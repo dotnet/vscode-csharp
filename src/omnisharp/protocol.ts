@@ -17,6 +17,7 @@ export module Requests {
     export const FormatAfterKeystroke = '/formatAfterKeystroke';
     export const FormatRange = '/formatRange';
     export const GetCodeActions = '/getcodeactions';
+    export const GoToTypeDefinition = '/gototypedefinition';
     export const FindImplementations = '/findimplementations';
     export const Project = '/project';
     export const Projects = '/projects';
@@ -579,6 +580,21 @@ export enum UpdateType {
 
 export interface SourceGeneratedFileClosedRequest extends SourceGeneratedFileInfo {
 }
+
+export interface Definition {
+    Location: V2.Location;
+    MetadataSource?: MetadataSource;
+    SourceGeneratedFileInfo?: SourceGeneratedFileInfo;
+}
+
+export interface GoToTypeDefinitionRequest extends Request {
+    WantMetadata?: boolean;
+}
+
+export interface GoToTypeDefinitionResponse {
+    Definitions?: Definition[];
+}
+
 
 export namespace V2 {
 

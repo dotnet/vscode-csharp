@@ -67,6 +67,10 @@ export async function goToDefinition(server: OmniSharpServer, request: protocol.
     return server.makeRequest<protocol.V2.GoToDefinitionResponse>(protocol.V2.Requests.GoToDefinition, request, token);
 }
 
+export async function goToTypeDefinition(server: OmniSharpServer, request: protocol.GoToTypeDefinitionRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.GoToTypeDefinitionResponse>(protocol.Requests.GoToTypeDefinition, request, token);
+}
+
 export async function getSourceGeneratedFile(server: OmniSharpServer, request: protocol.SourceGeneratedFileRequest, token: vscode.CancellationToken) {
     return server.makeRequest<protocol.SourceGeneratedFileResponse>(protocol.Requests.SourceGeneratedFile, request, token);
 }

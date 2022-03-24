@@ -83,6 +83,8 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider, sourceGeneratedDocumentProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
+        localDisposables.add(vscode.languages.registerTypeDefinitionProvider(documentSelector, definitionProvider));
+        localDisposables.add(vscode.languages.registerTypeDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
         localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, languageMiddlewareFeature)));
