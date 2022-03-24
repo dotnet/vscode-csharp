@@ -353,7 +353,7 @@ async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[],
         argsCopy.unshift(`"${launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath}"`);
     }
 
-    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
+    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env, shell: true });
 
     return {
         process,
