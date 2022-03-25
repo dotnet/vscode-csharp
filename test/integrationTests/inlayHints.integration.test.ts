@@ -27,7 +27,7 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         const csharpConfig = vscode.workspace.getConfiguration('csharp');
         csharpConfig.update('inlayhints.parameters.enabled', true);
         csharpConfig.update('inlayhints.parameters.forLiteralParameters', true);
-        csharpConfig.update('inlayhints.parameters.forObjectCreationParameters', true);
+        csharpConfig.update('inlayhints.parameters.inlayHintsForObjectCreationParameters', true);
         csharpConfig.update('inlayhints.parameters.forIndexerParameters', true);
         csharpConfig.update('inlayhints.parameters.forOtherParameters', true);
         csharpConfig.update('inlayhints.parameters.suppressForParametersThatDifferOnlyBySuffix', true);

@@ -10,6 +10,7 @@ import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeatur
 import CompositeDisposable from '../CompositeDisposable';
 import { InlayHint, InlayHintRequest, InlayHintResolve as InlayHintResolveRequest } from '../omnisharp/protocol';
 import { fromVSCodeRange, toVSCodePosition } from '../omnisharp/typeConversion';
+import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 
 export default class CSharpInlayHintProvider extends AbstractProvider implements vscode.InlayHintsProvider {
     private readonly _onDidChangeInlayHints = new vscode.EventEmitter<void>();
@@ -29,6 +30,10 @@ export default class CSharpInlayHintProvider extends AbstractProvider implements
     }
 
     async provideInlayHints(document: vscode.TextDocument, range: vscode.Range, token: vscode.CancellationToken): Promise<vscode.InlayHint[]> {
+        if (isVirtualCSharpDocument(document)) {
+            return [];
+        }
+
         const request: InlayHintRequest = {
             Location: {
                 FileName: document.fileName,
