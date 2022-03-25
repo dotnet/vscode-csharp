@@ -24,6 +24,9 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
+        const editorConfig = vscode.workspace.getConfiguration('editor');
+        editorConfig.update('inlayHints.enabled', true);
+
         const csharpConfig = vscode.workspace.getConfiguration('csharp');
         csharpConfig.update('inlayHints.parameters.enabled', true);
         csharpConfig.update('inlayHints.parameters.forLiteralParameters', true);
