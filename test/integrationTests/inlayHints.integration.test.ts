@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 import { should, assert } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartOmniSharpServer } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as path from 'path';
 
@@ -41,6 +41,7 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         csharpConfig.update('inlayHints.types.forLambdaParameterTypes', true);
         csharpConfig.update('inlayHints.types.forImplicitObjectCreation', true);
 
+        await restartOmniSharpServer();
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);
 
