@@ -51,7 +51,7 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test.only("Hints retrieved for region", async () => {
+    test("Hints retrieved for region", async () => {
         const range = new vscode.Range(new vscode.Position(4, 8), new vscode.Position(15, 85));
         const hints : vscode.InlayHint[] = await vscode.commands.executeCommand('vscode.executeInlayHintProvider', fileUri, range);
         assert.lengthOf(hints, 6);
