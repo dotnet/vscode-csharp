@@ -48,7 +48,7 @@ You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See
 
 ### Note about using .NET 6 SDKs
 
-The .NET 6 SDK requires version 16.10 of MSBuild.
+The .NET 6 SDK requires version 17.0 of MSBuild.
 
 For Windows users who have Visual Studio installed, this means you will need to have Visual Studio 16.11 or newer installed.
 
