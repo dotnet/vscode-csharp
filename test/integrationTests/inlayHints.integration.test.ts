@@ -43,12 +43,15 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
 
         await restartOmniSharpServer();
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restoreAndWait(activation);
+        await testAssetWorkspace.restore();
 
         const fileName = 'inlayHints.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
+        
+        await vscode.commands.executeCommand("vscode.open", fileUri);
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {
@@ -56,7 +59,6 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
     });
 
     test("Hints retrieved for region", async () => {
-        await vscode.commands.executeCommand("vscode.open", fileUri);
         const range = new vscode.Range(new vscode.Position(4, 8), new vscode.Position(15, 85));
         const hints : vscode.InlayHint[] = await vscode.commands.executeCommand('vscode.executeInlayHintProvider', fileUri, range);
         assert.lengthOf(hints, 6);
