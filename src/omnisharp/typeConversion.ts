@@ -47,6 +47,21 @@ export function toVSCodeRange(StartLine: number, StartColumn: number, EndLine: n
     return new vscode.Range(StartLine, StartColumn, EndLine, EndColumn);
 }
 
+export function fromVSCodeRange(range: vscode.Range): protocol.V2.Range {
+    return {
+        Start: fromVSCodePosition(range.start),
+        End: fromVSCodePosition(range.end)
+    };
+}
+
+export function fromVSCodePosition(position: vscode.Position): protocol.V2.Point {
+    return { Line: position.line, Column: position.character };
+}
+
+export function toVSCodePosition(point: protocol.V2.Point): vscode.Position {
+    return new vscode.Position(point.Line, point.Column);
+}
+
 export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
 
     let Line: number, Column: number;

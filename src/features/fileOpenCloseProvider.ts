@@ -49,8 +49,8 @@ class FileOpenCloseProvider implements IDisposable {
         await serverUtils.fileClose(this._server, { FileName: e.fileName });
     }
 
-    private async _onActiveTextEditorChange(e: vscode.TextEditor) {
-        if (shouldIgnoreDocument(e.document)) {
+    private async _onActiveTextEditorChange(e: vscode.TextEditor | undefined) {
+        if (e === undefined || shouldIgnoreDocument(e.document)) {
             return;
         }
 

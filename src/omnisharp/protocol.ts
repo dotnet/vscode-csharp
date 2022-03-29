@@ -38,6 +38,8 @@ export module Requests {
     export const SourceGeneratedFile = '/sourcegeneratedfile';
     export const UpdateSourceGeneratedFile = '/updatesourcegeneratedfile';
     export const SourceGeneratedFileClosed = '/sourcegeneratedfileclosed';
+    export const InlayHint = '/inlayHint';
+    export const InlayHintResolve = '/inlayHint/resolve';
     export const FileOpen = '/open';
     export const FileClose = '/close';
 }
@@ -579,6 +581,25 @@ export enum UpdateType {
 }
 
 export interface SourceGeneratedFileClosedRequest extends SourceGeneratedFileInfo {
+}
+
+export interface InlayHintRequest {
+    Location: V2.Location;
+}
+
+export interface InlayHint {
+    Position: V2.Point;
+    Label: string;
+    Tooltip?: string;
+    Data: any;
+}
+
+export interface InlayHintResponse {
+    InlayHints: InlayHint[];
+}
+
+export interface InlayHintResolve {
+    Hint: InlayHint;
 }
 
 export interface Definition {

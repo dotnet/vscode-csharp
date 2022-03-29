@@ -391,6 +391,24 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
+        if (options.inlayHintsEnableForParameters === true) {
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${options.inlayHintsEnableForParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${options.inlayHintsForLiteralParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${options.inlayHintsForIndexerParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${options.inlayHintsForObjectCreationParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${options.inlayHintsForOtherParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${options.inlayHintsSuppressForParametersThatDifferOnlyBySuffix.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${options.inlayHintsSuppressForParametersThatMatchMethodIntent.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${options.inlayHintsSuppressForParametersThatMatchArgumentName.toString()}`);
+        }
+
+        if (options.inlayHintsEnableForTypes === true) {
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${options.inlayHintsEnableForTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${options.inlayHintsForImplicitVariableTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${options.inlayHintsForLambdaParameterTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${options.inlayHintsForImplicitObjectCreation.toString()}`);
+        }
+
         if (options.analyzeOpenDocumentsOnly === true) {
             args.push('RoslynExtensionsOptions:AnalyzeOpenDocumentsOnly=true');
         }

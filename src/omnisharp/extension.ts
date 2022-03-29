@@ -44,6 +44,7 @@ import SemanticTokensProvider from '../features/semanticTokensProvider';
 import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocumentProvider';
 import { getDecompilationAuthorization } from './decompilationPrompt';
 import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
+import CSharpInlayHintProvider from '../features/inlayHintProvider';
 import fileOpenClose from '../features/fileOpenCloseProvider';
 
 export interface ActivationResult {
@@ -119,6 +120,9 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
         localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+
+        const inlayHintsProvider = new CSharpInlayHintProvider(server, languageMiddlewareFeature);
+        localDisposables.add(vscode.languages.registerInlayHintsProvider(documentSelector, inlayHintsProvider));
     }));
 
     disposables.add(server.onServerStop(() => {
