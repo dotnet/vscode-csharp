@@ -57,6 +57,9 @@ For MacOS and Linux users who have Mono installed, this means you will need to s
 You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See instructions above.
 
 ### What's new in 1.24.2
+* Support inlay hints ([#1932](https://github.com/OmniSharp/omnisharp-roslyn/issues/1932), PR: [#5107](https://github.com/OmniSharp/omnisharp-vscode/pull/5107))
+* Pass "shell: true" as a spawn option when launching O# (PR: [#5125](https://github.com/OmniSharp/omnisharp-vscode/pull/5125))
+* Add GoToTypeDefinition provider ([#4251](https://github.com/OmniSharp/omnisharp-vscode/issues/4251), PR: [#5094](https://github.com/OmniSharp/omnisharp-vscode/pull/5094))
 * Quote launch paths when necessary ([#5099](https://github.com/OmniSharp/omnisharp-vscode/issues/5099), PR: [#5101](https://github.com/OmniSharp/omnisharp-vscode/pull/5101))
 * Fix string escape for linux and unix (PR: [#5122](https://github.com/OmniSharp/omnisharp-vscode/pull/5122))
 * Debounce diagnostic requests ([#5085](https://github.com/OmniSharp/omnisharp-vscode/issues/5085), PR: [#5089](https://github.com/OmniSharp/omnisharp-vscode/pull/5089))
