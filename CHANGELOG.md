@@ -13,7 +13,7 @@
   * As a workaround, make an edit within the file before using Rename Symbol.
 
 ## 1.24.3
-* Fix OmniSharp not found issue on Mono ([#5140](https://github.com/OmniSharp/omnisharp-vscode/issues/5140), PR: [##5141](https://github.com/OmniSharp/omnisharp-vscode/pull/5141))
+* Fix OmniSharp not found issue on Mono ([#5140](https://github.com/OmniSharp/omnisharp-vscode/issues/5140), PR: [#5141](https://github.com/OmniSharp/omnisharp-vscode/pull/5141))
 
 ## 1.24.2 (Apr 1st, 2022)
 * Support inlay hints ([#1932](https://github.com/OmniSharp/omnisharp-roslyn/issues/1932), PR: [#5107](https://github.com/OmniSharp/omnisharp-vscode/pull/5107))
