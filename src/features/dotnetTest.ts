@@ -313,7 +313,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private _createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
+    private _createLaunchConfiguration(program: string, args: string, cwd: string, environmentVariables: Map<string, string>, debuggerEventsPipeName: string) {
         let debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');
 
         // Get the initial set of options from the workspace setting
@@ -333,7 +333,8 @@ export default class TestManager extends AbstractProvider {
             debuggerEventsPipeName: debuggerEventsPipeName,
             program: program,
             args: args,
-            cwd: cwd
+            cwd: cwd,
+            env: environmentVariables,
         };
 
         // Now fill in the rest of the options
@@ -369,6 +370,7 @@ export default class TestManager extends AbstractProvider {
                 response.FileName,
                 response.Arguments,
                 response.WorkingDirectory,
+                response.EnvironmentVariables,
                 debugEventListener.pipePath());
         }
         finally {
@@ -497,7 +499,7 @@ export default class TestManager extends AbstractProvider {
 
         try {
             let response = await serverUtils.debugTestClassGetStartInfo(this._server, request);
-            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, response.EnvironmentVariables, debugEventListener.pipePath());
         }
         finally {
             listener.dispose();
@@ -537,7 +539,7 @@ export default class TestManager extends AbstractProvider {
                 return null;
             }
 
-            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, response.EnvironmentVariables, debugEventListener.pipePath());
         }
         finally {
             listener.dispose();
