@@ -30,6 +30,11 @@ export default class CSharpInlayHintProvider extends AbstractProvider implements
     }
 
     async provideInlayHints(document: vscode.TextDocument, range: vscode.Range, token: vscode.CancellationToken): Promise<vscode.InlayHint[]> {
+        // Exclude documents from other schemes, such as those in the diff view.
+        if (document.uri.scheme !== "file") {
+            return [];
+        }
+        
         if (isVirtualCSharpDocument(document)) {
             return [];
         }
