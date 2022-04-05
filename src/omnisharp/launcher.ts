@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { spawn, ChildProcess } from 'child_process';
+import { spawn } from 'cross-spawn';
+import { ChildProcess } from 'child_process';
 
 import { PlatformInformation } from '../platform';
 import * as path from 'path';
@@ -343,17 +344,16 @@ async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[],
     let command: string;
     const argsCopy = args.slice(0);
 
-
     if (launchInfo.LaunchPath && !launchInfo.LaunchPath.endsWith('.dll')) {
         // If we're not being asked to launch a dll, assume whatever we're given is an executable
         command = launchInfo.LaunchPath;
     }
     else {
         command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
-        argsCopy.unshift(`"${launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath}"`);
+        argsCopy.unshift(launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath);
     }
 
-    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env, shell: true });
+    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
 
     return {
         process,
