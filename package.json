@@ -350,7 +350,7 @@
     },
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Linux (NET 6 / arm64)",
+      "description": "OmniSharp for Linux (.NET 6 / arm64)",
       "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.38.2/omnisharp-linux-arm64-net6.0-1.38.2.zip",
       "installPath": ".omnisharp/1.38.2-net6.0",
       "platforms": [
@@ -361,7 +361,7 @@
       ],
       "installTestPath": "./.omnisharp/1.38.2-net6.0/OmniSharp.dll",
       "platformId": "linux-arm64",
-      "isFramework": true,
+      "isFramework": false,
       "integrity": "28AB43CC4BDD3FFE805E44A723A80235E8150E055056E44A0D772AD7BECAB045"
     },
     {
