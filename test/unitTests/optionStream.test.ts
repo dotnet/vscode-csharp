@@ -37,7 +37,6 @@ suite('OptionStream', () => {
 
         test('Returns the default options if there is no change', () => {
             expect(options.path).to.be.null;
-            options.useGlobalMono.should.equal("auto");
             options.waitForDebugger.should.equal(false);
             options.loggingLevel.should.equal("information");
             options.autoStart.should.equal(true);

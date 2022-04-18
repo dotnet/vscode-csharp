@@ -925,25 +925,10 @@
         },
         "omnisharp.useModernNet": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "scope": "window",
-          "title": "Use .NET 6 build of OmniSharp (experimental)",
-          "description": "Use OmniSharp build for .NET 6. This version _does not_ support non-SDK-style .NET Framework projects, including Unity. SDK-style Framework, .NET Core, and .NET 5+ projects should see significant performance improvements, but there may still be bugs. Please open issues if you find any bugs."
-        },
-        "omnisharp.useGlobalMono": {
-          "type": "string",
-          "default": "auto",
-          "enum": [
-            "auto",
-            "always",
-            "never"
-          ],
-          "enumDescriptions": [
-            "Automatically launch OmniSharp with internal \"mono\", since \"mono\" 6.12.0 does not support .NET Core 3.1.40x or .NET 5 SDKs.",
-            "Always launch OmniSharp with \"mono\". If version 6.4.0 or greater is not available on the PATH, an error will be printed.",
-            "Never launch OmniSharp on a globally-installed Mono."
-          ],
-          "description": "Launch OmniSharp with the globally-installed Mono. If set to \"always\", \"mono\" version 6.4.0 or greater must be available on the PATH. If set to \"auto\", OmniSharp will be launched with \"mono\" if version 6.4.0 or greater is available on the PATH."
+          "title": "Use .NET 6 build of OmniSharp",
+          "description": "Use OmniSharp build for .NET 6. This version _does not_ support non-SDK-style .NET Framework projects, including Unity. SDK-style Framework, .NET Core, and .NET 5+ projects should see significant performance improvements."
         },
         "omnisharp.monoPath": {
           "type": [
@@ -952,7 +937,7 @@
           ],
           "default": null,
           "scope": "machine",
-          "description": "Specifies the path to a mono installation to use when \"useGlobalMono\" is set to \"always\", instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\""
+          "description": "Specifies the path to a mono installation to use when \"useModernNet\" is set to false, instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\""
         },
         "omnisharp.dotnetPath": {
           "type": [

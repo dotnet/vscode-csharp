@@ -9,7 +9,6 @@ export function getEmptyOptions(): Options {
     return new Options(
         /* path */"",
         /* useModernNet */false,
-        /* useGlobalMono */"",
         /* waitForDebugger */false,
         /* loggingLevel */"",
         /* autoStart */false,

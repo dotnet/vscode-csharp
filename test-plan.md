@@ -475,17 +475,6 @@ Changing this option should result in a notification message at the bottom right
   * if the option is not set, the OmniSharp log should indicate that the registered MSBuild instance is either the Standalone MSBuild, a Visual Studio MSBuild instance, or a Mono MSBuild isntance.
   * if the option is set, the OmniSharp log should inlcude text like the following "OmniSharp server started with .NET 6.0.100" and "Registered MSBuild instance: .NET Core SDK 6.0.100 17.0.0 - "/usr/local/share/dotnet/sdk/6.0.100/". All language services should continue to work as expected when an SDK-style project is open.
 
-  #### omnisharp.useGlobalMono (for Linux/Mac)
-  This option can be set to any of the following values:
-  * "auto" - Will launch OmniSharp using mono if version>=5.2.0 is installed but will launch using the run script if that is not so.
-  * "always" - Will launch OmniSharp using mono if version>=5.2.0 is installed and will throw an error otherwise.
-  * "never" - Launches OmniSharp without using the global mono
-
-  The value of OmniSharp path displayed in the OmniSharp log can be used to know if OmniSharp has launched using mono or not. If it is running using global mono, the path will end with "OmniSharp.exe" else the path will end with "run".
-  For using this option, mono version greater than or equal to 5.2.0 must be installed. If that is not so, setting this option to true, should give an error.
-  * If the option is not set, the OmniSharp path displayed in the "OmniSharp Log" should end with "run"
-  * If the option is set, the OmniSharp path as mentioned above should end with "OmniSharp.exe"
-
   #### omnisharp.path
   Setting this path to any of the values as listed below, should start the OmniSharp server and display the correct OmniSharp path in the `OmniSharp Log`(View --> Output--> OmniSharp Log).
   * undefined - OmniSharp server must start using the copy of omnisharp shipped with the extension, that is, the OmniSharp path must be the extension path, followed by .omnisharp followed by the default omnisharp version as present in the package.json and the platform-specific executable.

@@ -14,7 +14,6 @@ suite("Options tests", () => {
         const vscode = getVSCodeWithConfig();
         const options = Options.Read(vscode);
         expect(options.path).to.be.null;
-        options.useGlobalMono.should.equal("auto");
         expect(options.monoPath).to.be.undefined;
         options.waitForDebugger.should.equal(false);
         options.loggingLevel.should.equal("information");
@@ -80,42 +79,6 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
 
         options.loggingLevel.should.equal("debug");
-    });
-
-    test('BACK-COMPAT: "omnisharp.useMono": true == "omnisharp.useGlobalMono": "always"', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'omnisharp', 'useMono', true);
-
-        const options = Options.Read(vscode);
-
-        options.useGlobalMono.should.equal("always");
-    });
-
-    test('BACK-COMPAT: "omnisharp.useMono": false == "omnisharp.useGlobalMono": "auto"', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'omnisharp', 'useMono', false);
-
-        const options = Options.Read(vscode);
-
-        options.useGlobalMono.should.equal("auto");
-    });
-
-    test('BACK-COMPAT: "csharp.omnisharpUsesMono": true == "omnisharp.useGlobalMono": "always"', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'csharp', 'omnisharpUsesMono', true);
-
-        const options = Options.Read(vscode);
-
-        options.useGlobalMono.should.equal("always");
-    });
-
-    test('BACK-COMPAT: "csharp.omnisharpUsesMono": false == "omnisharp.useGlobalMono": "auto"', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'csharp', 'omnisharpUsesMono', false);
-
-        const options = Options.Read(vscode);
-
-        options.useGlobalMono.should.equal("auto");
     });
 
     test('BACK-COMPAT: "csharp.omnisharp" is used if it is set and "omnisharp.path" is not', () => {

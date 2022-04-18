@@ -9,7 +9,6 @@ export class Options {
     constructor(
         public path: string,
         public useModernNet: boolean,
-        public useGlobalMono: string,
         public waitForDebugger: boolean,
         public loggingLevel: string,
         public autoStart: boolean,
@@ -62,8 +61,6 @@ export class Options {
         // are supported below. In particular, these are:
         //
         // - "csharp.omnisharp" -> "omnisharp.path"
-        // - "csharp.omnisharpUsesMono" -> "omnisharp.useMono"
-        // - "omnisharp.useMono" -> "omnisharp.useGlobalMono"
 
         const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
         const csharpConfig = vscode.workspace.getConfiguration('csharp');
@@ -71,7 +68,6 @@ export class Options {
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
         const useModernNet = omnisharpConfig.get<boolean>("useModernNet", false);
-        const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
         const monoPath = omnisharpConfig.get<string>('monoPath', undefined) || undefined;
         const dotnetPath = omnisharpConfig.get<string>('dotnetPath', undefined) || undefined;
 
@@ -143,7 +139,6 @@ export class Options {
         return new Options(
             path,
             useModernNet,
-            useGlobalMono,
             waitForDebugger,
             loggingLevel,
             autoStart,
@@ -230,30 +225,6 @@ export class Options {
         else {
             // Otherwise, null.
             return null;
-        }
-    }
-
-    private static readUseGlobalMonoOption(omnisharpConfig: WorkspaceConfiguration, csharpConfig: WorkspaceConfiguration): string {
-        function toUseGlobalMonoValue(value: boolean): string {
-            // True means 'always' and false means 'auto'.
-            return value ? "always" : "auto";
-        }
-
-        if (omnisharpConfig.has('useGlobalMono')) {
-            // If 'omnisharp.useGlobalMono' setting was found, just use it.
-            return omnisharpConfig.get<string>('useGlobalMono', "auto");
-        }
-        else if (omnisharpConfig.has('useMono')) {
-            // BACKCOMPAT: If 'omnisharp.useMono' setting was found, true maps to "always" and false maps to "auto"
-            return toUseGlobalMonoValue(omnisharpConfig.get<boolean>('useMono'));
-        }
-        else if (csharpConfig.has('omnisharpUsesMono')) {
-            // BACKCOMPAT: If 'csharp.omnisharpUsesMono' setting was found, true maps to "always" and false maps to "auto"
-            return toUseGlobalMonoValue(csharpConfig.get<boolean>('omnisharpUsesMono'));
-        }
-        else {
-            // Otherwise, the default value is "auto".
-            return "auto";
         }
     }
 }

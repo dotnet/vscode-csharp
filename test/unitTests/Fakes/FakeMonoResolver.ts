@@ -13,14 +13,14 @@ export const fakeMonoInfo: HostExecutableInformation = {
 };
 
 export class FakeMonoResolver implements IHostExecutableResolver {
-    public getGlobalMonoCalled: boolean;
+    public getMonoCalled: boolean;
 
     constructor(public willReturnMonoInfo = true) {
-        this.getGlobalMonoCalled = false;
+        this.getMonoCalled = false;
     }
 
     async getHostExecutableInfo(): Promise<HostExecutableInformation> {
-        this.getGlobalMonoCalled = true;
+        this.getMonoCalled = true;
         if (this.willReturnMonoInfo) {
             return Promise.resolve(fakeMonoInfo);
         }
