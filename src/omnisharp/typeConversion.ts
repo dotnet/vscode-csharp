@@ -62,6 +62,16 @@ export function toVSCodePosition(point: protocol.V2.Point): vscode.Position {
     return new vscode.Position(point.Line, point.Column);
 }
 
+export function toVSCodeTextEdit(textChange: protocol.LinePositionSpanTextChange): vscode.TextEdit {
+    return new vscode.TextEdit(toVSCodeRange(textChange), textChange.NewText);
+
+    function toVSCodeRange(textChange: protocol.LinePositionSpanTextChange): vscode.Range {
+        const newStart = new vscode.Position(textChange.StartLine, textChange.StartColumn);
+        const newEnd = new vscode.Position(textChange.EndLine, textChange.EndColumn);
+        return new vscode.Range(newStart, newEnd);
+    }
+}
+
 export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
 
     let Line: number, Column: number;
