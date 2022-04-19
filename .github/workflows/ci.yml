@@ -44,7 +44,7 @@ jobs:
           gulp test
           npm run test:artifacts
       env:
-        CODE_VERSION: 1.65.0
+        CODE_VERSION: 1.66.0
         DISPLAY: :99.0
 
     - name: Build platform-specific extension package
