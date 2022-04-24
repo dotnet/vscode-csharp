@@ -136,7 +136,7 @@ suite(OmnisharpManager.name, () => {
             });
 
             test('Returns the default path if the omnisharp path is not set', async () => {
-                let launchInfo = await manager.GetOmniSharpLaunchInfo(defaultVersion, "", useFramework, server.baseUrl, latestfilePath, installPath, extensionPath);
+                const launchInfo = await manager.GetOmniSharpLaunchInfo(defaultVersion, undefined, useFramework, server.baseUrl, latestfilePath, installPath, extensionPath);
                 if (useFramework) {
                     expect(launchInfo.LaunchPath).to.be.equal(path.join(extensionPath, ".omnisharp", defaultVersion + suffix, elem.executable));
                     if (elem.platformInfo.isWindows()) {

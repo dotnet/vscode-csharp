@@ -36,7 +36,7 @@ suite('OptionStream', () => {
         });
 
         test('Returns the default options if there is no change', () => {
-            expect(options.path).to.be.null;
+            expect(options.path).to.be.undefined;
             options.useGlobalMono.should.equal("auto");
             options.waitForDebugger.should.equal(false);
             options.loggingLevel.should.equal("information");
@@ -60,7 +60,7 @@ suite('OptionStream', () => {
         });
 
         test('Gives the changed option when the omnisharp config changes', () => {
-            expect(options.path).to.be.null;
+            expect(options.path).to.be.undefined;
             let changingConfig = "omnisharp";
             updateConfig(vscode, changingConfig, 'path', "somePath");
             listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));

@@ -13,7 +13,7 @@ suite("Options tests", () => {
     test('Verify defaults', () => {
         const vscode = getVSCodeWithConfig();
         const options = Options.Read(vscode);
-        expect(options.path).to.be.null;
+        expect(options.path).to.be.undefined;
         options.useGlobalMono.should.equal("auto");
         expect(options.monoPath).to.be.undefined;
         options.waitForDebugger.should.equal(false);
