@@ -107,7 +107,7 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
             let buckets: vscode.Uri[];
 
             if (workspaceFolderToUriMap.has(folder.index)) {
-                buckets = workspaceFolderToUriMap.get(folder.index);
+                buckets = workspaceFolderToUriMap.get(folder.index)!; // Ensured valid via has.
             } else {
                 buckets = [];
                 workspaceFolderToUriMap.set(folder.index, buckets);
