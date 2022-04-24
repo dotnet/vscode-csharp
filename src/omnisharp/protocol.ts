@@ -957,36 +957,36 @@ export namespace V2 {
     }
 }
 
-export function findNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework {
-    let regexp = new RegExp('^net[1-4]');
+export function findNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework | undefined {
+    const regexp = new RegExp('^net[1-4]');
     return project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
 }
 
-export function findNetCoreTargetFramework(project: MSBuildProject): TargetFramework {
+export function findNetCoreTargetFramework(project: MSBuildProject): TargetFramework | undefined {
     return findNetCoreAppTargetFramework(project) ?? findModernNetFrameworkTargetFramework(project);
 }
 
-export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework {
+export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework | undefined {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
 }
 
-export function findModernNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework {
-    let regexp = new RegExp('^net[5-9]');
+export function findModernNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework | undefined {
+    const regexp = new RegExp('^net[5-9]');
     const targetFramework = project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
 
     // Shortname is being reported as net50 instead of net5.0
     if (targetFramework !== undefined && targetFramework.ShortName.charAt(4) !== ".") {
-        targetFramework.ShortName = targetFramework.ShortName.substr(0, 4) + "." + targetFramework.ShortName.substr(4);
+        targetFramework.ShortName = `${targetFramework.ShortName.substring(0, 4)}.${targetFramework.ShortName.substring(4)}`;
     }
 
     return targetFramework;
 }
 
-export function findNetStandardTargetFramework(project: MSBuildProject): TargetFramework {
+export function findNetStandardTargetFramework(project: MSBuildProject): TargetFramework | undefined {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netstandard'));
 }
 
-export function isDotNetCoreProject(project: MSBuildProject): Boolean {
+export function isDotNetCoreProject(project: MSBuildProject): boolean {
     return findNetCoreTargetFramework(project) !== undefined ||
         findNetStandardTargetFramework(project) !== undefined ||
         findNetFrameworkTargetFramework(project) !== undefined;
