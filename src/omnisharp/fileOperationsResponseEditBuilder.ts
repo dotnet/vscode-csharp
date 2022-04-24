@@ -12,7 +12,7 @@ import { toRange2 } from './typeConversion';
 export async function buildEditForResponse(changes: FileOperationResponse[], languageMiddlewareFeature: LanguageMiddlewareFeature, token: vscode.CancellationToken): Promise<boolean> {
     let edit = new vscode.WorkspaceEdit();
 
-    let fileToOpen: Uri = null;
+    let fileToOpen: Uri | undefined;
 
     if (!changes || !Array.isArray(changes) || !changes.length) {
         return true;
@@ -55,7 +55,7 @@ export async function buildEditForResponse(changes: FileOperationResponse[], lan
     // and replaced with a command that can only close the active editor.
     // If files were renamed that weren't the active editor, their tabs will
     // be left open and marked as "deleted" by VS Code
-    return fileToOpen != null
+    return fileToOpen !== undefined
         ? applyEditPromise.then(_ => {
             return vscode.commands.executeCommand("vscode.open", fileToOpen);
         })
