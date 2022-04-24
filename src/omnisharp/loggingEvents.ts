@@ -46,7 +46,7 @@ export class OmnisharpInitialisation implements BaseEvent {
 
 export class OmnisharpLaunch implements BaseEvent {
     type = EventType.OmnisharpLaunch;
-    constructor(public hostVersion: string, public hostPath: string, public hostIsMono: boolean, public command: string, public pid: number) { }
+    constructor(public hostVersion: string | undefined, public hostPath: string | undefined, public hostIsMono: boolean, public command: string, public pid: number) { }
 }
 
 export class PackageInstallStart implements BaseEvent {
