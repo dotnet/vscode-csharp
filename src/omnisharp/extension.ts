@@ -68,7 +68,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
-    let localDisposables: CompositeDisposable;
+    let localDisposables: CompositeDisposable | undefined;
     const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
     const completionProvider = new CompletionProvider(server, languageMiddlewareFeature);
 
@@ -130,7 +130,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         if (localDisposables) {
             localDisposables.dispose();
         }
-        localDisposables = null;
+        localDisposables = undefined;
     }));
 
     disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, packageJSON, extensionPath));

@@ -61,12 +61,6 @@ export function safeLength<T>(arr: T[] | undefined) {
     return arr ? arr.length : 0;
 }
 
-export async function buildPromiseChain<T, TResult>(array: T[], builder: (item: T) => Promise<TResult>): Promise<TResult> {
-    return array.reduce(
-        async (promise, n) => promise.then(async () => builder(n)),
-        Promise.resolve<TResult>(null));
-}
-
 export async function execChildProcess(command: string, workingDirectory: string = getExtensionPath()): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {

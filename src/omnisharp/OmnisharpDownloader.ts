@@ -35,9 +35,8 @@ export class OmnisharpDownloader {
                 this.eventStream.post(new InstallationSuccess());
                 return true;
             }
-
-            return false;
         }
+        return false;
     }
 
     public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {

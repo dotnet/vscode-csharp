@@ -62,29 +62,18 @@ export function toVSCodePosition(point: protocol.V2.Point): vscode.Position {
     return new vscode.Position(point.Line, point.Column);
 }
 
-export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position | vscode.Range, includeBuffer: boolean = false): T {
-
-    let Line: number, Column: number;
-
-    if (where instanceof vscode.Position) {
-        Line = where.line;
-        Column = where.character;
-    } else if (where instanceof vscode.Range) {
-        Line = where.start.line;
-        Column = where.start.character;
-    }
-
+export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position, includeBuffer: boolean = false): T {
     // for metadata sources, we need to remove the [metadata] from the filename, and prepend the $metadata$ authority
     // this is expected by the Omnisharp server to support metadata-to-metadata navigation
-    let fileName = document.uri.scheme === "omnisharp-metadata" ?
+    const fileName = document.uri.scheme === "omnisharp-metadata" ?
         `${document.uri.authority}${document.fileName.replace("[metadata] ", "")}` :
         document.fileName;
 
-    let request: protocol.Request = {
+    const request: protocol.Request = {
         FileName: fileName,
         Buffer: includeBuffer ? document.getText() : undefined,
-        Line,
-        Column
+        Line: where.line,
+        Column: where.character,
     };
 
     return <T>request;

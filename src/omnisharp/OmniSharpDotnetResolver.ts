@@ -22,7 +22,7 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
         const dotnet = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const env = { ...process.env };
 
-        if (options.dotnetPath) {
+        if (options.dotnetPath.length > 0) {
             env['PATH'] = options.dotnetPath + path.delimiter + env['PATH'];
         }
 
