@@ -19,7 +19,7 @@ export class OmniSharpMonoResolver implements IHostExecutableResolver {
     private async configureEnvironmentAndGetInfo(options: Options): Promise<HostExecutableInformation> {
         let env = { ...process.env };
         let monoPath: string;
-        if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
+        if (options.useGlobalMono !== "never" && options.monoPath.length > 0) {
             env['PATH'] = path.join(options.monoPath, 'bin') + path.delimiter + env['PATH'];
             env['MONO_GAC_PREFIX'] = options.monoPath;
             monoPath = options.monoPath;
@@ -40,7 +40,7 @@ export class OmniSharpMonoResolver implements IHostExecutableResolver {
         if (options.useGlobalMono === "always") {
             let isMissing = monoInfo.version === undefined;
             if (isMissing) {
-                const suggestedAction = options.monoPath
+                const suggestedAction = options.monoPath.length > 0
                     ? "Update the \"omnisharp.monoPath\" setting to point to the folder containing Mono's '/bin' folder."
                     : "Ensure that Mono's '/bin' folder is added to your environment's PATH variable.";
                 throw new Error(`Unable to find Mono. ${suggestedAction}`);
@@ -61,4 +61,3 @@ export class OmniSharpMonoResolver implements IHostExecutableResolver {
         return undefined;
     }
 }
-

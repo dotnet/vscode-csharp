@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should, expect } from 'chai';
+import { should } from 'chai';
 import { ConfigurationChangeEvent, vscode } from "../../src/vscodeAdapter";
 import { getVSCodeWithConfig, updateConfig } from "./testAssets/Fakes";
 import Disposable from "../../src/Disposable";
@@ -36,7 +36,7 @@ suite('OptionStream', () => {
         });
 
         test('Returns the default options if there is no change', () => {
-            expect(options.path).to.be.undefined;
+            options.path.should.equal("");
             options.useGlobalMono.should.equal("auto");
             options.waitForDebugger.should.equal(false);
             options.loggingLevel.should.equal("information");
@@ -56,11 +56,11 @@ suite('OptionStream', () => {
             options.enableDecompilationSupport.should.equal(false);
             options.enableImportCompletion.should.equal(false);
             options.enableAsyncCompletion.should.equal(false);
-            expect(options.defaultLaunchSolution).to.be.undefined;
+            options.defaultLaunchSolution.should.equal("");
         });
 
         test('Gives the changed option when the omnisharp config changes', () => {
-            expect(options.path).to.be.undefined;
+            options.path.should.equal("");
             let changingConfig = "omnisharp";
             updateConfig(vscode, changingConfig, 'path', "somePath");
             listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));

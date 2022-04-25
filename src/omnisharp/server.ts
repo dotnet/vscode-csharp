@@ -342,7 +342,7 @@ export class OmniSharpServer {
 
         if (!options.razorDisabled) {
             // Razor support only exists for certain platforms, so only load the plugin if present
-            const razorPluginPath = options.razorPluginPath ?? path.join(
+            const razorPluginPath = options.razorPluginPath.length > 0 ? options.razorPluginPath : path.join(
                 this.extensionPath,
                 '.razor',
                 'OmniSharpPlugin',
@@ -427,7 +427,7 @@ export class OmniSharpServer {
             const launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.hostVersion, launchResult.hostPath, launchResult.hostIsMono, launchResult.command, launchResult.process.pid));
 
-            if (!options.razorDisabled && options.razorPluginPath !== undefined) {
+            if (!options.razorDisabled && options.razorPluginPath.length > 0) {
                 if (fs.existsSync(options.razorPluginPath)) {
                     this.eventStream.post(new ObservableEvents.RazorPluginPathSpecified(options.razorPluginPath));
                 } else {

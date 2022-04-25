@@ -13,9 +13,9 @@ suite("Options tests", () => {
     test('Verify defaults', () => {
         const vscode = getVSCodeWithConfig();
         const options = Options.Read(vscode);
-        expect(options.path).to.be.undefined;
+        options.path.should.equal("");
         options.useGlobalMono.should.equal("auto");
-        expect(options.monoPath).to.be.undefined;
+        options.monoPath.should.equal("");
         options.waitForDebugger.should.equal(false);
         options.loggingLevel.should.equal("information");
         options.autoStart.should.equal(true);
@@ -35,8 +35,8 @@ suite("Options tests", () => {
         options.enableDecompilationSupport.should.equal(false);
         options.enableImportCompletion.should.equal(false);
         options.analyzeOpenDocumentsOnly.should.equal(false);
-        expect(options.testRunSettings).to.be.undefined;
-        expect(options.defaultLaunchSolution).to.be.undefined;
+        options.testRunSettings.should.equal("");
+        options.defaultLaunchSolution.should.equal("");
     });
 
     test('Verify return no excluded paths when files.exclude empty', () => {
