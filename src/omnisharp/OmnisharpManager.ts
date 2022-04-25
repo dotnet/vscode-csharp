@@ -23,7 +23,7 @@ export class OmnisharpManager {
     }
 
     public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string | undefined, useFramework: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
-        if (omnisharpPath === undefined) {
+        if (omnisharpPath === undefined || omnisharpPath.length === 0) {
             // If omnisharpPath was not specified, return the default path.
             const basePath = path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion + (useFramework ? '' : `-net${modernNetVersion}`));
             return this.GetLaunchInfo(this.platformInfo, useFramework, basePath);
