@@ -20,7 +20,7 @@ export class OmniSharpMonoResolver implements IHostExecutableResolver {
         const env = { ...process.env };
         let monoPath: string;
 
-        if (options.monoPath !== undefined) {
+        if (options.monoPath.length > 0) {
             env['PATH'] = path.join(options.monoPath, 'bin') + path.delimiter + env['PATH'];
             env['MONO_GAC_PREFIX'] = options.monoPath;
             monoPath = options.monoPath;

@@ -5,28 +5,12 @@
 
 import * as path from 'path';
 
-import { buildPromiseChain, isSubfolderOf, safeLength, sum } from '../../src/common';
+import { isSubfolderOf, safeLength, sum } from '../../src/common';
 
 import { should, expect } from 'chai';
 
 suite("Common", () => {
     suiteSetup(() => should());
-
-    suite("buildPromiseChain", () => {
-        test("produce a sequence of promises", async () => {
-            let array: number[] = [];
-            let items = [1, 2, 3, 4, 5];
-
-            let promise = buildPromiseChain(items, async n => new Promise<void>((resolve, reject) => {
-                array.push(n);
-                resolve();
-            }));
-
-            return promise.then(() => {
-                array.should.deep.equal([1, 2, 3, 4, 5]);
-            });
-        });
-    });
 
     suite("safeLength", () => {
         test("return 0 for empty array", () => {

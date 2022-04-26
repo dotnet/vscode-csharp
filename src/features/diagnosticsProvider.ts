@@ -137,7 +137,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
         this._subscriptions.push(this._validateCurrentDocumentPipe
             .pipe(debounceTime(750))
-            .subscribe(async x => this._validateDocument(x)));
+            .subscribe(async document => await this._validateDocument(document)));
 
         this._subscriptions.push(this._validateAllPipe
             .pipe(debounceTime(3000))
