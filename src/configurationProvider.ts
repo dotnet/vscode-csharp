@@ -155,7 +155,7 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 
         if (config.request === "launch") {
             if (!config.cwd && !config.pipeTransport) {
-                config.cwd = "${workspaceFolder}";
+                config.cwd = folder?.uri?.fsPath; // Workspace folder
             }
             if (!config.internalConsoleOptions) {
                 config.internalConsoleOptions = "openOnSessionStart";
