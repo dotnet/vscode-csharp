@@ -199,7 +199,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     }));
 
     if (options.autoStart) {
-        server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
+        server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
     }
 
     // stop server on deactivate

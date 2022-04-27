@@ -546,7 +546,7 @@ export class OmniSharpServer {
         }
     }
 
-    public autoStart(preferredPath: string | undefined): Thenable<void> {
+    public autoStart(preferredPath: string): Thenable<void> {
         const options = this.optionProvider.GetLatestOptions();
         return findLaunchTargets(options).then(async launchTargets => {
             // If there aren't any potential launch targets, we create file watcher and try to
@@ -582,7 +582,7 @@ export class OmniSharpServer {
 
             // If there's more than one launch target, we start the server if one of the targets
             // matches the preferred path.
-            if (preferredPath !== undefined) {
+            if (preferredPath.length > 0) {
                 const preferredLaunchTarget = launchTargets.find((a) => a.target === preferredPath);
                 if (preferredLaunchTarget) {
                     return this.restart(preferredLaunchTarget);
