@@ -49,6 +49,7 @@ type State = {
     status: ServerState.Started,
     disposables: CompositeDisposable,
     serverProcess: ChildProcess,
+    telemetryIntervalId: NodeJS.Timeout,
 };
 
 module Events {
@@ -96,7 +97,6 @@ export class OmniSharpServer {
     private static _nextId = 1;
 
     private _delayTrackers!: { [requestName: string]: DelayTracker }; // Initialized via _start
-    private _telemetryIntervalId: NodeJS.Timer | undefined;
 
     private _eventBus = new EventEmitter();
     private _state: State = { status: ServerState.Stopped };
@@ -451,10 +451,10 @@ export class OmniSharpServer {
                 status: ServerState.Started,
                 disposables,
                 serverProcess: launchResult.process,
+                telemetryIntervalId: setInterval(() => this._reportTelemetry(), TelemetryReportingDelay),
             });
             this._fireEvent(Events.ServerStart, solutionPath);
 
-            this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
             this._requestQueue.drain();
         }
         catch (err) {
@@ -493,13 +493,6 @@ export class OmniSharpServer {
         // Clear the session properties when the session ends.
         this._sessionProperties = {};
 
-        if (this._telemetryIntervalId !== undefined) {
-            // Stop reporting telemetry
-            clearInterval(this._telemetryIntervalId);
-            this._telemetryIntervalId = undefined;
-            this._reportTelemetry();
-        }
-
         if (this._state.status !== ServerState.Started) {
             // nothing to kill
             cleanupPromise = Promise.resolve();
@@ -508,8 +501,11 @@ export class OmniSharpServer {
             // Cache serverProcess to pass to the promises, or else TypeScript will complain.
             // While we know that there's no way the state can change before cleanupPromise
             // is executed (as we await it below), TypeScript is unable to infer that.
-            const { disposables, serverProcess } = this._state;
+            const { disposables, serverProcess, telemetryIntervalId } = this._state;
             disposables.dispose();
+
+            clearInterval(telemetryIntervalId);
+            this._reportTelemetry();
 
             if (process.platform === 'win32') {
                 // when killing a process in windows its child
