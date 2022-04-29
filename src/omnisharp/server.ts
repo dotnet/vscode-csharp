@@ -96,7 +96,7 @@ export class OmniSharpServer {
 
     private static _nextId = 1;
 
-    private _delayTrackers!: { [requestName: string]: DelayTracker }; // Initialized via _start
+    private _delayTrackers: { [requestName: string]: DelayTracker } = {};
 
     private _eventBus = new EventEmitter();
     private _state: State = { status: ServerState.Stopped };
