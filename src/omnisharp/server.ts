@@ -44,8 +44,10 @@ type State = {
     status: ServerState.Stopped,
 } | {
     status: ServerState.Starting,
+    disposables: CompositeDisposable,
 } | {
     status: ServerState.Started,
+    disposables: CompositeDisposable,
     serverProcess: ChildProcess,
 };
 
@@ -92,7 +94,6 @@ const latestVersionFileServerPath = 'releases/versioninfo.txt';
 export class OmniSharpServer {
 
     private static _nextId = 1;
-    private _disposables: CompositeDisposable;
 
     private _delayTrackers!: { [requestName: string]: DelayTracker }; // Initialized via _start
     private _telemetryIntervalId: NodeJS.Timer | undefined;
@@ -276,7 +277,7 @@ export class OmniSharpServer {
             return;
         }
 
-        let disposables = new CompositeDisposable();
+        const disposables = new CompositeDisposable();
 
         disposables.add(this.onServerError(err =>
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err))
@@ -330,9 +331,10 @@ export class OmniSharpServer {
         disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
         disposables.add(this.onProjectRemoved(this.debounceUpdateProjectWithLeadingTrue));
 
-        this._disposables = disposables;
-
-        this._setState({ status: ServerState.Starting });
+        this._setState({
+            status: ServerState.Starting,
+            disposables,
+        });
         this._launchTarget = launchTarget;
 
         const solutionPath = launchTarget.target;
@@ -444,9 +446,10 @@ export class OmniSharpServer {
 
             this._delayTrackers = {};
 
-            await this._doConnect(launchResult.process, options);
+            await this._doConnect(disposables, launchResult.process, options);
             this._setState({
                 status: ServerState.Started,
+                disposables,
                 serverProcess: launchResult.process,
             });
             this._fireEvent(Events.ServerStart, solutionPath);
@@ -505,7 +508,8 @@ export class OmniSharpServer {
             // Cache serverProcess to pass to the promises, or else TypeScript will complain.
             // While we know that there's no way the state can change before cleanupPromise
             // is executed (as we await it below), TypeScript is unable to infer that.
-            const { serverProcess } = this._state;
+            const { disposables, serverProcess } = this._state;
+            disposables.dispose();
 
             if (process.platform === 'win32') {
                 // when killing a process in windows its child
@@ -535,16 +539,10 @@ export class OmniSharpServer {
             }
         }
 
-        let disposables = this._disposables;
-        this._disposables = null;
+        await cleanupPromise;
 
-        return cleanupPromise.then(() => {
-            this._setState({ status: ServerState.Stopped });
-            this._fireEvent(Events.ServerStop, this);
-            if (disposables) {
-                disposables.dispose();
-            }
-        });
+        this._setState({ status: ServerState.Stopped });
+        this._fireEvent(Events.ServerStop, this);
     }
 
     public async restart(launchTarget: LaunchTarget | undefined = this._launchTarget): Promise<void> {
@@ -666,7 +664,10 @@ export class OmniSharpServer {
         });
     }
 
-    private async _doConnect(serverProcess: ChildProcess, options: Options): Promise<void> {
+    private async _doConnect(
+        disposables: CompositeDisposable,
+        serverProcess: ChildProcess,
+        options: Options): Promise<void> {
 
         serverProcess.stderr.on('data', (data: Buffer) => {
             let trimData = removeBOMFromBuffer(data);
@@ -711,7 +712,7 @@ export class OmniSharpServer {
 
         readLine.addListener('line', lineReceived);
 
-        this._disposables.add(new Disposable(() => {
+        disposables.add(new Disposable(() => {
             readLine.removeListener('line', lineReceived);
         }));
 
