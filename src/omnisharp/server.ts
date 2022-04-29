@@ -40,6 +40,15 @@ enum ServerState {
     Stopped
 }
 
+type State = {
+    status: ServerState.Stopped,
+} | {
+    status: ServerState.Starting,
+} | {
+    status: ServerState.Started,
+    serverProcess: ChildProcess,
+};
+
 module Events {
     export const StateChanged = 'stateChanged';
 
@@ -89,10 +98,9 @@ export class OmniSharpServer {
     private _telemetryIntervalId: NodeJS.Timer | undefined;
 
     private _eventBus = new EventEmitter();
-    private _state: ServerState = ServerState.Stopped;
+    private _state: State = { status: ServerState.Stopped };
     private _launchTarget: LaunchTarget | undefined;
     private _requestQueue: RequestQueueCollection;
-    private _serverProcess: ChildProcess;
     private _sessionProperties: { [key: string]: any } = {};
 
     private _omnisharpManager: OmnisharpManager;
@@ -122,7 +130,7 @@ export class OmniSharpServer {
     }
 
     public isRunning(): boolean {
-        return this._state === ServerState.Started;
+        return this._state.status === ServerState.Started;
     }
 
     public async waitForEmptyEventQueue(): Promise<void> {
@@ -132,10 +140,10 @@ export class OmniSharpServer {
         }
     }
 
-    private _setState(value: ServerState): void {
-        if (typeof value !== 'undefined' && value !== this._state) {
-            this._state = value;
-            this._fireEvent(Events.StateChanged, this._state);
+    private _setState(state: State): void {
+        if (state.status !== this._state.status) {
+            this._state = state;
+            this._fireEvent(Events.StateChanged, this._state.status);
         }
     }
 
@@ -258,7 +266,7 @@ export class OmniSharpServer {
     // --- start, stop, and connect
 
     private async _start(launchTarget: LaunchTarget, options: Options): Promise<void> {
-        if (this._state != ServerState.Stopped) {
+        if (this._state.status != ServerState.Stopped) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to start OmniSharp server failed because another server instance is running."));
             return;
         }
@@ -324,7 +332,7 @@ export class OmniSharpServer {
 
         this._disposables = disposables;
 
-        this._setState(ServerState.Starting);
+        this._setState({ status: ServerState.Starting });
         this._launchTarget = launchTarget;
 
         const solutionPath = launchTarget.target;
@@ -434,11 +442,13 @@ export class OmniSharpServer {
                 }
             }
 
-            this._serverProcess = launchResult.process;
             this._delayTrackers = {};
 
-            await this._doConnect(options);
-            this._setState(ServerState.Started);
+            await this._doConnect(launchResult.process, options);
+            this._setState({
+                status: ServerState.Started,
+                serverProcess: launchResult.process,
+            });
             this._fireEvent(Events.ServerStart, solutionPath);
 
             this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
@@ -487,43 +497,49 @@ export class OmniSharpServer {
             this._reportTelemetry();
         }
 
-        if (!this._serverProcess) {
+        if (this._state.status !== ServerState.Started) {
             // nothing to kill
             cleanupPromise = Promise.resolve();
         }
-        else if (process.platform === 'win32') {
-            // when killing a process in windows its child
-            // processes are *not* killed but become root
-            // processes. Therefore we use TASKKILL.EXE
-            cleanupPromise = new Promise<void>((resolve, reject) => {
-                const killer = exec(`taskkill /F /T /PID ${this._serverProcess.pid}`, (err, stdout, stderr) => {
-                    if (err) {
-                        return reject(err);
-                    }
-                });
-
-                killer.on('exit', resolve);
-                killer.on('error', reject);
-            });
-        }
         else {
-            // Kill Unix process and children
-            cleanupPromise = utils.getUnixChildProcessIds(this._serverProcess.pid)
-                .then(children => {
-                    for (let child of children) {
-                        process.kill(child, 'SIGTERM');
-                    }
+            // Cache serverProcess to pass to the promises, or else TypeScript will complain.
+            // While we know that there's no way the state can change before cleanupPromise
+            // is executed (as we await it below), TypeScript is unable to infer that.
+            const { serverProcess } = this._state;
 
-                    this._serverProcess.kill('SIGTERM');
+            if (process.platform === 'win32') {
+                // when killing a process in windows its child
+                // processes are *not* killed but become root
+                // processes. Therefore we use TASKKILL.EXE
+                cleanupPromise = new Promise<void>((resolve, reject) => {
+                    const killer = exec(`taskkill /F /T /PID ${serverProcess.pid}`, (err, stdout, stderr) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                    });
+
+                    killer.on('exit', resolve);
+                    killer.on('error', reject);
                 });
+            }
+            else {
+                // Kill Unix process and children
+                cleanupPromise = utils.getUnixChildProcessIds(serverProcess.pid)
+                    .then(children => {
+                        for (let child of children) {
+                            process.kill(child, 'SIGTERM');
+                        }
+
+                        serverProcess.kill('SIGTERM');
+                    });
+            }
         }
 
         let disposables = this._disposables;
         this._disposables = null;
 
         return cleanupPromise.then(() => {
-            this._serverProcess = null;
-            this._setState(ServerState.Stopped);
+            this._setState({ status: ServerState.Stopped });
             this._fireEvent(Events.ServerStop, this);
             if (disposables) {
                 disposables.dispose();
@@ -532,7 +548,7 @@ export class OmniSharpServer {
     }
 
     public async restart(launchTarget: LaunchTarget | undefined = this._launchTarget): Promise<void> {
-        if (this._state == ServerState.Starting) {
+        if (this._state.status == ServerState.Starting) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to restart OmniSharp server failed because another server instance is starting."));
             return;
         }
@@ -650,9 +666,9 @@ export class OmniSharpServer {
         });
     }
 
-    private async _doConnect(options: Options): Promise<void> {
+    private async _doConnect(serverProcess: ChildProcess, options: Options): Promise<void> {
 
-        this._serverProcess.stderr.on('data', (data: Buffer) => {
+        serverProcess.stderr.on('data', (data: Buffer) => {
             let trimData = removeBOMFromBuffer(data);
             if (trimData.length > 0) {
                 this._fireEvent(Events.StdErr, trimData.toString());
@@ -660,8 +676,8 @@ export class OmniSharpServer {
         });
 
         const readLine = createInterface({
-            input: this._serverProcess.stdout,
-            output: this._serverProcess.stdin,
+            input: serverProcess.stdout,
+            output: serverProcess.stdin,
             terminal: false
         });
 
@@ -768,7 +784,11 @@ export class OmniSharpServer {
         }
     }
 
-    private _makeRequest(request: Request) {
+    private _makeRequest(request: Request): number {
+        if (this._state.status !== ServerState.Started) {
+            throw new Error("Tried to make a request when the OmniSharp server wasn't running");
+        }
+
         const id = OmniSharpServer._nextId++;
         request.id = id;
 
@@ -780,7 +800,7 @@ export class OmniSharpServer {
         };
 
         this.eventStream.post(new ObservableEvents.OmnisharpRequestMessage(request, id));
-        this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
+        this._state.serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
         return id;
     }
 }
