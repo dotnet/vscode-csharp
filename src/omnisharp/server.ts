@@ -266,8 +266,8 @@ export class OmniSharpServer {
 
     // --- start, stop, and connect
 
-    private async _start(launchTarget: LaunchTarget, options: Options): Promise<void> {
-        if (this._state.status != ServerState.Stopped) {
+    private async _start(launchTarget: LaunchTarget): Promise<void> {
+        if (this._state.status !== ServerState.Stopped) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to start OmniSharp server failed because another server instance is running."));
             return;
         }
@@ -340,7 +340,9 @@ export class OmniSharpServer {
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
 
-        let args = [
+        const options = this.optionProvider.GetLatestOptions();
+
+        const args = [
             '-z',
             '-s', solutionPath,
             '--hostPID', process.pid.toString(),
@@ -550,8 +552,7 @@ export class OmniSharpServer {
         if (launchTarget !== undefined) {
             await this.stop();
             this.eventStream.post(new ObservableEvents.OmnisharpRestart());
-            const options = this.optionProvider.GetLatestOptions();
-            await this._start(launchTarget, options);
+            await this._start(launchTarget);
         }
     }
 
@@ -580,14 +581,14 @@ export class OmniSharpServer {
         }
         else if (launchTargets.length === 1) {
             // If there's only one target, just start
-            return this.restart(launchTargets[0]);
+            return this._start(launchTargets[0]);
         }
 
         // First, try to launch against something that matches the user's preferred target
         const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
         const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
         if (defaultLaunchSolutionTarget) {
-            return this.restart(defaultLaunchSolutionTarget);
+            return this._start(defaultLaunchSolutionTarget);
         }
 
         // If there's more than one launch target, we start the server if one of the targets
@@ -595,7 +596,7 @@ export class OmniSharpServer {
         if (preferredPath.length > 0) {
             const preferredLaunchTarget = launchTargets.find((a_1) => a_1.target === preferredPath);
             if (preferredLaunchTarget) {
-                return this.restart(preferredLaunchTarget);
+                return this._start(preferredLaunchTarget);
             }
         }
 
@@ -604,12 +605,12 @@ export class OmniSharpServer {
         const firstFolderOrSolutionTarget = launchTargets
             .find(target => target.workspaceKind == LaunchTargetKind.Folder || target.workspaceKind == LaunchTargetKind.Solution);
         if (firstFolderOrSolutionTarget) {
-            return this.restart(firstFolderOrSolutionTarget);
+            return this._start(firstFolderOrSolutionTarget);
         }
 
         // When running integration tests, open the first launch target.
         if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
-            return this.restart(launchTargets[0]);
+            return this._start(launchTargets[0]);
         }
 
         // Otherwise, we fire the "MultipleLaunchTargets" event,
