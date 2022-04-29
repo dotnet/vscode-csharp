@@ -546,67 +546,67 @@ export class OmniSharpServer {
         }
     }
 
-    public autoStart(preferredPath: string): Thenable<void> {
+    public async autoStart(preferredPath: string): Promise<void> {
         const options = this.optionProvider.GetLatestOptions();
-        return findLaunchTargets(options).then(async launchTargets => {
-            // If there aren't any potential launch targets, we create file watcher and try to
-            // start the server again once a *.sln, *.slnf, *.csproj, project.json, CSX or Cake file is created.
-            if (launchTargets.length === 0) {
-                return new Promise<void>((resolve, reject) => {
-                    // 1st watch for files
-                    let watcher = this.vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-                        /*ignoreCreateEvents*/ false,
-                        /*ignoreChangeEvents*/ true,
-                        /*ignoreDeleteEvents*/ true);
+        const launchTargets = await findLaunchTargets(options);
 
-                    watcher.onDidCreate(uri => {
-                        watcher.dispose();
-                        resolve();
-                    });
-                }).then(() => {
-                    // 2nd try again
-                    return this.autoStart(preferredPath);
+        // If there aren't any potential launch targets, we create file watcher and try to
+        // start the server again once a *.sln, *.slnf, *.csproj, project.json, CSX or Cake file is created.
+        if (launchTargets.length === 0) {
+            await new Promise<void>((resolve, reject) => {
+                // 1st watch for files
+                const watcher = this.vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+                    /*ignoreCreateEvents*/ false,
+                    /*ignoreChangeEvents*/ true,
+                    /*ignoreDeleteEvents*/ true);
+
+                watcher.onDidCreate(uri => {
+                    watcher.dispose();
+                    resolve();
                 });
-            }
-            else if (launchTargets.length === 1) {
-                // If there's only one target, just start
-                return this.restart(launchTargets[0]);
-            }
+            });
 
-            // First, try to launch against something that matches the user's preferred target
-            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
-            const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
-            if (defaultLaunchSolutionTarget) {
-                return this.restart(defaultLaunchSolutionTarget);
-            }
+            // 2nd try again
+            return this.autoStart(preferredPath);
+        }
+        else if (launchTargets.length === 1) {
+            // If there's only one target, just start
+            return this.restart(launchTargets[0]);
+        }
 
-            // If there's more than one launch target, we start the server if one of the targets
-            // matches the preferred path.
-            if (preferredPath.length > 0) {
-                const preferredLaunchTarget = launchTargets.find((a) => a.target === preferredPath);
-                if (preferredLaunchTarget) {
-                    return this.restart(preferredLaunchTarget);
-                }
-            }
+        // First, try to launch against something that matches the user's preferred target
+        const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
+        const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
+        if (defaultLaunchSolutionTarget) {
+            return this.restart(defaultLaunchSolutionTarget);
+        }
 
-            // To maintain previous behavior when there are mulitple targets available,
-            // launch with first Solution or Folder target.
-            const firstFolderOrSolutionTarget = launchTargets
-                .find(target => target.workspaceKind == LaunchTargetKind.Folder || target.workspaceKind == LaunchTargetKind.Solution);
-            if (firstFolderOrSolutionTarget) {
-                return this.restart(firstFolderOrSolutionTarget);
+        // If there's more than one launch target, we start the server if one of the targets
+        // matches the preferred path.
+        if (preferredPath.length > 0) {
+            const preferredLaunchTarget = launchTargets.find((a_1) => a_1.target === preferredPath);
+            if (preferredLaunchTarget) {
+                return this.restart(preferredLaunchTarget);
             }
+        }
 
-            // When running integration tests, open the first launch target.
-            if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
-                return this.restart(launchTargets[0]);
-            }
+        // To maintain previous behavior when there are mulitple targets available,
+        // launch with first Solution or Folder target.
+        const firstFolderOrSolutionTarget = launchTargets
+            .find(target => target.workspaceKind == LaunchTargetKind.Folder || target.workspaceKind == LaunchTargetKind.Solution);
+        if (firstFolderOrSolutionTarget) {
+            return this.restart(firstFolderOrSolutionTarget);
+        }
 
-            // Otherwise, we fire the "MultipleLaunchTargets" event,
-            // which is handled in status.ts to display the launch target selector.
-            this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
-            return showProjectSelector(this, launchTargets);
-        });
+        // When running integration tests, open the first launch target.
+        if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
+            return this.restart(launchTargets[0]);
+        }
+
+        // Otherwise, we fire the "MultipleLaunchTargets" event,
+        // which is handled in status.ts to display the launch target selector.
+        this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
+        return await showProjectSelector(this, launchTargets);
     }
 
     // --- requests et al
