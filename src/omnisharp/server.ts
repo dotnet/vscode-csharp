@@ -542,7 +542,7 @@ export class OmniSharpServer {
     }
 
     public async restart(launchTarget: LaunchTarget | undefined = this._launchTarget): Promise<void> {
-        if (this._state.status == ServerState.Starting) {
+        if (this._state.status === ServerState.Starting) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to restart OmniSharp server failed because another server instance is starting."));
             return;
         }
@@ -615,13 +615,12 @@ export class OmniSharpServer {
         // Otherwise, we fire the "MultipleLaunchTargets" event,
         // which is handled in status.ts to display the launch target selector.
         this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
-        return await showProjectSelector(this, launchTargets);
+        return showProjectSelector(this, launchTargets);
     }
 
     // --- requests et al
 
     public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
-
         if (!this.isRunning()) {
             return Promise.reject<TResponse>('OmniSharp server is not running.');
         }
@@ -629,7 +628,7 @@ export class OmniSharpServer {
         let startTime: number;
         let request: Request;
 
-        let promise = new Promise<TResponse>((resolve, reject) => {
+        const promise = new Promise<TResponse>((resolve, reject) => {
             startTime = Date.now();
 
             request = {
@@ -642,7 +641,7 @@ export class OmniSharpServer {
             this._requestQueue.enqueue(request);
         });
 
-        if (token) {
+        if (token !== undefined) {
             token.onCancellationRequested(() => {
                 this.eventStream.post(new ObservableEvents.OmnisharpServerRequestCancelled(request.command, request.id));
                 this._requestQueue.cancelRequest(request);
@@ -664,7 +663,6 @@ export class OmniSharpServer {
         disposables: CompositeDisposable,
         serverProcess: ChildProcess,
         options: Options): Promise<void> {
-
         serverProcess.stderr.on('data', (data: Buffer) => {
             let trimData = removeBOMFromBuffer(data);
             if (trimData.length > 0) {
