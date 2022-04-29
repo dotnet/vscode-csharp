@@ -12,7 +12,7 @@ import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
 import { ChildProcess, exec } from 'child_process';
 import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
-import { ReadLine, createInterface } from 'readline';
+import { createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
@@ -83,7 +83,6 @@ const latestVersionFileServerPath = 'releases/versioninfo.txt';
 export class OmniSharpServer {
 
     private static _nextId = 1;
-    private _readLine: ReadLine;
     private _disposables: CompositeDisposable;
 
     private _delayTrackers!: { [requestName: string]: DelayTracker }; // Initialized via _start
@@ -660,7 +659,7 @@ export class OmniSharpServer {
             }
         });
 
-        this._readLine = createInterface({
+        const readLine = createInterface({
             input: this._serverProcess.stdout,
             output: this._serverProcess.stdin,
             terminal: false
@@ -694,10 +693,10 @@ export class OmniSharpServer {
 
         const lineReceived = this._onLineReceived.bind(this);
 
-        this._readLine.addListener('line', lineReceived);
+        readLine.addListener('line', lineReceived);
 
         this._disposables.add(new Disposable(() => {
-            this._readLine.removeListener('line', lineReceived);
+            readLine.removeListener('line', lineReceived);
         }));
 
         return promise;
