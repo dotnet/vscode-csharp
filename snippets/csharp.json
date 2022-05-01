@@ -3,14 +3,14 @@
         "prefix": "attribute",
         "body": [
             "[System.AttributeUsage(System.AttributeTargets.${1:All}, Inherited = ${2:false}, AllowMultiple = ${3:true})]",
-            "sealed class ${4:My}Attribute : System.Attribute",
+            "sealed class ${$TM_FILENAME_BASE}Attribute : System.Attribute",
             "{",
             "\t// See the attribute guidelines at",
             "\t//  http://go.microsoft.com/fwlink/?LinkId=85236",
             "\treadonly string positionalString;",
             "\t",
             "\t// This is a positional argument",
-            "\tpublic ${4:My}Attribute(string positionalString)",
+            "\tpublic ${4:$TM_FILENAME_BASE}Attribute(string positionalString)",
             "\t{",
             "\t\tthis.positionalString = positionalString;",
             "\t\t",
@@ -51,7 +51,7 @@
     "Class": {
         "prefix": "class",
         "body": [
-            "class ${1:Name}",
+            "class ${1:$TM_FILENAME_BASE}",
             "{",
             "\t$0",
             "}"
@@ -88,7 +88,7 @@
     "Enum": {
         "prefix": "enum",
         "body": [
-            "enum ${1:Name}",
+            "enum ${1:$TM_FILENAME_BASE}",
             "{",
             "\t$0",
             "}"
@@ -132,12 +132,12 @@
         "prefix": "exception",
         "body": [
             "[System.Serializable]",
-            "public class ${1:My}Exception : ${2:System.Exception}",
+            "public class ${1:$TM_FILENAME_BASE}Exception : ${2:System.Exception}",
             "{",
-            "\tpublic ${1:My}Exception() { }",
-            "\tpublic ${1:My}Exception(string message) : base(message) { }",
-            "\tpublic ${1:My}Exception(string message, System.Exception inner) : base(message, inner) { }",
-            "\tprotected ${1:My}Exception(",
+            "\tpublic ${1:$TM_FILENAME_BASE}Exception() { }",
+            "\tpublic ${1:$TM_FILENAME_BASE}Exception(string message) : base(message) { }",
+            "\tpublic ${1:$TM_FILENAME_BASE}Exception(string message, System.Exception inner) : base(message, inner) { }",
+            "\tprotected ${1:$TM_FILENAME_BASE}Exception(",
             "\t\tSystem.Runtime.Serialization.SerializationInfo info,",
             "\t\tSystem.Runtime.Serialization.StreamingContext context) : base(info, context) { }",
             "}"
@@ -198,7 +198,7 @@
     "Interface": {
         "prefix": "interface",
         "body": [
-            "interface I${1:Name}",
+            "interface I${1:$TM_FILENAME_BASE}",
             "{",
             "\t$0",
             "}"
@@ -368,7 +368,7 @@
     "Struct": {
         "prefix": "struct",
         "body": [
-            "struct ${1:Name}",
+            "struct ${1:$TM_FILENAME_BASE}",
             "{",
             "\t$0",
             "}"
