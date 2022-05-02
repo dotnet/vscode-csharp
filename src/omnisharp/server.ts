@@ -489,6 +489,10 @@ export class OmniSharpServer {
     }
 
     public async stop(): Promise<void> {
+        // We're already stopped, nothing to do :).
+        if (this._state.status === ServerState.Stopped) {
+            return;
+        }
 
         let cleanupPromise: Promise<void>;
 
@@ -500,11 +504,7 @@ export class OmniSharpServer {
             cleanupPromise = Promise.resolve();
         }
         else {
-            // Cache serverProcess to pass to the promises, or else TypeScript will complain.
-            // While we know that there's no way the state can change before cleanupPromise
-            // is executed (as we await it below), TypeScript is unable to infer that.
-            const { disposables, serverProcess, telemetryIntervalId } = this._state;
-            disposables.dispose();
+            const { serverProcess, telemetryIntervalId } = this._state;
 
             clearInterval(telemetryIntervalId);
             this._reportTelemetry();
@@ -539,8 +539,13 @@ export class OmniSharpServer {
 
         await cleanupPromise;
 
+        const { disposables } = this._state;
+
         this._setState({ status: ServerState.Stopped });
         this._fireEvent(Events.ServerStop, this);
+
+        // Dispose of the disposables only _after_ we've fired the last server event.
+        disposables.dispose();
     }
 
     public async restart(launchTarget: LaunchTarget | undefined = this._launchTarget): Promise<void> {
