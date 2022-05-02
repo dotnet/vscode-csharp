@@ -494,16 +494,10 @@ export class OmniSharpServer {
             return;
         }
 
-        let cleanupPromise: Promise<void>;
-
         // Clear the session properties when the session ends.
         this._sessionProperties = {};
 
-        if (this._state.status !== ServerState.Started) {
-            // nothing to kill
-            cleanupPromise = Promise.resolve();
-        }
-        else {
+        if (this._state.status === ServerState.Started) {
             const { serverProcess, telemetryIntervalId } = this._state;
 
             clearInterval(telemetryIntervalId);
@@ -513,7 +507,7 @@ export class OmniSharpServer {
                 // when killing a process in windows its child
                 // processes are *not* killed but become root
                 // processes. Therefore we use TASKKILL.EXE
-                cleanupPromise = new Promise<void>((resolve, reject) => {
+                await new Promise<void>((resolve, reject) => {
                     const killer = exec(`taskkill /F /T /PID ${serverProcess.pid}`, (err, stdout, stderr) => {
                         if (err) {
                             return reject(err);
@@ -526,18 +520,14 @@ export class OmniSharpServer {
             }
             else {
                 // Kill Unix process and children
-                cleanupPromise = utils.getUnixChildProcessIds(serverProcess.pid)
-                    .then(children => {
-                        for (let child of children) {
-                            process.kill(child, 'SIGTERM');
-                        }
+                const children = await utils.getUnixChildProcessIds(serverProcess.pid);
+                for (const child of children) {
+                    process.kill(child, 'SIGTERM');
+                }
 
-                        serverProcess.kill('SIGTERM');
-                    });
+                serverProcess.kill('SIGTERM');
             }
         }
-
-        await cleanupPromise;
 
         const { disposables } = this._state;
 
