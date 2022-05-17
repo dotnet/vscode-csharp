@@ -30,7 +30,7 @@ suite("Options tests", () => {
         options.maxFindSymbolsItems.should.equal(1000);
         options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
         options.enableRoslynAnalyzers.should.equal(false);
-        options.enableEditorConfigSupport.should.equal(false);
+        options.enableEditorConfigSupport.should.equal(true);
         options.enableDecompilationSupport.should.equal(false);
         options.enableImportCompletion.should.equal(false);
         options.analyzeOpenDocumentsOnly.should.equal(false);
