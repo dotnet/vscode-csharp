@@ -227,10 +227,9 @@ async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExten
     return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo, useFramework);
 }
 
-async function initializeDotnetPath() {
+async function initializeDotnetPath(): Promise<void> {
     const dotnetPackApi = await getDotnetPackApi();
-    if (!dotnetPackApi) {
-        return null;
+    if (dotnetPackApi !== undefined) {
+        await dotnetPackApi.getDotnetPath();
     }
-    return await dotnetPackApi.getDotnetPath();
 }
