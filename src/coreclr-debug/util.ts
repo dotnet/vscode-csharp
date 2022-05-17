@@ -121,13 +121,7 @@ export class CoreClrDebugUtil {
 
 const MINIMUM_SUPPORTED_OSX_ARM64_DOTNET_CLI: string = '6.0.0';
 
-export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string, dotnetInfo: DotnetInfo): string 
-{
-    if (!platformInfo)
-    {
-        throw new Error(`Unable to retrieve 'TargetArchitecture' without platformInfo.`);
-    }
-
+export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string, dotnetInfo: DotnetInfo): string {
     let targetArchitecture = "";
 
     // On Apple M1 Machines, we need to determine if we need to use the 'x86_64' or 'arm64' debugger.

@@ -15,7 +15,7 @@ chai.use(require('chai-arrays'));
 
 suite('TelemetryReporterObserver', () => {
     suiteSetup(() => should());
-    let platformInfo = new PlatformInformation("platform", "architecture");
+    let platformInfo = new PlatformInformation("linux", "architecture");
     let name = "";
     let property: { [key: string]: string } = null;
     let measure: { [key: string]: number }[] = [];

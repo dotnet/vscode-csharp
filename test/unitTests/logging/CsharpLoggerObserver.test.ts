@@ -24,9 +24,9 @@ suite("CsharpLoggerObserver", () => {
     });
 
     test('PlatformInfo: Logs contain the Platform and Architecture', () => {
-        let event = new Event.LogPlatformInfo(new PlatformInformation("MyPlatform", "MyArchitecture"));
+        let event = new Event.LogPlatformInfo(new PlatformInformation("linux", "MyArchitecture"));
         observer.post(event);
-        expect(logOutput).to.contain("MyPlatform");
+        expect(logOutput).to.contain("linux");
         expect(logOutput).to.contain("MyArchitecture");
     });
 
