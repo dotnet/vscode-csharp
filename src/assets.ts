@@ -5,7 +5,7 @@
 
 import * as fs from 'fs-extra';
 import * as jsonc from 'jsonc-parser';
-import { FormattingOptions, ModificationOptions } from 'jsonc-parser'; 
+import { FormattingOptions, ModificationOptions } from 'jsonc-parser';
 import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './omnisharp/protocol';
@@ -23,32 +23,19 @@ export class AssetGenerator {
     public tasksJsonPath: string;
     public launchJsonPath: string;
 
-    private executeableProjects: protocol.MSBuildProject[];
+    private executableProjects: protocol.MSBuildProject[];
     private startupProject: protocol.MSBuildProject | undefined;
-    private fallbackBuildProject: protocol.MSBuildProject;
+    private fallbackBuildProject: protocol.MSBuildProject | undefined;
 
-    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, workspaceFolder: vscode.WorkspaceFolder = undefined) {
+    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, workspaceFolder?: vscode.WorkspaceFolder) {
         if (workspaceFolder) {
             this.workspaceFolder = workspaceFolder;
         }
         else {
-            let resourcePath: string = undefined;
-
-            if (!resourcePath && workspaceInfo.Cake) {
-                resourcePath = workspaceInfo.Cake.Path;
-            }
-
-            if (!resourcePath && workspaceInfo.ScriptCs) {
-                resourcePath = workspaceInfo.ScriptCs.Path;
-            }
-
-            if (!resourcePath && workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
-                resourcePath = workspaceInfo.DotNet.Projects[0].Path;
-            }
-
-            if (!resourcePath && workspaceInfo.MsBuild) {
-                resourcePath = workspaceInfo.MsBuild.SolutionPath;
-            }
+            const resourcePath = workspaceInfo.Cake?.Path ??
+                workspaceInfo.ScriptCs?.Path ??
+                workspaceInfo.DotNet?.Projects?.[0].Path ??
+                workspaceInfo.MsBuild?.SolutionPath;
 
             this.workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
         }
@@ -57,29 +44,22 @@ export class AssetGenerator {
         this.tasksJsonPath = path.join(this.vscodeFolder, 'tasks.json');
         this.launchJsonPath = path.join(this.vscodeFolder, 'launch.json');
 
-        this.startupProject = undefined;
-        this.fallbackBuildProject = undefined;
-
-        if (workspaceInfo.MsBuild && workspaceInfo.MsBuild.Projects.length > 0) {
-            this.executeableProjects = protocol.findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
-            if (this.executeableProjects.length === 0) {
+        if (workspaceInfo.MsBuild !== undefined && workspaceInfo.MsBuild.Projects.length > 0) {
+            this.executableProjects = protocol.findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
+            if (this.executableProjects.length === 0) {
                 this.fallbackBuildProject = workspaceInfo.MsBuild.Projects[0];
             }
         } else {
-            this.executeableProjects = [];
+            this.executableProjects = [];
         }
     }
 
     public hasExecutableProjects(): boolean {
-        return this.executeableProjects.length > 0;
+        return this.executableProjects.length > 0;
     }
 
     public isStartupProjectSelected(): boolean {
-        if (this.startupProject) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.startupProject !== undefined;
     }
 
     public async selectStartupProject(selectedIndex?: number): Promise<boolean> {
@@ -87,21 +67,21 @@ export class AssetGenerator {
             throw new Error("No executable projects");
         }
 
-        if (this.executeableProjects.length === 1) {
-            this.startupProject = this.executeableProjects[0];
+        if (this.executableProjects.length === 1) {
+            this.startupProject = this.executableProjects[0];
             return true;
         } else {
             const mapItemNameToProject: { [key: string]: protocol.MSBuildProject } = {};
             const itemNames: string[] = [];
 
-            this.executeableProjects.forEach(project => {
+            this.executableProjects.forEach(project => {
                 const itemName = `${path.basename(project.Path, ".csproj")} (${project.Path})`;
                 itemNames.push(itemName);
                 mapItemNameToProject[itemName] = project;
             });
 
-            let selectedItem: string;
-            if (selectedIndex != null) {
+            let selectedItem: string | undefined;
+            if (selectedIndex !== undefined) {
                 selectedItem = itemNames[selectedIndex];
             }
             else {
@@ -110,7 +90,8 @@ export class AssetGenerator {
                     placeHolder: "Select the project to launch"
                 });
             }
-            if (!selectedItem || !mapItemNameToProject[selectedItem]) {
+
+            if (selectedItem === undefined || mapItemNameToProject[selectedItem] === undefined) {
                 return false;
             }
 
@@ -121,11 +102,11 @@ export class AssetGenerator {
 
     // This method is used by the unit tests instead of selectStartupProject
     public setStartupProject(index: number): void {
-        if (index >= this.executeableProjects.length) {
+        if (index >= this.executableProjects.length) {
             throw new Error("Invalid project index");
         }
 
-        this.startupProject = this.executeableProjects[index];
+        this.startupProject = this.executableProjects[index];
     }
 
     public hasWebServerDependency(): boolean {
@@ -463,9 +444,9 @@ async function getOperations(generator: AssetGenerator): Promise<AssetOperations
 function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskDescription[] {
     let result: tasks.TaskDescription[] = [];
 
-    function findBuildTask(version: string, tasksDescriptions: tasks.TaskDescription[]) {
+    function findBuildTask(tasksDescriptions: tasks.TaskDescription[] | undefined) {
         let buildTask = undefined;
-        if (tasksDescriptions) {
+        if (tasksDescriptions !== undefined) {
             buildTask = tasksDescriptions.find(td => td.group === 'build');
         }
 
@@ -474,18 +455,18 @@ function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskD
         }
     }
 
-    findBuildTask(tasksConfiguration.version, tasksConfiguration.tasks);
+    findBuildTask(tasksConfiguration.tasks);
 
     if (tasksConfiguration.windows) {
-        findBuildTask(tasksConfiguration.version, tasksConfiguration.windows.tasks);
+        findBuildTask(tasksConfiguration.windows.tasks);
     }
 
     if (tasksConfiguration.osx) {
-        findBuildTask(tasksConfiguration.version, tasksConfiguration.osx.tasks);
+        findBuildTask(tasksConfiguration.osx.tasks);
     }
 
     if (tasksConfiguration.linux) {
-        findBuildTask(tasksConfiguration.version, tasksConfiguration.linux.tasks);
+        findBuildTask(tasksConfiguration.linux.tasks);
     }
 
     return result;
@@ -583,8 +564,8 @@ function getBuildAssetsNotificationSetting() {
     return csharpConfig.get<boolean>('supressBuildAssetsNotification');
 }
 
-export function getFormattingOptions(): FormattingOptions { 
-    const editorConfig = vscode.workspace.getConfiguration('editor'); 
+export function getFormattingOptions(): FormattingOptions {
+    const editorConfig = vscode.workspace.getConfiguration('editor');
 
     const tabSize = editorConfig.get<number>('tabSize') ?? 4;
     const insertSpaces = editorConfig.get<boolean>('insertSpaces') ?? true;
@@ -609,20 +590,20 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
         }
 
         const formattingOptions = getFormattingOptions();
-        
+
         const tasksJson = generator.createTasksConfiguration();
 
         let text: string;
         if (!fs.pathExistsSync(generator.tasksJsonPath)) {
             // when tasks.json does not exist create it and write all the content directly
             const tasksJsonText = JSON.stringify(tasksJson);
-            const tasksJsonTextFormatted = jsonc.applyEdits(tasksJsonText, jsonc.format(tasksJsonText, null, formattingOptions));
+            const tasksJsonTextFormatted = jsonc.applyEdits(tasksJsonText, jsonc.format(tasksJsonText, undefined, formattingOptions));
             text = tasksJsonTextFormatted;
         }
         else {
             // when tasks.json exists just update the tasks node
-            const ourConfigs = tasksJson.tasks;
-            const content = fs.readFileSync(generator.tasksJsonPath).toString(); 
+            const ourConfigs = tasksJson.tasks ?? [];
+            const content = fs.readFileSync(generator.tasksJsonPath, { encoding: 'utf8' });
             const updatedJson = updateJsonWithComments(content, ourConfigs, 'tasks', 'label', formattingOptions);
             text = updatedJson;
         }
@@ -658,12 +639,12 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
                 "configurations": ${configurationsMassaged}
             }`;
 
-            text = jsonc.applyEdits(launchJsonText, jsonc.format(launchJsonText, null, formattingOptions));
-        } 
+            text = jsonc.applyEdits(launchJsonText, jsonc.format(launchJsonText, undefined, formattingOptions));
+        }
         else {
             // when launch.json exists replace or append our configurations
-            const ourConfigs = jsonc.parse(launchJsonConfigurations);
-            const content = fs.readFileSync(generator.launchJsonPath).toString();
+            const ourConfigs = jsonc.parse(launchJsonConfigurations) ?? [];
+            const content = fs.readFileSync(generator.launchJsonPath, { encoding: 'utf8' });
             const updatedJson = updateJsonWithComments(content, ourConfigs, 'configurations', 'name', formattingOptions);
             text = updatedJson;
         }
@@ -751,18 +732,18 @@ async function getExistingAssets(generator: AssetGenerator) {
             assets = assets.concat(tasks);
         }
 
-        if(fs.pathExistsSync(generator.launchJsonPath)) { 
+        if(fs.pathExistsSync(generator.launchJsonPath)) {
             const content = fs.readFileSync(generator.launchJsonPath).toString();
             let configurationNames = [
-                ".NET Core Launch (console)", 
+                ".NET Core Launch (console)",
                 ".NET Core Launch (web)",
                 ".NET Core Attach",
-                "Launch and Debug Standalone Blazor WebAssembly App", 
+                "Launch and Debug Standalone Blazor WebAssembly App",
             ];
             const configurations = jsonc.parse(content)?.configurations?.
                 map((t: { name: string; }) => t.name).
                 filter((n: string) => configurationNames.includes(n));
-                
+
             assets = assets.concat(configurations);
         }
 
@@ -773,7 +754,7 @@ async function getExistingAssets(generator: AssetGenerator) {
 async function shouldGenerateAssets(generator: AssetGenerator): Promise<Boolean> {
     return new Promise<Boolean>((resolve, reject) => {
         getExistingAssets(generator).then(res => {
-            if (res && res.length) {
+            if (res.length > 0) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
@@ -833,22 +814,22 @@ export function replaceCommentPropertiesWithComments(text: string) {
     // replacing dummy properties OS-COMMENT with the normal comment syntax
     let regex = /["']OS-COMMENT\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
     let withComments = text.replace(regex, '// $1');
-    
+
     return withComments;
 }
 
-export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string { 
+export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string {
     let modificationOptions : ModificationOptions = {
         formattingOptions
     };
-    
+
     // parse using jsonc because there are comments
     // only use this to determine what to change
     // we will modify it as text to keep existing comments
     let parsed = jsonc.parse(text);
     let items = parsed[nodeName];
     let itemKeys : string[] = items.map((i: { [x: string]: string; }) => i[keyName]);
-    
+
     let modified = text;
     // count how many items we inserted to ensure we are putting items at the end
     // in the same order as they are in the replacements array
@@ -866,6 +847,6 @@ export function updateJsonWithComments(text: string, replacements: any[], nodeNa
         // changes one by one
         modified = updated;
     });
-    
+
     return replaceCommentPropertiesWithComments(modified);
 }
