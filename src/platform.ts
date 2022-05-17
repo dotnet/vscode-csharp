@@ -19,8 +19,7 @@ const unknown = 'unknown';
 export class LinuxDistribution {
     public constructor(
         public name: string,
-        public version: string,
-        public idLike?: string[]) { }
+        public version: string) { }
 
     public static async GetCurrent(): Promise<LinuxDistribution> {
         // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
@@ -78,7 +77,6 @@ export class LinuxDistribution {
     public static FromReleaseInfo(releaseInfo: string, eol: string = os.EOL): LinuxDistribution {
         let name = unknown;
         let version = unknown;
-        let idLike: string[] = null;
 
         const lines = releaseInfo.split(eol);
         for (let line of lines) {
@@ -100,25 +98,22 @@ export class LinuxDistribution {
                 else if (key === 'VERSION_ID') {
                     version = value;
                 }
-                else if (key === 'ID_LIKE') {
-                    idLike = value.split(" ");
-                }
 
-                if (name !== unknown && version !== unknown && idLike !== null) {
+                if (name !== unknown && version !== unknown) {
                     break;
                 }
             }
         }
 
-        return new LinuxDistribution(name, version, idLike);
+        return new LinuxDistribution(name, version);
     }
 }
 
 export class PlatformInformation {
     public constructor(
-        public platform: string,
+        public platform: NodeJS.Platform,
         public architecture: string,
-        public distribution: LinuxDistribution = null) {
+        public distribution?: LinuxDistribution) {
     }
 
     public isWindows(): boolean {
@@ -134,87 +129,51 @@ export class PlatformInformation {
     }
 
     public toString(): string {
-        let result = this.platform;
-
-        if (this.architecture) {
-            if (result) {
-                result += ', ';
-            }
-
-            result += this.architecture;
-        }
-
-        if (this.distribution) {
-            if (result) {
-                result += ', ';
-            }
-
-            result += this.distribution.toString();
+        let result = `${this.platform}, ${this.architecture}`;
+        if (this.distribution !== undefined) {
+            result += `, ${this.distribution.toString()}`;
         }
 
         return result;
     }
 
     public static async GetCurrent(): Promise<PlatformInformation> {
-        let platform = os.platform();
-        let architecturePromise: Promise<string>;
-        let distributionPromise: Promise<LinuxDistribution>;
-
-        switch (platform) {
-            case 'win32':
-                architecturePromise = PlatformInformation.GetWindowsArchitecture();
-                distributionPromise = Promise.resolve(null);
-                break;
-
-            case 'darwin':
-                architecturePromise = PlatformInformation.GetUnixArchitecture();
-                distributionPromise = Promise.resolve(null);
-                break;
-
-            case 'linux':
-                architecturePromise = PlatformInformation.GetUnixArchitecture();
-                distributionPromise = LinuxDistribution.GetCurrent();
-                break;
-
-            default:
-                throw new Error(`Unsupported platform: ${platform}`);
+        const platform = os.platform();
+        if (platform === 'win32') {
+            return new PlatformInformation(platform, PlatformInformation.GetWindowsArchitecture());
+        }
+        else if (platform === 'darwin') {
+            return new PlatformInformation(platform, await PlatformInformation.GetUnixArchitecture());
+        }
+        else if (platform === 'linux') {
+            const [architecture, distribution] = await Promise.all([
+                PlatformInformation.GetUnixArchitecture(),
+                LinuxDistribution.GetCurrent()
+            ]);
+            return new PlatformInformation(platform, architecture, distribution);
         }
 
-        const platformData: [string, LinuxDistribution] = await Promise.all([architecturePromise, distributionPromise]);
-
-        return new PlatformInformation(platform, platformData[0], platformData[1]);
+        throw new Error(`Unsupported platform: ${platform}`);
     }
 
-    private static async GetWindowsArchitecture(): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            if (process.env.PROCESSOR_ARCHITECTURE === 'x86' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
-                resolve('x86');
-            }
-            else if (process.env.PROCESSOR_ARCHITECTURE === 'ARM64' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
-                resolve('arm64');
-            }
-            else {
-                resolve('x86_64');
-            }
-        });
+    private static GetWindowsArchitecture(): string {
+        if (process.env.PROCESSOR_ARCHITECTURE === 'x86' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
+            return 'x86';
+        }
+        else if (process.env.PROCESSOR_ARCHITECTURE === 'ARM64' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
+            return 'arm64';
+        }
+        else {
+            return 'x86_64';
+        }
     }
 
     private static async GetUnixArchitecture(): Promise<string> {
-        return util.execChildProcess('uname -m')
-            .then(architecture => {
-                if (architecture) {
-                    architecture = architecture.trim();
-
-                    switch (architecture) {
-                        case "aarch64":
-                            return "arm64";
-                        default:
-                            return architecture;
-                    }
-                }
-
-                return null;
-            });
+        const architecture = await util.execChildProcess('uname -m');
+        if (architecture === "aarch64") {
+            return "arm64";
+        }
+        return architecture;
     }
 
     public isValidPlatformForMono(): boolean {
