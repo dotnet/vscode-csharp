@@ -67,7 +67,7 @@ export class Options {
         const razorConfig = vscode.workspace.getConfiguration('razor');
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
-        const useModernNet = omnisharpConfig.get<boolean>("useModernNet", false);
+        const useModernNet = omnisharpConfig.get<boolean>("useModernNet", true);
 
         // VS Code coerces unset string settings to the empty string.
         // Thus, to avoid dealing with the empty string AND undefined,
@@ -92,7 +92,7 @@ export class Options {
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
-        const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
+        const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', true);
         const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
         const enableAsyncCompletion = omnisharpConfig.get<boolean>('enableAsyncCompletion', false);
@@ -105,7 +105,7 @@ export class Options {
         const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
         const filteredSymbolsCodeLens = csharpConfig.get<string[]>('referencesCodeLens.filteredSymbols', []);
 
-        const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', false);
+        const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', true);
 
         const inlayHintsEnableForParameters = csharpConfig.get<boolean>('inlayHints.parameters.enabled', false);
         const inlayHintsForLiteralParameters = csharpConfig.get<boolean>('inlayHints.parameters.forLiteralParameters', false);
