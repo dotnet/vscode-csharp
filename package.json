@@ -4032,11 +4032,5 @@
         "when": "debugStartLanguage == csharp"
       }
     ]
-  },
-  "__metadata": {
-    "id": "d0bfc4ab-1d3a-4487-8782-7cf6027b4fff",
-    "publisherDisplayName": "Microsoft",
-    "publisherId": "d05e23de-3974-4ff0-8d47-23ee77830092",
-    "isPreReleaseVersion": false
   }
 }
