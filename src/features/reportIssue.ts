@@ -85,12 +85,9 @@ async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: 
     if (isValidPlatformForMono) {
         let monoVersion: string;
         try {
-            let globalMonoInfo = await monoResolver.getHostExecutableInfo(options);
-            if (globalMonoInfo) {
-                monoVersion = `OmniSharp using global mono :${globalMonoInfo.version}`;
-            }
-            else {
-                monoVersion = `OmniSharp using built-in mono`;
+            let monoInfo = await monoResolver.getHostExecutableInfo(options);
+            if (monoInfo) {
+                monoVersion = `OmniSharp using mono :${monoInfo.version}`;
             }
         }
         catch (error) {

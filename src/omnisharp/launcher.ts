@@ -312,21 +312,7 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    let monoInfo = await monoResolver.getHostExecutableInfo(options);
-
-    if (monoInfo) {
-        const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
-        let childEnv = monoInfo.env;
-        return {
-            ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            hostIsMono: true,
-            hostVersion: monoInfo.version,
-            hostPath: monoInfo.path
-        };
-    }
-    else {
-        return launchNix(launchInfo.LaunchPath, cwd, args);
-    }
+    return await launchNix(launchInfo, cwd, args, options, monoResolver);
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
@@ -393,20 +379,20 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     };
 }
 
-function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResult {
-    let process = spawn(launchPath, args, {
-        detached: false,
-        cwd: cwd
-    });
+async function launchNix(launchInfo: LaunchInfo, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
+    const monoInfo = await monoResolver.getHostExecutableInfo(options);
+    const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
 
     return {
-        process,
+        process: launchNixMono(launchPath, cwd, args, monoInfo.env, options.waitForDebugger),
         command: launchPath,
-        hostIsMono: false
+        hostIsMono: true,
+        hostVersion: monoInfo.version,
+        hostPath: monoInfo.path
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): LaunchResult {
+function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): ChildProcess {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
@@ -422,9 +408,5 @@ function launchNixMono(launchPath: string, cwd: string, args: string[], environm
         env: environment
     });
 
-    return {
-        process,
-        command: launchPath,
-        hostIsMono: true
-    };
+    return process;
 }

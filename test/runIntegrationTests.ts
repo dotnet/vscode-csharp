@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-
-import { runTests } from 'vscode-test';
+import { runTests } from '@vscode/test-electron';
 import { execChildProcess } from '../src/common';
 
 function getSln(workspacePath: string): string | undefined {

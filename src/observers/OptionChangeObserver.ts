@@ -14,7 +14,6 @@ type OptionsKey = keyof Options;
 
 const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "path",
-    "useGlobalMono",
     "enableMsBuildLoadProjectsOnDemand",
     "waitForDebugger",
     "loggingLevel",
