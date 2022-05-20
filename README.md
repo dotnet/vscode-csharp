@@ -16,39 +16,13 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 ## Announcements
 
-### Planned removal of the included Mono & MSBuild Tools
+### The C# extension no longer ships with an included Mono & MSBuild Tools
 
-In the future .NET Framework builds of OmniSharp will not ship with Mono or the MSBuild tooling (See announcement [omnisharp-roslyn#2339](https://github.com/OmniSharp/omnisharp-roslyn/issues/2339)). To ensure that the C# extension remains usable out of the box for .NET SDK projects, we will be changing the default value of `omnisharp.useModernNet` to `true`.
+.NET Framework builds of OmniSharp no longer ship with Mono or the MSBuild tooling (See announcement [omnisharp-roslyn#2339](https://github.com/OmniSharp/omnisharp-roslyn/issues/2339)). To ensure that the C# extension remains usable out of the box for .NET SDK projects, we have changed the default value of `omnisharp.useModernNet` to `true`.
+
+If you still need Unity or .NET Framework support, you can set `omnisharp.useModernNet` to `false` in your VS Code settings and restart OmniSharp.
 
 See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
-
-### Using .NET 6 builds of OmniSharp
-
-Starting with C# extension version 1.24.0, there is now an option to use build of OmniSharp that runs on the .NET 6 SDK. This build requires that the .NET 6 SDK be installed and does not use Visual Studio MSBuild tools or Mono. It only supports newer SDK-style projects that are buildable with `dotnet build`. Unity projects and other Full Framework projects are not supported.
-
-To use the .NET 6 build, set `omnisharp.useModernNet` to `true` in your VS Code settings and restart OmniSharp.
-
-### Note about using .NET Core 3.1.4xx SDKs
-
-The .NET 3.1.4xx SDKs require version 16.7 of MSBuild.
-
-You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See instructions above.
-
-### Note about using .NET 5 SDKs
-
-The .NET 5 SDK requires version 16.8 of MSBuild.
-
-For Windows users who have Visual Studio installed, this means you will need to be on the latest Visual Studio 16.8 Preview.
-
-You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See instructions above.
-
-### Note about using .NET 6 SDKs
-
-The .NET 6 SDK requires version 16.10 of MSBuild.
-
-For Windows users who have Visual Studio installed, this means you will need to have Visual Studio 16.11 or newer installed.
-
-You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See instructions above.
 
 ## What's new in 1.25.0
 * Make SDK build of OmniSharp the default ([#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120), PR: [#5176](https://github.com/OmniSharp/omnisharp-vscode/pull/5176))
@@ -104,22 +78,6 @@ You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See
     * Support inlay hints (PR: [omnisharp-roslyn#2357](https://github.com/OmniSharp/omnisharp-roslyn/pull/2357))
     * Update build tools to match .NET SDK 6.0.201 ([omnisharp-roslyn#2363](https://github.com/OmniSharp/omnisharp-roslyn/pull/2363))
 
-## What's new in 1.24.1
-* Only semantically highlight documents from uri.scheme 'file' (PR: [#5059](https://github.com/OmniSharp/omnisharp-vscode/pull/5059))
-* Filter packages to install by framework before attempting install ([#5032](https://github.com/OmniSharp/omnisharp-vscode/issues/5032), PR: [#5041](https://github.com/OmniSharp/omnisharp-vscode/pull/5041))
-* Update Razor's TextMate to latest. (PR: [#5012](https://github.com/OmniSharp/omnisharp-vscode/pull/5012))
-* Upgrade OmniSharp to 1.38.1:
-  * Reuse Roslyn's analyzer assembly loader (PR: [omnisharp-roslyn#2236](https://github.com/OmniSharp/omnisharp-roslyn/pull/2236))
-  * Pass Completion, Rename and Block Structure options directly instead of updating the Workspace (PR: [omnisharp-roslyn#2306](https://github.com/OmniSharp/omnisharp-roslyn/pull/2306))
-  * Update included build tool to match the current 6.0.200 sdk (PR: [omnisharp-roslyn#2329](https://github.com/OmniSharp/omnisharp-roslyn/pull/2329))
-  * Fix concurrency issue in CSharpDiagnosticWorker (PR: [omnisharp-roslyn#2333](https://github.com/OmniSharp/omnisharp-roslyn/pull/2333))
-  * run analyzers on multiple threads if allowed to (PR: [omnisharp-roslyn#2285](https://github.com/OmniSharp/omnisharp-roslyn/pull/2285))
-  * Add MSBuild project to solution and apply the change to Roslyn workspace as a unit (PR: [omnisharp-roslyn#2314](https://github.com/OmniSharp/omnisharp-roslyn/pull/2314))
-  * Updated to Roslyn 4.0.1 (PR: [omnisharp-roslyn#2323](https://github.com/OmniSharp/omnisharp-roslyn/pull/2323))
-  * Enable OmniSharp.Cake tests for .NET 6 (PR: [omnisharp-roslyn#2307](https://github.com/OmniSharp/omnisharp-roslyn/pull/2307))
-  * Handle completions with trailing whitespace on previous lines (PR: [omnisharp-roslyn#2319](https://github.com/OmniSharp/omnisharp-roslyn/pull/2319))
-  * Update build bools to match .NET SDK 6.0.200 (PR: [omnisharp-roslyn#2347](https://github.com/OmniSharp/omnisharp-roslyn/pull/2347))
-
 ### Emmet support in Razor files
 
 To enable emmet support, add the following to your settings.json:
@@ -129,12 +87,6 @@ To enable emmet support, add the following to your settings.json:
     "aspnetcorerazor": "html"
 }
 ```
-
-### Semantic Highlighting
-
-The C# semantic highlighting support is in preview. To enable, set `editor.semanticHighlighting.enabled` and `csharp.semanticHighlighting.enabled` to `true` in your settings. Semantic highlighting is only provided for code files that are part of the active project.
-
-To really see the difference, try the new Visual Studio 2019 Light and Dark themes with semantic colors that closely match Visual Studio 2019.
 
 ### Supported Operating Systems for Debugging
 
@@ -163,7 +115,7 @@ First install:
 
 To **run and develop** do the following:
 
-* Run `npm i`
+* Run `npm ci`
 * Run `npm run compile`
 * Open in Visual Studio Code (`code .`)
 * _Optional:_ run `npm run watch`, make code changes
