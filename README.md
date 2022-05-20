@@ -32,8 +32,6 @@ To use the .NET 6 build, set `omnisharp.useModernNet` to `true` in your VS Code 
 
 The .NET 3.1.4xx SDKs require version 16.7 of MSBuild.
 
-For MacOS and Linux users who have Mono installed, this means you will need to set `omnisharp.useGlobalMono` to `never` until a version of Mono ships with MSBuild 16.7.
-
 You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See instructions above.
 
 ### Note about using .NET 5 SDKs
@@ -42,8 +40,6 @@ The .NET 5 SDK requires version 16.8 of MSBuild.
 
 For Windows users who have Visual Studio installed, this means you will need to be on the latest Visual Studio 16.8 Preview.
 
-For MacOS and Linux users who have Mono installed, this means you will need to set `omnisharp.useGlobalMono` to `never` until a version of Mono ships with MSBuild 16.8.
-
 You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See instructions above.
 
 ### Note about using .NET 6 SDKs
@@ -51,8 +47,6 @@ You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See
 The .NET 6 SDK requires version 16.10 of MSBuild.
 
 For Windows users who have Visual Studio installed, this means you will need to have Visual Studio 16.11 or newer installed.
-
-For MacOS and Linux users who have Mono installed, this means you will need to set `omnisharp.useGlobalMono` to `never` until a version of Mono ships with MSBuild 16.10.
 
 You can also use the .NET 6 build of OmniSharp which runs on the .NET 6 SDK. See instructions above.
 
