@@ -194,7 +194,7 @@ export default class TestManager extends AbstractProvider {
 
     private _getRunSettings(filename: string): string | undefined {
         const testSettingsPath = this.optionProvider.GetLatestOptions().testRunSettings;
-        if (!testSettingsPath) {
+        if (testSettingsPath.length === 0) {
             return undefined;
         }
 

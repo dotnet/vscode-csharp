@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import { IDisposable } from "../Disposable";
 import { OmniSharpServer } from "../omnisharp/server";
 import * as vscode from 'vscode';
@@ -54,7 +59,18 @@ class FileOpenCloseProvider implements IDisposable {
             return;
         }
 
-        await serverUtils.filesChanged(this._server, [{ FileName: e.document.fileName }]);
+        // This handler is attempting to alert O# that the current file has changed and
+        // to update diagnostics. This is necessary because O# does not recompute all diagnostics
+        // for the projects affected when code files are changed. We want to at least provide
+        // up to date diagnostics for the active document.
+        //
+        // The filesChanges service notifies O# that files have changed on disk. This causes
+        // the document to be reloaded from disk. If there were unsaved changes in VS Code then
+        // the server is no longer aware of those changes. This is not a good fit for our needs.
+        //
+        // Instead we will update the buffer for the current document which causes diagnostics to be
+        // recomputed.
+        await serverUtils.updateBuffer(this._server, { FileName: e.document.fileName, Buffer: e.document.getText() });
     }
 
     dispose = () => this._disposable.dispose();

@@ -9,7 +9,6 @@ export function getEmptyOptions(): Options {
     return new Options(
         /* path */"",
         /* useModernNet */false,
-        /* useGlobalMono */"",
         /* waitForDebugger */false,
         /* loggingLevel */"",
         /* autoStart */false,
@@ -48,6 +47,9 @@ export function getEmptyOptions(): Options {
         /* inlayHintsForImplicitVariableTypes */false,
         /* inlayHintsForLambdaParameterTypes */false,
         /* inlayHintsForImplicitObjectCreation */false,
+        /* sdkPath */"",
+        /* sdkVersion */"",
+        /* sdkIncludePrereleases */false,
         /* razorPluginPath */"",
         /* defaultLaunchSolution */"",
         /* monoPath */"",

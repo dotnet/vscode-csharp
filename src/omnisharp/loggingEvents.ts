@@ -46,7 +46,7 @@ export class OmnisharpInitialisation implements BaseEvent {
 
 export class OmnisharpLaunch implements BaseEvent {
     type = EventType.OmnisharpLaunch;
-    constructor(public hostVersion: string, public hostPath: string, public hostIsMono: boolean, public command: string, public pid: number) { }
+    constructor(public hostVersion: string | undefined, public hostPath: string | undefined, public hostIsMono: boolean, public command: string, public pid: number) { }
 }
 
 export class PackageInstallStart implements BaseEvent {
@@ -125,7 +125,7 @@ export class OmnisharpServerDequeueRequest implements BaseEvent {
 
 export class OmnisharpServerRequestCancelled implements BaseEvent {
     type = EventType.OmnisharpServerRequestCancelled;
-    constructor(public command: string, public id: number) { }
+    constructor(public command: string, public id: number | undefined) { }
 }
 
 export class OmnisharpServerProcessRequestStart implements BaseEvent {

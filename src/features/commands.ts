@@ -97,14 +97,14 @@ async function pickProjectAndStart(server: OmniSharpServer, optionProvider: Opti
 }
 
 export async function showProjectSelector(server: OmniSharpServer, targets: LaunchTarget[]): Promise<void> {
-    return vscode.window.showQuickPick(targets, {
+    const launchTarget = await vscode.window.showQuickPick(targets, {
         matchOnDescription: true,
         placeHolder: `Select 1 of ${targets.length} projects`
-    }).then(async launchTarget => {
-        if (launchTarget) {
-            return server.restart(launchTarget);
-        }
     });
+
+    if (launchTarget !== undefined) {
+        return server.restart(launchTarget);
+    }
 }
 
 interface Command {

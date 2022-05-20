@@ -17,15 +17,16 @@ export class OmniSharpMonoResolver implements IHostExecutableResolver {
     }
 
     private async configureEnvironmentAndGetInfo(options: Options): Promise<HostExecutableInformation> {
-        let env = { ...process.env };
+        const env = { ...process.env };
         let monoPath: string;
-        if (options.useGlobalMono !== "never" && options.monoPath !== undefined) {
+
+        if (options.monoPath.length > 0) {
             env['PATH'] = path.join(options.monoPath, 'bin') + path.delimiter + env['PATH'];
             env['MONO_GAC_PREFIX'] = options.monoPath;
             monoPath = options.monoPath;
         }
 
-        let version = await this.getMonoVersion(env);
+        const version = await this.getMonoVersion(env);
 
         return {
             version,
@@ -35,30 +36,21 @@ export class OmniSharpMonoResolver implements IHostExecutableResolver {
     }
 
     public async getHostExecutableInfo(options: Options): Promise<HostExecutableInformation> {
-        let monoInfo = await this.configureEnvironmentAndGetInfo(options);
-        let isValid = monoInfo.version && satisfies(monoInfo.version, `>=${this.minimumMonoVersion}`);
-        if (options.useGlobalMono === "always") {
-            let isMissing = monoInfo.version === undefined;
-            if (isMissing) {
-                const suggestedAction = options.monoPath
-                    ? "Update the \"omnisharp.monoPath\" setting to point to the folder containing Mono's '/bin' folder."
-                    : "Ensure that Mono's '/bin' folder is added to your environment's PATH variable.";
-                throw new Error(`Unable to find Mono. ${suggestedAction}`);
-            }
+        const monoInfo = await this.configureEnvironmentAndGetInfo(options);
+        const isValid = monoInfo.version && satisfies(monoInfo.version, `>=${this.minimumMonoVersion}`);
 
-            if (!isValid) {
-                throw new Error(`Found Mono version ${monoInfo.version}. Cannot start OmniSharp because Mono version >=${this.minimumMonoVersion} is required.`);
-            }
-
-            return monoInfo;
-        }
-        else if (options.useGlobalMono === "auto" && isValid) {
-            // While waiting for Mono to ship with a MSBuild version 16.8 or higher, we will treat "auto"
-            // as "Use included Mono".
-            // return monoInfo;
+        const isMissing = monoInfo.version === undefined;
+        if (isMissing) {
+            const suggestedAction = options.monoPath
+                ? "Update the \"omnisharp.monoPath\" setting to point to the folder containing Mono's '/bin' folder."
+                : "Ensure that Mono's '/bin' folder is added to your environment's PATH variable.";
+            throw new Error(`Unable to find Mono. ${suggestedAction}`);
         }
 
-        return undefined;
+        if (!isValid) {
+            throw new Error(`Found Mono version ${monoInfo.version}. Cannot start OmniSharp because Mono version >=${this.minimumMonoVersion} is required.`);
+        }
+
+        return monoInfo;
     }
 }
-
