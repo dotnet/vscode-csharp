@@ -17,7 +17,9 @@ async function main() {
         const extensionTestsPath = path.resolve(__dirname, './featureTests/index');
 
         // Download VS Code, unzip it and run the integration test
-        await runTests({ version: "1.65.0", extensionDevelopmentPath, extensionTestsPath, launchArgs: ['-n', '--verbose'] });
+        const exitCode = await runTests({ extensionDevelopmentPath, extensionTestsPath, launchArgs: ['-n', '--verbose'] });
+
+        process.exit(exitCode);
     } catch (err) {
         console.error(err);
         console.error('Failed to run tests');
