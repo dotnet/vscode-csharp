@@ -592,6 +592,7 @@ export interface InlayHint {
     Label: string;
     Tooltip?: string;
     Data: any;
+    TextEdits?: LinePositionSpanTextChange[];
 }
 
 export interface InlayHintResponse {
