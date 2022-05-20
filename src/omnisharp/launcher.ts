@@ -65,18 +65,17 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
 
     const projectFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-        /*maxResults*/ options.maxProjectResults);
+        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}');
 
     const csFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.cs}',
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-        /*maxResults*/ options.maxProjectResults);
+        /*maxResults*/ 1);
 
-    return resourcesToLaunchTargets(projectFiles.concat(csFiles));
+    return resourcesToLaunchTargets(projectFiles.concat(csFiles), options.maxProjectResults);
 }
 
-export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
+export function resourcesToLaunchTargets(resources: vscode.Uri[], maxProjectResults: number): LaunchTarget[] {
     // The list of launch targets is calculated like so:
     //   * If there are .csproj files, .sln and .slnf files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
@@ -117,10 +116,10 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
         }
     }
 
-    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap);
+    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap, maxProjectResults);
 }
 
-export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>): LaunchTarget[] {
+export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>, maxProjectResults: number): LaunchTarget[] {
     let solutionTargets: LaunchTarget[] = [];
     let projectJsonTargets: LaunchTarget[] = [];
     let projectRootTargets: LaunchTarget[] = [];
@@ -241,7 +240,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
     projectJsonTargets = projectJsonTargets.sort((a, b) => a.directory.localeCompare(b.directory));
     projectTargets = projectTargets.sort((a, b) => a.directory.localeCompare(b.directory));
 
-    return otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
+    return otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets).slice(0, maxProjectResults);
 }
 
 function isCSharpProject(resource: vscode.Uri): boolean {
