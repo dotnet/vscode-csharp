@@ -47,6 +47,9 @@ export class Options {
         public inlayHintsForImplicitVariableTypes: boolean,
         public inlayHintsForLambdaParameterTypes: boolean,
         public inlayHintsForImplicitObjectCreation: boolean,
+        public sdkPath: string,
+        public sdkVersion: string,
+        public sdkIncludePrereleases: boolean,
         public razorPluginPath: string,
         public defaultLaunchSolution: string,
         public monoPath: string,
@@ -68,6 +71,10 @@ export class Options {
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
         const useModernNet = omnisharpConfig.get<boolean>("useModernNet", true);
+
+        const sdkPath = omnisharpConfig.get<string>('sdkPath', '');
+        const sdkVersion = omnisharpConfig.get<string>('sdkVersion', '');
+        const sdkIncludePrereleases = omnisharpConfig.get<boolean>('sdkIncludePrereleases', true);
 
         // VS Code coerces unset string settings to the empty string.
         // Thus, to avoid dealing with the empty string AND undefined,
@@ -182,6 +189,9 @@ export class Options {
             inlayHintsForImplicitVariableTypes,
             inlayHintsForLambdaParameterTypes,
             inlayHintsForImplicitObjectCreation,
+            sdkPath,
+            sdkVersion,
+            sdkIncludePrereleases,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,

@@ -31,6 +31,8 @@ export const offlinePackages = [
     { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64", isFramework: includeFrameworkOmniSharp },
     { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64", isFramework: includeFrameworkOmniSharp },
     { platformInfo: new PlatformInformation('linux', 'arm64'), id: "linux-arm64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('linux-musl', 'x86_64'), id: "alpine-x64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('linux-musl', 'arm64'), id: "alpine-arm64", isFramework: includeFrameworkOmniSharp },
     { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64", isFramework: includeFrameworkOmniSharp },
     { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64", isFramework: includeFrameworkOmniSharp },
 ];

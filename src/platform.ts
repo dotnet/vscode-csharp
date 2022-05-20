@@ -41,9 +41,9 @@ export class LinuxDistribution {
      */
     public toTelemetryString(): string {
         const allowedList = [
-            'antergos', 'arch', 'centos', 'debian', 'deepin', 'elementary', 'fedora',
-            'galliumos', 'gentoo', 'kali', 'linuxmint', 'manjoro', 'neon', 'opensuse',
-            'parrot', 'rhel', 'ubuntu', 'zorin'
+            'alpine', 'antergos', 'arch', 'centos', 'debian', 'deepin', 'elementary',
+            'fedora', 'galliumos', 'gentoo', 'kali', 'linuxmint', 'manjoro', 'neon',
+            'opensuse', 'parrot', 'rhel', 'ubuntu', 'zorin'
         ];
 
         if (this.name === unknown || allowedList.indexOf(this.name) >= 0) {
@@ -130,7 +130,7 @@ export class PlatformInformation {
     }
 
     public isLinux(): boolean {
-        return this.platform === 'linux';
+        return this.platform.startsWith('linux');
     }
 
     public toString(): string {
@@ -156,7 +156,7 @@ export class PlatformInformation {
     }
 
     public static async GetCurrent(): Promise<PlatformInformation> {
-        let platform = os.platform();
+        let platform: string = os.platform();
         let architecturePromise: Promise<string>;
         let distributionPromise: Promise<LinuxDistribution>;
 
@@ -172,6 +172,10 @@ export class PlatformInformation {
                 break;
 
             case 'linux':
+                if (await this.GetIsMusl()) {
+                    // Update platform so we can distuguish between linux and linux-musl.
+                    platform = "linux-musl";
+                }
                 architecturePromise = PlatformInformation.GetUnixArchitecture();
                 distributionPromise = LinuxDistribution.GetCurrent();
                 break;
@@ -199,22 +203,31 @@ export class PlatformInformation {
         });
     }
 
-    private static async GetUnixArchitecture(): Promise<string> {
-        return util.execChildProcess('uname -m')
-            .then(architecture => {
-                if (architecture) {
-                    architecture = architecture.trim();
+    private static async GetUnixArchitecture(): Promise<string | undefined> {
+        let architecture = await util.execChildProcess('uname -m');
 
-                    switch (architecture) {
-                        case "aarch64":
-                            return "arm64";
-                        default:
-                            return architecture;
-                    }
-                }
+        if (architecture) {
+            architecture = architecture.trim();
 
-                return null;
-            });
+            switch (architecture) {
+                case "aarch64":
+                    return "arm64";
+                default:
+                    return architecture;
+            }
+        }
+
+        return undefined;
+    }
+
+    private static async GetIsMusl() {
+        let output;
+        try {
+            output = await util.execChildProcess('ldd --version');
+        } catch (err) {
+            output = err.message;
+        }
+        return output.indexOf('musl') > -1;
     }
 
     public isValidPlatformForMono(): boolean {
