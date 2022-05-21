@@ -18,28 +18,15 @@ import { OmniSharpServer } from './omnisharp/server';
 import { tolerantParse } from './json';
 
 export class AssetGenerator {
-    public workspaceFolder: vscode.WorkspaceFolder;
     public vscodeFolder: string;
     public tasksJsonPath: string;
     public launchJsonPath: string;
 
-    private executableProjects: protocol.MSBuildProject[];
+    private executableProjects: protocol.MSBuildProject[] = [];
     private startupProject: protocol.MSBuildProject | undefined;
     private fallbackBuildProject: protocol.MSBuildProject | undefined;
 
-    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, workspaceFolder?: vscode.WorkspaceFolder) {
-        if (workspaceFolder) {
-            this.workspaceFolder = workspaceFolder;
-        }
-        else {
-            const resourcePath = workspaceInfo.Cake?.Path ??
-                workspaceInfo.ScriptCs?.Path ??
-                workspaceInfo.DotNet?.Projects?.[0].Path ??
-                workspaceInfo.MsBuild?.SolutionPath;
-
-            this.workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
-        }
-
+    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, private workspaceFolder: vscode.WorkspaceFolder) {
         this.vscodeFolder = path.join(this.workspaceFolder.uri.fsPath, '.vscode');
         this.tasksJsonPath = path.join(this.vscodeFolder, 'tasks.json');
         this.launchJsonPath = path.join(this.vscodeFolder, 'launch.json');
@@ -49,8 +36,6 @@ export class AssetGenerator {
             if (this.executableProjects.length === 0) {
                 this.fallbackBuildProject = workspaceInfo.MsBuild.Projects[0];
             }
-        } else {
-            this.executableProjects = [];
         }
     }
 
@@ -145,7 +130,14 @@ export class AssetGenerator {
         const startupProjectDir = path.dirname(this.startupProject.Path);
         const relativeProjectDir = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
         const configurationName = 'Debug';
-        const targetFramework = protocol.findNetCoreTargetFramework(this.startupProject);
+
+        // We know targetFramework is non-null for the following reasons:
+        // 1. startupProject is non-null.
+        // 2. In order for startupProject to be non-null, there must be at least one executable project.
+        // 3. For a project to be executable, it must either be .NET Core or Blazor WASM standalone.
+        // 4. Blazor was officially released starting with .NET Core 3.0.
+        // Therefore, we know that findNetCoreTargetFramework will always return a framework.
+        const targetFramework = protocol.findNetCoreTargetFramework(this.startupProject)!;
         const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework.ShortName}/${this.startupProject.AssemblyName}.dll`);
         return result;
     }
@@ -690,7 +682,21 @@ export async function addAssetsIfNecessary(server: OmniSharpServer): Promise<Add
         }
 
         serverUtils.requestWorkspaceInformation(server).then(async info => {
-            const generator = new AssetGenerator(info);
+            const resourcePath = info.Cake?.Path ??
+                info.ScriptCs?.Path ??
+                info.DotNet?.Projects?.[0].Path ??
+                info.MsBuild?.SolutionPath;
+            if (resourcePath === undefined) {
+                // This shouldn't happen, but it's a cheap check.
+                return resolve(AddAssetResult.NotApplicable);
+            }
+
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
+            if (workspaceFolder === undefined) {
+                return resolve(AddAssetResult.NotApplicable);
+            }
+
+            const generator = new AssetGenerator(info, workspaceFolder);
             // If there aren't executable projects, we will not prompt
             if (generator.hasExecutableProjects()) {
                 return getOperations(generator).then(operations => {
@@ -698,7 +704,7 @@ export async function addAssetsIfNecessary(server: OmniSharpServer): Promise<Add
                         return resolve(AddAssetResult.NotApplicable);
                     }
 
-                    promptToAddAssets(generator.workspaceFolder).then(result => {
+                    promptToAddAssets(workspaceFolder).then(result => {
                         if (result === PromptResult.Disable) {
                             return resolve(AddAssetResult.Disable);
                         }
@@ -781,7 +787,13 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
     try {
         let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
         if (workspaceInformation.MsBuild && workspaceInformation.MsBuild.Projects.length > 0) {
-            const generator = new AssetGenerator(workspaceInformation);
+            const resourcePath = workspaceInformation.MsBuild.SolutionPath;
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
+            if (workspaceFolder === undefined) {
+                return;
+            }
+
+            const generator = new AssetGenerator(workspaceInformation, workspaceFolder);
             let doGenerateAssets = await shouldGenerateAssets(generator);
             if (!doGenerateAssets) {
                 return; // user cancelled
