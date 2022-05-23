@@ -320,12 +320,15 @@ export interface CakeContext {
 
 export interface MSBuildProject {
     ProjectGuid: string;
+    /** Absolute path to the csproj file. */
     Path: string;
     AssemblyName: string;
+    /** Absolute path to the output assembly DLL. */
     TargetPath: string;
     TargetFramework: string;
     SourceFiles: string[];
     TargetFrameworks: TargetFramework[];
+    /** Absolute path to the output directory. */
     OutputPath: string;
     IsExe: boolean;
     IsUnityProject: boolean;
