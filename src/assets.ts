@@ -135,9 +135,13 @@ export class AssetGenerator {
         // 1. startupProject is non-null.
         // 2. In order for startupProject to be non-null, there must be at least one executable project.
         // 3. For a project to be executable, it must either be .NET Core or Blazor WASM standalone.
-        // 4. Blazor was officially released starting with .NET Core 3.0.
+        // 4. This code path is not called if the project is Blazor WASM standalone.
         // Therefore, we know that findNetCoreTargetFramework will always return a framework.
         const targetFramework = protocol.findNetCoreTargetFramework(this.startupProject)!;
+
+        // TODO: Could we rewrite this to use this.startupPath.OutputPath, so we don't need a nullability assertion above?
+        // const relativeOutputDir = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.OutputPath);
+        // const result = path.join('${workspaceFolder}', relativeOutputDir, `${this.startupProject.AssemblyName}.dll`);
         const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework.ShortName}/${this.startupProject.AssemblyName}.dll`);
         return result;
     }
