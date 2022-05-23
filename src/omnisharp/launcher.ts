@@ -65,18 +65,17 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
 
     const projectFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-        /*maxResults*/ options.maxProjectResults);
+        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}');
 
     const csFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.cs}',
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-        /*maxResults*/ options.maxProjectResults);
+        /*maxResults*/ 1);
 
-    return resourcesToLaunchTargets(projectFiles.concat(csFiles));
+    return resourcesToLaunchTargets(projectFiles.concat(csFiles), options.maxProjectResults);
 }
 
-export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
+export function resourcesToLaunchTargets(resources: vscode.Uri[], maxProjectResults: number): LaunchTarget[] {
     // The list of launch targets is calculated like so:
     //   * If there are .csproj files, .sln and .slnf files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
@@ -117,10 +116,10 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
         }
     }
 
-    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap);
+    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap, maxProjectResults);
 }
 
-export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>): LaunchTarget[] {
+export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>, maxProjectResults: number): LaunchTarget[] {
     let solutionTargets: LaunchTarget[] = [];
     let projectJsonTargets: LaunchTarget[] = [];
     let projectRootTargets: LaunchTarget[] = [];
@@ -241,7 +240,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
     projectJsonTargets = projectJsonTargets.sort((a, b) => a.directory.localeCompare(b.directory));
     projectTargets = projectTargets.sort((a, b) => a.directory.localeCompare(b.directory));
 
-    return otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
+    return otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets).slice(0, maxProjectResults);
 }
 
 function isCSharpProject(resource: vscode.Uri): boolean {
@@ -312,21 +311,7 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    let monoInfo = await monoResolver.getHostExecutableInfo(options);
-
-    if (monoInfo) {
-        const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
-        let childEnv = monoInfo.env;
-        return {
-            ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            hostIsMono: true,
-            hostVersion: monoInfo.version,
-            hostPath: monoInfo.path
-        };
-    }
-    else {
-        return launchNix(launchInfo.LaunchPath, cwd, args);
-    }
+    return await launchNix(launchInfo, cwd, args, options, monoResolver);
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
@@ -393,20 +378,20 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     };
 }
 
-function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResult {
-    let process = spawn(launchPath, args, {
-        detached: false,
-        cwd: cwd
-    });
+async function launchNix(launchInfo: LaunchInfo, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
+    const monoInfo = await monoResolver.getHostExecutableInfo(options);
+    const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
 
     return {
-        process,
+        process: launchNixMono(launchPath, cwd, args, monoInfo.env, options.waitForDebugger),
         command: launchPath,
-        hostIsMono: false
+        hostIsMono: true,
+        hostVersion: monoInfo.version,
+        hostPath: monoInfo.path
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): LaunchResult {
+function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): ChildProcess {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
@@ -422,9 +407,5 @@ function launchNixMono(launchPath: string, cwd: string, args: string[], environm
         env: environment
     });
 
-    return {
-        process,
-        command: launchPath,
-        hostIsMono: true
-    };
+    return process;
 }

@@ -9,7 +9,6 @@ export class Options {
     constructor(
         public path: string,
         public useModernNet: boolean,
-        public useGlobalMono: string,
         public waitForDebugger: boolean,
         public loggingLevel: string,
         public autoStart: boolean,
@@ -48,6 +47,9 @@ export class Options {
         public inlayHintsForImplicitVariableTypes: boolean,
         public inlayHintsForLambdaParameterTypes: boolean,
         public inlayHintsForImplicitObjectCreation: boolean,
+        public sdkPath: string,
+        public sdkVersion: string,
+        public sdkIncludePrereleases: boolean,
         public razorPluginPath: string,
         public defaultLaunchSolution: string,
         public monoPath: string,
@@ -62,16 +64,17 @@ export class Options {
         // are supported below. In particular, these are:
         //
         // - "csharp.omnisharp" -> "omnisharp.path"
-        // - "csharp.omnisharpUsesMono" -> "omnisharp.useMono"
-        // - "omnisharp.useMono" -> "omnisharp.useGlobalMono"
 
         const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
         const csharpConfig = vscode.workspace.getConfiguration('csharp');
         const razorConfig = vscode.workspace.getConfiguration('razor');
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
-        const useModernNet = omnisharpConfig.get<boolean>("useModernNet", false);
-        const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
+        const useModernNet = omnisharpConfig.get<boolean>("useModernNet", true);
+
+        const sdkPath = omnisharpConfig.get<string>('sdkPath', '');
+        const sdkVersion = omnisharpConfig.get<string>('sdkVersion', '');
+        const sdkIncludePrereleases = omnisharpConfig.get<boolean>('sdkIncludePrereleases', true);
 
         // VS Code coerces unset string settings to the empty string.
         // Thus, to avoid dealing with the empty string AND undefined,
@@ -96,7 +99,7 @@ export class Options {
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
-        const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
+        const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', true);
         const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
         const enableAsyncCompletion = omnisharpConfig.get<boolean>('enableAsyncCompletion', false);
@@ -109,7 +112,7 @@ export class Options {
         const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
         const filteredSymbolsCodeLens = csharpConfig.get<string[]>('referencesCodeLens.filteredSymbols', []);
 
-        const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', false);
+        const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', true);
 
         const inlayHintsEnableForParameters = csharpConfig.get<boolean>('inlayHints.parameters.enabled', false);
         const inlayHintsForLiteralParameters = csharpConfig.get<boolean>('inlayHints.parameters.forLiteralParameters', false);
@@ -148,7 +151,6 @@ export class Options {
         return new Options(
             path,
             useModernNet,
-            useGlobalMono,
             waitForDebugger,
             loggingLevel,
             autoStart,
@@ -187,6 +189,9 @@ export class Options {
             inlayHintsForImplicitVariableTypes,
             inlayHintsForLambdaParameterTypes,
             inlayHintsForImplicitObjectCreation,
+            sdkPath,
+            sdkVersion,
+            sdkIncludePrereleases,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
@@ -229,24 +234,5 @@ export class Options {
             // Otherwise, the empty string.
             return '';
         }
-    }
-
-    private static readUseGlobalMonoOption(omnisharpConfig: WorkspaceConfiguration, csharpConfig: WorkspaceConfiguration): string {
-        function toUseGlobalMonoValue(value?: boolean): string | undefined {
-            if (value === undefined) {
-                return undefined;
-            }
-
-            // True means 'always' and false means 'auto'.
-            return value ? "always" : "auto";
-        }
-
-        // If 'omnisharp.useGlobalMono' is set, use that.
-        // Otherwise, for backcompat, look for 'omnisharp.useMono' and 'csharp.omnisharpUsesMono'.
-        // If both of those aren't found, return 'auto' as the default value.
-        return omnisharpConfig.get<string>('useGlobalMono') ??
-            toUseGlobalMonoValue(omnisharpConfig.get<boolean>('useMono')) ??
-            toUseGlobalMonoValue(csharpConfig.get<boolean>('omnisharpUsesMono')) ??
-            "auto";
     }
 }

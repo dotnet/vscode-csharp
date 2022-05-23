@@ -37,7 +37,6 @@ suite('OptionStream', () => {
 
         test('Returns the default options if there is no change', () => {
             options.path.should.equal("");
-            options.useGlobalMono.should.equal("auto");
             options.waitForDebugger.should.equal(false);
             options.loggingLevel.should.equal("information");
             options.autoStart.should.equal(true);
@@ -52,7 +51,7 @@ suite('OptionStream', () => {
             options.maxFindSymbolsItems.should.equal(1000);
             options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
             options.enableRoslynAnalyzers.should.equal(false);
-            options.enableEditorConfigSupport.should.equal(false);
+            options.enableEditorConfigSupport.should.equal(true);
             options.enableDecompilationSupport.should.equal(false);
             options.enableImportCompletion.should.equal(false);
             options.enableAsyncCompletion.should.equal(false);

@@ -74,6 +74,28 @@ jobs:
         asset_path: ./csharp-${{ env.VERSION }}-linux-x64.vsix
         asset_name: csharp-${{ env.VERSION }}-linux-x64.vsix
         asset_content_type: application/zip
+        
+    - name: Upload release build (alpine-arm64)
+      id: upload-release-asset-alpine-arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}-alpine-arm64.vsix
+        asset_name: csharp-${{ env.VERSION }}-alpine-arm64.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (alpine-x64)
+      id: upload-release-asset-alpine-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./csharp-${{ env.VERSION }}-alpine-x64.vsix
+        asset_name: csharp-${{ env.VERSION }}-alpine-x64.vsix
+        asset_content_type: application/zip
 
     - name: Upload release build (win32-arm64)
       id: upload-release-asset-win32-arm64
