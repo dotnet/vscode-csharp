@@ -156,7 +156,7 @@ export class AssetGenerator {
         return ProgramLaunchType.Console;
     }
 
-    private computeProgramPath() {
+    private computeProgramPath(): string {
         if (!this.startupProject) {
             throw new Error("Startup project not set");
         }
@@ -170,9 +170,8 @@ export class AssetGenerator {
             throw new Error("Startup project not set");
         }
 
-        const startupProjectDir = path.dirname(this.startupProject.Path);
-
-        return path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
+        const relativeProjectPath = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.Path);
+        return path.join('${workspaceFolder}', path.dirname(relativeProjectPath));
     }
 
     public createLaunchJsonConfigurationsArray(programLaunchType: ProgramLaunchType): vscode.DebugConfiguration[] {
