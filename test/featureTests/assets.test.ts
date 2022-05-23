@@ -105,24 +105,10 @@ suite("Asset generation: csproj", () => {
 
     [5, 6, 7, 8, 9].forEach(version => {
         const shortName = `net${version}.0`;
-        const alternameShortName = `net${version}0`;
 
         test(`Create launch.json for NET ${version} project opened in workspace with shortname '${shortName}'`, () => {
             let rootPath = path.resolve('testRoot');
             let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', shortName, /*isExe*/ true);
-            let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
-            generator.setStartupProject(0);
-            let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
-            let programPath = launchJson[0].program;
-
-            // ${workspaceFolder}/bin/Debug/net#.0/testApp.dll
-            let segments = programPath.split(path.posix.sep);
-            segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', shortName, 'testApp.dll']);
-        });
-
-        test(`Create launch.json for NET ${version} project opened in workspace with shortname '${alternameShortName}'`, () => {
-            let rootPath = path.resolve('testRoot');
-            let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', alternameShortName, /*isExe*/ true);
             let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
             generator.setStartupProject(0);
             let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
@@ -347,7 +333,7 @@ function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: st
                     ProjectGuid: '',
                     Path: projectPath,
                     AssemblyName: assemblyName,
-                    TargetPath: '',
+                    TargetPath: path.join(path.dirname(projectPath), 'bin', 'Debug', targetFrameworkShortName, `${assemblyName}.dll`),
                     TargetFramework: '',
                     SourceFiles: [],
                     TargetFrameworks: [
