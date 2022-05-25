@@ -24,6 +24,9 @@ If you still need Unity or .NET Framework support, you can set `omnisharp.useMod
 
 See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
 
+## What's new in 1.25.1
+* Provide actionable error messages for .NET SDK issues ([#5223](https://github.com/OmniSharp/omnisharp-vscode/issues/5223), PR: [#5225](https://github.com/OmniSharp/omnisharp-vscode/pull/5225))
+
 ## What's new in 1.25.0
 * Make SDK build of OmniSharp the default ([#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120), PR: [#5176](https://github.com/OmniSharp/omnisharp-vscode/pull/5176))
 * Add auto complete name to class, interface, enum, struct etc. snippets (PR: [#5198](https://github.com/OmniSharp/omnisharp-vscode/pull/5198))

@@ -1,4 +1,4 @@
-## Known Issues in 1.25.0
+## Known Issues in 1.25.1
 
 * For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useModernNet": false`.
 * After selecting a solution filter (*.slnf) from the project selector, the solution's name will be displayed in the status bar instead of the filter's.
@@ -12,7 +12,10 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
-## 1.25.0
+## 1.25.1
+* Provide actionable error messages for .NET SDK issues ([#5223](https://github.com/OmniSharp/omnisharp-vscode/issues/5223), PR: [#5225](https://github.com/OmniSharp/omnisharp-vscode/pull/5225))
+
+## 1.25.0 (May 24th, 2022)
 * Make SDK build of OmniSharp the default ([#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120), PR: [#5176](https://github.com/OmniSharp/omnisharp-vscode/pull/5176))
 * Add auto complete name to class, interface, enum, struct etc. snippets (PR: [#5198](https://github.com/OmniSharp/omnisharp-vscode/pull/5198))
 * Add a fallback for ps in remoteProcessPickerScript ([#4096](https://github.com/OmniSharp/omnisharp-vscode/issues/4096), PR: [#5207](https://github.com/OmniSharp/omnisharp-vscode/pull/5207))
