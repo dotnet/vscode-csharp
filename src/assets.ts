@@ -162,6 +162,11 @@ export class AssetGenerator {
         }
 
         const relativeTargetPath = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.TargetPath);
+        if (relativeTargetPath === this.startupProject.TargetPath) {
+            // This can happen if, for example, the workspace folder and the target path
+            // are on completely different drives.
+            return this.startupProject.TargetPath;
+        }
         return path.join('${workspaceFolder}', relativeTargetPath);
     }
 
@@ -170,6 +175,8 @@ export class AssetGenerator {
             throw new Error("Startup project not set");
         }
 
+        // Startup project will always be a child of the workspace folder,
+        // so the special check above isn't necessary.
         const relativeProjectPath = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.Path);
         return path.join('${workspaceFolder}', path.dirname(relativeProjectPath));
     }
