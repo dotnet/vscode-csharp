@@ -57,6 +57,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     util.setExtensionPath(extension.extensionPath);
 
     const eventStream = new EventStream();
+
+    let platformInfo: PlatformInformation;
+    try {
+        platformInfo = await PlatformInformation.GetCurrent();
+    }
+    catch (error) {
+        eventStream.post(new ActivationFailure());
+    }
+
     const optionStream = createOptionStream(vscode);
     let optionProvider = new OptionProvider(optionStream);
 
@@ -79,7 +88,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(csharpLogObserver.post);
 
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
-    let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel);
+    let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, platformInfo);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel, vscode);
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
@@ -115,14 +124,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     if (debugMode) {
         let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
         eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
-    }
-
-    let platformInfo: PlatformInformation;
-    try {
-        platformInfo = await PlatformInformation.GetCurrent();
-    }
-    catch (error) {
-        eventStream.post(new ActivationFailure());
     }
 
     if (!isSupportedPlatform(platformInfo)) {
