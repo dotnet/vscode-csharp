@@ -11,7 +11,9 @@ import * as jsonc from 'jsonc-parser';
 
 import { AssetGenerator, ProgramLaunchType, replaceCommentPropertiesWithComments, updateJsonWithComments } from '../../src/assets';
 import { parse } from 'jsonc-parser';
-import { should } from 'chai';
+import { use as chaiUse, should } from 'chai';
+
+chaiUse(require('chai-string'));
 
 suite("Asset generation: csproj", () => {
     suiteSetup(() => should());
@@ -96,41 +98,23 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
-        let programPath = launchJson[0].program;
+        let programPath: string = launchJson[0].program;
 
-        // ${workspaceFolder}/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        checkProgramPath(rootPath, programPath, info.MsBuild.Projects[0].TargetPath);
     });
 
     [5, 6, 7, 8, 9].forEach(version => {
         const shortName = `net${version}.0`;
-        const alternameShortName = `net${version}0`;
 
         test(`Create launch.json for NET ${version} project opened in workspace with shortname '${shortName}'`, () => {
             let rootPath = path.resolve('testRoot');
-            let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', shortName, /*isExe*/ true);
+            let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', shortName, /*targetPath*/ undefined, /*isExe*/ true);
             let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
             generator.setStartupProject(0);
             let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
-            let programPath = launchJson[0].program;
+            let programPath: string = launchJson[0].program;
 
-            // ${workspaceFolder}/bin/Debug/net#.0/testApp.dll
-            let segments = programPath.split(path.posix.sep);
-            segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', shortName, 'testApp.dll']);
-        });
-
-        test(`Create launch.json for NET ${version} project opened in workspace with shortname '${alternameShortName}'`, () => {
-            let rootPath = path.resolve('testRoot');
-            let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', alternameShortName, /*isExe*/ true);
-            let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
-            generator.setStartupProject(0);
-            let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
-            let programPath = launchJson[0].program;
-
-            // ${workspaceFolder}/bin/Debug/net#.0/testApp.dll
-            let segments = programPath.split(path.posix.sep);
-            segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', shortName, 'testApp.dll']);
+            checkProgramPath(rootPath, programPath, info.MsBuild.Projects[0].TargetPath);
         });
     });
 
@@ -140,16 +124,30 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
-        let programPath = launchJson[0].program;
+        let programPath: string = launchJson[0].program;
 
-        // ${workspaceFolder}/nested/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        checkProgramPath(rootPath, programPath, info.MsBuild.Projects[0].TargetPath);
+    });
+
+    test("Create launch.json for project opened in workspace with non-relative output path", function() {
+        if (process.platform !== "win32") {
+            this.skip();
+        }
+
+        let rootPath = path.resolve('testRoot');
+        let differentDrive = rootPath.startsWith('C:') ? 'D:' : 'C:';
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0', `${differentDrive}\\output.dll`);
+        let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
+        generator.setStartupProject(0);
+        let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
+        let programPath: string = launchJson[0].program;
+
+        checkProgramPath(rootPath, programPath, info.MsBuild.Projects[0].TargetPath);
     });
 
     test("Create launch.json for Blazor web assembly standalone project opened in workspace", () => {
         const rootPath = path.resolve('testRoot');
-        const info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netstandard2.1', /*isExe*/ true, /*isWebProject*/ true, /*isBlazorWebAssemblyStandalone*/ true);
+        const info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netstandard2.1', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true, /*isBlazorWebAssemblyStandalone*/ true);
         const generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         const launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.BlazorWebAssemblyStandalone), undefined, { disallowComments: true });
@@ -161,7 +159,7 @@ suite("Asset generation: csproj", () => {
 
     test("Create launch.json for nested Blazor web assembly standalone project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netstandard2.1', /*isExe*/ true, /*isWebProject*/ true, /*isBlazorWebAssemblyStandalone*/ true);
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netstandard2.1', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true, /*isBlazorWebAssemblyStandalone*/ true);
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.BlazorWebAssemblyStandalone), undefined, { disallowComments: true });
@@ -173,62 +171,58 @@ suite("Asset generation: csproj", () => {
 
     test("Create launch.json for Blazor web assembly hosted project opened in workspace", () => {
         const rootPath = path.resolve('testRoot');
-        const info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp3.0', /*isExe*/ true, /*isWebProject*/ true, /*isBlazorWebAssemblyStandalone*/ false, /*isBlazorWebAssemblyHosted*/ true);
+        const info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp3.0', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true, /*isBlazorWebAssemblyStandalone*/ false, /*isBlazorWebAssemblyHosted*/ true);
         const generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         const launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.BlazorWebAssemblyHosted), undefined, { disallowComments: true });
         const hostedBlazorLaunchConfig = launchJson[0];
-        const programPath = hostedBlazorLaunchConfig.program;
+        const programPath: string = hostedBlazorLaunchConfig.program;
         const cwd = hostedBlazorLaunchConfig.cwd;
         const hosted = hostedBlazorLaunchConfig.hosted;
 
-        let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp3.0', 'testApp.dll']);
+        checkProgramPath(rootPath, programPath, info.MsBuild.Projects[0].TargetPath);
+
         cwd.should.equal('${workspaceFolder}');
         hosted.should.equal(true);
     });
 
     test("Create launch.json for nested Blazor web assembly hosted project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp3.0', /*isExe*/ true, /*isWebProject*/ true, /*isBlazorWebAssemblyStandalone*/ false, /*isBlazorWebAssemblyHosted*/ true);
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp3.0', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true, /*isBlazorWebAssemblyStandalone*/ false, /*isBlazorWebAssemblyHosted*/ true);
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.BlazorWebAssemblyHosted), undefined, { disallowComments: true });
         const hostedBlazorLaunchConfig = launchJson[0];
-        const programPath = hostedBlazorLaunchConfig.program;
+        const programPath: string = hostedBlazorLaunchConfig.program;
         const cwd = hostedBlazorLaunchConfig.cwd;
         const hosted = hostedBlazorLaunchConfig.hosted;
 
-        let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp3.0', 'testApp.dll']);
+        checkProgramPath(rootPath, programPath, info.MsBuild.Projects[0].TargetPath);
+
         cwd.should.equal('${workspaceFolder}/nested');
         hosted.should.equal(true);
     });
 
     test("Create launch.json for web project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*isExe*/ true, /*isWebProject*/ true);
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true);
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Web), undefined, { disallowComments: true });
-        let programPath = launchJson[0].program;
+        let programPath: string = launchJson[0].program;
 
-        // ${workspaceFolder}/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        checkProgramPath(rootPath, programPath, info.MsBuild.Projects[0].TargetPath);
     });
 
     test("Create launch.json for nested web project opened in workspace", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*isExe*/ true, /*isWebProject*/ true);
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'nested', 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true);
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Web), undefined, { disallowComments: true });
-        let programPath = launchJson[0].program;
+        let programPath: string = launchJson[0].program;
 
-        // ${workspaceFolder}/nested/bin/Debug/netcoreapp1.0/testApp.dll
-        let segments = programPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'bin', 'Debug', 'netcoreapp1.0', 'testApp.dll']);
+        checkProgramPath(rootPath, programPath, info.MsBuild.Projects[0].TargetPath);
     });
 
     test("Add a new item to JSON", () => {
@@ -313,7 +307,7 @@ suite("Asset generation: csproj", () => {
 
     test("createLaunchJsonConfigurationsArray removes comments", () => {
         let rootPath = path.resolve('testRoot');
-        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*isExe*/ true, /*isWebProject*/ true);
+        let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true);
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let launchConfigurations: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(ProgramLaunchType.Web);
@@ -330,6 +324,15 @@ suite("Asset generation: csproj", () => {
     });
 });
 
+function checkProgramPath(rootPath: string, programPath: string, targetPath: string): void {
+    if (path.relative(rootPath, targetPath) !== targetPath) {
+        programPath.should.startWith('${workspaceFolder}/');
+        programPath.should.equal(targetPath.replace(rootPath, '${workspaceFolder}').replaceAll(path.win32.sep, path.posix.sep));
+    } else {
+        programPath.should.equal(targetPath.replaceAll(path.win32.sep, path.posix.sep));
+    }
+}
+
 function createMockWorkspaceFolder(rootPath: string): vscode.WorkspaceFolder {
     return {
         uri: vscode.Uri.file(rootPath),
@@ -338,7 +341,7 @@ function createMockWorkspaceFolder(rootPath: string): vscode.WorkspaceFolder {
     };
 }
 
-function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: string, targetFrameworkShortName: string, isExe: boolean = true, isWebProject: boolean = false, isBlazorWebAssemblyStandalone: boolean = false, isBlazorWebAssemblyHosted: boolean = false): protocol.WorkspaceInformationResponse {
+function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: string, targetFrameworkShortName: string, targetPath: string = undefined, isExe: boolean = true, isWebProject: boolean = false, isBlazorWebAssemblyStandalone: boolean = false, isBlazorWebAssemblyHosted: boolean = false): protocol.WorkspaceInformationResponse {
     return {
         MsBuild: {
             SolutionPath: '',
@@ -347,7 +350,7 @@ function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: st
                     ProjectGuid: '',
                     Path: projectPath,
                     AssemblyName: assemblyName,
-                    TargetPath: '',
+                    TargetPath: targetPath ?? path.join(path.dirname(projectPath), 'bin', 'Debug', new Date().getTime().toString(), targetFrameworkShortName, `${assemblyName}.dll`),
                     TargetFramework: '',
                     SourceFiles: [],
                     TargetFrameworks: [

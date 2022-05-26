@@ -5,7 +5,7 @@
 
 import * as fs from 'fs-extra';
 import * as jsonc from 'jsonc-parser';
-import { FormattingOptions, ModificationOptions } from 'jsonc-parser'; 
+import { FormattingOptions, ModificationOptions } from 'jsonc-parser';
 import * as os from 'os';
 import * as path from 'path';
 import * as protocol from './omnisharp/protocol';
@@ -156,17 +156,18 @@ export class AssetGenerator {
         return ProgramLaunchType.Console;
     }
 
-    private computeProgramPath() {
+    private computeProgramPath(): string {
         if (!this.startupProject) {
             throw new Error("Startup project not set");
         }
 
-        const startupProjectDir = path.dirname(this.startupProject.Path);
-        const relativeProjectDir = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
-        const configurationName = 'Debug';
-        const targetFramework = protocol.findNetCoreTargetFramework(this.startupProject);
-        const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework.ShortName}/${this.startupProject.AssemblyName}.dll`);
-        return result;
+        const relativeTargetPath = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.TargetPath);
+        if (relativeTargetPath === this.startupProject.TargetPath) {
+            // This can happen if, for example, the workspace folder and the target path
+            // are on completely different drives.
+            return this.startupProject.TargetPath;
+        }
+        return path.join('${workspaceFolder}', relativeTargetPath);
     }
 
     private computeWorkingDirectory(): string {
@@ -174,9 +175,10 @@ export class AssetGenerator {
             throw new Error("Startup project not set");
         }
 
-        const startupProjectDir = path.dirname(this.startupProject.Path);
-
-        return path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
+        // Startup project will always be a child of the workspace folder,
+        // so the special check above isn't necessary.
+        const relativeProjectPath = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.Path);
+        return path.join('${workspaceFolder}', path.dirname(relativeProjectPath));
     }
 
     public createLaunchJsonConfigurationsArray(programLaunchType: ProgramLaunchType): vscode.DebugConfiguration[] {
@@ -583,8 +585,8 @@ function getBuildAssetsNotificationSetting() {
     return csharpConfig.get<boolean>('supressBuildAssetsNotification');
 }
 
-export function getFormattingOptions(): FormattingOptions { 
-    const editorConfig = vscode.workspace.getConfiguration('editor'); 
+export function getFormattingOptions(): FormattingOptions {
+    const editorConfig = vscode.workspace.getConfiguration('editor');
 
     const tabSize = editorConfig.get<number>('tabSize') ?? 4;
     const insertSpaces = editorConfig.get<boolean>('insertSpaces') ?? true;
@@ -609,7 +611,7 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
         }
 
         const formattingOptions = getFormattingOptions();
-        
+
         const tasksJson = generator.createTasksConfiguration();
 
         let text: string;
@@ -622,7 +624,7 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
         else {
             // when tasks.json exists just update the tasks node
             const ourConfigs = tasksJson.tasks;
-            const content = fs.readFileSync(generator.tasksJsonPath).toString(); 
+            const content = fs.readFileSync(generator.tasksJsonPath).toString();
             const updatedJson = updateJsonWithComments(content, ourConfigs, 'tasks', 'label', formattingOptions);
             text = updatedJson;
         }
@@ -659,7 +661,7 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
             }`;
 
             text = jsonc.applyEdits(launchJsonText, jsonc.format(launchJsonText, null, formattingOptions));
-        } 
+        }
         else {
             // when launch.json exists replace or append our configurations
             const ourConfigs = jsonc.parse(launchJsonConfigurations);
@@ -751,18 +753,18 @@ async function getExistingAssets(generator: AssetGenerator) {
             assets = assets.concat(tasks);
         }
 
-        if(fs.pathExistsSync(generator.launchJsonPath)) { 
+        if(fs.pathExistsSync(generator.launchJsonPath)) {
             const content = fs.readFileSync(generator.launchJsonPath).toString();
             let configurationNames = [
-                ".NET Core Launch (console)", 
+                ".NET Core Launch (console)",
                 ".NET Core Launch (web)",
                 ".NET Core Attach",
-                "Launch and Debug Standalone Blazor WebAssembly App", 
+                "Launch and Debug Standalone Blazor WebAssembly App",
             ];
             const configurations = jsonc.parse(content)?.configurations?.
                 map((t: { name: string; }) => t.name).
                 filter((n: string) => configurationNames.includes(n));
-                
+
             assets = assets.concat(configurations);
         }
 
@@ -833,22 +835,22 @@ export function replaceCommentPropertiesWithComments(text: string) {
     // replacing dummy properties OS-COMMENT with the normal comment syntax
     let regex = /["']OS-COMMENT\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
     let withComments = text.replace(regex, '// $1');
-    
+
     return withComments;
 }
 
-export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string { 
+export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string {
     let modificationOptions : ModificationOptions = {
         formattingOptions
     };
-    
+
     // parse using jsonc because there are comments
     // only use this to determine what to change
     // we will modify it as text to keep existing comments
     let parsed = jsonc.parse(text);
     let items = parsed[nodeName];
     let itemKeys : string[] = items.map((i: { [x: string]: string; }) => i[keyName]);
-    
+
     let modified = text;
     // count how many items we inserted to ensure we are putting items at the end
     // in the same order as they are in the replacements array
@@ -866,6 +868,6 @@ export function updateJsonWithComments(text: string, replacements: any[], nodeNa
         // changes one by one
         modified = updated;
     });
-    
+
     return replaceCommentPropertiesWithComments(modified);
 }
