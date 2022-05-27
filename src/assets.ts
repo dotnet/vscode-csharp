@@ -52,35 +52,30 @@ export class AssetGenerator {
             throw new Error("No executable projects");
         }
 
+        if (selectedIndex !== undefined) {
+            this.startupProject = this.executableProjects[selectedIndex];
+            return true;
+        }
+
         if (this.executableProjects.length === 1) {
             this.startupProject = this.executableProjects[0];
             return true;
         } else {
-            const mapItemNameToProject: { [key: string]: protocol.MSBuildProject } = {};
-            const itemNames: string[] = [];
+            const items = this.executableProjects.map(project => ({
+                label: `${path.basename(project.Path, ".csproj")} (${project.Path})`,
+                project,
+            }));
 
-            this.executableProjects.forEach(project => {
-                const itemName = `${path.basename(project.Path, ".csproj")} (${project.Path})`;
-                itemNames.push(itemName);
-                mapItemNameToProject[itemName] = project;
+            const selectedItem = await vscode.window.showQuickPick(items, {
+                matchOnDescription: true,
+                placeHolder: "Select the project to launch"
             });
 
-            let selectedItem: string | undefined;
-            if (selectedIndex !== undefined) {
-                selectedItem = itemNames[selectedIndex];
-            }
-            else {
-                selectedItem = await vscode.window.showQuickPick(itemNames, {
-                    matchOnDescription: true,
-                    placeHolder: "Select the project to launch"
-                });
-            }
-
-            if (selectedItem === undefined || mapItemNameToProject[selectedItem] === undefined) {
+            if (selectedItem === undefined) {
                 return false;
             }
 
-            this.startupProject = mapItemNameToProject[selectedItem];
+            this.startupProject = selectedItem.project;
             return true;
         }
     }
