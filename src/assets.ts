@@ -122,28 +122,18 @@ export class AssetGenerator {
         return ProgramLaunchType.Console;
     }
 
-    private computeProgramPath() {
+    private computeProgramPath(): string {
         if (!this.startupProject) {
             throw new Error("Startup project not set");
         }
 
-        const startupProjectDir = path.dirname(this.startupProject.Path);
-        const relativeProjectDir = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
-        const configurationName = 'Debug';
-
-        // We know targetFramework is non-null for the following reasons:
-        // 1. startupProject is non-null.
-        // 2. In order for startupProject to be non-null, there must be at least one executable project.
-        // 3. For a project to be executable, it must either be .NET Core or Blazor WASM standalone.
-        // 4. This code path is not called if the project is Blazor WASM standalone.
-        // Therefore, we know that findNetCoreTargetFramework will always return a framework.
-        const targetFramework = protocol.findNetCoreTargetFramework(this.startupProject)!;
-
-        // TODO: Could we rewrite this to use this.startupPath.OutputPath, so we don't need a nullability assertion above?
-        // const relativeOutputDir = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.OutputPath);
-        // const result = path.join('${workspaceFolder}', relativeOutputDir, `${this.startupProject.AssemblyName}.dll`);
-        const result = path.join(relativeProjectDir, `bin/${configurationName}/${targetFramework.ShortName}/${this.startupProject.AssemblyName}.dll`);
-        return result;
+        const relativeTargetPath = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.TargetPath);
+        if (relativeTargetPath === this.startupProject.TargetPath) {
+            // This can happen if, for example, the workspace folder and the target path
+            // are on completely different drives.
+            return this.startupProject.TargetPath;
+        }
+        return path.join('${workspaceFolder}', relativeTargetPath);
     }
 
     private computeWorkingDirectory(): string {
@@ -151,9 +141,10 @@ export class AssetGenerator {
             throw new Error("Startup project not set");
         }
 
-        const startupProjectDir = path.dirname(this.startupProject.Path);
-
-        return path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, startupProjectDir));
+        // Startup project will always be a child of the workspace folder,
+        // so the special check above isn't necessary.
+        const relativeProjectPath = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.Path);
+        return path.join('${workspaceFolder}', path.dirname(relativeProjectPath));
     }
 
     public createLaunchJsonConfigurationsArray(programLaunchType: ProgramLaunchType): vscode.DebugConfiguration[] {

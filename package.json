@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "1.25.0",
+  "version": "1.25.1",
   "description": "C# for Visual Studio Code (powered by OmniSharp).",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -119,7 +119,7 @@
     "tslint": "5.12.1",
     "tslint-microsoft-contrib": "6.0.0",
     "tslint-no-unused-expression-chai": "0.1.4",
-    "typescript": "4.2.4",
+    "typescript": "4.6.3",
     "unzipper": "0.10.11",
     "vsce": "1.100.2",
     "webpack": "5.34.0",
