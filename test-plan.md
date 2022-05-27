@@ -480,7 +480,7 @@ Changing this option should result in a notification message at the bottom right
   This option is defaulted to `true`.
 
   When this option is set to `false` a .NET Framework build of OmniSharp is downloaded and used for language services. This setting should only be used when working with older Full Framework projects (such as Unity) and would be expected to fail when trying to load .NET SDK-style projects (.NET Core, .NET).
-  * if the option is not set, the OmniSharp log should indicate that the registered MSBuild instance is either the Standalone MSBuild, a Visual Studio MSBuild instance, or a Mono MSBuild isntance.
+  * if the option is not set, the OmniSharp log should indicate that the registered MSBuild instance is either the Standalone MSBuild, a Visual Studio MSBuild instance, or a Mono MSBuild instance.
   * if the option is set, the OmniSharp log should inlcude text like the following "OmniSharp server started with .NET 6.0.100" and "Registered MSBuild instance: .NET Core SDK 6.0.100 17.0.0 - "/usr/local/share/dotnet/sdk/6.0.100/". All language services should continue to work as expected when an SDK-style project is open.
 
   #### omnisharp.path
