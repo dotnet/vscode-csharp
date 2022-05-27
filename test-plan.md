@@ -1,5 +1,13 @@
 # Validating C# Extension for VS Code
 
+### Requirements
+- [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) or newer when `omnisharp.useModernNet` is set to `true` (the default value).
+- A Full Framework runtime and MSBuild tooling when `omnisharp.useModernNet` is set to `false`.
+  - Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+  - MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/stable/)
+
+See [OmniSharp Options](https://github.com/OmniSharp/omnisharp-vscode/blob/master/test-plan.md#omnisharpusemodernnet-all-platforms) for more details.
+
 #### Opening projects
 When you open a directory in VS Code, the C# extension should look for a .csproj, .sln, or .slnf file in that directory and use "OmniSharp" to load it. If a .cs file is present and no .csproj, .sln, or .slnf file are present, Omnisharp should start but the intellisense should only appear when a change is made to the file.
 If you look in "Output > Omnisharp Log" a bunch of information should be printed about what copy of MSBuild was used and what projects were load
@@ -469,9 +477,9 @@ Changing this option should result in a notification message at the bottom right
 #### OmniSharp Options
 
   ### omnisharp.useModernNet (all platforms)
-  This option is defaulted to `false`.
+  This option is defaulted to `true`.
 
-  When this option is set to `true` a .NET 6 build of OmniSharp is downloaded and used for language services. This setting should only be used when working with newer SDK style projects and would be expected to fail when trying to load a Full Framework projects (such as Unity projects).
+  When this option is set to `false` a .NET Framework build of OmniSharp is downloaded and used for language services. This setting should only be used when working with older Full Framework projects (such as Unity) and would be expected to fail when trying to load .NET SDK-style projects (.NET Core, .NET).
   * if the option is not set, the OmniSharp log should indicate that the registered MSBuild instance is either the Standalone MSBuild, a Visual Studio MSBuild instance, or a Mono MSBuild isntance.
   * if the option is set, the OmniSharp log should inlcude text like the following "OmniSharp server started with .NET 6.0.100" and "Registered MSBuild instance: .NET Core SDK 6.0.100 17.0.0 - "/usr/local/share/dotnet/sdk/6.0.100/". All language services should continue to work as expected when an SDK-style project is open.
 
