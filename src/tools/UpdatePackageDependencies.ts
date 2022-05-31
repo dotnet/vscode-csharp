@@ -61,7 +61,7 @@ export async function updatePackageDependencies(): Promise<void> {
                 break;
         }
     });
-    const networkSettingsProvider: NetworkSettingsProvider = () => new NetworkSettings(/*proxy:*/ null, /*stringSSL:*/ true);
+    const networkSettingsProvider: NetworkSettingsProvider = () => new NetworkSettings(/*proxy:*/ '', /*stringSSL:*/ true);
 
     const downloadAndGetHash = async (url: string): Promise<string> => {
         console.log(`Downloading from '${url}'`);

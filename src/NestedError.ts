@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 export class NestedError extends Error {
-    constructor(public message: string, public err: Error = null) {
+    constructor(public message: string, public err?: Error) {
         super(message);
     }
 }

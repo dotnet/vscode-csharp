@@ -18,68 +18,33 @@ import { OmniSharpServer } from './omnisharp/server';
 import { tolerantParse } from './json';
 
 export class AssetGenerator {
-    public workspaceFolder: vscode.WorkspaceFolder;
     public vscodeFolder: string;
     public tasksJsonPath: string;
     public launchJsonPath: string;
 
-    private executeableProjects: protocol.MSBuildProject[];
+    private executableProjects: protocol.MSBuildProject[] = [];
     private startupProject: protocol.MSBuildProject | undefined;
-    private fallbackBuildProject: protocol.MSBuildProject;
+    private fallbackBuildProject: protocol.MSBuildProject | undefined;
 
-    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, workspaceFolder: vscode.WorkspaceFolder = undefined) {
-        if (workspaceFolder) {
-            this.workspaceFolder = workspaceFolder;
-        }
-        else {
-            let resourcePath: string = undefined;
-
-            if (!resourcePath && workspaceInfo.Cake) {
-                resourcePath = workspaceInfo.Cake.Path;
-            }
-
-            if (!resourcePath && workspaceInfo.ScriptCs) {
-                resourcePath = workspaceInfo.ScriptCs.Path;
-            }
-
-            if (!resourcePath && workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
-                resourcePath = workspaceInfo.DotNet.Projects[0].Path;
-            }
-
-            if (!resourcePath && workspaceInfo.MsBuild) {
-                resourcePath = workspaceInfo.MsBuild.SolutionPath;
-            }
-
-            this.workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
-        }
-
+    public constructor(workspaceInfo: protocol.WorkspaceInformationResponse, private workspaceFolder: vscode.WorkspaceFolder) {
         this.vscodeFolder = path.join(this.workspaceFolder.uri.fsPath, '.vscode');
         this.tasksJsonPath = path.join(this.vscodeFolder, 'tasks.json');
         this.launchJsonPath = path.join(this.vscodeFolder, 'launch.json');
 
-        this.startupProject = undefined;
-        this.fallbackBuildProject = undefined;
-
-        if (workspaceInfo.MsBuild && workspaceInfo.MsBuild.Projects.length > 0) {
-            this.executeableProjects = protocol.findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
-            if (this.executeableProjects.length === 0) {
+        if (workspaceInfo.MsBuild !== undefined && workspaceInfo.MsBuild.Projects.length > 0) {
+            this.executableProjects = protocol.findExecutableMSBuildProjects(workspaceInfo.MsBuild.Projects);
+            if (this.executableProjects.length === 0) {
                 this.fallbackBuildProject = workspaceInfo.MsBuild.Projects[0];
             }
-        } else {
-            this.executeableProjects = [];
         }
     }
 
     public hasExecutableProjects(): boolean {
-        return this.executeableProjects.length > 0;
+        return this.executableProjects.length > 0;
     }
 
     public isStartupProjectSelected(): boolean {
-        if (this.startupProject) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.startupProject !== undefined;
     }
 
     public async selectStartupProject(selectedIndex?: number): Promise<boolean> {
@@ -87,45 +52,41 @@ export class AssetGenerator {
             throw new Error("No executable projects");
         }
 
-        if (this.executeableProjects.length === 1) {
-            this.startupProject = this.executeableProjects[0];
+        if (selectedIndex !== undefined) {
+            this.startupProject = this.executableProjects[selectedIndex];
+            return true;
+        }
+
+        if (this.executableProjects.length === 1) {
+            this.startupProject = this.executableProjects[0];
             return true;
         } else {
-            const mapItemNameToProject: { [key: string]: protocol.MSBuildProject } = {};
-            const itemNames: string[] = [];
+            const items = this.executableProjects.map(project => ({
+                label: `${path.basename(project.Path, ".csproj")} (${project.Path})`,
+                project,
+            }));
 
-            this.executeableProjects.forEach(project => {
-                const itemName = `${path.basename(project.Path, ".csproj")} (${project.Path})`;
-                itemNames.push(itemName);
-                mapItemNameToProject[itemName] = project;
+            const selectedItem = await vscode.window.showQuickPick(items, {
+                matchOnDescription: true,
+                placeHolder: "Select the project to launch"
             });
 
-            let selectedItem: string;
-            if (selectedIndex != null) {
-                selectedItem = itemNames[selectedIndex];
-            }
-            else {
-                selectedItem = await vscode.window.showQuickPick(itemNames, {
-                    matchOnDescription: true,
-                    placeHolder: "Select the project to launch"
-                });
-            }
-            if (!selectedItem || !mapItemNameToProject[selectedItem]) {
+            if (selectedItem === undefined) {
                 return false;
             }
 
-            this.startupProject = mapItemNameToProject[selectedItem];
+            this.startupProject = selectedItem.project;
             return true;
         }
     }
 
     // This method is used by the unit tests instead of selectStartupProject
     public setStartupProject(index: number): void {
-        if (index >= this.executeableProjects.length) {
+        if (index >= this.executableProjects.length) {
             throw new Error("Invalid project index");
         }
 
-        this.startupProject = this.executeableProjects[index];
+        this.startupProject = this.executableProjects[index];
     }
 
     public hasWebServerDependency(): boolean {
@@ -465,9 +426,9 @@ async function getOperations(generator: AssetGenerator): Promise<AssetOperations
 function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskDescription[] {
     let result: tasks.TaskDescription[] = [];
 
-    function findBuildTask(version: string, tasksDescriptions: tasks.TaskDescription[]) {
+    function findBuildTask(tasksDescriptions: tasks.TaskDescription[] | undefined) {
         let buildTask = undefined;
-        if (tasksDescriptions) {
+        if (tasksDescriptions !== undefined) {
             buildTask = tasksDescriptions.find(td => td.group === 'build');
         }
 
@@ -476,18 +437,18 @@ function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskD
         }
     }
 
-    findBuildTask(tasksConfiguration.version, tasksConfiguration.tasks);
+    findBuildTask(tasksConfiguration.tasks);
 
     if (tasksConfiguration.windows) {
-        findBuildTask(tasksConfiguration.version, tasksConfiguration.windows.tasks);
+        findBuildTask(tasksConfiguration.windows.tasks);
     }
 
     if (tasksConfiguration.osx) {
-        findBuildTask(tasksConfiguration.version, tasksConfiguration.osx.tasks);
+        findBuildTask(tasksConfiguration.osx.tasks);
     }
 
     if (tasksConfiguration.linux) {
-        findBuildTask(tasksConfiguration.version, tasksConfiguration.linux.tasks);
+        findBuildTask(tasksConfiguration.linux.tasks);
     }
 
     return result;
@@ -618,13 +579,13 @@ export async function addTasksJsonIfNecessary(generator: AssetGenerator, operati
         if (!fs.pathExistsSync(generator.tasksJsonPath)) {
             // when tasks.json does not exist create it and write all the content directly
             const tasksJsonText = JSON.stringify(tasksJson);
-            const tasksJsonTextFormatted = jsonc.applyEdits(tasksJsonText, jsonc.format(tasksJsonText, null, formattingOptions));
+            const tasksJsonTextFormatted = jsonc.applyEdits(tasksJsonText, jsonc.format(tasksJsonText, undefined, formattingOptions));
             text = tasksJsonTextFormatted;
         }
         else {
             // when tasks.json exists just update the tasks node
-            const ourConfigs = tasksJson.tasks;
-            const content = fs.readFileSync(generator.tasksJsonPath).toString();
+            const ourConfigs = tasksJson.tasks ?? [];
+            const content = fs.readFileSync(generator.tasksJsonPath, { encoding: 'utf8' });
             const updatedJson = updateJsonWithComments(content, ourConfigs, 'tasks', 'label', formattingOptions);
             text = updatedJson;
         }
@@ -660,12 +621,12 @@ async function addLaunchJsonIfNecessary(generator: AssetGenerator, operations: A
                 "configurations": ${configurationsMassaged}
             }`;
 
-            text = jsonc.applyEdits(launchJsonText, jsonc.format(launchJsonText, null, formattingOptions));
+            text = jsonc.applyEdits(launchJsonText, jsonc.format(launchJsonText, undefined, formattingOptions));
         }
         else {
             // when launch.json exists replace or append our configurations
-            const ourConfigs = jsonc.parse(launchJsonConfigurations);
-            const content = fs.readFileSync(generator.launchJsonPath).toString();
+            const ourConfigs = jsonc.parse(launchJsonConfigurations) ?? [];
+            const content = fs.readFileSync(generator.launchJsonPath, { encoding: 'utf8' });
             const updatedJson = updateJsonWithComments(content, ourConfigs, 'configurations', 'name', formattingOptions);
             text = updatedJson;
         }
@@ -711,7 +672,21 @@ export async function addAssetsIfNecessary(server: OmniSharpServer): Promise<Add
         }
 
         serverUtils.requestWorkspaceInformation(server).then(async info => {
-            const generator = new AssetGenerator(info);
+            const resourcePath = info.Cake?.Path ??
+                info.ScriptCs?.Path ??
+                info.DotNet?.Projects?.[0].Path ??
+                info.MsBuild?.SolutionPath;
+            if (resourcePath === undefined) {
+                // This shouldn't happen, but it's a cheap check.
+                return resolve(AddAssetResult.NotApplicable);
+            }
+
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
+            if (workspaceFolder === undefined) {
+                return resolve(AddAssetResult.NotApplicable);
+            }
+
+            const generator = new AssetGenerator(info, workspaceFolder);
             // If there aren't executable projects, we will not prompt
             if (generator.hasExecutableProjects()) {
                 return getOperations(generator).then(operations => {
@@ -719,7 +694,7 @@ export async function addAssetsIfNecessary(server: OmniSharpServer): Promise<Add
                         return resolve(AddAssetResult.NotApplicable);
                     }
 
-                    promptToAddAssets(generator.workspaceFolder).then(result => {
+                    promptToAddAssets(workspaceFolder).then(result => {
                         if (result === PromptResult.Disable) {
                             return resolve(AddAssetResult.Disable);
                         }
@@ -775,7 +750,7 @@ async function getExistingAssets(generator: AssetGenerator) {
 async function shouldGenerateAssets(generator: AssetGenerator): Promise<Boolean> {
     return new Promise<Boolean>((resolve, reject) => {
         getExistingAssets(generator).then(res => {
-            if (res && res.length) {
+            if (res.length > 0) {
                 const yesItem = { title: 'Yes' };
                 const cancelItem = { title: 'Cancel', isCloseAffordance: true };
                 vscode.window.showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
@@ -802,7 +777,13 @@ export async function generateAssets(server: OmniSharpServer, selectedIndex?: nu
     try {
         let workspaceInformation = await serverUtils.requestWorkspaceInformation(server);
         if (workspaceInformation.MsBuild && workspaceInformation.MsBuild.Projects.length > 0) {
-            const generator = new AssetGenerator(workspaceInformation);
+            const resourcePath = workspaceInformation.MsBuild.SolutionPath;
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(resourcePath));
+            if (workspaceFolder === undefined) {
+                return;
+            }
+
+            const generator = new AssetGenerator(workspaceInformation, workspaceFolder);
             let doGenerateAssets = await shouldGenerateAssets(generator);
             if (!doGenerateAssets) {
                 return; // user cancelled
