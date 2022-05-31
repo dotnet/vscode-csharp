@@ -9,6 +9,13 @@ Welcome to the C# extension for Visual Studio Code! This extension provides the 
 
 The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn).
 
+### Requirements
+
+- [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) or newer when `omnisharp.useModernNet` is set to `true` (the default value).
+- A Full Framework runtime and MSBuild tooling when `omnisharp.useModernNet` is set to `false`.
+  - Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+  - MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/preview/)
+
 ### Get Started Writing C# in VS Code
 
 * [Documentation](https://code.visualstudio.com/docs/languages/csharp)
@@ -20,7 +27,7 @@ The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnishar
 
 .NET Framework builds of OmniSharp no longer ship with Mono or the MSBuild tooling (See announcement [omnisharp-roslyn#2339](https://github.com/OmniSharp/omnisharp-roslyn/issues/2339)). To ensure that the C# extension remains usable out of the box for .NET SDK projects, we have changed the default value of `omnisharp.useModernNet` to `true`.
 
-If you still need Unity or .NET Framework support, you can set `omnisharp.useModernNet` to `false` in your VS Code settings and restart OmniSharp.
+If you still need Unity or .NET Framework support, you can set `omnisharp.useModernNet` to `false` in your VS Code settings and restart OmniSharp. Please see the [Requirements](https://github.com/OmniSharp/omnisharp-vscode#requirements) to ensure necessary tooling is installed.
 
 See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
 
