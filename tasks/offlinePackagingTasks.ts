@@ -104,7 +104,7 @@ async function install(platformInfo: PlatformInformation, packageJSON: any, isFr
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
         .filter(dep => dep.isFramework === undefined || dep.isFramework === isFramework);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
-    let provider = () => new NetworkSettings(undefined, undefined);
+    let provider = () => new NetworkSettings('', undefined);
     if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, isFramework))) {
         throw Error("Failed to download package.");
     }

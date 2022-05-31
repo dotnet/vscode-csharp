@@ -24,7 +24,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
     let installDependencies: IInstallDependencies;
     let eventStream: EventStream;
     let eventBus: TestEventBus;
-    let platformInfo = new PlatformInformation("platform1", "architecture1");
+    let platformInfo = new PlatformInformation("linux", "architecture1");
     const useFramework = true;
 
     setup(() => {

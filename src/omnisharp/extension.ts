@@ -136,13 +136,12 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, packageJSON, extensionPath));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
-        disposables.add(server.onServerStart(() => {
+        disposables.add(server.onServerStart(async () => {
             // Update or add tasks.json and launch.json
-            addAssetsIfNecessary(server).then(result => {
-                if (result === AddAssetResult.Disable) {
-                    context.workspaceState.update('assetPromptDisabled', true);
-                }
-            });
+            const result = await addAssetsIfNecessary(server);
+            if (result === AddAssetResult.Disable) {
+                context.workspaceState.update('assetPromptDisabled', true);
+            }
         }));
     }
 

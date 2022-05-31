@@ -211,6 +211,6 @@ suite(OmnisharpManager.name, () => {
 });
 
 function GetTestOmniSharpManager(platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string): OmnisharpManager {
-    let downloader = new OmnisharpDownloader(() => new NetworkSettings(undefined, false), eventStream, testPackageJSON, platformInfo, extensionPath);
+    let downloader = new OmnisharpDownloader(() => new NetworkSettings('', false), eventStream, testPackageJSON, platformInfo, extensionPath);
     return new OmnisharpManager(downloader, platformInfo);
 }

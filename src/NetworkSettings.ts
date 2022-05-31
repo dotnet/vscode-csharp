@@ -17,7 +17,7 @@ export interface NetworkSettingsProvider {
 export function vscodeNetworkSettingsProvider(vscode: vscode): NetworkSettingsProvider {
     return () => {
         const config = vscode.workspace.getConfiguration();
-        const proxy = config.get<string>('http.proxy');
+        const proxy = config.get<string>('http.proxy', '');
         const strictSSL = config.get('http.proxyStrictSSL', true);
         return new NetworkSettings(proxy, strictSSL);
     };
