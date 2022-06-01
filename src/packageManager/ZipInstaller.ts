@@ -17,7 +17,7 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
 
     return new Promise<void>((resolve, reject) => {
         yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipFile) => {
-            if (err) {
+            if (err !== null) {
                 let message = "C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking";
                 eventStream.post(new ZipError(message));
                 return reject(new NestedError(message));
@@ -35,7 +35,8 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
                         zipFile.readEntry();
                     }
                     catch (err) {
-                        return reject(new NestedError('Error creating directory for zip directory entry:' + err?.code || '', err));
+                        const error = err as NodeJS.ErrnoException; // Hack for TypeScript to type err correctly
+                        return reject(new NestedError('Error creating directory for zip directory entry:' + error.code ?? '', error));
                     }
                 }
                 else {
@@ -59,7 +60,7 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
                             readStream.on('end', () => zipFile.readEntry());
                         }
                         catch (err) {
-                            return reject(new NestedError('Error creating directory for zip file entry', err));
+                            return reject(new NestedError('Error creating directory for zip file entry', err as NodeJS.ErrnoException));
                         }
                     });
                 }
@@ -75,4 +76,3 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
         });
     });
 }
-
