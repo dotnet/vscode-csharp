@@ -133,8 +133,9 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
         });
 
         test('Returns experiment packages with install test path depending on install path and version', () => {
-            let inputPackages = <Package[]>[
+            let inputPackages: Package[] = [
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for Windows (.NET 4.7.2 / x64)",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
@@ -150,6 +151,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     isFramework: useFramework
                 },
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for Windows (.NET 4.7.2 / x64)",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
@@ -165,12 +167,16 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     isFramework: !useFramework
                 },
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for OSX",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
                     installPath: ".omnisharp",
                     platforms: [
                         "darwin"
+                    ],
+                    architectures: [
+                        "x86_64"
                     ],
                     binaries: [
                         "./mono.osx",
@@ -191,8 +197,9 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
 
         test('Returns only omnisharp packages with experimentalIds', () => {
             let version = "0.0.0";
-            let inputPackages = <Package[]>[
+            let inputPackages: Package[] = [
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for Windows (.NET 4.7.2 / x64)",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
@@ -208,6 +215,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     isFramework: useFramework
                 },
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for Windows (.NET 4.7.2 / x64)",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
@@ -223,12 +231,16 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     isFramework: !useFramework
                 },
                 {
+                    id: "OmniSharp",
                     description: "Some other package - no experimental id",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
                     installPath: ".omnisharp",
                     platforms: [
                         "darwin"
+                    ],
+                    architectures: [
+                        "x86_64"
                     ],
                     binaries: [
                         "./mono.osx",
