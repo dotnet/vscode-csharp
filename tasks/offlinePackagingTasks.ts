@@ -73,9 +73,10 @@ async function doPackageOffline() {
             await doOfflinePackage(p.platformInfo, p.id, p.isFramework, packageJSON, packedVsixOutputRoot);
         }
         catch (err) {
+            const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
             // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
             // stack trace of this line. So that seperates the two stack traces.
-            throw Error(`Failed to create package ${p.id}. ${err.stack ?? err ?? '<unknown error>'}\n---`);
+            throw Error(`Failed to create package ${p.id}. ${message}\n---`);
         }
     }
 }

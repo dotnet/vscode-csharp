@@ -23,7 +23,7 @@ export default async function spawnNode(args?: string[], options?: SpawnSyncOpti
         stdio: "inherit"
     };
 
-    console.log(`starting ${nodePath} ${args.join(' ')}`);
+    console.log(`starting ${nodePath} ${args ? args.join(' ') : ''}`);
 
     const buffer = spawnSync(nodePath, args, optionsWithFullEnvironment);
 
