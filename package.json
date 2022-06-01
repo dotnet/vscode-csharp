@@ -91,7 +91,7 @@
     "@types/gulp": "4.0.5",
     "@types/minimist": "1.2.1",
     "@types/mocha": "5.2.5",
-    "@types/node": "10.12.24",
+    "@types/node": "16.11.38",
     "@types/semver": "5.5.0",
     "@types/tmp": "0.0.33",
     "@types/unzipper": "^0.9.1",

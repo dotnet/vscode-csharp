@@ -26,7 +26,7 @@ export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean
     }
 
     const proxyEndpoint = parseUrl(proxyURL);
-    if (proxyEndpoint.protocol === undefined) {
+    if (proxyEndpoint.protocol === null) {
         return undefined;
     }
 
