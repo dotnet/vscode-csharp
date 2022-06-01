@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as https from 'https';
-import * as util from '../common';
 import { EventStream } from "../EventStream";
 import { DownloadSuccess, DownloadStart, DownloadFallBack, DownloadFailure, DownloadProgress, DownloadSizeObtained } from "../omnisharp/loggingEvents";
 import { NestedError } from "../NestedError";
@@ -51,7 +50,7 @@ async function downloadFile(description: string, urlString: string, eventStream:
         path: url.path,
         agent: getProxyAgent(url, proxy, strictSSL),
         port: url.port,
-        rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
+        rejectUnauthorized: strictSSL,
     };
 
     let buffers: any[] = [];
