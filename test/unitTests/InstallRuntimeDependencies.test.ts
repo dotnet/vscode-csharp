@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { installRuntimeDependencies } from "../../src/InstallRuntimeDependencies";
 import IInstallDependencies from "../../src/packageManager/IInstallDependencies";
 import { EventStream } from "../../src/EventStream";
@@ -17,7 +16,7 @@ const expect = chai.expect;
 
 suite(`${installRuntimeDependencies.name}`, () => {
     let packageJSON = {
-        runtimeDependencies: {}
+        runtimeDependencies: [] as Package[]
     };
 
     let extensionPath = "/ExtensionPath";
@@ -36,7 +35,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
     suite("When all the dependencies already exist", () => {
         suiteSetup(() => {
             packageJSON = {
-                runtimeDependencies: {}
+                runtimeDependencies: []
             };
         });
 
@@ -46,8 +45,8 @@ suite(`${installRuntimeDependencies.name}`, () => {
         });
 
         test("Doesn't log anything to the eventStream", async () => {
-            let packageJSON = {
-                runtimeDependencies: {}
+            packageJSON = {
+                runtimeDependencies: []
             };
 
             await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
