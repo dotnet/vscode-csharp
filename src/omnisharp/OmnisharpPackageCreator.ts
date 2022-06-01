@@ -8,13 +8,9 @@ import { Package } from "../packageManager/Package";
 export const modernNetVersion = "6.0";
 
 export function GetPackagesFromVersion(version: string, useFramework: boolean, runTimeDependencies: Package[], serverUrl: string, installPath: string): Package[] {
-    if (!version) {
-        throw new Error('Invalid version');
-    }
-
-    let versionPackages = new Array<Package>();
-    for (let inputPackage of runTimeDependencies) {
-        if (inputPackage.platformId && inputPackage.isFramework === useFramework) {
+    const versionPackages: Package[] = [];
+    for (const inputPackage of runTimeDependencies) {
+        if (inputPackage.platformId !== undefined && inputPackage.isFramework === useFramework) {
             versionPackages.push(SetBinaryAndGetPackage(inputPackage, useFramework, serverUrl, version, installPath));
         }
     }
@@ -60,4 +56,3 @@ function GetPackage(inputPackage: Package, useFramework: boolean, serverUrl: str
 
     return versionPackage;
 }
-
