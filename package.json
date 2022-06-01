@@ -230,6 +230,9 @@
       "platforms": [
         "darwin"
       ],
+      "architectures": [
+        "x86_64"
+      ],
       "binaries": [
         "./mono.osx",
         "./run"
