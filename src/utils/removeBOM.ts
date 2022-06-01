@@ -7,7 +7,7 @@ import removeBomBuffer = require("strip-bom-buf");
 import removeBomString from "strip-bom";
 
 export function removeBOMFromBuffer(buffer: Buffer): Buffer {
-    return <Buffer>removeBomBuffer(buffer);
+    return removeBomBuffer(buffer);
 }
 
 export function removeBOMFromString(line: string): string {
