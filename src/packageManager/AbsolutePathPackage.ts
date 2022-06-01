@@ -14,7 +14,7 @@ export class AbsolutePathPackage implements IPackage {
         public platforms: string[],
         public architectures: string[],
         public binaries: AbsolutePath[],
-        public installPath?: AbsolutePath,
+        public installPath: AbsolutePath,
         public installTestPath?: AbsolutePath,
         public fallbackUrl?: string,
         public platformId?: string,
@@ -58,7 +58,7 @@ function getAbsoluteBinaries(pkg: Package, extensionPath: string): AbsolutePath[
 }
 
 function getAbsoluteInstallPath(pkg: Package, extensionPath: string): AbsolutePath {
-    if (pkg.installPath) {
+    if (pkg.installPath !== undefined) {
         return AbsolutePath.getAbsolutePath(extensionPath, pkg.installPath);
     }
 
