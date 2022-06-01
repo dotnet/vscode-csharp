@@ -12,7 +12,7 @@ import { InstallationStart, ZipError } from "../omnisharp/loggingEvents";
 import { NestedError } from '../NestedError';
 import { AbsolutePath } from './AbsolutePath';
 
-export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: AbsolutePath, binaries: AbsolutePath[], eventStream: EventStream): Promise<void> {
+export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: AbsolutePath, binaries: AbsolutePath[] | undefined, eventStream: EventStream): Promise<void> {
     eventStream.post(new InstallationStart(description));
 
     return new Promise<void>((resolve, reject) => {
@@ -49,12 +49,9 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
                         try {
                             await mkdirp(path.dirname(absoluteEntryPath), 0o775);
 
-                            let binaryPaths = binaries && binaries.map(binary => binary.value);
-
                             // Make sure executable files have correct permissions when extracted
-                            let fileMode = binaryPaths && binaryPaths.indexOf(absoluteEntryPath) !== -1
-                                ? 0o755
-                                : 0o664;
+                            const binaryPaths = binaries?.map(binary => binary.value);
+                            const fileMode = binaryPaths?.includes(absoluteEntryPath) ? 0o755 : 0o664;
 
                             readStream.pipe(fs.createWriteStream(absoluteEntryPath, { mode: fileMode }));
                             readStream.on('end', () => zipFile.readEntry());
