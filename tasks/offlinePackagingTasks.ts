@@ -73,9 +73,10 @@ async function doPackageOffline() {
             await doOfflinePackage(p.platformInfo, p.id, p.isFramework, packageJSON, packedVsixOutputRoot);
         }
         catch (err) {
+            const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
             // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
             // stack trace of this line. So that seperates the two stack traces.
-            throw Error(`Failed to create package ${p.id}. ${err.stack ?? err ?? '<unknown error>'}\n---`);
+            throw Error(`Failed to create package ${p.id}. ${message}\n---`);
         }
     }
 }
@@ -104,7 +105,7 @@ async function install(platformInfo: PlatformInformation, packageJSON: any, isFr
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
         .filter(dep => dep.isFramework === undefined || dep.isFramework === isFramework);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
-    let provider = () => new NetworkSettings('', undefined);
+    let provider = () => new NetworkSettings('', true);
     if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, isFramework))) {
         throw Error("Failed to download package.");
     }

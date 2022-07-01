@@ -33,10 +33,6 @@ export function getUnixTempDirectory(){
     return envTmp;
 }
 
-export function isBoolean(obj: any): obj is boolean {
-    return obj === true || obj === false;
-}
-
 export function sum<T>(arr: T[], selector: (item: T) => number): number {
     return arr.reduce((prev, curr) => prev + selector(curr), 0);
 }

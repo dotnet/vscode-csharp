@@ -11,12 +11,12 @@ import { EventStream } from '../EventStream';
 
 export async function activateRazorExtension(context: vscode.ExtensionContext, extensionPath: string, eventStream: EventStream) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
-    const configuredLanguageServerDir = razorConfig.get<string>('languageServer.directory', null);
-    const languageServerDir = configuredLanguageServerDir || path.join(extensionPath, '.razor');
+    const configuredLanguageServerDir = razorConfig.get<string>('languageServer.directory', '');
+    const languageServerDir = configuredLanguageServerDir.length > 0 ? configuredLanguageServerDir : path.join(extensionPath, '.razor');
 
     if (fs.existsSync(languageServerDir)) {
         await Razor.activate(vscode, context, languageServerDir, eventStream, /* enableProposedApis: */ false);
-    } else if (configuredLanguageServerDir) {
+    } else if (configuredLanguageServerDir.length > 0) {
         // It's only an error if the nonexistent dir was explicitly configured
         // If it's the default dir, this is expected for unsupported platforms
         vscode.window.showErrorMessage(
