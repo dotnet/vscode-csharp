@@ -82,10 +82,7 @@ export class TelemetryObserver {
         if (event.error instanceof PackageError) {
             // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
             telemetryProps['error.message'] = event.error.message;
-
-            if (event.error.pkg) {
-                telemetryProps['error.packageUrl'] = event.error.pkg.url;
-            }
+            telemetryProps['error.packageUrl'] = event.error.pkg.url;
         }
 
         this.reporter.sendTelemetryEvent('AcquisitionFailed', telemetryProps);

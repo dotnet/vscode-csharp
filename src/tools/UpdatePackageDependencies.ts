@@ -65,7 +65,7 @@ export async function updatePackageDependencies(): Promise<void> {
 
     const downloadAndGetHash = async (url: string): Promise<string> => {
         console.log(`Downloading from '${url}'`);
-        const buffer: Buffer = await DownloadFile(url, eventStream, networkSettingsProvider, url, null);
+        const buffer: Buffer = await DownloadFile(url, eventStream, networkSettingsProvider, url);
         return getBufferIntegrityHash(buffer);
     };
 
@@ -176,9 +176,12 @@ export async function updatePackageDependencies(): Promise<void> {
 }
 
 
-function replaceVersion(fileName: string, newVersion: string): string {
-    if (!fileName) {
-        return fileName; //if the value is null or undefined return the same one
+function replaceVersion(fileName: string, newVersion: string): string;
+function replaceVersion(fileName: undefined, newVersion: string): undefined;
+function replaceVersion(fileName: string | undefined, newVersion: string): string | undefined;
+function replaceVersion(fileName: string | undefined, newVersion: string): string | undefined {
+    if (fileName === undefined) {
+        return undefined; // If the file name is undefined, no version to replace
     }
 
     let regex: RegExp = dottedVersionRegExp;
@@ -190,13 +193,17 @@ function replaceVersion(fileName: string, newVersion: string): string {
     dottedVersionRegExp.lastIndex = 0;
 
     if (!regex.test(fileName)) {
-        return fileName; //If the string doesn't contain any version return the same string
+        return fileName; // If the string doesn't contain any version return the same string
     }
 
     return fileName.replace(regex, newValue);
 }
 
-function verifyVersionSubstringCount(value: string, shouldContainVersion = false): void {
+function verifyVersionSubstringCount(value: string | undefined, shouldContainVersion = false): void {
+    if (value === undefined) {
+        return;
+    }
+
     const getMatchCount = (regexp: RegExp, searchString: string): number => {
         regexp.lastIndex = 0;
         let retVal = 0;
@@ -207,24 +214,20 @@ function verifyVersionSubstringCount(value: string, shouldContainVersion = false
         return retVal;
     };
 
-    if (!value) {
-        return;
-    }
+    const dottedMatches = getMatchCount(dottedVersionRegExp, value);
+    const dashedMatches = getMatchCount(dashedVersionRegExp, value);
+    const matchCount = dottedMatches + dashedMatches;
 
-    const dottedMatches: number = getMatchCount(dottedVersionRegExp, value);
-    const dashedMatches: number = getMatchCount(dashedVersionRegExp, value);
-    const matchCount: number = dottedMatches + dashedMatches;
-
-    if (shouldContainVersion && matchCount == 0) {
+    if (shouldContainVersion && matchCount === 0) {
         throw new Error(`Version number not found in '${value}'.`);
     }
+
     if (matchCount > 2) {
         throw new Error(`Ambiguous version pattern found in '${value}'. Multiple version strings found.`);
     }
 }
 
 function getLowercaseFileNameFromUrl(url: string): string {
-
     if (!url.startsWith("https://")) {
         throw new Error(`Unexpected URL '${url}'. URL expected to start with 'https://'.`);
     }

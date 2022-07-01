@@ -127,7 +127,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test(`Telemetry Props contains message and packageUrl if error is package error`, () => {
-            let error = new PackageError("someError", <Package>{ "description": "foo", "url": "someurl" });
+            let error = new PackageError("someError", <Package>{ "description": "foo", "url": "someurl" }, undefined);
             let event = new InstallationFailure("someStage", error);
             observer.post(event);
             expect(name).to.be.equal("AcquisitionFailed");
