@@ -101,6 +101,18 @@ If you want to use the port number from the console output, but not the host nam
     }
 ```
 
+In fact, you can open almost any url, for example you could open the default swagger ui by doing something like this:
+
+```json
+    "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+http://\\S+:([0-9]+)",
+        "uriFormat": "http://localhost:%s/swagger/index.html"
+    }
+```
+
+> **Note** You need to make sure your project has swaggerui setup to do this.
+
 ## Environment variables
 Environment variables may be passed to your program using this schema:
 
