@@ -68,7 +68,7 @@ export class TelemetryObserver {
     }
 
     private async handleOmnisharpInitialisation(event: OmnisharpInitialisation) {
-        this.dotnetInfo = await getDotnetInfo();
+        this.dotnetInfo = await getDotnetInfo(event.dotNetCliPaths);
         this.solutionId = this.createSolutionId(event.solutionPath);
     }
 

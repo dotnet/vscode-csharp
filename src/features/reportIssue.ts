@@ -15,7 +15,7 @@ import { IGetDotnetInfo } from "../constants/IGetDotnetInfo";
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
 export default async function reportIssue(vscode: vscode, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, monoResolver: IHostExecutableResolver) {
-    const dotnetInfo = await getDotnetInfo();
+    const dotnetInfo = await getDotnetInfo(options.dotNetCliPaths);
     const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options, monoResolver);
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);
