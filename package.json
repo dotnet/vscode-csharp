@@ -379,7 +379,7 @@
         "x86_64"
       ],
       "installTestPath": "./.omnisharp/1.39.1-net6.0/OmniSharp.dll",
-      "platformId": "alpine-x64",
+      "platformId": "linux-musl-x64",
       "isFramework": false,
       "integrity": "13A18F07ED10B96A77EF97A51FCF2ECA740A427A1C2867C41846CE0B00AD1004"
     },
@@ -395,7 +395,7 @@
         "arm64"
       ],
       "installTestPath": "./.omnisharp/1.39.1-net6.0/OmniSharp.dll",
-      "platformId": "alpine-arm64",
+      "platformId": "linux-musl-arm64",
       "isFramework": false,
       "integrity": "C5155A59D194536684B19D65E996AB645C02BD8EB66C9C810589C55E9C263E75"
     },

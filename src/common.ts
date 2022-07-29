@@ -23,10 +23,9 @@ export function getExtensionPath() {
     return extensionPath;
 }
 
-export function getUnixTempDirectory(){
+export function getUnixTempDirectory() {
     let envTmp = process.env.TMPDIR;
-    if(!envTmp)
-    {
+    if (!envTmp) {
         return "/tmp/";
     }
 
@@ -61,9 +60,9 @@ export async function execChildProcess(command: string, workingDirectory: string
     return new Promise<string>((resolve, reject) => {
         cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
             if (error) {
-                reject(`${error}
+                reject(new Error(`${error}
 ${stdout}
-${stderr}`);
+${stderr}`));
             }
             else if (stderr && !stderr.includes("screen size is bogus")) {
                 reject(new Error(stderr));
@@ -203,7 +202,7 @@ export function isSubfolderOf(subfolder: string, folder: string): boolean {
 /**
  * Find PowerShell executable from PATH (for Windows only).
  */
- export function findPowerShell(): string | undefined {
+export function findPowerShell(): string | undefined {
     const dirs: string[] = (process.env.PATH || '').replace(/"+/g, '').split(';').filter(x => x);
     const names: string[] = ['pwsh.exe', 'powershell.exe'];
     for (const name of names) {
