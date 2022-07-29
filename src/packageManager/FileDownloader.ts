@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as https from 'https';
-import * as util from '../common';
 import { EventStream } from "../EventStream";
 import { DownloadSuccess, DownloadStart, DownloadFallBack, DownloadFailure, DownloadProgress, DownloadSizeObtained } from "../omnisharp/loggingEvents";
 import { NestedError } from "../NestedError";
@@ -24,7 +23,7 @@ export async function DownloadFile(description: string, eventStream: EventStream
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from
         // the fallback. This is used for debugger packages as some users have had issues downloading from
         // the CDN link
-        if (fallbackUrl) {
+        if (fallbackUrl !== undefined) {
             eventStream.post(new DownloadFallBack(fallbackUrl));
             try {
                 let buffer = await downloadFile(description, fallbackUrl, eventStream, networkSettingsProvider);
@@ -51,7 +50,7 @@ async function downloadFile(description: string, urlString: string, eventStream:
         path: url.path,
         agent: getProxyAgent(url, proxy, strictSSL),
         port: url.port,
-        rejectUnauthorized: util.isBoolean(strictSSL) ? strictSSL : true
+        rejectUnauthorized: strictSSL,
     };
 
     let buffers: any[] = [];
@@ -60,13 +59,21 @@ async function downloadFile(description: string, urlString: string, eventStream:
         let request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
+                if (response.headers.location === undefined) {
+                    eventStream.post(new DownloadFailure(`Failed to download from ${urlString}. Redirected without location header`));
+                    return reject(new NestedError('Missing location'));
+                }
                 return resolve(downloadFile(description, response.headers.location, eventStream, networkSettingsProvider));
             }
-
-            else if (response.statusCode != 200) {
+            else if (response.statusCode !== 200) {
                 // Download failed - print error message
                 eventStream.post(new DownloadFailure(`Failed to download from ${urlString}. Error code '${response.statusCode}')`));
-                return reject(new NestedError(response.statusCode.toString()));
+                return reject(new NestedError(response.statusCode!.toString())); // Known to exist because this is from a ClientRequest
+            }
+
+            if (response.headers['content-length'] === undefined) {
+                eventStream.post(new DownloadFailure(`Failed to download from ${urlString}. No content-length header`));
+                return reject(new NestedError('Missing content-length'));
             }
 
             // Downloading - hook up events

@@ -100,25 +100,18 @@ suite(`${reportIssue.name}`, () => {
 
         test("mono information is obtained when it is a valid mono platform", async () => {
             await reportIssue(vscode, eventStream, getDotnetInfo, isValidForMono, options, fakeMonoResolver);
-            expect(fakeMonoResolver.getGlobalMonoCalled).to.be.equal(true);
+            expect(fakeMonoResolver.getMonoCalled).to.be.equal(true);
         });
 
-        test("mono version is put in the body when shouldUseGlobalMono returns a monoInfo", async () => {
+        test("mono version is put in the body when it is a valid mono platform", async () => {
             await reportIssue(vscode, eventStream, getDotnetInfo, isValidForMono, options, fakeMonoResolver);
-            expect(fakeMonoResolver.getGlobalMonoCalled).to.be.equal(true);
+            expect(fakeMonoResolver.getMonoCalled).to.be.equal(true);
             expect(issueBody).to.contain(fakeMonoInfo.version);
-        });
-
-        test("built-in mono usage message is put in the body when shouldUseGlobalMono returns a null", async () => {
-            fakeMonoResolver = new FakeMonoResolver(false);
-            await reportIssue(vscode, eventStream, getDotnetInfo, isValidForMono, options, fakeMonoResolver);
-            expect(fakeMonoResolver.getGlobalMonoCalled).to.be.equal(true);
-            expect(issueBody).to.contain(`OmniSharp using built-in mono`);
         });
 
         test("mono information is not obtained when it is not a valid mono platform", async () => {
             await reportIssue(vscode, eventStream, getDotnetInfo, false, options, fakeMonoResolver);
-            expect(fakeMonoResolver.getGlobalMonoCalled).to.be.equal(false);
+            expect(fakeMonoResolver.getMonoCalled).to.be.equal(false);
         });
 
         test("The url contains the name, publisher and version for all the extensions that are not builtin", async () => {

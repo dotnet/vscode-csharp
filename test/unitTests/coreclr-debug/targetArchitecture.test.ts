@@ -12,17 +12,9 @@ import { DotnetInfo } from '../../../src/utils/getDotnetInfo';
 suite("getTargetArchitecture Tests", () => {
     suiteSetup(() => should());
 
-    suite("Error", () => {
-        test("Invalid Call", () => {
-            let fn = function () { getTargetArchitecture(null, null, null); };
-
-            expect(fn).to.throw("Unable to retrieve 'TargetArchitecture' without platformInfo.");
-        });
-    });
-
     suite("Windows", () => {
         test("Windows x86_64", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("windows", "x86_64", null);
+            const platformInfo: PlatformInformation = new PlatformInformation("win32", "x86_64", null);
 
             const targetArchitecture = getTargetArchitecture(platformInfo, null, null);
 

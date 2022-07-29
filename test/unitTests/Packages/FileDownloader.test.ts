@@ -20,7 +20,7 @@ suite("FileDownloader", () => {
     const correctUrlPath = `/resource`;
     const redirectUrlPath = '/redirectResource';
     const errorUrlPath = '/errorResource';
-    const networkSettingsProvider = () => new NetworkSettings(undefined, false);
+    const networkSettingsProvider = () => new NetworkSettings('', false);
     const eventStream = new EventStream();
     let eventBus: TestEventBus;
     const getPrimaryURLEvents = () => {
@@ -124,5 +124,3 @@ suite("FileDownloader", () => {
         return `${server.baseUrl}${urlPath}`;
     }
 });
-
-

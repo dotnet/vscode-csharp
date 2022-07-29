@@ -12,12 +12,12 @@ import { InstallationStart, ZipError } from "../omnisharp/loggingEvents";
 import { NestedError } from '../NestedError';
 import { AbsolutePath } from './AbsolutePath';
 
-export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: AbsolutePath, binaries: AbsolutePath[], eventStream: EventStream): Promise<void> {
+export async function InstallZip(buffer: Buffer, description: string, destinationInstallPath: AbsolutePath, binaries: AbsolutePath[] | undefined, eventStream: EventStream): Promise<void> {
     eventStream.post(new InstallationStart(description));
 
     return new Promise<void>((resolve, reject) => {
         yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipFile) => {
-            if (err) {
+            if (err !== null) {
                 let message = "C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking";
                 eventStream.post(new ZipError(message));
                 return reject(new NestedError(message));
@@ -35,7 +35,8 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
                         zipFile.readEntry();
                     }
                     catch (err) {
-                        return reject(new NestedError('Error creating directory for zip directory entry:' + err?.code || '', err));
+                        const error = err as NodeJS.ErrnoException; // Hack for TypeScript to type err correctly
+                        return reject(new NestedError('Error creating directory for zip directory entry:' + error.code ?? '', error));
                     }
                 }
                 else {
@@ -48,18 +49,15 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
                         try {
                             await mkdirp(path.dirname(absoluteEntryPath), 0o775);
 
-                            let binaryPaths = binaries && binaries.map(binary => binary.value);
-
                             // Make sure executable files have correct permissions when extracted
-                            let fileMode = binaryPaths && binaryPaths.indexOf(absoluteEntryPath) !== -1
-                                ? 0o755
-                                : 0o664;
+                            const binaryPaths = binaries?.map(binary => binary.value);
+                            const fileMode = binaryPaths?.includes(absoluteEntryPath) ? 0o755 : 0o664;
 
                             readStream.pipe(fs.createWriteStream(absoluteEntryPath, { mode: fileMode }));
                             readStream.on('end', () => zipFile.readEntry());
                         }
                         catch (err) {
-                            return reject(new NestedError('Error creating directory for zip file entry', err));
+                            return reject(new NestedError('Error creating directory for zip file entry', err as NodeJS.ErrnoException));
                         }
                     });
                 }
@@ -75,4 +73,3 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
         });
     });
 }
-

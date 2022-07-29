@@ -43,6 +43,9 @@ import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import SemanticTokensProvider from '../features/semanticTokensProvider';
 import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocumentProvider';
 import { getDecompilationAuthorization } from './decompilationPrompt';
+import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
+import CSharpInlayHintProvider from '../features/inlayHintProvider';
+import fileOpenClose from '../features/fileOpenCloseProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -56,16 +59,17 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     };
 
     const options = optionProvider.GetLatestOptions();
-    let omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
+    const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
+    const omnisharpDotnetResolver = new OmniSharpDotnetResolver(platformInfo);
     const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, decompilationAuthorized);
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, omnisharpDotnetResolver, decompilationAuthorized);
     const advisor = new Advisor(server, optionProvider); // create before server is started
     const disposables = new CompositeDisposable();
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
-    let localDisposables: CompositeDisposable;
-    const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);
+    let localDisposables: CompositeDisposable | undefined;
+    const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
     const completionProvider = new CompletionProvider(server, languageMiddlewareFeature);
 
     disposables.add(server.onServerStart(() => {
@@ -80,6 +84,8 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider, sourceGeneratedDocumentProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
         localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
+        localDisposables.add(vscode.languages.registerTypeDefinitionProvider(documentSelector, definitionProvider));
+        localDisposables.add(vscode.languages.registerTypeDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
         localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, languageMiddlewareFeature)));
@@ -109,10 +115,14 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(forwardChanges(server));
         localDisposables.add(trackVirtualDocuments(server, eventStream));
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(fileOpenClose(server));
 
         const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
         localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+
+        const inlayHintsProvider = new CSharpInlayHintProvider(server, languageMiddlewareFeature);
+        localDisposables.add(vscode.languages.registerInlayHintsProvider(documentSelector, inlayHintsProvider));
     }));
 
     disposables.add(server.onServerStop(() => {
@@ -120,19 +130,18 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         if (localDisposables) {
             localDisposables.dispose();
         }
-        localDisposables = null;
+        localDisposables = undefined;
     }));
 
     disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, packageJSON, extensionPath));
 
     if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
-        disposables.add(server.onServerStart(() => {
+        disposables.add(server.onServerStart(async () => {
             // Update or add tasks.json and launch.json
-            addAssetsIfNecessary(server).then(result => {
-                if (result === AddAssetResult.Disable) {
-                    context.workspaceState.update('assetPromptDisabled', true);
-                }
-            });
+            const result = await addAssetsIfNecessary(server);
+            if (result === AddAssetResult.Disable) {
+                context.workspaceState.update('assetPromptDisabled', true);
+            }
         }));
     }
 
@@ -189,7 +198,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     }));
 
     if (options.autoStart) {
-        server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder'));
+        server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
     }
 
     // stop server on deactivate

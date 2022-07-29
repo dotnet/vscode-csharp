@@ -81,24 +81,19 @@ function cleanJsonText(text: string) {
     let index = 0;
     let length = text.length;
 
-    function next(): number | undefined {
+    function next(): number {
         const result = peek();
         index++;
         return result;
     }
 
-    function peek(offset: number = 0): number | undefined {
-        if ((index + offset) < length) {
-            return text.charCodeAt(index + offset);
-        }
-        else {
-            return undefined;
-        }
+    function peek(offset: number = 0): number {
+        return text.charCodeAt(index + offset);
     }
 
-    function peekPastWhitespace(): number | undefined {
+    function peekPastWhitespace(): number {
         let pos = index;
-        let code = undefined;
+        let code = NaN;
 
         do {
             code = text.charCodeAt(pos);

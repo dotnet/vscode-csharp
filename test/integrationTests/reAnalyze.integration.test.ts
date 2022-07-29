@@ -44,7 +44,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restoreAndWait(activation);
+        await testAssetWorkspace.restore();
 
         eventStream = activation.eventStream;
 
@@ -54,6 +54,8 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand("vscode.open", interfaceImplUri);
         await vscode.commands.executeCommand("vscode.open", interfaceUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

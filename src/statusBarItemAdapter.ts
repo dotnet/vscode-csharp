@@ -12,7 +12,7 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
         return this.statusBarItem.alignment;
     }
 
-    get priority(): number {
+    get priority(): number | undefined {
         return this.statusBarItem.priority;
     }
 
@@ -25,7 +25,7 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
     }
 
     get tooltip(): string {
-        return this.statusBarItem.tooltip;
+        return <string>this.statusBarItem.tooltip;
     }
 
     set tooltip(value: string) {
@@ -40,19 +40,19 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
         this.statusBarItem.color = value;
     }
 
-    get command(): string | vscode.Command {
+    get command(): string | vscode.Command | undefined {
         return this.statusBarItem.command;
     }
 
-    set command(value: string | vscode.Command) {
+    set command(value: string | vscode.Command | undefined) {
         this.statusBarItem.command = value;
     }
 
-    get name(): string {
+    get name(): string | undefined {
         return this.statusBarItem.name;
     }
 
-    set name(value: string) {
+    set name(value: string | undefined) {
         this.statusBarItem.name = value;
     }
 

@@ -3,14 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { spawn, ChildProcess } from 'child_process';
+import { spawn } from 'cross-spawn';
+import { ChildProcess } from 'child_process';
 
 import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
 import { LaunchInfo } from './OmnisharpManager';
-import { IMonoResolver } from '../constants/IMonoResolver';
+import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
 
 export enum LaunchTargetKind {
     Solution,
@@ -30,7 +31,7 @@ export interface LaunchTarget {
     description: string;
     directory: string;
     target: string;
-    kind: LaunchTargetKind;
+    workspaceKind: LaunchTargetKind;
 }
 
 export const vslsTarget: LaunchTarget = {
@@ -38,7 +39,7 @@ export const vslsTarget: LaunchTarget = {
     description: "Visual Studio Live Share",
     directory: "",
     target: "",
-    kind: LaunchTargetKind.LiveShare
+    workspaceKind: LaunchTargetKind.LiveShare
 };
 
 /** Live share scheme */
@@ -64,18 +65,17 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
 
     const projectFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-        /*maxResults*/ options.maxProjectResults);
+        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}');
 
     const csFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.cs}',
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
-        /*maxResults*/ options.maxProjectResults);
+        /*maxResults*/ 1);
 
-    return resourcesToLaunchTargets(projectFiles.concat(csFiles));
+    return resourcesToLaunchTargets(projectFiles.concat(csFiles), options.maxProjectResults);
 }
 
-export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[] {
+export function resourcesToLaunchTargets(resources: vscode.Uri[], maxProjectResults: number): LaunchTarget[] {
     // The list of launch targets is calculated like so:
     //   * If there are .csproj files, .sln and .slnf files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
@@ -106,7 +106,7 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
             let buckets: vscode.Uri[];
 
             if (workspaceFolderToUriMap.has(folder.index)) {
-                buckets = workspaceFolderToUriMap.get(folder.index);
+                buckets = workspaceFolderToUriMap.get(folder.index)!; // Ensured valid via has.
             } else {
                 buckets = [];
                 workspaceFolderToUriMap.set(folder.index, buckets);
@@ -116,10 +116,10 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[]): LaunchTarget[
         }
     }
 
-    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap);
+    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap, maxProjectResults);
 }
 
-export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>): LaunchTarget[] {
+export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>, maxProjectResults: number): LaunchTarget[] {
     let solutionTargets: LaunchTarget[] = [];
     let projectJsonTargets: LaunchTarget[] = [];
     let projectRootTargets: LaunchTarget[] = [];
@@ -144,7 +144,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                     description: vscode.workspace.asRelativePath(dirname),
                     target: resource.fsPath,
                     directory: path.dirname(resource.fsPath),
-                    kind: LaunchTargetKind.Solution
+                    workspaceKind: LaunchTargetKind.Solution
                 });
             }
             // Add project.json files
@@ -156,7 +156,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                     description: vscode.workspace.asRelativePath(dirname),
                     target: dirname,
                     directory: dirname,
-                    kind: LaunchTargetKind.ProjectJson
+                    workspaceKind: LaunchTargetKind.ProjectJson
                 });
             }
             // Add .csproj files
@@ -170,7 +170,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                     description: vscode.workspace.asRelativePath(dirname),
                     target: dirname,
                     directory: dirname,
-                    kind: LaunchTargetKind.Project
+                    workspaceKind: LaunchTargetKind.Project
                 });
             }
             else {
@@ -198,7 +198,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                 description: 'All contained projects',
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Folder
+                workspaceKind: LaunchTargetKind.Folder
             });
         }
 
@@ -209,7 +209,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                 description: path.basename(folderPath),
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Csx
+                workspaceKind: LaunchTargetKind.Csx
             });
         }
 
@@ -220,7 +220,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                 description: path.basename(folderPath),
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Cake
+                workspaceKind: LaunchTargetKind.Cake
             });
         }
 
@@ -230,7 +230,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
                 description: '',
                 target: folderPath,
                 directory: folderPath,
-                kind: LaunchTargetKind.Folder
+                workspaceKind: LaunchTargetKind.Folder
             });
         }
     });
@@ -240,7 +240,11 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
     projectJsonTargets = projectJsonTargets.sort((a, b) => a.directory.localeCompare(b.directory));
     projectTargets = projectTargets.sort((a, b) => a.directory.localeCompare(b.directory));
 
-    return otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
+    const allTargets = otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
+    
+    return maxProjectResults > 0
+        ? allTargets.slice(0, maxProjectResults)
+        : allTargets;
 }
 
 function isCSharpProject(resource: vscode.Uri): boolean {
@@ -270,13 +274,14 @@ function isCs(resource: vscode.Uri): boolean {
 export interface LaunchResult {
     process: ChildProcess;
     command: string;
-    monoVersion?: string;
-    monoPath?: string;
+    hostIsMono: boolean;
+    hostVersion?: string;
+    hostPath?: string;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, launchInfo, platformInfo, options, monoResolver)
+        launch(cwd, args, launchInfo, platformInfo, options, monoResolver, dotnetResolver)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -292,7 +297,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IMonoResolver): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration('', null);
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
@@ -302,24 +307,15 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
         args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
     }
 
+    if (options.useModernNet) {
+        return await launchDotnet(launchInfo, cwd, args, platformInfo, options, dotnetResolver);
+    }
+
     if (platformInfo.isWindows()) {
         return launchWindows(launchInfo.LaunchPath, cwd, args);
     }
 
-    let monoInfo = await monoResolver.getGlobalMonoInfo(options);
-
-    if (monoInfo) {
-        const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
-        let childEnv = monoInfo.env;
-        return {
-            ...launchNixMono(launchPath, cwd, args, childEnv, options.waitForDebugger),
-            monoVersion: monoInfo.version,
-            monoPath: monoInfo.path
-        };
-    }
-    else {
-        return launchNix(launchInfo.LaunchPath, cwd, args);
-    }
+    return await launchNix(launchInfo, cwd, args, options, monoResolver);
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
@@ -332,6 +328,31 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
     return globalConfig.get(configurationPath, defaultValue);
 }
 
+async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+    const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
+    let command: string;
+    const argsCopy = args.slice(0);
+
+    if (launchInfo.LaunchPath && !launchInfo.LaunchPath.endsWith('.dll')) {
+        // If we're not being asked to launch a dll, assume whatever we're given is an executable
+        command = launchInfo.LaunchPath;
+    }
+    else {
+        command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
+        argsCopy.unshift(launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath);
+    }
+
+    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
+
+    return {
+        process,
+        command: launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath,
+        hostVersion: dotnetInfo.version,
+        hostPath: dotnetInfo.path,
+        hostIsMono: false,
+    };
+}
+
 function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
     function escapeIfNeeded(arg: string) {
         const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
@@ -341,7 +362,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     }
 
     let argsCopy = args.slice(0); // create copy of args
-    argsCopy.unshift(launchPath);
+    argsCopy.unshift(`"${launchPath}"`);
     argsCopy = [[
         '/s',
         '/c',
@@ -357,22 +378,24 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     return {
         process,
         command: launchPath,
+        hostIsMono: false,
     };
 }
 
-function launchNix(launchPath: string, cwd: string, args: string[]): LaunchResult {
-    let process = spawn(launchPath, args, {
-        detached: false,
-        cwd: cwd
-    });
+async function launchNix(launchInfo: LaunchInfo, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
+    const monoInfo = await monoResolver.getHostExecutableInfo(options);
+    const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
 
     return {
-        process,
-        command: launchPath
+        process: launchNixMono(launchPath, cwd, args, monoInfo.env, options.waitForDebugger),
+        command: launchPath,
+        hostIsMono: true,
+        hostVersion: monoInfo.version,
+        hostPath: monoInfo.path
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): LaunchResult {
+function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): ChildProcess {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");
@@ -388,9 +411,5 @@ function launchNixMono(launchPath: string, cwd: string, args: string[], environm
         env: environment
     });
 
-    return {
-        process,
-        command: launchPath
-    };
+    return process;
 }
-

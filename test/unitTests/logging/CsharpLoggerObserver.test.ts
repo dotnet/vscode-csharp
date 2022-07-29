@@ -9,6 +9,7 @@ import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserve
 import { PlatformInformation } from '../../../src/platform';
 import * as Event from '../../../src/omnisharp/loggingEvents';
 import { PackageError } from '../../../src/packageManager/PackageError';
+import { Package } from '../../../src/packageManager/Package';
 
 suite("CsharpLoggerObserver", () => {
     suiteSetup(() => should());
@@ -18,15 +19,22 @@ suite("CsharpLoggerObserver", () => {
         ...getNullChannel(),
         append: (text?: string) => { logOutput += text || ""; },
     });
+    let pkg: Package = {
+        id: "id",
+        description: "description",
+        url: "url",
+        platforms: [],
+        architectures: [],
+    };
 
     setup(() => {
         logOutput = "";
     });
 
     test('PlatformInfo: Logs contain the Platform and Architecture', () => {
-        let event = new Event.LogPlatformInfo(new PlatformInformation("MyPlatform", "MyArchitecture"));
+        let event = new Event.LogPlatformInfo(new PlatformInformation("linux", "MyArchitecture"));
         observer.post(event);
-        expect(logOutput).to.contain("MyPlatform");
+        expect(logOutput).to.contain("linux");
         expect(logOutput).to.contain("MyArchitecture");
     });
 
@@ -39,14 +47,14 @@ suite("CsharpLoggerObserver", () => {
         });
 
         test('Stage and Error is logged if a PackageError without inner error', () => {
-            let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, null));
+            let event = new Event.InstallationFailure("someStage", new PackageError("someError", pkg, undefined));
             observer.post(event);
             expect(logOutput).to.contain(event.stage);
             expect(logOutput).to.contain(event.error.message);
         });
 
         test('Stage and Inner error is logged if a PackageError without inner error', () => {
-            let event = new Event.InstallationFailure("someStage", new PackageError("someError", null, "innerError"));
+            let event = new Event.InstallationFailure("someStage", new PackageError("someError", pkg, new Error("innerError")));
             observer.post(event);
             expect(logOutput).to.contain(event.stage);
             expect(logOutput).to.contain(event.error.innerError.toString());

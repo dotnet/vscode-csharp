@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
     - uses: actions/checkout@v2
@@ -17,10 +18,10 @@ jobs:
     - name: Setup virtual display
       run: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
-    - name: Install .NET Core 5.0 SDK
+    - name: Install .NET Core 6.0 SDK
       uses: actions/setup-dotnet@v1.7.2
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
 
     - name: Install Node.js 15.x
       uses: actions/setup-node@v1
@@ -43,7 +44,7 @@ jobs:
           gulp test
           npm run test:artifacts
       env:
-        CODE_VERSION: 1.45.0
+        CODE_VERSION: 1.66.0
         DISPLAY: :99.0
 
     - name: Build platform-specific extension package

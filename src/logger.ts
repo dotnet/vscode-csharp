@@ -11,7 +11,7 @@ export function SubscribeToAllLoggers(subscriber: (message: string) => void) {
 
 export class Logger {
     private _writer: (message: string) => void;
-    private _prefix: string;
+    private _prefix: string | undefined;
 
     private _indentLevel: number = 0;
     private _indentSize: number = 4;
@@ -29,7 +29,7 @@ export class Logger {
                 this.write(indent);
             }
 
-            if (this._prefix) {
+            if (this._prefix !== undefined) {
                 this.write(`[${this._prefix}] `);
             }
 
@@ -49,13 +49,11 @@ export class Logger {
         }
     }
 
-    public append(message?: string): void {
-        message = message || "";
+    public append(message: string = ""): void {
         this._appendCore(message);
     }
 
-    public appendLine(message?: string): void {
-        message = message || "";
+    public appendLine(message: string = ""): void {
         this._appendCore(message + '\n');
         this._atLineStart = true;
     }

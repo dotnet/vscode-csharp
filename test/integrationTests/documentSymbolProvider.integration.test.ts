@@ -24,7 +24,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        await integrationHelpers.activateCSharpExtension();
+        const activation = await integrationHelpers.activateCSharpExtension();
         await testAssetWorkspace.restore();
 
         let fileName = 'documentSymbols.cs';
@@ -33,6 +33,8 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         fileUri = vscode.Uri.file(filePath);
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {

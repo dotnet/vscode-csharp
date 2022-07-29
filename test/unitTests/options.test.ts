@@ -13,9 +13,8 @@ suite("Options tests", () => {
     test('Verify defaults', () => {
         const vscode = getVSCodeWithConfig();
         const options = Options.Read(vscode);
-        expect(options.path).to.be.null;
-        options.useGlobalMono.should.equal("auto");
-        expect(options.monoPath).to.be.undefined;
+        options.path.should.equal("");
+        options.monoPath.should.equal("");
         options.waitForDebugger.should.equal(false);
         options.loggingLevel.should.equal("information");
         options.autoStart.should.equal(true);
@@ -31,10 +30,12 @@ suite("Options tests", () => {
         options.maxFindSymbolsItems.should.equal(1000);
         options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
         options.enableRoslynAnalyzers.should.equal(false);
-        options.enableEditorConfigSupport.should.equal(false);
+        options.enableEditorConfigSupport.should.equal(true);
         options.enableDecompilationSupport.should.equal(false);
         options.enableImportCompletion.should.equal(false);
-        expect(options.defaultLaunchSolution).to.be.undefined;
+        options.analyzeOpenDocumentsOnly.should.equal(false);
+        options.testRunSettings.should.equal("");
+        options.defaultLaunchSolution.should.equal("");
     });
 
     test('Verify return no excluded paths when files.exclude empty', () => {
@@ -80,42 +81,6 @@ suite("Options tests", () => {
         options.loggingLevel.should.equal("debug");
     });
 
-    test('BACK-COMPAT: "omnisharp.useMono": true == "omnisharp.useGlobalMono": "always"', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'omnisharp', 'useMono', true);
-
-        const options = Options.Read(vscode);
-
-        options.useGlobalMono.should.equal("always");
-    });
-
-    test('BACK-COMPAT: "omnisharp.useMono": false == "omnisharp.useGlobalMono": "auto"', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'omnisharp', 'useMono', false);
-
-        const options = Options.Read(vscode);
-
-        options.useGlobalMono.should.equal("auto");
-    });
-
-    test('BACK-COMPAT: "csharp.omnisharpUsesMono": true == "omnisharp.useGlobalMono": "always"', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'csharp', 'omnisharpUsesMono', true);
-
-        const options = Options.Read(vscode);
-
-        options.useGlobalMono.should.equal("always");
-    });
-
-    test('BACK-COMPAT: "csharp.omnisharpUsesMono": false == "omnisharp.useGlobalMono": "auto"', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'csharp', 'omnisharpUsesMono', false);
-
-        const options = Options.Read(vscode);
-
-        options.useGlobalMono.should.equal("auto");
-    });
-
     test('BACK-COMPAT: "csharp.omnisharp" is used if it is set and "omnisharp.path" is not', () => {
         const vscode = getVSCodeWithConfig();
         updateConfig(vscode, 'csharp', 'omnisharp', 'OldPath');
@@ -142,5 +107,14 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
 
         options.defaultLaunchSolution.should.equal("some_valid_solution.sln");
+    });
+
+    test('"omnisharp.testRunSettings" is used if set', () => {
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'omnisharp', 'testRunSettings', 'some_valid_path\\some_valid_runsettings_files.runsettings');
+
+        const options = Options.Read(vscode);
+
+        options.testRunSettings.should.equal("some_valid_path\\some_valid_runsettings_files.runsettings");
     });
 });

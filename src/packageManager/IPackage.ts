@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 export interface IPackage {
-    id?: string;
+    id: string;
     description: string;
     url: string;
     fallbackUrl?: string;
@@ -12,4 +12,5 @@ export interface IPackage {
     architectures: string[];
     platformId?: string;
     integrity?: string;
+    isFramework?: boolean;
 }

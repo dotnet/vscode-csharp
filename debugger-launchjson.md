@@ -66,7 +66,7 @@ Notes about this:
 5. The way this works is that VS Code will scrape the output which is set to the console. If a line 
     matches the pattern, it will launch a browser against the URL which was 'captured' by the pattern.
     Here is an explanation of what the pattern does:
-    * `\\b` : Matches on a word boundery. Note that `\b` indicates a word boundary, but because this is in a json string, the `\` needs to be escaped, hence `\\b`.
+    * `\\b` : Matches on a word boundary. Note that `\b` indicates a word boundary, but because this is in a json string, the `\` needs to be escaped, hence `\\b`.
     * `Now listening on:` : This is a string literal, meaning that the next text must be `Now listening on:`.
     * `\\s+` : Matches one or more space characters.
     * `(` : This is the beginning of a 'capture group' -- this indicates which region of text will be saved and used to launch the browser.
@@ -101,6 +101,18 @@ If you want to use the port number from the console output, but not the host nam
     }
 ```
 
+In fact, you can open almost any url, for example you could open the default swagger ui by doing something like this:
+
+```json
+    "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+http://\\S+:([0-9]+)",
+        "uriFormat": "http://localhost:%s/swagger/index.html"
+    }
+```
+
+> **Note** You need to make sure your project has swaggerui setup to do this.
+
 ## Environment variables
 Environment variables may be passed to your program using this schema:
 
@@ -120,7 +132,7 @@ The `"console"` setting controls what console (terminal) window the target app i
 
 ## launchSettings.json support
 
-In addition to launch.json, launch options can be configured through a {cwd}/Properties/launchSettings.json file. The advantage of 
+In addition to launch.json, launch options can be configured through a launchSettings.json file. The advantage of 
 launchSettings.json is that it allows settings to be shared between Visual Studio Code, full Visual Studio, and `dotnet run`.
 
 To configure which launchSettings.json profile to use (or to prevent it from being used), set the `launchSettingsProfile` option:
@@ -146,11 +158,14 @@ If `launchSettingsProfile` is NOT specified, the first profile with `"commandNam
 
 If `launchSettingsProfile` is set to null/an empty string, then Properties/launchSettings.json will be ignored.
 
+By default, the debugger will search for launchSettings.json in {cwd}/Properties/launchSettings.json. To customize this path, set `launchSettingsFilePath`:
+
+   "launchSettingsFilePath": "${workspaceFolder}/<Relative-Path-To-Project-Directory/Properties/launchSettings.json"
+
 Restrictions:
-1. The launchSettings.json file must be in {cwd}/Properties/launchSettings.json
-2. Only profiles with `"commandName": "Project"` are supported.
-3. Only `environmentVariables`, `applicationUrl` and `commandLineArgs` properties are supported
-4. Settings in launch.json will take precedence over settings in launchSettings.json, so for example, if `args` 
+1. Only profiles with `"commandName": "Project"` are supported.
+2. Only `environmentVariables`, `applicationUrl` and `commandLineArgs` properties are supported
+3. Settings in launch.json will take precedence over settings in launchSettings.json, so for example, if `args` 
 is already set to something other than an empty string/array in `launch.json` then the launchSettings.json 
 content will be ignored.
 
@@ -256,6 +271,7 @@ The `symbolOptions` element allows customization of how the debugger searches fo
             "https://my-companies-symbols-server"
         ],
         "searchMicrosoftSymbolServer": true,
+        "searchNuGetOrgSymbolServer": true,
         "cachePath": "/symcache",
         "moduleFilter": {
             "mode": "loadAllButExcluded",
@@ -269,6 +285,8 @@ The `symbolOptions` element allows customization of how the debugger searches fo
 **searchPaths**: Array of symbol server URLs (example: https://msdl.microsoft.com/download/symbols) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.
 
 **searchMicrosoftSymbolServer**: If `true` the Microsoft Symbol server (https://msdl.microsoft.com/download/symbols) is added to the symbols search path. If unspecified, this option defaults to `false`.
+
+**searchNuGetOrgSymbolServer**: If `true` the Nuget.org Symbol server (https://symbols.nuget.org/download/symbols) is added to the symbols search path. If unspecified, this option defaults to `false`.
 
 **cachePath**": Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.
 
@@ -306,3 +324,17 @@ To disable Source Link for all URLs, use `"sourceLinkOptions": { "*": { "enabled
 If multiple entries cover the same URL, the more specific entry (the entry with the longer string length) will be used.
 
 Currently Source Link only works for source files that can be accessed without authentication. So, for example, the debugger can download source files from open source projects on GitHub, but it cannot download from private GitHub repos, or from Visual Studio Team Services.
+
+## Target Architecture options (macOS M1)
+
+.NET on Apple M1 supports both x86_64 and ARM64. When debugging, the architecture of the process the debugger is attaching to and the debugger must match. If they do not match, it may result in `Unknown Error: 0x80131c3c`.
+
+The extension will try to resolve `targetArchitecture` based on the output of `dotnet --info` in the PATH, else it will try to use the same architecture as VS Code.
+
+You can override this behavior by setting `targetArchitecture` in your `launch.json`.
+
+Example:
+
+```json
+    "targetArchitecture": "arm64"
+```

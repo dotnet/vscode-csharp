@@ -3,24 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IMonoResolver } from "../../../src/constants/IMonoResolver";
-import { MonoInformation } from "../../../src/constants/MonoInformation";
+import { IHostExecutableResolver } from "../../../src/constants/IHostExecutableResolver";
+import { HostExecutableInformation } from "../../../src/constants/HostExecutableInformation";
 
-export const fakeMonoInfo: MonoInformation = {
+export const fakeMonoInfo: HostExecutableInformation = {
     version: "someMonoVersion",
     path: "somePath",
     env: undefined
 };
 
-export class FakeMonoResolver implements IMonoResolver {
-    public getGlobalMonoCalled: boolean;
+export class FakeMonoResolver implements IHostExecutableResolver {
+    public getMonoCalled: boolean;
 
     constructor(public willReturnMonoInfo = true) {
-        this.getGlobalMonoCalled = false;
+        this.getMonoCalled = false;
     }
 
-    async getGlobalMonoInfo(): Promise<MonoInformation> {
-        this.getGlobalMonoCalled = true;
+    async getHostExecutableInfo(): Promise<HostExecutableInformation> {
+        this.getMonoCalled = true;
         if (this.willReturnMonoInfo) {
             return Promise.resolve(fakeMonoInfo);
         }

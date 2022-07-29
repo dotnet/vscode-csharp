@@ -8,7 +8,7 @@ import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 export class Options {
     constructor(
         public path: string,
-        public useGlobalMono: string,
+        public useModernNet: boolean,
         public waitForDebugger: boolean,
         public loggingLevel: string,
         public autoStart: boolean,
@@ -33,12 +33,30 @@ export class Options {
         public enableDecompilationSupport: boolean,
         public enableImportCompletion: boolean,
         public enableAsyncCompletion: boolean,
+        public analyzeOpenDocumentsOnly: boolean,
         public useSemanticHighlighting: boolean,
-        public razorPluginPath?: string,
-        public defaultLaunchSolution?: string,
-        public monoPath?: string,
-        public excludePaths?: string[],
-        public maxProjectFileCountForDiagnosticAnalysis?: number | null) {
+        public inlayHintsEnableForParameters: boolean,
+        public inlayHintsForLiteralParameters: boolean,
+        public inlayHintsForObjectCreationParameters: boolean,
+        public inlayHintsForIndexerParameters: boolean,
+        public inlayHintsForOtherParameters: boolean,
+        public inlayHintsSuppressForParametersThatDifferOnlyBySuffix: boolean,
+        public inlayHintsSuppressForParametersThatMatchMethodIntent: boolean,
+        public inlayHintsSuppressForParametersThatMatchArgumentName: boolean,
+        public inlayHintsEnableForTypes: boolean,
+        public inlayHintsForImplicitVariableTypes: boolean,
+        public inlayHintsForLambdaParameterTypes: boolean,
+        public inlayHintsForImplicitObjectCreation: boolean,
+        public sdkPath: string,
+        public sdkVersion: string,
+        public sdkIncludePrereleases: boolean,
+        public razorPluginPath: string,
+        public defaultLaunchSolution: string,
+        public monoPath: string,
+        public dotnetPath: string,
+        public excludePaths: string[],
+        public maxProjectFileCountForDiagnosticAnalysis: number,
+        public testRunSettings: string) {
     }
 
     public static Read(vscode: vscode): Options {
@@ -46,16 +64,24 @@ export class Options {
         // are supported below. In particular, these are:
         //
         // - "csharp.omnisharp" -> "omnisharp.path"
-        // - "csharp.omnisharpUsesMono" -> "omnisharp.useMono"
-        // - "omnisharp.useMono" -> "omnisharp.useGlobalMono"
 
         const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
         const csharpConfig = vscode.workspace.getConfiguration('csharp');
         const razorConfig = vscode.workspace.getConfiguration('razor');
 
         const path = Options.readPathOption(csharpConfig, omnisharpConfig);
-        const useGlobalMono = Options.readUseGlobalMonoOption(omnisharpConfig, csharpConfig);
-        const monoPath = omnisharpConfig.get<string>('monoPath', undefined) || undefined;
+        const useModernNet = omnisharpConfig.get<boolean>("useModernNet", true);
+
+        const sdkPath = omnisharpConfig.get<string>('sdkPath', '');
+        const sdkVersion = omnisharpConfig.get<string>('sdkVersion', '');
+        const sdkIncludePrereleases = omnisharpConfig.get<boolean>('sdkIncludePrereleases', true);
+
+        // VS Code coerces unset string settings to the empty string.
+        // Thus, to avoid dealing with the empty string AND undefined,
+        // explicitly pass in the empty string as the fallback if the setting
+        // isn't defined in package.json (which should never happen).
+        const monoPath = omnisharpConfig.get<string>('monoPath', '');
+        const dotnetPath = omnisharpConfig.get<string>('dotnetPath', '');
 
         const waitForDebugger = omnisharpConfig.get<boolean>('waitForDebugger', false);
 
@@ -69,14 +95,15 @@ export class Options {
 
         const projectLoadTimeout = omnisharpConfig.get<number>('projectLoadTimeout', 60);
         const maxProjectResults = omnisharpConfig.get<number>('maxProjectResults', 250);
-        const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', undefined);
+        const defaultLaunchSolution = omnisharpConfig.get<string>('defaultLaunchSolution', '');
         const useEditorFormattingSettings = omnisharpConfig.get<boolean>('useEditorFormattingSettings', true);
 
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
-        const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', false);
+        const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', true);
         const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
         const enableAsyncCompletion = omnisharpConfig.get<boolean>('enableAsyncCompletion', false);
+        const analyzeOpenDocumentsOnly = omnisharpConfig.get<boolean>('analyzeOpenDocumentsOnly', false);
 
         const useFormatting = csharpConfig.get<boolean>('format.enable', true);
         const organizeImportsOnFormat = omnisharpConfig.get<boolean>('organizeImportsOnFormat', false);
@@ -85,7 +112,20 @@ export class Options {
         const showTestsCodeLens = csharpConfig.get<boolean>('testsCodeLens.enabled', true);
         const filteredSymbolsCodeLens = csharpConfig.get<string[]>('referencesCodeLens.filteredSymbols', []);
 
-        const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', false);
+        const useSemanticHighlighting = csharpConfig.get<boolean>('semanticHighlighting.enabled', true);
+
+        const inlayHintsEnableForParameters = csharpConfig.get<boolean>('inlayHints.parameters.enabled', false);
+        const inlayHintsForLiteralParameters = csharpConfig.get<boolean>('inlayHints.parameters.forLiteralParameters', false);
+        const inlayHintsForObjectCreationParameters = csharpConfig.get<boolean>('inlayHints.parameters.forObjectCreationParameters', false);
+        const inlayHintsForIndexerParameters = csharpConfig.get<boolean>('inlayHints.parameters.forIndexerParameters', false);
+        const inlayHintsForOtherParameters = csharpConfig.get<boolean>('inlayHints.parameters.forOtherParameters', false);
+        const inlayHintsSuppressForParametersThatDifferOnlyBySuffix = csharpConfig.get<boolean>('inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix', false);
+        const inlayHintsSuppressForParametersThatMatchMethodIntent = csharpConfig.get<boolean>('inlayHints.parameters.suppressForParametersThatMatchMethodIntent', false);
+        const inlayHintsSuppressForParametersThatMatchArgumentName = csharpConfig.get<boolean>('inlayHints.parameters.suppressForParametersThatMatchArgumentName', false);
+        const inlayHintsEnableForTypes = csharpConfig.get<boolean>('inlayHints.types.enabled', false);
+        const inlayHintsForImplicitVariableTypes = csharpConfig.get<boolean>('inlayHints.types.forImplicitVariableTypes', false);
+        const inlayHintsForLambdaParameterTypes = csharpConfig.get<boolean>('inlayHints.types.forLambdaParameterTypes', false);
+        const inlayHintsForImplicitObjectCreation = csharpConfig.get<boolean>('inlayHints.types.forImplicitObjectCreation', false);
 
         const disableCodeActions = csharpConfig.get<boolean>('disableCodeActions', false);
 
@@ -98,17 +138,19 @@ export class Options {
 
         const enableMsBuildLoadProjectsOnDemand = omnisharpConfig.get<boolean>('enableMsBuildLoadProjectsOnDemand', false);
 
-        const razorDisabled = !!razorConfig && razorConfig.get<boolean>('disabled', false);
-        const razorDevMode = !!razorConfig && razorConfig.get<boolean>('devmode', false);
-        const razorPluginPath = razorConfig ? razorConfig.get<string>('plugin.path', undefined) : undefined;
+        const razorDisabled = razorConfig?.get<boolean>('disabled', false) ?? false;
+        const razorDevMode = razorConfig?.get<boolean>('devmode', false) ?? false;
+        const razorPluginPath = razorConfig?.get<string>('plugin.path', '') ?? '';
 
-        const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number | null>('maxProjectFileCountForDiagnosticAnalysis', 1000);
+        const maxProjectFileCountForDiagnosticAnalysis = csharpConfig.get<number>('maxProjectFileCountForDiagnosticAnalysis', 1000);
+
+        const testRunSettings = omnisharpConfig.get<string>('testRunSettings', '');
 
         const excludePaths = this.getExcludedPaths(vscode);
 
         return new Options(
             path,
-            useGlobalMono,
+            useModernNet,
             waitForDebugger,
             loggingLevel,
             autoStart,
@@ -133,20 +175,35 @@ export class Options {
             enableDecompilationSupport,
             enableImportCompletion,
             enableAsyncCompletion,
+            analyzeOpenDocumentsOnly,
             useSemanticHighlighting,
+            inlayHintsEnableForParameters,
+            inlayHintsForLiteralParameters,
+            inlayHintsForObjectCreationParameters,
+            inlayHintsForIndexerParameters,
+            inlayHintsForOtherParameters,
+            inlayHintsSuppressForParametersThatDifferOnlyBySuffix,
+            inlayHintsSuppressForParametersThatMatchMethodIntent,
+            inlayHintsSuppressForParametersThatMatchArgumentName,
+            inlayHintsEnableForTypes,
+            inlayHintsForImplicitVariableTypes,
+            inlayHintsForLambdaParameterTypes,
+            inlayHintsForImplicitObjectCreation,
+            sdkPath,
+            sdkVersion,
+            sdkIncludePrereleases,
             razorPluginPath,
             defaultLaunchSolution,
             monoPath,
+            dotnetPath,
             excludePaths,
-            maxProjectFileCountForDiagnosticAnalysis
+            maxProjectFileCountForDiagnosticAnalysis,
+            testRunSettings
         );
     }
 
     public static getExcludedPaths(vscode: vscode, includeSearchExcludes: boolean = false): string[] {
-        let workspaceConfig = vscode.workspace.getConfiguration(undefined, null);
-        if (!workspaceConfig) {
-            return [];
-        }
+        const workspaceConfig = vscode.workspace.getConfiguration();
 
         let excludePaths = getExcludes(workspaceConfig, 'files.exclude');
 
@@ -157,53 +214,25 @@ export class Options {
         return excludePaths;
 
         function getExcludes(config: WorkspaceConfiguration, option: string): string[] {
-            let optionValue = config.get<{ [i: string]: boolean }>(option);
-            if (!optionValue) {
-                return [];
-            }
-
+            const optionValue = config.get<{ [i: string]: boolean }>(option, {});
             return Object.entries(optionValue)
                 .filter(([key, value]) => value)
                 .map(([key, value]) => key);
         }
     }
 
-    private static readPathOption(csharpConfig: WorkspaceConfiguration, omnisharpConfig: WorkspaceConfiguration): string | null {
+    private static readPathOption(csharpConfig: WorkspaceConfiguration, omnisharpConfig: WorkspaceConfiguration): string {
         if (omnisharpConfig.has('path')) {
             // If 'omnisharp.path' setting was found, use it.
-            return omnisharpConfig.get<string>('path');
+            return omnisharpConfig.get<string>('path', '');
         }
         else if (csharpConfig.has('omnisharp')) {
             // BACKCOMPAT: If 'csharp.omnisharp' setting was found, use it.
-            return csharpConfig.get<string>('omnisharp');
+            return csharpConfig.get<string>('omnisharp', '');
         }
         else {
-            // Otherwise, null.
-            return null;
-        }
-    }
-
-    private static readUseGlobalMonoOption(omnisharpConfig: WorkspaceConfiguration, csharpConfig: WorkspaceConfiguration): string {
-        function toUseGlobalMonoValue(value: boolean): string {
-            // True means 'always' and false means 'auto'.
-            return value ? "always" : "auto";
-        }
-
-        if (omnisharpConfig.has('useGlobalMono')) {
-            // If 'omnisharp.useGlobalMono' setting was found, just use it.
-            return omnisharpConfig.get<string>('useGlobalMono', "auto");
-        }
-        else if (omnisharpConfig.has('useMono')) {
-            // BACKCOMPAT: If 'omnisharp.useMono' setting was found, true maps to "always" and false maps to "auto"
-            return toUseGlobalMonoValue(omnisharpConfig.get<boolean>('useMono'));
-        }
-        else if (csharpConfig.has('omnisharpUsesMono')) {
-            // BACKCOMPAT: If 'csharp.omnisharpUsesMono' setting was found, true maps to "always" and false maps to "auto"
-            return toUseGlobalMonoValue(csharpConfig.get<boolean>('omnisharpUsesMono'));
-        }
-        else {
-            // Otherwise, the default value is "auto".
-            return "auto";
+            // Otherwise, the empty string.
+            return '';
         }
     }
 }

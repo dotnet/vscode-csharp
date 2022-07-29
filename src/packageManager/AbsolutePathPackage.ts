@@ -13,12 +13,13 @@ export class AbsolutePathPackage implements IPackage {
         public url: string,
         public platforms: string[],
         public architectures: string[],
-        public binaries: AbsolutePath[],
-        public installPath?: AbsolutePath,
+        public installPath: AbsolutePath,
+        public binaries?: AbsolutePath[],
         public installTestPath?: AbsolutePath,
         public fallbackUrl?: string,
         public platformId?: string,
-        public integrity?: string) {
+        public integrity?: string,
+        public isFramework?: boolean) {
     }
 
     public static getAbsolutePathPackage(pkg: Package, extensionPath: string) {
@@ -28,35 +29,32 @@ export class AbsolutePathPackage implements IPackage {
             pkg.url,
             pkg.platforms,
             pkg.architectures,
-            getAbsoluteBinaries(pkg, extensionPath),
             getAbsoluteInstallPath(pkg, extensionPath),
+            getAbsoluteBinaries(pkg, extensionPath),
             getAbsoluteInstallTestPath(pkg, extensionPath),
             pkg.fallbackUrl,
             pkg.platformId,
-            pkg.integrity
+            pkg.integrity,
+            pkg.isFramework
         );
     }
 }
 
-function getAbsoluteInstallTestPath(pkg: Package, extensionPath: string): AbsolutePath {
-    if (pkg.installTestPath) {
+function getAbsoluteInstallTestPath(pkg: Package, extensionPath: string): AbsolutePath | undefined {
+    if (pkg.installTestPath !== undefined) {
         return AbsolutePath.getAbsolutePath(extensionPath, pkg.installTestPath);
     }
 
-    return null;
+    return undefined;
 }
 
-function getAbsoluteBinaries(pkg: Package, extensionPath: string): AbsolutePath[] {
-    let basePath = getAbsoluteInstallPath(pkg, extensionPath).value;
-    if (pkg.binaries) {
-        return pkg.binaries.map(value => AbsolutePath.getAbsolutePath(basePath, value));
-    }
-
-    return null;
+function getAbsoluteBinaries(pkg: Package, extensionPath: string): AbsolutePath[] | undefined {
+    const basePath = getAbsoluteInstallPath(pkg, extensionPath).value;
+    return pkg.binaries?.map(value => AbsolutePath.getAbsolutePath(basePath, value));
 }
 
 function getAbsoluteInstallPath(pkg: Package, extensionPath: string): AbsolutePath {
-    if (pkg.installPath) {
+    if (pkg.installPath !== undefined) {
         return AbsolutePath.getAbsolutePath(extensionPath, pkg.installPath);
     }
 

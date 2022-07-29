@@ -48,7 +48,7 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
             }
 
             // Validate we are on compatiable macOS version if we are x86_64
-            if ((platformInformation.architecture !== "x86_64") || 
+            if ((platformInformation.architecture !== "x86_64") ||
                 (platformInformation.architecture === "x86_64" && !CoreClrDebugUtil.isMacOSSupported())) {
                 eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
                 return false;
@@ -149,8 +149,8 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
             // install.Lock does not exist, need to wait for packages to finish downloading.
             let installLock = false;
-            let debuggerPackage = getRuntimeDependencyPackageWithId("Debugger", this.packageJSON, this.platformInfo, this.extensionPath);
-            if (debuggerPackage && debuggerPackage.installPath) {
+            const debuggerPackage = getRuntimeDependencyPackageWithId("Debugger", this.packageJSON, this.platformInfo, this.extensionPath);
+            if (debuggerPackage?.installPath) {
                 installLock = await common.installFileExists(debuggerPackage.installPath, common.InstallFileType.Lock);
             }
 

@@ -7,8 +7,15 @@ import { BaseLoggerObserver } from "./BaseLoggerObserver";
 import { BaseEvent, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpFailure, OmnisharpServerMessage, OmnisharpServerOnServerError, OmnisharpServerOnError, OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnStdErr, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
 import * as os from 'os';
 import { EventType } from "../omnisharp/EventType";
+import * as vscode from 'vscode';
+import { PlatformInformation } from "../platform";
+import { Logger } from "../logger";
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {
+    constructor(channel: vscode.OutputChannel | Logger, private platformInformation: PlatformInformation) {
+        super(channel);
+    }
+
     public post = (event: BaseEvent) => {
         switch (event.type) {
             case EventType.OmnisharpInitialisation:
@@ -34,7 +41,7 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
                 this.handleOmnisharpServerMsBuildProjectDiagnostics(<OmnisharpServerMsBuildProjectDiagnostics>event);
                 break;
             case EventType.OmnisharpServerOnStdErr:
-                this.logger.append((<OmnisharpServerOnStdErr>event).message);
+                this.handleOmnisharpServerOnStdErr(<OmnisharpServerOnStdErr>event);
                 break;
             case EventType.OmnisharpEventPacketReceived:
                 this.handleOmnisharpEventPacketReceived(<OmnisharpEventPacketReceived>event);
@@ -43,7 +50,25 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleOmnisharpServerOnServerError(event: OmnisharpServerOnServerError) {
+        if (event.err.cmd === "dotnet --version") {
+            this.logger.appendLine('[ERROR] A .NET 6 SDK was not found. Please install the latest SDK from https://dotnet.microsoft.com/en-us/download/dotnet/6.0.');
+            return;
+        }
+        else if (event.err.message?.startsWith("Found dotnet version")) {
+            this.logger.appendLine(`[ERROR] ${event.err} Please install the latest SDK from https://dotnet.microsoft.com/en-us/download/dotnet/6.0.`);
+            return;
+        }
+
         this.logger.appendLine('[ERROR] ' + event.err);
+    }
+
+    private handleOmnisharpServerOnStdErr(event: OmnisharpServerOnStdErr) {
+        if (event.message.startsWith("System.BadImageFormatException: Could not load file or assembly")) {
+            this.logger.appendLine(`[ERROR] A .NET 6 SDK for ${this.platformInformation.architecture} was not found. Please install the latest ${this.platformInformation.architecture} SDK from https://dotnet.microsoft.com/en-us/download/dotnet/6.0.`);
+            return;
+        }
+
+        this.logger.appendLine('[STDERR] ' + event.message);
     }
 
     private handleOmnisharpInitialisation(event: OmnisharpInitialisation) {
@@ -56,10 +81,10 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
 
     private handleOmnisharpLaunch(event: OmnisharpLaunch) {
         this.logger.append(`OmniSharp server started`);
-        if (event.monoVersion) {
-            this.logger.append(` with Mono ${event.monoVersion}`);
-            if (event.monoPath !== undefined) {
-                this.logger.append(` (${event.monoPath})`);
+        if (event.hostVersion) {
+            this.logger.append(` with ${event.hostIsMono ? 'Mono' : '.NET'} ${event.hostVersion}`);
+            if (event.hostPath?.length > 0) {
+                this.logger.append(` (${event.hostPath})`);
             }
         }
         this.logger.appendLine('.');

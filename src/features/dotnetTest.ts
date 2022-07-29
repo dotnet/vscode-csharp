@@ -19,6 +19,7 @@ import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import OptionProvider from '../observers/OptionProvider';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -29,7 +30,7 @@ export default class TestManager extends AbstractProvider {
     private _telemetryIntervalId: NodeJS.Timer = undefined;
     private _eventStream: EventStream;
 
-    constructor(server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(private optionProvider: OptionProvider, server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         this._eventStream = eventStream;
 
@@ -192,8 +193,8 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _getRunSettings(filename: string): string | undefined {
-        const testSettingsPath = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
-        if (!testSettingsPath) {
+        const testSettingsPath = this.optionProvider.GetLatestOptions().testRunSettings;
+        if (testSettingsPath.length === 0) {
             return undefined;
         }
 
@@ -312,7 +313,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private _createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
+    private _createLaunchConfiguration(program: string, args: string, cwd: string, environmentVariables: Map<string, string>, debuggerEventsPipeName: string) {
         let debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');
 
         // Get the initial set of options from the workspace setting
@@ -332,7 +333,8 @@ export default class TestManager extends AbstractProvider {
             debuggerEventsPipeName: debuggerEventsPipeName,
             program: program,
             args: args,
-            cwd: cwd
+            cwd: cwd,
+            env: environmentVariables,
         };
 
         // Now fill in the rest of the options
@@ -368,6 +370,7 @@ export default class TestManager extends AbstractProvider {
                 response.FileName,
                 response.Arguments,
                 response.WorkingDirectory,
+                response.EnvironmentVariables,
                 debugEventListener.pipePath());
         }
         finally {
@@ -496,7 +499,7 @@ export default class TestManager extends AbstractProvider {
 
         try {
             let response = await serverUtils.debugTestClassGetStartInfo(this._server, request);
-            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, response.EnvironmentVariables, debugEventListener.pipePath());
         }
         finally {
             listener.dispose();
@@ -536,7 +539,7 @@ export default class TestManager extends AbstractProvider {
                 return null;
             }
 
-            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, response.EnvironmentVariables, debugEventListener.pipePath());
         }
         finally {
             listener.dispose();

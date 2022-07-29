@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CompletionItemProvider, TextDocument, Position, CompletionContext, CompletionList, CompletionItem, MarkdownString, TextEdit, Range, SnippetString, window, Selection, WorkspaceEdit, workspace } from "vscode";
+import { CompletionItemProvider, TextDocument, Position, CompletionContext, CompletionList, CompletionItem, MarkdownString, TextEdit, Range, SnippetString, window, Selection, WorkspaceEdit, workspace, CompletionItemLabel } from "vscode";
 import AbstractProvider from "./abstractProvider";
 import * as protocol from "../omnisharp/protocol";
 import * as serverUtils from '../omnisharp/utils';
@@ -11,6 +11,7 @@ import { CancellationToken, CompletionTriggerKind as LspCompletionTriggerKind, I
 import { createRequest } from "../omnisharp/typeConversion";
 import { LanguageMiddlewareFeature } from "../omnisharp/LanguageMiddlewareFeature";
 import { OmniSharpServer } from "../omnisharp/server";
+import { isVirtualCSharpDocument } from "./virtualDocumentTracker";
 
 export const CompletionAfterInsertCommand = "csharp.completion.afterInsert";
 
@@ -29,7 +30,35 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
 
         try {
             const response = await serverUtils.getCompletion(this._server, request, token);
-            const mappedItems = response.Items.map(arg => this._convertToVscodeCompletionItem(arg));
+            let mappedItems = response.Items.map(arg => this._convertToVscodeCompletionItem(arg));
+
+            if (isVirtualCSharpDocument(document)) {
+                // The `await` completion item is not compatible with all Razor scenarios.
+                //
+                // The `await` completion has been made smarter in that it will now update the containing method signature to include `async`, if it has not been specified.
+                // This is problematic for Razor because it will now suggest making the code behind method that is "wrapping" the use of C# into an async method.
+                // It makes this change by including additional text edits in the completion item.
+                //
+                // Example that generates an incompatible completion item:
+                //
+                // ```
+                // @Da$$
+                // ```
+                //
+                // Cases where you are in an async method there are no additional text edits and we can continue to offer the `await` keyword.
+                //
+                // Example that generates a compatible completion item:
+                //
+                // ```
+                // @code {
+                //   async Task GetNamesAsync()
+                //   {
+                //     var names = awa$$
+                //   }
+                // }
+                // ```
+                mappedItems = mappedItems.filter(item => (<CompletionItemLabel>item.label).label !== "await" || !item.additionalTextEdits);
+            }
 
             let lastCompletions = new Map();
 
