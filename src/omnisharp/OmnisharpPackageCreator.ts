@@ -36,6 +36,7 @@ function GetPackage(inputPackage: Package, useFramework: boolean, serverUrl: str
 
     return {
         ...inputPackage,
+        integrity: undefined,
         description: `${inputPackage.description}, Version = ${version}`,
         url: `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}${packageSuffix}.zip`,
         installPath: `${installPath}/${version}${packageSuffix}`,
