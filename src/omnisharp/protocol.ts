@@ -682,6 +682,7 @@ export namespace V2 {
     export interface OmniSharpCodeAction {
         Identifier: string;
         Name: string;
+        CodeActionKind?: string;
     }
 
     export interface GetCodeActionsResponse {
