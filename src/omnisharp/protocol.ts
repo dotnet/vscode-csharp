@@ -215,6 +215,8 @@ export interface QuickFix {
 
 export interface SymbolLocation extends QuickFix {
     Kind: string;
+    ContainingSymbolName?: string;
+    GeneratedFileInfo?: SourceGeneratedFileInfo;
 }
 
 export interface QuickFixResponse {
