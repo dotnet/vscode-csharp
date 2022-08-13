@@ -9,13 +9,18 @@ import OptionProvider from '../observers/OptionProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConversion';
-import { CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind } from 'vscode';
+import { CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind, Location } from 'vscode';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
 
 export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
 
-    constructor(server: OmniSharpServer, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(
+        server: OmniSharpServer,
+        private optionProvider: OptionProvider,
+        languageMiddlewareFeature: LanguageMiddlewareFeature,
+        private sourceGeneratedDocumentProvider: SourceGeneratedDocumentProvider) {
         super(server, languageMiddlewareFeature);
     }
 
@@ -32,7 +37,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
         try {
             let res = await serverUtils.findSymbols(this._server, { Filter: search, MaxItemsToReturn: maxItemsToReturn, FileName: '' }, token);
             if (res && Array.isArray(res.QuickFixes)) {
-                return res.QuickFixes.map(OmnisharpWorkspaceSymbolProvider._asSymbolInformation);
+                return res.QuickFixes.map(symbol => this._asSymbolInformation(symbol));
             }
         }
         catch (error) {
@@ -40,11 +45,22 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
         }
     }
 
-    private static _asSymbolInformation(symbolInfo: protocol.SymbolLocation): SymbolInformation {
+    private _asSymbolInformation(symbolInfo: protocol.SymbolLocation): SymbolInformation {
+        let uri: Uri;
+        if (symbolInfo.GeneratedFileInfo) {
+            uri = this.sourceGeneratedDocumentProvider.addSourceGeneratedFileWithoutInitialContent(symbolInfo.GeneratedFileInfo, symbolInfo.FileName);
+        }
+        else {
+            uri = Uri.file(symbolInfo.FileName);
+        }
 
-        return new SymbolInformation(symbolInfo.Text, OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
-            toRange(symbolInfo),
-            Uri.file(symbolInfo.FileName));
+        const location = new Location(uri, toRange(symbolInfo));
+
+        return new SymbolInformation(
+            symbolInfo.Text,
+            OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
+            symbolInfo.ContainingSymbolName ?? "",
+            location);
     }
 
     private static _toKind(symbolInfo: protocol.SymbolLocation): SymbolKind {
