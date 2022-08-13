@@ -110,34 +110,6 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
         return uri;
     }
 
-    public addSourceGeneratedFile(fileInfo: SourceGeneratedFileInfo, response: SourceGeneratedFileResponse): Uri {
-        if (this._documents.has(fileInfo)) {
-            // Raced with something, return the existing one
-            return this.tryGetExistingSourceGeneratedFile(fileInfo);
-        }
-
-        const uri = this.getUriForName(response.SourceName);
-        const uriString = uri.toString();
-
-        let triggerUpdate = false;
-
-        if (this._uriToDocumentInfo.has(uriString)) {
-            // Old version of the file in the cache. Remove it, and after it's replaced trigger vscode to update the file.
-            this._documents.delete(fileInfo);
-            this._uriToDocumentInfo.delete(uriString);
-            triggerUpdate = true;
-        }
-
-        this._documents.set(fileInfo, response);
-        this._uriToDocumentInfo.set(uriString, fileInfo);
-
-        if (triggerUpdate) {
-            this._onDidChangeEmitter.fire(uri);
-        }
-
-        return uri;
-    }
-
     public async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string> {
         const fileInfo = this._uriToDocumentInfo.get(uri.toString());
         let response = this._documents.get(fileInfo);
