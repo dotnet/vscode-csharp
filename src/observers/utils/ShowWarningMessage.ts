@@ -8,8 +8,8 @@ import MessageItemWithCommand from "./MessageItemWithCommand";
 
 export default async function showWarningMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
     try {
-        let value = await vscode.window.showWarningMessage<MessageItemWithCommand>(message, ...items);
-        if (value && value.command) {
+        const value = await vscode.window.showWarningMessage<MessageItemWithCommand>(message, ...items);
+        if (value?.command) {
             await vscode.commands.executeCommand<string>(value.command);
         }
     }
