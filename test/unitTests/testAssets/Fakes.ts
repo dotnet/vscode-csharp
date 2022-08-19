@@ -38,9 +38,7 @@ export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
     let configuration: vscode.WorkspaceConfiguration = {
         get<T>(section: string, defaultValue?: T): T | undefined {
             let result = <T>values[section];
-            return result === undefined && defaultValue !== undefined
-                ? defaultValue
-                : result;
+            return result ?? defaultValue;
         },
         has: (section: string) => {
             return values[section] !== undefined;
@@ -187,18 +185,17 @@ export function getVSCodeWithConfig() {
     const _vscodeConfig = getWorkspaceConfiguration();
     const _omnisharpConfig = getWorkspaceConfiguration();
     const _csharpConfig = getWorkspaceConfiguration();
+    const _razorConfig = getWorkspaceConfiguration();
 
     vscode.workspace.getConfiguration = (section?, resource?) => {
-        if (!section) {
+        if (section === undefined) {
             return _vscodeConfig;
-        }
-
-        if (section === 'omnisharp') {
+        } else if (section === 'omnisharp') {
             return _omnisharpConfig;
-        }
-
-        if (section === 'csharp') {
+        } else if (section === 'csharp') {
             return _csharpConfig;
+        } else if (section === 'razor') {
+            return _razorConfig;
         }
 
         throw new Error(`Unexpected section ${section}`);
