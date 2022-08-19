@@ -20,7 +20,7 @@ export abstract class BaseStatusBarItemObserver {
     }
 
     public ResetAndHideStatusBar() {
-        this.statusBarItem.text = undefined;
+        this.statusBarItem.text = '';
         this.statusBarItem.command = undefined;
         this.statusBarItem.color = undefined;
         this.statusBarItem.tooltip = undefined;
