@@ -28,7 +28,7 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
         }
     }
 
-    GetType(type: string): FoldingRangeKind {
+    GetType(type: string): FoldingRangeKind | undefined {
         switch (type) {
             case "Comment":
                 return FoldingRangeKind.Comment;
@@ -37,7 +37,7 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
             case "Region":
                 return FoldingRangeKind.Region;
             default:
-                return null;
+                return undefined;
         }
     }
 
