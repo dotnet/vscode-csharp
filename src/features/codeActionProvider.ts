@@ -62,6 +62,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
                 return {
                     title: codeAction.Name,
+                    kind: this.mapOmniSharpCodeActionKindToVSCodeCodeActionKind(codeAction.CodeActionKind),
                     command: {
                         title: codeAction.Name,
                         command: this._commandId,
@@ -71,6 +72,21 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
             });
         } catch (error) {
             return Promise.reject(`Problem invoking 'GetCodeActions' on OmniSharp server: ${error}`);
+        }
+    }
+
+    private mapOmniSharpCodeActionKindToVSCodeCodeActionKind(kind: string): vscode.CodeActionKind {
+        switch (kind) {
+            case 'QuickFix':
+                return vscode.CodeActionKind.QuickFix;
+            case 'Refactor':
+                return vscode.CodeActionKind.Refactor;
+            case 'RefactorExtract':
+                return vscode.CodeActionKind.RefactorExtract;
+            case 'RefactorInline':
+                return vscode.CodeActionKind.RefactorInline;
+            default:
+                return vscode.CodeActionKind.Empty;
         }
     }
 

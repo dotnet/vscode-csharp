@@ -38,6 +38,6 @@ suite('BackgroundWorkStatusBarObserver', () => {
         observer.post(event);
         expect(hideCalled).to.be.true;
         expect(showCalled).to.be.false;
-        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.text).to.be.equal('');
     });
 });

@@ -90,7 +90,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
         localDisposables.add(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server, languageMiddlewareFeature)));
         if (options.useFormatting) {
@@ -99,7 +99,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         }
         localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, completionProvider, '.', ' '));
         localDisposables.add(vscode.commands.registerCommand(CompletionAfterInsertCommand, async (item) => completionProvider.afterInsert(item)));
-        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
         // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
         // so that it will be cleaned up if OmniSharp is restarted.
