@@ -29,7 +29,7 @@ suite('ProjectStatusBarObserver', () => {
         let event = new OmnisharpServerOnStop();
         observer.post(event);
         expect(hideCalled).to.be.true;
-        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.text).to.be.equal('');
         expect(statusBarItem.command).to.be.undefined;
         expect(statusBarItem.color).to.be.undefined;
     });
@@ -44,10 +44,10 @@ suite('ProjectStatusBarObserver', () => {
 
     suite('WorkspaceInformationUpdated', () => {
         test('Project status is hidden if there is no MSBuild Object', () => {
-            let event = getWorkspaceInformationUpdated(null);
+            let event = getWorkspaceInformationUpdated(undefined);
             observer.post(event);
             expect(hideCalled).to.be.true;
-            expect(statusBarItem.text).to.be.undefined;
+            expect(statusBarItem.text).to.be.equal('');
             expect(statusBarItem.command).to.be.undefined;
         });
 
@@ -55,7 +55,7 @@ suite('ProjectStatusBarObserver', () => {
             let event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
             observer.post(event);
             expect(showCalled).to.be.true;
-            expect(statusBarItem.text).to.contain(event.info.MsBuild.SolutionPath);
+            expect(statusBarItem.text).to.contain(event.info.MsBuild?.SolutionPath);
             expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
         });
     });
