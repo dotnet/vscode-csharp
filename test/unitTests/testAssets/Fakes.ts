@@ -175,7 +175,7 @@ export function getMSBuildWorkspaceInformation(msBuildSolutionPath: string, msBu
     };
 }
 
-export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspaceInformation): WorkspaceInformationUpdated {
+export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspaceInformation | undefined): WorkspaceInformationUpdated {
     let a: protocol.WorkspaceInformationResponse = {
         MsBuild: msbuild
     };
