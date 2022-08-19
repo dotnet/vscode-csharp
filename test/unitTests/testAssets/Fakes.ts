@@ -148,9 +148,9 @@ export function getFakeVsCode(): vscode.vscode {
         },
         version: "",
         env: {
-            appName: null,
-            appRoot: null,
-            language: null,
+            appName: "",
+            appRoot: "",
+            language: "",
             clipboard: {
                 writeText: () => {
                     throw new Error("Not Implemented");
@@ -159,8 +159,8 @@ export function getFakeVsCode(): vscode.vscode {
                     throw new Error("Not Implemented");
                 }
             },
-            machineId: null,
-            sessionId: null,
+            machineId: "",
+            sessionId: "",
             openExternal: () => {
                 throw new Error("Not Implemented");
             }
@@ -175,12 +175,10 @@ export function getMSBuildWorkspaceInformation(msBuildSolutionPath: string, msBu
     };
 }
 
-export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspaceInformation | undefined): WorkspaceInformationUpdated {
-    let a: protocol.WorkspaceInformationResponse = {
-        MsBuild: msbuild
-    };
-
-    return new WorkspaceInformationUpdated(a);
+export function getWorkspaceInformationUpdated(MsBuild: protocol.MsBuildWorkspaceInformation | undefined): WorkspaceInformationUpdated {
+    return new WorkspaceInformationUpdated({
+        MsBuild,
+    });
 }
 
 export function getVSCodeWithConfig() {
@@ -203,7 +201,7 @@ export function getVSCodeWithConfig() {
             return _csharpConfig;
         }
 
-        return undefined;
+        throw new Error(`Unexpected section ${section}`);
     };
 
     return vscode;
