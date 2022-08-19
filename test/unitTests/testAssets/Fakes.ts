@@ -187,7 +187,7 @@ export function getVSCodeWithConfig() {
     const _csharpConfig = getWorkspaceConfiguration();
     const _razorConfig = getWorkspaceConfiguration();
 
-    vscode.workspace.getConfiguration = (section?, resource?) => {
+    vscode.workspace.getConfiguration = (section, resource) => {
         if (section === undefined) {
             return _vscodeConfig;
         } else if (section === 'omnisharp') {
@@ -204,7 +204,7 @@ export function getVSCodeWithConfig() {
     return vscode;
 }
 
-export function updateConfig(vscode: vscode.vscode, section: string, config: string, value: any) {
-    let workspaceConfig = vscode.workspace.getConfiguration(section);
+export function updateConfig(vscode: vscode.vscode, section: string | undefined, config: string, value: any) {
+    const workspaceConfig = vscode.workspace.getConfiguration(section);
     workspaceConfig.update(config, value);
 }
