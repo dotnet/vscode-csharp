@@ -9,7 +9,7 @@ import { PackageError } from "../packageManager/PackageError";
 import { EventType } from "../omnisharp/EventType";
 
 export class CsharpLoggerObserver extends BaseLoggerObserver {
-    private dots: number;
+    private dots: number = 0;
 
     public post = (event: Event.BaseEvent) => {
         switch (event.type) {

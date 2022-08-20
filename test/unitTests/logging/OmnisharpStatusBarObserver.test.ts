@@ -14,7 +14,7 @@ suite('OmnisharpStatusBarObserver', () => {
     let hideCalled: boolean;
 
     setup(() => {
-        statusBarItem.text = undefined;
+        statusBarItem.text = '';
         statusBarItem.color = undefined;
         statusBarItem.command = undefined;
         statusBarItem.tooltip = undefined;
@@ -84,7 +84,7 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpServerOnStop();
         observer.post(event);
         expect(hideCalled).to.be.true;
-        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.text).to.be.equal('');
         expect(statusBarItem.command).to.be.undefined;
         expect(statusBarItem.color).to.be.undefined;
     });
@@ -118,7 +118,7 @@ suite('OmnisharpStatusBarObserver', () => {
         observer.post(successEvent);
 
         expect(hideCalled).to.be.true;
-        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.text).to.be.equal('');
         expect(statusBarItem.command).to.be.undefined;
         expect(statusBarItem.color).to.be.undefined;
     });

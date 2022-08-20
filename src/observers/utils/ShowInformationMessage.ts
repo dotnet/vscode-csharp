@@ -8,8 +8,8 @@ import MessageItemWithCommand from "./MessageItemWithCommand";
 
 export default async function showInformationMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
     try {
-        let value = await vscode.window.showInformationMessage<MessageItemWithCommand>(message, ...items);
-        if (value && value.command) {
+        const value = await vscode.window.showInformationMessage<MessageItemWithCommand>(message, ...items);
+        if (value?.command) {
             vscode.commands.executeCommand(value.command);
         }
     }

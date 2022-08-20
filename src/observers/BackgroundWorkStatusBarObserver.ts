@@ -15,7 +15,7 @@ export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
 
             if (asProjectEvent.message.Status === DiagnosticStatus.Processing) {
                 let projectFile = asProjectEvent.message.ProjectFilePath.replace(/^.*[\\\/]/, '');
-                this.SetAndShowStatusBar(`$(sync~spin) Analyzing ${projectFile}`, 'o.showOutput', null, `Analyzing ${projectFile}`);
+                this.SetAndShowStatusBar(`$(sync~spin) Analyzing ${projectFile}`, 'o.showOutput', undefined, `Analyzing ${projectFile}`);
             }
             else {
                 this.ResetAndHideStatusBar();
@@ -23,4 +23,3 @@ export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
         }
     }
 }
-
