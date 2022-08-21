@@ -26,9 +26,9 @@ export default class FormattingSupport extends AbstractSupport implements Docume
                 return res.Changes.map(FormattingSupport._asEditOptionation);
             }
         }
-        catch (error) {
-            return [];
-        }
+        catch {}
+
+        return [];
     }
 
     public async provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
@@ -46,9 +46,9 @@ export default class FormattingSupport extends AbstractSupport implements Docume
                 return res.Changes.map(FormattingSupport._asEditOptionation);
             }
         }
-        catch (error) {
-            return [];
-        }
+        catch {}
+
+        return [];
     }
 
     private static _asEditOptionation(change: protocol.TextChange): TextEdit {

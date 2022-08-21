@@ -100,7 +100,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         return [];
     }
 
-    async resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens> {
+    async resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens | undefined> {
         if (codeLens instanceof ReferencesCodeLens) {
             return this.resolveReferencesCodeLens(codeLens, token);
         }
@@ -110,9 +110,11 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         else if (codeLens instanceof DebugTestsCodeLens) {
             return this.resolveTestCodeLens(codeLens, 'Debug Test', 'dotnet.test.debug', 'Debug All Tests', 'dotnet.classTests.debug');
         }
+
+        return undefined;
     }
 
-    private async resolveReferencesCodeLens(codeLens: ReferencesCodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens> {
+    private async resolveReferencesCodeLens(codeLens: ReferencesCodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens | undefined> {
         const request: protocol.FindUsagesRequest = {
             FileName: codeLens.fileName,
             Line: codeLens.range.start.line,
@@ -147,7 +149,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         }
     }
 
-    private async resolveTestCodeLens(codeLens: TestCodeLens, singularTitle: string, singularCommandName: string, pluralTitle: string, pluralCommandName: string): Promise<vscode.CodeLens> {
+    private async resolveTestCodeLens(codeLens: TestCodeLens, singularTitle: string, singularCommandName: string, pluralTitle: string, pluralCommandName: string): Promise<vscode.CodeLens | undefined> {
         if (!codeLens.isTestContainer) {
             // This is just a single test method, not a container.
             codeLens.command = {

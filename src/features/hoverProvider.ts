@@ -11,7 +11,7 @@ import { HoverProvider, Hover, TextDocument, CancellationToken, Position, Markdo
 
 export default class OmniSharpHoverProvider extends AbstractSupport implements HoverProvider {
 
-    public async provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
+    public async provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover | undefined> {
         let request = createRequest<protocol.QuickInfoRequest>(document, position);
         try {
             const response = await serverUtils.getQuickInfo(this._server, request, token);

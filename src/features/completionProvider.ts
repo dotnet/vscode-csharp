@@ -23,7 +23,7 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
         super(server, languageMiddlewareFeature);
     }
 
-    public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList> {
+    public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined> {
         let request = createRequest<protocol.CompletionRequest>(document, position);
         request.CompletionTrigger = (context.triggerKind + 1) as LspCompletionTriggerKind;
         request.TriggerCharacter = context.triggerCharacter;
@@ -92,7 +92,7 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
             return this._convertToVscodeCompletionItem(response.Item);
         }
         catch (error) {
-            return;
+            return item;
         }
     }
 
