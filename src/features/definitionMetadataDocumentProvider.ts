@@ -9,7 +9,7 @@ import { IDisposable } from '../Disposable';
 
 export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, IDisposable {
     readonly scheme = "omnisharp-metadata";
-    private _registration: IDisposable;
+    private _registration?: IDisposable;
     private _documents: Map<string, MetadataResponse>;
     private _documentClosedSubscription: IDisposable;
 
@@ -23,7 +23,7 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
     }
 
     public dispose(): void {
-        this._registration.dispose();
+        this._registration?.dispose();
         this._documentClosedSubscription.dispose();
         this._documents.clear();
     }
@@ -48,7 +48,7 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
         this._registration = workspace.registerTextDocumentContentProvider(this.scheme, this);
     }
 
-    public provideTextDocumentContent(uri: Uri): string {
+    public provideTextDocumentContent(uri: Uri): string | undefined {
         return this._documents.get(uri.toString())?.Source;
     }
 
