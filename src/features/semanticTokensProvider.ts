@@ -312,7 +312,7 @@ tokenModifiers[DefaultTokenModifier.modification] = 'modification';
 tokenModifiers[DefaultTokenModifier.async] = 'async';
 tokenModifiers[DefaultTokenModifier.readonly] = 'readonly';
 
-const tokenTypeMap: number[] = [];
+const tokenTypeMap: (number | undefined)[] = [];
 tokenTypeMap[SemanticHighlightClassification.Comment] = DefaultTokenType.comment;
 tokenTypeMap[SemanticHighlightClassification.ExcludedCode] = CustomTokenType.excludedCode;
 tokenTypeMap[SemanticHighlightClassification.Identifier] = DefaultTokenType.variable;
