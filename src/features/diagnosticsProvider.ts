@@ -189,9 +189,9 @@ class DiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    private _onDidChangeActiveTextEditor(textEditor: vscode.TextEditor): void {
+    private _onDidChangeActiveTextEditor(textEditor: vscode.TextEditor | undefined): void {
         // active text editor can be undefined.
-        if (textEditor != undefined && textEditor.document != null) {
+        if (textEditor !== undefined) {
             this._onDocumentOpenOrChange(textEditor.document);
         }
     }
@@ -272,7 +272,7 @@ class DiagnosticsProvider extends AbstractSupport {
     private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diagnostic: vscode.Diagnostic, fileName: string }[] {
         return quickFixes
             .map(quickFix => this._asDiagnosticInFileIfAny(quickFix))
-            .filter(diagnosticInFile => diagnosticInFile !== undefined);
+            .filter(diagnosticInFile => diagnosticInFile !== undefined) as { diagnostic: vscode.Diagnostic, fileName: string }[];
     }
 
     private async _validateEntireWorkspace() {
@@ -310,7 +310,7 @@ class DiagnosticsProvider extends AbstractSupport {
         this._diagnostics.set(entries);
     }
 
-    private _asDiagnosticInFileIfAny(quickFix: protocol.QuickFix): { diagnostic: vscode.Diagnostic, fileName: string } {
+    private _asDiagnosticInFileIfAny(quickFix: protocol.QuickFix): { diagnostic: vscode.Diagnostic, fileName: string } | undefined {
         let display = this._getDiagnosticDisplay(quickFix, this._asDiagnosticSeverity(quickFix));
 
         if (display.severity === "hidden") {
