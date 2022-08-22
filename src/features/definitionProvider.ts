@@ -87,17 +87,7 @@ export default class CSharpDefinitionProvider extends AbstractSupport implements
                     locations.push(new Location(uri, vscodeRange));
                 } else if (definition.SourceGeneratedFileInfo) {
                     // File is source generated
-                    let uri = this.sourceGeneratedDocumentProvider.tryGetExistingSourceGeneratedFile(definition.SourceGeneratedFileInfo);
-                    if (!uri) {
-                        const sourceGeneratedFileResponse = await serverUtils.getSourceGeneratedFile(this._server, definition.SourceGeneratedFileInfo, token);
-
-                        if (!sourceGeneratedFileResponse || !sourceGeneratedFileResponse.Source || !sourceGeneratedFileResponse.SourceName) {
-                            continue;
-                        }
-
-                        uri = this.sourceGeneratedDocumentProvider.addSourceGeneratedFile(definition.SourceGeneratedFileInfo, sourceGeneratedFileResponse);
-                    }
-
+                    let uri = this.sourceGeneratedDocumentProvider.addSourceGeneratedFileWithoutInitialContent(definition.SourceGeneratedFileInfo, definition.Location.FileName);
                     locations.push(new Location(uri, toRange3(definition.Location.Range)));
                 } else {
                     // if it is a normal source definition, convert the response to a location
