@@ -301,7 +301,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
         // Clear diagnostics for files that no longer have any diagnostics.
         this._diagnostics.forEach((uri) => {
-            if (!entries.find(tuple => tuple[0].toString() === uri.toString())) {
+            if (entries.find(tuple => tuple[0].toString() === uri.toString()) === undefined) {
                 this._diagnostics.delete(uri);
             }
         });
@@ -332,12 +332,12 @@ class DiagnosticsProvider extends AbstractSupport {
 
     private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean } {
         // These hard coded values bring the goodness of fading even when analyzers are disabled.
-        let isFadeout = (quickFix.Tags && !!quickFix.Tags.find(x => x.toLowerCase() == 'unnecessary'))
+        let isFadeout = (quickFix.Tags?.find(x => x.toLowerCase() === 'unnecessary') !== undefined)
             || quickFix.Id == "CS0162"  // CS0162: Unreachable code
             || quickFix.Id == "CS0219"  // CS0219: Unused variable
             || quickFix.Id == "CS8019"; // CS8019: Unnecessary using
 
-        if (isFadeout && quickFix.LogLevel.toLowerCase() === 'hidden' || quickFix.LogLevel.toLowerCase() === 'none') {
+        if (isFadeout && ['hidden', 'none'].includes(quickFix.LogLevel)) {
             // Theres no such thing as hidden severity in VSCode,
             // however roslyn uses commonly analyzer with hidden to fade out things.
             // Without this any of those doesn't fade anything in vscode.
