@@ -17,7 +17,7 @@ import { CancellationToken } from 'vscode-languageserver-protocol';
 export class FixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
     public static fixAllCodeActionKind =
       vscode.CodeActionKind.SourceFixAll.append('csharp');
-  
+
     public static metadata: vscode.CodeActionProviderMetadata = {
       providedCodeActionKinds: [FixAllProvider.fixAllCodeActionKind]
     };
@@ -62,7 +62,7 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
             matchOnDescription: true,
             placeHolder: `Select fix all action`
         }).then(async selectedAction => {
-            let filter: FixAllItem[] = undefined;
+            let filter: FixAllItem[] | undefined;
 
             if (selectedAction === undefined) {
                 return;
@@ -77,7 +77,7 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
         });
     }
 
-    private async applyFixes(fileName: string, scope: FixAllScope, fixAllFilter: FixAllItem[]): Promise<boolean | string | {}> {
+    private async applyFixes(fileName: string, scope: FixAllScope, fixAllFilter: FixAllItem[] | undefined): Promise<boolean | string | undefined> {
         let response = await serverUtils.runFixAll(this.server, {
             FileName: fileName,
             Scope: scope,
