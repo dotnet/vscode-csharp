@@ -272,7 +272,7 @@ class DiagnosticsProvider extends AbstractSupport {
     private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diagnostic: vscode.Diagnostic, fileName: string }[] {
         return quickFixes
             .map(quickFix => this._asDiagnosticInFileIfAny(quickFix))
-            .filter(diagnosticInFile => diagnosticInFile !== undefined) as { diagnostic: vscode.Diagnostic, fileName: string }[];
+            .filter((diagnosticInFile): diagnosticInFile is NonNullable<typeof diagnosticInFile> => diagnosticInFile !== undefined);
     }
 
     private async _validateEntireWorkspace() {
