@@ -281,13 +281,13 @@ class DiagnosticsProvider extends AbstractSupport {
         let quickFixes = value.QuickFixes
             .sort((a, b) => a.FileName.localeCompare(b.FileName));
 
-        let entries: [vscode.Uri, vscode.Diagnostic[]][] = [];
-        let lastEntry: [vscode.Uri, vscode.Diagnostic[]];
+        let entries: [vscode.Uri, vscode.Diagnostic[] | undefined][] = [];
+        let lastEntry: [vscode.Uri, vscode.Diagnostic[]] | undefined;
 
         for (let diagnosticInFile of this._mapQuickFixesAsDiagnosticsInFile(quickFixes)) {
             let uri = vscode.Uri.file(diagnosticInFile.fileName);
 
-            if (lastEntry && lastEntry[0].toString() === uri.toString()) {
+            if (lastEntry !== undefined && lastEntry[0].toString() === uri.toString()) {
                 lastEntry[1].push(diagnosticInFile.diagnostic);
             } else {
                 // We're replacing all diagnostics in this file. Pushing an entry with undefined for
