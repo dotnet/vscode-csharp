@@ -127,7 +127,7 @@ export default class TestManager extends AbstractProvider {
             vscode.workspace.saveAll(/*includeUntitled*/ false));
     }
 
-    private async _runTest(fileName: string, testMethod: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTest(fileName: string, testMethod: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[] | undefined> {
         const request: protocol.V2.RunTestRequest = {
             FileName: fileName,
             MethodName: testMethod,
@@ -141,12 +141,12 @@ export default class TestManager extends AbstractProvider {
             let response = await serverUtils.runTest(this._server, request);
             return response.Results;
         }
-        catch (error) {
-            return undefined;
-        }
+        catch {}
+
+        return undefined;
     }
 
-    private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName?: string): Promise<string> {
+    private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName?: string): Promise<string | undefined> {
 
         await this._saveDirtyFiles();
         this._recordRunRequest(testFrameworkName);
@@ -170,7 +170,7 @@ export default class TestManager extends AbstractProvider {
         return targetFrameworkVersion;
     }
 
-    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[]> {
+    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[] | undefined> {
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
         let runSettings = this._getRunSettings(fileName);
@@ -187,9 +187,9 @@ export default class TestManager extends AbstractProvider {
             let response = await serverUtils.discoverTests(this._server, request);
             return response.Tests;
         }
-        catch (error) {
-            return undefined;
-        }
+        catch {}
+
+        return undefined;
     }
 
     private _getRunSettings(filename: string): string | undefined {
@@ -256,7 +256,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _runTestsInClass(fileName: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[], noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTestsInClass(fileName: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[], noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestsInClassRequest = {
             FileName: fileName,
             RunSettings: runSettings,
@@ -378,7 +378,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName?: string) {
+    private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName?: string): Promise<{ debugEventListener: DebugEventListener, targetFrameworkVersion: string } | undefined> {
         await this._saveDirtyFiles();
         this._recordDebugRequest(testFrameworkName);
         let projectInfo: protocol.ProjectInformationResponse;
@@ -389,19 +389,15 @@ export default class TestManager extends AbstractProvider {
             return undefined;
         }
 
-        let debugEventListener: DebugEventListener = null;
-        let targetFrameworkVersion: string;
-
         if (projectInfo.MsBuildProject) {
-            targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
-            debugEventListener = new DebugEventListener(fileName, this._server, this._eventStream);
+            const targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
+            const debugEventListener = new DebugEventListener(fileName, this._server, this._eventStream);
             debugEventListener.start();
+            return { debugEventListener, targetFrameworkVersion };
         }
         else {
             throw new Error('Expected .csproj project.');
         }
-
-        return { debugEventListener, targetFrameworkVersion };
     }
 
     public async debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, noBuild: boolean = false) {
@@ -548,13 +544,13 @@ export default class TestManager extends AbstractProvider {
 }
 
 class DebugEventListener {
-    static s_activeInstance: DebugEventListener = null;
+    static s_activeInstance: DebugEventListener | undefined;
     _fileName: string;
     _server: OmniSharpServer;
     _pipePath: string;
     _eventStream: EventStream;
 
-    _serverSocket: net.Server;
+    _serverSocket: net.Server | undefined;
     _isClosed: boolean = false;
 
     constructor(fileName: string, server: OmniSharpServer, eventStream: EventStream) {
@@ -574,7 +570,7 @@ class DebugEventListener {
     public async start(): Promise<void> {
 
         // We use our process id as part of the pipe name, so if we still somehow have an old instance running, close it.
-        if (DebugEventListener.s_activeInstance !== null) {
+        if (DebugEventListener.s_activeInstance !== undefined) {
             DebugEventListener.s_activeInstance.close();
         }
 
@@ -634,7 +630,7 @@ class DebugEventListener {
 
     public close() {
         if (this === DebugEventListener.s_activeInstance) {
-            DebugEventListener.s_activeInstance = null;
+            DebugEventListener.s_activeInstance = undefined;
         }
 
         if (this._isClosed) {
@@ -643,7 +639,7 @@ class DebugEventListener {
 
         this._isClosed = true;
 
-        if (this._serverSocket !== null) {
+        if (this._serverSocket !== undefined) {
             this._serverSocket.close();
         }
     }
