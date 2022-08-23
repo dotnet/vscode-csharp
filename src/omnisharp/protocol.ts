@@ -505,6 +505,12 @@ export interface RunFixAllRequest extends FileBasedRequest {
     ApplyChanges: boolean;
 }
 
+export interface ReAnalyzeRequest extends FileBasedRequest {
+}
+
+export interface ReAnalyzeReponse {
+}
+
 export interface QuickInfoRequest extends Request {
 }
 
