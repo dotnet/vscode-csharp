@@ -1195,7 +1195,8 @@
       {
         "command": "o.reanalyze.currentProject",
         "title": "Analyze current project",
-        "category": "OmniSharp"
+        "category": "OmniSharp",
+        "enablement": "editorFocus"
       },
       {
         "command": "dotnet.generateAssets",
