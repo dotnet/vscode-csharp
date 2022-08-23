@@ -71,7 +71,7 @@ export namespace WireProtocol {
 }
 
 export interface FileBasedRequest {
-    FileName: string;
+    FileName?: string;
 }
 
 export interface Request extends FileBasedRequest {

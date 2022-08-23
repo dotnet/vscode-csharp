@@ -35,7 +35,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
         }
 
         try {
-            const res = await serverUtils.findSymbols(this._server, { Filter: search, MaxItemsToReturn: maxItemsToReturn, FileName: '' }, token);
+            const res = await serverUtils.findSymbols(this._server, { Filter: search, MaxItemsToReturn: maxItemsToReturn }, token);
             if (Array.isArray(res?.QuickFixes)) {
                 return res.QuickFixes.map(symbol => this._asSymbolInformation(symbol));
             }

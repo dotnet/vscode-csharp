@@ -276,7 +276,7 @@ class DiagnosticsProvider extends AbstractSupport {
     }
 
     private async _validateEntireWorkspace() {
-        let value = await serverUtils.codeCheck(this._server, { FileName: null }, new vscode.CancellationTokenSource().token);
+        let value = await serverUtils.codeCheck(this._server, {}, new vscode.CancellationTokenSource().token);
 
         let quickFixes = value.QuickFixes
             .sort((a, b) => a.FileName.localeCompare(b.FileName));
