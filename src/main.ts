@@ -173,7 +173,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
         // activate coreclr-debug
-        coreClrDebugPromise = coreclrdebug.activate(context.extension, context, platformInfo, eventStream);
+        coreClrDebugPromise = coreclrdebug.activate(context.extension, context, platformInfo, eventStream, optionProvider.GetLatestOptions());
     }
 
     let razorPromise = Promise.resolve();

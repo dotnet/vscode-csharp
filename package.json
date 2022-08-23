@@ -988,7 +988,7 @@
         "omnisharp.dotnetPath": {
           "type": "string",
           "scope": "window",
-          "description": "Specified the path to a dotnet installation to use when \"useModernNet\" is set to true, instead of the default system one. Example: \"/home/username/mycustomdotnetdirectory\"."
+          "description": "Specified the path to a dotnet installation to use when \"useModernNet\" is set to true, instead of the default system one. This only influences the dotnet installation to use for hosting Omnisharp itself. Example: \"/home/username/mycustomdotnetdirectory\"."
         },
         "omnisharp.waitForDebugger": {
           "type": "boolean",
@@ -1091,6 +1091,14 @@
         "omnisharp.testRunSettings": {
           "type": "string",
           "description": "Path to the .runsettings file which should be used when running unit tests."
+        },
+        "omnisharp.dotNetCliPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Paths to a local download of the .NET CLI to use for running any user code.",
+          "uniqueItems": true
         },
         "razor.plugin.path": {
           "type": "string",

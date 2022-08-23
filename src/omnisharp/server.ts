@@ -433,6 +433,10 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:AnalyzeOpenDocumentsOnly=true');
         }
 
+        for (let i = 0; i < options.dotNetCliPaths.length; i++) {
+            args.push(`DotNetCliOptions:LocationPaths:${i}=${options.dotNetCliPaths[i]}`);
+        }
+
         let launchInfo: LaunchInfo;
         try {
             launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
@@ -443,7 +447,7 @@ export class OmniSharpServer {
             return;
         }
 
-        this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(new Date(), solutionPath));
+        this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(options.dotNetCliPaths, new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {

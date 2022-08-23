@@ -11,11 +11,13 @@ import { OpenURL } from "../omnisharp/loggingEvents";
 import { Options } from "../omnisharp/options";
 import { IHostExecutableResolver } from "../constants/IHostExecutableResolver";
 import { IGetDotnetInfo } from "../constants/IGetDotnetInfo";
+import { dirname } from "path";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
-export default async function reportIssue(vscode: vscode, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, monoResolver: IHostExecutableResolver) {
-    const dotnetInfo = await getDotnetInfo();
+export default async function reportIssue(vscode: vscode, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver) {
+    // Get info for the dotnet that the Omnisharp executable is run on, not the dotnet Omnisharp will execute user code on.
+    const dotnetInfo = await getDotnetInfo([ dirname((await dotnetResolver.getHostExecutableInfo(options)).path) ]);
     const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options, monoResolver);
     let extensions = getInstalledExtensions(vscode);
     let csharpExtVersion = getCsharpExtensionVersion(vscode);

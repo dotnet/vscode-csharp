@@ -41,7 +41,7 @@ export class OmnisharpStart extends TelemetryEventWithMeasures {
 
 export class OmnisharpInitialisation implements BaseEvent {
     type = EventType.OmnisharpInitialisation;
-    constructor(public timeStamp: Date, public solutionPath: string) { }
+    constructor(public dotNetCliPaths: string[], public timeStamp: Date, public solutionPath: string) { }
 }
 
 export class OmnisharpLaunch implements BaseEvent {
