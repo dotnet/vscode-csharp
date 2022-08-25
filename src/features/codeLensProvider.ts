@@ -144,7 +144,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             codeLens.command = {
                 title: count === 1 ? '1 reference' : `${count} references`,
                 command: 'editor.action.showReferences',
-                arguments: [vscode.Uri.file(request.FileName), codeLens.range.start, remappedLocations]
+                arguments: [vscode.Uri.file(codeLens.fileName), codeLens.range.start, remappedLocations]
             };
 
             return codeLens;
