@@ -205,6 +205,9 @@ export default class TestManager extends AbstractProvider {
         // Path is relative to the workspace. Create absolute path.
         const fileUri = vscode.Uri.file(filename);
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
+        if (workspaceFolder === undefined) {
+            return undefined;
+        }
 
         return path.join(workspaceFolder.uri.fsPath, testSettingsPath);
     }
