@@ -127,7 +127,7 @@ export default class TestManager extends AbstractProvider {
             vscode.workspace.saveAll(/*includeUntitled*/ false));
     }
 
-    private async _runTest(fileName: string, testMethod: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[] | undefined> {
+    private async _runTest(fileName: string, testMethod: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string | undefined, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[] | undefined> {
         const request: protocol.V2.RunTestRequest = {
             FileName: fileName,
             MethodName: testMethod,
@@ -256,7 +256,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _runTestsInClass(fileName: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[], noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTestsInClass(fileName: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string | undefined, methodsToRun: string[], noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestsInClassRequest = {
             FileName: fileName,
             RunSettings: runSettings,
@@ -344,11 +344,11 @@ export default class TestManager extends AbstractProvider {
     private async _getLaunchConfigurationForVSTest(
         fileName: string,
         testMethod: string,
-        runSettings: string,
+        runSettings: string | undefined,
         testFrameworkName: string,
-        targetFrameworkVersion: string,
+        targetFrameworkVersion: string | undefined,
         debugEventListener: DebugEventListener,
-        noBuild: boolean): Promise<LaunchConfiguration> {
+        noBuild: boolean | undefined): Promise<LaunchConfiguration> {
 
         // Listen for test messages while getting start info.
         const listener = this._server.onTestMessage(e => {
@@ -474,11 +474,11 @@ export default class TestManager extends AbstractProvider {
     private async _getLaunchConfigurationForVSTestClass(
         fileName: string,
         methodsToRun: string[],
-        runSettings: string,
+        runSettings: string | undefined,
         testFrameworkName: string,
-        targetFrameworkVersion: string,
+        targetFrameworkVersion: string | undefined,
         debugEventListener: DebugEventListener,
-        noBuild: boolean): Promise<LaunchConfiguration> {
+        noBuild: boolean | undefined): Promise<LaunchConfiguration> {
 
         const listener = this._server.onTestMessage(e => {
             this._eventStream.post(new DotNetTestMessage(e.Message));
@@ -506,8 +506,8 @@ export default class TestManager extends AbstractProvider {
         fileName: string,
         line: number,
         column: number,
-        runSettings: string,
-        targetFrameworkVersion: string,
+        runSettings: string | undefined,
+        targetFrameworkVersion: string | undefined,
         debugEventListener: DebugEventListener): Promise<LaunchConfiguration | null> {
 
         const listener = this._server.onTestMessage(e => {

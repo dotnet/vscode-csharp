@@ -749,9 +749,9 @@ export namespace V2 {
 
     // dotnet-test endpoints
     interface BaseTestRequest extends Request {
-        RunSettings: string;
+        RunSettings?: string;
         TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+        TargetFrameworkVersion?: string;
         NoBuild?: boolean;
     }
 
