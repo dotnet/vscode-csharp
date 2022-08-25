@@ -381,7 +381,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName?: string): Promise<{ debugEventListener: DebugEventListener, targetFrameworkVersion: string } | undefined> {
+    private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName?: string): Promise<{ debugEventListener: DebugEventListener, targetFrameworkVersion: string }> {
         await this._saveDirtyFiles();
         this._recordDebugRequest(testFrameworkName);
         let projectInfo: protocol.ProjectInformationResponse;
@@ -389,18 +389,17 @@ export default class TestManager extends AbstractProvider {
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
         }
         catch (error) {
-            return undefined;
+            throw new Error('Could not determine project type.');
         }
 
-        if (projectInfo.MsBuildProject) {
-            const targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
-            const debugEventListener = new DebugEventListener(fileName, this._server, this._eventStream);
-            debugEventListener.start();
-            return { debugEventListener, targetFrameworkVersion };
-        }
-        else {
+        if (!projectInfo.MsBuildProject) {
             throw new Error('Expected .csproj project.');
         }
+
+        const targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
+        const debugEventListener = new DebugEventListener(fileName, this._server, this._eventStream);
+        debugEventListener.start();
+        return { debugEventListener, targetFrameworkVersion };
     }
 
     public async debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, noBuild: boolean = false) {
@@ -528,11 +527,12 @@ export default class TestManager extends AbstractProvider {
         try {
             let response = await serverUtils.debugTestsInContextGetStartInfo(this._server, request);
             if (!response.Succeeded) {
+                // FailureReason is populated if Succeeded is false
                 if (response.ContextHadNoTests) {
-                    this._eventStream.post(new DotNetTestMessage(response.FailureReason));
+                    this._eventStream.post(new DotNetTestMessage(response.FailureReason!));
                 }
                 else {
-                    this._eventStream.post(new DotNetTestRunFailure(response.FailureReason));
+                    this._eventStream.post(new DotNetTestRunFailure(response.FailureReason!));
                 }
 
                 return null;
