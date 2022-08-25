@@ -122,7 +122,8 @@ export class ProjectJSONContribution implements IJSONContribution {
                     }
                 }
             } catch (error) {
-                result.error(error as string);
+                const message = (error as Error).message;
+                result.error(message);
             }
         }
     }
@@ -152,7 +153,8 @@ export class ProjectJSONContribution implements IJSONContribution {
                     }
                 }
             } catch (error) {
-                result.error(error as string);
+                const message = (error as Error).message;
+                result.error(message);
             }
         }
     }

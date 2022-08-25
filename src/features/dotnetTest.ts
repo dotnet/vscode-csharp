@@ -127,7 +127,7 @@ export default class TestManager extends AbstractProvider {
             vscode.workspace.saveAll(/*includeUntitled*/ false));
     }
 
-    private async _runTest(fileName: string, testMethod: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string | undefined, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[] | undefined> {
+    private async _runTest(fileName: string, testMethod: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string | undefined, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestRequest = {
             FileName: fileName,
             MethodName: testMethod,
@@ -137,13 +137,8 @@ export default class TestManager extends AbstractProvider {
             NoBuild: noBuild
         };
 
-        try {
-            let response = await serverUtils.runTest(this._server, request);
-            return response.Results;
-        }
-        catch {}
-
-        return undefined;
+        let response = await serverUtils.runTest(this._server, request);
+        return response.Results;
     }
 
     private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName?: string): Promise<string | undefined> {
@@ -227,8 +222,9 @@ export default class TestManager extends AbstractProvider {
             let results = await this._runTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, noBuild);
             this._eventStream.post(new ReportDotNetTestResults(results));
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestRunFailure(reason));
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestRunFailure(message));
         }
         finally {
             listener.dispose();
@@ -251,8 +247,9 @@ export default class TestManager extends AbstractProvider {
             let results = await this._runTestsInClass(fileName, runSettings, testFrameworkName, targetFrameworkVersion, methodsInClass, noBuild);
             this._eventStream.post(new ReportDotNetTestResults(results));
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestRunFailure(reason));
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestRunFailure(message));
         }
         finally {
             listener.dispose();
@@ -308,8 +305,9 @@ export default class TestManager extends AbstractProvider {
                 this._eventStream.post(new ReportDotNetTestResults(response.Results));
             }
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestRunFailure(reason));
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestRunFailure(message));
         }
         finally {
             listener.dispose();
@@ -416,11 +414,10 @@ export default class TestManager extends AbstractProvider {
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
             return vscode.debug.startDebugging(workspaceFolder, config);
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestDebugStartFailure(reason));
-            if (debugEventListener !== null) {
-                debugEventListener.close();
-            }
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestDebugStartFailure(message));
+            debugEventListener.close();
         }
     }
 
@@ -436,11 +433,10 @@ export default class TestManager extends AbstractProvider {
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
             return vscode.debug.startDebugging(workspaceFolder, config);
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestDebugStartFailure(reason));
-            if (debugEventListener != null) {
-                debugEventListener.close();
-            }
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestDebugStartFailure(message));
+            debugEventListener.close();
         }
     }
 
@@ -465,11 +461,10 @@ export default class TestManager extends AbstractProvider {
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
             return vscode.debug.startDebugging(workspaceFolder, config);
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestRunFailure(reason));
-            if (debugEventListener !== null) {
-                debugEventListener.close();
-            }
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestRunFailure(message));
+            debugEventListener.close();
         }
     }
 
