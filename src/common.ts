@@ -56,9 +56,9 @@ export function safeLength<T>(arr: T[] | undefined) {
     return arr ? arr.length : 0;
 }
 
-export async function execChildProcess(command: string, workingDirectory: string = getExtensionPath()): Promise<string> {
+export async function execChildProcess(command: string, workingDirectory: string = getExtensionPath(), env: NodeJS.ProcessEnv = {}): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
+        cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024, env: env }, (error, stdout, stderr) => {
             if (error) {
                 reject(new Error(`${error}
 ${stdout}

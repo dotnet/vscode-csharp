@@ -95,7 +95,7 @@ suite("OmnisharpLoggerObserver", () => {
 
 
     [
-        new OmnisharpInitialisation(new Date(5), "somePath"),
+        new OmnisharpInitialisation([], new Date(5), "somePath"),
     ].forEach((event: OmnisharpInitialisation) => {
         test(`${event.constructor.name}: TimeStamp and SolutionPath are logged`, () => {
             observer.post(event);
