@@ -580,10 +580,16 @@ export interface SourceGeneratedFileResponse {
 export interface UpdateSourceGeneratedFileRequest extends SourceGeneratedFileInfo {
 }
 
-export interface UpdateSourceGeneratedFileResponse {
-    UpdateType: UpdateType;
-    Source?: string;
+interface UpdateSourceGeneratedFileNotModifiedResponse {
+    UpdateType: Exclude<UpdateType, UpdateType.Modified>;
 }
+
+interface UpdateSourceGeneratedFileModifiedResponse {
+    UpdateType: UpdateType.Modified;
+    Source: string;
+}
+
+export type UpdateSourceGeneratedFileResponse = UpdateSourceGeneratedFileNotModifiedResponse | UpdateSourceGeneratedFileModifiedResponse;
 
 export enum UpdateType {
     Unchanged,
