@@ -46,17 +46,17 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
             if (existingInfo !== undefined) {
                 try {
                     const existingResponse = this._documents.get(existingInfo);
-                    const update = await serverUtils.getUpdatedSourceGeneratedFile(this.server, existingInfo);
-                    if (!update) {
+                    if (existingResponse === undefined) {
                         continue;
                     }
 
+                    const update = await serverUtils.getUpdatedSourceGeneratedFile(this.server, existingInfo);
                     switch (update.UpdateType) {
                         case UpdateType.Deleted:
-                            this._documents.set(existingInfo, { Source: "Document is no longer being generated.", SourceName: existingResponse.SourceName });
+                            existingResponse.Source = "Document is no longer being generated.";
                             break;
                         case UpdateType.Modified:
-                            this._documents.set(existingInfo, { Source: update.Source, SourceName: existingResponse.SourceName });
+                            existingResponse.Source = update.Source;
                             break;
                         case UpdateType.Unchanged:
                             continue;
@@ -98,10 +98,13 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
         return uri;
     }
 
-    public async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string> {
+    public async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string | undefined> {
         const fileInfo = this._uriToDocumentInfo.get(uri.toString());
-        let response = this._documents.get(fileInfo);
+        if (fileInfo === undefined) {
+            return undefined;
+        }
 
+        let response = this._documents.get(fileInfo);
         if (response === undefined) {
             // No content yet, get it
             response = await serverUtils.getSourceGeneratedFile(this.server, fileInfo, token);
