@@ -81,32 +81,18 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
         this._documents.clear();
     }
 
-    public tryGetExistingSourceGeneratedFile(fileInfo: SourceGeneratedFileInfo): Uri | undefined {
-        const sourceName = this._documents.get(fileInfo)?.SourceName;
-        if (sourceName !== undefined) {
-            return this.getUriForName(sourceName);
-        }
-
-        return undefined;
-    }
-
     public addSourceGeneratedFileWithoutInitialContent(fileInfo: SourceGeneratedFileInfo, fileName: string): Uri {
-        if (this._documents.has(fileInfo)) {
+        const response = this._documents.get(fileInfo);
+        if (response !== undefined) {
             // Raced with something, return the existing one.
-            // Bang is validated via has.
-            return this.tryGetExistingSourceGeneratedFile(fileInfo)!;
+            return this.getUriForName(response.SourceName);
         }
 
         const uri = this.getUriForName(fileName);
         const uriString = uri.toString();
 
-        if (this._uriToDocumentInfo.has(uriString)) {
-            this._documents.delete(fileInfo);
-            this._uriToDocumentInfo.delete(uriString);
-        }
-
-        // Provide will see the null and retrieve the file when asked.
-        this._documents.set(fileInfo, null);
+        // Provide will see that the document doesn't exist and retrieve the file when asked.
+        this._documents.delete(fileInfo);
         this._uriToDocumentInfo.set(uriString, fileInfo);
 
         return uri;
