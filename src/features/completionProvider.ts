@@ -30,7 +30,7 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
 
         try {
             const response = await serverUtils.getCompletion(this._server, request, token);
-            let mappedItems = response.Items.map(arg => this._convertToVscodeCompletionItem(arg));
+            let mappedItems = response.Items.map(arg => this._convertToVscodeCompletionItem(arg, document));
 
             if (isVirtualCSharpDocument(document)) {
                 // The `await` completion item is not compatible with all Razor scenarios.
@@ -89,16 +89,16 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
         const request: protocol.CompletionResolveRequest = { Item: lspItem };
         try {
             const response = await serverUtils.getCompletionResolve(this._server, request, token);
-            return this._convertToVscodeCompletionItem(response.Item);
+            return this._convertToVscodeCompletionItem(response.Item, item.command?.arguments?.[1] as TextDocument);
         }
         catch (error) {
             return item;
         }
     }
 
-    public async afterInsert(item: protocol.OmnisharpCompletionItem) {
+    public async afterInsert(item: protocol.OmnisharpCompletionItem, document: TextDocument) {
         try {
-            const uri = window.activeTextEditor.document.uri;
+            const uri = document.uri;
             const response = await serverUtils.getCompletionAfterInsert(this._server, { Item: item });
 
             if (!response.Changes || !response.Column || !response.Line) {
@@ -119,18 +119,20 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
                 return;
             }
 
-            const responseLine = response.Line;
-            const responseColumn = response.Column;
+            const editor = window.visibleTextEditors.find(editor => editor.document === document);
+            if (editor === undefined) {
+                return;
+            }
 
-            const finalPosition = new Position(responseLine, responseColumn);
-            window.activeTextEditor.selections = [new Selection(finalPosition, finalPosition)];
+            const finalPosition = new Position(response.Line, response.Column);
+            editor.selections = [new Selection(finalPosition, finalPosition)];
         }
         catch (error) {
             return;
         }
     }
 
-    private _convertToVscodeCompletionItem(omnisharpCompletion: protocol.OmnisharpCompletionItem): CompletionItem {
+    private _convertToVscodeCompletionItem(omnisharpCompletion: protocol.OmnisharpCompletionItem, document: TextDocument): CompletionItem {
         const docs: MarkdownString | undefined = omnisharpCompletion.Documentation ? new MarkdownString(omnisharpCompletion.Documentation, false) : undefined;
 
         const mapRange = function (edit: protocol.LinePositionSpanTextChange): Range {
@@ -165,7 +167,7 @@ export default class OmnisharpCompletionProvider extends AbstractProvider implem
             sortText: omnisharpCompletion.SortText,
             additionalTextEdits: additionalTextEdits,
             keepWhitespace: true,
-            command: omnisharpCompletion.HasAfterInsertStep ? { command: CompletionAfterInsertCommand, title: "", arguments: [omnisharpCompletion] } : undefined
+            command: omnisharpCompletion.HasAfterInsertStep ? { command: CompletionAfterInsertCommand, title: "", arguments: [omnisharpCompletion, document] } : undefined
         };
     }
 }
