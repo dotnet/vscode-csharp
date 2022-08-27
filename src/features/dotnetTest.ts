@@ -574,8 +574,8 @@ class DebugEventListener {
 
         DebugEventListener.s_activeInstance = this;
 
-        this._serverSocket = net.createServer((socket: net.Socket) => {
-            socket.on('data', (buffer: Buffer) => {
+        this._serverSocket = net.createServer(socket => {
+            socket.on('data', buffer => {
                 let event: DebuggerEventsProtocol.DebuggerEvent;
                 try {
                     event = DebuggerEventsProtocol.decodePacket(buffer);
@@ -605,10 +605,9 @@ class DebugEventListener {
         });
 
         await this.removeSocketFileIfExists();
-        return new Promise<void>((resolve, reject) => {
-            let isStarted: boolean = false;
-            this._serverSocket.on('error', (err: Error) => {
-                if (!isStarted) {
+        return new Promise((resolve, reject) => {
+            this._serverSocket.on('error', err => {
+                if (!this._serverSocket.listening) {
                     reject(err.message);
                 } else {
                     this._eventStream.post(new DotNetTestDebugWarning(`Communications error on debugger event channel. ${err.message}`));
@@ -616,7 +615,6 @@ class DebugEventListener {
             });
 
             this._serverSocket.listen(this._pipePath, () => {
-                isStarted = true;
                 resolve();
             });
         });
