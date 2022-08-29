@@ -489,5 +489,16 @@
             "}$0"
         ],
         "description": "create xunit test method"
-    }
+    },
+    "Specification Class": {
+        "prefix": "spec",
+        "body": [
+        "using Ardalis.Specification;",
+        "    public class $TM_FILENAME_BASE : Specification<${1:EntityType}>",
+        "    {",
+        "    \tpublic $TM_FILENAME_BASE() { }",
+        "    }"
+        ],
+        "description": "Create a specification class"
+  }
 }
