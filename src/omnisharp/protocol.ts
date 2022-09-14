@@ -285,15 +285,17 @@ export interface ProjectInformationResponse {
     MsBuildProject: MSBuildProject;
 }
 
-export enum DiagnosticStatus {
-    Processing = 0,
-    Ready = 1
+export enum BackgroundDiagnosticStatus {
+    Started = 0,
+    Progress = 1,
+    Finished = 2
 }
 
-export interface ProjectDiagnosticStatus {
-    Status: DiagnosticStatus;
-    ProjectFilePath: string;
-    Type: "background";
+export interface BackgroundDiagnosticStatusMessage {
+    Status: BackgroundDiagnosticStatus;
+    NumberProjects: number;
+    NumberFilesTotal: number;
+    NumberFilesRemaining: number;
 }
 
 export interface WorkspaceInformationResponse {

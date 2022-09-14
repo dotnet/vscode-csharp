@@ -4,18 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseStatusBarItemObserver } from './BaseStatusBarItemObserver';
-import { BaseEvent, OmnisharpProjectDiagnosticStatus } from '../omnisharp/loggingEvents';
+import { BaseEvent, OmnisharpBackgroundDiagnosticStatus } from '../omnisharp/loggingEvents';
 import { EventType } from '../omnisharp/EventType';
-import { DiagnosticStatus } from '../omnisharp/protocol';
+import { BackgroundDiagnosticStatus } from '../omnisharp/protocol';
 
 export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {
-        if (event.type === EventType.ProjectDiagnosticStatus) {
-            let asProjectEvent = <OmnisharpProjectDiagnosticStatus>event;
+        if (event.type === EventType.BackgroundDiagnosticStatus) {
+            let asProjectEvent = <OmnisharpBackgroundDiagnosticStatus>event;
 
-            if (asProjectEvent.message.Status === DiagnosticStatus.Processing) {
-                let projectFile = asProjectEvent.message.ProjectFilePath.replace(/^.*[\\\/]/, '');
-                this.SetAndShowStatusBar(`$(sync~spin) Analyzing ${projectFile}`, 'o.showOutput', undefined, `Analyzing ${projectFile}`);
+            if (asProjectEvent.message.Status !== BackgroundDiagnosticStatus.Finished) {
+                let {NumberFilesRemaining, NumberFilesTotal} = asProjectEvent.message;
+                let message = `Analyzing ${NumberFilesTotal} files - Remaining ${NumberFilesRemaining} files`;
+                this.SetAndShowStatusBar(`$(sync~spin) ${message}`, 'o.showOutput', null, `${message}`);
             }
             else {
                 this.ResetAndHideStatusBar();
