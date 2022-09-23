@@ -240,7 +240,11 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
     projectJsonTargets = projectJsonTargets.sort((a, b) => a.directory.localeCompare(b.directory));
     projectTargets = projectTargets.sort((a, b) => a.directory.localeCompare(b.directory));
 
-    return otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets).slice(0, maxProjectResults);
+    const allTargets = otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
+    
+    return maxProjectResults > 0
+        ? allTargets.slice(0, maxProjectResults)
+        : allTargets;
 }
 
 function isCSharpProject(resource: vscode.Uri): boolean {

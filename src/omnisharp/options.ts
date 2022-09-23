@@ -57,7 +57,8 @@ export class Options {
         public dotnetPath: string,
         public excludePaths: string[],
         public maxProjectFileCountForDiagnosticAnalysis: number,
-        public testRunSettings: string) {
+        public testRunSettings: string,
+        public dotNetCliPaths: string[]) {
     }
 
     public static Read(vscode: vscode): Options {
@@ -150,6 +151,8 @@ export class Options {
 
         const excludePaths = this.getExcludedPaths(vscode);
 
+        const dotNetCliPaths = omnisharpConfig.get<string[]>('dotNetCliPaths', []);
+
         return new Options(
             path,
             useModernNet,
@@ -201,7 +204,8 @@ export class Options {
             dotnetPath,
             excludePaths,
             maxProjectFileCountForDiagnosticAnalysis,
-            testRunSettings
+            testRunSettings,
+            dotNetCliPaths
         );
     }
 

@@ -16,7 +16,7 @@ import { TextDocument } from '../vscodeAdapter';
 import OptionProvider from '../observers/OptionProvider';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { DiagnosticStatus } from '../omnisharp/protocol';
+import { BackgroundDiagnosticStatus } from '../omnisharp/protocol';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 
 export class Advisor {
@@ -154,7 +154,7 @@ class DiagnosticsProvider extends AbstractSupport {
         this._disposable = new CompositeDisposable(this._diagnostics,
             this._server.onPackageRestore(() => this._validateAllPipe.next("onPackageRestore"), this),
             this._server.onProjectChange(() => this._validateAllPipe.next("onProjectChanged"), this),
-            this._server.onProjectDiagnosticStatus(this._onProjectAnalysis, this),
+            this._server.onBackgroundDiagnosticStatus(this._onBackgroundAnalysis, this),
             vscode.workspace.onDidOpenTextDocument(event => this._onDocumentOpenOrChange(event), this),
             vscode.workspace.onDidChangeTextDocument(event => this._onDocumentOpenOrChange(event.document), this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentClose, this),
@@ -210,9 +210,9 @@ class DiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    private _onProjectAnalysis(event: protocol.ProjectDiagnosticStatus) {
-        if (event.Status == DiagnosticStatus.Ready &&
-            event.ProjectFilePath === "(100 %)") {
+    private _onBackgroundAnalysis(event: protocol.BackgroundDiagnosticStatusMessage) {
+        if (event.Status == BackgroundDiagnosticStatus.Finished &&
+            event.NumberFilesRemaining === 0) {
             this._validateAllPipe.next();
         }
     }

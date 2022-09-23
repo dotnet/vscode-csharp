@@ -57,5 +57,6 @@ export function getEmptyOptions(): Options {
         /* dotnetPath */"",
         /* excludePaths */null,
         /* maxProjectFileCountForDiagnosticAnalysis */null,
-        /* testRunSettings */"");
+        /* testRunSettings */"",
+        /* dotNetCliPaths */[]);
 }

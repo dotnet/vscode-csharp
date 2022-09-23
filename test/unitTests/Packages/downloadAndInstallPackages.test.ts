@@ -35,7 +35,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
     let downloadValidator: DownloadValidator = () => true;
 
     const packageDescription = "Test Package";
-    const networkSettingsProvider = () => new NetworkSettings(undefined, false);
+    const networkSettingsProvider = () => new NetworkSettings('', false);
 
     setup(async () => {
         eventStream = new EventStream();

@@ -21,7 +21,7 @@ import { modernNetVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
 
 [true, false].forEach(useFramework => {
     suite(`OmnisharpDownloader (useFramework: ${useFramework})`, () => {
-        const networkSettingsProvider = () => new NetworkSettings(undefined, false);
+        const networkSettingsProvider = () => new NetworkSettings('', false);
         let eventStream: EventStream;
         const installPath = "somePath";
         let platformInfo = new PlatformInformation("win32", "x86");

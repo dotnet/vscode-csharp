@@ -38,9 +38,7 @@ export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
     let configuration: vscode.WorkspaceConfiguration = {
         get<T>(section: string, defaultValue?: T): T | undefined {
             let result = <T>values[section];
-            return result === undefined && defaultValue !== undefined
-                ? defaultValue
-                : result;
+            return result ?? defaultValue;
         },
         has: (section: string) => {
             return values[section] !== undefined;
@@ -148,9 +146,9 @@ export function getFakeVsCode(): vscode.vscode {
         },
         version: "",
         env: {
-            appName: null,
-            appRoot: null,
-            language: null,
+            appName: "",
+            appRoot: "",
+            language: "",
             clipboard: {
                 writeText: () => {
                     throw new Error("Not Implemented");
@@ -159,8 +157,8 @@ export function getFakeVsCode(): vscode.vscode {
                     throw new Error("Not Implemented");
                 }
             },
-            machineId: null,
-            sessionId: null,
+            machineId: "",
+            sessionId: "",
             openExternal: () => {
                 throw new Error("Not Implemented");
             }
@@ -175,12 +173,10 @@ export function getMSBuildWorkspaceInformation(msBuildSolutionPath: string, msBu
     };
 }
 
-export function getWorkspaceInformationUpdated(msbuild: protocol.MsBuildWorkspaceInformation): WorkspaceInformationUpdated {
-    let a: protocol.WorkspaceInformationResponse = {
-        MsBuild: msbuild
-    };
-
-    return new WorkspaceInformationUpdated(a);
+export function getWorkspaceInformationUpdated(MsBuild: protocol.MsBuildWorkspaceInformation | undefined): WorkspaceInformationUpdated {
+    return new WorkspaceInformationUpdated({
+        MsBuild,
+    });
 }
 
 export function getVSCodeWithConfig() {
@@ -189,27 +185,26 @@ export function getVSCodeWithConfig() {
     const _vscodeConfig = getWorkspaceConfiguration();
     const _omnisharpConfig = getWorkspaceConfiguration();
     const _csharpConfig = getWorkspaceConfiguration();
+    const _razorConfig = getWorkspaceConfiguration();
 
-    vscode.workspace.getConfiguration = (section?, resource?) => {
-        if (!section) {
+    vscode.workspace.getConfiguration = (section, resource) => {
+        if (section === undefined) {
             return _vscodeConfig;
-        }
-
-        if (section === 'omnisharp') {
+        } else if (section === 'omnisharp') {
             return _omnisharpConfig;
-        }
-
-        if (section === 'csharp') {
+        } else if (section === 'csharp') {
             return _csharpConfig;
+        } else if (section === 'razor') {
+            return _razorConfig;
         }
 
-        return undefined;
+        throw new Error(`Unexpected section ${section}`);
     };
 
     return vscode;
 }
 
-export function updateConfig(vscode: vscode.vscode, section: string, config: string, value: any) {
-    let workspaceConfig = vscode.workspace.getConfiguration(section);
+export function updateConfig(vscode: vscode.vscode, section: string | undefined, config: string, value: any) {
+    const workspaceConfig = vscode.workspace.getConfiguration(section);
     workspaceConfig.update(config, value);
 }

@@ -41,7 +41,7 @@ export class OmnisharpStart extends TelemetryEventWithMeasures {
 
 export class OmnisharpInitialisation implements BaseEvent {
     type = EventType.OmnisharpInitialisation;
-    constructor(public timeStamp: Date, public solutionPath: string) { }
+    constructor(public dotNetCliPaths: string[], public timeStamp: Date, public solutionPath: string) { }
 }
 
 export class OmnisharpLaunch implements BaseEvent {
@@ -98,9 +98,9 @@ export class OmnisharpServerOnError implements BaseEvent {
     constructor(public errorMessage: protocol.ErrorMessage) { }
 }
 
-export class OmnisharpProjectDiagnosticStatus implements BaseEvent {
-    type = EventType.ProjectDiagnosticStatus;
-    constructor(public message: protocol.ProjectDiagnosticStatus) { }
+export class OmnisharpBackgroundDiagnosticStatus implements BaseEvent {
+    type = EventType.BackgroundDiagnosticStatus;
+    constructor(public message: protocol.BackgroundDiagnosticStatusMessage) { }
 }
 
 export class OmnisharpServerMsBuildProjectDiagnostics implements BaseEvent {

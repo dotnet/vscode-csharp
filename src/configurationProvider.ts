@@ -32,28 +32,25 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
      */
     private async checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder): Promise<boolean> {
 
-        const solutionPathOrFolder: string = this.server.getSolutionPathOrFolder();
+        const solutionPathOrFolder = this.server.getSolutionPathOrFolder();
 
         // Make sure folder, folder.uri, and solutionPathOrFolder are defined.
-        if (!solutionPathOrFolder) {
+        if (solutionPathOrFolder === undefined) {
             return Promise.resolve(false);
         }
 
-        let serverFolder = solutionPathOrFolder;
         // If its a .sln or .slnf file, get the folder of the solution.
-        return fs.lstat(solutionPathOrFolder).then(stat => {
-            return stat.isFile();
-        }).then(isFile => {
-            if (isFile) {
-                serverFolder = path.dirname(solutionPathOrFolder);
-            }
+        let serverFolder = solutionPathOrFolder;
+        const isFile = (await fs.lstat(solutionPathOrFolder)).isFile();
+        if (isFile) {
+            serverFolder = path.dirname(solutionPathOrFolder);
+        }
 
-            // Get absolute paths of current folder and server folder.
-            const currentFolder = path.resolve(folder.uri.fsPath);
-            serverFolder = path.resolve(serverFolder);
+        // Get absolute paths of current folder and server folder.
+        const currentFolder = path.resolve(folder.uri.fsPath);
+        serverFolder = path.resolve(serverFolder);
 
-            return currentFolder && folder.uri && isSubfolderOf(serverFolder, currentFolder);
-        });
+        return isSubfolderOf(serverFolder, currentFolder);
     }
 
     /**
@@ -119,26 +116,22 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
      * Parse envFile and add to config.env
      */
     private parseEnvFile(envFile: string, config: vscode.DebugConfiguration): vscode.DebugConfiguration {
-        if (envFile) {
-            try {
-                const parsedFile: ParsedEnvironmentFile = ParsedEnvironmentFile.CreateFromFile(envFile, config["env"]);
+        try {
+            const parsedFile = ParsedEnvironmentFile.CreateFromFile(envFile, config["env"]);
 
-                // show error message if single lines cannot get parsed
-                if (parsedFile.Warning) {
-                    CSharpConfigurationProvider.showFileWarningAsync(parsedFile.Warning, envFile);
-                }
+            // show error message if single lines cannot get parsed
+            if (parsedFile.Warning) {
+                CSharpConfigurationProvider.showFileWarningAsync(parsedFile.Warning, envFile);
+            }
 
-                config.env = parsedFile.Env;
-            }
-            catch (e) {
-                throw new Error(`Can't parse envFile ${envFile} because of ${e}`);
-            }
+            config.env = parsedFile.Env;
+        }
+        catch (e) {
+            throw new Error(`Can't parse envFile ${envFile} because of ${e}`);
         }
 
         // remove envFile from config after parsing
-        if (config.envFile) {
-            delete config.envFile;
-        }
+        delete config.envFile;
 
         return config;
     }
@@ -155,14 +148,13 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 
         if (config.request === "launch") {
             if (!config.cwd && !config.pipeTransport) {
-                config.cwd = folder?.uri?.fsPath; // Workspace folder
-            }
-            if (!config.internalConsoleOptions) {
-                config.internalConsoleOptions = "openOnSessionStart";
+                config.cwd = folder?.uri.fsPath; // Workspace folder
             }
 
+            config.internalConsoleOptions ??= "openOnSessionStart";
+
             // read from envFile and set config.env
-            if (config.envFile) {
+            if (config.envFile !== undefined && config.envFile.length > 0) {
                 config = this.parseEnvFile(config.envFile, config);
             }
         }
@@ -172,12 +164,10 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
 
     private static async showFileWarningAsync(message: string, fileName: string) {
         const openItem: MessageItem = { title: 'Open envFile' };
-        let result: MessageItem = await vscode.window.showWarningMessage(message, openItem);
-        if (result && result.title === openItem.title) {
-            let doc: vscode.TextDocument = await vscode.workspace.openTextDocument(fileName);
-            if (doc) {
-                vscode.window.showTextDocument(doc);
-            }
+        const result = await vscode.window.showWarningMessage(message, openItem);
+        if (result?.title === openItem.title) {
+            const doc = await vscode.workspace.openTextDocument(fileName);
+            await vscode.window.showTextDocument(doc);
         }
     }
 }

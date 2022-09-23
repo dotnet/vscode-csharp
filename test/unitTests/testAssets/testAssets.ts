@@ -74,6 +74,9 @@ export let testPackageJSON = {
             "platforms": [
                 "darwin"
             ],
+            "architectures": [
+                "x86"
+            ],
             "binaries": [
                 "./mono.osx",
                 "./run"
@@ -89,6 +92,9 @@ export let testPackageJSON = {
             "installPath": ".omnisharp",
             "platforms": [
                 "darwin"
+            ],
+            "architectures": [
+                "x86"
             ],
             "binaries": [
                 "./mono.osx",

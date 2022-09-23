@@ -69,8 +69,8 @@ export class CoreClrDebugUtil {
     // is new enough for us.
     // Returns: a promise that returns a DotnetInfo class
     // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old.
-    public async checkDotNetCli(): Promise<DotnetInfo> {
-        let dotnetInfo = await getDotnetInfo();
+    public async checkDotNetCli(dotNetCliPaths: string[]): Promise<DotnetInfo> {
+        let dotnetInfo = await getDotnetInfo(dotNetCliPaths);
 
         if (dotnetInfo.FullInfo === DOTNET_MISSING_MESSAGE) {
             // something went wrong with spawning 'dotnet --info'
@@ -121,13 +121,7 @@ export class CoreClrDebugUtil {
 
 const MINIMUM_SUPPORTED_OSX_ARM64_DOTNET_CLI: string = '6.0.0';
 
-export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string, dotnetInfo: DotnetInfo): string 
-{
-    if (!platformInfo)
-    {
-        throw new Error(`Unable to retrieve 'TargetArchitecture' without platformInfo.`);
-    }
-
+export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string, dotnetInfo: DotnetInfo): string {
     let targetArchitecture = "";
 
     // On Apple M1 Machines, we need to determine if we need to use the 'x86_64' or 'arm64' debugger.

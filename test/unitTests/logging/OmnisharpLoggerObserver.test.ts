@@ -6,14 +6,20 @@ import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { OmnisharpLoggerObserver } from '../../../src/observers/OmnisharpLoggerObserver';
 import { OmnisharpServerMsBuildProjectDiagnostics, EventWithMessage, OmnisharpServerOnStdErr, OmnisharpServerMessage, OmnisharpServerOnServerError, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerOnError, OmnisharpFailure, OmnisharpEventPacketReceived } from '../../../src/omnisharp/loggingEvents';
+import { OutputChannel } from 'vscode';
+import { PlatformInformation } from '../../../src/platform';
 
 suite("OmnisharpLoggerObserver", () => {
     suiteSetup(() => should());
 
     let logOutput = "";
-    let observer = new OmnisharpLoggerObserver({
+    let channel = <OutputChannel>{
         ...getNullChannel(),
-        append: (text: string) => { logOutput += text; },
+        append: (text: string) => { logOutput += text; }
+    };
+    let observer = new OmnisharpLoggerObserver(channel, <PlatformInformation>{
+        architecture: "x128",
+        platform: "TestOS"
     });
 
     setup(() => {
@@ -89,7 +95,7 @@ suite("OmnisharpLoggerObserver", () => {
 
 
     [
-        new OmnisharpInitialisation(new Date(5), "somePath"),
+        new OmnisharpInitialisation([], new Date(5), "somePath"),
     ].forEach((event: OmnisharpInitialisation) => {
         test(`${event.constructor.name}: TimeStamp and SolutionPath are logged`, () => {
             observer.post(event);

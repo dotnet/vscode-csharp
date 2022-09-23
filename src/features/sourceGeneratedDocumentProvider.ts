@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as serverUtils from '../omnisharp/utils';
-import { Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor, Uri, window, workspace } from 'vscode';
+import { CancellationToken, Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor, Uri, window, workspace } from 'vscode';
 import { IDisposable } from '../Disposable';
 import { SourceGeneratedFileInfo, SourceGeneratedFileResponse, UpdateType } from '../omnisharp/protocol';
 import { OmniSharpServer } from '../omnisharp/server';
@@ -89,36 +89,38 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
         return undefined;
     }
 
-    public addSourceGeneratedFile(fileInfo: SourceGeneratedFileInfo, response: SourceGeneratedFileResponse): Uri {
+    public addSourceGeneratedFileWithoutInitialContent(fileInfo: SourceGeneratedFileInfo, fileName: string): Uri {
         if (this._documents.has(fileInfo)) {
             // Raced with something, return the existing one
             return this.tryGetExistingSourceGeneratedFile(fileInfo);
         }
 
-        const uri = this.getUriForName(response.SourceName);
+        const uri = this.getUriForName(fileName);
         const uriString = uri.toString();
 
-        let triggerUpdate = false;
-
         if (this._uriToDocumentInfo.has(uriString)) {
-            // Old version of the file in the cache. Remove it, and after it's replaced trigger vscode to update the file.
             this._documents.delete(fileInfo);
             this._uriToDocumentInfo.delete(uriString);
-            triggerUpdate = true;
         }
 
-        this._documents.set(fileInfo, response);
+        // Provide will see the null and retrieve the file when asked.
+        this._documents.set(fileInfo, null);
         this._uriToDocumentInfo.set(uriString, fileInfo);
-
-        if (triggerUpdate) {
-            this._onDidChangeEmitter.fire(uri);
-        }
 
         return uri;
     }
 
-    public provideTextDocumentContent(uri: Uri): string {
-        return this._documents.get(this._uriToDocumentInfo.get(uri.toString())).Source;
+    public async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string> {
+        const fileInfo = this._uriToDocumentInfo.get(uri.toString());
+        let response = this._documents.get(fileInfo);
+
+        if (response === null) {
+            // No content yet, get it
+            response = await serverUtils.getSourceGeneratedFile(this.server, fileInfo, token);
+            this._documents.set(fileInfo, response);
+        }
+
+        return response.Source;
     }
 
     private getUriForName(sourceName: string): Uri {
