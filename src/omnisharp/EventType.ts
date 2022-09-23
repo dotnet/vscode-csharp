@@ -79,7 +79,7 @@ export enum EventType {
     OmnisharpServerOnStart = 72,
     OmnisharpOnBeforeServerInstall = 73,
     ProjectConfigurationReceived = 74,
-    ProjectDiagnosticStatus = 75, // Obsolete, use BackgroundDiagnosticStatus
+    // ProjectDiagnosticStatus = 75, Obsolete, use BackgroundDiagnosticStatus
     DotNetTestRunInContextStart = 76,
     DotNetTestDebugInContextStart = 77,
     TelemetryErrorEvent = 78,
