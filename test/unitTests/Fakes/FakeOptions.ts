@@ -12,6 +12,7 @@ export function getEmptyOptions(): Options {
         /* waitForDebugger */false,
         /* loggingLevel */"",
         /* autoStart */false,
+        /* projectFilesExcludePattern */"",
         /* projectLoadTimeout */0,
         /* maxProjectResults */0,
         /* useEditorFormattingSettings */false,

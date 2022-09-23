@@ -1010,6 +1010,11 @@
           "default": true,
           "description": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command"
         },
+        "omnisharp.projectFilesExcludePattern" :{
+          "type": "string",
+          "default": "**/node_modules/**,**/.git/**,**/bower_components/**",
+          "description": "The exclude pattern used by OmniSharp to find all project files."
+        },
         "omnisharp.projectLoadTimeout": {
           "type": "number",
           "default": 60,

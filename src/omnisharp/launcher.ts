@@ -65,7 +65,7 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
 
     const projectFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-        /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}');
+        /*exclude*/ `{${options.projectFilesExcludePattern}}`);
 
     const csFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.cs}',
