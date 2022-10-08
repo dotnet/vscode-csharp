@@ -20,8 +20,8 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         return _dotnetInfo;
     }
 
-    let dotnetExeName = CoreClrDebugUtil.getPlatformExeExtension();
-    let dotnetExecutablePath = undefined;
+    let dotnetExeName = join('dotnet', CoreClrDebugUtil.getPlatformExeExtension());
+    let dotnetExecutablePath: string | undefined = undefined;
 
     for (const dotnetPath of dotNetCliPaths) {
         let dotnetFullPath = join(dotnetPath, dotnetExeName);
@@ -31,13 +31,12 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         }
     }
 
-    let dotnetInfo = new DotnetInfo();
+    const dotnetInfo = new DotnetInfo();
 
     try {
-        let data = await execChildProcess(`${dotnetExecutablePath || 'dotnet'} --info`, process.cwd());
+        let data = await execChildProcess(`${dotnetExecutablePath || 'dotnet'} --info`, process.cwd(), process.env);
 
-        dotnetInfo.CliPath = dotnetExecutablePath; 
-
+        dotnetInfo.CliPath = dotnetExecutablePath;
         dotnetInfo.FullInfo = data;
 
         let lines: string[] = data.replace(/\r/mg, '').split('\n');
