@@ -69,7 +69,7 @@ module Events {
     export const ProjectAdded = 'ProjectAdded';
     export const ProjectRemoved = 'ProjectRemoved';
 
-    export const ProjectDiagnosticStatus = 'ProjectDiagnosticStatus';
+    export const BackgroundDiagnosticStatus = 'BackgroundDiagnosticStatus';
 
     export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
 
@@ -218,8 +218,8 @@ export class OmniSharpServer {
         return this._addListener(Events.ProjectRemoved, listener, thisArg);
     }
 
-    public onProjectDiagnosticStatus(listener: (e: protocol.ProjectDiagnosticStatus) => any, thisArg?: any) {
-        return this._addListener(Events.ProjectDiagnosticStatus, listener, thisArg);
+    public onBackgroundDiagnosticStatus(listener: (e: protocol.BackgroundDiagnosticStatusMessage) => any, thisArg?: any) {
+        return this._addListener(Events.BackgroundDiagnosticStatus, listener, thisArg);
     }
 
     public onMsBuildProjectDiagnostics(listener: (e: protocol.MSBuildProjectDiagnostics) => any, thisArg?: any) {
@@ -319,8 +319,8 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
-        disposables.add(this.onProjectDiagnosticStatus((message: protocol.ProjectDiagnosticStatus) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpProjectDiagnosticStatus(message))
+        disposables.add(this.onBackgroundDiagnosticStatus((message: protocol.BackgroundDiagnosticStatusMessage) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpBackgroundDiagnosticStatus(message))
         ));
 
         disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
