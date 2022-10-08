@@ -396,7 +396,7 @@ export default class TestManager extends AbstractProvider {
 
         const targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
         const debugEventListener = new DebugEventListener(fileName, this._server, this._eventStream);
-        debugEventListener.start();
+        await debugEventListener.start();
         return { debugEventListener, targetFrameworkVersion };
     }
 
@@ -574,7 +574,7 @@ class DebugEventListener {
 
         DebugEventListener.s_activeInstance = this;
 
-        this._serverSocket = net.createServer(socket => {
+        const serverSocket = net.createServer(socket => {
             socket.on('data', buffer => {
                 let event: DebuggerEventsProtocol.DebuggerEvent;
                 try {
@@ -604,17 +604,21 @@ class DebugEventListener {
             });
         });
 
+        // We need the local serverSocket variable for the promise to capture below,
+        // or else TypeScript will warn that the instance variable could be undefined.
+        this._serverSocket = serverSocket;
+
         await this.removeSocketFileIfExists();
         return new Promise((resolve, reject) => {
-            this._serverSocket.on('error', err => {
-                if (!this._serverSocket.listening) {
+            serverSocket.on('error', err => {
+                if (!serverSocket.listening) {
                     reject(err.message);
                 } else {
                     this._eventStream.post(new DotNetTestDebugWarning(`Communications error on debugger event channel. ${err.message}`));
                 }
             });
 
-            this._serverSocket.listen(this._pipePath, () => {
+            serverSocket.listen(this._pipePath, () => {
                 resolve();
             });
         });
