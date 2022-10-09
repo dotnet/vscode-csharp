@@ -63,7 +63,6 @@ export default class CSharpInlayHintProvider extends AbstractProvider implements
         const inlayHint = this._hintsMap.get(hint);
         if (inlayHint === undefined) {
             return Promise.reject(`Outdated inlay hint was requested to be resolved, aborting.`);
-
         }
 
         const request: InlayHintResolveRequest = { Hint: inlayHint };
