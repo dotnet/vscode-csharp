@@ -337,7 +337,7 @@ class DiagnosticsProvider extends AbstractSupport {
             || quickFix.Id == "CS0219"  // CS0219: Unused variable
             || quickFix.Id == "CS8019"; // CS8019: Unnecessary using
 
-        if (isFadeout && ['hidden', 'none'].includes(quickFix.LogLevel)) {
+        if (isFadeout && ['hidden', 'none'].includes(quickFix.LogLevel.toLowerCase())) {
             // Theres no such thing as hidden severity in VSCode,
             // however roslyn uses commonly analyzer with hidden to fade out things.
             // Without this any of those doesn't fade anything in vscode.
