@@ -50,14 +50,6 @@ suite(`${reportIssue.name}`, () => {
 
     setup(() => {
         vscode = getFakeVsCode();
-        vscode.extensions.getExtension = () => {
-            return {
-                packageJSON: {
-                    version: csharpExtVersion
-                },
-                id: ""
-            };
-        };
 
         vscode.env.clipboard.writeText = (body: string) => {
             issueBody = body;
