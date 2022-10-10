@@ -7,21 +7,16 @@ import { join } from "path";
 import { execChildProcess } from "../common";
 import { CoreClrDebugUtil } from "../coreclr-debug/util";
 
-export const DOTNET_MISSING_MESSAGE = "A valid dotnet installation could not be found.";
+let _dotnetInfo: DotnetInfo | undefined;
 
-let _dotnetInfo: DotnetInfo;
-
-// This function checks for the presence of dotnet on the path and ensures the Version
-// is new enough for us.
-// Returns: a promise that returns a DotnetInfo class
-// Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old.
+// This function calls `dotnet --info` and returns the result as a DotnetInfo object.
 export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInfo> {
     if (_dotnetInfo !== undefined) {
         return _dotnetInfo;
     }
 
     let dotnetExeName = CoreClrDebugUtil.getPlatformExeExtension();
-    let dotnetExecutablePath = undefined;
+    let dotnetExecutablePath: string | undefined;
 
     for (const dotnetPath of dotNetCliPaths) {
         let dotnetFullPath = join(dotnetPath, dotnetExeName);
@@ -31,42 +26,47 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         }
     }
 
-    let dotnetInfo = new DotnetInfo();
-
     try {
-        let data = await execChildProcess(`${dotnetExecutablePath || 'dotnet'} --info`, process.cwd());
+        const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} --info`, process.cwd());
 
-        dotnetInfo.CliPath = dotnetExecutablePath; 
+        const cliPath = dotnetExecutablePath;
+        const fullInfo = data;
 
-        dotnetInfo.FullInfo = data;
+        let version: string | undefined;
+        let runtimeId: string | undefined;
 
-        let lines: string[] = data.replace(/\r/mg, '').split('\n');
-        lines.forEach(line => {
-            let match: RegExpMatchArray;
+        const lines = data.replace(/\r/mg, '').split('\n');
+        for (const line of lines) {
+            let match: RegExpMatchArray | null;
             if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
-                dotnetInfo.Version = match[1];
-            } else if (match = /^\ OS Version:\s*([^\s].*)$/.exec(line)) {
-                dotnetInfo.OsVersion = match[1];
+                version = match[1];
             } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
-                dotnetInfo.RuntimeId = match[1];
+                runtimeId = match[1];
             }
-        });
 
-        _dotnetInfo = dotnetInfo;
+            if (version !== undefined && runtimeId !== undefined) {
+                _dotnetInfo = {
+                    CliPath: cliPath,
+                    FullInfo: fullInfo,
+                    Version: version,
+                    RuntimeId: runtimeId,
+                };
+                return _dotnetInfo;
+            }
+        }
+
+        throw new Error('Failed to parse dotnet version information');
     }
     catch
     {
         // something went wrong with spawning 'dotnet --info'
-        dotnetInfo.FullInfo = DOTNET_MISSING_MESSAGE;
+        throw new Error('A valid dotnet installation could not be found');
     }
-
-    return dotnetInfo;
 }
 
-export class DotnetInfo {
-    public CliPath?: string;
-    public FullInfo: string;
-    public Version: string;
-    public OsVersion: string;
-    public RuntimeId: string;
+export interface DotnetInfo {
+    CliPath?: string;
+    FullInfo: string;
+    Version: string;
+    RuntimeId: string;
 }

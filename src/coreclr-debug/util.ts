@@ -8,7 +8,7 @@ import * as fs from 'fs';
 import * as semver from 'semver';
 import * as os from 'os';
 import { PlatformInformation } from './../platform';
-import { getDotnetInfo, DotnetInfo, DOTNET_MISSING_MESSAGE } from '../utils/getDotnetInfo';
+import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';
 
@@ -59,16 +59,14 @@ export class CoreClrDebugUtil {
     // This function checks for the presence of dotnet on the path and ensures the Version
     // is new enough for us.
     public async checkDotNetCli(dotNetCliPaths: string[]): Promise<void> {
-        let dotnetInfo = await getDotnetInfo(dotNetCliPaths);
-
-        if (dotnetInfo.FullInfo === DOTNET_MISSING_MESSAGE) {
-            // something went wrong with spawning 'dotnet --info'
-            throw new Error('The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.');
-        }
-
-        // succesfully spawned 'dotnet --info', check the Version
-        if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
-            throw new Error(`The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ${MINIMUM_SUPPORTED_DOTNET_CLI}.`);
+        try {
+            const dotnetInfo = await getDotnetInfo(dotNetCliPaths);
+            if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
+                throw new Error(`The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ${MINIMUM_SUPPORTED_DOTNET_CLI}.`);
+            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : `${error}`;
+            throw new Error(`The .NET Core SDK cannot be located: ${message}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.`);
         }
     }
 
