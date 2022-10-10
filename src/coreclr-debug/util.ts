@@ -101,52 +101,40 @@ export class CoreClrDebugUtil {
 
 const MINIMUM_SUPPORTED_OSX_ARM64_DOTNET_CLI: string = '6.0.0';
 
-export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string, dotnetInfo: DotnetInfo): string {
-    let targetArchitecture = "";
-
-    // On Apple M1 Machines, we need to determine if we need to use the 'x86_64' or 'arm64' debugger.
-    if (platformInfo.isMacOS())
+export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string | undefined, dotnetInfo: DotnetInfo): string {
+    if (!platformInfo.isMacOS())
     {
-        // 'targetArchitecture' is specified in launch.json configuration, use that.
-        if (launchJsonTargetArchitecture)
-        {
-            if (launchJsonTargetArchitecture !== "x86_64" && launchJsonTargetArchitecture !== "arm64")
-            {
-                throw new Error(`The value '${launchJsonTargetArchitecture}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`);
-            }
-            targetArchitecture = launchJsonTargetArchitecture;
-        }
-        else if (dotnetInfo)
-        {
-            // Find which targetArchitecture to use based on SDK Version or RID.
-
-            // If we are lower than .NET 6, use 'x86_64' since 'arm64' was not supported until .NET 6
-            if (dotnetInfo.Version && semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_OSX_ARM64_DOTNET_CLI))
-            {
-                targetArchitecture = 'x86_64';
-            }
-            else if (dotnetInfo.RuntimeId)
-            {
-                if (dotnetInfo.RuntimeId.includes('arm64'))
-                {
-                    targetArchitecture = 'arm64';
-                }
-                else if (dotnetInfo.RuntimeId.includes('x64'))
-                {
-                    targetArchitecture = 'x86_64';
-                }
-                else
-                {
-                    throw new Error(`Unexpected RuntimeId '${dotnetInfo.RuntimeId}'.`);
-                }
-            }
-        }
-
-        if (!targetArchitecture) {
-            // Unable to retrieve any targetArchitecture, go with platformInfo.
-            targetArchitecture = platformInfo.architecture;
-        }
+        // Nothing to do here.
+        return '';
     }
 
-    return targetArchitecture;
+    // On Apple M1 Machines, we need to determine if we need to use the 'x86_64' or 'arm64' debugger.
+
+    // 'targetArchitecture' is specified in launch.json configuration, use that.
+    if (launchJsonTargetArchitecture)
+    {
+        if (launchJsonTargetArchitecture !== "x86_64" && launchJsonTargetArchitecture !== "arm64")
+        {
+            throw new Error(`The value '${launchJsonTargetArchitecture}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`);
+        }
+        return launchJsonTargetArchitecture;
+    }
+
+    // If we are lower than .NET 6, use 'x86_64' since 'arm64' was not supported until .NET 6.
+    if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_OSX_ARM64_DOTNET_CLI))
+    {
+        return 'x86_64';
+    }
+
+    // Otherwise, look at the runtime ID.
+    if (dotnetInfo.RuntimeId.includes('arm64'))
+    {
+        return 'arm64';
+    }
+    else if (dotnetInfo.RuntimeId.includes('x64'))
+    {
+        return 'x86_64';
+    }
+
+    throw new Error(`Unexpected RuntimeId '${dotnetInfo.RuntimeId}'.`);
 }
