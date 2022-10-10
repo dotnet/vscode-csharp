@@ -12,11 +12,6 @@ import { getDotnetInfo, DotnetInfo, DOTNET_MISSING_MESSAGE } from '../utils/getD
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';
 
-export class DotNetCliError extends Error {
-    public ErrorMessage: string; // the message to display to the user
-    public ErrorString: string; // the string to log for this error
-}
-
 export class CoreClrDebugUtil {
     private _extensionDir: string = '';
     private _debugAdapterDir: string = '';
@@ -61,34 +56,20 @@ export class CoreClrDebugUtil {
         });
     }
 
-    public defaultDotNetCliErrorMessage(): string {
-        return 'Failed to find up to date dotnet cli on the path.';
-    }
-
     // This function checks for the presence of dotnet on the path and ensures the Version
     // is new enough for us.
-    // Returns: a promise that returns a DotnetInfo class
-    // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old.
-    public async checkDotNetCli(dotNetCliPaths: string[]): Promise<DotnetInfo> {
+    public async checkDotNetCli(dotNetCliPaths: string[]): Promise<void> {
         let dotnetInfo = await getDotnetInfo(dotNetCliPaths);
 
         if (dotnetInfo.FullInfo === DOTNET_MISSING_MESSAGE) {
             // something went wrong with spawning 'dotnet --info'
-            let dotnetError = new DotNetCliError();
-            dotnetError.ErrorMessage = 'The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.';
-            dotnetError.ErrorString = "Failed to spawn 'dotnet --info'";
-            throw dotnetError;
+            throw new Error('The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.');
         }
 
         // succesfully spawned 'dotnet --info', check the Version
         if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
-            let dotnetError = new DotNetCliError();
-            dotnetError.ErrorMessage = 'The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
-            dotnetError.ErrorString = "dotnet cli is too old";
-            throw dotnetError;
+            throw new Error(`The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ${MINIMUM_SUPPORTED_DOTNET_CLI}.`);
         }
-
-        return dotnetInfo;
     }
 
     public static isMacOSSupported(): boolean {
