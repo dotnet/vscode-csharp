@@ -33,6 +33,7 @@ import OptionProvider from '../observers/OptionProvider';
 import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
 import { showProjectSelector } from '../features/commands';
 import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
+import { validateRequirements } from './requirementCheck';
 
 enum ServerState {
     Starting,
@@ -277,6 +278,13 @@ export class OmniSharpServer {
             return;
         }
 
+        const options = this.optionProvider.GetLatestOptions();
+
+        if (!await validateRequirements(options)) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("OmniSharp failed to start because of missing requirements."));
+            return;
+        }
+
         const disposables = new CompositeDisposable();
 
         disposables.add(this.onServerError(err =>
@@ -339,8 +347,6 @@ export class OmniSharpServer {
 
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
-
-        const options = this.optionProvider.GetLatestOptions();
 
         const args = [
             '-z',
