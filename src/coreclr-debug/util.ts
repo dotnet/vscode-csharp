@@ -83,10 +83,11 @@ export class CoreClrDebugUtil {
             fs.accessSync(path, fs.constants.F_OK);
             return true;
         } catch (err) {
-            if (err.code === 'ENOENT' || err.code === 'ENOTDIR') {
+            const error = err as NodeJS.ErrnoException;
+            if (error.code === 'ENOENT' || error.code === 'ENOTDIR') {
                 return false;
             } else {
-                throw Error(err.code);
+                throw Error(error.code);
             }
         }
     }
