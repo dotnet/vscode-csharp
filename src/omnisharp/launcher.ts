@@ -377,11 +377,10 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
 
 async function launchNix(launchInfo: LaunchInfo, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
     const monoInfo = await monoResolver.getHostExecutableInfo(options);
-    const launchPath = launchInfo.MonoLaunchPath ?? launchInfo.LaunchPath;
 
     return {
-        process: launchNixMono(launchPath, cwd, args, monoInfo.env, options.waitForDebugger),
-        command: launchPath,
+        process: launchNixMono(launchInfo.LaunchPath, cwd, args, monoInfo.env, options.waitForDebugger),
+        command: launchInfo.LaunchPath,
         hostIsMono: true,
         hostVersion: monoInfo.version,
         hostPath: monoInfo.path

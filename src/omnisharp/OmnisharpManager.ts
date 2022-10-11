@@ -12,7 +12,6 @@ import { modernNetVersion } from './OmnisharpPackageCreator';
 
 export interface LaunchInfo {
     LaunchPath: string;
-    MonoLaunchPath?: string;
 }
 
 export class OmnisharpManager {
@@ -90,8 +89,7 @@ export class OmnisharpManager {
         }
 
         return {
-            LaunchPath: path.join(basePath, 'run'),
-            MonoLaunchPath: path.join(basePath, 'omnisharp', 'OmniSharp.exe')
+            LaunchPath: path.join(basePath, 'omnisharp', 'OmniSharp.exe')
         };
     }
 }
