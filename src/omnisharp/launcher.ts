@@ -330,23 +330,16 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
 
 async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
-    let command: string;
+    const command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
     const argsCopy = args.slice(0);
 
-    if (launchInfo.LaunchPath && !launchInfo.LaunchPath.endsWith('.dll')) {
-        // If we're not being asked to launch a dll, assume whatever we're given is an executable
-        command = launchInfo.LaunchPath;
-    }
-    else {
-        command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
-        argsCopy.unshift(launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath);
-    }
+    argsCopy.unshift(launchInfo.LaunchPath);
 
     const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
 
     return {
         process,
-        command: launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath,
+        command: launchInfo.LaunchPath,
         hostVersion: dotnetInfo.version,
         hostPath: dotnetInfo.path,
         hostIsMono: false,
@@ -384,7 +377,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
 
 async function launchNix(launchInfo: LaunchInfo, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
     const monoInfo = await monoResolver.getHostExecutableInfo(options);
-    const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
+    const launchPath = launchInfo.MonoLaunchPath ?? launchInfo.LaunchPath;
 
     return {
         process: launchNixMono(launchPath, cwd, args, monoInfo.env, options.waitForDebugger),
