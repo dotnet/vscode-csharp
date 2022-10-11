@@ -17,12 +17,18 @@ export interface LaunchInfo {
 }
 
 export class OmnisharpManager {
+    private readonly serverUrl = 'https://roslynomnisharp.blob.core.windows.net';
+
+    private readonly latestVersionFileServerPath = 'releases/versioninfo.txt';
+
+    private readonly installPath = '.omnisharp';
+
     public constructor(
         private downloader: OmnisharpDownloader,
         private platformInfo: PlatformInformation) {
     }
 
-    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
+    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<LaunchInfo> {
         if (omnisharpPath.length === 0) {
             // If omnisharpPath was not specified, return the default path.
             const basePath = path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion + (useFramework ? '' : `-net${modernNetVersion}`));
@@ -40,22 +46,22 @@ export class OmnisharpManager {
             };
         }
         else if (omnisharpPath === 'latest') {
-            return await this.InstallLatestAndReturnLaunchInfo(useFramework, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+            return await this.InstallLatestAndReturnLaunchInfo(useFramework, extensionPath);
         }
 
         // If the path is neither a valid path on disk not the string "latest", treat it as a version
-        return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, useFramework, serverUrl, installPath, extensionPath);
+        return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, useFramework, extensionPath);
     }
 
-    private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
-        let version = await this.downloader.GetLatestVersion(serverUrl, latestVersionFileServerPath);
-        return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, serverUrl, installPath, extensionPath);
+    private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, extensionPath: string): Promise<LaunchInfo> {
+        const version = await this.downloader.GetLatestVersion(this.serverUrl, this.latestVersionFileServerPath);
+        return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, extensionPath);
     }
 
-    private async InstallVersionAndReturnLaunchInfo(version: string, useFramework: boolean, serverUrl: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
+    private async InstallVersionAndReturnLaunchInfo(version: string, useFramework: boolean, extensionPath: string): Promise<LaunchInfo> {
         if (semver.valid(version)) {
-            await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, serverUrl, installPath);
-            return this.GetLaunchPathForVersion(this.platformInfo, useFramework, version, installPath, extensionPath);
+            await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, this.serverUrl, this.installPath);
+            return this.GetLaunchPathForVersion(this.platformInfo, useFramework, version, this.installPath, extensionPath);
         }
         else {
             throw new Error(`Invalid OmniSharp version - ${version}`);

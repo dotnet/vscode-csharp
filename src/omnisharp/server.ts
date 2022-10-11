@@ -89,9 +89,6 @@ module Events {
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
-const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
-const installPath = ".omnisharp";
-const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export class OmniSharpServer {
 
@@ -445,7 +442,7 @@ export class OmniSharpServer {
 
         let launchInfo: LaunchInfo;
         try {
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
+            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, this.extensionPath);
         }
         catch (e) {
             const error = e as Error; // Unsafe TypeScript hack to recognize the catch type as Error.
