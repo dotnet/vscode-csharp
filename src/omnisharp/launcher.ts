@@ -72,10 +72,10 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
         /*maxResults*/ 1);
 
-    return resourcesToLaunchTargets(projectFiles.concat(csFiles), options.maxProjectResults);
+    return resourcesToLaunchTargets(projectFiles.concat(csFiles), vscode.workspace.workspaceFolders, options.maxProjectResults);
 }
 
-export function resourcesToLaunchTargets(resources: vscode.Uri[], maxProjectResults: number): LaunchTarget[] {
+export function resourcesToLaunchTargets(resources: vscode.Uri[], workspaceFolders: readonly vscode.WorkspaceFolder[], maxProjectResults: number): LaunchTarget[] {
     // The list of launch targets is calculated like so:
     //   * If there are .csproj files, .sln and .slnf files are considered as launch targets.
     //   * Any project.json file is considered a launch target.
@@ -87,7 +87,7 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[], maxProjectResu
     //   * It should be possible to choose a .sln or .slnf file even when no .csproj files are found
     //     within the root.
 
-    if (!Array.isArray(resources) || resources.length === 0) {
+    if (resources.length === 0) {
         return [];
     }
 
@@ -116,10 +116,10 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[], maxProjectResu
         }
     }
 
-    return resourcesAndFolderMapToLaunchTargets(resources, vscode.workspace.workspaceFolders.concat(), workspaceFolderToUriMap, maxProjectResults);
+    return resourcesAndFolderMapToLaunchTargets(resources, workspaceFolders, workspaceFolderToUriMap, maxProjectResults);
 }
 
-export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>, maxProjectResults: number): LaunchTarget[] {
+export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], workspaceFolders: readonly vscode.WorkspaceFolder[], workspaceFolderToUriMap: Map<number, vscode.Uri[]>, maxProjectResults: number): LaunchTarget[] {
     let solutionTargets: LaunchTarget[] = [];
     let projectJsonTargets: LaunchTarget[] = [];
     let projectRootTargets: LaunchTarget[] = [];
@@ -241,7 +241,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
     projectTargets = projectTargets.sort((a, b) => a.directory.localeCompare(b.directory));
 
     const allTargets = otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
-    
+
     return maxProjectResults > 0
         ? allTargets.slice(0, maxProjectResults)
         : allTargets;
