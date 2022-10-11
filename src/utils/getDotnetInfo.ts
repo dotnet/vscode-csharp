@@ -15,7 +15,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         return _dotnetInfo;
     }
 
-    let dotnetExeName = join('dotnet', CoreClrDebugUtil.getPlatformExeExtension());
+    let dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
     let dotnetExecutablePath: string | undefined;
 
     for (const dotnetPath of dotNetCliPaths) {
