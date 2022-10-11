@@ -32,11 +32,11 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
         this.statusBarItem.tooltip = value;
     }
 
-    get color(): string {
-        return this.statusBarItem.color as string;
+    get color(): string | vscode.ThemeColor | undefined {
+        return this.statusBarItem.color;
     }
 
-    set color(value: string) {
+    set color(value: string | vscode.ThemeColor | undefined) {
         this.statusBarItem.color = value;
     }
 

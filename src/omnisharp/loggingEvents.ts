@@ -90,7 +90,7 @@ export class OmnisharpRequestMessage implements BaseEvent {
 
 export class TestExecutionCountReport implements BaseEvent {
     type = EventType.TestExecutionCountReport;
-    constructor(public debugCounts: { [testFrameworkName: string]: number }, public runCounts: { [testFrameworkName: string]: number }) { }
+    constructor(public debugCounts: { [testFrameworkName: string]: number } | undefined, public runCounts: { [testFrameworkName: string]: number } | undefined) { }
 }
 
 export class OmnisharpServerOnError implements BaseEvent {
@@ -185,7 +185,7 @@ export class ZipError implements BaseEvent {
 
 export class ReportDotNetTestResults implements BaseEvent {
     type = EventType.ReportDotNetTestResults;
-    constructor(public results: protocol.V2.DotNetTestResult[]) { }
+    constructor(public results: protocol.V2.DotNetTestResult[] | undefined) { }
 }
 
 export class DotNetTestRunStart implements BaseEvent {

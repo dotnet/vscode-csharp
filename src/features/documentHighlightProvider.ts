@@ -24,9 +24,9 @@ export default class OmnisharpDocumentHighlightProvider extends AbstractSupport 
                 return res.QuickFixes.map(OmnisharpDocumentHighlightProvider._asDocumentHighlight);
             }
         }
-        catch (error) {
-            return [];
-        }
+        catch {}
+
+        return [];
     }
 
     private static _asDocumentHighlight(quickFix: protocol.QuickFix): DocumentHighlight {

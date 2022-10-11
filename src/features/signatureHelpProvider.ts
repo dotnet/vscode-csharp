@@ -12,7 +12,7 @@ import { SignatureHelpParameter } from '../omnisharp/protocol';
 
 export default class OmniSharpSignatureHelpProvider extends AbstractSupport implements SignatureHelpProvider {
 
-    public async provideSignatureHelp(document: TextDocument, position: Position, token: CancellationToken): Promise<SignatureHelp> {
+    public async provideSignatureHelp(document: TextDocument, position: Position, token: CancellationToken): Promise<SignatureHelp | undefined> {
 
         let req = createRequest(document, position);
 

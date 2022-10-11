@@ -26,23 +26,23 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 
     public async provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
-        let options = this.optionProvider.GetLatestOptions();
-        let minFilterLength = options.minFindSymbolsFilterLength > 0 ? options.minFindSymbolsFilterLength : undefined;
-        let maxItemsToReturn = options.maxFindSymbolsItems > 0 ? options.maxFindSymbolsItems : undefined;
+        const options = this.optionProvider.GetLatestOptions();
+        const minFilterLength = options.minFindSymbolsFilterLength > 0 ? options.minFindSymbolsFilterLength : undefined;
+        const maxItemsToReturn = options.maxFindSymbolsItems > 0 ? options.maxFindSymbolsItems : undefined;
 
-        if (minFilterLength != undefined && search.length < minFilterLength) {
+        if (minFilterLength !== undefined && search.length < minFilterLength) {
             return [];
         }
 
         try {
-            let res = await serverUtils.findSymbols(this._server, { Filter: search, MaxItemsToReturn: maxItemsToReturn, FileName: '' }, token);
-            if (res && Array.isArray(res.QuickFixes)) {
+            const res = await serverUtils.findSymbols(this._server, { Filter: search, MaxItemsToReturn: maxItemsToReturn }, token);
+            if (Array.isArray(res?.QuickFixes)) {
                 return res.QuickFixes.map(symbol => this._asSymbolInformation(symbol));
             }
         }
-        catch (error) {
-            return [];
-        }
+        catch {}
+
+        return [];
     }
 
     private _asSymbolInformation(symbolInfo: protocol.SymbolLocation): SymbolInformation {

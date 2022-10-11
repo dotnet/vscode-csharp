@@ -171,7 +171,7 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
 
     async provideDocumentSemanticTokens(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
 
-        return this._provideSemanticTokens(document, null, token);
+        return this._provideSemanticTokens(document, undefined, token);
     }
 
     async provideDocumentRangeSemanticTokens(document: vscode.TextDocument, range: vscode.Range, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
@@ -189,7 +189,7 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
         return this._provideSemanticTokens(document, v2Range, token);
     }
 
-    async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
+    async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range | undefined, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
         // We can only semantically highlight file from disk.
         if (document.uri.scheme !== "file") {
             return null;
@@ -312,7 +312,7 @@ tokenModifiers[DefaultTokenModifier.modification] = 'modification';
 tokenModifiers[DefaultTokenModifier.async] = 'async';
 tokenModifiers[DefaultTokenModifier.readonly] = 'readonly';
 
-const tokenTypeMap: number[] = [];
+const tokenTypeMap: (number | undefined)[] = [];
 tokenTypeMap[SemanticHighlightClassification.Comment] = DefaultTokenType.comment;
 tokenTypeMap[SemanticHighlightClassification.ExcludedCode] = CustomTokenType.excludedCode;
 tokenTypeMap[SemanticHighlightClassification.Identifier] = DefaultTokenType.variable;

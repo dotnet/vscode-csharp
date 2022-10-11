@@ -10,19 +10,18 @@ import { createRequest, toLocation } from '../omnisharp/typeConversion';
 import { TextDocument, Position, CancellationToken, ImplementationProvider, Definition } from 'vscode';
 
 export default class CSharpImplementationProvider extends AbstractSupport implements ImplementationProvider {
-    public async provideImplementation(document: TextDocument, position: Position, token: CancellationToken): Promise<Definition> {
-        const request = <FindImplementationsRequest>createRequest(document, position);
+    public async provideImplementation(document: TextDocument, position: Position, token: CancellationToken): Promise<Definition | undefined> {
+        const request = createRequest<FindImplementationsRequest>(document, position);
 
-        const implementations = await serverUtils.findImplementations(this._server, request, token).then(response => {
-            if (!response || !response.QuickFixes) {
-                return;
-            }
+        try {
+            const response = await serverUtils.findImplementations(this._server, request, token);
+            const implementations = response?.QuickFixes?.map(fix => toLocation(fix)) ?? [];
 
-            return response.QuickFixes.map(fix => toLocation(fix));
-        }).catch();
+            // Allow language middlewares to re-map its edits if necessary.
+            const result = await this._languageMiddlewareFeature.remap("remapLocations", implementations, token);
+            return result;
+        } catch {}
 
-        // Allow language middlewares to re-map its edits if necessary.
-        const result = await this._languageMiddlewareFeature.remap("remapLocations", implementations, token);
-        return result;
+        return undefined;
     }
 }
