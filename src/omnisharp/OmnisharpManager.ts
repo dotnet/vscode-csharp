@@ -24,9 +24,7 @@ export class OmnisharpManager {
 
     public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<string> {
         if (omnisharpPath.length === 0) {
-            // If omnisharpPath was not specified, return the default path.
-            const basePath = path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion + (useFramework ? '' : `-net${modernNetVersion}`));
-            return this.GetLaunchInfo(this.platformInfo, useFramework, basePath);
+            return this.GetLaunchPathForVersion(defaultOmnisharpVersion, this.platformInfo, useFramework, extensionPath);
         }
 
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
@@ -53,25 +51,16 @@ export class OmnisharpManager {
     private async InstallVersionAndReturnLaunchInfo(version: string, useFramework: boolean, extensionPath: string): Promise<string> {
         if (semver.valid(version)) {
             await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, this.serverUrl, this.installPath);
-            return this.GetLaunchPathForVersion(this.platformInfo, useFramework, version, this.installPath, extensionPath);
+            return this.GetLaunchPathForVersion(version, this.platformInfo, useFramework, extensionPath);
         }
         else {
             throw new Error(`Invalid OmniSharp version - ${version}`);
         }
     }
 
-    private GetLaunchPathForVersion(platformInfo: PlatformInformation, isFramework: boolean, version: string, installPath: string, extensionPath: string): string {
-        if (!version) {
-            throw new Error('Invalid Version');
-        }
-
-        let basePath = path.resolve(extensionPath, installPath, version + (isFramework ? '' : `-net${modernNetVersion}`));
-
-        return this.GetLaunchInfo(platformInfo, isFramework, basePath);
-    }
-
-    private GetLaunchInfo(platformInfo: PlatformInformation, isFramework: boolean, basePath: string): string {
-        if (!isFramework) {
+    private GetLaunchPathForVersion(version: string, platformInfo: PlatformInformation, useFramework: boolean, extensionPath: string): string {
+        const basePath = path.resolve(extensionPath, this.installPath, version + (useFramework ? '' : `-net${modernNetVersion}`));
+        if (!useFramework) {
             return path.join(basePath, 'OmniSharp.dll');
         }
         else if (platformInfo.isWindows()) {
