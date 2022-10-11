@@ -10,10 +10,6 @@ import { OmnisharpDownloader } from './OmnisharpDownloader';
 import { PlatformInformation } from '../platform';
 import { modernNetVersion } from './OmnisharpPackageCreator';
 
-export interface LaunchInfo {
-    LaunchPath: string;
-}
-
 export class OmnisharpManager {
     private readonly serverUrl = 'https://roslynomnisharp.blob.core.windows.net';
 
@@ -26,7 +22,7 @@ export class OmnisharpManager {
         private platformInfo: PlatformInformation) {
     }
 
-    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<LaunchInfo> {
+    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<string> {
         if (omnisharpPath.length === 0) {
             // If omnisharpPath was not specified, return the default path.
             const basePath = path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion + (useFramework ? '' : `-net${modernNetVersion}`));
@@ -39,9 +35,7 @@ export class OmnisharpManager {
                 throw new Error('The system could not find the specified path');
             }
 
-            return {
-                LaunchPath: omnisharpPath
-            };
+            return omnisharpPath;
         }
         else if (omnisharpPath === 'latest') {
             return await this.InstallLatestAndReturnLaunchInfo(useFramework, extensionPath);
@@ -51,12 +45,12 @@ export class OmnisharpManager {
         return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, useFramework, extensionPath);
     }
 
-    private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, extensionPath: string): Promise<LaunchInfo> {
+    private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, extensionPath: string): Promise<string> {
         const version = await this.downloader.GetLatestVersion(this.serverUrl, this.latestVersionFileServerPath);
         return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, extensionPath);
     }
 
-    private async InstallVersionAndReturnLaunchInfo(version: string, useFramework: boolean, extensionPath: string): Promise<LaunchInfo> {
+    private async InstallVersionAndReturnLaunchInfo(version: string, useFramework: boolean, extensionPath: string): Promise<string> {
         if (semver.valid(version)) {
             await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, this.serverUrl, this.installPath);
             return this.GetLaunchPathForVersion(this.platformInfo, useFramework, version, this.installPath, extensionPath);
@@ -66,7 +60,7 @@ export class OmnisharpManager {
         }
     }
 
-    private GetLaunchPathForVersion(platformInfo: PlatformInformation, isFramework: boolean, version: string, installPath: string, extensionPath: string): LaunchInfo {
+    private GetLaunchPathForVersion(platformInfo: PlatformInformation, isFramework: boolean, version: string, installPath: string, extensionPath: string): string {
         if (!version) {
             throw new Error('Invalid Version');
         }
@@ -76,20 +70,14 @@ export class OmnisharpManager {
         return this.GetLaunchInfo(platformInfo, isFramework, basePath);
     }
 
-    private GetLaunchInfo(platformInfo: PlatformInformation, isFramework: boolean, basePath: string): LaunchInfo {
+    private GetLaunchInfo(platformInfo: PlatformInformation, isFramework: boolean, basePath: string): string {
         if (!isFramework) {
-            return {
-                LaunchPath: path.join(basePath, 'OmniSharp.dll')
-            };
+            return path.join(basePath, 'OmniSharp.dll');
         }
         else if (platformInfo.isWindows()) {
-            return {
-                LaunchPath: path.join(basePath, 'OmniSharp.exe')
-            };
+            return path.join(basePath, 'OmniSharp.exe');
         }
 
-        return {
-            LaunchPath: path.join(basePath, 'omnisharp', 'OmniSharp.exe')
-        };
+        return path.join(basePath, 'omnisharp', 'OmniSharp.exe');
     }
 }

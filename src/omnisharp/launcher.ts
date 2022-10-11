@@ -10,7 +10,6 @@ import { PlatformInformation } from '../platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from './options';
-import { LaunchInfo } from './OmnisharpManager';
 import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
 
 export enum LaunchTargetKind {
@@ -279,9 +278,9 @@ export interface LaunchResult {
     hostPath?: string;
 }
 
-export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+export async function launchOmniSharp(cwd: string, args: string[], launchPath: string, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
-        launch(cwd, args, launchInfo, platformInfo, options, monoResolver, dotnetResolver)
+        launch(cwd, args, launchPath, platformInfo, options, monoResolver, dotnetResolver)
             .then(result => {
                 // async error - when target not not ENEOT
                 result.process.on('error', err => {
@@ -297,7 +296,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchPath: string, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration('', null);
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
@@ -308,14 +307,14 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
     }
 
     if (options.useModernNet) {
-        return await launchDotnet(launchInfo, cwd, args, platformInfo, options, dotnetResolver);
+        return await launchDotnet(launchPath, cwd, args, platformInfo, options, dotnetResolver);
     }
 
     if (platformInfo.isWindows()) {
-        return launchWindows(launchInfo.LaunchPath, cwd, args);
+        return launchWindows(launchPath, cwd, args);
     }
 
-    return await launchNix(launchInfo, cwd, args, options, monoResolver);
+    return await launchNix(launchPath, cwd, args, options, monoResolver);
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
@@ -328,18 +327,18 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
     return globalConfig.get(configurationPath, defaultValue);
 }
 
-async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+async function launchDotnet(launchPath: string, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
     const command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
     const argsCopy = args.slice(0);
 
-    argsCopy.unshift(launchInfo.LaunchPath);
+    argsCopy.unshift(launchPath);
 
     const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
 
     return {
         process,
-        command: launchInfo.LaunchPath,
+        command: launchPath,
         hostVersion: dotnetInfo.version,
         hostPath: dotnetInfo.path,
         hostIsMono: false,
@@ -375,12 +374,12 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     };
 }
 
-async function launchNix(launchInfo: LaunchInfo, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
+async function launchNix(launchPath: string, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
     const monoInfo = await monoResolver.getHostExecutableInfo(options);
 
     return {
-        process: launchNixMono(launchInfo.LaunchPath, cwd, args, monoInfo.env, options.waitForDebugger),
-        command: launchInfo.LaunchPath,
+        process: launchNixMono(launchPath, cwd, args, monoInfo.env, options.waitForDebugger),
+        command: launchPath,
         hostIsMono: true,
         hostVersion: monoInfo.version,
         hostPath: monoInfo.path
