@@ -11,7 +11,7 @@ import { OmniSharpServer } from '../omnisharp/server';
 
 export default class SourceGeneratedDocumentProvider implements TextDocumentContentProvider, IDisposable {
     readonly scheme = "omnisharp-source-generated";
-    private _registration: IDisposable;
+    private _registration?: IDisposable;
     private _documents: Map<SourceGeneratedFileInfo, SourceGeneratedFileResponse>;
     private _uriToDocumentInfo: Map<string, SourceGeneratedFileInfo>;
     private _documentClosedSubscription: IDisposable;
@@ -30,33 +30,33 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
 
     private async onTextDocumentClosed(document: TextDocument) {
         const uriString = document.uri.toString();
-        if (this._uriToDocumentInfo.has(uriString)) {
-            const info = this._uriToDocumentInfo.get(uriString);
+        const info = this._uriToDocumentInfo.get(uriString);
+        if (info !== undefined) {
             this._documents.delete(info);
             this._uriToDocumentInfo.delete(uriString);
             await serverUtils.sourceGeneratedFileClosed(this.server, info);
         }
     }
 
-    private async onVisibleTextEditorsChanged(editors?: TextEditor[]) {
+    private async onVisibleTextEditorsChanged(editors: readonly TextEditor[]) {
         for (const editor of editors) {
             const documentUri = editor.document.uri;
             const uriString = documentUri.toString();
-            if (this._uriToDocumentInfo.has(uriString)) {
+            const existingInfo = this._uriToDocumentInfo.get(uriString);
+            if (existingInfo !== undefined) {
                 try {
-                    const existingInfo = this._uriToDocumentInfo.get(uriString);
                     const existingResponse = this._documents.get(existingInfo);
-                    const update = await serverUtils.getUpdatedSourceGeneratedFile(this.server, existingInfo);
-                    if (!update) {
+                    if (existingResponse === undefined) {
                         continue;
                     }
 
+                    const update = await serverUtils.getUpdatedSourceGeneratedFile(this.server, existingInfo);
                     switch (update.UpdateType) {
                         case UpdateType.Deleted:
-                            this._documents.set(existingInfo, { Source: "Document is no longer being generated.", SourceName: existingResponse.SourceName });
+                            existingResponse.Source = "Document is no longer being generated.";
                             break;
                         case UpdateType.Modified:
-                            this._documents.set(existingInfo, { Source: update.Source, SourceName: existingResponse.SourceName });
+                            existingResponse.Source = update.Source;
                             break;
                         case UpdateType.Unchanged:
                             continue;
@@ -75,46 +75,37 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
     }
 
     public dispose() {
-        this._registration.dispose();
+        this._registration?.dispose();
         this._documentClosedSubscription.dispose();
         this._visibleTextEditorsChangedSubscription.dispose();
         this._documents.clear();
     }
 
-    public tryGetExistingSourceGeneratedFile(fileInfo: SourceGeneratedFileInfo): Uri | undefined {
-        if (this._documents.has(fileInfo)) {
-            return this.getUriForName(this._documents.get(fileInfo).SourceName);
-        }
-
-        return undefined;
-    }
-
     public addSourceGeneratedFileWithoutInitialContent(fileInfo: SourceGeneratedFileInfo, fileName: string): Uri {
-        if (this._documents.has(fileInfo)) {
-            // Raced with something, return the existing one
-            return this.tryGetExistingSourceGeneratedFile(fileInfo);
+        const response = this._documents.get(fileInfo);
+        if (response !== undefined) {
+            // Raced with something, return the existing one.
+            return this.getUriForName(response.SourceName);
         }
 
         const uri = this.getUriForName(fileName);
         const uriString = uri.toString();
 
-        if (this._uriToDocumentInfo.has(uriString)) {
-            this._documents.delete(fileInfo);
-            this._uriToDocumentInfo.delete(uriString);
-        }
-
-        // Provide will see the null and retrieve the file when asked.
-        this._documents.set(fileInfo, null);
+        // Provide will see that the document doesn't exist and retrieve the file when asked.
+        this._documents.delete(fileInfo);
         this._uriToDocumentInfo.set(uriString, fileInfo);
 
         return uri;
     }
 
-    public async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string> {
+    public async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string | undefined> {
         const fileInfo = this._uriToDocumentInfo.get(uri.toString());
-        let response = this._documents.get(fileInfo);
+        if (fileInfo === undefined) {
+            return undefined;
+        }
 
-        if (response === null) {
+        let response = this._documents.get(fileInfo);
+        if (response === undefined) {
             // No content yet, get it
             response = await serverUtils.getSourceGeneratedFile(this.server, fileInfo, token);
             this._documents.set(fileInfo, response);

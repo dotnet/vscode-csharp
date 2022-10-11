@@ -134,9 +134,6 @@ export function getFakeVsCode(): vscode.vscode {
             }
         },
         extensions: {
-            getExtension: () => {
-                throw new Error("Not Implemented");
-            },
             all: []
         },
         Uri: {

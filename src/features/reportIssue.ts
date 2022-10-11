@@ -3,9 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from "../vscodeAdapter";
-import { Extension } from "../vscodeAdapter";
-import { CSharpExtensionId } from "../constants/CSharpExtensionId";
+import { vscode, Extension } from "../vscodeAdapter";
 import { EventStream } from "../EventStream";
 import { OpenURL } from "../omnisharp/loggingEvents";
 import { Options } from "../omnisharp/options";
@@ -15,12 +13,11 @@ import { dirname } from "path";
 
 const issuesUrl = "https://github.com/OmniSharp/omnisharp-vscode/issues/new";
 
-export default async function reportIssue(vscode: vscode, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver) {
+export default async function reportIssue(vscode: vscode, csharpExtVersion: string, eventStream: EventStream, getDotnetInfo: IGetDotnetInfo, isValidPlatformForMono: boolean, options: Options, dotnetResolver: IHostExecutableResolver, monoResolver: IHostExecutableResolver) {
     // Get info for the dotnet that the Omnisharp executable is run on, not the dotnet Omnisharp will execute user code on.
     const dotnetInfo = await getDotnetInfo([ dirname((await dotnetResolver.getHostExecutableInfo(options)).path) ]);
     const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options, monoResolver);
     let extensions = getInstalledExtensions(vscode);
-    let csharpExtVersion = getCsharpExtensionVersion(vscode);
 
     const body = `## Issue Description ##
 ## Steps to Reproduce ##
@@ -85,12 +82,10 @@ ${tableHeader}\n${table};
 
 async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: Options, monoResolver: IHostExecutableResolver): Promise<string> {
     if (isValidPlatformForMono) {
-        let monoVersion: string;
+        let monoVersion = "Unknown Mono version";
         try {
-            let monoInfo = await monoResolver.getHostExecutableInfo(options);
-            if (monoInfo) {
-                monoVersion = `OmniSharp using mono :${monoInfo.version}`;
-            }
+            const monoInfo = await monoResolver.getHostExecutableInfo(options);
+            monoVersion = `OmniSharp using mono: ${monoInfo.version}`;
         }
         catch (error) {
             monoVersion = `There is a problem with running OmniSharp on mono: ${error}`;
@@ -110,9 +105,4 @@ function getInstalledExtensions(vscode: vscode) {
         .filter(extension => extension.packageJSON.isBuiltin === false);
 
     return extensions.sort(sortExtensions);
-}
-
-function getCsharpExtensionVersion(vscode: vscode): string {
-    const extension = vscode.extensions.getExtension(CSharpExtensionId);
-    return extension.packageJSON.version;
 }

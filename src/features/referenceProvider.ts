@@ -34,9 +34,9 @@ export default class OmnisharpReferenceProvider extends AbstractSupport implemen
                 return result;
             }
         }
-        catch (error) {
-            return [];
-        }
+        catch {}
+
+        return [];
     }
 
     private mapToLocationWithGeneratedInfoPopulation(symbolLocation: protocol.SymbolLocation): Location {

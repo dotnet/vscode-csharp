@@ -6,11 +6,11 @@
 import { FoldingRangeProvider, TextDocument, FoldingContext, CancellationToken, FoldingRange, FoldingRangeKind } from "vscode";
 import AbstractSupport from './abstractProvider';
 import { blockStructure } from "../omnisharp/utils";
-import { Request } from "../omnisharp/protocol";
+import { V2 } from "../omnisharp/protocol";
 
 export class StructureProvider extends AbstractSupport implements FoldingRangeProvider {
     async provideFoldingRanges(document: TextDocument, context: FoldingContext, token: CancellationToken): Promise<FoldingRange[]> {
-        let request: Request = {
+        let request: V2.BlockStructureRequest = {
             FileName: document.fileName,
         };
 
@@ -28,7 +28,7 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
         }
     }
 
-    GetType(type: string): FoldingRangeKind {
+    GetType(type: string): FoldingRangeKind | undefined {
         switch (type) {
             case "Comment":
                 return FoldingRangeKind.Comment;
@@ -37,7 +37,7 @@ export class StructureProvider extends AbstractSupport implements FoldingRangePr
             case "Region":
                 return FoldingRangeKind.Region;
             default:
-                return null;
+                return undefined;
         }
     }
 

@@ -60,11 +60,12 @@ export default class CSharpInlayHintProvider extends AbstractProvider implements
     }
 
     async resolveInlayHint?(hint: vscode.InlayHint, token: vscode.CancellationToken): Promise<vscode.InlayHint> {
-        if (!this._hintsMap.has(hint)) {
+        const inlayHint = this._hintsMap.get(hint);
+        if (inlayHint === undefined) {
             return Promise.reject(`Outdated inlay hint was requested to be resolved, aborting.`);
         }
 
-        const request: InlayHintResolveRequest = { Hint: this._hintsMap.get(hint) };
+        const request: InlayHintResolveRequest = { Hint: inlayHint };
 
         try {
             const result = await serverUtils.resolveInlayHints(this._server, request, token);
@@ -82,8 +83,8 @@ export default class CSharpInlayHintProvider extends AbstractProvider implements
             textEdits: toVSCodeTextEdits(inlayHint.TextEdits),
         };
 
-        function toVSCodeTextEdits(textEdits: LinePositionSpanTextChange[]): vscode.TextEdit[] {
-            return textEdits ? textEdits.map(toVSCodeTextEdit) : undefined;
+        function toVSCodeTextEdits(textEdits: LinePositionSpanTextChange[] | undefined): vscode.TextEdit[] | undefined {
+            return textEdits?.map(toVSCodeTextEdit) ?? undefined;
         }
     }
 }

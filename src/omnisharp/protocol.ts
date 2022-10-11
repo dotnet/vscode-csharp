@@ -71,7 +71,7 @@ export namespace WireProtocol {
 }
 
 export interface FileBasedRequest {
-    FileName: string;
+    FileName?: string;
 }
 
 export interface Request extends FileBasedRequest {
@@ -507,6 +507,12 @@ export interface RunFixAllRequest extends FileBasedRequest {
     ApplyChanges: boolean;
 }
 
+export interface ReAnalyzeRequest extends FileBasedRequest {
+}
+
+export interface ReAnalyzeReponse {
+}
+
 export interface QuickInfoRequest extends Request {
 }
 
@@ -576,10 +582,16 @@ export interface SourceGeneratedFileResponse {
 export interface UpdateSourceGeneratedFileRequest extends SourceGeneratedFileInfo {
 }
 
-export interface UpdateSourceGeneratedFileResponse {
-    UpdateType: UpdateType;
-    Source?: string;
+interface UpdateSourceGeneratedFileNotModifiedResponse {
+    UpdateType: Exclude<UpdateType, UpdateType.Modified>;
 }
+
+interface UpdateSourceGeneratedFileModifiedResponse {
+    UpdateType: UpdateType.Modified;
+    Source: string;
+}
+
+export type UpdateSourceGeneratedFileResponse = UpdateSourceGeneratedFileNotModifiedResponse | UpdateSourceGeneratedFileModifiedResponse;
 
 export enum UpdateType {
     Unchanged,
@@ -745,9 +757,9 @@ export namespace V2 {
 
     // dotnet-test endpoints
     interface BaseTestRequest extends Request {
-        RunSettings: string;
+        RunSettings?: string;
         TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+        TargetFrameworkVersion?: string;
         NoBuild?: boolean;
     }
 
