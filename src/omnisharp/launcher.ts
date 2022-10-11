@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { spawn } from 'cross-spawn';
-import { ChildProcess } from 'child_process';
+import { ChildProcessWithoutNullStreams } from 'child_process';
 
 import { PlatformInformation } from '../platform';
 import * as path from 'path';
@@ -270,8 +270,20 @@ function isCs(resource: vscode.Uri): boolean {
     return /\.cs$/i.test(resource.fsPath);
 }
 
-export interface LaunchResult {
-    process: ChildProcess;
+// A ChildProcess that has spawned successfully without erroring.
+// We can guarantee that certain optional properties will exist in this case.
+// (Technically, this includes stderr/in/out, but ChildProcessWithoutNullStreams
+// gives us that for free even though it really shouldn't.)
+export interface SpawnedChildProcess extends ChildProcessWithoutNullStreams {
+    pid: number;
+}
+
+export interface LaunchResult extends IntermediateLaunchResult {
+    process: SpawnedChildProcess;
+}
+
+interface IntermediateLaunchResult {
+    process: ChildProcessWithoutNullStreams;
     command: string;
     hostIsMono: boolean;
     hostVersion?: string;
@@ -279,7 +291,7 @@ export interface LaunchResult {
 }
 
 export async function launchOmniSharp(cwd: string, args: string[], launchPath: string, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
-    return new Promise<LaunchResult>((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         launch(cwd, args, launchPath, platformInfo, options, monoResolver, dotnetResolver)
             .then(result => {
                 // async error - when target not not ENEOT
@@ -287,16 +299,15 @@ export async function launchOmniSharp(cwd: string, args: string[], launchPath: s
                     reject(err);
                 });
 
-                // success after a short freeing event loop
-                setTimeout(function () {
-                    resolve(result);
-                }, 0);
+                result.process.on('spawn', () => {
+                    resolve(result as LaunchResult);
+                });
             })
             .catch(reason => reject(reason));
     });
 }
 
-async function launch(cwd: string, args: string[], launchPath: string, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+async function launch(cwd: string, args: string[], launchPath: string, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<IntermediateLaunchResult> {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration('', null);
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
@@ -327,7 +338,7 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
     return globalConfig.get(configurationPath, defaultValue);
 }
 
-async function launchDotnet(launchPath: string, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+async function launchDotnet(launchPath: string, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<IntermediateLaunchResult> {
     const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
     const command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
     const argsCopy = args.slice(0);
@@ -345,7 +356,7 @@ async function launchDotnet(launchPath: string, cwd: string, args: string[], pla
     };
 }
 
-function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
+function launchWindows(launchPath: string, cwd: string, args: string[]): IntermediateLaunchResult {
     function escapeIfNeeded(arg: string) {
         const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
         return hasSpaceWithoutQuotes.test(arg)
@@ -374,7 +385,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     };
 }
 
-async function launchNix(launchPath: string, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
+async function launchNix(launchPath: string, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<IntermediateLaunchResult> {
     const monoInfo = await monoResolver.getHostExecutableInfo(options);
 
     return {
@@ -386,7 +397,7 @@ async function launchNix(launchPath: string, cwd: string, args: string[], option
     };
 }
 
-function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): ChildProcess {
+function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): ChildProcessWithoutNullStreams {
     let argsCopy = args.slice(0); // create copy of details args
     argsCopy.unshift(launchPath);
     argsCopy.unshift("--assembly-loader=strict");

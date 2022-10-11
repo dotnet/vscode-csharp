@@ -10,8 +10,8 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-import { ChildProcess, exec } from 'child_process';
-import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
+import { exec } from 'child_process';
+import { LaunchTarget, findLaunchTargets, LaunchTargetKind, SpawnedChildProcess } from './launcher';
 import { createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
@@ -49,7 +49,7 @@ type State = {
 } | {
     status: ServerState.Started,
     disposables: CompositeDisposable,
-    serverProcess: ChildProcess,
+    serverProcess: SpawnedChildProcess,
     telemetryIntervalId: NodeJS.Timeout,
 };
 
@@ -676,7 +676,7 @@ export class OmniSharpServer {
 
     private async _doConnect(
         disposables: CompositeDisposable,
-        serverProcess: ChildProcess,
+        serverProcess: SpawnedChildProcess,
         options: Options): Promise<void> {
         serverProcess.stderr.on('data', (data: Buffer) => {
             let trimData = removeBOMFromBuffer(data);
