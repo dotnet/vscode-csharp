@@ -11,7 +11,7 @@ import { PlatformInformation } from '../platform';
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     constructor(public platformInformation: PlatformInformation) {}
 
-    public async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration>
+    public async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined>
     {
         if (!debugConfiguration)
         {
@@ -21,7 +21,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
         // Process Id is empty, handle Attach to Process Dialog.
         if (debugConfiguration.request === "attach" && !debugConfiguration.processId && !debugConfiguration.processName)
         {
-            let process: AttachItem = undefined;
+            let process: AttachItem | undefined;
             if (debugConfiguration.pipeTransport)
             {
                 process = await RemoteAttachPicker.ShowAttachEntries(debugConfiguration, this.platformInformation);
@@ -33,15 +33,15 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                 process = await attacher.ShowAttachEntries();
             }
 
-            if (process)
+            if (process !== undefined)
             {
                 debugConfiguration.processId = process.id;
 
-                if (debugConfiguration.type == "coreclr" && 
-                    this.platformInformation.isMacOS() && 
+                if (debugConfiguration.type == "coreclr" &&
+                    this.platformInformation.isMacOS() &&
                     this.platformInformation.architecture == 'arm64')
                 {
-                    // For Apple Silicon M1, it is possible that the process we are attaching to is being emulated as x86_64. 
+                    // For Apple Silicon M1, it is possible that the process we are attaching to is being emulated as x86_64.
                     // The process is emulated if it has process flags has P_TRANSLATED (0x20000).
                     if (process.flags & 0x20000)
                     {

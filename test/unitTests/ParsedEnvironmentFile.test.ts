@@ -11,28 +11,25 @@ suite("ParsedEnvironmentFile", () => {
 
     test("Add single variable", () => {
         const content = `MyName=VALUE`;
-        const fakeConfig: { [key: string]: any } = {};
-        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
+        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", undefined);
 
-        expect(result.Warning).to.be.null;
+        expect(result.Warning).to.be.undefined;
         result.Env["MyName"].should.equal("VALUE");
     });
 
     test("Handle quoted values", () => {
         const content = `MyName="VALUE"`;
-        const fakeConfig: { [key: string]: any } = {};
-        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
+        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", undefined);
 
-        expect(result.Warning).to.be.null;
+        expect(result.Warning).to.be.undefined;
         result.Env["MyName"].should.equal("VALUE");
     });
 
     test("Handle BOM", () => {
         const content = "\uFEFFMyName=VALUE";
-        const fakeConfig: { [key: string]: any } = {};
-        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
+        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", undefined);
 
-        expect(result.Warning).to.be.null;
+        expect(result.Warning).to.be.undefined;
         result.Env["MyName"].should.equal("VALUE");
     });
 
@@ -42,10 +39,9 @@ MyName1=Value1
 MyName2=Value2
 
 `;
-        const fakeConfig: { [key: string]: any } = {};
-        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
+        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", undefined);
 
-        expect(result.Warning).to.be.null;
+        expect(result.Warning).to.be.undefined;
         result.Env["MyName1"].should.equal("Value1");
         result.Env["MyName2"].should.equal("Value2");
     });
@@ -56,13 +52,13 @@ MyName1=Value1
 MyName2=Value2
 
 `;
-        const initialEnv: { [key: string]: any } = {
+        const initialEnv = {
             "MyName1": "Value7",
             "ThisShouldNotChange": "StillHere"
         };
         const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", initialEnv);
 
-        expect(result.Warning).to.be.null;
+        expect(result.Warning).to.be.undefined;
         result.Env["MyName1"].should.equal("Value1");
         result.Env["MyName2"].should.equal("Value2");
         result.Env["ThisShouldNotChange"].should.equal("StillHere");
@@ -74,10 +70,9 @@ MyName1=Value1
 # This is a comment in the middle of the file
 MyName2=Value2
 `;
-        const fakeConfig: { [key: string]: any } = {};
-        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
+        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", undefined);
 
-        expect(result.Warning).to.be.null;
+        expect(result.Warning).to.be.undefined;
         result.Env["MyName1"].should.equal("Value1");
         result.Env["MyName2"].should.equal("Value2");
     });
@@ -89,10 +84,10 @@ MyName1=Value1
 MyName2=Value2
 
 `;
-        const fakeConfig: { [key: string]: any } = {};
-        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", fakeConfig["env"]);
+        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", undefined);
 
-        result.Warning.should.startWith("Ignoring non-parseable lines in envFile TestEnvFileName");
+        expect(result.Warning).not.to.be.undefined;
+        result.Warning!.should.startWith("Ignoring non-parseable lines in envFile TestEnvFileName");
         result.Env["MyName1"].should.equal("Value1");
         result.Env["MyName2"].should.equal("Value2");
     });
