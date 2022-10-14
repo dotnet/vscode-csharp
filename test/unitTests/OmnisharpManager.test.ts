@@ -37,61 +37,51 @@ suite(OmnisharpManager.name, () => {
     [
         {
             platformInfo: new PlatformInformation("win32", "x86"),
-            executable: "OmniSharp.dll",
             platformId: "win-x86",
             useFramework: false
         },
         {
             platformInfo: new PlatformInformation("win32", "x86"),
-            executable: "OmniSharp.exe",
             platformId: "win-x86",
             useFramework: true
         },
         {
             platformInfo: new PlatformInformation("win32", "x86_64"),
-            executable: "OmniSharp.dll",
             platformId: "win-x64",
             useFramework: false
         },
         {
             platformInfo: new PlatformInformation("win32", "x86_64"),
-            executable: "OmniSharp.exe",
             platformId: "win-x64",
             useFramework: true
         },
         {
             platformInfo: new PlatformInformation("linux", "x86_64"),
-            executable: "OmniSharp.dll",
             platformId: "linux-x64",
             useFramework: false
         },
         {
             platformInfo: new PlatformInformation("linux", "x86_64"),
-            executable: "run",
             platformId: "linux-x64",
             useFramework: true
         },
         {
             platformInfo: new PlatformInformation("linux", "x86"),
-            executable: "OmniSharp.dll",
             platformId: "linux-x86",
             useFramework: false
         },
         {
             platformInfo: new PlatformInformation("linux", "x86"),
-            executable: "run",
             platformId: "linux-x86",
             useFramework: true
         },
         {
             platformInfo: new PlatformInformation("darwin", "x86"),
-            executable: "OmniSharp.dll",
             platformId: "osx",
             useFramework: false
         },
         {
             platformInfo: new PlatformInformation("darwin", "x86"),
-            executable: "run",
             platformId: "osx",
             useFramework: true
         }
@@ -122,75 +112,66 @@ suite(OmnisharpManager.name, () => {
             });
 
             test('Throws error if the path is neither an absolute path nor a valid semver, nor the string "latest"', async () => {
-                expect(manager.GetOmniSharpLaunchInfo(defaultVersion, "Some incorrect path", useFramework, server.baseUrl, latestfilePath, installPath, extensionPath)).to.be.rejectedWith(Error);
+                expect(manager.GetOmniSharpLaunchInfo(defaultVersion, "Some incorrect path", useFramework, extensionPath)).to.be.rejectedWith(Error);
             });
 
             test('Throws error when the specified path is an invalid semver', async () => {
-                expect(manager.GetOmniSharpLaunchInfo(defaultVersion, "a.b.c", useFramework, server.baseUrl, latestfilePath, installPath, extensionPath)).to.be.rejectedWith(Error);
+                expect(manager.GetOmniSharpLaunchInfo(defaultVersion, "a.b.c", useFramework, extensionPath)).to.be.rejectedWith(Error);
             });
 
             test('Returns the same path if absolute path to an existing file is passed', async () => {
                 tmpFile = await CreateTmpFile();
-                let launchInfo = await manager.GetOmniSharpLaunchInfo(defaultVersion, tmpFile.name, useFramework, server.baseUrl, latestfilePath, installPath, extensionPath);
-                expect(launchInfo.LaunchPath).to.be.equal(tmpFile.name);
+                const launchPath = await manager.GetOmniSharpLaunchInfo(defaultVersion, tmpFile.name, useFramework, extensionPath);
+                expect(launchPath).to.be.equal(tmpFile.name);
             });
 
             test('Returns the default path if the omnisharp path is empty', async () => {
-                const launchInfo = await manager.GetOmniSharpLaunchInfo(defaultVersion, "", useFramework, server.baseUrl, latestfilePath, installPath, extensionPath);
+                const launchPath = await manager.GetOmniSharpLaunchInfo(defaultVersion, "", useFramework, extensionPath);
                 if (useFramework) {
-                    expect(launchInfo.LaunchPath).to.be.equal(path.join(extensionPath, ".omnisharp", defaultVersion + suffix, elem.executable));
                     if (elem.platformInfo.isWindows()) {
-                        expect(launchInfo.MonoLaunchPath).to.be.undefined;
+                        expect(launchPath).to.be.equal(path.join(extensionPath, ".omnisharp", defaultVersion + suffix, "OmniSharp.exe"));
                     }
                     else {
-                        expect(launchInfo.MonoLaunchPath).to.be.equal(path.join(extensionPath, ".omnisharp", defaultVersion, "omnisharp", "OmniSharp.exe"));
+                        expect(launchPath).to.be.equal(path.join(extensionPath, ".omnisharp", defaultVersion, "omnisharp", "OmniSharp.exe"));
                     }
                 }
                 else {
-                    expect(launchInfo.LaunchPath).to.be.undefined;
-                    expect(launchInfo.MonoLaunchPath).to.be.undefined;
-                    expect(launchInfo.DotnetLaunchPath).to.be.equal(path.join(extensionPath, ".omnisharp", defaultVersion + suffix, elem.executable));
+                    expect(launchPath).to.be.equal(path.join(extensionPath, ".omnisharp", defaultVersion + suffix, "OmniSharp.dll"));
                 }
             });
 
             test('Installs the latest version and returns the launch path ', async () => {
-                let launchInfo = await manager.GetOmniSharpLaunchInfo(defaultVersion, "latest", useFramework, server.baseUrl, latestfilePath, installPath, extensionPath);
+                let launchPath = await manager.GetOmniSharpLaunchInfo(defaultVersion, "latest", useFramework, extensionPath);
                 if (useFramework) {
-                    expect(launchInfo.LaunchPath).to.be.equal(path.join(extensionPath, installPath, latestVersion + suffix, elem.executable));
                     if (elem.platformInfo.isWindows()) {
-                        expect(launchInfo.MonoLaunchPath).to.be.undefined;
+                        expect(launchPath).to.be.equal(path.join(extensionPath, installPath, latestVersion + suffix, "OmniSharp.exe"));
                     }
                     else {
-                        expect(launchInfo.MonoLaunchPath).to.be.equal(path.join(extensionPath, installPath, latestVersion, "omnisharp", "OmniSharp.exe"));
+                        expect(launchPath).to.be.equal(path.join(extensionPath, installPath, latestVersion, "omnisharp", "OmniSharp.exe"));
                     }
                 }
                 else {
-                    expect(launchInfo.LaunchPath).to.be.undefined;
-                    expect(launchInfo.MonoLaunchPath).to.be.undefined;
-                    expect(launchInfo.DotnetLaunchPath).to.be.equal(path.join(extensionPath, installPath, latestVersion + suffix, elem.executable));
+                    expect(launchPath).to.be.equal(path.join(extensionPath, installPath, latestVersion + suffix, "OmniSharp.dll"));
                 }
             });
 
             test('Installs the test version and returns the launch path', async () => {
-                let launchInfo = await manager.GetOmniSharpLaunchInfo(defaultVersion, testVersion, useFramework, server.baseUrl, latestfilePath, installPath, extensionPath);
+                let launchPath = await manager.GetOmniSharpLaunchInfo(defaultVersion, testVersion, useFramework, extensionPath);
                 if (useFramework) {
-                    expect(launchInfo.LaunchPath).to.be.equal(path.join(extensionPath, installPath, testVersion + suffix, elem.executable));
                     if (elem.platformInfo.isWindows()) {
-                        expect(launchInfo.MonoLaunchPath).to.be.undefined;
+                        expect(launchPath).to.be.equal(path.join(extensionPath, installPath, testVersion + suffix, "OmniSharp.exe"));
                     }
                     else {
-                        expect(launchInfo.MonoLaunchPath).to.be.equal(path.join(extensionPath, installPath, testVersion, "omnisharp", "OmniSharp.exe"));
+                        expect(launchPath).to.be.equal(path.join(extensionPath, installPath, testVersion, "omnisharp", "OmniSharp.exe"));
                     }
                 }
                 else {
-                    expect(launchInfo.LaunchPath).to.be.undefined;
-                    expect(launchInfo.MonoLaunchPath).to.be.undefined;
-                    expect(launchInfo.DotnetLaunchPath).to.be.equal(path.join(extensionPath, installPath, testVersion + suffix, elem.executable));
+                    expect(launchPath).to.be.equal(path.join(extensionPath, installPath, testVersion + suffix, "OmniSharp.dll"));
                 }
             });
 
             test('Downloads package from given url and installs them at the specified path', async () => {
-                await manager.GetOmniSharpLaunchInfo(defaultVersion, testVersion, useFramework, server.baseUrl, latestfilePath, installPath, extensionPath);
+                await manager.GetOmniSharpLaunchInfo(defaultVersion, testVersion, useFramework, extensionPath);
                 for (let elem of testZip.files) {
                     let filePath = path.join(extensionPath, installPath, testVersion + suffix, elem.path);
                     expect(await util.fileExists(filePath)).to.be.true;
