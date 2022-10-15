@@ -25,8 +25,7 @@ suite(OmnisharpManager.name, () => {
     const defaultVersion = "0.1.2";
     const testVersion = "1.2.3";
     const latestVersion = "2.3.4";
-    const latestfilePath = "latestPath";
-    const installPath = "somePath";
+    const installPath = ".omnisharp";
     let tmpInstallDir: TmpAsset;
     let extensionPath: string;
     let tmpFile: TmpAsset;
@@ -92,7 +91,7 @@ suite(OmnisharpManager.name, () => {
                 await server.start();
                 tmpInstallDir = await CreateTmpDir(true);
                 extensionPath = tmpInstallDir.name;
-                manager = GetTestOmniSharpManager(elem.platformInfo, eventStream, extensionPath);
+                manager = GetTestOmniSharpManager(elem.platformInfo, eventStream, extensionPath, server.baseUrl);
                 testZip = await TestZip.createTestZipAsync(createTestFile("Foo", "foo.txt"));
                 useFramework = elem.useFramework;
                 suffix = useFramework ? '' : `-net${modernNetVersion}`;
@@ -101,7 +100,7 @@ suite(OmnisharpManager.name, () => {
                     "content-length": testZip.size
                 }, testZip.buffer);
 
-                server.addRequestHandler('GET', `/${latestfilePath}`, 200, {
+                server.addRequestHandler('GET', `/releases/versioninfo.txt`, 200, {
                     "content-type": "application/text",
                 }, latestVersion);
 
@@ -191,7 +190,7 @@ suite(OmnisharpManager.name, () => {
     });
 });
 
-function GetTestOmniSharpManager(platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string): OmnisharpManager {
+function GetTestOmniSharpManager(platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string, serverUrl: string): OmnisharpManager {
     let downloader = new OmnisharpDownloader(() => new NetworkSettings('', false), eventStream, testPackageJSON, platformInfo, extensionPath);
-    return new OmnisharpManager(downloader, platformInfo);
+    return new OmnisharpManager(downloader, platformInfo, serverUrl);
 }

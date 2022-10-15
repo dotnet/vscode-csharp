@@ -11,7 +11,6 @@ import { PlatformInformation } from '../platform';
 import { modernNetVersion } from './OmnisharpPackageCreator';
 
 export class OmnisharpManager {
-    private readonly serverUrl = 'https://roslynomnisharp.blob.core.windows.net';
 
     private readonly latestVersionFileServerPath = 'releases/versioninfo.txt';
 
@@ -19,7 +18,10 @@ export class OmnisharpManager {
 
     public constructor(
         private downloader: OmnisharpDownloader,
-        private platformInfo: PlatformInformation) {
+        private platformInfo: PlatformInformation,
+        // Only the tests set this. Instead of making this configurable,
+        // we should probably just mock the HTTP requests, not create an entire mock HTTP server.
+        private serverUrl: string = 'https://roslynomnisharp.blob.core.windows.net') {
     }
 
     public async GetOmniSharpLaunchPath(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<string> {
