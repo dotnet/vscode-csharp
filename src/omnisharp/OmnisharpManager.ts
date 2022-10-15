@@ -22,7 +22,7 @@ export class OmnisharpManager {
         private platformInfo: PlatformInformation) {
     }
 
-    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<string> {
+    public async GetOmniSharpLaunchPath(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<string> {
         if (omnisharpPath.length === 0) {
             return this.GetLaunchPathForVersion(defaultOmnisharpVersion, this.platformInfo, useFramework, extensionPath);
         }
