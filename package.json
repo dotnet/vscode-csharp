@@ -41,8 +41,8 @@
   "main": "./dist/extension",
   "scripts": {
     "vscode:prepublish": "tsc -p ./ && webpack --mode production",
-    "compile": "tsc -p ./ && gulp tslint",
-    "compileDev": "tsc -p ./ && gulp tslint && webpack --mode development",
+    "compile": "tsc -p ./ && tslint -p ./",
+    "compileDev": "tsc -p ./ && tslint -p ./ && webpack --mode development",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
     "test": "tsc -p test && gulp test",
@@ -54,8 +54,7 @@
     "test:integration:slnFilterWithCsproj": "tsc -p test && gulp test:integration:slnFilterWithCsproj",
     "test:release": "tsc -p test && mocha out/test/releaseTests/**/*.test.js",
     "test:artifacts": "tsc -p test && mocha out/test/artifactTests/**/*.test.js",
-    "unpackage:vsix": "gulp vsix:release:unpackage",
-    "gulp": "gulp"
+    "unpackage:vsix": "gulp vsix:release:unpackage"
   },
   "dependencies": {
     "@types/cross-spawn": "6.0.2",
@@ -109,7 +108,6 @@
     "get-port": "5.1.1",
     "glob-promise": "4.1.0",
     "gulp": "4.0.2",
-    "gulp-tslint": "8.1.4",
     "mocha": "10.0.0",
     "mock-fs": "4.13.0",
     "mock-http-server": "1.4.2",
