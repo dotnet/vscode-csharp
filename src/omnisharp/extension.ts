@@ -46,6 +46,7 @@ import { getDecompilationAuthorization } from './decompilationPrompt';
 import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
 import CSharpInlayHintProvider from '../features/inlayHintProvider';
 import fileOpenClose from '../features/fileOpenCloseProvider';
+import { activateRoslynLanguageServer } from "../lsptoolshost/roslynLanguageServer";
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -57,6 +58,12 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
     };
+
+    let useRoslynLsp = process.env.ROSLYN_LSP;
+    if (useRoslynLsp) {
+        activateRoslynLanguageServer(context);
+        return;
+    }
 
     const options = optionProvider.GetLatestOptions();
     const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
