@@ -14,9 +14,14 @@ suite("getTargetArchitecture Tests", () => {
 
     suite("Windows", () => {
         test("Windows x86_64", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("win32", "x86_64", null);
+            const platformInfo = new PlatformInformation("win32", "x86_64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "5.0.0",
+                RuntimeId: "win10-x64",
+            };
 
-            const targetArchitecture = getTargetArchitecture(platformInfo, null, null);
+            const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
             assert.equal(targetArchitecture, "");
         });
@@ -24,9 +29,14 @@ suite("getTargetArchitecture Tests", () => {
 
     suite("Linux", () => {
         test("getTargetArchitecture on Linux", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("linux", "x86_64", null);
+            const platformInfo = new PlatformInformation("linux", "x86_64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "5.0.0",
+                RuntimeId: "linux-x64",
+            };
 
-            const targetArchitecture = getTargetArchitecture(platformInfo, null, null);
+            const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
             assert.equal(targetArchitecture, "");
         });
@@ -34,51 +44,64 @@ suite("getTargetArchitecture Tests", () => {
 
     suite("macOS", () => {
         test("Apple x86_64", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("darwin", "x86_64", null);
+            const platformInfo = new PlatformInformation("darwin", "x86_64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "5.0.0",
+                RuntimeId: "osx.11.0-x64",
+            };
 
-            const targetArchitecture = getTargetArchitecture(platformInfo, null, null);
+            const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
             assert.equal(targetArchitecture, "x86_64");
         });
 
         test("Apple ARM64 on .NET 5", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("darwin", "arm64", null);
-            const dotnetInfo: DotnetInfo = new DotnetInfo();
-            dotnetInfo.Version = "5.0.0";
-            dotnetInfo.RuntimeId = "osx.11.0-x64";
+            const platformInfo = new PlatformInformation("darwin", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "5.0.0",
+                RuntimeId: "osx.11.0-x64",
+            };
 
-            const targetArchitecture = getTargetArchitecture(platformInfo, null, dotnetInfo);
+            const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
             assert.equal(targetArchitecture, "x86_64");
         });
 
         test("Apple ARM64 on .NET 6 osx-arm64", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("darwin", "arm64", null);
-            const dotnetInfo: DotnetInfo = new DotnetInfo();
-            dotnetInfo.Version = "6.0.0";
-            dotnetInfo.RuntimeId = "osx.11.0-arm64";
+            const platformInfo = new PlatformInformation("darwin", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "6.0.0",
+                RuntimeId: "osx.11.0-arm64",
+            };
 
-            const targetArchitecture = getTargetArchitecture(platformInfo, null, dotnetInfo);
+            const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
             assert.equal(targetArchitecture, "arm64");
         });
 
         test("Apple ARM64 on .NET 6 osx-x64", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("darwin", "arm64", null);
-            const dotnetInfo: DotnetInfo = new DotnetInfo();
-            dotnetInfo.Version = "6.0.0";
-            dotnetInfo.RuntimeId = "osx.11.0-x64";
+            const platformInfo = new PlatformInformation("darwin", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "6.0.0",
+                RuntimeId: "osx.11.0-x64",
+            };
 
-            const targetArchitecture = getTargetArchitecture(platformInfo, null, dotnetInfo);
+            const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
             assert.equal(targetArchitecture, "x86_64");
         });
 
         test("Apple ARM64 on .NET 6 osx-arm64 with targetArchitecture: 'arm64'", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("darwin", "arm64", null);
-            const dotnetInfo: DotnetInfo = new DotnetInfo();
-            dotnetInfo.Version = "6.0.0";
-            dotnetInfo.RuntimeId = "osx.11.0-arm64";
+            const platformInfo = new PlatformInformation("darwin", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "6.0.0",
+                RuntimeId: "osx.11.0-arm64",
+            };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, "arm64", dotnetInfo);
 
@@ -86,10 +109,12 @@ suite("getTargetArchitecture Tests", () => {
         });
 
         test("Apple ARM64 on .NET 6 osx-arm64 with targetArchitecture: 'x86_64'", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("darwin", "arm64", null);
-            const dotnetInfo: DotnetInfo = new DotnetInfo();
-            dotnetInfo.Version = "6.0.0";
-            dotnetInfo.RuntimeId = "osx.11.0-x86_64";
+            const platformInfo = new PlatformInformation("darwin", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "6.0.0",
+                RuntimeId: "osx.11.0-x86_64",
+            };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, "x86_64", dotnetInfo);
 
@@ -97,10 +122,12 @@ suite("getTargetArchitecture Tests", () => {
         });
 
         test("Apple ARM64 on .NET 6 osx-arm64 with invalid targetArchitecture", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("darwin", "arm64", null);
-            const dotnetInfo: DotnetInfo = new DotnetInfo();
-            dotnetInfo.Version = "6.0.0";
-            dotnetInfo.RuntimeId = "osx.11.0-x86_64";
+            const platformInfo = new PlatformInformation("darwin", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "6.0.0",
+                RuntimeId: "osx.11.0-x86_64",
+            };
 
             let fn = function () { getTargetArchitecture(platformInfo, "x64", dotnetInfo); };
 
@@ -108,12 +135,14 @@ suite("getTargetArchitecture Tests", () => {
         });
 
         test("Apple ARM64 on .NET 6 osx-arm64 with invalid RuntimeId", () => {
-            const platformInfo: PlatformInformation = new PlatformInformation("darwin", "arm64", null);
-            const dotnetInfo: DotnetInfo = new DotnetInfo();
-            dotnetInfo.Version = "6.0.0";
-            dotnetInfo.RuntimeId = "osx.11.0-FUTURE_ISA";
+            const platformInfo = new PlatformInformation("darwin", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "6.0.0",
+                RuntimeId: "osx.11.0-FUTURE_ISA",
+            };
 
-            let fn = function () { getTargetArchitecture(platformInfo, null, dotnetInfo); };
+            let fn = function () { getTargetArchitecture(platformInfo, undefined, dotnetInfo); };
 
             expect(fn).to.throw(`Unexpected RuntimeId 'osx.11.0-FUTURE_ISA'.`);
         });

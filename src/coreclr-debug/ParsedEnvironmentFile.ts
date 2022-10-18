@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
 
 export class ParsedEnvironmentFile {
     public Env: { [key: string]: any };
-    public Warning: string | null;
+    public Warning: string | undefined;
 
-    private constructor(env: { [key: string]: any }, warning: string | null) {
+    private constructor(env: { [key: string]: any }, warning: string | undefined) {
         this.Env = env;
         this.Warning = warning;
     }
@@ -20,26 +20,22 @@ export class ParsedEnvironmentFile {
     }
 
     public static CreateFromContent(content: string, envFile: string, initialEnv: { [key: string]: any } | undefined): ParsedEnvironmentFile {
-
         // Remove UTF-8 BOM if present
         if (content.charAt(0) === '\uFEFF') {
-            content = content.substr(1);
+            content = content.substring(1);
         }
 
         let parseErrors: string[] = [];
-        let env: { [key: string]: any } = initialEnv;
-        if (!env) {
-            env = {};
-        }
+        let env = initialEnv ?? {};
 
         content.split("\n").forEach(line => {
             // Split the line between key and value
-            const r: RegExpMatchArray = line.match(/^\s*([\w\.\-]+)\s*=\s*(.*)?\s*$/);
+            const match = line.match(/^\s*([\w\.\-]+)\s*=\s*(.*)?\s*$/);
 
-            if (r !== null) {
-                const key: string = r[1];
-                let value: string = r[2] || "";
-                if ((value.length > 0) && (value.charAt(0) === '"') && (value.charAt(value.length - 1) === '"')) {
+            if (match !== null) {
+                const key = match[1];
+                let value = match[2] ?? "";
+                if (value.length > 0 && value.charAt(0) === '"' && value.charAt(value.length - 1) === '"') {
                     value = value.replace(/\\n/gm, "\n");
                 }
 
@@ -57,12 +53,9 @@ export class ParsedEnvironmentFile {
         });
 
         // show error message if single lines cannot get parsed
-        let warning: string = null;
+        let warning: string | undefined;
         if (parseErrors.length !== 0) {
-            warning = "Ignoring non-parseable lines in envFile " + envFile + ": ";
-            parseErrors.forEach(function (value, idx, array) {
-                warning += "\"" + value + "\"" + ((idx !== array.length - 1) ? ", " : ".");
-            });
+            warning = `Ignoring non-parseable lines in envFile ${envFile}: ${parseErrors.join(", ")}.`;
         }
 
         return new ParsedEnvironmentFile(env, warning);
