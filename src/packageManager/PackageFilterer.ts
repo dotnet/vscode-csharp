@@ -5,10 +5,7 @@
 
 import { PlatformInformation } from "../platform";
 import * as util from '../common';
-import { PackageError } from "./PackageError";
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
-
-const { filterAsync } = require('node-filter-async');
 
 export async function getNotInstalledPackagesForPlatform(packages: AbsolutePathPackage[], platformInfo: PlatformInformation): Promise<AbsolutePathPackage[]> {
     let platformPackages = filterPlatformPackages(packages, platformInfo);
@@ -16,33 +13,15 @@ export async function getNotInstalledPackagesForPlatform(packages: AbsolutePathP
 }
 
 export function filterPlatformPackages(packages: AbsolutePathPackage[], platformInfo: PlatformInformation) {
-    if (packages) {
-        return packages.filter(pkg => {
-            if (pkg.architectures && pkg.architectures.indexOf(platformInfo.architecture) === -1) {
-                return false;
-            }
-
-            if (pkg.platforms && pkg.platforms.indexOf(platformInfo.platform) === -1) {
-                return false;
-            }
-
-            return true;
-        });
-    }
-    else {
-        throw new PackageError("Package manifest does not exist.");
-    }
+    return packages.filter(pkg =>
+        pkg.architectures.includes(platformInfo.architecture) && pkg.platforms.includes(platformInfo.platform)
+    );
 }
 
 async function filterAlreadyInstalledPackages(packages: AbsolutePathPackage[]): Promise<AbsolutePathPackage[]> {
-    return filterAsync(packages, async (pkg: AbsolutePathPackage) => {
-        //If the install.Lock file is present for this package then do not install it again
-        let testPath = util.getInstallFilePath(pkg.installPath, util.InstallFileType.Lock);
-        if (!testPath) {
-            //if there is no testPath then we will not filter it
-            return true;
-        }
-
+    return util.filterAsync(packages, async pkg => {
+        // If the install.Lock file is present for this package then do not install it again
+        const testPath = util.getInstallFilePath(pkg.installPath, util.InstallFileType.Lock);
         return !(await util.fileExists(testPath));
     });
 }

@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, expect } from 'chai';
-import { activateCSharpExtension } from './integrationHelpers';
+import { activateCSharpExtension, isSlnWithCsproj, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 const chai = require('chai');
@@ -18,8 +18,12 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
+        if (isSlnWithGenerator(vscode.workspace)) {
+            this.skip();
+        }
+
         should();
-        await activateCSharpExtension();
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
         let fileName = 'Program.cs';
@@ -32,6 +36,8 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
         await csharpConfig.update('testsCodeLens.enabled', true);
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     suiteTeardown(async () => {
@@ -67,12 +73,12 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
         should();
 
         // These tests only run on the slnWithCsproj solution
-        if (vscode.workspace.workspaceFolders[0].uri.fsPath.split(path.sep).pop() !== 'slnWithCsproj') {
+        if (!isSlnWithCsproj(vscode.workspace)) {
             this.skip();
         }
         else {
-            await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+            const activation = await activateCSharpExtension();
+            await testAssetWorkspace.restoreAndWait(activation);
 
             let fileName = 'UnitTest1.cs';
             let projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;

@@ -4,39 +4,42 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Url, parse as parseUrl } from 'url';
-import { isBoolean } from '../common';
-const HttpProxyAgent = require('http-proxy-agent');
-const HttpsProxyAgent = require('https-proxy-agent');
+import HttpProxyAgent = require('http-proxy-agent');
+import HttpsProxyAgent = require('https-proxy-agent');
+import { Agent } from 'http';
 
-function getSystemProxyURL(requestURL: Url): string {
+function getSystemProxyURL(requestURL: Url): string | undefined {
     if (requestURL.protocol === 'http:') {
-        return process.env.HTTP_PROXY || process.env.http_proxy || null;
+        return process.env.HTTP_PROXY ?? process.env.http_proxy;
     } else if (requestURL.protocol === 'https:') {
-        return process.env.HTTPS_PROXY || process.env.https_proxy || process.env.HTTP_PROXY || process.env.http_proxy || null;
+        return process.env.HTTPS_PROXY ?? process.env.https_proxy ?? process.env.HTTP_PROXY ?? process.env.http_proxy;
     }
 
-    return null;
+    return undefined;
 }
 
-export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean): any {
-    const proxyURL = proxy || getSystemProxyURL(requestURL);
+export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean): Agent | undefined {
+    const proxyURL = proxy.length > 0 ? proxy : getSystemProxyURL(requestURL);
 
-    if (!proxyURL) {
-        return null;
+    if (proxyURL === undefined) {
+        return undefined;
     }
 
     const proxyEndpoint = parseUrl(proxyURL);
-
-    if (!/^https?:$/.test(proxyEndpoint.protocol)) {
-        return null;
+    if (proxyEndpoint.protocol === null) {
+        return undefined;
     }
 
-    const opts = {
+    if (!/^https?:$/.test(proxyEndpoint.protocol)) {
+        return undefined;
+    }
+
+    const opts: HttpProxyAgent.HttpProxyAgentOptions & HttpsProxyAgent.HttpsProxyAgentOptions = {
         host: proxyEndpoint.hostname,
-        port: Number(proxyEndpoint.port),
+        port: proxyEndpoint.port,
         auth: proxyEndpoint.auth,
-        rejectUnauthorized: isBoolean(strictSSL) ? strictSSL : true
+        rejectUnauthorized: strictSSL,
     };
 
-    return requestURL.protocol === 'http:' ? new HttpProxyAgent(opts) : new HttpsProxyAgent(opts);
+    return requestURL.protocol === 'http:' ? HttpProxyAgent(opts) : HttpsProxyAgent(opts);
 }

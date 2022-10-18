@@ -223,6 +223,18 @@ export interface Command {
     arguments?: any[];
 }
 
+/**
+ * A reference to one of the workbench colors as defined in https://code.visualstudio.com/docs/getstarted/theme-color-reference.
+ * Using a theme color is preferred over a custom color as it gives theme authors and users the possibility to change the color.
+ */
+declare class ThemeColor {
+    /**
+     * Creates a reference to a theme color.
+     * @param id of the color. The available colors are listed in https://code.visualstudio.com/docs/getstarted/theme-color-reference.
+     */
+    constructor(id: string);
+}
+
 export interface StatusBarItem {
 
     /**
@@ -234,7 +246,7 @@ export interface StatusBarItem {
      * The priority of this item. Higher value means the item should
      * be shown more to the left.
      */
-    readonly priority: number;
+    readonly priority: number | undefined;
 
     /**
      * The text to show for the entry. You can embed icons in the text by leveraging the syntax:
@@ -254,7 +266,7 @@ export interface StatusBarItem {
     /**
      * The foreground color for this entry.
      */
-    color: string | undefined;
+    color: string | ThemeColor | undefined;
 
     /**
      * The identifier of a command to run on click. The command must be
@@ -970,7 +982,6 @@ export interface vscode {
         onDidChangeConfiguration: Event<ConfigurationChangeEvent>;
     };
     extensions: {
-        getExtension(extensionId: string): Extension<any> | undefined;
         all: ReadonlyArray<Extension<any>>;
     };
     Uri: {

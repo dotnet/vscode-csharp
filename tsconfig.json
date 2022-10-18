@@ -4,7 +4,7 @@
 		"module": "commonjs",
 		"outDir": "out",
 		"lib": [
-			"es6"
+			"ES2021"
 		],
 		"sourceMap": true,
 		"moduleResolution": "node",

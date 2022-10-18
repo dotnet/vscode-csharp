@@ -25,9 +25,9 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
 
     private handleWorkspaceInformationUpdated(event: WorkspaceInformationUpdated) {
         let label: string;
-        let info = event.info;
-        if (info.MsBuild && info.MsBuild.SolutionPath) {
-            label = basename(info.MsBuild.SolutionPath); //workspace.getRelativePath(info.MsBuild.SolutionPath);
+        let msbuild = event.info.MsBuild;
+        if (msbuild && msbuild.SolutionPath) {
+            label = basename(msbuild.SolutionPath);
             this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
         }
         else {

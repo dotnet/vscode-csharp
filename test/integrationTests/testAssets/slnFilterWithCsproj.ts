@@ -3,9 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Options } from "../omnisharp/options";
-import { MonoInformation } from "./MonoInformation";
+import { ITestAssetWorkspace } from "./testAssets";
 
-export interface IMonoResolver {
-    getGlobalMonoInfo(options: Options): Promise<MonoInformation>;
-}
+let workspace: ITestAssetWorkspace = {
+    description: "sln filter with a csproj's",
+    projects: [{
+        relativeFilePath: "src/app/app.csproj"
+    }]
+};
+
+export default workspace;

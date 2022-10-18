@@ -10,6 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
     - uses: actions/checkout@v2
@@ -17,33 +18,34 @@ jobs:
     - name: Setup virtual display
       run: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
-    - name: Install .NET Core 3.1 SDK
+    - name: Install .NET Core 6.0 SDK
       uses: actions/setup-dotnet@v1.7.2
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: 6.0.x
 
-    - name: Install Node.js 12.x
+    - name: Install Node.js 15.x
       uses: actions/setup-node@v1
       with:
-        node-version: '12.x'
+        node-version: '15.x'
 
     - name: Install dependencies
-      run: npm ci && npm i -g gulp
+      run: |
+          npm ci
+          npm i -g gulp
 
-    - name: Build
-      run: gulp 'vsix:release:package'
+    - name: Compile
+      run: npm run compile
 
-    - name: Initialize code coverage
-      run: gulp cov:instrument
+    - name: Build platform-neutral extension package
+      run: gulp 'vsix:release:package:platform-neutral'
 
     - name: Run unit and integration tests
-      run: gulp test
+      run: |
+          gulp test
+          npm run test:artifacts
       env:
-        CODE_VERSION: 1.45.0
+        CODE_VERSION: 1.66.0
         DISPLAY: :99.0
 
-    - name: Report code coverage
-      run: gulp cov:report
-
-    - name: Run artifact tests
-      run: npm run test:artifacts
+    - name: Build platform-specific extension package
+      run: gulp 'vsix:release:package:platform-specific'

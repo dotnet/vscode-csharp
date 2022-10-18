@@ -3,34 +3,29 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
-import { SpawnOptions, spawn } from "child_process";
+import { spawnSync, SpawnSyncOptions } from "child_process";
 import { nodePath, rootPath } from "./projectPaths";
-const { join } = require("async-child-process");
 
-export default async function spawnNode(args?: string[], options?: SpawnOptions): Promise<{ code: string; signal: string; }> {
+export default async function spawnNode(args?: string[], options?: SpawnSyncOptions) {
     if (!options) {
         options = {
             env: {}
         };
     }
 
-    let optionsWithFullEnvironment = {
+    const optionsWithFullEnvironment: SpawnSyncOptions = {
         cwd: rootPath,
         ...options,
         env: {
             ...process.env,
             ...options.env
-        }
+        },
+        stdio: "inherit"
     };
 
-    console.log(`starting ${nodePath} ${args.join(' ')}`);
+    console.log(`starting ${nodePath} ${args ? args.join(' ') : ''}`);
 
-    let spawned = spawn(nodePath, args, optionsWithFullEnvironment);
+    const buffer = spawnSync(nodePath, args, optionsWithFullEnvironment);
 
-    spawned.stderr.pipe(process.stdout);
-    spawned.stdout.pipe(process.stdout);
-
-    return join(spawned);
+    return { code: buffer.status, signal: buffer.signal };
 }

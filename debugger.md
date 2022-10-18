@@ -2,21 +2,14 @@
 This page gives you detailed instructions on how to debug code running under .NET Core in VS Code. 
 
 #### Your Feedback​
-File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) and [join our insiders group](http://landinghub.visualstudio.com/dotnetcoreinsiders) to help us build great tooling for .NET Core.
+File bugs and feature requests [here](https://github.com/OmniSharp/omnisharp-vscode/issues) to help us build great tooling for .NET Core.
 
 ### First Time setup
 ##### 1: Get Visual Studio Code
-Install Visual Studio Code (VSC). Pick the latest VSC version from here: https://code.visualstudio.com Make sure it is at least 1.5. 
-
-If you are not sure what version you have, you can see your version of VS Code:
-
-* **OSX:** Code->About Visual Studio Code
-* **Windows / Linux:** Help->About
+Install Visual Studio Code (VS Code). Pick the latest VS Code version from here: https://code.visualstudio.com
 
 ##### 2: Install .NET command line tools
-Install the .NET Core command line tools (CLI) by following the installation part of the instructions here: https://www.microsoft.com/net/core
-
-**OSX:** .NET Core requires openSSL to work. Don't forget this! Execute: `brew install openssl`
+Install the .NET Core command line tools (CLI) by following the installation part of the instructions here: https://dotnet.microsoft.com/download
 
 ##### 3: Install C# Extension for VS Code
 Open the command palette in VS Code (press <kbd>F1</kbd>) and run `Extensions: Install Extensions`. Enter `C#` in the search box and press `Enter`. Select the extension and click on `Install`.
@@ -30,15 +23,14 @@ The first time that C# code is opened in VS Code, the extension will download th
 ### Once for each project
 The following steps have to be executed for every project. 
 ##### 1: Get a project
-You can start from scratch by creating an empty project with `dotnet new`. Begin by opening the terminal in Visual Studio Code (`View->Integrated Terminal`) and type these commands:
+You can start from scratch by creating an empty console project with `dotnet new`. Begin by opening the terminal in Visual Studio Code (`View->Integrated Terminal`) and type these commands:
 
     cd ~
     mkdir MyApplication
     cd MyApplication
-    dotnet new
-    dotnet restore
-
-If you want a web project (ASP.NET project) use `dotnet new web`. For web projects, makes sure to run `bower install` before running so that they can restore assets.
+    dotnet new console
+    
+See `dotnet new --list` for a list of all the available project templates.
 
 ##### 2: Open the directory in VS Code
 Go to `File->Open Folder` (`File->Open` on macOS) and open the directory in Visual Studio Code. If this is the first time that the C# extension has been activated, it will now download additional platform-specific dependencies.
@@ -49,7 +41,7 @@ VS Code needs to be configured so it understands how to build your project and d
 * Tasks.json is used to configure what command line command is executed to build your project, and launch.json configures the type of debugger you want to use, and what program should be run under that debugger. 
 * Launch.json configures VS Code to run the build task from tasks.json so that your program is automatically up-to-date each time you go to debug it.
 
-If you open the folder containing your project.json, the C# extension can automatically generate these files for you if you have a basic project. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
+If you open the folder containing your project, the C# extension can automatically generate these files for you if you have a basic project. When you open a project and the C# extension is installed, you should see the following prompt in VS Code:
 
 ![Info: Required assets to build and debug are missing from your project. Add them? Yes | Close](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/info-bar-add-required-assets.png)
 
@@ -85,8 +77,33 @@ The C# debugger supports attaching to processes. To do this, switch to the Debug
 
 ![Debug launch configuration drop down](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/debug-launch-configurations.png)
 
-Select the '.NET Core Attach' configuration. Clicking the play button (or pressing <kbd>F5</kbd>) will then try to attach. In launch.json, if `processId` is set to `"${command:pickProcess}"` this will provide UI to select which process to attach to.
+Select the '.NET Core Attach' configuration. Clicking the play button (or pressing <kbd>F5</kbd>) will then try to attach. In launch.json, if `processId` is set to `""` this will provide UI to select which process to attach to.
 
 #### Remote Debugging
 
 The debugger supports remotely launching or attaching to processes. See [Attaching to remote processes](https://github.com/OmniSharp/omnisharp-vscode/wiki/Attaching-to-remote-processes) in the wiki for more information.
+
+#### Exception Settings
+
+The VS Code .NET debugger supports configuration options for if the debugger stops when exceptions are thrown or caught. This is done through two different entries in the BREAKPOINTS section of the Run view:
+
+![Exceptions settings in BREAKPOINTS Run View](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/Exception-Settings.png)
+
+Note that the BREAKPOINTS section will be missing these entries until the first time that the folder has been debugged with the .NET debugger.
+
+Checking 'All Exceptions' will configure the debugger to stop when an exception is thrown. If Just My Code is enabled (which it is by default) the debugger will not break if an exception is internally thrown and caught in library code. Though if the exception is thrown in library code and returned to user code the debugger will break then.
+
+Checking 'User-Unhandled Exceptions' will configure the debugger to stop when an exception is caught in non-user code after having been thrown in user code or traveled through user code. Exceptions that become user-unhandled aren't always a problem, it could be that user code is implementing an API and is expected to raise an exception in this scenario, but it is often a problem. So, by default, the debugger will stop when an exception becomes user-unhandled.
+
+##### Exception Conditions
+Both checkboxes support conditions to break on only selected exception types. To edit the condition, click on the pencil icon (see image above) or right click on the entry and invoke 'Edit Condition'. The condition is a comma-separated list of exception types to break on, or if the list starts with '!', a list of exception types to ignore.
+
+Examples conditions:
+
+| Example condition value | Result |
+|-------------------------|--------|
+| System.NullReferenceException | This will break on just null reference exceptions. |
+| System.NullReferenceException, System.InvalidOperationException | This will break on both null reference exceptions and invalid operation exceptions. |
+| !System.Threading.Tasks.TaskCanceledException | This will break on all exceptions except for task canceled. |
+| !System.Threading.Tasks.TaskCanceledException, System.NotImplementedException | This will break on all exceptions except for task cancelled and not implemented. |
+

@@ -48,7 +48,7 @@ export async function getFixAll(server: OmniSharpServer, request: protocol.GetFi
 }
 
 export async function findUsages(server: OmniSharpServer, request: protocol.FindUsagesRequest, token: vscode.CancellationToken) {
-    return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.FindUsages, request, token);
+    return server.makeRequest<protocol.FindSymbolsResponse>(protocol.Requests.FindUsages, request, token);
 }
 
 export async function formatAfterKeystroke(server: OmniSharpServer, request: protocol.FormatAfterKeystrokeRequest, token: vscode.CancellationToken) {
@@ -63,8 +63,24 @@ export async function getCodeActions(server: OmniSharpServer, request: protocol.
     return server.makeRequest<protocol.V2.GetCodeActionsResponse>(protocol.V2.Requests.GetCodeActions, request, token);
 }
 
-export async function goToDefinition(server: OmniSharpServer, request: protocol.GoToDefinitionRequest, token: vscode.CancellationToken) {
-    return server.makeRequest<protocol.GoToDefinitionResponse>(protocol.Requests.GoToDefinition, request);
+export async function goToDefinition(server: OmniSharpServer, request: protocol.V2.GoToDefinitionRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.V2.GoToDefinitionResponse>(protocol.V2.Requests.GoToDefinition, request, token);
+}
+
+export async function goToTypeDefinition(server: OmniSharpServer, request: protocol.GoToTypeDefinitionRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.GoToTypeDefinitionResponse>(protocol.Requests.GoToTypeDefinition, request, token);
+}
+
+export async function getSourceGeneratedFile(server: OmniSharpServer, request: protocol.SourceGeneratedFileRequest, token: vscode.CancellationToken) {
+    return server.makeRequest<protocol.SourceGeneratedFileResponse>(protocol.Requests.SourceGeneratedFile, request, token);
+}
+
+export async function getUpdatedSourceGeneratedFile(server: OmniSharpServer, request: protocol.UpdateSourceGeneratedFileRequest) {
+    return server.makeRequest<protocol.UpdateSourceGeneratedFileResponse>(protocol.Requests.UpdateSourceGeneratedFile, request);
+}
+
+export async function sourceGeneratedFileClosed(server: OmniSharpServer, request: protocol.SourceGeneratedFileRequest) {
+    return server.makeRequest(protocol.Requests.SourceGeneratedFileClosed, request);
 }
 
 export async function rename(server: OmniSharpServer, request: protocol.RenameRequest, token: vscode.CancellationToken) {
@@ -78,7 +94,6 @@ export async function requestProjectInformation(server: OmniSharpServer, request
 export async function requestWorkspaceInformation(server: OmniSharpServer) {
     const response = await server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
     if (response.MsBuild && response.MsBuild.Projects) {
-        const blazorDetectionEnabled = hasBlazorWebAssemblyDebugPrerequisites();
         let blazorWebAssemblyProjectFound = false;
 
         for (const project of response.MsBuild.Projects) {
@@ -87,28 +102,15 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
             const isProjectBlazorWebAssemblyProject = await isBlazorWebAssemblyProject(project);
             const isProjectBlazorWebAssemblyHosted = isBlazorWebAssemblyHosted(project, isProjectBlazorWebAssemblyProject);
 
-            project.IsBlazorWebAssemblyHosted = blazorDetectionEnabled && isProjectBlazorWebAssemblyHosted;
-            project.IsBlazorWebAssemblyStandalone = blazorDetectionEnabled && isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
+            project.IsBlazorWebAssemblyHosted = isProjectBlazorWebAssemblyHosted;
+            project.IsBlazorWebAssemblyStandalone = isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
 
             blazorWebAssemblyProjectFound = blazorWebAssemblyProjectFound || isProjectBlazorWebAssemblyProject;
         }
 
-        const configuration = vscode.workspace.getConfiguration('razor');
-        const disableBlazorDebugPrompt = configuration.get('disableBlazorDebugPrompt');
-
-        if (!blazorDetectionEnabled && blazorWebAssemblyProjectFound && !disableBlazorDebugPrompt) {
-            // There's a Blazor Web Assembly project but VSCode isn't configured to debug the WASM code, show a notification
-            // to help the user configure their VSCode appropriately.
-            vscode.window.showInformationMessage('Additional setup is required to debug Blazor WebAssembly applications.', 'Don\'t Ask Again', 'Learn more', 'Close')
-                .then(async result => {
-                    if (result === 'Learn more') {
-                        const uriToOpen = vscode.Uri.parse('https://aka.ms/blazordebugging#vscode');
-                        await vscode.commands.executeCommand('vscode.open', uriToOpen);
-                    }
-                    if (result === 'Don\'t Ask Again') {
-                        await configuration.update('disableBlazorDebugPrompt', true);
-                    }
-                });
+        if (blazorWebAssemblyProjectFound && !vscode.extensions.getExtension('ms-dotnettools.blazorwasm-companion')) {
+            // No need to await this call, we don't depend on the prompt being shown.
+            showBlazorDebuggingExtensionPrompt(server);
         }
     }
 
@@ -135,8 +137,8 @@ export async function getMetadata(server: OmniSharpServer, request: protocol.Met
     return server.makeRequest<protocol.MetadataResponse>(protocol.Requests.Metadata, request);
 }
 
-export async function reAnalyze(server: OmniSharpServer, request: any) {
-    return server.makeRequest<any>(protocol.Requests.ReAnalyze, request);
+export async function reAnalyze(server: OmniSharpServer, request: protocol.ReAnalyzeRequest) {
+    return server.makeRequest<protocol.ReAnalyzeReponse>(protocol.Requests.ReAnalyze, request);
 }
 
 export async function getTestStartInfo(server: OmniSharpServer, request: protocol.V2.GetTestStartInfoRequest) {
@@ -191,8 +193,28 @@ export async function getCompletionResolve(server: OmniSharpServer, request: pro
     return server.makeRequest<protocol.CompletionResolveResponse>(protocol.Requests.CompletionResolve, request, context);
 }
 
-export async function isNetCoreProject(project: protocol.MSBuildProject) {
+export async function getCompletionAfterInsert(server: OmniSharpServer, request: protocol.CompletionAfterInsertionRequest) {
+    return server.makeRequest<protocol.CompletionAfterInsertResponse>(protocol.Requests.CompletionAfterInsert, request);
+}
+
+export async function fileOpen(server: OmniSharpServer, request: protocol.Request) {
+    return server.makeRequest<void>(protocol.Requests.FileOpen, request);
+}
+
+export async function fileClose(server: OmniSharpServer, request: protocol.Request) {
+    return server.makeRequest<void>(protocol.Requests.FileClose, request);
+}
+
+export function isNetCoreProject(project: protocol.MSBuildProject) {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp') || tf.ShortName.startsWith('netstandard')) !== undefined;
+}
+
+export async function getInlayHints(server: OmniSharpServer, request: protocol.InlayHintRequest, context: vscode.CancellationToken) {
+    return server.makeRequest<protocol.InlayHintResponse>(protocol.Requests.InlayHint, request, context);
+}
+
+export async function resolveInlayHints(server: OmniSharpServer, request: protocol.InlayHintResolve, context: vscode.CancellationToken) {
+    return server.makeRequest<protocol.InlayHint>(protocol.Requests.InlayHintResolve, request, context);
 }
 
 function isBlazorWebAssemblyHosted(project: protocol.MSBuildProject, isProjectBlazorWebAssemblyProject: boolean): boolean {
@@ -239,46 +261,24 @@ async function isBlazorWebAssemblyProject(project: MSBuildProject): Promise<bool
     return false;
 }
 
-function hasBlazorWebAssemblyDebugPrerequisites() {
-    const companionExtension = vscode.extensions.getExtension('ms-dotnettools.blazorwasm-companion');
-    if (!companionExtension) {
-        const msg = 'The Blazor WASM Debugging Extension is required to debug Blazor WASM apps in VS Code.';
-        vscode.window.showInformationMessage(msg, 'Install Extension', 'Close')
-            .then(async result => {
-                if (result === 'Install Extension') {
-                    const uriToOpen = vscode.Uri.parse('vscode:extension/ms-dotnettools.blazorwasm-companion');
-                    await vscode.commands.executeCommand('vscode.open', uriToOpen);
-                }
-            });
-        return false;
-    }
-
-    const debugJavaScriptConfigSection = vscode.workspace.getConfiguration('debug.javascript');
-    const usePreviewValue = debugJavaScriptConfigSection.get('usePreview');
-    if (usePreviewValue) {
-        // If usePreview is truthy it takes priority over the useV3 variants.
-        return true;
-    }
-
-    const debugNodeConfigSection = vscode.workspace.getConfiguration('debug.node');
-    const useV3NodeValue = debugNodeConfigSection.get('useV3');
-    if (!useV3NodeValue) {
-        return false;
-    }
-
-    const debugChromeConfigSection = vscode.workspace.getConfiguration('debug.chrome');
-    const useV3ChromeValue = debugChromeConfigSection.get('useV3');
-    if (!useV3ChromeValue) {
-        return false;
-    }
-
-    return true;
-}
-
 function isWebProject(project: MSBuildProject): boolean {
     let projectFileText = fs.readFileSync(project.Path, 'utf8');
 
     // Assume that this is an MSBuild project. In that case, look for the 'Sdk="Microsoft.NET.Sdk.Web"' attribute.
     // TODO: Have OmniSharp provide the list of SDKs used by a project and check that list instead.
     return projectFileText.toLowerCase().indexOf('sdk="microsoft.net.sdk.web"') >= 0;
+}
+
+async function showBlazorDebuggingExtensionPrompt(server: OmniSharpServer) {
+    const promptShownKey = 'blazor_debugging_extension_prompt_shown';
+    if (!server.sessionProperties[promptShownKey]) {
+        server.sessionProperties[promptShownKey] = true;
+
+        const msg = 'The Blazor WASM Debugging Extension is required to debug Blazor WASM apps in VS Code.';
+        const result = await vscode.window.showInformationMessage(msg, 'Install Extension', 'Close');
+        if (result === 'Install Extension') {
+            const uriToOpen = vscode.Uri.parse('vscode:extension/ms-dotnettools.blazorwasm-companion');
+            await vscode.commands.executeCommand('vscode.open', uriToOpen);
+        }
+    }
 }

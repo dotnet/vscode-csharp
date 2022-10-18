@@ -41,12 +41,12 @@ export class OmnisharpStart extends TelemetryEventWithMeasures {
 
 export class OmnisharpInitialisation implements BaseEvent {
     type = EventType.OmnisharpInitialisation;
-    constructor(public timeStamp: Date, public solutionPath: string) { }
+    constructor(public dotNetCliPaths: string[], public timeStamp: Date, public solutionPath: string) { }
 }
 
 export class OmnisharpLaunch implements BaseEvent {
     type = EventType.OmnisharpLaunch;
-    constructor(public monoVersion: string, public monoPath: string, public command: string, public pid: number) { }
+    constructor(public hostVersion: string | undefined, public hostPath: string | undefined, public hostIsMono: boolean, public command: string, public pid: number) { }
 }
 
 export class PackageInstallStart implements BaseEvent {
@@ -90,7 +90,7 @@ export class OmnisharpRequestMessage implements BaseEvent {
 
 export class TestExecutionCountReport implements BaseEvent {
     type = EventType.TestExecutionCountReport;
-    constructor(public debugCounts: { [testFrameworkName: string]: number }, public runCounts: { [testFrameworkName: string]: number }) { }
+    constructor(public debugCounts: { [testFrameworkName: string]: number } | undefined, public runCounts: { [testFrameworkName: string]: number } | undefined) { }
 }
 
 export class OmnisharpServerOnError implements BaseEvent {
@@ -98,9 +98,9 @@ export class OmnisharpServerOnError implements BaseEvent {
     constructor(public errorMessage: protocol.ErrorMessage) { }
 }
 
-export class OmnisharpProjectDiagnosticStatus implements BaseEvent {
-    type = EventType.ProjectDiagnosticStatus;
-    constructor(public message: protocol.ProjectDiagnosticStatus) { }
+export class OmnisharpBackgroundDiagnosticStatus implements BaseEvent {
+    type = EventType.BackgroundDiagnosticStatus;
+    constructor(public message: protocol.BackgroundDiagnosticStatusMessage) { }
 }
 
 export class OmnisharpServerMsBuildProjectDiagnostics implements BaseEvent {
@@ -125,7 +125,7 @@ export class OmnisharpServerDequeueRequest implements BaseEvent {
 
 export class OmnisharpServerRequestCancelled implements BaseEvent {
     type = EventType.OmnisharpServerRequestCancelled;
-    constructor(public command: string, public id: number) { }
+    constructor(public command: string, public id: number | undefined) { }
 }
 
 export class OmnisharpServerProcessRequestStart implements BaseEvent {
@@ -185,7 +185,7 @@ export class ZipError implements BaseEvent {
 
 export class ReportDotNetTestResults implements BaseEvent {
     type = EventType.ReportDotNetTestResults;
-    constructor(public results: protocol.V2.DotNetTestResult[]) { }
+    constructor(public results: protocol.V2.DotNetTestResult[] | undefined) { }
 }
 
 export class DotNetTestRunStart implements BaseEvent {

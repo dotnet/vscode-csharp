@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as gulp from 'gulp';
 import * as optionsSchemaGenerator from './src/tools/GenerateOptionsSchema';
 import * as packageDependencyUpdater from './src/tools/UpdatePackageDependencies';
@@ -14,7 +12,6 @@ require('./tasks/testTasks');
 require('./tasks/onlinePackagingTasks');
 require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
-require('./tasks/coverageTasks');
 
 // Disable warning about wanting an async function
 // tslint:disable-next-line

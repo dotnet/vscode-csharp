@@ -7,10 +7,8 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
                 "--extensionDevelopmentPath=${workspaceRoot}"
             ],
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
@@ -53,7 +51,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "featureTests"
             },
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/out/test/**/*.js"
@@ -79,7 +76,6 @@
                 "OSVC_SUITE": "singleCsproj",
                 "OMNISHARP_DRIVER": "stdio"
             },
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
@@ -197,7 +193,54 @@
                 "OSVC_SUITE": "slnWithCsproj",
                 "OMNISHARP_DRIVER": "lsp"
             },
-            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Launch slnFilterWithCsproj Workspace Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "slnFilterWithCsproj"
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Launch slnWithGenerator Workspace Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "slnWithGenerator"
+            },
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
@@ -214,8 +257,8 @@
                 "updatePackageDependencies"
             ],
             "env": {
-                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/d6b65943b969e58f8f35aeac49334030/omnisharp-linux-x64-1.37.6.zip,https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/703d8f9a2fa49aeba9a08dc35c9a0f41/omnisharp-linux-x86-1.37.6.zip,https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/425d897d70c1ebfa8816c564967cbacb/omnisharp-osx-1.37.6.zip,https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/10b370161f0e5a51f7c9ab82bd62e0cf/omnisharp-win-x64-1.37.6.zip,https://download.visualstudio.microsoft.com/download/pr/7a933188-8245-4549-bbcc-b7e611f06ef1/94c851f64db400aabf05c23c4ed0777f/omnisharp-win-x86-1.37.6.zip",
-                "NEW_DEPS_VERSION": "1.37.6"
+                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-linux-x64-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-linux-x86-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-linux-arm64-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-osx-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-win-x64-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-win-x86-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-win-arm64-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-linux-musl-x64-net6.0-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-linux-musl-arm64-net6.0-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-linux-x64-net6.0-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-linux-arm64-net6.0-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-osx-x64-net6.0-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-osx-arm64-net6.0-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-win-x64-net6.0-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-win-x86-net6.0-1.39.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.1/omnisharp-win-arm64-net6.0-1.39.1.zip",
+                "NEW_DEPS_VERSION": "1.39.1"
             },
             "cwd": "${workspaceFolder}"
         }

@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
@@ -23,7 +21,7 @@ gulp.task('vsix:release:unpackage', () => {
     return fs.createReadStream(packageName).pipe(Extract({ path: unpackedVsixPath }));
 });
 
-gulp.task('vsix:release:package', async (onError) => {
+gulp.task('vsix:release:package:platform-neutral', async (onError) => {
     del.sync(vscodeignorePath);
 
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);

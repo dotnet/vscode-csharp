@@ -10,10 +10,11 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { PlatformInformation } from '../platform';
-import { getExtensionPath } from '../common';
+import { findPowerShell, getExtensionPath } from '../common';
 
 export interface AttachItem extends vscode.QuickPickItem {
     id: string;
+    flags: number;
 }
 
 export interface AttachItemsProvider {
@@ -23,21 +24,14 @@ export interface AttachItemsProvider {
 export class AttachPicker {
     constructor(private attachItemsProvider: AttachItemsProvider) { }
 
-    public async ShowAttachEntries(): Promise<string> {
-        return this.attachItemsProvider.getAttachItems()
-            .then(processEntries => {
-                let attachPickOptions: vscode.QuickPickOptions = {
-                    ignoreFocusOut: true,
-                    matchOnDescription: true,
-                    matchOnDetail: true,
-                    placeHolder: "Select the process to attach to"
-                };
-
-                return vscode.window.showQuickPick(processEntries, attachPickOptions)
-                    .then(chosenProcess => {
-                        return chosenProcess ? chosenProcess.id : null;
-                    });
-            });
+    public async ShowAttachEntries(): Promise<AttachItem | undefined> {
+        const processEntries = await this.attachItemsProvider.getAttachItems();
+        return vscode.window.showQuickPick(processEntries, {
+            ignoreFocusOut: true,
+            matchOnDescription: true,
+            matchOnDetail: true,
+            placeHolder: "Select the process to attach to",
+        });
     }
 }
 
@@ -50,19 +44,20 @@ interface IPipeTransportOptions {
 
 export class RemoteAttachPicker {
     public static get commColumnTitle() { return Array(PsOutputParser.secondColumnCharacters).join("a"); }
-    public static get linuxPsCommand() { return `ps axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
-    public static get osxPsCommand() { return `ps axww -o pid=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
+    public static get linuxPsCommand() { return `ps axww -o pid=,flags=,comm=${RemoteAttachPicker.commColumnTitle},args=`; }
+    public static get osxPsCommand() { return `ps axww -o pid=,flags=,comm=${RemoteAttachPicker.commColumnTitle},args= -c`; }
     public static get debuggerCommand() { return "${debuggerCommand}"; }
     public static get scriptShellCmd() { return "sh -s"; }
 
 
-    private static _channel: vscode.OutputChannel = null;
+    private static _channel: vscode.OutputChannel | undefined;
 
     public static async ValidateAndFixPipeProgram(program: string): Promise<string> {
         return PlatformInformation.GetCurrent().then(platformInfo => {
             // Check if we are on a 64 bit Windows
             if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {
-                let sysRoot: string = process.env.SystemRoot;
+                // If this doesn't exist, a lot more than OmniSharp is going to break.
+                let sysRoot = process.env.SystemRoot!;
                 let oldPath = path.join(sysRoot, 'System32');
                 let newPath = path.join(sysRoot, 'sysnative');
 
@@ -93,9 +88,9 @@ export class RemoteAttachPicker {
         let pipeArgs: string[] | string = pipeTransport.pipeArgs;
         let pipeCwd: string = pipeTransport.pipeCwd;
         let quoteArgs: boolean = pipeTransport.quoteArgs != null ? pipeTransport.quoteArgs : true; // default value is true
-        let platformSpecificPipeTransportOptions: IPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform);
+        let platformSpecificPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform);
 
-        if (platformSpecificPipeTransportOptions) {
+        if (platformSpecificPipeTransportOptions !== undefined) {
             pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
             pipeArgs = platformSpecificPipeTransportOptions.pipeArgs || pipeArgs;
             pipeCwd = platformSpecificPipeTransportOptions.pipeCwd || pipeCwd;
@@ -114,7 +109,7 @@ export class RemoteAttachPicker {
     // is included, then use that specific pipe transport configuration.
     //
     // Note: osPlatform is passed as an argument for testing.
-    private static getPlatformSpecificPipeTransportOptions(config: any, osPlatform: string): IPipeTransportOptions {
+    private static getPlatformSpecificPipeTransportOptions(config: any, osPlatform: string): IPipeTransportOptions | undefined {
         if (osPlatform === "darwin" && config.osx) {
             return config.osx;
         } else if (osPlatform === "linux" && config.linux) {
@@ -123,7 +118,7 @@ export class RemoteAttachPicker {
             return config.windows;
         }
 
-        return null;
+        return undefined;
     }
 
     // Creates a pipe command string based on the type of pipe args.
@@ -196,9 +191,9 @@ export class RemoteAttachPicker {
         return args.map(arg => this.quoteArg(arg)).join(" ");
     }
 
-    public static async ShowAttachEntries(args: any, platformInfo: PlatformInformation): Promise<string> {
+    public static async ShowAttachEntries(args: any, platformInfo: PlatformInformation): Promise<AttachItem | undefined> {
         // Create remote attach output channel for errors.
-        if (!RemoteAttachPicker._channel) {
+        if (RemoteAttachPicker._channel === undefined) {
             RemoteAttachPicker._channel = vscode.window.createOutputChannel('remote-attach');
         } else {
             RemoteAttachPicker._channel.clear();
@@ -210,35 +205,30 @@ export class RemoteAttachPicker {
 
         if (!name) {
             // Config name not found.
-            return Promise.reject<string>(new Error("Name not defined in current configuration."));
+            return Promise.reject<AttachItem>(new Error("Name not defined in current configuration."));
         }
 
         if (!args.pipeTransport || !args.pipeTransport.debuggerPath) {
             // Missing PipeTransport and debuggerPath, prompt if user wanted to just do local attach.
-            return Promise.reject<string>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
-                "pipeTransport argument with debuggerPath for pickRemoteProcess. Use pickProcess for local attach."));
+            return Promise.reject<AttachItem>(new Error("Configuration \"" + name + "\" in launch.json does not have a " +
+                "pipeTransport argument with debuggerPath for remote process listing."));
         } else {
-            let pipeTransport = this.getPipeTransportOptions(args.pipeTransport, os.platform());
-
-            return RemoteAttachPicker.createPipeCmd(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs)
-                .then(async pipeCmd => RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd, pipeTransport.pipeCwd, platformInfo))
-                .then(processes => {
-                    let attachPickOptions: vscode.QuickPickOptions = {
-                        ignoreFocusOut: true,
-                        matchOnDescription: true,
-                        matchOnDetail: true,
-                        placeHolder: "Select the process to attach to"
-                    };
-                    return vscode.window.showQuickPick(processes, attachPickOptions);
-                })
-                .then(item => { return item ? item.id : Promise.reject<string>(new Error("Could not find a process id to attach.")); });
+            const pipeTransport = this.getPipeTransportOptions(args.pipeTransport, os.platform());
+            const pipeCmd = await RemoteAttachPicker.createPipeCmd(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs);
+            const processes = await RemoteAttachPicker.getRemoteOSAndProcesses(pipeCmd, pipeTransport.pipeCwd, RemoteAttachPicker._channel, platformInfo);
+            return vscode.window.showQuickPick(processes, {
+                ignoreFocusOut: true,
+                matchOnDescription: true,
+                matchOnDetail: true,
+                placeHolder: "Select the process to attach to",
+            });
         }
     }
 
-    public static async getRemoteOSAndProcesses(pipeCmd: string, pipeCwd: string, platformInfo: PlatformInformation): Promise<AttachItem[]> {
+    public static async getRemoteOSAndProcesses(pipeCmd: string, pipeCwd: string, channel: vscode.OutputChannel, platformInfo: PlatformInformation): Promise<AttachItem[]> {
         const scriptPath = path.join(getExtensionPath(), 'scripts', 'remoteProcessPickerScript');
 
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < "${scriptPath}"`, pipeCwd, RemoteAttachPicker._channel, platformInfo).then(output => {
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < "${scriptPath}"`, pipeCwd, channel, platformInfo).then(output => {
             // OS will be on first line
             // Processess will follow if listed
             let lines = output.split(/\r?\n/);
@@ -265,23 +255,18 @@ export class RemoteAttachPicker {
     }
 }
 
-class Process {
-    constructor(public name: string, public pid: string, public commandLine: string) { }
-
-    public toAttachItem(): AttachItem {
-        return {
-            label: this.name,
-            description: this.pid,
-            detail: this.commandLine,
-            id: this.pid
-        };
-    }
+export interface Process {
+    name: string;
+    pid: string;
+    commandLine?: string;
+    flags?: number;
 }
 
 export class DotNetAttachItemsProviderFactory {
     static Get(): AttachItemsProvider {
         if (os.platform() === 'win32') {
-            return new WmicAttachItemsProvider();
+            const pwsh = findPowerShell();
+            return pwsh ? new CimAttachItemsProvider(pwsh) : new WmicAttachItemsProvider();
         }
         else {
             return new PsAttachItemsProvider();
@@ -305,7 +290,13 @@ function sortProcessEntries(processEntries: Process[], osPlatform: string): Atta
     let dotnetProcessName = (osPlatform === 'win32') ? 'dotnet.exe' : 'dotnet';
     processEntries = processEntries.sort((a, b) => {
         if (a.name.toLowerCase() === dotnetProcessName && b.name.toLowerCase() === dotnetProcessName) {
-            return a.commandLine.toLowerCase() < b.commandLine.toLowerCase() ? -1 : 1;
+            if (a.commandLine !== undefined && b.commandLine !== undefined) {
+                return a.commandLine.toLowerCase() < b.commandLine.toLowerCase() ? -1 : 1;
+            } else if (a.commandLine !== undefined) {
+                return -1;
+            } else {
+                return 1;
+            }
         } else if (a.name.toLowerCase() === dotnetProcessName) {
             return -1;
         } else if (b.name.toLowerCase() === dotnetProcessName) {
@@ -315,7 +306,13 @@ function sortProcessEntries(processEntries: Process[], osPlatform: string): Atta
         }
     });
 
-    let attachItems = processEntries.map(p => p.toAttachItem());
+    let attachItems = processEntries.map(process => ({
+        label: process.name,
+        description: process.pid,
+        detail: process.commandLine,
+        id: process.pid,
+        flags: process.flags ?? 0,
+    }));
     return attachItems;
 }
 
@@ -327,7 +324,7 @@ export class PsAttachItemsProvider extends DotNetAttachItemsProvider {
         // https://bugzilla.redhat.com/show_bug.cgi?id=429565
         // Since 'args' contains the full path to the executable, even if truncated, searching will work as desired.
         const psCommand = os.platform() === 'darwin' ? RemoteAttachPicker.osxPsCommand : RemoteAttachPicker.linuxPsCommand;
-        return execChildProcess(psCommand, null).then(processes => {
+        return execChildProcess(psCommand).then(processes => {
             return PsOutputParser.parseProcessFromPs(processes);
         });
     }
@@ -399,30 +396,81 @@ export class PsOutputParser {
         return processEntries;
     }
 
-    private static parseLineFromPs(line: string): Process {
+    private static parseLineFromPs(line: string): Process | undefined {
         // Explanation of the regex:
         //   - any leading whitespace
         //   - PID
+        //   - whitespace
+        //   - flags (hex value)
         //   - whitespace
         //   - executable name --> this is PsAttachItemsProvider.secondColumnCharacters - 1 because ps reserves one character
         //     for the whitespace separator
         //   - whitespace
         //   - args (might be empty)
-        const psEntry = new RegExp(`^\\s*([0-9]+)\\s+(.{${PsOutputParser.secondColumnCharacters - 1}})\\s+(.*)$`);
+        const psEntry = new RegExp(`^\\s*([0-9]+)\\s+([0-9a-fA-F]+)\\s+(.{${PsOutputParser.secondColumnCharacters - 1}})\\s+(.*)$`);
         const matches = psEntry.exec(line);
-        if (matches && matches.length === 4) {
+        if (matches?.length === 5) {
             const pid = matches[1].trim();
-            const executable = matches[2].trim();
-            const cmdline = matches[3].trim();
-            return new Process(executable, pid, cmdline);
+            const flags = parseInt(matches[2].trim(), 16); // flags comes in as hex
+            const name = matches[3].trim();
+            const cmdline = matches[4].trim();
+            return {
+                name,
+                pid,
+                commandLine: cmdline,
+                flags,
+            };
         }
+
+        return undefined;
+    }
+}
+
+export class CimAttachItemsProvider extends DotNetAttachItemsProvider {
+    constructor(private pwsh: string) { super(); }
+
+    protected async getInternalProcessEntries(): Promise<Process[]> {
+        const pwshCommand: string = `${this.pwsh} -NoProfile -Command`;
+        const cimCommand: string = 'Get-CimInstance Win32_Process | Select-Object Name,ProcessId,CommandLine | ConvertTo-JSON';
+        const processes: string = await execChildProcess(`${pwshCommand} "${cimCommand}"`);
+        return CimProcessParser.ParseProcessFromCim(processes);
+    }
+}
+
+type CimProcessInfo = {
+    Name: string;
+    ProcessId: number;
+    CommandLine: string | null;
+};
+
+export class CimProcessParser {
+    private static get extendedLengthPathPrefix(): string { return '\\\\?\\'; }
+    private static get ntObjectManagerPathPrefix(): string { return '\\??\\'; }
+
+    // Only public for tests.
+    public static ParseProcessFromCim(processes: string): Process[] {
+        const processInfos: CimProcessInfo[] = JSON.parse(processes);
+        return processInfos.map(info => {
+            let commandLine = info.CommandLine ?? undefined;
+            if (commandLine?.startsWith(this.extendedLengthPathPrefix)) {
+                commandLine = commandLine.slice(this.extendedLengthPathPrefix.length);
+            }
+            if (commandLine?.startsWith(this.ntObjectManagerPathPrefix)) {
+                commandLine = commandLine.slice(this.ntObjectManagerPathPrefix.length);
+            }
+            return {
+                name: info.Name,
+                pid: `${info.ProcessId}`,
+                commandLine,
+            };
+        });
     }
 }
 
 export class WmicAttachItemsProvider extends DotNetAttachItemsProvider {
     protected async getInternalProcessEntries(): Promise<Process[]> {
         const wmicCommand = 'wmic process get Name,ProcessId,CommandLine /FORMAT:list';
-        return execChildProcess(wmicCommand, null).then(processes => {
+        return execChildProcess(wmicCommand).then(processes => {
             return WmicOutputParser.parseProcessFromWmic(processes);
         });
     }
@@ -444,7 +492,7 @@ export class WmicOutputParser {
     // Only public for tests.
     public static parseProcessFromWmic(processes: string): Process[] {
         let lines = processes.split(os.EOL);
-        let currentProcess: Process = new Process(null, null, null);
+        let currentProcess: Partial<Process> = {};
         let processEntries: Process[] = [];
 
         for (let i = 0; i < lines.length; i++) {
@@ -457,15 +505,15 @@ export class WmicOutputParser {
 
             // Each entry of processes has ProcessId as the last line
             if (line.startsWith(WmicOutputParser.wmicPidTitle)) {
-                processEntries.push(currentProcess);
-                currentProcess = new Process(null, null, null);
+                processEntries.push(currentProcess as Process);
+                currentProcess = {};
             }
         }
 
         return processEntries;
     }
 
-    private static parseLineFromWmic(line: string, process: Process) {
+    private static parseLineFromWmic(line: string, process: Partial<Process>) {
         let splitter = line.indexOf('=');
         if (splitter >= 0) {
             let key = line.slice(0, line.indexOf('='));
@@ -489,9 +537,9 @@ export class WmicOutputParser {
 
 }
 
-async function execChildProcess(process: string, workingDirectory: string): Promise<string> {
+async function execChildProcess(process: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        child_process.exec(process, { cwd: workingDirectory, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
+        child_process.exec(process, { maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
             if (error) {
                 reject(error);
                 return;
@@ -525,7 +573,7 @@ async function execChildProcessAndOutputErrorToChannel(process: string, workingD
 
     return new Promise<string>(async (resolve, reject) => {
         return GetSysNativePathIfNeeded(platformInfo).then(newEnv => {
-            child_process.exec(process, { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 }, (error: Error, stdout: string, stderr: string) => {
+            child_process.exec(process, { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
                 let channelOutput = "";
 
                 if (stdout && stdout.length > 0) {

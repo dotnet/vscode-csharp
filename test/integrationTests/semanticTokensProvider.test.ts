@@ -7,10 +7,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { should, assert } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace } from './integrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { poll } from './poll';
-import { EventType } from '../../src/omnisharp/EventType';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -25,10 +23,10 @@ interface ExpectedToken {
 
 async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | null, message?: string): Promise<void> {
 
-    const legend = <vscode.SemanticTokensLegend>await vscode.commands.executeCommand("csharp.private.getSemanticTokensLegend");
-    const actual = <vscode.SemanticTokens>await vscode.commands.executeCommand("csharp.private.getSemanticTokens", fileUri);
+    const legend = <vscode.SemanticTokensLegend>await vscode.commands.executeCommand("vscode.provideDocumentSemanticTokensLegend", fileUri);
+    const actual = <vscode.SemanticTokens>await vscode.commands.executeCommand("vscode.provideDocumentSemanticTokens", fileUri);
 
-    if (actual === null) {
+    if (!actual) {
         assert.isNull(expected, message);
         return;
     }
@@ -54,36 +52,19 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        // These tests don't run on the BasicRazorApp2_1 solution
-        if (isRazorWorkspace(vscode.workspace)) {
+        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
             this.skip();
         }
 
         const activation = await activateCSharpExtension();
 
-        // Wait for workspace information to be returned
-        let isWorkspaceLoaded = false;
-
-        if (!activation.wasActive) {
-            const subscription = activation.eventStream.subscribe(event => {
-                console.log(event);
-                if (event.type === EventType.WorkspaceInformationUpdated) {
-                    isWorkspaceLoaded = true;
-                    subscription.unsubscribe();
-                }
-            });
-        } else {
-            isWorkspaceLoaded = true;
-        }
-
-        await testAssetWorkspace.restore();
-
-        await poll(() => isWorkspaceLoaded, 20000, 500);
-
         const fileName = 'semantictokens.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
 
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
+        await vscode.commands.executeCommand("vscode.open", fileUri);
+
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
     test('Semantic Highlighting returns null when disabled', async () => {

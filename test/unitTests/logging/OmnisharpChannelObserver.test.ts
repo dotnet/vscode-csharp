@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { expect } from 'chai';
-import { vscode } from '.,/../../src/vscodeAdapter';
+import { vscode } from '../../../src/vscodeAdapter';
 import { getNullChannel, updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
 import { OmnisharpFailure, ShowOmniSharpChannel, BaseEvent, OmnisharpRestart, OmnisharpServerOnStdErr } from '../../../src/omnisharp/loggingEvents';

@@ -714,5 +714,68 @@
                 "foreground": "#569CD6",
             }
         },
+        {
+            "name": "RegEx Comment",
+            "scope": "string.regexp.comment.cs",
+            "settings": {
+                "foreground": "#57A64A",
+            }
+        },
+        {
+            "name": "RegEx Character Class",
+            "scope": "constant.character.character-class.regexp.cs",
+            "settings": {
+                "foreground": "#2EABFE",
+            }
+        },
+        {
+            "name": "RegEx Anchor",
+            "scope": "keyword.control.anchor.regexp.cs",
+            "settings": {
+                "foreground": "#F979AE",
+            }
+        },
+        {
+            "name": "RegEx Quantifier",
+            "scope": "keyword.operator.quantifier.regexp.cs",
+            "settings": {
+                "foreground": "#F979AE",
+            }
+        },
+        {
+            "name": "RegEx Grouping",
+            "scope": "string.regexp.self-escaped-character.cs",
+            "settings": {
+                "foreground": "#05C3BA",
+            }
+        },
+        {
+            "name": "RegEx Alternation",
+            "scope": "keyword.operator.or.regexp.cs",
+            "settings": {
+                "foreground": "#05C3BA",
+            }
+        },
+        {
+            "name": "RegEx Self-Escaped Character",
+            "scope": "punctuation.definition.group.regexp.cs",
+            "settings": {
+                "foreground": "#D69D85",
+            }
+        },
+        {
+            "name": "RegEx Other Escape",
+            "scope": "string.regexp.other-escape.cs",
+            "settings": {
+                "foreground": "#FFD68F",
+            }
+        },
+        {
+            "name": "RegEx Text",
+            "scope": "string.regexp",
+            "settings": {
+                "foreground": "#D69D85"
+            }
+        },
     ]
 }

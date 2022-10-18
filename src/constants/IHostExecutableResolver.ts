@@ -3,18 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-declare module 'http-proxy-agent' {
+import { Options } from "../omnisharp/options";
+import { HostExecutableInformation } from "./HostExecutableInformation";
 
-    interface IHttpProxyAgentOptions {
-        host: string;
-        port: number;
-        auth?: string;
-    }
-
-    class HttpProxyAgent {
-        constructor(proxy: string);
-        constructor(opts: IHttpProxyAgentOptions);
-    }
-
-    export = HttpProxyAgent;
+export interface IHostExecutableResolver {
+    getHostExecutableInfo(options: Options): Promise<HostExecutableInformation>;
 }

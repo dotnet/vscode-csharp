@@ -8,11 +8,11 @@ import { AbsolutePathPackage } from '../packageManager/AbsolutePathPackage';
 import { filterPlatformPackages } from '../packageManager/PackageFilterer';
 import { Package } from '../packageManager/Package';
 
-export function getRuntimeDependencyPackageWithId(packageId: string, packageJSON: any, platformInfo: PlatformInformation, extensionPath: string): AbsolutePathPackage {
-    let runtimeDependencies = getRuntimeDependenciesPackages(packageJSON);
-    let absolutePathPackages = runtimeDependencies.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
-    let platformSpecificPackage = filterPlatformPackages(absolutePathPackages, platformInfo);
-    return platformSpecificPackage.find(pkg => pkg.id == packageId);
+export function getRuntimeDependencyPackageWithId(packageId: string, packageJSON: any, platformInfo: PlatformInformation, extensionPath: string): AbsolutePathPackage | undefined {
+    const runtimeDependencies = getRuntimeDependenciesPackages(packageJSON);
+    const absolutePathPackages = runtimeDependencies.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
+    const platformSpecificPackage = filterPlatformPackages(absolutePathPackages, platformInfo);
+    return platformSpecificPackage.find(pkg => pkg.id === packageId);
 }
 
 export function getRuntimeDependenciesPackages(packageJSON: any): Package[] {

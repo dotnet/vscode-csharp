@@ -6,6 +6,11 @@
 import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { EventStream } from '../../../src/EventStream';
+import { EventType } from '../../../src/omnisharp/EventType';
+import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
+import { ActivationResult } from '../integrationHelpers';
+import { poll } from '../poll';
 import spawnGit from './spawnGit';
 
 export class TestAssetProject {
@@ -39,6 +44,42 @@ export class TestAssetWorkspace {
 
     async restore(): Promise<void> {
         await vscode.commands.executeCommand("dotnet.restore.all");
+    }
+
+    async restoreAndWait(activation: ActivationResult): Promise<void> {
+        await this.restore();
+
+        // Wait for activity to settle before proceeding
+        await this.waitForIdle(activation.eventStream);
+    }
+
+    async waitForEvent<T extends BaseEvent>(stream: EventStream, captureType: EventType, stopCondition: (e: T) => boolean = _ => true, timeout: number = 25 * 1000): Promise<T> {
+        let event: T = null;
+
+        const subscription = stream.subscribe((e: BaseEvent) => {
+            if (e.type === captureType) {
+                const tEvent = <T>e;
+
+                if (stopCondition(tEvent)) {
+                    event = tEvent;
+                    subscription.unsubscribe();
+                }
+            }
+        });
+
+        await poll(() => event, timeout, 500, e => !!e);
+
+        return event;
+    }
+
+    async waitForIdle(stream: EventStream, timeout: number = 25 * 1000): Promise<void> {
+        let event: BaseEvent = { type: 0 };
+
+        const subscription = stream.subscribe((e: BaseEvent) => e.type !== EventType.BackgroundDiagnosticStatus && (event = e));
+
+        await poll(() => event, timeout, 500, e => !e || (event = null));
+
+        subscription.unsubscribe();
     }
 
     get vsCodeDirectoryPath(): string {

@@ -92,7 +92,7 @@ suite("InformationMessageObserver", () => {
                 };
 
                 doClickOk = () => {
-                    resolve(...items);
+                    resolve(items[0]);
                 };
             });
         };

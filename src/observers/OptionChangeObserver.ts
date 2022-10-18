@@ -14,7 +14,6 @@ type OptionsKey = keyof Options;
 
 const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "path",
-    "useGlobalMono",
     "enableMsBuildLoadProjectsOnDemand",
     "waitForDebugger",
     "loggingLevel",
@@ -22,6 +21,26 @@ const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "enableDecompilationSupport",
     "enableImportCompletion",
     "organizeImportsOnFormat",
+    "enableAsyncCompletion",
+    "useModernNet",
+    "enableLspDriver",
+    "sdkPath",
+    "sdkVersion",
+    "sdkIncludePrereleases",
+    "analyzeOpenDocumentsOnly",
+    "enableRoslynAnalyzers",
+    "inlayHintsEnableForParameters",
+    "inlayHintsForLiteralParameters",
+    "inlayHintsForObjectCreationParameters",
+    "inlayHintsForIndexerParameters",
+    "inlayHintsForOtherParameters",
+    "inlayHintsSuppressForParametersThatDifferOnlyBySuffix",
+    "inlayHintsSuppressForParametersThatMatchMethodIntent",
+    "inlayHintsSuppressForParametersThatMatchArgumentName",
+    "inlayHintsEnableForTypes",
+    "inlayHintsForImplicitVariableTypes",
+    "inlayHintsForLambdaParameterTypes",
+    "inlayHintsForImplicitObjectCreation",
 ];
 
 function OmniSharpOptionChangeObservable(optionObservable: Observable<Options>): Observable<Options> {

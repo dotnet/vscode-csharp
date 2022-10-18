@@ -323,6 +323,23 @@
           "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
           "default": false
         },
+        "launchSettingsFilePath": {
+          "type": "string",
+          "description": "The path to a launchSettings.json file. If this isn't set, the debugger will search in '{cwd}/Properties/launchSettings.json'.",
+          "default": "${workspaceFolder}/Properties/launchSettings.json"
+        },
+        "launchSettingsProfile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "If specified, indicates the name of the profile in launchSettings.json to use. This is ignored if launchSettings.json is not found. launchSettings.json will be read from the path specified should be the 'launchSettingsFilePath' property, or {cwd}/Properties/launchSettings.json if that isn't set. If this is set to null or an empty string then launchSettings.json is ignored. If this value is not specified the first 'Project' profile will be used.",
+          "default": "<insert-profile-name>"
+        },
         "sourceFileMap": {
           "type": "object",
           "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
@@ -386,6 +403,10 @@
           "type": "string",
           "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
           "default": "${workspaceFolder}/out.txt"
+        },
+        "targetArchitecture": {
+          "type": "string",
+          "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
         }
       }
     },
@@ -402,12 +423,12 @@
           "anyOf": [
             {
               "type": "string",
-              "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
-              "default": "${command:pickProcess}"
+              "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+              "default": ""
             },
             {
               "type": "integer",
-              "description": "The process id to attach to. Use \"${command:pickProcess}\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+              "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
               "default": 0
             }
           ]
@@ -470,6 +491,10 @@
           "type": "boolean",
           "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
           "default": true
+        },
+        "targetArchitecture": {
+          "type": "string",
+          "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
         }
       }
     },

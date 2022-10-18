@@ -3,43 +3,51 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as gulp from 'gulp';
 import * as path from 'path';
-import { codeExtensionPath, nycPath, rootPath, testAssetsRootPath, testRootPath, unitTestCoverageRootPath, mochaPath, vscodeTestHostPath } from './projectPaths';
+import { codeExtensionPath, featureTestRunnerPath, integrationTestRunnerPath, mochaPath, rootPath, testAssetsRootPath, testRootPath } from './projectPaths';
 import spawnNode from './spawnNode';
 
 gulp.task("test:feature", async () => {
     let env = {
-        ...process.env,
         OSVC_SUITE: "featureTests",
+        CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests"),
+        CODE_WORKSPACE_ROOT: rootPath,
         CODE_DISABLE_EXTENSIONS: "true",
     };
-    return spawnNode([vscodeTestHostPath, "--verbose"], {
-        env
-    });
+
+    const result = await spawnNode([featureTestRunnerPath], { env });
+
+    if (result.code === null || result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
 });
 
 gulp.task("test:unit", async () => {
-    return spawnNode([
-        nycPath,
-        '-r',
-        'lcovonly',
-        '--report-dir',
-        unitTestCoverageRootPath,
+    const result = await spawnNode([
         mochaPath,
         '--ui',
         'tdd',
-        '--',
+        '-c',
         'test/unitTests/**/*.test.ts'
     ]);
+
+    if (result.code === null || result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
 });
 
 const projectNames = [
     "singleCsproj",
     "slnWithCsproj",
+    "slnFilterWithCsproj",
     "BasicRazorApp2_1"
 ];
 
@@ -48,7 +56,6 @@ for (const projectName of projectNames) {
     gulp.task(`test:integration:${projectName}:lsp`, async () => runIntegrationTest(projectName, 'lsp'));
     gulp.task(`test:integration:${projectName}`, gulp.series(`test:integration:${projectName}:stdio`, `test:integration:${projectName}:lsp`));
 }
-
 
 gulp.task("test:integration", gulp.series(projectNames.map(projectName => `test:integration:${projectName}`)));
 gulp.task("test:integration:stdio", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:lsp`)));
@@ -67,5 +74,12 @@ async function runIntegrationTest(testAssetName: string, driver: 'stdio' | 'lsp'
         CODE_DISABLE_EXTENSIONS: 'true',
     };
 
-    return spawnNode([vscodeTestHostPath], { env, cwd: rootPath });
+    const result = await spawnNode([integrationTestRunnerPath], { env, cwd: rootPath });
+
+    if (result.code === null || result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
 }

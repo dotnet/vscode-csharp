@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Proposed } from 'vscode-languageserver-protocol';
+import { SemanticTokenTypes } from 'vscode-languageserver-protocol';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toRange2 } from '../omnisharp/typeConversion';
@@ -64,6 +64,14 @@ enum CustomTokenType {
     xmlDocCommentName,
     xmlDocCommentProcessingInstruction,
     xmlDocCommentText,
+    regexComment,
+    regexCharacterClass,
+    regexAnchor,
+    regexQuantifier,
+    regexGrouping,
+    regexAlternation,
+    regexSelfEscapedCharacter,
+    regexOtherEscape,
 }
 
 // The default TokenModifiers defined by VS Code https://github.com/microsoft/vscode/blob/master/src/vs/platform/theme/common/tokenClassificationRegistry.ts#L393
@@ -163,7 +171,7 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
 
     async provideDocumentSemanticTokens(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
 
-        return this._provideSemanticTokens(document, null, token);
+        return this._provideSemanticTokens(document, undefined, token);
     }
 
     async provideDocumentRangeSemanticTokens(document: vscode.TextDocument, range: vscode.Range, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
@@ -181,7 +189,12 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
         return this._provideSemanticTokens(document, v2Range, token);
     }
 
-    async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
+    async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range | undefined, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
+        // We can only semantically highlight file from disk.
+        if (document.uri.scheme !== "file") {
+            return null;
+        }
+
         const options = this.optionProvider.GetLatestOptions();
         if (!options.useSemanticHighlighting) {
             return null;
@@ -235,28 +248,28 @@ export default class SemanticTokensProvider extends AbstractProvider implements 
 }
 
 const tokenTypes: string[] = [];
-tokenTypes[DefaultTokenType.comment] = Proposed.SemanticTokenTypes.comment;
-tokenTypes[DefaultTokenType.string] = Proposed.SemanticTokenTypes.string;
-tokenTypes[DefaultTokenType.keyword] = Proposed.SemanticTokenTypes.keyword;
-tokenTypes[DefaultTokenType.number] = Proposed.SemanticTokenTypes.number;
-tokenTypes[DefaultTokenType.regexp] = Proposed.SemanticTokenTypes.regexp;
-tokenTypes[DefaultTokenType.operator] = Proposed.SemanticTokenTypes.operator;
-tokenTypes[DefaultTokenType.namespace] = Proposed.SemanticTokenTypes.namespace;
-tokenTypes[DefaultTokenType.type] = Proposed.SemanticTokenTypes.type;
-tokenTypes[DefaultTokenType.struct] = Proposed.SemanticTokenTypes.struct;
-tokenTypes[DefaultTokenType.class] = Proposed.SemanticTokenTypes.class;
-tokenTypes[DefaultTokenType.interface] = Proposed.SemanticTokenTypes.interface;
-tokenTypes[DefaultTokenType.enum] = Proposed.SemanticTokenTypes.enum;
-tokenTypes[DefaultTokenType.typeParameter] = Proposed.SemanticTokenTypes.typeParameter;
-tokenTypes[DefaultTokenType.function] = Proposed.SemanticTokenTypes.function;
-tokenTypes[DefaultTokenType.member] = Proposed.SemanticTokenTypes.member;
-tokenTypes[DefaultTokenType.macro] = Proposed.SemanticTokenTypes.macro;
-tokenTypes[DefaultTokenType.variable] = Proposed.SemanticTokenTypes.variable;
-tokenTypes[DefaultTokenType.parameter] = Proposed.SemanticTokenTypes.parameter;
-tokenTypes[DefaultTokenType.property] = Proposed.SemanticTokenTypes.property;
+tokenTypes[DefaultTokenType.comment] = SemanticTokenTypes.comment;
+tokenTypes[DefaultTokenType.string] = SemanticTokenTypes.string;
+tokenTypes[DefaultTokenType.keyword] = SemanticTokenTypes.keyword;
+tokenTypes[DefaultTokenType.number] = SemanticTokenTypes.number;
+tokenTypes[DefaultTokenType.regexp] = SemanticTokenTypes.regexp;
+tokenTypes[DefaultTokenType.operator] = SemanticTokenTypes.operator;
+tokenTypes[DefaultTokenType.namespace] = SemanticTokenTypes.namespace;
+tokenTypes[DefaultTokenType.type] = SemanticTokenTypes.type;
+tokenTypes[DefaultTokenType.struct] = SemanticTokenTypes.struct;
+tokenTypes[DefaultTokenType.class] = SemanticTokenTypes.class;
+tokenTypes[DefaultTokenType.interface] = SemanticTokenTypes.interface;
+tokenTypes[DefaultTokenType.enum] = SemanticTokenTypes.enum;
+tokenTypes[DefaultTokenType.typeParameter] = SemanticTokenTypes.typeParameter;
+tokenTypes[DefaultTokenType.function] = SemanticTokenTypes.function;
+tokenTypes[DefaultTokenType.member] = 'member';
+tokenTypes[DefaultTokenType.macro] = SemanticTokenTypes.macro;
+tokenTypes[DefaultTokenType.variable] = SemanticTokenTypes.variable;
+tokenTypes[DefaultTokenType.parameter] = SemanticTokenTypes.parameter;
+tokenTypes[DefaultTokenType.property] = SemanticTokenTypes.property;
 tokenTypes[DefaultTokenType.enumMember] = 'enumMember';
 tokenTypes[DefaultTokenType.event] = 'event';
-tokenTypes[DefaultTokenType.label] = Proposed.SemanticTokenTypes.label;
+tokenTypes[DefaultTokenType.label] = 'label';
 tokenTypes[CustomTokenType.plainKeyword] = "plainKeyword";
 tokenTypes[CustomTokenType.controlKeyword] = "controlKeyword";
 tokenTypes[CustomTokenType.operatorOverloaded] = "operatorOverloaded";
@@ -281,6 +294,14 @@ tokenTypes[CustomTokenType.xmlDocCommentEntityReference] = "xmlDocCommentEntityR
 tokenTypes[CustomTokenType.xmlDocCommentName] = "xmlDocCommentName";
 tokenTypes[CustomTokenType.xmlDocCommentProcessingInstruction] = "xmlDocCommentProcessingInstruction";
 tokenTypes[CustomTokenType.xmlDocCommentText] = "xmlDocCommentText";
+tokenTypes[CustomTokenType.regexComment] = "regexComment";
+tokenTypes[CustomTokenType.regexCharacterClass] = "regexCharacterClass";
+tokenTypes[CustomTokenType.regexAnchor] = "regexAnchor";
+tokenTypes[CustomTokenType.regexQuantifier] = "regexQuantifier";
+tokenTypes[CustomTokenType.regexGrouping] = "regexGrouping";
+tokenTypes[CustomTokenType.regexAlternation] = "regexAlternation";
+tokenTypes[CustomTokenType.regexSelfEscapedCharacter] = "regexSelfEscapedCharacter";
+tokenTypes[CustomTokenType.regexOtherEscape] = "regexOtherEscape";
 
 const tokenModifiers: string[] = [];
 tokenModifiers[DefaultTokenModifier.declaration] = 'declaration';
@@ -291,7 +312,7 @@ tokenModifiers[DefaultTokenModifier.modification] = 'modification';
 tokenModifiers[DefaultTokenModifier.async] = 'async';
 tokenModifiers[DefaultTokenModifier.readonly] = 'readonly';
 
-const tokenTypeMap: number[] = [];
+const tokenTypeMap: (number | undefined)[] = [];
 tokenTypeMap[SemanticHighlightClassification.Comment] = DefaultTokenType.comment;
 tokenTypeMap[SemanticHighlightClassification.ExcludedCode] = CustomTokenType.excludedCode;
 tokenTypeMap[SemanticHighlightClassification.Identifier] = DefaultTokenType.variable;
@@ -348,15 +369,15 @@ tokenTypeMap[SemanticHighlightClassification.XmlLiteralEntityReference] = undefi
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralName] = undefined;
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralProcessingInstruction] = undefined;
 tokenTypeMap[SemanticHighlightClassification.XmlLiteralText] = undefined;
-tokenTypeMap[SemanticHighlightClassification.RegexComment] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexCharacterClass] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexAnchor] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexQuantifier] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexGrouping] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexAlternation] = DefaultTokenType.regexp;
+tokenTypeMap[SemanticHighlightClassification.RegexComment] = CustomTokenType.regexComment;
+tokenTypeMap[SemanticHighlightClassification.RegexCharacterClass] = CustomTokenType.regexCharacterClass;
+tokenTypeMap[SemanticHighlightClassification.RegexAnchor] = CustomTokenType.regexAnchor;
+tokenTypeMap[SemanticHighlightClassification.RegexQuantifier] = CustomTokenType.regexQuantifier;
+tokenTypeMap[SemanticHighlightClassification.RegexGrouping] = CustomTokenType.regexGrouping;
+tokenTypeMap[SemanticHighlightClassification.RegexAlternation] = CustomTokenType.regexAlternation;
 tokenTypeMap[SemanticHighlightClassification.RegexText] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexSelfEscapedCharacter] = DefaultTokenType.regexp;
-tokenTypeMap[SemanticHighlightClassification.RegexOtherEscape] = DefaultTokenType.regexp;
+tokenTypeMap[SemanticHighlightClassification.RegexSelfEscapedCharacter] = CustomTokenType.regexSelfEscapedCharacter;
+tokenTypeMap[SemanticHighlightClassification.RegexOtherEscape] = CustomTokenType.regexOtherEscape;
 
 const tokenModifierMap: number[] = [];
 tokenModifierMap[SemanticHighlightModifier.Static] = 2 ** DefaultTokenModifier.static;

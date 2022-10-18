@@ -19,17 +19,18 @@ import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import OptionProvider from '../observers/OptionProvider';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
 export default class TestManager extends AbstractProvider {
 
-    private _runCounts: { [testFrameworkName: string]: number };
-    private _debugCounts: { [testFrameworkName: string]: number };
-    private _telemetryIntervalId: NodeJS.Timer = undefined;
+    private _runCounts?: { [testFrameworkName: string]: number };
+    private _debugCounts?: { [testFrameworkName: string]: number };
+    private _telemetryIntervalId?: NodeJS.Timer = undefined;
     private _eventStream: EventStream;
 
-    constructor(server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(private optionProvider: OptionProvider, server: OmniSharpServer, eventStream: EventStream, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         this._eventStream = eventStream;
 
@@ -126,7 +127,7 @@ export default class TestManager extends AbstractProvider {
             vscode.workspace.saveAll(/*includeUntitled*/ false));
     }
 
-    private async _runTest(fileName: string, testMethod: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTest(fileName: string, testMethod: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string | undefined, noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestRequest = {
             FileName: fileName,
             MethodName: testMethod,
@@ -136,16 +137,11 @@ export default class TestManager extends AbstractProvider {
             NoBuild: noBuild
         };
 
-        try {
-            let response = await serverUtils.runTest(this._server, request);
-            return response.Results;
-        }
-        catch (error) {
-            return undefined;
-        }
+        let response = await serverUtils.runTest(this._server, request);
+        return response.Results;
     }
 
-    private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName?: string): Promise<string> {
+    private async _recordRunAndGetFrameworkVersion(fileName: string, testFrameworkName?: string): Promise<string | undefined> {
 
         await this._saveDirtyFiles();
         this._recordRunRequest(testFrameworkName);
@@ -169,10 +165,10 @@ export default class TestManager extends AbstractProvider {
         return targetFrameworkVersion;
     }
 
-    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[]> {
+    public async discoverTests(fileName: string, testFrameworkName: string, noBuild: boolean): Promise<protocol.V2.TestInfo[] | undefined> {
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
-        let runSettings = vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
+        let runSettings = this._getRunSettings(fileName);
 
         const request: protocol.V2.DiscoverTestsRequest = {
             FileName: fileName,
@@ -186,13 +182,29 @@ export default class TestManager extends AbstractProvider {
             let response = await serverUtils.discoverTests(this._server, request);
             return response.Tests;
         }
-        catch (error) {
-            return undefined;
-        }
+        catch {}
+
+        return undefined;
     }
 
-    private _getRunSettings(): string | undefined {
-        return vscode.workspace.getConfiguration('omnisharp').get<string>('testRunSettings');
+    private _getRunSettings(filename: string): string | undefined {
+        const testSettingsPath = this.optionProvider.GetLatestOptions().testRunSettings;
+        if (testSettingsPath.length === 0) {
+            return undefined;
+        }
+
+        if (path.isAbsolute(testSettingsPath)) {
+            return testSettingsPath;
+        }
+
+        // Path is relative to the workspace. Create absolute path.
+        const fileUri = vscode.Uri.file(filename);
+        const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
+        if (workspaceFolder === undefined) {
+            return undefined;
+        }
+
+        return path.join(workspaceFolder.uri.fsPath, testSettingsPath);
     }
 
     public async runDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, noBuild: boolean = false) {
@@ -204,14 +216,15 @@ export default class TestManager extends AbstractProvider {
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let results = await this._runTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, noBuild);
             this._eventStream.post(new ReportDotNetTestResults(results));
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestRunFailure(reason));
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestRunFailure(message));
         }
         finally {
             listener.dispose();
@@ -228,21 +241,22 @@ export default class TestManager extends AbstractProvider {
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName, testFrameworkName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let results = await this._runTestsInClass(fileName, runSettings, testFrameworkName, targetFrameworkVersion, methodsInClass, noBuild);
             this._eventStream.post(new ReportDotNetTestResults(results));
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestRunFailure(reason));
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestRunFailure(message));
         }
         finally {
             listener.dispose();
         }
     }
 
-    private async _runTestsInClass(fileName: string, runSettings: string, testFrameworkName: string, targetFrameworkVersion: string, methodsToRun: string[], noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
+    private async _runTestsInClass(fileName: string, runSettings: string | undefined, testFrameworkName: string, targetFrameworkVersion: string | undefined, methodsToRun: string[], noBuild: boolean): Promise<protocol.V2.DotNetTestResult[]> {
         const request: protocol.V2.RunTestsInClassRequest = {
             FileName: fileName,
             RunSettings: runSettings,
@@ -269,7 +283,7 @@ export default class TestManager extends AbstractProvider {
         });
 
         let targetFrameworkVersion = await this._recordRunAndGetFrameworkVersion(fileName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         const request: protocol.V2.RunTestsInContextRequest = {
             FileName: fileName,
@@ -291,15 +305,16 @@ export default class TestManager extends AbstractProvider {
                 this._eventStream.post(new ReportDotNetTestResults(response.Results));
             }
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestRunFailure(reason));
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestRunFailure(message));
         }
         finally {
             listener.dispose();
         }
     }
 
-    private _createLaunchConfiguration(program: string, args: string, cwd: string, debuggerEventsPipeName: string) {
+    private _createLaunchConfiguration(program: string, args: string, cwd: string, environmentVariables: Map<string, string>, debuggerEventsPipeName: string) {
         let debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');
 
         // Get the initial set of options from the workspace setting
@@ -319,7 +334,8 @@ export default class TestManager extends AbstractProvider {
             debuggerEventsPipeName: debuggerEventsPipeName,
             program: program,
             args: args,
-            cwd: cwd
+            cwd: cwd,
+            env: environmentVariables,
         };
 
         // Now fill in the rest of the options
@@ -329,11 +345,11 @@ export default class TestManager extends AbstractProvider {
     private async _getLaunchConfigurationForVSTest(
         fileName: string,
         testMethod: string,
-        runSettings: string,
+        runSettings: string | undefined,
         testFrameworkName: string,
-        targetFrameworkVersion: string,
+        targetFrameworkVersion: string | undefined,
         debugEventListener: DebugEventListener,
-        noBuild: boolean): Promise<LaunchConfiguration> {
+        noBuild: boolean | undefined): Promise<LaunchConfiguration> {
 
         // Listen for test messages while getting start info.
         const listener = this._server.onTestMessage(e => {
@@ -355,6 +371,7 @@ export default class TestManager extends AbstractProvider {
                 response.FileName,
                 response.Arguments,
                 response.WorkingDirectory,
+                response.EnvironmentVariables,
                 debugEventListener.pipePath());
         }
         finally {
@@ -362,7 +379,7 @@ export default class TestManager extends AbstractProvider {
         }
     }
 
-    private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName?: string) {
+    private async _recordDebugAndGetDebugValues(fileName: string, testFrameworkName?: string): Promise<{ debugEventListener: DebugEventListener, targetFrameworkVersion: string }> {
         await this._saveDirtyFiles();
         this._recordDebugRequest(testFrameworkName);
         let projectInfo: protocol.ProjectInformationResponse;
@@ -370,21 +387,16 @@ export default class TestManager extends AbstractProvider {
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
         }
         catch (error) {
-            return undefined;
+            throw new Error('Could not determine project type.');
         }
 
-        let debugEventListener: DebugEventListener = null;
-        let targetFrameworkVersion: string;
-
-        if (projectInfo.MsBuildProject) {
-            targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
-            debugEventListener = new DebugEventListener(fileName, this._server, this._eventStream);
-            debugEventListener.start();
-        }
-        else {
+        if (!projectInfo.MsBuildProject) {
             throw new Error('Expected .csproj project.');
         }
 
+        const targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
+        const debugEventListener = new DebugEventListener(fileName, this._server, this._eventStream);
+        await debugEventListener.start();
         return { debugEventListener, targetFrameworkVersion };
     }
 
@@ -395,18 +407,17 @@ export default class TestManager extends AbstractProvider {
         this._eventStream.post(new DotNetTestDebugStart(testMethod));
 
         let { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let config = await this._getLaunchConfigurationForVSTest(fileName, testMethod, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener, noBuild);
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
             return vscode.debug.startDebugging(workspaceFolder, config);
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestDebugStartFailure(reason));
-            if (debugEventListener !== null) {
-                debugEventListener.close();
-            }
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestDebugStartFailure(message));
+            debugEventListener.close();
         }
     }
 
@@ -415,18 +426,17 @@ export default class TestManager extends AbstractProvider {
         this._eventStream.post(new DotNetTestsInClassDebugStart(className));
 
         let { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName, testFrameworkName);
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let config = await this._getLaunchConfigurationForVSTestClass(fileName, methodsToRun, runSettings, testFrameworkName, targetFrameworkVersion, debugEventListener, noBuild);
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fileName));
             return vscode.debug.startDebugging(workspaceFolder, config);
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestDebugStartFailure(reason));
-            if (debugEventListener != null) {
-                debugEventListener.close();
-            }
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestDebugStartFailure(message));
+            debugEventListener.close();
         }
     }
 
@@ -440,7 +450,7 @@ export default class TestManager extends AbstractProvider {
 
         let { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(fileName);
 
-        let runSettings = this._getRunSettings();
+        let runSettings = this._getRunSettings(fileName);
 
         try {
             let config = await this._getLaunchConfigurationForVSTestInContext(fileName, active.line, active.character, runSettings, targetFrameworkVersion, debugEventListener);
@@ -451,22 +461,21 @@ export default class TestManager extends AbstractProvider {
             const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
             return vscode.debug.startDebugging(workspaceFolder, config);
         }
-        catch (reason) {
-            this._eventStream.post(new DotNetTestRunFailure(reason));
-            if (debugEventListener !== null) {
-                debugEventListener.close();
-            }
+        catch (error) {
+            const message = (error as Error).message;
+            this._eventStream.post(new DotNetTestRunFailure(message));
+            debugEventListener.close();
         }
     }
 
     private async _getLaunchConfigurationForVSTestClass(
         fileName: string,
         methodsToRun: string[],
-        runSettings: string,
+        runSettings: string | undefined,
         testFrameworkName: string,
-        targetFrameworkVersion: string,
+        targetFrameworkVersion: string | undefined,
         debugEventListener: DebugEventListener,
-        noBuild: boolean): Promise<LaunchConfiguration> {
+        noBuild: boolean | undefined): Promise<LaunchConfiguration> {
 
         const listener = this._server.onTestMessage(e => {
             this._eventStream.post(new DotNetTestMessage(e.Message));
@@ -483,7 +492,7 @@ export default class TestManager extends AbstractProvider {
 
         try {
             let response = await serverUtils.debugTestClassGetStartInfo(this._server, request);
-            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, response.EnvironmentVariables, debugEventListener.pipePath());
         }
         finally {
             listener.dispose();
@@ -494,8 +503,8 @@ export default class TestManager extends AbstractProvider {
         fileName: string,
         line: number,
         column: number,
-        runSettings: string,
-        targetFrameworkVersion: string,
+        runSettings: string | undefined,
+        targetFrameworkVersion: string | undefined,
         debugEventListener: DebugEventListener): Promise<LaunchConfiguration | null> {
 
         const listener = this._server.onTestMessage(e => {
@@ -513,17 +522,18 @@ export default class TestManager extends AbstractProvider {
         try {
             let response = await serverUtils.debugTestsInContextGetStartInfo(this._server, request);
             if (!response.Succeeded) {
+                // FailureReason is populated if Succeeded is false
                 if (response.ContextHadNoTests) {
-                    this._eventStream.post(new DotNetTestMessage(response.FailureReason));
+                    this._eventStream.post(new DotNetTestMessage(response.FailureReason!));
                 }
                 else {
-                    this._eventStream.post(new DotNetTestRunFailure(response.FailureReason));
+                    this._eventStream.post(new DotNetTestRunFailure(response.FailureReason!));
                 }
 
                 return null;
             }
 
-            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, debugEventListener.pipePath());
+            return this._createLaunchConfiguration(response.FileName, response.Arguments, response.WorkingDirectory, response.EnvironmentVariables, debugEventListener.pipePath());
         }
         finally {
             listener.dispose();
@@ -532,39 +542,40 @@ export default class TestManager extends AbstractProvider {
 }
 
 class DebugEventListener {
-    static s_activeInstance: DebugEventListener = null;
+    static s_activeInstance: DebugEventListener | undefined;
     _fileName: string;
     _server: OmniSharpServer;
     _pipePath: string;
     _eventStream: EventStream;
 
-    _serverSocket: net.Server;
+    _serverSocket: net.Server | undefined;
     _isClosed: boolean = false;
 
     constructor(fileName: string, server: OmniSharpServer, eventStream: EventStream) {
         this._fileName = fileName;
         this._server = server;
         this._eventStream = eventStream;
-        // NOTE: The max pipe name on OSX is fairly small, so this name shouldn't bee too long.
-        const pipeSuffix = "TestDebugEvents-" + process.pid;
+
         if (os.platform() === 'win32') {
-            this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt." + pipeSuffix;
-        } else {
-            this._pipePath = path.join(utils.getExtensionPath(), "." + pipeSuffix);
+            this._pipePath = "\\\\.\\pipe\\Microsoft.VSCode.CSharpExt.TestDebugEvents" + process.pid;
+        }
+        else {
+            let tmpdir = utils.getUnixTempDirectory();
+            this._pipePath = path.join(tmpdir, "ms-dotnettools.csharp-tde-" + process.pid);
         }
     }
 
     public async start(): Promise<void> {
 
         // We use our process id as part of the pipe name, so if we still somehow have an old instance running, close it.
-        if (DebugEventListener.s_activeInstance !== null) {
+        if (DebugEventListener.s_activeInstance !== undefined) {
             DebugEventListener.s_activeInstance.close();
         }
 
         DebugEventListener.s_activeInstance = this;
 
-        this._serverSocket = net.createServer((socket: net.Socket) => {
-            socket.on('data', (buffer: Buffer) => {
+        const serverSocket = net.createServer(socket => {
+            socket.on('data', buffer => {
                 let event: DebuggerEventsProtocol.DebuggerEvent;
                 try {
                     event = DebuggerEventsProtocol.decodePacket(buffer);
@@ -593,19 +604,21 @@ class DebugEventListener {
             });
         });
 
+        // We need the local serverSocket variable for the promise to capture below,
+        // or else TypeScript will warn that the instance variable could be undefined.
+        this._serverSocket = serverSocket;
+
         await this.removeSocketFileIfExists();
-        return new Promise<void>((resolve, reject) => {
-            let isStarted: boolean = false;
-            this._serverSocket.on('error', (err: Error) => {
-                if (!isStarted) {
+        return new Promise((resolve, reject) => {
+            serverSocket.on('error', err => {
+                if (!serverSocket.listening) {
                     reject(err.message);
                 } else {
                     this._eventStream.post(new DotNetTestDebugWarning(`Communications error on debugger event channel. ${err.message}`));
                 }
             });
 
-            this._serverSocket.listen(this._pipePath, () => {
-                isStarted = true;
+            serverSocket.listen(this._pipePath, () => {
                 resolve();
             });
         });
@@ -617,7 +630,7 @@ class DebugEventListener {
 
     public close() {
         if (this === DebugEventListener.s_activeInstance) {
-            DebugEventListener.s_activeInstance = null;
+            DebugEventListener.s_activeInstance = undefined;
         }
 
         if (this._isClosed) {
@@ -626,7 +639,7 @@ class DebugEventListener {
 
         this._isClosed = true;
 
-        if (this._serverSocket !== null) {
+        if (this._serverSocket !== undefined) {
             this._serverSocket.close();
         }
     }

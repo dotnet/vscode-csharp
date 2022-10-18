@@ -12,7 +12,6 @@ import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
 import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
-import { Options } from './options';
 import { PlatformInformation } from '../platform';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
@@ -23,18 +22,32 @@ import { debounceTime } from 'rxjs/operators';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
 import OptionProvider from '../observers/OptionProvider';
-import { IMonoResolver } from '../constants/IMonoResolver';
 import { ExtensionContext, OutputChannel } from 'vscode';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import { LspEngine } from './engines/LspEngine';
 import { IEngine } from './engines/IEngine';
 import { StdioEngine } from './engines/StdioEngine';
+import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
+import { showProjectSelector } from '../features/commands';
+import { validateRequirements } from './requirementCheck';
 
 enum ServerState {
     Starting,
     Started,
     Stopped,
 }
+
+type State = {
+    status: ServerState.Stopped,
+} | {
+    status: ServerState.Starting,
+    disposables: CompositeDisposable,
+} | {
+    status: ServerState.Started,
+    disposables: CompositeDisposable,
+    engine: IEngine,
+    telemetryIntervalId: NodeJS.Timeout,
+};
 
 export module Events {
     export const StateChanged = 'stateChanged';
@@ -53,7 +66,7 @@ export module Events {
     export const ProjectAdded = 'ProjectAdded';
     export const ProjectRemoved = 'ProjectRemoved';
 
-    export const ProjectDiagnosticStatus = 'ProjectDiagnosticStatus';
+    export const BackgroundDiagnosticStatus = 'BackgroundDiagnosticStatus';
 
     export const MsBuildProjectDiagnostics = 'MsBuildProjectDiagnostics';
 
@@ -77,13 +90,14 @@ const installPath = '.omnisharp';
 const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export class OmniSharpServer {
-    private _delayTrackers: { [requestName: string]: DelayTracker };
+
+    private _delayTrackers: { [requestName: string]: DelayTracker } = {};
 
     private _eventBus = new EventEmitter();
-    private _state: ServerState = ServerState.Stopped;
-    private _launchTarget: LaunchTarget;
-    private _engine: IEngine;
-    private _telemetryIntervalId: NodeJS.Timer = undefined;
+    private _state: State = { status: ServerState.Stopped };
+    private _launchTarget: LaunchTarget | undefined;
+
+    private _sessionProperties: { [key: string]: any } = {};
 
     private _omnisharpManager: OmnisharpManager;
     private updateProjectDebouncer = new Subject<
@@ -99,19 +113,19 @@ export class OmniSharpServer {
         private eventStream: EventStream,
         private optionProvider: OptionProvider,
         private extensionPath: string,
-        private monoResolver: IMonoResolver,
+        private monoResolver: IHostExecutableResolver,
+        private dotnetResolver: IHostExecutableResolver,
         public decompilationAuthorized: boolean,
         private context: ExtensionContext,
         private outputChannel: OutputChannel,
         private languageMiddlewareFeature: LanguageMiddlewareFeature
     ) {
-        let downloader = new OmnisharpDownloader(
+        const downloader = new OmnisharpDownloader(
             networkSettingsProvider,
             this.eventStream,
             this.packageJSON,
             platformInfo,
-            extensionPath
-        );
+            extensionPath);
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer
             .pipe(debounceTime(1500))
@@ -121,18 +135,27 @@ export class OmniSharpServer {
         this.firstUpdateProject = true;
     }
 
+    public get sessionProperties() {
+        return this._sessionProperties;
+    }
+
     public isRunning(): boolean {
-        return this._state === ServerState.Started;
+        return this._state.status === ServerState.Started;
     }
 
     public async waitForInitialize(): Promise<void> {
-        await this._engine.waitForInitialize();
+        if (this._state.status !== ServerState.Started) {
+            throw new Error('OmniSharp server is not running.');
+        }
+
+        let { engine } = this._state;
+        await engine.waitForInitialize();
     }
 
-    private _setState(value: ServerState): void {
-        if (typeof value !== 'undefined' && value !== this._state) {
-            this._state = value;
-            this._fireEvent(Events.StateChanged, this._state);
+    private _setState(state: State): void {
+        if (state.status !== this._state.status) {
+            this._state = state;
+            this._fireEvent(Events.StateChanged, this._state.status);
         }
     }
 
@@ -161,8 +184,8 @@ export class OmniSharpServer {
         }
     }
 
-    public getSolutionPathOrFolder(): string {
-        return this._launchTarget ? this._launchTarget.target : undefined;
+    public getSolutionPathOrFolder(): string | undefined {
+        return this._launchTarget?.target;
     }
 
     // --- eventing
@@ -206,8 +229,8 @@ export class OmniSharpServer {
         return this._addListener(Events.ProjectRemoved, listener, thisArg);
     }
 
-    public onProjectDiagnosticStatus(listener: (e: protocol.ProjectDiagnosticStatus) => any, thisArg?: any) {
-        return this._addListener(Events.ProjectDiagnosticStatus, listener, thisArg);
+    public onBackgroundDiagnosticStatus(listener: (e: protocol.BackgroundDiagnosticStatusMessage) => any, thisArg?: any) {
+        return this._addListener(Events.BackgroundDiagnosticStatus, listener, thisArg);
     }
 
     public onMsBuildProjectDiagnostics(listener: (e: protocol.MSBuildProjectDiagnostics) => any, thisArg?: any) {
@@ -253,20 +276,30 @@ export class OmniSharpServer {
     }
 
     // --- start, stop, and connect
-    public async start(
-        launchTarget: LaunchTarget,
-        options: Options
-    ): Promise<void> {
 
-        if (launchTarget.kind === LaunchTargetKind.LiveShare) {
+    public async start(launchTarget: LaunchTarget): Promise<void> {
+        if (this._state.status !== ServerState.Stopped) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to start OmniSharp server failed because another server instance is running."));
+            return;
+        }
+
+        if (launchTarget.workspaceKind === LaunchTargetKind.LiveShare) {
             this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("During Live Share sessions language services are provided by the Live Share server."));
             return;
         }
 
-        let disposables = new CompositeDisposable();
+        const options = this.optionProvider.GetLatestOptions();
 
+        if (!await validateRequirements(options)) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("OmniSharp failed to start because of missing requirements."));
+            return;
+        }
+
+        const disposables = new CompositeDisposable();
+
+        let engine: IEngine | undefined;
         if (options.enableLspDriver) {
-            this._engine = new LspEngine(
+            engine = new LspEngine(
                 this._eventBus,
                 this.eventStream,
                 this.context,
@@ -274,14 +307,16 @@ export class OmniSharpServer {
                 disposables,
                 this.languageMiddlewareFeature,
                 this.platformInfo,
-                this.monoResolver
+                this.monoResolver,
+                this.dotnetResolver
             );
         } else {
-            this._engine = new StdioEngine(
+            engine = new StdioEngine(
                 this._eventBus,
                 this.eventStream,
                 this.platformInfo,
                 this.monoResolver,
+                this.dotnetResolver,
                 disposables
             );
         }
@@ -326,8 +361,8 @@ export class OmniSharpServer {
             this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
         }));
 
-        disposables.add(this.onProjectDiagnosticStatus((message: protocol.ProjectDiagnosticStatus) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpProjectDiagnosticStatus(message))
+        disposables.add(this.onBackgroundDiagnosticStatus((message: protocol.BackgroundDiagnosticStatusMessage) =>
+            this.eventStream.post(new ObservableEvents.OmnisharpBackgroundDiagnosticStatus(message))
         ));
 
         disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
@@ -338,13 +373,16 @@ export class OmniSharpServer {
         disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
         disposables.add(this.onProjectRemoved(this.debounceUpdateProjectWithLeadingTrue));
 
-        this._setState(ServerState.Starting);
+        this._setState({
+            status: ServerState.Starting,
+            disposables,
+        });
         this._launchTarget = launchTarget;
 
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
 
-        let args = [
+        const args = [
             '-z',
             '-s',
             solutionPath,
@@ -355,17 +393,14 @@ export class OmniSharpServer {
             options.loggingLevel,
         ];
 
-        let razorPluginPath: string;
+        let razorPluginPath: string | undefined;
         if (!options.razorDisabled) {
             // Razor support only exists for certain platforms, so only load the plugin if present
-            razorPluginPath =
-                options.razorPluginPath ||
-                path.join(
-                    this.extensionPath,
-                    '.razor',
-                    'OmniSharpPlugin',
-                    'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll'
-                );
+            razorPluginPath = options.razorPluginPath.length > 0 ? options.razorPluginPath : path.join(
+                this.extensionPath,
+                '.razor',
+                'OmniSharpPlugin',
+                'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll');
             if (fs.existsSync(razorPluginPath)) {
                 args.push('--plugin', razorPluginPath);
             }
@@ -403,36 +438,77 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:EnableImportCompletion=true');
         }
 
+        if (options.enableAsyncCompletion === true) {
+            args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
+        }
+
+        if (options.sdkPath.length > 0) {
+            args.push(`Sdk:Path='${options.sdkPath}'`);
+        }
+
+        if (options.sdkVersion.length > 0) {
+            args.push(`Sdk:Version='${options.sdkVersion}'`);
+        }
+
+        if (options.sdkIncludePrereleases) {
+            args.push(`Sdk:IncludePrereleases=true`);
+        }
+
+        if (options.inlayHintsEnableForParameters === true) {
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${options.inlayHintsEnableForParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${options.inlayHintsForLiteralParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${options.inlayHintsForIndexerParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${options.inlayHintsForObjectCreationParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${options.inlayHintsForOtherParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${options.inlayHintsSuppressForParametersThatDifferOnlyBySuffix.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${options.inlayHintsSuppressForParametersThatMatchMethodIntent.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${options.inlayHintsSuppressForParametersThatMatchArgumentName.toString()}`);
+        }
+
+        if (options.inlayHintsEnableForTypes === true) {
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${options.inlayHintsEnableForTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${options.inlayHintsForImplicitVariableTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${options.inlayHintsForLambdaParameterTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${options.inlayHintsForImplicitObjectCreation.toString()}`);
+        }
+
+        if (options.analyzeOpenDocumentsOnly === true) {
+            args.push('RoslynExtensionsOptions:AnalyzeOpenDocumentsOnly=true');
+        }
+
+        for (let i = 0; i < options.dotNetCliPaths.length; i++) {
+            args.push(`DotNetCliOptions:LocationPaths:${i}=${options.dotNetCliPaths[i]}`);
+        }
+
         let launchInfo: LaunchInfo;
         try {
             launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(
                 this.packageJSON.defaults.omniSharp,
                 options.path,
+                /* useFramework */ !options.useModernNet,
                 serverUrl,
                 latestVersionFileServerPath,
                 installPath,
-                this.extensionPath
-            );
-        } catch (error) {
+                this.extensionPath);
+        }
+        catch (e) {
+            const error = e as Error; // Unsafe TypeScript hack to recognize the catch type as Error.
             this.eventStream.post(
                 new ObservableEvents.OmnisharpFailure(
                     `Error occurred in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`,
-                    error
-                )
-            );
+                    error));
             return;
         }
 
         this.eventStream.post(
             new ObservableEvents.OmnisharpInitialisation(
+                options.dotNetCliPaths,
                 new Date(),
-                solutionPath
-            )
-        );
+                solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            await this._engine.start(
+            await engine.start(
                 cwd,
                 args,
                 launchTarget,
@@ -440,11 +516,16 @@ export class OmniSharpServer {
                 options
             );
 
-            this._setState(ServerState.Started);
+            this._setState({
+                status: ServerState.Started,
+                disposables,
+                engine,
+                telemetryIntervalId: setInterval(() => this._reportTelemetry(), TelemetryReportingDelay),
+            });
 
             this._delayTrackers = {};
 
-            if (razorPluginPath && options.razorPluginPath) {
+            if (razorPluginPath !== undefined && options.razorPluginPath) {
                 if (fs.existsSync(razorPluginPath)) {
                     this.eventStream.post(
                         new ObservableEvents.RazorPluginPathSpecified(
@@ -461,8 +542,8 @@ export class OmniSharpServer {
             }
 
             this._fireEvent(Events.ServerStart, solutionPath);
-            this._telemetryIntervalId = setInterval(() => this._reportTelemetry(), TelemetryReportingDelay);
-        } catch (err) {
+        }
+        catch (err) {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
         }
@@ -492,109 +573,127 @@ export class OmniSharpServer {
         this.eventStream.post(new ObservableEvents.WorkspaceInformationUpdated(info));
     }
 
-    public async stop() {
-        if (this._engine) {
-            await this._engine.stop();
-            this._setState(ServerState.Stopped);
-            this._engine.dispose();
-            this._engine = null;
+    public async stop(): Promise<void> {
+        // We're already stopped, nothing to do :).
+        if (this._state.status === ServerState.Stopped) {
+            return;
         }
-        if (this._telemetryIntervalId !== undefined) {
-            // Stop reporting telemetry
-            clearInterval(this._telemetryIntervalId);
-            this._telemetryIntervalId = undefined;
+
+        if (this._state.status === ServerState.Started) {
+            const { disposables, engine, telemetryIntervalId } = this._state;
+
+            await engine.stop();
+            engine.dispose();
+
+            // Clear the session properties when the session ends.
+            this._sessionProperties = {};
+            this._setState({ status: ServerState.Stopped });
+            this._fireEvent(Events.ServerStop, this);
+
+            // Dispose of the disposables only _after_ we've fired the last server event.
+            disposables.dispose();
+
+            // Clear and report telemetry
+            clearInterval(telemetryIntervalId);
             this._reportTelemetry();
         }
     }
 
-    public async restart(
-        launchTarget: LaunchTarget = this._launchTarget
-    ): Promise<void> {
-        if (launchTarget) {
+    public async restart(launchTarget: LaunchTarget | undefined = this._launchTarget): Promise<void> {
+        if (this._state.status === ServerState.Starting) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to restart OmniSharp server failed because another server instance is starting."));
+            return;
+        }
+
+        if (launchTarget !== undefined) {
             await this.stop();
             this.eventStream.post(new ObservableEvents.OmnisharpRestart());
-            const options = this.optionProvider.GetLatestOptions();
-            await this.start(launchTarget, options);
+            await this.start(launchTarget);
         }
     }
 
-    public autoStart(preferredPath: string): Thenable<void> {
+    public async autoStart(preferredPath: string): Promise<void> {
         const options = this.optionProvider.GetLatestOptions();
-        return findLaunchTargets(options).then(async (launchTargets) => {
-            // If there aren't any potential launch targets, we create file watcher and try to
-            // start the server again once a *.sln, *.csproj, project.json, CSX or Cake file is created.
-            if (launchTargets.length === 0) {
-                return new Promise<void>((resolve) => {
-                    // 1st watch for files
-                    let watcher = this.vscode.workspace.createFileSystemWatcher(
-                        '{**/*.sln,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-                        /*ignoreCreateEvents*/ false,
-                        /*ignoreChangeEvents*/ true,
-                        /*ignoreDeleteEvents*/ true
-                    );
+        const launchTargets = await findLaunchTargets(options);
 
-                    watcher.onDidCreate((uri) => {
-                        watcher.dispose();
-                        resolve();
-                    });
-                }).then(() => {
-                    // 2nd try again
-                    return this.autoStart(preferredPath);
+        // If there aren't any potential launch targets, we create file watcher and try to
+        // start the server again once a *.sln, *.slnf, *.csproj, project.json, CSX or Cake file is created.
+        if (launchTargets.length === 0) {
+            await new Promise<void>((resolve) => {
+                // 1st watch for files
+                const watcher = this.vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+                    /*ignoreCreateEvents*/ false,
+                    /*ignoreChangeEvents*/ true,
+                    /*ignoreDeleteEvents*/ true);
+
+                watcher.onDidCreate(uri => {
+                    watcher.dispose();
+                    resolve();
                 });
-            }
+            });
 
-            const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions()
-                .defaultLaunchSolution;
-
-            // First, try to launch against something that matches the user's preferred target
-            const defaultLaunchSolutionTarget = launchTargets.find(
-                (a) =>
-                    path.basename(a.target) === defaultLaunchSolutionConfigValue
-            );
-            if (defaultLaunchSolutionTarget) {
-                return this.restart(defaultLaunchSolutionTarget);
-            }
-
-            // If there's more than one launch target, we start the server if one of the targets
-            // matches the preferred path. Otherwise, we fire the "MultipleLaunchTargets" event,
-            // which is handled in status.ts to display the launch target selector.
-            if (launchTargets.length > 1 && preferredPath) {
-                for (let launchTarget of launchTargets) {
-                    if (launchTarget.target === preferredPath) {
-                        // start preferred path
-                        return this.restart(launchTarget);
-                    }
-                }
-
-                this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
-                return Promise.reject<void>(undefined);
-            }
-
+            // 2nd try again
+            return this.autoStart(preferredPath);
+        }
+        else if (launchTargets.length === 1) {
             // If there's only one target, just start
-            return this.restart(launchTargets[0]);
-        });
+            return this.start(launchTargets[0]);
+        }
+
+        // First, try to launch against something that matches the user's preferred target
+        const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
+        const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
+        if (defaultLaunchSolutionTarget) {
+            return this.start(defaultLaunchSolutionTarget);
+        }
+
+        // If there's more than one launch target, we start the server if one of the targets
+        // matches the preferred path.
+        if (preferredPath.length > 0) {
+            const preferredLaunchTarget = launchTargets.find((a_1) => a_1.target === preferredPath);
+            if (preferredLaunchTarget) {
+                return this.start(preferredLaunchTarget);
+            }
+        }
+
+        // To maintain previous behavior when there are mulitple targets available,
+        // launch with first Solution or Folder target.
+        const firstFolderOrSolutionTarget = launchTargets
+            .find(target => target.workspaceKind == LaunchTargetKind.Folder || target.workspaceKind == LaunchTargetKind.Solution);
+        if (firstFolderOrSolutionTarget) {
+            return this.start(firstFolderOrSolutionTarget);
+        }
+
+        // When running integration tests, open the first launch target.
+        if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
+            return this.start(launchTargets[0]);
+        }
+
+        // Otherwise, we fire the "MultipleLaunchTargets" event,
+        // which is handled in status.ts to display the launch target selector.
+        this._fireEvent(Events.MultipleLaunchTargets, launchTargets);
+        return showProjectSelector(this, launchTargets);
     }
-    public async makeRequest<TResponse>(
-        command: string,
-        data?: any,
-        token?: CancellationToken
-    ): Promise<TResponse> {
-        if (!this.isRunning()) {
+
+    // --- requests et al
+
+    public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
+        if (this._state.status !== ServerState.Started) {
             return Promise.reject<TResponse>(
                 'OmniSharp server is not running.'
             );
         }
 
+        let { engine } = this._state;
+
         let startTime: number;
         startTime = Date.now();
-        return this._engine
-            .makeRequest<TResponse>(command, data, token)
-            .then((response) => {
-                let endTime = Date.now();
-                let elapsedTime = endTime - startTime;
-                this._recordRequestDelay(command, elapsedTime);
+        const response = await engine.makeRequest<TResponse>(command, data, token);
 
-                return response;
-            });
+        let endTime = Date.now();
+        let elapsedTime = endTime - startTime;
+        this._recordRequestDelay(command, elapsedTime);
+
+        return response;
     }
 }

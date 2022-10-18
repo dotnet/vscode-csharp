@@ -72,8 +72,10 @@ export async function poll<T>(
     duration: number,
     step: number,
     expression: (input: T) => boolean = defaultPollExpression): Promise<T> {
+    let value: T;
+
     while (duration > 0) {
-        let value = await getValue();
+        value = await getValue();
 
         if (expression(value)) {
             return value;
@@ -87,6 +89,6 @@ export async function poll<T>(
     throw new Error("Polling did not succeed within the alotted duration.");
 }
 
-async function sleep(ms = 0) {
+export async function sleep(ms = 0) {
     return new Promise(r => setTimeout(r, ms));
 }

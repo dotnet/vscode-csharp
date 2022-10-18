@@ -20,7 +20,7 @@ import * as ObservableEvents from '../loggingEvents';
 import { EventStream } from '../../EventStream';
 import CompositeDisposable from '../../CompositeDisposable';
 import Disposable from '../../Disposable';
-import { IMonoResolver } from '../../constants/IMonoResolver';
+import { IHostExecutableResolver } from '../../constants/IHostExecutableResolver';
 import {
     removeBOMFromBuffer,
     removeBOMFromString,
@@ -40,7 +40,8 @@ export class StdioEngine implements IEngine {
         eventBus: EventEmitter,
         private eventStream: EventStream,
         private platformInfo: PlatformInformation,
-        private monoResolver: IMonoResolver,
+        private monoResolver: IHostExecutableResolver,
+        private dotnetResolver: IHostExecutableResolver,
         disposables: CompositeDisposable
     ) {
         this._eventBus = eventBus;
@@ -130,12 +131,14 @@ export class StdioEngine implements IEngine {
             launchInfo,
             this.platformInfo,
             options,
-            this.monoResolver
+            this.monoResolver,
+            this.dotnetResolver
         );
         this.eventStream.post(
             new ObservableEvents.OmnisharpLaunch(
-                launchResult.monoVersion,
-                launchResult.monoPath,
+                launchResult.hostVersion ?? '',
+                launchResult.hostPath ?? '',
+                launchResult.hostIsMono,
                 launchResult.command,
                 launchResult.process.pid
             )

@@ -14,7 +14,7 @@ suite('OmnisharpStatusBarObserver', () => {
     let hideCalled: boolean;
 
     setup(() => {
-        statusBarItem.text = undefined;
+        statusBarItem.text = '';
         statusBarItem.color = undefined;
         statusBarItem.command = undefined;
         statusBarItem.tooltip = undefined;
@@ -78,14 +78,13 @@ suite('OmnisharpStatusBarObserver', () => {
         expect(statusBarItem.text).to.be.equal('$(flame)');
         expect(statusBarItem.command).to.equal('o.showOutput');
         expect(statusBarItem.tooltip).to.be.equal('OmniSharp server is running');
-        expect(statusBarItem.color).to.be.equal(StatusBarColors.White);
     });
 
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {
         let event = new OmnisharpServerOnStop();
         observer.post(event);
         expect(hideCalled).to.be.true;
-        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.text).to.be.equal('');
         expect(statusBarItem.command).to.be.undefined;
         expect(statusBarItem.color).to.be.undefined;
     });
@@ -119,7 +118,7 @@ suite('OmnisharpStatusBarObserver', () => {
         observer.post(successEvent);
 
         expect(hideCalled).to.be.true;
-        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.text).to.be.equal('');
         expect(statusBarItem.command).to.be.undefined;
         expect(statusBarItem.color).to.be.undefined;
     });

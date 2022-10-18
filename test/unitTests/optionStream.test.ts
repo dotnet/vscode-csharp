@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should, expect } from 'chai';
+import { should } from 'chai';
 import { ConfigurationChangeEvent, vscode } from "../../src/vscodeAdapter";
 import { getVSCodeWithConfig, updateConfig } from "./testAssets/Fakes";
 import Disposable from "../../src/Disposable";
@@ -36,8 +36,7 @@ suite('OptionStream', () => {
         });
 
         test('Returns the default options if there is no change', () => {
-            expect(options.path).to.be.null;
-            options.useGlobalMono.should.equal("auto");
+            options.path.should.equal("");
             options.waitForDebugger.should.equal(false);
             options.loggingLevel.should.equal("information");
             options.autoStart.should.equal(true);
@@ -52,14 +51,15 @@ suite('OptionStream', () => {
             options.maxFindSymbolsItems.should.equal(1000);
             options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
             options.enableRoslynAnalyzers.should.equal(false);
-            options.enableEditorConfigSupport.should.equal(false);
+            options.enableEditorConfigSupport.should.equal(true);
             options.enableDecompilationSupport.should.equal(false);
             options.enableImportCompletion.should.equal(false);
-            expect(options.defaultLaunchSolution).to.be.undefined;
+            options.enableAsyncCompletion.should.equal(false);
+            options.defaultLaunchSolution.should.equal("");
         });
 
         test('Gives the changed option when the omnisharp config changes', () => {
-            expect(options.path).to.be.null;
+            options.path.should.equal("");
             let changingConfig = "omnisharp";
             updateConfig(vscode, changingConfig, 'path', "somePath");
             listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));

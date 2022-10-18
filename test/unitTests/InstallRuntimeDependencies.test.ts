@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { installRuntimeDependencies } from "../../src/InstallRuntimeDependencies";
 import IInstallDependencies from "../../src/packageManager/IInstallDependencies";
 import { EventStream } from "../../src/EventStream";
@@ -17,14 +16,15 @@ const expect = chai.expect;
 
 suite(`${installRuntimeDependencies.name}`, () => {
     let packageJSON = {
-        runtimeDependencies: {}
+        runtimeDependencies: [] as Package[]
     };
 
     let extensionPath = "/ExtensionPath";
     let installDependencies: IInstallDependencies;
     let eventStream: EventStream;
     let eventBus: TestEventBus;
-    let platformInfo = new PlatformInformation("platform1", "architecture1");
+    let platformInfo = new PlatformInformation("linux", "architecture1");
+    const useFramework = true;
 
     setup(() => {
         eventStream = new EventStream();
@@ -35,21 +35,21 @@ suite(`${installRuntimeDependencies.name}`, () => {
     suite("When all the dependencies already exist", () => {
         suiteSetup(() => {
             packageJSON = {
-                runtimeDependencies: {}
+                runtimeDependencies: []
             };
         });
 
         test("True is returned", async () => {
-            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
+            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(installed).to.be.true;
         });
 
         test("Doesn't log anything to the eventStream", async () => {
-            let packageJSON = {
-                runtimeDependencies: {}
+            packageJSON = {
+                runtimeDependencies: []
             };
 
-            await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
+            await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(eventBus.getEvents()).to.be.empty;
         });
     });
@@ -78,7 +78,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
                 return Promise.resolve(true);
             };
 
-            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
+            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(installed).to.be.true;
             expect(inputPackage).to.have.length(1);
             expect(inputPackage[0]).to.be.deep.equal(AbsolutePathPackage.getAbsolutePathPackage(packageToInstall, extensionPath));
@@ -86,7 +86,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
 
         test("Returns false when installDependencies returns false", async () => {
             installDependencies = async () => Promise.resolve(false);
-            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo);
+            let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(installed).to.be.false;
         });
     });
