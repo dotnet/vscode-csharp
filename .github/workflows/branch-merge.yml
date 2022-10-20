@@ -3,22 +3,6 @@ on:
   schedule:
     - cron:  '0 */3 * * *'
 jobs:
-  Merge-Omnisharp-Master:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: feature/lsp_tools_host
-      - name: Get changes from Omnisharp-vscode/master
-        run: |
-          git remote add upstream https://github.com/OmniSharp/omnisharp-vscode.git
-          git fetch upstream master:upstream-master
-          git reset --hard upstream-master
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          title: Merge omnisharp-vscode/master into feature/lsp_tools_host
-          branch: merge-omnisharp-master
   Merge-LSP-Engine:
     runs-on: ubuntu-latest
     steps:
