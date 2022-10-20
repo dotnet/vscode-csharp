@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          repository: omnisharp/omnisharp-vscode
+          ref: feature/lsp_tools_host
       - name: Get changes from Omnisharp-vscode/master
         run: |
           git remote add upstream https://github.com/OmniSharp/omnisharp-vscode.git
@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          repository: omnisharp/omnisharp-vscode
+          ref: feature/lsp_tools_host
       - name: Get changes from Omnisharp-vscode/feature/lsp-engine
         run: |
           git remote add upstream https://github.com/OmniSharp/omnisharp-vscode.git
