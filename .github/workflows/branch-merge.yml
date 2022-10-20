@@ -17,6 +17,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
+          title: Merge omnisharp-vscode/master into feature/lsp_tools_host
           branch: merge-omnisharp-master
   Merge-LSP-Engine:
     runs-on: ubuntu-latest
@@ -32,4 +33,5 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
+          title: Merge omnisharp-vscode/feature/lsp-engine into feature/lsp_tools_host
           branch: merge-omnisharp-lsp-engine
