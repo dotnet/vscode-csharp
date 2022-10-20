@@ -186,6 +186,23 @@
                 "NEW_DEPS_VERSION": "1.39.1"
             },
             "cwd": "${workspaceFolder}"
-        }
+        },
+        {
+            "name": "Launch Roslyn Language Server",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
+            "env": {
+                "ROSLYN_LSP": "true",
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev",
+        },
     ]
 }
