@@ -241,7 +241,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
     projectTargets = projectTargets.sort((a, b) => a.directory.localeCompare(b.directory));
 
     const allTargets = otherTargets.concat(solutionTargets).concat(projectRootTargets).concat(projectJsonTargets).concat(projectTargets);
-    
+
     return maxProjectResults > 0
         ? allTargets.slice(0, maxProjectResults)
         : allTargets;
@@ -279,6 +279,17 @@ export interface LaunchResult {
     hostPath?: string;
 }
 
+export interface LaunchConfiguration {
+    hostKind: ".NET" | "Windows .NET Framework" | "Mono .NET Framework";
+    hostPath: string;
+    hostVersion: string;
+    path: string;
+    launchPath: string;
+    cwd: string;
+    args: string[];
+    env: NodeJS.ProcessEnv;
+}
+
 export async function launchOmniSharp(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
     return new Promise<LaunchResult>((resolve, reject) => {
         launch(cwd, args, launchInfo, platformInfo, options, monoResolver, dotnetResolver)
@@ -297,7 +308,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchInfo: L
     });
 }
 
-async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+export async function configure(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchConfiguration> {
     if (options.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration('', null);
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
@@ -308,14 +319,108 @@ async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platf
     }
 
     if (options.useModernNet) {
-        return await launchDotnet(launchInfo, cwd, args, platformInfo, options, dotnetResolver);
+        const argsCopy = args.slice(0);
+        const launchPath = launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath;
+
+        let command: string;
+        if (!launchPath.endsWith('.dll')) {
+            // If we're not being asked to launch a dll, assume whatever we're given is an executable
+            command = launchPath;
+        }
+        else {
+            command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
+            argsCopy.unshift(launchPath);
+        }
+
+        const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
+
+        return {
+            hostKind: '.NET',
+            hostPath: dotnetInfo.path,
+            hostVersion: dotnetInfo.version,
+            path: command,
+            launchPath: launchPath,
+            cwd,
+            args: argsCopy,
+            env: dotnetInfo.env
+        };
     }
 
     if (platformInfo.isWindows()) {
-        return launchWindows(launchInfo.LaunchPath, cwd, args);
+        return {
+            hostKind: 'Windows .NET Framework',
+            hostPath: '',
+            hostVersion: '',
+            path: launchInfo.LaunchPath,
+            launchPath: launchInfo.LaunchPath,
+            cwd,
+            args,
+            env: process.env
+        };
     }
 
-    return await launchNix(launchInfo, cwd, args, options, monoResolver);
+    let monoInfo = await monoResolver.getHostExecutableInfo(options);
+    if (monoInfo !== undefined) {
+        const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
+
+        let argsCopy = args.slice(0); // create copy of details args
+        argsCopy.unshift(launchPath);
+        argsCopy.unshift("--assembly-loader=strict");
+
+        if (options.waitForDebugger) {
+            argsCopy.unshift("--debug");
+            argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
+        }
+
+        return {
+            hostKind: "Mono .NET Framework",
+            hostPath: monoInfo.path,
+            hostVersion: monoInfo.version,
+            path: 'mono',
+            launchPath,
+            cwd,
+            args: argsCopy,
+            env: monoInfo.env,
+        };
+    }
+
+    throw new Error('Unable to find Mono installation.');
+}
+
+async function launch(cwd: string, args: string[], launchInfo: LaunchInfo, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
+    const configureResults = await configure(cwd, args, launchInfo, platformInfo, options, monoResolver, dotnetResolver);
+    return coreLaunch(platformInfo, configureResults);
+}
+
+function coreLaunch(platformInfo: PlatformInformation, configuration: LaunchConfiguration): LaunchResult {
+    const { cwd, args, path, launchPath, env } = configuration;
+
+    switch (configuration.hostKind) {
+        case ".NET": {
+            const process = spawn(path, args, { detached: false, cwd, env });
+
+            return {
+                process,
+                command: launchPath,
+                hostIsMono: false,
+                hostVersion: configuration.hostVersion,
+                hostPath: configuration.hostPath,
+            };
+            break;
+        }
+        case "Windows .NET Framework": {
+            return launchWindows(path, cwd, args);
+        }
+        case "Mono .NET Framework": {
+            return {
+                command: launchPath,
+                process: launchNixMono(configuration.hostPath, cwd, args, configuration.env),
+                hostIsMono: true,
+                hostVersion: configuration.hostVersion,
+                hostPath: configuration.hostPath
+            };
+        }
+    }
 }
 
 function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csharpConfig: vscode.WorkspaceConfiguration,
@@ -326,31 +431,6 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
     }
 
     return globalConfig.get(configurationPath, defaultValue);
-}
-
-async function launchDotnet(launchInfo: LaunchInfo, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<LaunchResult> {
-    const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
-    let command: string;
-    const argsCopy = args.slice(0);
-
-    if (launchInfo.LaunchPath && !launchInfo.LaunchPath.endsWith('.dll')) {
-        // If we're not being asked to launch a dll, assume whatever we're given is an executable
-        command = launchInfo.LaunchPath;
-    }
-    else {
-        command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
-        argsCopy.unshift(launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath);
-    }
-
-    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
-
-    return {
-        process,
-        command: launchInfo.DotnetLaunchPath ?? launchInfo.LaunchPath,
-        hostVersion: dotnetInfo.version,
-        hostPath: dotnetInfo.path,
-        hostIsMono: false,
-    };
 }
 
 function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchResult {
@@ -382,30 +462,8 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): LaunchR
     };
 }
 
-async function launchNix(launchInfo: LaunchInfo, cwd: string, args: string[], options: Options, monoResolver: IHostExecutableResolver): Promise<LaunchResult> {
-    const monoInfo = await monoResolver.getHostExecutableInfo(options);
-    const launchPath = launchInfo.MonoLaunchPath || launchInfo.LaunchPath;
-
-    return {
-        process: launchNixMono(launchPath, cwd, args, monoInfo.env, options.waitForDebugger),
-        command: launchPath,
-        hostIsMono: true,
-        hostVersion: monoInfo.version,
-        hostPath: monoInfo.path
-    };
-}
-
-function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv, useDebugger: boolean): ChildProcess {
-    let argsCopy = args.slice(0); // create copy of details args
-    argsCopy.unshift(launchPath);
-    argsCopy.unshift("--assembly-loader=strict");
-
-    if (useDebugger) {
-        argsCopy.unshift("--debug");
-        argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
-    }
-
-    let process = spawn('mono', argsCopy, {
+function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv): ChildProcess {
+    let process = spawn('mono', args, {
         detached: false,
         cwd: cwd,
         env: environment

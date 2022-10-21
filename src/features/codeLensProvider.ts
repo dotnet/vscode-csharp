@@ -281,5 +281,5 @@ function getTest(element: Structure.CodeElement): Test | undefined {
     return {
         framework,
         methodName,
-    }
+    };
 }

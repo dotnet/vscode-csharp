@@ -43,7 +43,7 @@ async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | nul
         lastLine = line;
         lastCharacter = character;
     }
-    assert.deepEqual(actualRanges, expected, message);
+    assert.deepEqual(expected, actualRanges, message);
 }
 
 suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
@@ -57,7 +57,6 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
         }
 
         const activation = await activateCSharpExtension();
-        await testAssetWorkspace.restore();
 
         const fileName = 'semantictokens.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

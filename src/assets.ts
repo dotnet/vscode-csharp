@@ -258,7 +258,7 @@ export class AssetGenerator {
         commandArgs.push("/consoleloggerparameters:NoSummary");
     }
 
-    private getBuildProjectPath() : string|null {
+    private getBuildProjectPath(): string | null {
         let buildProject = this.startupProject;
         if (!buildProject) {
             buildProject = this.fallbackBuildProject;
@@ -720,7 +720,7 @@ async function getExistingAssets(generator: AssetGenerator) {
         let assets: string[] = [];
         if (fs.pathExistsSync(generator.tasksJsonPath)) {
             const content = fs.readFileSync(generator.tasksJsonPath).toString();
-            let taskLabels = [ "build", "publish", "watch" ];
+            let taskLabels = ["build", "publish", "watch"];
             const tasks = jsonc.parse(content)?.tasks?.
                 map((t: { label: string; }) => t.label).
                 filter((l: string) => taskLabels.includes(l));
@@ -728,7 +728,7 @@ async function getExistingAssets(generator: AssetGenerator) {
             assets = assets.concat(tasks);
         }
 
-        if(fs.pathExistsSync(generator.launchJsonPath)) {
+        if (fs.pathExistsSync(generator.launchJsonPath)) {
             const content = fs.readFileSync(generator.launchJsonPath).toString();
             let configurationNames = [
                 ".NET Core Launch (console)",
@@ -820,8 +820,8 @@ export function replaceCommentPropertiesWithComments(text: string) {
     return withComments;
 }
 
-export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions) : string {
-    let modificationOptions : ModificationOptions = {
+export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions): string {
+    let modificationOptions: ModificationOptions = {
         formattingOptions
     };
 
@@ -830,7 +830,7 @@ export function updateJsonWithComments(text: string, replacements: any[], nodeNa
     // we will modify it as text to keep existing comments
     let parsed = jsonc.parse(text);
     let items = parsed[nodeName];
-    let itemKeys : string[] = items.map((i: { [x: string]: string; }) => i[keyName]);
+    let itemKeys: string[] = items.map((i: { [x: string]: string; }) => i[keyName]);
 
     let modified = text;
     // count how many items we inserted to ensure we are putting items at the end

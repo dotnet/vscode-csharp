@@ -54,7 +54,7 @@ export interface ActivationResult {
     readonly testManager: TestManager;
 }
 
-export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
+export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string, outputChannel: vscode.OutputChannel) {
     const documentSelector: vscode.DocumentSelector = {
         language: 'csharp',
     };
@@ -65,16 +65,16 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         return;
     }
 
+    const disposables = new CompositeDisposable();
     const options = optionProvider.GetLatestOptions();
     const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
     const omnisharpDotnetResolver = new OmniSharpDotnetResolver(platformInfo);
-    const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, omnisharpDotnetResolver, decompilationAuthorized);
-    const advisor = new Advisor(server, optionProvider); // create before server is started
-    const disposables = new CompositeDisposable();
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
+    const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, omnisharpDotnetResolver, decompilationAuthorized, context, outputChannel, languageMiddlewareFeature);
+    const advisor = new Advisor(server, optionProvider); // create before server is started
     let localDisposables: CompositeDisposable | undefined;
     const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
     const completionProvider = new CompletionProvider(server, languageMiddlewareFeature);
@@ -108,18 +108,20 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         localDisposables.add(vscode.commands.registerCommand(CompletionAfterInsertCommand, async (item, document) => completionProvider.afterInsert(item, document)));
         localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
         localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
-        // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
-        // so that it will be cleaned up if OmniSharp is restarted.
-        const codeActionProvider = new CodeActionProvider(server, optionProvider, languageMiddlewareFeature);
-        localDisposables.add(codeActionProvider);
-        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
         // Since the FixAllProviders registers its own commands, we must instantiate it and add it to the localDisposables
         // so that it will be cleaned up if OmniSharp is restarted.
         const fixAllProvider = new FixAllProvider(server, languageMiddlewareFeature);
         localDisposables.add(fixAllProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider, FixAllProvider.metadata));
-        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
-        localDisposables.add(forwardChanges(server));
+        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature, optionProvider));
+        if (!options.enableLspDriver) {
+            localDisposables.add(forwardChanges(server));
+            // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
+            // so that it will be cleaned up if OmniSharp is restarted.
+            const codeActionProvider = new CodeActionProvider(server, optionProvider, languageMiddlewareFeature);
+            localDisposables.add(codeActionProvider);
+            localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
+        }
         localDisposables.add(trackVirtualDocuments(server, eventStream));
         localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
         localDisposables.add(fileOpenClose(server));
