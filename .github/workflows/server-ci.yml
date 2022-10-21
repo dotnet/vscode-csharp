@@ -20,4 +20,4 @@ jobs:
         global-json-file: server/global.json
 
     - name: Build Microsoft.CodeAnalysis.LanguageServer
-      run: dotnet build .\server\Microsoft.CodeAnalysis.LanguageServer.sln -warnaserror
+      run: dotnet build ./server/Microsoft.CodeAnalysis.LanguageServer.sln -warnaserror
