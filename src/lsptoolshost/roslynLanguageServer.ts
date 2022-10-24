@@ -99,6 +99,5 @@ function startServer(outputChannel: vscode.OutputChannel) : cp.ChildProcess {
     ];
 
     let childProcess = cp.spawn('dotnet', args);
-    childProcess.stderr.on("data", data => outputChannel.append(`STDER: ${data.toString()}`));
     return childProcess;
 }
