@@ -51,7 +51,7 @@ suite(`${reportIssue.name}`, () => {
     setup(() => {
         vscode = getFakeVsCode();
 
-        vscode.env.clipboard.writeText = (body: string) => {
+        vscode.env.clipboard.writeText = async (body: string) => {
             issueBody = body;
             return Promise.resolve();
         };

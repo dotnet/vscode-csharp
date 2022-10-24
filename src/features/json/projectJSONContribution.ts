@@ -210,7 +210,7 @@ export class ProjectJSONContribution implements IJSONContribution {
             return undefined;
         } catch (error) {
             return undefined;
-        };
+        }
     }
 
 
