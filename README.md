@@ -33,6 +33,7 @@ See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for
 
 ## What's new in 1.25.1
 * Provide actionable error messages for .NET SDK issues ([#5223](https://github.com/OmniSharp/omnisharp-vscode/issues/5223), PR: [#5225](https://github.com/OmniSharp/omnisharp-vscode/pull/5225))
+* Various debugger bug fixes including fixing an issue with [Source Link](https://aka.ms/sourcelink) with file paths that contain characters that need to be URL escaped ([#5290](https://github.com/OmniSharp/omnisharp-vscode/issues/5290)).
 
 ## What's new in 1.25.0
 * Make SDK build of OmniSharp the default ([#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120), PR: [#5176](https://github.com/OmniSharp/omnisharp-vscode/pull/5176))

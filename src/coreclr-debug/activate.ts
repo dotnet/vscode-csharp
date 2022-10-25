@@ -42,7 +42,6 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
     if (platformInformation) {
         if (platformInformation.isMacOS()) {
             if (platformInformation.architecture === "arm64") {
-                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: arm64 macOS is not officially supported by the .NET debugger. You may experience unexpected issues when running in this configuration.`));
                 return true;
             }
 
