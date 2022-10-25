@@ -2,6 +2,7 @@ name: Merge master into feature/lsp-engine
 on:
   schedule:
     - cron:  '0 */3 * * *'
+  workflow_dispatch:
 jobs:
   Create-Merge-PR:
     runs-on: ubuntu-latest
