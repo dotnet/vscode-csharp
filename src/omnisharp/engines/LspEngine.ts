@@ -150,6 +150,10 @@ export class LspEngine implements IEngine {
                 },
                 async resolveCodeLens(codeLens, token, next) {
                     const result = await next(codeLens, token);
+                    // The command returned from O# isn't valid for VS Code.
+                    // Fix up the result by using the VS Code find reference command.
+                    // The codeLens data contains the uri for the current document.
+                    // The result.range contains the span for the identifier.
                     return new CodeLens(result.range, Command.create(result.command.title, "editor.action.findReferences", Uri.parse((<any>codeLens).data), result.range.start));
                 },
                 async provideFoldingRanges(document, context, token, next) {
@@ -232,7 +236,7 @@ export class LspEngine implements IEngine {
 
         disableFeature(CallHierarchyFeature); // Not implemented in O#
         //disableFeature(CodeActionFeature);
-        //disableFeature(CodeLensFeature);
+        //disableFeature(CodeLensFeature); // Only supports Reference codelens at this time. Does not support Run/Debug Test codelens.
         disableFeature(ColorProviderFeature); // Not implemented in O#
         //disableFeature(CompletionItemFeature);
         disableFeature(DeclarationFeature); // Not implemented in O#
