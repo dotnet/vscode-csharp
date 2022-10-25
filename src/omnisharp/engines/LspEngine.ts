@@ -18,22 +18,31 @@ import {
     ExtensionContext,
     CancellationTokenSource,
     OutputChannel,
+    Location,
+    CodeLens,
+    Uri,
 } from 'vscode';
-import { ColorProviderFeature } from 'vscode-languageclient/lib/colorProvider';
-import { FoldingRangeFeature } from 'vscode-languageclient/lib/foldingRange';
-import { WorkspaceFoldersFeature } from 'vscode-languageclient/lib/workspaceFolders';
-import { ImplementationFeature } from 'vscode-languageclient/lib/implementation';
-import { DeclarationFeature } from 'vscode-languageclient/lib/declaration';
-import { SelectionRangeFeature } from 'vscode-languageclient/lib/selectionRange';
-import { TypeDefinitionFeature } from 'vscode-languageclient/lib/typeDefinition';
-
 import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
-import { Events } from '../server';
+import { Events, OmniSharpServer } from '../server';
 import { IEngine } from './IEngine';
 import { PlatformInformation } from '../../platform';
 import { IHostExecutableResolver } from '../../constants/IHostExecutableResolver';
-import { CodeLensRequest, CompletionRequest, DefinitionRequest, DocumentFormattingRequest, DocumentHighlightRequest, DocumentLinkRequest, DocumentOnTypeFormattingRequest, DocumentRangeFormattingRequest, DocumentSymbolRequest, HoverRequest, ProtocolNotificationType, ProtocolNotificationType0, ProtocolRequestType, ProtocolRequestType0, ReferencesRequest, RenameRequest, SignatureHelpRequest, WorkspaceSymbolRequest } from 'vscode-languageserver-protocol';
-import { DynamicFeature, LanguageClient, LanguageClientOptions, RequestType0, ServerOptions, StaticFeature, Trace } from 'vscode-languageclient';
+import { Command, DynamicFeature, LanguageClientOptions, RequestType0, StaticFeature, Trace } from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import { SelectionRangeFeature } from 'vscode-languageclient/lib/common/selectionRange';
+import { ColorProviderFeature } from 'vscode-languageclient/lib/common/colorProvider';
+import { WorkspaceFoldersFeature } from 'vscode-languageclient/lib/common/workspaceFolder';
+import { DeclarationFeature } from 'vscode-languageclient/lib/common/declaration';
+import { DocumentLinkFeature } from 'vscode-languageclient/lib/common/documentLink';
+import { InlayHintsFeature } from 'vscode-languageclient/lib/common/inlayHint';
+import { InlineValueFeature } from 'vscode-languageclient/lib/common/inlineValue';
+import { DiagnosticFeature } from 'vscode-languageclient/lib/common/diagnostic';
+import { NotebookDocumentSyncFeature } from 'vscode-languageclient/lib/common/notebook';
+import { TypeHierarchyFeature } from 'vscode-languageclient/lib/common/typeHierarchy';
+import { CallHierarchyFeature } from 'vscode-languageclient/lib/common/callHierarchy';
+import { Advisor } from '../../features/diagnosticsProvider';
+import dotnetTest from '../../features/dotnetTest';
+import OptionProvider from '../../observers/OptionProvider';
 
 export class LspEngine implements IEngine {
     client: LanguageClient;
@@ -48,13 +57,8 @@ export class LspEngine implements IEngine {
         private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver,
     ) {}
-    public async start(
-        cwd: string,
-        args: string[],
-        launchTarget: LaunchTarget,
-        launchInfo: LaunchInfo,
-        options: Options
-    ): Promise<void> {
+
+    public async start(cwd: string, args: string[], launchTarget: LaunchTarget, launchInfo: LaunchInfo, options: Options): Promise<void> {
         const configuration = await configure(cwd, ['-lsp', '--encoding', 'ascii'].concat(args), launchInfo, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
         let serverOptions: ServerOptions = {
             run: {
@@ -95,25 +99,24 @@ export class LspEngine implements IEngine {
             middleware: {
                 async provideDefinition(document, position, token, next) {
                     const result = await next(document, position, token);
+                    // Needs Metadata document support
                     return languageMiddlewareFeature.remap(
                         'remapLocations',
                         !Array.isArray(result) ? [result] : result,
                         token
                     );
                 },
-                async provideReferences(
-                    document,
-                    position,
-                    options,
-                    token,
-                    next
-                ) {
-                    const result = await next(
-                        document,
-                        position,
-                        options,
+                async provideTypeDefinition(document, position, token, next) {
+                    const result = await next(document, position, token);
+                    // Needs Metadata document support
+                    return languageMiddlewareFeature.remap(
+                        'remapLocations',
+                        !Array.isArray(result) ? [result] : result,
                         token
                     );
+                },
+                async provideReferences(document, position, options, token, next) {
+                    const result = await next(document, position, options, token);
                     return languageMiddlewareFeature.remap(
                         'remapLocations',
                         result,
@@ -122,106 +125,157 @@ export class LspEngine implements IEngine {
                 },
                 async provideImplementation(document, position, token, next) {
                     const result = await next(document, position, token);
+                    // Needs Metadata document support
                     return languageMiddlewareFeature.remap(
                         'remapLocations',
                         !Array.isArray(result) ? [result] : result,
                         token
                     );
                 },
-                // TODO: This uses range not locations
-                // async provideCodeLenses(document, token, next) {
-                //     const result = await next(document, token);
-                //     return languageMiddlewareFeature.remap("remapLocations", result, token);
-                // },
-                async provideRenameEdits(
-                    document,
-                    position,
-                    newName,
-                    token,
-                    next
-                ) {
-                    const result = await next(
-                        document,
-                        position,
-                        newName,
-                        token
-                    );
+                async provideRenameEdits(document, position, newName, token, next) {
+                    const result = await next(document, position, newName, token);
                     return languageMiddlewareFeature.remap(
                         'remapWorkspaceEdit',
                         result,
                         token
                     );
                 },
+                async provideCodeLenses(document, token, next) {
+                    const result = await next(document, token);
+                    // Covert CodeLens results to locations for mapping.
+                    const locations = result.map(r => new Location(document.uri, r.range));
+                    const mappedLocations = await languageMiddlewareFeature.remap("remapLocations", locations, token);
+                    // Only keep results with mapped locations within the current document.
+                    return result.filter((r, i) => mappedLocations[i].uri === document.uri);
+                },
+                async resolveCodeLens(codeLens, token, next) {
+                    const result = await next(codeLens, token);
+                    return new CodeLens(result.range, Command.create(result.command.title, "editor.action.findReferences", Uri.parse((<any>codeLens).data), result.range.start));
+                },
+                async provideFoldingRanges(document, context, token, next) {
+                    const result = await next(document, context, token);
+                    return result;
+                },
+                async provideHover(document, position, token, next) {
+                    const result = await next(document, position, token);
+                    return result;
+                },
+                async provideSignatureHelp(document, position, context, token, next) {
+                    const result = await next(document, position, context, token);
+                    return result;
+                },
+                async provideCompletionItem(document, position, context, token, next) {
+                    const result = await next(document, position, context, token);
+                    return result;
+                },
+                async provideWorkspaceSymbols(query, token, next) {
+                    const result = await next(query, token);
+                    // May need source generator support.
+                    return result;
+                },
+                async provideDocumentSymbols(document, token, next) {
+                    const result = await next(document, token);
+                    return result;
+                },
+                async provideCodeActions(document, range, context, token, next) {
+                    const result = await next(document, range, context, token);
+                    return result;
+                },
+                async provideDocumentFormattingEdits(document, options, token, next) {
+                    const result = await next(document, options, token);
+                    return result;
+                },
+                async provideDocumentRangeFormattingEdits(document, range, options, token, next) {
+                    const result = await next(document, range, options, token);
+                    return result;
+                },
+                async provideOnTypeFormattingEdits(document, position, ch, options, token, next) {
+                    const result = await next(document, position, ch, options, token);
+                    return result;
+                },
+                async provideDocumentSemanticTokens(document, token, next) {
+                    const result = await next(document, token);
+                    return result;
+                },
+                async provideDocumentRangeSemanticTokens(document, range, token, next) {
+                    const result = await next(document, range, token);
+                    return result;
+                },
+                async provideDocumentHighlights(document, position, token, next) {
+                    const result = await next(document, position, token);
+                    return result;
+                },
             },
         };
 
         const client = new LanguageClient(
-            'omnisharp',
             'Omnisharp Server',
             serverOptions,
             clientOptions
         );
+        client.setTrace(Trace.Verbose);
 
         // The goal here is to disable all the features and light them up over time.
         const features: (
             | StaticFeature
             | DynamicFeature<any>
         )[] = (client as any)._features;
-        client.trace = Trace.Verbose;
 
         function disableFeature(ctor: {
             new (...args: any[]): StaticFeature | DynamicFeature<any>;
-        }): void;
-        function disableFeature(ctor: {
-            type:
-                | ProtocolNotificationType<any, any>
-                | ProtocolNotificationType0<any>;
-        }): void;
-        function disableFeature(ctor: {
-            type:
-                | ProtocolRequestType<any, any, any, any, any>
-                | ProtocolRequestType0<any, any, any, any>;
-        }): void;
-        function disableFeature(ctor: any) {
-            let index = ctor.type
-                ? features.findIndex((z) => (z as any).messages == ctor.type)
-                : features.findIndex((z) => z instanceof ctor);
+        }): void {
+            let index = features.findIndex((z) => z instanceof ctor);
             if (index > -1) {
                 features.splice(index, 1);
             }
         }
-        disableFeature(CompletionRequest);
-        disableFeature(HoverRequest);
-        disableFeature(SignatureHelpRequest);
-        disableFeature(DefinitionRequest);
-        disableFeature(ReferencesRequest);
-        disableFeature(DocumentHighlightRequest);
-        disableFeature(DocumentSymbolRequest);
-        disableFeature(WorkspaceSymbolRequest);
-        disableFeature(CodeLensRequest);
-        disableFeature(DocumentFormattingRequest);
-        disableFeature(DocumentRangeFormattingRequest);
-        disableFeature(DocumentOnTypeFormattingRequest);
-        disableFeature(RenameRequest);
-        disableFeature(DocumentLinkRequest);
-        disableFeature(TypeDefinitionFeature);
-        disableFeature(SelectionRangeFeature);
-        disableFeature(ImplementationFeature);
-        disableFeature(ColorProviderFeature);
-        disableFeature(WorkspaceFoldersFeature);
-        disableFeature(FoldingRangeFeature);
-        disableFeature(DeclarationFeature);
 
-        client.registerFeature(this.createInteropFeature(client));
-        const disposable = client.start();
+        disableFeature(CallHierarchyFeature); // Not implemented in O#
+        //disableFeature(CodeActionFeature);
+        //disableFeature(CodeLensFeature);
+        disableFeature(ColorProviderFeature); // Not implemented in O#
+        //disableFeature(CompletionItemFeature);
+        disableFeature(DeclarationFeature); // Not implemented in O#
+        //disableFeature(DefinitionFeature); // Needs metadata document/source generated document support
+        disableFeature(DiagnosticFeature);
+        //disableFeature(DocumentFormattingFeature);
+        //disableFeature(DocumentRangeFormattingFeature);
+        //disableFeature(DocumentOnTypeFormattingFeature); // This feature does not seem to be triggering
+        //disableFeature(DocumentHighlightFeature);
+        disableFeature(DocumentLinkFeature);  // Not implemented in O#
+        //disableFeature(DocumentSymbolFeature);
+        //disableFeature(FoldingRangeFeature);
+        //disableFeature(HoverFeature); // This feature does not always seem to be working. Wonder if requests are coming in too early.
+        //disableFeature(ImplementationFeature); // Needs metadata document/source generated document support
+        disableFeature(InlayHintsFeature); // The csharp-language-server-protocol library needs to update with 3.17 changes
+        disableFeature(InlineValueFeature); // Not implemented in O#
+        disableFeature(NotebookDocumentSyncFeature); // Not implemented in O#
+        //disableFeature(ReferencesFeature); // Needs metadata document/source generated document support
+        //disableFeature(RenameFeature);
+        disableFeature(SelectionRangeFeature); // Not implemented in O#
+        //disableFeature(SemanticTokensFeature); // This feature does not always seem to be working. Wonder if requests are coming in too early.
+        //disableFeature(SignatureHelpFeature);
+        //disableFeature(TypeDefinitionFeature); // Needs metadata document/source generated document support
+        disableFeature(TypeHierarchyFeature); // Not implemented in O#
+        disableFeature(WorkspaceFoldersFeature); // Not implemented in O#
+        //disableFeature(WorkspaceSymbolFeature);
+
+        const interopFeature = this.createInteropFeature(client);
+        client.registerFeature(interopFeature);
+
         this.client = client;
 
-        this.disposables.add(disposable);
-        this.context.subscriptions.push(disposable);
+        this.disposables.add(client);
+        this.context.subscriptions.push(client);
         this.eventStream.post(
             new ObservableEvents.OmnisharpLaunch(configuration.hostVersion ?? '', configuration.hostPath, configuration.hostKind === "Mono .NET Framework", configuration.hostPath ?? configuration.path, -1)
         );
-        return this.client.onReady();
+        return this.client.start();
+    }
+
+    async registerProviders(server: OmniSharpServer, optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature, eventStream: EventStream, advisor: Advisor, testManager: dotnetTest): Promise<Disposable> {
+        // Register providers for functionality implemented outside of the O# LSP.
+        return new CompositeDisposable();
     }
 
     async stop(): Promise<void> {
@@ -286,6 +340,14 @@ export class LspEngine implements IEngine {
 
     private createInteropFeature = (client: LanguageClient): StaticFeature => {
         return {
+            getState() {
+                return {
+                    kind: 'workspace',
+                    id: "omnisharpProtocolInteropFeature",
+                    registrations: true
+                };
+            },
+            dispose() {},
             fillClientCapabilities(capabilities) {},
             initialize: (capabilities, documentSelector) => {
                 client.onNotification(

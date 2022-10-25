@@ -113,10 +113,10 @@ export class Advisor {
 }
 
 export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature, options: OptionProvider): IDisposable {
-    return new DiagnosticsProvider(server, advisor, languageMiddlewareFeature, options);
+    return new OmniSharpDiagnosticsProvider(server, advisor, languageMiddlewareFeature, options);
 }
 
-class DiagnosticsProvider extends AbstractSupport {
+class OmniSharpDiagnosticsProvider extends AbstractSupport {
 
     private _validationAdvisor: Advisor;
     private _disposable: CompositeDisposable;

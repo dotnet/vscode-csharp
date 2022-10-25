@@ -30,6 +30,8 @@ import { StdioEngine } from './engines/StdioEngine';
 import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
 import { showProjectSelector } from '../features/commands';
 import { validateRequirements } from './requirementCheck';
+import { Advisor } from '../features/diagnosticsProvider';
+import TestManager from '../features/dotnetTest';
 
 enum ServerState {
     Starting,
@@ -547,6 +549,16 @@ export class OmniSharpServer {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
         }
+    }
+
+    public async registerProviders(eventStream: EventStream, advisor: Advisor, testManager: TestManager) {
+        if (this._state.status !== ServerState.Started) {
+            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to register providers failed because no server instance is running."));
+            return;
+        }
+
+        const { engine } = this._state;
+        return await engine.registerProviders(this, this.optionProvider, this.languageMiddlewareFeature, eventStream, advisor, testManager);
     }
 
     private onProjectConfigurationReceived(

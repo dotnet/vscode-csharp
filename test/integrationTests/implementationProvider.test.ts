@@ -4,13 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import CSharpImplementationProvider from "../../src/features/implementationProvider";
+import OmniSharpImplementationProvider from "../../src/features/implementationProvider";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect, should } from "chai";
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 
-suite(`${CSharpImplementationProvider.name}: ${testAssetWorkspace.description}`, () => {
+suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {

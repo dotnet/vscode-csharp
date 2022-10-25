@@ -26,7 +26,34 @@ import {
     removeBOMFromString,
 } from '../../utils/removeBOM';
 import { IEngine } from './IEngine';
-import { Events } from '../server';
+import { Events, OmniSharpServer } from '../server';
+import DefinitionMetadataDocumentProvider from '../../features/definitionMetadataDocumentProvider';
+import SourceGeneratedDocumentProvider from '../../features/sourceGeneratedDocumentProvider';
+import * as vscode from 'vscode';
+import OmniSharpCodeLensProvider from '../../features/codeLensProvider';
+import OmniSharpDocumentHighlightProvider from '../../features/documentHighlightProvider';
+import OmniSharpDocumentSymbolProvider from '../../features/documentSymbolProvider';
+import OmniSharpHoverProvider from '../../features/hoverProvider';
+import OmniSharpRenameProvider from '../../features/renameProvider';
+import OmniSharpFormatProvider from '../../features/formattingEditProvider';
+import OmniSharpWorkspaceSymbolProvider from '../../features/workspaceSymbolProvider';
+import OmniSharpSignatureHelpProvider from '../../features/signatureHelpProvider';
+import { OmniSharpFixAllProvider } from '../../features/fixAllProvider';
+import OmniSharpCompletionProvider, { CompletionAfterInsertCommand } from '../../features/completionProvider';
+import OmniSharpReferenceProvider from '../../features/referenceProvider';
+import OmniSharpImplementationProvider from '../../features/implementationProvider';
+import OmniSharpSemanticTokensProvider from '../../features/semanticTokensProvider';
+import OmniSharpInlayHintProvider from '../../features/inlayHintProvider';
+import fileOpenClose from '../../features/fileOpenCloseProvider';
+import trackVirtualDocuments from '../../features/virtualDocumentTracker';
+import OmniSharpCodeActionProvider from '../../features/codeActionProvider';
+import forwardChanges from '../../features/changeForwarding';
+import OmniSharpDefinitionProvider from '../../features/definitionProvider';
+import reportDiagnostics, { Advisor } from '../../features/diagnosticsProvider';
+import OptionProvider from '../../observers/OptionProvider';
+import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
+import TestManager from '../../features/dotnetTest';
+import { OmniSharpStructureProvider } from '../../features/structureProvider';
 
 export class StdioEngine implements IEngine {
     private static _nextId = 1;
@@ -51,6 +78,74 @@ export class StdioEngine implements IEngine {
             8,
             (request) => this._makeRequest(request)
         );
+    }
+
+    async registerProviders(server: OmniSharpServer, optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature, eventStream: EventStream, advisor: Advisor, testManager: TestManager): Promise<Disposable> {
+        const documentSelector: vscode.DocumentSelector = {
+            language: 'csharp',
+        };
+
+        const options = optionProvider.GetLatestOptions();
+
+        // register language feature provider on start
+        const localDisposables = new CompositeDisposable();
+
+        const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
+        definitionMetadataDocumentProvider.register();
+        localDisposables.add(definitionMetadataDocumentProvider);
+
+        const sourceGeneratedDocumentProvider = new SourceGeneratedDocumentProvider(server);
+        sourceGeneratedDocumentProvider.register();
+        localDisposables.add(sourceGeneratedDocumentProvider);
+
+        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new OmniSharpCodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new OmniSharpDocumentHighlightProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new OmniSharpDocumentSymbolProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerHoverProvider(documentSelector, new OmniSharpHoverProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(vscode.languages.registerRenameProvider(documentSelector, new OmniSharpRenameProvider(server, languageMiddlewareFeature)));
+        if (options.useFormatting) {
+            localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new OmniSharpFormatProvider(server, languageMiddlewareFeature)));
+            localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new OmniSharpFormatProvider(server, languageMiddlewareFeature), '}', '/', '\n', ';'));
+        }
+        const completionProvider = new OmniSharpCompletionProvider(server, languageMiddlewareFeature);
+        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, completionProvider, '.', ' '));
+        localDisposables.add(vscode.commands.registerCommand(CompletionAfterInsertCommand, async (item, document) => completionProvider.afterInsert(item, document)));
+        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new OmniSharpWorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
+        localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new OmniSharpSignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
+        // Since the FixAllProviders registers its own commands, we must instantiate it and add it to the localDisposables
+        // so that it will be cleaned up if OmniSharp is restarted.
+        const fixAllProvider = new OmniSharpFixAllProvider(server, languageMiddlewareFeature);
+        localDisposables.add(fixAllProvider);
+        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider, OmniSharpFixAllProvider.metadata));
+        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature, optionProvider));
+
+        const definitionProvider = new OmniSharpDefinitionProvider(server, definitionMetadataDocumentProvider, sourceGeneratedDocumentProvider, languageMiddlewareFeature);
+        localDisposables.add(vscode.languages.registerTypeDefinitionProvider(documentSelector, definitionProvider));
+        localDisposables.add(vscode.languages.registerTypeDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
+        localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
+        localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
+        localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new OmniSharpReferenceProvider(server, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
+        localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new OmniSharpImplementationProvider(server, languageMiddlewareFeature)));
+
+        localDisposables.add(forwardChanges(server));
+        // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
+        // so that it will be cleaned up if OmniSharp is restarted.
+        const codeActionProvider = new OmniSharpCodeActionProvider(server, optionProvider, languageMiddlewareFeature);
+        localDisposables.add(codeActionProvider);
+        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
+
+        localDisposables.add(trackVirtualDocuments(server, eventStream));
+        localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new OmniSharpStructureProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(fileOpenClose(server));
+
+        const semanticTokensProvider = new OmniSharpSemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
+        localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+        localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+
+        const inlayHintsProvider = new OmniSharpInlayHintProvider(server, languageMiddlewareFeature);
+        localDisposables.add(vscode.languages.registerInlayHintsProvider(documentSelector, inlayHintsProvider));
+
+        return localDisposables;
     }
 
     public async stop(): Promise<void> {
