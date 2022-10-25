@@ -2,6 +2,7 @@ name: Merge omnisharp master into feature/lsp_tools_host
 on:
   schedule:
     - cron:  '0 */3 * * *'
+  workflow_dispatch:
 jobs:
   Merge-LSP-Engine:
     runs-on: ubuntu-latest
