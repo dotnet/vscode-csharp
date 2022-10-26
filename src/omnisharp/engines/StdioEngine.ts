@@ -435,12 +435,7 @@ export class StdioEngine implements IEngine {
                 onError: (err) => reject(err),
             };
 
-            this._requestQueue.enqueue({
-                command,
-                data,
-                onSuccess: (value) => resolve(value),
-                onError: (err) => reject(err),
-            });
+            this._requestQueue.enqueue(request);
         });
 
         if (token) {
