@@ -61,6 +61,7 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         let sawEmptyAdditionalTextEdits = false;
 
         for (const i of nonSnippets) {
+            expect((<vscode.SnippetString>i.insertText).value).is.not.undefined;
             expect((<vscode.SnippetString>i.insertText).value).contains("$0");
             if (i.additionalTextEdits) {
                 sawAdditionalTextEdits = true;

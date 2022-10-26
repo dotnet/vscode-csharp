@@ -109,14 +109,14 @@ function t(startLine: number, character: number, length: number, tokenClassifict
     return { startLine, character, length, tokenClassifiction };
 }
 
-const _keyword = (text: string, line: number, col: number) => t(line, col, text.length, "plainKeyword");
-const _controlKeyword = (text: string, line: number, col: number) => t(line, col, text.length, "controlKeyword");
+const _keyword = (text: string, line: number, col: number) => t(line, col, text.length, "keyword");
+const _controlKeyword = (text: string, line: number, col: number) => t(line, col, text.length, "keyword - control");
 const _punctuation = (text: string, line: number, col: number) => t(line, col, text.length, "punctuation");
 const _operator = (text: string, line: number, col: number) => t(line, col, text.length, "operator");
 const _number = (text: string, line: number, col: number) => t(line, col, text.length, "number");
 const _string = (text: string, line: number, col: number) => t(line, col, text.length, "string");
-const _namespace = (text: string, line: number, col: number) => t(line, col, text.length, "namespace");
-const _class = (text: string, line: number, col: number) => t(line, col, text.length, "class");
-const _staticClass = (text: string, line: number, col: number) => t(line, col, text.length, "class.static");
-const _staticMethod = (text: string, line: number, col: number) => t(line, col, text.length, "member.static");
-const _parameter = (text: string, line: number, col: number) => t(line, col, text.length, "parameter");
+const _namespace = (text: string, line: number, col: number) => t(line, col, text.length, "namespace name");
+const _class = (text: string, line: number, col: number) => t(line, col, text.length, "class name");
+const _staticClass = (text: string, line: number, col: number) => t(line, col, text.length, "class name.static");
+const _staticMethod = (text: string, line: number, col: number) => t(line, col, text.length, "method name.static");
+const _parameter = (text: string, line: number, col: number) => t(line, col, text.length, "parameter name");

@@ -14,12 +14,12 @@ import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeatur
 import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBuilder';
 import { CancellationToken } from 'vscode-languageserver-protocol';
 
-export class FixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
+export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
     public static fixAllCodeActionKind =
       vscode.CodeActionKind.SourceFixAll.append('csharp');
 
     public static metadata: vscode.CodeActionProviderMetadata = {
-      providedCodeActionKinds: [FixAllProvider.fixAllCodeActionKind]
+      providedCodeActionKinds: [OmniSharpFixAllProvider.fixAllCodeActionKind]
     };
 
     public constructor(private server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
@@ -42,7 +42,7 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
             return [];
         }
 
-        if (context.only.contains(FixAllProvider.fixAllCodeActionKind)) {
+        if (context.only.contains(OmniSharpFixAllProvider.fixAllCodeActionKind)) {
             await this.applyFixes(document.fileName, FixAllScope.Document, undefined);
         }
 

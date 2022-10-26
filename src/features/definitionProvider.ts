@@ -13,7 +13,7 @@ import { OmniSharpServer } from '../omnisharp/server';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
-export default class CSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider, TypeDefinitionProvider {
+export default class OmniSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider, TypeDefinitionProvider {
     constructor(
         server: OmniSharpServer,
         private definitionMetadataDocumentProvider: DefinitionMetadataOrSourceGeneratedDocumentProvider,

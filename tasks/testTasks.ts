@@ -58,18 +58,19 @@ for (const projectName of projectNames) {
 }
 
 gulp.task("test:integration", gulp.series(projectNames.map(projectName => `test:integration:${projectName}`)));
-gulp.task("test:integration:stdio", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:lsp`)));
-gulp.task("test:integration:lsp", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:stdio`)));
-gulp.task("test", gulp.series("test:feature", "test:unit", "test:integration"));
+gulp.task("test:integration:stdio", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:stdio`)));
+gulp.task("test:integration:lsp", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:lsp`)));
+// TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
+gulp.task("test", gulp.series("test:feature", "test:unit", "test:integration:stdio"));
 
-async function runIntegrationTest(testAssetName: string, driver: 'stdio' | 'lsp') {
+async function runIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     let env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, "integrationTests"),
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: path.join(testAssetsRootPath, testAssetName),
         CODE_WORKSPACE_ROOT: rootPath,
-        OMNISHARP_DRIVER: driver,
+        OMNISHARP_ENGINE: engine,
         OMNISHARP_LOCATION: process.env.OMNISHARP_LOCATION,
         CODE_DISABLE_EXTENSIONS: 'true',
     };

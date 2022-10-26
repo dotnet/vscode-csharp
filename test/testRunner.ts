@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as Mocha from 'mocha';
 import * as glob from 'glob-promise';
 import * as fs from 'fs';
+import * as vscode from 'vscode';
 import { SubscribeToAllLoggers } from "../src/logger";
 
 // Linux: prevent a weird NPE when mocha on Linux requires the window size from the TTY
@@ -37,6 +38,11 @@ export async function run(testsRoot: string, options?: Mocha.MochaOptions) {
         retries: 2
     };
 
+    const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
+    const enableLspDriver = omnisharpConfig.get<boolean | undefined>('enableLspDriver', undefined);
+
+    omnisharpConfig.update('enableLspDriver', process.env.OMNISHARP_ENGINE === 'lsp', true);
+
     const mocha = new Mocha(options);
 
     setupLogging();
@@ -56,5 +62,6 @@ export async function run(testsRoot: string, options?: Mocha.MochaOptions) {
         if (failures > 0) {
             throw new Error(`${failures} tests failed.`);
         }
+        omnisharpConfig.update('enableLspDriver', enableLspDriver, true);
     });
 }
