@@ -19,5 +19,9 @@ jobs:
       with:
         global-json-file: server/global.json
 
-    - name: Build Microsoft.CodeAnalysis.LanguageServer
+    - name: Build Microsoft.CodeAnalysis.LanguageServer.sln
       run: dotnet build ./server/Microsoft.CodeAnalysis.LanguageServer.sln -warnaserror
+
+    - name: Test Microsoft.CodeAnalysis.LanguageServer.sln
+      # We already built in the previous step, no need to build again.
+      run: dotnet test ./server/Microsoft.CodeAnalysis.LanguageServer.sln --no-build
