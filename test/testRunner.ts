@@ -41,7 +41,7 @@ export async function run(testsRoot: string, options?: Mocha.MochaOptions) {
     const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
     const enableLspDriver = omnisharpConfig.get<boolean | undefined>('enableLspDriver', undefined);
 
-    omnisharpConfig.update('enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp', true);
+    omnisharpConfig.update('enableLspDriver', process.env.OMNISHARP_ENGINE === 'lsp', true);
 
     const mocha = new Mocha(options);
 
