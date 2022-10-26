@@ -74,7 +74,7 @@
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "singleCsproj",
-                "OMNISHARP_DRIVER": "stdio"
+                "OMNISHARP_ENGINE": "stdio"
             },
             "sourceMaps": true,
             "outFiles": [
@@ -99,7 +99,7 @@
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "BasicRazorApp2_1",
-                "OMNISHARP_DRIVER": "stdio"
+                "OMNISHARP_ENGINE": "stdio"
             },
         },
         {
@@ -119,7 +119,7 @@
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
-                "OMNISHARP_DRIVER": "stdio"
+                "OMNISHARP_ENGINE": "stdio"
             },
             "stopOnEntry": false,
             "sourceMaps": true,
@@ -145,7 +145,7 @@
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "singleCsproj",
-                "OMNISHARP_DRIVER": "lsp"
+                "OMNISHARP_ENGINE": "lsp"
             },
             "stopOnEntry": false,
             "sourceMaps": true,
@@ -171,7 +171,7 @@
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "BasicRazorApp2_1",
-                "OMNISHARP_DRIVER": "lsp"
+                "OMNISHARP_ENGINE": "lsp"
             },
         },
         {
@@ -191,7 +191,7 @@
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
-                "OMNISHARP_DRIVER": "lsp"
+                "OMNISHARP_ENGINE": "lsp"
             },
             "sourceMaps": true,
             "outFiles": [

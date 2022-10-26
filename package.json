@@ -75,8 +75,8 @@
     "strip-bom": "5.0.0",
     "strip-bom-buf": "2.0.0",
     "tmp": "0.0.33",
-    "vscode-languageclient": "^6.1.3",
-    "vscode-languageserver-protocol": "3.17.1",
+    "vscode-languageclient": "8.0.2",
+    "vscode-languageserver-protocol": "3.17.2",
     "vscode-nls": "5.0.1",
     "yauzl": "2.10.0"
   },
@@ -3942,100 +3942,133 @@
       {
         "language": "csharp",
         "scopes": {
-          "plainKeyword": [
+          "keyword": [
             "keyword.cs"
           ],
-          "controlKeyword": [
+          "keyword - control": [
             "keyword.control.cs"
           ],
-          "operatorOverloaded": [
+          "operator - overloaded": [
             "entity.name.function.member.overload.cs"
           ],
-          "preprocessorKeyword": [
+          "preprocessor keyword": [
             "keyword.preprocessor.cs"
           ],
-          "preprocessorText": [
+          "preprocessor text": [
             "meta.preprocessor.string.cs"
           ],
-          "excludedCode": [
+          "excluded code": [
             "support.other.excluded.cs"
           ],
           "punctuation": [
             "punctuation.cs"
           ],
-          "stringVerbatim": [
+          "string - verbatim": [
             "string.verbatim.cs"
           ],
-          "stringEscapeCharacter": [
+          "string - escape character": [
             "constant.character.escape.cs"
           ],
-          "delegate": [
+          "namespace name": [
+            "entity.name.type.namespace.cs"
+          ],
+          "class name": [
+            "entity.name.type.class.cs"
+          ],
+          "struct name": [
+            "entity.name.type.struct.cs"
+          ],
+          "interface name": [
+            "entity.name.type.interface.cs"
+          ],
+          "enum name": [
+            "entity.name.type.enum.cs"
+          ],
+          "enum member name": [
+            "variable.other.enummember.cs"
+          ],
+          "type parameter name": [
+            "entity.name.type.type-parameter.cs"
+          ],
+          "delegate name": [
             "entity.name.type.delegate.cs"
           ],
-          "module": [
+          "module name": [
             "entity.name.type.module.cs"
           ],
-          "extensionMethod": [
+          "method name": [
+            "entity.name.function.member.cs"
+          ],
+          "extension method name": [
             "entity.name.function.extension.cs"
           ],
-          "field": [
+          "property name": [
+            "variable.other.property.cs"
+          ],
+          "field name": [
             "entity.name.variable.field.cs"
           ],
-          "local": [
+          "constant name": [
+            "variable.other.constant.cs"
+          ],
+          "local name": [
             "entity.name.variable.local.cs"
           ],
-          "xmlDocCommentAttributeName": [
+          "parameter name": [
+            "entity.name.variable.parameter.cs"
+          ],
+          "xml doc comment - attribute name": [
             "comment.documentation.attribute.name.cs"
           ],
-          "xmlDocCommentAttributeQuotes": [
+          "xml doc comment - attribute quotes": [
             "comment.documentation.attribute.quotes.cs"
           ],
-          "xmlDocCommentAttributeValue": [
+          "xml doc comment - attribute value": [
             "comment.documentation.attribute.value.cs"
           ],
-          "xmlDocCommentCDataSection": [
+          "xml doc comment - cdata section": [
             "comment.documentation.cdata.cs"
           ],
-          "xmlDocCommentComment": [
+          "xml doc comment - comment": [
             "comment.documentation.comment.cs"
           ],
-          "xmlDocCommentDelimiter": [
+          "xml doc comment - delimiter": [
             "comment.documentation.delimiter.cs"
           ],
-          "xmlDocCommentEntityReference": [
+          "xml doc comment - entity reference": [
             "comment.documentation.entityReference.cs"
           ],
-          "xmlDocCommentName": [
+          "xml doc comment - name": [
             "comment.documentation.name.cs"
           ],
-          "xmlDocCommentProcessingInstruction": [
+          "xml doc comment - processing instruction": [
             "comment.documentation.processingInstruction.cs"
           ],
-          "xmlDocCommentText": [
+          "xml doc comment - text": [
             "comment.documentation.cs"
           ],
-          "regexComment": [
+          "regex - comment": [
             "string.regexp.comment.cs"
           ],
-          "regexCharacterClass": [
+          "regex - character class": [
             "constant.character.character-class.regexp.cs"
           ],
-          "regexAnchor": [
+          "regex - anchor": [
             "keyword.control.anchor.regexp.cs"
           ],
-          "regexQuantifier": [
+          "regex - quantifier": [
             "keyword.operator.quantifier.regexp.cs"
           ],
-          "regexGrouping": [
+          "regex - grouping": [
             "punctuation.definition.group.regexp.cs"
           ],
-          "regexAlternation": [
+          "regex - alternation": [
             "keyword.operator.or.regexp.cs"
           ],
-          "regexSelfEscapedCharacter": [
+          "regex - self escaped character": [
             "string.regexp.self-escaped-character.cs"
           ],
-          "regexOtherEscape": [
+          "regex - other escape": [
             "string.regexp.other-escape.cs"
           ]
         }

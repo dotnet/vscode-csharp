@@ -9,7 +9,7 @@ import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toRange } from '../omnisharp/typeConversion';
 import { DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, CancellationToken, TextDocument, Position } from 'vscode';
 
-export default class OmnisharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
+export default class OmniSharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
 
     public async provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
 
@@ -21,7 +21,7 @@ export default class OmnisharpDocumentHighlightProvider extends AbstractSupport 
             let res = await serverUtils.findUsages(this._server, req, token);
 
             if (res && Array.isArray(res.QuickFixes)) {
-                return res.QuickFixes.map(OmnisharpDocumentHighlightProvider._asDocumentHighlight);
+                return res.QuickFixes.map(OmniSharpDocumentHighlightProvider._asDocumentHighlight);
             }
         }
         catch {}

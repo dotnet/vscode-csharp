@@ -12,7 +12,7 @@ import { InlayHint, InlayHintRequest, InlayHintResolve as InlayHintResolveReques
 import { fromVSCodeRange, toVSCodePosition, toVSCodeTextEdit } from '../omnisharp/typeConversion';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 
-export default class CSharpInlayHintProvider extends AbstractProvider implements vscode.InlayHintsProvider {
+export default class OmniSharpInlayHintProvider extends AbstractProvider implements vscode.InlayHintsProvider {
     private readonly _onDidChangeInlayHints = new vscode.EventEmitter<void>();
     public readonly onDidChangeInlayHints = this._onDidChangeInlayHints.event;
 

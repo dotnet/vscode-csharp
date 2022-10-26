@@ -611,7 +611,7 @@
         },
         {
             "name": "Namespace",
-            "scope": "entity.name.namespace",
+            "scope": "entity.name.type.namespace",
             "settings": {
                 "foreground": "#D4D4D4"
             }
@@ -659,8 +659,8 @@
             }
         },
         {
-            "name": "Paramter",
-            "scope": "entity.name.type.parameter",
+            "name": "Type Parameter",
+            "scope": "entity.name.type.type-parameter",
             "settings": {
                 "foreground": "#b8d7a3"
             }
