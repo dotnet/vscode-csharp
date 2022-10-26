@@ -1,22 +1,22 @@
-name: Merge master into feature/lsp-engine
+name: Merge omnisharp master into feature/lsp_tools_host
 on:
   schedule:
     - cron:  '0 */3 * * *'
   workflow_dispatch:
 jobs:
-  Create-Merge-PR:
+  Merge-LSP-Engine:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: feature/lsp-engine
-      - name: Get changes from master
+          ref: feature/lsp_tools_host
+      - name: Get changes from Omnisharp-vscode/feature/lsp-engine
         run: |
           git remote add upstream https://github.com/OmniSharp/omnisharp-vscode.git
-          git fetch upstream master:upstream-master
-          git reset --hard upstream-master
+          git fetch upstream feature/lsp-engine:upstream-feature/lsp-engine
+          git reset --hard upstream-feature/lsp-engine
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
-          title: Merge master into feature/lsp-engine
-          branch: merge-master-to-feature-lsp-engine
+          title: Merge omnisharp-vscode/feature/lsp-engine into feature/lsp_tools_host
+          branch: merge-omnisharp-lsp-engine

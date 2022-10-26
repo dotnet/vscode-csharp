@@ -24,6 +24,7 @@ import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import { getDecompilationAuthorization } from './decompilationPrompt';
 import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
 import { Advisor } from '../features/diagnosticsProvider';
+import { activateRoslynLanguageServer } from "../lsptoolshost/roslynLanguageServer";
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -32,6 +33,12 @@ export interface ActivationResult {
 }
 
 export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string, outputChannel: vscode.OutputChannel) {
+    let useRoslynLsp = process.env.ROSLYN_LSP;
+    if (useRoslynLsp) {
+        activateRoslynLanguageServer(context);
+        return;
+    }
+
     const disposables = new CompositeDisposable();
 
     const options = optionProvider.GetLatestOptions();
