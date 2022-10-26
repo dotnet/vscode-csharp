@@ -56,7 +56,9 @@ export class LspEngine implements IEngine {
         private platformInfo: PlatformInformation,
         private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver,
-    ) {}
+    ) { }
+
+    private _initializeTask: Promise<void> | undefined;
 
     public async start(cwd: string, args: string[], launchTarget: LaunchTarget, launchInfo: LaunchInfo, options: Options): Promise<void> {
         const configuration = await configure(cwd, ['-lsp', '--encoding', 'ascii'].concat(args), launchInfo, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
@@ -287,8 +289,19 @@ export class LspEngine implements IEngine {
     }
 
     async waitForInitialize(): Promise<void> {
-        while (!(await this.client.sendRequest(this.readyStatus))) {
-            await new Promise((r) => setTimeout(r, 100));
+        if (this._initializeTask === undefined) {
+            this._initializeTask = waitForReady(this.client);
+        }
+
+        return this._initializeTask;
+
+        async function waitForReady(client: LanguageClient) {
+            const readyStatus = new RequestType0<boolean, void>(
+                'o#/checkreadystatus'
+            );
+            while (!(await client.sendRequest(readyStatus))) {
+                await new Promise((r) => setTimeout(r, 100));
+            }
         }
     }
 
@@ -300,6 +313,8 @@ export class LspEngine implements IEngine {
         if (data?.Buffer) {
             delete data.Buffer;
         }
+
+        await this.waitForInitialize();
 
         let tries = 0;
 
@@ -337,10 +352,6 @@ export class LspEngine implements IEngine {
             this.eventBus.removeListener(eventName, listener)
         );
     }
-
-    private readyStatus = new RequestType0<boolean, void>(
-        'o#/checkreadystatus'
-    );
 
     private createInteropFeature = (client: LanguageClient): StaticFeature => {
         return {
