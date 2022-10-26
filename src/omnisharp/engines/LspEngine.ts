@@ -19,21 +19,21 @@ import {
     CancellationTokenSource,
     OutputChannel,
 } from 'vscode';
-import { ColorProviderFeature } from 'vscode-languageclient/lib/colorProvider';
-import { FoldingRangeFeature } from 'vscode-languageclient/lib/foldingRange';
-import { WorkspaceFoldersFeature } from 'vscode-languageclient/lib/workspaceFolders';
-import { ImplementationFeature } from 'vscode-languageclient/lib/implementation';
-import { DeclarationFeature } from 'vscode-languageclient/lib/declaration';
-import { SelectionRangeFeature } from 'vscode-languageclient/lib/selectionRange';
-import { TypeDefinitionFeature } from 'vscode-languageclient/lib/typeDefinition';
-
 import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
 import { Events } from '../server';
 import { IEngine } from './IEngine';
 import { PlatformInformation } from '../../platform';
 import { IHostExecutableResolver } from '../../constants/IHostExecutableResolver';
 import { CodeLensRequest, CompletionRequest, DefinitionRequest, DocumentFormattingRequest, DocumentHighlightRequest, DocumentLinkRequest, DocumentOnTypeFormattingRequest, DocumentRangeFormattingRequest, DocumentSymbolRequest, HoverRequest, ProtocolNotificationType, ProtocolNotificationType0, ProtocolRequestType, ProtocolRequestType0, ReferencesRequest, RenameRequest, SignatureHelpRequest, WorkspaceSymbolRequest } from 'vscode-languageserver-protocol';
-import { DynamicFeature, LanguageClient, LanguageClientOptions, RequestType0, ServerOptions, StaticFeature, Trace } from 'vscode-languageclient';
+import { DynamicFeature, LanguageClientOptions, RequestType0, StaticFeature, Trace } from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import { TypeDefinitionFeature } from 'vscode-languageclient/lib/common/typeDefinition';
+import { SelectionRangeFeature } from 'vscode-languageclient/lib/common/selectionRange';
+import { ImplementationFeature } from 'vscode-languageclient/lib/common/implementation';
+import { ColorProviderFeature } from 'vscode-languageclient/lib/common/colorProvider';
+import { WorkspaceFoldersFeature } from 'vscode-languageclient/lib/common/workspaceFolder';
+import { FoldingRangeFeature } from 'vscode-languageclient/lib/common/foldingRange';
+import { DeclarationFeature } from 'vscode-languageclient/lib/common/declaration';
 
 export class LspEngine implements IEngine {
     client: LanguageClient;
@@ -167,7 +167,7 @@ export class LspEngine implements IEngine {
             | StaticFeature
             | DynamicFeature<any>
         )[] = (client as any)._features;
-        client.trace = Trace.Verbose;
+        client.setTrace(Trace.Verbose);
 
         function disableFeature(ctor: {
             new (...args: any[]): StaticFeature | DynamicFeature<any>;
@@ -213,15 +213,15 @@ export class LspEngine implements IEngine {
         disableFeature(DeclarationFeature);
 
         client.registerFeature(this.createInteropFeature(client));
-        const disposable = client.start();
+
         this.client = client;
 
-        this.disposables.add(disposable);
-        this.context.subscriptions.push(disposable);
+        this.disposables.add(client);
+        this.context.subscriptions.push(client);
         this.eventStream.post(
             new ObservableEvents.OmnisharpLaunch(configuration.hostVersion ?? '', configuration.hostPath, configuration.hostKind === "Mono .NET Framework", configuration.hostPath ?? configuration.path, -1)
         );
-        return this.client.onReady();
+        return this.client.start();
     }
 
     async stop(): Promise<void> {
@@ -286,6 +286,14 @@ export class LspEngine implements IEngine {
 
     private createInteropFeature = (client: LanguageClient): StaticFeature => {
         return {
+            getState() {
+                return {
+                    kind: 'workspace',
+                    id: "omnisharpProtocolInteropFeature",
+                    registrations: true
+                };
+            },
+            dispose() { },
             fillClientCapabilities(capabilities) {},
             initialize: (capabilities, documentSelector) => {
                 client.onNotification(
