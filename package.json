@@ -619,6 +619,17 @@
     "configuration": {
       "title": "C# configuration",
       "properties": {
+        "microsoft-codeanalysis-languageserver.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "verbose",
+          "description": "Traces the communication between VS Code and the language server."
+        },
         "csharp.format.enable": {
           "type": "boolean",
           "default": true,

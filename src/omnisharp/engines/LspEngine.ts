@@ -228,7 +228,7 @@ export class LspEngine implements IEngine {
         )[] = (client as any)._features;
 
         function disableFeature(ctor: {
-            new (...args: any[]): StaticFeature | DynamicFeature<any>;
+            new(...args: any[]): StaticFeature | DynamicFeature<any>;
         }): void {
             let index = features.findIndex((z) => z instanceof ctor);
             if (index > -1) {
@@ -362,8 +362,8 @@ export class LspEngine implements IEngine {
                     registrations: true
                 };
             },
-            dispose() {},
-            fillClientCapabilities(capabilities) {},
+            dispose() { },
+            fillClientCapabilities(capabilities) { },
             initialize: (capabilities, documentSelector) => {
                 client.onNotification(
                     'o#/log',
