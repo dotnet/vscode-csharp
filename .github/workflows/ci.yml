@@ -41,7 +41,7 @@ jobs:
 
     - name: Run unit and integration tests
       run: |
-          gulp test
+          npm run test
           npm run test:artifacts
       env:
         CODE_VERSION: 1.66.0

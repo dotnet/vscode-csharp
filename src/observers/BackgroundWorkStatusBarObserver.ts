@@ -16,7 +16,7 @@ export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
             if (asProjectEvent.message.Status !== BackgroundDiagnosticStatus.Finished) {
                 let {NumberFilesRemaining, NumberFilesTotal} = asProjectEvent.message;
                 let message = `Analyzing ${NumberFilesTotal} files - Remaining ${NumberFilesRemaining} files`;
-                this.SetAndShowStatusBar(`$(sync~spin) ${message}`, 'o.showOutput', null, `${message}`);
+                this.SetAndShowStatusBar(`$(sync~spin) ${message}`, 'o.showOutput', undefined, `${message}`);
             }
             else {
                 this.ResetAndHideStatusBar();
