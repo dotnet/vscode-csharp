@@ -27,7 +27,7 @@ import { Events, OmniSharpServer } from '../server';
 import { IEngine } from './IEngine';
 import { PlatformInformation } from '../../platform';
 import { IHostExecutableResolver } from '../../constants/IHostExecutableResolver';
-import { Command, DynamicFeature, LanguageClientOptions, RequestType0, StaticFeature, Trace } from 'vscode-languageclient';
+import { Command, DynamicFeature, LanguageClientOptions, RequestType, StaticFeature, Trace } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { SelectionRangeFeature } from 'vscode-languageclient/lib/common/selectionRange';
 import { ColorProviderFeature } from 'vscode-languageclient/lib/common/colorProvider';
@@ -296,10 +296,10 @@ export class LspEngine implements IEngine {
         return this._initializeTask;
 
         async function waitForReady(client: LanguageClient) {
-            const readyStatus = new RequestType0<boolean, void>(
+            const statusRequest = new RequestType<{}, boolean, void>(
                 'o#/checkreadystatus'
             );
-            while (!(await client.sendRequest(readyStatus))) {
+            while (!await client.sendRequest(statusRequest, {})) {
                 await new Promise((r) => setTimeout(r, 100));
             }
         }
