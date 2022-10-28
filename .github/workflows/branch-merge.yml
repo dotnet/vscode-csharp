@@ -1,4 +1,4 @@
-name: Merge omnisharp master into feature/lsp_tools_host
+name: Merge omnisharp-vscode/feature/lsp-engine into feature/lsp_tools_host
 on:
   schedule:
     - cron:  '0 */3 * * *'
