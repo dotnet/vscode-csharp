@@ -2,10 +2,10 @@ name: OmniSharp-VSCode CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, feature/** ]
 
   pull_request:
-    branches: [ master ]
+    branches: [ master, feature/** ]
 
 jobs:
   build:
@@ -41,7 +41,7 @@ jobs:
 
     - name: Run unit and integration tests
       run: |
-          gulp test
+          npm run test
           npm run test:artifacts
       env:
         CODE_VERSION: 1.66.0

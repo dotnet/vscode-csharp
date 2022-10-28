@@ -32,7 +32,7 @@ gulp.task("test:unit", async () => {
         '--ui',
         'tdd',
         '-c',
-        'test/unitTests/**/*.test.ts'
+        'out/test/unitTests/**/*.test.js'
     ]);
 
     if (result.code === null || result.code > 0) {

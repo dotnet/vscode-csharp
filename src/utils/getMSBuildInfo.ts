@@ -21,7 +21,7 @@ export async function getMSBuildVersion(): Promise<string | undefined> {
     try {
         let data = await execChildProcess(`${msbuildExeName} --version --nologo`, process.cwd(), process.env);
         const match = /^(\d+\.\d+\.\d+\.\d+)$/.exec(data);
-        if (match.length > 0) {
+        if (match) {
             _msbuildVersion = match[1];
         }
     }

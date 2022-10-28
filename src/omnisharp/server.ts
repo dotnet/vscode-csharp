@@ -10,13 +10,13 @@ import * as protocol from './protocol';
 import * as utils from '../common';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-import { ChildProcess, exec } from 'child_process';
-import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
+import { exec } from 'child_process';
+import { LaunchTarget, findLaunchTargets, LaunchTargetKind, SpawnedChildProcess } from './launcher';
 import { createInterface } from 'readline';
 import { Request, RequestQueueCollection } from './requestQueue';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
+import { OmnisharpManager } from './OmnisharpManager';
 import { Options } from './options';
 import { PlatformInformation } from '../platform';
 import { launchOmniSharp } from './launcher';
@@ -49,7 +49,7 @@ type State = {
 } | {
     status: ServerState.Started,
     disposables: CompositeDisposable,
-    serverProcess: ChildProcess,
+    serverProcess: SpawnedChildProcess,
     telemetryIntervalId: NodeJS.Timeout,
 };
 
@@ -89,9 +89,6 @@ module Events {
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
-const serverUrl = "https://roslynomnisharp.blob.core.windows.net";
-const installPath = ".omnisharp";
-const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export class OmniSharpServer {
 
@@ -443,9 +440,9 @@ export class OmniSharpServer {
             args.push(`DotNetCliOptions:LocationPaths:${i}=${options.dotNetCliPaths[i]}`);
         }
 
-        let launchInfo: LaunchInfo;
+        let launchPath: string;
         try {
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, serverUrl, latestVersionFileServerPath, installPath, this.extensionPath);
+            launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, this.extensionPath);
         }
         catch (e) {
             const error = e as Error; // Unsafe TypeScript hack to recognize the catch type as Error.
@@ -457,7 +454,7 @@ export class OmniSharpServer {
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            const launchResult = await launchOmniSharp(cwd, args, launchInfo, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
+            const launchResult = await launchOmniSharp(cwd, args, launchPath, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
             this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.hostVersion, launchResult.hostPath, launchResult.hostIsMono, launchResult.command, launchResult.process.pid));
 
             if (!options.razorDisabled && options.razorPluginPath.length > 0) {
@@ -679,7 +676,7 @@ export class OmniSharpServer {
 
     private async _doConnect(
         disposables: CompositeDisposable,
-        serverProcess: ChildProcess,
+        serverProcess: SpawnedChildProcess,
         options: Options): Promise<void> {
         serverProcess.stderr.on('data', (data: Buffer) => {
             let trimData = removeBOMFromBuffer(data);
