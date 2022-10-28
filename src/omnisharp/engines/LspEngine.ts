@@ -7,7 +7,6 @@ import * as protocol from '../protocol';
 import { CancellationToken } from '../../vscodeAdapter';
 import { configure, LaunchTarget } from '../launcher';
 import { EventEmitter } from 'events';
-import { LaunchInfo } from '../OmnisharpManager';
 import { Options } from '../options';
 import { setTimeout } from 'timers';
 import * as ObservableEvents from '../loggingEvents';
@@ -45,7 +44,7 @@ import dotnetTest from '../../features/dotnetTest';
 import OptionProvider from '../../observers/OptionProvider';
 
 export class LspEngine implements IEngine {
-    client: LanguageClient;
+    client: LanguageClient | undefined;
     constructor(
         private eventBus: EventEmitter,
         private eventStream: EventStream,
@@ -60,8 +59,8 @@ export class LspEngine implements IEngine {
 
     private _initializeTask: Promise<void> | undefined;
 
-    public async start(cwd: string, args: string[], launchTarget: LaunchTarget, launchInfo: LaunchInfo, options: Options): Promise<void> {
-        const configuration = await configure(cwd, ['-lsp', '--encoding', 'ascii'].concat(args), launchInfo, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
+    public async start(cwd: string, args: string[], launchTarget: LaunchTarget, launchPath: string, options: Options): Promise<void> {
+        const configuration = await configure(cwd, ['-lsp', '--encoding', 'ascii'].concat(args), launchPath, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
         let serverOptions: ServerOptions = {
             run: {
                 command: configuration.path,
@@ -101,6 +100,10 @@ export class LspEngine implements IEngine {
             middleware: {
                 async provideDefinition(document, position, token, next) {
                     const result = await next(document, position, token);
+                    if (!result) {
+                        return result;
+                    }
+
                     // Needs Metadata document support
                     return languageMiddlewareFeature.remap(
                         'remapLocations',
@@ -110,6 +113,10 @@ export class LspEngine implements IEngine {
                 },
                 async provideTypeDefinition(document, position, token, next) {
                     const result = await next(document, position, token);
+                    if (!result) {
+                        return result;
+                    }
+
                     // Needs Metadata document support
                     return languageMiddlewareFeature.remap(
                         'remapLocations',
@@ -127,6 +134,10 @@ export class LspEngine implements IEngine {
                 },
                 async provideImplementation(document, position, token, next) {
                     const result = await next(document, position, token);
+                    if (!result) {
+                        return result;
+                    }
+
                     // Needs Metadata document support
                     return languageMiddlewareFeature.remap(
                         'remapLocations',
@@ -136,6 +147,10 @@ export class LspEngine implements IEngine {
                 },
                 async provideRenameEdits(document, position, newName, token, next) {
                     const result = await next(document, position, newName, token);
+                    if (!result) {
+                        return result;
+                    }
+
                     return languageMiddlewareFeature.remap(
                         'remapWorkspaceEdit',
                         result,
@@ -144,6 +159,10 @@ export class LspEngine implements IEngine {
                 },
                 async provideCodeLenses(document, token, next) {
                     const result = await next(document, token);
+                    if (!result) {
+                        return result;
+                    }
+
                     // Covert CodeLens results to locations for mapping.
                     const locations = result.map(r => new Location(document.uri, r.range));
                     const mappedLocations = await languageMiddlewareFeature.remap("remapLocations", locations, token);
@@ -152,6 +171,10 @@ export class LspEngine implements IEngine {
                 },
                 async resolveCodeLens(codeLens, token, next) {
                     const result = await next(codeLens, token);
+                    if (!result || result.command === undefined) {
+                        return result;
+                    }
+
                     // The command returned from O# isn't valid for VS Code.
                     // Fix up the result by using the VS Code find reference command.
                     // The codeLens data contains the uri for the current document.
@@ -285,10 +308,14 @@ export class LspEngine implements IEngine {
     }
 
     async stop(): Promise<void> {
-        return this.client.stop();
+        return this.client?.stop();
     }
 
     async waitForInitialize(): Promise<void> {
+        if (this.client === undefined) {
+            throw new Error("LSP Client not started.");
+        }
+
         if (this._initializeTask === undefined) {
             this._initializeTask = waitForReady(this.client);
         }
@@ -314,9 +341,14 @@ export class LspEngine implements IEngine {
             delete data.Buffer;
         }
 
+        if (this.client === undefined) {
+            throw new Error("Request made before client was started.");
+        }
+
         await this.waitForInitialize();
 
         let tries = 0;
+        let error: any;
 
         while (tries < 5) {
             try {
@@ -328,7 +360,7 @@ export class LspEngine implements IEngine {
                 );
 
                 return response;
-            } catch (error) {
+            } catch (e) {
                 /*if (tries < 5 && error?.code === -32800) { // Request Cancelled
                     tries++;
                 }
@@ -337,11 +369,13 @@ export class LspEngine implements IEngine {
                 if (tries < 5 && error?.code === -32801) { // Content modified
                     tries++;
                 } else {
-                    console.error(error);
-                    throw error;
+                    error = e;
                 }
             }
         }
+
+        console.error(error);
+        throw error;
     }
 
     public addListener<T = {}>(event: string, listener: (e: T) => void): Disposable {
