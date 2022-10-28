@@ -12,7 +12,7 @@ import { OmniSharpServer } from '../omnisharp/server';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
-export default class OmnisharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
+export default class OmniSharpReferenceProvider extends AbstractSupport implements ReferenceProvider {
 
     public constructor(server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature, private generatedDocumentProvider: SourceGeneratedDocumentProvider) {
         super(server, languageMiddlewareFeature);

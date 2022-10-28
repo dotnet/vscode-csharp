@@ -14,7 +14,7 @@ import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeatur
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
 
-export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
+export default class OmniSharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
 
     constructor(
         server: OmniSharpServer,
@@ -58,7 +58,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 
         return new SymbolInformation(
             symbolInfo.Text,
-            OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
+            OmniSharpWorkspaceSymbolProvider._toKind(symbolInfo),
             symbolInfo.ContainingSymbolName ?? "",
             location);
     }

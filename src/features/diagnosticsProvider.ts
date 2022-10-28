@@ -112,11 +112,11 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature): IDisposable {
-    return new DiagnosticsProvider(server, advisor, languageMiddlewareFeature);
+export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature, options: OptionProvider): IDisposable {
+    return new OmniSharpDiagnosticsProvider(server, advisor, languageMiddlewareFeature, options);
 }
 
-class DiagnosticsProvider extends AbstractSupport {
+class OmniSharpDiagnosticsProvider extends AbstractSupport {
 
     private _validationAdvisor: Advisor;
     private _disposable: CompositeDisposable;
@@ -127,7 +127,7 @@ class DiagnosticsProvider extends AbstractSupport {
     private _subscriptions: Subscription[] = [];
     private _suppressHiddenDiagnostics: boolean;
 
-    constructor(server: OmniSharpServer, validationAdvisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(server: OmniSharpServer, validationAdvisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature, options: OptionProvider) {
         super(server, languageMiddlewareFeature);
 
         this._analyzersEnabled = vscode.workspace.getConfiguration('omnisharp').get('enableRoslynAnalyzers', false);
@@ -135,9 +135,11 @@ class DiagnosticsProvider extends AbstractSupport {
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
         this._suppressHiddenDiagnostics = vscode.workspace.getConfiguration('csharp').get('suppressHiddenDiagnostics', true);
 
-        this._subscriptions.push(this._validateCurrentDocumentPipe
-            .pipe(debounceTime(750))
-            .subscribe(async document => await this._validateDocument(document)));
+        if (!options.GetLatestOptions().enableLspDriver) {
+            this._subscriptions.push(this._validateCurrentDocumentPipe
+                .pipe(debounceTime(750))
+                .subscribe(async document => await this._validateDocument(document)));
+        }
 
         this._subscriptions.push(this._validateAllPipe
             .pipe(debounceTime(3000))
@@ -243,6 +245,13 @@ class DiagnosticsProvider extends AbstractSupport {
                     this._diagnostics.delete(document.uri);
                 }
 
+                return;
+            }
+
+            // If we're over the file limit and the file shouldn't have diagnostics, don't add them. This can
+            // happen if a file is opened then immediately closed, as the on doc close event will occur before
+            // diagnostics come back from the server.
+            if (!this._validationAdvisor.shouldValidateAll() && vscode.workspace.textDocuments.every(doc => doc.uri !== document.uri)) {
                 return;
             }
 

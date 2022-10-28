@@ -23,6 +23,7 @@ const omniSharpOptions: ReadonlyArray<OptionsKey> = [
     "organizeImportsOnFormat",
     "enableAsyncCompletion",
     "useModernNet",
+    "enableLspDriver",
     "sdkPath",
     "sdkVersion",
     "sdkIncludePrereleases",
