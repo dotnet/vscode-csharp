@@ -35,7 +35,7 @@ suite('OmnisharpStatusBarObserver', () => {
         test(`${event.constructor.name}: Status bar is shown with the error text`, () => {
             observer.post(event);
             expect(showCalled).to.be.true;
-            expect(statusBarItem.text).to.equal(`$(flame)`);
+            expect(statusBarItem.text).to.startWith(`$(flame)`);
             expect(statusBarItem.command).to.equal('o.showOutput');
             expect(statusBarItem.tooltip).to.equal('Error starting OmniSharp');
             expect(statusBarItem.color).to.equal(StatusBarColors.Red);
@@ -46,10 +46,10 @@ suite('OmnisharpStatusBarObserver', () => {
         let event = new OmnisharpServerOnStdErr("std error");
         observer.post(event);
         expect(showCalled).to.be.true;
-        expect(statusBarItem.color).to.equal(StatusBarColors.Red);
-        expect(statusBarItem.text).to.equal(`$(flame)`);
+        expect(statusBarItem.text).to.startWith(`$(flame)`);
         expect(statusBarItem.command).to.equal('o.showOutput');
         expect(statusBarItem.tooltip).to.contain(event.message);
+        expect(statusBarItem.color).to.equal(StatusBarColors.Red);
     });
 
 
