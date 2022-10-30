@@ -678,13 +678,6 @@ export class OmniSharpServer {
         disposables: CompositeDisposable,
         serverProcess: SpawnedChildProcess,
         options: Options): Promise<void> {
-        serverProcess.stderr.on('data', (data: Buffer) => {
-            let trimData = removeBOMFromBuffer(data);
-            if (trimData.length > 0) {
-                this._fireEvent(Events.StdErr, trimData.toString());
-            }
-        });
-
         const readLine = createInterface({
             input: serverProcess.stdout,
             output: serverProcess.stdin,
@@ -693,6 +686,15 @@ export class OmniSharpServer {
 
         const promise = new Promise<void>((resolve, reject) => {
             let listener: Disposable;
+            
+            serverProcess.stderr.on('data', (data: Buffer) => {
+                let trimData = removeBOMFromBuffer(data);
+                if (trimData.length > 0) {
+                    const err = trimData.toString();
+                    this._fireEvent(Events.StdErr, err);
+                    reject(new Error(err));
+                }
+            });
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
             const timeoutDuration = options.projectLoadTimeout * 1000;
