@@ -29,8 +29,11 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     const dotnetVersion = await exec('dotnet --version', workDirectory);
     console.log("Dotnet version: " + dotnetVersion);
 
+    let solutionPath = await vscode.workspace.findFiles('*.sln', '**/node_modules/**', 1);
+    console.log(`Found solution ${solutionPath[0]}`);
+
     let serverOptions: ServerOptions = async () => {
-        const process = startServer(_channel);
+        const process = startServer(_channel, solutionPath[0]);
         return Promise.resolve<cp.ChildProcess>(process);
     };
 
@@ -44,6 +47,15 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
         },
         traceOutputChannel: _channel,
         outputChannel: _channel,
+        uriConverters: {
+            // VSCode encodes the ":" as "%3A" in file paths, for example "file:///c%3A/Users/dabarbet/source/repos/ConsoleApp8/ConsoleApp8/Program.cs".
+            // System.Uri does not decode the LocalPath property correctly into a valid windows path, instead you get something like
+            // "/c:/Users/dabarbet/source/repos/ConsoleApp8/ConsoleApp8/Program.cs" (note the incorrect forward slashes and prepended "/").
+            // Properly decoded, it would look something like "c:\Users\dabarbet\source\repos\ConsoleApp8\ConsoleApp8\Program.cs"
+            // So instead we decode the URI here before sending to the server.
+            code2Protocol: UriConverter.serialize,
+            protocol2Code: UriConverter.deserialize,
+        }
     };
 
     // Create the language client and start the client.
@@ -84,7 +96,7 @@ export async function exec(command: string, workDirectory: string = process.cwd(
     });
 }
 
-function startServer(outputChannel: vscode.OutputChannel) : cp.ChildProcess {
+function startServer(outputChannel: vscode.OutputChannel, solutionPath: vscode.Uri) : cp.ChildProcess {
     let clientRoot = __dirname;
     const serverPath = path.join(clientRoot, "..", "server", "Microsoft.CodeAnalysis.LanguageServer", "bin", "Debug", "net7.0", "Microsoft.CodeAnalysis.LanguageServer.dll");
 
@@ -93,11 +105,25 @@ function startServer(outputChannel: vscode.OutputChannel) : cp.ChildProcess {
         throw error;
     }
 
+
     let args: string[] = [
         serverPath,
         "--debug",
+        "--solutionPath",
+        solutionPath.fsPath,
     ];
 
     let childProcess = cp.spawn('dotnet', args);
     return childProcess;
+}
+
+export class UriConverter {
+	public static serialize(uri: vscode.Uri): string {
+		// Fix issue in System.Uri where file:///c%3A/file.txt is not a valid Windows path
+		return uri.toString(true);
+	}
+
+	public static deserialize(value: string): vscode.Uri {
+		return vscode.Uri.parse(value);
+	}
 }
