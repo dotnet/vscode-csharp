@@ -11,7 +11,7 @@ import { vscode, CancellationToken } from '../vscodeAdapter';
 import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { OmnisharpManager, LaunchInfo } from './OmnisharpManager';
+import { OmnisharpManager } from './OmnisharpManager';
 import { PlatformInformation } from '../platform';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
@@ -87,9 +87,6 @@ export module Events {
 }
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
-const serverUrl = 'https://roslynomnisharp.blob.core.windows.net';
-const installPath = '.omnisharp';
-const latestVersionFileServerPath = 'releases/versioninfo.txt';
 
 export class OmniSharpServer {
 
@@ -482,16 +479,9 @@ export class OmniSharpServer {
             args.push(`DotNetCliOptions:LocationPaths:${i}=${options.dotNetCliPaths[i]}`);
         }
 
-        let launchInfo: LaunchInfo;
+        let launchPath: string;
         try {
-            launchInfo = await this._omnisharpManager.GetOmniSharpLaunchInfo(
-                this.packageJSON.defaults.omniSharp,
-                options.path,
-                /* useFramework */ !options.useModernNet,
-                serverUrl,
-                latestVersionFileServerPath,
-                installPath,
-                this.extensionPath);
+            launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, this.extensionPath);
         }
         catch (e) {
             const error = e as Error; // Unsafe TypeScript hack to recognize the catch type as Error.
@@ -514,7 +504,7 @@ export class OmniSharpServer {
                 cwd,
                 args,
                 launchTarget,
-                launchInfo,
+                launchPath,
                 options
             );
 

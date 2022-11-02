@@ -18,7 +18,7 @@ suite(`launcher:`, () => {
             vscode.Uri.parse(`${vsls}:/test/Program.cs`),
         ];
 
-        const launchTargets = resourcesToLaunchTargets(testResources, maxProjectResults);
+        const launchTargets = resourcesToLaunchTargets(testResources, workspaceFolders, maxProjectResults);
 
         const liveShareTarget = launchTargets.find(target => target === vslsTarget);
         assert.exists(liveShareTarget, "Launch targets was not the Visual Studio Live Share target.");
