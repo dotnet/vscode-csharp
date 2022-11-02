@@ -72,17 +72,17 @@ async function checkRequirements(options: Options): Promise<RequirementResult> {
     }
     else {
         const monoResolver = new OmniSharpMonoResolver(getMonoVersion);
-        let monoError: Error | undefined;
+        let monoError = false;
         try {
             await monoResolver.getHostExecutableInfo(options);
         } catch (e) {
-            monoError = e;
+            monoError = true;
         }
 
         const msbuildVersion = await getMSBuildVersion();
 
         return {
-            needsMono: monoError !== undefined,
+            needsMono: monoError,
             needsDotNetSdk: false,
             needsMSBuildTools: msbuildVersion !== undefined,
         };

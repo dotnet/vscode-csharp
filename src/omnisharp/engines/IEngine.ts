@@ -5,7 +5,6 @@
 
 import { CancellationToken } from '../../vscodeAdapter';
 import { LaunchTarget } from '../launcher';
-import { LaunchInfo } from '../OmnisharpManager';
 import { Options } from '../options';
 import Disposable from '../../Disposable';
 import { OmniSharpServer } from '../server';
@@ -20,7 +19,7 @@ export interface IEngine {
         cwd: string,
         args: string[],
         launchTarget: LaunchTarget,
-        launchInfo: LaunchInfo,
+        launchPath: string,
         options: Options,
     ): Promise<void>;
     stop(): Promise<void>;
