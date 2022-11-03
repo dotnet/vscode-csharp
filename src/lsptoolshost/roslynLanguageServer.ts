@@ -118,12 +118,12 @@ function startServer(outputChannel: vscode.OutputChannel, solutionPath: vscode.U
 }
 
 export class UriConverter {
-	public static serialize(uri: vscode.Uri): string {
-		// Fix issue in System.Uri where file:///c%3A/file.txt is not a valid Windows path
-		return uri.toString(true);
-	}
+    public static serialize(uri: vscode.Uri): string {
+        // Fix issue in System.Uri where file:///c%3A/file.txt is not a valid Windows path
+        return uri.toString(true);
+    }
 
-	public static deserialize(value: string): vscode.Uri {
-		return vscode.Uri.parse(value);
-	}
+    public static deserialize(value: string): vscode.Uri {
+        return vscode.Uri.parse(value);
+    }
 }
