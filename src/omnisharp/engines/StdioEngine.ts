@@ -11,7 +11,6 @@ import { LaunchTarget } from '../launcher';
 import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from '../requestQueue';
 import { EventEmitter } from 'events';
-import { LaunchInfo } from '../OmnisharpManager';
 import { Options } from '../options';
 import { PlatformInformation } from '../../platform';
 import { launchOmniSharp } from '../launcher';
@@ -57,9 +56,9 @@ import { OmniSharpStructureProvider } from '../../features/structureProvider';
 
 export class StdioEngine implements IEngine {
     private static _nextId = 1;
-    private _readLine: ReadLine;
-    private _disposables: CompositeDisposable;
-    private _serverProcess: ChildProcess;
+    private _readLine: ReadLine | undefined;
+    private _disposables: CompositeDisposable | undefined;
+    private _serverProcess: ChildProcess | undefined;
     private _eventBus: EventEmitter;
     private _requestQueue: RequestQueueCollection;
 
@@ -151,44 +150,46 @@ export class StdioEngine implements IEngine {
     public async stop(): Promise<void> {
         let cleanupPromise: Promise<void>;
 
-        if (!this._serverProcess) {
+        if (this._serverProcess === undefined) {
             // nothing to kill
             cleanupPromise = Promise.resolve();
-        } else if (process.platform === 'win32') {
-            // when killing a process in windows its child
-            // processes are *not* killed but become root
-            // processes. Therefore we use TASKKILL.EXE
-            cleanupPromise = new Promise<void>((resolve, reject) => {
-                const killer = exec(
-                    `taskkill /F /T /PID ${this._serverProcess.pid}`,
-                    (err, stdout, stderr) => {
-                        if (err) {
-                            return reject(err);
-                        }
-                    }
-                );
-
-                killer.on('exit', resolve);
-                killer.on('error', reject);
-            });
         } else {
-            // Kill Unix process and children
-            cleanupPromise = utils
-                .getUnixChildProcessIds(this._serverProcess.pid)
-                .then((children) => {
-                    for (let child of children) {
-                        process.kill(child, 'SIGTERM');
-                    }
+            if (process.platform === 'win32') {
+                // when killing a process in windows its child
+                // processes are *not* killed but become root
+                // processes. Therefore we use TASKKILL.EXE
+                cleanupPromise = new Promise<void>((resolve, reject) => {
+                    const killer = exec(
+                        `taskkill /F /T /PID ${this._serverProcess!.pid}`,
+                        (err, stdout, stderr) => {
+                            if (err) {
+                                return reject(err);
+                            }
+                        }
+                    );
 
-                    this._serverProcess.kill('SIGTERM');
+                    killer.on('exit', resolve);
+                    killer.on('error', reject);
                 });
+            } else {
+                // Kill Unix process and children
+                cleanupPromise = utils
+                    .getUnixChildProcessIds(this._serverProcess.pid!)
+                    .then((children) => {
+                        for (let child of children) {
+                            process.kill(child, 'SIGTERM');
+                        }
+
+                        this._serverProcess!.kill('SIGTERM');
+                    });
+            }
         }
 
         let disposables = this._disposables;
-        this._disposables = null;
+        this._disposables = undefined;
 
         return cleanupPromise.then(() => {
-            this._serverProcess = null;
+            this._serverProcess = undefined;
             this._eventBus.emit(Events.ServerStop, this);
             if (disposables) {
                 disposables.dispose();
@@ -217,13 +218,13 @@ export class StdioEngine implements IEngine {
         cwd: string,
         args: string[],
         launchTarget: LaunchTarget,
-        launchInfo: LaunchInfo,
+        launchPath: string,
         options: Options
     ): Promise<void> {
         const launchResult = await launchOmniSharp(
             cwd,
             args.concat('--encoding', 'utf-8'),
-            launchInfo,
+            launchPath,
             this.platformInfo,
             options,
             this.monoResolver,
@@ -240,7 +241,11 @@ export class StdioEngine implements IEngine {
         );
 
         this._serverProcess = launchResult.process;
-        this._serverProcess.stderr.on('data', (data: Buffer) => {
+        if (this._serverProcess === undefined) {
+            throw new Error("Server launch failed.");
+        }
+
+        this._serverProcess.stderr!.on('data', (data: Buffer) => {
             let trimData = removeBOMFromBuffer(data);
             if (trimData.length > 0) {
                 this._fireEvent(Events.StdErr, trimData.toString());
@@ -248,8 +253,8 @@ export class StdioEngine implements IEngine {
         });
 
         this._readLine = createInterface({
-            input: this._serverProcess.stdout,
-            output: this._serverProcess.stdin,
+            input: this._serverProcess.stdout!,
+            output: this._serverProcess.stdin!,
             terminal: false,
         });
 
@@ -287,9 +292,9 @@ export class StdioEngine implements IEngine {
 
         this._readLine.addListener('line', lineReceived);
 
-        this._disposables.add(
+        this._disposables?.add(
             new Disposable(() => {
-                this._readLine.removeListener('line', lineReceived);
+                this._readLine?.removeListener('line', lineReceived);
             })
         );
 
@@ -411,7 +416,7 @@ export class StdioEngine implements IEngine {
         this.eventStream.post(
             new ObservableEvents.OmnisharpRequestMessage(request, id)
         );
-        this._serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
+        this._serverProcess?.stdin!.write(JSON.stringify(requestPacket) + '\n');
         return id;
     }
 

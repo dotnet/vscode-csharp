@@ -45,8 +45,15 @@ import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 import { getDotnetPackApi } from './DotnetPack';
+import { activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | null> {
+
+    let useRoslynLsp = process.env.ROSLYN_LSP;
+    if (useRoslynLsp) {
+        activateRoslynLanguageServer(context);
+        return null;
+    }
 
     const extensionVersion = context.extension.packageJSON.version;
     const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
