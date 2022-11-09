@@ -13,6 +13,7 @@
   * As a workaround, make an edit within the file before using Rename Symbol.
 
 ## 1.25.1
+* When `.editorconfig` support is enabled (on by default), it is given higher priority over the legacy `omnisharp.json` code formatting options. If you would like to have the `omnisharp.json` code formatting options respected, disable `.editorconfig` support by setting `"omnisharp.enableEditorConfigSupport": false`
 * Fix csharp.unitTestDebuggingOptions description ([#5309](https://github.com/OmniSharp/omnisharp-vscode/issues/5309), PR: [#5315](https://github.com/OmniSharp/omnisharp-vscode/pull/5315))
 * Removed quoted examples from omnisharp.sdkVersion and omnisharp.sdkPath ([omnisharp-roslyn#2412](https://github.com/OmniSharp/omnisharp-roslyn/issues/2412), PR: [#5301](https://github.com/OmniSharp/omnisharp-vscode/pull/5301))
 * Added an example on how to launch swagger ui (PR: [#5283](https://github.com/OmniSharp/omnisharp-vscode/pull/5283))
