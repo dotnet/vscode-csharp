@@ -578,7 +578,7 @@
         "linux"
       ],
       "architectures": [
-        "x86_64"
+        "arm64"
       ],
       "binaries": [
         "./rzls"
