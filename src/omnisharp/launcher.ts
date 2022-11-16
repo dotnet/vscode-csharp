@@ -440,30 +440,6 @@ function getConfigurationValue(globalConfig: vscode.WorkspaceConfiguration, csha
     return globalConfig.get(configurationPath, defaultValue);
 }
 
-async function launchDotnet(launchPath: string, cwd: string, args: string[], platformInfo: PlatformInformation, options: Options, dotnetResolver: IHostExecutableResolver): Promise<IntermediateLaunchResult> {
-    const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
-
-    let command: string;
-    const argsCopy = args.slice(0);
-    if (!launchPath.endsWith('.dll')) {
-        // If a custom path was set that's not a dll, assume whatever we're given is an executable
-        command = launchPath;
-    } else {
-        command = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
-        argsCopy.unshift(launchPath);
-    }
-
-    const process = spawn(command, argsCopy, { detached: false, cwd, env: dotnetInfo.env });
-
-    return {
-        process,
-        command: launchPath,
-        hostVersion: dotnetInfo.version,
-        hostPath: dotnetInfo.path,
-        hostIsMono: false,
-    };
-}
-
 function launchWindows(launchPath: string, cwd: string, args: string[]): IntermediateLaunchResult {
     function escapeIfNeeded(arg: string) {
         const hasSpaceWithoutQuotes = /^[^"].* .*[^"]/;
