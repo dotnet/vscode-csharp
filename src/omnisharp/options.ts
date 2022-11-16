@@ -58,7 +58,8 @@ export class Options {
         public excludePaths: string[],
         public maxProjectFileCountForDiagnosticAnalysis: number,
         public testRunSettings: string,
-        public dotNetCliPaths: string[]) {
+        public dotNetCliPaths: string[],
+        public enableLspDriver?: boolean | null) {
     }
 
     public static Read(vscode: vscode): Options {
@@ -104,6 +105,7 @@ export class Options {
         const enableRoslynAnalyzers = omnisharpConfig.get<boolean>('enableRoslynAnalyzers', false);
         const enableEditorConfigSupport = omnisharpConfig.get<boolean>('enableEditorConfigSupport', true);
         const enableDecompilationSupport = omnisharpConfig.get<boolean>('enableDecompilationSupport', false);
+        const enableLspDriver = omnisharpConfig.get<boolean>('enableLspDriver', false);
         const enableImportCompletion = omnisharpConfig.get<boolean>('enableImportCompletion', false);
         const enableAsyncCompletion = omnisharpConfig.get<boolean>('enableAsyncCompletion', false);
         const analyzeOpenDocumentsOnly = omnisharpConfig.get<boolean>('analyzeOpenDocumentsOnly', false);
@@ -205,7 +207,8 @@ export class Options {
             excludePaths,
             maxProjectFileCountForDiagnosticAnalysis,
             testRunSettings,
-            dotNetCliPaths
+            dotNetCliPaths,
+            enableLspDriver
         );
     }
 

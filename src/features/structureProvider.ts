@@ -8,7 +8,7 @@ import AbstractSupport from './abstractProvider';
 import { blockStructure } from "../omnisharp/utils";
 import { V2 } from "../omnisharp/protocol";
 
-export class StructureProvider extends AbstractSupport implements FoldingRangeProvider {
+export class OmniSharpStructureProvider extends AbstractSupport implements FoldingRangeProvider {
     async provideFoldingRanges(document: TextDocument, context: FoldingContext, token: CancellationToken): Promise<FoldingRange[]> {
         let request: V2.BlockStructureRequest = {
             FileName: document.fileName,

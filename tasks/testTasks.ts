@@ -14,6 +14,7 @@ gulp.task("test:feature", async () => {
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests"),
         CODE_WORKSPACE_ROOT: rootPath,
+        CODE_DISABLE_EXTENSIONS: "true",
     };
 
     const result = await spawnNode([featureTestRunnerPath], { env });
@@ -43,42 +44,35 @@ gulp.task("test:unit", async () => {
     return result;
 });
 
-gulp.task("test:integration:singleCsproj", async () => {
-    return runIntegrationTest("singleCsproj");
-});
+const projectNames = [
+    "singleCsproj",
+    "slnWithCsproj",
+    "slnFilterWithCsproj",
+    "BasicRazorApp2_1"
+];
 
-gulp.task("test:integration:slnWithCsproj", async () => {
-    return runIntegrationTest("slnWithCsproj");
-});
+for (const projectName of projectNames) {
+    gulp.task(`test:integration:${projectName}:stdio`, async () => runIntegrationTest(projectName, 'stdio'));
+    gulp.task(`test:integration:${projectName}:lsp`, async () => runIntegrationTest(projectName, 'lsp'));
+    gulp.task(`test:integration:${projectName}`, gulp.series(`test:integration:${projectName}:stdio`, `test:integration:${projectName}:lsp`));
+}
 
-gulp.task("test:integration:slnFilterWithCsproj", async () => {
-    return runIntegrationTest("slnFilterWithCsproj");
-});
+gulp.task("test:integration", gulp.series(projectNames.map(projectName => `test:integration:${projectName}`)));
+gulp.task("test:integration:stdio", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:stdio`)));
+gulp.task("test:integration:lsp", gulp.series(projectNames.map(projectName => `test:integration:${projectName}:lsp`)));
+// TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
+gulp.task("test", gulp.series("test:feature", "test:unit", "test:integration:stdio"));
 
-gulp.task("test:integration:BasicRazorApp2_1", async () => {
-    return runIntegrationTest("BasicRazorApp2_1");
-});
-
-gulp.task(
-    "test:integration", gulp.series(
-        "test:integration:singleCsproj",
-        "test:integration:slnWithCsproj",
-        "test:integration:slnFilterWithCsproj",
-        "test:integration:BasicRazorApp2_1"
-    ));
-
-gulp.task("test", gulp.series(
-    "test:feature",
-    "test:unit",
-    "test:integration"));
-
-async function runIntegrationTest(testAssetName: string) {
+async function runIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     let env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, "integrationTests"),
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: path.join(testAssetsRootPath, testAssetName),
         CODE_WORKSPACE_ROOT: rootPath,
+        OMNISHARP_ENGINE: engine,
+        OMNISHARP_LOCATION: process.env.OMNISHARP_LOCATION,
+        CODE_DISABLE_EXTENSIONS: 'true',
     };
 
     const result = await spawnNode([integrationTestRunnerPath], { env, cwd: rootPath });

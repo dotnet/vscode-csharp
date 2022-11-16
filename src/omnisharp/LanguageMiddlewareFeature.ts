@@ -12,7 +12,7 @@ export interface LanguageMiddleware extends RemapApi {
 
 interface RemapApi {
     remapWorkspaceEdit?(workspaceEdit: vscode.WorkspaceEdit, token: vscode.CancellationToken): vscode.ProviderResult<vscode.WorkspaceEdit>;
-    remapLocations?(locations: vscode.Location[], token: vscode.CancellationToken): vscode.ProviderResult<vscode.Location[]>;
+    remapLocations?(locations: vscode.Location[] | vscode.LocationLink[], token: vscode.CancellationToken): vscode.ProviderResult<Array<vscode.Location | vscode.LocationLink>>;
 }
 
 type GetRemapType<T extends (parameter: any, token: vscode.CancellationToken) => any>

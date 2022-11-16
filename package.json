@@ -49,9 +49,8 @@
     "test:unit": "tsc -p test && gulp test:unit",
     "test:feature": "tsc -p test && gulp test:feature",
     "test:integration": "tsc -p test && gulp test:integration",
-    "test:integration:singleCsproj": "tsc -p test && gulp test:integration:singleCsproj",
-    "test:integration:slnWithCsproj": "tsc -p test && gulp test:integration:slnWithCsproj",
-    "test:integration:slnFilterWithCsproj": "tsc -p test && gulp test:integration:slnFilterWithCsproj",
+    "test:integration:stdio": "tsc -p test && gulp test:integration:stdio",
+    "test:integration:lsp": "tsc -p test && gulp test:integration:lsp",
     "test:release": "tsc -p test && mocha out/test/releaseTests/**/*.test.js",
     "test:artifacts": "tsc -p test && mocha out/test/artifactTests/**/*.test.js",
     "unpackage:vsix": "gulp vsix:release:unpackage"
@@ -75,7 +74,8 @@
     "strip-bom": "5.0.0",
     "strip-bom-buf": "2.0.0",
     "tmp": "0.0.33",
-    "vscode-languageserver-protocol": "3.17.1",
+    "vscode-languageclient": "8.0.2",
+    "vscode-languageserver-protocol": "3.17.2",
     "vscode-nls": "5.0.1",
     "yauzl": "2.10.0"
   },
@@ -723,17 +723,17 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "searchNuGetOrgSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
@@ -952,7 +952,7 @@
         },
         "omnisharp.path": {
           "type": "string",
-          "scope": "machine",
+          "scope": "window",
           "description": "Specifies the path to OmniSharp. When left empty the OmniSharp version pinned to the C# Extension is used. This can be the absolute path to an OmniSharp executable, a specific version number, or \"latest\". If a version number or \"latest\" is specified, the appropriate version of OmniSharp will be downloaded on your behalf. Setting \"latest\" is an opt-in into latest beta releases of OmniSharp."
         },
         "omnisharp.useModernNet": {
@@ -1070,6 +1070,11 @@
           "default": false,
           "scope": "machine",
           "description": "Enables support for decompiling external references instead of viewing metadata."
+        },
+        "omnisharp.enableLspDriver": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enables support for the experimental language protocol based engine (requires reload to setup bindings correctly)"
         },
         "omnisharp.enableImportCompletion": {
           "type": "boolean",
@@ -1815,17 +1820,17 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2251,17 +2256,17 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -2942,17 +2947,17 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -3378,17 +3383,17 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
@@ -3934,100 +3939,133 @@
       {
         "language": "csharp",
         "scopes": {
-          "plainKeyword": [
+          "keyword": [
             "keyword.cs"
           ],
-          "controlKeyword": [
+          "keyword - control": [
             "keyword.control.cs"
           ],
-          "operatorOverloaded": [
+          "operator - overloaded": [
             "entity.name.function.member.overload.cs"
           ],
-          "preprocessorKeyword": [
+          "preprocessor keyword": [
             "keyword.preprocessor.cs"
           ],
-          "preprocessorText": [
+          "preprocessor text": [
             "meta.preprocessor.string.cs"
           ],
-          "excludedCode": [
+          "excluded code": [
             "support.other.excluded.cs"
           ],
           "punctuation": [
             "punctuation.cs"
           ],
-          "stringVerbatim": [
+          "string - verbatim": [
             "string.verbatim.cs"
           ],
-          "stringEscapeCharacter": [
+          "string - escape character": [
             "constant.character.escape.cs"
           ],
-          "delegate": [
+          "namespace name": [
+            "entity.name.type.namespace.cs"
+          ],
+          "class name": [
+            "entity.name.type.class.cs"
+          ],
+          "struct name": [
+            "entity.name.type.struct.cs"
+          ],
+          "interface name": [
+            "entity.name.type.interface.cs"
+          ],
+          "enum name": [
+            "entity.name.type.enum.cs"
+          ],
+          "enum member name": [
+            "variable.other.enummember.cs"
+          ],
+          "type parameter name": [
+            "entity.name.type.type-parameter.cs"
+          ],
+          "delegate name": [
             "entity.name.type.delegate.cs"
           ],
-          "module": [
+          "module name": [
             "entity.name.type.module.cs"
           ],
-          "extensionMethod": [
+          "method name": [
+            "entity.name.function.member.cs"
+          ],
+          "extension method name": [
             "entity.name.function.extension.cs"
           ],
-          "field": [
+          "property name": [
+            "variable.other.property.cs"
+          ],
+          "field name": [
             "entity.name.variable.field.cs"
           ],
-          "local": [
+          "constant name": [
+            "variable.other.constant.cs"
+          ],
+          "local name": [
             "entity.name.variable.local.cs"
           ],
-          "xmlDocCommentAttributeName": [
+          "parameter name": [
+            "entity.name.variable.parameter.cs"
+          ],
+          "xml doc comment - attribute name": [
             "comment.documentation.attribute.name.cs"
           ],
-          "xmlDocCommentAttributeQuotes": [
+          "xml doc comment - attribute quotes": [
             "comment.documentation.attribute.quotes.cs"
           ],
-          "xmlDocCommentAttributeValue": [
+          "xml doc comment - attribute value": [
             "comment.documentation.attribute.value.cs"
           ],
-          "xmlDocCommentCDataSection": [
+          "xml doc comment - cdata section": [
             "comment.documentation.cdata.cs"
           ],
-          "xmlDocCommentComment": [
+          "xml doc comment - comment": [
             "comment.documentation.comment.cs"
           ],
-          "xmlDocCommentDelimiter": [
+          "xml doc comment - delimiter": [
             "comment.documentation.delimiter.cs"
           ],
-          "xmlDocCommentEntityReference": [
+          "xml doc comment - entity reference": [
             "comment.documentation.entityReference.cs"
           ],
-          "xmlDocCommentName": [
+          "xml doc comment - name": [
             "comment.documentation.name.cs"
           ],
-          "xmlDocCommentProcessingInstruction": [
+          "xml doc comment - processing instruction": [
             "comment.documentation.processingInstruction.cs"
           ],
-          "xmlDocCommentText": [
+          "xml doc comment - text": [
             "comment.documentation.cs"
           ],
-          "regexComment": [
+          "regex - comment": [
             "string.regexp.comment.cs"
           ],
-          "regexCharacterClass": [
+          "regex - character class": [
             "constant.character.character-class.regexp.cs"
           ],
-          "regexAnchor": [
+          "regex - anchor": [
             "keyword.control.anchor.regexp.cs"
           ],
-          "regexQuantifier": [
+          "regex - quantifier": [
             "keyword.operator.quantifier.regexp.cs"
           ],
-          "regexGrouping": [
+          "regex - grouping": [
             "punctuation.definition.group.regexp.cs"
           ],
-          "regexAlternation": [
+          "regex - alternation": [
             "keyword.operator.or.regexp.cs"
           ],
-          "regexSelfEscapedCharacter": [
+          "regex - self escaped character": [
             "string.regexp.self-escaped-character.cs"
           ],
-          "regexOtherEscape": [
+          "regex - other escape": [
             "string.regexp.other-escape.cs"
           ]
         }
@@ -4061,6 +4099,10 @@
         {
           "command": "dotnet.test.runTestsInContext",
           "when": "editorLangId == csharp"
+        },
+        {
+          "command": "csharp.listRemoteProcess",
+          "when": "never"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
