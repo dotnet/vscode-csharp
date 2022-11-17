@@ -84,7 +84,7 @@ async function checkRequirements(options: Options): Promise<RequirementResult> {
         return {
             needsMono: monoError,
             needsDotNetSdk: false,
-            needsMSBuildTools: msbuildVersion !== undefined,
+            needsMSBuildTools: msbuildVersion === undefined,
         };
     }
 }
