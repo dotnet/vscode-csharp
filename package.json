@@ -1186,20 +1186,17 @@
       {
         "command": "o.fixAll.solution",
         "title": "Fix all occurrences of a code issue within solution",
-        "category": "OmniSharp",
-        "enablement": "editorFocus"
+        "category": "OmniSharp"
       },
       {
         "command": "o.fixAll.project",
         "title": "Fix all occurrences of a code issue within project",
-        "category": "OmniSharp",
-        "enablement": "editorFocus"
+        "category": "OmniSharp"
       },
       {
         "command": "o.fixAll.document",
         "title": "Fix all occurrences of a code issue within document",
-        "category": "OmniSharp",
-        "enablement": "editorFocus"
+        "category": "OmniSharp"
       },
       {
         "command": "o.reanalyze.allProjects",
@@ -1209,8 +1206,7 @@
       {
         "command": "o.reanalyze.currentProject",
         "title": "Analyze current project",
-        "category": "OmniSharp",
-        "enablement": "editorFocus"
+        "category": "OmniSharp"
       },
       {
         "command": "dotnet.generateAssets",
