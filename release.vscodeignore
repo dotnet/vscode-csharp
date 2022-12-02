@@ -9,6 +9,7 @@
 .vscode-test/**
 coverage/**
 out/**
+server/**
 src/**
 tasks/**
 test/**

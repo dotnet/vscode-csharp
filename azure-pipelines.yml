@@ -1,0 +1,62 @@
+trigger:
+- feature/*
+
+pr:
+- feature/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDKs'
+  inputs:
+    useGlobalJson: true
+    workingDirectory: server/
+
+- script: dotnet build ./server/Microsoft.CodeAnalysis.LanguageServer.sln -warnaserror
+  displayName: 'Build Microsoft.CodeAnalysis.LanguageServer.sln'
+
+- script: dotnet test ./server/Microsoft.CodeAnalysis.LanguageServer.sln --no-build
+  displayName: 'Test Microsoft.CodeAnalysis.LanguageServer.sln'
+
+- script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+  displayName: Setup virtual display
+
+- task: NodeTool@0
+  displayName: 'Install Node.js 15.x'
+  inputs:
+    versionSpec: '15.x'
+
+- script: |
+    npm ci
+    npm i -g gulp
+  displayName: 'Install dependencies'
+
+- script: npm run compile
+  displayName: 'Compile'
+
+- script: gulp 'vsix:release:package:platform-neutral'
+  displayName: 'Build platform-neutral extension package'
+
+- script: |
+    npm run test
+    npm run test:artifacts
+  displayName: 'Run unit and integration tests'
+  env:
+    CODE_VERSION: 1.66.0
+    DISPLAY: :99.0
+  # Continue on error so we still upload the vsix even if tests fail.
+  continueOnError: true
+
+- task: CopyFiles@2
+  displayName: 'Copy vsixes to upload directory'
+  inputs:
+    contents: '$(Build.SourcesDirectory)/*.vsix'
+    targetFolder: '$(Build.SourcesDirectory)/vsix'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish VSIXs'
+  inputs:
+    targetPath: '$(Build.SourcesDirectory)/vsix'
+    artifactName: 'VSIXs'

@@ -49,8 +49,10 @@ import { activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServe
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | null> {
 
-    let useRoslynLsp = process.env.ROSLYN_LSP;
-    if (useRoslynLsp) {
+    const config = vscode.workspace.getConfiguration('microsoft-codeanalysis-languageserver');
+    let useOmnisharpServer = config.get<boolean>('useOmnisharpServer') || process.env.USE_OMNISHARP_SERVER;
+    if (!useOmnisharpServer)
+    {
         activateRoslynLanguageServer(context);
         return null;
     }

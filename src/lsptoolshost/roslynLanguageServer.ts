@@ -98,7 +98,7 @@ export async function exec(command: string, workDirectory: string = process.cwd(
 
 function startServer(outputChannel: vscode.OutputChannel, solutionPath: vscode.Uri) : cp.ChildProcess {
     let clientRoot = __dirname;
-    const serverPath = path.join(clientRoot, "..", "server", "Microsoft.CodeAnalysis.LanguageServer", "bin", "Debug", "net7.0", "Microsoft.CodeAnalysis.LanguageServer.dll");
+    const serverPath = path.join(clientRoot, "..", "artifacts", "Debug", "net7.0", "Microsoft.CodeAnalysis.LanguageServer.dll");
 
     if (!fs.existsSync(serverPath)) {
         const error = new Error(`Cannot find language server in path '${serverPath}''`);
