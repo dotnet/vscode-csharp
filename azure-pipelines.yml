@@ -20,9 +20,6 @@ steps:
 - script: dotnet test ./server/Microsoft.CodeAnalysis.LanguageServer.sln --no-build
   displayName: 'Test Microsoft.CodeAnalysis.LanguageServer.sln'
 
-- script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-  displayName: Setup virtual display
-
 - task: NodeTool@0
   displayName: 'Install Node.js 15.x'
   inputs:
@@ -38,6 +35,9 @@ steps:
 
 - script: gulp 'vsix:release:package:platform-neutral'
   displayName: 'Build platform-neutral extension package'
+
+- script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+  displayName: Setup virtual display
 
 - script: |
     npm run test
