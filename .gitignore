@@ -2,6 +2,7 @@ bin
 obj
 node_modules
 out
+artifacts
 .omnisharp/
 .omnisharp-*/
 .vs/
