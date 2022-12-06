@@ -108,10 +108,14 @@ function startServer(outputChannel: vscode.OutputChannel, solutionPath: vscode.U
 
     let args: string[] = [
         serverPath,
-        "--debug",
         "--solutionPath",
         solutionPath.fsPath,
     ];
+
+    if (process.env.DEBUG_ROSLYN_LANGUAGE_SERVER)
+    {
+        args.push("--debug");
+    }
 
     let childProcess = cp.spawn('dotnet', args);
     return childProcess;

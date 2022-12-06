@@ -13,6 +13,9 @@
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
             ],
+            "env": {
+                "DEBUG_ROSLYN_LANGUAGE_SERVER": "true"
+            },
             "preLaunchTask": "buildDev"
         },
         {
