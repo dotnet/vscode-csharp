@@ -18,12 +18,10 @@ export const mochaPath = path.join(nodeModulesPath, 'mocha', 'bin', 'mocha');
 
 export const packageJsonPath = path.join(rootPath, "package.json");
 
-export const packedVsixOutputRoot = commandLineOptions.outputFolder || rootPath;
+export const packedVsixOutputRoot = commandLineOptions.outputFolder || path.join(rootPath, "vsix");
 export const unpackedVsixPath = path.join(rootPath, "vsix");
-export const unpackedExtensionPath = path.join(unpackedVsixPath, "extension");
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
-export const codeExtensionSourcesPath = path.join(codeExtensionPath, "dist");
 
 export const testRootPath = path.join(rootPath, "out", "test");
 export const featureTestRunnerPath = path.join(testRootPath, "runFeatureTests.js");

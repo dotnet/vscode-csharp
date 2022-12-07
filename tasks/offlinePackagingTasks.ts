@@ -7,10 +7,7 @@
 import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
-import * as path from 'path';
-import * as util from '../src/common';
-import spawnNode from '../tasks/spawnNode';
-import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
+import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, packedVsixOutputRoot } from '../tasks/projectPaths';
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import { getPackageJSON } from '../tasks/packageJson';
@@ -22,6 +19,7 @@ import { commandLineOptions } from '../tasks/commandLineArguments';
 import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
+import { createPackageAsync } from '../tasks/vsceTasks';
 
 const includeFrameworkOmniSharp = false;
 
@@ -93,7 +91,7 @@ async function doOfflinePackage(platformInfo: PlatformInformation, vscodePlatfor
     await cleanAsync(false);
     const packageFileName = getPackageName(packageJSON, vscodePlatformId);
     await install(platformInfo, packageJSON, isFramework);
-    await createPackageAsync(packageFileName, outputFolder, vscodePlatformId);
+    await createPackageAsync(outputFolder, packageFileName, vscodePlatformId);
 }
 
 // Install Tasks
@@ -115,44 +113,4 @@ async function install(platformInfo: PlatformInformation, packageJSON: any, isFr
     await del(['.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.targets', '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.VisualBasic.targets']);
 }
 
-/// Packaging (VSIX) Tasks
-async function createPackageAsync(packageName: string, outputFolder: string, vscodePlatformId: string) {
 
-    let vsceArgs = [];
-    let packagePath = undefined;
-
-    if (!(await util.fileExists(vscePath))) {
-        throw new Error(`vsce does not exist at expected location: '${vscePath}'`);
-    }
-
-    vsceArgs.push(vscePath);
-    vsceArgs.push('package'); // package command
-
-    if (packageName !== undefined) {
-        vsceArgs.push('-o');
-        if (outputFolder) {
-            //if we have specified an output folder then put the files in that output folder
-            packagePath = path.join(outputFolder, packageName);
-            vsceArgs.push(packagePath);
-        }
-        else {
-            vsceArgs.push(packageName);
-        }
-
-        if (vscodePlatformId !== undefined) {
-            vsceArgs.push("--target");
-            vsceArgs.push(vscodePlatformId);
-        }
-    }
-
-    const spawnResult = await spawnNode(vsceArgs);
-    if (spawnResult.code != 0) {
-        throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
-    }
-
-    if (packagePath) {
-        if (!(await util.fileExists(packagePath))) {
-            throw new Error(`vsce failed to create: '${packagePath}'`);
-        }
-    }
-}
