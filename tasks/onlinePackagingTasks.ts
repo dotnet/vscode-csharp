@@ -6,9 +6,9 @@
 import * as del from 'del';
 import * as fs from 'fs';
 import * as gulp from 'gulp';
-import { onlineVscodeignorePath, unpackedVsixPath, vscePath, vscodeignorePath } from './projectPaths';
+import { onlineVscodeignorePath, packedVsixOutputRoot, unpackedVsixPath, vscodeignorePath } from './projectPaths';
+import { createPackageAsync } from './vsceTasks';
 import { getPackageJSON } from './packageJson';
-import spawnNode from './spawnNode';
 import { Extract } from 'unzipper';
 
 gulp.task('vsix:release:unpackage', () => {
@@ -27,7 +27,7 @@ gulp.task('vsix:release:package:platform-neutral', async (onError) => {
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);
 
     try {
-        await spawnNode([vscePath, 'package']);
+        createPackageAsync(packedVsixOutputRoot)
     }
     finally {
         await del(vscodeignorePath);

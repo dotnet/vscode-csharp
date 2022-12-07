@@ -49,12 +49,6 @@ steps:
   # Continue on error so we still upload the vsix even if tests fail.
   continueOnError: true
 
-- task: CopyFiles@2
-  displayName: 'Copy vsixes to upload directory'
-  inputs:
-    contents: '$(Build.SourcesDirectory)/*.vsix'
-    targetFolder: '$(Build.SourcesDirectory)/vsix'
-
 - task: PublishPipelineArtifact@1
   displayName: 'Publish VSIXs'
   inputs:
