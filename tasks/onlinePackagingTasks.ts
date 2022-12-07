@@ -27,7 +27,7 @@ gulp.task('vsix:release:package:platform-neutral', async (onError) => {
     fs.copyFileSync(onlineVscodeignorePath, vscodeignorePath);
 
     try {
-        createPackageAsync(packedVsixOutputRoot)
+        await createPackageAsync(packedVsixOutputRoot);
     }
     finally {
         await del(vscodeignorePath);
