@@ -5,19 +5,23 @@
 
 import { should, expect } from 'chai';
 import { DotNetChannelObserver } from "../../../src/observers/DotnetChannelObserver";
-import { getNullChannel } from '../testAssets/Fakes';
+import { getNullChannel, getVSCodeWithConfig, updateConfig } from '../testAssets/Fakes';
 import { CommandDotNetRestoreStart } from '../../../src/omnisharp/loggingEvents';
 
 suite("DotnetChannelObserver", () => {
     suiteSetup(() => should());
     let hasShown: boolean;
     let hasCleared: boolean;
-
-    let observer = new DotNetChannelObserver({
-        ...getNullChannel(),
-        clear: () => { hasCleared = true; },
-        show: () => { hasShown = true; }
-    });
+    let vscode = getVSCodeWithConfig();
+    let observer = new DotNetChannelObserver(
+        {
+            ...getNullChannel(),
+            clear: () => { hasCleared = true; },
+            show: () => { hasShown = true; }
+        },
+        vscode
+    );
+    updateConfig(vscode, "csharp", "showOmnisharpLogOnError", true);
 
     setup(() => {
         hasShown = false;

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { getNullChannel } from '../testAssets/Fakes';
+import { getNullChannel, getVSCodeWithConfig, updateConfig } from '../testAssets/Fakes';
 import { CsharpChannelObserver } from '../../../src/observers/CsharpChannelObserver';
 import { InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent, PackageInstallStart, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
 
@@ -21,14 +21,18 @@ suite("CsharpChannelObserver", () => {
         test(`${event.constructor.name}: Channel is shown and preserve focus is set to true`, () => {
             let hasShown = false;
             let preserveFocus = false;
-            let observer = new CsharpChannelObserver({
-                ...getNullChannel(),
-                show: (preserve) => {
-                    hasShown = true;
-                    preserveFocus = preserve;
-                }
-            });
-
+            let vscode = getVSCodeWithConfig();
+            let observer = new CsharpChannelObserver(
+                {
+                    ...getNullChannel(),
+                    show: (preserve) => {
+                        hasShown = true;
+                        preserveFocus = preserve;
+                    }
+                },
+                vscode
+            );
+            updateConfig(vscode, "csharp", "showOmnisharpLogOnError", true);
             observer.post(event);
             expect(hasShown).to.be.true;
             expect(preserveFocus).to.be.true;

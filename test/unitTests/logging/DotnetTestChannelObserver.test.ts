@@ -4,21 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { expect } from 'chai';
-import { getNullChannel } from '../testAssets/Fakes';
+import { getNullChannel, getVSCodeWithConfig, updateConfig } from '../testAssets/Fakes';
 import { BaseEvent, DotNetTestsInClassDebugStart, DotNetTestRunStart, DotNetTestRunFailure, DotNetTestsInClassRunStart, DotNetTestDebugStart } from '../../../src/omnisharp/loggingEvents';
 import DotnetTestChannelObserver from '../../../src/observers/DotnetTestChannelObserver';
 
 suite("DotnetTestChannelObserver", () => {
     let hasShown: boolean;
     let preserveFocus: boolean;
-
-    let observer = new DotnetTestChannelObserver({
-        ...getNullChannel(),
-        show: (preserve) => {
-            hasShown = true;
-            preserveFocus = preserve;
-        }
-    });
+    let vscode = getVSCodeWithConfig();
+    let observer = new DotnetTestChannelObserver(
+        {
+            ...getNullChannel(),
+            show: (preserve) => {
+                hasShown = true;
+                preserveFocus = preserve;
+            }
+        },
+        vscode
+    );
+    updateConfig(vscode, "csharp", "showOmnisharpLogOnError", true);
 
     setup(() => {
         hasShown = false;

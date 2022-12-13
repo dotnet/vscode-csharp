@@ -6,8 +6,13 @@
 import { BaseChannelObserver } from "./BaseChannelObserver";
 import { EventType } from "../omnisharp/EventType";
 import { BaseEvent } from "../omnisharp/loggingEvents";
+import { OutputChannel, vscode } from "../vscodeAdapter";
 
 export class CsharpChannelObserver extends BaseChannelObserver {
+    constructor(channel: OutputChannel, private vscode: vscode) {
+        super(channel);
+    }
+
     public post = (event: BaseEvent) => {
         switch (event.type) {
             case EventType.PackageInstallStart:
@@ -16,7 +21,10 @@ export class CsharpChannelObserver extends BaseChannelObserver {
             case EventType.DebuggerNotInstalledFailure:
             case EventType.DebuggerPrerequisiteFailure:
             case EventType.ProjectJsonDeprecatedWarning:
-                this.showChannel(true);
+                let csharpConfig = this.vscode.workspace.getConfiguration('csharp');
+                if (csharpConfig.get<boolean>('showOmnisharpLogOnError')) {
+                    this.showChannel(true);
+                }
                 break;
         }
     }

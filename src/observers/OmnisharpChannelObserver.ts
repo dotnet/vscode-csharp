@@ -17,7 +17,10 @@ export class OmnisharpChannelObserver extends BaseChannelObserver {
         switch (event.type) {
             case EventType.ShowOmniSharpChannel:
             case EventType.OmnisharpFailure:
-                this.showChannel(true);
+                let csharpConfig = this.vscode.workspace.getConfiguration('csharp');
+                if (csharpConfig.get<boolean>('showOmnisharpLogOnError')) {
+                    this.showChannel(true);
+                }
                 break;
             case EventType.OmnisharpServerOnStdErr:
                 this.handleOmnisharpServerOnStdErr(<OmnisharpServerOnStdErr>event);
