@@ -36,7 +36,7 @@
   },
   "defaults": {
     "omniSharp": "1.39.2",
-    "razor": "7.0.0-preview.5.22527.9"
+    "razor": "7.0.0-preview.22622.6."
   },
   "main": "./dist/extension",
   "scripts": {
@@ -66,7 +66,7 @@
     "http-proxy-agent": "4.0.1",
     "https-proxy-agent": "5.0.0",
     "jsonc-parser": "3.0.0",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/bc18d74062fd62b90d96e0f6bf2245a8/microsoft.aspnetcore.razor.vscode-7.0.0-preview.5.22527.9.tgz",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/088127b07f05c682c324e9b85568be76/microsoft.aspnetcore.razor.vscode-7.0.0-preview.22622.6.tgz",
     "node-machine-id": "1.1.12",
     "request-light": "0.4.0",
     "rxjs": "6.6.7",
@@ -521,7 +521,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/67f02d91dd4cb18ab832b2ff4026163e/razorlanguageserver-win-x64-7.0.0-preview.5.22527.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/9ec3e9eed17ad42abe9858845f4b481d/razorlanguageserver-win-x64-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -533,7 +533,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/6f2e7269ad4421bfd9a772ffa4ac188e/razorlanguageserver-win-x86-7.0.0-preview.5.22527.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/e5c6fd0391f2ded06532ed6df09d0a4d/razorlanguageserver-win-x86-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -545,7 +545,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/2f536dfc8bc9278ab74da7fd47265989/razorlanguageserver-win-arm64-7.0.0-preview.5.22527.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/b2d6b92ce5a018dae5d7929444a28ee7/razorlanguageserver-win-arm64-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -557,7 +557,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/6e749e624ea801dfc55926dfb662f398/razorlanguageserver-linux-x64-7.0.0-preview.5.22527.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/ca9ef1f76b2fab2190e09ac2eb2f79d8/razorlanguageserver-linux-x64-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -572,7 +572,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/52c53cdfbaa74c599a78c7b15c210341/razorlanguageserver-linux-arm64-7.0.0-preview.5.22527.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/db081036af2bb7354f307a5e95734190/razorlanguageserver-linux-arm64-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -587,7 +587,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/c5613c7e58754fa5169b8635c85df441/razorlanguageserver-linux-musl-x64-7.0.0-preview.5.22527.9.zip",
+      "url": " https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/0069d8278aa52a850764c41225f8b043/razorlanguageserver-linux-musl-x64-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -602,7 +602,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/5339772f139f8f0dbfa6bad9d4ac84f3/razorlanguageserver-linux-musl-arm64-7.0.0-preview.5.22527.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/aff921ba3becdf72d9c5fcfafaa3a56f/razorlanguageserver-linux-musl-arm64-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -617,7 +617,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/b5b04c5638e70013dc56bf9fb36df0e9/razorlanguageserver-osx-x64-7.0.0-preview.5.22527.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/41a0a3fdf1892a19854839a7bf61b870/razorlanguageserver-osx-x64-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -632,7 +632,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/271197fe-1d63-4a9a-986f-a02c89bc5627/bee0210b0925d8b77410c092d0496455/razorlanguageserver-osx-arm64-7.0.0-preview.5.22527.9.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/c359d96e-c7dd-4fe8-8f88-155543c37fe5/251fba36eebffde73575606eaa4a8fbd/razorlanguageserver-osx-arm64-7.0.0-preview.22622.6.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
