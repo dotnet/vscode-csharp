@@ -242,6 +242,12 @@ To setup a test project to verify on you can do:
 * When no changes have been performed on `Pages/Index.cshtml`, there are 0 errors.
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file.
 
+##### HTML Document Color and Color Presentation
+* Specifying a color name should display the color itself. Hovering over the color should display a color picker.
+```HTML
+<h1 style="background-color:blue"></h1>
+```
+
 ##### Debugging with blazorwasm debug adapter
 
 **Note:** On a VS Code installation with no extensions, you should recieve an alert like the following:
