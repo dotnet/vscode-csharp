@@ -35,8 +35,8 @@
     }
   },
   "defaults": {
-    "omniSharp": "1.39.2",
-    "razor": "7.0.0-preview.22622.6."
+    "omniSharp": "1.39.3",
+    "razor": "7.0.0-preview.23053.8"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -54,7 +54,8 @@
     "test:integration:slnFilterWithCsproj": "tsc -p test && gulp test:integration:slnFilterWithCsproj",
     "test:release": "tsc -p test && mocha out/test/releaseTests/**/*.test.js",
     "test:artifacts": "tsc -p test && mocha out/test/artifactTests/**/*.test.js",
-    "unpackage:vsix": "gulp vsix:release:unpackage"
+    "unpackage:vsix": "gulp vsix:release:unpackage",
+    "updatePackageDependencies": "gulp updatePackageDependencies"
   },
   "dependencies": {
     "@types/cross-spawn": "6.0.2",
@@ -126,104 +127,104 @@
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.7.2 / x86)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-win-x86-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-x86-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.39.2/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.39.3/OmniSharp.exe",
       "platformId": "win-x86",
       "isFramework": true,
-      "integrity": "D2B2D10FA5122669771F86B0898FDBCBBC144C60D1DEB350217BA1A14689C5F8"
+      "integrity": "54B9E3E025A2BB939C75ECAE3ED86EB3C512D47A20A734F0325123D6C7A38CE5"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 6 / x86)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-win-x86-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-x86-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "win-x86",
       "isFramework": false,
-      "integrity": "8C61F9F9181A421A6051226A40C9B32DA7DCC2E1CFF903D28CB94068187891D4"
+      "integrity": "68350ECDBE8255103B06DF5DD493511633F8EF4529733800BF153AB408757B68"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.7.2 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-win-x64-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-x64-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.39.3/OmniSharp.exe",
       "platformId": "win-x64",
       "isFramework": true,
-      "integrity": "2C7557017C95AF49853B7073D560A93C4BC80DC5DCEC08E85C95E24C1ABD7DF1"
+      "integrity": "DD676997EA60069BB00A68E46C06D5373880F679D26544488DC0540B39605C30"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 6 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-win-x64-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-x64-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "win-x64",
       "isFramework": false,
-      "integrity": "CC42295D9F91FE383C4893DF905E26D89313971873E8F54600CB6D6123E8FF14"
+      "integrity": "EF04F5764B85DD61F4670B1614B6AD82BD403675D88850618D4F6DB1C920BFC3"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.7.2 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-win-arm64-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-arm64-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "arm64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2/OmniSharp.exe",
+      "installTestPath": "./.omnisharp/1.39.3/OmniSharp.exe",
       "platformId": "win-arm64",
       "isFramework": true,
-      "integrity": "B92826343ABD3CD3C9BB0EEAD5D93ACDFE5E7E5724E9ED53477E15A6AD87D4B6"
+      "integrity": "7FB3F3BCDED5362FA1FC7E9D4964D463A9178F2620E1E79975C1FB6B661BC676"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 6 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-win-arm64-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-arm64-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "arm64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "win-arm64",
       "isFramework": false,
-      "integrity": "9906F3F98CF70D43893D2EBCC2F1B20212293590EE92F72A9DC2BCE7F014222D"
+      "integrity": "14F235413DBBCBE1303995E7D57E93CFF33B55386EB9A3A675CE902530E3E09E"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX (Mono / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-osx-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-osx-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3",
       "platforms": [
         "darwin"
       ],
@@ -235,48 +236,48 @@
         "./mono.osx",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.39.2/run",
+      "installTestPath": "./.omnisharp/1.39.3/run",
       "platformId": "osx",
       "isFramework": true,
-      "integrity": "BA01EF0D7D6EACC514193407D75B254DA4F4F510774A309F1D36D778945D2CAE"
+      "integrity": "86568B1826BB72EFBA7CDD75AB9AFC48AE9A1359885957912A55A7D99DB32978"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX (.NET 6 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-osx-x64-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-osx-x64-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "darwin"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "osx-x64",
       "isFramework": false,
-      "integrity": "1DE7F7E9E3D00D5A2FCE8BA443876F8B47C06221B559AA23809F1A1A24C53C90"
+      "integrity": "1F1DCF6EC64611524B4463AFD4A5D72C508F37706CDFEE9533572ED2E4A01B83"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for OSX (.NET 6 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-osx-arm64-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-osx-arm64-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "darwin"
       ],
       "architectures": [
         "arm64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "osx-arm64",
       "isFramework": false,
-      "integrity": "0A7C85AC7EA95216FD9A128C97FD9F128BB23420EB980D552BD2BEC3ED4E0FFA"
+      "integrity": "3762FE59299EF9FC14FD6E114A05785D4C5C23738E1335E82DF0FFC9A128E5FB"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (Mono / x86)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-linux-x86-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-x86-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3",
       "platforms": [
         "linux"
       ],
@@ -288,16 +289,16 @@
         "./mono.linux-x86",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.39.2/run",
+      "installTestPath": "./.omnisharp/1.39.3/run",
       "platformId": "linux-x86",
       "isFramework": true,
-      "integrity": "5A17B43C654683F22E8DD31502034BD5081B5AB536F524EEB462E4F420482F63"
+      "integrity": "5EFFDCD72F490BA8E6F0ED901B9DE33AE57361026BAB28B5A422219105E0FC4E"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (Mono / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-linux-x64-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-x64-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3",
       "platforms": [
         "linux"
       ],
@@ -308,32 +309,32 @@
         "./mono.linux-x86_64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.39.2/run",
+      "installTestPath": "./.omnisharp/1.39.3/run",
       "platformId": "linux-x64",
       "isFramework": true,
-      "integrity": "031BCFB048C1111A4BBE14C078B6F0203603390296E831593F840ABFAB2AF70F"
+      "integrity": "0DC607493CF4DC054E2E544A0E4EC963072523560F31FD1707BBD22A17B474B0"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (.NET 6 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-linux-x64-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-x64-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "linux"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "linux-x64",
       "isFramework": false,
-      "integrity": "41C1D2A4065303FD520E3191AEC43C8BEBCFF9B96385D72858C2486B82EA7EC2"
+      "integrity": "42FB17A25CAF9198B0572B21F752F77C7D4988EB57B2137BE05B913D5C21E895"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (Mono / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-linux-arm64-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-arm64-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3",
       "platforms": [
         "linux"
       ],
@@ -344,63 +345,63 @@
         "./mono.linux-arm64",
         "./run"
       ],
-      "installTestPath": "./.omnisharp/1.39.2/run",
+      "installTestPath": "./.omnisharp/1.39.3/run",
       "platformId": "linux-arm64",
       "isFramework": true,
-      "integrity": "AB1A4C3608C95D485795B4D26A55A2B6F08B825CBD02E07BF7DBDF51BED55C65"
+      "integrity": "A6784E87303DE38EE107360DA144B726ECCF6E5F80A148CFEE894272503A18D8"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux (.NET 6 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-linux-arm64-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-arm64-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "linux"
       ],
       "architectures": [
         "arm64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "linux-arm64",
       "isFramework": false,
-      "integrity": "7EF8A9B8D183B5FC6B307B4EC60C1F6354ADA37533B5CF0DD280B93C90E79F79"
+      "integrity": "2ED1132BEEEB7DAAF2D0B7E000C406A0235097BB5EA6A06144BF2E66407294E4"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux musl (.NET 6 / x64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-linux-musl-x64-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-musl-x64-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "linux-musl"
       ],
       "architectures": [
         "x86_64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "linux-musl-x64",
       "isFramework": false,
-      "integrity": "A1480C7D317A3215EEC7EF56FE847A3220EFE912A3E17C084439799D49089A27"
+      "integrity": "FDE35375172EEA357ABD91B28B35D58C65ECE6A3767D971BE054B52381E77852"
     },
     {
       "id": "OmniSharp",
       "description": "OmniSharp for Linux musl (.NET 6 / arm64)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.2/omnisharp-linux-musl-arm64-net6.0-1.39.2.zip",
-      "installPath": ".omnisharp/1.39.2-net6.0",
+      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-musl-arm64-net6.0-1.39.3.zip",
+      "installPath": ".omnisharp/1.39.3-net6.0",
       "platforms": [
         "linux-musl"
       ],
       "architectures": [
         "arm64"
       ],
-      "installTestPath": "./.omnisharp/1.39.2-net6.0/OmniSharp.dll",
+      "installTestPath": "./.omnisharp/1.39.3-net6.0/OmniSharp.dll",
       "platformId": "linux-musl-arm64",
       "isFramework": false,
-      "integrity": "4DC5EB206EDD13196CC183E05B396B28BB2432106AC47E1C1346FBB3B3AC2992"
+      "integrity": "0D413F36CA8BA3584DA6A68DE448AC32E04B1E2B6FD527C795673B7A5551F3CF"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-1/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-3/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -409,12 +410,12 @@
         "x86_64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "79EC070073C884B9CC3FE226E4555A40B0848D6C3BBF182DC78980F5790E1528"
+      "integrity": "E3D200B0A27C1A32703842120AE3D214D459AC8A8FD23F4EA2537904CB3ED81F"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-1/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-3/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "win32"
@@ -423,12 +424,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/vsdbg-ui.exe",
-      "integrity": "57152318E6453379D84C7A659239894ED424D3F32FE0548937C53412338BDF48"
+      "integrity": "73C02938E3A9681DBCB029A77FBE987A0FC7750434555602F364EDA1E3358A74"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-1/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-3/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -442,12 +443,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "71D153840B3EE415F36574A308EAC6F3191FE57F716E6A125EF60BAAEF61B86B"
+      "integrity": "34A7858CFA100AEA0EE57197804C86273D6B587FEDE9561E32EFB263EA3FA10C"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-1/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-3/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -460,12 +461,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "CE62E18AAED99DA63D6F380FD96F5F7FB3B2AE3ABE4D90F2BF122881ED3AF55B"
+      "integrity": "3BC5BC7850E6AE2B6D99A49B189D8DABBB4DA091054EBBA0826CFC390B8D0DEF"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-1/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-3/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -478,12 +479,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "704E0127BF399D4C8A725D14AF15CF0F408987A8DDA90946C3C81C3F8E92B117"
+      "integrity": "86A3721317C4FC2EF9075F5CD3969BB56061F0A4529318FBEF2AC7ED2FC000C3"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-1/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-3/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux",
@@ -497,12 +498,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "45DE227F75B16DEA8F9B0561FB8FF8BCC55C9F17D7ECE5C031D1AA4840952512"
+      "integrity": "2DC95910DD83D10809506594B9964182BE2CFE6698E0338C585123D473782A06"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-1/coreclr-debug-linux-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-3/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux",
@@ -516,7 +517,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "77C7D930EA90BA3700F32C75D0A1D6E91ECE62EE6EF136AF6E6CB758E7201AE5"
+      "integrity": "3D62BFB0B88F3E413B52CF2F0DC139845F9F970817D8D0776481C6024487924D"
     },
     {
       "id": "Razor",
@@ -1255,20 +1256,17 @@
       {
         "command": "o.fixAll.solution",
         "title": "Fix all occurrences of a code issue within solution",
-        "category": "OmniSharp",
-        "enablement": "editorFocus"
+        "category": "OmniSharp"
       },
       {
         "command": "o.fixAll.project",
         "title": "Fix all occurrences of a code issue within project",
-        "category": "OmniSharp",
-        "enablement": "editorFocus"
+        "category": "OmniSharp"
       },
       {
         "command": "o.fixAll.document",
         "title": "Fix all occurrences of a code issue within document",
-        "category": "OmniSharp",
-        "enablement": "editorFocus"
+        "category": "OmniSharp"
       },
       {
         "command": "o.reanalyze.allProjects",
@@ -1278,8 +1276,7 @@
       {
         "command": "o.reanalyze.currentProject",
         "title": "Analyze current project",
-        "category": "OmniSharp",
-        "enablement": "editorFocus"
+        "category": "OmniSharp"
       },
       {
         "command": "dotnet.generateAssets",
