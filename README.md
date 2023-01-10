@@ -32,6 +32,9 @@ If you still need Unity or .NET Framework support, you can set `omnisharp.useMod
 See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
 
 ## What's new in 1.25.3
+* Update Razor to 7.0.0-preview.23053.8 (PR: [#5523](https://github.com/OmniSharp/omnisharp-vscode/pull/5523))
+  * Enables support for arm64
+  * Adds document color and color presentation features
 * Update Roslyn to 4.5.0-2.22527.10 (PR: [#2486](https://github.com/OmniSharp/omnisharp-roslyn/pull/2486))
 * Update dotnet-script dependencies to 1.4.0 (PR: [#2477](https://github.com/OmniSharp/omnisharp-roslyn/pull/2477))
 * Register the LanguageServerLogger only once (PR: [#2473](https://github.com/OmniSharp/omnisharp-roslyn/pull/2473))
