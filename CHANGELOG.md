@@ -13,7 +13,7 @@
   * As a workaround, make an edit within the file before using Rename Symbol.
 
 ## 1.25.3
-* Update Razor to 7.0.0-preview.23053.8 (PR: )
+* Update Razor to 7.0.0-preview.23053.8 (PR: [#5523](https://github.com/OmniSharp/omnisharp-vscode/pull/5523))
   * Enables support for arm64
   * Adds document color and color presentation features
 * Update Roslyn to 4.5.0-2.22527.10 (PR: [#2486](https://github.com/OmniSharp/omnisharp-roslyn/pull/2486))
