@@ -23,14 +23,18 @@ import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPa
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 
+const includeFrameworkOmniSharp = false;
+
 export const offlinePackages = [
-    { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64", isFramework: true },
-    { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32", isFramework: true },
-    { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64", isFramework: true },
-    { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64", isFramework: true },
-    { platformInfo: new PlatformInformation('linux', 'arm64'), id: "linux-arm64", isFramework: true },
-    { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64", isFramework: true },
-    { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64", isFramework: true },
+    { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('linux', 'arm64'), id: "linux-arm64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('linux-musl', 'x86_64'), id: "alpine-x64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('linux-musl', 'arm64'), id: "alpine-arm64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64", isFramework: includeFrameworkOmniSharp },
+    { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64", isFramework: includeFrameworkOmniSharp },
 ];
 
 export function getPackageName(packageJSON: any, vscodePlatformId: string) {
@@ -69,9 +73,10 @@ async function doPackageOffline() {
             await doOfflinePackage(p.platformInfo, p.id, p.isFramework, packageJSON, packedVsixOutputRoot);
         }
         catch (err) {
+            const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
             // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
             // stack trace of this line. So that seperates the two stack traces.
-            throw Error(`Failed to create package ${p.id}. ${err.stack ?? err ?? '<unknown error>'}\n---`);
+            throw Error(`Failed to create package ${p.id}. ${message}\n---`);
         }
     }
 }
@@ -100,7 +105,7 @@ async function install(platformInfo: PlatformInformation, packageJSON: any, isFr
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
         .filter(dep => dep.isFramework === undefined || dep.isFramework === isFramework);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
-    let provider = () => new NetworkSettings(undefined, undefined);
+    let provider = () => new NetworkSettings('', true);
     if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, isFramework))) {
         throw Error("Failed to download package.");
     }

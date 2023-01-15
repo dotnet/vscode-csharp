@@ -9,7 +9,6 @@
             "args": [
                 "--extensionDevelopmentPath=${workspaceRoot}"
             ],
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
@@ -52,7 +51,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "featureTests"
             },
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/out/test/**/*.js"
@@ -77,7 +75,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "singleCsproj"
             },
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
@@ -121,7 +118,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj"
             },
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
@@ -146,7 +142,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnFilterWithCsproj"
             },
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
@@ -171,7 +166,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithGenerator"
             },
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
@@ -188,8 +182,8 @@
                 "updatePackageDependencies"
             ],
             "env": {
-                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-linux-x64-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-linux-x86-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-linux-arm64-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-osx-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-win-x64-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-win-x86-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-win-arm64-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-linux-x64-net6.0-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-linux-arm64-net6.0-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-osx-x64-net6.0-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-osx-arm64-net6.0-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-win-x64-net6.0-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-win-x86-net6.0-1.38.1.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.38.1/omnisharp-win-arm64-net6.0-1.38.1.zip",
-                "NEW_DEPS_VERSION": "1.38.1"
+                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-x64-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-x86-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-arm64-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-osx-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-x64-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-x86-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-arm64-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-musl-x64-net6.0-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-musl-arm64-net6.0-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-x64-net6.0-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-linux-arm64-net6.0-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-osx-x64-net6.0-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-osx-arm64-net6.0-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-x64-net6.0-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-x86-net6.0-1.39.3.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.3/omnisharp-win-arm64-net6.0-1.39.3.zip",
+                "NEW_DEPS_VERSION": "1.39.3"
             },
             "cwd": "${workspaceFolder}"
         }

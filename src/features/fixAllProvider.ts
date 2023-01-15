@@ -17,7 +17,7 @@ import { CancellationToken } from 'vscode-languageserver-protocol';
 export class FixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
     public static fixAllCodeActionKind =
       vscode.CodeActionKind.SourceFixAll.append('csharp');
-  
+
     public static metadata: vscode.CodeActionProviderMetadata = {
       providedCodeActionKinds: [FixAllProvider.fixAllCodeActionKind]
     };
@@ -50,7 +50,13 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
     }
 
     private async fixAllMenu(server: OmniSharpServer, scope: protocol.FixAllScope): Promise<void> {
-        let availableFixes = await serverUtils.getFixAll(server, { FileName: vscode.window.activeTextEditor.document.fileName, Scope: scope });
+        const fileName = vscode.window.activeTextEditor?.document.fileName;
+        if (fileName === undefined) {
+            vscode.window.showWarningMessage('Text editor must be focused to fix all issues');
+            return;
+        }
+
+        let availableFixes = await serverUtils.getFixAll(server, { FileName: fileName, Scope: scope });
 
         let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
 
@@ -58,26 +64,25 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
             targets = ["Fix all issues", ...targets];
         }
 
-        return vscode.window.showQuickPick(targets, {
+        const action = await vscode.window.showQuickPick(targets, {
             matchOnDescription: true,
             placeHolder: `Select fix all action`
-        }).then(async selectedAction => {
-            let filter: FixAllItem[] = undefined;
-
-            if (selectedAction === undefined) {
-                return;
-            }
-
-            if (selectedAction !== "Fix all issues") {
-                let actionTokens = selectedAction.split(":");
-                filter = [{ Id: actionTokens[0], Message: actionTokens[1] }];
-            }
-
-            await this.applyFixes(vscode.window.activeTextEditor.document.fileName, scope, filter);
         });
+
+        if (action === undefined) {
+            return;
+        }
+
+        let filter: FixAllItem[] | undefined;
+        if (action !== "Fix all issues") {
+            let actionTokens = action.split(":");
+            filter = [{ Id: actionTokens[0], Message: actionTokens[1] }];
+        }
+
+        await this.applyFixes(fileName, scope, filter);
     }
 
-    private async applyFixes(fileName: string, scope: FixAllScope, fixAllFilter: FixAllItem[]): Promise<boolean | string | {}> {
+    private async applyFixes(fileName: string, scope: FixAllScope, fixAllFilter: FixAllItem[] | undefined): Promise<void> {
         let response = await serverUtils.runFixAll(this.server, {
             FileName: fileName,
             Scope: scope,
@@ -88,7 +93,7 @@ export class FixAllProvider extends AbstractProvider implements vscode.CodeActio
         });
 
         if (response) {
-            return buildEditForResponse(response.Changes, this._languageMiddlewareFeature, CancellationToken.None);
+            await buildEditForResponse(response.Changes, this._languageMiddlewareFeature, CancellationToken.None);
         }
     }
 }

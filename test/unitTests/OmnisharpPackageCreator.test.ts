@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { assert, should, expect } from "chai";
+import { assert, should } from "chai";
 import { SetBinaryAndGetPackage, GetPackagesFromVersion, modernNetVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
 import { Package } from "../../src/packageManager/Package";
 import { testPackageJSON } from "./testAssets/testAssets";
@@ -29,26 +29,13 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
     useFrameworkOptions.forEach((useFramework) => {
         const pathSuffix = useFramework ? '' : `-net${modernNetVersion}`;
 
-        test(`Throws exception if version is empty useFramework: ${useFramework}`, () => {
-            let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
-            let fn = function () { SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, "", installPath); };
-            expect(fn).to.throw('Invalid version');
-        });
-
-        test(`Throws exception if version is null useFramework: ${useFramework}`, () => {
-            let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
-            let fn = function () { SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, null, installPath); };
-            expect(fn).to.throw('Invalid version');
-        });
-
-        test(`Architectures, binaries and platforms do not change and fallback url is empty useFramework: ${useFramework}`, () => {
+        test(`Architectures, binaries and platforms do not change useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
             let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, version, installPath);
 
             resultPackage.architectures.should.equal(testPackage.architectures);
             assert.equal(resultPackage.binaries, testPackage.binaries);
             resultPackage.platforms.should.equal(testPackage.platforms);
-            expect(resultPackage.fallbackUrl).to.be.undefined;
         });
 
         test(`Version information is appended to the description useFramework: ${useFramework}`, () => {
@@ -112,29 +99,12 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
 
     const serverUrl = "http://serverUrl";
     const installPath = "testPath";
-    let inputPackages: any;
-
-    suiteSetup(() => {
-        inputPackages = <Package[]>(testPackageJSON.runtimeDependencies);
-        should();
-    });
 
     [true, false].forEach((useFramework) => {
-        test(`Throws exception if the version is null (useFramework: ${useFramework})`, () => {
-            let version: string = null;
-            let fn = function () { GetPackagesFromVersion(version, useFramework, inputPackages, serverUrl, installPath); };
-            expect(fn).to.throw('Invalid version');
-        });
-
-        test(`Throws exception if the version is empty (useFramework: ${useFramework})`, () => {
-            let version = "";
-            let fn = function () { GetPackagesFromVersion(version, useFramework, inputPackages, serverUrl, installPath); };
-            expect(fn).to.throw('Invalid version');
-        });
-
         test('Returns experiment packages with install test path depending on install path and version', () => {
-            let inputPackages = <Package[]>[
+            let inputPackages: Package[] = [
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for Windows (.NET 4.7.2 / x64)",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
@@ -150,6 +120,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     isFramework: useFramework
                 },
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for Windows (.NET 4.7.2 / x64)",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
@@ -165,12 +136,16 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     isFramework: !useFramework
                 },
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for OSX",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
                     installPath: ".omnisharp",
                     platforms: [
                         "darwin"
+                    ],
+                    architectures: [
+                        "x86_64"
                     ],
                     binaries: [
                         "./mono.osx",
@@ -191,8 +166,9 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
 
         test('Returns only omnisharp packages with experimentalIds', () => {
             let version = "0.0.0";
-            let inputPackages = <Package[]>[
+            let inputPackages: Package[] = [
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for Windows (.NET 4.7.2 / x64)",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
@@ -208,6 +184,7 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     isFramework: useFramework
                 },
                 {
+                    id: "OmniSharp",
                     description: "OmniSharp for Windows (.NET 4.7.2 / x64)",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip",
@@ -223,12 +200,16 @@ suite('GetPackagesFromVersion : Gets the experimental omnisharp packages from a 
                     isFramework: !useFramework
                 },
                 {
+                    id: "OmniSharp",
                     description: "Some other package - no experimental id",
                     url: "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
                     fallbackUrl: "https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-osx-1.28.0.zip",
                     installPath: ".omnisharp",
                     platforms: [
                         "darwin"
+                    ],
+                    architectures: [
+                        "x86_64"
                     ],
                     binaries: [
                         "./mono.osx",

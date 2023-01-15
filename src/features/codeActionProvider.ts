@@ -23,7 +23,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         this.addDisposables(new CompositeDisposable(registerCommandDisposable));
     }
 
-    public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[]> {
+    public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[] | undefined> {
         const options = this.optionProvider.GetLatestOptions();
         if (options.disableCodeActions) {
             return;
@@ -62,6 +62,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
 
                 return {
                     title: codeAction.Name,
+                    kind: this.mapOmniSharpCodeActionKindToVSCodeCodeActionKind(codeAction.CodeActionKind),
                     command: {
                         title: codeAction.Name,
                         command: this._commandId,
@@ -74,7 +75,22 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         }
     }
 
-    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest, token: vscode.CancellationToken): Promise<boolean | string | {}> {
+    private mapOmniSharpCodeActionKindToVSCodeCodeActionKind(kind: string | undefined): vscode.CodeActionKind {
+        switch (kind) {
+            case 'QuickFix':
+                return vscode.CodeActionKind.QuickFix;
+            case 'Refactor':
+                return vscode.CodeActionKind.Refactor;
+            case 'RefactorExtract':
+                return vscode.CodeActionKind.RefactorExtract;
+            case 'RefactorInline':
+                return vscode.CodeActionKind.RefactorInline;
+            default:
+                return vscode.CodeActionKind.Empty;
+        }
+    }
+
+    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest, token: vscode.CancellationToken): Promise<boolean | string | undefined> {
         try {
             const response = await serverUtils.runCodeAction(this._server, req);
             if (response) {
@@ -83,5 +99,7 @@ export default class CodeActionProvider extends AbstractProvider implements vsco
         } catch (error) {
             return Promise.reject(`Problem invoking 'RunCodeAction' on OmniSharp server: ${error}`);
         }
+
+        return undefined;
     }
 }

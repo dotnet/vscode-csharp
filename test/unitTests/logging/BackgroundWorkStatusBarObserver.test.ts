@@ -5,9 +5,9 @@
 
 import { expect, should } from 'chai';
 import { StatusBarItem } from '../../../src/vscodeAdapter';
-import { OmnisharpProjectDiagnosticStatus } from '../../../src/omnisharp/loggingEvents';
+import { OmnisharpBackgroundDiagnosticStatus } from '../../../src/omnisharp/loggingEvents';
 import { BackgroundWorkStatusBarObserver } from '../../../src/observers/BackgroundWorkStatusBarObserver';
-import { DiagnosticStatus } from '../../../src/omnisharp/protocol';
+import { BackgroundDiagnosticStatus } from '../../../src/omnisharp/protocol';
 
 suite('BackgroundWorkStatusBarObserver', () => {
     suiteSetup(() => should());
@@ -25,19 +25,19 @@ suite('BackgroundWorkStatusBarObserver', () => {
         hideCalled = false;
     });
 
-    test('OmnisharpProjectDiagnosticStatus.Processing: Show processing message', () => {
-        let event = new OmnisharpProjectDiagnosticStatus({ Status: DiagnosticStatus.Processing, ProjectFilePath: "foo.csproj", Type: "background" });
+    test('OmnisharpBackgroundDiagnosticStatus.Processing: Show processing message', () => {
+        let event = new OmnisharpBackgroundDiagnosticStatus({ Status: BackgroundDiagnosticStatus.Progress, NumberFilesRemaining: 0, NumberFilesTotal: 0, NumberProjects: 0 });
         observer.post(event);
         expect(hideCalled).to.be.false;
         expect(showCalled).to.be.true;
         expect(statusBarItem.text).to.contain('Analyzing');
     });
 
-    test('OmnisharpProjectDiagnosticStatus.Ready: Hide processing message', () => {
-        let event = new OmnisharpProjectDiagnosticStatus({ Status: DiagnosticStatus.Ready, ProjectFilePath: "foo.csproj", Type: "background" });
+    test('OmnisharpBackgroundDiagnosticStatus.Ready: Hide processing message', () => {
+        let event = new OmnisharpBackgroundDiagnosticStatus({ Status: BackgroundDiagnosticStatus.Finished, NumberFilesRemaining: 0, NumberFilesTotal: 0, NumberProjects: 0 });
         observer.post(event);
         expect(hideCalled).to.be.true;
         expect(showCalled).to.be.false;
-        expect(statusBarItem.text).to.be.undefined;
+        expect(statusBarItem.text).to.be.equal('');
     });
 });

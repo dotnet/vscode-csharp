@@ -66,7 +66,7 @@ Notes about this:
 5. The way this works is that VS Code will scrape the output which is set to the console. If a line 
     matches the pattern, it will launch a browser against the URL which was 'captured' by the pattern.
     Here is an explanation of what the pattern does:
-    * `\\b` : Matches on a word boundery. Note that `\b` indicates a word boundary, but because this is in a json string, the `\` needs to be escaped, hence `\\b`.
+    * `\\b` : Matches on a word boundary. Note that `\b` indicates a word boundary, but because this is in a json string, the `\` needs to be escaped, hence `\\b`.
     * `Now listening on:` : This is a string literal, meaning that the next text must be `Now listening on:`.
     * `\\s+` : Matches one or more space characters.
     * `(` : This is the beginning of a 'capture group' -- this indicates which region of text will be saved and used to launch the browser.
@@ -100,6 +100,18 @@ If you want to use the port number from the console output, but not the host nam
         "uriFormat": "http://localhost:%s"
     }
 ```
+
+In fact, you can open almost any url, for example you could open the default swagger ui by doing something like this:
+
+```json
+    "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+http://\\S+:([0-9]+)",
+        "uriFormat": "http://localhost:%s/swagger/index.html"
+    }
+```
+
+> **Note** You need to make sure your project has swaggerui setup to do this.
 
 ## Environment variables
 Environment variables may be passed to your program using this schema:

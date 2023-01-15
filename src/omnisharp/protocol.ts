@@ -17,6 +17,7 @@ export module Requests {
     export const FormatAfterKeystroke = '/formatAfterKeystroke';
     export const FormatRange = '/formatRange';
     export const GetCodeActions = '/getcodeactions';
+    export const GoToTypeDefinition = '/gototypedefinition';
     export const FindImplementations = '/findimplementations';
     export const Project = '/project';
     export const Projects = '/projects';
@@ -37,6 +38,10 @@ export module Requests {
     export const SourceGeneratedFile = '/sourcegeneratedfile';
     export const UpdateSourceGeneratedFile = '/updatesourcegeneratedfile';
     export const SourceGeneratedFileClosed = '/sourcegeneratedfileclosed';
+    export const InlayHint = '/inlayHint';
+    export const InlayHintResolve = '/inlayHint/resolve';
+    export const FileOpen = '/open';
+    export const FileClose = '/close';
 }
 
 export namespace WireProtocol {
@@ -66,7 +71,7 @@ export namespace WireProtocol {
 }
 
 export interface FileBasedRequest {
-    FileName: string;
+    FileName?: string;
 }
 
 export interface Request extends FileBasedRequest {
@@ -210,6 +215,8 @@ export interface QuickFix {
 
 export interface SymbolLocation extends QuickFix {
     Kind: string;
+    ContainingSymbolName?: string;
+    GeneratedFileInfo?: SourceGeneratedFileInfo;
 }
 
 export interface QuickFixResponse {
@@ -278,15 +285,17 @@ export interface ProjectInformationResponse {
     MsBuildProject: MSBuildProject;
 }
 
-export enum DiagnosticStatus {
-    Processing = 0,
-    Ready = 1
+export enum BackgroundDiagnosticStatus {
+    Started = 0,
+    Progress = 1,
+    Finished = 2
 }
 
-export interface ProjectDiagnosticStatus {
-    Status: DiagnosticStatus;
-    ProjectFilePath: string;
-    Type: "background";
+export interface BackgroundDiagnosticStatusMessage {
+    Status: BackgroundDiagnosticStatus;
+    NumberProjects: number;
+    NumberFilesTotal: number;
+    NumberFilesRemaining: number;
 }
 
 export interface WorkspaceInformationResponse {
@@ -315,12 +324,15 @@ export interface CakeContext {
 
 export interface MSBuildProject {
     ProjectGuid: string;
+    /** Absolute path to the csproj file. */
     Path: string;
     AssemblyName: string;
+    /** Absolute path to the output assembly DLL. */
     TargetPath: string;
     TargetFramework: string;
     SourceFiles: string[];
     TargetFrameworks: TargetFramework[];
+    /** Absolute path to the output directory. */
     OutputPath: string;
     IsExe: boolean;
     IsUnityProject: boolean;
@@ -495,6 +507,12 @@ export interface RunFixAllRequest extends FileBasedRequest {
     ApplyChanges: boolean;
 }
 
+export interface ReAnalyzeRequest extends FileBasedRequest {
+}
+
+export interface ReAnalyzeReponse {
+}
+
 export interface QuickInfoRequest extends Request {
 }
 
@@ -564,10 +582,16 @@ export interface SourceGeneratedFileResponse {
 export interface UpdateSourceGeneratedFileRequest extends SourceGeneratedFileInfo {
 }
 
-export interface UpdateSourceGeneratedFileResponse {
-    UpdateType: UpdateType;
-    Source?: string;
+interface UpdateSourceGeneratedFileNotModifiedResponse {
+    UpdateType: Exclude<UpdateType, UpdateType.Modified>;
 }
+
+interface UpdateSourceGeneratedFileModifiedResponse {
+    UpdateType: UpdateType.Modified;
+    Source: string;
+}
+
+export type UpdateSourceGeneratedFileResponse = UpdateSourceGeneratedFileNotModifiedResponse | UpdateSourceGeneratedFileModifiedResponse;
 
 export enum UpdateType {
     Unchanged,
@@ -577,6 +601,41 @@ export enum UpdateType {
 
 export interface SourceGeneratedFileClosedRequest extends SourceGeneratedFileInfo {
 }
+
+export interface InlayHintRequest {
+    Location: V2.Location;
+}
+
+export interface InlayHint {
+    Position: V2.Point;
+    Label: string;
+    Tooltip?: string;
+    Data: any;
+    TextEdits?: LinePositionSpanTextChange[];
+}
+
+export interface InlayHintResponse {
+    InlayHints: InlayHint[];
+}
+
+export interface InlayHintResolve {
+    Hint: InlayHint;
+}
+
+export interface Definition {
+    Location: V2.Location;
+    MetadataSource?: MetadataSource;
+    SourceGeneratedFileInfo?: SourceGeneratedFileInfo;
+}
+
+export interface GoToTypeDefinitionRequest extends Request {
+    WantMetadata?: boolean;
+}
+
+export interface GoToTypeDefinitionResponse {
+    Definitions?: Definition[];
+}
+
 
 export namespace V2 {
 
@@ -639,6 +698,7 @@ export namespace V2 {
     export interface OmniSharpCodeAction {
         Identifier: string;
         Name: string;
+        CodeActionKind?: string;
     }
 
     export interface GetCodeActionsResponse {
@@ -697,9 +757,9 @@ export namespace V2 {
 
     // dotnet-test endpoints
     interface BaseTestRequest extends Request {
-        RunSettings: string;
+        RunSettings?: string;
         TestFrameworkName: string;
-        TargetFrameworkVersion: string;
+        TargetFrameworkVersion?: string;
         NoBuild?: boolean;
     }
 
@@ -918,36 +978,36 @@ export namespace V2 {
     }
 }
 
-export function findNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework {
-    let regexp = new RegExp('^net[1-4]');
+export function findNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework | undefined {
+    const regexp = new RegExp('^net[1-4]');
     return project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
 }
 
-export function findNetCoreTargetFramework(project: MSBuildProject): TargetFramework {
+export function findNetCoreTargetFramework(project: MSBuildProject): TargetFramework | undefined {
     return findNetCoreAppTargetFramework(project) ?? findModernNetFrameworkTargetFramework(project);
 }
 
-export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework {
+export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework | undefined {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
 }
 
-export function findModernNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework {
-    let regexp = new RegExp('^net[5-9]');
+export function findModernNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework | undefined {
+    const regexp = new RegExp('^net[5-9]');
     const targetFramework = project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
 
     // Shortname is being reported as net50 instead of net5.0
     if (targetFramework !== undefined && targetFramework.ShortName.charAt(4) !== ".") {
-        targetFramework.ShortName = targetFramework.ShortName.substr(0, 4) + "." + targetFramework.ShortName.substr(4);
+        targetFramework.ShortName = `${targetFramework.ShortName.substring(0, 4)}.${targetFramework.ShortName.substring(4)}`;
     }
 
     return targetFramework;
 }
 
-export function findNetStandardTargetFramework(project: MSBuildProject): TargetFramework {
+export function findNetStandardTargetFramework(project: MSBuildProject): TargetFramework | undefined {
     return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netstandard'));
 }
 
-export function isDotNetCoreProject(project: MSBuildProject): Boolean {
+export function isDotNetCoreProject(project: MSBuildProject): boolean {
     return findNetCoreTargetFramework(project) !== undefined ||
         findNetStandardTargetFramework(project) !== undefined ||
         findNetFrameworkTargetFramework(project) !== undefined;

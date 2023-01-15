@@ -22,14 +22,15 @@ type RemapParameterType<M extends keyof RemapApi> = GetRemapType<NonNullable<Rem
 
 export class LanguageMiddlewareFeature implements IDisposable {
     private readonly _middlewares: LanguageMiddleware[];
-    private _registration: IDisposable;
+    private _registration: IDisposable | undefined;
 
     constructor() {
         this._middlewares = [];
     }
 
     public dispose(): void {
-        this._registration.dispose();
+        // this._registration should always be defined, but just in case we never register...
+        this._registration?.dispose();
     }
 
     public register(): void {

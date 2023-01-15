@@ -1,7 +1,6 @@
 {
     "ui": "tdd",
     "require": [
-        "source-map-support/register",
-        "ts-node/register"
+        "source-map-support/register"
     ]
 }

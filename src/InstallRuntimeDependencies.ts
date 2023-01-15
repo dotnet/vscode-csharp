@@ -16,7 +16,7 @@ export async function installRuntimeDependencies(packageJSON: any, extensionPath
     const packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, extensionPath);
     const filteredPackages = filterOmniSharpPackage(packagesToInstall, useFramework);
 
-    if (filteredPackages && filteredPackages.length > 0) {
+    if (filteredPackages.length > 0) {
         eventStream.post(new PackageInstallation("C# dependencies"));
         // Display platform information and RID
         eventStream.post(new LogPlatformInfo(platformInfo));
@@ -36,5 +36,5 @@ export async function installRuntimeDependencies(packageJSON: any, extensionPath
 function filterOmniSharpPackage(packages: AbsolutePathPackage[], useFramework: boolean) {
     // Since we will have more than one OmniSharp package defined for some platforms, we need
     // to filter out the one that doesn't match which dotnet runtime is being used.
-    return packages.filter(pkg => pkg.id != "OmniSharp" || pkg.isFramework === useFramework);
+    return packages.filter(pkg => pkg.id !== "OmniSharp" || pkg.isFramework === useFramework);
 }

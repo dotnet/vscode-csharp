@@ -1,0 +1,13 @@
+{
+    // This is a temporary tsconfig.json to disable strict mode for the test folder
+    // until all nullability issues are fixed.
+    "extends": "../tsconfig.json",
+    "include": [
+        "../src",
+        "../test",
+        "../typings"
+    ],
+    "compilerOptions": {
+      "strict": false
+    }
+}

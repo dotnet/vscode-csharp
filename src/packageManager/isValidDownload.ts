@@ -8,14 +8,14 @@ import { EventStream } from "../EventStream";
 import { IntegrityCheckSuccess, DownloadValidation } from "../omnisharp/loggingEvents";
 
 export interface DownloadValidator {
-    (buffer: Buffer, integrity: string, eventStream: EventStream): boolean;
+    (buffer: Buffer, integrity: string | undefined, eventStream: EventStream): boolean;
 }
 
-export function isValidDownload(buffer: Buffer, integrity: string, eventStream: EventStream): boolean {
-    if (integrity && integrity.length > 0) {
+export function isValidDownload(buffer: Buffer, integrity: string | undefined, eventStream: EventStream): boolean {
+    if (integrity !== undefined && integrity.length > 0) {
         eventStream.post(new DownloadValidation());
         let value = getBufferIntegrityHash(buffer);
-        if (value == integrity.toUpperCase()) {
+        if (value === integrity.toUpperCase()) {
             eventStream.post(new IntegrityCheckSuccess());
             return true;
         }

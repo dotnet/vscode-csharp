@@ -92,7 +92,7 @@ class RequestQueue {
         this.eventStream.post(new OmnisharpServerProcessRequestStart(this._name, availableRequestSlots));
 
         for (let i = 0; i < availableRequestSlots && this._pending.length > 0; i++) {
-            const item = this._pending.shift();
+            const item = this._pending.shift()!; // We know from this._pending.length that we can still shift
             item.startTime = Date.now();
 
             const id = this._makeRequest(item);
@@ -117,6 +117,7 @@ export class RequestQueueCollection {
         concurrency: number,
         makeRequest: (request: Request) => number
     ) {
+        this._isProcessing = false;
         this._priorityQueue = new RequestQueue('Priority', 1, eventStream, makeRequest);
         this._normalQueue = new RequestQueue('Normal', concurrency, eventStream, makeRequest);
         this._deferredQueue = new RequestQueue('Deferred', Math.max(Math.floor(concurrency / 4), 2), eventStream, makeRequest);

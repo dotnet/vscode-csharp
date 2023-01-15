@@ -57,7 +57,7 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleOmnisharpServerRequestCancelled(event: OmnisharpServerRequestCancelled) {
-        this.logger.appendLine(`Cancelled request for ${event.command} (${event.id}).`);
+        this.logger.appendLine(`Cancelled request for ${event.command}${event.id ? ` (${event.id})` : ''}.`);
         this.logger.appendLine();
     }
 

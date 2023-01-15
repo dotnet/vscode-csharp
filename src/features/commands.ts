@@ -23,7 +23,7 @@ import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
 
-export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IHostExecutableResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
+export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
     let disposable = new CompositeDisposable();
     disposable.add(vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
@@ -53,7 +53,7 @@ export default function registerCommands(context: vscode.ExtensionContext, serve
     // Register command for generating tasks.json and launch.json assets.
     disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(server, selectedIndex)));
 
-    disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), monoResolver)));
+    disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, context.extension.packageJSON.version, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), dotnetResolver, monoResolver)));
 
     disposable.add(vscode.commands.registerCommand('csharp.showDecompilationTerms', async () => showDecompilationTerms(context, server, optionProvider)));
 
@@ -97,14 +97,14 @@ async function pickProjectAndStart(server: OmniSharpServer, optionProvider: Opti
 }
 
 export async function showProjectSelector(server: OmniSharpServer, targets: LaunchTarget[]): Promise<void> {
-    return vscode.window.showQuickPick(targets, {
+    const launchTarget = await vscode.window.showQuickPick(targets, {
         matchOnDescription: true,
         placeHolder: `Select 1 of ${targets.length} projects`
-    }).then(async launchTarget => {
-        if (launchTarget) {
-            return server.restart(launchTarget);
-        }
     });
+
+    if (launchTarget !== undefined) {
+        return server.restart(launchTarget);
+    }
 }
 
 interface Command {
@@ -154,8 +154,13 @@ async function reAnalyzeAllProjects(server: OmniSharpServer, eventStream: EventS
 }
 
 async function reAnalyzeCurrentProject(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+    const activeTextEditor = vscode.window.activeTextEditor;
+    if (activeTextEditor === undefined) {
+        return;
+    }
+
     await serverUtils.reAnalyze(server, {
-        fileName: vscode.window.activeTextEditor.document.uri.fsPath
+        FileName: activeTextEditor.document.uri.fsPath,
     });
 }
 

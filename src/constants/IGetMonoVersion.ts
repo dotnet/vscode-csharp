@@ -4,5 +4,5 @@
  *--------------------------------------------------------------------------------------------*/
 
 export interface IGetMonoVersion {
-    (environment: NodeJS.ProcessEnv): Promise<string>;
+    (environment: NodeJS.ProcessEnv): Promise<string | undefined>;
 }

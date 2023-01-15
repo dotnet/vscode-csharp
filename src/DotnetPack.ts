@@ -10,10 +10,10 @@ export interface DotnetPackExtensionExports {
     getDotnetPath(version?: string): Promise<string | undefined>;
 }
 
-export async function getDotnetPackApi(): Promise<DotnetPackExtensionExports> {
+export async function getDotnetPackApi(): Promise<DotnetPackExtensionExports | undefined> {
     const dotnetExtension = vscode.extensions.getExtension<DotnetPackExtensionExports>(dotnetPackExtensionId);
-    if (!dotnetExtension) {
-        return null;
+    if (dotnetExtension === undefined) {
+        return undefined;
     }
 
     if (!dotnetExtension.isActive) {

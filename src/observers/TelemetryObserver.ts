@@ -19,8 +19,8 @@ export interface ITelemetryReporter {
 export class TelemetryObserver {
     private reporter: ITelemetryReporter;
     private platformInfo: PlatformInformation;
-    private solutionId: string;
-    private dotnetInfo: DotnetInfo;
+    private solutionId?: string;
+    private dotnetInfo?: DotnetInfo;
 
     constructor(platformInfo: PlatformInformation, reporterCreator: () => ITelemetryReporter) {
         this.platformInfo = platformInfo;
@@ -64,11 +64,11 @@ export class TelemetryObserver {
     }
 
     private handleTelemetryEventMeasures(event: TelemetryEventWithMeasures) {
-        this.reporter.sendTelemetryEvent(event.eventName, null, event.measures);
+        this.reporter.sendTelemetryEvent(event.eventName, undefined, event.measures);
     }
 
     private async handleOmnisharpInitialisation(event: OmnisharpInitialisation) {
-        this.dotnetInfo = await getDotnetInfo();
+        this.dotnetInfo = await getDotnetInfo(event.dotNetCliPaths);
         this.solutionId = this.createSolutionId(event.solutionPath);
     }
 
@@ -82,10 +82,7 @@ export class TelemetryObserver {
         if (event.error instanceof PackageError) {
             // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
             telemetryProps['error.message'] = event.error.message;
-
-            if (event.error.pkg) {
-                telemetryProps['error.packageUrl'] = event.error.pkg.url;
-            }
+            telemetryProps['error.packageUrl'] = event.error.pkg.url;
         }
 
         this.reporter.sendTelemetryEvent('AcquisitionFailed', telemetryProps);
@@ -93,16 +90,16 @@ export class TelemetryObserver {
 
     private handleTestExecutionCountReport(event: TestExecutionCountReport) {
         if (event.debugCounts) {
-            this.reporter.sendTelemetryEvent('DebugTest', null, event.debugCounts);
+            this.reporter.sendTelemetryEvent('DebugTest', undefined, event.debugCounts);
         }
         if (event.runCounts) {
-            this.reporter.sendTelemetryEvent('RunTest', null, event.runCounts);
+            this.reporter.sendTelemetryEvent('RunTest', undefined, event.runCounts);
         }
     }
 
     private handleProjectConfigurationReceived(event: ProjectConfiguration, telemetryProps: { [key: string]: string }) {
         let projectConfig = event.projectConfiguration;
-        telemetryProps['SolutionId'] = this.solutionId;
+        telemetryProps['SolutionId'] = this.solutionId ?? "";
         telemetryProps['ProjectId'] = projectConfig.ProjectId;
         telemetryProps['SessionId'] = projectConfig.SessionId;
         telemetryProps['OutputType'] = projectConfig.OutputKind?.toString() ?? "";

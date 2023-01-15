@@ -12,15 +12,14 @@ import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotIn
 import { EventStream } from '../EventStream';
 import CSharpExtensionExports from '../CSharpExtensionExports';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
-import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { DotnetDebugConfigurationProvider } from './debugConfigurationProvider';
+import { Options } from '../omnisharp/options';
 
-let _debugUtil: CoreClrDebugUtil = null;
+export async function activate(thisExtension: vscode.Extension<CSharpExtensionExports>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, options: Options) {
+    const debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
-export async function activate(thisExtension: vscode.Extension<CSharpExtensionExports>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream) {
-    _debugUtil = new CoreClrDebugUtil(context.extensionPath);
-
-    if (!CoreClrDebugUtil.existsSync(_debugUtil.debugAdapterDir())) {
+    if (!CoreClrDebugUtil.existsSync(debugUtil.debugAdapterDir())) {
         let isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
         // If this is a valid architecture, we should have had a debugger, so warn if we didn't, otherwise
         // a warning was already issued, so do nothing.
@@ -28,11 +27,11 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
             eventStream.post(new DebuggerPrerequisiteFailure("[ERROR]: C# Extension failed to install the debugger package."));
             showInstallErrorMessage(eventStream);
         }
-    } else if (!CoreClrDebugUtil.existsSync(_debugUtil.installCompleteFilePath())) {
-        completeDebuggerInstall(platformInformation, eventStream);
+    } else if (!CoreClrDebugUtil.existsSync(debugUtil.installCompleteFilePath())) {
+        completeDebuggerInstall(debugUtil, platformInformation, eventStream, options);
     }
 
-    const factory = new DebugAdapterExecutableFactory(platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath);
+    const factory = new DebugAdapterExecutableFactory(debugUtil, platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath, options);
     context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetDebugConfigurationProvider(platformInformation)));
     context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('clr', new DotnetDebugConfigurationProvider(platformInformation)));
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
@@ -43,12 +42,11 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
     if (platformInformation) {
         if (platformInformation.isMacOS()) {
             if (platformInformation.architecture === "arm64") {
-                eventStream.post(new DebuggerPrerequisiteWarning(`[WARNING]: arm64 macOS is not officially supported by the .NET debugger. You may experience unexpected issues when running in this configuration.`));
                 return true;
             }
 
             // Validate we are on compatiable macOS version if we are x86_64
-            if ((platformInformation.architecture !== "x86_64") || 
+            if ((platformInformation.architecture !== "x86_64") ||
                 (platformInformation.architecture === "x86_64" && !CoreClrDebugUtil.isMacOSSupported())) {
                 eventStream.post(new DebuggerPrerequisiteFailure("[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer."));
                 return false;
@@ -73,30 +71,29 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
     return false;
 }
 
-async function completeDebuggerInstall(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
-    return _debugUtil.checkDotNetCli()
-        .then(async (dotnetInfo: DotnetInfo) => {
-
-            let isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
-
-            if (!isValidArchitecture) {
-                eventStream.post(new DebuggerNotInstalledFailure());
-                vscode.window.showErrorMessage('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
-                return false;
-            }
-
-            // Write install.complete
-            CoreClrDebugUtil.writeEmptyFile(_debugUtil.installCompleteFilePath());
-
-            return true;
-        }, (err) => {
-            // Check for dotnet tools failed. pop the UI
-            // err is a DotNetCliError but use defaults in the unexpected case that it's not
-            showDotnetToolsWarning(err.ErrorMessage || _debugUtil.defaultDotNetCliErrorMessage());
-            eventStream.post(new DebuggerPrerequisiteWarning(err.ErrorString || err));
-            // TODO: log telemetry?
+async function completeDebuggerInstall(debugUtil: CoreClrDebugUtil, platformInformation: PlatformInformation, eventStream: EventStream, options: Options): Promise<boolean> {
+    try {
+        await debugUtil.checkDotNetCli(options.dotNetCliPaths);
+        const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
+        if (!isValidArchitecture) {
+            eventStream.post(new DebuggerNotInstalledFailure());
+            vscode.window.showErrorMessage('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
             return false;
-        });
+        }
+
+        // Write install.complete
+        CoreClrDebugUtil.writeEmptyFile(debugUtil.installCompleteFilePath());
+
+        return true;
+    } catch (err) {
+        const error = err as Error;
+
+        // Check for dotnet tools failed. pop the UI
+        showDotnetToolsWarning(error.message);
+        eventStream.post(new DebuggerPrerequisiteWarning(error.message));
+        // TODO: log telemetry?
+        return false;
+    }
 }
 
 function showInstallErrorMessage(eventStream: EventStream) {
@@ -132,7 +129,7 @@ function showDotnetToolsWarning(message: string): void {
 // Else it will launch the debug adapter
 export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescriptorFactory {
 
-    constructor(private readonly platformInfo: PlatformInformation, private readonly eventStream: EventStream, private readonly packageJSON: any, private readonly extensionPath: string) {
+    constructor(private readonly debugUtil: CoreClrDebugUtil, private readonly platformInfo: PlatformInformation, private readonly eventStream: EventStream, private readonly packageJSON: any, private readonly extensionPath: string, private readonly options: Options) {
     }
 
     async createDebugAdapterDescriptor(_session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): Promise<vscode.DebugAdapterDescriptor> {
@@ -149,8 +146,8 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
             // install.Lock does not exist, need to wait for packages to finish downloading.
             let installLock = false;
-            let debuggerPackage = getRuntimeDependencyPackageWithId("Debugger", this.packageJSON, this.platformInfo, this.extensionPath);
-            if (debuggerPackage && debuggerPackage.installPath) {
+            const debuggerPackage = getRuntimeDependencyPackageWithId("Debugger", this.packageJSON, this.platformInfo, this.extensionPath);
+            if (debuggerPackage?.installPath) {
                 installLock = await common.installFileExists(debuggerPackage.installPath, common.InstallFileType.Lock);
             }
 
@@ -160,8 +157,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             }
             // install.complete does not exist, check dotnetCLI to see if we can complete.
             else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-                let success: boolean = await completeDebuggerInstall(this.platformInfo, this.eventStream);
-
+                let success = await completeDebuggerInstall(this.debugUtil, this.platformInfo, this.eventStream, this.options);
                 if (!success) {
                     this.eventStream.post(new DebuggerNotInstalledFailure());
                     throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
@@ -171,13 +167,16 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // debugger has finished installation, kick off our debugger process
 
-        // Check for targetArchitecture
-        const targetArchitecture: string = getTargetArchitecture(this.platformInfo, _session.configuration.targetArchitecture, await getDotnetInfo());
-
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
+            const dotNetInfo = await getDotnetInfo(this.options.dotNetCliPaths);
+            const targetArchitecture = getTargetArchitecture(this.platformInfo, _session.configuration.targetArchitecture, dotNetInfo);
             const command = path.join(common.getExtensionPath(), ".debugger", targetArchitecture, "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
-            executable = new vscode.DebugAdapterExecutable(command);
+            executable = new vscode.DebugAdapterExecutable(command, [], {
+                env: {
+                    DOTNET_ROOT: dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '',
+                }
+            });
         }
 
         // make VS Code launch the DA executable

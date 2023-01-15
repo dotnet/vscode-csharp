@@ -8,14 +8,9 @@ import * as fs from 'fs';
 import * as semver from 'semver';
 import * as os from 'os';
 import { PlatformInformation } from './../platform';
-import { getDotnetInfo, DotnetInfo, DOTNET_MISSING_MESSAGE } from '../utils/getDotnetInfo';
+import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';
-
-export class DotNetCliError extends Error {
-    public ErrorMessage: string; // the message to display to the user
-    public ErrorString: string; // the string to log for this error
-}
 
 export class CoreClrDebugUtil {
     private _extensionDir: string = '';
@@ -61,34 +56,18 @@ export class CoreClrDebugUtil {
         });
     }
 
-    public defaultDotNetCliErrorMessage(): string {
-        return 'Failed to find up to date dotnet cli on the path.';
-    }
-
     // This function checks for the presence of dotnet on the path and ensures the Version
     // is new enough for us.
-    // Returns: a promise that returns a DotnetInfo class
-    // Throws: An DotNetCliError() from the return promise if either dotnet does not exist or is too old.
-    public async checkDotNetCli(): Promise<DotnetInfo> {
-        let dotnetInfo = await getDotnetInfo();
-
-        if (dotnetInfo.FullInfo === DOTNET_MISSING_MESSAGE) {
-            // something went wrong with spawning 'dotnet --info'
-            let dotnetError = new DotNetCliError();
-            dotnetError.ErrorMessage = 'The .NET Core SDK cannot be located. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.';
-            dotnetError.ErrorString = "Failed to spawn 'dotnet --info'";
-            throw dotnetError;
+    public async checkDotNetCli(dotNetCliPaths: string[]): Promise<void> {
+        try {
+            const dotnetInfo = await getDotnetInfo(dotNetCliPaths);
+            if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
+                throw new Error(`The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ${MINIMUM_SUPPORTED_DOTNET_CLI}.`);
+            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : `${error}`;
+            throw new Error(`The .NET Core SDK cannot be located: ${message}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.`);
         }
-
-        // succesfully spawned 'dotnet --info', check the Version
-        if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
-            let dotnetError = new DotNetCliError();
-            dotnetError.ErrorMessage = 'The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ' + MINIMUM_SUPPORTED_DOTNET_CLI + '.';
-            dotnetError.ErrorString = "dotnet cli is too old";
-            throw dotnetError;
-        }
-
-        return dotnetInfo;
     }
 
     public static isMacOSSupported(): boolean {
@@ -102,10 +81,11 @@ export class CoreClrDebugUtil {
             fs.accessSync(path, fs.constants.F_OK);
             return true;
         } catch (err) {
-            if (err.code === 'ENOENT' || err.code === 'ENOTDIR') {
+            const error = err as NodeJS.ErrnoException;
+            if (error.code === 'ENOENT' || error.code === 'ENOTDIR') {
                 return false;
             } else {
-                throw Error(err.code);
+                throw Error(error.code);
             }
         }
     }
@@ -121,58 +101,40 @@ export class CoreClrDebugUtil {
 
 const MINIMUM_SUPPORTED_OSX_ARM64_DOTNET_CLI: string = '6.0.0';
 
-export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string, dotnetInfo: DotnetInfo): string 
-{
-    if (!platformInfo)
+export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string | undefined, dotnetInfo: DotnetInfo): string {
+    if (!platformInfo.isMacOS())
     {
-        throw new Error(`Unable to retrieve 'TargetArchitecture' without platformInfo.`);
+        // Nothing to do here.
+        return '';
     }
-
-    let targetArchitecture = "";
 
     // On Apple M1 Machines, we need to determine if we need to use the 'x86_64' or 'arm64' debugger.
-    if (platformInfo.isMacOS())
+
+    // 'targetArchitecture' is specified in launch.json configuration, use that.
+    if (launchJsonTargetArchitecture)
     {
-        // 'targetArchitecture' is specified in launch.json configuration, use that.
-        if (launchJsonTargetArchitecture)
+        if (launchJsonTargetArchitecture !== "x86_64" && launchJsonTargetArchitecture !== "arm64")
         {
-            if (launchJsonTargetArchitecture !== "x86_64" && launchJsonTargetArchitecture !== "arm64")
-            {
-                throw new Error(`The value '${launchJsonTargetArchitecture}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`);
-            }
-            targetArchitecture = launchJsonTargetArchitecture;
+            throw new Error(`The value '${launchJsonTargetArchitecture}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`);
         }
-        else if (dotnetInfo)
-        {
-            // Find which targetArchitecture to use based on SDK Version or RID.
-
-            // If we are lower than .NET 6, use 'x86_64' since 'arm64' was not supported until .NET 6
-            if (dotnetInfo.Version && semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_OSX_ARM64_DOTNET_CLI))
-            {
-                targetArchitecture = 'x86_64';
-            }
-            else if (dotnetInfo.RuntimeId)
-            {
-                if (dotnetInfo.RuntimeId.includes('arm64'))
-                {
-                    targetArchitecture = 'arm64';
-                }
-                else if (dotnetInfo.RuntimeId.includes('x64'))
-                {
-                    targetArchitecture = 'x86_64';
-                }
-                else
-                {
-                    throw new Error(`Unexpected RuntimeId '${dotnetInfo.RuntimeId}'.`);
-                }
-            }
-        }
-
-        if (!targetArchitecture) {
-            // Unable to retrieve any targetArchitecture, go with platformInfo.
-            targetArchitecture = platformInfo.architecture;
-        }
+        return launchJsonTargetArchitecture;
     }
 
-    return targetArchitecture;
+    // If we are lower than .NET 6, use 'x86_64' since 'arm64' was not supported until .NET 6.
+    if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_OSX_ARM64_DOTNET_CLI))
+    {
+        return 'x86_64';
+    }
+
+    // Otherwise, look at the runtime ID.
+    if (dotnetInfo.RuntimeId.includes('arm64'))
+    {
+        return 'arm64';
+    }
+    else if (dotnetInfo.RuntimeId.includes('x64'))
+    {
+        return 'x86_64';
+    }
+
+    throw new Error(`Unexpected RuntimeId '${dotnetInfo.RuntimeId}'.`);
 }

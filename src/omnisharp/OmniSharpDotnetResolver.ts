@@ -12,9 +12,8 @@ import { IHostExecutableResolver } from "../constants/IHostExecutableResolver";
 import { PlatformInformation } from "../platform";
 import { Options } from "./options";
 
-const minimumDotnetVersion = semver.parse("6.0.100");
-
 export class OmniSharpDotnetResolver implements IHostExecutableResolver {
+    private readonly minimumDotnetVersion = "6.0.100";
 
     constructor(private platformInfo: PlatformInformation) { }
 
@@ -22,7 +21,7 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
         const dotnet = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const env = { ...process.env };
 
-        if (options.dotnetPath) {
+        if (options.dotnetPath.length > 0) {
             env['PATH'] = options.dotnetPath + path.delimiter + env['PATH'];
         }
 
@@ -33,13 +32,13 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
             throw new Error(`Unable to read dotnet version information. Error ${result.stderr}`);
         }
 
-        const dotnetVersion = semver.parse(result.stdout.trimRight());
+        const dotnetVersion = semver.parse(result.stdout.trimEnd());
         if (!dotnetVersion) {
             throw new Error(`Unknown result output from 'dotnet --version'. Received ${result.stdout}`);
         }
 
-        if (semver.lt(dotnetVersion, minimumDotnetVersion)) {
-            throw new Error(`Found dotnet version ${dotnetVersion}. Minimum required version is ${minimumDotnetVersion}.`);
+        if (semver.lt(dotnetVersion, this.minimumDotnetVersion)) {
+            throw new Error(`Found dotnet version ${dotnetVersion}. Minimum required version is ${this.minimumDotnetVersion}.`);
         }
 
         return {

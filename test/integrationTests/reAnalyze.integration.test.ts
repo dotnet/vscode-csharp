@@ -12,8 +12,8 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll } from './poll';
 import { EventStream } from '../../src/EventStream';
 import { EventType } from '../../src/omnisharp/EventType';
-import { BaseEvent, OmnisharpProjectDiagnosticStatus } from '../../src/omnisharp/loggingEvents';
-import { DiagnosticStatus } from '../../src/omnisharp/protocol';
+import { BaseEvent, OmnisharpBackgroundDiagnosticStatus } from '../../src/omnisharp/loggingEvents';
+import { BackgroundDiagnosticStatus } from '../../src/omnisharp/protocol';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -63,7 +63,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When interface is manually renamed, then return correct analysis after re-analysis of project", async function () {
-        let diagnosticStatusEvents = listenEvents<OmnisharpProjectDiagnosticStatus>(eventStream, EventType.ProjectDiagnosticStatus);
+        let diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
 
         await vscode.commands.executeCommand("vscode.open", interfaceUri);
 
@@ -73,7 +73,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) !== undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === BackgroundDiagnosticStatus.Finished) !== undefined);
 
         await assertWithPoll(
             () => vscode.languages.getDiagnostics(interfaceImplUri),
@@ -83,20 +83,20 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When re-analyze of project is executed then eventually get notified about them.", async function () {
-        let diagnosticStatusEvents = listenEvents<OmnisharpProjectDiagnosticStatus>(eventStream, EventType.ProjectDiagnosticStatus);
+        let diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status !== BackgroundDiagnosticStatus.Finished) != undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === BackgroundDiagnosticStatus.Finished) != undefined);
     });
 
     test("When re-analyze of all projects is executed then eventually get notified about them.", async function () {
-        let diagnosticStatusEvents = listenEvents<OmnisharpProjectDiagnosticStatus>(eventStream, EventType.ProjectDiagnosticStatus);
+        let diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
 
         await vscode.commands.executeCommand('o.reanalyze.allProjects', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Processing) != undefined);
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === DiagnosticStatus.Ready) != undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status !== BackgroundDiagnosticStatus.Finished) != undefined);
+        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === BackgroundDiagnosticStatus.Finished) != undefined);
     });
 });

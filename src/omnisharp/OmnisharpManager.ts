@@ -10,23 +10,23 @@ import { OmnisharpDownloader } from './OmnisharpDownloader';
 import { PlatformInformation } from '../platform';
 import { modernNetVersion } from './OmnisharpPackageCreator';
 
-export interface LaunchInfo {
-    LaunchPath?: string;
-    MonoLaunchPath?: string;
-    DotnetLaunchPath?: string;
-}
-
 export class OmnisharpManager {
+
+    private readonly latestVersionFileServerPath = 'releases/versioninfo.txt';
+
+    private readonly installPath = '.omnisharp';
+
     public constructor(
         private downloader: OmnisharpDownloader,
-        private platformInfo: PlatformInformation) {
+        private platformInfo: PlatformInformation,
+        // Only the tests set this. Instead of making this configurable,
+        // we should probably just mock the HTTP requests, not create an entire mock HTTP server.
+        private serverUrl: string = 'https://roslynomnisharp.blob.core.windows.net') {
     }
 
-    public async GetOmniSharpLaunchInfo(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
-        if (!omnisharpPath) {
-            // If omnisharpPath was not specified, return the default path.
-            let basePath = path.resolve(extensionPath, '.omnisharp', defaultOmnisharpVersion + (useFramework ? '' : `-net${modernNetVersion}`));
-            return this.GetLaunchInfo(this.platformInfo, useFramework, basePath);
+    public async GetOmniSharpLaunchPath(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<string> {
+        if (omnisharpPath.length === 0) {
+            return this.GetLaunchPathForVersion(defaultOmnisharpVersion, this.platformInfo, useFramework, extensionPath);
         }
 
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
@@ -35,58 +35,40 @@ export class OmnisharpManager {
                 throw new Error('The system could not find the specified path');
             }
 
-            return {
-                LaunchPath: omnisharpPath
-            };
+            return omnisharpPath;
         }
         else if (omnisharpPath === 'latest') {
-            return await this.InstallLatestAndReturnLaunchInfo(useFramework, serverUrl, latestVersionFileServerPath, installPath, extensionPath);
+            return await this.InstallLatestAndReturnLaunchInfo(useFramework, extensionPath);
         }
 
         // If the path is neither a valid path on disk not the string "latest", treat it as a version
-        return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, useFramework, serverUrl, installPath, extensionPath);
+        return await this.InstallVersionAndReturnLaunchInfo(omnisharpPath, useFramework, extensionPath);
     }
 
-    private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, serverUrl: string, latestVersionFileServerPath: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
-        let version = await this.downloader.GetLatestVersion(serverUrl, latestVersionFileServerPath);
-        return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, serverUrl, installPath, extensionPath);
+    private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, extensionPath: string): Promise<string> {
+        const version = await this.downloader.GetLatestVersion(this.serverUrl, this.latestVersionFileServerPath);
+        return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, extensionPath);
     }
 
-    private async InstallVersionAndReturnLaunchInfo(version: string, useFramework: boolean, serverUrl: string, installPath: string, extensionPath: string): Promise<LaunchInfo> {
+    private async InstallVersionAndReturnLaunchInfo(version: string, useFramework: boolean, extensionPath: string): Promise<string> {
         if (semver.valid(version)) {
-            await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, serverUrl, installPath);
-            return this.GetLaunchPathForVersion(this.platformInfo, useFramework, version, installPath, extensionPath);
+            await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, this.serverUrl, this.installPath);
+            return this.GetLaunchPathForVersion(version, this.platformInfo, useFramework, extensionPath);
         }
         else {
             throw new Error(`Invalid OmniSharp version - ${version}`);
         }
     }
 
-    private GetLaunchPathForVersion(platformInfo: PlatformInformation, isFramework: boolean, version: string, installPath: string, extensionPath: string): LaunchInfo {
-        if (!version) {
-            throw new Error('Invalid Version');
-        }
-
-        let basePath = path.resolve(extensionPath, installPath, version + (isFramework ? '' : `-net${modernNetVersion}`));
-
-        return this.GetLaunchInfo(platformInfo, isFramework, basePath);
-    }
-
-    private GetLaunchInfo(platformInfo: PlatformInformation, isFramework: boolean, basePath: string): LaunchInfo {
-        if (!isFramework) {
-            return {
-                DotnetLaunchPath: path.join(basePath, 'OmniSharp.dll')
-            };
+    private GetLaunchPathForVersion(version: string, platformInfo: PlatformInformation, useFramework: boolean, extensionPath: string): string {
+        const basePath = path.resolve(extensionPath, this.installPath, version + (useFramework ? '' : `-net${modernNetVersion}`));
+        if (!useFramework) {
+            return path.join(basePath, 'OmniSharp.dll');
         }
         else if (platformInfo.isWindows()) {
-            return {
-                LaunchPath: path.join(basePath, 'OmniSharp.exe')
-            };
+            return path.join(basePath, 'OmniSharp.exe');
         }
 
-        return {
-            LaunchPath: path.join(basePath, 'run'),
-            MonoLaunchPath: path.join(basePath, 'omnisharp', 'OmniSharp.exe')
-        };
+        return path.join(basePath, 'omnisharp', 'OmniSharp.exe');
     }
 }

@@ -18,7 +18,7 @@ gulp.task("test:feature", async () => {
 
     const result = await spawnNode([featureTestRunnerPath], { env });
 
-    if (result.code > 0) {
+    if (result.code === null || result.code > 0) {
         // Ensure that gulp fails when tests fail
         throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
     }
@@ -32,10 +32,10 @@ gulp.task("test:unit", async () => {
         '--ui',
         'tdd',
         '-c',
-        'test/unitTests/**/*.test.ts'
+        'out/test/unitTests/**/*.test.js'
     ]);
 
-    if (result.code > 0) {
+    if (result.code === null || result.code > 0) {
         // Ensure that gulp fails when tests fail
         throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
     }
@@ -83,7 +83,7 @@ async function runIntegrationTest(testAssetName: string) {
 
     const result = await spawnNode([integrationTestRunnerPath], { env, cwd: rootPath });
 
-    if (result.code > 0) {
+    if (result.code === null || result.code > 0) {
         // Ensure that gulp fails when tests fail
         throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
     }
