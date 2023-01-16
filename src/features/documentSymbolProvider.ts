@@ -46,7 +46,7 @@ function createSymbols(elements: Structure.CodeElement[], parentElement?: Struct
     return results;
 }
 
-function getNameForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): string {
+function getNameAndDetailsForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): { name: string, details: string } {
     switch (element.Kind) {
         case SymbolKinds.Class:
         case SymbolKinds.Delegate:
@@ -55,10 +55,17 @@ function getNameForElement(element: Structure.CodeElement, parentElement?: Struc
         case SymbolKinds.Struct:
         case SymbolKinds.Namespace:
             if (typeof parentElement === 'undefined') {
-                return element.DisplayName;
+                return { name: element.DisplayName, details: '' };
             }
             const prefix = `${parentElement.DisplayName}.`;
-            return element.DisplayName.startsWith(prefix) ? element.DisplayName.slice(prefix.length) : element.DisplayName;
+            if (!element.DisplayName.startsWith(prefix)) {
+                return { name: element.DisplayName, details: '' };
+            }
+            const name = element.DisplayName.slice(prefix.length);
+            if (name === element.DisplayName) {
+                return { name: element.DisplayName, details: '' };
+            }
+            return { name, details: element.DisplayName };
 
         case SymbolKinds.Constant:
         case SymbolKinds.Constructor:
@@ -72,15 +79,8 @@ function getNameForElement(element: Structure.CodeElement, parentElement?: Struc
         case SymbolKinds.Property:
         case SymbolKinds.Unknown:
         default:
-            return element.Name;
+            return { name: element.DisplayName, details: '' };
     }
-}
-
-function getNameAndDetailsForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): { name: string, details: string } {
-    const name = getNameForElement(element, parentElement);
-    const details = element.DisplayName === name ? '' : element.DisplayName;
-
-    return { name, details };
 }
 
 function createSymbolForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): vscode.DocumentSymbol {
