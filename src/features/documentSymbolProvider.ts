@@ -54,8 +54,9 @@ function getNameForElement(element: Structure.CodeElement, parentElement?: Struc
         case SymbolKinds.Interface:
         case SymbolKinds.Struct:
         case SymbolKinds.Namespace:
-            if (typeof parentElement === 'undefined')
+            if (typeof parentElement === 'undefined') {
                 return element.DisplayName;
+            }
             const prefix = `${parentElement.DisplayName}.`;
             return element.DisplayName.startsWith(prefix) ? element.DisplayName.slice(prefix.length) : element.DisplayName;
 
