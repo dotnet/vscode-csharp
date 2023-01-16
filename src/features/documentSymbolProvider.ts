@@ -31,13 +31,13 @@ export default class OmnisharpDocumentSymbolProvider extends AbstractSupport imp
     }
 }
 
-function createSymbols(elements: Structure.CodeElement[]): vscode.DocumentSymbol[] {
+function createSymbols(elements: Structure.CodeElement[], parentElement?: Structure.CodeElement): vscode.DocumentSymbol[] {
     let results: vscode.DocumentSymbol[] = [];
 
     elements.forEach(element => {
-        let symbol = createSymbolForElement(element);
+        let symbol = createSymbolForElement(element, parentElement);
         if (element.Children) {
-            symbol.children = createSymbols(element.Children);
+            symbol.children = createSymbols(element.Children, element);
         }
 
         results.push(symbol);
@@ -46,23 +46,46 @@ function createSymbols(elements: Structure.CodeElement[]): vscode.DocumentSymbol
     return results;
 }
 
-function createSymbolForElement(element: Structure.CodeElement): vscode.DocumentSymbol {
-    const fullRange = element.Ranges[SymbolRangeNames.Full];
-    const nameRange = element.Ranges[SymbolRangeNames.Name];
-
-    var name = element.DisplayName;
+function getNameForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): string {
     switch (element.Kind) {
         case SymbolKinds.Class:
         case SymbolKinds.Delegate:
         case SymbolKinds.Enum:
         case SymbolKinds.Interface:
         case SymbolKinds.Struct:
-            name = element.Name;
-            break;
+        case SymbolKinds.Namespace:
+            if (typeof parentElement === 'undefined')
+                return element.DisplayName;
+            const prefix = `${parentElement.DisplayName}.`;
+            return element.DisplayName.startsWith(prefix) ? element.DisplayName.slice(prefix.length) : element.DisplayName;
+
+        case SymbolKinds.Constant:
+        case SymbolKinds.Constructor:
+        case SymbolKinds.Destructor:
+        case SymbolKinds.EnumMember:
+        case SymbolKinds.Event:
+        case SymbolKinds.Field:
+        case SymbolKinds.Indexer:
+        case SymbolKinds.Method:
+        case SymbolKinds.Operator:
+        case SymbolKinds.Property:
+        case SymbolKinds.Unknown:
         default:
-            break;
+            return element.Name;
     }
-    const details = name == element.DisplayName ? "" : element.DisplayName;
+}
+
+function getNameAndDetailsForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): { name: string, details: string } {
+    const name = getNameForElement(element, parentElement);
+    const details = element.DisplayName === name ? '' : element.DisplayName;
+
+    return { name, details };
+}
+
+function createSymbolForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): vscode.DocumentSymbol {
+    const fullRange = element.Ranges[SymbolRangeNames.Full];
+    const nameRange = element.Ranges[SymbolRangeNames.Name];
+    const { name, details } = getNameAndDetailsForElement(element, parentElement);
 
     return new vscode.DocumentSymbol(name, details, toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
 }
