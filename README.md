@@ -31,6 +31,10 @@ If you still need Unity or .NET Framework support, you can set `omnisharp.useMod
 
 See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
 
+## What's new in 1.25.4
+* Update OmniSharp to 1.39.4 (PR: [#5544](https://github.com/OmniSharp/omnisharp-vscode/pull/5544))
+  * Disable snippets in sync completion (PR: [#2497](https://github.com/OmniSharp/omnisharp-roslyn/pull/2497))
+
 ## What's new in 1.25.3
 * Update Razor to 7.0.0-preview.23067.5 (PR: [#5543](https://github.com/OmniSharp/omnisharp-vscode/pull/5543))
   * Enables support for arm64
