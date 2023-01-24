@@ -9,6 +9,8 @@
 .vscode-test/**
 coverage/**
 out/**
+artifacts/**
+!artifacts/languageServer/**
 server/**
 src/**
 tasks/**

@@ -7,50 +7,56 @@ pr:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: UseDotNet@2
-  displayName: 'Install .NET Core SDKs'
-  inputs:
-    useGlobalJson: true
-    workingDirectory: server/
+stages:
+- stage: Build_And_Test
+  dependsOn: []
+  jobs:
+  - job: Build_And_Test
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET Core SDKs'
+      inputs:
+        useGlobalJson: true
+        workingDirectory: server/
 
-- script: dotnet build ./server/Microsoft.CodeAnalysis.LanguageServer.sln -warnaserror
-  displayName: 'Build Microsoft.CodeAnalysis.LanguageServer.sln'
+    - script: dotnet test ./server/Microsoft.CodeAnalysis.LanguageServer.sln -warnaserror --configuration Release
+      displayName: 'Build and test Microsoft.CodeAnalysis.LanguageServer.sln'
 
-- script: dotnet test ./server/Microsoft.CodeAnalysis.LanguageServer.sln --no-build
-  displayName: 'Test Microsoft.CodeAnalysis.LanguageServer.sln'
+    - task: NodeTool@0
+      displayName: 'Install Node.js 15.x'
+      inputs:
+        versionSpec: '15.x'
 
-- task: NodeTool@0
-  displayName: 'Install Node.js 15.x'
-  inputs:
-    versionSpec: '15.x'
+    - script: |
+        npm ci
+        npm i -g gulp
+      displayName: 'Install dependencies'
 
-- script: |
-    npm ci
-    npm i -g gulp
-  displayName: 'Install dependencies'
+    - script: npm run compile
+      displayName: 'Compile'
 
-- script: npm run compile
-  displayName: 'Compile'
+    # Build ready to run server bits for all platforms.  This only needs to be done for the main executable project.
+    - script: gulp 'server:publish' --configuration Release
+      displayName: 'Publish Microsoft.CodeAnalysis.LanguageServer'
 
-- script: gulp 'vsix:release:package:platform-neutral'
-  displayName: 'Build platform-neutral extension package'
+    - script: gulp 'vsix:release:package' --configuration Release
+      displayName: 'Build VSIXs'
 
-- script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-  displayName: Setup virtual display
+    - script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+      displayName: Setup virtual display
 
-- script: |
-    npm run test
-    npm run test:artifacts
-  displayName: 'Run unit and integration tests'
-  env:
-    CODE_VERSION: 1.66.0
-    DISPLAY: :99.0
-  # Continue on error so we still upload the vsix even if tests fail.
-  continueOnError: true
+    - script: |
+        npm run test
+        npm run test:artifacts
+      displayName: 'Run unit and integration tests'
+      env:
+        CODE_VERSION: 1.66.0
+        DISPLAY: :99.0
+      # Continue on error so we still upload the vsix even if tests fail.
+      continueOnError: true
 
-- task: PublishPipelineArtifact@1
-  displayName: 'Publish VSIXs'
-  inputs:
-    targetPath: '$(Build.SourcesDirectory)/vsix'
-    artifactName: 'VSIXs'
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish VSIXs'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/vsix'
+        artifactName: 'VSIXs'

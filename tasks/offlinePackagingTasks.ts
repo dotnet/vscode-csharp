@@ -4,48 +4,56 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as cp from 'child_process';
 import * as del from 'del';
 import * as fs from 'fs';
+import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
-import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, packedVsixOutputRoot } from '../tasks/projectPaths';
-import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
-import { EventStream } from '../src/EventStream';
-import { getPackageJSON } from '../tasks/packageJson';
-import { Logger } from '../src/logger';
-import { PlatformInformation } from '../src/platform';
-import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
-import NetworkSettings from '../src/NetworkSettings';
+import * as util from 'util';
 import { commandLineOptions } from '../tasks/commandLineArguments';
-import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
-import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
-import { isValidDownload } from '../src/packageManager/isValidDownload';
+import { offlineVscodeignorePath, vscodeignorePath, packedVsixOutputRoot, languageServerDirectory, getServerPublishDirectory } from '../tasks/projectPaths';
+import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
+const argv = require('yargs').argv;
+const exec = util.promisify(cp.exec);
 
-const includeFrameworkOmniSharp = false;
-
-export const offlinePackages = [
-    { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('linux', 'arm64'), id: "linux-arm64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('linux-musl', 'x86_64'), id: "alpine-x64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('linux-musl', 'arm64'), id: "alpine-arm64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64", isFramework: includeFrameworkOmniSharp },
+// Mapping of vsce vsix packaging target to the RID used to build the server executable
+export const platformSpecificPackages = [
+    { vsceTarget: "win32-x64", rid: "win-x64" },
+    { vsceTarget: "win32-ia32", rid: "win-x86" },
+    { vsceTarget: "win32-arm64", rid: "win-arm64" },
+    { vsceTarget: "linux-x64", rid: "linux-x64" },
+    { vsceTarget: "linux-arm64", rid: "linux-arm64" },
+    { vsceTarget: "alpine-x64", rid: "alpine-x64" },
+    { vsceTarget: "alpine-arm64", rid: "alpine-arm64" },
+    { vsceTarget: "darwin-x64", rid: "osx-x64" },
+    { vsceTarget: "darwin-arm64", rid: "osx-arm64" }
 ];
 
-export function getPackageName(packageJSON: any, vscodePlatformId: string) {
+export function getPackageName(packageJSON: any, vscodePlatformId?: string) {
     const name = packageJSON.name;
     const version = packageJSON.version;
-    return `${name}-${version}-${vscodePlatformId}.vsix`;
+
+    if (vscodePlatformId) {
+        return `${name}-${version}-${vscodePlatformId}.vsix`;
+    } else {
+        return `${name}-${version}.vsix`;
+    }
 }
 
-gulp.task('vsix:release:package:platform-specific', async () => {
-
-    if (process.platform === 'win32') {
-        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+gulp.task('server:publish', async () => {
+    let configuration = argv.configuration ?? 'Debug';
+    
+    // Publish all platform specific server bits.
+    for (let platform of platformSpecificPackages) {
+        await publishServer(configuration, platform.rid);
     }
+
+    // Publish a platform neutral server as well.
+    await publishServer(configuration);
+});
+
+gulp.task('vsix:release:package', async () => {
 
     //if user does not want to clean up the existing vsix packages
     await cleanAsync(/* deleteVsix: */ !commandLineOptions.retainVsix);
@@ -62,55 +70,78 @@ gulp.task('vsix:release:package:platform-specific', async () => {
     }
 });
 
+async function publishServer(configuration: string, rid?: string) {
+    let dotnetArgs = [];
+    dotnetArgs.push('dotnet', 'publish', './server/Microsoft.CodeAnalysis.LanguageServer/', '--configuration', configuration);
+    if (rid) {
+        dotnetArgs.push('-r', rid, '-p:PublishReadyToRun=true');
+    }
+
+    let command = dotnetArgs.join(" ");
+    console.log(command);
+    const { stdout } = await exec(dotnetArgs.join(" "));
+    console.log(`stdout: ${stdout}`);
+}
+
 async function doPackageOffline() {
 
     const packageJSON = getPackageJSON();
 
-    for (let p of offlinePackages) {
+    for (let p of platformSpecificPackages) {
         try {
-            await doOfflinePackage(p.platformInfo, p.id, p.isFramework, packageJSON, packedVsixOutputRoot);
+            if (process.platform === 'win32' && !p.rid.startsWith('win')) {
+                console.warn(`Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`);
+                continue;
+            }
+
+            await buildVsix(packageJSON, packedVsixOutputRoot, p.rid, p.vsceTarget);
         }
         catch (err) {
             const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
             // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
             // stack trace of this line. So that seperates the two stack traces.
-            throw Error(`Failed to create package ${p.id}. ${message}\n---`);
+            throw Error(`Failed to create package ${p.vsceTarget}. ${message}\n---`);
         }
     }
+
+    // Also output the platform neutral VSIX using the platform neutral server bits we created before.
+    await buildVsix(packageJSON, packedVsixOutputRoot, "neutral");
+
 }
 
 async function cleanAsync(deleteVsix: boolean) {
-    await del(['install.*', '.omnisharp*', '.debugger', '.razor']);
+    await del(['install.*', '.omnisharp*', '.debugger', '.razor', languageServerDirectory]);
 
     if (deleteVsix) {
         await del('*.vsix');
     }
 }
 
-async function doOfflinePackage(platformInfo: PlatformInformation, vscodePlatformId: string, isFramework: boolean, packageJSON: any, outputFolder: string) {
+async function buildVsix(packageJSON: any, outputFolder: string, publishFolder: string, vsceTarget?: string) {
     await cleanAsync(false);
-    const packageFileName = getPackageName(packageJSON, vscodePlatformId);
-    await install(platformInfo, packageJSON, isFramework);
-    await createPackageAsync(outputFolder, packageFileName, vscodePlatformId);
+    const packageFileName = getPackageName(packageJSON, vsceTarget);
+    await copyServerToExtensionDirectory(publishFolder);
+    await createPackageAsync(outputFolder, packageFileName, vsceTarget);
 }
 
-// Install Tasks
-async function install(platformInfo: PlatformInformation, packageJSON: any, isFramework: boolean) {
-    let eventStream = new EventStream();
-    const logger = new Logger(message => process.stdout.write(message));
-    let stdoutObserver = new CsharpLoggerObserver(logger);
-    eventStream.subscribe(stdoutObserver.post);
-    let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
-        .filter(dep => dep.isFramework === undefined || dep.isFramework === isFramework);
-    let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
-    let provider = () => new NetworkSettings('', true);
-    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, isFramework))) {
-        throw Error("Failed to download package.");
+/**
+ * This takes care of copying the server bits from the build directory
+ * to the location that the extension looks for to activate it.
+ */
+async function copyServerToExtensionDirectory(publishFolder: string)
+{
+    if (!fs.existsSync(languageServerDirectory))
+    {
+        fs.mkdirSync(languageServerDirectory);
     }
 
-    // The VSIX Format doesn't allow files that differ only by case. The Linux OmniSharp package had a lowercase version of these files ('.targets') targets from mono,
-    // and an upper case ('.Targets') from Microsoft.Build.Runtime. Remove the lowercase versions.
-    await del(['.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.targets', '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.VisualBasic.targets']);
+    let configuration = argv.configuration ?? "Debug";
+    let serverBuildDirectory = getServerPublishDirectory(configuration, publishFolder);
+
+    if (!fs.existsSync(serverBuildDirectory))
+    {
+        throw new Error(`Did not find expected server bits at ${serverBuildDirectory}`);
+    }
+
+    fsextra.copySync(serverBuildDirectory, languageServerDirectory);
 }
-
-

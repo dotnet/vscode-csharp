@@ -14,7 +14,8 @@
                 "${workspaceRoot}/dist/*.js"
             ],
             "env": {
-                "DEBUG_ROSLYN_LANGUAGE_SERVER": "true"
+                "DEBUG_ROSLYN_LANGUAGE_SERVER": "true",
+                "ROSLYN_LANGUAGE_SERVER_DIRECTORY": "artifacts/bin/Debug/net7.0"
             },
             "preLaunchTask": "buildDev"
         },

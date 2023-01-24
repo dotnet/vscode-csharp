@@ -51,9 +51,7 @@
     "test:integration": "tsc -p test && gulp test:integration",
     "test:integration:stdio": "tsc -p test && gulp test:integration:stdio",
     "test:integration:lsp": "tsc -p test && gulp test:integration:lsp",
-    "test:release": "tsc -p test && mocha out/test/releaseTests/**/*.test.js",
-    "test:artifacts": "tsc -p test && mocha out/test/artifactTests/**/*.test.js",
-    "unpackage:vsix": "gulp vsix:release:unpackage"
+    "test:artifacts": "tsc -p test && mocha out/test/artifactTests/**/*.test.js"
   },
   "dependencies": {
     "@types/cross-spawn": "6.0.2",
