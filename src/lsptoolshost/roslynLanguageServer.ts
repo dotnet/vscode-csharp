@@ -98,15 +98,13 @@ export async function exec(command: string, workDirectory: string = process.cwd(
 
 function startServer(outputChannel: vscode.OutputChannel, solutionPath: vscode.Uri) : cp.ChildProcess {
     let clientRoot = __dirname;
-    let serverDirectory = path.join(clientRoot, "..", "artifacts", "languageServer");
-
+    
     // This environment variable is used by F5 builds to launch the server from the local build directory.
-    if (process.env.ROSLYN_LANGUAGE_SERVER_DIRECTORY) {
-        serverDirectory = path.join(clientRoot, "..", process.env.ROSLYN_LANGUAGE_SERVER_DIRECTORY);
-    }
+    let serverDirectory = process.env.ROSLYN_LANGUAGE_SERVER_DIRECTORY
+        ? path.join(clientRoot, "..", process.env.ROSLYN_LANGUAGE_SERVER_DIRECTORY)
+        : path.join(clientRoot, "..", "artifacts", "languageServer");
 
     let serverPath = path.join(serverDirectory, "Microsoft.CodeAnalysis.LanguageServer.dll");
-
     if (!fs.existsSync(serverPath)) {
         throw new Error(`Cannot find language server in path '${serverPath}''`);
     }
