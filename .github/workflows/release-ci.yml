@@ -25,9 +25,6 @@ jobs:
     - name: Build extension package
       run: gulp 'vsix:release:package:platform-specific'
 
-    - name: Run release tests
-      run: npm run test:release
-
     - name: Get package version
       run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
 

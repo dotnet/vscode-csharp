@@ -21,8 +21,8 @@ suite("Omnisharp-Vscode VSIX", async () => {
     });
 
     vsixFiles.forEach(element => {
-        // We're packaging the Roslyn server in the vsix, so the size should be roughly ~20MB
-        const sizeInMB = 25;
+        // We're packaging the platform specific Roslyn server with ready to run in the vsix, so the size should be roughly ~50MB
+        const sizeInMB = 50;
         const maximumVsixSizeInBytes = sizeInMB * 1024 * 1024;
 
         suite(`Given ${element}`, () => {
