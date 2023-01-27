@@ -6,8 +6,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as Razor from 'microsoft.aspnetcore.razor.vscode';
 import { EventStream } from '../EventStream';
+import * as Razor from './src/Microsoft.AspNetCore.Razor.VSCode';
 
 export async function activateRazorExtension(context: vscode.ExtensionContext, extensionPath: string, eventStream: EventStream) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
