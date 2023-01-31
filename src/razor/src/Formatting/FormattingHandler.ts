@@ -26,7 +26,7 @@ export class FormattingHandler {
         // tslint:disable-next-line: no-floating-promises
         this.serverClient.onRequestWithParams<SerializableFormattingParams, SerializableFormattingResponse, any>(
             this.formattingRequestType,
-            async (request, token) => this.provideFormatting(request, token));
+            async (request: SerializableFormattingParams, token: vscode.CancellationToken) => this.provideFormatting(request, token));
     }
 
     private async provideFormatting(

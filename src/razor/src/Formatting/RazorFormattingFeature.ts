@@ -29,7 +29,7 @@ export class RazorFormattingFeature {
         // tslint:disable-next-line: no-floating-promises
         this.serverClient.onRequestWithParams<RazorDocumentRangeFormattingRequest, RazorDocumentRangeFormattingResponse, any>(
             this.rangeFormattingRequestType,
-            async (request, token) => this.handleRangeFormatting(request, token));
+            async (request: RazorDocumentRangeFormattingRequest, token: vscode.CancellationToken) => this.handleRangeFormatting(request, token));
     }
 
     private async handleRangeFormatting(request: RazorDocumentRangeFormattingRequest, token: vscode.CancellationToken) {

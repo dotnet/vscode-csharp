@@ -26,7 +26,7 @@ export class CodeActionsHandler {
         // tslint:disable-next-line: no-floating-promises
         this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, RazorCodeAction[], any>(
             this.codeActionRequestType,
-            async (request, token) => this.provideCodeActions(request, token));
+            async (request: SerializableDelegatedCodeActionParams, token: vscode.CancellationToken) => this.provideCodeActions(request, token));
     }
 
     private async provideCodeActions(
