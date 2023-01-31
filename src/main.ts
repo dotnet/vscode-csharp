@@ -61,14 +61,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         activateRoslynLanguageServer(context);
 
         // Activate Razor
-        let razorPromise = Promise.resolve();
         if (!optionProvider.GetLatestOptions().razorDisabled) {
             const razorObserver = new RazorLoggerObserver(omnisharpChannel);
             eventStream.subscribe(razorObserver.post);
             
-            if (!optionProvider.GetLatestOptions().razorDevMode) {
-                razorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
-            }
+            activateRazorExtension(context, context.extension.extensionPath, eventStream);
         }
         
         return null;
@@ -175,7 +172,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = optionProvider.GetLatestOptions().useModernNet !== true;
-    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload, useFramework);
+    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(context.extension, eventStream, platformInfo, installDependencies, useFramework);
 
     // activate language services

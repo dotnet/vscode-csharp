@@ -1,5 +1,4 @@
 .debugger/**
-.razor/**
 .logs/**
 .nyc_output/**
 .omnisharp/**
@@ -36,9 +35,6 @@ tsconfig.json
 tslint.json
 wallaby.js
 webpack.config.js
-
-!src/razor/language-configuration.json
-!src/razor/syntaxes/*
 
 +RuntimeLicenses/dependencies/*
 coreclr-debug/install.log
