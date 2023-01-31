@@ -21,10 +21,12 @@ export class TelemetryObserver {
     private platformInfo: PlatformInformation;
     private solutionId?: string;
     private dotnetInfo?: DotnetInfo;
+    private useModernNet: boolean;
 
-    constructor(platformInfo: PlatformInformation, reporterCreator: () => ITelemetryReporter) {
+    constructor(platformInfo: PlatformInformation, reporterCreator: () => ITelemetryReporter, useModernNet: boolean) {
         this.platformInfo = platformInfo;
         this.reporter = reporterCreator();
+        this.useModernNet = useModernNet;
     }
 
     public post = (event: BaseEvent) => {
@@ -109,6 +111,7 @@ export class TelemetryObserver {
         telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join("|");
         telemetryProps['FileCounts'] = projectConfig.FileCounts?.join("|") ?? "";
         telemetryProps['NetSdkVersion'] = this.dotnetInfo?.Version ?? "";
+        telemetryProps['useModernNet'] = this.useModernNet.toString();
         this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);
     }
 
