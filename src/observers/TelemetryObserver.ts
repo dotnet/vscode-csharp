@@ -112,6 +112,7 @@ export class TelemetryObserver {
         telemetryProps['FileCounts'] = projectConfig.FileCounts?.join("|") ?? "";
         telemetryProps['NetSdkVersion'] = this.dotnetInfo?.Version ?? "";
         telemetryProps['useModernNet'] = this.useModernNet.toString();
+        telemetryProps['sdkStyleProject'] = projectConfig.SdkStyleProject.toString();
         this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);
     }
 
