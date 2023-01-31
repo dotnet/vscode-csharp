@@ -86,7 +86,7 @@ gulp.task('razor:languageserver', async () => {
     const platform = await PlatformInformation.GetCurrent();
 
     try {
-        install(platform, packageJSON);
+        await install(platform, packageJSON);
     }
     catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -135,7 +135,7 @@ async function doPackageOffline() {
                 continue;
             }
 
-            install(p.platformInfo, packageJSON);
+            await install(p.platformInfo, packageJSON);
             await buildVsix(packageJSON, packedVsixOutputRoot, p.rid, p.vsceTarget);
         }
         catch (err) {
