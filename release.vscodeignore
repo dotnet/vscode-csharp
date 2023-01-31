@@ -1,22 +1,23 @@
-.debugger/**
+!.debugger/**
 .logs/**
 .nyc_output/**
-.omnisharp/**
+!.omnisharp/**
+!.razor/**
 .rpt2_cache/**
 .github/**
 .vscode/**
 .vscode-test/**
 coverage/**
 out/**
+server/**
 artifacts/**
 !artifacts/languageServer/**
-server/**
 src/**
 tasks/**
 test/**
 typings/**
 vsix/**
-node_modules/**
+node_modules
 
 **/*.map
 *.vsix
@@ -24,7 +25,7 @@ node_modules/**
 .editorconfig
 .gitignore
 gulpfile.ts
-install.Lock
+!install.Lock
 ISSUE_TEMPLATE
 .mocharc.jsonc
 *.vscodeignore
@@ -35,6 +36,9 @@ tsconfig.json
 tslint.json
 wallaby.js
 webpack.config.js
+
+!src/razor/language-configuration.json
+!src/razor/syntaxes/*
 
 +RuntimeLicenses/dependencies/*
 coreclr-debug/install.log

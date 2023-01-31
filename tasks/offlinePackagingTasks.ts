@@ -135,8 +135,7 @@ async function doPackageOffline() {
                 continue;
             }
 
-            await install(p.platformInfo, packageJSON);
-            await buildVsix(packageJSON, packedVsixOutputRoot, p.rid, p.vsceTarget);
+            await buildVsix(packageJSON, p.platformInfo, packedVsixOutputRoot, p.rid, p.vsceTarget);
         }
         catch (err) {
             const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -147,7 +146,7 @@ async function doPackageOffline() {
     }
 
     // Also output the platform neutral VSIX using the platform neutral server bits we created before.
-    await buildVsix(packageJSON, packedVsixOutputRoot, "neutral");
+    await buildVsix(packageJSON, await PlatformInformation.GetCurrent(), packedVsixOutputRoot, "neutral");
 
 }
 
@@ -159,8 +158,9 @@ async function cleanAsync(deleteVsix: boolean) {
     }
 }
 
-async function buildVsix(packageJSON: any, outputFolder: string, publishFolder: string, vsceTarget?: string) {
+async function buildVsix(packageJSON: any, platformInfo: PlatformInformation, outputFolder: string, publishFolder: string, vsceTarget?: string) {
     await cleanAsync(false);
+    await install(platformInfo, packageJSON);
     const packageFileName = getPackageName(packageJSON, vsceTarget);
     await copyServerToExtensionDirectory(publishFolder);
     await createPackageAsync(outputFolder, packageFileName, vsceTarget);
