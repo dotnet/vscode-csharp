@@ -16,24 +16,30 @@ import {
 
 let client: LanguageClient;
 let _channel: vscode.OutputChannel;
+let _traceChannel: vscode.OutputChannel;
 
 // Some hacky code to get VSCode to start up and connect to the new Roslyn LSP.
 // TODO - will be removed and unified with the rest of the omnisharp code in BYO LSP.
 // https://github.com/microsoft/vscode-csharp-next/issues/2
 export async function activateRoslynLanguageServer(context: vscode.ExtensionContext) {
 
-    _channel = vscode.window.createOutputChannel("Microsoft.CodeAnalysis.LanguageServer");
-    console.log(`channel: ${JSON.stringify(_channel)}`);
+    // Create a channel for outputting general logs from the language server.
+    _channel = vscode.window.createOutputChannel("C#");
+    // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
+    _traceChannel = vscode.window.createOutputChannel("C# LSP Trace Logs");
 
     const workDirectory = process.cwd();
     const dotnetVersion = await exec('dotnet --version', workDirectory);
-    console.log("Dotnet version: " + dotnetVersion);
+    _channel.appendLine("Dotnet version: " + dotnetVersion);
 
     let solutionPath = await vscode.workspace.findFiles('*.sln', '**/node_modules/**', 1);
-    console.log(`Found solution ${solutionPath[0]}`);
+    _channel.appendLine(`Found solution ${solutionPath[0]}`);
+
+    let configuration = vscode.workspace.getConfiguration();
+    let logLevel = configuration.get<string>('microsoft-codeanalysis-languageserver.trace.server');
 
     let serverOptions: ServerOptions = async () => {
-        const process = startServer(_channel, solutionPath[0]);
+        const process = startServer(solutionPath[0], logLevel);
         return Promise.resolve<cp.ChildProcess>(process);
     };
 
@@ -45,7 +51,7 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
             // Notify the server about file changes to '.clientrc files contain in the workspace
             fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*')
         },
-        traceOutputChannel: _channel,
+        traceOutputChannel: _traceChannel,
         outputChannel: _channel,
         uriConverters: {
             // VSCode encodes the ":" as "%3A" in file paths, for example "file:///c%3A/Users/dabarbet/source/repos/ConsoleApp8/ConsoleApp8/Program.cs".
@@ -96,7 +102,7 @@ export async function exec(command: string, workDirectory: string = process.cwd(
     });
 }
 
-function startServer(outputChannel: vscode.OutputChannel, solutionPath: vscode.Uri) : cp.ChildProcess {
+function startServer(solutionPath: vscode.Uri, logLevel: string | undefined) : cp.ChildProcess {
     let clientRoot = __dirname;
     
     // This environment variable is used by F5 builds to launch the server from the local build directory.
@@ -118,6 +124,11 @@ function startServer(outputChannel: vscode.OutputChannel, solutionPath: vscode.U
     if (process.env.DEBUG_ROSLYN_LANGUAGE_SERVER)
     {
         args.push("--debug");
+    }
+
+    if (logLevel)
+    {
+        args.push("--logLevel", logLevel);
     }
 
     let childProcess = cp.spawn('dotnet', args);
