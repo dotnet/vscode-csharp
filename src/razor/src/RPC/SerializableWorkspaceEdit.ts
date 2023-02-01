@@ -23,14 +23,18 @@ export function convertWorkspaceEditFromSerializable(data: SerializableWorkspace
     if (Array.isArray(data.documentChanges)) {
         for (const documentChange of data.documentChanges) {
             if (documentChange.kind === 'create') {
-                workspaceEdit.createFile(vscode.Uri.parse(documentChange.uri), documentChange.options);
+                const createDocumentChange = documentChange as SerializableCreateDocument;
+                workspaceEdit.createFile(vscode.Uri.parse(createDocumentChange.uri), createDocumentChange.options);
             } else if (documentChange.kind === 'rename') {
-                workspaceEdit.renameFile(vscode.Uri.parse(documentChange.oldUri), vscode.Uri.parse(documentChange.newUri), documentChange.options);
+                const renameDocumentChange = documentChange as SerializableRenameDocument;
+                workspaceEdit.renameFile(vscode.Uri.parse(renameDocumentChange.oldUri), vscode.Uri.parse(renameDocumentChange.newUri), renameDocumentChange.options);
             } else if (documentChange.kind === 'delete') {
-                workspaceEdit.deleteFile(vscode.Uri.parse(documentChange.uri), documentChange.options);
+                const deleteDocumentChange = documentChange as SerializableDeleteDocument;
+                workspaceEdit.deleteFile(vscode.Uri.parse(deleteDocumentChange.uri), deleteDocumentChange.options);
             } else {
-                const changes = documentChange.edits.map(convertTextEditFromSerializable);
-                workspaceEdit.set(vscode.Uri.parse(documentChange.textDocument.uri), changes);
+                const editDocumentChange = documentChange as SerializableTextDocumentEdit;
+                const changes = editDocumentChange.edits.map(convertTextEditFromSerializable);
+                workspaceEdit.set(vscode.Uri.parse(editDocumentChange.textDocument.uri), changes);
             }
         }
     }
