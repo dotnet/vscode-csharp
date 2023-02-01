@@ -79,6 +79,7 @@ gulp.task('vsix:release:package', async () => {
     }
 });
 
+// Downloads Razor language server bits for local development
 gulp.task('razor:languageserver', async () => {
     await del('.razor');
 
@@ -86,7 +87,7 @@ gulp.task('razor:languageserver', async () => {
     const platform = await PlatformInformation.GetCurrent();
 
     try {
-        await install(platform, packageJSON);
+        await installRazor(platform, packageJSON);
     }
     catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -97,13 +98,13 @@ gulp.task('razor:languageserver', async () => {
 });
 
 // Install Tasks
-async function install(platformInfo: PlatformInformation, packageJSON: any) {
+async function installRazor(platformInfo: PlatformInformation, packageJSON: any) {
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
-        .filter(dep => dep.isFramework === undefined || !dep.isFramework);
+        .filter(dep => (dep.isFramework === undefined || !dep.isFramework) && dep.id === "Razor");
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
     let provider = () => new NetworkSettings('', true);
     if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
@@ -135,7 +136,7 @@ async function doPackageOffline() {
                 continue;
             }
 
-            await buildVsix(packageJSON, p.platformInfo, packedVsixOutputRoot, p.rid, p.vsceTarget);
+            await buildVsix(packageJSON, packedVsixOutputRoot, p.rid, p.vsceTarget, p.platformInfo);
         }
         catch (err) {
             const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -146,7 +147,7 @@ async function doPackageOffline() {
     }
 
     // Also output the platform neutral VSIX using the platform neutral server bits we created before.
-    await buildVsix(packageJSON, await PlatformInformation.GetCurrent(), packedVsixOutputRoot, "neutral");
+    await buildVsix(packageJSON, packedVsixOutputRoot, "neutral");
 
 }
 
@@ -158,9 +159,13 @@ async function cleanAsync(deleteVsix: boolean) {
     }
 }
 
-async function buildVsix(packageJSON: any, platformInfo: PlatformInformation, outputFolder: string, publishFolder: string, vsceTarget?: string) {
+async function buildVsix(packageJSON: any, outputFolder: string, publishFolder: string, vsceTarget?: string, platformInfo?: PlatformInformation) {
     await cleanAsync(false);
-    await install(platformInfo, packageJSON);
+
+    if (platformInfo != null) {
+        await installRazor(platformInfo, packageJSON);
+    }
+
     const packageFileName = getPackageName(packageJSON, vsceTarget);
     await copyServerToExtensionDirectory(publishFolder);
     await createPackageAsync(outputFolder, packageFileName, vsceTarget);
