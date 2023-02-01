@@ -52,7 +52,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let optionProvider = new OptionProvider(optionStream);
 
     const eventStream = new EventStream();
-    let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
 
     const config = vscode.workspace.getConfiguration('microsoft-codeanalysis-languageserver');
     let useOmnisharpServer = config.get<boolean>('useOmnisharpServer') || process.env.USE_OMNISHARP_SERVER;
@@ -62,9 +61,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
         // Activate Razor
         if (!optionProvider.GetLatestOptions().razorDisabled) {
-            const razorObserver = new RazorLoggerObserver(omnisharpChannel);
-            eventStream.subscribe(razorObserver.post);
-            
             activateRazorExtension(context, context.extension.extensionPath, eventStream);
         }
         
@@ -104,6 +100,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(csharpchannelObserver.post);
     eventStream.subscribe(csharpLogObserver.post);
 
+    let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, platformInfo);
     let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel, vscode);
     eventStream.subscribe(omnisharpLogObserver.post);

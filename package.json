@@ -650,7 +650,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.66.0"
+    "vscode": "^1.69.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
