@@ -32,7 +32,7 @@ export class RazorHtmlFeature {
             vscode.workspace.registerTextDocumentContentProvider(
                 HtmlProjectedDocumentContentProvider.scheme, this.projectionProvider),
             vscode.commands.registerCommand(
-                'extension.showRazorHtmlWindow', () => this.htmlPreviewPanel.show()),
+                'extension.showRazorHtmlWindow', async () => this.htmlPreviewPanel.show()),
             this.htmlTagCompletionProvider.register(),
         ];
 

@@ -247,7 +247,7 @@ ${tableHeader}${os.EOL}${table};
         return extensionTable;
     }
 
-    private getDotnetInfo(): Promise<string> {
+    private async getDotnetInfo(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             try {
                 cp.exec('dotnet --info', { cwd: process.cwd(), maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {

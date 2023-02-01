@@ -17,7 +17,7 @@ export class HtmlPreviewPanel {
 
     constructor(
         private readonly documentManager: RazorDocumentManager) {
-        documentManager.onChange((event) => this.documentChanged(event));
+        documentManager.onChange(async (event) => this.documentChanged(event));
     }
 
     public async show() {

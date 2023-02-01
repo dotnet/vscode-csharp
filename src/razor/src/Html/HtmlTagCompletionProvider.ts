@@ -27,7 +27,7 @@ export class HtmlTagCompletionProvider {
         this.htmlLanguageService = getHtmlLanguageService();
 
         const onChangeRegistration = vscode.workspace.onDidChangeTextDocument(
-            args => this.onDidChangeTextDocument(args.document, args.contentChanges));
+            async args => this.onDidChangeTextDocument(args.document, args.contentChanges));
 
         const onActiveTextEditorChange = vscode.window.onDidChangeActiveTextEditor(() => this.checkIfEnabled());
 

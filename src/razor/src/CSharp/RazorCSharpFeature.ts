@@ -27,7 +27,7 @@ export class RazorCSharpFeature {
             vscode.workspace.registerTextDocumentContentProvider(
                 CSharpProjectedDocumentContentProvider.scheme, this.projectionProvider),
             vscode.commands.registerCommand(
-                'extension.showRazorCSharpWindow', () => this.csharpPreviewPanel.show()),
+                'extension.showRazorCSharpWindow', async () => this.csharpPreviewPanel.show()),
         ];
 
         if (vscode.window.registerWebviewPanelSerializer) {

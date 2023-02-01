@@ -22,7 +22,7 @@ export class RazorCodeActionRunner {
     public register(): vscode.Disposable {
         return vscode.commands.registerCommand(
             RazorCodeActionRunner.razorCodeActionRunnerCommand,
-            (request: RazorCodeActionResolutionParams) => this.runCodeAction(request),
+            async (request: RazorCodeActionResolutionParams) => this.runCodeAction(request),
             this);
     }
 

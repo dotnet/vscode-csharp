@@ -86,6 +86,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         let resolve: () => void = Function;
         let reject: (reason: any) => void = Function;
+        // tslint:disable-next-line: promise-must-complete
         this.startHandle = new Promise<void>((resolver, rejecter) => {
             resolve = resolver;
             reject = rejecter;
@@ -176,6 +177,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     public async stop() {
         let resolve: () => void = Function;
         let reject: (reason: any) => void = Function;
+        // tslint:disable-next-line: promise-must-complete
         this.stopHandle = new Promise<void>((resolver, rejecter) => {
             resolve = resolver;
             reject = rejecter;

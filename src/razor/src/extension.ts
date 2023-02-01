@@ -244,7 +244,7 @@ async function startLanguageServer(
             razorFileOpenedRegistration.dispose();
             await languageServerClient.start();
         };
-        const razorFileCreatedRegistration = watcher.onDidCreate(() => delayedLanguageServerStart());
+        const razorFileCreatedRegistration = watcher.onDidCreate(async () => delayedLanguageServerStart());
         const razorFileOpenedRegistration = vscodeType.workspace.onDidOpenTextDocument(async (event) => {
             if (event.languageId === RazorLanguage.id) {
                 await delayedLanguageServerStart();

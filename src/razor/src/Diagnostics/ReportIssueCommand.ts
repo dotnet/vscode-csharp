@@ -29,7 +29,7 @@ export class ReportIssueCommand {
         const registrations: vscode.Disposable[] = [];
         registrations.push(
             this.dataCollectorFactory.register(),
-            this.vscodeApi.commands.registerCommand('razor.reportIssue', () => this.issuePanel.show()));
+            this.vscodeApi.commands.registerCommand('razor.reportIssue', async () => this.issuePanel.show()));
         if (this.vscodeApi.window.registerWebviewPanelSerializer) {
             registrations.push(this.vscodeApi.window.registerWebviewPanelSerializer(ReportIssuePanel.viewType, {
                 deserializeWebviewPanel: async (panel: vscode.WebviewPanel) => {

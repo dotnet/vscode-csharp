@@ -35,7 +35,7 @@ export class ProvisionalCompletionOrchestrator {
         // different actions (other than viewing completion).
 
         const onDidChangeSelectionRegistration = vscode.window.onDidChangeTextEditorSelection(
-            args => this.tryRemoveProvisionalDot(args.textEditor.document));
+            async args => this.tryRemoveProvisionalDot(args.textEditor.document));
         const onDidChangeRegistration = vscode.workspace.onDidChangeTextDocument(async args => {
             if (args.contentChanges.length === 1 && args.contentChanges[0].text === '.') {
                 // Don't want to remove a provisional dot that we just added.
