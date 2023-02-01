@@ -24,9 +24,9 @@ let _traceChannel: vscode.OutputChannel;
 export async function activateRoslynLanguageServer(context: vscode.ExtensionContext) {
 
     // Create a channel for outputting general logs from the language server.
-    _channel = vscode.window.createOutputChannel("Microsoft.CodeAnalysis.LanguageServer");
+    _channel = vscode.window.createOutputChannel("C#");
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
-    _traceChannel = vscode.window.createOutputChannel("Microsoft.CodeAnalysis.LanguageServer.Trace");
+    _traceChannel = vscode.window.createOutputChannel("C# LSP Trace Logs");
 
     const workDirectory = process.cwd();
     const dotnetVersion = await exec('dotnet --version', workDirectory);
