@@ -60,4 +60,4 @@ stages:
       displayName: 'Publish VSIXs'
       inputs:
         targetPath: '$(Build.SourcesDirectory)/vsix'
-        artifactName: 'VSIXs'
+        artifactName: 'VSIXs - Attempt $(System.JobAttempt)'
