@@ -46,26 +46,19 @@ function createSymbols(elements: Structure.CodeElement[], parentElement?: Struct
     return results;
 }
 
-function getNameAndDetailsForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): { name: string, details: string } {
+function getNameForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): string {
     switch (element.Kind) {
         case SymbolKinds.Class:
         case SymbolKinds.Delegate:
         case SymbolKinds.Enum:
         case SymbolKinds.Interface:
         case SymbolKinds.Struct:
+            return element.Name;
+
         case SymbolKinds.Namespace:
-            if (typeof parentElement === 'undefined') {
-                return { name: element.DisplayName, details: '' };
-            }
-            const prefix = `${parentElement.DisplayName}.`;
-            if (!element.DisplayName.startsWith(prefix)) {
-                return { name: element.DisplayName, details: '' };
-            }
-            const name = element.DisplayName.slice(prefix.length);
-            if (name === element.DisplayName) {
-                return { name: element.DisplayName, details: '' };
-            }
-            return { name, details: element.DisplayName };
+            return typeof parentElement !== 'undefined' && element.DisplayName.startsWith(`${parentElement.DisplayName}.`)
+                ? element.DisplayName.slice(parentElement.DisplayName.length + 1)
+                : element.DisplayName;
 
         case SymbolKinds.Constant:
         case SymbolKinds.Constructor:
@@ -79,14 +72,15 @@ function getNameAndDetailsForElement(element: Structure.CodeElement, parentEleme
         case SymbolKinds.Property:
         case SymbolKinds.Unknown:
         default:
-            return { name: element.DisplayName, details: '' };
+            return element.DisplayName;
     }
 }
 
 function createSymbolForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): vscode.DocumentSymbol {
     const fullRange = element.Ranges[SymbolRangeNames.Full];
     const nameRange = element.Ranges[SymbolRangeNames.Name];
-    const { name, details } = getNameAndDetailsForElement(element, parentElement);
+    const name = getNameForElement(element, parentElement);
+    const details = name === element.DisplayName ? '' : element.DisplayName;
 
     return new vscode.DocumentSymbol(name, details, toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
 }
