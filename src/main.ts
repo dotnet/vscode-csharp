@@ -48,12 +48,22 @@ import { getDotnetPackApi } from './DotnetPack';
 import { activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | null> {
+    const optionStream = createOptionStream(vscode);
+    let optionProvider = new OptionProvider(optionStream);
+
+    const eventStream = new EventStream();
 
     const config = vscode.workspace.getConfiguration('microsoft-codeanalysis-languageserver');
     let useOmnisharpServer = config.get<boolean>('useOmnisharpServer') || process.env.USE_OMNISHARP_SERVER;
     if (!useOmnisharpServer)
     {
         activateRoslynLanguageServer(context);
+
+        // Activate Razor
+        if (!optionProvider.GetLatestOptions().razorDisabled) {
+            activateRazorExtension(context, context.extension.extensionPath, eventStream);
+        }
+        
         return null;
     }
 
@@ -63,8 +73,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     util.setExtensionPath(context.extension.extensionPath);
 
-    const eventStream = new EventStream();
-
     let platformInfo: PlatformInformation;
     try {
         platformInfo = await PlatformInformation.GetCurrent();
@@ -73,9 +81,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         eventStream.post(new ActivationFailure());
         throw error;
     }
-
-    const optionStream = createOptionStream(vscode);
-    let optionProvider = new OptionProvider(optionStream);
 
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -164,7 +169,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = optionProvider.GetLatestOptions().useModernNet !== true;
-    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload, useFramework);
+    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(context.extension, eventStream, platformInfo, installDependencies, useFramework);
 
     // activate language services

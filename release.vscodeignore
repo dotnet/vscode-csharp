@@ -1,5 +1,5 @@
 .debugger/**
-.razor/**
+!.razor/**
 .logs/**
 .nyc_output/**
 .omnisharp/**
