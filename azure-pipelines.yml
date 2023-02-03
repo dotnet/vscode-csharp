@@ -45,13 +45,14 @@ stages:
     - script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
       displayName: Setup virtual display
 
-    - script: |
-        npm run test
-        npm run test:artifacts
+    - script: npm run test
       displayName: 'Run unit and integration tests'
       env:
         CODE_VERSION: 1.66.0
         DISPLAY: :99.0
+    
+    - script: npm run test:artifacts
+      displayName: 'Run artifacts tests'
 
     - task: PublishPipelineArtifact@1
       # Run the publish step so we have vsix's even if the tests fail.
