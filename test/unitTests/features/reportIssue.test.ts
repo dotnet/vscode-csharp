@@ -117,6 +117,7 @@ suite(`${reportIssue.name}`, () => {
             expect(issueBody).to.not.contain(extension1.packageJSON.name);
             expect(issueBody).to.not.contain(extension1.packageJSON.publisher);
             expect(issueBody).to.not.contain(extension1.packageJSON.version);
+            expect(issueBody).to.contain("something not there");
         });
     });
 });
