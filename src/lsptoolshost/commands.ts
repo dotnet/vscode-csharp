@@ -33,6 +33,8 @@ async function peekReferencesCallback(uriStr: string, serverPosition: languageCl
     const vscodeApiPosition = new vscode.Position(serverPosition.line, serverPosition.character);
     const references: vscode.Location[] = await vscode.commands.executeCommand('vscode.executeReferenceProvider', uri, vscodeApiPosition);
     if (references && Array.isArray(references)) {
+      // The references could come back after the document has moved to a new state (that may not even contain the position).
+      // This is fine - the VSCode API is resilient to that scenario and will not crash.
       vscode.commands.executeCommand('editor.action.showReferences', uri, vscodeApiPosition, references);
     }
 }
