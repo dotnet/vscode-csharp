@@ -52,10 +52,10 @@ stages:
       env:
         CODE_VERSION: 1.66.0
         DISPLAY: :99.0
-      # Continue on error so we still upload the vsix even if tests fail.
-      continueOnError: true
 
     - task: PublishPipelineArtifact@1
+      # Run the publish step so we have vsix's even if the tests fail.
+      condition: succeededOrFailed()
       displayName: 'Publish VSIXs'
       inputs:
         targetPath: '$(Build.SourcesDirectory)/vsix'
