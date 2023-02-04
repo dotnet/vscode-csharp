@@ -7,6 +7,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as cp from 'child_process';
+import { registerCommands } from './commands';
+import { UriConverter } from './uriConverter';
 
 import {
     LanguageClient,
@@ -74,6 +76,9 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
 
     client.registerProposedFeatures();
 
+    // Register any commands that need to be handled by the extension.
+    registerCommands(context);
+
     // Start the client. This will also launch the server
     client.start();
 }
@@ -133,15 +138,4 @@ function startServer(solutionPath: vscode.Uri, logLevel: string | undefined) : c
 
     let childProcess = cp.spawn('dotnet', args);
     return childProcess;
-}
-
-export class UriConverter {
-    public static serialize(uri: vscode.Uri): string {
-        // Fix issue in System.Uri where file:///c%3A/file.txt is not a valid Windows path
-        return uri.toString(true);
-    }
-
-    public static deserialize(value: string): vscode.Uri {
-        return vscode.Uri.parse(value);
-    }
 }
