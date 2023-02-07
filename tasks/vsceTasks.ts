@@ -44,6 +44,8 @@ export async function createPackageAsync(outputFolder: string, packageName?: str
         vsceArgs.push(vscodePlatformId);
     }
 
+    vsceArgs.push('--baseContentUrl', 'https://devdiv.visualstudio.com/DevDiv/_git/vscode-csharp-next?path=/');
+
     const spawnResult = await spawnNode(vsceArgs);
     if (spawnResult.code != 0) {
         throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
