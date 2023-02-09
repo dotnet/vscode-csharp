@@ -8,8 +8,8 @@ import { updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
 import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
 import { vscode } from '../../../src/vscodeAdapter';
-import { ShowOmniSharpConfigChangePrompt } from '../../../src/observers/OptionChangeObserver';
-import { Options } from '../../../src/omnisharp/options';
+import { ShowConfigChangePrompt } from '../../../src/shared/observers/OptionChangeObserver';
+import { Options } from '../../../src/shared/options';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -29,7 +29,7 @@ suite("OmniSharpConfigChangeObserver", () => {
     setup(() => {
         vscode = getVSCode();
         optionObservable = new BehaviorSubject<Options>(Options.Read(vscode));
-        ShowOmniSharpConfigChangePrompt(optionObservable, vscode);
+        ShowConfigChangePrompt(optionObservable, 'o.restart', Options.shouldOmnisharpOptionChangeTriggerReload, vscode);
         commandDone = new Promise<void>(resolve => {
             signalCommandDone = () => { resolve(); };
         });
@@ -51,7 +51,7 @@ suite("OmniSharpConfigChangeObserver", () => {
             });
 
             test(`The information message is shown`, async () => {
-                expect(infoMessage).to.be.equal("OmniSharp configuration has changed. Would you like to relaunch the OmniSharp server with your changes?");
+                expect(infoMessage).to.be.equal("CSharp configuration has changed. Would you like to relaunch the Language Server with your changes?");
             });
 
             test('Given an information message if the user clicks cancel, the command is not executed', async () => {

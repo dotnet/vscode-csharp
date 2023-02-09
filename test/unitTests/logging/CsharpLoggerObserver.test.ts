@@ -6,7 +6,7 @@
 import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { CsharpLoggerObserver } from '../../../src/observers/CsharpLoggerObserver';
-import { PlatformInformation } from '../../../src/platform';
+import { PlatformInformation } from '../../../src/shared/platform';
 import * as Event from '../../../src/omnisharp/loggingEvents';
 import { PackageError } from '../../../src/packageManager/PackageError';
 import { Package } from '../../../src/packageManager/Package';

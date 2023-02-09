@@ -13,7 +13,7 @@ import CompositeDisposable from '../CompositeDisposable';
 import { IDisposable } from '../Disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { BackgroundDiagnosticStatus } from '../omnisharp/protocol';
@@ -98,7 +98,7 @@ export class Advisor {
 
     private _isOverFileLimit(): boolean {
         let opts = this.optionProvider.GetLatestOptions();
-        let fileLimit = opts.maxProjectFileCountForDiagnosticAnalysis;
+        let fileLimit = opts.omnisharpOptions.maxProjectFileCountForDiagnosticAnalysis;
         if (fileLimit > 0) {
             let sourceFileCount = 0;
             for (let key in this._projectSourceFileCounts) {
@@ -135,7 +135,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
         this._suppressHiddenDiagnostics = vscode.workspace.getConfiguration('csharp').get('suppressHiddenDiagnostics', true);
 
-        if (!options.GetLatestOptions().enableLspDriver) {
+        if (!options.GetLatestOptions().omnisharpOptions.enableLspDriver) {
             this._subscriptions.push(this._validateCurrentDocumentPipe
                 .pipe(debounceTime(750))
                 .subscribe(async document => await this._validateDocument(document)));

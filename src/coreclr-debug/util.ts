@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as semver from 'semver';
 import * as os from 'os';
-import { PlatformInformation } from './../platform';
+import { PlatformInformation } from '../shared/platform';
 import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';

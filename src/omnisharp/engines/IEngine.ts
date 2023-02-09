@@ -5,11 +5,11 @@
 
 import { CancellationToken } from '../../vscodeAdapter';
 import { LaunchTarget } from '../launcher';
-import { Options } from '../options';
+import { Options } from '../../shared/options';
 import Disposable from '../../Disposable';
 import { OmniSharpServer } from '../server';
 import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
-import OptionProvider from '../../observers/OptionProvider';
+import OptionProvider from '../../shared/observers/OptionProvider';
 import { Advisor } from '../../features/diagnosticsProvider';
 import TestManager from '../../features/dotnetTest';
 import { EventStream } from '../../EventStream';

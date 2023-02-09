@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, LatestBuildDownloadStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';

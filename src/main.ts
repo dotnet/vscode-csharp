@@ -20,7 +20,7 @@ import { OmnisharpChannelObserver } from './observers/OmnisharpChannelObserver';
 import { OmnisharpDebugModeLoggerObserver } from './observers/OmnisharpDebugModeLoggerObserver';
 import { OmnisharpLoggerObserver } from './observers/OmnisharpLoggerObserver';
 import { OmnisharpStatusBarObserver } from './observers/OmnisharpStatusBarObserver';
-import { PlatformInformation } from './platform';
+import { PlatformInformation } from './shared/platform';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
 import { TelemetryObserver } from './observers/TelemetryObserver';
 import TelemetryReporter from '@vscode/extension-telemetry';
@@ -29,11 +29,11 @@ import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
 import CSharpExtensionExports from './CSharpExtensionExports';
 import { vscodeNetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
-import OptionProvider from './observers/OptionProvider';
+import OptionProvider from './shared/observers/OptionProvider';
 import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
-import { ShowOmniSharpConfigChangePrompt } from './observers/OptionChangeObserver';
-import createOptionStream from './observables/CreateOptionStream';
+import { ShowConfigChangePrompt } from './shared/observers/OptionChangeObserver';
+import createOptionStream from './shared/observables/CreateOptionStream';
 import { CSharpExtensionId } from './constants/CSharpExtensionId';
 import { OpenURLObserver } from './observers/OpenURLObserver';
 import { activateRazorExtension } from './razor/razor';
@@ -46,30 +46,13 @@ import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 import { getDotnetPackApi } from './DotnetPack';
 import { activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
+import { Options } from './shared/options';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | null> {
     const optionStream = createOptionStream(vscode);
     let optionProvider = new OptionProvider(optionStream);
 
     const eventStream = new EventStream();
-
-    const config = vscode.workspace.getConfiguration('microsoft-codeanalysis-languageserver');
-    let useOmnisharpServer = config.get<boolean>('useOmnisharpServer') || process.env.USE_OMNISHARP_SERVER;
-    if (!useOmnisharpServer)
-    {
-        activateRoslynLanguageServer(context);
-
-        // Activate Razor
-        if (!optionProvider.GetLatestOptions().razorDisabled) {
-            activateRazorExtension(context, context.extension.extensionPath, eventStream);
-        }
-        
-        return null;
-    }
-
-    const extensionVersion = context.extension.packageJSON.version;
-    const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
-    const reporter = new TelemetryReporter(CSharpExtensionId, extensionVersion, aiKey);
 
     util.setExtensionPath(context.extension.extensionPath);
 
@@ -81,6 +64,25 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         eventStream.post(new ActivationFailure());
         throw error;
     }
+
+    let useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
+    if (!useOmnisharpServer)
+    {
+        context.subscriptions.push(optionProvider);
+        context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode));
+        activateRoslynLanguageServer(context, platformInfo, optionProvider);
+
+        // Activate Razor
+        if (!optionProvider.GetLatestOptions().razorOptions.razorDisabled) {
+            activateRazorExtension(context, context.extension.extensionPath, eventStream);
+        }
+        
+        return null;
+    }
+
+    const extensionVersion = context.extension.packageJSON.version;
+    const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
+    const reporter = new TelemetryReporter(CSharpExtensionId, extensionVersion, aiKey);
 
     let dotnetChannel = vscode.window.createOutputChannel('.NET');
     let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -102,14 +104,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
     let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, platformInfo);
-    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel, vscode);
+    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel, optionProvider);
     eventStream.subscribe(omnisharpLogObserver.post);
     eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let warningMessageObserver = new WarningMessageObserver(vscode, () => optionProvider.GetLatestOptions().disableMSBuildDiagnosticWarning || false);
+    let warningMessageObserver = new WarningMessageObserver(vscode, () => optionProvider.GetLatestOptions().omnisharpOptions.disableMSBuildDiagnosticWarning || false);
     eventStream.subscribe(warningMessageObserver.post);
 
-    let informationMessageObserver = new InformationMessageObserver(vscode);
+    let informationMessageObserver = new InformationMessageObserver(vscode, optionProvider);
     eventStream.subscribe(informationMessageObserver.post);
 
     let errorMessageObserver = new ErrorMessageObserver(vscode);
@@ -168,7 +170,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(telemetryObserver.post);
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    const useFramework = optionProvider.GetLatestOptions().useModernNet !== true;
+    const useFramework = optionProvider.GetLatestOptions().omnisharpOptions.useModernNet !== true;
     let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(context.extension, eventStream, platformInfo, installDependencies, useFramework);
 
@@ -182,7 +184,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }));
 
     context.subscriptions.push(optionProvider);
-    context.subscriptions.push(ShowOmniSharpConfigChangePrompt(optionStream, vscode));
+    context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'o.restart', Options.shouldOmnisharpOptionChangeTriggerReload, vscode));
 
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
@@ -191,11 +193,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }
 
     let razorPromise = Promise.resolve();
-    if (!optionProvider.GetLatestOptions().razorDisabled) {
+    let razorOptions = optionProvider.GetLatestOptions().razorOptions;
+    if (!razorOptions.razorDisabled) {
         const razorObserver = new RazorLoggerObserver(omnisharpChannel);
         eventStream.subscribe(razorObserver.post);
 
-        if (!optionProvider.GetLatestOptions().razorDevMode) {
+        if (!razorOptions.razorDevMode) {
             razorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
         }
     }

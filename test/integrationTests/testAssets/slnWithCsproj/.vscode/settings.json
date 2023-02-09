@@ -1,5 +1,6 @@
 {
     "omnisharp.defaultLaunchSolution": "b_SecondInOrder_SlnFile.sln",
     "omnisharp.path": "latest",
-    "omnisharp.enableRoslynAnalyzers": true
+    "omnisharp.enableRoslynAnalyzers": true,
+    "dotnet.server.useOmnisharp": true,
 }

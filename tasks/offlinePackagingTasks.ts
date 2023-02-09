@@ -11,7 +11,7 @@ import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
 import * as util from 'util';
 import { Logger } from '../src/logger';
-import { PlatformInformation } from '../src/platform';
+import { PlatformInformation } from '../src/shared/platform';
 import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import NetworkSettings from '../src/NetworkSettings';

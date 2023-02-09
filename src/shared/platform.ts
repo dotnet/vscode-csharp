@@ -6,7 +6,7 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
-import * as util from './common';
+import * as util from '../common';
 
 const unknown = 'unknown';
 

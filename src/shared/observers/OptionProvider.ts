@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Options } from "../omnisharp/options";
+import { Options } from "../options";
 import { Subscription, Observable } from "rxjs";
 export default class OptionProvider {
     private options?: Options;

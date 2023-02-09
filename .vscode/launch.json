@@ -14,7 +14,6 @@
                 "${workspaceRoot}/dist/*.js"
             ],
             "env": {
-                "DEBUG_ROSLYN_LANGUAGE_SERVER": "true",
                 "ROSLYN_LANGUAGE_SERVER_DIRECTORY": "artifacts/bin/Debug/net7.0"
             },
             "preLaunchTask": "buildDev"
@@ -54,7 +53,6 @@
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/featureTests",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "featureTests",
-                "USE_OMNISHARP_SERVER": "true",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -80,7 +78,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "singleCsproj",
                 "OMNISHARP_ENGINE": "stdio",
-                "USE_OMNISHARP_SERVER": "true",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -106,7 +103,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "BasicRazorApp2_1",
                 "OMNISHARP_ENGINE": "stdio",
-                "USE_OMNISHARP_SERVER": "true",
             },
         },
         {
@@ -127,7 +123,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
                 "OMNISHARP_ENGINE": "stdio",
-                "USE_OMNISHARP_SERVER": "true",
             },
             "stopOnEntry": false,
             "sourceMaps": true,
@@ -154,7 +149,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "singleCsproj",
                 "OMNISHARP_ENGINE": "lsp",
-                "USE_OMNISHARP_SERVER": "true",
             },
             "stopOnEntry": false,
             "sourceMaps": true,
@@ -181,7 +175,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "BasicRazorApp2_1",
                 "OMNISHARP_ENGINE": "lsp",
-                "USE_OMNISHARP_SERVER": "true",
             },
         },
         {
@@ -202,7 +195,6 @@
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
                 "OMNISHARP_ENGINE": "lsp",
-                "USE_OMNISHARP_SERVER": "true",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -227,7 +219,6 @@
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnFilterWithCsproj",
-                "USE_OMNISHARP_SERVER": "true",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -252,7 +243,6 @@
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithGenerator",
-                "USE_OMNISHARP_SERVER": "true",
             },
             "sourceMaps": true,
             "outFiles": [

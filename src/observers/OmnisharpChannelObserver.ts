@@ -4,12 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { BaseChannelObserver } from "./BaseChannelObserver";
-import { vscode, OutputChannel } from '../vscodeAdapter';
+import { OutputChannel } from '../vscodeAdapter';
 import { BaseEvent, OmnisharpServerOnStdErr } from '../omnisharp/loggingEvents';
 import { EventType } from "../omnisharp/EventType";
+import OptionProvider from "../shared/observers/OptionProvider";
 
 export class OmnisharpChannelObserver extends BaseChannelObserver {
-    constructor(channel: OutputChannel, private vscode: vscode) {
+    constructor(channel: OutputChannel, private optionProvider: OptionProvider) {
         super(channel);
     }
 
@@ -29,8 +30,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver {
     }
 
     private async handleOmnisharpServerOnStdErr(event: OmnisharpServerOnStdErr) {
-        let csharpConfig = this.vscode.workspace.getConfiguration('csharp');
-        if (csharpConfig.get<boolean>('showOmnisharpLogOnError')) {
+        if (this.optionProvider.GetLatestOptions().omnisharpOptions.showOmnisharpLogOnError) {
             this.showChannel(true);
         }
     }

@@ -7,6 +7,9 @@ import { vscode } from '../../../src/vscodeAdapter';
 import { getNullChannel, updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/OmnisharpChannelObserver';
 import { OmnisharpFailure, ShowOmniSharpChannel, BaseEvent, OmnisharpRestart, OmnisharpServerOnStdErr } from '../../../src/omnisharp/loggingEvents';
+import OptionProvider from '../../../src/shared/observers/OptionProvider';
+import { Subject } from 'rxjs';
+import { Options } from '../../../src/shared/options';
 
 suite("OmnisharpChannelObserver", () => {
 
@@ -14,6 +17,8 @@ suite("OmnisharpChannelObserver", () => {
     let hasCleared: boolean;
     let preserveFocus: boolean;
     let vscode: vscode;
+    let optionObservable = new Subject<Options>();
+    let optionProvider = new OptionProvider(optionObservable);
     let observer: OmnisharpChannelObserver;
 
     setup(() => {
@@ -28,9 +33,10 @@ suite("OmnisharpChannelObserver", () => {
                 preserveFocus = preserve;
             },
             clear: () => { hasCleared = true; }
-        }, vscode);
+        }, optionProvider);
 
         updateConfig(vscode, "csharp", "showOmnisharpLogOnError", true);
+        optionObservable.next(Options.Read(vscode));
     });
 
     [
@@ -48,6 +54,7 @@ suite("OmnisharpChannelObserver", () => {
 
     test(`OmnisharpServerOnStdErr: Channel is not shown when disabled in configuration`, () => {
         updateConfig(vscode, "csharp", "showOmnisharpLogOnError", false);
+        optionObservable.next(Options.Read(vscode));
 
         expect(hasShown).to.be.false;
         observer.post(new OmnisharpServerOnStdErr("std err"));

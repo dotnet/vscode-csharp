@@ -6,11 +6,11 @@
 import { spawn } from 'cross-spawn';
 import { ChildProcessWithoutNullStreams } from 'child_process';
 
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { Options } from './options';
-import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
+import { Options } from '../shared/options';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 
 export enum LaunchTargetKind {
     Solution,
@@ -64,14 +64,14 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
 
     const projectFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-        /*exclude*/ `{${options.projectFilesExcludePattern}}`);
+        /*exclude*/ `{${options.omnisharpOptions.projectFilesExcludePattern}}`);
 
     const csFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.cs}',
         /*exclude*/ '{**/node_modules/**,**/.git/**,**/bower_components/**}',
         /*maxResults*/ 1);
 
-    return resourcesToLaunchTargets(projectFiles.concat(csFiles), vscode.workspace.workspaceFolders, options.maxProjectResults);
+    return resourcesToLaunchTargets(projectFiles.concat(csFiles), vscode.workspace.workspaceFolders, options.omnisharpOptions.maxProjectResults);
 }
 
 export function resourcesToLaunchTargets(resources: vscode.Uri[], workspaceFolders: readonly vscode.WorkspaceFolder[], maxProjectResults: number): LaunchTarget[] {
@@ -319,7 +319,7 @@ export async function launchOmniSharp(cwd: string, args: string[], launchPath: s
 }
 
 export async function configure(cwd: string, args: string[], launchPath: string, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchConfiguration> {
-    if (options.useEditorFormattingSettings) {
+    if (options.omnisharpOptions.useEditorFormattingSettings) {
         let globalConfig = vscode.workspace.getConfiguration('', null);
         let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
 
@@ -328,7 +328,7 @@ export async function configure(cwd: string, args: string[], launchPath: string,
         args.push(`formattingOptions:indentationSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
     }
 
-    if (options.useModernNet) {
+    if (options.omnisharpOptions.useModernNet) {
         const argsCopy = args.slice(0);
 
         let command: string;
@@ -374,7 +374,7 @@ export async function configure(cwd: string, args: string[], launchPath: string,
         argsCopy.unshift(launchPath);
         argsCopy.unshift("--assembly-loader=strict");
 
-        if (options.waitForDebugger) {
+        if (options.commonOptions.waitForDebugger) {
             argsCopy.unshift("--debug");
             argsCopy.unshift("--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555");
         }

@@ -691,7 +691,7 @@
     "configuration": {
       "title": "C# configuration",
       "properties": {
-        "microsoft-codeanalysis-languageserver.trace.server": {
+        "dotnet.server.trace": {
           "scope": "window",
           "type": "string",
           "enum": [
@@ -703,10 +703,25 @@
           "default": "minimal",
           "description": "Sets the logging level for the language server"
         },
-        "microsoft-codeanalysis-languageserver.useOmnisharpServer": {
+        "dotnet.server.useOmnisharp": {
           "type": "boolean",
           "default": false,
           "description": "Switches to use the Omnisharp server for language features when enabled (requires restart)."
+        },
+        "dotnet.server.path": {
+          "type": "string",
+          "scope": "window",
+          "description": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used."
+        },
+        "dotnet.server.waitForDebugger": {
+          "type": "boolean",
+          "default": false,
+          "description": "Passes the --debug flag when launching the server to allow a debugger to be attached."
+        },
+        "dotnet.dotnetPath": {
+          "type": "string",
+          "scope": "window",
+          "description": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\"."
         },
         "csharp.format.enable": {
           "type": "boolean",
@@ -1042,11 +1057,6 @@
           "default": false,
           "description": "Show hints for implicit object creation"
         },
-        "omnisharp.path": {
-          "type": "string",
-          "scope": "window",
-          "description": "Specifies the path to OmniSharp. When left empty the OmniSharp version pinned to the C# Extension is used. This can be the absolute path to an OmniSharp executable, a specific version number, or \"latest\". If a version number or \"latest\" is specified, the appropriate version of OmniSharp will be downloaded on your behalf. Setting \"latest\" is an opt-in into latest beta releases of OmniSharp."
-        },
         "omnisharp.useModernNet": {
           "type": "boolean",
           "default": true,
@@ -1074,16 +1084,6 @@
           "type": "string",
           "scope": "machine",
           "description": "Specifies the path to a mono installation to use when \"useModernNet\" is set to false, instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\""
-        },
-        "omnisharp.dotnetPath": {
-          "type": "string",
-          "scope": "window",
-          "description": "Specified the path to a dotnet installation to use when \"useModernNet\" is set to true, instead of the default system one. This only influences the dotnet installation to use for hosting Omnisharp itself. Example: \"/home/username/mycustomdotnetdirectory\"."
-        },
-        "omnisharp.waitForDebugger": {
-          "type": "boolean",
-          "default": false,
-          "description": "Pass the --debug flag when launching the OmniSharp server to allow a debugger to be attached."
         },
         "omnisharp.loggingLevel": {
           "type": "string",
@@ -1273,37 +1273,44 @@
       {
         "command": "o.restart",
         "title": "Restart OmniSharp",
-        "category": "OmniSharp"
+        "category": "OmniSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.pickProjectAndStart",
         "title": "Select Project",
-        "category": "OmniSharp"
+        "category": "OmniSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.fixAll.solution",
         "title": "Fix all occurrences of a code issue within solution",
-        "category": "OmniSharp"
+        "category": "OmniSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.fixAll.project",
         "title": "Fix all occurrences of a code issue within project",
-        "category": "OmniSharp"
+        "category": "OmniSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.fixAll.document",
         "title": "Fix all occurrences of a code issue within document",
-        "category": "OmniSharp"
+        "category": "OmniSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.reanalyze.allProjects",
         "title": "Analyze all projects",
-        "category": "OmniSharp"
+        "category": "OmniSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.reanalyze.currentProject",
         "title": "Analyze current project",
-        "category": "OmniSharp"
+        "category": "OmniSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "dotnet.generateAssets",
@@ -1313,12 +1320,14 @@
       {
         "command": "dotnet.restore.project",
         "title": "Restore Project",
-        "category": ".NET"
+        "category": ".NET",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "dotnet.restore.all",
         "title": "Restore All Projects",
-        "category": ".NET"
+        "category": ".NET",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "csharp.downloadDebugger",
@@ -1374,6 +1383,12 @@
         "command": "dotnet.test.debugTestsInContext",
         "title": "Debug Tests in Context",
         "category": ".NET"
+      },
+      {
+        "command": "dotnet.restartServer",
+        "title": "Restart Language Server",
+        "category": ".NET",
+        "enablement": "!config.dotnet.server.useOmnisharp"
       }
     ],
     "keybindings": [
@@ -4209,6 +4224,10 @@
         {
           "command": "dotnet.test.debugTestsInContext",
           "when": "editorLangId == csharp"
+        },
+        {
+          "command": "o.restart",
+          "when": "config.dotnet.server.useOmnisharp"
         }
       ],
       "editor/title": [

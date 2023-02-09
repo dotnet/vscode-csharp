@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from "../../vscodeAdapter";
-import MessageItemWithCommand from "./MessageItemWithCommand";
+import { vscode } from "../../../vscodeAdapter";
+import MessageItemWithCommand from "../../../observers/utils/MessageItemWithCommand";
 
 export default async function showInformationMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
     try {

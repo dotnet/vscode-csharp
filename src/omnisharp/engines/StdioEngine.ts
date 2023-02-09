@@ -11,15 +11,15 @@ import { LaunchTarget } from '../launcher';
 import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from '../requestQueue';
 import { EventEmitter } from 'events';
-import { Options } from '../options';
-import { PlatformInformation } from '../../platform';
+import { Options } from '../../shared/options';
+import { PlatformInformation } from '../../shared/platform';
 import { launchOmniSharp } from '../launcher';
 import { setTimeout } from 'timers';
 import * as ObservableEvents from '../loggingEvents';
 import { EventStream } from '../../EventStream';
 import CompositeDisposable from '../../CompositeDisposable';
 import Disposable from '../../Disposable';
-import { IHostExecutableResolver } from '../../constants/IHostExecutableResolver';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 import {
     removeBOMFromBuffer,
     removeBOMFromString,
@@ -49,7 +49,7 @@ import OmniSharpCodeActionProvider from '../../features/codeActionProvider';
 import forwardChanges from '../../features/changeForwarding';
 import OmniSharpDefinitionProvider from '../../features/definitionProvider';
 import reportDiagnostics, { Advisor } from '../../features/diagnosticsProvider';
-import OptionProvider from '../../observers/OptionProvider';
+import OptionProvider from '../../shared/observers/OptionProvider';
 import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
 import TestManager from '../../features/dotnetTest';
 import { OmniSharpStructureProvider } from '../../features/structureProvider';
@@ -102,7 +102,7 @@ export class StdioEngine implements IEngine {
         localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new OmniSharpDocumentSymbolProvider(server, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerHoverProvider(documentSelector, new OmniSharpHoverProvider(server, languageMiddlewareFeature)));
         localDisposables.add(vscode.languages.registerRenameProvider(documentSelector, new OmniSharpRenameProvider(server, languageMiddlewareFeature)));
-        if (options.useFormatting) {
+        if (options.omnisharpOptions.useFormatting) {
             localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new OmniSharpFormatProvider(server, languageMiddlewareFeature)));
             localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new OmniSharpFormatProvider(server, languageMiddlewareFeature), '}', '/', '\n', ';'));
         }
@@ -262,7 +262,7 @@ export class StdioEngine implements IEngine {
             let listener: Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = options.projectLoadTimeout * 1000;
+            const timeoutDuration = options.omnisharpOptions.projectLoadTimeout * 1000;
 
             // timeout logic
             const handle = setTimeout(() => {

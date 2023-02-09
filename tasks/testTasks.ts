@@ -15,7 +15,6 @@ gulp.task("test:feature", async () => {
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests"),
         CODE_WORKSPACE_ROOT: rootPath,
         CODE_DISABLE_EXTENSIONS: "true",
-        USE_OMNISHARP_SERVER: "true",
     };
 
     const result = await spawnNode([featureTestRunnerPath], { env });
@@ -74,7 +73,6 @@ async function runIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp'
         OMNISHARP_ENGINE: engine,
         OMNISHARP_LOCATION: process.env.OMNISHARP_LOCATION,
         CODE_DISABLE_EXTENSIONS: 'true',
-        USE_OMNISHARP_SERVER: "true",
     };
 
     const result = await spawnNode([integrationTestRunnerPath], { env, cwd: rootPath });

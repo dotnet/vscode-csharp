@@ -12,7 +12,7 @@ import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
 import { OmnisharpManager } from './OmnisharpManager';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
 import { EventStream } from '../EventStream';
@@ -21,13 +21,13 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 import { ExtensionContext, OutputChannel } from 'vscode';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import { LspEngine } from './engines/LspEngine';
 import { IEngine } from './engines/IEngine';
 import { StdioEngine } from './engines/StdioEngine';
-import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { showProjectSelector } from '../features/commands';
 import { validateRequirements } from './requirementCheck';
 import { Advisor } from '../features/diagnosticsProvider';
@@ -297,7 +297,8 @@ export class OmniSharpServer {
         const disposables = new CompositeDisposable();
 
         let engine: IEngine | undefined;
-        if (options.enableLspDriver) {
+        let omnisharpOptions = options.omnisharpOptions;
+        if (omnisharpOptions.enableLspDriver) {
             engine = new LspEngine(
                 this._eventBus,
                 this.eventStream,
@@ -389,13 +390,14 @@ export class OmniSharpServer {
             process.pid.toString(),
             'DotNet:enablePackageRestore=false',
             '--loglevel',
-            options.loggingLevel,
+            omnisharpOptions.loggingLevel,
         ];
 
         let razorPluginPath: string | undefined;
-        if (!options.razorDisabled) {
+        let razorOptions = options.razorOptions;
+        if (!razorOptions.razorDisabled) {
             // Razor support only exists for certain platforms, so only load the plugin if present
-            razorPluginPath = options.razorPluginPath.length > 0 ? options.razorPluginPath : path.join(
+            razorPluginPath = razorOptions.razorPluginPath.length > 0 ? razorOptions.razorPluginPath : path.join(
                 this.extensionPath,
                 '.razor',
                 'OmniSharpPlugin',
@@ -405,83 +407,83 @@ export class OmniSharpServer {
             }
         }
 
-        if (options.waitForDebugger === true) {
+        if (options.commonOptions.waitForDebugger === true) {
             args.push('--debug');
         }
 
-        for (let i = 0; i < options.excludePaths.length; i++) {
-            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.excludePaths[i]}`);
+        for (let i = 0; i < options.commonOptions.excludePaths.length; i++) {
+            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.commonOptions.excludePaths[i]}`);
         }
 
-        if (options.enableMsBuildLoadProjectsOnDemand === true) {
+        if (omnisharpOptions.enableMsBuildLoadProjectsOnDemand === true) {
             args.push('MsBuild:LoadProjectsOnDemand=true');
         }
 
-        if (options.enableRoslynAnalyzers === true) {
+        if (omnisharpOptions.enableRoslynAnalyzers === true) {
             args.push('RoslynExtensionsOptions:EnableAnalyzersSupport=true');
         }
 
-        if (options.enableEditorConfigSupport === true) {
+        if (omnisharpOptions.enableEditorConfigSupport === true) {
             args.push('FormattingOptions:EnableEditorConfigSupport=true');
         }
 
-        if (options.organizeImportsOnFormat === true) {
+        if (omnisharpOptions.organizeImportsOnFormat === true) {
             args.push('FormattingOptions:OrganizeImports=true');
         }
 
-        if (this.decompilationAuthorized && options.enableDecompilationSupport === true) {
+        if (this.decompilationAuthorized && omnisharpOptions.enableDecompilationSupport === true) {
             args.push('RoslynExtensionsOptions:EnableDecompilationSupport=true');
         }
 
-        if (options.enableImportCompletion === true) {
+        if (omnisharpOptions.enableImportCompletion === true) {
             args.push('RoslynExtensionsOptions:EnableImportCompletion=true');
         }
 
-        if (options.enableAsyncCompletion === true) {
+        if (omnisharpOptions.enableAsyncCompletion === true) {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
-        if (options.sdkPath.length > 0) {
-            args.push(`Sdk:Path=${options.sdkPath}`);
+        if (omnisharpOptions.sdkPath.length > 0) {
+            args.push(`Sdk:Path=${omnisharpOptions.sdkPath}`);
         }
 
-        if (options.sdkVersion.length > 0) {
-            args.push(`Sdk:Version=${options.sdkVersion}`);
+        if (omnisharpOptions.sdkVersion.length > 0) {
+            args.push(`Sdk:Version=${omnisharpOptions.sdkVersion}`);
         }
 
-        if (options.sdkIncludePrereleases) {
+        if (omnisharpOptions.sdkIncludePrereleases) {
             args.push(`Sdk:IncludePrereleases=true`);
         }
 
-        if (options.inlayHintsEnableForParameters === true) {
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${options.inlayHintsEnableForParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${options.inlayHintsForLiteralParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${options.inlayHintsForIndexerParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${options.inlayHintsForObjectCreationParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${options.inlayHintsForOtherParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${options.inlayHintsSuppressForParametersThatDifferOnlyBySuffix.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${options.inlayHintsSuppressForParametersThatMatchMethodIntent.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${options.inlayHintsSuppressForParametersThatMatchArgumentName.toString()}`);
+        if (omnisharpOptions.inlayHintsEnableForParameters === true) {
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${omnisharpOptions.inlayHintsEnableForParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${omnisharpOptions.inlayHintsForLiteralParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${omnisharpOptions.inlayHintsForIndexerParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${omnisharpOptions.inlayHintsForObjectCreationParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${omnisharpOptions.inlayHintsForOtherParameters.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${omnisharpOptions.inlayHintsSuppressForParametersThatDifferOnlyBySuffix.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${omnisharpOptions.inlayHintsSuppressForParametersThatMatchMethodIntent.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${omnisharpOptions.inlayHintsSuppressForParametersThatMatchArgumentName.toString()}`);
         }
 
-        if (options.inlayHintsEnableForTypes === true) {
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${options.inlayHintsEnableForTypes.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${options.inlayHintsForImplicitVariableTypes.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${options.inlayHintsForLambdaParameterTypes.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${options.inlayHintsForImplicitObjectCreation.toString()}`);
+        if (omnisharpOptions.inlayHintsEnableForTypes === true) {
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${omnisharpOptions.inlayHintsEnableForTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${omnisharpOptions.inlayHintsForImplicitVariableTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${omnisharpOptions.inlayHintsForLambdaParameterTypes.toString()}`);
+            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${omnisharpOptions.inlayHintsForImplicitObjectCreation.toString()}`);
         }
 
-        if (options.analyzeOpenDocumentsOnly === true) {
+        if (omnisharpOptions.analyzeOpenDocumentsOnly === true) {
             args.push('RoslynExtensionsOptions:AnalyzeOpenDocumentsOnly=true');
         }
 
-        for (let i = 0; i < options.dotNetCliPaths.length; i++) {
-            args.push(`DotNetCliOptions:LocationPaths:${i}=${options.dotNetCliPaths[i]}`);
+        for (let i = 0; i < omnisharpOptions.dotNetCliPaths.length; i++) {
+            args.push(`DotNetCliOptions:LocationPaths:${i}=${omnisharpOptions.dotNetCliPaths[i]}`);
         }
 
         let launchPath: string;
         try {
-            launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, this.extensionPath);
+            launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(this.packageJSON.defaults.omniSharp, options.commonOptions.serverPath, /* useFramework */ !omnisharpOptions.useModernNet, this.extensionPath);
         }
         catch (e) {
             const error = e as Error; // Unsafe TypeScript hack to recognize the catch type as Error.
@@ -494,7 +496,7 @@ export class OmniSharpServer {
 
         this.eventStream.post(
             new ObservableEvents.OmnisharpInitialisation(
-                options.dotNetCliPaths,
+                omnisharpOptions.dotNetCliPaths,
                 new Date(),
                 solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
@@ -517,7 +519,7 @@ export class OmniSharpServer {
 
             this._delayTrackers = {};
 
-            if (razorPluginPath !== undefined && options.razorPluginPath) {
+            if (razorPluginPath !== undefined && razorOptions.razorPluginPath) {
                 if (fs.existsSync(razorPluginPath)) {
                     this.eventStream.post(
                         new ObservableEvents.RazorPluginPathSpecified(
@@ -643,7 +645,7 @@ export class OmniSharpServer {
         }
 
         // First, try to launch against something that matches the user's preferred target
-        const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
+        const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().omnisharpOptions.defaultLaunchSolution;
         const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
         if (defaultLaunchSolutionTarget) {
             return this.start(defaultLaunchSolutionTarget);

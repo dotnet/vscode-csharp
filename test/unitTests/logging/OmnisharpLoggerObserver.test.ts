@@ -7,7 +7,7 @@ import { getNullChannel } from '../testAssets/Fakes';
 import { OmnisharpLoggerObserver } from '../../../src/observers/OmnisharpLoggerObserver';
 import { OmnisharpServerMsBuildProjectDiagnostics, EventWithMessage, OmnisharpServerOnStdErr, OmnisharpServerMessage, OmnisharpServerOnServerError, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpServerOnError, OmnisharpFailure, OmnisharpEventPacketReceived } from '../../../src/omnisharp/loggingEvents';
 import { OutputChannel } from 'vscode';
-import { PlatformInformation } from '../../../src/platform';
+import { PlatformInformation } from '../../../src/shared/platform';
 
 suite("OmnisharpLoggerObserver", () => {
     suiteSetup(() => should());

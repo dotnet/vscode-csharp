@@ -4,10 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { InformationMessageObserver } from '../../../src/observers/InformationMessageObserver';
+import OptionProvider from '../../../src/shared/observers/OptionProvider';
 import { use as chaiUse, expect, should } from 'chai';
 import { getUnresolvedDependenices, updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
-import { from as observableFrom } from 'rxjs';
+import { Subject, from as observableFrom } from 'rxjs';
 import { timeout } from 'rxjs/operators';
+import { Options } from '../../../src/shared/options';
 
 chaiUse(require('chai-as-promised'));
 chaiUse(require('chai-string'));
@@ -20,9 +22,11 @@ suite("InformationMessageObserver", () => {
     let signalCommandDone: () => void;
     let commandDone: Promise<void>;
     let vscode = getVsCode();
+    let optionObservable = new Subject<Options>();
+    let optionProvider = new OptionProvider(optionObservable);
     let infoMessage: string;
     let invokedCommand: string;
-    let observer: InformationMessageObserver = new InformationMessageObserver(vscode);
+    let observer: InformationMessageObserver = new InformationMessageObserver(vscode, optionProvider);
 
     setup(() => {
         infoMessage = undefined;
@@ -42,7 +46,10 @@ suite("InformationMessageObserver", () => {
     ].forEach((elem) => {
         suite(elem.event.constructor.name, () => {
             suite('Suppress Dotnet Restore Notification is true', () => {
-                setup(() => updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', true));
+                setup(() =>  {
+                    updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', true);
+                    optionObservable.next(Options.Read(vscode));
+                });
 
                 test('The information message is not shown', () => {
                     observer.post(elem.event);
@@ -51,7 +58,10 @@ suite("InformationMessageObserver", () => {
             });
 
             suite('Suppress Dotnet Restore Notification is false', () => {
-                setup(() => updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', false));
+                setup(() => {
+                    updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', false);
+                    optionObservable.next(Options.Read(vscode));
+                });
 
                 test('The information message is shown', async () => {
                     observer.post(elem.event);

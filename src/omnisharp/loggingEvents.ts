@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from "../platform";
+import { PlatformInformation } from "../shared/platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';
 import { LaunchTarget } from "./launcher";

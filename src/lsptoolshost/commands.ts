@@ -6,8 +6,9 @@
 import * as vscode from 'vscode';
 import { UriConverter } from './uriConverter';
 import * as languageClient from 'vscode-languageclient/node';
+import { RoslynLanguageServer } from './roslynLanguageServer';
 
-export function registerCommands(context: vscode.ExtensionContext) {
+export function registerCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     // It is very important to be careful about the types used as parameters for these command callbacks.
     // If the arguments are coming from the server as json, it is NOT appropriate to use type definitions
     // from the normal vscode API (e.g. vscode.Location) as input parameters.
@@ -18,6 +19,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
     // Instead, we define inputs from the server using the LSP type definitions as those have no prototypes
     // so we don't accidentally pass them directly into vscode APIs.
     context.subscriptions.push(vscode.commands.registerCommand('roslyn.client.peekReferences', peekReferencesCallback));
+    context.subscriptions.push(vscode.commands.registerCommand('dotnet.restartServer', async () => restartServer(languageServer)));
 }
 
 /**
@@ -37,5 +39,9 @@ async function peekReferencesCallback(uriStr: string, serverPosition: languageCl
       // This is fine - the VSCode API is resilient to that scenario and will not crash.
       vscode.commands.executeCommand('editor.action.showReferences', uri, vscodeApiPosition, references);
     }
+}
+
+async function restartServer(languageServer: RoslynLanguageServer): Promise<void> {
+  await languageServer.restart();
 }
 

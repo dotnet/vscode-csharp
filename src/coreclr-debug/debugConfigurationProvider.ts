@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 import { RemoteAttachPicker, DotNetAttachItemsProviderFactory, AttachPicker, AttachItem } from '../features/processPicker';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     constructor(public platformInformation: PlatformInformation) {}

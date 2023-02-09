@@ -7,12 +7,12 @@ import { exec } from "child_process";
 import * as path from 'path';
 import * as semver from "semver";
 import { promisify } from "util";
-import { HostExecutableInformation } from "../constants/HostExecutableInformation";
-import { IHostExecutableResolver } from "../constants/IHostExecutableResolver";
-import { PlatformInformation } from "../platform";
+import { HostExecutableInformation } from "../shared/constants/HostExecutableInformation";
+import { IHostExecutableResolver } from "../shared/constants/IHostExecutableResolver";
 import { Options } from "./options";
+import { PlatformInformation } from "./platform";
 
-export class OmniSharpDotnetResolver implements IHostExecutableResolver {
+export class DotnetResolver implements IHostExecutableResolver {
     private readonly minimumDotnetVersion = "6.0.100";
 
     constructor(private platformInfo: PlatformInformation) { }
@@ -21,8 +21,8 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
         const dotnet = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const env = { ...process.env };
 
-        if (options.dotnetPath.length > 0) {
-            env['PATH'] = options.dotnetPath + path.delimiter + env['PATH'];
+        if (options.commonOptions.dotnetPath.length > 0) {
+            env['PATH'] = options.commonOptions.dotnetPath + path.delimiter + env['PATH'];
         }
 
         // Test the dotnet exe for version
@@ -43,7 +43,7 @@ export class OmniSharpDotnetResolver implements IHostExecutableResolver {
 
         return {
             version: result.stdout,
-            path: options.dotnetPath,
+            path: options.commonOptions.dotnetPath,
             env
         };
     }

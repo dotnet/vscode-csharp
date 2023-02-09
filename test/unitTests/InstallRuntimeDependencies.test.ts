@@ -6,7 +6,7 @@
 import { installRuntimeDependencies } from "../../src/InstallRuntimeDependencies";
 import IInstallDependencies from "../../src/packageManager/IInstallDependencies";
 import { EventStream } from "../../src/EventStream";
-import { PlatformInformation } from "../../src/platform";
+import { PlatformInformation } from "../../src/shared/platform";
 import * as chai from "chai";
 import TestEventBus from "./testAssets/TestEventBus";
 import { AbsolutePathPackage } from "../../src/packageManager/AbsolutePathPackage";

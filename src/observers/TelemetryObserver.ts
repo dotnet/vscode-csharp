@@ -5,7 +5,7 @@
 
 import * as crypto from 'crypto';
 import { machineIdSync } from 'node-machine-id';
-import { PlatformInformation } from "../platform";
+import { PlatformInformation } from "../shared/platform";
 import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration, TelemetryErrorEvent, OmnisharpInitialisation } from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
 import { EventType } from "../omnisharp/EventType";

@@ -7,7 +7,7 @@ import * as protocol from '../protocol';
 import { CancellationToken } from '../../vscodeAdapter';
 import { configure, LaunchTarget } from '../launcher';
 import { EventEmitter } from 'events';
-import { Options } from '../options';
+import { Options } from '../../shared/options';
 import { setTimeout } from 'timers';
 import * as ObservableEvents from '../loggingEvents';
 import { EventStream } from '../../EventStream';
@@ -24,8 +24,8 @@ import {
 import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
 import { Events, OmniSharpServer } from '../server';
 import { IEngine } from './IEngine';
-import { PlatformInformation } from '../../platform';
-import { IHostExecutableResolver } from '../../constants/IHostExecutableResolver';
+import { PlatformInformation } from '../../shared/platform';
+import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 import { Command, DynamicFeature, LanguageClientOptions, RequestType, StaticFeature, Trace } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { SelectionRangeFeature } from 'vscode-languageclient/lib/common/selectionRange';
@@ -41,7 +41,7 @@ import { TypeHierarchyFeature } from 'vscode-languageclient/lib/common/typeHiera
 import { CallHierarchyFeature } from 'vscode-languageclient/lib/common/callHierarchy';
 import { Advisor } from '../../features/diagnosticsProvider';
 import dotnetTest from '../../features/dotnetTest';
-import OptionProvider from '../../observers/OptionProvider';
+import OptionProvider from '../../shared/observers/OptionProvider';
 
 export class LspEngine implements IEngine {
     client: LanguageClient | undefined;

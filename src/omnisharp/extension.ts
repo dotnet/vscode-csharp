@@ -11,18 +11,18 @@ import { CSharpConfigurationProvider } from '../configurationProvider';
 import { OmniSharpServer } from './server';
 import TestManager from '../features/dotnetTest';
 import registerCommands from '../features/commands';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import { ProjectJsonDeprecatedWarning, OmnisharpStart, RazorDevModeActive } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import { getDecompilationAuthorization } from './decompilationPrompt';
-import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
+import { DotnetResolver } from '../shared/DotnetResolver';
 import { Advisor } from '../features/diagnosticsProvider';
 
 export interface ActivationResult {
@@ -36,7 +36,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     const options = optionProvider.GetLatestOptions();
     const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
-    const omnisharpDotnetResolver = new OmniSharpDotnetResolver(platformInfo);
+    const omnisharpDotnetResolver = new DotnetResolver(platformInfo);
 
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
     languageMiddlewareFeature.register();
@@ -115,7 +115,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     }));
 
     disposables.add(server.onBeforeServerStart(path => {
-        if (options.razorDevMode) {
+        if (options.razorOptions.razorDevMode) {
             eventStream.post(new RazorDevModeActive());
         }
 
@@ -123,7 +123,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         context.workspaceState.update('lastSolutionPathOrFolder', path);
     }));
 
-    if (options.autoStart) {
+    if (options.omnisharpOptions.autoStart) {
         server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
     }
 

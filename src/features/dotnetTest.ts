@@ -19,7 +19,7 @@ import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../Disposable';
 import CompositeDisposable from '../CompositeDisposable';
 import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -188,7 +188,7 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _getRunSettings(filename: string): string | undefined {
-        const testSettingsPath = this.optionProvider.GetLatestOptions().testRunSettings;
+        const testSettingsPath = this.optionProvider.GetLatestOptions().omnisharpOptions.testRunSettings;
         if (testSettingsPath.length === 0) {
             return undefined;
         }

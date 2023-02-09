@@ -38,10 +38,9 @@ export async function run(testsRoot: string, options?: Mocha.MochaOptions) {
         retries: 2
     };
 
-    const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
-    const enableLspDriver = omnisharpConfig.get<boolean | undefined>('enableLspDriver', undefined);
-
-    omnisharpConfig.update('enableLspDriver', process.env.OMNISHARP_ENGINE === 'lsp', true);
+    const configuration = vscode.workspace.getConfiguration();
+    const enableLspDriver = configuration.get<boolean | undefined>('omnisharp.enableLspDriver', undefined);
+    configuration.update('omnisharp.enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp' ? true : false);
 
     const mocha = new Mocha(options);
 
@@ -62,6 +61,7 @@ export async function run(testsRoot: string, options?: Mocha.MochaOptions) {
         if (failures > 0) {
             throw new Error(`${failures} tests failed.`);
         }
-        omnisharpConfig.update('enableLspDriver', enableLspDriver, true);
+
+        configuration.update('omnisharp.enableLspDriver', enableLspDriver);
     });
 }

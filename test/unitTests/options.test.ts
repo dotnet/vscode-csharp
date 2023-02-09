@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { Options } from '../../src/omnisharp/options';
+import { Options } from '../../src/shared/options';
 import { getVSCodeWithConfig, updateConfig } from './testAssets/Fakes';
 
 suite("Options tests", () => {
@@ -13,29 +13,30 @@ suite("Options tests", () => {
     test('Verify defaults', () => {
         const vscode = getVSCodeWithConfig();
         const options = Options.Read(vscode);
-        options.path.should.equal("");
-        options.monoPath.should.equal("");
-        options.waitForDebugger.should.equal(false);
-        options.loggingLevel.should.equal("information");
-        options.autoStart.should.equal(true);
-        options.projectLoadTimeout.should.equal(60);
-        options.maxProjectResults.should.equal(250);
-        options.useEditorFormattingSettings.should.equal(true);
-        options.useFormatting.should.equal(true);
-        options.showReferencesCodeLens.should.equal(true);
-        options.showTestsCodeLens.should.equal(true);
-        options.disableCodeActions.should.equal(false);
-        options.showOmnisharpLogOnError.should.equal(true);
-        options.minFindSymbolsFilterLength.should.equal(0);
-        options.maxFindSymbolsItems.should.equal(1000);
-        options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
-        options.enableRoslynAnalyzers.should.equal(false);
-        options.enableEditorConfigSupport.should.equal(true);
-        options.enableDecompilationSupport.should.equal(false);
-        options.enableImportCompletion.should.equal(false);
-        options.analyzeOpenDocumentsOnly.should.equal(false);
-        options.testRunSettings.should.equal("");
-        options.defaultLaunchSolution.should.equal("");
+        options.commonOptions.serverPath.should.equal("");
+        options.omnisharpOptions.monoPath.should.equal("");
+        options.commonOptions.waitForDebugger.should.equal(false);
+        options.omnisharpOptions.loggingLevel.should.equal("information");
+        options.omnisharpOptions.autoStart.should.equal(true);
+        options.omnisharpOptions.projectLoadTimeout.should.equal(60);
+        options.omnisharpOptions.maxProjectResults.should.equal(250);
+        options.omnisharpOptions.useEditorFormattingSettings.should.equal(true);
+        options.omnisharpOptions.useFormatting.should.equal(true);
+        options.omnisharpOptions.showReferencesCodeLens.should.equal(true);
+        options.omnisharpOptions.showTestsCodeLens.should.equal(true);
+        options.omnisharpOptions.disableCodeActions.should.equal(false);
+        options.omnisharpOptions.showOmnisharpLogOnError.should.equal(true);
+        options.omnisharpOptions.minFindSymbolsFilterLength.should.equal(0);
+        options.omnisharpOptions.maxFindSymbolsItems.should.equal(1000);
+        options.omnisharpOptions.enableMsBuildLoadProjectsOnDemand.should.equal(false);
+        options.omnisharpOptions.enableRoslynAnalyzers.should.equal(false);
+        options.omnisharpOptions.enableEditorConfigSupport.should.equal(true);
+        options.omnisharpOptions.enableDecompilationSupport.should.equal(false);
+        options.omnisharpOptions.enableImportCompletion.should.equal(false);
+        options.omnisharpOptions.enableAsyncCompletion.should.equal(false);
+        options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(false);
+        options.omnisharpOptions.testRunSettings.should.equal("");
+        options.omnisharpOptions.defaultLaunchSolution.should.equal("");
     });
 
     test('Verify return no excluded paths when files.exclude empty', () => {
@@ -78,7 +79,7 @@ suite("Options tests", () => {
 
         const options = Options.Read(vscode);
 
-        options.loggingLevel.should.equal("debug");
+        options.omnisharpOptions.loggingLevel.should.equal("debug");
     });
 
     test('BACK-COMPAT: "csharp.omnisharp" is used if it is set and "omnisharp.path" is not', () => {
@@ -87,7 +88,7 @@ suite("Options tests", () => {
 
         const options = Options.Read(vscode);
 
-        options.path.should.equal("OldPath");
+        options.commonOptions.serverPath.should.equal("OldPath");
     });
 
     test('BACK-COMPAT: "csharp.omnisharp" is not used if "omnisharp.path" is set', () => {
@@ -97,7 +98,7 @@ suite("Options tests", () => {
 
         const options = Options.Read(vscode);
 
-        options.path.should.equal("NewPath");
+        options.commonOptions.serverPath.should.equal("NewPath");
     });
 
     test('"omnisharp.defaultLaunchSolution" is used if set', () => {
@@ -106,7 +107,7 @@ suite("Options tests", () => {
 
         const options = Options.Read(vscode);
 
-        options.defaultLaunchSolution.should.equal("some_valid_solution.sln");
+        options.omnisharpOptions.defaultLaunchSolution.should.equal("some_valid_solution.sln");
     });
 
     test('"omnisharp.testRunSettings" is used if set', () => {
@@ -115,6 +116,6 @@ suite("Options tests", () => {
 
         const options = Options.Read(vscode);
 
-        options.testRunSettings.should.equal("some_valid_path\\some_valid_runsettings_files.runsettings");
+        options.omnisharpOptions.testRunSettings.should.equal("some_valid_path\\some_valid_runsettings_files.runsettings");
     });
 });

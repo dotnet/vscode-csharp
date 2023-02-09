@@ -13,36 +13,26 @@ import { EventType } from '../../src/omnisharp/EventType';
 export interface ActivationResult {
     readonly advisor: Advisor;
     readonly eventStream: EventStream;
-    readonly wasActive: boolean;
 }
 
 export async function activateCSharpExtension(): Promise<ActivationResult | undefined> {
-    const configuration = vscode.workspace.getConfiguration('omnisharp');
-    configuration.update('enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp' ? true : false);
+    const configuration = vscode.workspace.getConfiguration();
+    configuration.update('omnisharp.enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp' ? true : false);
     if (process.env.OMNISHARP_LOCATION) {
         configuration.update('path', process.env.OMNISHARP_LOCATION);
     }
 
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
-    const isActive = csharpExtension.isActive;
 
-    if (!isActive) {
-        await csharpExtension.activate();
-    }
+    // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
+    await csharpExtension.activate();
 
-    try {
-        await csharpExtension.exports.initializationFinished();
-        console.log("ms-dotnettools.csharp activated");
-        return {
-            advisor: await csharpExtension.exports.getAdvisor(),
-            eventStream: csharpExtension.exports.eventStream,
-            wasActive: isActive
-        };
-    }
-    catch (err) {
-        console.log(JSON.stringify(err));
-        return undefined;
-    }
+    await csharpExtension.exports.initializationFinished();
+    console.log("ms-dotnettools.csharp activated");
+    return {
+        advisor: await csharpExtension.exports.getAdvisor(),
+        eventStream: csharpExtension.exports.eventStream,
+    };
 }
 
 export async function restartOmniSharpServer(): Promise<void> {

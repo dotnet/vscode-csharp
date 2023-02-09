@@ -7,14 +7,14 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from './../common';
 import { CoreClrDebugUtil, getTargetArchitecture } from './util';
-import { PlatformInformation } from './../platform';
+import { PlatformInformation } from '../shared/platform';
 import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import CSharpExtensionExports from '../CSharpExtensionExports';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { DotnetDebugConfigurationProvider } from './debugConfigurationProvider';
-import { Options } from '../omnisharp/options';
+import { Options } from '../shared/options';
 
 export async function activate(thisExtension: vscode.Extension<CSharpExtensionExports>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, options: Options) {
     const debugUtil = new CoreClrDebugUtil(context.extensionPath);
@@ -73,7 +73,7 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
 
 async function completeDebuggerInstall(debugUtil: CoreClrDebugUtil, platformInformation: PlatformInformation, eventStream: EventStream, options: Options): Promise<boolean> {
     try {
-        await debugUtil.checkDotNetCli(options.dotNetCliPaths);
+        await debugUtil.checkDotNetCli(options.omnisharpOptions.dotNetCliPaths);
         const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
@@ -169,7 +169,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
-            const dotNetInfo = await getDotnetInfo(this.options.dotNetCliPaths);
+            const dotNetInfo = await getDotnetInfo(this.options.omnisharpOptions.dotNetCliPaths);
             const targetArchitecture = getTargetArchitecture(this.platformInfo, _session.configuration.targetArchitecture, dotNetInfo);
             const command = path.join(common.getExtensionPath(), ".debugger", targetArchitecture, "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
             executable = new vscode.DebugAdapterExecutable(command, [], {

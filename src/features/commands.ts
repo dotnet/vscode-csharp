@@ -15,11 +15,11 @@ import { RemoteAttachPicker } from './processPicker';
 import { generateAssets } from '../assets';
 import { ShowOmniSharpChannel, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import CompositeDisposable from '../CompositeDisposable';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 import reportIssue from './reportIssue';
-import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
 
