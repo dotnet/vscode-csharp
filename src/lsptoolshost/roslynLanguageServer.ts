@@ -204,10 +204,10 @@ export class RoslynLanguageServer {
     }
 }
 
-export async function activateRoslynLanguageServer(context: vscode.ExtensionContext, platformInfo: PlatformInformation, optionsProvider: OptionProvider) {
+export async function activateRoslynLanguageServer(context: vscode.ExtensionContext, platformInfo: PlatformInformation, optionsProvider: OptionProvider, outputChannel: vscode.OutputChannel) {
 
     // Create a channel for outputting general logs from the language server.
-    _channel = vscode.window.createOutputChannel("C#");
+    _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     _traceChannel = vscode.window.createOutputChannel("C# LSP Trace Logs");
 

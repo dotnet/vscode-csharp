@@ -10,8 +10,8 @@ import * as vscode from 'vscode';
 
 import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
 import { WarningMessageObserver } from './observers/WarningMessageObserver';
-import { CsharpChannelObserver } from './observers/CsharpChannelObserver';
-import { CsharpLoggerObserver } from './observers/CsharpLoggerObserver';
+import { CsharpChannelObserver } from './shared/observers/CsharpChannelObserver';
+import { CsharpLoggerObserver } from './shared/observers/CsharpLoggerObserver';
 import { DotNetChannelObserver } from './observers/DotnetChannelObserver';
 import { DotnetLoggerObserver } from './observers/DotnetLoggerObserver';
 import { EventStream } from './EventStream';
@@ -49,6 +49,8 @@ import { activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServe
 import { Options } from './shared/options';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | null> {
+    let extensionExportsResolver: ((coreClrDebugPromise: Promise<void>) => CSharpExtensionExports) | null = null;
+
     const optionStream = createOptionStream(vscode);
     let optionProvider = new OptionProvider(optionStream);
 
@@ -65,36 +67,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         throw error;
     }
 
-    let useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
-    if (!useOmnisharpServer)
-    {
-        context.subscriptions.push(optionProvider);
-        context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode));
-        activateRoslynLanguageServer(context, platformInfo, optionProvider);
-
-        // Activate Razor
-        if (!optionProvider.GetLatestOptions().razorOptions.razorDisabled) {
-            activateRazorExtension(context, context.extension.extensionPath, eventStream);
-        }
-        
-        return null;
-    }
-
     const extensionVersion = context.extension.packageJSON.version;
     const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
     const reporter = new TelemetryReporter(CSharpExtensionId, extensionVersion, aiKey);
-
-    let dotnetChannel = vscode.window.createOutputChannel('.NET');
-    let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
-    let dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
-    eventStream.subscribe(dotnetChannelObserver.post);
-    eventStream.subscribe(dotnetLoggerObserver.post);
-
-    let dotnetTestChannel = vscode.window.createOutputChannel(".NET Test Log");
-    let dotnetTestChannelObserver = new DotNetTestChannelObserver(dotnetTestChannel);
-    let dotnetTestLoggerObserver = new DotNetTestLoggerObserver(dotnetTestChannel);
-    eventStream.subscribe(dotnetTestChannelObserver.post);
-    eventStream.subscribe(dotnetTestLoggerObserver.post);
 
     let csharpChannel = vscode.window.createOutputChannel('C#');
     let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
@@ -102,47 +77,128 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     eventStream.subscribe(csharpchannelObserver.post);
     eventStream.subscribe(csharpLogObserver.post);
 
-    let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
-    let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, platformInfo);
-    let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel, optionProvider);
-    eventStream.subscribe(omnisharpLogObserver.post);
-    eventStream.subscribe(omnisharpChannelObserver.post);
 
-    let warningMessageObserver = new WarningMessageObserver(vscode, () => optionProvider.GetLatestOptions().omnisharpOptions.disableMSBuildDiagnosticWarning || false);
-    eventStream.subscribe(warningMessageObserver.post);
+    let requiredPackageIds: string[] = [
+        "Debugger"
+    ];
 
-    let informationMessageObserver = new InformationMessageObserver(vscode, optionProvider);
-    eventStream.subscribe(informationMessageObserver.post);
+    let razorOptions = optionProvider.GetLatestOptions().razorOptions;
+    if (!razorOptions.razorDisabled)
+    {
+        requiredPackageIds.push("Razor");
+    }
 
-    let errorMessageObserver = new ErrorMessageObserver(vscode);
-    eventStream.subscribe(errorMessageObserver.post);
+    let useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
+    if (useOmnisharpServer)
+    {
+        requiredPackageIds.push("OmniSharp");
+    }
 
-    let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Language-Service-Status", vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 2));
-    omnisharpStatusBar.name = "C# Language Service Status";
-    let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);
-    eventStream.subscribe(omnisharpStatusBarObserver.post);
+    // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
+    await initializeDotnetPath();
 
-    let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Project-Selector", vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 1));
-    projectStatusBar.name = "C# Project Selector";
-    let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
-    eventStream.subscribe(projectStatusBarObserver.post);
+    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
+    eventStream.subscribe(telemetryObserver.post);
 
-    let backgroundWorkStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Code-Analysis", vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
-    backgroundWorkStatusBar.name = "C# Code Analysis";
-    let backgroundWorkStatusBarObserver = new BackgroundWorkStatusBarObserver(backgroundWorkStatusBar);
-    eventStream.subscribe(backgroundWorkStatusBarObserver.post);
+    let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
+    const useFramework = useOmnisharpServer && optionProvider.GetLatestOptions().omnisharpOptions.useModernNet !== true;
+    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
+    let runtimeDependenciesExist = await ensureRuntimeDependencies(context.extension, eventStream, platformInfo, installDependencies, useFramework, requiredPackageIds);
 
-    let openURLObserver = new OpenURLObserver(vscode);
-    eventStream.subscribe(openURLObserver.post);
+    if (!useOmnisharpServer)
+    {
+        context.subscriptions.push(optionProvider);
+        context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode));
+        activateRoslynLanguageServer(context, platformInfo, optionProvider, csharpChannel);
+    }
+    else
+    {
+        let dotnetChannel = vscode.window.createOutputChannel('.NET');
+        let dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
+        let dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
+        eventStream.subscribe(dotnetChannelObserver.post);
+        eventStream.subscribe(dotnetLoggerObserver.post);
 
-    const debugMode = false;
-    if (debugMode) {
-        let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
-        eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
+        let dotnetTestChannel = vscode.window.createOutputChannel(".NET Test Log");
+        let dotnetTestChannelObserver = new DotNetTestChannelObserver(dotnetTestChannel);
+        let dotnetTestLoggerObserver = new DotNetTestLoggerObserver(dotnetTestChannel);
+        eventStream.subscribe(dotnetTestChannelObserver.post);
+        eventStream.subscribe(dotnetTestLoggerObserver.post);
+
+        let omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
+        let omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, platformInfo);
+        let omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel, optionProvider);
+        eventStream.subscribe(omnisharpLogObserver.post);
+        eventStream.subscribe(omnisharpChannelObserver.post);
+
+        let warningMessageObserver = new WarningMessageObserver(vscode, () => optionProvider.GetLatestOptions().omnisharpOptions.disableMSBuildDiagnosticWarning || false);
+        eventStream.subscribe(warningMessageObserver.post);
+
+        let informationMessageObserver = new InformationMessageObserver(vscode, optionProvider);
+        eventStream.subscribe(informationMessageObserver.post);
+
+        let errorMessageObserver = new ErrorMessageObserver(vscode);
+        eventStream.subscribe(errorMessageObserver.post);
+
+        let omnisharpStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Language-Service-Status", vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 2));
+        omnisharpStatusBar.name = "C# Language Service Status";
+        let omnisharpStatusBarObserver = new OmnisharpStatusBarObserver(omnisharpStatusBar);
+        eventStream.subscribe(omnisharpStatusBarObserver.post);
+
+        let projectStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Project-Selector", vscode.StatusBarAlignment.Left, Number.MIN_VALUE + 1));
+        projectStatusBar.name = "C# Project Selector";
+        let projectStatusBarObserver = new ProjectStatusBarObserver(projectStatusBar);
+        eventStream.subscribe(projectStatusBarObserver.post);
+
+        let backgroundWorkStatusBar = new StatusBarItemAdapter(vscode.window.createStatusBarItem("C#-Code-Analysis", vscode.StatusBarAlignment.Left, Number.MIN_VALUE));
+        backgroundWorkStatusBar.name = "C# Code Analysis";
+        let backgroundWorkStatusBarObserver = new BackgroundWorkStatusBarObserver(backgroundWorkStatusBar);
+        eventStream.subscribe(backgroundWorkStatusBarObserver.post);
+
+        let openURLObserver = new OpenURLObserver(vscode);
+        eventStream.subscribe(openURLObserver.post);
+
+        const debugMode = false;
+        if (debugMode) {
+            let omnisharpDebugModeLoggerObserver = new OmnisharpDebugModeLoggerObserver(omnisharpChannel);
+            eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
+        }
+
+        // activate language services
+        let langServicePromise = OmniSharp.activate(context, context.extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, context.extension.extensionPath, omnisharpChannel);
+
+        context.subscriptions.push(optionProvider);
+        context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'o.restart', Options.shouldOmnisharpOptionChangeTriggerReload, vscode));
+
+        // register JSON completion & hover providers for project.json
+        context.subscriptions.push(addJSONProviders());
+        context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
+            eventStream.post(new ActiveTextEditorChanged());
+        }));
+
+        extensionExportsResolver = (coreClrDebugPromise: Promise<void>): CSharpExtensionExports => {
+            return {
+                initializationFinished: async () => {
+                    let langService = await langServicePromise;
+                    await langService.server.waitForInitialize();
+                    await coreClrDebugPromise;
+                    await razorPromise;
+                },
+                getAdvisor: async () => {
+                    let langService = await langServicePromise;
+                    return langService.advisor;
+                },
+                getTestManager: async () => {
+                    let langService = await langServicePromise;
+                    return langService.testManager;
+                },
+                eventStream
+            };
+        };
     }
 
     if (!isSupportedPlatform(platformInfo)) {
-        let errorMessage: string = `The C# extension for Visual Studio Code (powered by OmniSharp) is incompatible on ${platformInfo.platform} ${platformInfo.architecture}`;
+        let errorMessage: string = `The C# extension for Visual Studio Code is incompatible on ${platformInfo.platform} ${platformInfo.architecture}`;
 
         // Check to see if VS Code is running remotely
         if (context.extension.extensionKind === vscode.ExtensionKind.Workspace) {
@@ -163,29 +219,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         return null;
     }
 
-    // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
-    await initializeDotnetPath();
-
-    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
-    eventStream.subscribe(telemetryObserver.post);
-
-    let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    const useFramework = optionProvider.GetLatestOptions().omnisharpOptions.useModernNet !== true;
-    let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(context.extension, eventStream, platformInfo, installDependencies, useFramework);
-
-    // activate language services
-    let langServicePromise = OmniSharp.activate(context, context.extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, context.extension.extensionPath, omnisharpChannel);
-
-    // register JSON completion & hover providers for project.json
-    context.subscriptions.push(addJSONProviders());
-    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
-        eventStream.post(new ActiveTextEditorChanged());
-    }));
-
-    context.subscriptions.push(optionProvider);
-    context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'o.restart', Options.shouldOmnisharpOptionChangeTriggerReload, vscode));
-
     let coreClrDebugPromise = Promise.resolve();
     if (runtimeDependenciesExist) {
         // activate coreclr-debug
@@ -193,9 +226,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }
 
     let razorPromise = Promise.resolve();
-    let razorOptions = optionProvider.GetLatestOptions().razorOptions;
     if (!razorOptions.razorDisabled) {
-        const razorObserver = new RazorLoggerObserver(omnisharpChannel);
+        const razorObserver = new RazorLoggerObserver(csharpChannel);
         eventStream.subscribe(razorObserver.post);
 
         if (!razorOptions.razorDevMode) {
@@ -203,23 +235,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         }
     }
 
-    return {
-        initializationFinished: async () => {
-            let langService = await langServicePromise;
-            await langService.server.waitForInitialize();
-            await coreClrDebugPromise;
-            await razorPromise;
-        },
-        getAdvisor: async () => {
-            let langService = await langServicePromise;
-            return langService.advisor;
-        },
-        getTestManager: async () => {
-            let langService = await langServicePromise;
-            return langService.testManager;
-        },
-        eventStream
-    };
+    if (extensionExportsResolver)
+    {
+        return extensionExportsResolver(coreClrDebugPromise);
+    }
+
+    return null;
 }
 
 function isSupportedPlatform(platform: PlatformInformation): boolean {
@@ -241,8 +262,8 @@ function isSupportedPlatform(platform: PlatformInformation): boolean {
     return false;
 }
 
-async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies, useFramework: boolean): Promise<boolean> {
-    return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo, useFramework);
+async function ensureRuntimeDependencies(extension: vscode.Extension<CSharpExtensionExports>, eventStream: EventStream, platformInfo: PlatformInformation, installDependencies: IInstallDependencies, useFramework: boolean, requiredPackageIds: string[]): Promise<boolean> {
+    return installRuntimeDependencies(extension.packageJSON, extension.extensionPath, installDependencies, eventStream, platformInfo, useFramework, requiredPackageIds);
 }
 
 async function initializeDotnetPath(): Promise<void> {
