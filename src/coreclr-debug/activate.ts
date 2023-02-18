@@ -32,8 +32,8 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
     }
 
     const factory = new DebugAdapterExecutableFactory(debugUtil, platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath, options);
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetDebugConfigurationProvider(platformInformation)));
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('clr', new DotnetDebugConfigurationProvider(platformInformation)));
+    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetDebugConfigurationProvider(platformInformation, options)));
+    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('clr', new DotnetDebugConfigurationProvider(platformInformation, options)));
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
     context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
 }

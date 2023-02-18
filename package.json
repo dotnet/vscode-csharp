@@ -1982,6 +1982,11 @@
               "targetArchitecture": {
                 "type": "string",
                 "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+              },
+              "checkForDevCert": {
+                "type": "boolean",
+                "description": "When true, the presence of dev certificates will be checked by runing dotnet `dev-certs https --check`, and if that fails the user will be prompted to create dev certs by running `dotnet dev-certs https --trust`",
+                "default": true
               }
             }
           },
@@ -3109,6 +3114,11 @@
               "targetArchitecture": {
                 "type": "string",
                 "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+              },
+              "checkForDevCert": {
+                "type": "boolean",
+                "description": "When true, the presence of dev certificates will be checked by runing dotnet `dev-certs https --check`, and if that fails the user will be prompted to create dev certs by running `dotnet dev-certs https --trust`",
+                "default": true
               }
             }
           },

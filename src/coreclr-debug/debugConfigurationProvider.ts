@@ -6,10 +6,12 @@
 import * as vscode from 'vscode';
 
 import { RemoteAttachPicker, DotNetAttachItemsProviderFactory, AttachPicker, AttachItem } from '../features/processPicker';
+import { Options } from '../omnisharp/options';
 import { PlatformInformation } from '../platform';
-
+import { hasDotnetDevCertsHttps, createSelfSignedCerts } from '../utils/DotnetDevCertsHttps';
+ 
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
-    constructor(public platformInformation: PlatformInformation) {}
+    constructor(public platformInformation: PlatformInformation, private options: Options) {}
 
     public async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined>
     {
@@ -57,6 +59,31 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
             {
                 vscode.window.showErrorMessage("No process was selected.", { modal: true });
                 return undefined;
+            }
+        }
+
+        if (!this.platformInformation.isLinux() && !vscode.env.remoteName && vscode.env.uiKind != vscode.UIKind.Web) 
+        {
+            if(debugConfiguration.checkForDevCert === undefined && debugConfiguration.serverReadyAction && !debugConfiguration.pipeTransport)
+            {
+                debugConfiguration.checkForDevCert = true;
+            }
+
+            if (debugConfiguration.checkForDevCert)
+            {
+                hasDotnetDevCertsHttps(this.options.dotNetCliPaths).then(async (hasDevCert) => {
+                    if(!hasDevCert)
+                    {
+                        const result = await vscode.window.showInformationMessage(
+                            "The selected launch configuration is configured to launch a web browser but the certificates required to build and debug are missing from this machine. Add them?", 
+                            'Not Now', 'Yes'
+                            ); 
+                        if (result === 'Yes')
+                        {
+                            await createSelfSignedCerts(this.options.dotNetCliPaths);
+                        }
+                    }
+                });
             }
         }
 
