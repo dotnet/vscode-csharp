@@ -13,10 +13,10 @@ export async function hasDotnetDevCertsHttps(dotNetCliPaths: string[]): Promise<
     let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     try {
-        const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --check`, process.cwd(), process.env);
-        return (/A valid certificate was found/.test(data));
+        await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --check`, process.cwd(), process.env);
+        return true;
     }
-    catch (err) {
+    catch (err) { // execChildProcess will throw if the process returns anything but 0
         return false;
     }
 }
@@ -27,10 +27,10 @@ export async function createSelfSignedCert(dotNetCliPaths: string[]): Promise<Bo
     let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     try {
-        const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
-        return (/Successfully created and trusted a new HTTPS certificate/.test(data));
+        await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
+        return true; 
     }
-    catch (err) {
+    catch (err) { // execChildProcess will throw if the process returns anything but 0
         return false;
     }
 }

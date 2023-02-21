@@ -62,9 +62,13 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
             }
         }
         
-        if (!this.platformInformation.isLinux() && !vscode.env.remoteName && vscode.env.uiKind != vscode.UIKind.Web) 
+        // We want to ask the user if we should run dotnet  dev-certs https --trust, but this doesn't work in a few cases --
+        // Linux -- not supported by the .NET CLI as there isn't a single root cert store
+        // VS Code remoting/Web UI -- the trusted cert work would need to happen on the client machine, but we don't have a way to run code there currently
+        // pipeTransport -- the dev cert on the server will be different from the client
+        if (!this.platformInformation.isLinux() && !vscode.env.remoteName && vscode.env.uiKind != vscode.UIKind.Web && !debugConfiguration.pipeTransport)
         {
-            if(debugConfiguration.checkForDevCert === undefined && debugConfiguration.serverReadyAction && !debugConfiguration.pipeTransport)
+            if(debugConfiguration.checkForDevCert === undefined && debugConfiguration.serverReadyAction)
             {
                 debugConfiguration.checkForDevCert = true;
             }
@@ -76,7 +80,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                     {
                         const result = await vscode.window.showInformationMessage(
                             "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?", 
-                            "Don't Ask Again", 'Not Now', 'Yes'
+                            'Yes', "Don't Ask Again", 'Not Now'
                             ); 
                         if (result === 'Yes')
                         {
@@ -91,7 +95,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                         }
                         else if (result === "Don't Ask Again")
                         {
-                            await vscode.window.showInformationMessage("To don't see this message again set launch option `checkForDevCert` to `false` in launch.json", { modal: true });
+                            await vscode.window.showInformationMessage("To don't see this message again set launch option 'checkForDevCert' to 'false' in launch.json", { modal: true });
                         }
                     }
                 });
