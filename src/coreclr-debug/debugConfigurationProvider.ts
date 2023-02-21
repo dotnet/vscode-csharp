@@ -91,7 +91,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                         }
                         else if (result === "Don't Ask Again")
                         {
-                            await vscode.window.showInformationMessage("To don't see this message again set launch option `checkForDevCert` to `false` at .vscode/launch.json", { modal: true });
+                            await vscode.window.showInformationMessage("To don't see this message again set launch option `checkForDevCert` to `false` in launch.json", { modal: true });
                         }
                     }
                 });
