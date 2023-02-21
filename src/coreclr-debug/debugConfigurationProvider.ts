@@ -80,7 +80,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                     {
                         const result = await vscode.window.showInformationMessage(
                             "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?", 
-                            'Yes', "Don't Ask Again", 'Not Now'
+                            'Yes', 'Not Now', "Don't Ask Again", 
                             ); 
                         if (result === 'Yes')
                         {
