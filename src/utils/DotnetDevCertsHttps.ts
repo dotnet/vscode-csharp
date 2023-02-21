@@ -7,7 +7,7 @@ import { join } from "path";
 import { execChildProcess } from "../common";
 import { CoreClrDebugUtil } from "../coreclr-debug/util";
 
-// Will return true if `dotnet dev-certs https --check` succesfully finds a development certificate. Returns false if it can't find one or fails.
+// Will return true if `dotnet dev-certs https --check` succesfully finds a development certificate. 
 export async function hasDotnetDevCertsHttps(dotNetCliPaths: string[]): Promise<Boolean> {
 
     let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
@@ -22,13 +22,13 @@ export async function hasDotnetDevCertsHttps(dotNetCliPaths: string[]): Promise<
 }
 
 // Will run `dotnet dev-certs https --trust` to prompt the user to create self signed certificates. Retruns true if sucessfull.
-export async function createSelfSignedCerts(dotNetCliPaths: string[]): Promise<Boolean> {
+export async function createSelfSignedCert(dotNetCliPaths: string[]): Promise<Boolean> {
     
     let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     try {
-        await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
-        return true;
+        const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
+        return (/Successfully created and trusted a new HTTPS certificate/.test(data));
     }
     catch (err) {
         return false;

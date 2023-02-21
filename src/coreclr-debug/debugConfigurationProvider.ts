@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { RemoteAttachPicker, DotNetAttachItemsProviderFactory, AttachPicker, AttachItem } from '../features/processPicker';
 import { Options } from '../omnisharp/options';
 import { PlatformInformation } from '../platform';
-import { hasDotnetDevCertsHttps, createSelfSignedCerts } from '../utils/DotnetDevCertsHttps';
+import { hasDotnetDevCertsHttps, createSelfSignedCert } from '../utils/DotnetDevCertsHttps';
  
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     constructor(public platformInformation: PlatformInformation, private options: Options) {}
@@ -61,7 +61,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                 return undefined;
             }
         }
-
+        
         if (!this.platformInformation.isLinux() && !vscode.env.remoteName && vscode.env.uiKind != vscode.UIKind.Web) 
         {
             if(debugConfiguration.checkForDevCert === undefined && debugConfiguration.serverReadyAction && !debugConfiguration.pipeTransport)
@@ -75,12 +75,23 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                     if(!hasDevCert)
                     {
                         const result = await vscode.window.showInformationMessage(
-                            "The selected launch configuration is configured to launch a web browser but the certificates required to build and debug are missing from this machine. Add them?", 
-                            'Not Now', 'Yes'
+                            "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?", 
+                            "Don't Ask Again", 'Not Now', 'Yes'
                             ); 
                         if (result === 'Yes')
                         {
-                            await createSelfSignedCerts(this.options.dotNetCliPaths);
+                            if (await createSelfSignedCert(this.options.dotNetCliPaths))
+                            {
+                                vscode.window.showInformationMessage('Self-signed certificate sucessfully created');
+                            }
+                            else
+                            {
+                                vscode.window.showWarningMessage("Couldn't create self-signed certificate");
+                            }
+                        }
+                        else if (result === "Don't Ask Again")
+                        {
+                            await vscode.window.showInformationMessage("To don't see this message again set launch option `checkForDevCert` to `false` at .vscode/launch.json", { modal: true });
                         }
                     }
                 });
