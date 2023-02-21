@@ -410,7 +410,7 @@
         },
         "checkForDevCert": {
           "type": "boolean",
-          "description": "When true, the presence of dev certificates will be checked by runing dotnet `dev-certs https --check`, and if that fails the user will be prompted to create dev certs by running `dotnet dev-certs https --trust`",
+          "description": "When true, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found, the user will be prompted to install it.",
           "default": true
         }
       }
