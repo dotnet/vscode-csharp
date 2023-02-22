@@ -9,9 +9,11 @@ import { RemoteAttachPicker, DotNetAttachItemsProviderFactory, AttachPicker, Att
 import { Options } from '../omnisharp/options';
 import { PlatformInformation } from '../platform';
 import { hasDotnetDevCertsHttps, createSelfSignedCert } from '../utils/DotnetDevCertsHttps';
+import { EventStream } from '../EventStream';
+import { DevCertCreationFailure } from '../omnisharp/loggingEvents';
  
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
-    constructor(public platformInformation: PlatformInformation, private options: Options) {}
+    constructor(public platformInformation: PlatformInformation, private readonly eventStream: EventStream, private options: Options) {}
 
     public async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined>
     {
@@ -75,7 +77,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
 
             if (debugConfiguration.checkForDevCert)
             {
-                checkForDevCerts(this.options.dotNetCliPaths);
+                checkForDevCerts(this.options.dotNetCliPaths, this.eventStream);
             }
         }
 
@@ -83,7 +85,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
     }
 }
 
-function checkForDevCerts(dotNetCliPaths: string[]){
+function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
     hasDotnetDevCertsHttps(dotNetCliPaths).then(async (returnData) => {
         if(returnData.error) //if the prcess returns 0 error is null, otherwise the return code can ba acessed in returnData.error.code
         {
@@ -93,25 +95,31 @@ function checkForDevCerts(dotNetCliPaths: string[]){
 
             const result = await vscode.window.showInformationMessage(
                 "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?", 
-                { title:labelYes}, { title:labelNotNow, isCloseAffordance: true }, { title:labelMoreInfo}
+                { title:labelYes }, { title:labelNotNow, isCloseAffordance: true }, { title:labelMoreInfo }
                 ); 
             if (result?.title === labelYes)
             {
                 let returnData = await createSelfSignedCert(dotNetCliPaths);
                 if (returnData.error === null)
                 {
-                    vscode.window.showInformationMessage('Self-signed certificate sucessfully created');
+                    vscode.window.showInformationMessage('Self-signed certificate sucessfully created.');
                 }
                 else
                 {
-                    vscode.window.showWarningMessage("Couldn't create self-signed certificate");
+                    eventStream.post(new DevCertCreationFailure(`${returnData.error.message}\ncode: ${returnData.error.code}\nstdout: ${returnData.stdout}`));
+
+                    const labelShowOutput: string = "Show Output";
+                    const result = await vscode.window.showWarningMessage("Couldn't create self-signed certificate. See for more information.", labelShowOutput);
+                    if (result === labelShowOutput){
+                        vscode.commands.executeCommand("workbench.action.output.show.extension-output-ms-dotnettools.csharp-#3-C#");
+                    }
                 }
             }
             if (result?.title === labelMoreInfo)
             {
                 const launchjsonDescriptionURL = 'https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#check-for-devcert';
                 vscode.env.openExternal(vscode.Uri.parse(launchjsonDescriptionURL));
-                checkForDevCerts(dotNetCliPaths);
+                checkForDevCerts(dotNetCliPaths, eventStream);
             }
         }
     });
