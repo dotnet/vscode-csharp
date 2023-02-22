@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { join } from "path";
 import * as cp from 'child_process';
 import { getExtensionPath } from "../common";
-import { CoreClrDebugUtil } from "../coreclr-debug/util";
+import { getDotNetExecutablePath } from "./getDotnetInfo";
 
 // Will return true if `dotnet dev-certs https --check` succesfully finds a development certificate. 
 export async function hasDotnetDevCertsHttps(dotNetCliPaths: string[]): Promise<ExecReturnData> {
@@ -22,20 +21,6 @@ export async function createSelfSignedCert(dotNetCliPaths: string[]): Promise<Ex
     let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     return await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
-}
-
-function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined{
-    let dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
-    let dotnetExecutablePath: string | undefined;
-
-    for (const dotnetPath of dotNetCliPaths) {
-        let dotnetFullPath = join(dotnetPath, dotnetExeName);
-        if (CoreClrDebugUtil.existsSync(dotnetFullPath)) {
-            dotnetExecutablePath = dotnetFullPath;
-            break;
-        }
-    }
-    return dotnetExecutablePath;
 }
 
 async function execChildProcess(command: string, workingDirectory: string = getExtensionPath(), env: NodeJS.ProcessEnv = {}): Promise<ExecReturnData> {
