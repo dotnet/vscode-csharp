@@ -80,12 +80,12 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                     {
                         const result = await vscode.window.showInformationMessage(
                             "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?", 
-                            { title:"Yes"}, { title:'Not Now', isCloseAffordance: true }, { title:"Don't Ask Again"}
+                            { title:"Yes"}, { title:'Not Now', isCloseAffordance: true }, { title:"More Information"}
                             ); 
                         if (result?.title === 'Yes')
                         {
                             let returnData = await createSelfSignedCert(this.options.dotNetCliPaths);
-                            if (!returnData.error)
+                            if (returnData.error === null)
                             {
                                 vscode.window.showInformationMessage('Self-signed certificate sucessfully created');
                             }
@@ -94,9 +94,10 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                                 vscode.window.showWarningMessage("Couldn't create self-signed certificate");
                             }
                         }
-                        if (result?.title === "Don't Ask Again") //TODO: change option to More information and redirect to debugger-launchjson.md
+                        if (result?.title === "More Information")
                         {
-                            await vscode.window.showInformationMessage("To don't see this message again set launch option 'checkForDevCert' to 'false' in launch.json", { modal: true });
+                            const launchjsonDescriptionURL = 'https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#check-for-devcert';
+                            vscode.env.openExternal(vscode.Uri.parse(launchjsonDescriptionURL));
                         }
                     }
                 });
