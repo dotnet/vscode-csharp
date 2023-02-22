@@ -109,7 +109,7 @@ function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
                     eventStream.post(new DevCertCreationFailure(`${returnData.error.message}\ncode: ${returnData.error.code}\nstdout: ${returnData.stdout}`));
 
                     const labelShowOutput: string = "Show Output";
-                    const result = await vscode.window.showWarningMessage("Couldn't create self-signed certificate. See for more information.", labelShowOutput);
+                    const result = await vscode.window.showWarningMessage("Couldn't create self-signed certificate. See output for more information.", labelShowOutput);
                     if (result === labelShowOutput){
                         vscode.commands.executeCommand("workbench.action.output.show.extension-output-ms-dotnettools.csharp-#3-C#");
                     }
