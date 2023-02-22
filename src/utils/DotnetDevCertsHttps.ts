@@ -4,35 +4,24 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { join } from "path";
-import { execChildProcess } from "../common";
+import * as cp from 'child_process';
+import { getExtensionPath } from "../common";
 import { CoreClrDebugUtil } from "../coreclr-debug/util";
 
 // Will return true if `dotnet dev-certs https --check` succesfully finds a development certificate. 
-export async function hasDotnetDevCertsHttps(dotNetCliPaths: string[]): Promise<Boolean> {
+export async function hasDotnetDevCertsHttps(dotNetCliPaths: string[]): Promise<ExecReturnData> {
 
     let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
-    try {
-        await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --check`, process.cwd(), process.env);
-        return true;
-    }
-    catch (err) { // execChildProcess will throw if the process returns anything but 0
-        return false;
-    }
+    return await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --check`, process.cwd(), process.env);
 }
 
 // Will run `dotnet dev-certs https --trust` to prompt the user to create self signed certificates. Retruns true if sucessfull.
-export async function createSelfSignedCert(dotNetCliPaths: string[]): Promise<Boolean> {
-    
+export async function createSelfSignedCert(dotNetCliPaths: string[]): Promise<ExecReturnData> {
+
     let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
-    try {
-        await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
-        return true; 
-    }
-    catch (err) { // execChildProcess will throw if the process returns anything but 0
-        return false;
-    }
+    return await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
 }
 
 function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined{
@@ -47,4 +36,18 @@ function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined{
         }
     }
     return dotnetExecutablePath;
+}
+
+async function execChildProcess(command: string, workingDirectory: string = getExtensionPath(), env: NodeJS.ProcessEnv = {}): Promise<ExecReturnData> {
+    return new Promise<ExecReturnData>((resolve) => {
+        cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024, env: env }, (error, stdout, stderr) => {
+            resolve({error, stdout, stderr});
+        });
+    });
+}
+
+interface ExecReturnData {
+    error: cp.ExecException | null;
+    stdout: string;
+    stderr: string;
 }

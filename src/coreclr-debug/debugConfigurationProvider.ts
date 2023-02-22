@@ -75,16 +75,17 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
 
             if (debugConfiguration.checkForDevCert)
             {
-                hasDotnetDevCertsHttps(this.options.dotNetCliPaths).then(async (hasDevCert) => {
-                    if(!hasDevCert)
+                hasDotnetDevCertsHttps(this.options.dotNetCliPaths).then(async (returnData) => {
+                    if(returnData.error) //if the prcess returns 0 error is null, otherwise the return code can ba acessed in returnData.error.code
                     {
                         const result = await vscode.window.showInformationMessage(
                             "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?", 
-                            'Yes', 'Not Now', "Don't Ask Again", 
+                            { title:"Yes"}, { title:'Not Now', isCloseAffordance: true }, { title:"Don't Ask Again"}
                             ); 
-                        if (result === 'Yes')
+                        if (result?.title === 'Yes')
                         {
-                            if (await createSelfSignedCert(this.options.dotNetCliPaths))
+                            let returnData = await createSelfSignedCert(this.options.dotNetCliPaths);
+                            if (!returnData.error)
                             {
                                 vscode.window.showInformationMessage('Self-signed certificate sucessfully created');
                             }
@@ -93,7 +94,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
                                 vscode.window.showWarningMessage("Couldn't create self-signed certificate");
                             }
                         }
-                        else if (result === "Don't Ask Again")
+                        if (result?.title === "Don't Ask Again") //TODO: change option to More information and redirect to debugger-launchjson.md
                         {
                             await vscode.window.showInformationMessage("To don't see this message again set launch option 'checkForDevCert' to 'false' in launch.json", { modal: true });
                         }

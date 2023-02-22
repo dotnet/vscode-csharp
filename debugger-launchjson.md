@@ -340,9 +340,11 @@ Example:
 ```
 
 ## Check for DevCert
-If unspecified, it will be enabled when `serverReadyAction` is set AND when `pipeTransport` is NOT set.
 
-When `true` and if VS is runing on Windows or MacOS, the extension will try to find if your system contains a development certificate by running `dotnet dev-certs https --check`, if no certs are found it will prompt the user to suggest creating them. If approved by the user, the extension will run `dotnet dev-certs https --trust` to create self signed certificates.
+When `true` and if Visual Studio Code is runing on Windows or MacOS, the the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints, it will try to run `dotnet dev-certs https --check`, if no certs are found it will prompt the user to suggest creating one. If approved by the user, the extension will run `dotnet dev-certs https --trust` to create a trusted self-signed certificate.
+
+If unspecified, defaults to true when `serverReadyAction` is set.
+This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios.
 
 You can override this behavior by setting `checkForDevCert` to false in your `launch.json`.
 
