@@ -341,7 +341,7 @@ Example:
 
 ## Check for DevCert
 
-When `true` and if Visual Studio Code is runing on Windows or MacOS, the the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints, it will try to run `dotnet dev-certs https --check`, if no certs are found it will prompt the user to suggest creating one. If approved by the user, the extension will run `dotnet dev-certs https --trust` to create a trusted self-signed certificate.
+This option controls if, on launch, the the debugger should check if the computer has a self-signed HTTPS certificate used to develop web projects running on https endpoints. For this it will try to run `dotnet dev-certs https --check`, if no certs are found it will prompt the user to suggest creating one. If approved by the user, the extension will run `dotnet dev-certs https --trust` to create a trusted self-signed certificate.
 
 If unspecified, defaults to true when `serverReadyAction` is set.
 This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios.
