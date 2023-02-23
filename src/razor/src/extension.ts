@@ -89,7 +89,10 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 documentManager,
                 languageServerClient,
                 logger);
-            const foldingRangeHandler = new FoldingRangeHandler(languageServerClient);
+            const foldingRangeHandler = new FoldingRangeHandler(
+                languageServerClient,
+                documentManager,
+                logger);
             const formattingHandler = new FormattingHandler(
                 documentManager,
                 languageServerClient,

@@ -2,7 +2,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
 
 import { RazorLogger } from '../RazorLogger';
@@ -23,17 +25,27 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             await this.launchApp(folder, configuration);
         }
 
-        const result = await vscode.commands.executeCommand<{
-            url: string,
-            inspectUri: string,
-            debuggingPort: number,
-        }>('blazorwasm-companion.launchDebugProxy', folder);
+        let inspectUri = '{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}';
+        let url = 'https://localhost:5001';
+        try {
+            if (folder !== undefined) {
+                let folderPath = configuration.cwd ? configuration.cwd : fileURLToPath(folder.uri.toString());
+                folderPath = folderPath.replace('${workspaceFolder}', fileURLToPath(folder.uri.toString()));
+                const launchSettings = JSON.parse(readFileSync(join(folderPath, 'Properties', 'launchSettings.json'), 'utf8'));
+                if (launchSettings?.profiles && launchSettings?.profiles[Object.keys(launchSettings.profiles)[0]]?.inspectUri) {
+                    inspectUri = launchSettings.profiles[Object.keys(launchSettings.profiles)[0]].inspectUri;
+                    url = launchSettings.profiles[Object.keys(launchSettings.profiles)[0]].applicationUrl.split(';', 1)[0];
+                }
+            }
+        } catch (error: any) {
+            this.logger.logError('[DEBUGGER] Error while getting information from launchSettings.json: ', error as Error);
+        }
 
         await this.launchBrowser(
             folder,
             configuration,
-            result ? result.inspectUri : undefined,
-            result ? result.debuggingPort : undefined);
+            inspectUri,
+            url);
 
         /**
          * If `resolveDebugConfiguration` returns undefined, then the debugger
@@ -85,18 +97,17 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         }
     }
 
-    private async launchBrowser(folder: vscode.WorkspaceFolder | undefined, configuration: vscode.DebugConfiguration, inspectUri?: string, debuggingPort?: number) {
+    private async launchBrowser(folder: vscode.WorkspaceFolder | undefined, configuration: vscode.DebugConfiguration, inspectUri: string, url: string) {
         const browser = {
             name: JS_DEBUG_NAME,
             type: configuration.browser === 'edge' ? 'pwa-msedge' : 'pwa-chrome',
             request: 'launch',
             timeout: configuration.timeout || 30000,
-            url: configuration.url || 'https://localhost:5001',
+            url: configuration.url || url,
             webRoot: configuration.webRoot || '${workspaceFolder}',
             inspectUri,
             trace: configuration.trace || false,
             noDebug: configuration.noDebug || false,
-            port: debuggingPort,
             ...configuration.browserConfig,
             // When the browser debugging session is stopped, propogate
             // this and terminate the debugging session of the Blazor dev server.

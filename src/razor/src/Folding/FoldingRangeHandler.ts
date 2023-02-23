@@ -4,33 +4,82 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType } from 'vscode-languageclient';
+import { FoldingRange, FoldingRangeKind, RequestType } from 'vscode-languageclient';
+import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { RazorLanguageServerClient } from '../RazorLanguageServerClient';
+import { RazorLogger } from '../RazorLogger';
 import { SerializableFoldingRangeParams } from './SerializableFoldingRangeParams';
 import { SerializableFoldingRangeResponse } from './SerializableFoldingRangeResponse';
 
 export class FoldingRangeHandler {
     private static readonly provideFoldingRange = 'razor/foldingRange';
     private foldingRangeRequestType: RequestType<SerializableFoldingRangeParams, SerializableFoldingRangeResponse, any> = new RequestType(FoldingRangeHandler.provideFoldingRange);
+    private emptyFoldingRangeReponse: SerializableFoldingRangeResponse = new SerializableFoldingRangeResponse(new Array<FoldingRange>(), new Array<FoldingRange>());
 
-    constructor(private readonly serverClient: RazorLanguageServerClient) { }
+    constructor(
+        private readonly serverClient: RazorLanguageServerClient,
+        private readonly documentManager: RazorDocumentManager,
+        private readonly logger: RazorLogger) { }
 
     public register() {
         // tslint:disable-next-line: no-floating-promises
         this.serverClient.onRequestWithParams<SerializableFoldingRangeParams, SerializableFoldingRangeResponse, any>(
             this.foldingRangeRequestType,
-            async (request: SerializableFoldingRangeParams, token: vscode.CancellationToken) => this.provideFoldingRanges(request, token));
+            async (request, token) => this.provideFoldingRanges(request, token));
     }
 
     private async provideFoldingRanges(
         foldingRangeParams: SerializableFoldingRangeParams,
         cancellationToken: vscode.CancellationToken) {
-        // This is currently a no-op because we don't have a way to get folding ranges from C#/HTML.
-        // Other functions accomplish this with `vscode.execute<Blank>Provider`, but that doesn't exist yet for folding ranges.
-        // VSCode issue: https://github.com/microsoft/vscode/issues/36638
-        // Razor tracking issue: https://github.com/dotnet/razor-tooling/issues/6811
-        const emptyFoldingRange: vscode.FoldingRange[] = [];
-        const response = new SerializableFoldingRangeResponse(emptyFoldingRange, emptyFoldingRange);
-        return response;
+        try {
+            const razorDocumentUri = vscode.Uri.parse(foldingRangeParams.textDocument.uri, true);
+            const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
+            if (razorDocument === undefined) {
+                return this.emptyFoldingRangeReponse;
+            }
+
+            const virtualCSharpUri = razorDocument.csharpDocument.uri;
+            const virtualHtmlUri = razorDocument.htmlDocument.uri;
+
+            const csharpFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>('vscode.executeFoldingRangeProvider', virtualCSharpUri);
+            const htmlFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>('vscode.executeFoldingRangeProvider', virtualHtmlUri);
+
+            const response = new SerializableFoldingRangeResponse(this.convertFoldingRanges(htmlFoldingRanges), this.convertFoldingRanges(csharpFoldingRanges));
+            return response;
+        } catch (error) {
+            this.logger.logWarning(`${FoldingRangeHandler.provideFoldingRange} failed with ${error}`);
+        }
+
+        return this.emptyFoldingRangeReponse;
+    }
+
+    private convertFoldingRanges(foldingRanges: vscode.FoldingRange[]) {
+        const convertedFoldingRanges = new Array<FoldingRange>();
+        foldingRanges.forEach(foldingRange => {
+            const convertedFoldingRange: FoldingRange = {
+                startLine: foldingRange.start,
+                startCharacter: 0,
+                endLine: foldingRange.end,
+                endCharacter: 0,
+                kind: foldingRange.kind === undefined ? undefined : this.convertFoldingRangeKind(foldingRange.kind),
+            };
+
+            convertedFoldingRanges.push(convertedFoldingRange);
+        });
+
+        return convertedFoldingRanges;
+    }
+
+    private convertFoldingRangeKind(kind: vscode.FoldingRangeKind) {
+        if (kind === vscode.FoldingRangeKind.Comment) {
+            return FoldingRangeKind.Comment;
+        } else if (kind === vscode.FoldingRangeKind.Imports) {
+            return FoldingRangeKind.Imports;
+        } else if (kind === vscode.FoldingRangeKind.Region) {
+            return FoldingRangeKind.Region;
+        } else {
+            this.logger.logWarning(`Unexpected FoldingRangeKind ${kind}`);
+            return undefined;
+        }
     }
 }
