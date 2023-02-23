@@ -87,7 +87,7 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
 
 function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
     hasDotnetDevCertsHttps(dotNetCliPaths).then(async (returnData) => {
-        if(returnData.error) //if the prcess returns 0 error is null, otherwise the return code can ba acessed in returnData.error.code
+        if(returnData.error?.code === 6) // the process returns 6 if no dev certificate is found.
         {
             const labelYes: string = "Yes";
             const labelNotNow: string = "Not Now";
@@ -100,7 +100,7 @@ function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
             if (result?.title === labelYes)
             {
                 let returnData = await createSelfSignedCert(dotNetCliPaths);
-                if (returnData.error === null)
+                if (returnData.error === null) //if the prcess returns 0, returnData.error is null, otherwise the return code can be acessed in returnData.error.code
                 {
                     vscode.window.showInformationMessage('Self-signed certificate sucessfully created.');
                 }
