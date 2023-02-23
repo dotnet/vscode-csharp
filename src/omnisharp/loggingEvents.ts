@@ -354,3 +354,6 @@ export class DevCertCreationFailure implements BaseEvent {
     type = EventType.DevCertCreationFailure;
     constructor(public errorMessage: string) { }
 }
+export class ShowChannel implements BaseEvent {
+    type = EventType.ShowChannel;
+}

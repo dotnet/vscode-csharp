@@ -10,7 +10,7 @@ import { Options } from '../omnisharp/options';
 import { PlatformInformation } from '../platform';
 import { hasDotnetDevCertsHttps, createSelfSignedCert } from '../utils/DotnetDevCertsHttps';
 import { EventStream } from '../EventStream';
-import { DevCertCreationFailure } from '../omnisharp/loggingEvents';
+import { DevCertCreationFailure, ShowChannel } from '../omnisharp/loggingEvents';
  
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     constructor(public platformInformation: PlatformInformation, private readonly eventStream: EventStream, private options: Options) {}
@@ -111,7 +111,7 @@ function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
                     const labelShowOutput: string = "Show Output";
                     const result = await vscode.window.showWarningMessage("Couldn't create self-signed certificate. See output for more information.", labelShowOutput);
                     if (result === labelShowOutput){
-                        vscode.commands.executeCommand("workbench.action.output.show.extension-output-ms-dotnettools.csharp-#3-C#");
+                        eventStream.post(new ShowChannel());
                     }
                 }
             }
