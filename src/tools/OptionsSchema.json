@@ -407,6 +407,11 @@
         "targetArchitecture": {
           "type": "string",
           "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+        },
+        "checkForDevCert": {
+          "type": "boolean",
+          "description": "When true, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. If unspecified, defaults to true when `serverReadyAction` is set. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found or isn't trusted, the user will be prompted to install/trust it.",
+          "default": true
         }
       }
     },

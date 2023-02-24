@@ -15,16 +15,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         return _dotnetInfo;
     }
 
-    let dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
-    let dotnetExecutablePath: string | undefined;
-
-    for (const dotnetPath of dotNetCliPaths) {
-        let dotnetFullPath = join(dotnetPath, dotnetExeName);
-        if (CoreClrDebugUtil.existsSync(dotnetFullPath)) {
-            dotnetExecutablePath = dotnetFullPath;
-            break;
-        }
-    }
+    let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     try {
         const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} --info`, process.cwd(), process.env);
@@ -62,6 +53,20 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         // something went wrong with spawning 'dotnet --info'
         throw new Error('A valid dotnet installation could not be found');
     }
+}
+
+export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined{
+    let dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
+    let dotnetExecutablePath: string | undefined;
+
+    for (const dotnetPath of dotNetCliPaths) {
+        let dotnetFullPath = join(dotnetPath, dotnetExeName);
+        if (CoreClrDebugUtil.existsSync(dotnetFullPath)) {
+            dotnetExecutablePath = dotnetFullPath;
+            break;
+        }
+    }
+    return dotnetExecutablePath;
 }
 
 export interface DotnetInfo {
