@@ -11,7 +11,9 @@ import { PlatformInformation } from '../platform';
 import { hasDotnetDevCertsHttps, createSelfSignedCert, CertToolStatusCodes } from '../utils/DotnetDevCertsHttps';
 import { EventStream } from '../EventStream';
 import { DevCertCreationFailure, ShowChannel } from '../omnisharp/loggingEvents';
- 
+import * as fs from 'fs-extra';
+import path = require('path');
+
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     constructor(public platformInformation: PlatformInformation, private readonly eventStream: EventStream, private options: Options) {}
 
@@ -81,11 +83,40 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
             }
         }
 
+        // If launchSettings.json contains an https launch profile, and no launchSettingsProfile is specified in the debug configuration, use https as default.
+        // otherwise dotnet would have used the first profile it found where commandName === "Project"
+        // This doesn't apply to Linux as it is not supported by the .NET CLI
+        if (!this.platformInformation.isLinux() && debugConfiguration.launchSettingsProfile === undefined)
+        {
+            const projectDirectory = folder?.uri.fsPath;
+            const launchSettingsPath = debugConfiguration.launchSettingsFilePath ?? path.join(projectDirectory ?? debugConfiguration.cwd, 'Properties', 'launchSettings.json');
+
+            try {
+                if (fs.pathExistsSync(launchSettingsPath)) {
+                    const launchSettingsObj = fs.readJsonSync(launchSettingsPath);
+                    if (launchSettingsObj?.hasOwnProperty('profiles'))
+                    {
+                        let profileNames = Object.keys(launchSettingsObj.profiles);
+                        for (let profileName of profileNames){
+                            if (ProfileHasHttpsUrlAndIsProject(launchSettingsObj.profiles[profileName]))
+                            {
+                                debugConfiguration.launchSettingsProfile = profileName; // Use the first https profile found
+                                break; 
+                            }
+                        }
+                    }                   
+                }
+            } catch {
+                // Swallow IO errors from reading the launchSettings.json file
+            }
+        }
+
         return debugConfiguration;
     }
 }
 
-function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
+function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream)
+{
     hasDotnetDevCertsHttps(dotNetCliPaths).then(async (returnData) => {
         let errorCode = returnData.error?.code;
         if(errorCode === CertToolStatusCodes.CertificateNotTrusted || errorCode === CertToolStatusCodes.ErrorNoValidCertificateFound) 
@@ -125,4 +156,18 @@ function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
             }
         }
     });
+}
+
+function ProfileHasHttpsUrlAndIsProject(profile: any): Boolean
+{
+    if(profile?.commandName !== "Project") { return false; }
+
+    let urls = profile.applicationUrl?.split(';');
+    if (urls !== null && urls.length > 0) 
+    {  
+        return urls.find((url : string) => 
+            url.startsWith("https://")
+        ) !== undefined;
+    }
+    return false;
 }
