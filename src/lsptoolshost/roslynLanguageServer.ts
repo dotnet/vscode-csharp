@@ -79,9 +79,12 @@ export class RoslynLanguageServer {
         _channel.appendLine("Dotnet version: " + resolvedDotnet.version);
 
         let solutions = await vscode.workspace.findFiles('*.sln', '**/node_modules/**', 1);
-        let solutionPath = solutions[0];
-        _channel.appendLine(`Found solution ${solutionPath}`);
+        let solutionPath: vscode.Uri | undefined = solutions[0];
 
+        if (solutionPath) {
+            _channel.appendLine(`Found solution ${solutionPath}`);
+        }
+        
         let logLevel = options.languageServerOptions.logLevel;
 
         let serverOptions: ServerOptions = async () => {
@@ -141,7 +144,7 @@ export class RoslynLanguageServer {
         await this.start();
     }
 
-    private async startServer(solutionPath: vscode.Uri, logLevel: string | undefined) : Promise<cp.ChildProcess> {
+    private async startServer(solutionPath: vscode.Uri | undefined, logLevel: string | undefined) : Promise<cp.ChildProcess> {
         let clientRoot = __dirname;
 
         // This environment variable is used by F5 builds to launch the server from the local build directory.
@@ -161,10 +164,8 @@ export class RoslynLanguageServer {
     
         let args: string[] = [
             serverPath,
-            "--solutionPath",
-            solutionPath.fsPath,
         ];
-    
+
         if (this.optionProvider.GetLatestOptions().commonOptions.waitForDebugger)
         {
             args.push("--debug");
@@ -177,6 +178,11 @@ export class RoslynLanguageServer {
 
         if (brokeredServicePipeName) {
             args.push("--brokeredServicePipeName", brokeredServicePipeName);
+        }
+        else if (solutionPath) {
+            // We only add the solution path if we didn't have a pipe name; if we had a pipe name we won't be opening any solution right away but following
+            // what the other process does.
+            args.push("--solutionPath", solutionPath.fsPath);
         }
     
         let childProcess = cp.spawn('dotnet', args);
