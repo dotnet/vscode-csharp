@@ -12,6 +12,7 @@ import {
     TextDocumentItem
 } from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
+import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { RazorLanguage } from '../RazorLanguage';
 import { RazorLogger } from '../RazorLogger';
@@ -53,7 +54,7 @@ export class DynamicFileInfoHandler {
                     this.logger.logWarning(`Could not find Razor document ${razorDocumentUri}; adding null as a placeholder in URI array.`);
                 } else {
                     // Retrieve generated doc URIs for each Razor URI we are given
-                    let virtualCsharpUri = razorDocument.csharpDocument.uri.path;
+                    let virtualCsharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
                     virtualUris.push(virtualCsharpUri);
 
                     // Send didOpen request to Roslyn which contains generated doc content
