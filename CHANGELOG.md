@@ -13,7 +13,7 @@
   * As a workaround, make an edit within the file before using Rename Symbol.
 
 ## 1.25.5
-* Update Razor to 7.0.0-preview.23124.2 (PR: )
+* Update Razor to 7.0.0-preview.23124.2 (PR: [#5604](https://github.com/OmniSharp/omnisharp-vscode/pull/5604))
   * Fix colorization when nullable operators are present ([#5570](https://github.com/OmniSharp/omnisharp-vscode/pull/5570))
   * Add C#/HTML folding range support ([razor#8309](https://github.com/dotnet/razor/pull/8309))
   * Formatting fixes ([razor#8318](https://github.com/dotnet/razor/pull/8318))
