@@ -403,11 +403,11 @@ export class OmniSharpServer {
         }
 
         if (options.sdkPath.length > 0) {
-            args.push(`Sdk:Path='${options.sdkPath}'`);
+            args.push(`Sdk:Path=${options.sdkPath}`);
         }
 
         if (options.sdkVersion.length > 0) {
-            args.push(`Sdk:Version='${options.sdkVersion}'`);
+            args.push(`Sdk:Version=${options.sdkVersion}`);
         }
 
         if (options.sdkIncludePrereleases) {

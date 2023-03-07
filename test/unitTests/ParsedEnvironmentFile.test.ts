@@ -46,22 +46,33 @@ MyName2=Value2
         result.Env["MyName2"].should.equal("Value2");
     });
 
-    test("Update variable", () => {
+    test("Not override variables", () => {
         const content = `
-MyName1=Value1
+CommonKey=NewValue
 MyName2=Value2
 
 `;
         const initialEnv = {
-            "MyName1": "Value7",
+            "CommonKey": "InitialValue",
             "ThisShouldNotChange": "StillHere"
         };
         const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", initialEnv);
 
         expect(result.Warning).to.be.undefined;
-        result.Env["MyName1"].should.equal("Value1");
+        result.Env["CommonKey"].should.equal("InitialValue");
         result.Env["MyName2"].should.equal("Value2");
         result.Env["ThisShouldNotChange"].should.equal("StillHere");
+    });
+
+    test("Take last value", () => {
+        const content = `
+Key=FirstValue
+Key=SecondValue
+`;
+        const result = ParsedEnvironmentFile.CreateFromContent(content, "TestEnvFileName", undefined);
+
+        expect(result.Warning).to.be.undefined;
+        result.Env["Key"].should.equal("SecondValue");
     });
 
     test("Handle comments", () => {

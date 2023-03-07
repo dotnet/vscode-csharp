@@ -26,7 +26,8 @@ export class ParsedEnvironmentFile {
         }
 
         let parseErrors: string[] = [];
-        let env = initialEnv ?? {};
+        let safeInitialEnv = initialEnv ?? {};
+        let env = {...safeInitialEnv};
 
         content.split("\n").forEach(line => {
             // Split the line between key and value
@@ -34,6 +35,10 @@ export class ParsedEnvironmentFile {
 
             if (match !== null) {
                 const key = match[1];
+                if (safeInitialEnv[key] !== undefined) {
+                    return;
+                }
+
                 let value = match[2] ?? "";
                 if (value.length > 0 && value.charAt(0) === '"' && value.charAt(value.length - 1) === '"') {
                     value = value.replace(/\\n/gm, "\n");
