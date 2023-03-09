@@ -20,7 +20,8 @@ export const packageJsonPath = path.join(rootPath, "package.json");
 
 export const packedVsixOutputRoot = commandLineOptions.outputFolder || path.join(rootPath, "vsix");
 export const unpackedVsixPath = path.join(rootPath, "vsix");
-export const languageServerDirectory = path.join("artifacts", "languageServer");
+export const nugetTempPath = path.join(rootPath, "out", ".nuget");
+export const languageServerDirectory = path.join(rootPath, ".roslyn");
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 
@@ -32,8 +33,4 @@ export const testAssetsRootPath = path.join(rootPath, "test", "integrationTests"
 export const nodePath = path.join(process.env.NVM_BIN
     ? `${process.env.NVM_BIN}${path.sep}`
     : '', 'node');
-
-export function getServerPublishDirectory(configuration: string, runtimeIdentifierFolder: string) {
-    return path.join("artifacts", "publish", configuration, "net7.0", runtimeIdentifierFolder);
-}
 

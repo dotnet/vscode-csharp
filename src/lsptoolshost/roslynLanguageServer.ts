@@ -147,12 +147,13 @@ export class RoslynLanguageServer {
     private async startServer(solutionPath: vscode.Uri | undefined, logLevel: string | undefined) : Promise<cp.ChildProcess> {
         let clientRoot = __dirname;
 
-        // This environment variable is used by F5 builds to launch the server from the local build directory.
-        let serverDirectory = process.env.ROSLYN_LANGUAGE_SERVER_DIRECTORY
-            ? path.join(clientRoot, "..", process.env.ROSLYN_LANGUAGE_SERVER_DIRECTORY)
-            : path.join(clientRoot, "..", "artifacts", "languageServer");
-    
-        let serverPath = path.join(serverDirectory, "Microsoft.CodeAnalysis.LanguageServer.dll");
+        let serverPath = this.optionProvider.GetLatestOptions().commonOptions.serverPath;
+        if (!serverPath) {
+            // Option not set, use the path from the extension.
+            const fileExtension = this.platformInfo.isWindows() ? '.exe' : '';
+            serverPath = path.join(clientRoot, '..', '.roslyn', `Microsoft.CodeAnalysis.LanguageServer${fileExtension}`);
+        }
+
         if (!fs.existsSync(serverPath)) {
             throw new Error(`Cannot find language server in path '${serverPath}''`);
         }
@@ -162,9 +163,7 @@ export class RoslynLanguageServer {
         // in our activation because Green depends on Blue activation completing.
         let brokeredServicePipeName = await this.waitForGreenActivationAndGetPipeName();
     
-        let args: string[] = [
-            serverPath,
-        ];
+        let args: string[] = [ ];
 
         if (this.optionProvider.GetLatestOptions().commonOptions.waitForDebugger)
         {
@@ -184,8 +183,10 @@ export class RoslynLanguageServer {
             // what the other process does.
             args.push("--solutionPath", solutionPath.fsPath);
         }
+
+        _channel.appendLine(`Starting server at ${serverPath}`);
     
-        let childProcess = cp.spawn('dotnet', args);
+        let childProcess = cp.spawn(serverPath, args);
         return childProcess;
     }
 

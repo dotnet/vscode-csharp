@@ -164,20 +164,7 @@ Alternatively you could visit https://github.com/OmniSharp/omnisharp-vscode/issu
 
 ### Development
 
-First install:
-
-* Node.js (8.11.1 or later)
-* Npm (5.6.0 or later)
-
-To **run and develop** do the following:
-
-* Run `npm ci`
-* Run `npm run compile`
-* Open in Visual Studio Code (`code .`)
-* _Optional:_ run `npm run watch`, make code changes
-* Press <kbd>F5</kbd> to debug
-
-To **test** do the following: `npm run test` or <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration.
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### License
 

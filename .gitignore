@@ -2,7 +2,7 @@ bin
 obj
 node_modules
 out
-artifacts
+.roslyn/
 .omnisharp/
 .omnisharp-*/
 .vs/

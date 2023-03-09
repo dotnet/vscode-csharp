@@ -29,10 +29,16 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
 
     await csharpExtension.exports.initializationFinished();
     console.log("ms-dotnettools.csharp activated");
-    return {
+
+    // Output the directory where logs are being written so if a test fails we can match it to the right logs.
+    console.log(`Extension log directory: ${csharpExtension.exports.logDirectory}`);
+    
+    let activationResult: ActivationResult = {
         advisor: await csharpExtension.exports.getAdvisor(),
         eventStream: csharpExtension.exports.eventStream,
     };
+
+    return activationResult;
 }
 
 export async function restartOmniSharpServer(): Promise<void> {

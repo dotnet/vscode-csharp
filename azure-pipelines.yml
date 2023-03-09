@@ -13,14 +13,15 @@ stages:
   jobs:
   - job: Build_And_Test
     steps:
+
+    # The server package is downloaded from NuGet
+    - task: NuGetAuthenticate@1
+
+    # Required for integration tests.
     - task: UseDotNet@2
       displayName: 'Install .NET Core SDKs'
       inputs:
-        useGlobalJson: true
-        workingDirectory: server/
-
-    - script: dotnet test ./server/Microsoft.CodeAnalysis.LanguageServer.sln -warnaserror --configuration Release
-      displayName: 'Build and test Microsoft.CodeAnalysis.LanguageServer.sln'
+        version: '7.0.100'
 
     - task: NodeTool@0
       displayName: 'Install Node.js 15.x'
@@ -35,11 +36,7 @@ stages:
     - script: npm run compile
       displayName: 'Compile'
 
-    # Build ready to run server bits for all platforms.  This only needs to be done for the main executable project.
-    - script: gulp 'server:publish' --configuration Release
-      displayName: 'Publish Microsoft.CodeAnalysis.LanguageServer'
-
-    - script: gulp 'vsix:release:package' --configuration Release
+    - script: gulp 'vsix:release:package'
       displayName: 'Build VSIXs'
 
     - script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
@@ -53,6 +50,13 @@ stages:
     
     - script: npm run test:artifacts
       displayName: 'Run artifacts tests'
+
+    - task: PublishPipelineArtifact@1
+      condition: failed()
+      displayName: 'Upload integration test logs'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/.vscode-test/user-data/logs'
+        artifactName: 'VSCode Test Logs'
 
     - task: PublishPipelineArtifact@1
       # Run the publish step so we have vsix's even if the tests fail.

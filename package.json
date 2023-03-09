@@ -2,7 +2,7 @@
   "name": "csharp",
   "publisher": "ms-dotnettools",
   "version": "2.0.0",
-  "description": "C# for Visual Studio Code (powered by OmniSharp).",
+  "description": "C# for Visual Studio Code",
   "displayName": "C#",
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
@@ -35,6 +35,7 @@
     }
   },
   "defaults": {
+    "roslyn": "4.6.0-3.23158.4",
     "omniSharp": "1.39.4",
     "razor": "7.0.0-preview.23067.5"
   },

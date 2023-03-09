@@ -13,9 +13,6 @@
             "outFiles": [
                 "${workspaceRoot}/dist/*.js"
             ],
-            "env": {
-                "ROSLYN_LANGUAGE_SERVER_DIRECTORY": "artifacts/bin/Debug/net7.0"
-            },
             "preLaunchTask": "buildDev"
         },
         {

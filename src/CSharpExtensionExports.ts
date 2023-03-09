@@ -12,4 +12,5 @@ export default interface CSharpExtensionExports {
     getAdvisor: () => Promise<Advisor>;
     getTestManager: () => Promise<TestManager>;
     eventStream: EventStream;
+    logDirectory: string;
 }

@@ -16,14 +16,15 @@ import { CsharpLoggerObserver } from '../src/shared/observers/CsharpLoggerObserv
 import { EventStream } from '../src/EventStream';
 import NetworkSettings from '../src/NetworkSettings';
 import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
+import { DownloadFile } from '../src/packageManager/FileDownloader';
 import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 import { commandLineOptions } from '../tasks/commandLineArguments';
-import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, packedVsixOutputRoot, languageServerDirectory, getServerPublishDirectory } from '../tasks/projectPaths';
+import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, packedVsixOutputRoot, languageServerDirectory, nugetTempPath, rootPath } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
-const argv = require('yargs').argv;
+import path = require('path');
 const exec = util.promisify(cp.exec);
 
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
@@ -49,18 +50,6 @@ export function getPackageName(packageJSON: any, vscodePlatformId?: string) {
         return `${name}-${version}.vsix`;
     }
 }
-
-gulp.task('server:publish', async () => {
-    let configuration = argv.configuration ?? 'Debug';
-    
-    // Publish all platform specific server bits.
-    for (let platform of platformSpecificPackages) {
-        await publishServer(configuration, platform.rid);
-    }
-
-    // Publish a platform neutral server as well.
-    await publishServer(configuration);
-});
 
 gulp.task('vsix:release:package', async () => {
 
@@ -97,6 +86,54 @@ gulp.task('razor:languageserver', async () => {
     }
 });
 
+// Downloads Roslyn language server bits for local development
+gulp.task('roslyn:languageserver', async () => {
+    await del(languageServerDirectory);
+
+    const packageJSON = getPackageJSON();
+    const platform = await PlatformInformation.GetCurrent();
+
+    try {
+        await installRoslyn(packageJSON, platform);
+    }
+    catch (err) {
+        const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
+        // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
+        // stack trace of this line. So that seperates the two stack traces.
+        throw Error(`Failed to install packages for ${platform}. ${message}\n---`);
+    }
+});
+
+async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformation) {
+    const roslynVersion = packageJSON.defaults.roslyn;
+    const packagePath = await acquireNugetPackage('Microsoft.CodeAnalysis.LanguageServer', roslynVersion);
+
+    // Find the matching server RID for the current platform.
+    let serverPlatform: string;
+    if (platformInfo === undefined) {
+        serverPlatform = 'neutral';
+    }
+    else {
+        serverPlatform = platformSpecificPackages.find(p => p.platformInfo.platform === platformInfo.platform && p.platformInfo.architecture === platformInfo.architecture)!.rid;
+    }
+
+    // Get the directory containing the server executable for the current platform.
+    const serverExecutableDirectory = path.join(packagePath, 'content', 'LanguageServer', serverPlatform);
+    if (!fs.existsSync(serverExecutableDirectory)) {
+        throw new Error(`Failed to find server executable directory at ${serverExecutableDirectory}`);
+    }
+
+    console.log(`Extracting Roslyn executables from ${serverExecutableDirectory}`);
+
+    // Copy the files to the language server directory.
+    fs.mkdirSync(languageServerDirectory);
+    fsextra.copySync(serverExecutableDirectory, languageServerDirectory);
+    const languageServerDll = path.join(languageServerDirectory, 'Microsoft.CodeAnalysis.LanguageServer.dll');
+    if (!fs.existsSync(languageServerDll)) {
+        throw new Error(`Failed to copy server executable`);
+    }
+}
+
 // Install Tasks
 async function installRazor(platformInfo: PlatformInformation, packageJSON: any) {
     let eventStream = new EventStream();
@@ -112,17 +149,50 @@ async function installRazor(platformInfo: PlatformInformation, packageJSON: any)
     }
 }
 
-async function publishServer(configuration: string, rid?: string) {
-    let dotnetArgs = [];
-    dotnetArgs.push('dotnet', 'publish', './server/Microsoft.CodeAnalysis.LanguageServer/', '--configuration', configuration);
-    if (rid) {
-        dotnetArgs.push('-r', rid, '-p:PublishReadyToRun=true');
+async function acquireNugetPackage(packageName: string, packageVersion: string): Promise<string> {
+    const nugetCliPath = await acquireNugetCli();
+
+    const packageOutputPath = path.join(nugetTempPath, `${packageName}.${packageVersion}`);
+    if (fs.existsSync(packageOutputPath)) {
+        // Package is already downloaded, no need to download again.
+        console.log(`Reusing existing download of ${packageName}.${packageVersion}`);
+        return packageOutputPath;
     }
 
-    let command = dotnetArgs.join(" ");
+    let nugetArgs = [];
+    nugetArgs.push(nugetCliPath, 'install');
+    nugetArgs.push(packageName);
+    nugetArgs.push('-Version', packageVersion);
+    nugetArgs.push('-OutputDirectory', nugetTempPath);
+    nugetArgs.push('-ConfigFile',path.join(rootPath, 'NuGet.config'));
+    // We don't need any of the package's dependencies since we're just consuming the executables.
+    nugetArgs.push('-DependencyVersion', 'Ignore');
+
+    let command = nugetArgs.join(" ");
     console.log(command);
-    const { stdout } = await exec(dotnetArgs.join(" "));
+    const { stdout } = await exec(nugetArgs.join(" "));
     console.log(`stdout: ${stdout}`);
+
+    if (!fs.existsSync(packageOutputPath)) {
+        throw new Error(`Failed to find downloaded package at ${packageOutputPath}`);
+    }
+
+    return packageOutputPath;
+}
+
+async function acquireNugetCli() : Promise<string> {
+    const nugetCliPath = path.join(nugetTempPath, 'nuget.exe');
+    if (fs.existsSync(nugetCliPath)) {
+        return nugetCliPath;
+    }
+
+    let eventStream = new EventStream();
+    let provider = () => new NetworkSettings('', true);
+    let buffer = await DownloadFile('NuGet CLI', eventStream, provider, 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe');
+    fs.mkdirSync(nugetTempPath, { recursive: true });
+    fs.writeFileSync(nugetCliPath, buffer, { mode: 0o755 });
+
+    return nugetCliPath;
 }
 
 async function doPackageOffline() {
@@ -136,7 +206,7 @@ async function doPackageOffline() {
                 continue;
             }
 
-            await buildVsix(packageJSON, packedVsixOutputRoot, p.rid, p.vsceTarget, p.platformInfo);
+            await buildVsix(packageJSON, packedVsixOutputRoot, p.vsceTarget, p.platformInfo);
         }
         catch (err) {
             const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -147,7 +217,7 @@ async function doPackageOffline() {
     }
 
     // Also output the platform neutral VSIX using the platform neutral server bits we created before.
-    await buildVsix(packageJSON, packedVsixOutputRoot, "neutral");
+    await buildVsix(packageJSON, packedVsixOutputRoot);
 
 }
 
@@ -159,36 +229,15 @@ async function cleanAsync(deleteVsix: boolean) {
     }
 }
 
-async function buildVsix(packageJSON: any, outputFolder: string, publishFolder: string, vsceTarget?: string, platformInfo?: PlatformInformation) {
+async function buildVsix(packageJSON: any, outputFolder: string, vsceTarget?: string, platformInfo?: PlatformInformation) {
     await cleanAsync(false);
+
+    await installRoslyn(packageJSON, platformInfo);
 
     if (platformInfo != null) {
         await installRazor(platformInfo, packageJSON);
     }
 
     const packageFileName = getPackageName(packageJSON, vsceTarget);
-    await copyServerToExtensionDirectory(publishFolder);
     await createPackageAsync(outputFolder, packageFileName, vsceTarget);
-}
-
-/**
- * This takes care of copying the server bits from the build directory
- * to the location that the extension looks for to activate it.
- */
-async function copyServerToExtensionDirectory(publishFolder: string)
-{
-    if (!fs.existsSync(languageServerDirectory))
-    {
-        fs.mkdirSync(languageServerDirectory);
-    }
-
-    let configuration = argv.configuration ?? "Debug";
-    let serverBuildDirectory = getServerPublishDirectory(configuration, publishFolder);
-
-    if (!fs.existsSync(serverBuildDirectory))
-    {
-        throw new Error(`Did not find expected server bits at ${serverBuildDirectory}`);
-    }
-
-    fsextra.copySync(serverBuildDirectory, languageServerDirectory);
 }

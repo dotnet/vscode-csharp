@@ -1,6 +1,7 @@
 !.debugger/**
 .logs/**
 .nyc_output/**
+!.roslyn/**
 !.omnisharp/**
 !.razor/**
 .rpt2_cache/**
@@ -10,8 +11,6 @@
 coverage/**
 out/**
 server/**
-artifacts/**
-!artifacts/languageServer/**
 src/**
 tasks/**
 test/**
