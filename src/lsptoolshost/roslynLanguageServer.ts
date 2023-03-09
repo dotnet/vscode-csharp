@@ -14,6 +14,8 @@ import {
     LanguageClient,
     LanguageClientOptions,
     ServerOptions,
+    State,
+    Trace,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { DotnetResolver } from '../shared/DotnetResolver';
@@ -86,6 +88,7 @@ export class RoslynLanguageServer {
         }
         
         let logLevel = options.languageServerOptions.logLevel;
+        const languageClientTraceLevel = Trace.fromString(logLevel);
 
         let serverOptions: ServerOptions = async () => {
             return await this.startServer(solutionPath, logLevel);
@@ -123,6 +126,14 @@ export class RoslynLanguageServer {
         client.registerProposedFeatures();
 
         this._languageClient = client;
+
+        // Set the language client trace level based on the log level option.
+        // setTrace only works after the client is already running.
+        this._languageClient.onDidChangeState(async (state) => {
+            if (state.newState === State.Running) {
+                await this._languageClient!.setTrace(languageClientTraceLevel);
+            }
+        });
 
         // Start the client. This will also launch the server
         this._languageClient.start();
