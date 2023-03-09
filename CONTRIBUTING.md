@@ -29,6 +29,8 @@ https://dnceng.visualstudio.com/internal/_git/dotnet-roslyn?version=GBfeatures%2
 
 depending on which configuration is built.  Then, launch the extension here and change the VSCode setting `dotnet.server.path` to point to the Roslyn executable path you built above and restart the language server.
 
+If you need to debug the server, you can set the VSCode setting `dotnet.server.waitForDebugger` to true.  This will trigger a `Debugger.Launch()` on the server side as it starts.
+
 ### Creating VSIXs
 
 VSIXs can be created using the gulp command `gulp vsix:release:package`.  This will create all the platform specific VSIXs that you can then install manually in VSCode.
