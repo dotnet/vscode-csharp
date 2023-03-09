@@ -23,7 +23,7 @@ To **test** do the following: `npm run test` or <kbd>F5</kbd> in VS Code with th
 
 ### Using a locally developed Roslyn server
 
-https://github.com/dotnet/roslyn contains the server implementation.  Follow the instructions there to build the repo as normal.  Once built, the server executable will be located in the build output directory, typically 
+https://dnceng.visualstudio.com/internal/_git/dotnet-roslyn?version=GBfeatures%2Flsp_tools_host contains the server implementation.  Follow the instructions there to build the repo as normal.  Once built, the server executable will be located in the build output directory, typically 
 
 `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net7.0/Microsoft.CodeAnalysis.LanguageServer.exe`
 
