@@ -172,13 +172,16 @@ export class RoslynLanguageServer {
         // Get the brokered service pipe name from green (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
         // in our activation because Green depends on Blue activation completing.
-        let brokeredServicePipeName = await this.waitForGreenActivationAndGetPipeName();
+        let vsGreenExports = await this.waitForGreenActivationAndGetExports();
+        let brokeredServicePipeName = await this.getBrokeredServicePipeName(vsGreenExports);
+        let starredCompletionComponentPath = this.getStarredCompletionComponentPath(vsGreenExports);
     
         let args: string[] = [ ];
 
         if (this.optionProvider.GetLatestOptions().commonOptions.waitForDebugger)
         {
             args.push("--debug");
+            starredCompletionComponentPath = "D:\\Pythia\\artifacts\\bin\\PythiaVSGreen\\Debug\\net7.0";
         }
     
         if (logLevel)
@@ -195,13 +198,17 @@ export class RoslynLanguageServer {
             args.push("--solutionPath", solutionPath.fsPath);
         }
 
+        if (starredCompletionComponentPath) {
+            args.push("--starredCompletionComponentPath", starredCompletionComponentPath);
+        }
+
         _channel.appendLine(`Starting server at ${serverPath}`);
     
         let childProcess = cp.spawn(serverPath, args);
         return childProcess;
     }
 
-    private async waitForGreenActivationAndGetPipeName(): Promise<string | undefined> {
+    private async waitForGreenActivationAndGetExports(): Promise<any | undefined> {
         let vsGreenExtension = vscode.extensions.getExtension(greenExtensionId);
         if (!vsGreenExtension) {
             // VS green is not installed - continue blue-only activation.
@@ -212,13 +219,25 @@ export class RoslynLanguageServer {
     
         _channel.appendLine("Activating Blue + Green...");
         this._wasActivatedWithGreen = true;
-        let vsGreenExports = await vsGreenExtension.activate();
+        return await vsGreenExtension.activate();
+    }
+
+    private async getBrokeredServicePipeName(vsGreenExports: any | undefined): Promise<string | undefined> {
+        if (!vsGreenExports) {
+            return undefined;
+        }
         if (!('getBrokeredServiceServerPipeName' in vsGreenExports)) {
             throw new Error("VS Green is installed but missing expected export getBrokeredServiceServerPipeName");
         }
-    
-        let brokeredServicePipeName = await vsGreenExports.getBrokeredServiceServerPipeName();
-        return brokeredServicePipeName;
+        return await vsGreenExports.getBrokeredServiceServerPipeName();
+    }
+
+    private getStarredCompletionComponentPath(vsGreenExports: any | undefined): string | undefined {
+        if (!vsGreenExports || !vsGreenExports.components || 
+            !vsGreenExports.components["@vsintellicode/starred-suggestions-csharp"]) {
+            return undefined;
+        }
+        return vsGreenExports.components["@vsintellicode/starred-suggestions-csharp"];
     }
 }
 
