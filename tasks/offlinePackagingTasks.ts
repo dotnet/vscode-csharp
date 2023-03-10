@@ -9,6 +9,7 @@ import * as del from 'del';
 import * as fs from 'fs';
 import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
+import * as nbgv from 'nerdbank-gitversioning';
 import * as util from 'util';
 import { Logger } from '../src/logger';
 import { PlatformInformation } from '../src/shared/platform';
@@ -45,7 +46,7 @@ export function getPackageName(packageJSON: any, vscodePlatformId?: string) {
     const version = packageJSON.version;
 
     if (vscodePlatformId) {
-        return `${name}-${version}-${vscodePlatformId}.vsix`;
+        return `${name}-${vscodePlatformId}-${version}.vsix`;
     } else {
         return `${name}-${version}.vsix`;
     }
@@ -197,28 +198,39 @@ async function acquireNugetCli() : Promise<string> {
 
 async function doPackageOffline() {
 
-    const packageJSON = getPackageJSON();
+    // Set the package version using git versioning.
+    const versionInfo = await nbgv.getVersion();
+    console.log(versionInfo.npmPackageVersion);
+    await nbgv.setPackageVersion();
 
-    for (let p of platformSpecificPackages) {
-        try {
-            if (process.platform === 'win32' && !p.rid.startsWith('win')) {
-                console.warn(`Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`);
-                continue;
+    try {
+        // Now that we've updated the version, get the package.json.
+        const packageJSON = getPackageJSON();
+
+        for (let p of platformSpecificPackages) {
+            try {
+                if (process.platform === 'win32' && !p.rid.startsWith('win')) {
+                    console.warn(`Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`);
+                    continue;
+                }
+
+                await buildVsix(packageJSON, packedVsixOutputRoot, p.vsceTarget, p.platformInfo);
             }
+            catch (err) {
+                const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
+                // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
+                // stack trace of this line. So that seperates the two stack traces.
+                throw Error(`Failed to create package ${p.vsceTarget}. ${message}\n---`);
+            }
+        }
 
-            await buildVsix(packageJSON, packedVsixOutputRoot, p.vsceTarget, p.platformInfo);
-        }
-        catch (err) {
-            const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
-            // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
-            // stack trace of this line. So that seperates the two stack traces.
-            throw Error(`Failed to create package ${p.vsceTarget}. ${message}\n---`);
-        }
+        // Also output the platform neutral VSIX using the platform neutral server bits we created before.
+        await buildVsix(packageJSON, packedVsixOutputRoot);
     }
-
-    // Also output the platform neutral VSIX using the platform neutral server bits we created before.
-    await buildVsix(packageJSON, packedVsixOutputRoot);
-
+    finally {
+        // Reset package version to the placeholder value.
+        await nbgv.resetPackageVersionPlaceholder();
+    }
 }
 
 async function cleanAsync(deleteVsix: boolean) {

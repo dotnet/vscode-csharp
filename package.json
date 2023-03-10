@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "2.0.0",
+  "version": "0.0.0-placeholder",
   "description": "C# for Visual Studio Code",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -66,6 +66,7 @@
     "http-proxy-agent": "4.0.1",
     "https-proxy-agent": "5.0.0",
     "jsonc-parser": "3.0.0",
+    "nerdbank-gitversioning": "^3.6.79-alpha",
     "node-machine-id": "1.1.12",
     "ps-list": "7.2.0",
     "request-light": "0.4.0",
