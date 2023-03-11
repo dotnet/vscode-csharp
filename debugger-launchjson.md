@@ -338,3 +338,18 @@ Example:
 ```json
     "targetArchitecture": "arm64"
 ```
+
+## Check for DevCert
+
+This option controls if, on launch, the the debugger should check if the computer has a self-signed HTTPS certificate used to develop web projects running on https endpoints. For this it will try to run `dotnet dev-certs https --check --trust`, if no certs are found it will prompt the user to suggest creating one. If approved by the user, the extension will run `dotnet dev-certs https --trust` to create a trusted self-signed certificate.
+
+If unspecified, defaults to true when `serverReadyAction` is set.
+This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios.
+
+You can override this behavior by setting `checkForDevCert` to false in your `launch.json`.
+
+Example:
+
+```json
+    "checkForDevCert": "false"
+```
