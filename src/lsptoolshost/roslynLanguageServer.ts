@@ -181,7 +181,6 @@ export class RoslynLanguageServer {
         if (this.optionProvider.GetLatestOptions().commonOptions.waitForDebugger)
         {
             args.push("--debug");
-            starredCompletionComponentPath = "D:\\Pythia\\artifacts\\bin\\PythiaVSGreen\\Debug\\net7.0";
         }
     
         if (logLevel)
