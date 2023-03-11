@@ -10,14 +10,12 @@ import * as fs from 'fs';
 import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
 import * as nbgv from 'nerdbank-gitversioning';
-import * as util from 'util';
 import { Logger } from '../src/logger';
 import { PlatformInformation } from '../src/shared/platform';
 import { CsharpLoggerObserver } from '../src/shared/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import NetworkSettings from '../src/NetworkSettings';
 import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
-import { DownloadFile } from '../src/packageManager/FileDownloader';
 import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 import { commandLineOptions } from '../tasks/commandLineArguments';
@@ -26,7 +24,6 @@ import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 import path = require('path');
-const exec = util.promisify(cp.exec);
 
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
 export const platformSpecificPackages = [
@@ -74,6 +71,7 @@ gulp.task('razor:languageserver', async () => {
     await del('.razor');
 
     const packageJSON = getPackageJSON();
+
     const platform = await PlatformInformation.GetCurrent();
 
     try {
@@ -151,49 +149,31 @@ async function installRazor(platformInfo: PlatformInformation, packageJSON: any)
 }
 
 async function acquireNugetPackage(packageName: string, packageVersion: string): Promise<string> {
-    const nugetCliPath = await acquireNugetCli();
-
-    const packageOutputPath = path.join(nugetTempPath, `${packageName}.${packageVersion}`);
+    packageName = packageName.toLocaleLowerCase();
+    const packageOutputPath = path.join(nugetTempPath, packageName, packageVersion);
     if (fs.existsSync(packageOutputPath)) {
         // Package is already downloaded, no need to download again.
         console.log(`Reusing existing download of ${packageName}.${packageVersion}`);
         return packageOutputPath;
     }
 
-    let nugetArgs = [];
-    nugetArgs.push(nugetCliPath, 'install');
-    nugetArgs.push(packageName);
-    nugetArgs.push('-Version', packageVersion);
-    nugetArgs.push('-OutputDirectory', nugetTempPath);
-    nugetArgs.push('-ConfigFile',path.join(rootPath, 'NuGet.config'));
-    // We don't need any of the package's dependencies since we're just consuming the executables.
-    nugetArgs.push('-DependencyVersion', 'Ignore');
+    let dotnetArgs = [ 'restore', path.join(rootPath, 'server'), `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}` ];
 
-    let command = nugetArgs.join(" ");
-    console.log(command);
-    const { stdout } = await exec(nugetArgs.join(" "));
-    console.log(`stdout: ${stdout}`);
+    let process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
+    await new Promise( (resolve) => {
+        process.on('exit', (exitCode, signal) => {
+            if (exitCode !== 0) {
+                throw new Error(`Failed to download nuget package ${packageName}.${packageVersion}`);
+            }
+            resolve(undefined);
+        });
+    });
 
     if (!fs.existsSync(packageOutputPath)) {
         throw new Error(`Failed to find downloaded package at ${packageOutputPath}`);
     }
 
     return packageOutputPath;
-}
-
-async function acquireNugetCli() : Promise<string> {
-    const nugetCliPath = path.join(nugetTempPath, 'nuget.exe');
-    if (fs.existsSync(nugetCliPath)) {
-        return nugetCliPath;
-    }
-
-    let eventStream = new EventStream();
-    let provider = () => new NetworkSettings('', true);
-    let buffer = await DownloadFile('NuGet CLI', eventStream, provider, 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe');
-    fs.mkdirSync(nugetTempPath, { recursive: true });
-    fs.writeFileSync(nugetCliPath, buffer, { mode: 0o755 });
-
-    return nugetCliPath;
 }
 
 async function doPackageOffline() {

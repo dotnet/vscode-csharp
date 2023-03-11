@@ -161,8 +161,7 @@ export class RoslynLanguageServer {
         let serverPath = this.optionProvider.GetLatestOptions().commonOptions.serverPath;
         if (!serverPath) {
             // Option not set, use the path from the extension.
-            const fileExtension = this.platformInfo.isWindows() ? '.exe' : '';
-            serverPath = path.join(clientRoot, '..', '.roslyn', `Microsoft.CodeAnalysis.LanguageServer${fileExtension}`);
+            serverPath = path.join(clientRoot, '..', '.roslyn', this.getServerFileName());
         }
 
         if (!fs.existsSync(serverPath)) {
@@ -197,8 +196,34 @@ export class RoslynLanguageServer {
 
         _channel.appendLine(`Starting server at ${serverPath}`);
     
-        let childProcess = cp.spawn(serverPath, args);
+        let childProcess: cp.ChildProcessWithoutNullStreams;
+        if (serverPath.endsWith('.dll')) {
+            // If we were given a path to a dll, launch that via dotnet.
+            const argsWithPath = [ serverPath ].concat(args);
+            childProcess = cp.spawn('dotnet', argsWithPath);
+        } else {
+            // Otherwise assume we were given a path to an executable.
+            childProcess = cp.spawn(serverPath, args);
+        }
+        
         return childProcess;
+    }
+
+    private getServerFileName() {
+        const serverFileName = 'Microsoft.CodeAnalysis.LanguageServer';
+        let extension = '';
+        if (this.platformInfo.isWindows()) {
+            extension = '.exe';
+        }
+
+        if (this.platformInfo.isMacOS()) {
+            // MacOS executables must be signed with codesign.  Currently all Roslyn server executables are built on windows
+            // and therefore dotnet publish does not automatically sign them.
+            // Tracking bug - https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
+            extension = '.dll';
+        }
+
+        return `${serverFileName}${extension}`;
     }
 
     private async waitForGreenActivationAndGetPipeName(): Promise<string | undefined> {
