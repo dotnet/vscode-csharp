@@ -20,6 +20,7 @@ suite('TelemetryReporterObserver', () => {
     let property: { [key: string]: string } = null;
     let measure: { [key: string]: number }[] = [];
     let errorProp: string[][] = [];
+    let useModernNet = true;
     let observer = new TelemetryObserver(platformInfo, () => {
         return {
             ...getNullTelemetryReporter,
@@ -35,7 +36,7 @@ suite('TelemetryReporterObserver', () => {
                 errorProp.push(errorProps);
             },
         };
-    });
+    }, useModernNet);
 
     setup(() => {
         name = "";
@@ -66,6 +67,7 @@ suite('TelemetryReporterObserver', () => {
         const references = ["ref1", "ref2"];
         const fileExtensions = [".cs", ".cshtml"];
         const fileCounts = [7, 3];
+        const sdkStyleProject = true;
         let event = new ProjectConfiguration({
             ProjectCapabilities: projectCapabilities,
             TargetFrameworks: targetFrameworks,
@@ -74,7 +76,8 @@ suite('TelemetryReporterObserver', () => {
             OutputKind: outputKind,
             References: references,
             FileExtensions: fileExtensions,
-            FileCounts: fileCounts
+            FileCounts: fileCounts,
+            SdkStyleProject: sdkStyleProject
         });
 
         observer.post(event);
@@ -86,6 +89,8 @@ suite('TelemetryReporterObserver', () => {
         expect(property["References"]).to.be.equal("ref1|ref2");
         expect(property["FileExtensions"]).to.be.equal(".cs|.cshtml");
         expect(property["FileCounts"]).to.be.equal("7|3");
+        expect(property["useModernNet"]).to.be.equal("true");
+        expect(property["sdkStyleProject"]).to.be.equal("true");
     });
 
     [
