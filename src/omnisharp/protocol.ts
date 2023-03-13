@@ -470,6 +470,7 @@ export interface ProjectConfigurationMessage {
     References: string[];
     FileExtensions: string[];
     FileCounts: number[];
+    SdkStyleProject: boolean;
 }
 
 export interface PackageDependency {

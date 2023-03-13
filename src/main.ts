@@ -150,11 +150,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
     await initializeDotnetPath();
 
-    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
+    let useModernNetOption = optionProvider.GetLatestOptions().useModernNet;
+    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter, useModernNetOption);
     eventStream.subscribe(telemetryObserver.post);
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    const useFramework = optionProvider.GetLatestOptions().useModernNet !== true;
+    const useFramework = useModernNetOption !== true;
     let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload, useFramework);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(context.extension, eventStream, platformInfo, installDependencies, useFramework);
 
