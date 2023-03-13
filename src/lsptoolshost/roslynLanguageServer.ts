@@ -36,14 +36,14 @@ let _traceChannel: vscode.OutputChannel;
 const greenExtensionId = "ms-dotnettools.visual-studio-green";
 
 export class RoslynLanguageServer {
-    
+
     public static readonly roslynDidOpenCommand: string = 'roslyn.openRazorCSharp';
     public static readonly roslynDidChangeCommand: string = 'roslyn.changeRazorCSharp';
     public static readonly roslynDidCloseCommand: string = 'roslyn.closeRazorCSharp';
 
     private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
     private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
-    
+
     /**
      * The timeout for stopping the language server (in ms).
      */
@@ -64,7 +64,7 @@ export class RoslynLanguageServer {
         // subscribe to extension change events so that we can get notified if green is added/removed later.
         this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
             let vsGreenExtension = vscode.extensions.getExtension(greenExtensionId);
-            
+
             if (this._wasActivatedWithGreen === undefined) {
                 // Haven't activated yet.
                 return;
@@ -77,7 +77,7 @@ export class RoslynLanguageServer {
                 // Offer a prompt to restart the server to use green.
                 _channel.appendLine(`Detected new installation of ${greenExtensionId}`);
                 let message = `Detected installation of ${greenExtensionId}. Would you like to relaunch the language server for added features?`;
-                ShowInformationMessage(vscode, message, { title , command  });
+                ShowInformationMessage(vscode, message, { title, command });
             } else {
                 // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
                 // which will automatically restart this extension too.
@@ -90,7 +90,7 @@ export class RoslynLanguageServer {
      */
     public async start(): Promise<void> {
         const dotnetResolver = new DotnetResolver(this.platformInfo);
-    
+
         let options = this.optionProvider.GetLatestOptions();
         let resolvedDotnet = await dotnetResolver.getHostExecutableInfo(options);
         _channel.appendLine("Dotnet version: " + resolvedDotnet.version);
@@ -101,7 +101,7 @@ export class RoslynLanguageServer {
         if (solutionPath) {
             _channel.appendLine(`Found solution ${solutionPath}`);
         }
-        
+
         let logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = Trace.fromString(logLevel);
 
@@ -109,10 +109,12 @@ export class RoslynLanguageServer {
             return await this.startServer(solutionPath, logLevel);
         };
 
+        let documentSelector = options.languageServerOptions.documentSelector;
+
         // Options to control the language client
         let clientOptions: LanguageClientOptions = {
             // Register the server for plain csharp documents
-            documentSelector: ['csharp'],
+            documentSelector: documentSelector,
             synchronize: {
                 // Notify the server about file changes to '.clientrc files contain in the workspace
                 fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*')
@@ -173,7 +175,7 @@ export class RoslynLanguageServer {
         await this.start();
     }
 
-    private async startServer(solutionPath: vscode.Uri | undefined, logLevel: string | undefined) : Promise<cp.ChildProcess> {
+    private async startServer(solutionPath: vscode.Uri | undefined, logLevel: string | undefined): Promise<cp.ChildProcess> {
         let clientRoot = __dirname;
 
         let serverPath = this.optionProvider.GetLatestOptions().commonOptions.serverPath;
@@ -190,16 +192,15 @@ export class RoslynLanguageServer {
         // We explicitly call this in the LSP server start action instead of awaiting it
         // in our activation because Green depends on Blue activation completing.
         let brokeredServicePipeName = await this.waitForGreenActivationAndGetPipeName();
-    
+
         let args: string[] = [ ];
 
-        if (this.optionProvider.GetLatestOptions().commonOptions.waitForDebugger)
-        {
+        let options = this.optionProvider.GetLatestOptions();
+        if (options.commonOptions.waitForDebugger) {
             args.push("--debug");
         }
-    
-        if (logLevel)
-        {
+
+        if (logLevel) {
             args.push("--logLevel", logLevel);
         }
 
@@ -213,7 +214,7 @@ export class RoslynLanguageServer {
         }
 
         _channel.appendLine(`Starting server at ${serverPath}`);
-    
+
         let childProcess: cp.ChildProcessWithoutNullStreams;
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
@@ -223,7 +224,7 @@ export class RoslynLanguageServer {
             // Otherwise assume we were given a path to an executable.
             childProcess = cp.spawn(serverPath, args);
         }
-        
+
         return childProcess;
     }
 
@@ -236,7 +237,7 @@ export class RoslynLanguageServer {
         client.onNotification(
             RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
             async notification => vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification));
-        
+
         // Razor will call into us (via command) for generated file didOpen/didChange/didClose notifications. We'll then forward these
         // notifications along to Roslyn.
         vscode.commands.registerCommand(RoslynLanguageServer.roslynDidOpenCommand, (notification: DidOpenTextDocumentParams) => {
@@ -249,7 +250,7 @@ export class RoslynLanguageServer {
             client.sendNotification(DidCloseTextDocumentNotification.method, notification);
         });
     }
-    
+
     private getServerFileName() {
         const serverFileName = 'Microsoft.CodeAnalysis.LanguageServer';
         let extension = '';
@@ -275,14 +276,14 @@ export class RoslynLanguageServer {
             this._wasActivatedWithGreen = false;
             return undefined;
         }
-    
+
         _channel.appendLine("Activating Blue + Green...");
         this._wasActivatedWithGreen = true;
         let vsGreenExports = await vsGreenExtension.activate();
         if (!('getBrokeredServiceServerPipeName' in vsGreenExports)) {
             throw new Error("VS Green is installed but missing expected export getBrokeredServiceServerPipeName");
         }
-    
+
         let brokeredServicePipeName = await vsGreenExports.getBrokeredServiceServerPipeName();
         return brokeredServicePipeName;
     }

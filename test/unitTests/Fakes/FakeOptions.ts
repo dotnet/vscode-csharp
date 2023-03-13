@@ -63,7 +63,8 @@ export function getEmptyOptions(): Options {
             suppressDotnetRestoreNotification: false,
         },
         {
-            logLevel: ""
+            logLevel: "",
+            documentSelector: ['csharp']
         },
         {
             razorDisabled: false,

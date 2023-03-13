@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { DocumentSelector } from 'vscode-languageserver-protocol';
 import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 
 export class Options {
@@ -92,6 +93,7 @@ export class Options {
 
         // Options for MS.CA.LanguageServer
         let languageServerLogLevel = Options.readOption<string>(config, 'dotnet.server.trace', 'minimal');
+        let documentSelector = Options.readOption<DocumentSelector>(config, 'dotnet.server.documentSelector', ['csharp']);
 
         // Options that apply to Razor
 
@@ -158,7 +160,8 @@ export class Options {
                 enableLspDriver: enableLspDriver,
             },
             {
-                logLevel: languageServerLogLevel
+                logLevel: languageServerLogLevel,
+                documentSelector: documentSelector
             },
             {
                 razorDisabled: razorDisabled,
@@ -315,8 +318,10 @@ export interface RazorOptions {
 
 export interface LanguageServerOptions {
     logLevel: string;
+    documentSelector: DocumentSelector;
 }
 
 const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
-    "logLevel"
+    "logLevel",
+    "documentSelector"
 ];
