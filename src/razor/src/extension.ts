@@ -21,6 +21,7 @@ import { RazorDocumentSynchronizer } from './Document/RazorDocumentSynchronizer'
 import { DocumentColorHandler } from './DocumentColor/DocumentColorHandler';
 import { RazorDocumentHighlightProvider } from './DocumentHighlight/RazorDocumentHighlightProvider';
 import { reportTelemetryForDocuments } from './DocumentTelemetryListener';
+import { DynamicFileInfoHandler } from './DynamicFile/DynamicFileInfoHandler';
 import { FoldingRangeHandler } from './Folding/FoldingRangeHandler';
 import { FormattingHandler } from './Formatting/FormattingHandler';
 import { RazorFormattingFeature } from './Formatting/RazorFormattingFeature';
@@ -144,6 +145,9 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 documentManager,
                 languageServiceClient,
                 logger);
+            const dynamicFileInfoProvider = new DynamicFileInfoHandler(
+                documentManager,
+                logger);
 
             localRegistrations.push(
                 languageConfiguration.register(),
@@ -197,6 +201,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
             foldingRangeHandler.register();
             formattingHandler.register();
             semanticTokenHandler.register();
+            dynamicFileInfoProvider.register();
         });
 
         const onStopRegistration = languageServerClient.onStop(() => {

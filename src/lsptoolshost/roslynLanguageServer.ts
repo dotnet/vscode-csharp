@@ -11,15 +11,22 @@ import { registerCommands } from './commands';
 import { UriConverter } from './uriConverter';
 
 import {
+    DidOpenTextDocumentNotification,
+    DidChangeTextDocumentNotification,
+    DidCloseTextDocumentNotification,
     LanguageClient,
     LanguageClientOptions,
     ServerOptions,
+    DidCloseTextDocumentParams,
+    DidOpenTextDocumentParams,
+    DidChangeTextDocumentParams,
     State,
     Trace,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { DotnetResolver } from '../shared/DotnetResolver';
 import OptionProvider from '../shared/observers/OptionProvider';
+import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfoHandler';
 import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
 
 let _languageServer: RoslynLanguageServer;
@@ -29,6 +36,14 @@ let _traceChannel: vscode.OutputChannel;
 const greenExtensionId = "ms-dotnettools.visual-studio-green";
 
 export class RoslynLanguageServer {
+    
+    public static readonly roslynDidOpenCommand: string = 'roslyn.openRazorCSharp';
+    public static readonly roslynDidChangeCommand: string = 'roslyn.changeRazorCSharp';
+    public static readonly roslynDidCloseCommand: string = 'roslyn.closeRazorCSharp';
+
+    private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
+    private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
+    
     /**
      * The timeout for stopping the language server (in ms).
      */
@@ -137,6 +152,9 @@ export class RoslynLanguageServer {
 
         // Start the client. This will also launch the server
         this._languageClient.start();
+
+        // Register Razor dynamic file info handling
+        this.registerRazor(this._languageClient);
     }
 
     public async stop(): Promise<void> {
@@ -209,6 +227,29 @@ export class RoslynLanguageServer {
         return childProcess;
     }
 
+    private registerRazor(client: LanguageClient) {
+        // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
+        // a command.
+        client.onRequest(
+            RoslynLanguageServer.provideRazorDynamicFileInfoMethodName,
+            async request => vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request));
+        client.onNotification(
+            RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
+            async notification => vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification));
+        
+        // Razor will call into us (via command) for generated file didOpen/didChange/didClose notifications. We'll then forward these
+        // notifications along to Roslyn.
+        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidOpenCommand, (notification: DidOpenTextDocumentParams) => {
+            client.sendNotification(DidOpenTextDocumentNotification.method, notification);
+        });
+        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidChangeCommand, (notification: DidChangeTextDocumentParams) => {
+            client.sendNotification(DidChangeTextDocumentNotification.method, notification);
+        });
+        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidCloseCommand, (notification: DidCloseTextDocumentParams) => {
+            client.sendNotification(DidCloseTextDocumentNotification.method, notification);
+        });
+    }
+    
     private getServerFileName() {
         const serverFileName = 'Microsoft.CodeAnalysis.LanguageServer';
         let extension = '';
