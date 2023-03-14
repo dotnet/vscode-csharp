@@ -15,7 +15,8 @@ import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer
 import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { RazorLanguage } from '../RazorLanguage';
 import { RazorLogger } from '../RazorLogger';
-import { ProvideDynamicFileParams as ProvideDynamicFileParams } from './ProvideDynamicFileParams';
+import { ProvideDynamicFileParams } from './ProvideDynamicFileParams';
+import { ProvideDynamicFileResponse } from './ProvideDynamicFileResponse';
 import { RemoveDynamicFileParams } from './RemoveDynamicFileParams';
 
 // Handles Razor generated doc communication between the Roslyn workspace and Razor.
@@ -40,7 +41,7 @@ export class DynamicFileInfoHandler {
     // This method, given Razor document URIs:
     // 1) Returns associated generated doc URIs
     // 2) Sends didOpen requests to Roslyn for each generated doc, which includes doc content
-    private async provideDynamicFileInfo(request: ProvideDynamicFileParams) {
+    private async provideDynamicFileInfo(request: ProvideDynamicFileParams): Promise<ProvideDynamicFileResponse> {
         const uris = request.razorFiles;
         const virtualUris = new Array<DocumentUri | null>();
         try {
@@ -77,7 +78,7 @@ export class DynamicFileInfoHandler {
             this.logger.logWarning(`${DynamicFileInfoHandler.provideDynamicFileInfoCommand} failed with ${error}`);
         }
 
-        return virtualUris;
+        return new ProvideDynamicFileResponse(virtualUris);
     }
 
     private async removeDynamicFileInfo(request: RemoveDynamicFileParams) {
