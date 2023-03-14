@@ -83,18 +83,24 @@ export class DynamicFileInfoHandler {
     }
 
     private async removeDynamicFileInfo(request: RemoveDynamicFileParams) {
-        const vscodeUri = vscode.Uri.parse('file:' + request.razorFile, true);
+        try {
+            const uris = request.razorFiles;
+            for (const razorDocumentUri of uris) {
+                const vscodeUri = vscode.Uri.parse('file:' + razorDocumentUri, true);
+                if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
+                    this.documentManager.didCloseRazorCSharpDocument(vscodeUri);
+                    const textDocumentIdentifier = TextDocumentIdentifier.create(vscodeUri.path);
 
-        if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
-            this.documentManager.didCloseRazorCSharpDocument(vscodeUri);
-            const textDocumentIdentifier = TextDocumentIdentifier.create(vscodeUri.path);
+                    // Send textDocument/didClose request to Roslyn
+                    const didCloseRequest: DidCloseTextDocumentParams = {
+                        textDocument: textDocumentIdentifier
+                    };
 
-            // Send textDocument/didClose request to Roslyn
-            const didCloseRequest: DidCloseTextDocumentParams = {
-                textDocument: textDocumentIdentifier
-            };
-
-            vscode.commands.executeCommand(RoslynLanguageServer.roslynDidCloseCommand, didCloseRequest);
+                    vscode.commands.executeCommand(RoslynLanguageServer.roslynDidCloseCommand, didCloseRequest);
+                }
+            }    
+        } catch (error) {
+            this.logger.logWarning(`${DynamicFileInfoHandler.removeDynamicFileInfoCommand} failed with ${error}`);
         }
     }
 }
