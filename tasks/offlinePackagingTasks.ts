@@ -9,14 +9,13 @@ import * as del from 'del';
 import * as fs from 'fs';
 import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
-import * as util from 'util';
+import * as nbgv from 'nerdbank-gitversioning';
 import { Logger } from '../src/logger';
 import { PlatformInformation } from '../src/shared/platform';
 import { CsharpLoggerObserver } from '../src/shared/observers/CsharpLoggerObserver';
 import { EventStream } from '../src/EventStream';
 import NetworkSettings from '../src/NetworkSettings';
 import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
-import { DownloadFile } from '../src/packageManager/FileDownloader';
 import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 import { commandLineOptions } from '../tasks/commandLineArguments';
@@ -25,7 +24,6 @@ import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 import path = require('path');
-const exec = util.promisify(cp.exec);
 
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
 export const platformSpecificPackages = [
@@ -45,7 +43,7 @@ export function getPackageName(packageJSON: any, vscodePlatformId?: string) {
     const version = packageJSON.version;
 
     if (vscodePlatformId) {
-        return `${name}-${version}-${vscodePlatformId}.vsix`;
+        return `${name}-${vscodePlatformId}-${version}.vsix`;
     } else {
         return `${name}-${version}.vsix`;
     }
@@ -73,6 +71,7 @@ gulp.task('razor:languageserver', async () => {
     await del('.razor');
 
     const packageJSON = getPackageJSON();
+
     const platform = await PlatformInformation.GetCurrent();
 
     try {
@@ -150,28 +149,25 @@ async function installRazor(platformInfo: PlatformInformation, packageJSON: any)
 }
 
 async function acquireNugetPackage(packageName: string, packageVersion: string): Promise<string> {
-    const nugetCliPath = await acquireNugetCli();
-
-    const packageOutputPath = path.join(nugetTempPath, `${packageName}.${packageVersion}`);
+    packageName = packageName.toLocaleLowerCase();
+    const packageOutputPath = path.join(nugetTempPath, packageName, packageVersion);
     if (fs.existsSync(packageOutputPath)) {
         // Package is already downloaded, no need to download again.
         console.log(`Reusing existing download of ${packageName}.${packageVersion}`);
         return packageOutputPath;
     }
 
-    let nugetArgs = [];
-    nugetArgs.push(nugetCliPath, 'install');
-    nugetArgs.push(packageName);
-    nugetArgs.push('-Version', packageVersion);
-    nugetArgs.push('-OutputDirectory', nugetTempPath);
-    nugetArgs.push('-ConfigFile',path.join(rootPath, 'NuGet.config'));
-    // We don't need any of the package's dependencies since we're just consuming the executables.
-    nugetArgs.push('-DependencyVersion', 'Ignore');
+    let dotnetArgs = [ 'restore', path.join(rootPath, 'server'), `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}` ];
 
-    let command = nugetArgs.join(" ");
-    console.log(command);
-    const { stdout } = await exec(nugetArgs.join(" "));
-    console.log(`stdout: ${stdout}`);
+    let process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
+    await new Promise( (resolve) => {
+        process.on('exit', (exitCode, signal) => {
+            if (exitCode !== 0) {
+                throw new Error(`Failed to download nuget package ${packageName}.${packageVersion}`);
+            }
+            resolve(undefined);
+        });
+    });
 
     if (!fs.existsSync(packageOutputPath)) {
         throw new Error(`Failed to find downloaded package at ${packageOutputPath}`);
@@ -180,45 +176,41 @@ async function acquireNugetPackage(packageName: string, packageVersion: string):
     return packageOutputPath;
 }
 
-async function acquireNugetCli() : Promise<string> {
-    const nugetCliPath = path.join(nugetTempPath, 'nuget.exe');
-    if (fs.existsSync(nugetCliPath)) {
-        return nugetCliPath;
-    }
-
-    let eventStream = new EventStream();
-    let provider = () => new NetworkSettings('', true);
-    let buffer = await DownloadFile('NuGet CLI', eventStream, provider, 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe');
-    fs.mkdirSync(nugetTempPath, { recursive: true });
-    fs.writeFileSync(nugetCliPath, buffer, { mode: 0o755 });
-
-    return nugetCliPath;
-}
-
 async function doPackageOffline() {
 
-    const packageJSON = getPackageJSON();
+    // Set the package version using git versioning.
+    const versionInfo = await nbgv.getVersion();
+    console.log(versionInfo.npmPackageVersion);
+    await nbgv.setPackageVersion();
 
-    for (let p of platformSpecificPackages) {
-        try {
-            if (process.platform === 'win32' && !p.rid.startsWith('win')) {
-                console.warn(`Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`);
-                continue;
+    try {
+        // Now that we've updated the version, get the package.json.
+        const packageJSON = getPackageJSON();
+
+        for (let p of platformSpecificPackages) {
+            try {
+                if (process.platform === 'win32' && !p.rid.startsWith('win')) {
+                    console.warn(`Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`);
+                    continue;
+                }
+
+                await buildVsix(packageJSON, packedVsixOutputRoot, p.vsceTarget, p.platformInfo);
             }
+            catch (err) {
+                const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
+                // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
+                // stack trace of this line. So that seperates the two stack traces.
+                throw Error(`Failed to create package ${p.vsceTarget}. ${message}\n---`);
+            }
+        }
 
-            await buildVsix(packageJSON, packedVsixOutputRoot, p.vsceTarget, p.platformInfo);
-        }
-        catch (err) {
-            const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
-            // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
-            // stack trace of this line. So that seperates the two stack traces.
-            throw Error(`Failed to create package ${p.vsceTarget}. ${message}\n---`);
-        }
+        // Also output the platform neutral VSIX using the platform neutral server bits we created before.
+        await buildVsix(packageJSON, packedVsixOutputRoot);
     }
-
-    // Also output the platform neutral VSIX using the platform neutral server bits we created before.
-    await buildVsix(packageJSON, packedVsixOutputRoot);
-
+    finally {
+        // Reset package version to the placeholder value.
+        await nbgv.resetPackageVersionPlaceholder();
+    }
 }
 
 async function cleanAsync(deleteVsix: boolean) {

@@ -3,24 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as cp from 'child_process';
+import * as vscode from 'vscode';
 import { registerCommands } from './commands';
 import { UriConverter } from './uriConverter';
 
 import {
-    LanguageClient,
+    DidChangeTextDocumentNotification, DidChangeTextDocumentParams, DidCloseTextDocumentNotification, DidCloseTextDocumentParams, DidOpenTextDocumentNotification, DidOpenTextDocumentParams, LanguageClient,
     LanguageClientOptions,
-    ServerOptions,
-    State,
-    Trace,
+    ServerOptions, State,
+    Trace
 } from 'vscode-languageclient/node';
-import { PlatformInformation } from '../shared/platform';
+import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfoHandler';
 import { DotnetResolver } from '../shared/DotnetResolver';
 import OptionProvider from '../shared/observers/OptionProvider';
 import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
+import { PlatformInformation } from '../shared/platform';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -29,6 +29,14 @@ let _traceChannel: vscode.OutputChannel;
 const greenExtensionId = "ms-dotnettools.visual-studio-green";
 
 export class RoslynLanguageServer {
+
+    public static readonly roslynDidOpenCommand: string = 'roslyn.openRazorCSharp';
+    public static readonly roslynDidChangeCommand: string = 'roslyn.changeRazorCSharp';
+    public static readonly roslynDidCloseCommand: string = 'roslyn.closeRazorCSharp';
+
+    private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
+    private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
+
     /**
      * The timeout for stopping the language server (in ms).
      */
@@ -49,7 +57,7 @@ export class RoslynLanguageServer {
         // subscribe to extension change events so that we can get notified if green is added/removed later.
         this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
             let vsGreenExtension = vscode.extensions.getExtension(greenExtensionId);
-            
+
             if (this._wasActivatedWithGreen === undefined) {
                 // Haven't activated yet.
                 return;
@@ -62,7 +70,7 @@ export class RoslynLanguageServer {
                 // Offer a prompt to restart the server to use green.
                 _channel.appendLine(`Detected new installation of ${greenExtensionId}`);
                 let message = `Detected installation of ${greenExtensionId}. Would you like to relaunch the language server for added features?`;
-                ShowInformationMessage(vscode, message, { title , command  });
+                ShowInformationMessage(vscode, message, { title, command });
             } else {
                 // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
                 // which will automatically restart this extension too.
@@ -75,7 +83,7 @@ export class RoslynLanguageServer {
      */
     public async start(): Promise<void> {
         const dotnetResolver = new DotnetResolver(this.platformInfo);
-    
+
         let options = this.optionProvider.GetLatestOptions();
         let resolvedDotnet = await dotnetResolver.getHostExecutableInfo(options);
         _channel.appendLine("Dotnet version: " + resolvedDotnet.version);
@@ -86,7 +94,7 @@ export class RoslynLanguageServer {
         if (solutionPath) {
             _channel.appendLine(`Found solution ${solutionPath}`);
         }
-        
+
         let logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = Trace.fromString(logLevel);
 
@@ -94,10 +102,12 @@ export class RoslynLanguageServer {
             return await this.startServer(solutionPath, logLevel);
         };
 
+        let documentSelector = options.languageServerOptions.documentSelector;
+
         // Options to control the language client
         let clientOptions: LanguageClientOptions = {
             // Register the server for plain csharp documents
-            documentSelector: ['csharp'],
+            documentSelector: documentSelector,
             synchronize: {
                 // Notify the server about file changes to '.clientrc files contain in the workspace
                 fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*')
@@ -137,6 +147,9 @@ export class RoslynLanguageServer {
 
         // Start the client. This will also launch the server
         this._languageClient.start();
+
+        // Register Razor dynamic file info handling
+        this.registerRazor(this._languageClient);
     }
 
     public async stop(): Promise<void> {
@@ -155,14 +168,13 @@ export class RoslynLanguageServer {
         await this.start();
     }
 
-    private async startServer(solutionPath: vscode.Uri | undefined, logLevel: string | undefined) : Promise<cp.ChildProcess> {
+    private async startServer(solutionPath: vscode.Uri | undefined, logLevel: string | undefined): Promise<cp.ChildProcess> {
         let clientRoot = __dirname;
 
         let serverPath = this.optionProvider.GetLatestOptions().commonOptions.serverPath;
         if (!serverPath) {
             // Option not set, use the path from the extension.
-            const fileExtension = this.platformInfo.isWindows() ? '.exe' : '';
-            serverPath = path.join(clientRoot, '..', '.roslyn', `Microsoft.CodeAnalysis.LanguageServer${fileExtension}`);
+            serverPath = path.join(clientRoot, '..', '.roslyn', this.getServerFileName());
         }
 
         if (!fs.existsSync(serverPath)) {
@@ -175,16 +187,15 @@ export class RoslynLanguageServer {
         let vsGreenExports = await this.waitForGreenActivationAndGetExports();
         let brokeredServicePipeName = await this.getBrokeredServicePipeName(vsGreenExports);
         let starredCompletionComponentPath = this.getStarredCompletionComponentPath(vsGreenExports);
-    
-        let args: string[] = [ ];
 
-        if (this.optionProvider.GetLatestOptions().commonOptions.waitForDebugger)
-        {
+        let args: string[] = [];
+
+        let options = this.optionProvider.GetLatestOptions();
+        if (options.commonOptions.waitForDebugger) {
             args.push("--debug");
         }
-    
-        if (logLevel)
-        {
+
+        if (logLevel) {
             args.push("--logLevel", logLevel);
         }
 
@@ -202,9 +213,58 @@ export class RoslynLanguageServer {
         }
 
         _channel.appendLine(`Starting server at ${serverPath}`);
-    
-        let childProcess = cp.spawn(serverPath, args);
+
+        let childProcess: cp.ChildProcessWithoutNullStreams;
+        if (serverPath.endsWith('.dll')) {
+            // If we were given a path to a dll, launch that via dotnet.
+            const argsWithPath = [serverPath].concat(args);
+            childProcess = cp.spawn('dotnet', argsWithPath);
+        } else {
+            // Otherwise assume we were given a path to an executable.
+            childProcess = cp.spawn(serverPath, args);
+        }
+
         return childProcess;
+    }
+
+    private registerRazor(client: LanguageClient) {
+        // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
+        // a command.
+        client.onRequest(
+            RoslynLanguageServer.provideRazorDynamicFileInfoMethodName,
+            async request => vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request));
+        client.onNotification(
+            RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
+            async notification => vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification));
+
+        // Razor will call into us (via command) for generated file didOpen/didChange/didClose notifications. We'll then forward these
+        // notifications along to Roslyn.
+        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidOpenCommand, (notification: DidOpenTextDocumentParams) => {
+            client.sendNotification(DidOpenTextDocumentNotification.method, notification);
+        });
+        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidChangeCommand, (notification: DidChangeTextDocumentParams) => {
+            client.sendNotification(DidChangeTextDocumentNotification.method, notification);
+        });
+        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidCloseCommand, (notification: DidCloseTextDocumentParams) => {
+            client.sendNotification(DidCloseTextDocumentNotification.method, notification);
+        });
+    }
+
+    private getServerFileName() {
+        const serverFileName = 'Microsoft.CodeAnalysis.LanguageServer';
+        let extension = '';
+        if (this.platformInfo.isWindows()) {
+            extension = '.exe';
+        }
+
+        if (this.platformInfo.isMacOS()) {
+            // MacOS executables must be signed with codesign.  Currently all Roslyn server executables are built on windows
+            // and therefore dotnet publish does not automatically sign them.
+            // Tracking bug - https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
+            extension = '.dll';
+        }
+
+        return `${serverFileName}${extension}`;
     }
 
     private async waitForGreenActivationAndGetExports(): Promise<any | undefined> {
@@ -215,7 +275,7 @@ export class RoslynLanguageServer {
             this._wasActivatedWithGreen = false;
             return undefined;
         }
-    
+
         _channel.appendLine("Activating Blue + Green...");
         this._wasActivatedWithGreen = true;
         return await vsGreenExtension.activate();
@@ -232,7 +292,7 @@ export class RoslynLanguageServer {
     }
 
     private getStarredCompletionComponentPath(vsGreenExports: any | undefined): string | undefined {
-        if (!vsGreenExports || !vsGreenExports.components || 
+        if (!vsGreenExports || !vsGreenExports.components ||
             !vsGreenExports.components["@vsintellicode/starred-suggestions-csharp"]) {
             return undefined;
         }

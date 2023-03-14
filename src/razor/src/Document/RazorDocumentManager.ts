@@ -4,11 +4,22 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as vscode from 'vscode';
+import {
+    DidChangeTextDocumentParams,
+    DidOpenTextDocumentParams,
+    Position,
+    Range,
+    TextDocumentContentChangeEvent,
+    TextDocumentItem,
+    VersionedTextDocumentIdentifier
+} from 'vscode-languageclient/node';
+import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
 import { CSharpProjectedDocument } from '../CSharp/CSharpProjectedDocument';
 import { HtmlProjectedDocument } from '../Html/HtmlProjectedDocument';
 import { RazorLanguage } from '../RazorLanguage';
 import { RazorLanguageServerClient } from '../RazorLanguageServerClient';
 import { RazorLogger } from '../RazorLogger';
+import { ServerTextSpan } from '../RPC/ServerTextSpan';
 import { UpdateBufferRequest } from '../RPC/UpdateBufferRequest';
 import { getUriPath } from '../UriPaths';
 import { IRazorDocument } from './IRazorDocument';
@@ -19,6 +30,7 @@ import { createDocument } from './RazorDocumentFactory';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     private readonly razorDocuments: { [hostDocumentPath: string]: IRazorDocument } = {};
+    private readonly openRazorDocuments = new Set<string>();
     private onChangeEmitter = new vscode.EventEmitter<IRazorDocumentChangeEvent>();
 
     constructor(
@@ -51,6 +63,26 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
         const activeDocument = await this.getDocument(vscode.window.activeTextEditor.document.uri);
         return activeDocument;
+    }
+
+    // Returns true if a textDocument/didOpen notification has been sent
+    // to the C# workspace for a given document and if the document is
+    // currently open.
+    public isRazorDocumentOpenInCSharpWorkspace(razorUri: vscode.Uri) {
+        const path = getUriPath(razorUri);
+        return this.openRazorDocuments.has(path);
+    }
+
+    // Indicates that a given document has been opened in the C# workspace.
+    public didOpenRazorCSharpDocument(razorUri: vscode.Uri) {
+        const path = getUriPath(razorUri);
+        this.openRazorDocuments.add(path);
+    }
+
+    // Indicates that a given document has been closed in the C# workspace.
+    public didCloseRazorCSharpDocument(razorUri: vscode.Uri) {
+        const path = getUriPath(razorUri);
+        this.openRazorDocuments.delete(path);
     }
 
     public async initialize() {
@@ -193,6 +225,47 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             const csharpProjectedDocument = projectedDocument as CSharpProjectedDocument;
             csharpProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
+            const csharpProjectedDocumentPath = csharpProjectedDocument.uri.path;
+
+            // Since the Razor language server starts before Roslyn's, there's a chance they haven't sent us a dynamic
+            // file info request yet. If they haven't, we'll kick off our own while taking care to not send a duplicate
+            // request later on.
+            if (!this.isRazorDocumentOpenInCSharpWorkspace(hostDocumentUri)) {
+                const csharpDoc: TextDocumentItem = {
+                    uri: csharpProjectedDocumentPath,
+                    languageId: RazorLanguage.id,
+                    version: csharpProjectedDocument.projectedDocumentSyncVersion,
+                    text: ''
+                };
+
+                const didOpenRequest: DidOpenTextDocumentParams = {
+                    textDocument: csharpDoc
+                };
+
+                vscode.commands.executeCommand(RoslynLanguageServer.roslynDidOpenCommand, didOpenRequest);
+                this.didOpenRazorCSharpDocument(hostDocumentUri);
+            }
+
+            // Create change events for our didChange notifications
+            const contentChangeEvents = new Array<TextDocumentContentChangeEvent>();
+            for (const change of updateBufferRequest.changes) {
+                const range = RazorDocumentManager.spanToRange(csharpProjectedDocument.getContent(), change.span, this.logger);
+                const contentChangeEvent: TextDocumentContentChangeEvent = {
+                    range: range,
+                    text: change.newText
+                };
+
+                contentChangeEvents.push(contentChangeEvent);
+            }
+
+            // Send didChange notification to Roslyn
+            const csharpTextDocumentIdentifier = VersionedTextDocumentIdentifier.create(csharpProjectedDocumentPath, csharpProjectedDocument.projectedDocumentSyncVersion);
+            const didChangeNotification: DidChangeTextDocumentParams = {
+                textDocument: csharpTextDocumentIdentifier,
+                contentChanges: contentChangeEvents
+            };
+
+            vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification);
             this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
         } else {
             this.logger.logWarning('Failed to update the C# document buffer. This is unexpected and may result in incorrect C# interactions.');
@@ -238,7 +311,57 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private async ensureProjectedDocumentsOpen(document: IRazorDocument) {
+        // vscode.workspace.openTextDocument may send a textDocument/didOpen
+        // request to the C# language server. We need to keep track of 
+        // this to make sure we don't send a duplicate request later on.
+        const razorUri = vscode.Uri.parse('file:' + document.path, true);
+        if (!this.isRazorDocumentOpenInCSharpWorkspace(razorUri)) {
+            this.didOpenRazorCSharpDocument(razorUri);
+        }
+
         await vscode.workspace.openTextDocument(document.csharpDocument.uri);
         await vscode.workspace.openTextDocument(document.htmlDocument.uri);
+    }
+
+    private static spanToRange(sourceText: string, textSpan: ServerTextSpan, logger: RazorLogger) {
+        let lineIndex = 0;
+        let characterIndex = 0;
+
+        let startPosition: Position | undefined = undefined;
+        let endPosition: Position | undefined = undefined;
+
+        for (let index = 0; index < sourceText.length; index++) {
+            // If we hit a line break, skip over it and incremement the line count, taking into account '\r\n' vs. '\n' line endings
+            if (sourceText[index] == '\n') {
+                lineIndex++;
+                characterIndex = 0;
+                index++;
+            } else if (index + 1 < sourceText.length && sourceText[index] == '\r' && sourceText[index + 1] == '\n') {
+                lineIndex++;
+                characterIndex = 0;
+                index += 2;
+            }
+
+            // Start position
+            if (startPosition == undefined && index == textSpan.start) {
+                startPosition = Position.create(lineIndex, characterIndex);
+            }
+
+            // End position
+            if (index >= textSpan.start + textSpan.length) {
+                endPosition = Position.create(lineIndex, characterIndex);
+                return Range.create(startPosition as Position, endPosition);
+            }
+
+            characterIndex++;
+        }
+        
+        // If we have a start position and no end position, return the length of the document.
+        if (startPosition != undefined) {
+            endPosition = Position.create(lineIndex, characterIndex);
+            return Range.create(startPosition as Position, endPosition);
+        }
+
+        logger.logWarning(`Could not convert span to range for span ${textSpan}.`);
     }
 }
