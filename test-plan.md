@@ -8,6 +8,11 @@
 
 See [OmniSharp Options](https://github.com/OmniSharp/omnisharp-vscode/blob/master/test-plan.md#omnisharpusemodernnet-all-platforms) for more details.
 
+### Validation
+
+#### Platforms
+All the validations below should be performed on both Windows and at least one Unix platform (MacOS, Linux).  These can be done on x64 versions unless there are ARM specific changes to validate.
+
 #### Opening projects
 When you open a directory in VS Code, the C# extension should look for a .csproj, .sln, or .slnf file in that directory and use "OmniSharp" to load it. If a .cs file is present and no .csproj, .sln, or .slnf file are present, Omnisharp should start but the intellisense should only appear when a change is made to the file.
 If you look in "Output > Omnisharp Log" a bunch of information should be printed about what copy of MSBuild was used and what projects were load
@@ -241,6 +246,12 @@ To setup a test project to verify on you can do:
 ##### C# Diagnostics
 * When no changes have been performed on `Pages/Index.cshtml`, there are 0 errors.
 * Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file.
+
+##### HTML Document Color and Color Presentation
+* Specifying a color name should display the color itself. Hovering over the color should display a color picker.
+```HTML
+<h1 style="background-color:blue"></h1>
+```
 
 ##### Debugging with blazorwasm debug adapter
 
