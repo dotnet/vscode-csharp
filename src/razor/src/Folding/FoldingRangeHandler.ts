@@ -38,13 +38,16 @@ export class FoldingRangeHandler {
                 return this.emptyFoldingRangeReponse;
             }
 
-            const virtualCSharpUri = razorDocument.csharpDocument.uri;
             const virtualHtmlUri = razorDocument.htmlDocument.uri;
+            const virtualCSharpUri = razorDocument.csharpDocument.uri;
 
-            const csharpFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>('vscode.executeFoldingRangeProvider', virtualCSharpUri);
             const htmlFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>('vscode.executeFoldingRangeProvider', virtualHtmlUri);
+            const csharpFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>('vscode.executeFoldingRangeProvider', virtualCSharpUri);
 
-            const response = new SerializableFoldingRangeResponse(this.convertFoldingRanges(htmlFoldingRanges), this.convertFoldingRanges(csharpFoldingRanges));
+            const convertedHtmlFoldingRanges = htmlFoldingRanges === undefined ? new Array<FoldingRange>() : this.convertFoldingRanges(htmlFoldingRanges);
+            const convertedCSharpFoldingRanges = csharpFoldingRanges === undefined ? new Array<FoldingRange>() : this.convertFoldingRanges(csharpFoldingRanges);
+
+            const response = new SerializableFoldingRangeResponse(convertedHtmlFoldingRanges, convertedCSharpFoldingRanges);
             return response;
         } catch (error) {
             this.logger.logWarning(`${FoldingRangeHandler.provideFoldingRange} failed with ${error}`);

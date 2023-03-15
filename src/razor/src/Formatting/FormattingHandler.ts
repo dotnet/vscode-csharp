@@ -26,7 +26,7 @@ export class FormattingHandler {
         // tslint:disable-next-line: no-floating-promises
         this.serverClient.onRequestWithParams<SerializableFormattingParams, SerializableFormattingResponse, any>(
             this.formattingRequestType,
-            async (request: SerializableFormattingParams, token: vscode.CancellationToken) => this.provideFormatting(request, token));
+            async (request, token) => this.provideFormatting(request, token));
     }
 
     private async provideFormatting(
@@ -46,8 +46,24 @@ export class FormattingHandler {
                 virtualHtmlUri,
                 formattingParams.options);
 
+            if (textEdits === undefined) {
+                return this.emptyFormattingResponse;
+            }
+
+            const htmlDocText = razorDocument.htmlDocument.getContent();
+            const zeroBasedLineCount = this.countLines(htmlDocText);
             const serializableTextEdits = Array<SerializableTextEdit>();
-            for (const textEdit of textEdits) {
+            for (let textEdit of textEdits) {
+                // The below workaround is needed due to a bug on the HTML side where
+                // they'll sometimes send us an end position that exceeds the length
+                // of the document. Tracked by https://github.com/microsoft/vscode/issues/175298.
+                if (textEdit.range.end.line > zeroBasedLineCount) {
+                    const lastLineLength = this.getLastLineLength(htmlDocText);
+                    const updatedEndPosition = new vscode.Position(zeroBasedLineCount, lastLineLength);
+                    const updatedRange = new vscode.Range(textEdit.range.start, updatedEndPosition);
+                    textEdit = new vscode.TextEdit(updatedRange, textEdit.newText);
+                }
+
                 const serializableTextEdit = convertTextEditToSerializable(textEdit);
                 serializableTextEdits.push(serializableTextEdit);
             }
@@ -58,5 +74,33 @@ export class FormattingHandler {
         }
 
         return this.emptyFormattingResponse;
+    }
+
+    private countLines(text: string) {
+        let lineCount = 0;
+        for (const i of text) {
+            if (i === '\n') {
+                lineCount++;
+            }
+        }
+
+        return lineCount;
+    }
+
+    private getLastLineLength(text: string) {
+        let currentLineLength = 0;
+        for (let i = 0; i < text.length; i++) {
+            // Take into account different line ending types ('\r\n' vs. '\n')
+            if (i + 1 < text.length && text[i] === '\r' && text[i + 1] === '\n') {
+                currentLineLength = 0;
+                i++;
+            } else if (text[i] === '\n') {
+                currentLineLength = 0;
+            } else {
+                currentLineLength++;
+            }
+        }
+
+        return currentLineLength;
     }
 }
