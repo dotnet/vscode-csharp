@@ -24,6 +24,7 @@ import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 import path = require('path');
+const argv = require('yargs').argv;
 
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
 export const platformSpecificPackages = [
@@ -158,6 +159,9 @@ async function acquireNugetPackage(packageName: string, packageVersion: string):
     }
 
     let dotnetArgs = [ 'restore', path.join(rootPath, 'server'), `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}` ];
+    if (argv.interactive) {
+        dotnetArgs.push('--interactive');
+    }
 
     let process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
     await new Promise( (resolve) => {
