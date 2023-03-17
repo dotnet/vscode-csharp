@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { isDeepStrictEqual } from 'util';
 import { DocumentSelector } from 'vscode-languageserver-protocol';
 import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 
@@ -172,13 +173,16 @@ export class Options {
     }
 
     public static shouldOmnisharpOptionChangeTriggerReload(oldOptions: Options, newOptions: Options): boolean {
-        return CommonOptionsThatTriggerReload.some(key => oldOptions.commonOptions[key] !== newOptions.commonOptions[key]) ||
-            OmnisharpOptionsThatTriggerReload.some(key => oldOptions.omnisharpOptions[key] !== newOptions.omnisharpOptions[key]);
+        const commonOptionsChanged = CommonOptionsThatTriggerReload.some(key => !isDeepStrictEqual(oldOptions.commonOptions[key], newOptions.commonOptions[key]));
+        const omnisharpOptionsChanged = OmnisharpOptionsThatTriggerReload.some(key => !isDeepStrictEqual(oldOptions.omnisharpOptions[key], newOptions.omnisharpOptions[key]));
+        return commonOptionsChanged || omnisharpOptionsChanged;
     }
 
     public static shouldLanguageServerOptionChangeTriggerReload(oldOptions: Options, newOptions: Options): boolean {
-        return CommonOptionsThatTriggerReload.some(key => oldOptions.commonOptions[key] !== newOptions.commonOptions[key]) ||
-            LanguageServerOptionsThatTriggerReload.some(key => oldOptions.languageServerOptions[key] !== newOptions.languageServerOptions[key]);
+        const commonOptionsChanged = CommonOptionsThatTriggerReload.some(key => !isDeepStrictEqual(oldOptions.commonOptions[key], newOptions.commonOptions[key]));
+        const languageServerOptionsChanged = LanguageServerOptionsThatTriggerReload.some(key => !isDeepStrictEqual(oldOptions.languageServerOptions[key], newOptions.languageServerOptions[key]));
+        return commonOptionsChanged || languageServerOptionsChanged;
+            
     }
 
     public static getExcludedPaths(vscode: vscode, includeSearchExcludes: boolean = false): string[] {
