@@ -30,10 +30,13 @@ const greenExtensionId = "ms-dotnettools.visual-studio-green";
 
 export class RoslynLanguageServer {
 
+    // These are commands that are invoked by the Razor extension, and are used to send LSP requests to the Roslyn LSP server
+    // to update the text contents of Razor generated files.
     public static readonly roslynDidOpenCommand: string = 'roslyn.openRazorCSharp';
     public static readonly roslynDidChangeCommand: string = 'roslyn.changeRazorCSharp';
     public static readonly roslynDidCloseCommand: string = 'roslyn.closeRazorCSharp';
 
+    // These are notifications we will get from the LSP server and will forward to the Razor extension.
     private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
     private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
 

@@ -4,8 +4,8 @@
 
 First install:
 
-* Node.js (8.11.1 or later)
-* Npm (5.6.0 or later)
+* Node.js ([v16.16 LTS](https://nodejs.org/en/blog/release/v16.16.0) is recommended.  Later versions will fail to build).
+* Npm (The version shipped with node is fine, for example for v16.16.0 it would be 8.19.2)
 * .NET 7.0 SDK (dotnet should be on your path)
 
 ### Build and run the extension
@@ -15,6 +15,10 @@ To run and develop the extension do the following:
 * Run `npm i`
 * Run `npm i -g gulp`
 * Run `gulp roslyn:languageserver` (this will download the Roslyn language server executables as specified by the version in the [package.json](package.json))
+  * A common error you may run into is `NU1301: Unable to load the service index for source https://devdiv.pkgs.visualstudio.com/_packaging/VS/nuget/v3/index.json`. 
+  To resolve this error, try running `dotnet restore --interactive server/ /p:MicrosoftCodeAnalysisLanguageServerVersion=version_number` with `version_number` replaced with the version number found in [package.json](package.json) inside the `defaults` section under the `roslyn` key.
+  If this does not work, install [azure artifacts nuget credential provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) then rerun the previous command.
+* _Optional:_ run `gulp razor:languageserver` to install the Razor language server.
 * _Optional:_ run `gulp razor:languageserver` to install the Razor language server.
 * Open in Visual Studio Code (`code .`)
 * _Optional:_ run `npm run watch`, make code changes

@@ -12,10 +12,12 @@ import {
     TextDocumentItem
 } from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
+import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { RazorLanguage } from '../RazorLanguage';
 import { RazorLogger } from '../RazorLogger';
-import { ProvideDynamicFileParams as ProvideDynamicFileParams } from './ProvideDynamicFileParams';
+import { ProvideDynamicFileParams } from './ProvideDynamicFileParams';
+import { ProvideDynamicFileResponse } from './ProvideDynamicFileResponse';
 import { RemoveDynamicFileParams } from './RemoveDynamicFileParams';
 
 // Handles Razor generated doc communication between the Roslyn workspace and Razor.
@@ -40,7 +42,7 @@ export class DynamicFileInfoHandler {
     // This method, given Razor document URIs:
     // 1) Returns associated generated doc URIs
     // 2) Sends didOpen requests to Roslyn for each generated doc, which includes doc content
-    private async provideDynamicFileInfo(request: ProvideDynamicFileParams) {
+    private async provideDynamicFileInfo(request: ProvideDynamicFileParams): Promise<ProvideDynamicFileResponse> {
         const uris = request.razorFiles;
         const virtualUris = new Array<DocumentUri | null>();
         try {
@@ -52,7 +54,7 @@ export class DynamicFileInfoHandler {
                     this.logger.logWarning(`Could not find Razor document ${razorDocumentUri}; adding null as a placeholder in URI array.`);
                 } else {
                     // Retrieve generated doc URIs for each Razor URI we are given
-                    let virtualCsharpUri = razorDocument.csharpDocument.uri.path;
+                    let virtualCsharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
                     virtualUris.push(virtualCsharpUri);
 
                     // Send didOpen request to Roslyn which contains generated doc content
@@ -77,7 +79,7 @@ export class DynamicFileInfoHandler {
             this.logger.logWarning(`${DynamicFileInfoHandler.provideDynamicFileInfoCommand} failed with ${error}`);
         }
 
-        return virtualUris;
+        return new ProvideDynamicFileResponse(virtualUris);
     }
 
     private async removeDynamicFileInfo(request: RemoveDynamicFileParams) {
