@@ -115,7 +115,7 @@ function showDotnetToolsWarning(message: string): void {
                     let dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
                     vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
                 } else if (value === goToSettingsMessage) {
-                    vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+                    vscode.commands.executeCommand('workbench.action.openSettings', 'csharp.suppressDotnetInstallWarning');
                 } else if (value == helpMessage) {
                     let helpURL = 'https://aka.ms/VSCode-CS-DotnetNotFoundHelp';
                     vscode.env.openExternal(vscode.Uri.parse(helpURL));

@@ -36,17 +36,17 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', undefined, 'OmniSharp server is running');
                 break;
             case EventType.DownloadStart:
-                this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${(<DownloadStart>event).packageDescription}...' `);
+                this.SetAndShowStatusBar("$(cloud-download) Downloading packages", undefined, undefined, `Downloading package '${(<DownloadStart>event).packageDescription}...' `);
                 break;
             case EventType.InstallationStart:
-                this.SetAndShowStatusBar("$(desktop-download) Installing packages...", '', '', `Installing package '${(<InstallationStart>event).packageDescription}'`);
+                this.SetAndShowStatusBar("$(desktop-download) Installing packages...", undefined, undefined, `Installing package '${(<InstallationStart>event).packageDescription}'`);
                 break;
             case EventType.InstallationSuccess:
                 this.ResetAndHideStatusBar();
                 break;
             case EventType.DownloadProgress:
                 let progressEvent = <DownloadProgress>event;
-                this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${progressEvent.packageDescription}'... ${progressEvent.downloadPercentage}%`);
+                this.SetAndShowStatusBar("$(cloud-download) Downloading packages", undefined, undefined, `Downloading package '${progressEvent.packageDescription}'... ${progressEvent.downloadPercentage}%`);
                 break;
         }
     }

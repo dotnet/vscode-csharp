@@ -27,7 +27,7 @@ export async function validateRequirements(options: Options): Promise<boolean> {
             let dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
             vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
         } else if (downloadSdk === PromptResult.No) {
-            vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+            vscode.commands.executeCommand('workbench.action.openSettings', 'omnisharp.dotnetPath');
         }
 
         return false;
@@ -42,7 +42,7 @@ export async function validateRequirements(options: Options): Promise<boolean> {
             let monoURL = 'https://www.mono-project.com/download/stable/';
             vscode.env.openExternal(vscode.Uri.parse(monoURL));
         } else if (downloadMono === PromptResult.No) {
-            vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+            vscode.commands.executeCommand('workbench.action.openSettings', 'omnisharp.monoPath');
         }
 
         return false;

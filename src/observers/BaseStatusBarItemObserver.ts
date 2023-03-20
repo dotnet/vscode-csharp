@@ -11,7 +11,7 @@ export abstract class BaseStatusBarItemObserver {
     constructor(private statusBarItem: StatusBarItem) {
     }
 
-    public SetAndShowStatusBar(text: string, command: string, color?: string, tooltip?: string) {
+    public SetAndShowStatusBar(text: string, command?: string, color?: string, tooltip?: string) {
         this.statusBarItem.text = text;
         this.statusBarItem.command = command;
         this.statusBarItem.color = color;
