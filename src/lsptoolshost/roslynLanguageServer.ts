@@ -106,7 +106,7 @@ export class RoslynLanguageServer {
         }
 
         let logLevel = options.languageServerOptions.logLevel;
-        const languageClientTraceLevel = Trace.fromString(logLevel);
+        const languageClientTraceLevel = RoslynLanguageServer.GetTraceLevel(logLevel);
 
         let serverOptions: ServerOptions = async () => {
             return await this.startServer(solutionPath, logLevel);
@@ -289,6 +289,27 @@ export class RoslynLanguageServer {
 
         let brokeredServicePipeName = await vsGreenExports.getBrokeredServiceServerPipeName();
         return brokeredServicePipeName;
+    }
+
+    private static GetTraceLevel(logLevel: string): Trace {
+        switch (logLevel) {
+            case "Trace":
+                return Trace.Verbose;
+            case "Debug":
+                return Trace.Messages;
+            case "Information":
+                return Trace.Off;
+            case "Warning":
+                return Trace.Off;
+            case "Error":
+                return Trace.Off;
+            case "Critical":
+                return Trace.Off;
+            case "None":
+                return Trace.Off;
+            default:
+                throw new Error(`Invalid log level ${logLevel}`);
+        }
     }
 }
 

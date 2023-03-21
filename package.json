@@ -35,7 +35,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.6.0-3.23166.12",
+    "roslyn": "4.6.0-3.23170.12",
     "omniSharp": "1.39.4",
     "razor": "7.0.0-preview.23067.5"
   },
@@ -697,12 +697,15 @@
           "scope": "window",
           "type": "string",
           "enum": [
-            "off",
-            "minimal",
-            "messages",
-            "verbose"
+            "Trace",
+            "Debug",
+            "Information",
+            "Warning",
+            "Error",
+            "Critical",
+            "None"
           ],
-          "default": "minimal",
+          "default": "Information",
           "description": "Sets the logging level for the language server"
         },
         "dotnet.server.useOmnisharp": {
