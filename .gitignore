@@ -27,5 +27,3 @@ coverage/
 
 \.DS_Store
 vsix/
-
-\.vscodeignore

@@ -8,18 +8,11 @@ import { commandLineOptions } from './commandLineArguments';
 
 export const rootPath = path.resolve(__dirname, '..');
 
-export const vscodeignorePath = path.join(rootPath, '.vscodeignore');
-export const offlineVscodeignorePath = path.join(rootPath, 'offline.vscodeignore');
-export const onlineVscodeignorePath = path.join(rootPath, 'release.vscodeignore');
-
-export const nodeModulesPath = path.join(rootPath, 'node_modules');
+const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, 'vsce', 'vsce');
 export const mochaPath = path.join(nodeModulesPath, 'mocha', 'bin', 'mocha');
 
-export const packageJsonPath = path.join(rootPath, "package.json");
-
 export const packedVsixOutputRoot = commandLineOptions.outputFolder || path.join(rootPath, "vsix");
-export const unpackedVsixPath = path.join(rootPath, "vsix");
 export const nugetTempPath = path.join(rootPath, "out", ".nuget");
 export const languageServerDirectory = path.join(rootPath, ".roslyn");
 
