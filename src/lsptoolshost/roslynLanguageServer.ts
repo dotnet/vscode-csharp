@@ -25,6 +25,7 @@ import {
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { DotnetResolver } from '../shared/DotnetResolver';
+import { readConfigurations } from './configurationMiddleware';
 import OptionProvider from '../shared/observers/OptionProvider';
 import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfoHandler';
 import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
@@ -132,6 +133,11 @@ export class RoslynLanguageServer {
                 // So instead we decode the URI here before sending to the server.
                 code2Protocol: UriConverter.serialize,
                 protocol2Code: UriConverter.deserialize,
+            },
+            middleware: {
+                workspace: {
+                    configuration: (params) => readConfigurations(params),
+                }
             }
         };
 

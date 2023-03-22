@@ -728,6 +728,55 @@
           "scope": "window",
           "description": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\"."
         },
+        "dotnet.symbolSearch.searchReferenceAssemblies": {
+            "type": "boolean",
+            "default": true,
+            "description": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports."
+        },
+        "dotnet.implementType.insertionBehavior": {
+            "type": "string",
+            "enum": ["withOtherMembersOfTheSameKind", "atTheEnd"],
+            "default": "withOtherMembersOfTheSameKind",
+            "enumDescriptions": ["Place them with other members of the same kind.", "Place thme at the end."],
+            "description": "The insertion location of properties, events, and methods When implement interface or abstract class."
+        },
+        "dotnet.implementType.propertyGenerationBehavior": {
+            "type": "string",
+            "enum": ["preferThrowingProperties", "preferAutoProperties"],
+            "default": "preferThrowingProperties",
+            "enumDescriptions": ["Prefer throwing properties.", "Prefer auto properties."],
+            "description": "Generation behavior of properties when implement interface or abstract class."
+        },
+        "dotnet.completion.showNameCompletionSuggestions": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Perform automatic object name completion for the members that you have recently selected."
+        },
+        "dotnet.completion.provideRegexCompletions": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Show regular expressions in completion list."
+        },
+        "dotnet.quickInfo.showRemarksInQuickInfo": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Show remarks information when display symbol."
+        },
+        "dotnet.navigation.navigateToDecompiledSources": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Enable navigation to decomplied sources."
+        },
+        "dotnet.highlighting.highlightRelatedRegexComponents": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Highlight related regular expression components under cursor."
+        },
+        "dotnet.highlighting.highlightRelatedJsonComponents": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Highlight related JSON components under cursor."
+        },
         "csharp.format.enable": {
           "type": "boolean",
           "default": true,

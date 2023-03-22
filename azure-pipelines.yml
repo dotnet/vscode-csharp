@@ -27,9 +27,9 @@ stages:
         version: '7.0.100'
 
     - task: NodeTool@0
-      displayName: 'Install Node.js 15.x'
+      displayName: 'Install Node.js 16.x'
       inputs:
-        versionSpec: '15.x'
+        versionSpec: '16.x'
 
     - script: |
         npm ci
