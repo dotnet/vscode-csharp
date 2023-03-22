@@ -15,8 +15,12 @@ import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPac
 import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { DotnetDebugConfigurationProvider } from './debugConfigurationProvider';
 import { Options } from '../shared/options';
+import { RemoteAttachPicker } from '../features/processPicker';
+import CompositeDisposable from '../CompositeDisposable';
 
 export async function activate(thisExtension: vscode.Extension<CSharpExtensionExports>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, options: Options) {
+    let disposables = new CompositeDisposable();
+
     const debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
     if (!CoreClrDebugUtil.existsSync(debugUtil.debugAdapterDir())) {
@@ -31,11 +35,24 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
         completeDebuggerInstall(debugUtil, platformInformation, eventStream, options);
     }
 
+    // register process picker for attach for legacy configurations.
+    disposables.add(vscode.commands.registerCommand('csharp.listProcess', () => ""));
+    disposables.add(vscode.commands.registerCommand('csharp.listRemoteProcess', () => ""));
+
+    // List remote processes for docker extension.
+    // Change to return "" when https://github.com/microsoft/vscode/issues/110889 is resolved.
+    disposables.add(vscode.commands.registerCommand('csharp.listRemoteDockerProcess', async (args) => {
+        const attachItem = await RemoteAttachPicker.ShowAttachEntries(args, platformInformation);
+        return attachItem ? attachItem.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
+    }));
+
     const factory = new DebugAdapterExecutableFactory(debugUtil, platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath, options);
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('clr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
+    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
+    disposables.add(vscode.debug.registerDebugConfigurationProvider('clr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
+
+    context.subscriptions.push(disposables);
 }
 
 async function checkIsValidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
