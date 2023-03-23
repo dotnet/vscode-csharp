@@ -11,9 +11,24 @@ import { PlatformInformation } from '../shared/platform';
 import { hasDotnetDevCertsHttps, createSelfSignedCert, CertToolStatusCodes } from '../utils/DotnetDevCertsHttps';
 import { EventStream } from '../EventStream';
 import { DevCertCreationFailure, ShowChannel } from '../omnisharp/loggingEvents';
- 
+
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     constructor(public platformInformation: PlatformInformation, private readonly eventStream: EventStream, private options: Options) {}
+
+    public provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration[]> {
+        return [];
+    }
+
+    public resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration>
+    {
+        // Check to see if we are in the "Run and Debug" scenario.
+        if (Object.keys(debugConfiguration).length == 0)
+        {
+            // Return null to call into 'provideDebugConfigurations'
+            return null;
+        }
+        return debugConfiguration;
+    }
 
     public async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined>
     {
