@@ -1321,6 +1321,10 @@
       {
         "fileMatch": "global.json",
         "url": "http://json.schemastore.org/global"
+      },
+      {
+        "fileMatch": "launchSettings.json",
+        "url": "https://json.schemastore.org/launchsettings.json"
       }
     ],
     "commands": [
