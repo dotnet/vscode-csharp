@@ -5,7 +5,7 @@
 
 import {assert, expect} from 'chai';
 import {convertServerOptionNameToClientConfigurationName} from '../../../src/lsptoolshost/OptionNameConverter';
-import { readFileSync } from 'fs';
+import {readFileSync} from 'fs';
 
 const testData = [
     { serverOption: "csharp|symbol_search.dotnet_search_reference_assemblies", vsCodeConfiguration: "dotnet.symbolSearch.searchReferenceAssemblies", declareInPackageJson: true},
