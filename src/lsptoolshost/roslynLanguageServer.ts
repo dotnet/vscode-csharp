@@ -34,7 +34,7 @@ let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
-const greenExtensionId = "ms-dotnettools.visual-studio-green";
+const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
 
 export class RoslynLanguageServer {
 
@@ -55,32 +55,32 @@ export class RoslynLanguageServer {
     private _languageClient: LanguageClient | undefined;
 
     /**
-     * Flag indicating if green was installed the last time we activated.
+     * Flag indicating if C# Devkit was installed the last time we activated.
      * Used to determine if we need to restart the server on extension changes.
      */
-    private _wasActivatedWithGreen: boolean | undefined;
+    private _wasActivatedWithCSharpDevkit: boolean | undefined;
 
     constructor(
         private platformInfo: PlatformInformation,
         private optionProvider: OptionProvider,
         private context: vscode.ExtensionContext,
     ) {
-        // subscribe to extension change events so that we can get notified if green is added/removed later.
+        // subscribe to extension change events so that we can get notified if C# Devkit is added/removed later.
         this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
-            let vsGreenExtension = vscode.extensions.getExtension(greenExtensionId);
+            let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
 
-            if (this._wasActivatedWithGreen === undefined) {
+            if (this._wasActivatedWithCSharpDevkit === undefined) {
                 // Haven't activated yet.
                 return;
             }
 
             const title = 'Restart Language Server';
             const command = 'dotnet.restartServer';
-            if (vsGreenExtension && !this._wasActivatedWithGreen) {
-                // We previously started without green and its now installed.
-                // Offer a prompt to restart the server to use green.
-                _channel.appendLine(`Detected new installation of ${greenExtensionId}`);
-                let message = `Detected installation of ${greenExtensionId}. Would you like to relaunch the language server for added features?`;
+            if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
+                // We previously started without C# Devkit and its now installed.
+                // Offer a prompt to restart the server to use C# Devkit.
+                _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
+                let message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
                 ShowInformationMessage(vscode, message, { title, command });
             } else {
                 // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
@@ -197,10 +197,10 @@ export class RoslynLanguageServer {
             throw new Error(`Cannot find language server in path '${serverPath}''`);
         }
 
-        // Get the brokered service pipe name from green (if installed).
+        // Get the brokered service pipe name from C# Devkit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
-        // in our activation because Green depends on Blue activation completing.
-        let brokeredServicePipeName = await this.waitForGreenActivationAndGetPipeName();
+        // in our activation because C# Devkit depends on C# activation completing.
+        let brokeredServicePipeName = await this.waitForCSharpDevkitActivationAndGetPipeName();
 
         let args: string[] = [ ];
 
@@ -277,23 +277,23 @@ export class RoslynLanguageServer {
         return `${serverFileName}${extension}`;
     }
 
-    private async waitForGreenActivationAndGetPipeName(): Promise<string | undefined> {
-        let vsGreenExtension = vscode.extensions.getExtension(greenExtensionId);
-        if (!vsGreenExtension) {
-            // VS green is not installed - continue blue-only activation.
-            _channel.appendLine("Activating Blue standalone...");
-            this._wasActivatedWithGreen = false;
+    private async waitForCSharpDevkitActivationAndGetPipeName(): Promise<string | undefined> {
+        let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
+        if (!csharpDevkitExtension) {
+            // C# Devkit is not installed - continue C#-only activation.
+            _channel.appendLine("Activating C# standalone...");
+            this._wasActivatedWithCSharpDevkit = false;
             return undefined;
         }
 
-        _channel.appendLine("Activating Blue + Green...");
-        this._wasActivatedWithGreen = true;
-        let vsGreenExports = await vsGreenExtension.activate();
-        if (!('getBrokeredServiceServerPipeName' in vsGreenExports)) {
-            throw new Error("VS Green is installed but missing expected export getBrokeredServiceServerPipeName");
+        _channel.appendLine("Activating C# + Devkit...");
+        this._wasActivatedWithCSharpDevkit = true;
+        let csharpDevkitExports = await csharpDevkitExtension.activate();
+        if (!('getBrokeredServiceServerPipeName' in csharpDevkitExports)) {
+            throw new Error("C# Devkit is installed but missing expected export getBrokeredServiceServerPipeName");
         }
 
-        let brokeredServicePipeName = await vsGreenExports.getBrokeredServiceServerPipeName();
+        let brokeredServicePipeName = await csharpDevkitExports.getBrokeredServiceServerPipeName();
         return brokeredServicePipeName;
     }
 
