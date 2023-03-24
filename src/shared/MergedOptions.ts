@@ -19,13 +19,13 @@ const mergeOptions = [
     {omnisharpOption: "csharp.inlayHints.types.forImplicitVariableTypes", roslynOption: "csharp.inlineHints.enableInlineHintsForImplicitVariableTypes" },
     {omnisharpOption: "csharp.inlayHints.types.forLambdaParameterTypes", roslynOption: "csharp.inlineHints.enableInlineHintsForLambdaParameterTypes" },
     {omnisharpOption: "csharp.inlayHints.types.forImplicitObjectCreation", roslynOption: "csharp.inlineHints.enableInlineHintsForImplicitObjectCreation" },
-]
+];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {
     let configuration = vscode.workspace.getConfiguration();
     for (const {omnisharpOption, roslynOption} of mergeOptions) {
         if (configuration.has(omnisharpOption) && !configuration.has(roslynOption)) {
-            await MoveOptionsValue(omnisharpOption, roslynOption, configuration)
+            await MoveOptionsValue(omnisharpOption, roslynOption, configuration);
         }
     }
 }
