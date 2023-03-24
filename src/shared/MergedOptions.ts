@@ -5,7 +5,7 @@
 
 import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 
-
+// Option in the array should be identical to each other, except the name.
 const mergeOptions = [
     {omnisharpOption: "csharp.inlayHints.parameters.enabled", roslynOption: "dotnet.inlineHints.enableInlineHintsForParameters" },
     {omnisharpOption: "csharp.inlayHints.parameters.forLiteralParameters", roslynOption: "dotnet.inlineHints.enableInlineHintsForLiteralParameters" },
