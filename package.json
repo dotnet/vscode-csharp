@@ -1051,6 +1051,66 @@
           "default": true,
           "description": "Shows the OmniSharp log in the Output pane when OmniSharp reports an error."
         },
+        "dotnet.inlineHints.enableInlineHintsForParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Display inline parameter name hints"
+        },
+        "dotnet.inlineHints.enableInlineHintsForLiteralParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for literals"
+        },
+        "dotnet.inlineHints.enableInlineHintsForIndexerParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for indexers"
+        },
+        "dotnet.inlineHints.enableInlineHintsForObjectCreationParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for 'new' expressions"
+        },
+        "dotnet.inlineHints.enableInlineHintsForOtherParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for everything else"
+        },
+        "dotnet.inlineHints.suppressInlineHintsForParametersThatDifferOnlyBySuffix": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress hints when parameter names differ only by suffix"
+        },
+        "dotnet.inlineHints.suppressInlineHintsForParametersThatMatchMethodIntent": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress hints when parameter name matches the method's intent"
+        },
+        "dotnet.inlineHints.suppressInlineHintsForParametersThatMatchArgumentName": {
+          "type": "boolean",
+          "default": false,
+          "description": "Suppress hints when argument matches parameter name"
+        },
+        "csharp.inlineHints.enableInlineHintsForTypes": {
+          "type": "boolean",
+          "default": false,
+          "description": "Display inline type hints"
+        },
+        "csharp.inlineHints.enableInlineHintsForImplicitVariableTypes": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for variables with inferred types"
+        },
+        "csharp.inlineHints.enableInlineHintsForLambdaParameterTypes": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for lambda parameter types"
+        },
+        "csharp.inlineHints.enableInlineHintsForImplicitObjectCreation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for implicit object creation"
+        },
         "csharp.inlayHints.parameters.enabled": {
           "type": "boolean",
           "default": false,
