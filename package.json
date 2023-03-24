@@ -1111,66 +1111,6 @@
           "default": false,
           "description": "Show hints for implicit object creation"
         },
-        "csharp.inlayHints.parameters.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Display inline parameter name hints"
-        },
-        "csharp.inlayHints.parameters.forLiteralParameters": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show hints for literals"
-        },
-        "csharp.inlayHints.parameters.forObjectCreationParameters": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show hints for 'new' expressions"
-        },
-        "csharp.inlayHints.parameters.forIndexerParameters": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show hints for indexers"
-        },
-        "csharp.inlayHints.parameters.forOtherParameters": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show hints for everything else"
-        },
-        "csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix": {
-          "type": "boolean",
-          "default": false,
-          "description": "Suppress hints when parameter names differ only by suffix"
-        },
-        "csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent": {
-          "type": "boolean",
-          "default": false,
-          "description": "Suppress hints when parameter name matches the method's intent"
-        },
-        "csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName": {
-          "type": "boolean",
-          "default": false,
-          "description": "Suppress hints when argument matches parameter name"
-        },
-        "csharp.inlayHints.types.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Display inline type hints"
-        },
-        "csharp.inlayHints.types.forImplicitVariableTypes": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show hints for variables with inferred types"
-        },
-        "csharp.inlayHints.types.forLambdaParameterTypes": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show hints for lambda parameter types"
-        },
-        "csharp.inlayHints.types.forImplicitObjectCreation": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show hints for implicit object creation"
-        },
         "omnisharp.useModernNet": {
           "type": "boolean",
           "default": true,
