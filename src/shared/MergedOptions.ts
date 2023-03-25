@@ -24,7 +24,10 @@ const mergeOptions = [
 export async function MigrateOptions(vscode: vscode): Promise<void> {
     let configuration = vscode.workspace.getConfiguration();
     for (const {omnisharpOption, roslynOption} of mergeOptions) {
-        if (configuration.has(omnisharpOption) && !configuration.has(roslynOption)) {
+        let roslynOptionValue = configuration.get(roslynOption);
+        let roslynOptionDefaultValue = configuration.inspect(roslynOption)?.defaultValue;
+        let roslynOptionsHasValue = roslynOption !== undefined ? roslynOptionValue !== roslynOptionDefaultValue : false;
+        if (configuration.has(omnisharpOption) && !roslynOptionsHasValue) {
             await MoveOptionsValue(omnisharpOption, roslynOption, configuration);
         }
     }
