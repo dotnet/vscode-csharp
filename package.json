@@ -1061,15 +1061,15 @@
           "default": false,
           "description": "Show hints for literals"
         },
-        "dotnet.inlineHints.enableInlineHintsForIndexerParameters": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show hints for indexers"
-        },
         "dotnet.inlineHints.enableInlineHintsForObjectCreationParameters": {
           "type": "boolean",
           "default": false,
           "description": "Show hints for 'new' expressions"
+        },
+        "dotnet.inlineHints.enableInlineHintsForIndexerParameters": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show hints for indexers"
         },
         "dotnet.inlineHints.enableInlineHintsForOtherParameters": {
           "type": "boolean",
