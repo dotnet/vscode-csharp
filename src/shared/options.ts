@@ -93,7 +93,7 @@ export class Options {
         const suppressDotnetRestoreNotification = Options.readOption<boolean>(config, 'csharp.suppressDotnetRestoreNotification', false);
 
         // Options for MS.CA.LanguageServer
-        let languageServerLogLevel = Options.readOption<string>(config, 'dotnet.server.trace', 'minimal');
+        let languageServerLogLevel = Options.readOption<string>(config, 'dotnet.server.trace', 'Information');
         let documentSelector = Options.readOption<DocumentSelector>(config, 'dotnet.server.documentSelector', ['csharp']);
 
         // Options that apply to Razor

@@ -68,7 +68,7 @@ suite("LanguageServerConfigChangeObserver", () => {
     suite('Information Message is not shown if no change in value', () => {
         [
             { config: "dotnet", section: "server.documentSelector", value: ['csharp'] },
-            { config: "dotnet", section: "server.trace", value: 'minimal' },
+            { config: "dotnet", section: "server.trace", value: 'Information' },
         ].forEach(elem => {
             test(`${elem.config} ${elem.section}`, async () => {
                 expect(infoMessage).to.be.undefined;
