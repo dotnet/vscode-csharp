@@ -298,7 +298,7 @@ export class RoslynLanguageServer {
     }
 
     private async getBrokeredServicePipeName(csharpDevkitExports: any | undefined): Promise<string | undefined> {
-        if (this._wasActivatedWithCSharpDevkit || !csharpDevkitExports) {
+        if (!this._wasActivatedWithCSharpDevkit || !csharpDevkitExports) {
             return undefined; // C# Devkit is not installed - continue activation without pipe name
         }
         if (!('getBrokeredServiceServerPipeName' in csharpDevkitExports)) {
@@ -310,7 +310,7 @@ export class RoslynLanguageServer {
     }
     
     private getStarredCompletionComponentPath(csharpDevkitExports: any | undefined): string | undefined {
-        if (this._wasActivatedWithCSharpDevkit || !csharpDevkitExports || !csharpDevkitExports.components ||
+        if (!this._wasActivatedWithCSharpDevkit || !csharpDevkitExports || !csharpDevkitExports.components ||
             !csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"]) {
             return undefined;
         }
