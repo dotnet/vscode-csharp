@@ -3,30 +3,38 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as cp from 'child_process';
+import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as cp from 'child_process';
 import { registerCommands } from './commands';
 import { UriConverter } from './uriConverter';
 
 import {
-    DidChangeTextDocumentNotification, DidChangeTextDocumentParams, DidCloseTextDocumentNotification, DidCloseTextDocumentParams, DidOpenTextDocumentNotification, DidOpenTextDocumentParams, LanguageClient,
+    DidOpenTextDocumentNotification,
+    DidChangeTextDocumentNotification,
+    DidCloseTextDocumentNotification,
+    LanguageClient,
     LanguageClientOptions,
-    ServerOptions, State,
-    Trace
+    ServerOptions,
+    DidCloseTextDocumentParams,
+    DidOpenTextDocumentParams,
+    DidChangeTextDocumentParams,
+    State,
+    Trace,
 } from 'vscode-languageclient/node';
-import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfoHandler';
-import { DotnetResolver } from '../shared/DotnetResolver';
-import OptionProvider from '../shared/observers/OptionProvider';
-import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
 import { PlatformInformation } from '../shared/platform';
+import { DotnetResolver } from '../shared/DotnetResolver';
+import { readConfigurations } from './configurationMiddleware';
+import OptionProvider from '../shared/observers/OptionProvider';
+import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfoHandler';
+import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
-const greenExtensionId = "ms-dotnettools.visual-studio-green";
+const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
 
 export class RoslynLanguageServer {
 
@@ -47,32 +55,32 @@ export class RoslynLanguageServer {
     private _languageClient: LanguageClient | undefined;
 
     /**
-     * Flag indicating if green was installed the last time we activated.
+     * Flag indicating if C# Devkit was installed the last time we activated.
      * Used to determine if we need to restart the server on extension changes.
      */
-    private _wasActivatedWithGreen: boolean | undefined;
+    private _wasActivatedWithCSharpDevkit: boolean | undefined;
 
     constructor(
         private platformInfo: PlatformInformation,
         private optionProvider: OptionProvider,
         private context: vscode.ExtensionContext,
     ) {
-        // subscribe to extension change events so that we can get notified if green is added/removed later.
+        // subscribe to extension change events so that we can get notified if C# Devkit is added/removed later.
         this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
-            let vsGreenExtension = vscode.extensions.getExtension(greenExtensionId);
+            let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
 
-            if (this._wasActivatedWithGreen === undefined) {
+            if (this._wasActivatedWithCSharpDevkit === undefined) {
                 // Haven't activated yet.
                 return;
             }
 
             const title = 'Restart Language Server';
             const command = 'dotnet.restartServer';
-            if (vsGreenExtension && !this._wasActivatedWithGreen) {
-                // We previously started without green and its now installed.
-                // Offer a prompt to restart the server to use green.
-                _channel.appendLine(`Detected new installation of ${greenExtensionId}`);
-                let message = `Detected installation of ${greenExtensionId}. Would you like to relaunch the language server for added features?`;
+            if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
+                // We previously started without C# Devkit and its now installed.
+                // Offer a prompt to restart the server to use C# Devkit.
+                _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
+                let message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
                 ShowInformationMessage(vscode, message, { title, command });
             } else {
                 // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
@@ -99,7 +107,7 @@ export class RoslynLanguageServer {
         }
 
         let logLevel = options.languageServerOptions.logLevel;
-        const languageClientTraceLevel = Trace.fromString(logLevel);
+        const languageClientTraceLevel = this.GetTraceLevel(logLevel);
 
         let serverOptions: ServerOptions = async () => {
             return await this.startServer(solutionPath, logLevel);
@@ -125,6 +133,11 @@ export class RoslynLanguageServer {
                 // So instead we decode the URI here before sending to the server.
                 code2Protocol: UriConverter.serialize,
                 protocol2Code: UriConverter.deserialize,
+            },
+            middleware: {
+                workspace: {
+                    configuration: (params) => readConfigurations(params),
+                }
             }
         };
 
@@ -184,14 +197,14 @@ export class RoslynLanguageServer {
             throw new Error(`Cannot find language server in path '${serverPath}''`);
         }
 
-        // Get the brokered service pipe name from green (if installed).
+        // Get the brokered service pipe name from C# Devkit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
-        // in our activation because Green depends on Blue activation completing.
-        let vsGreenExports = await this.waitForGreenActivationAndGetExports();
+        // in our activation because C# Devkit depends on C# activation completing.
+        let vsGreenExports = await this.waitForCSharpDevkitActivationAndGetExports();
         let brokeredServicePipeName = await this.getBrokeredServicePipeName(vsGreenExports);
         let starredCompletionComponentPath = this.getStarredCompletionComponentPath(vsGreenExports);
 
-        let args: string[] = [];
+        let args: string[] = [ ];
 
         let options = this.optionProvider.GetLatestOptions();
         if (options.commonOptions.waitForDebugger) {
@@ -220,7 +233,7 @@ export class RoslynLanguageServer {
         let childProcess: cp.ChildProcessWithoutNullStreams;
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
-            const argsWithPath = [serverPath].concat(args);
+            const argsWithPath = [ serverPath ].concat(args);
             childProcess = cp.spawn('dotnet', argsWithPath);
         } else {
             // Otherwise assume we were given a path to an executable.
@@ -270,36 +283,60 @@ export class RoslynLanguageServer {
         return `${serverFileName}${extension}`;
     }
 
-    private async waitForGreenActivationAndGetExports(): Promise<any | undefined> {
-        let vsGreenExtension = vscode.extensions.getExtension(greenExtensionId);
-        if (!vsGreenExtension) {
-            // VS green is not installed - continue blue-only activation.
-            _channel.appendLine("Activating Blue standalone...");
-            this._wasActivatedWithGreen = false;
+    private async waitForCSharpDevkitActivationAndGetExports(): Promise<any | undefined> {
+        let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
+        if (!csharpDevkitExtension) {
+            // C# Devkit is not installed - continue C#-only activation.
+            _channel.appendLine("Activating C# standalone...");
+            this._wasActivatedWithCSharpDevkit = false;
             return undefined;
         }
 
-        _channel.appendLine("Activating Blue + Green...");
-        this._wasActivatedWithGreen = true;
-        return await vsGreenExtension.activate();
+        _channel.appendLine("Activating C# + Devkit...");
+        this._wasActivatedWithCSharpDevkit = true;
+        return await csharpDevkitExtension.activate();
     }
 
-    private async getBrokeredServicePipeName(vsGreenExports: any | undefined): Promise<string | undefined> {
-        if (!vsGreenExports) {
+    private async getBrokeredServicePipeName(csharpDevkitExports: any | undefined): Promise<string | undefined> {
+        if (this._wasActivatedWithCSharpDevkit || !csharpDevkitExports) {
+            return undefined; // C# Devkit is not installed - continue activation without pipe name
+        }
+        if (!('getBrokeredServiceServerPipeName' in csharpDevkitExports)) {
+            throw new Error("C# Devkit is installed but missing expected export getBrokeredServiceServerPipeName");
+        }
+
+        let brokeredServicePipeName = await csharpDevkitExports.getBrokeredServiceServerPipeName();
+        return brokeredServicePipeName;
+    }
+    
+    private getStarredCompletionComponentPath(csharpDevkitExports: any | undefined): string | undefined {
+        if (this._wasActivatedWithCSharpDevkit || !csharpDevkitExports || !csharpDevkitExports.components ||
+            !csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"]) {
             return undefined;
         }
-        if (!('getBrokeredServiceServerPipeName' in vsGreenExports)) {
-            throw new Error("VS Green is installed but missing expected export getBrokeredServiceServerPipeName");
-        }
-        return await vsGreenExports.getBrokeredServiceServerPipeName();
+        return csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"];
     }
 
-    private getStarredCompletionComponentPath(vsGreenExports: any | undefined): string | undefined {
-        if (!vsGreenExports || !vsGreenExports.components ||
-            !vsGreenExports.components["@vsintellicode/starred-suggestions-csharp"]) {
-            return undefined;
+    private GetTraceLevel(logLevel: string): Trace {
+        switch (logLevel) {
+            case "Trace":
+                return Trace.Verbose;
+            case "Debug":
+                return Trace.Messages;
+            case "Information":
+                return Trace.Off;
+            case "Warning":
+                return Trace.Off;
+            case "Error":
+                return Trace.Off;
+            case "Critical":
+                return Trace.Off;
+            case "None":
+                return Trace.Off;
+            default:
+                _channel.appendLine(`Invalid log level ${logLevel}, server will not start. Please set the 'dotnet.server.trace' configuration to a valid value`);
+                throw new Error(`Invalid log level ${logLevel}`);
         }
-        return vsGreenExports.components["@vsintellicode/starred-suggestions-csharp"];
     }
 }
 

@@ -19,7 +19,7 @@ import { downloadAndInstallPackages } from '../src/packageManager/downloadAndIns
 import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 import { commandLineOptions } from '../tasks/commandLineArguments';
-import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, packedVsixOutputRoot, languageServerDirectory, nugetTempPath, rootPath } from '../tasks/projectPaths';
+import { codeExtensionPath, packedVsixOutputRoot, languageServerDirectory, nugetTempPath, rootPath } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
@@ -39,62 +39,25 @@ export const platformSpecificPackages = [
     { vsceTarget: "darwin-arm64", rid: "osx-arm64", platformInfo: new PlatformInformation('darwin', 'arm64') }
 ];
 
-export function getPackageName(packageJSON: any, vscodePlatformId?: string) {
-    const name = packageJSON.name;
-    const version = packageJSON.version;
-
-    if (vscodePlatformId) {
-        return `${name}-${vscodePlatformId}-${version}.vsix`;
-    } else {
-        return `${name}-${version}.vsix`;
-    }
-}
-
 gulp.task('vsix:release:package', async () => {
-
     //if user does not want to clean up the existing vsix packages
     await cleanAsync(/* deleteVsix: */ !commandLineOptions.retainVsix);
 
-    del.sync(vscodeignorePath);
-
-    fs.copyFileSync(offlineVscodeignorePath, vscodeignorePath);
-
-    try {
-        await doPackageOffline();
-    }
-    finally {
-        del(vscodeignorePath);
-    }
+    await doPackageOffline();
 });
 
-// Downloads Razor language server bits for local development
-gulp.task('razor:languageserver', async () => {
-    await del('.razor');
+// Downloads dependencies for local development.
+gulp.task('installDependencies', async () => {
+    await cleanAsync(/* deleteVsix: */ false);
 
     const packageJSON = getPackageJSON();
 
-    const platform = await PlatformInformation.GetCurrent();
-
-    try {
-        await installRazor(platform, packageJSON);
-    }
-    catch (err) {
-        const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
-        // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
-        // stack trace of this line. So that seperates the two stack traces.
-        throw Error(`Failed to install packages for ${platform}. ${message}\n---`);
-    }
-});
-
-// Downloads Roslyn language server bits for local development
-gulp.task('roslyn:languageserver', async () => {
-    await del(languageServerDirectory);
-
-    const packageJSON = getPackageJSON();
     const platform = await PlatformInformation.GetCurrent();
 
     try {
         await installRoslyn(packageJSON, platform);
+        await installDebugger(packageJSON, platform);
+        await installRazor(packageJSON, platform);
     }
     catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -104,6 +67,7 @@ gulp.task('roslyn:languageserver', async () => {
     }
 });
 
+// Install Tasks
 async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformation) {
     const roslynVersion = packageJSON.defaults.roslyn;
     const packagePath = await acquireNugetPackage('Microsoft.CodeAnalysis.LanguageServer', roslynVersion);
@@ -134,14 +98,21 @@ async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformatio
     }
 }
 
-// Install Tasks
-async function installRazor(platformInfo: PlatformInformation, packageJSON: any) {
+async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
+    return await installPackageJsonDependency("Razor", packageJSON, platformInfo);
+}
+
+async function installDebugger(packageJSON: any, platformInfo: PlatformInformation) {
+    return await installPackageJsonDependency("Debugger", packageJSON, platformInfo);
+}
+
+async function installPackageJsonDependency(dependencyName: string, packageJSON: any, platformInfo: PlatformInformation) {
     let eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
     let stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
     let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
-        .filter(dep => (dep.isFramework === undefined || !dep.isFramework) && dep.id === "Razor");
+        .filter(dep => (dep.isFramework === undefined || !dep.isFramework) && dep.id === dependencyName);
     let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
     let provider = () => new NetworkSettings('', true);
     if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
@@ -231,9 +202,21 @@ async function buildVsix(packageJSON: any, outputFolder: string, vsceTarget?: st
     await installRoslyn(packageJSON, platformInfo);
 
     if (platformInfo != null) {
-        await installRazor(platformInfo, packageJSON);
+        await installRazor(packageJSON, platformInfo);
+        await installDebugger(packageJSON, platformInfo);
     }
 
     const packageFileName = getPackageName(packageJSON, vsceTarget);
     await createPackageAsync(outputFolder, packageFileName, vsceTarget);
+}
+
+function getPackageName(packageJSON: any, vscodePlatformId?: string) {
+    const name = packageJSON.name;
+    const version = packageJSON.version;
+
+    if (vscodePlatformId) {
+        return `${name}-${vscodePlatformId}-${version}.vsix`;
+    } else {
+        return `${name}-${version}.vsix`;
+    }
 }
