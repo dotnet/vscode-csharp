@@ -200,7 +200,9 @@ export class RoslynLanguageServer {
         // Get the brokered service pipe name from C# Devkit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
         // in our activation because C# Devkit depends on C# activation completing.
-        let brokeredServicePipeName = await this.waitForCSharpDevkitActivationAndGetPipeName();
+        let vsGreenExports = await this.waitForCSharpDevkitActivationAndGetExports();
+        let brokeredServicePipeName = await this.getBrokeredServicePipeName(vsGreenExports);
+        let starredCompletionComponentPath = this.getStarredCompletionComponentPath(vsGreenExports);
 
         let args: string[] = [ ];
 
@@ -220,6 +222,10 @@ export class RoslynLanguageServer {
             // We only add the solution path if we didn't have a pipe name; if we had a pipe name we won't be opening any solution right away but following
             // what the other process does.
             args.push("--solutionPath", solutionPath.fsPath);
+        }
+
+        if (starredCompletionComponentPath) {
+            args.push("--starredCompletionComponentPath", starredCompletionComponentPath);
         }
 
         _channel.appendLine(`Starting server at ${serverPath}`);
@@ -277,7 +283,7 @@ export class RoslynLanguageServer {
         return `${serverFileName}${extension}`;
     }
 
-    private async waitForCSharpDevkitActivationAndGetPipeName(): Promise<string | undefined> {
+    private async waitForCSharpDevkitActivationAndGetExports(): Promise<any | undefined> {
         let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
         if (!csharpDevkitExtension) {
             // C# Devkit is not installed - continue C#-only activation.
@@ -288,13 +294,27 @@ export class RoslynLanguageServer {
 
         _channel.appendLine("Activating C# + Devkit...");
         this._wasActivatedWithCSharpDevkit = true;
-        let csharpDevkitExports = await csharpDevkitExtension.activate();
+        return await csharpDevkitExtension.activate();
+    }
+
+    private async getBrokeredServicePipeName(csharpDevkitExports: any | undefined): Promise<string | undefined> {
+        if (!this._wasActivatedWithCSharpDevkit || !csharpDevkitExports) {
+            return undefined; // C# Devkit is not installed - continue activation without pipe name
+        }
         if (!('getBrokeredServiceServerPipeName' in csharpDevkitExports)) {
             throw new Error("C# Devkit is installed but missing expected export getBrokeredServiceServerPipeName");
         }
 
         let brokeredServicePipeName = await csharpDevkitExports.getBrokeredServiceServerPipeName();
         return brokeredServicePipeName;
+    }
+    
+    private getStarredCompletionComponentPath(csharpDevkitExports: any | undefined): string | undefined {
+        if (!this._wasActivatedWithCSharpDevkit || !csharpDevkitExports || !csharpDevkitExports.components ||
+            !csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"]) {
+            return undefined;
+        }
+        return csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"];
     }
 
     private GetTraceLevel(logLevel: string): Trace {
