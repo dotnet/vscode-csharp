@@ -5,9 +5,9 @@
 
 import * as utils from './utils';
 import * as vscode from 'vscode';
-import { AddAssetResult, addAssetsIfNecessary } from '../assets';
+import { addAssetsIfNecessary } from '../shared/assets';
 import { safeLength, sum } from '../common';
-import { CSharpConfigurationProvider } from '../configurationProvider';
+import { CSharpConfigurationProvider } from '../shared/configurationProvider';
 import { OmniSharpServer } from './server';
 import TestManager from '../features/dotnetTest';
 import registerCommands from '../features/commands';
@@ -24,6 +24,7 @@ import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import { getDecompilationAuthorization } from './decompilationPrompt';
 import { DotnetResolver } from '../shared/DotnetResolver';
 import { Advisor } from '../features/diagnosticsProvider';
+import { OmnisharpWorkspaceDebugInformationProvider } from '../OmnisharpWorkspaceDebugInformationProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -47,6 +48,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, omnisharpDotnetResolver, decompilationAuthorized, context, outputChannel, languageMiddlewareFeature);
     const advisor = new Advisor(server, optionProvider); // create before server is started
     const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
+    const workspaceInformationProvider = new OmnisharpWorkspaceDebugInformationProvider(server);
 
     let registrations: Disposable | undefined;
     disposables.add(server.onServerStart(async () => {
@@ -59,17 +61,12 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         registrations = undefined;
     }));
 
-    disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, omnisharpDotnetResolver, packageJSON, extensionPath));
+    disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, omnisharpDotnetResolver, workspaceInformationProvider));
 
-    if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
-        disposables.add(server.onServerStart(async () => {
-            // Update or add tasks.json and launch.json
-            const result = await addAssetsIfNecessary(server);
-            if (result === AddAssetResult.Disable) {
-                context.workspaceState.update('assetPromptDisabled', true);
-            }
-        }));
-    }
+    disposables.add(server.onServerStart(async () => {
+        // Update or add tasks.json and launch.json
+        await addAssetsIfNecessary(context, workspaceInformationProvider);
+    }));
 
     // After server is started (and projects are loaded), check to see if there are
     // any project.json projects if the suppress option is not set. If so, notify the user about migration.
@@ -135,7 +132,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     }));
 
     // Register ConfigurationProvider
-    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
+    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(workspaceInformationProvider)));
 
     context.subscriptions.push(disposables);
 

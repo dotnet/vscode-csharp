@@ -4,54 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as serverUtils from './omnisharp/utils';
 import * as vscode from 'vscode';
-import { ParsedEnvironmentFile } from './coreclr-debug/ParsedEnvironmentFile';
+import { ParsedEnvironmentFile } from '../coreclr-debug/ParsedEnvironmentFile';
 
 import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, createAttachConfiguration, createFallbackLaunchConfiguration, getBuildOperations } from './assets';
 
-import { OmniSharpServer } from './omnisharp/server';
-import { WorkspaceInformationResponse } from './omnisharp/protocol';
-import { isSubfolderOf } from './common';
 import { parse } from 'jsonc-parser';
-import { MessageItem } from './vscodeAdapter';
+import { MessageItem } from '../vscodeAdapter';
+import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider';
 
 export class CSharpConfigurationProvider implements vscode.DebugConfigurationProvider {
-    private server: OmniSharpServer;
 
-    public constructor(server: OmniSharpServer) {
-        this.server = server;
-    }
-
-    /**
-     * TODO: Remove function when https://github.com/OmniSharp/omnisharp-roslyn/issues/909 is resolved.
-     *
-     * Note: serverUtils.requestWorkspaceInformation only retrieves one folder for multi-root workspaces. Therefore, generator will be incorrect for all folders
-     * except the first in a workspace. Currently, this only works if the requested folder is the same as the server's solution path or folder.
-     */
-    private async checkWorkspaceInformationMatchesWorkspaceFolder(folder: vscode.WorkspaceFolder): Promise<boolean> {
-
-        const solutionPathOrFolder = this.server.getSolutionPathOrFolder();
-
-        // Make sure folder, folder.uri, and solutionPathOrFolder are defined.
-        if (solutionPathOrFolder === undefined) {
-            return Promise.resolve(false);
-        }
-
-        // If its a .sln or .slnf file, get the folder of the solution.
-        let serverFolder = solutionPathOrFolder;
-        const isFile = (await fs.lstat(solutionPathOrFolder)).isFile();
-        if (isFile) {
-            serverFolder = path.dirname(solutionPathOrFolder);
-        }
-
-        // Get absolute paths of current folder and server folder.
-        const currentFolder = path.resolve(folder.uri.fsPath);
-        serverFolder = path.resolve(serverFolder);
-
-        return isSubfolderOf(serverFolder, currentFolder);
-    }
+    public constructor(private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider) { }
 
     /**
 	 * Returns a list of initial debug configurations based on contextual information, e.g. package.json or folder.
@@ -63,19 +27,17 @@ export class CSharpConfigurationProvider implements vscode.DebugConfigurationPro
             return [];
         }
 
-        if (!this.server.isRunning()) {
-            vscode.window.showErrorMessage("Cannot create .NET debug configurations. The OmniSharp server is still initializing or has exited unexpectedly.");
-            return [];
-        }
-
         try {
-            let hasWorkspaceMatches: boolean = await this.checkWorkspaceInformationMatchesWorkspaceFolder(folder);
-            if (!hasWorkspaceMatches) {
-                vscode.window.showErrorMessage(`Cannot create .NET debug configurations. The active C# project is not within folder '${folder.uri.fsPath}'.`);
+            let info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
+            if (!info) {
+                vscode.window.showErrorMessage("Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.");
                 return [];
             }
 
-            let info: WorkspaceInformationResponse = await serverUtils.requestWorkspaceInformation(this.server);
+            if (info.length === 0) {
+                vscode.window.showErrorMessage(`Cannot create .NET debug configurations. The active C# project is not within folder '${folder.uri.fsPath}'.`);
+                return [];
+            }
 
             const generator = new AssetGenerator(info, folder);
             if (generator.hasExecutableProjects()) {

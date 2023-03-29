@@ -35,7 +35,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.6.0-3.23173.10",
+    "roslyn": "4.6.0-3.23178.13",
     "omniSharp": "1.39.4",
     "razor": "7.0.0-preview.23067.5"
   },
@@ -1373,8 +1373,7 @@
       {
         "command": "dotnet.generateAssets",
         "title": "Generate Assets for Build and Debug",
-        "category": ".NET",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "category": ".NET"
       },
       {
         "command": "dotnet.restore.project",
@@ -4352,7 +4351,7 @@
       {
         "view": "debug",
         "contents": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\n\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson).",
-        "when": "debugStartLanguage == csharp && config.dotnet.server.useOmnisharp"
+        "when": "debugStartLanguage == csharp"
       }
     ]
   }

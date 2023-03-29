@@ -5,6 +5,7 @@
 
 import * as path from 'path';
 import { CompletionTriggerKind, CompletionItemKind, CompletionItemTag, InsertTextFormat } from 'vscode-languageserver-protocol';
+import { findNetCoreTargetFramework, findNetFrameworkTargetFramework, findNetStandardTargetFramework } from '../shared/utils';
 
 export module Requests {
     export const AddToProject = '/addtoproject';
@@ -978,39 +979,11 @@ export namespace V2 {
     }
 }
 
-export function findNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework | undefined {
-    const regexp = new RegExp('^net[1-4]');
-    return project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
-}
-
-export function findNetCoreTargetFramework(project: MSBuildProject): TargetFramework | undefined {
-    return findNetCoreAppTargetFramework(project) ?? findModernNetFrameworkTargetFramework(project);
-}
-
-export function findNetCoreAppTargetFramework(project: MSBuildProject): TargetFramework | undefined {
-    return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netcoreapp'));
-}
-
-export function findModernNetFrameworkTargetFramework(project: MSBuildProject): TargetFramework | undefined {
-    const regexp = new RegExp('^net[5-9]');
-    const targetFramework = project.TargetFrameworks.find(tf => regexp.test(tf.ShortName));
-
-    // Shortname is being reported as net50 instead of net5.0
-    if (targetFramework !== undefined && targetFramework.ShortName.charAt(4) !== ".") {
-        targetFramework.ShortName = `${targetFramework.ShortName.substring(0, 4)}.${targetFramework.ShortName.substring(4)}`;
-    }
-
-    return targetFramework;
-}
-
-export function findNetStandardTargetFramework(project: MSBuildProject): TargetFramework | undefined {
-    return project.TargetFrameworks.find(tf => tf.ShortName.startsWith('netstandard'));
-}
-
 export function isDotNetCoreProject(project: MSBuildProject): boolean {
-    return findNetCoreTargetFramework(project) !== undefined ||
-        findNetStandardTargetFramework(project) !== undefined ||
-        findNetFrameworkTargetFramework(project) !== undefined;
+    let tfms = project.TargetFrameworks.map(tf => tf.ShortName);
+    return findNetCoreTargetFramework(tfms) !== undefined ||
+        findNetStandardTargetFramework(tfms) !== undefined ||
+        findNetFrameworkTargetFramework(tfms) !== undefined;
 }
 
 export interface ProjectDescriptor {
@@ -1043,21 +1016,6 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
             }
         }
     }
-
-    return result;
-}
-
-export function findExecutableMSBuildProjects(projects: MSBuildProject[]) {
-    let result: MSBuildProject[] = [];
-
-    projects.forEach(project => {
-        const projectIsNotNetFramework = findNetCoreTargetFramework(project) !== undefined
-            || project.IsBlazorWebAssemblyStandalone;
-
-        if (project.IsExe && projectIsNotNetFramework) {
-            result.push(project);
-        }
-    });
 
     return result;
 }
