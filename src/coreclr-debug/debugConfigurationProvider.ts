@@ -27,6 +27,10 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
             // Return null to call into 'provideDebugConfigurations'
             return null;
         }
+
+        // Load settings before resolving variables as there may be variables set in settings.
+        this.loadSettingDebugOptions(debugConfiguration);
+
         return debugConfiguration;
     }
 
@@ -98,7 +102,46 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
 
         return debugConfiguration;
     }
+
+    private loadSettingDebugOptions(debugConfiguration: vscode.DebugConfiguration): void {
+        let debugOptions = vscode.workspace.getConfiguration('csharp').get('debug');
+        let result = JSON.parse(JSON.stringify(debugOptions));
+        let keys = Object.keys(result);
+
+        for (let key of keys) {
+            // Skip since option is set in the launch.json configuration
+            if (debugConfiguration.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const settingsValue: any = result[key];
+            if (!this.CheckIfSettingIsEmpty(settingsValue))
+            {
+                debugConfiguration[key] = settingsValue;
+            }
+        }
+    }
+
+    private CheckIfSettingIsEmpty(input: any): boolean {
+        switch(typeof(input)) {
+            case "object":
+                if (Array.isArray(input)) {
+                    return input.length === 0;
+                }
+                else {
+                    return Object.keys(input).length === 0;
+                }
+            case "string":
+                return !input;
+            case "boolean":
+            case "number":
+                return false; // booleans and numbers are never empty
+            default:
+                throw "Unknown type to check to see if setting is empty";
+        }
+    }
 }
+
 
 function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
     hasDotnetDevCertsHttps(dotNetCliPaths).then(async (returnData) => {
