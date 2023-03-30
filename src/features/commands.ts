@@ -11,7 +11,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
-import { generateAssets } from '../assets';
+import { generateAssets } from '../shared/assets';
 import { ShowOmniSharpChannel, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../shared/platform';
@@ -21,8 +21,17 @@ import reportIssue from './reportIssue';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
+import { IWorkspaceDebugInformationProvider } from '../shared/IWorkspaceDebugInformationProvider';
 
-export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
+export default function registerCommands(
+        context: vscode.ExtensionContext,
+        server: OmniSharpServer,
+        platformInfo: PlatformInformation,
+        eventStream: EventStream,
+        optionProvider: OptionProvider,
+        monoResolver: IHostExecutableResolver,
+        dotnetResolver: IHostExecutableResolver,
+        workspaceInformationProvider: IWorkspaceDebugInformationProvider): CompositeDisposable {
     let disposable = new CompositeDisposable();
     disposable.add(vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
@@ -35,7 +44,7 @@ export default function registerCommands(context: vscode.ExtensionContext, serve
     disposable.add(vscode.commands.registerCommand('o.reanalyze.currentProject', async () => reAnalyzeCurrentProject(server, eventStream)));
 
     // Register command for generating tasks.json and launch.json assets.
-    disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(server, selectedIndex)));
+    disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(workspaceInformationProvider, selectedIndex)));
 
     disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, context.extension.packageJSON.version, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), dotnetResolver, monoResolver)));
 

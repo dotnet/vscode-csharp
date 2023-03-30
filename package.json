@@ -35,7 +35,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.6.0-3.23170.12",
+    "roslyn": "4.6.0-3.23178.13",
     "omniSharp": "1.39.4",
     "razor": "7.0.0-preview.23067.5"
   },
@@ -729,53 +729,65 @@
           "description": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\"."
         },
         "dotnet.symbolSearch.searchReferenceAssemblies": {
-            "type": "boolean",
-            "default": true,
-            "description": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports."
+          "type": "boolean",
+          "default": true,
+          "description": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports."
         },
         "dotnet.implementType.insertionBehavior": {
-            "type": "string",
-            "enum": ["withOtherMembersOfTheSameKind", "atTheEnd"],
-            "default": "withOtherMembersOfTheSameKind",
-            "enumDescriptions": ["Place them with other members of the same kind.", "Place thme at the end."],
-            "description": "The insertion location of properties, events, and methods When implement interface or abstract class."
+          "type": "string",
+          "enum": [
+            "withOtherMembersOfTheSameKind",
+            "atTheEnd"
+          ],
+          "default": "withOtherMembersOfTheSameKind",
+          "enumDescriptions": [
+            "Place them with other members of the same kind.",
+            "Place thme at the end."
+          ],
+          "description": "The insertion location of properties, events, and methods When implement interface or abstract class."
         },
         "dotnet.implementType.propertyGenerationBehavior": {
-            "type": "string",
-            "enum": ["preferThrowingProperties", "preferAutoProperties"],
-            "default": "preferThrowingProperties",
-            "enumDescriptions": ["Prefer throwing properties.", "Prefer auto properties."],
-            "description": "Generation behavior of properties when implement interface or abstract class."
+          "type": "string",
+          "enum": [
+            "preferThrowingProperties",
+            "preferAutoProperties"
+          ],
+          "default": "preferThrowingProperties",
+          "enumDescriptions": [
+            "Prefer throwing properties.",
+            "Prefer auto properties."
+          ],
+          "description": "Generation behavior of properties when implement interface or abstract class."
         },
         "dotnet.completion.showNameCompletionSuggestions": {
-            "type": "boolean",
-            "default": "true",
-            "description": "Perform automatic object name completion for the members that you have recently selected."
+          "type": "boolean",
+          "default": "true",
+          "description": "Perform automatic object name completion for the members that you have recently selected."
         },
         "dotnet.completion.provideRegexCompletions": {
-            "type": "boolean",
-            "default": "true",
-            "description": "Show regular expressions in completion list."
+          "type": "boolean",
+          "default": "true",
+          "description": "Show regular expressions in completion list."
         },
         "dotnet.quickInfo.showRemarksInQuickInfo": {
-            "type": "boolean",
-            "default": "true",
-            "description": "Show remarks information when display symbol."
+          "type": "boolean",
+          "default": "true",
+          "description": "Show remarks information when display symbol."
         },
         "dotnet.navigation.navigateToDecompiledSources": {
-            "type": "boolean",
-            "default": "true",
-            "description": "Enable navigation to decomplied sources."
+          "type": "boolean",
+          "default": "true",
+          "description": "Enable navigation to decomplied sources."
         },
         "dotnet.highlighting.highlightRelatedRegexComponents": {
-            "type": "boolean",
-            "default": "true",
-            "description": "Highlight related regular expression components under cursor."
+          "type": "boolean",
+          "default": "true",
+          "description": "Highlight related regular expression components under cursor."
         },
         "dotnet.highlighting.highlightRelatedJsonComponents": {
-            "type": "boolean",
-            "default": "true",
-            "description": "Highlight related JSON components under cursor."
+          "type": "boolean",
+          "default": "true",
+          "description": "Highlight related JSON components under cursor."
         },
         "csharp.format.enable": {
           "type": "boolean",
@@ -794,80 +806,77 @@
           "properties": {
             "sourceFileMap": {
               "type": "object",
-              "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+              "markdownDescription": "Maps build-time paths to local source locations. All instances of build-time path will be replaced with the local source path.\n\nExample:\n\n`{\"<build-path>\":\"<local-source-path>\"}`",
               "additionalProperties": {
                 "type": "string"
-              },
-              "default": {
-                "<insert-source-path-here>": "<insert-target-path-here>"
               }
             },
             "justMyCode": {
               "type": "boolean",
-              "description": "Optional flag to only show user code.",
+              "markdownDescription": "Flag to only show user code. This option defaults to `true`.",
               "default": true
             },
             "requireExactSource": {
               "type": "boolean",
-              "description": "Optional flag to require current source code to match the pdb.",
+              "markdownDescription": "Flag to require current source code to match the pdb. This option defaults to `true`.",
               "default": true
             },
             "enableStepFiltering": {
               "type": "boolean",
-              "description": "Optional flag to enable stepping over Properties and Operators.",
+              "markdownDescription": "Flag to enable stepping over Properties and Operators. This option defaults to `true`.",
               "default": true
             },
             "logging": {
-              "description": "Optional flags to determine what types of messages should be logged to the output window.",
+              "description": "Flags to determine what types of messages should be logged to the output window.",
               "type": "object",
               "required": [],
               "default": {},
               "properties": {
                 "exceptions": {
                   "type": "boolean",
-                  "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                  "markdownDescription": "Flag to determine whether exception messages should be logged to the output window. This option defaults to `true`.",
                   "default": true
                 },
                 "moduleLoad": {
                   "type": "boolean",
-                  "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                  "markdownDescription": "Flag to determine whether module load events should be logged to the output window. This option defaults to `true`.",
                   "default": true
                 },
                 "programOutput": {
                   "type": "boolean",
-                  "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                  "markdownDescription": "Flag to determine whether program output should be logged to the output window when not using an external console. This option defaults to `true`.",
                   "default": true
                 },
                 "engineLogging": {
                   "type": "boolean",
-                  "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                  "markdownDescription": "Flag to determine whether diagnostic engine logs should be logged to the output window. This option defaults to `false`.",
                   "default": false
                 },
                 "browserStdOut": {
                   "type": "boolean",
-                  "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                  "markdownDescription": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
                   "default": true
                 },
                 "elapsedTiming": {
                   "type": "boolean",
-                  "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                  "markdownDescription": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
                   "default": false
                 },
                 "threadExit": {
                   "type": "boolean",
-                  "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                  "markdownDescription": "Controls if a message is logged when a thread in the target process exits. This option defaults to `false`.",
                   "default": false
                 },
                 "processExit": {
                   "type": "boolean",
-                  "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                  "markdownDescription": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
                   "default": true
                 }
               }
             },
             "suppressJITOptimizations": {
               "type": "boolean",
-              "description": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. For more information: https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations",
+              "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
               "default": false
             },
             "symbolOptions": {
@@ -884,23 +893,23 @@
                   "items": {
                     "type": "string"
                   },
-                  "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                  "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                   "default": []
                 },
                 "searchMicrosoftSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "searchNuGetOrgSymbolServer": {
                   "type": "boolean",
-                  "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                  "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                   "default": false
                 },
                 "cachePath": {
                   "type": "string",
                   "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
-                  "default": "~/.dotnet/symbolcache"
+                  "default": ""
                 },
                 "moduleFilter": {
                   "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -940,9 +949,7 @@
                         "type": "string"
                       },
                       "description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
-                      "default": [
-                        "MyExampleModule.dll"
-                      ]
+                      "default": []
                     },
                     "includeSymbolsNextToModules": {
                       "type": "boolean",
@@ -954,7 +961,7 @@
               }
             },
             "sourceLinkOptions": {
-              "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
+              "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
               "default": {
                 "*": {
                   "enabled": true
@@ -966,7 +973,7 @@
                 "properties": {
                   "enabled": {
                     "title": "boolean",
-                    "description": "Is Source Link enabled for this URL?  If unspecified, this option defaults to 'true'.",
+                    "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
                     "default": "true"
                   }
                 }
@@ -979,7 +986,11 @@
             },
             "targetArchitecture": {
               "type": "string",
-              "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+              "markdownDescription": "[Only supported in local macOS debugging]\n\nThe architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are `x86_64` or `arm64`.",
+              "enum": [
+                "x86_64",
+                "arm64"
+              ]
             },
             "type": {
               "type": "string",
@@ -1299,6 +1310,141 @@
           "scope": "window",
           "default": true,
           "description": "Enable/disable default Razor formatter."
+        },
+        "csharp.debug.stopAtEntry": {
+          "type": "boolean",
+          "markdownDescription": "If true, the debugger should stop at the entry point of the target. This option defaults to `false`.",
+          "default": false
+        },
+        "csharp.debug.sourceFileMap": {
+          "type": "object",
+          "markdownDescription": "Maps build-time paths to local source locations. All instances of build-time path will be replaced with the local source path.\n\nExample:\n\n`{\"<build-path>\":\"<local-source-path>\"}`",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {}
+        },
+        "csharp.debug.justMyCode": {
+          "type": "boolean",
+          "markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson#just-my-code)",
+          "default": true
+        },
+        "csharp.debug.requireExactSource": {
+          "type": "boolean",
+          "markdownDescription": "Flag to require current source code to match the pdb. This option defaults to `true`.",
+          "default": true
+        },
+        "csharp.debug.enableStepFiltering": {
+          "type": "boolean",
+          "markdownDescription": "Flag to enable stepping over Properties and Operators. This option defaults to `true`.",
+          "default": true
+        },
+        "csharp.debug.logging.exceptions": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine whether exception messages should be logged to the output window. This option defaults to `true`.",
+          "default": true
+        },
+        "csharp.debug.logging.moduleLoad": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine whether module load events should be logged to the output window. This option defaults to `true`.",
+          "default": true
+        },
+        "csharp.debug.logging.programOutput": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine whether program output should be logged to the output window when not using an external console. This option defaults to `true`.",
+          "default": true
+        },
+        "csharp.debug.logging.engineLogging": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine whether diagnostic engine logs should be logged to the output window. This option defaults to `false`.",
+          "default": false
+        },
+        "csharp.debug.logging.browserStdOut": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
+          "default": true
+        },
+        "csharp.debug.logging.elapsedTiming": {
+          "type": "boolean",
+          "markdownDescription": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
+          "default": false
+        },
+        "csharp.debug.logging.threadExit": {
+          "type": "boolean",
+          "markdownDescription": "Controls if a message is logged when a thread in the target process exits. This option defaults to `false`.",
+          "default": false
+        },
+        "csharp.debug.logging.processExit": {
+          "type": "boolean",
+          "markdownDescription": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
+          "default": true
+        },
+        "csharp.debug.suppressJITOptimizations": {
+          "type": "boolean",
+          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
+          "default": false
+        },
+        "csharp.debug.symbolOptions.searchPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+          "default": []
+        },
+        "csharp.debug.symbolOptions.searchMicrosoftSymbolServer": {
+          "type": "boolean",
+          "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+          "default": false
+        },
+        "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": {
+          "type": "boolean",
+          "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+          "default": false
+        },
+        "csharp.debug.symbolOptions.cachePath": {
+          "type": "string",
+          "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+          "default": ""
+        },
+        "csharp.debug.symbolOptions.moduleFilter.mode": {
+          "type": "string",
+          "enum": [
+            "loadAllButExcluded",
+            "loadOnlyIncluded"
+          ],
+          "enumDescriptions": [
+            "Load symbols for all modules unless the module is in the 'excludedModules' array.",
+            "Do not attempt to load symbols for ANY module unless it is in the 'includedModules' array, or it is included through the 'includeSymbolsNextToModules' setting."
+          ],
+          "description": "Controls which of the two basic operating modes the module filter operates in.",
+          "default": "loadAllButExcluded"
+        },
+        "csharp.debug.symbolOptions.moduleFilter.excludedModules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of modules that the debugger should NOT load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadAllButExcluded'.",
+          "default": []
+        },
+        "csharp.debug.symbolOptions.moduleFilter.includedModules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
+          "default": []
+        },
+        "csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules": {
+          "type": "boolean",
+          "description": "If true, for any module NOT in the 'includedModules' array, the debugger will still check next to the module itself and the launching executable, but it will not check paths on the symbol search list. This option defaults to 'true'.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
+          "default": true
+        },
+        "csharp.debug.allowFastEvaluate": {
+          "type": "boolean",
+          "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+          "default": true
         }
       }
     },
@@ -1373,8 +1519,7 @@
       {
         "command": "dotnet.generateAssets",
         "title": "Generate Assets for Build and Debug",
-        "category": ".NET",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "category": ".NET"
       },
       {
         "command": "dotnet.restore.project",
@@ -1502,7 +1647,7 @@
             "properties": {
               "program": {
                 "type": "string",
-                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+                "markdownDescription": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: `${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)`\n\nExample: `${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll`\n\nWhere:\n`(target-framework)` is the framework that the debugged project is being built for. This is normally found in the project file as the `TargetFramework` property.\n\n`(project-name.dll)` is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
                 "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
               },
               "cwd": {
@@ -1529,7 +1674,7 @@
               },
               "stopAtEntry": {
                 "type": "boolean",
-                "description": "If true, the debugger should stop at the entry point of the target.",
+                "markdownDescription": "If true, the debugger should stop at the entry point of the target. This option defaults to `false`.",
                 "default": false
               },
               "launchBrowser": {
@@ -1544,7 +1689,7 @@
                 "properties": {
                   "enabled": {
                     "type": "boolean",
-                    "description": "Whether web browser launch is enabled",
+                    "description": "Whether web browser launch is enabled. This option defaults to `true`.",
                     "default": true
                   },
                   "args": {
@@ -1565,7 +1710,7 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The executable which will start the web browser",
+                        "description": "The executable which will start the web browser.",
                         "default": "open"
                       },
                       "args": {
@@ -1588,7 +1733,7 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The executable which will start the web browser",
+                        "description": "The executable which will start the web browser.",
                         "default": "xdg-open"
                       },
                       "args": {
@@ -1611,7 +1756,7 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The executable which will start the web browser",
+                        "description": "The executable which will start the web browser.",
                         "default": "cmd.exe"
                       },
                       "args": {
@@ -1633,7 +1778,7 @@
               },
               "envFile": {
                 "type": "string",
-                "description": "Environment variables passed to the program by a file.",
+                "markdownDescription": "Environment variables passed to the program by a file. E.g. `${workspaceFolder}/.env`",
                 "default": "${workspaceFolder}/.env"
               },
               "console": {
@@ -1644,21 +1789,21 @@
                   "externalTerminal"
                 ],
                 "enumDescriptions": [
-                  "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine)",
-                  "VS Code's integrated terminal",
-                  "External terminal that can be configured via user settings"
+                  "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine).",
+                  "VS Code's integrated terminal.",
+                  "External terminal that can be configured via user settings."
                 ],
-                "description": "Where to launch the debug target.",
+                "description": "When launching console projects, indicates which console the target program should be launched into.",
                 "default": "internalConsole"
               },
               "externalConsole": {
                 "type": "boolean",
-                "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
+                "markdownDescription": "Attribute `externalConsole` is deprecated, use `console` instead. This option defaults to `false`.",
                 "default": false
               },
               "launchSettingsFilePath": {
                 "type": "string",
-                "description": "The path to a launchSettings.json file. If this isn't set, the debugger will search in '{cwd}/Properties/launchSettings.json'.",
+                "markdownDescription": "The path to a launchSettings.json file. If this isn't set, the debugger will search in `{cwd}/Properties/launchSettings.json`.",
                 "default": "${workspaceFolder}/Properties/launchSettings.json"
               },
               "launchSettingsProfile": {
@@ -1675,73 +1820,71 @@
               },
               "sourceFileMap": {
                 "type": "object",
-                "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "markdownDescription": "Maps build-time paths to local source locations. All instances of build-time path will be replaced with the local source path.\n\nExample:\n\n`{\"<build-path>\":\"<local-source-path>\"}`",
                 "additionalProperties": {
                   "type": "string"
                 },
-                "default": {
-                  "<insert-source-path-here>": "<insert-target-path-here>"
-                }
+                "default": {}
               },
               "justMyCode": {
                 "type": "boolean",
-                "description": "Optional flag to only show user code.",
+                "markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson#just-my-code)",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "description": "Optional flag to require current source code to match the pdb.",
+                "markdownDescription": "Flag to require current source code to match the pdb. This option defaults to `true`.",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "description": "Optional flag to enable stepping over Properties and Operators.",
+                "markdownDescription": "Flag to enable stepping over Properties and Operators. This option defaults to `true`.",
                 "default": true
               },
               "logging": {
-                "description": "Optional flags to determine what types of messages should be logged to the output window.",
+                "description": "Flags to determine what types of messages should be logged to the output window.",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether exception messages should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether module load events should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "markdownDescription": "Flag to determine whether program output should be logged to the output window when not using an external console. This option defaults to `true`.",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether diagnostic engine logs should be logged to the output window. This option defaults to `false`.",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                    "markdownDescription": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "markdownDescription": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "markdownDescription": "Controls if a message is logged when a thread in the target process exits. This option defaults to `false`.",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "markdownDescription": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
                     "default": true
                   }
                 }
@@ -1965,7 +2108,7 @@
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "description": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. For more information: https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations",
+                "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
                 "default": false
               },
               "symbolOptions": {
@@ -1982,23 +2125,23 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
                     "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
-                    "default": "~/.dotnet/symbolcache"
+                    "default": ""
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -2038,9 +2181,7 @@
                           "type": "string"
                         },
                         "description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
-                        "default": [
-                          "MyExampleModule.dll"
-                        ]
+                        "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
@@ -2052,7 +2193,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
+                "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
                 "default": {
                   "*": {
                     "enabled": true
@@ -2064,7 +2205,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "description": "Is Source Link enabled for this URL?  If unspecified, this option defaults to 'true'.",
+                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
                       "default": "true"
                     }
                   }
@@ -2077,16 +2218,20 @@
               },
               "targetOutputLogPath": {
                 "type": "string",
-                "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
-                "default": "${workspaceFolder}/out.txt"
+                "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole. E.g. '${workspaceFolder}/out.txt'",
+                "default": ""
               },
               "targetArchitecture": {
                 "type": "string",
-                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "markdownDescription": "[Only supported in local macOS debugging]\n\nThe architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are `x86_64` or `arm64`.",
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ]
               },
               "checkForDevCert": {
                 "type": "boolean",
-                "description": "When true, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. If unspecified, defaults to true when `serverReadyAction` is set. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found or isn't trusted, the user will be prompted to install/trust it.",
+                "description": "If you are launching a web project on Windows or macOS and this is enabled, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. If unspecified, defaults to true when `serverReadyAction` is set. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found or isn't trusted, the user will be prompted to install/trust it.",
                 "default": true
               }
             }
@@ -2097,92 +2242,89 @@
             "properties": {
               "processName": {
                 "type": "string",
-                "description": "",
-                "default": "The process name to attach to. If this is used, 'processId' should not be used."
+                "default": "",
+                "markdownDescription": "The process name to attach to. If this is used, `processId` should not be used."
               },
               "processId": {
                 "anyOf": [
                   {
                     "type": "string",
-                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "markdownDescription": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
                     "default": ""
                   },
                   {
                     "type": "integer",
-                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "markdownDescription": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
                     "default": 0
                   }
                 ]
               },
               "sourceFileMap": {
                 "type": "object",
-                "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "markdownDescription": "Maps build-time paths to local source locations. All instances of build-time path will be replaced with the local source path.\n\nExample:\n\n`{\"<build-path>\":\"<local-source-path>\"}`",
                 "additionalProperties": {
                   "type": "string"
-                },
-                "default": {
-                  "<insert-source-path-here>": "<insert-target-path-here>"
                 }
               },
               "justMyCode": {
                 "type": "boolean",
-                "description": "Optional flag to only show user code.",
+                "markdownDescription": "Flag to only show user code. This option defaults to `true`.",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "description": "Optional flag to require current source code to match the pdb.",
+                "markdownDescription": "Flag to require current source code to match the pdb. This option defaults to `true`.",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "description": "Optional flag to enable stepping over Properties and Operators.",
+                "markdownDescription": "Flag to enable stepping over Properties and Operators. This option defaults to `true`.",
                 "default": true
               },
               "logging": {
-                "description": "Optional flags to determine what types of messages should be logged to the output window.",
+                "description": "Flags to determine what types of messages should be logged to the output window.",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether exception messages should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether module load events should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "markdownDescription": "Flag to determine whether program output should be logged to the output window when not using an external console. This option defaults to `true`.",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether diagnostic engine logs should be logged to the output window. This option defaults to `false`.",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                    "markdownDescription": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "markdownDescription": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "markdownDescription": "Controls if a message is logged when a thread in the target process exits. This option defaults to `false`.",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "markdownDescription": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
                     "default": true
                   }
                 }
@@ -2406,7 +2548,7 @@
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "description": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. For more information: https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations",
+                "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
                 "default": false
               },
               "symbolOptions": {
@@ -2423,23 +2565,23 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
                     "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
-                    "default": "~/.dotnet/symbolcache"
+                    "default": ""
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -2479,9 +2621,7 @@
                           "type": "string"
                         },
                         "description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
-                        "default": [
-                          "MyExampleModule.dll"
-                        ]
+                        "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
@@ -2493,7 +2633,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
+                "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
                 "default": {
                   "*": {
                     "enabled": true
@@ -2505,7 +2645,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "description": "Is Source Link enabled for this URL?  If unspecified, this option defaults to 'true'.",
+                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
                       "default": "true"
                     }
                   }
@@ -2518,7 +2658,11 @@
               },
               "targetArchitecture": {
                 "type": "string",
-                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "markdownDescription": "[Only supported in local macOS debugging]\n\nThe architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are `x86_64` or `arm64`.",
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ]
               }
             }
           }
@@ -2607,6 +2751,28 @@
                 "debuggerPath": "^\"${2:enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg}\""
               }
             }
+          },
+          {
+            "label": ".NET: Launch and Debug Hosted Blazor WebAssembly App",
+            "description": "Launches a Hosted Blazor WebAssembly App with a debugger",
+            "body": {
+              "name": "Launch and Debug Hosted Blazor WebAssembly App",
+              "type": "blazorwasm",
+              "request": "launch",
+              "hosted": true,
+              "program": "^\"\\${workspaceFolder}/bin/Debug/${1:<target-framework>}/${2:<project-name.dll>}\"",
+              "cwd": "^\"\\${workspaceFolder}\""
+            }
+          },
+          {
+            "label": ".NET: Launch and Debug Standalone Blazor WebAssembly App",
+            "description": "Launches Standalone Blazor WebAssembly App with a debugger",
+            "body": {
+              "name": "Launch and Debug Standalone Blazor WebAssembly App",
+              "type": "blazorwasm",
+              "request": "launch",
+              "cwd": "^\"\\${workspaceFolder}\""
+            }
           }
         ]
       },
@@ -2634,7 +2800,7 @@
             "properties": {
               "program": {
                 "type": "string",
-                "description": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: '${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)'\nExample: '${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll'\n\nWhere:\n(target-framework) is the framework that the debugged project is being built for. This is normally found in the project file as the 'TargetFramework' property.\n(project-name.dll) is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+                "markdownDescription": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: `${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)`\n\nExample: `${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll`\n\nWhere:\n`(target-framework)` is the framework that the debugged project is being built for. This is normally found in the project file as the `TargetFramework` property.\n\n`(project-name.dll)` is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
                 "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
               },
               "cwd": {
@@ -2661,7 +2827,7 @@
               },
               "stopAtEntry": {
                 "type": "boolean",
-                "description": "If true, the debugger should stop at the entry point of the target.",
+                "markdownDescription": "If true, the debugger should stop at the entry point of the target. This option defaults to `false`.",
                 "default": false
               },
               "launchBrowser": {
@@ -2676,7 +2842,7 @@
                 "properties": {
                   "enabled": {
                     "type": "boolean",
-                    "description": "Whether web browser launch is enabled",
+                    "description": "Whether web browser launch is enabled. This option defaults to `true`.",
                     "default": true
                   },
                   "args": {
@@ -2697,7 +2863,7 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The executable which will start the web browser",
+                        "description": "The executable which will start the web browser.",
                         "default": "open"
                       },
                       "args": {
@@ -2720,7 +2886,7 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The executable which will start the web browser",
+                        "description": "The executable which will start the web browser.",
                         "default": "xdg-open"
                       },
                       "args": {
@@ -2743,7 +2909,7 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "The executable which will start the web browser",
+                        "description": "The executable which will start the web browser.",
                         "default": "cmd.exe"
                       },
                       "args": {
@@ -2765,7 +2931,7 @@
               },
               "envFile": {
                 "type": "string",
-                "description": "Environment variables passed to the program by a file.",
+                "markdownDescription": "Environment variables passed to the program by a file. E.g. `${workspaceFolder}/.env`",
                 "default": "${workspaceFolder}/.env"
               },
               "console": {
@@ -2776,21 +2942,21 @@
                   "externalTerminal"
                 ],
                 "enumDescriptions": [
-                  "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine)",
-                  "VS Code's integrated terminal",
-                  "External terminal that can be configured via user settings"
+                  "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine).",
+                  "VS Code's integrated terminal.",
+                  "External terminal that can be configured via user settings."
                 ],
-                "description": "Where to launch the debug target.",
+                "description": "When launching console projects, indicates which console the target program should be launched into.",
                 "default": "internalConsole"
               },
               "externalConsole": {
                 "type": "boolean",
-                "description": "Attribute 'externalConsole' is deprecated, use 'console' instead.",
+                "markdownDescription": "Attribute `externalConsole` is deprecated, use `console` instead. This option defaults to `false`.",
                 "default": false
               },
               "launchSettingsFilePath": {
                 "type": "string",
-                "description": "The path to a launchSettings.json file. If this isn't set, the debugger will search in '{cwd}/Properties/launchSettings.json'.",
+                "markdownDescription": "The path to a launchSettings.json file. If this isn't set, the debugger will search in `{cwd}/Properties/launchSettings.json`.",
                 "default": "${workspaceFolder}/Properties/launchSettings.json"
               },
               "launchSettingsProfile": {
@@ -2807,73 +2973,71 @@
               },
               "sourceFileMap": {
                 "type": "object",
-                "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "markdownDescription": "Maps build-time paths to local source locations. All instances of build-time path will be replaced with the local source path.\n\nExample:\n\n`{\"<build-path>\":\"<local-source-path>\"}`",
                 "additionalProperties": {
                   "type": "string"
                 },
-                "default": {
-                  "<insert-source-path-here>": "<insert-target-path-here>"
-                }
+                "default": {}
               },
               "justMyCode": {
                 "type": "boolean",
-                "description": "Optional flag to only show user code.",
+                "markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson#just-my-code)",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "description": "Optional flag to require current source code to match the pdb.",
+                "markdownDescription": "Flag to require current source code to match the pdb. This option defaults to `true`.",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "description": "Optional flag to enable stepping over Properties and Operators.",
+                "markdownDescription": "Flag to enable stepping over Properties and Operators. This option defaults to `true`.",
                 "default": true
               },
               "logging": {
-                "description": "Optional flags to determine what types of messages should be logged to the output window.",
+                "description": "Flags to determine what types of messages should be logged to the output window.",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether exception messages should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether module load events should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "markdownDescription": "Flag to determine whether program output should be logged to the output window when not using an external console. This option defaults to `true`.",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether diagnostic engine logs should be logged to the output window. This option defaults to `false`.",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                    "markdownDescription": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "markdownDescription": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "markdownDescription": "Controls if a message is logged when a thread in the target process exits. This option defaults to `false`.",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "markdownDescription": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
                     "default": true
                   }
                 }
@@ -3097,7 +3261,7 @@
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "description": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. For more information: https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations",
+                "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
                 "default": false
               },
               "symbolOptions": {
@@ -3114,23 +3278,23 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
                     "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
-                    "default": "~/.dotnet/symbolcache"
+                    "default": ""
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -3170,9 +3334,7 @@
                           "type": "string"
                         },
                         "description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
-                        "default": [
-                          "MyExampleModule.dll"
-                        ]
+                        "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
@@ -3184,7 +3346,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
+                "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
                 "default": {
                   "*": {
                     "enabled": true
@@ -3196,7 +3358,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "description": "Is Source Link enabled for this URL?  If unspecified, this option defaults to 'true'.",
+                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
                       "default": "true"
                     }
                   }
@@ -3209,16 +3371,20 @@
               },
               "targetOutputLogPath": {
                 "type": "string",
-                "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole.",
-                "default": "${workspaceFolder}/out.txt"
+                "description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole. E.g. '${workspaceFolder}/out.txt'",
+                "default": ""
               },
               "targetArchitecture": {
                 "type": "string",
-                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "markdownDescription": "[Only supported in local macOS debugging]\n\nThe architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are `x86_64` or `arm64`.",
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ]
               },
               "checkForDevCert": {
                 "type": "boolean",
-                "description": "When true, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. If unspecified, defaults to true when `serverReadyAction` is set. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found or isn't trusted, the user will be prompted to install/trust it.",
+                "description": "If you are launching a web project on Windows or macOS and this is enabled, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. If unspecified, defaults to true when `serverReadyAction` is set. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found or isn't trusted, the user will be prompted to install/trust it.",
                 "default": true
               }
             }
@@ -3229,92 +3395,89 @@
             "properties": {
               "processName": {
                 "type": "string",
-                "description": "",
-                "default": "The process name to attach to. If this is used, 'processId' should not be used."
+                "default": "",
+                "markdownDescription": "The process name to attach to. If this is used, `processId` should not be used."
               },
               "processId": {
                 "anyOf": [
                   {
                     "type": "string",
-                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "markdownDescription": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
                     "default": ""
                   },
                   {
                     "type": "integer",
-                    "description": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If 'processId' used, 'processName' should not be used.",
+                    "markdownDescription": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
                     "default": 0
                   }
                 ]
               },
               "sourceFileMap": {
                 "type": "object",
-                "description": "Optional source file mappings passed to the debug engine. Example: '{ \"C:\\foo\":\"/home/user/foo\" }'",
+                "markdownDescription": "Maps build-time paths to local source locations. All instances of build-time path will be replaced with the local source path.\n\nExample:\n\n`{\"<build-path>\":\"<local-source-path>\"}`",
                 "additionalProperties": {
                   "type": "string"
-                },
-                "default": {
-                  "<insert-source-path-here>": "<insert-target-path-here>"
                 }
               },
               "justMyCode": {
                 "type": "boolean",
-                "description": "Optional flag to only show user code.",
+                "markdownDescription": "Flag to only show user code. This option defaults to `true`.",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "description": "Optional flag to require current source code to match the pdb.",
+                "markdownDescription": "Flag to require current source code to match the pdb. This option defaults to `true`.",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "description": "Optional flag to enable stepping over Properties and Operators.",
+                "markdownDescription": "Flag to enable stepping over Properties and Operators. This option defaults to `true`.",
                 "default": true
               },
               "logging": {
-                "description": "Optional flags to determine what types of messages should be logged to the output window.",
+                "description": "Flags to determine what types of messages should be logged to the output window.",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether exception messages should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether exception messages should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether module load events should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether module load events should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether program output should be logged to the output window when not using an external console.",
+                    "markdownDescription": "Flag to determine whether program output should be logged to the output window when not using an external console. This option defaults to `true`.",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "description": "Optional flag to determine whether diagnostic engine logs should be logged to the output window.",
+                    "markdownDescription": "Flag to determine whether diagnostic engine logs should be logged to the output window. This option defaults to `false`.",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "description": "Optional flag to determine if stdout text from the launching the web browser should be logged to the output window.",
+                    "markdownDescription": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "description": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took.",
+                    "markdownDescription": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "description": "Controls if a message is logged when a thread in the target process exits. Default: `false`.",
+                    "markdownDescription": "Controls if a message is logged when a thread in the target process exits. This option defaults to `false`.",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "description": "Controls if a message is logged when the target process exits, or debugging is stopped. Default: `true`.",
+                    "markdownDescription": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
                     "default": true
                   }
                 }
@@ -3538,7 +3701,7 @@
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "description": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. For more information: https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations",
+                "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
                 "default": false
               },
               "symbolOptions": {
@@ -3555,23 +3718,23 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+                    "description": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+                    "description": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
                     "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
-                    "default": "~/.dotnet/symbolcache"
+                    "default": ""
                   },
                   "moduleFilter": {
                     "description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
@@ -3611,9 +3774,7 @@
                           "type": "string"
                         },
                         "description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
-                        "default": [
-                          "MyExampleModule.dll"
-                        ]
+                        "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
@@ -3625,7 +3786,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
+                "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
                 "default": {
                   "*": {
                     "enabled": true
@@ -3637,7 +3798,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "description": "Is Source Link enabled for this URL?  If unspecified, this option defaults to 'true'.",
+                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
                       "default": "true"
                     }
                   }
@@ -3650,7 +3811,11 @@
               },
               "targetArchitecture": {
                 "type": "string",
-                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "markdownDescription": "[Only supported in local macOS debugging]\n\nThe architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are `x86_64` or `arm64`.",
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ]
               }
             }
           }

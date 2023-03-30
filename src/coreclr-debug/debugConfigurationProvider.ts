@@ -11,9 +11,28 @@ import { PlatformInformation } from '../shared/platform';
 import { hasDotnetDevCertsHttps, createSelfSignedCert, CertToolStatusCodes } from '../utils/DotnetDevCertsHttps';
 import { EventStream } from '../EventStream';
 import { DevCertCreationFailure, ShowChannel } from '../omnisharp/loggingEvents';
- 
+
 export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     constructor(public platformInformation: PlatformInformation, private readonly eventStream: EventStream, private options: Options) {}
+
+    public provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration[]> {
+        return [];
+    }
+
+    public resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration>
+    {
+        // Check to see if we are in the "Run and Debug" scenario.
+        if (Object.keys(debugConfiguration).length == 0)
+        {
+            // Return null to call into 'provideDebugConfigurations'
+            return null;
+        }
+
+        // Load settings before resolving variables as there may be variables set in settings.
+        this.loadSettingDebugOptions(debugConfiguration);
+
+        return debugConfiguration;
+    }
 
     public async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined>
     {
@@ -83,7 +102,46 @@ export class DotnetDebugConfigurationProvider implements vscode.DebugConfigurati
 
         return debugConfiguration;
     }
+
+    private loadSettingDebugOptions(debugConfiguration: vscode.DebugConfiguration): void {
+        let debugOptions = vscode.workspace.getConfiguration('csharp').get('debug');
+        let result = JSON.parse(JSON.stringify(debugOptions));
+        let keys = Object.keys(result);
+
+        for (let key of keys) {
+            // Skip since option is set in the launch.json configuration
+            if (debugConfiguration.hasOwnProperty(key)) {
+                continue;
+            }
+
+            const settingsValue: any = result[key];
+            if (!this.CheckIfSettingIsEmpty(settingsValue))
+            {
+                debugConfiguration[key] = settingsValue;
+            }
+        }
+    }
+
+    private CheckIfSettingIsEmpty(input: any): boolean {
+        switch(typeof(input)) {
+            case "object":
+                if (Array.isArray(input)) {
+                    return input.length === 0;
+                }
+                else {
+                    return Object.keys(input).length === 0;
+                }
+            case "string":
+                return !input;
+            case "boolean":
+            case "number":
+                return false; // booleans and numbers are never empty
+            default:
+                throw "Unknown type to check to see if setting is empty";
+        }
+    }
 }
+
 
 function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
     hasDotnetDevCertsHttps(dotNetCliPaths).then(async (returnData) => {
