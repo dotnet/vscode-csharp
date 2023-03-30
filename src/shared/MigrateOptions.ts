@@ -6,7 +6,7 @@
 import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 
 // Option in the array should be identical to each other, except the name.
-const mergeOptions = [
+const migrateOptions = [
     {omnisharpOption: "csharp.inlayHints.parameters.enabled", roslynOption: "dotnet.inlineHints.enableInlineHintsForParameters" },
     {omnisharpOption: "csharp.inlayHints.parameters.forLiteralParameters", roslynOption: "dotnet.inlineHints.enableInlineHintsForLiteralParameters" },
     {omnisharpOption: "csharp.inlayHints.parameters.forIndexerParameters", roslynOption: "dotnet.inlineHints.enableInlineHintsForIndexerParameters" },
@@ -23,7 +23,7 @@ const mergeOptions = [
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {
     let configuration = vscode.workspace.getConfiguration();
-    for (const {omnisharpOption, roslynOption} of mergeOptions) {
+    for (const {omnisharpOption, roslynOption} of migrateOptions) {
         let roslynOptionValue = configuration.get(roslynOption);
         let roslynOptionDefaultValue = configuration.inspect(roslynOption)?.defaultValue;
         let roslynOptionsHasValue = roslynOption !== undefined ? roslynOptionValue !== roslynOptionDefaultValue : false;

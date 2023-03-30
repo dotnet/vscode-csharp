@@ -47,7 +47,7 @@ import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatu
 import { getDotnetPackApi } from './DotnetPack';
 import { activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
 import { Options } from './shared/options';
-import { MigrateOptions } from './shared/MergedOptions';
+import { MigrateOptions } from './shared/MigrateOptions';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | null> {
     let extensionExportsResolver: ((coreClrDebugPromise: Promise<void>) => CSharpExtensionExports) | null = null;
