@@ -5,6 +5,9 @@
 
 import assert = require('node:assert');
 
+// Inline hints is called inlay hints in vscode.
+const wellKnownClientNameMapping: Map<string, string> = new Map([["inline_hints", "inlay_hints"]]);
+
 export function convertServerOptionNameToClientConfigurationName(section: string) : string | null {
     // Server name would be in format {languageName}|{grouping}.{name} or
     // {grouping}.{name} if this option can be applied to multiple languages.
@@ -17,7 +20,7 @@ export function convertServerOptionNameToClientConfigurationName(section: string
 
         // 2. Get {grouping} part.
         let startIndex = languageNameIndex == -1 ? 0 : languageNameIndex + 1;
-        let optionGroupName = section.substring(startIndex, lastDotIndex);
+        let featureGroupName = section.substring(startIndex, lastDotIndex);
 
         // 3. {name} part from roslyn would be in editorconfig-like form.
         // A valid prefix here is dotnet, csharp or no prefix
@@ -31,12 +34,21 @@ export function convertServerOptionNameToClientConfigurationName(section: string
 
         let featureName = optionNamePrefix == '' ? optionName: optionName.substring(optionNamePrefix.length + 1);
 
-        // Finally, convert everything to camel case and put them together.
-        let camelCaseGroupName = convertToCamelCase(optionGroupName, '_');
+        // If the feature has a well-known name in the client, like inline hints -> inlay hints. Do the mapping.
+        if (wellKnownClientNameMapping.has(featureGroupName)) {
+            let clientSideName = wellKnownClientNameMapping.get(featureGroupName)!;
+            featureName = featureName.replaceAll(featureGroupName, clientSideName);
+            featureGroupName = clientSideName;
+        }
+
+        // Convert everything to camel case.
+        let camelCaseFeatureGroupName = convertToCamelCase(featureGroupName, '_');
         let camelCaseFeatureName = convertToCamelCase(featureName, '_');
+
+        // Put everything together.
         return optionNamePrefix == ''
-            ? camelCaseGroupName.concat('.', camelCaseFeatureName)
-            : convertToCamelCase(optionNamePrefix, '_').concat('.', camelCaseGroupName, '.', camelCaseFeatureName);
+            ? camelCaseFeatureGroupName.concat('.', camelCaseFeatureName)
+            : convertToCamelCase(optionNamePrefix, '_').concat('.', camelCaseFeatureGroupName, '.', camelCaseFeatureName);
     }
 
     return null;
