@@ -7,18 +7,18 @@ import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAd
 
 // Option in the array should be identical to each other, except the name.
 const migrateOptions = [
-    {omnisharpOption: "csharp.inlayHints.parameters.enabled", roslynOption: "dotnet.inlineHints.enableInlineHintsForParameters" },
-    {omnisharpOption: "csharp.inlayHints.parameters.forLiteralParameters", roslynOption: "dotnet.inlineHints.enableInlineHintsForLiteralParameters" },
-    {omnisharpOption: "csharp.inlayHints.parameters.forIndexerParameters", roslynOption: "dotnet.inlineHints.enableInlineHintsForIndexerParameters" },
-    {omnisharpOption: "csharp.inlayHints.parameters.forObjectCreationParameters", roslynOption: "dotnet.inlineHints.enableInlineHintsForObjectCreationParameters" },
-    {omnisharpOption: "csharp.inlayHints.parameters.forOtherParameters", roslynOption: "dotnet.inlineHints.enableInlineHintsForOtherParameters" },
-    {omnisharpOption: "csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix", roslynOption: "dotnet.inlineHints.suppressInlineHintsForParametersThatDifferOnlyBySuffix" },
-    {omnisharpOption: "csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent", roslynOption: "dotnet.inlineHints.suppressInlineHintsForParametersThatMatchMethodIntent" },
-    {omnisharpOption: "csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName", roslynOption: "dotnet.inlineHints.suppressInlineHintsForParametersThatMatchArgumentName" },
-    {omnisharpOption: "csharp.inlayHints.types.enabled", roslynOption: "csharp.inlineHints.enableInlineHintsForTypes" },
-    {omnisharpOption: "csharp.inlayHints.types.forImplicitVariableTypes", roslynOption: "csharp.inlineHints.enableInlineHintsForImplicitVariableTypes" },
-    {omnisharpOption: "csharp.inlayHints.types.forLambdaParameterTypes", roslynOption: "csharp.inlineHints.enableInlineHintsForLambdaParameterTypes" },
-    {omnisharpOption: "csharp.inlayHints.types.forImplicitObjectCreation", roslynOption: "csharp.inlineHints.enableInlineHintsForImplicitObjectCreation" },
+    {omnisharpOption: "csharp.inlayHints.parameters.enabled", roslynOption: "dotnet.inlayHints.enableInlayHintsForParameters" },
+    {omnisharpOption: "csharp.inlayHints.parameters.forLiteralParameters", roslynOption: "dotnet.inlayHints.enableInlayHintsForLiteralParameters" },
+    {omnisharpOption: "csharp.inlayHints.parameters.forIndexerParameters", roslynOption: "dotnet.inlayHints.enableInlayHintsForIndexerParameters" },
+    {omnisharpOption: "csharp.inlayHints.parameters.forObjectCreationParameters", roslynOption: "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters" },
+    {omnisharpOption: "csharp.inlayHints.parameters.forOtherParameters", roslynOption: "dotnet.inlayHints.enableInlayHintsForOtherParameters" },
+    {omnisharpOption: "csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix", roslynOption: "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix" },
+    {omnisharpOption: "csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent", roslynOption: "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent" },
+    {omnisharpOption: "csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName", roslynOption: "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName" },
+    {omnisharpOption: "csharp.inlayHints.types.enabled", roslynOption: "csharp.inlayHints.enableInlayHintsForTypes" },
+    {omnisharpOption: "csharp.inlayHints.types.forImplicitVariableTypes", roslynOption: "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes" },
+    {omnisharpOption: "csharp.inlayHints.types.forLambdaParameterTypes", roslynOption: "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes" },
+    {omnisharpOption: "csharp.inlayHints.types.forImplicitObjectCreation", roslynOption: "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation" },
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {
