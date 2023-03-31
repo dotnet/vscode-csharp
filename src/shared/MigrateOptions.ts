@@ -6,7 +6,7 @@
 import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 
 // Option in the array should be identical to each other, except the name.
-const migrateOptions = [
+export const migrateOptions = [
     {omnisharpOption: "csharp.inlayHints.parameters.enabled", roslynOption: "dotnet.inlayHints.enableInlayHintsForParameters" },
     {omnisharpOption: "csharp.inlayHints.parameters.forLiteralParameters", roslynOption: "dotnet.inlayHints.enableInlayHintsForLiteralParameters" },
     {omnisharpOption: "csharp.inlayHints.parameters.forIndexerParameters", roslynOption: "dotnet.inlayHints.enableInlayHintsForIndexerParameters" },
