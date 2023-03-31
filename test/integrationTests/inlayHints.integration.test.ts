@@ -34,7 +34,7 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         await dotnetConfig.update('inlayHints.enableInlayHintsForObjectCreationParameters', true);
         await dotnetConfig.update('inlayHints.enableInlayHintsForIndexerParameters', true);
         await dotnetConfig.update('inlayHints.enableInlayHintsForOtherParameters', true);
-        await dotnetConfig.update('inlayHints.suppressInlayintsForParametersThatDifferOnlyBySuffix', true);
+        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix', true);
         await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent', true);
         await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatMatchArgumentName', true);
 
