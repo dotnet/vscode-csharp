@@ -350,3 +350,10 @@ export class DotNetTestDebugComplete implements BaseEvent {
 export class DownloadValidation implements BaseEvent {
     type = EventType.DownloadValidation;
 }
+export class DevCertCreationFailure implements BaseEvent {
+    type = EventType.DevCertCreationFailure;
+    constructor(public errorMessage: string) { }
+}
+export class ShowChannel implements BaseEvent {
+    type = EventType.ShowChannel;
+}

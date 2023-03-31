@@ -85,6 +85,8 @@ export enum EventType {
     TelemetryErrorEvent = 78,
     OmnisharpServerRequestCancelled = 79,
     BackgroundDiagnosticStatus = 80,
+    DevCertCreationFailure = 81,
+    ShowChannel = 82,
 }
 
 //Note that the EventType protocol is shared with Razor.VSCode and the numbers here should not be altered
