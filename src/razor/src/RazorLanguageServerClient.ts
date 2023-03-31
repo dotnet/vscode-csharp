@@ -230,11 +230,13 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         this.logger.logMessage(`Razor language server path: ${options.serverPath}`);
 
         args.push('-lsp');
-        args.push('--trace');
 
+        args.push('--trace');
+        args.push(options.trace.toString());
         this.telemetryReporter.reportTraceLevel(options.trace);
 
-        args.push(options.trace.toString());
+        args.push('--projectConfigurationFileName');
+        args.push('project.razor.vscode.json');
 
         if (options.debug) {
             this.telemetryReporter.reportDebugLanguageServer();
