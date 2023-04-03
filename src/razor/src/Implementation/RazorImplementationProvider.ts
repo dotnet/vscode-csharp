@@ -6,6 +6,8 @@
 import * as vscode from 'vscode';
 import { RazorLanguageFeatureBase } from '../RazorLanguageFeatureBase';
 import { LanguageKind } from '../RPC/LanguageKind';
+import { MappingHelpers } from '../Mapping/MappingHelpers';
+import { isRazorCSharpFile } from '../RazorConventions';
 
 export class RazorImplementationProvider
     extends RazorLanguageFeatureBase
@@ -29,8 +31,22 @@ export class RazorImplementationProvider
             'vscode.executeImplementationProvider',
             projection.uri,
             projection.position) as vscode.Location[];
+        
+        const result = new Array<vscode.Location>();
+        for (const implementation of implementations) {
+            if (isRazorCSharpFile(implementation.uri)) {
+                const remappedLocation = await MappingHelpers.remapGeneratedFileLocation(implementation, this.serviceClient, this.logger, token);
+                if (remappedLocation === undefined) {
+                    continue;
+                }
 
-        // Omnisharp should have already done all the remapping. Nothing for us to do here.
-        return implementations;
+                result.push(remappedLocation);
+            } else {
+                // This means it is a .cs file, so we don't need to remap.
+                result.push(implementation);
+            }
+        }
+
+        return result;
     }
 }

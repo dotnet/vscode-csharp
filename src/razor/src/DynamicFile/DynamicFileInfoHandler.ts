@@ -75,6 +75,14 @@ export class DynamicFileInfoHandler {
                     } 
                 }
             }
+
+            // Execute any pending didChange notifications that were queued before Roslyn activated.
+            for (const didChangeNotification of this.documentManager.getPendingChangeNotifications) {
+                vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification); 
+            }
+
+            this.documentManager.clearPendingDidChangeNotifications();
+            this.documentManager.roslynActivated = true;
         } catch (error) {
             this.logger.logWarning(`${DynamicFileInfoHandler.provideDynamicFileInfoCommand} failed with ${error}`);
         }

@@ -32,7 +32,6 @@ import { RazorHtmlFeature } from './Html/RazorHtmlFeature';
 import { IEventEmitterFactory } from './IEventEmitterFactory';
 import { RazorImplementationProvider } from './Implementation/RazorImplementationProvider';
 import { ProposedApisFeature } from './ProposedApisFeature';
-import { RazorCSharpLanguageMiddleware } from './RazorCSharpLanguageMiddleware';
 import { RazorLanguage } from './RazorLanguage';
 import { RazorLanguageConfiguration } from './RazorLanguageConfiguration';
 import { RazorLanguageServerClient } from './RazorLanguageServerClient';
@@ -61,8 +60,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         const languageServerClient = new RazorLanguageServerClient(vscodeType, languageServerDir, telemetryReporter, logger);
         const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
 
-        const razorLanguageMiddleware = new RazorCSharpLanguageMiddleware(languageServiceClient, logger);
-
         const documentManager = new RazorDocumentManager(languageServerClient, logger);
         reportTelemetryForDocuments(documentManager, telemetryReporter);
         const languageConfiguration = new RazorLanguageConfiguration();
@@ -75,7 +72,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
 
         let documentSynchronizer: RazorDocumentSynchronizer;
         languageServerClient.onStart(async () => {
-            vscodeType.commands.executeCommand<void>('omnisharp.registerLanguageMiddleware', razorLanguageMiddleware);
             documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
             const provisionalCompletionOrchestrator = new ProvisionalCompletionOrchestrator(
                 documentManager,

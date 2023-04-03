@@ -4,9 +4,10 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as vscode from 'vscode';
-import { getRazorDocumentUri, isRazorHtmlFile } from '../RazorConventions';
+import { getRazorDocumentUri, isRazorCSharpFile, isRazorHtmlFile } from '../RazorConventions';
 import { RazorLanguageFeatureBase } from '../RazorLanguageFeatureBase';
 import { LanguageKind } from '../RPC/LanguageKind';
+import { MappingHelpers } from '../Mapping/MappingHelpers';
 
 export class RazorReferenceProvider
     extends RazorLanguageFeatureBase
@@ -36,13 +37,18 @@ export class RazorReferenceProvider
                 // we need to remap their file locations to reference the top level Razor document.
                 const razorFile = getRazorDocumentUri(reference.uri);
                 result.push(new vscode.Location(razorFile, reference.range));
+            }  else if (isRazorCSharpFile(reference.uri)) {
+                const remappedLocation = await MappingHelpers.remapGeneratedFileLocation(reference, this.serviceClient, this.logger, token);
+                if (remappedLocation === undefined) {
+                    continue;
+                }
 
+                result.push(remappedLocation);
             } else {
                 // This means it is one of the following,
-                // 1. A .razor/.cshtml file (because OmniSharp already remapped the background C# to the original document)
-                // 2. A .cs file
-                // 3. A .html/.js file
-                // In all of these cases, we don't need to remap. So accept it as is and move on.
+                // 1. A .cs file
+                // 2. A .html/.js file
+                // In both of these cases, we don't need to remap. So accept it as is and move on.
                 result.push(reference);
             }
         }

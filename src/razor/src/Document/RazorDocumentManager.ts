@@ -6,11 +6,9 @@
 import * as vscode from 'vscode';
 import {
     DidChangeTextDocumentParams,
-    DidOpenTextDocumentParams,
     Position,
     Range,
     TextDocumentContentChangeEvent,
-    TextDocumentItem,
     VersionedTextDocumentIdentifier
 } from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
@@ -29,8 +27,11 @@ import { RazorDocumentChangeKind } from './RazorDocumentChangeKind';
 import { createDocument } from './RazorDocumentFactory';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
+    public roslynActivated = false;
+
     private readonly razorDocuments: { [hostDocumentPath: string]: IRazorDocument } = {};
     private readonly openRazorDocuments = new Set<string>();
+    private pendingDidChangeNotifications = new Array<DidChangeTextDocumentParams>();
     private onChangeEmitter = new vscode.EventEmitter<IRazorDocumentChangeEvent>();
 
     constructor(
@@ -40,8 +41,16 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     public get onChange() { return this.onChangeEmitter.event; }
 
+    public get getPendingChangeNotifications() {
+        return this.pendingDidChangeNotifications;
+    }
+
     public get documents() {
         return Object.values(this.razorDocuments);
+    }
+
+    public async clearPendingDidChangeNotifications() {
+        this.pendingDidChangeNotifications = [];
     }
 
     public async getDocument(uri: vscode.Uri) {
@@ -227,25 +236,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
             const csharpProjectedDocumentPath = csharpProjectedDocument.uri.path;
 
-            // Since the Razor language server starts before Roslyn's, there's a chance they haven't sent us a dynamic
-            // file info request yet. If they haven't, we'll kick off our own while taking care to not send a duplicate
-            // request later on.
-            if (!this.isRazorDocumentOpenInCSharpWorkspace(hostDocumentUri)) {
-                const csharpDoc: TextDocumentItem = {
-                    uri: csharpProjectedDocumentPath,
-                    languageId: RazorLanguage.id,
-                    version: csharpProjectedDocument.projectedDocumentSyncVersion,
-                    text: ''
-                };
-
-                const didOpenRequest: DidOpenTextDocumentParams = {
-                    textDocument: csharpDoc
-                };
-
-                vscode.commands.executeCommand(RoslynLanguageServer.roslynDidOpenCommand, didOpenRequest);
-                this.didOpenRazorCSharpDocument(hostDocumentUri);
-            }
-
             // Create change events for our didChange notifications
             const contentChangeEvents = new Array<TextDocumentContentChangeEvent>();
             for (const change of updateBufferRequest.changes) {
@@ -265,7 +255,14 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 contentChanges: contentChangeEvents
             };
 
-            vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification);
+            // Since the Razor language server starts before Roslyn's, there's a chance they haven't sent us a dynamic
+            // file info request yet. If they haven't, we'll execute the didChange notifications later.
+            if (!this.roslynActivated) {
+                this.pendingDidChangeNotifications.push(didChangeNotification);
+            } else {
+                vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification);
+            }
+
             this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
         } else {
             this.logger.logWarning('Failed to update the C# document buffer. This is unexpected and may result in incorrect C# interactions.');

@@ -12,6 +12,7 @@ import { RazorLanguageServiceClient } from '../RazorLanguageServiceClient';
 import { RazorLogger } from '../RazorLogger';
 import { LanguageKind } from '../RPC/LanguageKind';
 import { RazorCodeLens } from './RazorCodeLens';
+import { MappingHelpers } from '../Mapping/MappingHelpers';
 export class RazorCodeLensProvider
     extends RazorLanguageFeatureBase
     implements vscode.CodeLensProvider {
@@ -115,13 +116,16 @@ export class RazorCodeLensProvider
                 'vscode.executeReferenceProvider',
                 projection.uri,
                 projection.position) as vscode.Location[];
+            
+            const remappedReferences = await MappingHelpers.remapGeneratedFileLocations(
+                references, this.serviceClient, this.logger, token);
 
             // We now have a list of references to show in the CodeLens.
-            const count = references.length;
+            const count = remappedReferences.length;
             codeLens.command = {
                 title: count === 1 ? '1 reference' : `${count} references`,
                 command: 'editor.action.showReferences',
-                arguments: [razorDocument.uri, codeLens.range.start, references],
+                arguments: [razorDocument.uri, codeLens.range.start, remappedReferences],
             };
 
             return codeLens;
