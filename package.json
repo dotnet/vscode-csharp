@@ -1062,62 +1062,62 @@
           "default": true,
           "description": "Shows the OmniSharp log in the Output pane when OmniSharp reports an error."
         },
-        "csharp.inlayHints.parameters.enabled": {
+        "dotnet.inlayHints.enableInlayHintsForParameters": {
           "type": "boolean",
           "default": false,
           "description": "Display inline parameter name hints"
         },
-        "csharp.inlayHints.parameters.forLiteralParameters": {
+        "dotnet.inlayHints.enableInlayHintsForLiteralParameters": {
           "type": "boolean",
           "default": false,
           "description": "Show hints for literals"
         },
-        "csharp.inlayHints.parameters.forObjectCreationParameters": {
+        "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": {
           "type": "boolean",
           "default": false,
           "description": "Show hints for 'new' expressions"
         },
-        "csharp.inlayHints.parameters.forIndexerParameters": {
+        "dotnet.inlayHints.enableInlayHintsForIndexerParameters": {
           "type": "boolean",
           "default": false,
           "description": "Show hints for indexers"
         },
-        "csharp.inlayHints.parameters.forOtherParameters": {
+        "dotnet.inlayHints.enableInlayHintsForOtherParameters": {
           "type": "boolean",
           "default": false,
           "description": "Show hints for everything else"
         },
-        "csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix": {
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": {
           "type": "boolean",
           "default": false,
           "description": "Suppress hints when parameter names differ only by suffix"
         },
-        "csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent": {
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": {
           "type": "boolean",
           "default": false,
           "description": "Suppress hints when parameter name matches the method's intent"
         },
-        "csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName": {
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": {
           "type": "boolean",
           "default": false,
           "description": "Suppress hints when argument matches parameter name"
         },
-        "csharp.inlayHints.types.enabled": {
+        "csharp.inlayHints.enableInlayHintsForTypes": {
           "type": "boolean",
           "default": false,
           "description": "Display inline type hints"
         },
-        "csharp.inlayHints.types.forImplicitVariableTypes": {
+        "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": {
           "type": "boolean",
           "default": false,
           "description": "Show hints for variables with inferred types"
         },
-        "csharp.inlayHints.types.forLambdaParameterTypes": {
+        "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": {
           "type": "boolean",
           "default": false,
           "description": "Show hints for lambda parameter types"
         },
-        "csharp.inlayHints.types.forImplicitObjectCreation": {
+        "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": {
           "type": "boolean",
           "default": false,
           "description": "Show hints for implicit object creation"

@@ -28,19 +28,21 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         const editorConfig = vscode.workspace.getConfiguration('editor');
         await editorConfig.update('inlayHints.enabled', true);
 
+        const dotnetConfig = vscode.workspace.getConfiguration('dotnet');
+        await dotnetConfig.update('inlayHints.enableInlayHintsForParameters', true);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForLiteralParameters', true);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForObjectCreationParameters', true);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForIndexerParameters', true);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForOtherParameters', true);
+        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix', true);
+        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent', true);
+        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatMatchArgumentName', true);
+
         const csharpConfig = vscode.workspace.getConfiguration('csharp');
-        await csharpConfig.update('inlayHints.parameters.enabled', true);
-        await csharpConfig.update('inlayHints.parameters.forLiteralParameters', true);
-        await csharpConfig.update('inlayHints.parameters.forObjectCreationParameters', true);
-        await csharpConfig.update('inlayHints.parameters.forIndexerParameters', true);
-        await csharpConfig.update('inlayHints.parameters.forOtherParameters', true);
-        await csharpConfig.update('inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix', true);
-        await csharpConfig.update('inlayHints.parameters.suppressForParametersThatMatchMethodIntent', true);
-        await csharpConfig.update('inlayHints.parameters.suppressForParametersThatMatchArgumentName', true);
-        await csharpConfig.update('inlayHints.types.enabled', true);
-        await csharpConfig.update('inlayHints.types.forImplicitVariableTypes', true);
-        await csharpConfig.update('inlayHints.types.forLambdaParameterTypes', true);
-        await csharpConfig.update('inlayHints.types.forImplicitObjectCreation', true);
+        await csharpConfig.update('inlayHints.enableInlayHintsForTypes', true);
+        await csharpConfig.update('inlayHints.enableInlayHintsForImplicitVariableTypes', true);
+        await csharpConfig.update('inlayHints.enableInlayHintsForLambdaParameterTypes', true);
+        await csharpConfig.update('inlayHints.enableInlayHintsForImplicitObjectCreation', true);
 
         await restartOmniSharpServer();
         const activation = await activateCSharpExtension();

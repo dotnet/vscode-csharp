@@ -5,7 +5,7 @@
 
 import {assert, expect} from 'chai';
 import {convertServerOptionNameToClientConfigurationName} from '../../../src/lsptoolshost/OptionNameConverter';
-import { readFileSync } from 'fs';
+import {readFileSync} from 'fs';
 
 const testData = [
     { serverOption: "csharp|symbol_search.dotnet_search_reference_assemblies", vsCodeConfiguration: "dotnet.symbolSearch.searchReferenceAssemblies", declareInPackageJson: true},
@@ -25,7 +25,19 @@ const testData = [
     { serverOption: "mystery_language|highlighting.dotnet_highlight_related_regex_components", vsCodeConfiguration: null, declareInPackageJson: false},
     { serverOption: "csharp|highlighting.dotnet_highlight_related_json_components", vsCodeConfiguration: "dotnet.highlighting.highlightRelatedJsonComponents", declareInPackageJson: true},
     { serverOption: "mystery_language|Highlighting.dotnet_highlight_related_json_components", vsCodeConfiguration: null, declareInPackageJson: false},
-    { serverOption: "text_editor.tab_width", vsCodeConfiguration: "textEditor.tabWidth", declareInPackageJson: false}
+    { serverOption: "text_editor.tab_width", vsCodeConfiguration: "textEditor.tabWidth", declareInPackageJson: false},
+    { serverOption: "csharp|inlay_hints.dotnet_enable_inlay_hints_for_parameters", vsCodeConfiguration: "dotnet.inlayHints.enableInlayHintsForParameters", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.dotnet_enable_inlay_hints_for_literal_parameters", vsCodeConfiguration: "dotnet.inlayHints.enableInlayHintsForLiteralParameters", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.dotnet_enable_inlay_hints_for_indexer_parameters", vsCodeConfiguration: "dotnet.inlayHints.enableInlayHintsForIndexerParameters", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.dotnet_enable_inlay_hints_for_object_creation_parameters", vsCodeConfiguration: "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.dotnet_enable_inlay_hints_for_other_parameters", vsCodeConfiguration: "dotnet.inlayHints.enableInlayHintsForOtherParameters", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix", vsCodeConfiguration: "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent", vsCodeConfiguration: "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name", vsCodeConfiguration: "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.csharp_enable_inlay_hints_for_types", vsCodeConfiguration: "csharp.inlayHints.enableInlayHintsForTypes", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.csharp_enable_inlay_hints_for_implicit_variable_types", vsCodeConfiguration: "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.csharp_enable_inlay_hints_for_lambda_parameter_types", vsCodeConfiguration: "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes", declareInPackageJson: true},
+    { serverOption: "csharp|inlay_hints.csharp_enable_inlay_hints_for_implicit_object_creation", vsCodeConfiguration: "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation", declareInPackageJson: true},
 ]
 
 suite("Server option name to vscode configuration name test", () => {
