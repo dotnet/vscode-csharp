@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as protocol from './protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-import { LaunchTarget, findLaunchTargets, LaunchTargetKind } from './launcher';
+import { LaunchTarget, LaunchTargetKind } from "../shared/LaunchTarget";
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
 import { OmnisharpManager } from './OmnisharpManager';
@@ -32,6 +32,7 @@ import { showProjectSelector } from '../features/commands';
 import { validateRequirements } from './requirementCheck';
 import { Advisor } from '../features/diagnosticsProvider';
 import TestManager from '../features/dotnetTest';
+import { findLaunchTargets } from './launcher';
 
 enum ServerState {
     Starting,

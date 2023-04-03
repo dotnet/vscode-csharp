@@ -35,7 +35,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.6.0-3.23180.12",
+    "roslyn": "4.6.0-3.23180.19",
     "omniSharp": "1.39.4",
     "razor": "7.0.0-preview.23067.5"
   },
@@ -669,6 +669,7 @@
     "onCommand:dotnet.restore.project",
     "onCommand:dotnet.restore.all",
     "onCommand:dotnet.generateAssets",
+    "onCommand:dotnet.openSolution",
     "onCommand:csharp.downloadDebugger",
     "onCommand:csharp.listProcess",
     "onCommand:csharp.listRemoteProcess",
@@ -1485,6 +1486,12 @@
         "title": "Select Project",
         "category": "OmniSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
+      },
+      {
+        "command": "dotnet.openSolution",
+        "title": "Open Solution",
+        "category": ".NET",
+        "enablement": "!config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.fixAll.solution",

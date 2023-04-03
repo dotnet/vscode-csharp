@@ -5,7 +5,8 @@
 
 import * as vscode from 'vscode';
 import { assert } from "chai";
-import { LaunchTargetKind, resourcesAndFolderMapToLaunchTargets, resourcesToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
+import { resourcesAndFolderMapToLaunchTargets, resourcesToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
+import { LaunchTargetKind } from '../../src/shared/LaunchTarget';
 
 suite(`launcher:`, () => {
     const workspaceFolders: vscode.WorkspaceFolder[] = [{ uri: vscode.Uri.parse('/'), name: "root", index: 0 }];

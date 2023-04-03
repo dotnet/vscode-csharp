@@ -6,7 +6,7 @@
 import { PlatformInformation } from "../shared/platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';
-import { LaunchTarget } from "./launcher";
+import { LaunchTarget } from "../shared/LaunchTarget";
 import { EventType } from "./EventType";
 
 export interface BaseEvent {

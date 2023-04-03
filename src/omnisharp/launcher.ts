@@ -11,27 +11,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from '../shared/options';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
-
-export enum LaunchTargetKind {
-    Solution,
-    Project,
-    ProjectJson,
-    Folder,
-    Csx,
-    Cake,
-    LiveShare
-}
-
-/**
- * Represents the project or solution that OmniSharp is to be launched with.
- * */
-export interface LaunchTarget {
-    label: string;
-    description: string;
-    directory: string;
-    target: string;
-    workspaceKind: LaunchTargetKind;
-}
+import { LaunchTarget, LaunchTargetKind, createLaunchTargetForSolution } from '../shared/LaunchTarget';
 
 export const vslsTarget: LaunchTarget = {
     label: "VSLS",
@@ -137,14 +117,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
         resources.forEach(resource => {
             // Add .sln and .slnf files
             if (isSolution(resource)) {
-                const dirname = path.dirname(resource.fsPath);
-                solutionTargets.push({
-                    label: path.basename(resource.fsPath),
-                    description: vscode.workspace.asRelativePath(dirname),
-                    target: resource.fsPath,
-                    directory: path.dirname(resource.fsPath),
-                    workspaceKind: LaunchTargetKind.Solution
-                });
+                solutionTargets.push(createLaunchTargetForSolution(resource));
             }
             // Add project.json files
             else if (isProjectJson(resource)) {

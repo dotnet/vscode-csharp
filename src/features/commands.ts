@@ -5,7 +5,8 @@
 
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import { findLaunchTargets, LaunchTarget } from '../omnisharp/launcher';
+import { findLaunchTargets } from '../omnisharp/launcher';
+import { LaunchTarget } from "../shared/LaunchTarget";
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';

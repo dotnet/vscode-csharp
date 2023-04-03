@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { UriConverter } from './uriConverter';
 import * as languageClient from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from './roslynLanguageServer';
+import { createLaunchTargetForSolution } from '../shared/LaunchTarget';
 
 export function registerCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     // It is very important to be careful about the types used as parameters for these command callbacks.
@@ -20,6 +21,7 @@ export function registerCommands(context: vscode.ExtensionContext, languageServe
     // so we don't accidentally pass them directly into vscode APIs.
     context.subscriptions.push(vscode.commands.registerCommand('roslyn.client.peekReferences', peekReferencesCallback));
     context.subscriptions.push(vscode.commands.registerCommand('dotnet.restartServer', async () => restartServer(languageServer)));
+    context.subscriptions.push(vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer)));
 }
 
 /**
@@ -43,5 +45,22 @@ async function peekReferencesCallback(uriStr: string, serverPosition: languageCl
 
 async function restartServer(languageServer: RoslynLanguageServer): Promise<void> {
   await languageServer.restart();
+}
+
+async function openSolution(languageServer: RoslynLanguageServer): Promise<void> {
+  if (!vscode.workspace.workspaceFolders) {
+    return;
+  }
+
+  const solutionFiles = await vscode.workspace.findFiles('**/*.sln');
+  const launchTargets = solutionFiles.map(createLaunchTargetForSolution);
+  const launchTarget = await vscode.window.showQuickPick(launchTargets, {
+    matchOnDescription: true,
+    placeHolder: `Select solution file`
+  });
+
+  if (launchTarget) {
+    languageServer.openSolution(vscode.Uri.file(launchTarget.target));
+  }
 }
 

@@ -34,6 +34,7 @@ import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfo
 import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
 import EventEmitter = require('events');
 import Disposable from '../Disposable';
+import { OpenSolutionParams } from './OpenSolutionParams';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -78,6 +79,13 @@ export class RoslynLanguageServer {
      */
     private _eventBus = new EventEmitter();
 
+    /**
+     * The solution file previously opened; we hold onto this so we can send this back over if the server were to be relaunched for any reason, like some other configuration
+     * change that required the server to restart, or some other catastrophic failure that completely took down the process. In the case that the process is crashing because
+     * of trying to load this solution file, we'll rely on VS Code's support to eventually stop relaunching the LSP server entirely.
+     */
+    private _solutionFile: vscode.Uri | undefined;
+
     constructor(
         private platformInfo: PlatformInformation,
         private optionProvider: OptionProvider,
@@ -117,18 +125,11 @@ export class RoslynLanguageServer {
         let resolvedDotnet = await dotnetResolver.getHostExecutableInfo(options);
         _channel.appendLine("Dotnet version: " + resolvedDotnet.version);
 
-        let solutions = await vscode.workspace.findFiles('*.sln', '**/node_modules/**', 1);
-        let solutionPath: vscode.Uri | undefined = solutions[0];
-
-        if (solutionPath) {
-            _channel.appendLine(`Found solution ${solutionPath}`);
-        }
-
         let logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
 
         let serverOptions: ServerOptions = async () => {
-            return await this.startServer(solutionPath, logLevel);
+            return await this.startServer(logLevel);
         };
 
         let documentSelector = options.languageServerOptions.documentSelector;
@@ -177,6 +178,7 @@ export class RoslynLanguageServer {
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
                 await this._languageClient!.setTrace(languageClientTraceLevel);
+                await this.sendOpenSolutionNotification();
             }
         });
 
@@ -237,7 +239,19 @@ export class RoslynLanguageServer {
         return response;
     }
 
-    private async startServer(solutionPath: vscode.Uri | undefined, logLevel: string | undefined): Promise<cp.ChildProcess> {
+    public async openSolution(solutionFile: vscode.Uri): Promise<void> {
+        this._solutionFile = solutionFile;
+        await this.sendOpenSolutionNotification();
+    }
+
+    private async sendOpenSolutionNotification() {
+        if (this._solutionFile !== undefined && this._languageClient !== undefined && this._languageClient.isRunning()) {
+            let protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
+            await this._languageClient.sendNotification("solution/open", new OpenSolutionParams(protocolUri));
+        }
+    }
+
+    private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
         let clientRoot = __dirname;
 
         let serverPath = this.optionProvider.GetLatestOptions().commonOptions.serverPath;
@@ -270,11 +284,6 @@ export class RoslynLanguageServer {
 
         if (brokeredServicePipeName) {
             args.push("--brokeredServicePipeName", brokeredServicePipeName);
-        }
-        else if (solutionPath) {
-            // We only add the solution path if we didn't have a pipe name; if we had a pipe name we won't be opening any solution right away but following
-            // what the other process does.
-            args.push("--solutionPath", solutionPath.fsPath);
         }
 
         if (starredCompletionComponentPath) {
@@ -419,3 +428,4 @@ export async function deactivate() {
     }
     return _languageServer.stop();
 }
+

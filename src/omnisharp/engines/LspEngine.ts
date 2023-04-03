@@ -5,7 +5,8 @@
 
 import * as protocol from '../protocol';
 import { CancellationToken } from '../../vscodeAdapter';
-import { configure, LaunchTarget } from '../launcher';
+import { configure } from '../launcher';
+import { LaunchTarget } from "../../shared/LaunchTarget";
 import { EventEmitter } from 'events';
 import { Options } from '../../shared/options';
 import { setTimeout } from 'timers';

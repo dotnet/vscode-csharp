@@ -7,7 +7,7 @@ import * as protocol from '../protocol';
 import * as utils from '../../common';
 import { CancellationToken } from '../../vscodeAdapter';
 import { ChildProcess, exec } from 'child_process';
-import { LaunchTarget } from '../launcher';
+import { LaunchTarget } from "../../shared/LaunchTarget";
 import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from '../requestQueue';
 import { EventEmitter } from 'events';

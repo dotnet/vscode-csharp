@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from '../../vscodeAdapter';
-import { LaunchTarget } from '../launcher';
+import { LaunchTarget } from "../../shared/LaunchTarget";
 import { Options } from '../../shared/options';
 import Disposable from '../../Disposable';
 import { OmniSharpServer } from '../server';
