@@ -1,4 +1,4 @@
-## C# for VIsual Studio Code
+## C# for Visual Studio Code
 C# is an extension that contributes to the larger [C# Dev Kit extension]() for Visual Studio Code to provide performant and reliable language support. Under the hood, this extension is powered by a Language Server Protocol (LSP) Tools Host which integrates with open source components like Roslyn (Link to Roslyn) and Razor (link to Razor) to provide rich type information and a faster, more reliable C# experience.
 
 
