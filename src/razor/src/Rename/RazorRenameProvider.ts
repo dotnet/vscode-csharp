@@ -10,6 +10,7 @@ import { RazorLanguageFeatureBase } from '../RazorLanguageFeatureBase';
 import { RazorLanguageServiceClient } from '../RazorLanguageServiceClient';
 import { RazorLogger } from '../RazorLogger';
 import { LanguageKind } from '../RPC/LanguageKind';
+import { MappingHelpers } from '../Mapping/MappingHelpers';
 
 export class RazorRenameProvider
     extends RazorLanguageFeatureBase
@@ -39,8 +40,6 @@ export class RazorRenameProvider
             return null;  // Promise.reject('Cannot rename this symbol.');
         }
 
-        // Let the rename go through. OmniSharp doesn't currently support "prepareRename" so we need to utilize document
-        // APIs in order to resolve the appropriate rename range.
         const range = document.getWordRangeAtPosition(position);
         return range;
     }
@@ -61,7 +60,6 @@ export class RazorRenameProvider
             return;
         }
 
-        // Send a rename command to Omnisharp which in turn would call our command to get the Razor documents re-mapped.
         const response = await vscode.commands.executeCommand<vscode.WorkspaceEdit>(
             'vscode.executeDocumentRenameProvider',
             projection.uri,
@@ -69,6 +67,8 @@ export class RazorRenameProvider
             newName,
         );
 
-        return response;
+        // Re-map the rename location to the original Razor document
+        const remappedResponse = await MappingHelpers.remapGeneratedFileWorkspaceEdit(response, this.serviceClient, this.logger, token);
+        return remappedResponse;
     }
 }
