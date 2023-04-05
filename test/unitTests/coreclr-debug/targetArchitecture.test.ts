@@ -23,7 +23,33 @@ suite("getTargetArchitecture Tests", () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, "");
+            assert.equal(targetArchitecture, "x86_64");
+        });
+
+        test("Windows: X64 SDK on ARM64", () => {
+            const platformInfo = new PlatformInformation("win32", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "6.0.0",
+                RuntimeId: "win10-x64",
+            };
+
+            const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
+
+            assert.equal(targetArchitecture, "x86_64");
+        });
+
+        test("Windows: ARM64 SDK on ARM64", () => {
+            const platformInfo = new PlatformInformation("win32", "arm64");
+            const dotnetInfo: DotnetInfo = {
+                FullInfo: "Irrelevant",
+                Version: "6.0.0",
+                RuntimeId: "win10-arm64",
+            };
+
+            const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
+
+            assert.equal(targetArchitecture, "arm64");
         });
     });
 
