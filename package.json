@@ -402,28 +402,29 @@
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-win7-x64.zip",
-      "installPath": ".debugger",
+      "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
       ],
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "arm64"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui.exe",
+      "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
       "integrity": "10F4DA0626D3BA8599FA27A6C1AE6293037158350A30B55501664DA56E4D7FC9"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-win10-arm64.zip",
-      "installPath": ".debugger",
+      "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
       ],
       "architectures": [
         "arm64"
       ],
-      "installTestPath": "./.debugger/vsdbg-ui.exe",
+      "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
       "integrity": "85426D6D98DBCFA1220F5A74D51D8FDB530903F612BF95A406E95D18F67E4821"
     },
     {
@@ -888,7 +889,11 @@
             },
             "targetArchitecture": {
               "type": "string",
-              "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+              "enum": [
+                "x86_64",
+                "arm64"
+              ],
+              "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
             },
             "type": {
               "type": "string",
@@ -1981,7 +1986,11 @@
               },
               "targetArchitecture": {
                 "type": "string",
-                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ],
+                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
               },
               "checkForDevCert": {
                 "type": "boolean",
@@ -2417,7 +2426,11 @@
               },
               "targetArchitecture": {
                 "type": "string",
-                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ],
+                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
               }
             }
           }
@@ -3113,7 +3126,11 @@
               },
               "targetArchitecture": {
                 "type": "string",
-                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ],
+                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
               },
               "checkForDevCert": {
                 "type": "boolean",
@@ -3549,7 +3566,11 @@
               },
               "targetArchitecture": {
                 "type": "string",
-                "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ],
+                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
               }
             }
           }

@@ -406,7 +406,11 @@
         },
         "targetArchitecture": {
           "type": "string",
-          "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+          "enum": [
+            "x86_64",
+            "arm64"
+          ],
+          "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
         },
         "checkForDevCert": {
           "type": "boolean",
@@ -499,7 +503,11 @@
         },
         "targetArchitecture": {
           "type": "string",
-          "description": "[Only supported in local macOS debugging] The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+          "enum": [
+            "x86_64",
+            "arm64"
+          ],
+          "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
         }
       }
     },
