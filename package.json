@@ -893,7 +893,7 @@
                 "x86_64",
                 "arm64"
               ],
-              "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+              "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
             },
             "type": {
               "type": "string",
@@ -1990,7 +1990,7 @@
                   "x86_64",
                   "arm64"
                 ],
-                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
               },
               "checkForDevCert": {
                 "type": "boolean",
@@ -2430,7 +2430,7 @@
                   "x86_64",
                   "arm64"
                 ],
-                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
               }
             }
           }
@@ -3130,7 +3130,7 @@
                   "x86_64",
                   "arm64"
                 ],
-                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
               },
               "checkForDevCert": {
                 "type": "boolean",
@@ -3570,7 +3570,7 @@
                   "x86_64",
                   "arm64"
                 ],
-                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64."
+                "description": "The architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are x86_64 or arm64. This value is ignored on Linux."
               }
             }
           }
