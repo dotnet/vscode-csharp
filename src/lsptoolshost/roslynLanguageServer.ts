@@ -25,6 +25,8 @@ import {
     Trace,
     StateChangeEvent,
     RequestType,
+    FormattingOptions,
+    TextDocumentIdentifier,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { DotnetResolver } from '../shared/DotnetResolver';
@@ -34,6 +36,7 @@ import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfo
 import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
 import EventEmitter = require('events');
 import Disposable from '../Disposable';
+import { OnAutoInsertRequest, RoslynProtocol } from './roslynProtocol';
 import { OpenSolutionParams } from './OpenSolutionParams';
 
 let _languageServer: RoslynLanguageServer;
@@ -251,6 +254,15 @@ export class RoslynLanguageServer {
         }
     }
 
+    public getServerCapabilities() : any {
+        if (!this._languageClient) {
+            throw new Error('Tried to send request while server is not started.');
+        }
+
+        let capabilities: any = this._languageClient.initializeResult?.capabilities;
+        return capabilities;
+    }
+
     private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
         let clientRoot = __dirname;
 
@@ -419,8 +431,74 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, _languageServer);
 
+    let options = optionsProvider.GetLatestOptions();
+    let source = new vscode.CancellationTokenSource();
+    vscode.workspace.onDidChangeTextDocument(async e => {
+        if (!options.languageServerOptions.documentSelector.includes(e.document.languageId))
+        {
+            return;
+        }
+        
+        if (e.contentChanges.length > 1) {
+            return;
+        }
+    
+        const change = e.contentChanges[0];
+    
+        if (!change.range.isEmpty) {
+            return;
+        }
+
+        const capabilities = await _languageServer.getServerCapabilities();
+
+        if (capabilities._vs_onAutoInsertProvider) {
+            if (!capabilities._vs_onAutoInsertProvider._vs_triggerCharacters.includes(change.text)) {
+                return;
+            }
+
+            source.cancel();
+            source = new vscode.CancellationTokenSource();
+            await applyAutoInsertEdit(e, source.token);
+        }
+    });
+
     // Start the language server.
     await _languageServer.start();
+}
+
+async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vscode.CancellationToken) {
+    const change = e.contentChanges[0];
+
+    // Need to add 1 since the server expects the position to be where the caret is after the last token has been inserted.
+    const position = new vscode.Position(change.range.start.line, change.range.start.character + 1);
+    const uri = UriConverter.serialize(e.document.uri);
+    const textDocument = TextDocumentIdentifier.create(uri);
+    const formattingOptions = getFormattingOptions();
+    const request: RoslynProtocol.OnAutoInsertParams = { _vs_textDocument: textDocument, _vs_position: position, _vs_ch: change.text, _vs_options: formattingOptions };
+    let response = await _languageServer.sendRequest(OnAutoInsertRequest.type, request, token);
+    if (response)
+    {
+        const textEdit = response._vs_textEdit;
+        const startPosition = new vscode.Position(textEdit.range.start.line, textEdit.range.start.character);
+        const endPosition = new vscode.Position(textEdit.range.end.line, textEdit.range.end.character);
+        const docComment = new vscode.SnippetString(textEdit.newText);
+        const code: any = vscode;
+        const textEdits = [new code.SnippetTextEdit(new vscode.Range(startPosition, endPosition), docComment)];
+        let edit = new vscode.WorkspaceEdit();
+        edit.set(e.document.uri, textEdits);        
+
+        const applied = vscode.workspace.applyEdit(edit);
+        if (!applied) {
+            throw new Error("Tried to insert a comment but an error occurred.");
+        }
+    }
+}
+
+function getFormattingOptions() : FormattingOptions {
+    const editorConfig = vscode.workspace.getConfiguration('editor');
+    const tabSize = editorConfig.get<number>('tabSize') ?? 4;
+    const insertSpaces = editorConfig.get<boolean>('insertSpaces') ?? true;
+    return FormattingOptions.create(tabSize, insertSpaces);
 }
 
 // this method is called when your extension is deactivated

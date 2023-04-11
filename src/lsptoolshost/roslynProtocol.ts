@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { MessageDirection, RequestType, URI } from "vscode-languageserver-protocol";
+import { FormattingOptions, InsertTextFormat, MessageDirection, Position, RequestType, TextDocumentIdentifier, TextEdit, URI } from "vscode-languageserver-protocol";
 
 export declare namespace RoslynProtocol {
     export interface WorkspaceDebugConfigurationParams {
@@ -41,10 +41,28 @@ export declare namespace RoslynProtocol {
          */
         isExe: boolean;
     }
+
+    export interface OnAutoInsertParams {
+        _vs_textDocument: TextDocumentIdentifier;
+        _vs_position: Position;
+        _vs_ch: string;
+        _vs_options: FormattingOptions;
+    }
+
+    export interface OnAutoInsertResponseItem {
+        _vs_textEditFormat: InsertTextFormat;
+        _vs_textEdit: TextEdit;
+    }
 }
 
 export namespace WorkspaceDebugConfigurationRequest {
     export const method: 'workspace/debugConfiguration' = 'workspace/debugConfiguration';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
     export const type = new RequestType<RoslynProtocol.WorkspaceDebugConfigurationParams, RoslynProtocol.ProjectDebugConfiguration[], void>(method);
+}
+
+export namespace OnAutoInsertRequest {
+    export const method: 'textDocument/_vs_onAutoInsert' = 'textDocument/_vs_onAutoInsert';
+    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
+    export const type = new RequestType<RoslynProtocol.OnAutoInsertParams, RoslynProtocol.OnAutoInsertResponseItem, void>(method);
 }
