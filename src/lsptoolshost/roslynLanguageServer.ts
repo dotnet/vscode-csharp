@@ -364,13 +364,14 @@ export class RoslynLanguageServer {
         if (!csharpDevkitExtension) {
             // C# Dev Kit is not installed - continue C#-only activation.
             _channel.appendLine("Activating C# standalone...");
+            vscode.commands.executeCommand("setContext", "dotnet.server.activatedStandalone", true);
             this._wasActivatedWithCSharpDevkit = false;
             return undefined;
         }
 
         _channel.appendLine("Activating C# + C# Dev Kit...");
         this._wasActivatedWithCSharpDevkit = true;
-        return await csharpDevkitExtension.activate();
+        await csharpDevkitExtension.activate();
     }
 
     private async getBrokeredServicePipeName(csharpDevkitExports: any | undefined): Promise<string | undefined> {

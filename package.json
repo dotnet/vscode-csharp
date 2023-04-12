@@ -1492,7 +1492,7 @@
         "command": "dotnet.openSolution",
         "title": "Open Solution",
         "category": ".NET",
-        "enablement": "!config.dotnet.server.useOmnisharp"
+        "enablement": "!config.dotnet.server.useOmnisharp && dotnet.server.activatedStandalone"
       },
       {
         "command": "o.fixAll.solution",
@@ -1589,12 +1589,14 @@
       {
         "command": "dotnet.test.runTestsInContext",
         "title": "Run Tests in Context",
-        "category": ".NET"
+        "category": ".NET",
+        "enablement": "dotnet.server.activatedStandalone"
       },
       {
         "command": "dotnet.test.debugTestsInContext",
         "title": "Debug Tests in Context",
-        "category": ".NET"
+        "category": ".NET",
+        "enablement": "dotnet.server.activatedStandalone"
       },
       {
         "command": "dotnet.restartServer",
