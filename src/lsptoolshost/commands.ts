@@ -20,6 +20,7 @@ export function registerCommands(context: vscode.ExtensionContext, languageServe
     // Instead, we define inputs from the server using the LSP type definitions as those have no prototypes
     // so we don't accidentally pass them directly into vscode APIs.
     context.subscriptions.push(vscode.commands.registerCommand('roslyn.client.peekReferences', peekReferencesCallback));
+    context.subscriptions.push(vscode.commands.registerCommand('roslyn.client.completionComplexEdit', completionComplexEdit));
     context.subscriptions.push(vscode.commands.registerCommand('dotnet.restartServer', async () => restartServer(languageServer)));
     context.subscriptions.push(vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer)));
 }
@@ -45,6 +46,58 @@ async function peekReferencesCallback(uriStr: string, serverPosition: languageCl
 
 async function restartServer(languageServer: RoslynLanguageServer): Promise<void> {
   await languageServer.restart();
+}
+
+/**
+ * Callback after a completion item with complex edit is committed. The change needs to be made outside completion resolve
+ * handling
+ * @param uriStr The uri containing the location of the document where the completion item was committed in.
+ * @param textEdits The additional complex edit for the committed completion item.
+ * @param isSnippetString Indicates if the TextEdit contains a snippet string.
+ * @param newPosition The offset for new cursor position. -1 if the edit has not specified one.
+ */
+async function completionComplexEdit(uriStr: string, textEdit: vscode.TextEdit, isSnippetString: boolean, newOffset: number): Promise<void>
+{    
+  let success = false;
+  const uri = UriConverter.deserialize(uriStr);
+  const editor = vscode.window.visibleTextEditors.find(editor => editor.document.uri.path === uri.path);
+
+  if (editor !== undefined) {
+
+    let newRange = editor.document.validateRange(
+      new vscode.Range(textEdit.range.start.line, textEdit.range.start.character, textEdit.range.end.line, textEdit.range.end.character));
+
+    // HACK: 
+    // ApplyEdit would fail the first time it's called when an item was committed with text modifying commit char (e.g. space, '(', etc.)
+    // so we retry a couple time here as a tempory workaround. We need to either figure our the reason of the failure, and/or try the 
+    // approach of sending another edit request to server with updated document.
+    for (let i = 0; i < 3; i++)
+    {
+      if (isSnippetString){ 
+        editor.selection = new vscode.Selection(newRange.start, newRange.end);
+        success = await editor.insertSnippet(new vscode.SnippetString(textEdit.newText));       
+      }
+      else{  
+        let edit = new vscode.WorkspaceEdit();
+        let newTextEdit = vscode.TextEdit.replace(newRange, textEdit.newText);  
+        edit.set(editor.document.uri, [newTextEdit]);
+        success = await vscode.workspace.applyEdit(edit);
+  
+        if (success && newOffset >= 0){
+          const newPosition = editor.document.positionAt(newOffset);
+          editor.selections = [new vscode.Selection(newPosition, newPosition)];
+        }
+      }
+
+      if (success){
+        break;
+      }
+    }
+  }
+
+  if (!success) {
+    throw new Error("Failed to make a complex text edit for completion."); 
+  }
 }
 
 async function openSolution(languageServer: RoslynLanguageServer): Promise<void> {
