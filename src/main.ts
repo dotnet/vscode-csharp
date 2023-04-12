@@ -48,6 +48,9 @@ import { getDotnetPackApi } from './DotnetPack';
 import { activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/MigrateOptions';
+import { getBrokeredServiceContainer } from './brokeredServicesHosting';
+import { CSharpDevKitExports } from './CSharpDevKitExports';
+import CSharpDevKitDescriptors from './CSharpDevKitDescriptors';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | null> {
     let extensionExportsResolver: ((coreClrDebugPromise: Promise<void>) => CSharpExtensionExports) | null = null;
@@ -247,6 +250,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
             razorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
         }
     }
+
+    const csharpDevKitExtId: string = "ms-dotnettools.csdevkit";
+    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevKitExtId);
+    ext?.activate().then(async (exports: CSharpDevKitExports) => {
+        if (exports && exports.serviceBroker) {
+            // When proffering this IServiceBroker into our own container,
+            // we list the monikers of the brokered services we expect to find there.
+            // This list must be a subset of the monikers previously registered with our own container
+            // as defined in the getBrokeredServiceContainer function.
+            getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [CSharpDevKitDescriptors.helloWorld.moniker]);
+        } else {
+            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevKitExtId}' activated but did not return expected Exports.`);
+        }
+    }, () => {
+        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevKitExtId}'`);
+    });
 
     if (extensionExportsResolver)
     {

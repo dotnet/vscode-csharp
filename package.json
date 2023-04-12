@@ -57,6 +57,7 @@
     "updatePackageDependencies": "gulp updatePackageDependencies"
   },
   "dependencies": {
+    "@microsoft/servicehub-framework": "4.2.99-beta",
     "@types/cross-spawn": "6.0.2",
     "@vscode/debugprotocol": "1.56.0",
     "@vscode/extension-telemetry": "0.6.2",
