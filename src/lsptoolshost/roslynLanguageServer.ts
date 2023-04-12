@@ -26,10 +26,13 @@ import {
     Trace,
     StateChangeEvent,
     RequestType,
+    RequestType0,
     FormattingOptions,
     TextDocumentIdentifier,
     DocumentDiagnosticRequest,
     DocumentDiagnosticReport,
+    integer,
+    CancellationToken,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { DotnetResolver } from '../shared/DotnetResolver';
@@ -39,9 +42,10 @@ import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfo
 import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
 import EventEmitter = require('events');
 import Disposable from '../Disposable';
-import { OnAutoInsertRequest, RoslynProtocol } from './roslynProtocol';
+import { RegisterSolutionSnapshotRequest, OnAutoInsertRequest, RoslynProtocol } from './roslynProtocol';
 import { OpenSolutionParams } from './OpenSolutionParams';
 import { CSharpDevKitExports } from '../CSharpDevKitExports';
+import { ISolutionSnapshotProvider } from './services/ISolutionSnapshotProvider';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -82,7 +86,7 @@ export class RoslynLanguageServer {
     /**
      * Event emitter that fires events when state related to the server changes.
      * For example when the server starts or stops.
-     * 
+     *
      * Consumers can register to listen for these events if they need to.
      */
     private _eventBus = new EventEmitter();
@@ -238,13 +242,35 @@ export class RoslynLanguageServer {
     /**
      * Makes an LSP request to the server with a given type and parameters.
      */
-    public async sendRequest<Params, Response, Error>(type: RequestType<Params, Response, Error>, params: Params, token?: vscode.CancellationToken): Promise<Response> {
+    public async sendRequest<Params, Response, Error>(type: RequestType<Params, Response, Error>, params: Params, token: vscode.CancellationToken): Promise<Response> {
         if (!this.isRunning()) {
             throw new Error('Tried to send request while server is not started.');
         }
 
         let response = await this._languageClient!.sendRequest(type, params, token);
         return response;
+    }
+
+    /**
+     * Makes an LSP request to the server with a given type and no parameters
+     */
+    public async sendRequest0<Response, Error>(type: RequestType0<Response, Error>, token: vscode.CancellationToken): Promise<Response> {
+        if (!this.isRunning()) {
+            throw new Error('Tried to send request while server is not started.');
+        }
+
+        let response = await this._languageClient!.sendRequest(type, token);
+        return response;
+    }
+
+    public async registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<integer> {
+        let response = await _languageServer.sendRequest0(RegisterSolutionSnapshotRequest.type, token);
+        if (response)
+        {
+            return response.snapshot_id;
+        }
+
+        throw new Error('Unable to retrieve current solution.');
     }
 
     public async openSolution(solutionFile: vscode.Uri): Promise<void> {
@@ -348,7 +374,7 @@ export class RoslynLanguageServer {
         });
         vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
             let diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
-            return await this.sendRequest(diagnosticRequestType, request);
+            return await this.sendRequest(diagnosticRequestType, request, CancellationToken.None);
         });
     }
 
@@ -380,7 +406,7 @@ export class RoslynLanguageServer {
         csharpDevkitArgs.push("--starredCompletionComponentPath", starredCompletionComponentPath);
         return csharpDevkitArgs;
     }
-    
+
     private getStarredCompletionComponentPath(csharpDevkitExports: CSharpDevKitExports): string {
         return csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"];
     }
@@ -408,6 +434,15 @@ export class RoslynLanguageServer {
     }
 }
 
+/**
+ * Brokered service implementation.
+ */
+export class SolutionSnapshotProvider implements ISolutionSnapshotProvider {
+    public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<integer> {
+        return _languageServer.registerSolutionSnapshot(token);
+    }
+}
+
 export async function activateRoslynLanguageServer(context: vscode.ExtensionContext, platformInfo: PlatformInformation, optionsProvider: OptionProvider, outputChannel: vscode.OutputChannel) {
 
     // Create a channel for outputting general logs from the language server.
@@ -430,13 +465,13 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
         {
             return;
         }
-        
+
         if (e.contentChanges.length > 1 || e.contentChanges.length === 0) {
             return;
         }
-    
+
         const change = e.contentChanges[0];
-    
+
         if (!change.range.isEmpty) {
             return;
         }
@@ -477,7 +512,7 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
         const code: any = vscode;
         const textEdits = [new code.SnippetTextEdit(new vscode.Range(startPosition, endPosition), docComment)];
         let edit = new vscode.WorkspaceEdit();
-        edit.set(e.document.uri, textEdits);        
+        edit.set(e.document.uri, textEdits);
 
         const applied = vscode.workspace.applyEdit(edit);
         if (!applied) {

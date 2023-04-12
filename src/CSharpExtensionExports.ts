@@ -6,11 +6,18 @@
 import { Advisor } from "./features/diagnosticsProvider";
 import { EventStream } from "./EventStream";
 import TestManager from "./features/dotnetTest";
+import { GlobalBrokeredServiceContainer } from "@microsoft/servicehub-framework";
 
-export default interface CSharpExtensionExports {
+export interface OmnisharpExtensionExports {
     initializationFinished: () => Promise<void>;
     getAdvisor: () => Promise<Advisor>;
     getTestManager: () => Promise<TestManager>;
     eventStream: EventStream;
     logDirectory: string;
+}
+
+export interface CSharpExtensionExports {
+    initializationFinished: () => Promise<void>;
+    logDirectory: string;
+    profferBrokeredServices: (container: GlobalBrokeredServiceContainer) => void;
 }

@@ -5,10 +5,10 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 import { Advisor } from '../../src/features/diagnosticsProvider';
 import { EventStream } from '../../src/EventStream';
 import { EventType } from '../../src/omnisharp/EventType';
+import { OmnisharpExtensionExports } from '../../src/CSharpExtensionExports';
 
 export interface ActivationResult {
     readonly advisor: Advisor;
@@ -22,7 +22,7 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
         configuration.update('path', process.env.OMNISHARP_LOCATION);
     }
 
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>("ms-dotnettools.csharp");
 
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
     await csharpExtension.activate();
@@ -32,7 +32,7 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
 
     // Output the directory where logs are being written so if a test fails we can match it to the right logs.
     console.log(`Extension log directory: ${csharpExtension.exports.logDirectory}`);
-    
+
     let activationResult: ActivationResult = {
         advisor: await csharpExtension.exports.getAdvisor(),
         eventStream: csharpExtension.exports.eventStream,
@@ -42,7 +42,7 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
 }
 
 export async function restartOmniSharpServer(): Promise<void> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>("ms-dotnettools.csharp");
 
     if (!csharpExtension.isActive) {
         await activateCSharpExtension();

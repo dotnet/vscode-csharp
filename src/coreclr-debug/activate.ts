@@ -10,7 +10,6 @@ import { CoreClrDebugUtil, getTargetArchitecture } from './util';
 import { PlatformInformation } from '../shared/platform';
 import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
-import CSharpExtensionExports from '../CSharpExtensionExports';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { DotnetDebugConfigurationProvider } from './debugConfigurationProvider';
@@ -18,7 +17,7 @@ import { Options } from '../shared/options';
 import { RemoteAttachPicker } from '../features/processPicker';
 import CompositeDisposable from '../CompositeDisposable';
 
-export async function activate(thisExtension: vscode.Extension<CSharpExtensionExports>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, options: Options) {
+export async function activate(thisExtension: vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, options: Options) {
     let disposables = new CompositeDisposable();
 
     const debugUtil = new CoreClrDebugUtil(context.extensionPath);
