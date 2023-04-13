@@ -161,13 +161,13 @@ export function GenerateOptionsSchema() {
         "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
         "default": 4711
     };
-    packageJSON.contributes.configuration.properties["csharp.unitTestDebuggingOptions"].properties = unitTestDebuggingOptions;
+    packageJSON.contributes.configuration[0].properties["csharp.unitTestDebuggingOptions"].properties = unitTestDebuggingOptions;
 
     // Delete old debug options
-    const originalContributeDebugKeys = Object.keys(packageJSON.contributes.configuration.properties).filter(x => x.startsWith("csharp.debug"));
+    const originalContributeDebugKeys = Object.keys(packageJSON.contributes.configuration[1].properties).filter(x => x.startsWith("csharp.debug"));
     for(let key of originalContributeDebugKeys)
     {
-        delete packageJSON.contributes.configuration.properties[key];
+        delete packageJSON.contributes.configuration[1].properties[key];
     }
 
     // Remove the options that should not be shown in the settings editor.
@@ -189,7 +189,7 @@ export function GenerateOptionsSchema() {
         "console"
     ]);
     // Using LaunchOptions as it is a superset of AttachOptions
-    createContributesSettingsForDebugOptions("csharp.debug", schemaJSON.definitions.LaunchOptions.properties, ignoreOptions, packageJSON.contributes.configuration.properties);
+    createContributesSettingsForDebugOptions("csharp.debug", schemaJSON.definitions.LaunchOptions.properties, ignoreOptions, packageJSON.contributes.configuration[1].properties);
 
     let content = JSON.stringify(packageJSON, null, 2);
     if (os.platform() === 'win32') {

@@ -42,7 +42,7 @@ const testData = [
 
 suite("Server option name to vscode configuration name test", () => {
     let packageJson = JSON.parse(readFileSync('package.json').toString());
-    let configurations = Object.keys(packageJson["contributes"]["configuration"]["properties"]);
+    let configurations = Object.keys(packageJson["contributes"]["configuration"][1]["properties"]);
 
     testData.forEach((data) => {
         let actualName = convertServerOptionNameToClientConfigurationName(data.serverOption);
