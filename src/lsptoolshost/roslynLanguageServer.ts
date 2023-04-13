@@ -38,6 +38,7 @@ import EventEmitter = require('events');
 import Disposable from '../Disposable';
 import { OnAutoInsertRequest, RoslynProtocol } from './roslynProtocol';
 import { OpenSolutionParams } from './OpenSolutionParams';
+import { CSharpDevKitExports } from '../CSharpDevKitExports';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -276,13 +277,6 @@ export class RoslynLanguageServer {
             throw new Error(`Cannot find language server in path '${serverPath}''`);
         }
 
-        // Get the brokered service pipe name from C# Dev Kit (if installed).
-        // We explicitly call this in the LSP server start action instead of awaiting it
-        // in our activation because C# Dev Kit depends on C# activation completing.
-        let vsGreenExports = await this.waitForCSharpDevkitActivationAndGetExports();
-        let brokeredServicePipeName = await this.getBrokeredServicePipeName(vsGreenExports);
-        let starredCompletionComponentPath = this.getStarredCompletionComponentPath(vsGreenExports);
-
         let args: string[] = [ ];
 
         let options = this.optionProvider.GetLatestOptions();
@@ -294,12 +288,20 @@ export class RoslynLanguageServer {
             args.push("--logLevel", logLevel);
         }
 
-        if (brokeredServicePipeName) {
-            args.push("--brokeredServicePipeName", brokeredServicePipeName);
-        }
-
-        if (starredCompletionComponentPath) {
-            args.push("--starredCompletionComponentPath", starredCompletionComponentPath);
+        // Get the brokered service pipe name from C# Dev Kit (if installed).
+        // We explicitly call this in the LSP server start action instead of awaiting it
+        // in our activation because C# Dev Kit depends on C# activation completing.
+        const csharpDevkitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
+        if (csharpDevkitExtension) {
+            _channel.appendLine("Activating C# + C# Dev Kit...");
+            this._wasActivatedWithCSharpDevkit = true;
+            const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension);
+            args = args.concat(csharpDevkitArgs);
+        } else {
+            // C# Dev Kit is not installed - continue C#-only activation.
+            _channel.appendLine("Activating C# standalone...");
+            vscode.commands.executeCommand("setContext", "dotnet.server.activatedStandalone", true);
+            this._wasActivatedWithCSharpDevkit = false;
         }
 
         if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
@@ -359,38 +361,19 @@ export class RoslynLanguageServer {
         return `${serverFileName}${extension}`;
     }
 
-    private async waitForCSharpDevkitActivationAndGetExports(): Promise<any | undefined> {
-        let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
-        if (!csharpDevkitExtension) {
-            // C# Dev Kit is not installed - continue C#-only activation.
-            _channel.appendLine("Activating C# standalone...");
-            vscode.commands.executeCommand("setContext", "dotnet.server.activatedStandalone", true);
-            this._wasActivatedWithCSharpDevkit = false;
-            return undefined;
-        }
+    private async getCSharpDevkitExportArgs(csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>) : Promise<string[]> {
+        const exports = await csharpDevkitExtension.activate();
 
-        _channel.appendLine("Activating C# + C# Dev Kit...");
-        this._wasActivatedWithCSharpDevkit = true;
-        await csharpDevkitExtension.activate();
-    }
+        const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
+        const starredCompletionComponentPath = this.getStarredCompletionComponentPath(exports);
 
-    private async getBrokeredServicePipeName(csharpDevkitExports: any | undefined): Promise<string | undefined> {
-        if (!this._wasActivatedWithCSharpDevkit || !csharpDevkitExports) {
-            return undefined; // C# Devkit is not installed - continue activation without pipe name
-        }
-        if (!('getBrokeredServiceServerPipeName' in csharpDevkitExports)) {
-            throw new Error("C# Dev Kit is installed but missing expected export getBrokeredServiceServerPipeName");
-        }
-
-        let brokeredServicePipeName = await csharpDevkitExports.getBrokeredServiceServerPipeName();
-        return brokeredServicePipeName;
+        let csharpDevkitArgs: string[] = [ ];
+        csharpDevkitArgs.push("--brokeredServicePipeName", brokeredServicePipeName);
+        csharpDevkitArgs.push("--starredCompletionComponentPath", starredCompletionComponentPath);
+        return csharpDevkitArgs;
     }
     
-    private getStarredCompletionComponentPath(csharpDevkitExports: any | undefined): string | undefined {
-        if (!this._wasActivatedWithCSharpDevkit || !csharpDevkitExports || !csharpDevkitExports.components ||
-            !csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"]) {
-            return undefined;
-        }
+    private getStarredCompletionComponentPath(csharpDevkitExports: CSharpDevKitExports): string {
         return csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"];
     }
 
