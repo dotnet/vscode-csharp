@@ -21,12 +21,15 @@ import {
     DidCloseTextDocumentParams,
     DidOpenTextDocumentParams,
     DidChangeTextDocumentParams,
+    DocumentDiagnosticParams,
     State,
     Trace,
     StateChangeEvent,
     RequestType,
     FormattingOptions,
     TextDocumentIdentifier,
+    DocumentDiagnosticRequest,
+    DocumentDiagnosticReport,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { DotnetResolver } from '../shared/DotnetResolver';
@@ -53,6 +56,7 @@ export class RoslynLanguageServer {
     public static readonly roslynDidOpenCommand: string = 'roslyn.openRazorCSharp';
     public static readonly roslynDidChangeCommand: string = 'roslyn.changeRazorCSharp';
     public static readonly roslynDidCloseCommand: string = 'roslyn.closeRazorCSharp';
+    public static readonly roslynPullDiagnosticCommand: string = 'roslyn.pullDiagnosticRazorCSharp';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
     private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
@@ -341,6 +345,10 @@ export class RoslynLanguageServer {
         });
         vscode.commands.registerCommand(RoslynLanguageServer.roslynDidCloseCommand, (notification: DidCloseTextDocumentParams) => {
             client.sendNotification(DidCloseTextDocumentNotification.method, notification);
+        });
+        vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
+            let diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
+            return await this.sendRequest(diagnosticRequestType, request);
         });
     }
 

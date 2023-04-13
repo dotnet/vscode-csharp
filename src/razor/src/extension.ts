@@ -44,6 +44,7 @@ import { RazorDocumentSemanticTokensProvider } from './Semantic/RazorDocumentSem
 import { SemanticTokensRangeHandler } from './Semantic/SemanticTokensRangeHandler';
 import { RazorSignatureHelpProvider } from './SignatureHelp/RazorSignatureHelpProvider';
 import { TelemetryReporter } from './TelemetryReporter';
+import { RazorDiagnosticHandler } from './Diagnostics/RazorDiagnosticHandler';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -146,6 +147,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 documentManager,
                 logger);
             const onTypeFormattingEditProvider = new RazorFormatOnTypeProvider();
+            const razorDiagnosticHandler = new RazorDiagnosticHandler(documentSynchronizer, languageServerClient, languageServiceClient, documentManager, logger);
 
             localRegistrations.push(
                 languageConfiguration.register(),
@@ -207,6 +209,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
             formattingHandler.register();
             semanticTokenHandler.register();
             dynamicFileInfoProvider.register();
+            razorDiagnosticHandler.register();
         });
 
         const onStopRegistration = languageServerClient.onStop(() => {
