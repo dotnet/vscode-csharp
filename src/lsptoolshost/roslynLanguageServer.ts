@@ -431,7 +431,7 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
             return;
         }
         
-        if (e.contentChanges.length > 1) {
+        if (e.contentChanges.length > 1 || e.contentChanges.length === 0) {
             return;
         }
     
