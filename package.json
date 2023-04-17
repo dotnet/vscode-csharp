@@ -40,6 +40,12 @@
     "razor": "7.0.0-preview.23213.4"
   },
   "main": "./dist/extension",
+  "brokeredServices": [{
+    "moniker": {
+      "name": "Microsoft.VisualStudio.LanguageServer.SolutionSnapshotProvider",
+      "version": "0.1"
+    }
+  }],
   "scripts": {
     "vscode:prepublish": "tsc -p ./ && webpack --mode production",
     "compile": "tsc -p ./ && tslint -p ./",

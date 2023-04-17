@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { FormattingOptions, InsertTextFormat, MessageDirection, Position, RequestType, TextDocumentIdentifier, TextEdit, URI } from "vscode-languageserver-protocol";
+import { FormattingOptions, InsertTextFormat, MessageDirection, Position, RequestType, RequestType0, TextDocumentIdentifier, TextEdit, URI, integer } from "vscode-languageserver-protocol";
 
 export declare namespace RoslynProtocol {
     export interface WorkspaceDebugConfigurationParams {
@@ -53,6 +53,13 @@ export declare namespace RoslynProtocol {
         _vs_textEditFormat: InsertTextFormat;
         _vs_textEdit: TextEdit;
     }
+
+    export interface RegisterSolutionSnapshotResponseItem {
+        /**
+         * Represents a solution snapshot.
+        */
+        snapshot_id: integer;
+    }
 }
 
 export namespace WorkspaceDebugConfigurationRequest {
@@ -66,3 +73,10 @@ export namespace OnAutoInsertRequest {
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
     export const type = new RequestType<RoslynProtocol.OnAutoInsertParams, RoslynProtocol.OnAutoInsertResponseItem, void>(method);
 }
+
+export namespace RegisterSolutionSnapshotRequest {
+    export const method: 'workspace/_vs_registerSolutionSnapshot' = 'workspace/_vs_registerSolutionSnapshot';
+    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
+    export const type = new RequestType0<RoslynProtocol.RegisterSolutionSnapshotResponseItem, void>(method);
+}
+

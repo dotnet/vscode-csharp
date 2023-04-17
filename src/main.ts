@@ -26,7 +26,6 @@ import { TelemetryObserver } from './observers/TelemetryObserver';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/ProjectStatusBarObserver';
-import CSharpExtensionExports from './CSharpExtensionExports';
 import { vscodeNetworkSettingsProvider } from './NetworkSettings';
 import { ErrorMessageObserver } from './observers/ErrorMessageObserver';
 import OptionProvider from './shared/observers/OptionProvider';
@@ -45,15 +44,17 @@ import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 import { getDotnetPackApi } from './DotnetPack';
-import { activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
+import { SolutionSnapshotProvider, activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/MigrateOptions';
 import { getBrokeredServiceContainer } from './brokeredServicesHosting';
 import { CSharpDevKitExports } from './CSharpDevKitExports';
 import CSharpDevKitDescriptors from './CSharpDevKitDescriptors';
+import Descriptors from './lsptoolshost/services/Descriptors';
+import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
+import { CSharpExtensionExports, OmnisharpExtensionExports} from './CSharpExtensionExports';
 
-export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | null> {
-    let extensionExportsResolver: ((coreClrDebugPromise: Promise<void>) => CSharpExtensionExports) | null = null;
+export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | OmnisharpExtensionExports | null> {
     await MigrateOptions(vscode);
     const optionStream = createOptionStream(vscode);
     let optionProvider = new OptionProvider(optionStream);
@@ -105,6 +106,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) => downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
     let runtimeDependenciesExist = await ensureRuntimeDependencies(context.extension, eventStream, platformInfo, installDependencies, useFramework, requiredPackageIds);
 
+    let omnisharpLangServicePromise : Promise<OmniSharp.ActivationResult> | undefined = undefined;
+    let omnisharpRazorPromise : Promise<void> | undefined = undefined;
+    let roslynLanguageServerPromise : Promise<void> | undefined = undefined;
+
     if (!useOmnisharpServer)
     {
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
@@ -119,7 +124,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode));
-        activateRoslynLanguageServer(context, platformInfo, optionProvider, csharpChannel);
+        roslynLanguageServerPromise = activateRoslynLanguageServer(context, platformInfo, optionProvider, csharpChannel);
     }
     else
     {
@@ -175,7 +180,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         }
 
         // activate language services
-        let langServicePromise = OmniSharp.activate(context, context.extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, context.extension.extensionPath, omnisharpChannel);
+        omnisharpLangServicePromise = OmniSharp.activate(context, context.extension.packageJSON, platformInfo, networkSettingsProvider, eventStream, optionProvider, context.extension.extensionPath, omnisharpChannel);
 
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'o.restart', Options.shouldOmnisharpOptionChangeTriggerReload, vscode));
@@ -186,26 +191,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
             eventStream.post(new ActiveTextEditorChanged());
         }));
 
-        extensionExportsResolver = (coreClrDebugPromise: Promise<void>): CSharpExtensionExports => {
-            return {
-                initializationFinished: async () => {
-                    let langService = await langServicePromise;
-                    await langService.server.waitForInitialize();
-                    await coreClrDebugPromise;
-                    await razorPromise;
-                },
-                getAdvisor: async () => {
-                    let langService = await langServicePromise;
-                    return langService.advisor;
-                },
-                getTestManager: async () => {
-                    let langService = await langServicePromise;
-                    return langService.testManager;
-                },
-                eventStream,
-                logDirectory: context.logUri.fsPath
-            };
-        };
+        const razorObserver = new RazorLoggerObserver(csharpChannel);
+        eventStream.subscribe(razorObserver.post);
+
+        if (!razorOptions.razorDevMode) {
+            omnisharpRazorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
+        }
     }
 
     if (!isSupportedPlatform(platformInfo)) {
@@ -236,16 +227,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         coreClrDebugPromise = coreclrdebug.activate(context.extension, context, platformInfo, eventStream, optionProvider.GetLatestOptions());
     }
 
-    let razorPromise = Promise.resolve();
-    if (useOmnisharpServer) {
-        const razorObserver = new RazorLoggerObserver(csharpChannel);
-        eventStream.subscribe(razorObserver.post);
-
-        if (!razorOptions.razorDevMode) {
-            razorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
-        }
-    }
-
     const csharpDevKitExtId: string = "ms-dotnettools.csdevkit";
     const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevKitExtId);
     ext?.activate().then(async (exports: CSharpDevKitExports) => {
@@ -262,12 +243,42 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevKitExtId}'`);
     });
 
-    if (extensionExportsResolver)
-    {
-        return extensionExportsResolver(coreClrDebugPromise);
-    }
+    if (!useOmnisharpServer) {
+        return {
+            initializationFinished: async () => {
+                await coreClrDebugPromise;
+                await roslynLanguageServerPromise;
+            },
+            profferBrokeredServices: container => profferBrokeredServices(context, container),
+            logDirectory: context.logUri.fsPath
+        };
+    } else {
+        return {
+            initializationFinished: async () => {
+                let langService = await omnisharpLangServicePromise;
+                await langService!.server.waitForInitialize();
+                await coreClrDebugPromise;
 
-    return null;
+                if (omnisharpRazorPromise) {
+                    await omnisharpRazorPromise;
+                }
+            },
+            getAdvisor: async () => {
+                let langService = await omnisharpLangServicePromise;
+                return langService!.advisor;
+            },
+            getTestManager: async () => {
+                let langService = await omnisharpLangServicePromise;
+                return langService!.testManager;
+            },
+            eventStream,
+            logDirectory: context.logUri.fsPath
+        };
+    }
+}
+
+function profferBrokeredServices(context: vscode.ExtensionContext, serviceContainer: GlobalBrokeredServiceContainer) {
+    context.subscriptions.push(serviceContainer.profferServiceFactory(Descriptors.solutionSnapshotProviderRegistration, (mk, op, sb) => new SolutionSnapshotProvider()));
 }
 
 function isSupportedPlatform(platform: PlatformInformation): boolean {
