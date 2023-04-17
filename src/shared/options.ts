@@ -97,8 +97,6 @@ export class Options {
         let documentSelector = Options.readOption<DocumentSelector>(config, 'dotnet.server.documentSelector', ['csharp']);
 
         // Options that apply to Razor
-
-        const razorDisabled = Options.readOption<boolean>(config, 'razor.disabled', false) ?? false;
         const razorDevMode = Options.readOption<boolean>(config, 'razor.devmode', false) ?? false;
         const razorPluginPath = Options.readOption<string>(config, 'razor.plugin.path', '') ?? '';
 
@@ -165,7 +163,6 @@ export class Options {
                 documentSelector: documentSelector
             },
             {
-                razorDisabled: razorDisabled,
                 razorDevMode: razorDevMode,
                 razorPluginPath: razorPluginPath
             }
@@ -315,7 +312,6 @@ const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOpti
 ];
 
 export interface RazorOptions {
-    razorDisabled: boolean;
     razorDevMode: boolean;
     razorPluginPath: string;
 }

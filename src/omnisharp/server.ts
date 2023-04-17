@@ -396,16 +396,14 @@ export class OmniSharpServer {
 
         let razorPluginPath: string | undefined;
         let razorOptions = options.razorOptions;
-        if (!razorOptions.razorDisabled) {
-            // Razor support only exists for certain platforms, so only load the plugin if present
-            razorPluginPath = razorOptions.razorPluginPath.length > 0 ? razorOptions.razorPluginPath : path.join(
-                this.extensionPath,
-                '.razor',
-                'OmniSharpPlugin',
-                'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll');
-            if (fs.existsSync(razorPluginPath)) {
-                args.push('--plugin', razorPluginPath);
-            }
+        // Razor support only exists for certain platforms, so only load the plugin if present
+        razorPluginPath = razorOptions.razorPluginPath.length > 0 ? razorOptions.razorPluginPath : path.join(
+            this.extensionPath,
+            '.razor',
+            'OmniSharpPlugin',
+            'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll');
+        if (fs.existsSync(razorPluginPath)) {
+            args.push('--plugin', razorPluginPath);
         }
 
         if (options.commonOptions.waitForDebugger === true) {

@@ -1499,12 +1499,6 @@
             ],
             "description": "Specifies whether to output all messages [Verbose], some messages [Messages] or not at all [Off].",
             "order": 90
-          },
-          "razor.disabled": {
-            "type": "boolean",
-            "default": false,
-            "description": "Specifies whether to disable Razor language features.",
-            "order": 90
           }
         }
       }],

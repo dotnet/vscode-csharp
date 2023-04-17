@@ -86,10 +86,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     ];
 
     let razorOptions = optionProvider.GetLatestOptions().razorOptions;
-    if (!razorOptions.razorDisabled)
-    {
-        requiredPackageIds.push("Razor");
-    }
+    requiredPackageIds.push("Razor");
 
     let useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
     if (useOmnisharpServer)
@@ -118,9 +115,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
         //     for dynamic file info once project system is ready ->
         // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-        if (!optionProvider.GetLatestOptions().razorOptions.razorDisabled) {
-            await activateRazorExtension(context, context.extension.extensionPath, eventStream);
-        }
+        await activateRazorExtension(context, context.extension.extensionPath, eventStream);
 
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode));
@@ -242,7 +237,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }
 
     let razorPromise = Promise.resolve();
-    if (!razorOptions.razorDisabled && useOmnisharpServer) {
+    if (useOmnisharpServer) {
         const razorObserver = new RazorLoggerObserver(csharpChannel);
         eventStream.subscribe(razorObserver.post);
 

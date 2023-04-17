@@ -67,7 +67,6 @@ export function getEmptyOptions(): Options {
             documentSelector: ['csharp']
         },
         {
-            razorDisabled: false,
             razorDevMode: false,
             razorPluginPath: "",
         }

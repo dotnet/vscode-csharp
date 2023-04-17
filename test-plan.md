@@ -474,9 +474,6 @@ Perform the following in any of the above Razor projects.
 
 #### Razor Options
 
-##### razor.disabled
-This option can be set to `true` to disable the above described C# experiences.
-
 ##### razor.trace
 This option should always be displayed in the View --> Output --> Razor Log window
 This option can be set to any of the following values:
