@@ -191,13 +191,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
             eventStream.post(new ActiveTextEditorChanged());
         }));
 
-        if (!razorOptions.razorDisabled) {
-            const razorObserver = new RazorLoggerObserver(csharpChannel);
-            eventStream.subscribe(razorObserver.post);
+        const razorObserver = new RazorLoggerObserver(csharpChannel);
+        eventStream.subscribe(razorObserver.post);
 
-            if (!razorOptions.razorDevMode) {
-                omnisharpRazorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
-            }
+        if (!razorOptions.razorDevMode) {
+            omnisharpRazorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
         }
     }
 
