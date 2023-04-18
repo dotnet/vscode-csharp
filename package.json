@@ -1146,18 +1146,19 @@
         "properties": {
           "dotnet.dotnetPath": {
             "type": "string",
-            "scope": "window",
+            "scope": "machine-overridable",
             "description": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
             "order": 0
           },
           "dotnet.server.path": {
             "type": "string",
-            "scope": "window",
+            "scope": "machine-overridable",
             "description": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used.",
             "order": 0
           },
           "dotnet.server.waitForDebugger": {
             "type": "boolean",
+            "scope": "machine-overridable",
             "default": false,
             "description": "Passes the --debug flag when launching the server to allow a debugger to be attached.",
             "order": 0
@@ -1480,12 +1481,13 @@
           },
           "razor.languageServer.directory": {
             "type": "string",
-            "scope": "machine",
+            "scope": "machine-overridable",
             "description": "Overrides the path to the Razor Language Server directory.",
             "order": 90
           },
           "razor.languageServer.debug": {
             "type": "boolean",
+            "scope": "machine-overridable",
             "default": false,
             "description": "Specifies whether to wait for debug attach when launching the language server.",
             "order": 90
