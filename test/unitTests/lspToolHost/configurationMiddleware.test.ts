@@ -38,6 +38,11 @@ const testData = [
     { serverOption: "csharp|inlay_hints.csharp_enable_inlay_hints_for_implicit_variable_types", vsCodeConfiguration: "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes", declareInPackageJson: true},
     { serverOption: "csharp|inlay_hints.csharp_enable_inlay_hints_for_lambda_parameter_types", vsCodeConfiguration: "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes", declareInPackageJson: true},
     { serverOption: "csharp|inlay_hints.csharp_enable_inlay_hints_for_implicit_object_creation", vsCodeConfiguration: "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation", declareInPackageJson: true},
+    { serverOption: "csharp|code_style.formatting.indentation_and_spacing.tab_width", vsCodeConfiguration: "codeStyle.formatting.indentationAndSpacing.tabWidth", declareInPackageJson: false},
+    { serverOption: "csharp|code_style.formatting.indentation_and_spacing.indent_size", vsCodeConfiguration: "codeStyle.formatting.indentationAndSpacing.indentSize", declareInPackageJson: false},
+    { serverOption: "csharp|code_style.formatting.indentation_and_spacing.indent_style", vsCodeConfiguration: "codeStyle.formatting.indentationAndSpacing.indentStyle", declareInPackageJson: false},
+    { serverOption: "csharp|code_style.formatting.new_line.end_of_line", vsCodeConfiguration: "codeStyle.formatting.newLine.endOfLine", declareInPackageJson: false},
+    { serverOption: "code_style.formatting.new_line.insert_final_newline", vsCodeConfiguration: "codeStyle.formatting.newLine.insertFinalNewline", declareInPackageJson: false},
 ]
 
 suite("Server option name to vscode configuration name test", () => {

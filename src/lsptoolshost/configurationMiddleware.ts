@@ -8,6 +8,7 @@ import {
     ConfigurationParams,
 } from 'vscode-languageclient/node';
 import { convertServerOptionNameToClientConfigurationName as convertServerOptionNameToClientConfigurationName } from './OptionNameConverter';
+import { readEquivalentVsCodeConfiguration } from './universalEditorConfigProvider';
 
 export function readConfigurations(params: ConfigurationParams): (string | null)[] {
     // Note: null means there is no such configuration in client.
@@ -31,12 +32,18 @@ export function readConfigurations(params: ConfigurationParams): (string | null)
         }
 
         let value = settings.get<string>(clientSideName);
-        if (value === undefined) {
-            result.push(null);
+        if (value !== undefined) {
+            result.push(value);
             continue;
         }
 
-        result.push(value);
+        value = readEquivalentVsCodeConfiguration(clientSideName);
+        if (value !== undefined) {  
+            result.push(value);
+            continue;
+        }
+
+        result.push(null);
     }
 
     return result;
