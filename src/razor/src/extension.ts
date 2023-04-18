@@ -72,6 +72,14 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         const razorCodeActionRunner = new RazorCodeActionRunner(languageServerClient, logger);
 
         let documentSynchronizer: RazorDocumentSynchronizer;
+
+        // Our dynamic file handler needs to be registered regardless of whether the Razor language server starts
+        // since the Roslyn implementation expects the dynamic file commands to always be registered.
+        const dynamicFileInfoProvider = new DynamicFileInfoHandler(
+            documentManager,
+            logger);
+        dynamicFileInfoProvider.register();
+
         languageServerClient.onStart(async () => {
             documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
             const provisionalCompletionOrchestrator = new ProvisionalCompletionOrchestrator(
@@ -143,9 +151,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 documentManager,
                 languageServiceClient,
                 logger);
-            const dynamicFileInfoProvider = new DynamicFileInfoHandler(
-                documentManager,
-                logger);
             const onTypeFormattingEditProvider = new RazorFormatOnTypeProvider();
             const razorDiagnosticHandler = new RazorDiagnosticHandler(documentSynchronizer, languageServerClient, languageServiceClient, documentManager, logger);
 
@@ -208,7 +213,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
             foldingRangeHandler.register();
             formattingHandler.register();
             semanticTokenHandler.register();
-            dynamicFileInfoProvider.register();
             razorDiagnosticHandler.register();
         });
 
