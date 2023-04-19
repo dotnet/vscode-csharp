@@ -6,15 +6,11 @@
 import * as vscode from 'vscode';
 import {
     DidCloseTextDocumentParams,
-    DidOpenTextDocumentParams,
     DocumentUri,
-    TextDocumentIdentifier,
-    TextDocumentItem
-} from 'vscode-languageclient/node';
+    TextDocumentIdentifier} from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import { RazorDocumentManager } from '../Document/RazorDocumentManager';
-import { RazorLanguage } from '../RazorLanguage';
 import { RazorLogger } from '../RazorLogger';
 import { ProvideDynamicFileParams } from './ProvideDynamicFileParams';
 import { ProvideDynamicFileResponse } from './ProvideDynamicFileResponse';
@@ -39,9 +35,7 @@ export class DynamicFileInfoHandler {
         });
     }
 
-    // This method, given Razor document URIs:
-    // 1) Returns associated generated doc URIs
-    // 2) Sends didOpen requests to Roslyn for each generated doc, which includes doc content
+    // Given Razor document URIs, returns associated generated doc URIs
     private async provideDynamicFileInfo(request: ProvideDynamicFileParams): Promise<ProvideDynamicFileResponse> {
         const uris = request.razorFiles;
         const virtualUris = new Array<DocumentUri | null>();
@@ -55,24 +49,7 @@ export class DynamicFileInfoHandler {
                 } else {
                     // Retrieve generated doc URIs for each Razor URI we are given
                     let virtualCsharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
-                    virtualUris.push(virtualCsharpUri);
-
-                    // Send didOpen request to Roslyn which contains generated doc content
-                    if (!this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
-                        const csharpDocContent = razorDocument.csharpDocument.getContent();
-                        const csharpDoc: TextDocumentItem = {
-                            uri: virtualCsharpUri,
-                            languageId: RazorLanguage.id,
-                            version: razorDocument.csharpDocument.projectedDocumentSyncVersion,
-                            text: csharpDocContent
-                        };
-                        const didOpenRequest: DidOpenTextDocumentParams = {
-                            textDocument: csharpDoc
-                        };
-    
-                        vscode.commands.executeCommand(RoslynLanguageServer.roslynDidOpenCommand, didOpenRequest); 
-                        this.documentManager.didOpenRazorCSharpDocument(vscodeUri);
-                    } 
+                    virtualUris.push(virtualCsharpUri); 
                 }
             }
 
