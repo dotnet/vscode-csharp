@@ -56,7 +56,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     public async getDocument(uri: vscode.Uri) {
         const document = this._getDocument(uri);
 
-        await this.ensureProjectedDocumentsOpen(document);
+        await this.ensureDocumentAndProjectedDocumentsOpen(document);
 
         return document;
     }
@@ -307,13 +307,18 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         this.onChangeEmitter.fire(args);
     }
 
-    private async ensureProjectedDocumentsOpen(document: IRazorDocument) {
+    private async ensureDocumentAndProjectedDocumentsOpen(document: IRazorDocument) {
         // vscode.workspace.openTextDocument may send a textDocument/didOpen
-        // request to the C# language server. We need to keep track of 
+        // request to the C# language server. We need to keep track of
         // this to make sure we don't send a duplicate request later on.
         const razorUri = vscode.Uri.parse('file:' + document.path, true);
         if (!this.isRazorDocumentOpenInCSharpWorkspace(razorUri)) {
             this.didOpenRazorCSharpDocument(razorUri);
+
+            // Need to tell the Razor server that the document is open, or it won't generate C# code
+            // for it, and our projected document will always be empty, until the user manually
+            // opens the razor file.
+            await vscode.workspace.openTextDocument(razorUri);
         }
 
         await vscode.workspace.openTextDocument(document.csharpDocument.uri);
@@ -352,7 +357,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
             characterIndex++;
         }
-        
+
         // If we have a start position and no end position, return the length of the document.
         if (startPosition != undefined) {
             endPosition = Position.create(lineIndex, characterIndex);
