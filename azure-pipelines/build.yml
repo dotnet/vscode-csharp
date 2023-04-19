@@ -1,0 +1,19 @@
+steps:
+- checkout: self
+  clean: true
+  submodules: true
+  fetchTags: false
+  fetchDepth: 0
+
+- template: prereqs.yml
+
+- script: gulp 'vsix:release:package'
+  displayName: 'Build VSIXs'
+
+- task: PublishPipelineArtifact@1
+  # Run the publish step so we have vsix's even if the tests fail.
+  condition: succeededOrFailed()
+  displayName: 'Publish VSIXs'
+  inputs:
+    targetPath: '$(Build.SourcesDirectory)/vsix'
+    artifactName: 'VSIXs - Attempt $(System.JobAttempt)'

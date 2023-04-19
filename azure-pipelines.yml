@@ -1,70 +1,36 @@
 trigger:
-- feature/*
+  batch: true
+  branches:
+    include:
+    - feature/*
 
 pr:
 - feature/*
 
-pool:
-  vmImage: 'ubuntu-latest'
-
 stages:
-- stage: Build_And_Test
+- stage: Build
   dependsOn: []
   jobs:
-  - job: Build_And_Test
+  - job: Build
     steps:
+    - template: azure-pipelines/build.yml
 
-    - checkout: self
-      fetchDepth: 0
+- stage: Test
+  displayName: Test
+  dependsOn: []
+  jobs:
+  - job: Test
+    strategy:
+      matrix:
+        linux:
+          vmImage: ubuntu-latest
+        windows:
+          vmImage: windows-latest
+        mac:
+          vmImage: macOS-latest
+    pool:
+      vmImage: $(vmImage)
+    steps:
+    - template: azure-pipelines/test.yml
 
-    # The server package is downloaded from NuGet
-    - task: NuGetAuthenticate@1
-
-    # Required for integration tests.
-    - task: UseDotNet@2
-      displayName: 'Install .NET Core SDKs'
-      inputs:
-        version: '7.0.100'
-
-    - task: NodeTool@0
-      displayName: 'Install Node.js 16.x'
-      inputs:
-        versionSpec: '16.x'
-
-    - script: |
-        npm ci
-        npm i -g gulp
-      displayName: 'Install dependencies'
-
-    - script: npm run compile
-      displayName: 'Compile'
-
-    - script: gulp 'vsix:release:package'
-      displayName: 'Build VSIXs'
-
-    - script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-      displayName: Setup virtual display
-
-    - script: npm run test
-      displayName: 'Run unit and integration tests'
-      env:
-        CODE_VERSION: 1.66.0
-        DISPLAY: :99.0
-    
-    - script: npm run test:artifacts
-      displayName: 'Run artifacts tests'
-
-    - task: PublishPipelineArtifact@1
-      condition: failed()
-      displayName: 'Upload integration test logs'
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)/.vscode-test/user-data/logs'
-        artifactName: 'VSCode Test Logs'
-
-    - task: PublishPipelineArtifact@1
-      # Run the publish step so we have vsix's even if the tests fail.
-      condition: succeededOrFailed()
-      displayName: 'Publish VSIXs'
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)/vsix'
-        artifactName: 'VSIXs - Attempt $(System.JobAttempt)'
+# TODO: add compliance stage
