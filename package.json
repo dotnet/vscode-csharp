@@ -1622,6 +1622,11 @@
         "category": "CSharp"
       },
       {
+        "command": "csharp.attachToProcess",
+        "title": "Attach to a .NET 5+ or .NET Core process",
+        "category": "Debug"
+      },
+      {
         "command": "csharp.reportIssue",
         "title": "Report an issue",
         "category": "CSharp"
@@ -4522,16 +4527,24 @@
           "when": "editorLangId == csharp"
         },
         {
-          "command": "csharp.listRemoteProcess",
-          "when": "never"
-        },
-        {
           "command": "dotnet.test.debugTestsInContext",
           "when": "editorLangId == csharp"
         },
         {
           "command": "o.restart",
           "when": "config.dotnet.server.useOmnisharp"
+        },
+        {
+          "command": "csharp.listProcess",
+          "when": "false"
+        },
+        {
+          "command": "csharp.listRemoteProcess",
+          "when": "false"
+        },
+        {
+          "command": "csharp.listRemoteDockerProcess",
+          "when": "false"
         }
       ],
       "editor/title": [
