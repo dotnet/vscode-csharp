@@ -237,6 +237,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         args.push('--projectConfigurationFileName');
         args.push('project.razor.vscode.json');
+        args.push('--SupportsDelegatedDiagnostics');
+        args.push('true');
 
         if (options.debug) {
             this.telemetryReporter.reportDebugLanguageServer();
