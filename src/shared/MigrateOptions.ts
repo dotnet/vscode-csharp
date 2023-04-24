@@ -19,6 +19,7 @@ export const migrateOptions = [
     {omnisharpOption: "csharp.inlayHints.types.forImplicitVariableTypes", roslynOption: "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes" },
     {omnisharpOption: "csharp.inlayHints.types.forLambdaParameterTypes", roslynOption: "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes" },
     {omnisharpOption: "csharp.inlayHints.types.forImplicitObjectCreation", roslynOption: "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation" },
+    {omnisharpOption: "omnisharp.enableImportCompletion", roslynOption: "dotnet.completion.showCompletionItemsFromUnimportedNamespaces" },
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {

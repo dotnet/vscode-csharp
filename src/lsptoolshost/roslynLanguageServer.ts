@@ -12,14 +12,12 @@ import { registerDebugger } from './debugger';
 import { UriConverter } from './uriConverter';
 
 import {
-    DidOpenTextDocumentNotification,
     DidChangeTextDocumentNotification,
     DidCloseTextDocumentNotification,
     LanguageClient,
     LanguageClientOptions,
     ServerOptions,
     DidCloseTextDocumentParams,
-    DidOpenTextDocumentParams,
     DidChangeTextDocumentParams,
     DocumentDiagnosticParams,
     State,
@@ -361,11 +359,8 @@ export class RoslynLanguageServer {
             RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
             async notification => vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification));
 
-        // Razor will call into us (via command) for generated file didOpen/didChange/didClose notifications. We'll then forward these
-        // notifications along to Roslyn.
-        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidOpenCommand, (notification: DidOpenTextDocumentParams) => {
-            client.sendNotification(DidOpenTextDocumentNotification.method, notification);
-        });
+        // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
+        // notifications along to Roslyn. didOpen notifications are handled separately via the vscode.openTextDocument method.
         vscode.commands.registerCommand(RoslynLanguageServer.roslynDidChangeCommand, (notification: DidChangeTextDocumentParams) => {
             client.sendNotification(DidChangeTextDocumentNotification.method, notification);
         });

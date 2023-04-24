@@ -59,7 +59,7 @@ export class Options {
         const enableEditorConfigSupport = Options.readOption<boolean>(config, 'omnisharp.enableEditorConfigSupport', true);
         const enableDecompilationSupport = Options.readOption<boolean>(config, 'omnisharp.enableDecompilationSupport', false);
         const enableLspDriver = Options.readOption<boolean>(config, 'omnisharp.enableLspDriver', false);
-        const enableImportCompletion = Options.readOption<boolean>(config, 'omnisharp.enableImportCompletion', false);
+        const enableImportCompletion = Options.readOption<boolean>(config, 'dotnet.completion.showCompletionItemsFromUnimportedNamespaces', false, 'omnisharp.enableImportCompletion');
         const enableAsyncCompletion = Options.readOption<boolean>(config, 'omnisharp.enableAsyncCompletion', false);
         const analyzeOpenDocumentsOnly = Options.readOption<boolean>(config, 'omnisharp.analyzeOpenDocumentsOnly', false);
         const organizeImportsOnFormat = Options.readOption<boolean>(config, 'omnisharp.organizeImportsOnFormat', false);

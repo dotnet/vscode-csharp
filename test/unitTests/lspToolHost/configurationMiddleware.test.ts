@@ -18,6 +18,8 @@ const testData = [
     { serverOption: "mystery_language|completion.dotnet_show_name_completion_suggestions", vsCodeConfiguration: null, declareInPackageJson: false},
     { serverOption: "csharp|completion.dotnet_provide_regex_completions", vsCodeConfiguration: "dotnet.completion.provideRegexCompletions", declareInPackageJson: true},
     { serverOption: "mystery_language|completion.dotnet_provide_regex_completions", vsCodeConfiguration: null, declareInPackageJson: false},
+    { serverOption: "csharp|completion.dotnet_show_completion_items_from_unimported_namespaces", vsCodeConfiguration: "dotnet.completion.showCompletionItemsFromUnimportedNamespaces", declareInPackageJson: true},
+    { serverOption: "mystery_language|completion.dotnet_show_completion_items_from_unimported_namespaces", vsCodeConfiguration: null, declareInPackageJson: false},
     { serverOption: "csharp|quick_info.dotnet_show_remarks_in_quick_info", vsCodeConfiguration: "dotnet.quickInfo.showRemarksInQuickInfo", declareInPackageJson: true},
     { serverOption: "mystery_language|quick_info.dotnet_show_remarks_in_quick_info", vsCodeConfiguration: null, declareInPackageJson: false},
     { serverOption: "navigation.dotnet_navigate_to_decompiled_sources", vsCodeConfiguration: "dotnet.navigation.navigateToDecompiledSources", declareInPackageJson: true},

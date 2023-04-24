@@ -45,6 +45,19 @@ export async function activate(thisExtension: vscode.Extension<any>, context: vs
         return attachItem ? attachItem.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
     }));
 
+    // Register a command to fire attach to process for the coreclr debug engine.
+    disposables.add(vscode.commands.registerCommand('csharp.attachToProcess', async () => {
+        vscode.debug.startDebugging(
+            undefined,
+            {
+                "name": ".NET Core Attach",
+                "type": "coreclr",
+                "request": "attach"
+            },
+            undefined
+        );
+    }));
+
     const factory = new DebugAdapterExecutableFactory(debugUtil, platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath, options);
     disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
     disposables.add(vscode.debug.registerDebugConfigurationProvider('clr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
