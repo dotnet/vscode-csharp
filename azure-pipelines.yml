@@ -26,8 +26,6 @@ stages:
           vmImage: ubuntu-latest
         windows:
           vmImage: windows-latest
-        mac:
-          vmImage: macOS-latest
     pool:
       vmImage: $(vmImage)
     steps:
