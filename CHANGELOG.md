@@ -13,7 +13,7 @@
   * As a workaround, make an edit within the file before using Rename Symbol.
 
 ## 1.25.7
-* Update Razor to 7.0.0-preview.23224.3 (PR: )
+* Update Razor to 7.0.0-preview.23224.3 (PR: [#5660](https://github.com/OmniSharp/omnisharp-vscode/pull/5660))
   * Fix issue with Razor diagnostics (PR: [#8622](https://github.com/dotnet/razor/pull/8622))
 
 ## 1.25.6
