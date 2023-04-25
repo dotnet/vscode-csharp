@@ -17,3 +17,6 @@ steps:
   inputs:
     targetPath: '$(Build.SourcesDirectory)/vsix'
     artifactName: 'VSIXs - Attempt $(System.JobAttempt)'
+
+- script: npm run test:artifacts
+  displayName: 'Run artifacts tests'

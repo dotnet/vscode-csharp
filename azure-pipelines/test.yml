@@ -7,6 +7,11 @@ steps:
 
 - template: prereqs.yml
 
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDKs'
+  inputs:
+    version: '7.0.100'
+
 - pwsh: |
     if ($IsLinux) {
       Write-Host "Activating screen emulation"
@@ -17,9 +22,6 @@ steps:
 
     npm run test
   displayName: 🧪 Run unit and integration tests
-
-- script: npm run test:artifacts
-  displayName: 'Run artifacts tests'
 
 - task: PublishPipelineArtifact@1
   condition: failed()
