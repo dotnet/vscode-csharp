@@ -4168,132 +4168,242 @@
         "description": "The begining or ending punctuation of a Markup comment."
       },
       {
-        "id": "plainKeyword",
-        "description": "Represents a keyword"
+        "id": "excludedCode",
+        "description": "A token that represents inactive code."
       },
       {
         "id": "controlKeyword",
-        "description": "Represents a control-flow keyword"
+        "description": "A token that represents a control-flow keyword.",
+        "superType": "keyword"
       },
       {
         "id": "operatorOverloaded",
-        "description": "Represents a custom implementation of an operator"
+        "description": "A declaration or reference to an overloaded operator."
       },
       {
-        "id": "preprocessorKeyword",
-        "description": "Represents"
+        "id": "whitespace",
+        "description": "A token that represents whitespace."
+      },
+      {
+        "id": "text",
+        "description": "A token that represents text."
       },
       {
         "id": "preprocessorText",
-        "description": "Represents"
-      },
-      {
-        "id": "excludedCode",
-        "description": ""
+        "description": "Text associated with a preprocessor directive."
       },
       {
         "id": "punctuation",
-        "description": ""
+        "description": "A token that represents punctuation."
       },
       {
         "id": "stringVerbatim",
-        "description": ""
+        "superType": "string",
+        "description": "A token that represents a verbatim string."
       },
       {
         "id": "stringEscapeCharacter",
-        "description": ""
+        "superType": "string",
+        "description": "An escape character within a string."
+      },
+      {
+        "id": "recordClass",
+        "superType": "class",
+        "description": "A definition or reference to a record class type."
       },
       {
         "id": "delegate",
-        "description": ""
+        "superType": "method",
+        "description": "A definition or reference to a delegate type."
       },
       {
         "id": "module",
-        "description": ""
+        "superType": "namespace",
+        "description": "A definition or reference to a module name."
       },
       {
-        "id": "extensionMethod",
-        "description": ""
+        "id": "recordStruct",
+        "superType": "struct",
+        "description": "A definition or reference to a record struct type."
       },
       {
         "id": "field",
-        "description": ""
+        "superType": "property",
+        "description": "A definition or reference to a field."
       },
       {
-        "id": "local",
-        "description": ""
+        "id": "constant",
+        "superType": "variable",
+        "description": "A definition or reference to a constant."
+      },
+      {
+        "id": "extensionMethod",
+        "superType": "method",
+        "description": "A definition or reference to an extension method"
       },
       {
         "id": "xmlDocCommentAttributeName",
-        "description": ""
+        "description": "A token that represents an attribute in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentAttributeQuotes",
-        "description": ""
+        "description": "A token that represents an attribute quote in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentAttributeValue",
-        "description": ""
+        "description": "A token that represents an attribute value in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentCDataSection",
-        "description": ""
+        "description": "A token that represents a CDATA section in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentComment",
-        "description": ""
+        "description": "A token that represents a comment in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentDelimiter",
-        "description": ""
+        "description": "A token that represents a delimeter in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentEntityReference",
-        "description": ""
+        "description": "A token that represents reference to an entity in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentName",
-        "description": ""
+        "description": "A token that represents a name in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentProcessingInstruction",
-        "description": ""
+        "description": "A token that represents a processing instruction in an XML documentation comment"
       },
       {
         "id": "xmlDocCommentText",
-        "description": ""
+        "description": "A token that represents text in an XML documentation comment"
+      },
+      {
+        "id": "xmlLiteralAttributeName",
+        "description": "A token that represents an attribute name in an XML literal"
+      },
+      {
+        "id": "xmlLiteralAttributeQuotes",
+        "description": "A token that represents an attribute quote in an XML literal"
+      },
+      {
+        "id": "xmlLiteralAttributeValue",
+        "description": "A token that represents an attribute value in an XML literal"
+      },
+      {
+        "id": "xmlLiteralCDataSection",
+        "description": "A token that represents a CDATA section in an XML literal"
+      },
+      {
+        "id": "xmlLiteralComment",
+        "description": "A token that represents a comment in an XML literal"
+      },
+      {
+        "id": "xmlLiteralDelimiter",
+        "description": "A token that represents a delimiter in an XML literal"
+      },
+      {
+        "id": "xmlLiteralEmbeddedExpression",
+        "description": "A token that represents an emebedded expression in an XML literal"
+      },
+      {
+        "id": "xmlLiteralEntityReference",
+        "description": "A token that represents a reference to an entity in an XML literal"
+      },
+      {
+        "id": "xmlLiteralName",
+        "description": "A token that represents a name in an XML literal"
+      },
+      {
+        "id": "xmlLiteralProcessingInstruction",
+        "description": "A token that represents a processing instruction in an XML literal"
+      },
+      {
+        "id": "xmlLiteralText",
+        "description": "A token that represents text in an XML literal"
       },
       {
         "id": "regexComment",
-        "description": ""
+        "description": "A token that represents a comment in a regex string"
       },
       {
         "id": "regexCharacterClass",
-        "description": ""
+        "description": "A token that represents a character class in a regex string"
       },
       {
         "id": "regexAnchor",
-        "description": ""
+        "description": "A token that represents an anchor in a regex string"
       },
       {
         "id": "regexQuantifier",
-        "description": ""
+        "description": "A token that represents a quantifier in a regex string"
       },
       {
         "id": "regexGrouping",
-        "description": ""
+        "description": "A token that represents a group in a regex string"
       },
       {
         "id": "regexAlternation",
-        "description": ""
+        "description": "A token that represents an alternation in a regex string"
+      },
+      {
+        "id": "regexText",
+        "description": "A token that represents text in a regex string"
       },
       {
         "id": "regexSelfEscapedCharacter",
-        "description": ""
+        "description": "A token that represents a self escaped character in a regex string"
       },
       {
         "id": "regexOtherEscape",
-        "description": ""
+        "description": "A token that represents an escape in a regex string"
+      },
+      {
+        "id": "jsonComment",
+        "description": "A token that represents a comment in a JSON string"
+      },
+      {
+        "id": "jsonNumber",
+        "description": "A token that represents a number in a JSON string"
+      },
+      {
+        "id": "jsonString",
+        "description": "A token that represents a string in a JSON string"
+      },
+      {
+        "id": "jsonKeyword",
+        "description": "A token that represents a keyword in a JSON string"
+      },
+      {
+        "id": "jsonText",
+        "description": "A token that represents text in a JSON string"
+      },
+      {
+        "id": "jsonOperator",
+        "description": "A token that represents an operator in a JSON string"
+      },
+      {
+        "id": "jsonPunctuation",
+        "description": "A token that represents punctuation in a JSON string"
+      },
+      {
+        "id": "jsonArray",
+        "description": "A token that represents an array in a JSON string"
+      },
+      {
+        "id": "jsonObject",
+        "description": "A token that represents an object in a JSON string"
+      },
+      {
+        "id": "jsonPropertyName",
+        "description": "A token that represents a property name in a JSON string"
+      },
+      {
+        "id": "jsonConstructorName",
+        "description": "A token that represents a constructor in a JSON string"
       }
     ],
     "semanticTokenModifiers": [],
@@ -4366,134 +4476,207 @@
       {
         "language": "csharp",
         "scopes": {
+          "namespace": [
+            "entity.name.type.namespace.cs"
+          ],
+          "type": [
+            "entity.name.type"
+          ],
+          "class": [
+            "entity.name.type.class.cs"
+          ],
+          "enum": [
+            "entity.name.type.enum.cs"
+          ],
+          "interface": [
+            "entity.name.type.interface.cs"
+          ],
+          "struct": [
+            "entity.name.type.struct.cs"
+          ],
+          "typeParameter": [
+            "entity.name.type.type-parameter.cs"
+          ],
+          "parameter": [
+            "entity.name.variable.parameter.cs"
+          ],
+          "variable": [
+            "entity.name.variable.local.cs"
+          ],
+          "property": [
+            "variable.other.property.cs"
+          ],
+          "enumMember": [
+            "variable.other.enummember.cs"
+          ],
+          "method": [
+            "entity.name.function.member.cs"
+          ],
+          "macro": [
+            "keyword.preprocessor.cs"
+          ],
           "keyword": [
             "keyword.cs"
           ],
-          "keyword - control": [
+          
+          "excludedCode": [
+            "support.other.excluded.cs"
+          ],
+          "controlKeyword": [
             "keyword.control.cs"
           ],
-          "operator - overloaded": [
+          "operatorOverloaded": [
             "entity.name.function.member.overload.cs"
           ],
-          "preprocessor keyword": [
-            "keyword.preprocessor.cs"
-          ],
-          "preprocessor text": [
+          "preprocessorText": [
             "meta.preprocessor.string.cs"
-          ],
-          "excluded code": [
-            "support.other.excluded.cs"
           ],
           "punctuation": [
             "punctuation.cs"
           ],
-          "string - verbatim": [
+          "stringVerbatim": [
             "string.verbatim.cs"
           ],
-          "string - escape character": [
+          "stringEscapeCharacter": [
             "constant.character.escape.cs"
           ],
-          "namespace name": [
-            "entity.name.type.namespace.cs"
-          ],
-          "class name": [
-            "entity.name.type.class.cs"
-          ],
-          "struct name": [
-            "entity.name.type.struct.cs"
-          ],
-          "interface name": [
-            "entity.name.type.interface.cs"
-          ],
-          "enum name": [
-            "entity.name.type.enum.cs"
-          ],
-          "enum member name": [
-            "variable.other.enummember.cs"
-          ],
-          "type parameter name": [
-            "entity.name.type.type-parameter.cs"
-          ],
-          "delegate name": [
+          "delegate": [
             "entity.name.type.delegate.cs"
           ],
-          "module name": [
+          "module": [
             "entity.name.type.module.cs"
           ],
-          "method name": [
-            "entity.name.function.member.cs"
-          ],
-          "extension method name": [
-            "entity.name.function.extension.cs"
-          ],
-          "property name": [
-            "variable.other.property.cs"
-          ],
-          "field name": [
+          "field": [
             "entity.name.variable.field.cs"
           ],
-          "constant name": [
+          "constant": [
             "variable.other.constant.cs"
           ],
-          "local name": [
-            "entity.name.variable.local.cs"
+          "extensionMethod": [
+            "entity.name.function.extension.cs"
           ],
-          "parameter name": [
-            "entity.name.variable.parameter.cs"
-          ],
-          "xml doc comment - attribute name": [
+          "xmlDocCommentAttributeName": [
             "comment.documentation.attribute.name.cs"
           ],
-          "xml doc comment - attribute quotes": [
+          "xmlDocCommentAttributeQuotes": [
             "comment.documentation.attribute.quotes.cs"
           ],
-          "xml doc comment - attribute value": [
+          "xmlDocCommentAttributeValue": [
             "comment.documentation.attribute.value.cs"
           ],
-          "xml doc comment - cdata section": [
+          "xmlDocCommentCDataSection": [
             "comment.documentation.cdata.cs"
           ],
-          "xml doc comment - comment": [
+          "xmlDocCommentComment": [
             "comment.documentation.comment.cs"
           ],
-          "xml doc comment - delimiter": [
+          "xmlDocCommentDelimiter": [
             "comment.documentation.delimiter.cs"
           ],
-          "xml doc comment - entity reference": [
+          "xmlDocCommentEntityReference": [
             "comment.documentation.entityReference.cs"
           ],
-          "xml doc comment - name": [
+          "xmlDocCommentName": [
             "comment.documentation.name.cs"
           ],
-          "xml doc comment - processing instruction": [
+          "xmlDocCommentProcessingInstruction": [
             "comment.documentation.processingInstruction.cs"
           ],
-          "xml doc comment - text": [
+          "xmlDocCommentText": [
             "comment.documentation.cs"
           ],
-          "regex - comment": [
+          "xmlLiteralAttributeName": [
+            "entity.other.attribute-name.localname.xml"
+          ],
+          "xmlLiteralAttributeQuotes": [
+            "string.quoted.double.xml"
+          ],
+          "xmlLiteralAttributeValue": [
+            "meta.tag.xml"
+          ],
+          "xmlLiteralCDataSection": [
+            "string.quoted.double.xml"
+          ],
+          "xmlLiteralComment": [
+            "comment.block.xml"
+          ],
+          "xmlLiteralDelimiter": [
+            "text.xml"
+          ],
+          "xmlLiteralEmbeddedExpression": [
+            "meta.tag.xml"
+          ],
+          "xmlLiteralEntityReference": [
+            "meta.tag.xml"
+          ],
+          "xmlLiteralName": [
+            "entity.name.tag.localname.xml"
+          ],
+          "xmlLiteralProcessingInstruction": [
+            "meta.tag.xml"
+          ],
+          "xmlLiteralText": [
+            "text.xml"
+          ],
+          "regexComment": [
             "string.regexp.comment.cs"
           ],
-          "regex - character class": [
+          "regexCharacterClass": [
             "constant.character.character-class.regexp.cs"
           ],
-          "regex - anchor": [
+          "regexAnchor": [
             "keyword.control.anchor.regexp.cs"
           ],
-          "regex - quantifier": [
+          "regexQuantifier": [
             "keyword.operator.quantifier.regexp.cs"
           ],
-          "regex - grouping": [
+          "regexGrouping": [
             "punctuation.definition.group.regexp.cs"
           ],
-          "regex - alternation": [
+          "regexAlternation": [
             "keyword.operator.or.regexp.cs"
           ],
-          "regex - self escaped character": [
+          "regexText": [
+            "string.regexp"
+          ],
+          "regexSelfEscapedCharacter": [
             "string.regexp.self-escaped-character.cs"
           ],
-          "regex - other escape": [
+          "regexOtherEscape": [
             "string.regexp.other-escape.cs"
+          ],
+          "jsonComment": [
+            "comment.line.double-slash.js"
+          ],
+          "jsonNumber": [
+            "constant.numeric.json"
+          ],
+          "jsonString": [
+            "string.quoted.double.json"
+          ],
+          "jsonKeyword": [
+            "constant.language.json"
+          ],
+          "jsonText": [
+            "string.quoted.double.json"
+          ],
+          "jsonOperator": [
+            "string.quoted.double.json"
+          ],
+          "jsonPunctuation": [
+            "punctuation.separator.dictionary.key-value.json"
+          ],
+          "jsonArray": [
+            "punctuation.definition.array.begin.json"
+          ],
+          "jsonObject": [
+            "punctuation.definition.dictionary.begin.json"
+          ],
+          "jsonPropertyName": [
+            "support.type.property-name.json"
+          ],
+          "jsonConstructorName": [
+            "support.type.property-name.json"
           ]
         }
       }
