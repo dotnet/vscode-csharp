@@ -47,9 +47,8 @@ import { getDotnetPackApi } from './DotnetPack';
 import { SolutionSnapshotProvider, activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/MigrateOptions';
-import { getBrokeredServiceContainer } from './brokeredServicesHosting';
+import { getBrokeredServiceContainer } from './lsptoolshost/services/brokeredServicesHosting';
 import { CSharpDevKitExports } from './CSharpDevKitExports';
-import CSharpDevKitDescriptors from './CSharpDevKitDescriptors';
 import Descriptors from './lsptoolshost/services/Descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports} from './CSharpExtensionExports';
@@ -227,23 +226,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         coreClrDebugPromise = coreclrdebug.activate(context.extension, context, platformInfo, eventStream, optionProvider.GetLatestOptions());
     }
 
-    const csharpDevKitExtId: string = "ms-dotnettools.csdevkit";
-    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevKitExtId);
-    ext?.activate().then(async (exports: CSharpDevKitExports) => {
-        if (exports && exports.serviceBroker) {
-            // When proffering this IServiceBroker into our own container,
-            // we list the monikers of the brokered services we expect to find there.
-            // This list must be a subset of the monikers previously registered with our own container
-            // as defined in the getBrokeredServiceContainer function.
-            getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [CSharpDevKitDescriptors.helloWorld.moniker]);
-        } else {
-            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevKitExtId}' activated but did not return expected Exports.`);
-        }
-    }, () => {
-        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevKitExtId}'`);
-    });
-
     if (!useOmnisharpServer) {
+        tryGetCSharpDevKitExtensionExports(csharpLogObserver);
+
         return {
             initializationFinished: async () => {
                 await coreClrDebugPromise;
@@ -275,6 +260,27 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
             logDirectory: context.logUri.fsPath
         };
     }
+}
+
+// This method will try to get the CSharpDevKitExports through a thenable promise,
+// awaiting `activate` will cause this extension's activation to hang
+function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObserver): void {
+    const csharpDevKitExtId: string = "ms-dotnettools.csdevkit";
+
+    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevKitExtId);
+    ext?.activate().then(async (exports: CSharpDevKitExports) => {
+        if (exports && exports.serviceBroker) {
+            // When proffering this IServiceBroker into our own container,
+            // we list the monikers of the brokered services we expect to find there.
+            // This list must be a subset of the monikers previously registered with our own container
+            // as defined in the getBrokeredServiceContainer function.
+            getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [Descriptors.launchConfigurationService.moniker]);
+        } else {
+            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevKitExtId}' activated but did not return expected Exports.`);
+        }
+    }, () => {
+        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevKitExtId}'`);
+    });
 }
 
 function profferBrokeredServices(context: vscode.ExtensionContext, serviceContainer: GlobalBrokeredServiceContainer) {

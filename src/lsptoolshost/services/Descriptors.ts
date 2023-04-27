@@ -17,4 +17,17 @@ export default class Descriptors {
             MessageDelimiters.HttpLikeHeaders,
         ),
     );
+
+    /**
+     * The descriptor for the Project System launch configuration service.
+     * Use {@link ILaunchConfigurationService} for the RPC interface.
+     */
+    static readonly launchConfigurationService = new ServiceJsonRpcDescriptor(
+        ServiceMoniker.create('Microsoft.VisualStudio.LaunchConfigurationService', undefined),
+        Formatters.Utf8,
+        MessageDelimiters.HttpLikeHeaders,
+        {
+            protocolMajorVersion: 3
+        }
+    );
 }

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { GlobalBrokeredServiceContainer, IRemoteServiceBroker, IServiceBroker, ServiceAudience, ServiceMoniker, ServiceRegistration } from '@microsoft/servicehub-framework';
-import Descriptors from './CSharpDevKitDescriptors';
+import Descriptors from './Descriptors';
 
 export class CSharpExtensionServiceBroker extends GlobalBrokeredServiceContainer {
     registerExternalServices(...monikers: ServiceMoniker[]) {
@@ -18,7 +18,10 @@ export function getBrokeredServiceContainer(): CSharpExtensionServiceBroker {
     if (!_csharpExtensionServiceBroker) {
         _csharpExtensionServiceBroker = new CSharpExtensionServiceBroker();
         // Register any brokered services that come from other extensions so that we can proffer them later.
-        _csharpExtensionServiceBroker.registerExternalServices(Descriptors.helloWorld.moniker);
+
+        _csharpExtensionServiceBroker.registerExternalServices(
+            Descriptors.launchConfigurationService.moniker
+        );
     }
     return _csharpExtensionServiceBroker;
 }
