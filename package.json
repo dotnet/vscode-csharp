@@ -2,7 +2,7 @@
   "name": "csharp",
   "publisher": "ms-dotnettools",
   "version": "2.0.0-placeholder",
-  "description": "C# for Visual Studio Code",
+  "description": "Base language support for C#",
   "displayName": "C#",
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
