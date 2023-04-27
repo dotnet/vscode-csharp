@@ -24,8 +24,6 @@ stages:
       matrix:
         linux:
           vmImage: ubuntu-latest
-        windows:
-          vmImage: windows-latest
     pool:
       vmImage: $(vmImage)
     steps:
