@@ -7,7 +7,7 @@ import * as utils from './utils';
 import * as vscode from 'vscode';
 import { addAssetsIfNecessary } from '../shared/assets';
 import { safeLength, sum } from '../common';
-import { CSharpConfigurationProvider } from '../shared/configurationProvider';
+import { DotnetWorkspaceConfigurationProvider } from '../shared/workspaceConfigurationProvider';
 import { OmniSharpServer } from './server';
 import TestManager from '../features/dotnetTest';
 import registerCommands from '../features/commands';
@@ -132,7 +132,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     }));
 
     // Register ConfigurationProvider
-    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(workspaceInformationProvider)));
+    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetWorkspaceConfigurationProvider(workspaceInformationProvider, platformInfo, optionProvider, outputChannel)));
 
     context.subscriptions.push(disposables);
 

@@ -5,22 +5,15 @@
 
 import * as cp from 'child_process';
 import { getExtensionPath } from "../common";
-import { getDotNetExecutablePath } from "./getDotnetInfo";
 
 // Will return true if `dotnet dev-certs https --check` succesfully finds a trusted development certificate. 
-export async function hasDotnetDevCertsHttps(dotNetCliPaths: string[]): Promise<ExecReturnData> {
-
-    let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
-
-    return await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --check --trust`, process.cwd(), process.env);
+export async function hasDotnetDevCertsHttps(dotnetPath: string): Promise<ExecReturnData> {
+    return await execChildProcess(`${dotnetPath ? dotnetPath : 'dotnet'} dev-certs https --check --trust`, process.cwd(), process.env);
 }
 
 // Will run `dotnet dev-certs https --trust` to prompt the user to create a trusted self signed certificates. Retruns true if sucessfull.
-export async function createSelfSignedCert(dotNetCliPaths: string[]): Promise<ExecReturnData> {
-
-    let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
-
-    return await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
+export async function createSelfSignedCert(dotnetPath: string): Promise<ExecReturnData> {
+    return await execChildProcess(`${dotnetPath ? dotnetPath : 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
 }
 
 async function execChildProcess(command: string, workingDirectory: string = getExtensionPath(), env: NodeJS.ProcessEnv = {}): Promise<ExecReturnData> {

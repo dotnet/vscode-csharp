@@ -438,22 +438,22 @@ export class SolutionSnapshotProvider implements ISolutionSnapshotProvider {
     }
 }
 
-export async function activateRoslynLanguageServer(context: vscode.ExtensionContext, platformInfo: PlatformInformation, optionsProvider: OptionProvider, outputChannel: vscode.OutputChannel) {
+export async function activateRoslynLanguageServer(context: vscode.ExtensionContext, platformInfo: PlatformInformation, optionProvider: OptionProvider, outputChannel: vscode.OutputChannel) {
 
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     _traceChannel = vscode.window.createOutputChannel("C# LSP Trace Logs");
 
-    _languageServer = new RoslynLanguageServer(platformInfo, optionsProvider, context);
+    _languageServer = new RoslynLanguageServer(platformInfo, optionProvider, context);
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, _languageServer);
 
     // Register any needed debugger components that need to communicate with the language server.
-    registerDebugger(context, _languageServer);
+    registerDebugger(context, _languageServer, platformInfo, optionProvider, _channel);
 
-    let options = optionsProvider.GetLatestOptions();
+    let options = optionProvider.GetLatestOptions();
     let source = new vscode.CancellationTokenSource();
     vscode.workspace.onDidChangeTextDocument(async e => {
         if (!options.languageServerOptions.documentSelector.includes(e.document.languageId))

@@ -12,14 +12,16 @@ import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotIn
 import { EventStream } from '../EventStream';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
-import { DotnetDebugConfigurationProvider } from './debugConfigurationProvider';
 import { Options } from '../shared/options';
 import { RemoteAttachPicker } from '../features/processPicker';
 import CompositeDisposable from '../CompositeDisposable';
+import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 
-export async function activate(thisExtension: vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, options: Options) {
+export async function activate(thisExtension: vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, csharpOutputChannel: vscode.OutputChannel, optionProvider: OptionProvider) {
     let disposables = new CompositeDisposable();
 
+    const options: Options = optionProvider.GetLatestOptions();
     const debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
     if (!CoreClrDebugUtil.existsSync(debugUtil.debugAdapterDir())) {
@@ -59,8 +61,8 @@ export async function activate(thisExtension: vscode.Extension<any>, context: vs
     }));
 
     const factory = new DebugAdapterExecutableFactory(debugUtil, platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath, options);
-    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
-    disposables.add(vscode.debug.registerDebugConfigurationProvider('clr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
+    /** 'clr' type does not have a intial configuration provider, but we need to register it to support the common debugger features listed in {@link BaseVsDbgConfigurationProvider} */
+    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('clr', new BaseVsDbgConfigurationProvider(platformInformation, optionProvider, csharpOutputChannel)));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
 
