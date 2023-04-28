@@ -4,18 +4,22 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType } from 'vscode-languageclient';
+import { CodeAction, RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
 import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { RazorLanguageServerClient } from '../RazorLanguageServerClient';
 import { RazorLogger } from '../RazorLogger';
-import { convertRangeFromSerializable } from '../RPC/SerializableRange';
-import { RazorCodeAction } from './RazorCodeAction';
 import { SerializableDelegatedCodeActionParams } from './SerializableDelegatedCodeActionParams';
+import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
+import { LanguageKind } from '../RPC/LanguageKind';
+import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { SerializableRazorResolveCodeActionParams } from './SerializableRazorResolveCodeActionParams';
 
 export class CodeActionsHandler {
     private static readonly provideCodeActionsEndpoint = 'razor/provideCodeActions';
-    private codeActionRequestType: RequestType<SerializableDelegatedCodeActionParams, RazorCodeAction[], any> = new RequestType(CodeActionsHandler.provideCodeActionsEndpoint);
-    private emptyCodeActionResponse: RazorCodeAction[] = [];
+    private static readonly resolveCodeActionsEndpoint = 'razor/resolveCodeActions';
+    private codeActionRequestType: RequestType<SerializableDelegatedCodeActionParams, CodeAction[], any> = new RequestType(CodeActionsHandler.provideCodeActionsEndpoint);
+    private codeActionResolveRequestType: RequestType<SerializableRazorResolveCodeActionParams, CodeAction, any> = new RequestType(CodeActionsHandler.resolveCodeActionsEndpoint);
+    private emptyCodeActionResponse: CodeAction[] = [];
 
     constructor(
         private readonly documentManager: RazorDocumentManager,
@@ -24,14 +28,17 @@ export class CodeActionsHandler {
 
     public register() {
         // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, RazorCodeAction[], any>(
+        this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, CodeAction[], any>(
             this.codeActionRequestType,
-            async (request: SerializableDelegatedCodeActionParams, token: vscode.CancellationToken) => this.provideCodeActions(request, token));
+            async (request: SerializableDelegatedCodeActionParams, token: vscode.CancellationToken) => this.provideCodeActions(request));
+
+        // tslint:disable-next-line: no-floating-promises
+        this.serverClient.onRequestWithParams<SerializableRazorResolveCodeActionParams, CodeAction, any>(
+            this.codeActionResolveRequestType,
+            async (request: SerializableRazorResolveCodeActionParams, token: vscode.CancellationToken) => this.resolveCodeAction(request));
     }
 
-    private async provideCodeActions(
-        delegatedCodeActionParams: SerializableDelegatedCodeActionParams,
-        cancellationToken: vscode.CancellationToken) {
+    private async provideCodeActions(delegatedCodeActionParams: SerializableDelegatedCodeActionParams) {
         try {
             const codeActionParams = delegatedCodeActionParams.codeActionParams;
             const razorDocumentUri = vscode.Uri.parse(codeActionParams.textDocument.uri, true);
@@ -40,20 +47,16 @@ export class CodeActionsHandler {
                 return this.emptyCodeActionResponse;
             }
 
-            const virtualCSharpUri = razorDocument.csharpDocument.uri;
-
-            const range = convertRangeFromSerializable(codeActionParams.range);
-
-            const commands = await vscode.commands.executeCommand<vscode.Command[]>(
-                'vscode.executeCodeActionProvider',
-                virtualCSharpUri,
-                range) as vscode.Command[];
-
-            if (commands.length === 0) {
+            // We only support C# delegated code actions (for now??)
+            if (delegatedCodeActionParams.languageKind !== LanguageKind.CSharp) {
                 return this.emptyCodeActionResponse;
             }
 
-            return commands.map(c => this.commandAsCodeAction(c));
+            // Point this request to the virtual C# document, and call Roslyn
+            const virtualCSharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
+            codeActionParams.textDocument = TextDocumentIdentifier.create(virtualCSharpUri);
+
+            return <CodeAction[]>await vscode.commands.executeCommand(RoslynLanguageServer.provideCodeActionsCommand, codeActionParams);
         } catch (error) {
             this.logger.logWarning(`${CodeActionsHandler.provideCodeActionsEndpoint} failed with ${error}`);
         }
@@ -61,7 +64,26 @@ export class CodeActionsHandler {
         return this.emptyCodeActionResponse;
     }
 
-    private commandAsCodeAction(command: vscode.Command): RazorCodeAction {
-        return { title: command.title, data: { CustomTags: [ 'CodeActionFromVSCode' ] } } as RazorCodeAction;
+    private async resolveCodeAction(resolveCodeActionParams: SerializableRazorResolveCodeActionParams) {
+        try {
+            const codeAction = resolveCodeActionParams.codeAction;
+            const razorDocument = await this.documentManager.getDocument(resolveCodeActionParams.uri);
+            if (razorDocument === undefined) {
+                return <CodeAction>{};
+            }
+
+            // We only support C# delegated code actions (for now??)
+            if (resolveCodeActionParams.languageKind !== LanguageKind.CSharp) {
+                return <CodeAction>{};
+            }
+
+            // Call Roslyn. Since this code action came from Roslyn, we don't even have to point it
+            // to the virtual C# document.
+            return <CodeAction>await vscode.commands.executeCommand(RoslynLanguageServer.resolveCodeActionCommand, codeAction);
+        } catch (error) {
+            this.logger.logWarning(`${CodeActionsHandler.resolveCodeActionsEndpoint} failed with ${error}`);
+        }
+
+        return <CodeAction>{};
     }
 }

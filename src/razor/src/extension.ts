@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import * as vscodeapi from 'vscode';
 import { ExtensionContext } from 'vscode';
 import { BlazorDebugConfigurationProvider } from './BlazorDebug/BlazorDebugConfigurationProvider';
+import { CodeActionsHandler } from './CodeActions/CodeActionsHandler';
 import { RazorCodeActionRunner } from './CodeActions/RazorCodeActionRunner';
 import { RazorCodeLensProvider } from './CodeLens/RazorCodeLensProvider';
 import { ColorPresentationHandler } from './ColorPresentation/ColorPresentationHandler';
@@ -70,6 +71,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, logger);
         const razorFormattingFeature = new RazorFormattingFeature(languageServerClient, documentManager, logger);
         const razorCodeActionRunner = new RazorCodeActionRunner(languageServerClient, logger);
+        const codeActionsHandler = new CodeActionsHandler(documentManager, languageServerClient, logger);
 
         let documentSynchronizer: RazorDocumentSynchronizer;
 
@@ -214,6 +216,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
             formattingHandler.register();
             semanticTokenHandler.register();
             razorDiagnosticHandler.register();
+            codeActionsHandler.register();
         });
 
         const onStopRegistration = languageServerClient.onStop(() => {

@@ -3,10 +3,12 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
+import { Uri } from 'vscode';
 import { LanguageKind } from '../RPC/LanguageKind';
-import { SerializableCodeActionParams } from './SerializableCodeActionParams';
+import { CodeAction } from 'vscode-languageserver-protocol';
 
-export interface SerializableDelegatedCodeActionParams {
-    codeActionParams: SerializableCodeActionParams;
+export interface SerializableRazorResolveCodeActionParams {
+    uri: Uri;
     languageKind: LanguageKind;
+    codeAction: CodeAction;
 }
