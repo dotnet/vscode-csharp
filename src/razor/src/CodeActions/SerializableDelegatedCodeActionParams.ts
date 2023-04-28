@@ -7,6 +7,7 @@ import { LanguageKind } from '../RPC/LanguageKind';
 import { SerializableCodeActionParams } from './SerializableCodeActionParams';
 
 export interface SerializableDelegatedCodeActionParams {
+    hostDocumentVersion: number;
     codeActionParams: SerializableCodeActionParams;
     languageKind: LanguageKind;
 }

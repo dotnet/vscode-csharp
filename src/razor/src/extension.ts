@@ -63,6 +63,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
 
         const documentManager = new RazorDocumentManager(languageServerClient, logger);
+        const documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
         reportTelemetryForDocuments(documentManager, telemetryReporter);
         const languageConfiguration = new RazorLanguageConfiguration();
         const csharpFeature = new RazorCSharpFeature(documentManager, eventEmitterFactory, logger);
@@ -71,9 +72,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, logger);
         const razorFormattingFeature = new RazorFormattingFeature(languageServerClient, documentManager, logger);
         const razorCodeActionRunner = new RazorCodeActionRunner(languageServerClient, logger);
-        const codeActionsHandler = new CodeActionsHandler(documentManager, languageServerClient, logger);
-
-        let documentSynchronizer: RazorDocumentSynchronizer;
+        const codeActionsHandler = new CodeActionsHandler(documentManager, documentSynchronizer, languageServerClient, logger);
 
         // Our dynamic file handler needs to be registered regardless of whether the Razor language server starts
         // since the Roslyn implementation expects the dynamic file commands to always be registered.
@@ -83,7 +82,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         dynamicFileInfoProvider.register();
 
         languageServerClient.onStart(async () => {
-            documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
             const provisionalCompletionOrchestrator = new ProvisionalCompletionOrchestrator(
                 documentManager,
                 csharpFeature.projectionProvider,

@@ -13,6 +13,7 @@ import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer
 import { LanguageKind } from '../RPC/LanguageKind';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import { SerializableRazorResolveCodeActionParams } from './SerializableRazorResolveCodeActionParams';
+import { RazorDocumentSynchronizer } from '../Document/RazorDocumentSynchronizer';
 
 export class CodeActionsHandler {
     private static readonly provideCodeActionsEndpoint = 'razor/provideCodeActions';
@@ -20,9 +21,11 @@ export class CodeActionsHandler {
     private codeActionRequestType: RequestType<SerializableDelegatedCodeActionParams, CodeAction[], any> = new RequestType(CodeActionsHandler.provideCodeActionsEndpoint);
     private codeActionResolveRequestType: RequestType<SerializableRazorResolveCodeActionParams, CodeAction, any> = new RequestType(CodeActionsHandler.resolveCodeActionsEndpoint);
     private emptyCodeActionResponse: CodeAction[] = [];
+    private emptyCodeAction: CodeAction = <CodeAction>{};
 
     constructor(
         private readonly documentManager: RazorDocumentManager,
+        private readonly documentSynchronizer: RazorDocumentSynchronizer,
         private readonly serverClient: RazorLanguageServerClient,
         private readonly logger: RazorLogger) { }
 
@@ -30,15 +33,17 @@ export class CodeActionsHandler {
         // tslint:disable-next-line: no-floating-promises
         this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, CodeAction[], any>(
             this.codeActionRequestType,
-            async (request: SerializableDelegatedCodeActionParams, token: vscode.CancellationToken) => this.provideCodeActions(request));
+            async (request: SerializableDelegatedCodeActionParams, token: vscode.CancellationToken) => this.provideCodeActions(request, token));
 
         // tslint:disable-next-line: no-floating-promises
         this.serverClient.onRequestWithParams<SerializableRazorResolveCodeActionParams, CodeAction, any>(
             this.codeActionResolveRequestType,
-            async (request: SerializableRazorResolveCodeActionParams, token: vscode.CancellationToken) => this.resolveCodeAction(request));
+            async (request: SerializableRazorResolveCodeActionParams, token: vscode.CancellationToken) => this.resolveCodeAction(request, token));
     }
 
-    private async provideCodeActions(delegatedCodeActionParams: SerializableDelegatedCodeActionParams) {
+    private async provideCodeActions(
+        delegatedCodeActionParams: SerializableDelegatedCodeActionParams,
+        token: vscode.CancellationToken) {
         try {
             const codeActionParams = delegatedCodeActionParams.codeActionParams;
             const razorDocumentUri = vscode.Uri.parse(codeActionParams.textDocument.uri, true);
@@ -49,6 +54,12 @@ export class CodeActionsHandler {
 
             // We only support C# delegated code actions (for now??)
             if (delegatedCodeActionParams.languageKind !== LanguageKind.CSharp) {
+                return this.emptyCodeActionResponse;
+            }
+
+            const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.csharpDocument, delegatedCodeActionParams.hostDocumentVersion, token);
+            if (!synchronized) {
                 return this.emptyCodeActionResponse;
             }
 
@@ -64,17 +75,26 @@ export class CodeActionsHandler {
         return this.emptyCodeActionResponse;
     }
 
-    private async resolveCodeAction(resolveCodeActionParams: SerializableRazorResolveCodeActionParams) {
+    private async resolveCodeAction(
+        resolveCodeActionParams: SerializableRazorResolveCodeActionParams,
+        token: vscode.CancellationToken) {
         try {
             const codeAction = resolveCodeActionParams.codeAction;
-            const razorDocument = await this.documentManager.getDocument(resolveCodeActionParams.uri);
+            const razorDocumentUri = vscode.Uri.parse(resolveCodeActionParams.uri, true);
+            const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
             if (razorDocument === undefined) {
-                return <CodeAction>{};
+                return this.emptyCodeAction;
             }
 
             // We only support C# delegated code actions (for now??)
             if (resolveCodeActionParams.languageKind !== LanguageKind.CSharp) {
-                return <CodeAction>{};
+                return this.emptyCodeAction;
+            }
+
+            const textDocument = await vscode.workspace.openTextDocument(razorDocument.uri);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.csharpDocument, resolveCodeActionParams.hostDocumentVersion, token);
+            if (!synchronized) {
+                return this.emptyCodeAction;
             }
 
             // Call Roslyn. Since this code action came from Roslyn, we don't even have to point it
@@ -84,6 +104,6 @@ export class CodeActionsHandler {
             this.logger.logWarning(`${CodeActionsHandler.resolveCodeActionsEndpoint} failed with ${error}`);
         }
 
-        return <CodeAction>{};
+        return this.emptyCodeAction;
     }
 }
