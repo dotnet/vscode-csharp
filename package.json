@@ -4525,11 +4525,11 @@
       "commandPalette": [
         {
           "command": "dotnet.test.runTestsInContext",
-          "when": "editorLangId == csharp"
+          "when": "editorLangId == csharp && dotnet.server.activatedStandalone"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
-          "when": "editorLangId == csharp"
+          "when": "editorLangId == csharp && dotnet.server.activatedStandalone"
         },
         {
           "command": "o.restart",
@@ -4565,12 +4565,12 @@
       "editor/context": [
         {
           "command": "dotnet.test.runTestsInContext",
-          "when": "editorLangId == csharp",
+          "when": "editorLangId == csharp && dotnet.server.activatedStandalone",
           "group": "2_dotnet@1"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
-          "when": "editorLangId == csharp",
+          "when": "editorLangId == csharp && dotnet.server.activatedStandalone",
           "group": "2_dotnet@2"
         }
       ]
