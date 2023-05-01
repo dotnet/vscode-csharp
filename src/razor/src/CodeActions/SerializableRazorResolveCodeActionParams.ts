@@ -4,10 +4,11 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { LanguageKind } from '../RPC/LanguageKind';
-import { SerializableCodeActionParams } from './SerializableCodeActionParams';
+import { CodeAction } from 'vscode-languageserver-protocol';
 
-export interface SerializableDelegatedCodeActionParams {
+export interface SerializableRazorResolveCodeActionParams {
     hostDocumentVersion: number;
-    codeActionParams: SerializableCodeActionParams;
+    uri: string;
     languageKind: LanguageKind;
+    codeAction: CodeAction;
 }

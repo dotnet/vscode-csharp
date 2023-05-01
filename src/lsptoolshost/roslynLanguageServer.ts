@@ -31,6 +31,10 @@ import {
     DocumentDiagnosticReport,
     integer,
     CancellationToken,
+    CodeAction,
+    CodeActionParams,
+    CodeActionRequest,
+    CodeActionResolveRequest,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { DotnetResolver } from '../shared/DotnetResolver';
@@ -54,11 +58,12 @@ const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
 export class RoslynLanguageServer {
 
     // These are commands that are invoked by the Razor extension, and are used to send LSP requests to the Roslyn LSP server
-    // to update the text contents of Razor generated files.
     public static readonly roslynDidOpenCommand: string = 'roslyn.openRazorCSharp';
     public static readonly roslynDidChangeCommand: string = 'roslyn.changeRazorCSharp';
     public static readonly roslynDidCloseCommand: string = 'roslyn.closeRazorCSharp';
     public static readonly roslynPullDiagnosticCommand: string = 'roslyn.pullDiagnosticRazorCSharp';
+    public static readonly provideCodeActionsCommand: string = 'roslyn.provideCodeActions';
+    public static readonly resolveCodeActionCommand: string = 'roslyn.resolveCodeAction';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
     private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
@@ -370,6 +375,16 @@ export class RoslynLanguageServer {
         vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
             let diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
             return await this.sendRequest(diagnosticRequestType, request, CancellationToken.None);
+        });
+
+        // The VS Code API for code actions (and the vscode.CodeAction type) doesn't support everything that LSP supports,
+        // namely the data property, which Razor needs to identify which code actions are on their allow list, so we need
+        // to expose a command for them to directly invoke our code actions LSP endpoints, rather than use built-in commands.
+        vscode.commands.registerCommand(RoslynLanguageServer.provideCodeActionsCommand, async (request: CodeActionParams) => {
+            return await this.sendRequest(CodeActionRequest.type, request, CancellationToken.None);
+        });
+        vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
+            return await this.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
         });
     }
 
