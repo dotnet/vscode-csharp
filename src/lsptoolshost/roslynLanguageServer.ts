@@ -307,7 +307,7 @@ export class RoslynLanguageServer {
         }
 
         if (!fs.existsSync(serverPath)) {
-            throw new Error(`Cannot find language server in path '${serverPath}''`);
+            throw new Error(`Cannot find language server in path '${serverPath}'`);
         }
 
         let args: string[] = [ ];
