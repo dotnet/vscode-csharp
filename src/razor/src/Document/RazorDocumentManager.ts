@@ -341,6 +341,12 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             } else if (index + 1 < sourceText.length && sourceText[index] == '\r' && sourceText[index + 1] == '\n') {
                 lineIndex++;
                 characterIndex = 0;
+
+                // Start position - it's possible the span might begin between '\r' and '\n'
+                if (startPosition == undefined && index + 1 == textSpan.start) {
+                    startPosition = Position.create(lineIndex, characterIndex);
+                }
+
                 index += 2;
             }
 
