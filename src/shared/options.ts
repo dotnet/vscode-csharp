@@ -34,6 +34,7 @@ export class Options {
         const path = Options.readOption<string>(config, 'dotnet.server.path', '', 'omnisharp.path', 'csharp.omnisharp');
         const waitForDebugger = Options.readOption<boolean>(config, 'dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger');
         const useOmnisharpServer = Options.readOption<boolean>(config, 'dotnet.server.useOmnisharp', false);
+        const defaultSolution = Options.readOption<string>(config, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
 
         // Omnisharp Server Options
 
@@ -53,7 +54,6 @@ export class Options {
         const projectFilesExcludePattern = Options.readOption<string>(config, 'omnisharp.projectFilesExcludePattern', '**/node_modules/**,**/.git/**,**/bower_components/**');
         const projectLoadTimeout = Options.readOption<number>(config, 'omnisharp.projectLoadTimeout', 60);
         const maxProjectResults = Options.readOption<number>(config, 'omnisharp.maxProjectResults', 250);
-        const defaultLaunchSolution = Options.readOption<string>(config, 'omnisharp.defaultLaunchSolution', '');
         const useEditorFormattingSettings = Options.readOption<boolean>(config, 'omnisharp.useEditorFormattingSettings', true);
         const enableRoslynAnalyzers = Options.readOption<boolean>(config, 'omnisharp.enableRoslynAnalyzers', false);
         const enableEditorConfigSupport = Options.readOption<boolean>(config, 'omnisharp.enableEditorConfigSupport', true);
@@ -107,7 +107,8 @@ export class Options {
                 waitForDebugger: waitForDebugger,
                 serverPath: path,
                 useOmnisharpServer: useOmnisharpServer,
-                excludePaths: excludePaths
+                excludePaths: excludePaths,
+                defaultSolution: defaultSolution,
             },
             {
                 useModernNet: useModernNet,
@@ -117,7 +118,6 @@ export class Options {
                 projectFilesExcludePattern: projectFilesExcludePattern,
                 projectLoadTimeout: projectLoadTimeout,
                 maxProjectResults: maxProjectResults,
-                defaultLaunchSolution: defaultLaunchSolution,
                 useEditorFormattingSettings: useEditorFormattingSettings,
                 enableRoslynAnalyzers: enableRoslynAnalyzers,
                 enableEditorConfigSupport: enableEditorConfigSupport,
@@ -223,6 +223,7 @@ export interface CommonOptions {
     serverPath: string;
     useOmnisharpServer: boolean;
     excludePaths: string[];
+    defaultSolution: string;
 }
 
 const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
@@ -240,7 +241,6 @@ export interface OmnisharpServerOptions {
     projectFilesExcludePattern: string;
     projectLoadTimeout: number;
     maxProjectResults: number;
-    defaultLaunchSolution: string;
     useEditorFormattingSettings: boolean;
     enableRoslynAnalyzers: boolean;
     enableEditorConfigSupport: boolean;

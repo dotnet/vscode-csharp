@@ -1041,10 +1041,6 @@
             "default": 250,
             "description": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250)."
           },
-          "omnisharp.defaultLaunchSolution": {
-            "type": "string",
-            "description": "The name of the default solution used at start up if the repo has multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in alphabetical order to be chosen."
-          },
           "omnisharp.useEditorFormattingSettings": {
             "type": "boolean",
             "default": true,
@@ -1139,6 +1135,10 @@
       {
         "title": "C#",
         "properties": {
+          "dotnet.defaultSolution": {
+            "type": "string",
+            "description": "The name of the default solution used at start up if the repo has multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in alphabetical order to be chosen."
+          },
           "dotnet.dotnetPath": {
             "type": "string",
             "scope": "machine-overridable",
