@@ -19,6 +19,10 @@ export interface ProjectDebugInformation {
     projectPath: string;
 
     /**
+     * The absolute path to the solution file.
+     */
+    solutionPath: string | null;
+    /**
      * The absolute path to the output assembly dll.
      */
     outputPath: string;

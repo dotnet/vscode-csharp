@@ -346,6 +346,7 @@ function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: st
     return [
             {
                 projectPath: projectPath,
+                solutionPath: null,
                 targetsDotnetCore: findNetCoreTargetFramework([targetFrameworkShortName]) !== undefined,
                 outputPath: targetPath ?? path.join(path.dirname(projectPath), 'bin', 'Debug', new Date().getTime().toString(), targetFrameworkShortName, `${assemblyName}.dll`),
                 projectName: projectPath,

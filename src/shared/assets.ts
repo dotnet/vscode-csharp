@@ -262,11 +262,20 @@ export class AssetGenerator {
             buildProject = this.fallbackBuildProject;
         }
         if (buildProject) {
-            const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, buildProject.projectPath));
-            return util.convertNativePathToPosix(buildPath);
+            if (buildProject.solutionPath) {
+                return this.getBuildPath(buildProject.solutionPath);
+            }
+            else {
+                return this.getBuildPath(buildProject.projectPath);
+            }
         }
 
         return null;
+    }
+
+    private getBuildPath(absoluteBuildPath: string) : string {
+        const buildPath = path.join('${workspaceFolder}', path.relative(this.workspaceFolder.uri.fsPath, absoluteBuildPath));
+        return util.convertNativePathToPosix(buildPath);
     }
 
     public createTasksConfiguration(): tasks.TaskConfiguration {
