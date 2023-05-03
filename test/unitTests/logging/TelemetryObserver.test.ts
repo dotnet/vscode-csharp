@@ -17,7 +17,7 @@ suite('TelemetryReporterObserver', () => {
     suiteSetup(() => should());
     let platformInfo = new PlatformInformation("linux", "architecture");
     let name = "";
-    let property: { [key: string]: string } = null;
+    let property: { [key: string]: string } | undefined = undefined;
     let measure: { [key: string]: number }[] = [];
     let errorProp: string[][] = [];
     let useModernNet = true;
@@ -27,20 +27,20 @@ suite('TelemetryReporterObserver', () => {
             sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => {
                 name += eventName;
                 property = properties;
-                measure.push(measures);
+                measure.push(measures!);
             },
             sendTelemetryErrorEvent: (eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]) => {
                 name += eventName;
                 property = properties;
-                measure.push(measures);
-                errorProp.push(errorProps);
+                measure.push(measures!);
+                errorProp.push(errorProps!);
             },
         };
     }, useModernNet);
 
     setup(() => {
         name = "";
-        property = null;
+        property = undefined;
         measure = [];
         errorProp = [];
     });
@@ -81,16 +81,16 @@ suite('TelemetryReporterObserver', () => {
         });
 
         observer.post(event);
-        expect(property["ProjectCapabilities"]).to.be.equal("cap1 cap2");
-        expect(property["TargetFrameworks"]).to.be.equal("tfm1|tfm2");
-        expect(property["ProjectId"]).to.be.equal(projectId);
-        expect(property["SessionId"]).to.be.equal(sessionId);
-        expect(property["OutputType"]).to.be.equal(outputKind.toString());
-        expect(property["References"]).to.be.equal("ref1|ref2");
-        expect(property["FileExtensions"]).to.be.equal(".cs|.cshtml");
-        expect(property["FileCounts"]).to.be.equal("7|3");
-        expect(property["useModernNet"]).to.be.equal("true");
-        expect(property["sdkStyleProject"]).to.be.equal("true");
+        expect(property!["ProjectCapabilities"]).to.be.equal("cap1 cap2");
+        expect(property!["TargetFrameworks"]).to.be.equal("tfm1|tfm2");
+        expect(property!["ProjectId"]).to.be.equal(projectId);
+        expect(property!["SessionId"]).to.be.equal(sessionId);
+        expect(property!["OutputType"]).to.be.equal(outputKind.toString());
+        expect(property!["References"]).to.be.equal("ref1|ref2");
+        expect(property!["FileExtensions"]).to.be.equal(".cs|.cshtml");
+        expect(property!["FileCounts"]).to.be.equal("7|3");
+        expect(property!["useModernNet"]).to.be.equal("true");
+        expect(property!["sdkStyleProject"]).to.be.equal("true");
     });
 
     [
@@ -151,7 +151,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty run count', () => {
-            let event = new TestExecutionCountReport({ "framework1": 20 }, null);
+            let event = new TestExecutionCountReport({ "framework1": 20 }, undefined!);
             observer.post(event);
             expect(name).to.not.contain("RunTest");
             expect(name).to.contain("DebugTest");
@@ -159,7 +159,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty debug count', () => {
-            let event = new TestExecutionCountReport(null, { "framework1": 20 });
+            let event = new TestExecutionCountReport(undefined!, { "framework1": 20 });
             observer.post(event);
             expect(name).to.contain("RunTest");
             expect(name).to.not.contain("DebugTest");
@@ -167,7 +167,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty debug and run counts', () => {
-            let event = new TestExecutionCountReport(null, null);
+            let event = new TestExecutionCountReport(undefined!, undefined!);
             observer.post(event);
             expect(name).to.be.empty;
             expect(measure).to.be.empty;

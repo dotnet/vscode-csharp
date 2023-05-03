@@ -41,10 +41,10 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((e) => {
             onChangeSubscription.dispose();
             expect(vscode.debug.activeDebugSession).not.to.be.undefined;
-            expect(vscode.debug.activeDebugSession.type).to.equal("coreclr");
+            expect(vscode.debug.activeDebugSession!.type).to.equal("coreclr");
         });
 
-        let result = await vscode.debug.startDebugging(vscode.workspace.workspaceFolders[0], ".NET Core Launch (console)");
+        let result = await vscode.debug.startDebugging(vscode.workspace.workspaceFolders![0], ".NET Core Launch (console)");
         expect(result, "Debugger could not be started.");
 
         let debugSessionTerminated = new Promise<void>(resolve => {

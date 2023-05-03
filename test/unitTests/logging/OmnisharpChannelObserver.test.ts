@@ -12,7 +12,7 @@ suite("OmnisharpChannelObserver", () => {
 
     let hasShown: boolean;
     let hasCleared: boolean;
-    let preserveFocus: boolean;
+    let preserveFocus: boolean | undefined;
     let vscode: vscode;
     let observer: OmnisharpChannelObserver;
 

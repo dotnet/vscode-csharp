@@ -80,8 +80,8 @@ suite(`${installRuntimeDependencies.name}`, () => {
 
             let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework);
             expect(installed).to.be.true;
-            expect(inputPackage).to.have.length(1);
-            expect(inputPackage[0]).to.be.deep.equal(AbsolutePathPackage.getAbsolutePathPackage(packageToInstall, extensionPath));
+            expect(inputPackage!).to.have.length(1);
+            expect(inputPackage![0]).to.be.deep.equal(AbsolutePathPackage.getAbsolutePathPackage(packageToInstall, extensionPath));
         });
 
         test("Returns false when installDependencies returns false", async () => {

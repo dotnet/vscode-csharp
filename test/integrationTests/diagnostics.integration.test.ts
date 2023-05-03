@@ -116,7 +116,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
             let cs0219 = result.find(x => x.code === "CS0219");
             expect(cs0219).to.not.be.undefined;
-            expect(cs0219.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            expect(cs0219!.tags).to.include(vscode.DiagnosticTag.Unnecessary);
         });
 
         test("Return unnecessary tag in case of unnesessary using", async function () {
@@ -128,7 +128,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
             let cs8019 = result.find(x => x.code === "CS8019");
             expect(cs8019).to.not.be.undefined;
-            expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            expect(cs8019!.tags).to.include(vscode.DiagnosticTag.Unnecessary);
         });
 
         test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
@@ -140,7 +140,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
 
             let ide0059 = result.find(x => x.code === "IDE0059");
             expect(ide0059).to.not.be.undefined;
-            expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+            expect(ide0059!.tags).to.include(vscode.DiagnosticTag.Unnecessary);
         });
 
         test("On small workspaces also show/fetch closed document analysis results", async function () {

@@ -20,7 +20,7 @@ export function getEmptyOptions(): Options {
         /* organizeImportsOnFormat */false,
         /* showReferencesCodeLens */false,
         /* showTestsCodeLens */false,
-        /* filteredSymbolsCodeLens */undefined,
+        /* filteredSymbolsCodeLens */undefined!,
         /* disableCodeActions */false,
         /* disableMSBuildDiagnosticWarning */false,
         /* showOmnisharpLogOnError */false,
@@ -55,8 +55,8 @@ export function getEmptyOptions(): Options {
         /* defaultLaunchSolution */"",
         /* monoPath */"",
         /* dotnetPath */"",
-        /* excludePaths */null,
-        /* maxProjectFileCountForDiagnosticAnalysis */null,
+        /* excludePaths */[],
+        /* maxProjectFileCountForDiagnosticAnalysis */1000,
         /* testRunSettings */"",
         /* dotNetCliPaths */[]);
 }

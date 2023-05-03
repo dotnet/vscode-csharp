@@ -82,10 +82,10 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
                 return;
             }
 
-            assert.equal(actual.textEdits.length, expected.TextEdits.length);
+            assert.equal(actual.textEdits.length, expected.TextEdits!.length);
             for (let i = 0; i < actual.textEdits.length; i++) {
                 const actualTextEdit = actual.textEdits[i];
-                const expectedTextEdit = expected.TextEdits[i];
+                const expectedTextEdit = expected.TextEdits![i];
 
                 assertTextEditEqual(actualTextEdit, expectedTextEdit);
             }

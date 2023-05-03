@@ -59,7 +59,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand('dotnet.test.runTestsInContext');
 
         const event = await eventWaiter;
-        const runTestsRequest = <V2.RunTestsInContextRequest>event.request.data;
+        const runTestsRequest = <V2.RunTestsInContextRequest>event!.request.data;
 
         expect(runTestsRequest.RunSettings).to.be.undefined;
     });
@@ -76,7 +76,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand('dotnet.test.runTestsInContext');
 
         const event = await eventWaiter;
-        const runTestsRequest = <V2.RunTestsInContextRequest>event.request.data;
+        const runTestsRequest = <V2.RunTestsInContextRequest>event!.request.data;
 
         expect(runTestsRequest.RunSettings).to.be.equal(absoluteRunSettingsPath);
     });
@@ -93,11 +93,11 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand('dotnet.test.runTestsInContext');
 
         const event = await eventWaiter;
-        const runTestsRequest = <V2.RunTestsInContextRequest>event.request.data;
+        const runTestsRequest = <V2.RunTestsInContextRequest>event!.request.data;
 
         expect(runTestsRequest.RunSettings).to.be.not.null;
-        expect(runTestsRequest.RunSettings.endsWith(endingPath), "Path includes relative path").to.be.true;
-        expect(path.isAbsolute(runTestsRequest.RunSettings), "Path is absolute").to.be.true;
+        expect(runTestsRequest.RunSettings!.endsWith(endingPath), "Path includes relative path").to.be.true;
+        expect(path.isAbsolute(runTestsRequest.RunSettings!), "Path is absolute").to.be.true;
     });
 });
 

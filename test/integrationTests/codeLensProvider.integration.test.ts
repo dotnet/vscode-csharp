@@ -61,7 +61,7 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
         for (let codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
             expect(codeLens.command).not.to.be.undefined;
-            expect(codeLens.command.title).to.equal("0 references");
+            expect(codeLens.command!.title).to.equal("0 references");
         }
     });
 });
@@ -105,8 +105,8 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
         for (let codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
             expect(codeLens.command).not.to.be.undefined;
-            expect(codeLens.command.command).to.be.oneOf(['dotnet.test.run', 'dotnet.classTests.run', 'dotnet.test.debug', 'dotnet.classTests.debug']);
-            expect(codeLens.command.title).to.be.oneOf(['Run Test', 'Run All Tests', 'Debug Test', 'Debug All Tests']);
+            expect(codeLens.command!.command).to.be.oneOf(['dotnet.test.run', 'dotnet.classTests.run', 'dotnet.test.debug', 'dotnet.classTests.debug']);
+            expect(codeLens.command!.title).to.be.oneOf(['Run Test', 'Run All Tests', 'Debug Test', 'Debug All Tests']);
         }
     });
 
@@ -121,8 +121,8 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
         for (let codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
             expect(codeLens.command).not.to.be.undefined;
-            expect(codeLens.command.command).to.be.equal('editor.action.showReferences');
-            expect(codeLens.command.title).to.equal('0 references');
+            expect(codeLens.command!.command).to.be.equal('editor.action.showReferences');
+            expect(codeLens.command!.title).to.equal('0 references');
         }
     });
 

@@ -101,7 +101,7 @@ class TestLanguageMiddleware implements LanguageMiddleware {
         this.fileToRemapUri = vscode.Uri.file(path.join(projectDirectory, fileToRemap));
     }
 
-    remapWorkspaceEdit?(workspaceEdit: vscode.WorkspaceEdit, token: vscode.CancellationToken): vscode.ProviderResult<vscode.WorkspaceEdit> {
+    remapWorkspaceEdit(workspaceEdit: vscode.WorkspaceEdit, token: vscode.CancellationToken): vscode.ProviderResult<vscode.WorkspaceEdit> {
         const newEdit = new vscode.WorkspaceEdit();
         for (const entry of workspaceEdit.entries()) {
             const uri = entry[0];
@@ -116,7 +116,7 @@ class TestLanguageMiddleware implements LanguageMiddleware {
         return newEdit;
     }
 
-    remapLocations?(locations: vscode.Location[], token: vscode.CancellationToken): vscode.ProviderResult<vscode.Location[]> {
+    remapLocations(locations: vscode.Location[], token: vscode.CancellationToken): vscode.ProviderResult<vscode.Location[]> {
         const remapped = new Array<vscode.Location>();
         for (const location of locations) {
             if (location.uri.path === this.fileToRemapUri.path) {

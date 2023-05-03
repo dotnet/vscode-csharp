@@ -167,7 +167,7 @@ suite("OmnisharpLoggerObserver", () => {
 
     suite('OmnisharpServerOnError', () => {
         test(`Doesnot throw error if FileName is null`, () => {
-            let event = new OmnisharpServerOnError({ Text: "someText", FileName: null, Line: 1, Column: 2 });
+            let event = new OmnisharpServerOnError({ Text: "someText", FileName: null!, Line: 1, Column: 2 });
             let fn = function () { observer.post(event); };
             expect(fn).to.not.throw(Error);
         });
