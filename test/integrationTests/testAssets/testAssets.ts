@@ -21,7 +21,7 @@ export class TestAssetProject {
     relativeFilePath: string;
 
     get projectDirectoryPath(): string {
-        return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath,
+        return path.join(vscode.workspace.workspaceFolders![0].uri.fsPath,
             path.dirname(this.relativeFilePath));
     }
 
@@ -53,8 +53,8 @@ export class TestAssetWorkspace {
         await this.waitForIdle(activation.eventStream);
     }
 
-    async waitForEvent<T extends BaseEvent>(stream: EventStream, captureType: EventType, stopCondition: (e: T) => boolean = _ => true, timeout: number = 25 * 1000): Promise<T> {
-        let event: T = null;
+    async waitForEvent<T extends BaseEvent>(stream: EventStream, captureType: EventType, stopCondition: (e: T) => boolean = _ => true, timeout: number = 25 * 1000): Promise<T | undefined> {
+        let event: T | undefined = undefined;
 
         const subscription = stream.subscribe((e: BaseEvent) => {
             if (e.type === captureType) {
@@ -73,17 +73,25 @@ export class TestAssetWorkspace {
     }
 
     async waitForIdle(stream: EventStream, timeout: number = 25 * 1000): Promise<void> {
-        let event: BaseEvent = { type: 0 };
+        let event: BaseEvent | undefined = { type: 0 };
 
         const subscription = stream.subscribe((e: BaseEvent) => e.type !== EventType.BackgroundDiagnosticStatus && (event = e));
-
-        await poll(() => event, timeout, 500, e => !e || (event = null));
+        await poll(() => event, timeout, 500, e => {
+            if (e) {
+                // We're still getting real events, set the event to undefined so we can check if it changed in the next poll.
+                event = undefined;
+                return false;
+            } else {
+                // The event is still undefined (set by the last poll) which means we haven't recieved any new events - we can exit here.
+                return true;
+            }
+        });
 
         subscription.unsubscribe();
     }
 
     get vsCodeDirectoryPath(): string {
-        return path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, ".vscode");
+        return path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, ".vscode");
     }
 
     get launchJsonPath(): string {
@@ -95,7 +103,7 @@ export class TestAssetWorkspace {
     }
 
     async cleanupWorkspace(): Promise<void> {
-        let workspaceRootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        let workspaceRootPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
         let cleanUpRoutine = async () => {
             await vscode.commands.executeCommand("workbench.action.closeAllEditors");
             await spawnGit(["clean", "-xdf", "."], { cwd: workspaceRootPath });

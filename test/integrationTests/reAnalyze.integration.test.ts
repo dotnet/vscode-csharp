@@ -69,7 +69,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         let editor = vscode.window.activeTextEditor;
 
-        await editor.edit(editorBuilder => editorBuilder.replace(new vscode.Range(2, 0, 2, 50), 'public interface ISomeInterfaceRenamedNow'));
+        await editor!.edit(editorBuilder => editorBuilder.replace(new vscode.Range(2, 0, 2, 50), 'public interface ISomeInterfaceRenamedNow'));
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 

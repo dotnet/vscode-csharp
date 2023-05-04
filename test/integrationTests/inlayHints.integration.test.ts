@@ -10,6 +10,7 @@ import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartO
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as path from 'path';
 import { InlayHint, LinePositionSpanTextChange } from '../../src/omnisharp/protocol';
+import { isNotNull } from '../testUtil';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -82,6 +83,7 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
                 return;
             }
 
+            isNotNull(expected.TextEdits);
             assert.equal(actual.textEdits.length, expected.TextEdits.length);
             for (let i = 0; i < actual.textEdits.length; i++) {
                 const actualTextEdit = actual.textEdits[i];

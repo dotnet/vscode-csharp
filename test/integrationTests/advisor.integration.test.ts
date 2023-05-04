@@ -34,11 +34,7 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        if (!activation) {
-            throw new Error('Cannot activate extension.');
-        } else {
-            advisor = activation.advisor;
-        }
+        advisor = activation.advisor;
 
         let fileName = 'completion.cs';
         let dir = testAssetWorkspace.projects[0].projectDirectoryPath;

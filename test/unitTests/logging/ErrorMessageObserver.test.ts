@@ -18,7 +18,7 @@ suite("ErrorMessageObserver", () => {
     suiteSetup(() => should());
 
     let vscode: vscode = getFakeVsCode();
-    let errorMessage: string;
+    let errorMessage: string | undefined;
     let observer = new ErrorMessageObserver(vscode);
 
     vscode.window.showErrorMessage = async (message: string, ...items: string[]) => {
