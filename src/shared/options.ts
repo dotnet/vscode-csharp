@@ -6,6 +6,7 @@
 import { isDeepStrictEqual } from 'util';
 import { DocumentSelector } from 'vscode-languageserver-protocol';
 import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
+import * as path from 'path';
 
 export class Options {
     constructor(
@@ -31,10 +32,23 @@ export class Options {
         // explicitly pass in the empty string as the fallback if the setting
         // isn't defined in package.json (which should never happen).
         const dotnetPath = Options.readOption<string>(config, 'dotnet.dotnetPath', '', 'omnisharp.dotnetPath');
-        const path = Options.readOption<string>(config, 'dotnet.server.path', '', 'omnisharp.path', 'csharp.omnisharp');
+        const serverPath = Options.readOption<string>(config, 'dotnet.server.path', '', 'omnisharp.path', 'csharp.omnisharp');
         const waitForDebugger = Options.readOption<boolean>(config, 'dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger');
         const useOmnisharpServer = Options.readOption<boolean>(config, 'dotnet.server.useOmnisharp', false);
-        const defaultSolution = Options.readOption<string>(config, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
+
+        // For the default launch solution, a multi-folder workspace might have this configured in one place; in that case we'll check each workspace folder;
+        // The first one that specifies it will be the winner
+        let defaultSolution = '';
+        if (vscode.workspace.workspaceFolders !== undefined) {
+            for (let workspaceFolder of vscode.workspace.workspaceFolders) {
+                const workspaceConfig = vscode.workspace.getConfiguration(undefined, workspaceFolder.uri);
+                const defaultSolutionFromWorkspace = Options.readOption<string>(workspaceConfig, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
+                if (defaultSolutionFromWorkspace !== '') {
+                    defaultSolution = path.join(workspaceFolder.uri.fsPath, defaultSolutionFromWorkspace);
+                    break;
+                }
+            }
+        }
 
         // Omnisharp Server Options
 
@@ -105,7 +119,7 @@ export class Options {
         return new Options({
                 dotnetPath: dotnetPath,
                 waitForDebugger: waitForDebugger,
-                serverPath: path,
+                serverPath: serverPath,
                 useOmnisharpServer: useOmnisharpServer,
                 excludePaths: excludePaths,
                 defaultSolution: defaultSolution,
@@ -223,6 +237,8 @@ export interface CommonOptions {
     serverPath: string;
     useOmnisharpServer: boolean;
     excludePaths: string[];
+    
+    /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in */
     defaultSolution: string;
 }
 

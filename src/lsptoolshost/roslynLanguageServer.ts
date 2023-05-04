@@ -208,6 +208,11 @@ export class RoslynLanguageServer {
 
         // Register Razor dynamic file info handling
         this.registerRazor(this._languageClient);
+
+        // If we haven't previously chosen a solution file this session, use the option if one is present
+        if (this._solutionFile === undefined && options.commonOptions.defaultSolution !== '') {
+            this.openSolution(vscode.Uri.file(options.commonOptions.defaultSolution));
+        }
     }
 
     public async stop(): Promise<void> {

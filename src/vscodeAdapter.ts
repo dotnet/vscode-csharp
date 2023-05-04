@@ -927,6 +927,12 @@ export interface FileSystemWatcher extends Disposable {
     onDidDelete: Event<Uri>;
 }
 
+export interface WorkspaceFolder {
+    index: number;
+    name: string;
+    uri: Uri;
+}
+
 export interface ConfigurationChangeEvent {
 
     /**
@@ -938,7 +944,6 @@ export interface ConfigurationChangeEvent {
      */
     affectsConfiguration(section: string, resource?: Uri): boolean;
 }
-
 
 /**
  * Thenable is a common denominator between ES6 promises, Q, jquery.Deferred, WinJS.Promise,
@@ -980,6 +985,7 @@ export interface vscode {
         asRelativePath: (pathOrUri: string | Uri, includeWorkspaceFolder?: boolean) => string;
         createFileSystemWatcher(globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean): FileSystemWatcher;
         onDidChangeConfiguration: Event<ConfigurationChangeEvent>;
+        workspaceFolders: readonly WorkspaceFolder[] | undefined;
     };
     extensions: {
         all: ReadonlyArray<Extension<any>>;
