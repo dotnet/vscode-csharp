@@ -64,6 +64,7 @@ export class RoslynLanguageServer {
     public static readonly roslynPullDiagnosticCommand: string = 'roslyn.pullDiagnosticRazorCSharp';
     public static readonly provideCodeActionsCommand: string = 'roslyn.provideCodeActions';
     public static readonly resolveCodeActionCommand: string = 'roslyn.resolveCodeAction';
+    public static readonly razorInitializeCommand: string = 'razor.initialize';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
     private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
@@ -385,6 +386,13 @@ export class RoslynLanguageServer {
         });
         vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
             return await this.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
+        });
+
+        // Roslyn is responsible for producing a json file containing information for Razor, that comes from the compilation for
+        // a project. We want to defer this work until necessary, so this command is called by the Razor document manager to tell
+        // us when they need us to initialize the Razor things.
+        vscode.commands.registerCommand(RoslynLanguageServer.razorInitializeCommand, () => {
+            client.sendNotification("razor/initialize", { });
         });
     }
 

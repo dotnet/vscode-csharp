@@ -28,6 +28,7 @@ import { createDocument } from './RazorDocumentFactory';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
+    public razorDocumentGenerationInitialized = false;
 
     private readonly razorDocuments: { [hostDocumentPath: string]: IRazorDocument } = {};
     private readonly openRazorDocuments = new Set<string>();
@@ -55,8 +56,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     public async getDocument(uri: vscode.Uri) {
         const document = this._getDocument(uri);
-
-        await this.ensureDocumentAndProjectedDocumentsOpen(document);
 
         return document;
     }
@@ -111,7 +110,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 continue;
             }
 
-            this.openDocument(textDocument.uri);
+            await this.openDocument(textDocument.uri);
         }
     }
 
@@ -122,12 +121,12 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             async (uri: vscode.Uri) => this.addDocument(uri));
         const didDeleteRegistration = watcher.onDidDelete(
             async (uri: vscode.Uri) => this.removeDocument(uri));
-        const didOpenRegistration = vscode.workspace.onDidOpenTextDocument(document => {
+        const didOpenRegistration = vscode.workspace.onDidOpenTextDocument(async document => {
             if (document.languageId !== RazorLanguage.id) {
                 return;
             }
 
-            this.openDocument(document.uri);
+            await this.openDocument(document.uri);
         });
         const didCloseRegistration = vscode.workspace.onDidCloseTextDocument(document => {
             if (document.languageId !== RazorLanguage.id) {
@@ -165,7 +164,20 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         return document;
     }
 
-    private openDocument(uri: vscode.Uri) {
+    private async openDocument(uri: vscode.Uri) {
+        // On first open of a Razor document, we kick off the generation of all razor documents so that
+        // components are discovered correctly. If we do this early, when we initialize everything, we
+        // just spend a lot of time generating documents and json files that might not be needed.
+        // If we wait for each individual document to be opened by the user, then locally defined components
+        // don't work, which is a poor experience. This is the compromise.
+        if (!this.razorDocumentGenerationInitialized) {
+            this.razorDocumentGenerationInitialized = true;
+            vscode.commands.executeCommand(RoslynLanguageServer.razorInitializeCommand);
+            for (const document of this.documents) {
+                await this.ensureDocumentAndProjectedDocumentsOpen(document);
+            }
+        }
+
         const document = this._getDocument(uri);
 
         this.notifyDocumentChange(document, RazorDocumentChangeKind.opened);
