@@ -25,8 +25,6 @@ import { reportTelemetryForDocuments } from './DocumentTelemetryListener';
 import { DynamicFileInfoHandler } from './DynamicFile/DynamicFileInfoHandler';
 import { FoldingRangeHandler } from './Folding/FoldingRangeHandler';
 import { FormattingHandler } from './Formatting/FormattingHandler';
-import { RazorFormatOnTypeProvider } from './Formatting/RazorFormatOnTypeProvider';
-import { RazorFormattingFeature } from './Formatting/RazorFormattingFeature';
 import { HostEventStream } from './HostEventStream';
 import { RazorHoverProvider } from './Hover/RazorHoverProvider';
 import { RazorHtmlFeature } from './Html/RazorHtmlFeature';
@@ -70,7 +68,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         const htmlFeature = new RazorHtmlFeature(documentManager, languageServiceClient, eventEmitterFactory, logger);
         const localRegistrations: vscode.Disposable[] = [];
         const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, logger);
-        const razorFormattingFeature = new RazorFormattingFeature(languageServerClient, documentManager, logger);
         const razorCodeActionRunner = new RazorCodeActionRunner(languageServerClient, logger);
         const codeActionsHandler = new CodeActionsHandler(documentManager, documentSynchronizer, languageServerClient, logger);
 
@@ -102,6 +99,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 logger);
             const formattingHandler = new FormattingHandler(
                 documentManager,
+                documentSynchronizer,
                 languageServerClient,
                 logger);
 
@@ -151,7 +149,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 documentManager,
                 languageServiceClient,
                 logger);
-            const onTypeFormattingEditProvider = new RazorFormatOnTypeProvider();
             const razorDiagnosticHandler = new RazorDiagnosticHandler(documentSynchronizer, languageServerClient, languageServiceClient, documentManager, logger);
 
             localRegistrations.push(
@@ -186,13 +183,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 vscodeType.languages.registerDocumentHighlightProvider(
                     RazorLanguage.id,
                     documentHighlightProvider),
-                // Our OnTypeFormatter doesn't do anything at the moment, but it's needed so
-                // VS Code doesn't throw an exception when it tries to send us an
-                // OnTypeFormatting request.
-                vscodeType.languages.registerOnTypeFormattingEditProvider(
-                    RazorLanguage.documentSelector,
-                    onTypeFormattingEditProvider,
-                    ''),
                 documentManager.register(),
                 csharpFeature.register(),
                 htmlFeature.register(),
@@ -206,7 +196,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 await proposedApisFeature.register(vscodeType, localRegistrations);
             }
 
-            razorFormattingFeature.register();
             razorCodeActionRunner.register();
             colorPresentationHandler.register();
             documentColorHandler.register();
