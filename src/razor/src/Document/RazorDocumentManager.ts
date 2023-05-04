@@ -25,6 +25,7 @@ import { IRazorDocumentChangeEvent } from './IRazorDocumentChangeEvent';
 import { IRazorDocumentManager } from './IRazorDocumentManager';
 import { RazorDocumentChangeKind } from './RazorDocumentChangeKind';
 import { createDocument } from './RazorDocumentFactory';
+import { UriConverter } from '../../../lsptoolshost/uriConverter';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -246,8 +247,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             const csharpProjectedDocument = projectedDocument as CSharpProjectedDocument;
             csharpProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
-            const csharpProjectedDocumentPath = csharpProjectedDocument.uri.path;
-
             // Create change events for our didChange notifications
             const contentChangeEvents = new Array<TextDocumentContentChangeEvent>();
             for (const change of updateBufferRequest.changes) {
@@ -261,7 +260,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             }
 
             // Send didChange notification to Roslyn
-            const csharpTextDocumentIdentifier = VersionedTextDocumentIdentifier.create(csharpProjectedDocumentPath, csharpProjectedDocument.projectedDocumentSyncVersion);
+            const csharpPathWithScheme = UriConverter.serialize(csharpProjectedDocument.uri);
+            const csharpTextDocumentIdentifier = VersionedTextDocumentIdentifier.create(csharpPathWithScheme, csharpProjectedDocument.projectedDocumentSyncVersion);
             const didChangeNotification: DidChangeTextDocumentParams = {
                 textDocument: csharpTextDocumentIdentifier,
                 contentChanges: contentChangeEvents
