@@ -10,6 +10,7 @@ import { should, expect } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll } from './poll';
+import { isNotNull } from '../testUtil';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -40,8 +41,8 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
 
         const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((e) => {
             onChangeSubscription.dispose();
-            expect(vscode.debug.activeDebugSession).not.to.be.undefined;
-            expect(vscode.debug.activeDebugSession!.type).to.equal("coreclr");
+            isNotNull(vscode.debug.activeDebugSession);
+            expect(vscode.debug.activeDebugSession.type).to.equal("coreclr");
         });
 
         let result = await vscode.debug.startDebugging(vscode.workspace.workspaceFolders![0], ".NET Core Launch (console)");

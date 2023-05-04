@@ -9,6 +9,7 @@ import * as path from 'path';
 import { should, expect } from 'chai';
 import { activateCSharpExtension, isSlnWithCsproj, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { isNotNull } from '../testUtil';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -60,8 +61,8 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
 
         for (let codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
-            expect(codeLens.command).not.to.be.undefined;
-            expect(codeLens.command!.title).to.equal("0 references");
+            isNotNull(codeLens.command);
+            expect(codeLens.command.title).to.equal("0 references");
         }
     });
 });
@@ -104,9 +105,9 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
 
         for (let codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
-            expect(codeLens.command).not.to.be.undefined;
-            expect(codeLens.command!.command).to.be.oneOf(['dotnet.test.run', 'dotnet.classTests.run', 'dotnet.test.debug', 'dotnet.classTests.debug']);
-            expect(codeLens.command!.title).to.be.oneOf(['Run Test', 'Run All Tests', 'Debug Test', 'Debug All Tests']);
+            isNotNull(codeLens.command);
+            expect(codeLens.command.command).to.be.oneOf(['dotnet.test.run', 'dotnet.classTests.run', 'dotnet.test.debug', 'dotnet.classTests.debug']);
+            expect(codeLens.command.title).to.be.oneOf(['Run Test', 'Run All Tests', 'Debug Test', 'Debug All Tests']);
         }
     });
 
@@ -120,9 +121,9 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
 
         for (let codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
-            expect(codeLens.command).not.to.be.undefined;
-            expect(codeLens.command!.command).to.be.equal('editor.action.showReferences');
-            expect(codeLens.command!.title).to.equal('0 references');
+            isNotNull(codeLens.command);
+            expect(codeLens.command.command).to.be.equal('editor.action.showReferences');
+            expect(codeLens.command.title).to.equal('0 references');
         }
     });
 

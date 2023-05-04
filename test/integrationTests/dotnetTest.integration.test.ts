@@ -13,6 +13,7 @@ import { EventStream } from '../../src/EventStream';
 import { EventType } from '../../src/omnisharp/EventType';
 import { OmnisharpRequestMessage } from '../../src/omnisharp/loggingEvents';
 import { V2 } from '../../src/omnisharp/protocol';
+import { isNotNull } from '../testUtil';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -95,7 +96,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const event = await eventWaiter;
         const runTestsRequest = <V2.RunTestsInContextRequest>event!.request.data;
 
-        expect(runTestsRequest.RunSettings).to.be.not.null;
+        isNotNull(runTestsRequest.RunSettings);
         expect(runTestsRequest.RunSettings!.endsWith(endingPath), "Path includes relative path").to.be.true;
         expect(path.isAbsolute(runTestsRequest.RunSettings!), "Path is absolute").to.be.true;
     });

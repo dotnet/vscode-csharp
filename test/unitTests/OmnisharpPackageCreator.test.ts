@@ -7,6 +7,7 @@ import { assert, should } from "chai";
 import { SetBinaryAndGetPackage, GetPackagesFromVersion, modernNetVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
 import { Package } from "../../src/packageManager/Package";
 import { testPackageJSON } from "./testAssets/testAssets";
+import { isNotNull } from "../testUtil";
 
 suite("GetOmnisharpPackage : Output package depends on the input package and other input parameters like serverUrl", () => {
 
@@ -31,18 +32,20 @@ suite("GetOmnisharpPackage : Output package depends on the input package and oth
 
         test(`Architectures, binaries and platforms do not change useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
-            let resultPackage = SetBinaryAndGetPackage(testPackage!, useFramework, serverUrl, version, installPath);
+            isNotNull(testPackage);
+            let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, version, installPath);
 
-            resultPackage.architectures.should.equal(testPackage!.architectures);
-            assert.equal(resultPackage.binaries, testPackage!.binaries);
-            resultPackage.platforms.should.equal(testPackage!.platforms);
+            resultPackage.architectures.should.equal(testPackage.architectures);
+            assert.equal(resultPackage.binaries, testPackage.binaries);
+            resultPackage.platforms.should.equal(testPackage.platforms);
         });
 
         test(`Version information is appended to the description useFramework: ${useFramework}`, () => {
             let testPackage = inputPackages.find(element => (element.platformId && element.platformId == "os-architecture"));
-            let resultPackage = SetBinaryAndGetPackage(testPackage!, useFramework, serverUrl, "1.2.3", installPath);
+            isNotNull(testPackage);
+            let resultPackage = SetBinaryAndGetPackage(testPackage, useFramework, serverUrl, "1.2.3", installPath);
 
-            resultPackage.description.should.equal(`${testPackage!.description}, Version = 1.2.3`);
+            resultPackage.description.should.equal(`${testPackage.description}, Version = 1.2.3`);
         });
 
         test(`Install path is calculated using the specified path and version useFramework: ${useFramework}`, () => {

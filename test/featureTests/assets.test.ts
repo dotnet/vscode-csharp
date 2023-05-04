@@ -12,6 +12,7 @@ import * as jsonc from 'jsonc-parser';
 import { AssetGenerator, ProgramLaunchType, replaceCommentPropertiesWithComments, updateJsonWithComments } from '../../src/assets';
 import { parse } from 'jsonc-parser';
 import { use as chaiUse, should } from 'chai';
+import { isNotNull } from '../testUtil';
 
 chaiUse(require('chai-string'));
 
@@ -24,7 +25,9 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
-        let buildPath = tasksJson.tasks![0].args![1];
+        isNotNull(tasksJson.tasks);
+        isNotNull(tasksJson.tasks[0].args);
+        let buildPath = tasksJson.tasks[0].args[1];
 
         // ${workspaceFolder}/project.json
         let segments = buildPath.split(path.posix.sep);
@@ -37,9 +40,10 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
+        isNotNull(tasksJson.tasks);
 
         // We do not check the watch task since this parameter can break hot reload scenarios.
-        tasksJson.tasks!
+        tasksJson.tasks
             .filter(task => task.label !== "watch")
             .forEach(task => task.args!.should.contain("/property:GenerateFullPaths=true"));
     });
@@ -50,9 +54,10 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
+        isNotNull(tasksJson.tasks);
 
         // We do not check the watch task since this parameter can break hot reload scenarios.
-        tasksJson.tasks!
+        tasksJson.tasks
             .filter(task => task.label !== "watch")
             .forEach(task => task.args!.should.contain("/consoleloggerparameters:NoSummary"));
     });
@@ -63,9 +68,11 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
+        isNotNull(tasksJson.tasks);
 
-        const watchTask = tasksJson.tasks!.find(task => task.label === "watch");
-        watchTask!.args!.should.not.contain("/property:GenerateFullPaths=true");
+        const watchTask = tasksJson.tasks.find(task => task.label === "watch");
+        isNotNull(watchTask?.args);
+        watchTask.args.should.not.contain("/property:GenerateFullPaths=true");
     });
 
     test("Generated 'watch' task does not have the consoleloggerparameters argument set to NoSummary", () => {
@@ -76,7 +83,8 @@ suite("Asset generation: csproj", () => {
         let tasksJson = generator.createTasksConfiguration();
 
         const watchTask = tasksJson.tasks!.find(task => task.label === "watch");
-        watchTask!.args!.should.not.contain("/consoleloggerparameters:NoSummary");
+        isNotNull(watchTask?.args);
+        watchTask.args.should.not.contain("/consoleloggerparameters:NoSummary");
     });
 
     test("Create tasks.json for nested project opened in workspace", () => {
@@ -85,7 +93,9 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
-        let buildPath = tasksJson.tasks![0].args![1];
+        isNotNull(tasksJson.tasks);
+        isNotNull(tasksJson.tasks[0].args);
+        let buildPath = tasksJson.tasks[0].args[1];
 
         // ${workspaceFolder}/nested/project.json
         let segments = buildPath.split(path.posix.sep);

@@ -20,12 +20,12 @@ suite("CsharpChannelObserver", () => {
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is shown and preserve focus is set to true`, () => {
             let hasShown = false;
-            let preserveFocus: boolean | undefined = false;
+            let preserveFocus: boolean = false;
             let observer = new CsharpChannelObserver({
                 ...getNullChannel(),
                 show: (preserve) => {
                     hasShown = true;
-                    preserveFocus = preserve;
+                    preserveFocus = preserve ?? false;
                 }
             });
 

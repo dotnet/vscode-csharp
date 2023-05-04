@@ -9,7 +9,7 @@ import { HostExecutableInformation } from "../../../src/constants/HostExecutable
 export const fakeMonoInfo: HostExecutableInformation = {
     version: "someMonoVersion",
     path: "somePath",
-    env: undefined!
+    env: { }
 };
 
 export class FakeMonoResolver implements IHostExecutableResolver {

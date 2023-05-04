@@ -9,6 +9,7 @@ import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExec
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
 import { Package } from '../../../src/packageManager/Package';
 import { PackageError } from '../../../src/packageManager/PackageError';
+import { isNotNull } from '../../testUtil';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -81,16 +82,17 @@ suite('TelemetryReporterObserver', () => {
         });
 
         observer.post(event);
-        expect(property!["ProjectCapabilities"]).to.be.equal("cap1 cap2");
-        expect(property!["TargetFrameworks"]).to.be.equal("tfm1|tfm2");
-        expect(property!["ProjectId"]).to.be.equal(projectId);
-        expect(property!["SessionId"]).to.be.equal(sessionId);
-        expect(property!["OutputType"]).to.be.equal(outputKind.toString());
-        expect(property!["References"]).to.be.equal("ref1|ref2");
-        expect(property!["FileExtensions"]).to.be.equal(".cs|.cshtml");
-        expect(property!["FileCounts"]).to.be.equal("7|3");
-        expect(property!["useModernNet"]).to.be.equal("true");
-        expect(property!["sdkStyleProject"]).to.be.equal("true");
+        isNotNull(property);
+        expect(property["ProjectCapabilities"]).to.be.equal("cap1 cap2");
+        expect(property["TargetFrameworks"]).to.be.equal("tfm1|tfm2");
+        expect(property["ProjectId"]).to.be.equal(projectId);
+        expect(property["SessionId"]).to.be.equal(sessionId);
+        expect(property["OutputType"]).to.be.equal(outputKind.toString());
+        expect(property["References"]).to.be.equal("ref1|ref2");
+        expect(property["FileExtensions"]).to.be.equal(".cs|.cshtml");
+        expect(property["FileCounts"]).to.be.equal("7|3");
+        expect(property["useModernNet"]).to.be.equal("true");
+        expect(property["sdkStyleProject"]).to.be.equal("true");
     });
 
     [

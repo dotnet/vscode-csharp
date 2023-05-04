@@ -10,13 +10,13 @@ import DotnetTestChannelObserver from '../../../src/observers/DotnetTestChannelO
 
 suite("DotnetTestChannelObserver", () => {
     let hasShown: boolean;
-    let preserveFocus: boolean | undefined;
+    let preserveFocus: boolean;
 
     let observer = new DotnetTestChannelObserver({
         ...getNullChannel(),
         show: (preserve) => {
             hasShown = true;
-            preserveFocus = preserve;
+            preserveFocus = preserve ?? false;
         }
     });
 
