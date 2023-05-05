@@ -89,7 +89,7 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
 
         test(`Displays the outcome of each test`, () => {
             observer.post(event);
-            event.results.forEach(result => {
+            event.results!.forEach(result => {
                 expect(appendedMessage).to.containIgnoreCase(`${result.MethodName}:\n    Outcome: ${result.Outcome}`);
             });
         });
@@ -107,14 +107,14 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
 
         test(`Displays the standard output messages if any`, () => {
             observer.post(event);
-            event.results.forEach(result => {
+            event.results!.forEach(result => {
                 result.StandardOutput.forEach(message => expect(appendedMessage).to.contain(message));
             });
         });
 
         test(`Displays the standard error messages if any`, () => {
             observer.post(event);
-            event.results.forEach(result => {
+            event.results!.forEach(result => {
                 result.StandardError.forEach(message => expect(appendedMessage).to.contain(message));
             });
         });

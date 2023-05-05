@@ -12,7 +12,7 @@ export function getEmptyOptions(): Options {
             waitForDebugger: false,
             serverPath: "",
             useOmnisharpServer: true,
-            excludePaths: null
+            excludePaths: []
         },
         {
             useModernNet: false,
@@ -44,7 +44,7 @@ export function getEmptyOptions(): Options {
             useFormatting: false,
             showReferencesCodeLens: false,
             showTestsCodeLens: false,
-            filteredSymbolsCodeLens: undefined,
+            filteredSymbolsCodeLens: [],
             disableCodeActions: false,
             useSemanticHighlighting: false,
             inlayHintsEnableForParameters: false,
@@ -59,7 +59,7 @@ export function getEmptyOptions(): Options {
             inlayHintsForImplicitVariableTypes: false,
             inlayHintsForLambdaParameterTypes: false,
             inlayHintsForImplicitObjectCreation: false,
-            maxProjectFileCountForDiagnosticAnalysis: null,
+            maxProjectFileCountForDiagnosticAnalysis: 1000,
             suppressDotnetRestoreNotification: false,
         },
         {

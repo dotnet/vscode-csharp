@@ -17,9 +17,9 @@ export async function assertWithPoll<T>(
     getValue: () => T,
     duration: number,
     step: number,
-    assertForValue: (input: T) => void = defaultAssertion): Promise<T> {
+    assertForValue: (input: T) => void = defaultAssertion): Promise<void> {
 
-    let assertResult: Error = undefined;
+    let assertResult: Error | undefined = undefined;
 
     while (duration > 0) {
         let value = await getValue();
@@ -28,7 +28,7 @@ export async function assertWithPoll<T>(
             assertResult = undefined;
             assertForValue(value);
         } catch (error) {
-            assertResult = error;
+            assertResult = error as Error;
         }
 
         if (assertResult === undefined) {

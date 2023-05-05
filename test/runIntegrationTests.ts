@@ -38,6 +38,10 @@ async function main() {
         const sln = getSln(workspacePath);
         if (sln) {
             // Run a build before the tests, to ensure that source generators are set up correctly
+            if (!process.env.DOTNET_ROOT) {
+                throw new Error("Environment variable DOTNET_ROOT is not set");
+            }
+
             const dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
             await execChildProcess(`${dotnetPath} build ${sln}`, workspacePath);
         }

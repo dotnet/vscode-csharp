@@ -197,15 +197,15 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
         process1.name.should.equal('System Idle Process');
         process1.pid.should.equal('0');
 
-        process2.commandLine.should.equal('"C:\\Program Files\\WindowsApps\\Microsoft.WindowsTerminalPreview_1.12.2931.0_x64__8wekyb3d8bbwe\\WindowsTerminal.exe"');
+        process2.commandLine!.should.equal('"C:\\Program Files\\WindowsApps\\Microsoft.WindowsTerminalPreview_1.12.2931.0_x64__8wekyb3d8bbwe\\WindowsTerminal.exe"');
         process2.name.should.equal('WindowsTerminal.exe');
         process2.pid.should.equal('5112');
 
-        process3.commandLine.should.equal('C:\\WINDOWS\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x8e0 --server 0x824');
+        process3.commandLine!.should.equal('C:\\WINDOWS\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x8e0 --server 0x824');
         process3.name.should.equal('conhost.exe');
         process3.pid.should.equal('34560');
 
-        process4.commandLine.should.equal('C:\\WINDOWS\\system32\\conhost.exe 0x4');
+        process4.commandLine!.should.equal('C:\\WINDOWS\\system32\\conhost.exe 0x4');
         process4.name.should.equal('conhost.exe');
         process4.pid.should.equal('33732');
     });

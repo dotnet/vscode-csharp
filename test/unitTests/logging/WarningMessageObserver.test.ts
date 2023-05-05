@@ -25,7 +25,7 @@ suite('WarningMessageObserver', () => {
     });
 
     let warningMessages: string[];
-    let invokedCommand: string;
+    let invokedCommand: string | undefined;
     let scheduler: TestScheduler;
     let assertionObservable: Subject<string>;
     let observer: WarningMessageObserver;
@@ -34,7 +34,7 @@ suite('WarningMessageObserver', () => {
     vscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
         warningMessages.push(message);
         assertionObservable.next(`[${warningMessages.length}] ${message}`);
-        return new Promise<T>(resolve => {
+        return new Promise<T | undefined>(resolve => {
             doClickCancel = () => {
                 resolve(undefined);
             };
@@ -45,10 +45,10 @@ suite('WarningMessageObserver', () => {
         });
     };
 
-    vscode.commands.executeCommand = <T>(command: string, ...rest: any[]) => {
+    vscode.commands.executeCommand = async (command: string, ...rest: any[]) => {
         invokedCommand = command;
         signalCommandDone();
-        return <T>undefined;
+        return undefined;
     };
 
     setup(() => {

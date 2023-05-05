@@ -12,7 +12,7 @@ import { expect } from "chai";
 suite(`${OpenURLObserver.name}`, () => {
     let observer: OpenURLObserver;
     let vscode: vscode;
-    let valueToBeParsed: string;
+    let valueToBeParsed: string | undefined;
     const url = "someUrl";
     let openExternalCalled: boolean;
 
@@ -20,14 +20,14 @@ suite(`${OpenURLObserver.name}`, () => {
         vscode = getFakeVsCode();
         openExternalCalled = false;
         valueToBeParsed = undefined;
-        vscode.env.openExternal = (target: Uri) => {
+        vscode.env.openExternal = async (target: Uri) => {
             openExternalCalled = true;
-            return undefined;
+            return true;
         };
 
         vscode.Uri.parse = (value: string) => {
             valueToBeParsed = value;
-            return undefined;
+            return undefined!;
         };
 
         observer = new OpenURLObserver(vscode);

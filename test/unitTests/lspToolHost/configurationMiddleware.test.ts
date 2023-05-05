@@ -45,7 +45,7 @@ const testData = [
     { serverOption: "csharp|code_style.formatting.indentation_and_spacing.indent_style", vsCodeConfiguration: "codeStyle.formatting.indentationAndSpacing.indentStyle", declareInPackageJson: false},
     { serverOption: "csharp|code_style.formatting.new_line.end_of_line", vsCodeConfiguration: "codeStyle.formatting.newLine.endOfLine", declareInPackageJson: false},
     { serverOption: "code_style.formatting.new_line.insert_final_newline", vsCodeConfiguration: "codeStyle.formatting.newLine.insertFinalNewline", declareInPackageJson: false},
-]
+];
 
 suite("Server option name to vscode configuration name test", () => {
     let packageJson = JSON.parse(readFileSync('package.json').toString());
@@ -57,5 +57,5 @@ suite("Server option name to vscode configuration name test", () => {
         if (data.declareInPackageJson) {
             assert.include(configurations, data.vsCodeConfiguration);
         }
-    })
+    });
 });
