@@ -13,6 +13,7 @@ import { parse } from 'jsonc-parser';
 import { use as chaiUse, should } from 'chai';
 import { ProjectDebugInformation } from '../../src/shared/IWorkspaceDebugInformationProvider';
 import { findNetCoreTargetFramework } from '../../src/shared/utils';
+import { isNotNull } from '../testUtil';
 
 chaiUse(require('chai-string'));
 
@@ -25,6 +26,8 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
+        isNotNull(tasksJson.tasks);
+        isNotNull(tasksJson.tasks[0].args);
         let buildPath = tasksJson.tasks[0].args[1];
 
         // ${workspaceFolder}/project.json
@@ -38,11 +41,12 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
+        isNotNull(tasksJson.tasks);
 
         // We do not check the watch task since this parameter can break hot reload scenarios.
         tasksJson.tasks
             .filter(task => task.label !== "watch")
-            .forEach(task => task.args.should.contain("/property:GenerateFullPaths=true"));
+            .forEach(task => task.args!.should.contain("/property:GenerateFullPaths=true"));
     });
 
     test("Generated 'build' and 'publish' tasks have the consoleloggerparameters argument set to NoSummary", () => {
@@ -51,11 +55,12 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
+        isNotNull(tasksJson.tasks);
 
         // We do not check the watch task since this parameter can break hot reload scenarios.
         tasksJson.tasks
             .filter(task => task.label !== "watch")
-            .forEach(task => task.args.should.contain("/consoleloggerparameters:NoSummary"));
+            .forEach(task => task.args!.should.contain("/consoleloggerparameters:NoSummary"));
     });
 
     test("Generated 'watch' task does not have the property GenerateFullPaths set to true ", () => {
@@ -64,8 +69,10 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
+        isNotNull(tasksJson.tasks);
 
         const watchTask = tasksJson.tasks.find(task => task.label === "watch");
+        isNotNull(watchTask?.args);
         watchTask.args.should.not.contain("/property:GenerateFullPaths=true");
     });
 
@@ -76,7 +83,8 @@ suite("Asset generation: csproj", () => {
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
 
-        const watchTask = tasksJson.tasks.find(task => task.label === "watch");
+        const watchTask = tasksJson.tasks!.find(task => task.label === "watch");
+        isNotNull(watchTask?.args);
         watchTask.args.should.not.contain("/consoleloggerparameters:NoSummary");
     });
 
@@ -86,6 +94,8 @@ suite("Asset generation: csproj", () => {
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
         let tasksJson = generator.createTasksConfiguration();
+        isNotNull(tasksJson.tasks);
+        isNotNull(tasksJson.tasks[0].args);
         let buildPath = tasksJson.tasks[0].args[1];
 
         // ${workspaceFolder}/nested/project.json
@@ -235,7 +245,7 @@ suite("Asset generation: csproj", () => {
         };
 
         const newItem = { name: 'new-item' };
-        const updated = updateJsonWithComments(JSON.stringify(original), [newItem], 'configurations', 'name', /*formattingOptions*/ null);
+        const updated = updateJsonWithComments(JSON.stringify(original), [newItem], 'configurations', 'name', /*formattingOptions*/ null!);
         const parsed = jsonc.parse(updated);
         const configurations = parsed.configurations;
 
@@ -255,7 +265,7 @@ suite("Asset generation: csproj", () => {
 
         const updatedItem = { name: 'build', command: 'dotnet' };
 
-        const updated = updateJsonWithComments(JSON.stringify(original), [updatedItem], 'configurations', 'name', /*formattingOptions*/ null);
+        const updated = updateJsonWithComments(JSON.stringify(original), [updatedItem], 'configurations', 'name', /*formattingOptions*/ null!);
         const parsed = jsonc.parse(updated);
         const configurations = parsed.configurations;
 
@@ -279,7 +289,7 @@ suite("Asset generation: csproj", () => {
 
         const updatedItem = { name: 'build', command: 'dotnet' };
 
-        const updated = updateJsonWithComments(original, [updatedItem], 'configurations', 'name', /*formattingOptions*/ null);
+        const updated = updateJsonWithComments(original, [updatedItem], 'configurations', 'name', /*formattingOptions*/ null!);
         const lines = updated.trim().split('\n');
 
         lines[0].trim().should.equal('// user comment in file');
@@ -337,12 +347,12 @@ function checkProgramPath(rootPath: string, programPath: string, targetPath: str
 function createMockWorkspaceFolder(rootPath: string): vscode.WorkspaceFolder {
     return {
         uri: vscode.Uri.file(rootPath),
-        name: undefined,
-        index: undefined
+        name: '',
+        index: -1
     };
 }
 
-function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: string, targetFrameworkShortName: string, targetPath: string = undefined, isExe: boolean = true, isWebProject: boolean = false, isBlazorWebAssemblyStandalone: boolean = false, isBlazorWebAssemblyHosted: boolean = false): ProjectDebugInformation[] {
+function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: string, targetFrameworkShortName: string, targetPath: string | undefined = undefined, isExe: boolean = true, isWebProject: boolean = false, isBlazorWebAssemblyStandalone: boolean = false, isBlazorWebAssemblyHosted: boolean = false): ProjectDebugInformation[] {
     return [
             {
                 projectPath: projectPath,

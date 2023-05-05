@@ -11,6 +11,7 @@ import * as chai from "chai";
 import TestEventBus from "./testAssets/TestEventBus";
 import { AbsolutePathPackage } from "../../src/packageManager/AbsolutePathPackage";
 import { Package } from "../../src/packageManager/Package";
+import { isNotNull } from "../testUtil";
 
 const expect = chai.expect;
 
@@ -80,6 +81,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
 
             let installed = await installRuntimeDependencies(packageJSON, extensionPath, installDependencies, eventStream, platformInfo, useFramework, ["myPackage"]);
             expect(installed).to.be.true;
+            isNotNull(inputPackage!);
             expect(inputPackage).to.have.length(1);
             expect(inputPackage[0]).to.be.deep.equal(AbsolutePathPackage.getAbsolutePathPackage(packageToInstall, extensionPath));
         });

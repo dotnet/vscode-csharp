@@ -52,10 +52,10 @@ suite('OptionStream', () => {
         });
 
         teardown(() => {
-            options = undefined;
-            listenerFunction = undefined;
+            options = undefined!;
+            listenerFunction = undefined!;
             subscription.unsubscribe();
-            subscription = undefined;
+            subscription = undefined!;
         });
     });
 
@@ -74,6 +74,7 @@ suite('OptionStream', () => {
 
     function getVSCode(listenerFunction: Array<(e: ConfigurationChangeEvent) => any>): vscode {
         let vscode = getVSCodeWithConfig();
+        // @ts-ignore
         vscode.workspace.onDidChangeConfiguration = (listener: (e: ConfigurationChangeEvent) => any, thisArgs?: any, disposables?: Disposable[]) => {
             listenerFunction.push(listener);
             return new Disposable(() => disposeCalled = true);

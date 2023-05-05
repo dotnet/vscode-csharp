@@ -15,7 +15,7 @@ export interface ActivationResult {
     readonly eventStream: EventStream;
 }
 
-export async function activateCSharpExtension(): Promise<ActivationResult | undefined> {
+export async function activateCSharpExtension(): Promise<ActivationResult> {
     const configuration = vscode.workspace.getConfiguration();
     configuration.update('omnisharp.enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp' ? true : false);
     if (process.env.OMNISHARP_LOCATION) {
@@ -23,6 +23,9 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
     }
 
     const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>("ms-dotnettools.csharp");
+    if (!csharpExtension) {
+        throw new Error("Failed to find installation of ms-dotnettools.csharp");
+    }
 
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
     await csharpExtension.activate();
@@ -43,6 +46,9 @@ export async function activateCSharpExtension(): Promise<ActivationResult | unde
 
 export async function restartOmniSharpServer(): Promise<void> {
     const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>("ms-dotnettools.csharp");
+    if (!csharpExtension) {
+        throw new Error("Failed to find installation of ms-dotnettools.csharp");
+    }
 
     if (!csharpExtension.isActive) {
         await activateCSharpExtension();
@@ -62,7 +68,7 @@ export async function restartOmniSharpServer(): Promise<void> {
     }
     catch (err) {
         console.log(JSON.stringify(err));
-        return;
+        throw err;
     }
 }
 
@@ -79,7 +85,7 @@ export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
 }
 
 function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {
-    const primeWorkspace = workspace.workspaceFolders[0];
+    const primeWorkspace = workspace.workspaceFolders![0];
     const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
 
     return projectFileName === expectedProjectFileName;
