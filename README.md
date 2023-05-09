@@ -32,7 +32,7 @@ If you still need Unity or .NET Framework support, you can set `omnisharp.useMod
 See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
 
 ## What's new in 1.25.8
-* Update Razor to 7.0.0-preview.23258.1 (PR: [#TK](https://github.com/OmniSharp/omnisharp-vscode/pull/TK))
+* Update Razor to 7.0.0-preview.23258.1 (PR: [#5672](https://github.com/OmniSharp/omnisharp-vscode/pull/5672))
   * Fix issue with Razor attribute hover and Go to Definition (PR: [#8653](https://github.com/dotnet/razor/pull/8653))
   * Fix issue with Razor formatting (PR: [#8669](https://github.com/dotnet/razor/pull/8669))
 
