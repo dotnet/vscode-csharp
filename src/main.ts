@@ -33,7 +33,6 @@ import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowConfigChangePrompt } from './shared/observers/OptionChangeObserver';
 import createOptionStream from './shared/observables/CreateOptionStream';
-import { CSharpExtensionId } from './constants/CSharpExtensionId';
 import { OpenURLObserver } from './observers/OpenURLObserver';
 import { activateRazorExtension } from './razor/razor';
 import { RazorLoggerObserver } from './observers/RazorLoggerObserver';
@@ -71,9 +70,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         throw error;
     }
 
-    const extensionVersion = context.extension.packageJSON.version;
     const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
-    const reporter = new TelemetryReporter(CSharpExtensionId, extensionVersion, aiKey);
+    const reporter = new TelemetryReporter(
+        context.extension.id,
+        context.extension.packageJSON.version,
+        aiKey);
 
     let csharpChannel = vscode.window.createOutputChannel('C#');
     let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
@@ -124,7 +125,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode));
-        roslynLanguageServerPromise = activateRoslynLanguageServer(context, platformInfo, optionProvider, csharpChannel);
+        roslynLanguageServerPromise = activateRoslynLanguageServer(context, platformInfo, optionProvider, csharpChannel, reporter);
     }
     else
     {

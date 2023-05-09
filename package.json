@@ -1176,6 +1176,14 @@
             "description": "Sets the logging level for the language server",
             "order": 0
           },
+          "dotnet.server.extensionPaths": {
+            "type": ["array", null],
+            "items": {
+              "type": "string"
+            },
+            "default": null,
+            "description": "Override for path to langauge server --extensions argument"
+          },
           "dotnet.implementType.insertionBehavior": {
             "type": "string",
             "enum": [
@@ -1203,7 +1211,7 @@
             ],
             "description": "Generation behavior of properties when implement interface or abstract class.",
             "order": 10
-          },          
+          },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",
             "default": false,
@@ -4520,7 +4528,7 @@
           "keyword": [
             "keyword.cs"
           ],
-          
+
           "excludedCode": [
             "support.other.excluded.cs"
           ],
