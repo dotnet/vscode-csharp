@@ -12,6 +12,11 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
+## 1.25.8
+* Update Razor to 7.0.0-preview.23258.1 (PR: [#TK](https://github.com/OmniSharp/omnisharp-vscode/pull/TK))
+  * Fix issue with Razor attribute hover and Go to Definition (PR: [#8653](https://github.com/dotnet/razor/pull/8653))
+  * Fix issue with Razor formatting (PR: [#8669](https://github.com/dotnet/razor/pull/8669))
+
 ## 1.25.7
 * Update Razor to 7.0.0-preview.23224.3 (PR: [#5660](https://github.com/OmniSharp/omnisharp-vscode/pull/5660))
   * Fix issue with Razor diagnostics (PR: [#8622](https://github.com/dotnet/razor/pull/8622))
