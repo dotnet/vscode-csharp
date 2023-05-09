@@ -32,8 +32,7 @@ export class FormattingHandler {
         await this.serverClient.onRequestWithParams<SerializableFormattingParams, SerializableFormattingResponse, any>(
             this.formattingRequestType,
             async (request, token) => this.provideFormatting(request, token));
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableOnTypeFormattingParams, SerializableFormattingResponse, any>(
+        await this.serverClient.onRequestWithParams<SerializableOnTypeFormattingParams, SerializableFormattingResponse, any>(
             this.onTypeFormattingRequestType,
             async (request, token) => this.provideOnTypeFormatting(request, token));
     }
@@ -136,6 +135,7 @@ export class FormattingHandler {
                 if (textEdit.range.end.line > zeroBasedLineCount) {
                     end = updatedPosition;
                 }
+
                 const updatedRange = new vscode.Range(start, end);
                 textEdit = new vscode.TextEdit(updatedRange, textEdit.newText);
             }

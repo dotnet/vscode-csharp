@@ -197,7 +197,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
             }
 
             razorCodeActionRunner.register();
-            await razorFormattingFeature.register();
             await colorPresentationHandler.register();
             await documentColorHandler.register();
             await foldingRangeHandler.register();
