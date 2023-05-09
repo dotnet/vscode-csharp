@@ -52,6 +52,8 @@ import Descriptors from './lsptoolshost/services/Descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports} from './CSharpExtensionExports';
 
+const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
+
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | OmnisharpExtensionExports | null> {
     await MigrateOptions(vscode);
     const optionStream = createOptionStream(vscode);
@@ -88,8 +90,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let razorOptions = optionProvider.GetLatestOptions().razorOptions;
     requiredPackageIds.push("Razor");
-
-    let useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
+    
+    let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
+    let useOmnisharpServer = !csharpDevkitExtension && optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
     if (useOmnisharpServer)
     {
         requiredPackageIds.push("OmniSharp");
@@ -267,9 +270,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 // This method will try to get the CSharpDevKitExports through a thenable promise,
 // awaiting `activate` will cause this extension's activation to hang
 function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObserver): void {
-    const csharpDevKitExtId: string = "ms-dotnettools.csdevkit";
-
-    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevKitExtId);
+    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
     ext?.activate().then(async (exports: CSharpDevKitExports) => {
         if (exports && exports.serviceBroker) {
             // When proffering this IServiceBroker into our own container,
@@ -278,10 +279,10 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
             // as defined in the getBrokeredServiceContainer function.
             getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [Descriptors.launchConfigurationService.moniker]);
         } else {
-            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevKitExtId}' activated but did not return expected Exports.`);
+            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevkitExtensionId}' activated but did not return expected Exports.`);
         }
     }, () => {
-        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevKitExtId}'`);
+        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevkitExtensionId}'`);
     });
 }
 
