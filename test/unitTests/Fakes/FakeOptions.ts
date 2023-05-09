@@ -12,7 +12,8 @@ export function getEmptyOptions(): Options {
             waitForDebugger: false,
             serverPath: "",
             useOmnisharpServer: true,
-            excludePaths: []
+            excludePaths: [],
+            defaultSolution: ""
         },
         {
             useModernNet: false,
@@ -22,7 +23,6 @@ export function getEmptyOptions(): Options {
             projectFilesExcludePattern: "",
             projectLoadTimeout: 0,
             maxProjectResults: 0,
-            defaultLaunchSolution: "",
             useEditorFormattingSettings: false,
             enableRoslynAnalyzers: false,
             enableEditorConfigSupport: false,

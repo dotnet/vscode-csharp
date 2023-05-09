@@ -36,7 +36,6 @@ suite("Options tests", () => {
         options.omnisharpOptions.enableAsyncCompletion.should.equal(false);
         options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(false);
         options.omnisharpOptions.testRunSettings.should.equal("");
-        options.omnisharpOptions.defaultLaunchSolution.should.equal("");
     });
 
     test('Verify return no excluded paths when files.exclude empty', () => {
@@ -99,15 +98,6 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
 
         options.commonOptions.serverPath.should.equal("NewPath");
-    });
-
-    test('"omnisharp.defaultLaunchSolution" is used if set', () => {
-        const vscode = getVSCodeWithConfig();
-        updateConfig(vscode, 'omnisharp', 'defaultLaunchSolution', 'some_valid_solution.sln');
-
-        const options = Options.Read(vscode);
-
-        options.omnisharpOptions.defaultLaunchSolution.should.equal("some_valid_solution.sln");
     });
 
     test('"omnisharp.testRunSettings" is used if set', () => {
