@@ -52,6 +52,8 @@ import Descriptors from './lsptoolshost/services/Descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports} from './CSharpExtensionExports';
 
+const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
+
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | OmnisharpExtensionExports | null> {
     await MigrateOptions(vscode);
     const optionStream = createOptionStream(vscode);
@@ -88,11 +90,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let razorOptions = optionProvider.GetLatestOptions().razorOptions;
     requiredPackageIds.push("Razor");
-
-    let useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
-    if (useOmnisharpServer)
+    
+    let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
+    let useOmnisharpServer = false;
+    if (!csharpDevkitExtension)
     {
-        requiredPackageIds.push("OmniSharp");
+        useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
+        if (useOmnisharpServer)
+        {
+            requiredPackageIds.push("OmniSharp");
+        }
     }
 
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
