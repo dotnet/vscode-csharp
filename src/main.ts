@@ -92,14 +92,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     requiredPackageIds.push("Razor");
     
     let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
-    let useOmnisharpServer = false;
-    if (!csharpDevkitExtension)
+    let useOmnisharpServer = !csharpDevkitExtension && optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
+    if (useOmnisharpServer)
     {
-        useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
-        if (useOmnisharpServer)
-        {
-            requiredPackageIds.push("OmniSharp");
-        }
+        requiredPackageIds.push("OmniSharp");
     }
 
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
@@ -274,9 +270,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 // This method will try to get the CSharpDevKitExports through a thenable promise,
 // awaiting `activate` will cause this extension's activation to hang
 function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObserver): void {
-    const csharpDevKitExtId: string = "ms-dotnettools.csdevkit";
-
-    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevKitExtId);
+    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
     ext?.activate().then(async (exports: CSharpDevKitExports) => {
         if (exports && exports.serviceBroker) {
             // When proffering this IServiceBroker into our own container,
@@ -285,10 +279,10 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
             // as defined in the getBrokeredServiceContainer function.
             getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [Descriptors.launchConfigurationService.moniker]);
         } else {
-            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevKitExtId}' activated but did not return expected Exports.`);
+            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevkitExtensionId}' activated but did not return expected Exports.`);
         }
     }, () => {
-        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevKitExtId}'`);
+        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevkitExtensionId}'`);
     });
 }
 
