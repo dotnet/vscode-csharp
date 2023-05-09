@@ -28,7 +28,7 @@ suite(OmnisharpManager.name, () => {
     const installPath = ".omnisharp";
     let tmpInstallDir: TmpAsset;
     let extensionPath: string;
-    let tmpFile: TmpAsset;
+    let tmpFile: TmpAsset | undefined;
     let testZip: TestZip;
     let useFramework: boolean;
     let suffix: string;
@@ -186,7 +186,7 @@ suite(OmnisharpManager.name, () => {
             tmpFile = undefined;
         }
         tmpInstallDir.dispose();
-        extensionPath = undefined;
+        extensionPath = '';
     });
 });
 

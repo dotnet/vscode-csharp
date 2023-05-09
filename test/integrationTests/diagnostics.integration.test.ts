@@ -10,6 +10,7 @@ import { should, expect } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartOmniSharpServer } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
+import { isNotNull } from '../testUtil';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -120,7 +121,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 result => result.find(x => x.code === "CS0219") != undefined);
 
             let cs0219 = result.find(x => x.code === "CS0219");
-            expect(cs0219).to.not.be.undefined;
+            isNotNull(cs0219);
             if (cs0219.tags) { // not currently making it through lsp 100% of the time
                 expect(cs0219.tags).to.include(vscode.DiagnosticTag.Unnecessary);
             }
@@ -134,7 +135,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 result => result.find(x => x.code === "CS8019") != undefined);
 
             let cs8019 = result.find(x => x.code === "CS8019");
-            expect(cs8019).to.not.be.undefined;
+            isNotNull(cs8019);
             if (cs8019.tags) { // not currently making it through lsp 100% of the time
                 expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
             }
@@ -148,7 +149,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 result => result.find(x => x.code === "IDE0059") != undefined);
 
             let ide0059 = result.find(x => x.code === "IDE0059");
-            expect(ide0059).to.not.be.undefined;
+            isNotNull(ide0059);
             if (ide0059.tags) { // not currently making it through lsp 100% of the time
                 expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
             }

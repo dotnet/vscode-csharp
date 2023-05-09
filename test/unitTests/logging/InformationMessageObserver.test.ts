@@ -20,19 +20,17 @@ suite("InformationMessageObserver", () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
-    let commandDone: Promise<void>;
+    let commandDone: Promise<void> | undefined;
     let vscode = getVsCode();
     let optionObservable = new Subject<Options>();
     let optionProvider = new OptionProvider(optionObservable);
-    let infoMessage: string;
-    let invokedCommand: string;
+    let infoMessage: string | undefined;
+    let invokedCommand: string | undefined;
     let observer: InformationMessageObserver = new InformationMessageObserver(vscode, optionProvider);
 
     setup(() => {
         infoMessage = undefined;
         invokedCommand = undefined;
-        doClickCancel = undefined;
-        doClickOk = undefined;
         commandDone = new Promise<void>(resolve => {
             signalCommandDone = () => { resolve(); };
         });
@@ -81,7 +79,7 @@ suite("InformationMessageObserver", () => {
                 test('Given an information message if the user clicks cancel, the command is not executed', async () => {
                     observer.post(elem.event);
                     doClickCancel();
-                    await expect(observableFrom(commandDone).pipe(timeout(1)).toPromise()).to.be.rejected;
+                    await expect(observableFrom(commandDone!).pipe(timeout(1)).toPromise()).to.be.rejected;
                     expect(invokedCommand).to.be.undefined;
                 });
             });
@@ -96,7 +94,7 @@ suite("InformationMessageObserver", () => {
         let vscode = getVSCodeWithConfig();
         vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
-            return new Promise<T>(resolve => {
+            return new Promise<T | undefined>(resolve => {
                 doClickCancel = () => {
                     resolve(undefined);
                 };
@@ -107,7 +105,7 @@ suite("InformationMessageObserver", () => {
             });
         };
 
-        vscode.commands.executeCommand = (command: string, ...rest: any[]) => {
+        vscode.commands.executeCommand = async (command: string, ...rest: any[]) => {
             invokedCommand = command;
             signalCommandDone();
             return undefined;

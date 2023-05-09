@@ -14,5 +14,5 @@ suite("Migrate configuration should in package.json", () => {
 
     migrateOptions.forEach((data) => {
         assert.include(configurations, data.roslynOption);
-    })
+    });
 });

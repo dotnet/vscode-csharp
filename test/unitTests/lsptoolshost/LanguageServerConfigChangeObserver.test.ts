@@ -20,10 +20,10 @@ suite("LanguageServerConfigChangeObserver", () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
-    let commandDone: Promise<void>;
+    let commandDone: Promise<void> | undefined;
     let vscode: vscode;
-    let infoMessage: string;
-    let invokedCommand: string;
+    let infoMessage: string | undefined;
+    let invokedCommand: string | undefined;
     let optionObservable: Subject<Options>;
 
     setup(() => {
@@ -53,7 +53,7 @@ suite("LanguageServerConfigChangeObserver", () => {
 
             test('Given an information message if the user clicks cancel, the command is not executed', async () => {
                 doClickCancel();
-                await expect(observableFrom(commandDone).pipe(timeout(1)).toPromise()).to.be.rejected;
+                await expect(observableFrom(commandDone!).pipe(timeout(1)).toPromise()).to.be.rejected;
                 expect(invokedCommand).to.be.undefined;
             });
 
@@ -100,9 +100,6 @@ suite("LanguageServerConfigChangeObserver", () => {
     teardown(() => {
         infoMessage = undefined;
         invokedCommand = undefined;
-        doClickCancel = undefined;
-        doClickOk = undefined;
-        signalCommandDone = undefined;
         commandDone = undefined;
     });
 
@@ -110,7 +107,7 @@ suite("LanguageServerConfigChangeObserver", () => {
         let vscode = getVSCodeWithConfig();
         vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
-            return new Promise<T>(resolve => {
+            return new Promise<T | undefined>(resolve => {
                 doClickCancel = () => {
                     resolve(undefined);
                 };
@@ -121,7 +118,7 @@ suite("LanguageServerConfigChangeObserver", () => {
             });
         };
 
-        vscode.commands.executeCommand = (command: string, ...rest: any[]) => {
+        vscode.commands.executeCommand = async (command: string, ...rest: any[]) => {
             invokedCommand = command;
             signalCommandDone();
             return undefined;

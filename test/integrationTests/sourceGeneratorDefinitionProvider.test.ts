@@ -62,7 +62,7 @@ suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, 
 
         await vscode.commands.executeCommand('vscode.open', generatedCodeUri);
         await assertWithPoll(() => { }, 15 * 1000, 500, _ => {
-            const documentText = vscode.window.activeTextEditor.document.getText();
+            const documentText = vscode.window.activeTextEditor!.document.getText();
             expect(documentText).does.not.contain("Hello world!");
             expect(documentText).contains("Goodbye");
         });

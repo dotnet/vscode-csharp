@@ -9,6 +9,7 @@ import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExec
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
 import { Package } from '../../../src/packageManager/Package';
 import { PackageError } from '../../../src/packageManager/PackageError';
+import { isNotNull } from '../../testUtil';
 
 const chai = require('chai');
 chai.use(require('chai-arrays'));
@@ -17,29 +18,30 @@ suite('TelemetryReporterObserver', () => {
     suiteSetup(() => should());
     let platformInfo = new PlatformInformation("linux", "architecture");
     let name = "";
-    let property: { [key: string]: string } = null;
+    let property: { [key: string]: string } | undefined = undefined;
     let measure: { [key: string]: number }[] = [];
     let errorProp: string[][] = [];
+    let useModernNet = true;
     let observer = new TelemetryObserver(platformInfo, () => {
         return {
             ...getNullTelemetryReporter,
             sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => {
                 name += eventName;
                 property = properties;
-                measure.push(measures);
+                measure.push(measures!);
             },
             sendTelemetryErrorEvent: (eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]) => {
                 name += eventName;
                 property = properties;
-                measure.push(measures);
-                errorProp.push(errorProps);
+                measure.push(measures!);
+                errorProp.push(errorProps!);
             },
         };
-    });
+    }, useModernNet);
 
     setup(() => {
         name = "";
-        property = null;
+        property = undefined;
         measure = [];
         errorProp = [];
     });
@@ -66,6 +68,7 @@ suite('TelemetryReporterObserver', () => {
         const references = ["ref1", "ref2"];
         const fileExtensions = [".cs", ".cshtml"];
         const fileCounts = [7, 3];
+        const sdkStyleProject = true;
         let event = new ProjectConfiguration({
             ProjectCapabilities: projectCapabilities,
             TargetFrameworks: targetFrameworks,
@@ -74,10 +77,12 @@ suite('TelemetryReporterObserver', () => {
             OutputKind: outputKind,
             References: references,
             FileExtensions: fileExtensions,
-            FileCounts: fileCounts
+            FileCounts: fileCounts,
+            SdkStyleProject: sdkStyleProject
         });
 
         observer.post(event);
+        isNotNull(property);
         expect(property["ProjectCapabilities"]).to.be.equal("cap1 cap2");
         expect(property["TargetFrameworks"]).to.be.equal("tfm1|tfm2");
         expect(property["ProjectId"]).to.be.equal(projectId);
@@ -86,6 +91,8 @@ suite('TelemetryReporterObserver', () => {
         expect(property["References"]).to.be.equal("ref1|ref2");
         expect(property["FileExtensions"]).to.be.equal(".cs|.cshtml");
         expect(property["FileCounts"]).to.be.equal("7|3");
+        expect(property["useModernNet"]).to.be.equal("true");
+        expect(property["sdkStyleProject"]).to.be.equal("true");
     });
 
     [
@@ -146,7 +153,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty run count', () => {
-            let event = new TestExecutionCountReport({ "framework1": 20 }, null);
+            let event = new TestExecutionCountReport({ "framework1": 20 }, undefined!);
             observer.post(event);
             expect(name).to.not.contain("RunTest");
             expect(name).to.contain("DebugTest");
@@ -154,7 +161,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty debug count', () => {
-            let event = new TestExecutionCountReport(null, { "framework1": 20 });
+            let event = new TestExecutionCountReport(undefined!, { "framework1": 20 });
             observer.post(event);
             expect(name).to.contain("RunTest");
             expect(name).to.not.contain("DebugTest");
@@ -162,7 +169,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty debug and run counts', () => {
-            let event = new TestExecutionCountReport(null, null);
+            let event = new TestExecutionCountReport(undefined!, undefined!);
             observer.post(event);
             expect(name).to.be.empty;
             expect(measure).to.be.empty;

@@ -22,6 +22,11 @@ export declare namespace RoslynProtocol {
         projectPath: string;
 
         /**
+         * The absolute path to the solution file.
+         */
+        solutionPath: string | null;
+        
+        /**
          * The absolute path to the output assembly dll.
          */
         outputPath: string;

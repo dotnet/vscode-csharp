@@ -37,7 +37,8 @@ import { UriConverter } from './uriConverter';
                 isExe: p.isExe,
                 isWebProject: webProject,
                 isBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted(p.isExe, webProject, webAssemblyBlazor, p.targetsDotnetCore),
-                isBlazorWebAssemblyStandalone: webAssemblyBlazor
+                isBlazorWebAssemblyStandalone: webAssemblyBlazor,
+                solutionPath: p.solutionPath
             };
         });
 
