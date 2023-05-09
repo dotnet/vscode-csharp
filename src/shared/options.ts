@@ -95,6 +95,7 @@ export class Options {
         // Options for MS.CA.LanguageServer
         let languageServerLogLevel = Options.readOption<string>(config, 'dotnet.server.trace', 'Information');
         let documentSelector = Options.readOption<DocumentSelector>(config, 'dotnet.server.documentSelector', ['csharp']);
+        let extensionPaths = Options.readOption<string[] | null>(config, 'dotnet.server.extensionPaths', null);
 
         // Options that apply to Razor
         const razorDevMode = Options.readOption<boolean>(config, 'razor.devmode', false) ?? false;
@@ -160,7 +161,8 @@ export class Options {
             },
             {
                 logLevel: languageServerLogLevel,
-                documentSelector: documentSelector
+                documentSelector: documentSelector,
+                extensionsPaths: extensionPaths
             },
             {
                 razorDevMode: razorDevMode,
@@ -179,7 +181,7 @@ export class Options {
         const commonOptionsChanged = CommonOptionsThatTriggerReload.some(key => !isDeepStrictEqual(oldOptions.commonOptions[key], newOptions.commonOptions[key]));
         const languageServerOptionsChanged = LanguageServerOptionsThatTriggerReload.some(key => !isDeepStrictEqual(oldOptions.languageServerOptions[key], newOptions.languageServerOptions[key]));
         return commonOptionsChanged || languageServerOptionsChanged;
-            
+
     }
 
     public static getExcludedPaths(vscode: vscode, includeSearchExcludes: boolean = false): string[] {
@@ -319,6 +321,7 @@ export interface RazorOptions {
 export interface LanguageServerOptions {
     logLevel: string;
     documentSelector: DocumentSelector;
+    extensionsPaths: string[] | null;
 }
 
 const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [

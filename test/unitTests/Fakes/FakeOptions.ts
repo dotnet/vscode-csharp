@@ -64,7 +64,8 @@ export function getEmptyOptions(): Options {
         },
         {
             logLevel: "",
-            documentSelector: ['csharp']
+            documentSelector: ['csharp'],
+            extensionsPaths: null,
         },
         {
             razorDevMode: false,

@@ -48,6 +48,8 @@ import { RegisterSolutionSnapshotRequest, OnAutoInsertRequest, RoslynProtocol } 
 import { OpenSolutionParams } from './OpenSolutionParams';
 import { CSharpDevKitExports } from '../CSharpDevKitExports';
 import { ISolutionSnapshotProvider } from './services/ISolutionSnapshotProvider';
+import { Options } from '../shared/options';
+import TelemetryReporter from '@vscode/extension-telemetry';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -106,6 +108,7 @@ export class RoslynLanguageServer {
         private platformInfo: PlatformInformation,
         private optionProvider: OptionProvider,
         private context: vscode.ExtensionContext,
+        private telemetryReporter: TelemetryReporter
     ) {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
         this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
@@ -128,6 +131,14 @@ export class RoslynLanguageServer {
                 // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
                 // which will automatically restart this extension too.
             }
+        }));
+
+        // Subscribe to telemetry events so we can enable/disable as needed
+        this.context.subscriptions.push(vscode.env.onDidChangeTelemetryEnabled((isEnabled: boolean) => {
+            const title = 'Restart Language Server';
+            const command = 'dotnet.restartServer';
+            const message = 'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
+            ShowInformationMessage(vscode, message, { title, command });
         }));
     }
 
@@ -301,7 +312,8 @@ export class RoslynLanguageServer {
     private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
         let clientRoot = __dirname;
 
-        let serverPath = this.optionProvider.GetLatestOptions().commonOptions.serverPath;
+        let options = this.optionProvider.GetLatestOptions();
+        let serverPath = options.commonOptions.serverPath;
         if (!serverPath) {
             // Option not set, use the path from the extension.
             serverPath = path.join(clientRoot, '..', '.roslyn', this.getServerFileName());
@@ -313,7 +325,6 @@ export class RoslynLanguageServer {
 
         let args: string[] = [ ];
 
-        let options = this.optionProvider.GetLatestOptions();
         if (options.commonOptions.waitForDebugger) {
             args.push("--debug");
         }
@@ -329,7 +340,7 @@ export class RoslynLanguageServer {
         if (csharpDevkitExtension) {
             _channel.appendLine("Activating C# + C# Dev Kit...");
             this._wasActivatedWithCSharpDevkit = true;
-            const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension);
+            const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension, options);
             args = args.concat(csharpDevkitArgs);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
@@ -341,6 +352,8 @@ export class RoslynLanguageServer {
         if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
             _channel.appendLine(`Starting server at ${serverPath}`);
         }
+
+        args.push("--telemetryLevel", this.telemetryReporter.telemetryLevel);
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
         if (serverPath.endsWith('.dll')) {
@@ -413,15 +426,20 @@ export class RoslynLanguageServer {
         return `${serverFileName}${extension}`;
     }
 
-    private async getCSharpDevkitExportArgs(csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>) : Promise<string[]> {
+    private async getCSharpDevkitExportArgs(csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>, options: Options) : Promise<string[]> {
         const exports = await csharpDevkitExtension.activate();
 
         const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
         const starredCompletionComponentPath = this.getStarredCompletionComponentPath(exports);
+        const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
+
+        // required for the telemetry service to work
+        await exports.writeCommonPropsToFileAsync();
 
         let csharpDevkitArgs: string[] = [ ];
         csharpDevkitArgs.push("--brokeredServicePipeName", brokeredServicePipeName);
         csharpDevkitArgs.push("--starredCompletionComponentPath", starredCompletionComponentPath);
+        csharpDevkitArgs.push("--extensions", extensionPaths.join(" "));
         return csharpDevkitArgs;
     }
 
@@ -429,6 +447,12 @@ export class RoslynLanguageServer {
         return csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"];
     }
 
+    private getLanguageServicesDevKitComponentPath(csharpDevKitExports: CSharpDevKitExports) : string {
+        return path.join(
+            csharpDevKitExports.components["@microsoft/visualstudio-languageservices-devkit"],
+            "Microsoft.VisualStudio.LanguageServices.DevKit.dll");
+    }
+    
     private GetTraceLevel(logLevel: string): Trace {
         switch (logLevel) {
             case "Trace":
@@ -461,14 +485,14 @@ export class SolutionSnapshotProvider implements ISolutionSnapshotProvider {
     }
 }
 
-export async function activateRoslynLanguageServer(context: vscode.ExtensionContext, platformInfo: PlatformInformation, optionProvider: OptionProvider, outputChannel: vscode.OutputChannel) {
+export async function activateRoslynLanguageServer(context: vscode.ExtensionContext, platformInfo: PlatformInformation, optionProvider: OptionProvider, outputChannel: vscode.OutputChannel, reporter: TelemetryReporter) {
 
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     _traceChannel = vscode.window.createOutputChannel("C# LSP Trace Logs");
 
-    _languageServer = new RoslynLanguageServer(platformInfo, optionProvider, context);
+    _languageServer = new RoslynLanguageServer(platformInfo, optionProvider, context, reporter);
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, _languageServer);
