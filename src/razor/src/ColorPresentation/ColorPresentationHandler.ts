@@ -25,9 +25,8 @@ export class ColorPresentationHandler {
         private readonly logger: RazorLogger) {
     }
 
-    public register() {
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableColorPresentationParams, SerializableColorPresentation[], any>(
+    public async register() {
+        await this.serverClient.onRequestWithParams<SerializableColorPresentationParams, SerializableColorPresentation[], any>(
             this.colorPresentationRequestType,
             async (request: SerializableColorPresentationParams, token: vscode.CancellationToken) => this.provideHtmlColorPresentation(request, token));
     }

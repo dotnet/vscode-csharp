@@ -206,15 +206,15 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 await proposedApisFeature.register(vscodeType, localRegistrations);
             }
 
-            razorFormattingFeature.register();
             razorCodeActionRunner.register();
-            colorPresentationHandler.register();
-            documentColorHandler.register();
-            foldingRangeHandler.register();
-            formattingHandler.register();
-            semanticTokenHandler.register();
-            razorDiagnosticHandler.register();
-            codeActionsHandler.register();
+            await razorFormattingFeature.register();
+            await colorPresentationHandler.register();
+            await documentColorHandler.register();
+            await foldingRangeHandler.register();
+            await formattingHandler.register();
+            await semanticTokenHandler.register();
+            await razorDiagnosticHandler.register();
+            await codeActionsHandler.register();
         });
 
         const onStopRegistration = languageServerClient.onStop(() => {

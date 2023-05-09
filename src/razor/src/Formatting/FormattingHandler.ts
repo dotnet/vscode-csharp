@@ -22,9 +22,8 @@ export class FormattingHandler {
         private readonly serverClient: RazorLanguageServerClient,
         private readonly logger: RazorLogger) { }
 
-    public register() {
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableFormattingParams, SerializableFormattingResponse, any>(
+    public async register() {
+        await this.serverClient.onRequestWithParams<SerializableFormattingParams, SerializableFormattingResponse, any>(
             this.formattingRequestType,
             async (request, token) => this.provideFormatting(request, token));
     }
