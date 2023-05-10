@@ -436,6 +436,7 @@ export class RoslynLanguageServer {
             // required for the telemetry service to work
             await exports.writeCommonPropsAsync();
         } catch (e) {
+            _channel.appendLine(`Telemetry registration failed with ${e}`);
         }
 
         let csharpDevkitArgs: string[] = [ ];
