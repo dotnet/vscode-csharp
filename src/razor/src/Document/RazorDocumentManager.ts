@@ -1,4 +1,4 @@
-﻿/* --------------------------------------------------------------------------------------------
+/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -279,10 +279,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 // If project information was already cached in a .json file, its possible the Razor server sent us C# content
                 // before we've finished advising Roslyn of all of the files, so make sure we do it here just in case, because we're
                 // about to send a didChange for it and we don't want that to error.
-                if (!this.isRazorDocumentOpenInCSharpWorkspace(document.uri)) {
-                    await vscode.workspace.openTextDocument(document.csharpDocument.uri);
-                }
-
+                await vscode.workspace.openTextDocument(document.csharpDocument.uri);
                 vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification);
             }
 
