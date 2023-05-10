@@ -33,7 +33,6 @@ import DotNetTestChannelObserver from './observers/DotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/DotnetTestLoggerObserver';
 import { ShowConfigChangePrompt } from './shared/observers/OptionChangeObserver';
 import createOptionStream from './shared/observables/CreateOptionStream';
-import { CSharpExtensionId } from './constants/CSharpExtensionId';
 import { OpenURLObserver } from './observers/OpenURLObserver';
 import { activateRazorExtension } from './razor/razor';
 import { RazorLoggerObserver } from './observers/RazorLoggerObserver';
@@ -53,6 +52,8 @@ import Descriptors from './lsptoolshost/services/Descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports} from './CSharpExtensionExports';
 
+const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
+
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | OmnisharpExtensionExports | null> {
     await MigrateOptions(vscode);
     const optionStream = createOptionStream(vscode);
@@ -71,9 +72,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         throw error;
     }
 
-    const extensionVersion = context.extension.packageJSON.version;
     const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
-    const reporter = new TelemetryReporter(CSharpExtensionId, extensionVersion, aiKey);
+    const reporter = new TelemetryReporter(
+        context.extension.id,
+        context.extension.packageJSON.version,
+        aiKey);
 
     let csharpChannel = vscode.window.createOutputChannel('C#');
     let csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
@@ -87,8 +90,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
     let razorOptions = optionProvider.GetLatestOptions().razorOptions;
     requiredPackageIds.push("Razor");
-
-    let useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
+    
+    let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
+    let useOmnisharpServer = !csharpDevkitExtension && optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
     if (useOmnisharpServer)
     {
         requiredPackageIds.push("OmniSharp");
@@ -97,7 +101,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
     await initializeDotnetPath();
 
-    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter);
+    let useModernNetOption = optionProvider.GetLatestOptions().omnisharpOptions.useModernNet;
+    let telemetryObserver = new TelemetryObserver(platformInfo, () => reporter, useModernNetOption);
     eventStream.subscribe(telemetryObserver.post);
 
     let networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
@@ -123,7 +128,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode));
-        roslynLanguageServerPromise = activateRoslynLanguageServer(context, platformInfo, optionProvider, csharpChannel);
+        roslynLanguageServerPromise = activateRoslynLanguageServer(context, platformInfo, optionProvider, csharpChannel, reporter);
     }
     else
     {
@@ -265,9 +270,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
 // This method will try to get the CSharpDevKitExports through a thenable promise,
 // awaiting `activate` will cause this extension's activation to hang
 function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObserver): void {
-    const csharpDevKitExtId: string = "ms-dotnettools.csdevkit";
-
-    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevKitExtId);
+    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
     ext?.activate().then(async (exports: CSharpDevKitExports) => {
         if (exports && exports.serviceBroker) {
             // When proffering this IServiceBroker into our own container,
@@ -276,10 +279,10 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
             // as defined in the getBrokeredServiceContainer function.
             getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [Descriptors.launchConfigurationService.moniker]);
         } else {
-            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevKitExtId}' activated but did not return expected Exports.`);
+            csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevkitExtensionId}' activated but did not return expected Exports.`);
         }
     }, () => {
-        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevKitExtId}'`);
+        csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevkitExtensionId}'`);
     });
 }
 

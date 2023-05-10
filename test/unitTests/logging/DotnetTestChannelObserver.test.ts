@@ -16,7 +16,7 @@ suite("DotnetTestChannelObserver", () => {
         ...getNullChannel(),
         show: (preserve) => {
             hasShown = true;
-            preserveFocus = preserve;
+            preserveFocus = preserve ?? false;
         }
     });
 
