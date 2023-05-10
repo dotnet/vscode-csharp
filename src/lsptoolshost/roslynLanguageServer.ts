@@ -54,6 +54,7 @@ let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
 const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
+const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.cs-intellicode";
 
 export class RoslynLanguageServer {
 
@@ -338,6 +339,15 @@ export class RoslynLanguageServer {
             this._wasActivatedWithCSharpDevkit = false;
         }
 
+        // TODO: update logic - something reusable for multiple different extensions would be nice
+        // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
+        const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitIntelliCodeExtensionId);
+        if (csharpDevkitIntelliCodeExtension && csharpDevkitExtension) {
+            _channel.appendLine("Activating C# Dev Kit IntelliCode...");
+            const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension);
+            args = args.concat(csharpDevkitIntelliCodeArgs);
+        } 
+
         if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
             _channel.appendLine(`Starting server at ${serverPath}`);
         }
@@ -417,16 +427,20 @@ export class RoslynLanguageServer {
         const exports = await csharpDevkitExtension.activate();
 
         const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
-        const starredCompletionComponentPath = this.getStarredCompletionComponentPath(exports);
 
         let csharpDevkitArgs: string[] = [ ];
         csharpDevkitArgs.push("--brokeredServicePipeName", brokeredServicePipeName);
-        csharpDevkitArgs.push("--starredCompletionComponentPath", starredCompletionComponentPath);
         return csharpDevkitArgs;
     }
 
-    private getStarredCompletionComponentPath(csharpDevkitExports: CSharpDevKitExports): string {
-        return csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"];
+    private async getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpDevKitExports>) : Promise<string[]> {
+        const exports = await csharpDevkitIntelliCodeExtension.activate();
+
+        const starredCompletionComponentPath = exports.components["@vsintellicode/starred-suggestions-csharp"];
+
+        let csharpIntelliCodeArgs: string[] = [ ];
+        csharpIntelliCodeArgs.push("--starredCompletionComponentPath", starredCompletionComponentPath);
+        return csharpIntelliCodeArgs;
     }
 
     private GetTraceLevel(logLevel: string): Trace {
