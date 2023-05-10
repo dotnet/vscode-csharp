@@ -54,7 +54,7 @@ let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
 const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
-const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.cs-intellicode";
+const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
 
 export class RoslynLanguageServer {
 
@@ -339,11 +339,10 @@ export class RoslynLanguageServer {
             this._wasActivatedWithCSharpDevkit = false;
         }
 
-        // TODO: update logic - something reusable for multiple different extensions would be nice
         // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
         const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitIntelliCodeExtensionId);
         if (csharpDevkitIntelliCodeExtension && csharpDevkitExtension) {
-            _channel.appendLine("Activating C# Dev Kit IntelliCode...");
+            _channel.appendLine("Activating C# IntelliCode...");
             const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension);
             args = args.concat(csharpDevkitIntelliCodeArgs);
         } 
