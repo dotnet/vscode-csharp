@@ -51,7 +51,7 @@ suite("OmniSharpConfigChangeObserver", () => {
             });
 
             test(`The information message is shown`, async () => {
-                expect(infoMessage).to.be.equal("CSharp configuration has changed. Would you like to relaunch the Language Server with your changes?");
+                expect(infoMessage).to.be.equal("C# configuration has changed. Would you like to relaunch the Language Server with your changes?");
             });
 
             test('Given an information message if the user clicks cancel, the command is not executed', async () => {
