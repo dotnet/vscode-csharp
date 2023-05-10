@@ -431,9 +431,12 @@ export class RoslynLanguageServer {
         const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
         const starredCompletionComponentPath = this.getStarredCompletionComponentPath(exports);
         const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
-
-        // required for the telemetry service to work
-        await exports.writeCommonPropsToFileAsync();
+        
+        try {
+            // required for the telemetry service to work
+            await exports.writeCommonPropsAsync();
+        } catch (e) {
+        }
 
         let csharpDevkitArgs: string[] = [ ];
         csharpDevkitArgs.push("--brokeredServicePipeName", brokeredServicePipeName);
