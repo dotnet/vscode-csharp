@@ -1,4 +1,4 @@
-/* --------------------------------------------------------------------------------------------
+﻿/* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -29,12 +29,14 @@ import { UriConverter } from '../../../lsptoolshost/uriConverter';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
-    public razorDocumentGenerationInitialized = false;
 
     private readonly razorDocuments: { [hostDocumentPath: string]: IRazorDocument } = {};
     private readonly openRazorDocuments = new Set<string>();
     private pendingDidChangeNotifications = new Array<DidChangeTextDocumentParams>();
     private onChangeEmitter = new vscode.EventEmitter<IRazorDocumentChangeEvent>();
+
+    private razorDocumentGenerationInitialized = false;
+    private anyRazorDocumentOpen = false;
 
     constructor(
         private readonly serverClient: RazorLanguageServerClient,
@@ -166,6 +168,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private async openDocument(uri: vscode.Uri) {
+        this.anyRazorDocumentOpen = true;
         await this.ensureRazorInitialized();
 
         const document = this._getDocument(uri);
@@ -179,7 +182,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // just spend a lot of time generating documents and json files that might not be needed.
         // If we wait for each individual document to be opened by the user, then locally defined components
         // don't work, which is a poor experience. This is the compromise.
-        if (this.roslynActivated && !this.razorDocumentGenerationInitialized) {
+        if (this.roslynActivated && !this.razorDocumentGenerationInitialized && this.anyRazorDocumentOpen) {
             this.razorDocumentGenerationInitialized = true;
             vscode.commands.executeCommand(RoslynLanguageServer.razorInitializeCommand);
             for (const document of this.documents) {
