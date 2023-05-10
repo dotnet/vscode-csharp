@@ -166,22 +166,26 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private async openDocument(uri: vscode.Uri) {
+        await this.ensureRazorInitialized();
+
+        const document = this._getDocument(uri);
+
+        this.notifyDocumentChange(document, RazorDocumentChangeKind.opened);
+    }
+
+    public async ensureRazorInitialized() {
         // On first open of a Razor document, we kick off the generation of all razor documents so that
         // components are discovered correctly. If we do this early, when we initialize everything, we
         // just spend a lot of time generating documents and json files that might not be needed.
         // If we wait for each individual document to be opened by the user, then locally defined components
         // don't work, which is a poor experience. This is the compromise.
-        if (!this.razorDocumentGenerationInitialized) {
+        if (this.roslynActivated && !this.razorDocumentGenerationInitialized) {
             this.razorDocumentGenerationInitialized = true;
             vscode.commands.executeCommand(RoslynLanguageServer.razorInitializeCommand);
             for (const document of this.documents) {
                 await this.ensureDocumentAndProjectedDocumentsOpen(document);
             }
         }
-
-        const document = this._getDocument(uri);
-
-        this.notifyDocumentChange(document, RazorDocumentChangeKind.opened);
     }
 
     private closeDocument(uri: vscode.Uri) {
