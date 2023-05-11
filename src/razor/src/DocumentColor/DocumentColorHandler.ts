@@ -22,9 +22,8 @@ export class DocumentColorHandler {
         private readonly serverClient: RazorLanguageServerClient,
         private readonly logger: RazorLogger) { }
 
-    public register() {
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableDocumentColorParams, SerializableColorInformation[], any>(
+    public async register() {
+        await this.serverClient.onRequestWithParams<SerializableDocumentColorParams, SerializableColorInformation[], any>(
             this.documentColorRequestType,
             async (request: SerializableDocumentColorParams, token: vscode.CancellationToken) => this.provideHtmlDocumentColors(request, token));
     }

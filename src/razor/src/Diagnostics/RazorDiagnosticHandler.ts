@@ -17,7 +17,7 @@ import { RazorLogger } from '../RazorLogger';
 
 export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
     private static readonly razorPullDiagnosticsCommand = 'razor/pullDiagnostics';
-    private diagnosticRequestType: RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any> = 
+    private diagnosticRequestType: RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any> =
         new RequestType(RazorDiagnosticHandler.razorPullDiagnosticsCommand);
 
     constructor(
@@ -26,13 +26,12 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
         protected readonly serviceClient: RazorLanguageServiceClient,
         protected readonly documentManager: RazorDocumentManager,
         protected readonly logger: RazorLogger
-    ) { 
+    ) {
         super(documentSynchronizer, documentManager, serviceClient, logger);
     }
 
-    public register() {
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(
+    public async register() {
+        await this.serverClient.onRequestWithParams<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(
             this.diagnosticRequestType,
             async (request: DocumentDiagnosticParams, token: vscode.CancellationToken) => this.getDiagnostic(request, token));
     }
