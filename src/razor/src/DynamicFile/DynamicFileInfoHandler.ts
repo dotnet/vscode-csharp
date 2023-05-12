@@ -4,11 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import {
-    DidCloseTextDocumentParams,
-    DocumentUri,
-    TextDocumentIdentifier} from 'vscode-languageclient/node';
-import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
+import { DocumentUri } from 'vscode-languageclient/node';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import { RazorDocumentManager } from '../Document/RazorDocumentManager';
 import { RazorLogger } from '../RazorLogger';
@@ -53,15 +49,6 @@ export class DynamicFileInfoHandler {
                 }
             }
 
-            // Execute any pending didChange notifications that were queued before Roslyn activated.
-            for (const didChangeNotification of this.documentManager.getPendingChangeNotifications) {
-                // Since the changes happened before Roslyn activated, we assume we need to open the document too. This is
-                // a no-op if it's already open.
-                await vscode.workspace.openTextDocument(UriConverter.deserialize(didChangeNotification.textDocument.uri));
-                vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification);
-            }
-
-            this.documentManager.clearPendingDidChangeNotifications();
             this.documentManager.roslynActivated = true;
 
             // Normally we start receiving dynamic info after Razor is initialized, but if the user had a .razor file open
@@ -81,14 +68,6 @@ export class DynamicFileInfoHandler {
                 const vscodeUri = vscode.Uri.parse('file:' + razorDocumentUri, true);
                 if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
                     this.documentManager.didCloseRazorCSharpDocument(vscodeUri);
-                    const textDocumentIdentifier = TextDocumentIdentifier.create(vscodeUri.path);
-
-                    // Send textDocument/didClose request to Roslyn
-                    const didCloseRequest: DidCloseTextDocumentParams = {
-                        textDocument: textDocumentIdentifier
-                    };
-
-                    vscode.commands.executeCommand(RoslynLanguageServer.roslynDidCloseCommand, didCloseRequest);
                 }
             }
         } catch (error) {
