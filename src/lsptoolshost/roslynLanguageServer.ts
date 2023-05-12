@@ -208,6 +208,7 @@ export class RoslynLanguageServer {
             if (state.newState === State.Running) {
                 await this._languageClient!.setTrace(languageClientTraceLevel);
                 await this.sendOpenSolutionNotification();
+                await this.sendOrSubscribeForServiceBrokerConnection();
                 this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.Started);
             }
         });
@@ -300,6 +301,25 @@ export class RoslynLanguageServer {
             await this._languageClient.sendNotification("solution/open", new OpenSolutionParams(protocolUri));
         }
     }
+
+    private async sendOrSubscribeForServiceBrokerConnection() {
+        const csharpDevKitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
+        if (csharpDevKitExtension) {
+            const exports = await csharpDevKitExtension.activate();
+
+            // If the server process has already loaded, we'll get the pipe name and send it over to our process; otherwise we'll wait until the Dev Kit server
+            // is launched and then send the pipe name over. This avoids us calling getBrokeredServiceServerPipeName() which will launch the server
+            // if it's not already running. The rationale here is if Dev Kit is installed, we defer to it for the project system loading; if it's not loaded,
+            // then we have no projects, and so this extension won't have anything to do.
+            if (exports.hasServerProcessLoaded()) {
+                const pipeName = await exports.getBrokeredServiceServerPipeName();
+                this._languageClient?.sendNotification("serviceBroker/connect", { pipeName: pipeName });
+            } else {
+                // We'll subscribe if the process later launches, and call this function again to send the pipe name.
+                this.context.subscriptions.push(exports.serverProcessLoaded(this.sendOrSubscribeForServiceBrokerConnection));
+            }
+        }
+    } 
 
     public getServerCapabilities() : any {
         if (!this._languageClient) {
@@ -440,14 +460,12 @@ export class RoslynLanguageServer {
     private async getCSharpDevkitExportArgs(csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>, options: Options) : Promise<string[]> {
         const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
 
-        const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
         const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
         
         // required for the telemetry service to work
         await exports.writeCommonPropsAsync(this.context);
 
         let csharpDevkitArgs: string[] = [ ];
-        csharpDevkitArgs.push("--brokeredServicePipeName", brokeredServicePipeName);
         csharpDevkitArgs.push("--extensions", extensionPaths.join(" "));
         return csharpDevkitArgs;
     }
