@@ -22,7 +22,6 @@ import {
     DocumentDiagnosticParams,
     State,
     Trace,
-    StateChangeEvent,
     RequestType,
     RequestType0,
     FormattingOptions,
@@ -44,11 +43,12 @@ import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfo
 import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
 import EventEmitter = require('events');
 import Disposable from '../Disposable';
-import { RegisterSolutionSnapshotRequest, OnAutoInsertRequest, RoslynProtocol } from './roslynProtocol';
+import { RegisterSolutionSnapshotRequest, OnAutoInsertRequest, RoslynProtocol, ProjectInitializationCompleteNotification } from './roslynProtocol';
 import { OpenSolutionParams } from './OpenSolutionParams';
 import { CSharpDevKitExports } from '../CSharpDevKitExports';
 import { ISolutionSnapshotProvider } from './services/ISolutionSnapshotProvider';
 import { Options } from '../shared/options';
+import { ServerStateChange } from './ServerStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
 
 let _languageServer: RoslynLanguageServer;
@@ -206,13 +206,12 @@ export class RoslynLanguageServer {
             if (state.newState === State.Running) {
                 await this._languageClient!.setTrace(languageClientTraceLevel);
                 await this.sendOpenSolutionNotification();
+                this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.Started);
             }
         });
 
-        // Register an event that fires on state change so consumers of the RoslynLanguageServer type
-        // can also act on state changes.
-        this._languageClient.onDidChangeState(async (state) => {
-            this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, state);
+        this._languageClient.onNotification(ProjectInitializationCompleteNotification.type, () => {
+           this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.ProjectInitializationComplete);
         });
 
         // Start the client. This will also launch the server
@@ -247,7 +246,7 @@ export class RoslynLanguageServer {
      * Allows consumers of this server to register for state change events.
      * These state change events will be registered each time the underlying _languageClient instance is created.
      */
-    public registerOnStateChange(listener: (stateChange: StateChangeEvent) => Promise<any>): Disposable {
+    public registerStateChangeEvent(listener: (event: ServerStateChange) => Promise<any>): Disposable {
         this._eventBus.addListener(RoslynLanguageServer.serverStateChangeEvent, listener);
         return new Disposable(() => this._eventBus.removeListener(RoslynLanguageServer.serverStateChangeEvent, listener));
     }
@@ -437,9 +436,9 @@ export class RoslynLanguageServer {
         const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
         const starredCompletionComponentPath = this.getStarredCompletionComponentPath(exports);
         const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
-
+        
         // required for the telemetry service to work
-        await exports.writeCommonPropsToFileAsync();
+        await exports.writeCommonPropsAsync(this.context);
 
         let csharpDevkitArgs: string[] = [ ];
         csharpDevkitArgs.push("--brokeredServicePipeName", brokeredServicePipeName);

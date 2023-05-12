@@ -35,7 +35,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.7.0-2.23258.2",
+    "roslyn": "4.7.0-2.23259.12",
     "omniSharp": "1.39.6",
     "razor": "7.0.0-preview.23258.1"
   },
@@ -1214,8 +1214,8 @@
           },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",
-            "default": false,
-            "description": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file. This option can have a negative impact on initial completion responsiveness, particularly for the first few completion sessions after opening a solution.",
+            "default": true,
+            "description": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file.",
             "order": 20
           },
           "dotnet.completion.showNameCompletionSuggestions": {

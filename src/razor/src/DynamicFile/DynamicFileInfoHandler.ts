@@ -49,17 +49,24 @@ export class DynamicFileInfoHandler {
                 } else {
                     // Retrieve generated doc URIs for each Razor URI we are given
                     let virtualCsharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
-                    virtualUris.push(virtualCsharpUri); 
+                    virtualUris.push(virtualCsharpUri);
                 }
             }
 
             // Execute any pending didChange notifications that were queued before Roslyn activated.
             for (const didChangeNotification of this.documentManager.getPendingChangeNotifications) {
-                vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification); 
+                // Since the changes happened before Roslyn activated, we assume we need to open the document too. This is
+                // a no-op if it's already open.
+                await vscode.workspace.openTextDocument(UriConverter.deserialize(didChangeNotification.textDocument.uri));
+                vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification);
             }
 
             this.documentManager.clearPendingDidChangeNotifications();
             this.documentManager.roslynActivated = true;
+
+            // Normally we start receiving dynamic info after Razor is initialized, but if the user had a .razor file open
+            // when they started VS Code, the order is the other way around. This no-ops if Razor is already initialized.
+            await this.documentManager.ensureRazorInitialized();
         } catch (error) {
             this.logger.logWarning(`${DynamicFileInfoHandler.provideDynamicFileInfoCommand} failed with ${error}`);
         }
@@ -83,7 +90,7 @@ export class DynamicFileInfoHandler {
 
                     vscode.commands.executeCommand(RoslynLanguageServer.roslynDidCloseCommand, didCloseRequest);
                 }
-            }    
+            }
         } catch (error) {
             this.logger.logWarning(`${DynamicFileInfoHandler.removeDynamicFileInfoCommand} failed with ${error}`);
         }

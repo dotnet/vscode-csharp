@@ -20,9 +20,8 @@ export class SemanticTokensRangeHandler {
 
     constructor(private readonly serverClient: RazorLanguageServerClient) { }
 
-    public register() {
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableSemanticTokensParams, ProvideSemanticTokensResponse, any>(
+    public async register() {
+        await this.serverClient.onRequestWithParams<SerializableSemanticTokensParams, ProvideSemanticTokensResponse, any>(
             this.semanticTokensRequestType,
             async (request: SerializableSemanticTokensParams, token: vscode.CancellationToken) => this.getSemanticTokens(request, token));
     }

@@ -13,5 +13,5 @@ export interface CSharpDevKitExports {
     components: Readonly<{ [key: string]: string }>;
     hasServerProcessLoaded: () => boolean;
     serverProcessLoaded: vscode.Event<void>;
-    writeCommonPropsToFileAsync: () => Promise<string | undefined>;
+    writeCommonPropsAsync: (context: vscode.ExtensionContext) => Promise<string | undefined>;
 }

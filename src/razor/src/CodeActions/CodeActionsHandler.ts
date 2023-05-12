@@ -29,14 +29,12 @@ export class CodeActionsHandler {
         private readonly serverClient: RazorLanguageServerClient,
         private readonly logger: RazorLogger) { }
 
-    public register() {
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, CodeAction[], any>(
+    public async register() {
+        await this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, CodeAction[], any>(
             this.codeActionRequestType,
             async (request: SerializableDelegatedCodeActionParams, token: vscode.CancellationToken) => this.provideCodeActions(request, token));
 
-        // tslint:disable-next-line: no-floating-promises
-        this.serverClient.onRequestWithParams<SerializableRazorResolveCodeActionParams, CodeAction, any>(
+        await this.serverClient.onRequestWithParams<SerializableRazorResolveCodeActionParams, CodeAction, any>(
             this.codeActionResolveRequestType,
             async (request: SerializableRazorResolveCodeActionParams, token: vscode.CancellationToken) => this.resolveCodeAction(request, token));
     }

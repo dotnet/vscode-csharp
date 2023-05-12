@@ -29,12 +29,14 @@ import { UriConverter } from '../../../lsptoolshost/uriConverter';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
-    public razorDocumentGenerationInitialized = false;
 
     private readonly razorDocuments: { [hostDocumentPath: string]: IRazorDocument } = {};
     private readonly openRazorDocuments = new Set<string>();
     private pendingDidChangeNotifications = new Array<DidChangeTextDocumentParams>();
     private onChangeEmitter = new vscode.EventEmitter<IRazorDocumentChangeEvent>();
+
+    private razorDocumentGenerationInitialized = false;
+    private anyRazorDocumentOpen = false;
 
     constructor(
         private readonly serverClient: RazorLanguageServerClient,
@@ -166,22 +168,27 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private async openDocument(uri: vscode.Uri) {
+        this.anyRazorDocumentOpen = true;
+        await this.ensureRazorInitialized();
+
+        const document = this._getDocument(uri);
+
+        this.notifyDocumentChange(document, RazorDocumentChangeKind.opened);
+    }
+
+    public async ensureRazorInitialized() {
         // On first open of a Razor document, we kick off the generation of all razor documents so that
         // components are discovered correctly. If we do this early, when we initialize everything, we
         // just spend a lot of time generating documents and json files that might not be needed.
         // If we wait for each individual document to be opened by the user, then locally defined components
         // don't work, which is a poor experience. This is the compromise.
-        if (!this.razorDocumentGenerationInitialized) {
+        if (this.roslynActivated && !this.razorDocumentGenerationInitialized && this.anyRazorDocumentOpen) {
             this.razorDocumentGenerationInitialized = true;
             vscode.commands.executeCommand(RoslynLanguageServer.razorInitializeCommand);
             for (const document of this.documents) {
                 await this.ensureDocumentAndProjectedDocumentsOpen(document);
             }
         }
-
-        const document = this._getDocument(uri);
-
-        this.notifyDocumentChange(document, RazorDocumentChangeKind.opened);
     }
 
     private closeDocument(uri: vscode.Uri) {
@@ -275,10 +282,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 // If project information was already cached in a .json file, its possible the Razor server sent us C# content
                 // before we've finished advising Roslyn of all of the files, so make sure we do it here just in case, because we're
                 // about to send a didChange for it and we don't want that to error.
-                if (!this.isRazorDocumentOpenInCSharpWorkspace(document.uri)) {
-                    await vscode.workspace.openTextDocument(document.csharpDocument.uri);
-                }
-
+                await vscode.workspace.openTextDocument(document.csharpDocument.uri);
                 vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification);
             }
 

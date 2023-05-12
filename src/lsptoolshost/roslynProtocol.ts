@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { FormattingOptions, InsertTextFormat, MessageDirection, Position, RequestType, RequestType0, TextDocumentIdentifier, TextEdit, URI, integer } from "vscode-languageserver-protocol";
+import { FormattingOptions, InsertTextFormat, MessageDirection, NotificationType, Position, RequestType, RequestType0, TextDocumentIdentifier, TextEdit, URI, integer } from "vscode-languageserver-protocol";
 
 export declare namespace RoslynProtocol {
     export interface WorkspaceDebugConfigurationParams {
@@ -83,5 +83,11 @@ export namespace RegisterSolutionSnapshotRequest {
     export const method: 'workspace/_vs_registerSolutionSnapshot' = 'workspace/_vs_registerSolutionSnapshot';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
     export const type = new RequestType0<RoslynProtocol.RegisterSolutionSnapshotResponseItem, void>(method);
+}
+
+export namespace ProjectInitializationCompleteNotification {
+    export const method: 'workspace/projectInitializationComplete' = 'workspace/projectInitializationComplete';
+    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
+    export const type = new NotificationType(method);
 }
 
