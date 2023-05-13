@@ -223,6 +223,13 @@ export class RoslynLanguageServer {
         // If we haven't previously chosen a solution file this session, use the option if one is present
         if (this._solutionFile === undefined && options.commonOptions.defaultSolution !== '') {
             this.openSolution(vscode.Uri.file(options.commonOptions.defaultSolution));
+        } else {
+            // Auto open if there is just one solution target, if not the let the user trigger an open solution
+            const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
+            if (solutionUris && solutionUris.length === 1) {
+                this.openSolution(solutionUris[0]);
+                await vscode.workspace.getConfiguration('dotnet').update('defaultSolution', solutionUris[0]);
+            }
         }
     }
 

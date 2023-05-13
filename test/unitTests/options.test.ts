@@ -15,6 +15,7 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
         options.commonOptions.serverPath.should.equal("");
         options.omnisharpOptions.monoPath.should.equal("");
+        options.commonOptions.defaultSolution.should.equal("");
         options.commonOptions.waitForDebugger.should.equal(false);
         options.omnisharpOptions.loggingLevel.should.equal("information");
         options.omnisharpOptions.autoStart.should.equal(true);
@@ -98,6 +99,15 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
 
         options.commonOptions.serverPath.should.equal("NewPath");
+    });
+
+    test('"omnisharp.defaultLaunchSolution" is used if set', () => {
+        const vscode = getVSCodeWithConfig();
+        updateConfig(vscode, 'omnisharp', 'defaultLaunchSolution', 'some_valid_solution.sln');
+
+        const options = Options.Read(vscode);
+
+        options.commonOptions.defaultSolution.should.equal("some_valid_solution.sln");
     });
 
     test('"omnisharp.testRunSettings" is used if set', () => {
