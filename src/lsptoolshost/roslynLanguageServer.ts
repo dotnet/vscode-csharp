@@ -50,12 +50,14 @@ import { ISolutionSnapshotProvider } from './services/ISolutionSnapshotProvider'
 import { Options } from '../shared/options';
 import { ServerStateChange } from './ServerStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
+import CSharpIntelliCodeExports from '../CSharpIntelliCodeExports';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
 const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
+const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
 
 export class RoslynLanguageServer {
 
@@ -337,10 +339,20 @@ export class RoslynLanguageServer {
         // in our activation because C# Dev Kit depends on C# activation completing.
         const csharpDevkitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
         if (csharpDevkitExtension) {
-            _channel.appendLine("Activating C# + C# Dev Kit...");
             this._wasActivatedWithCSharpDevkit = true;
             const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension, options);
             args = args.concat(csharpDevkitArgs);
+
+            // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
+            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(csharpDevkitIntelliCodeExtensionId);
+            if (csharpDevkitIntelliCodeExtension) {
+                _channel.appendLine("Activating C# + C# Dev Kit + C# IntelliCode...");
+                const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension);
+                args = args.concat(csharpDevkitIntelliCodeArgs);
+            } else {
+                _channel.appendLine("Activating C# + C# Dev Kit...");
+            }
+            
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             _channel.appendLine("Activating C# standalone...");
@@ -426,10 +438,9 @@ export class RoslynLanguageServer {
     }
 
     private async getCSharpDevkitExportArgs(csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>, options: Options) : Promise<string[]> {
-        const exports = await csharpDevkitExtension.activate();
+        const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
 
         const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
-        const starredCompletionComponentPath = this.getStarredCompletionComponentPath(exports);
         const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
         
         // required for the telemetry service to work
@@ -437,13 +448,17 @@ export class RoslynLanguageServer {
 
         let csharpDevkitArgs: string[] = [ ];
         csharpDevkitArgs.push("--brokeredServicePipeName", brokeredServicePipeName);
-        csharpDevkitArgs.push("--starredCompletionComponentPath", starredCompletionComponentPath);
         csharpDevkitArgs.push("--extensions", extensionPaths.join(" "));
         return csharpDevkitArgs;
     }
 
-    private getStarredCompletionComponentPath(csharpDevkitExports: CSharpDevKitExports): string {
-        return csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"];
+    private async getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>) : Promise<string[]> {
+        const exports = await csharpDevkitIntelliCodeExtension.activate();
+
+        const starredCompletionComponentPath = exports.components["@vsintellicode/starred-suggestions-csharp"];
+
+        let csharpIntelliCodeArgs: string[] = [ "--starredCompletionComponentPath", starredCompletionComponentPath ];
+        return csharpIntelliCodeArgs;
     }
 
     private getLanguageServicesDevKitComponentPath(csharpDevKitExports: CSharpDevKitExports) : string {
