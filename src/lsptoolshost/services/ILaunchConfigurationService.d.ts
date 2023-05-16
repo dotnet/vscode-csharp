@@ -44,10 +44,21 @@ export interface ExeLaunchTarget extends LaunchTarget
 {
     executable: string;
     directory: string;
-    arguments: string | undefined;
+    commandLineArguments: string | undefined;
     environmentVariables: Map<string, string>[];
     isConsoleApp: boolean;
     isUsingSSL: boolean;
+}
+
+export module ExeLaunchTarget {
+    export function is(value: LaunchTarget): value is ExeLaunchTarget {
+        return 'executable' in value &&
+            'directory' in value &&
+            'commandLineArguments' in value &&
+            'environmentVariables' in value &&
+            'isConsoleApp' in value &&
+            'isUsingSSL' in value;
+    }
 }
 
 export interface BrowserLaunchTarget extends LaunchTarget
@@ -55,7 +66,19 @@ export interface BrowserLaunchTarget extends LaunchTarget
     url: string;
 }
 
+export module BrowserLaunchTarget {
+    export function is(value: LaunchTarget): value is BrowserLaunchTarget {
+        return 'url' in value;
+    }
+}
+
 export interface CustomLaunchTarget extends LaunchTarget
 {
     options: Map<string, string>[];
+}
+
+export module CustomLaunchTarget {
+    export function is(value: LaunchTarget): value is CustomLaunchTarget {
+        return 'options' in value;
+    }
 }
