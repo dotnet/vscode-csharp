@@ -315,7 +315,8 @@
             "VS Code's integrated terminal.",
             "External terminal that can be configured via user settings."
           ],
-          "description": "When launching console projects, indicates which console the target program should be launched into.",
+          "markdownDescription": "When launching console projects, indicates which console the target program should be launched into.",
+          "settingsDescription": "**Note:** _This option is only used for the 'dotnet' debug configuration type_.\n\nWhen launching console projects, indicates which console the target program should be launched into.",
           "default": "internalConsole"
         },
         "externalConsole": {

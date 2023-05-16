@@ -15,6 +15,8 @@ import * as vscode from 'vscode';
 import { tolerantParse } from '../json';
 import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider';
 
+type DebugConsoleOptions = {'console' : string};
+
 export class AssetGenerator {
     public vscodeFolder: string;
     public tasksJsonPath: string;
@@ -140,10 +142,10 @@ export class AssetGenerator {
         return path.join('${workspaceFolder}', path.dirname(relativeProjectPath));
     }
 
-    public createLaunchJsonConfigurationsArray(programLaunchType: ProgramLaunchType): vscode.DebugConfiguration[] {
+    public createLaunchJsonConfigurationsArray(programLaunchType: ProgramLaunchType, forDotnetConfiguration: boolean): vscode.DebugConfiguration[] {
         const launchJson: string = this.createLaunchJsonConfigurations(programLaunchType);
 
-        const configurationArray: vscode.DebugConfiguration[] = JSON.parse(launchJson);
+        let configurationArray: vscode.DebugConfiguration[] = JSON.parse(launchJson);
 
         // Remove comments
         configurationArray.forEach((configuration) => {
@@ -152,9 +154,28 @@ export class AssetGenerator {
                     if (key.startsWith("OS-COMMENT")) {
                         delete configuration[key];
                     }
+
+                    if (forDotnetConfiguration && key === "stopAtEntry") {
+                        delete configuration[key];
+                    }
+
+                    // Override console option with user option.
+                    if (forDotnetConfiguration && programLaunchType === ProgramLaunchType.Console && key == "console") {
+                        const debugOptions = vscode.workspace.getConfiguration('csharp').get<DebugConsoleOptions>('debug');
+                        if (debugOptions) {
+                            const consoleOption: string | undefined = debugOptions.console;
+                            if (consoleOption) {
+                                configuration.console = consoleOption;
+                            }
+                        }
+                    }
                 }
             }
         });
+
+        if (forDotnetConfiguration) {
+            configurationArray = configurationArray.filter(configuration => configuration.request == "launch");
+        }
 
         return configurationArray;
     }
