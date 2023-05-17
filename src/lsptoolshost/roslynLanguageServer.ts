@@ -28,7 +28,6 @@ import {
     TextDocumentIdentifier,
     DocumentDiagnosticRequest,
     DocumentDiagnosticReport,
-    integer,
     CancellationToken,
     CodeAction,
     CodeActionParams,
@@ -46,7 +45,7 @@ import Disposable from '../Disposable';
 import { RegisterSolutionSnapshotRequest, OnAutoInsertRequest, RoslynProtocol, ProjectInitializationCompleteNotification } from './roslynProtocol';
 import { OpenSolutionParams } from './OpenSolutionParams';
 import { CSharpDevKitExports } from '../CSharpDevKitExports';
-import { ISolutionSnapshotProvider } from './services/ISolutionSnapshotProvider';
+import { ISolutionSnapshotProvider, SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
 import { Options } from '../shared/options';
 import { ServerStateChange } from './ServerStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
@@ -279,11 +278,11 @@ export class RoslynLanguageServer {
         return response;
     }
 
-    public async registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<integer> {
+    public async registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<SolutionSnapshotId> {
         let response = await _languageServer.sendRequest0(RegisterSolutionSnapshotRequest.type, token);
         if (response)
         {
-            return response.snapshot_id;
+            return new SolutionSnapshotId(response.id);
         }
 
         throw new Error('Unable to retrieve current solution.');
@@ -442,7 +441,7 @@ export class RoslynLanguageServer {
 
         const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
         const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
-        
+
         // required for the telemetry service to work
         await exports.writeCommonPropsAsync(this.context);
 
@@ -466,7 +465,7 @@ export class RoslynLanguageServer {
             csharpDevKitExports.components["@microsoft/visualstudio-languageservices-devkit"],
             "Microsoft.VisualStudio.LanguageServices.DevKit.dll");
     }
-    
+
     private GetTraceLevel(logLevel: string): Trace {
         switch (logLevel) {
             case "Trace":
@@ -494,7 +493,7 @@ export class RoslynLanguageServer {
  * Brokered service implementation.
  */
 export class SolutionSnapshotProvider implements ISolutionSnapshotProvider {
-    public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<integer> {
+    public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {
         return _languageServer.registerSolutionSnapshot(token);
     }
 }

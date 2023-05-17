@@ -12,9 +12,9 @@ export default class Descriptors {
      */
     static readonly solutionSnapshotProviderRegistration: ServiceRpcDescriptor = Object.freeze(
         new ServiceJsonRpcDescriptor(
-            ServiceMoniker.create('Microsoft.VisualStudio.LanguageServer.SolutionSnapshotProvider', '0.1'),
-            Formatters.Utf8,
-            MessageDelimiters.HttpLikeHeaders,
+            ServiceMoniker.create('Microsoft.CodeAnalysis.LanguageClient.SolutionSnapshotProvider', '0.1'),
+            Formatters.MessagePack,
+            MessageDelimiters.BigEndianInt32LengthHeader,
         ),
     );
 

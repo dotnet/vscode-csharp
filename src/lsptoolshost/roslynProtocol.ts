@@ -25,7 +25,7 @@ export declare namespace RoslynProtocol {
          * The absolute path to the solution file.
          */
         solutionPath: string | null;
-        
+
         /**
          * The absolute path to the output assembly dll.
          */
@@ -63,7 +63,7 @@ export declare namespace RoslynProtocol {
         /**
          * Represents a solution snapshot.
         */
-        snapshot_id: integer;
+        id: integer;
     }
 }
 
