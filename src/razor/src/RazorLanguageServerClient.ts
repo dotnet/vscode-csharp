@@ -241,6 +241,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         args.push('true');
         args.push('--SupportsDelegatedCodeActions');
         args.push('true');
+        args.push('--UpdateBuffersForClosedDocuments');
+        args.push('true');
 
         if (options.debug) {
             this.telemetryReporter.reportDebugLanguageServer();

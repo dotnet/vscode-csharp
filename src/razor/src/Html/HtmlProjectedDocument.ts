@@ -46,12 +46,6 @@ export class HtmlProjectedDocument implements IProjectedDocument {
         return this.content;
     }
 
-    public reset() {
-        this.projectedDocumentVersion++;
-        this.hostDocumentVersion = null;
-        this.setContent('');
-    }
-
     private getEditedContent(newText: string, start: number, end: number, content: string) {
         const before = content.substr(0, start);
         const after = content.substr(end);
