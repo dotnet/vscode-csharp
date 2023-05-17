@@ -10,6 +10,11 @@ export class UriConverter {
             // Fix issue in System.Uri where file:///c%3A/file.txt is not a valid Windows path
             return uri.toString(true);
         } else {
+            // VSCode specifically handles file schemes different than others:
+            // https://github.com/microsoft/vscode-uri/blob/b54811339bd748982d0e2697fa857a3fecc72522/src/uri.ts#L606
+            // Since it's desirable that  URIs follow the same scheme across different OSs regardless of
+            // path separator, cause generation to happen as if it was a file scheme and then replace
+            // with the actual scheme. This behavior follows the expectations in RazorDynamicFileInfoProvider.cs
             let fileSchemUri = uri.with({scheme: 'file'});
             let uriString = fileSchemUri.toString(true);
             return uri.scheme + uriString.slice("file".length);
