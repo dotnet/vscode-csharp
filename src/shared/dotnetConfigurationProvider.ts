@@ -29,7 +29,7 @@ class UnavaliableLaunchServiceError extends Error {}
 
 const workspaceFolderToken: string = "${workspaceFolder}";
 /**
- * Replaces '${workspaceFolder}' with the current folder while keeping path seperators consistant.
+ * Replaces '${workspaceFolder}' with the current folder while keeping path separators consistent.
  *
  * @param projectPath The expected path to the .csproj
  * @param folderPath The current workspace folder
