@@ -55,6 +55,12 @@ export class CodeActionsHandler {
                 return this.emptyCodeActionResponse;
             }
 
+            if (!this.documentManager.roslynActivated) {
+                // Unlike most other handlers, code actions works by directly sending an LSP request to Roslyn, so if Roslyn isn't
+                // activated we need to catch that here.
+                return this.emptyCodeActionResponse;
+            }
+
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
             const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.csharpDocument, delegatedCodeActionParams.hostDocumentVersion, token);
             if (!synchronized) {
