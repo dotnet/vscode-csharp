@@ -465,9 +465,14 @@ export class RoslynLanguageServer {
         // required for the telemetry service to work
         await exports.writeCommonPropsAsync(this.context);
 
-        let csharpDevkitArgs: string[] = [ ];
-        csharpDevkitArgs.push("--extensions", extensionPaths.join(" "));
-        return csharpDevkitArgs;
+        let args: string[] = [];
+
+        for (const extensionPath of extensionPaths) {
+            args.push("--extensions"); // TODO: switch to --extension naming
+            args.push(extensionPath);
+        }
+
+        return args;
     }
 
     private async getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>) : Promise<string[]> {
