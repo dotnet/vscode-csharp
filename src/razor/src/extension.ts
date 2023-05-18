@@ -39,7 +39,6 @@ import { RazorLanguageServiceClient } from './RazorLanguageServiceClient';
 import { RazorLogger } from './RazorLogger';
 import { RazorReferenceProvider } from './Reference/RazorReferenceProvider';
 import { RazorRenameProvider } from './Rename/RazorRenameProvider';
-import { RazorDocumentSemanticTokensProvider } from './Semantic/RazorDocumentSemanticTokensProvider';
 import { SemanticTokensRangeHandler } from './Semantic/SemanticTokensRangeHandler';
 import { RazorSignatureHelpProvider } from './SignatureHelp/RazorSignatureHelpProvider';
 import { TelemetryReporter } from './TelemetryReporter';
@@ -218,16 +217,6 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         context.subscriptions.push(vscodeType.debug.registerDebugConfigurationProvider('blazorwasm', provider));
 
         languageServerClient.onStarted(async () => {
-            const legend = languageServerClient.initializeResult?.capabilities.semanticTokensProvider?.legend;
-            const semanticTokenProvider = new RazorDocumentSemanticTokensProvider(
-                documentSynchronizer,
-                documentManager,
-                languageServiceClient,
-                logger);
-            if (legend) {
-                localRegistrations.push(vscodeType.languages.registerDocumentRangeSemanticTokensProvider(RazorLanguage.id, semanticTokenProvider, legend));
-            }
-
             await documentManager.initialize();
         });
 
