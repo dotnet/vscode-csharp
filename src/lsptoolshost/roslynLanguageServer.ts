@@ -318,7 +318,7 @@ export class RoslynLanguageServer {
                 this.context.subscriptions.push(exports.serverProcessLoaded(this.sendOrSubscribeForServiceBrokerConnection));
             }
         }
-    } 
+    }
 
     public getServerCapabilities() : any {
         if (!this._languageClient) {
@@ -359,8 +359,6 @@ export class RoslynLanguageServer {
         const csharpDevkitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
         if (csharpDevkitExtension) {
             this._wasActivatedWithCSharpDevkit = true;
-            const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension, options);
-            args = args.concat(csharpDevkitArgs);
 
             // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
             const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(csharpDevkitIntelliCodeExtensionId);
@@ -371,7 +369,9 @@ export class RoslynLanguageServer {
             } else {
                 _channel.appendLine("Activating C# + C# Dev Kit...");
             }
-            
+
+            const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension, options);
+            args = args.concat(csharpDevkitArgs);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             _channel.appendLine("Activating C# standalone...");
@@ -471,6 +471,7 @@ export class RoslynLanguageServer {
             args.push(extensionPath);
         }
 
+        args.push("--sessionId", vscode.env.sessionId);
         return args;
     }
 
