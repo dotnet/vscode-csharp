@@ -10,8 +10,8 @@ import { IDisposable, IObserver } from "@microsoft/servicehub-framework";
 export interface ILaunchConfigurationService
 {
     subscribe(observer: IObserver<LaunchableProjectInfo[]>): Promise<IDisposable>;
-    setActiveLaunchConfiguration(projectPath: string, launchConfigurationId: string, cancellationToken: vscode.CancellationToken): Promise<boolean>;
-    queryLaunchTargets(projectPath: string, options: LaunchOptions, cancellationToken: vscode.CancellationToken): Promise<LaunchTarget[]>;
+    setActiveLaunchConfiguration(projectPath: string, launchConfigurationId: string, cancellationToken?: vscode.CancellationToken): Promise<boolean>;
+    queryLaunchTargets(projectPath: string, options: LaunchOptions, cancellationToken?: vscode.CancellationToken): Promise<LaunchTarget[]>;
 }
 
 export interface LaunchableProjectInfo
@@ -74,11 +74,24 @@ export module BrowserLaunchTarget {
 
 export interface CustomLaunchTarget extends LaunchTarget
 {
-    options: Map<string, string>[];
+    options: {"key": string, "value": string}[];
 }
 
 export module CustomLaunchTarget {
     export function is(value: LaunchTarget): value is CustomLaunchTarget {
         return 'options' in value;
+    }
+}
+
+export interface ErrorLaunchTarget extends LaunchTarget
+{
+    userMessage: string;
+    details: {"key": string, "value": string}[];
+}
+
+export module ErrorLaunchTarget {
+    export function is(value: LaunchTarget): value is ErrorLaunchTarget {
+        return 'userMessage' in value &&
+            'details' in value;
     }
 }

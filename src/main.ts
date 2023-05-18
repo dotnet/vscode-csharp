@@ -279,7 +279,11 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
             // we list the monikers of the brokered services we expect to find there.
             // This list must be a subset of the monikers previously registered with our own container
             // as defined in the getBrokeredServiceContainer function.
-            getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [Descriptors.launchConfigurationService.moniker]);
+            getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [
+                    Descriptors.launchConfigurationService.moniker,
+                    Descriptors.buildService.moniker
+                ]
+            );
 
             // Notify the vsdbg configuration provider that C# dev kit has been loaded.
             exports.serverProcessLoaded(async () => 

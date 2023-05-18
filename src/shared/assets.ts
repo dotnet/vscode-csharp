@@ -142,6 +142,15 @@ export class AssetGenerator {
         return path.join('${workspaceFolder}', path.dirname(relativeProjectPath));
     }
 
+    public static getConsoleDebugOption(): string | undefined {
+        const debugOptions = vscode.workspace.getConfiguration('csharp').get<DebugConsoleOptions>('debug');
+        if (debugOptions) {
+            return debugOptions.console;
+        }
+
+        return undefined;
+    }
+
     public createLaunchJsonConfigurationsArray(programLaunchType: ProgramLaunchType, forDotnetConfiguration: boolean): vscode.DebugConfiguration[] {
         const launchJson: string = this.createLaunchJsonConfigurations(programLaunchType);
 
@@ -161,12 +170,9 @@ export class AssetGenerator {
 
                     // Override console option with user option.
                     if (forDotnetConfiguration && programLaunchType === ProgramLaunchType.Console && key == "console") {
-                        const debugOptions = vscode.workspace.getConfiguration('csharp').get<DebugConsoleOptions>('debug');
-                        if (debugOptions) {
-                            const consoleOption: string | undefined = debugOptions.console;
-                            if (consoleOption) {
-                                configuration.console = consoleOption;
-                            }
+                        const consoleOption: string | undefined = AssetGenerator.getConsoleDebugOption();
+                        if (consoleOption) {
+                            configuration.console = consoleOption;
                         }
                     }
                 }
