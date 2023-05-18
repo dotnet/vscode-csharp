@@ -7,4 +7,5 @@ import { SerializableTextDocumentIdentifier } from '../RPC/SerializableTextDocum
 
 export interface SerializableDocumentColorParams {
     textDocument: SerializableTextDocumentIdentifier;
+    _razor_hostDocumentVersion: number;
 }

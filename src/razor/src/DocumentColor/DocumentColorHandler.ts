@@ -11,6 +11,7 @@ import { RazorLogger } from '../RazorLogger';
 import { convertRangeToSerializable } from '../RPC/SerializableRange';
 import { SerializableColorInformation } from './SerializableColorInformation';
 import { SerializableDocumentColorParams } from './SerializableDocumentColorParams';
+import { RazorDocumentSynchronizer } from '../Document/RazorDocumentSynchronizer';
 
 export class DocumentColorHandler {
     private static readonly provideHtmlDocumentColorEndpoint = 'razor/provideHtmlDocumentColor';
@@ -19,6 +20,7 @@ export class DocumentColorHandler {
 
     constructor(
         private readonly documentManager: RazorDocumentManager,
+        private readonly documentSynchronizer: RazorDocumentSynchronizer,
         private readonly serverClient: RazorLanguageServerClient,
         private readonly logger: RazorLogger) { }
 
@@ -36,6 +38,12 @@ export class DocumentColorHandler {
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
             if (razorDocument === undefined) {
                 this.logger.logWarning(`Could not find Razor document ${razorDocumentUri}; returning empty color information.`);
+                return this.emptyColorInformationResponse;
+            }
+
+            const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.htmlDocument, documentColorParams._razor_hostDocumentVersion, cancellationToken);
+            if (!synchronized) {
                 return this.emptyColorInformationResponse;
             }
 

@@ -90,6 +90,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 logger);
             const documentColorHandler = new DocumentColorHandler(
                 documentManager,
+                documentSynchronizer,
                 languageServerClient,
                 logger);
             const foldingRangeHandler = new FoldingRangeHandler(
