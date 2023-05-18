@@ -13,6 +13,7 @@ import { RazorLogger } from '../RazorLogger';
 import { LanguageKind } from '../RPC/LanguageKind';
 import { RazorCodeLens } from './RazorCodeLens';
 import { MappingHelpers } from '../Mapping/MappingHelpers';
+
 export class RazorCodeLensProvider
     extends RazorLanguageFeatureBase
     implements vscode.CodeLensProvider {
@@ -44,10 +45,17 @@ export class RazorCodeLensProvider
                 onCodeLensChangedEmitter.fire();
             }
         });
+        documentManager.onRazorInitialized(() => onCodeLensChangedEmitter.fire());
     }
 
     public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
         try {
+            // If a Razor file is open in VS Code at start up, we can be called before Razor is initialized.
+            // We don't want to answer those calls, but we'll be refreshed when everything is ready.
+            if (!this.documentManager.razorDocumentGenerationInitialized) {
+                return;
+            }
+
             const razorDocument = await this.documentManager.getDocument(document.uri);
             if (!razorDocument) {
                 return;
@@ -116,7 +124,7 @@ export class RazorCodeLensProvider
                 'vscode.executeReferenceProvider',
                 projection.uri,
                 projection.position) as vscode.Location[];
-            
+
             const remappedReferences = await MappingHelpers.remapGeneratedFileLocations(
                 references, this.serviceClient, this.logger, token);
 
