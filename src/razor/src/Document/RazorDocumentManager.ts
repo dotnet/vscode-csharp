@@ -42,6 +42,14 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     public async getDocument(uri: vscode.Uri) {
         const document = this._getDocument(uri);
 
+        // VS Code closes virtual documents after some timeout if they are not open in the IDE. Since our generated C# and Html
+        // documents are never open in the IDE, we need to ensure that VS Code considers them open so that requests against them
+        // succeed. Without this, even a simple diagnostics request will fail in Roslyn if the user just opens a .razor document
+        // and leaves it open past the timeout.
+        if (this.razorDocumentGenerationInitialized) {
+            await this.ensureProjectDocumentsOpen(document);
+        }
+
         return document;
     }
 
@@ -293,6 +301,10 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(razorUri);
         }
 
+        await this.ensureProjectDocumentsOpen(document);
+    }
+
+    private async ensureProjectDocumentsOpen(document: IRazorDocument) {
         await vscode.workspace.openTextDocument(document.csharpDocument.uri);
         await vscode.workspace.openTextDocument(document.htmlDocument.uri);
     }
