@@ -216,7 +216,7 @@ To setup a test project to verify on you can do:
 * Typing `@layout MainLayout` prompts for completion for the `layout` symbol and the `MainLayout` symbol.
 
 ##### C# Signature Help
-* Typing `@SetParameters()` prompts for signature help inside of the `()`.
+* Typing `@SetParametersAsync()` prompts for signature help inside of the `()`.
 
 ##### C# Rename
 * Renaming "someVariable" in `@{var someVariable = true;} @someVariable` results in both locations being changed.
