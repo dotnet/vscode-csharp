@@ -159,7 +159,7 @@ void Foo(){
 ```
 
 ##### C# Diagnostics
-* Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
+* Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file.
 
 ##### TagHelper Quick Info
 * Typing `<environment></environment>` then hovering the mouse over the opening tag results in a window about that TagHelper that should read something like `EnvironmentTagHelper ITagHelper implementation targeting <environment> elements that conditionally renders content based on the current value of IHostingEnvironment.EnvironmentName...`.
@@ -216,7 +216,7 @@ To setup a test project to verify on you can do:
 * Typing `@layout MainLayout` prompts for completion for the `layout` symbol and the `MainLayout` symbol.
 
 ##### C# Signature Help
-* Typing `@SetParameters()` prompts for signature help inside of the `()`.
+* Typing `@SetParametersAsync()` prompts for signature help inside of the `()`.
 
 ##### C# Rename
 * Renaming "someVariable" in `@{var someVariable = true;} @someVariable` results in both locations being changed.
