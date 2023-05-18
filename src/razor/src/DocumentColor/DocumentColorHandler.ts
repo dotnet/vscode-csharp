@@ -42,7 +42,7 @@ export class DocumentColorHandler {
             }
 
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
-            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.csharpDocument, documentColorParams._razor_hostDocumentVersion, cancellationToken);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.htmlDocument, documentColorParams._razor_hostDocumentVersion, cancellationToken);
             if (!synchronized) {
                 return this.emptyColorInformationResponse;
             }
