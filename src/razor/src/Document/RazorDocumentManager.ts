@@ -23,9 +23,10 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     private readonly razorDocuments: { [hostDocumentPath: string]: IRazorDocument } = {};
     private readonly openRazorDocuments = new Set<string>();
-    private onChangeEmitter = new vscode.EventEmitter<IRazorDocumentChangeEvent>();
+    private readonly onChangeEmitter = new vscode.EventEmitter<IRazorDocumentChangeEvent>();
+    private readonly onRazorInitializedEmitter = new vscode.EventEmitter<void>();
 
-    private razorDocumentGenerationInitialized = false;
+    public razorDocumentGenerationInitialized = false;
     private anyRazorDocumentOpen = false;
 
     constructor(
@@ -34,6 +35,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     public get onChange() { return this.onChangeEmitter.event; }
+
+    public get onRazorInitialized() { return this.onRazorInitializedEmitter.event; }
 
     public get documents() {
         return Object.values(this.razorDocuments);
@@ -170,6 +173,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             for (const document of this.documents) {
                 await this.ensureDocumentAndProjectedDocumentsOpen(document);
             }
+
+            this.onRazorInitializedEmitter.fire();
         }
     }
 
