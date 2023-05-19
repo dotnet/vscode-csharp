@@ -59,7 +59,7 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
                 await addTasksJsonIfNecessary(generator, buildOperations);
 
                 const programLaunchType = generator.computeProgramLaunchType();
-                const launchJson: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(programLaunchType);
+                const launchJson: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(programLaunchType, false);
 
                 return launchJson;
 

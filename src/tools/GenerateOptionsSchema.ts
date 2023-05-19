@@ -110,7 +110,11 @@ function createContributesSettingsForDebugOptions(path: string, options: any, ig
             (currentProperty.type == "object" && currentProperty.additionalProperties != null) || // map type
             (currentProperty.type == "array" && currentProperty.items != null) // array type
         ) {
-            outProperties[newOptionKey] = currentProperty;
+            outProperties[newOptionKey] = { ...currentProperty }; // Create a deep copy
+            if (currentProperty.settingsDescription) {
+                outProperties[newOptionKey].markdownDescription = currentProperty.settingsDescription;
+                delete outProperties[newOptionKey].settingsDescription;
+            }
         }
         // Recursively create a suboption path.
         // E.g. csharp.debug.<object>.<propertykey>....
@@ -185,8 +189,7 @@ export function GenerateOptionsSchema() {
         "env",
         "envFile",
         "targetOutputLogPath",
-        "checkForDevCert",
-        "console"
+        "checkForDevCert"
     ]);
     // Using LaunchOptions as it is a superset of AttachOptions
     createContributesSettingsForDebugOptions("csharp.debug", schemaJSON.definitions.LaunchOptions.properties, ignoreOptions, packageJSON.contributes.configuration[1].properties);

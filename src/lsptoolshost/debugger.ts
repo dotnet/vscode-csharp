@@ -12,6 +12,7 @@ import { RoslynWorkspaceDebugInformationProvider } from './RoslynWorkspaceDebugC
 import { PlatformInformation } from '../shared/platform';
 import OptionProvider from '../shared/observers/OptionProvider';
 import { ServerStateChange } from './ServerStateChange';
+import { DotnetConfigurationResolver } from '../shared/dotnetConfigurationProvider';
 
 export function registerDebugger(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer, platformInfo: PlatformInformation, optionProvider: OptionProvider, csharpOutputChannel: vscode.OutputChannel) {
     let workspaceInformationProvider: IWorkspaceDebugInformationProvider = new RoslynWorkspaceDebugInformationProvider(languageServer);
@@ -25,6 +26,7 @@ export function registerDebugger(context: vscode.ExtensionContext, languageServe
     context.subscriptions.push(disposable);
 
     // Register ConfigurationProvider
+    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('dotnet', new DotnetConfigurationResolver(workspaceInformationProvider, platformInfo)));
     context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetWorkspaceConfigurationProvider(workspaceInformationProvider, platformInfo, optionProvider, csharpOutputChannel)));
     context.subscriptions.push(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(workspaceInformationProvider, selectedIndex)));
 }

@@ -30,4 +30,16 @@ export default class Descriptors {
             protocolMajorVersion: 3
         }
     );
+
+    /**
+     * The descriptor for the Build service.
+     * Use {@link IBuildService} for the RPC interface.
+     */
+    static readonly buildService = new ServiceJsonRpcDescriptor(
+        ServiceMoniker.create('Microsoft.VisualStudio.BuildService', '0.1'),
+        Formatters.MessagePack, MessageDelimiters.BigEndianInt32LengthHeader,
+        {
+            protocolMajorVersion: 3
+        }
+    );
 }

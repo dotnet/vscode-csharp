@@ -160,7 +160,8 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
         for (let key of keys) {
             // Skip since option is set in the launch.json configuration
-            if (debugConfiguration.hasOwnProperty(key)) {
+            // Skip 'console' option since this should be set when we know this is a console project.
+            if (debugConfiguration.hasOwnProperty(key) || key === "console") {
                 continue;
             }
 
