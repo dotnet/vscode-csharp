@@ -93,7 +93,7 @@ export class MappingHelpers {
 
         logger.logVerbose(
             `Re-mapping location ${location.range} in ${location.uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`);
-    
+
         const newLocation = new vscode.Location(documentUri, remappedResponse.ranges[0]);
         return newLocation;
     }
@@ -103,7 +103,7 @@ export class MappingHelpers {
         serviceClient: RazorLanguageServiceClient,
         logger: RazorLogger,
         token: vscode.CancellationToken) {
-        
+
         const result: vscode.Location[] = [];
         for (const location of locations) {
             const remappedLocation = await this.remapGeneratedFileLocation(location, serviceClient, logger, token);
