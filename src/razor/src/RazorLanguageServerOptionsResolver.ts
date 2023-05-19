@@ -19,12 +19,14 @@ export function resolveRazorLanguageServerOptions(
     const languageServerExecutablePath = findLanguageServerExecutable(languageServerDir);
     const serverConfig = vscodeApi.workspace.getConfiguration('razor.languageServer');
     const debugLanguageServer = serverConfig.get<boolean>('debug');
+    const usingOmniSharp = vscodeApi.workspace.getConfiguration().get<Boolean>('dotnet.server.useOmnisharp');
 
     return {
         serverPath: languageServerExecutablePath,
         debug: debugLanguageServer,
         trace,
         outputChannel: logger.outputChannel,
+        usingOmniSharp
     } as RazorLanguageServerOptions;
 }
 
