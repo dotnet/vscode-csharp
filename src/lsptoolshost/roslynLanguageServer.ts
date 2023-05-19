@@ -524,6 +524,9 @@ export class RoslynLanguageServer {
 
         let args: string[] = [];
 
+        args.push("--sharedDependencies");
+        args.push(exports.components['@microsoft/visualstudio-server-shared']);
+
         for (const extensionPath of extensionPaths) {
             args.push("--extension");
             args.push(extensionPath);
