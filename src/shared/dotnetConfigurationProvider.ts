@@ -117,13 +117,12 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                 const noDebug: boolean = debugConfiguration.noDebug ?? false;
                 const preferSSL: boolean = !this.platformInformation.isLinux() && !vscode.env.remoteName && vscode.env.uiKind != vscode.UIKind.Web;
                 const launchTargets: LaunchTarget[] = await launchConfigurationServiceProxy.queryLaunchTargets(projectPath, {noDebug: noDebug, preferSSL: preferSSL}, token);
-                for (let launchTarget of launchTargets) {
-                    const convertedLaunchTarget: vscode.DebugConfiguration | undefined = LaunchTargetToDebugConfigurationConverter.convert(debugConfiguration, launchTarget);
-                    if (convertedLaunchTarget) {
-                        debugConfigurations.push(convertedLaunchTarget);
-                    } else {
-                        throw new InternalServiceError("Unable to convert launch target to a vscode debug configuration.");
-                    }
+                const convertedLaunchTargets: vscode.DebugConfiguration[] | undefined = LaunchTargetToDebugConfigurationConverter.convert(debugConfiguration, launchTargets);
+
+                if (convertedLaunchTargets) {
+                    debugConfigurations = debugConfigurations.concat(convertedLaunchTargets);
+                } else {
+                    throw new InternalServiceError("Unable to convert launch target to a vscode debug configuration.");
                 }
 
                 if (debugConfigurations.length == 1) {
@@ -209,24 +208,39 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
 }
 
 class LaunchTargetToDebugConfigurationConverter {
-    static convert(debugConfiguration: vscode.DebugConfiguration, launchTarget: LaunchTarget): vscode.DebugConfiguration | undefined {
-        if (launchTarget.debugEngines.length > 1) {
-            throw new InternalServiceError(`Multiple debug engines are currently unsupported: '${launchTarget.debugEngines.join(",")}'`);
+    static convert(debugConfiguration: vscode.DebugConfiguration, launchTargets: LaunchTarget[]): vscode.DebugConfiguration[] | undefined {
+        let debugConfigurations: vscode.DebugConfiguration[] = [];
+
+        for (let launchTarget of launchTargets)
+        {
+            if (launchTarget.debugEngines.length > 1) {
+                throw new InternalServiceError(`Multiple debug engines are currently unsupported: '${launchTarget.debugEngines.join(",")}'`);
+            }
+
+            if (ExeLaunchTarget.is(launchTarget)) {
+                debugConfigurations.push(LaunchTargetToDebugConfigurationConverter.convertExeLaunchTarget(debugConfiguration, launchTarget));
+            } else if (BrowserLaunchTarget.is(launchTarget)) {
+                const lastConfig: vscode.DebugConfiguration | undefined = debugConfigurations.pop();
+                if (lastConfig) {
+                    const browserLaunchTarget: any = LaunchTargetToDebugConfigurationConverter.convertBrowserLaunchTarget(launchTarget);
+                    debugConfigurations.push({
+                        ...lastConfig,
+                        ...browserLaunchTarget
+                    });
+                } else {
+                    throw new InternalServiceError(`Expected an ExeLaunchTarget before seeing a BrowserLaunchTarget.`);
+                }
+            } else if (CustomLaunchTarget.is(launchTarget)) {
+                throw new InternalServiceError(`CustomLaunchTarget is not implemented.\nDebugConfiguration: ${debugConfiguration}\nLaunchTarget: ${launchTarget}`);
+            } else if (ErrorLaunchTarget.is(launchTarget)) {
+                // TODO: Handle launchTarget.details
+                throw new LaunchServiceError(launchTarget.userMessage);
+            } else {
+                throw new InternalServiceError(`Unknown LaunchTarget type: '${launchTarget.constructor.name}'`);
+            }
         }
 
-        if (ExeLaunchTarget.is(launchTarget)) {
-            return LaunchTargetToDebugConfigurationConverter.convertExeLaunchTarget(debugConfiguration, launchTarget);
-        } else if (BrowserLaunchTarget.is(launchTarget)) {
-            LaunchTargetToDebugConfigurationConverter.convertBrowserLaunchTarget(debugConfiguration, launchTarget);
-            throw new InternalServiceError(`BrowserLaunchTarget is not implemented.\nDebugConfiguration: ${debugConfiguration}\nLaunchTarget: ${launchTarget}`);
-        } else if (CustomLaunchTarget.is(launchTarget)) {
-            throw new InternalServiceError(`CustomLaunchTarget is not implemented.\nDebugConfiguration: ${debugConfiguration}\nLaunchTarget: ${launchTarget}`);
-        } else if (ErrorLaunchTarget.is(launchTarget)) {
-            // TODO: Handle launchTarget.details
-            throw new LaunchServiceError(launchTarget.userMessage);
-        }
-
-        return undefined;
+        return debugConfigurations;
     }
 
     private static convertExeLaunchTarget(debugConfiguration: vscode.DebugConfiguration, exeLaunchTarget: ExeLaunchTarget): vscode.DebugConfiguration {
@@ -243,11 +257,13 @@ class LaunchTargetToDebugConfigurationConverter {
         };
     }
 
-    private static convertBrowserLaunchTarget(debugConfiguration: vscode.DebugConfiguration, browserLaunchTarget: BrowserLaunchTarget): vscode.DebugConfiguration {
+    private static convertBrowserLaunchTarget(browserLaunchTarget: BrowserLaunchTarget): any {
         return {
-            "name": debugConfiguration.name,
-            "type": browserLaunchTarget.debugEngines[0],
-            "request": debugConfiguration.request
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+https?://\\S+",
+                "uriFormat" : browserLaunchTarget.url,
+            }
         };
     }
 }
