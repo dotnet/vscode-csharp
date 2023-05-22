@@ -47,13 +47,6 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         this.setContent(content);
     }
 
-    public reset() {
-        this.provisionalEditAt = undefined;
-        this.preProvisionalContent = undefined;
-        this.hostDocumentVersion = null;
-        this.setContent('');
-    }
-
     public getContent() {
         return this.content;
     }

@@ -7,19 +7,20 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IEventEmitterFactory } from './IEventEmitterFactory';
 import { Trace } from './Trace';
-import * as vscode from './vscodeAdapter';
+import * as vscodeAdapter from './vscodeAdapter';
+import * as vscode from 'vscode';
 
-export class RazorLogger implements vscode.Disposable {
+export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';
     public verboseEnabled!: boolean;
     public messageEnabled!: boolean;
-    public readonly outputChannel: vscode.OutputChannel;
+    public readonly outputChannel: vscodeAdapter.OutputChannel;
 
-    private readonly onLogEmitter: vscode.EventEmitter<string>;
-    private readonly onTraceLevelChangeEmitter: vscode.EventEmitter<Trace>;
+    private readonly onLogEmitter: vscodeAdapter.EventEmitter<string>;
+    private readonly onTraceLevelChangeEmitter: vscodeAdapter.EventEmitter<Trace>;
 
     constructor(
-        private readonly vscodeApi: vscode.api,
+        private readonly vscodeApi: vscodeAdapter.api,
         eventEmitterFactory: IEventEmitterFactory,
         public trace: Trace) {
         this.processTraceLevel();
@@ -29,6 +30,7 @@ export class RazorLogger implements vscode.Disposable {
         this.outputChannel = this.vscodeApi.window.createOutputChannel(RazorLogger.logName);
 
         this.logRazorInformation();
+        this.setupToStringOverrides();
     }
 
     public setTraceLevel(trace: Trace) {
@@ -119,6 +121,16 @@ ${error.stack}`;
         this.log('');
     }
 
+    private setupToStringOverrides() {
+        vscode.Range.prototype.toString = function () {
+            return `[${this.start}, ${this.end}]`;
+        };
+
+        vscode.Position.prototype.toString = function () {
+            return `${this.line}:${this.character}`;
+        };
+    }
+
     private processTraceLevel() {
         this.verboseEnabled = this.trace >= Trace.Verbose;
         this.messageEnabled = this.trace >= Trace.Messages;
@@ -145,3 +157,4 @@ function findInDirectoryOrAncestor(dir: string, filename: string) {
         dir = parentDir;
     }
 }
+

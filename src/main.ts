@@ -267,8 +267,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     }
 }
 
-// This method will try to get the CSharpDevKitExports through a thenable promise,
-// awaiting `activate` will cause this extension's activation to hang
+/** 
+ * This method will try to get the CSharpDevKitExports through a thenable promise,
+ * awaiting `activate` will cause this extension's activation to hang.
+ */
 function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObserver): void {
     const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
     ext?.activate().then(async (exports: CSharpDevKitExports) => {
@@ -277,7 +279,14 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
             // we list the monikers of the brokered services we expect to find there.
             // This list must be a subset of the monikers previously registered with our own container
             // as defined in the getBrokeredServiceContainer function.
-            getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [Descriptors.launchConfigurationService.moniker]);
+            getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [
+                    Descriptors.dotnetDebugConfigurationService.moniker
+                ]
+            );
+
+            // Notify the vsdbg configuration provider that C# dev kit has been loaded.
+            exports.serverProcessLoaded(async () => 
+                coreclrdebug.initializeBrokeredServicePipeName(await exports.getBrokeredServiceServerPipeName()));
         } else {
             csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevkitExtensionId}' activated but did not return expected Exports.`);
         }

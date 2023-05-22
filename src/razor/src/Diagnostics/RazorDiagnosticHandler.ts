@@ -31,12 +31,16 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
     }
 
     public async register() {
-        await this.serverClient.onRequestWithParams<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(
+        await this.serverClient.onRequestWithParams<DocumentDiagnosticParams, DocumentDiagnosticReport | undefined, any>(
             this.diagnosticRequestType,
             async (request: DocumentDiagnosticParams, token: vscode.CancellationToken) => this.getDiagnostic(request, token));
     }
 
-    private async getDiagnostic(request: DocumentDiagnosticParams, cancellationToken: vscode.CancellationToken): Promise<DocumentDiagnosticReport> {
+    private async getDiagnostic(request: DocumentDiagnosticParams, cancellationToken: vscode.CancellationToken): Promise<DocumentDiagnosticReport | undefined> {
+        if (!this.documentManager.roslynActivated) {
+            return undefined;
+        }
+
         const razorDocumentUri = vscode.Uri.parse(request.textDocument.uri, true);
         const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
         const virtualCSharpUri = razorDocument.csharpDocument.uri;

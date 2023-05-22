@@ -28,7 +28,6 @@ import {
     TextDocumentIdentifier,
     DocumentDiagnosticRequest,
     DocumentDiagnosticReport,
-    integer,
     CancellationToken,
     CodeAction,
     CodeActionParams,
@@ -46,16 +45,18 @@ import Disposable from '../Disposable';
 import { RegisterSolutionSnapshotRequest, OnAutoInsertRequest, RoslynProtocol, ProjectInitializationCompleteNotification } from './roslynProtocol';
 import { OpenSolutionParams } from './OpenSolutionParams';
 import { CSharpDevKitExports } from '../CSharpDevKitExports';
-import { ISolutionSnapshotProvider } from './services/ISolutionSnapshotProvider';
+import { ISolutionSnapshotProvider, SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
 import { Options } from '../shared/options';
 import { ServerStateChange } from './ServerStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
+import CSharpIntelliCodeExports from '../CSharpIntelliCodeExports';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
 const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
+const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
 
 export class RoslynLanguageServer {
 
@@ -206,6 +207,7 @@ export class RoslynLanguageServer {
             if (state.newState === State.Running) {
                 await this._languageClient!.setTrace(languageClientTraceLevel);
                 await this.sendOpenSolutionNotification();
+                await this.sendOrSubscribeForServiceBrokerConnection();
                 this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.Started);
             }
         });
@@ -282,11 +284,11 @@ export class RoslynLanguageServer {
         return response;
     }
 
-    public async registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<integer> {
+    public async registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<SolutionSnapshotId> {
         let response = await _languageServer.sendRequest0(RegisterSolutionSnapshotRequest.type, token);
         if (response)
         {
-            return response.snapshot_id;
+            return new SolutionSnapshotId(response.id);
         }
 
         throw new Error('Unable to retrieve current solution.');
@@ -301,6 +303,25 @@ export class RoslynLanguageServer {
         if (this._solutionFile !== undefined && this._languageClient !== undefined && this._languageClient.isRunning()) {
             let protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
             await this._languageClient.sendNotification("solution/open", new OpenSolutionParams(protocolUri));
+        }
+    }
+
+    private async sendOrSubscribeForServiceBrokerConnection() {
+        const csharpDevKitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
+        if (csharpDevKitExtension) {
+            const exports = await csharpDevKitExtension.activate();
+
+            // If the server process has already loaded, we'll get the pipe name and send it over to our process; otherwise we'll wait until the Dev Kit server
+            // is launched and then send the pipe name over. This avoids us calling getBrokeredServiceServerPipeName() which will launch the server
+            // if it's not already running. The rationale here is if Dev Kit is installed, we defer to it for the project system loading; if it's not loaded,
+            // then we have no projects, and so this extension won't have anything to do.
+            if (exports.hasServerProcessLoaded()) {
+                const pipeName = await exports.getBrokeredServiceServerPipeName();
+                this._languageClient?.sendNotification("serviceBroker/connect", { pipeName: pipeName });
+            } else {
+                // We'll subscribe if the process later launches, and call this function again to send the pipe name.
+                this.context.subscriptions.push(exports.serverProcessLoaded(this.sendOrSubscribeForServiceBrokerConnection));
+            }
         }
     }
 
@@ -342,8 +363,18 @@ export class RoslynLanguageServer {
         // in our activation because C# Dev Kit depends on C# activation completing.
         const csharpDevkitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
         if (csharpDevkitExtension) {
-            _channel.appendLine("Activating C# + C# Dev Kit...");
             this._wasActivatedWithCSharpDevkit = true;
+
+            // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
+            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(csharpDevkitIntelliCodeExtensionId);
+            if (csharpDevkitIntelliCodeExtension) {
+                _channel.appendLine("Activating C# + C# Dev Kit + C# IntelliCode...");
+                const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension);
+                args = args.concat(csharpDevkitIntelliCodeArgs);
+            } else {
+                _channel.appendLine("Activating C# + C# Dev Kit...");
+            }
+
             const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension, options);
             args = args.concat(csharpDevkitArgs);
         } else {
@@ -431,24 +462,31 @@ export class RoslynLanguageServer {
     }
 
     private async getCSharpDevkitExportArgs(csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>, options: Options) : Promise<string[]> {
-        const exports = await csharpDevkitExtension.activate();
+        const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
 
-        const brokeredServicePipeName = await exports.getBrokeredServiceServerPipeName();
-        const starredCompletionComponentPath = this.getStarredCompletionComponentPath(exports);
         const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
-        
+
         // required for the telemetry service to work
         await exports.writeCommonPropsAsync(this.context);
 
-        let csharpDevkitArgs: string[] = [ ];
-        csharpDevkitArgs.push("--brokeredServicePipeName", brokeredServicePipeName);
-        csharpDevkitArgs.push("--starredCompletionComponentPath", starredCompletionComponentPath);
-        csharpDevkitArgs.push("--extensions", extensionPaths.join(" "));
-        return csharpDevkitArgs;
+        let args: string[] = [];
+
+        for (const extensionPath of extensionPaths) {
+            args.push("--extensions"); // TODO: switch to --extension naming
+            args.push(extensionPath);
+        }
+
+        args.push("--sessionId", vscode.env.sessionId);
+        return args;
     }
 
-    private getStarredCompletionComponentPath(csharpDevkitExports: CSharpDevKitExports): string {
-        return csharpDevkitExports.components["@vsintellicode/starred-suggestions-csharp"];
+    private async getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>) : Promise<string[]> {
+        const exports = await csharpDevkitIntelliCodeExtension.activate();
+
+        const starredCompletionComponentPath = exports.components["@vsintellicode/starred-suggestions-csharp"];
+
+        let csharpIntelliCodeArgs: string[] = [ "--starredCompletionComponentPath", starredCompletionComponentPath ];
+        return csharpIntelliCodeArgs;
     }
 
     private getLanguageServicesDevKitComponentPath(csharpDevKitExports: CSharpDevKitExports) : string {
@@ -456,7 +494,7 @@ export class RoslynLanguageServer {
             csharpDevKitExports.components["@microsoft/visualstudio-languageservices-devkit"],
             "Microsoft.VisualStudio.LanguageServices.DevKit.dll");
     }
-    
+
     private GetTraceLevel(logLevel: string): Trace {
         switch (logLevel) {
             case "Trace":
@@ -484,7 +522,7 @@ export class RoslynLanguageServer {
  * Brokered service implementation.
  */
 export class SolutionSnapshotProvider implements ISolutionSnapshotProvider {
-    public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<integer> {
+    public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {
         return _languageServer.registerSolutionSnapshot(token);
     }
 }

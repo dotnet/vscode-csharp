@@ -5,6 +5,7 @@
 
 import * as vscode from 'vscode';
 import { ParsedEnvironmentFile } from '../coreclr-debug/ParsedEnvironmentFile';
+import { getBrokeredServicePipeName } from '../coreclr-debug/activate';
 
 import { MessageItem } from '../vscodeAdapter';
 import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/DotnetDevCertsHttps';
@@ -21,7 +22,6 @@ import OptionProvider from './observers/OptionProvider';
  * 3. Handle registering developer certs for web development.
  */
 export class BaseVsDbgConfigurationProvider implements vscode.DebugConfigurationProvider {
-
     public constructor(protected platformInformation: PlatformInformation, private optionProvider: OptionProvider, private csharpOutputChannel: vscode.OutputChannel) { }
 
     //#region DebugConfigurationProvider
@@ -47,6 +47,11 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         if (!debugConfiguration.type) {
             // If the config doesn't look functional force VSCode to open a configuration file https://github.com/Microsoft/vscode/issues/54213
             return null;
+        }
+
+        let brokeredServicePipeName = getBrokeredServicePipeName();
+        if (brokeredServicePipeName !== undefined) {
+            debugConfiguration.brokeredServicePipeName = brokeredServicePipeName;
         }
 
         if (debugConfiguration.request === "launch") {
@@ -155,7 +160,8 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
         for (let key of keys) {
             // Skip since option is set in the launch.json configuration
-            if (debugConfiguration.hasOwnProperty(key)) {
+            // Skip 'console' option since this should be set when we know this is a console project.
+            if (debugConfiguration.hasOwnProperty(key) || key === "console") {
                 continue;
             }
 

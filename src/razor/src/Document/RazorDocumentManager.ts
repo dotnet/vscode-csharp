@@ -4,20 +4,12 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as vscode from 'vscode';
-import {
-    DidChangeTextDocumentParams,
-    Position,
-    Range,
-    TextDocumentContentChangeEvent,
-    VersionedTextDocumentIdentifier
-} from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
 import { CSharpProjectedDocument } from '../CSharp/CSharpProjectedDocument';
 import { HtmlProjectedDocument } from '../Html/HtmlProjectedDocument';
 import { RazorLanguage } from '../RazorLanguage';
 import { RazorLanguageServerClient } from '../RazorLanguageServerClient';
 import { RazorLogger } from '../RazorLogger';
-import { ServerTextSpan } from '../RPC/ServerTextSpan';
 import { UpdateBufferRequest } from '../RPC/UpdateBufferRequest';
 import { getUriPath } from '../UriPaths';
 import { IRazorDocument } from './IRazorDocument';
@@ -25,17 +17,16 @@ import { IRazorDocumentChangeEvent } from './IRazorDocumentChangeEvent';
 import { IRazorDocumentManager } from './IRazorDocumentManager';
 import { RazorDocumentChangeKind } from './RazorDocumentChangeKind';
 import { createDocument } from './RazorDocumentFactory';
-import { UriConverter } from '../../../lsptoolshost/uriConverter';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
 
     private readonly razorDocuments: { [hostDocumentPath: string]: IRazorDocument } = {};
     private readonly openRazorDocuments = new Set<string>();
-    private pendingDidChangeNotifications = new Array<DidChangeTextDocumentParams>();
-    private onChangeEmitter = new vscode.EventEmitter<IRazorDocumentChangeEvent>();
+    private readonly onChangeEmitter = new vscode.EventEmitter<IRazorDocumentChangeEvent>();
+    private readonly onRazorInitializedEmitter = new vscode.EventEmitter<void>();
 
-    private razorDocumentGenerationInitialized = false;
+    public razorDocumentGenerationInitialized = false;
     private anyRazorDocumentOpen = false;
 
     constructor(
@@ -45,20 +36,22 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     public get onChange() { return this.onChangeEmitter.event; }
 
-    public get getPendingChangeNotifications() {
-        return this.pendingDidChangeNotifications;
-    }
+    public get onRazorInitialized() { return this.onRazorInitializedEmitter.event; }
 
     public get documents() {
         return Object.values(this.razorDocuments);
     }
 
-    public async clearPendingDidChangeNotifications() {
-        this.pendingDidChangeNotifications = [];
-    }
-
     public async getDocument(uri: vscode.Uri) {
         const document = this._getDocument(uri);
+
+        // VS Code closes virtual documents after some timeout if they are not open in the IDE. Since our generated C# and Html
+        // documents are never open in the IDE, we need to ensure that VS Code considers them open so that requests against them
+        // succeed. Without this, even a simple diagnostics request will fail in Roslyn if the user just opens a .razor document
+        // and leaves it open past the timeout.
+        if (this.razorDocumentGenerationInitialized) {
+            await this.ensureProjectedDocumentsOpen(document);
+        }
 
         return document;
     }
@@ -188,20 +181,13 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             for (const document of this.documents) {
                 await this.ensureDocumentAndProjectedDocumentsOpen(document);
             }
+
+            this.onRazorInitializedEmitter.fire();
         }
     }
 
     private closeDocument(uri: vscode.Uri) {
         const document = this._getDocument(uri);
-
-        const csharpDocument = document.csharpDocument;
-        const csharpProjectedDocument = csharpDocument as CSharpProjectedDocument;
-        const htmlDocument = document.htmlDocument;
-        const htmlProjectedDocument = htmlDocument as HtmlProjectedDocument;
-
-        // Reset the projected documents, VSCode resets all sync versions when a document closes.
-        csharpProjectedDocument.reset();
-        htmlProjectedDocument.reset();
 
         // Files outside of the workspace will return undefined from getWorkspaceFolder
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
@@ -251,40 +237,12 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             projectedDocument.hostDocumentSyncVersion <= updateBufferRequest.hostDocumentVersion) {
             // We allow re-setting of the updated content from the same doc sync version in the case
             // of project or file import changes.
+
+            // Make sure the document is open, because updating will cause a didChange event to fire.
+            await vscode.workspace.openTextDocument(document.csharpDocument.uri);
+
             const csharpProjectedDocument = projectedDocument as CSharpProjectedDocument;
             csharpProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
-
-            // Create change events for our didChange notifications
-            const contentChangeEvents = new Array<TextDocumentContentChangeEvent>();
-            for (const change of updateBufferRequest.changes) {
-                const range = RazorDocumentManager.spanToRange(csharpProjectedDocument.getContent(), change.span, this.logger);
-                const contentChangeEvent: TextDocumentContentChangeEvent = {
-                    range: range,
-                    text: change.newText
-                };
-
-                contentChangeEvents.push(contentChangeEvent);
-            }
-
-            // Send didChange notification to Roslyn
-            const csharpPathWithScheme = UriConverter.serialize(csharpProjectedDocument.uri);
-            const csharpTextDocumentIdentifier = VersionedTextDocumentIdentifier.create(csharpPathWithScheme, csharpProjectedDocument.projectedDocumentSyncVersion);
-            const didChangeNotification: DidChangeTextDocumentParams = {
-                textDocument: csharpTextDocumentIdentifier,
-                contentChanges: contentChangeEvents
-            };
-
-            // Since the Razor language server starts before Roslyn's, there's a chance they haven't sent us a dynamic
-            // file info request yet. If they haven't, we'll execute the didChange notifications later.
-            if (!this.roslynActivated) {
-                this.pendingDidChangeNotifications.push(didChangeNotification);
-            } else {
-                // If project information was already cached in a .json file, its possible the Razor server sent us C# content
-                // before we've finished advising Roslyn of all of the files, so make sure we do it here just in case, because we're
-                // about to send a didChange for it and we don't want that to error.
-                await vscode.workspace.openTextDocument(document.csharpDocument.uri);
-                vscode.commands.executeCommand(RoslynLanguageServer.roslynDidChangeCommand, didChangeNotification);
-            }
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
         } else {
@@ -307,6 +265,10 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             projectedDocument.hostDocumentSyncVersion <= updateBufferRequest.hostDocumentVersion) {
             // We allow re-setting of the updated content from the same doc sync version in the case
             // of project or file import changes.
+
+            // Make sure the document is open, because updating will cause a didChange event to fire.
+            await vscode.workspace.openTextDocument(document.htmlDocument.uri);
+
             const htmlProjectedDocument = projectedDocument as HtmlProjectedDocument;
             htmlProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
@@ -344,55 +306,11 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(razorUri);
         }
 
-        await vscode.workspace.openTextDocument(document.csharpDocument.uri);
-        await vscode.workspace.openTextDocument(document.htmlDocument.uri);
+        await this.ensureProjectedDocumentsOpen(document);
     }
 
-    private static spanToRange(sourceText: string, textSpan: ServerTextSpan, logger: RazorLogger) {
-        let lineIndex = 0;
-        let characterIndex = 0;
-
-        let startPosition: Position | undefined = undefined;
-        let endPosition: Position | undefined = undefined;
-
-        for (let index = 0; index < sourceText.length; index++) {
-            // If we hit a line break, skip over it and incremement the line count, taking into account '\r\n' vs. '\n' line endings
-            if (sourceText[index] == '\n') {
-                lineIndex++;
-                characterIndex = 0;
-                index++;
-            } else if (index + 1 < sourceText.length && sourceText[index] == '\r' && sourceText[index + 1] == '\n') {
-                lineIndex++;
-                characterIndex = 0;
-
-                // Start position - it's possible the span might begin between '\r' and '\n'
-                if (startPosition == undefined && index + 1 == textSpan.start) {
-                    startPosition = Position.create(lineIndex, characterIndex);
-                }
-
-                index += 2;
-            }
-
-            // Start position
-            if (startPosition == undefined && index == textSpan.start) {
-                startPosition = Position.create(lineIndex, characterIndex);
-            }
-
-            // End position
-            if (index >= textSpan.start + textSpan.length) {
-                endPosition = Position.create(lineIndex, characterIndex);
-                return Range.create(startPosition as Position, endPosition);
-            }
-
-            characterIndex++;
-        }
-
-        // If we have a start position and no end position, return the length of the document.
-        if (startPosition != undefined) {
-            endPosition = Position.create(lineIndex, characterIndex);
-            return Range.create(startPosition as Position, endPosition);
-        }
-
-        logger.logWarning(`Could not convert span to range for span ${textSpan}.`);
+    private async ensureProjectedDocumentsOpen(document: IRazorDocument) {
+        await vscode.workspace.openTextDocument(document.csharpDocument.uri);
+        await vscode.workspace.openTextDocument(document.htmlDocument.uri);
     }
 }

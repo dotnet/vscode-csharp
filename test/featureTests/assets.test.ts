@@ -321,7 +321,7 @@ suite("Asset generation: csproj", () => {
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true);
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
-        let launchConfigurations: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(ProgramLaunchType.Web);
+        let launchConfigurations: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(ProgramLaunchType.Web, false);
 
         launchConfigurations.should.have.lengthOf(2);
 

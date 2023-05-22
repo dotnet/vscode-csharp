@@ -229,24 +229,27 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         this.logger.logMessage(`Razor language server path: ${options.serverPath}`);
 
-        args.push('-lsp');
-
         args.push('--trace');
         args.push(options.trace.toString());
         this.telemetryReporter.reportTraceLevel(options.trace);
-
-        args.push('--projectConfigurationFileName');
-        args.push('project.razor.vscode.json');
-        args.push('--SupportsDelegatedDiagnostics');
-        args.push('true');
-        args.push('--SupportsDelegatedCodeActions');
-        args.push('true');
 
         if (options.debug) {
             this.telemetryReporter.reportDebugLanguageServer();
 
             this.logger.logMessage('Debug flag set for Razor Language Server.');
             args.push('--debug');
+        }
+
+        // TODO: When all of this code is on GitHub, should we just pass `--omnisharp` as a flag to rzls, and let it decide?
+        if (!options.usingOmniSharp) {
+            args.push('--projectConfigurationFileName');
+            args.push('project.razor.vscode.json');
+            args.push('--SupportsDelegatedDiagnostics');
+            args.push('true');
+            args.push('--SupportsDelegatedCodeActions');
+            args.push('true');
+            args.push('--UpdateBuffersForClosedDocuments');
+            args.push('true');
         }
 
         this.serverOptions = { command, args };
