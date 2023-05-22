@@ -18,25 +18,8 @@ export default class Descriptors {
         ),
     );
 
-    /**
-     * The descriptor for the Project System launch configuration service.
-     * Use {@link ILaunchConfigurationService} for the RPC interface.
-     */
-    static readonly launchConfigurationService = new ServiceJsonRpcDescriptor(
-        ServiceMoniker.create('Microsoft.VisualStudio.LaunchConfigurationService', undefined),
-        Formatters.Utf8,
-        MessageDelimiters.HttpLikeHeaders,
-        {
-            protocolMajorVersion: 3
-        }
-    );
-
-    /**
-     * The descriptor for the Build service.
-     * Use {@link IBuildService} for the RPC interface.
-     */
-    static readonly buildService = new ServiceJsonRpcDescriptor(
-        ServiceMoniker.create('Microsoft.VisualStudio.BuildService', '0.1'),
+    static readonly dotnetDebugConfigurationService: ServiceRpcDescriptor = new ServiceJsonRpcDescriptor(
+        ServiceMoniker.create('Microsoft.VisualStudio.Debugger.DotnetDebugConfigurationService', '0.1'),
         Formatters.MessagePack, MessageDelimiters.BigEndianInt32LengthHeader,
         {
             protocolMajorVersion: 3

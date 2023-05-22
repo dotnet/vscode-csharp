@@ -20,8 +20,7 @@ export function getBrokeredServiceContainer(): CSharpExtensionServiceBroker {
         // Register any brokered services that come from other extensions so that we can proffer them later.
 
         _csharpExtensionServiceBroker.registerExternalServices(
-            Descriptors.launchConfigurationService.moniker,
-            Descriptors.buildService.moniker
+            Descriptors.dotnetDebugConfigurationService.moniker
         );
     }
     return _csharpExtensionServiceBroker;

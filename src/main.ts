@@ -280,8 +280,7 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
             // This list must be a subset of the monikers previously registered with our own container
             // as defined in the getBrokeredServiceContainer function.
             getBrokeredServiceContainer().profferServiceBroker(exports.serviceBroker, [
-                    Descriptors.launchConfigurationService.moniker,
-                    Descriptors.buildService.moniker
+                    Descriptors.dotnetDebugConfigurationService.moniker
                 ]
             );
 
