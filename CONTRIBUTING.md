@@ -44,4 +44,4 @@ To update the version of the roslyn server used by the extension do the followin
 1.  Find the the Roslyn signed build you want from [here](https://dnceng.visualstudio.com/internal/_build?definitionId=327&branchFilter=246637%2C246637).  Typically the latest successful build is fine.
 2.  In the official build stage, look for the `Publish Language Server Executables` step.  In there you will see it publishing the `Microsoft.CodeAnalysis.LanguageServer` package with some version, e.g. `4.6.0-3.23158.4`.  Take note of that version number.
 3.  In the [package.json](package.json) inside the `defaults` section update the `roslyn` key to point to the version number you found above in step 2.
-4.  Build and test the change (make sure to run `gulp roslyn:languageserver` to get the new version!).  If everything looks good, submit a PR.
+4.  Build and test the change (make sure to run `gulp installDependencies` to get the new version!).  If everything looks good, submit a PR.
