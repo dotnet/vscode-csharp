@@ -36,16 +36,28 @@ export class Options {
         const waitForDebugger = Options.readOption<boolean>(config, 'dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger');
         const useOmnisharpServer = Options.readOption<boolean>(config, 'dotnet.server.useOmnisharp', false);
 
-        // For the default launch solution, a multi-folder workspace might have this configured in one place; in that case we'll check each workspace folder;
-        // The first one that specifies it will be the winner
         let defaultSolution = '';
+
         if (vscode.workspace.workspaceFolders !== undefined) {
-            for (let workspaceFolder of vscode.workspace.workspaceFolders) {
-                const workspaceConfig = vscode.workspace.getConfiguration(undefined, workspaceFolder.uri);
-                const defaultSolutionFromWorkspace = Options.readOption<string>(workspaceConfig, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
-                if (defaultSolutionFromWorkspace !== '') {
-                    defaultSolution = path.join(workspaceFolder.uri.fsPath, defaultSolutionFromWorkspace);
-                    break;
+            // If this is multi-folder, then check to see if we have a fully qualified path set directly in the workspace settings; this will let the user directly specify in their
+            // workspace settings which one is active in the case of a multi-folder workspace. This has to be absolute because in this case, there's no clear folder to resolve a relative
+            // path against.
+            if (vscode.workspace.workspaceFolders.length > 1) {
+                const defaultSolutionFromWorkspace = Options.readOption<string>(config, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
+                if (path.isAbsolute(defaultSolutionFromWorkspace)) {
+                    defaultSolution = defaultSolutionFromWorkspace;
+                }
+            }
+
+            // If we didn't have an absolute workspace setting, then check each workspace folder and resolve any relative paths against it
+            if(defaultSolution == '') {
+                for (let workspaceFolder of vscode.workspace.workspaceFolders) {
+                    const workspaceFolderConfig = vscode.workspace.getConfiguration(undefined, workspaceFolder.uri);
+                    const defaultSolutionFromWorkspaceFolder = Options.readOption<string>(workspaceFolderConfig, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
+                    if (defaultSolutionFromWorkspaceFolder !== '') {
+                        defaultSolution = path.join(workspaceFolder.uri.fsPath, defaultSolutionFromWorkspaceFolder);
+                        break;
+                    }
                 }
             }
         }
