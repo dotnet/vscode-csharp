@@ -50,7 +50,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // succeed. Without this, even a simple diagnostics request will fail in Roslyn if the user just opens a .razor document
         // and leaves it open past the timeout.
         if (this.razorDocumentGenerationInitialized) {
-            await this.ensureProjectedDocumentsOpen(document);
+            await this.ensureDocumentAndProjectedDocumentsOpen(document);
         }
 
         return document;
@@ -306,10 +306,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(razorUri);
         }
 
-        await this.ensureProjectedDocumentsOpen(document);
-    }
-
-    private async ensureProjectedDocumentsOpen(document: IRazorDocument) {
         await vscode.workspace.openTextDocument(document.csharpDocument.uri);
         await vscode.workspace.openTextDocument(document.htmlDocument.uri);
     }
