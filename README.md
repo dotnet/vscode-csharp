@@ -1,5 +1,5 @@
 ## C# for Visual Studio Code
-C# is the feature-rich, language support for C# and is shipped as part of [C# Dev Kit](csdevkitextension).
+C# is the feature-rich, language support for C# and is shipped as part of [C# Dev Kit](csdevkitextension). This version of the extension is currently in pre-release and available for you to use today.
 
 C# is an extension that contributes to the [C# Dev Kit extension](csdevkitextension) for Visual Studio Code to provide performant and reliable language support. Under the hood, this extension is powered by a Language Server Protocol (LSP) Tools Host which integrates with open source components like [Roslyn](https://github.com/dotnet/roslyn)  and [Razor](https://github.com/dotnet/razor) to provide rich type information and a faster, more reliable C# experience.
 
@@ -10,7 +10,7 @@ While it is possible to use the C# extension as a standalone extension, we highl
 2. Open a folder/workspace that contains a C# project (.csproj) or solution (.sln) and the extension will activate.
 
 * If working on a solution that requires versions prior to .NET 6, install a Full Framework runtime and MSBuild tooling.
-  * Set omnisharp.useModernNet to false and dotnet.server.useOmnisharp to true
+  * Set omnisharp.useModernNet to false and if you are on the pre-release verion, set dotnet.server.useOmnisharp to true
   * Windows: .NET Framework along with MSBuild Tools 
   * MacOS/Linux: Mono with MSBuild 
 
@@ -21,7 +21,7 @@ While it is possible to use the C# extension as a standalone extension, we highl
   * Roslyn powered semantic awareness
 
 ## How to use Omnisharp?
-If you don’t want to take advantage of the great Language Server features, you can revert back to using Omnisharp by going to the Extension settings and setting `dotnet.server.useOmnisharp` to true. This will require that you restart VS Code to take effect.
+If you don’t want to take advantage of the great Language Server features, you can revert back to using Omnisharp in the pre-release extension by going to the Extension settings and setting `dotnet.server.useOmnisharp` to true. This will require that you restart VS Code to take effect. You can also switch back to the Switch to Release Version to revert back to the C# extension powered by OmniSharp.
 
 
 ## Found a Bug?
