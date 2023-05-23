@@ -6,6 +6,7 @@
 import { isDeepStrictEqual } from 'util';
 import { DocumentSelector } from 'vscode-languageserver-protocol';
 import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
+import * as path from 'path';
 
 export class Options {
     constructor(
@@ -31,9 +32,35 @@ export class Options {
         // explicitly pass in the empty string as the fallback if the setting
         // isn't defined in package.json (which should never happen).
         const dotnetPath = Options.readOption<string>(config, 'dotnet.dotnetPath', '', 'omnisharp.dotnetPath');
-        const path = Options.readOption<string>(config, 'dotnet.server.path', '', 'omnisharp.path', 'csharp.omnisharp');
+        const serverPath = Options.readOption<string>(config, 'dotnet.server.path', '', 'omnisharp.path', 'csharp.omnisharp');
         const waitForDebugger = Options.readOption<boolean>(config, 'dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger');
         const useOmnisharpServer = Options.readOption<boolean>(config, 'dotnet.server.useOmnisharp', false);
+
+        let defaultSolution = '';
+
+        if (vscode.workspace.workspaceFolders !== undefined) {
+            // If this is multi-folder, then check to see if we have a fully qualified path set directly in the workspace settings; this will let the user directly specify in their
+            // workspace settings which one is active in the case of a multi-folder workspace. This has to be absolute because in this case, there's no clear folder to resolve a relative
+            // path against.
+            if (vscode.workspace.workspaceFolders.length > 1) {
+                const defaultSolutionFromWorkspace = Options.readOption<string>(config, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
+                if (path.isAbsolute(defaultSolutionFromWorkspace)) {
+                    defaultSolution = defaultSolutionFromWorkspace;
+                }
+            }
+
+            // If we didn't have an absolute workspace setting, then check each workspace folder and resolve any relative paths against it
+            if(defaultSolution == '') {
+                for (let workspaceFolder of vscode.workspace.workspaceFolders) {
+                    const workspaceFolderConfig = vscode.workspace.getConfiguration(undefined, workspaceFolder.uri);
+                    const defaultSolutionFromWorkspaceFolder = Options.readOption<string>(workspaceFolderConfig, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
+                    if (defaultSolutionFromWorkspaceFolder !== '') {
+                        defaultSolution = path.join(workspaceFolder.uri.fsPath, defaultSolutionFromWorkspaceFolder);
+                        break;
+                    }
+                }
+            }
+        }
 
         // Omnisharp Server Options
 
@@ -53,7 +80,6 @@ export class Options {
         const projectFilesExcludePattern = Options.readOption<string>(config, 'omnisharp.projectFilesExcludePattern', '**/node_modules/**,**/.git/**,**/bower_components/**');
         const projectLoadTimeout = Options.readOption<number>(config, 'omnisharp.projectLoadTimeout', 60);
         const maxProjectResults = Options.readOption<number>(config, 'omnisharp.maxProjectResults', 250);
-        const defaultLaunchSolution = Options.readOption<string>(config, 'omnisharp.defaultLaunchSolution', '');
         const useEditorFormattingSettings = Options.readOption<boolean>(config, 'omnisharp.useEditorFormattingSettings', true);
         const enableRoslynAnalyzers = Options.readOption<boolean>(config, 'omnisharp.enableRoslynAnalyzers', false);
         const enableEditorConfigSupport = Options.readOption<boolean>(config, 'omnisharp.enableEditorConfigSupport', true);
@@ -76,14 +102,14 @@ export class Options {
         const filteredSymbolsCodeLens = Options.readOption<string[]>(config, 'csharp.referencesCodeLens.filteredSymbols', []);
         const useSemanticHighlighting = Options.readOption<boolean>(config, 'csharp.semanticHighlighting.enabled', true);
         const inlayHintsEnableForParameters = Options.readOption<boolean>(config, 'dotnet.inlayHints.enableInlayHintsForParameters', false, 'csharp.inlayHints.parameters.enabled');
-        const inlayHintsForLiteralParameters = Options.readOption<boolean>(config, 'dotnet.inlayHints.enableInlayHintsForLiteralParameters',  false, 'csharp.inlayHints.parameters.forLiteralParameters');
+        const inlayHintsForLiteralParameters = Options.readOption<boolean>(config, 'dotnet.inlayHints.enableInlayHintsForLiteralParameters', false, 'csharp.inlayHints.parameters.forLiteralParameters');
         const inlayHintsForObjectCreationParameters = Options.readOption<boolean>(config, 'dotnet.inlayHints.enableInlayHintsForObjectCreationParameters', false, 'csharp.inlayHints.parameters.forObjectCreationParameters');
         const inlayHintsForIndexerParameters = Options.readOption<boolean>(config, 'dotnet.inlayHints.enableInlayHintsForIndexerParameters', false, 'csharp.inlayHints.parameters.forIndexerParameters');
         const inlayHintsForOtherParameters = Options.readOption<boolean>(config, 'dotnet.inlayHints.enableInlayHintsForOtherParameters', false, 'csharp.inlayHints.parameters.forOtherParameters');
         const inlayHintsSuppressForParametersThatDifferOnlyBySuffix = Options.readOption<boolean>(config, 'dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix', false, 'csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix');
         const inlayHintsSuppressForParametersThatMatchMethodIntent = Options.readOption<boolean>(config, 'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent', false, 'csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent');
-        const inlayHintsSuppressForParametersThatMatchArgumentName = Options.readOption<boolean>(config,  'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName', false, 'csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName');
-        const inlayHintsEnableForTypes = Options.readOption<boolean>(config,  'csharp.inlayHints.enableInlayHintsForTypes', false, 'csharp.inlayHints.types.enabled');
+        const inlayHintsSuppressForParametersThatMatchArgumentName = Options.readOption<boolean>(config, 'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName', false, 'csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName');
+        const inlayHintsEnableForTypes = Options.readOption<boolean>(config, 'csharp.inlayHints.enableInlayHintsForTypes', false, 'csharp.inlayHints.types.enabled');
         const inlayHintsForImplicitVariableTypes = Options.readOption<boolean>(config, 'csharp.inlayHints.enableInlayHintsForImplicitVariableTypes', false, 'csharp.inlayHints.types.forImplicitVariableTypes');
         const inlayHintsForLambdaParameterTypes = Options.readOption<boolean>(config, 'csharp.inlayHints.enableInlayHintsForLambdaParameterTypes', false, 'csharp.inlayHints.types.forLambdaParameterTypes');
         const inlayHintsForImplicitObjectCreation = Options.readOption<boolean>(config, 'csharp.inlayHints.enableInlayHintsForImplicitObjectCreation', false, 'csharp.inlayHints.types.forImplicitObjectCreation');
@@ -106,9 +132,10 @@ export class Options {
         return new Options({
                 dotnetPath: dotnetPath,
                 waitForDebugger: waitForDebugger,
-                serverPath: path,
+                serverPath: serverPath,
                 useOmnisharpServer: useOmnisharpServer,
-                excludePaths: excludePaths
+                excludePaths: excludePaths,
+                defaultSolution: defaultSolution,
             },
             {
                 useModernNet: useModernNet,
@@ -118,7 +145,6 @@ export class Options {
                 projectFilesExcludePattern: projectFilesExcludePattern,
                 projectLoadTimeout: projectLoadTimeout,
                 maxProjectResults: maxProjectResults,
-                defaultLaunchSolution: defaultLaunchSolution,
                 useEditorFormattingSettings: useEditorFormattingSettings,
                 enableRoslynAnalyzers: enableRoslynAnalyzers,
                 enableEditorConfigSupport: enableEditorConfigSupport,
@@ -150,7 +176,7 @@ export class Options {
                 inlayHintsForOtherParameters: inlayHintsForOtherParameters,
                 inlayHintsSuppressForParametersThatDifferOnlyBySuffix: inlayHintsSuppressForParametersThatDifferOnlyBySuffix,
                 inlayHintsSuppressForParametersThatMatchMethodIntent: inlayHintsSuppressForParametersThatMatchMethodIntent,
-                inlayHintsSuppressForParametersThatMatchArgumentName:inlayHintsSuppressForParametersThatMatchArgumentName,
+                inlayHintsSuppressForParametersThatMatchArgumentName: inlayHintsSuppressForParametersThatMatchArgumentName,
                 inlayHintsEnableForTypes: inlayHintsEnableForTypes,
                 inlayHintsForImplicitVariableTypes: inlayHintsForImplicitVariableTypes,
                 inlayHintsForLambdaParameterTypes: inlayHintsForLambdaParameterTypes,
@@ -209,8 +235,7 @@ export class Options {
     private static readOption<T>(config: WorkspaceConfiguration, option: string, defaultValue: T, ...backCompatOptionNames: string[]): T {
         let value = config.get<T>(option);
 
-        if (value === undefined && backCompatOptionNames.length > 0)
-        {
+        if (value === undefined && backCompatOptionNames.length > 0) {
             // Search the back compat options for a defined value.
             value = backCompatOptionNames.map((name) => config.get<T>(name)).find((val) => val);
         }
@@ -225,6 +250,9 @@ export interface CommonOptions {
     serverPath: string;
     useOmnisharpServer: boolean;
     excludePaths: string[];
+
+    /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in */
+    defaultSolution: string;
 }
 
 const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
@@ -242,7 +270,6 @@ export interface OmnisharpServerOptions {
     projectFilesExcludePattern: string;
     projectLoadTimeout: number;
     maxProjectResults: number;
-    defaultLaunchSolution: string;
     useEditorFormattingSettings: boolean;
     enableRoslynAnalyzers: boolean;
     enableEditorConfigSupport: boolean;

@@ -120,6 +120,7 @@ export function getFakeVsCode(): vscode.vscode {
             }
         },
         workspace: {
+            workspaceFolders: undefined,
             getConfiguration: (section?: string, resource?: Uri) => {
                 throw new Error("Not Implemented");
             },

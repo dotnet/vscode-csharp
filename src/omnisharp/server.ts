@@ -644,7 +644,7 @@ export class OmniSharpServer {
         }
 
         // First, try to launch against something that matches the user's preferred target
-        const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().omnisharpOptions.defaultLaunchSolution;
+        const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().commonOptions.defaultSolution;
         const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
         if (defaultLaunchSolutionTarget) {
             return this.start(defaultLaunchSolutionTarget);

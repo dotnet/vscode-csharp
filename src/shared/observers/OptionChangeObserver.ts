@@ -24,7 +24,7 @@ function OptionChangeObservable(optionObservable: Observable<Options>, shouldOpt
 export function ShowConfigChangePrompt(optionObservable: Observable<Options>, commandName: string, shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean, vscode: vscode): Disposable {
     const subscription = OptionChangeObservable(optionObservable, shouldOptionChangeTriggerReload)
         .subscribe(_ => {
-            let message = "CSharp configuration has changed. Would you like to relaunch the Language Server with your changes?";
+            let message = "C# configuration has changed. Would you like to relaunch the Language Server with your changes?";
             ShowInformationMessage(vscode, message, { title: "Restart Language Server", command: commandName });
         });
 

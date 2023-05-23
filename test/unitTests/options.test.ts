@@ -6,6 +6,8 @@
 import { should, expect } from 'chai';
 import { Options } from '../../src/shared/options';
 import { getVSCodeWithConfig, updateConfig } from './testAssets/Fakes';
+import { URI } from 'vscode-uri';
+import * as path from 'path';
 
 suite("Options tests", () => {
     suiteSetup(() => should());
@@ -15,6 +17,7 @@ suite("Options tests", () => {
         const options = Options.Read(vscode);
         options.commonOptions.serverPath.should.equal("");
         options.omnisharpOptions.monoPath.should.equal("");
+        options.commonOptions.defaultSolution.should.equal("");
         options.commonOptions.waitForDebugger.should.equal(false);
         options.omnisharpOptions.loggingLevel.should.equal("information");
         options.omnisharpOptions.autoStart.should.equal(true);
@@ -36,7 +39,6 @@ suite("Options tests", () => {
         options.omnisharpOptions.enableAsyncCompletion.should.equal(false);
         options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(false);
         options.omnisharpOptions.testRunSettings.should.equal("");
-        options.omnisharpOptions.defaultLaunchSolution.should.equal("");
     });
 
     test('Verify return no excluded paths when files.exclude empty', () => {
@@ -103,11 +105,14 @@ suite("Options tests", () => {
 
     test('"omnisharp.defaultLaunchSolution" is used if set', () => {
         const vscode = getVSCodeWithConfig();
+        const workspaceFolderUri = URI.file("/Test");
+        vscode.workspace.workspaceFolders = [{ index: 0, name: "Test", uri: workspaceFolderUri }];
+
         updateConfig(vscode, 'omnisharp', 'defaultLaunchSolution', 'some_valid_solution.sln');
 
         const options = Options.Read(vscode);
 
-        options.omnisharpOptions.defaultLaunchSolution.should.equal("some_valid_solution.sln");
+        options.commonOptions.defaultSolution.should.equals(path.join(workspaceFolderUri.fsPath, "some_valid_solution.sln"));
     });
 
     test('"omnisharp.testRunSettings" is used if set', () => {
