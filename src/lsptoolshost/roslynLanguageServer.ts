@@ -329,7 +329,7 @@ export class RoslynLanguageServer {
                 this._languageClient?.sendNotification("serviceBroker/connect", { pipeName: pipeName });
             } else {
                 // We'll subscribe if the process later launches, and call this function again to send the pipe name.
-                this.context.subscriptions.push(exports.serverProcessLoaded(this.sendOrSubscribeForServiceBrokerConnection));
+                this.context.subscriptions.push(exports.serverProcessLoaded(async() => this.sendOrSubscribeForServiceBrokerConnection()));
             }
         }
     }
