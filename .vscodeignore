@@ -24,18 +24,15 @@ azure-pipelines
 
 .editorconfig
 .gitignore
-azure-pipelines.yml
-codecov.yml
-debugger.md
-debugger.launchjson.md
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
 .mocharc.jsonc
+*.md
 *.vscodeignore
+*.yml
 package-lock.json
 package.json
-test-plan.md
 tsconfig.json
 tslint.json
 wallaby.js
