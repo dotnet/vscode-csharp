@@ -17,12 +17,14 @@ test/**
 typings/**
 vsix/**
 node_modules
+azure-pipelines
 
 **/*.map
 *.vsix
 
 .editorconfig
 .gitignore
+azure-pipelines.yml
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
