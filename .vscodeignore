@@ -17,6 +17,7 @@ test/**
 typings/**
 vsix/**
 node_modules
+azure-pipelines
 
 **/*.map
 *.vsix
@@ -27,10 +28,11 @@ gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
 .mocharc.jsonc
+*.md
 *.vscodeignore
+*.yml
 package-lock.json
 package.json
-test-plan.md
 tsconfig.json
 tslint.json
 wallaby.js
