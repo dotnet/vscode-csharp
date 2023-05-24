@@ -25,6 +25,9 @@ azure-pipelines
 .editorconfig
 .gitignore
 azure-pipelines.yml
+codecov.yml
+debugger.md
+debugger.launchjson.md
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
