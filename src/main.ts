@@ -51,8 +51,7 @@ import { CSharpDevKitExports } from './CSharpDevKitExports';
 import Descriptors from './lsptoolshost/services/Descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports} from './CSharpExtensionExports';
-
-const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
+import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
 
 export async function activate(context: vscode.ExtensionContext): Promise<CSharpExtensionExports | OmnisharpExtensionExports | null> {
     await MigrateOptions(vscode);
@@ -272,7 +271,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
  * awaiting `activate` will cause this extension's activation to hang.
  */
 function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObserver): void {
-    const ext = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
+    const ext = getCSharpDevKit();
     ext?.activate().then(async (exports: CSharpDevKitExports) => {
         if (exports && exports.serviceBroker) {
             // When proffering this IServiceBroker into our own container,
@@ -287,6 +286,8 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
             // Notify the vsdbg configuration provider that C# dev kit has been loaded.
             exports.serverProcessLoaded(async () => 
                 coreclrdebug.initializeBrokeredServicePipeName(await exports.getBrokeredServiceServerPipeName()));
+
+            vscode.commands.executeCommand("setContext", "dotnet.debug.serviceBrokerAvailable", true);
         } else {
             csharpLogObserver.logger.appendLine(`[ERROR] '${csharpDevkitExtensionId}' activated but did not return expected Exports.`);
         }

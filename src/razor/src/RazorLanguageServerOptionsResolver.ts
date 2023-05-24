@@ -10,6 +10,7 @@ import { RazorLanguageServerOptions } from './RazorLanguageServerOptions';
 import { RazorLogger } from './RazorLogger';
 import { Trace } from './Trace';
 import * as vscode from './vscodeAdapter';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 export function resolveRazorLanguageServerOptions(
     vscodeApi: vscode.api,
@@ -19,7 +20,7 @@ export function resolveRazorLanguageServerOptions(
     const languageServerExecutablePath = findLanguageServerExecutable(languageServerDir);
     const serverConfig = vscodeApi.workspace.getConfiguration('razor.languageServer');
     const debugLanguageServer = serverConfig.get<boolean>('debug');
-    const usingOmniSharp = !vscodeApi.extensions.getExtension("ms-dotnettools.csdevkit") && vscodeApi.workspace.getConfiguration().get<Boolean>('dotnet.server.useOmnisharp');
+    const usingOmniSharp = !getCSharpDevKit()&& vscodeApi.workspace.getConfiguration().get<Boolean>('dotnet.server.useOmnisharp');
 
     return {
         serverPath: languageServerExecutablePath,

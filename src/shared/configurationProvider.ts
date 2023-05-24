@@ -12,6 +12,7 @@ import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } fro
 import { AttachItem, RemoteAttachPicker, DotNetAttachItemsProviderFactory, AttachPicker } from '../features/processPicker';
 import { PlatformInformation } from './platform';
 import OptionProvider from './observers/OptionProvider';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 /**
  * Class used for debug configurations that will be sent to the debugger registered by {@link DebugAdapterExecutableFactory}
@@ -26,11 +27,12 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
     //#region DebugConfigurationProvider
 
-    resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): vscode.ProviderResult<vscode.DebugConfiguration> {
+    async resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | undefined | null> {
         // Check to see if we are in the "Run and Debug" scenario.
         if (Object.keys(debugConfiguration).length == 0) {
-            // Return null to call into 'provideDebugConfigurations'
-            return null;
+            const csharpDevkitExtension = getCSharpDevKit();
+            // If we dont have the csharpDevKitExtension, prompt for initial configurations.
+            return csharpDevkitExtension ? undefined : null;
         }
 
         // Load settings before resolving variables as there may be variables set in settings.

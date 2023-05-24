@@ -13,14 +13,18 @@ import { PlatformInformation } from '../shared/platform';
 import OptionProvider from '../shared/observers/OptionProvider';
 import { ServerStateChange } from './ServerStateChange';
 import { DotnetConfigurationResolver } from '../shared/dotnetConfigurationProvider';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 export function registerDebugger(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer, platformInfo: PlatformInformation, optionProvider: OptionProvider, csharpOutputChannel: vscode.OutputChannel) {
     let workspaceInformationProvider: IWorkspaceDebugInformationProvider = new RoslynWorkspaceDebugInformationProvider(languageServer);
 
     let disposable = languageServer.registerStateChangeEvent(async (state) => {
         if (state === ServerStateChange.ProjectInitializationComplete) {
-            // Update or add tasks.json and launch.json
-            await addAssetsIfNecessary(context, workspaceInformationProvider);
+            let csharpDevkitExtension = getCSharpDevKit();
+            if (!csharpDevkitExtension) {
+                // Update or add tasks.json and launch.json
+                await addAssetsIfNecessary(context, workspaceInformationProvider);
+            }
         }
     });
     context.subscriptions.push(disposable);

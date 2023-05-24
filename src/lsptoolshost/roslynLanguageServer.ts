@@ -50,12 +50,12 @@ import { Options } from '../shared/options';
 import { ServerStateChange } from './ServerStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../CSharpIntelliCodeExports';
+import { csharpDevkitExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
-const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
 const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
 
 export class RoslynLanguageServer {
@@ -113,7 +113,7 @@ export class RoslynLanguageServer {
     ) {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
         this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
-            let csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
+            let csharpDevkitExtension = getCSharpDevKit();
 
             if (this._wasActivatedWithCSharpDevkit === undefined) {
                 // Haven't activated yet.
