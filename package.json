@@ -1142,7 +1142,8 @@
         "properties": {
           "dotnet.defaultSolution": {
             "type": "string",
-            "description": "The name of the default solution used at start up if the repo has multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in alphabetical order to be chosen."
+            "description": "The path of the default solution to be opened in the workspace, or set to 'disable' to skip it.",
+            "order": 0
           },
           "dotnet.dotnetPath": {
             "type": "string",
