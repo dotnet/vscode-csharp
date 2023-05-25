@@ -710,7 +710,8 @@
           "dotnet.server.useOmnisharp": {
             "type": "boolean",
             "default": false,
-            "description": "Switches to use the Omnisharp server for language features when enabled (requires restart). This option will not work with C# Dev Kit"
+            "description": "Switches to use the Omnisharp server for language features when enabled (requires restart). This option will not work with C# Dev Kit.",
+            "order": 0
           },
           "csharp.format.enable": {
             "type": "boolean",
