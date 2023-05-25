@@ -9,7 +9,7 @@ While it is possible to use the C# extension as a standalone extension, we highl
 1. Installing [C# Dev Kit](csdevkitextension) will automatically install this extension as a required dependency
 2. Open a folder/workspace that contains a C# project (.csproj) or solution (.sln) and the extension will activate.
 
-* If working on a solution that requires versions prior to .NET 6, install a Full Framework runtime and MSBuild tooling.
+Note: If working on a solution that requires versions prior to .NET 6, install a Full Framework runtime and MSBuild tooling.
   * Set omnisharp.useModernNet to false and if you are on the pre-release verion, set dotnet.server.useOmnisharp to true
   * Windows: .NET Framework along with MSBuild Tools 
   * MacOS/Linux: Mono with MSBuild 
