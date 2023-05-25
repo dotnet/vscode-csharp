@@ -1148,21 +1148,18 @@
           "dotnet.dotnetPath": {
             "type": "string",
             "scope": "machine-overridable",
-            "description": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
-            "order": 0
+            "description": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\"."
           },
           "dotnet.server.path": {
             "type": "string",
             "scope": "machine-overridable",
-            "description": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used.",
-            "order": 0
+            "description": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used."
           },
           "dotnet.server.waitForDebugger": {
             "type": "boolean",
             "scope": "machine-overridable",
             "default": false,
-            "description": "Passes the --debug flag when launching the server to allow a debugger to be attached.",
-            "order": 0
+            "description": "Passes the --debug flag when launching the server to allow a debugger to be attached."
           },
           "dotnet.server.trace": {
             "scope": "window",
@@ -1177,8 +1174,7 @@
               "None"
             ],
             "default": "Information",
-            "description": "Sets the logging level for the language server",
-            "order": 0
+            "description": "Sets the logging level for the language server"
           },
           "dotnet.server.extensionPaths": {
             "type": [
