@@ -2,16 +2,21 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { readFileSync } from 'fs';
+import { promises, readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
-
+import { ChromeBrowserFinder, EdgeBrowserFinder } from 'vscode-js-debug-browsers';
 import { RazorLogger } from '../RazorLogger';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './Constants';
 import { onDidTerminateDebugSession } from './TerminateDebugHandler';
+import showInformationMessage from '../../../shared/observers/utils/ShowInformationMessage';
+import showErrorMessage from '../../../observers/utils/ShowErrorMessage';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
+    private readonly autoDetectUserNotice = `Run and Debug: auto-detection found {0} for a launch browser`;
+    private readonly edgeBrowserType = 'pwa-msedge';
+    private readonly chromeBrowserType = 'pwa-chrome';
 
     constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) { }
 
@@ -98,9 +103,17 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
     }
 
     private async launchBrowser(folder: vscode.WorkspaceFolder | undefined, configuration: vscode.DebugConfiguration, inspectUri: string, url: string) {
+        const configBrowser = configuration.browser;
+        const browserType = configBrowser === 'edge'  ? this.edgeBrowserType 
+                            : configBrowser === 'chrome' ? this.chromeBrowserType 
+                            : await this.determineBrowserType();
+        if (!browserType) {
+            return;
+        }
+
         const browser = {
             name: JS_DEBUG_NAME,
-            type: configuration.browser === 'edge' ? 'pwa-msedge' : 'pwa-chrome',
+            type: browserType,
             request: 'launch',
             timeout: configuration.timeout || 30000,
             url: configuration.url || url,
@@ -138,5 +151,26 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
                 }
             });
         }
+    }
+
+    private async determineBrowserType() {     
+        // There was no browser specified by the user, so we will do some auto-detection to find a browser, 
+        // favoring chrome if multiple valid options are installed.
+        const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises, null);
+        const chromeInstallations = await chromeBrowserFinder.findAll();
+        if (chromeInstallations.length > 0) {
+            showInformationMessage(vscode, this.autoDetectUserNotice.replace('{0}', `'Chrome'`));
+            return this.chromeBrowserType;
+        }
+
+        const edgeBrowserFinder = new EdgeBrowserFinder(process.env, promises, null);
+        const edgeInstallations = await edgeBrowserFinder.findAll();
+        if (edgeInstallations.length > 0) {
+            showInformationMessage(vscode, this.autoDetectUserNotice.replace('{0}', `'Edge'`));
+            return this.edgeBrowserType;
+        }
+
+        showErrorMessage(vscode, 'Run and Debug: A valid browser is not installed');
+        return undefined;
     }
 }

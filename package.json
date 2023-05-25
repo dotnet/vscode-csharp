@@ -90,6 +90,7 @@
     "strip-bom-buf": "2.0.0",
     "tmp": "0.0.33",
     "vscode-html-languageservice": "^5.0.1",
+    "vscode-js-debug-browsers": "^1.0.5",
     "vscode-jsonrpc": "8.0.2",
     "vscode-languageclient": "8.0.2",
     "vscode-languageserver-protocol": "3.17.2",
@@ -4123,8 +4124,7 @@
           "razor",
           "aspnetcorerazor"
         ],
-        "variables": {
-        },
+        "variables": {},
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
         "configurationAttributes": {
           "launch": {
@@ -4145,8 +4145,7 @@
             }
           }
         },
-        "configurationSnippets": [
-        ]
+        "configurationSnippets": []
       }
     ],
     "semanticTokenTypes": [
