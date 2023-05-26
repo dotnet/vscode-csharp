@@ -12,8 +12,8 @@ steps:
 
 # Set the CI build number to the VSIX version we're creating from this build.
 - script: |
-    dotnet tool install --tool-path . nbgv
-    nbgv cloud
+    dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
+    $(Agent.BuildDirectory)/nbgv cloud
 
 - script: |
     npm ci
