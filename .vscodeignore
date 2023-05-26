@@ -24,6 +24,7 @@ azure-pipelines
 
 .editorconfig
 .gitignore
+CODEOWNERS
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
@@ -35,6 +36,7 @@ package-lock.json
 package.json
 tsconfig.json
 tslint.json
+version.json
 wallaby.js
 webpack.config.js
 
