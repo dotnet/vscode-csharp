@@ -115,8 +115,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const watcher = vscode.workspace.createFileSystemWatcher(RazorLanguage.globbingPattern);
         const didCreateRegistration = watcher.onDidCreate(
             async (uri: vscode.Uri) => this.addDocument(uri));
-        const didDeleteRegistration = watcher.onDidDelete(
-            async (uri: vscode.Uri) => this.removeDocument(uri));
         const didOpenRegistration = vscode.workspace.onDidOpenTextDocument(async document => {
             if (document.languageId !== RazorLanguage.id) {
                 return;
@@ -142,7 +140,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         return vscode.Disposable.from(
             watcher,
             didCreateRegistration,
-            didDeleteRegistration,
             didOpenRegistration,
             didCloseRegistration);
     }
