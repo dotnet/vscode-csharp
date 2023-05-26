@@ -3,9 +3,17 @@ trigger:
   branches:
     include:
     - feature/*
+    - prerelease
+    - release
 
 pr:
 - feature/*
+- prerelease
+- release
+
+variables:
+  - name: prereleaseFlag
+    value: '--prerelease'
 
 stages:
 - stage: Build
@@ -14,6 +22,8 @@ stages:
   - job: Build
     steps:
     - template: azure-pipelines/build.yml
+      parameters:
+        prereleaseFlag: $(prereleaseFlag)
 
 - stage: Test
   displayName: Test

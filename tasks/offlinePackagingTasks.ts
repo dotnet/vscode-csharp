@@ -158,6 +158,11 @@ async function doPackageOffline() {
     console.log(versionInfo.npmPackageVersion);
     await nbgv.setPackageVersion();
 
+    let prerelease = false;
+    if (argv.prerelease) {
+        prerelease = true;
+    }
+
     try {
         // Now that we've updated the version, get the package.json.
         const packageJSON = getPackageJSON();
@@ -169,7 +174,7 @@ async function doPackageOffline() {
                     continue;
                 }
 
-                await buildVsix(packageJSON, packedVsixOutputRoot, p.vsceTarget, p.platformInfo);
+                await buildVsix(packageJSON, packedVsixOutputRoot, prerelease, p.vsceTarget, p.platformInfo);
             }
             catch (err) {
                 const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -180,7 +185,7 @@ async function doPackageOffline() {
         }
 
         // Also output the platform neutral VSIX using the platform neutral server bits we created before.
-        await buildVsix(packageJSON, packedVsixOutputRoot);
+        await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
     }
     finally {
         // Reset package version to the placeholder value.
@@ -196,7 +201,7 @@ async function cleanAsync(deleteVsix: boolean) {
     }
 }
 
-async function buildVsix(packageJSON: any, outputFolder: string, vsceTarget?: string, platformInfo?: PlatformInformation) {
+async function buildVsix(packageJSON: any, outputFolder: string, prerelease: boolean, vsceTarget?: string, platformInfo?: PlatformInformation) {
     await cleanAsync(false);
 
     await installRoslyn(packageJSON, platformInfo);
@@ -207,7 +212,7 @@ async function buildVsix(packageJSON: any, outputFolder: string, vsceTarget?: st
     }
 
     const packageFileName = getPackageName(packageJSON, vsceTarget);
-    await createPackageAsync(outputFolder, packageFileName, vsceTarget);
+    await createPackageAsync(outputFolder, prerelease, packageFileName, vsceTarget);
 }
 
 function getPackageName(packageJSON: any, vscodePlatformId?: string) {
