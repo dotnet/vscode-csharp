@@ -217,13 +217,13 @@ export class RoslynLanguageServer {
         // Register Razor dynamic file info handling
         this.registerRazor(this._languageClient);
 
-        // If Dev Kit isn't installed, then we are responsible for picking the solution to open. Check the workpace setting,
-        // or fallback to looking for a solution
-        if (!this._wasActivatedWithCSharpDevkit) {
-            if (this._solutionFile === undefined && options.commonOptions.defaultSolution !== '') {
+        // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
+        // disabled it.
+        if (!this._wasActivatedWithCSharpDevkit && options.commonOptions.defaultSolution !== 'disable' && this._solutionFile === undefined) {
+            if (options.commonOptions.defaultSolution !== '') {
                 this.openSolution(vscode.Uri.file(options.commonOptions.defaultSolution));
             } else {
-                // Auto open if there is just one solution target, if not the let the user trigger an open solution themselves
+                // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
                 const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
                 if (solutionUris && solutionUris.length === 1) {
                     this.openSolution(solutionUris[0]);
