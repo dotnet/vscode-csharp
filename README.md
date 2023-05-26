@@ -7,7 +7,7 @@ C# is an extension that contributes to the [C# Dev Kit extension](csdevkitextens
 While it is possible to use the C# extension as a standalone extension, we highly recommend using [C# Dev Kit](csdevkitextension).
 
 1. Installing [C# Dev Kit](csdevkitextension) will automatically install this extension as a required dependency
-2. Open a folder/workspace that contains a C# project (.csproj) or solution (.sln) and the extension will activate.
+2. Open a folder/workspace that contains a C# project (.csproj) and a C# solution (.sln) and the extension will activate.
 
 Note: If working on a solution that requires versions prior to .NET 6, install a Full Framework runtime and MSBuild tooling.
   * Set omnisharp.useModernNet to false and if you are on the pre-release verion, set dotnet.server.useOmnisharp to true
