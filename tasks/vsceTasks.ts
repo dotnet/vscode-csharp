@@ -10,7 +10,7 @@ import spawnNode from '../tasks/spawnNode';
 import { vscePath } from './projectPaths';
 
 /// Packaging (VSIX) Tasks
-export async function createPackageAsync(outputFolder: string, packageName?: string, vscodePlatformId?: string) {
+export async function createPackageAsync(outputFolder: string, prerelease: boolean, packageName?: string, vscodePlatformId?: string) {
 
     let vsceArgs = [];
     let packagePath = undefined;
@@ -42,6 +42,10 @@ export async function createPackageAsync(outputFolder: string, packageName?: str
     if (vscodePlatformId !== undefined) {
         vsceArgs.push("--target");
         vsceArgs.push(vscodePlatformId);
+    }
+
+    if (prerelease) {
+        vsceArgs.push("--pre-release");
     }
 
     vsceArgs.push('--baseContentUrl', 'https://devdiv.visualstudio.com/DevDiv/_git/vscode-csharp-next?path=/');
