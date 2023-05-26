@@ -129,7 +129,8 @@ export class ProvisionalCompletionOrchestrator {
             projectedDocument.uri,
             htmlPosition,
             provisionalPosition,
-            completionContext.triggerCharacter);
+            completionContext,
+            projection.languageKind);
 
         // We track when we add provisional dots to avoid doing unnecessary work on commonly invoked events.
         this.provisionalDotsMayBeActive = true;

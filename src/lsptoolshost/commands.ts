@@ -51,6 +51,10 @@ async function restartServer(languageServer: RoslynLanguageServer): Promise<void
 /**
  * Callback after a completion item with complex edit is committed. The change needs to be made outside completion resolve
  * handling
+ * 
+ * IMPORTANT: @see RazorCompletionItemProvider.resolveCompletionItem matches the arguments for this commands
+ * so it can remap correctly in razor files. Any updates to this function signature requires updates there as well.
+ * 
  * @param uriStr The uri containing the location of the document where the completion item was committed in.
  * @param textEdits The additional complex edit for the committed completion item.
  * @param isSnippetString Indicates if the TextEdit contains a snippet string.

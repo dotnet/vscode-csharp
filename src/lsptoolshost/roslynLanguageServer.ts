@@ -33,6 +33,10 @@ import {
     CodeActionParams,
     CodeActionRequest,
     CodeActionResolveRequest,
+    CompletionParams,
+    CompletionRequest,
+    CompletionResolveRequest,
+    CompletionItem,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { acquireDotNetProcessDependencies } from './dotnetRuntime';
@@ -67,6 +71,8 @@ export class RoslynLanguageServer {
     public static readonly roslynPullDiagnosticCommand: string = 'roslyn.pullDiagnosticRazorCSharp';
     public static readonly provideCodeActionsCommand: string = 'roslyn.provideCodeActions';
     public static readonly resolveCodeActionCommand: string = 'roslyn.resolveCodeAction';
+    public static readonly provideCompletionsCommand: string = 'roslyn.provideCompletions';
+    public static readonly resolveCompletionsCommand: string = 'roslyn.resolveCompletion';
     public static readonly razorInitializeCommand: string = 'razor.initialize';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
@@ -474,6 +480,13 @@ export class RoslynLanguageServer {
         });
         vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
             return await this.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
+        });
+
+        vscode.commands.registerCommand(RoslynLanguageServer.provideCompletionsCommand, async (request: CompletionParams) => {
+            return await this.sendRequest(CompletionRequest.type, request, CancellationToken.None);
+        });
+        vscode.commands.registerCommand(RoslynLanguageServer.resolveCompletionsCommand, async (request: CompletionItem) => {
+            return await this.sendRequest(CompletionResolveRequest.type, request, CancellationToken.None);
         });
 
         // Roslyn is responsible for producing a json file containing information for Razor, that comes from the compilation for

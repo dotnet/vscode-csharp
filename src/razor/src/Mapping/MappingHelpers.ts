@@ -35,34 +35,53 @@ export class MappingHelpers {
 
             // Re-map each edit to its position in the original Razor document.
             for (const edit of edits) {
-                const remappedResponse = await serviceClient.mapToDocumentRanges(
-                    LanguageKind.CSharp,
-                    [edit.range],
-                    documentUri);
+                let remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(documentUri, edit, serviceClient, logger, token);
 
-                if (!remappedResponse ||
-                    !remappedResponse.ranges ||
-                    !remappedResponse.ranges[0]) {
-                    // This is kind of wrong. Workspace edits commonly consist of a bunch of different edits which
-                    // don't make sense individually. If we try to introspect on them individually there won't be
-                    // enough context to do anything intelligent. But we also need to know if the edit can just
-                    // be handled by mapToDocumentRange (something went wrong here), so we ignore the edit.
-                    logger.logWarning(`Unable to remap file ${uri.path} at ${edit.range}.`);
-                    continue;
-                } else {
-                    const remappedEdit = new vscode.TextEdit(remappedResponse.ranges[0], edit.newText);
-
-                    logger.logVerbose(
-                        `Re-mapping text ${edit.newText} at ${edit.range} in ${uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`);
-
+                if (remappedEdit) {
                     this.addElementToDictionary(map, documentUri, remappedEdit);
                 }
-
             }
         }
 
         const result = this.mapToTextEdit(map);
         return result;
+    }
+
+    /**
+     * Try to map a textedit from a generated document onto the razor file
+     * @param uri The document uri, expected to be the generated document
+     * @param textEdit The edit to map from a generated document
+     * @returns A mapped edit, or undefined if the edit couldn't be mapped (or is in a razor file)
+     */
+    public static async remapGeneratedFileTextEdit(
+        uri: vscode.Uri,
+        textEdit: vscode.TextEdit,
+        serviceClient: RazorLanguageServiceClient,
+        logger: RazorLogger,
+        token: vscode.CancellationToken): Promise<vscode.TextEdit | undefined> {
+
+        const remappedResponse = await serviceClient.mapToDocumentRanges(
+            LanguageKind.CSharp,
+            [textEdit.range],
+            uri);
+
+        if (!remappedResponse ||
+            !remappedResponse.ranges ||
+            !remappedResponse.ranges[0]) {
+            // This is kind of wrong. Workspace edits commonly consist of a bunch of different edits which
+            // don't make sense individually. If we try to introspect on them individually there won't be
+            // enough context to do anything intelligent. But we also need to know if the edit can just
+            // be handled by mapToDocumentRange (something went wrong here), so we ignore the edit.
+            logger.logWarning(`Unable to remap file ${uri.path} at ${textEdit.range}.`);
+            return undefined;
+        } else {
+            const remappedEdit = new vscode.TextEdit(remappedResponse.ranges[0], textEdit.newText);
+
+            logger.logVerbose(
+                `Re-mapping text ${textEdit.newText} at ${textEdit.range} in ${uri.path} to ${remappedResponse.ranges[0]} in ${uri.path}`);
+
+            return remappedEdit;
+        }
     }
 
     public static async remapGeneratedFileLocation(
