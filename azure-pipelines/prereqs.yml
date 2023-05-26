@@ -8,6 +8,13 @@ steps:
   inputs:
     versionSpec: '16.x'
 
+- task: UseDotNet@2
+
+# Set the CI build number to the VSIX version we're creating from this build.
+- script: |
+    dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
+    $(Agent.BuildDirectory)/nbgv cloud
+
 - script: |
     npm ci
     npm i -g gulp
