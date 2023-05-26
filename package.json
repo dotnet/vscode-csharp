@@ -1182,6 +1182,7 @@
             "description": "Sets the logging level for the language server"
           },
           "dotnet.server.extensionPaths": {
+            "scope": "machine-overridable",
             "type": [
               "array",
               null
@@ -1190,7 +1191,7 @@
               "type": "string"
             },
             "default": null,
-            "description": "Override for path to langauge server --extensions argument"
+            "description": "Override for path to langauge server --extension arguments."
           },
           "dotnet.implementType.insertionBehavior": {
             "type": "string",

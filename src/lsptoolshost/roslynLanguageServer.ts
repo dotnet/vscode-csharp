@@ -512,7 +512,7 @@ export class RoslynLanguageServer {
         let args: string[] = [];
 
         for (const extensionPath of extensionPaths) {
-            args.push("--extensions"); // TODO: switch to --extension naming
+            args.push("--extension");
             args.push(extensionPath);
         }
 
