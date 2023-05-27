@@ -1,3 +1,7 @@
+parameters:
+- name: prereleaseFlag
+  type: string
+
 steps:
 - checkout: self
   clean: true
@@ -7,7 +11,7 @@ steps:
 
 - template: prereqs.yml
 
-- script: gulp 'vsix:release:package'
+- script: gulp 'vsix:release:package' ${{ parameters.prereleaseFlag }}
   displayName: 'Build VSIXs'
 
 - task: PublishPipelineArtifact@1
