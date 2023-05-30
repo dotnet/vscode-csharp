@@ -1,4 +1,4 @@
-## Known Issues in 1.25.1
+## Known Issues in 1.25.8
 
 * For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useModernNet": false`.
 * After selecting a solution filter (*.slnf) from the project selector, the solution's name will be displayed in the status bar instead of the filter's.
@@ -16,6 +16,7 @@
 * Update Razor to 7.0.0-preview.23258.1 (PR: [#5672](https://github.com/OmniSharp/omnisharp-vscode/pull/5672))
   * Fix issue with Razor attribute hover and Go to Definition (PR: [#8653](https://github.com/dotnet/razor/pull/8653))
   * Fix issue with Razor formatting (PR: [#8669](https://github.com/dotnet/razor/pull/8669))
+* Combine test compile step into normal compile (PR: [#5666](https://github.com/OmniSharp/omnisharp-vscode/pull/5666))
 
 ## 1.25.7
 * Update Razor to 7.0.0-preview.23224.3 (PR: [#5660](https://github.com/OmniSharp/omnisharp-vscode/pull/5660))
