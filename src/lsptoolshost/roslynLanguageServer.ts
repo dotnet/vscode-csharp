@@ -55,6 +55,7 @@ import { ServerStateChange } from './ServerStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../CSharpIntelliCodeExports';
 import { csharpDevkitExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { randomUUID } from 'crypto';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -365,13 +366,13 @@ export class RoslynLanguageServer {
         let options = this.optionProvider.GetLatestOptions();
         let serverPath = this.getServerPath(options);
 
-        let dotnetRuntimePath = options.commonOptions.dotnetPath; 
+        let dotnetRuntimePath = options.commonOptions.dotnetPath;
         if (!dotnetRuntimePath)
         {
-            let dotnetPath = await acquireDotNetProcessDependencies(serverPath); 
-            dotnetRuntimePath = path.dirname(dotnetPath);   
+            let dotnetPath = await acquireDotNetProcessDependencies(serverPath);
+            dotnetRuntimePath = path.dirname(dotnetPath);
         }
-        
+
         const dotnetExecutableName = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const dotnetExecutablePath = path.join(dotnetRuntimePath, dotnetExecutableName);
         if (!fs.existsSync(dotnetExecutablePath)) {
@@ -379,14 +380,14 @@ export class RoslynLanguageServer {
         }
 
         _channel.appendLine("Dotnet path: " + dotnetExecutablePath);
-        
+
         // Take care to always run .NET processes on the runtime that we intend.
         // The dotnet.exe we point to should not go looking for other runtimes.
         const env: NodeJS.ProcessEnv =  { ...process.env };
         env.DOTNET_ROOT = dotnetRuntimePath;
         env.DOTNET_MULTILEVEL_LOOKUP = '0';
         // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
-        env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';   
+        env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
 
         let args: string[] = [ ];
 
@@ -532,7 +533,7 @@ export class RoslynLanguageServer {
             args.push(extensionPath);
         }
 
-        args.push("--sessionId", vscode.env.sessionId);
+        args.push("--sessionId", getSessionId());
         return args;
     }
 
@@ -676,3 +677,15 @@ export async function deactivate() {
     return _languageServer.stop();
 }
 
+// VS code will have a default session id when running under tests. Since we may still
+// report telemetry, we need to give a unique session id instead of the default value.
+function getSessionId(): string {
+    let sessionId = vscode.env.sessionId;
+
+    // 'somevalue.sessionid' is the test session id provided by vs code
+    if (sessionId.toLowerCase() === 'somevalue.sessionid') {
+        return randomUUID();
+    }
+
+    return sessionId;
+}
