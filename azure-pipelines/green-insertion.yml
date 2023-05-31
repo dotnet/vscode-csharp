@@ -9,10 +9,10 @@ schedules:
     - feature/lsp_tools_host
 
 parameters:
-- name: InsertTargetBranch
-  displayName: Target branch
-  type: string
-  default: main
+  - name: InsertTargetBranch
+    displayName: Target branch
+    type: string
+    default: main
 
 resources:
   pipelines:
@@ -87,16 +87,23 @@ jobs:
           $vsix = $_.FullName
           $npmName = "@microsoft/csharp-vscode-extension.$os-$arch"
 
-          Write-Host "##[group]Translating $os-$arch VSIX to NPM package $npmName"
-          $packageStagingDir = "$(Agent.TempDirectory)/csharp/$os-$arch"
-          New-Item -Type Directory -Path $packageStagingDir | Set-Location
-          Spawn-Tool '7z' ('x', '-y', $vsix)
-          Set-Content -Path package.json -Value "{`n  `"description`": `"C# for Visual Studio Code ($os-$arch) as NPM package for insertion into the C# Dev Kit extension for testing.`"`n}"
-          Spawn-Tool 'npm' ('pkg','set',"name=$npmName","version=$version",'publishConfig.registry=https://pkgs.dev.azure.com/devdiv/DevDiv/_packaging/vs-green/npm/registry/','repository.type=git','repository.url=https://devdiv.visualstudio.com/DevDiv/_git/vscode-csharp-next',"repository.commit=$(resources.pipeline.BlueCI.sourceCommit)")
-          Get-Content -Path package.json
-          Spawn-Tool 'npm' @('publish','--userconfig','$(Pipeline.Workspace)/.npmrc')
-          $InsertNpmDependencies += "$npmName@$version "
-          Write-Host "##[endgroup]"
+          $packageNameAndVersion = "$npmName@$version"
+          $InsertNpmDependencies += "$packageNameAndVersion "
+          & npm view $packageNameAndVersion --userconfig $(Pipeline.Workspace)/.npmrc
+          # If the command succeeded it means the package is already published, so we need to skip it.
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "$packageNameAndVersion is already published, skipping."
+          } else {
+            Write-Host "##[group]Translating $os-$arch VSIX to NPM package $npmName"
+            $packageStagingDir = "$(Agent.TempDirectory)/csharp/$os-$arch"
+            New-Item -Type Directory -Path $packageStagingDir | Set-Location
+            Spawn-Tool '7z' ('x', '-y', $vsix)
+            Set-Content -Path package.json -Value "{`n  `"description`": `"C# for Visual Studio Code ($os-$arch) as NPM package for insertion into the C# Dev Kit extension for testing.`"`n}"
+            Spawn-Tool 'npm' ('pkg','set',"name=$npmName","version=$version",'publishConfig.registry=https://pkgs.dev.azure.com/devdiv/DevDiv/_packaging/vs-green/npm/registry/','repository.type=git','repository.url=https://devdiv.visualstudio.com/DevDiv/_git/vscode-csharp-next',"repository.commit=$(resources.pipeline.BlueCI.sourceCommit)")
+            Get-Content -Path package.json
+            Spawn-Tool 'npm' @('publish','--userconfig','$(Pipeline.Workspace)/.npmrc')
+            Write-Host "##[endgroup]"
+          }
         }
       }
 
