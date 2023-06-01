@@ -203,11 +203,20 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             const dotNetInfo = await getDotnetInfo(this.options.omnisharpOptions.dotNetCliPaths);
             const targetArchitecture = getTargetArchitecture(this.platformInfo, _session.configuration.targetArchitecture, dotNetInfo);
             const command = path.join(common.getExtensionPath(), ".debugger", targetArchitecture, "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
-            executable = new vscode.DebugAdapterExecutable(command, [], {
-                env: {
-                    DOTNET_ROOT: dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '',
-                }
-            });
+
+            // Look to see if DOTNET_ROOT is set, then use dotnet cli path
+            let dotnetRoot: string = process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+
+            let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
+            if (dotnetRoot) {
+                options = {
+                    env: {
+                        DOTNET_ROOT: dotnetRoot,
+                    }
+                };
+            }
+
+            executable = new vscode.DebugAdapterExecutable(command, [], options);
         }
 
         // make VS Code launch the DA executable
