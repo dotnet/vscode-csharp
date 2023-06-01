@@ -9,7 +9,7 @@
   "icon": "images/csharpIcon.png",
   "preview": false,
   "bugs": {
-    "url": "https://github.com/dotnet/vscode-dotnettools"
+    "url": "https://github.com/dotnet/vscode-dotnettools/issues"
   },
   "repository": {
     "type": "git",
