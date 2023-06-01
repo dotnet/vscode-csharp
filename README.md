@@ -1,4 +1,6 @@
-## C# for Visual Studio Code (powered by OmniSharp)
+## C# for Visual Studio Code
+
+C# is the feature-rich, language support for C# in VS Code. This extension is being updated to be powered by a new fully open-source Language Server Protocol (LSP) Host.  To use the LSP-powered version, click on the “Switch to Pre-Release Version” or “Install Pre-Release” button or above. To use the OmniSharp-powered version, click “Install Release Version” or continuing using the 1.x version you already have installed.
 
 Welcome to the C# extension for Visual Studio Code! This extension provides the following features inside VS Code:
 
