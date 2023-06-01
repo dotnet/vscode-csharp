@@ -9,7 +9,7 @@
   "icon": "images/csharpIcon.png",
   "preview": false,
   "bugs": {
-    "url": "https://github.com/microsoft/vscode-dotnettools/issues"
+    "url": "https://github.com/dotnet/vscode-dotnettools"
   },
   "repository": {
     "type": "git",
@@ -1642,12 +1642,14 @@
       {
         "command": "csharp.reportIssue",
         "title": "Report an issue",
-        "category": "CSharp"
+        "category": "CSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "csharp.showDecompilationTerms",
         "title": "Show the decompiler terms agreement",
-        "category": "CSharp"
+        "category": "CSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "extension.showRazorCSharpWindow",
