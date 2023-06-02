@@ -679,6 +679,7 @@
     "onDebugResolve:dotnet",
     "onLanguage:csharp",
     "onLanguage:aspnetcorerazor",
+    "onLanguage:dotnetProject",
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
@@ -4121,7 +4122,8 @@
         "languages": [
           "csharp",
           "razor",
-          "aspnetcorerazor"
+          "aspnetcorerazor",
+          "dotnetProject"
         ],
         "variables": {},
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
@@ -4738,6 +4740,16 @@
         "configuration": "./src/razor/language-configuration.json",
         "aliases": [
           "ASP.NET Razor"
+        ]
+      },
+      {
+        "id": "dotnetProject",
+        "extensions": [
+          ".csproj",
+          ".sln"
+        ],
+        "aliases": [
+          ".NET Project"
         ]
       }
     ],
