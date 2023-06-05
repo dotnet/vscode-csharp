@@ -1643,12 +1643,14 @@
       {
         "command": "csharp.reportIssue",
         "title": "Report an issue",
-        "category": "CSharp"
+        "category": "CSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "csharp.showDecompilationTerms",
         "title": "Show the decompiler terms agreement",
-        "category": "CSharp"
+        "category": "CSharp",
+        "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "extension.showRazorCSharpWindow",

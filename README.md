@@ -20,8 +20,8 @@ Note: If working on a solution that requires versions prior to .NET 6, install a
   * Code Completions
   * Roslyn powered semantic awareness
 
-## How to use Omnisharp?
-If you don’t want to take advantage of the great Language Server features, you can revert back to using Omnisharp in the pre-release extension by going to the Extension settings and setting `dotnet.server.useOmnisharp` to true. This will require that you restart VS Code to take effect. You can also switch back to the Switch to Release Version to revert back to the C# extension powered by OmniSharp.
+## How to use OmniSharp?
+If you don’t want to take advantage of the great Language Server features, you can revert back to using OmniSharp in the pre-release extension by going to the Extension settings and setting `dotnet.server.useOmnisharp` to true. This will require that you restart VS Code to take effect. You can also switch back to the Switch to Release Version to revert back to the C# extension powered by OmniSharp.
 
 
 ## Found a Bug?
@@ -46,7 +46,7 @@ For more information see the [.NET Foundation Code of Conduct](http://www.dotnet
 
 ### Contribution License Agreement
 
-By signing the [CLA](https://cla.dotnetfoundation.org/OmniSharp/omnisharp-roslyn), the community is free to use your contribution to [.NET Foundation](http://www.dotnetfoundation.org) projects.
+By signing the [CLA](https://cla.dotnetfoundation.org/), the community is free to use your contribution to [.NET Foundation](http://www.dotnetfoundation.org) projects.
 
 ### .NET Foundation
 
@@ -69,4 +69,4 @@ If someone has already filed an issue that encompasses your feedback, please lea
 Let us know what you think of the extension by taking the quick survey.
 
 
-[csdevkitextension]: https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscodeintellicode-csharp
+[csdevkitextension]: https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit
