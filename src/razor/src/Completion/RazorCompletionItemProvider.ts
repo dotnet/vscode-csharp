@@ -118,6 +118,15 @@ export class RazorCompletionItemProvider
                     completionItem.commitCharacters = completionItem.commitCharacters.filter(
                         commitChar => commitChar !== '{' && commitChar !== '(' && commitChar !== '*');
                 }
+
+                // for intellicode items, manually set the insertText to avoid including stars in the commit
+                if (completionItem.label.toString().includes('\u2605')){
+                    // vscode.CompletionItem does not have textEditText, which was added in 3.17
+                    let intellicodeCompletion: CompletionItem = completionItem as CompletionItem;
+                    if (intellicodeCompletion.textEditText){
+                        completionItem.insertText = intellicodeCompletion.textEditText;
+                    }
+                }
             }
 
             const isIncomplete = completions instanceof Array ? false
