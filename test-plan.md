@@ -6,7 +6,7 @@
   - Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
   - MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/stable/)
 
-See [OmniSharp Options](https://github.com/OmniSharp/omnisharp-vscode/blob/master/test-plan.md#omnisharpusemodernnet-all-platforms) for more details.
+See [OmniSharp Options](https://github.com/dotnet/vscode-csharp/blob/main/test-plan.md#omnisharpusemodernnet-all-platforms) for more details.
 
 ### Validation
 

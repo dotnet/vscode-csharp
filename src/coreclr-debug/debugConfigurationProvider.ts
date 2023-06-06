@@ -119,7 +119,7 @@ function checkForDevCerts(dotNetCliPaths: string[], eventStream: EventStream){
             }
             if (result?.title === labelMoreInfo)
             {
-                const launchjsonDescriptionURL = 'https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#check-for-devcert';
+                const launchjsonDescriptionURL = 'https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md#check-for-devcert';
                 vscode.env.openExternal(vscode.Uri.parse(launchjsonDescriptionURL));
                 checkForDevCerts(dotNetCliPaths, eventStream);
             }
