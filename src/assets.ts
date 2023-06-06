@@ -290,7 +290,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
     const configuration = {
         "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
         "OS-COMMENT2": "Use hover for the description of the existing attributes",
-        "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "OS-COMMENT3": "For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md",
         "name": ".NET Core Launch (web)",
         "type": "coreclr",
         "request": "launch",
@@ -345,7 +345,7 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
     const configuration = {
         "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
         "OS-COMMENT2": "Use hover for the description of the existing attributes",
-        "OS-COMMENT3": "For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md",
+        "OS-COMMENT3": "For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md",
         "name": ".NET Core Launch (console)",
         "type": "coreclr",
         "request": "launch",

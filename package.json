@@ -3645,7 +3645,7 @@
                 "description": "Environment variables passed to dotnet. Only valid for hosted apps."
               },
               "dotNetConfig": {
-                "description": "Options passed to the underlying .NET debugger. For more info, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger.md.",
+                "description": "Options passed to the underlying .NET debugger. For more info, see https://github.com/dotnet/vscode-csharp/blob/main/debugger.md.",
                 "type": "object",
                 "required": [],
                 "default": {},
