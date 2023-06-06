@@ -34,7 +34,7 @@ If you still need Unity or .NET Framework support, you can set `omnisharp.useMod
 See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
 
 ## What's new in 1.25.10
-* Readme updates (PR: [#5706](https://github.com/OmniSharp/omnisharp-vscode/pull/5706))
+* Readme updates (PR: [#5707](https://github.com/OmniSharp/omnisharp-vscode/pull/5707))
 * 
 ## What's new in 1.25.9
 * Readme updates (PR: [#5705](https://github.com/OmniSharp/omnisharp-vscode/pull/5705))
