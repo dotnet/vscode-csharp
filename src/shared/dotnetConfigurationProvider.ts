@@ -61,7 +61,7 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
 
     async resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | undefined> {
         /** This {@link vscode.DebugConfigurationProvider} does not handle Run and Debug */
-        if (Object.keys(debugConfiguration).length == 0) {
+        if (debugConfiguration.type === undefined) {
             return debugConfiguration;
         }
 
