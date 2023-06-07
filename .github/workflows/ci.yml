@@ -2,10 +2,10 @@ name: OmniSharp-VSCode CI
 
 on:
   push:
-    branches: [ main, feature/** ]
+    branches: [ release, main, feature/** ]
 
   pull_request:
-    branches: [ main, feature/** ]
+    branches: [ release, main, feature/** ]
 
 jobs:
   build:
