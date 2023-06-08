@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { GetPackagesFromVersion } from './OmnisharpPackageCreator';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess, InstallationFailure, LatestBuildDownloadStart } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
@@ -31,7 +31,7 @@ export class OmnisharpDownloader {
         if (packagesToInstall.length > 0) {
             this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            if (await downloadAndInstallPackages(packagesToInstall, this.networkSettingsProvider, this.eventStream, isValidDownload, useFramework)) {
+            if (await downloadAndInstallPackages(packagesToInstall, this.networkSettingsProvider, this.eventStream, isValidDownload)) {
                 this.eventStream.post(new InstallationSuccess());
                 return true;
             }

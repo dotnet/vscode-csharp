@@ -5,7 +5,7 @@
 
 import AbstractSupport from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConversion';
@@ -14,7 +14,7 @@ import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeatur
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
 
-export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
+export default class OmniSharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
 
     constructor(
         server: OmniSharpServer,
@@ -26,7 +26,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 
     public async provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
 
-        const options = this.optionProvider.GetLatestOptions();
+        const options = this.optionProvider.GetLatestOptions().omnisharpOptions;
         const minFilterLength = options.minFindSymbolsFilterLength > 0 ? options.minFindSymbolsFilterLength : undefined;
         const maxItemsToReturn = options.maxFindSymbolsItems > 0 ? options.maxFindSymbolsItems : undefined;
 
@@ -58,7 +58,7 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 
         return new SymbolInformation(
             symbolInfo.Text,
-            OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
+            OmniSharpWorkspaceSymbolProvider._toKind(symbolInfo),
             symbolInfo.ContainingSymbolName ?? "",
             location);
     }

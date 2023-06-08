@@ -8,7 +8,7 @@ import { BaseEvent, OmnisharpInitialisation, OmnisharpLaunch, OmnisharpFailure, 
 import * as os from 'os';
 import { EventType } from "../omnisharp/EventType";
 import * as vscode from 'vscode';
-import { PlatformInformation } from "../platform";
+import { PlatformInformation } from "../shared/platform";
 import { Logger } from "../logger";
 
 export class OmnisharpLoggerObserver extends BaseLoggerObserver {

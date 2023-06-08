@@ -15,7 +15,7 @@ import { isVirtualCSharpDocument } from "./virtualDocumentTracker";
 
 export const CompletionAfterInsertCommand = "csharp.completion.afterInsert";
 
-export default class OmnisharpCompletionProvider extends AbstractProvider implements CompletionItemProvider {
+export default class OmniSharpCompletionProvider extends AbstractProvider implements CompletionItemProvider {
 
     #lastCompletions?: Map<CompletionItem, protocol.OmnisharpCompletionItem>;
 

@@ -10,7 +10,7 @@ import TestEventBus from "../testAssets/TestEventBus";
 import { expect } from "chai";
 import { OpenURL } from "../../../src/omnisharp/loggingEvents";
 import { vscode } from "../../../src/vscodeAdapter";
-import { Options } from "../../../src/omnisharp/options";
+import { Options } from "../../../src/shared/options";
 import { FakeGetDotnetInfo, fakeDotnetInfo } from "../Fakes/FakeGetDotnetInfo";
 import { FakeMonoResolver, fakeMonoInfo } from "../Fakes/FakeMonoResolver";
 import { FakeDotnetResolver } from "../Fakes/FakeDotnetResolver";

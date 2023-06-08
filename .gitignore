@@ -2,6 +2,7 @@ bin
 obj
 node_modules
 out
+.roslyn/
 .omnisharp/
 .omnisharp-*/
 .vs/
@@ -26,5 +27,3 @@ coverage/
 
 \.DS_Store
 vsix/
-
-\.vscodeignore

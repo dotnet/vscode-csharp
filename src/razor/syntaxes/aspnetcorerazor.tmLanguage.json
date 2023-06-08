@@ -529,7 +529,7 @@
       ]
     },
     "code-directive": {
-      "begin": "(@)(code)\\s*",
+      "begin": "(@)(code)((?=\\{)|\\s+)",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -550,7 +550,7 @@
       "end": "(?<=})|\\s"
     },
     "functions-directive": {
-      "begin": "(@)(functions)\\s*",
+      "begin": "(@)(functions)((?=\\{)|\\s+)",
       "beginCaptures": {
         "1": {
           "patterns": [

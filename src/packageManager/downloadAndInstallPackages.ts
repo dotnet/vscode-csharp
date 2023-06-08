@@ -16,7 +16,7 @@ import { mkdirpSync } from "fs-extra";
 import { PackageInstallStart } from "../omnisharp/loggingEvents";
 import { DownloadValidator } from './isValidDownload';
 
-export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream, downloadValidator: DownloadValidator, useFramework: boolean): Promise<boolean> {
+export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream, downloadValidator: DownloadValidator): Promise<boolean> {
     eventStream.post(new PackageInstallStart());
     for (let pkg of packages) {
         let installationStage = "touchBeginFile";

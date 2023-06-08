@@ -5,47 +5,26 @@
 
 import * as utils from './utils';
 import * as vscode from 'vscode';
-import { AddAssetResult, addAssetsIfNecessary } from '../assets';
-import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
+import { addAssetsIfNecessary } from '../shared/assets';
 import { safeLength, sum } from '../common';
-import { CSharpConfigurationProvider } from '../configurationProvider';
-import CodeActionProvider from '../features/codeActionProvider';
-import CodeLensProvider from '../features/codeLensProvider';
-import CompletionProvider, { CompletionAfterInsertCommand } from '../features/completionProvider';
-import DefinitionMetadataDocumentProvider from '../features/definitionMetadataDocumentProvider';
-import DefinitionProvider from '../features/definitionProvider';
-import DocumentHighlightProvider from '../features/documentHighlightProvider';
-import DocumentSymbolProvider from '../features/documentSymbolProvider';
-import FormatProvider from '../features/formattingEditProvider';
-import HoverProvider from '../features/hoverProvider';
-import ImplementationProvider from '../features/implementationProvider';
+import { DotnetWorkspaceConfigurationProvider } from '../shared/workspaceConfigurationProvider';
 import { OmniSharpServer } from './server';
-import ReferenceProvider from '../features/referenceProvider';
-import RenameProvider from '../features/renameProvider';
-import SignatureHelpProvider from '../features/signatureHelpProvider';
 import TestManager from '../features/dotnetTest';
-import WorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
-import forwardChanges from '../features/changeForwarding';
 import registerCommands from '../features/commands';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import { ProjectJsonDeprecatedWarning, OmnisharpStart, RazorDevModeActive } from './loggingEvents';
 import { EventStream } from '../EventStream';
 import { NetworkSettingsProvider } from '../NetworkSettings';
 import CompositeDisposable from '../CompositeDisposable';
 import Disposable from '../Disposable';
-import OptionProvider from '../observers/OptionProvider';
-import trackVirtualDocuments from '../features/virtualDocumentTracker';
-import { StructureProvider } from '../features/structureProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
-import { FixAllProvider } from '../features/fixAllProvider';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
-import SemanticTokensProvider from '../features/semanticTokensProvider';
-import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocumentProvider';
 import { getDecompilationAuthorization } from './decompilationPrompt';
-import { OmniSharpDotnetResolver } from './OmniSharpDotnetResolver';
-import CSharpInlayHintProvider from '../features/inlayHintProvider';
-import fileOpenClose from '../features/fileOpenCloseProvider';
+import { DotnetResolver } from '../shared/DotnetResolver';
+import { Advisor } from '../features/diagnosticsProvider';
+import { OmnisharpWorkspaceDebugInformationProvider } from '../OmnisharpWorkspaceDebugInformationProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -53,97 +32,41 @@ export interface ActivationResult {
     readonly testManager: TestManager;
 }
 
-export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string) {
-    const documentSelector: vscode.DocumentSelector = {
-        language: 'csharp',
-    };
+export async function activate(context: vscode.ExtensionContext, packageJSON: any, platformInfo: PlatformInformation, provider: NetworkSettingsProvider, eventStream: EventStream, optionProvider: OptionProvider, extensionPath: string, outputChannel: vscode.OutputChannel) {
+    const disposables = new CompositeDisposable();
 
     const options = optionProvider.GetLatestOptions();
     const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
-    const omnisharpDotnetResolver = new OmniSharpDotnetResolver(platformInfo);
-    const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
-    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, omnisharpDotnetResolver, decompilationAuthorized);
-    const advisor = new Advisor(server, optionProvider); // create before server is started
-    const disposables = new CompositeDisposable();
+    const omnisharpDotnetResolver = new DotnetResolver(platformInfo);
+
     const languageMiddlewareFeature = new LanguageMiddlewareFeature();
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
-    let localDisposables: CompositeDisposable | undefined;
+
+    const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
+
+    const server = new OmniSharpServer(vscode, provider, packageJSON, platformInfo, eventStream, optionProvider, extensionPath, omnisharpMonoResolver, omnisharpDotnetResolver, decompilationAuthorized, context, outputChannel, languageMiddlewareFeature);
+    const advisor = new Advisor(server, optionProvider); // create before server is started
     const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
-    const completionProvider = new CompletionProvider(server, languageMiddlewareFeature);
+    const workspaceInformationProvider = new OmnisharpWorkspaceDebugInformationProvider(server);
 
-    disposables.add(server.onServerStart(() => {
-        // register language feature provider on start
-        localDisposables = new CompositeDisposable();
-        const definitionMetadataDocumentProvider = new DefinitionMetadataDocumentProvider();
-        definitionMetadataDocumentProvider.register();
-        localDisposables.add(definitionMetadataDocumentProvider);
-        const sourceGeneratedDocumentProvider = new SourceGeneratedDocumentProvider(server);
-        sourceGeneratedDocumentProvider.register();
-        localDisposables.add(sourceGeneratedDocumentProvider);
-        const definitionProvider = new DefinitionProvider(server, definitionMetadataDocumentProvider, sourceGeneratedDocumentProvider, languageMiddlewareFeature);
-        localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
-        localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
-        localDisposables.add(vscode.languages.registerTypeDefinitionProvider(documentSelector, definitionProvider));
-        localDisposables.add(vscode.languages.registerTypeDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
-        localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new ImplementationProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new CodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new DocumentHighlightProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new DocumentSymbolProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new ReferenceProvider(server, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
-        localDisposables.add(vscode.languages.registerHoverProvider(documentSelector, new HoverProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerRenameProvider(documentSelector, new RenameProvider(server, languageMiddlewareFeature)));
-        if (options.useFormatting) {
-            localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature)));
-            localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new FormatProvider(server, languageMiddlewareFeature), '}', '/', '\n', ';'));
-        }
-        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, completionProvider, '.', ' '));
-        localDisposables.add(vscode.commands.registerCommand(CompletionAfterInsertCommand, async (item, document) => completionProvider.afterInsert(item, document)));
-        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new WorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
-        localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new SignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
-        // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
-        // so that it will be cleaned up if OmniSharp is restarted.
-        const codeActionProvider = new CodeActionProvider(server, optionProvider, languageMiddlewareFeature);
-        localDisposables.add(codeActionProvider);
-        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
-        // Since the FixAllProviders registers its own commands, we must instantiate it and add it to the localDisposables
-        // so that it will be cleaned up if OmniSharp is restarted.
-        const fixAllProvider = new FixAllProvider(server, languageMiddlewareFeature);
-        localDisposables.add(fixAllProvider);
-        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider, FixAllProvider.metadata));
-        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
-        localDisposables.add(forwardChanges(server));
-        localDisposables.add(trackVirtualDocuments(server, eventStream));
-        localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new StructureProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(fileOpenClose(server));
-
-        const semanticTokensProvider = new SemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
-        localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
-        localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
-
-        const inlayHintsProvider = new CSharpInlayHintProvider(server, languageMiddlewareFeature);
-        localDisposables.add(vscode.languages.registerInlayHintsProvider(documentSelector, inlayHintsProvider));
+    let registrations: Disposable | undefined;
+    disposables.add(server.onServerStart(async () => {
+        registrations = await server.registerProviders(eventStream, advisor, testManager);
     }));
 
     disposables.add(server.onServerStop(() => {
         // remove language feature providers on stop
-        if (localDisposables) {
-            localDisposables.dispose();
-        }
-        localDisposables = undefined;
+        registrations?.dispose();
+        registrations = undefined;
     }));
 
-    disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, omnisharpDotnetResolver, packageJSON, extensionPath));
+    disposables.add(registerCommands(context, server, platformInfo, eventStream, optionProvider, omnisharpMonoResolver, omnisharpDotnetResolver, workspaceInformationProvider));
 
-    if (!context.workspaceState.get<boolean>('assetPromptDisabled')) {
-        disposables.add(server.onServerStart(async () => {
-            // Update or add tasks.json and launch.json
-            const result = await addAssetsIfNecessary(server);
-            if (result === AddAssetResult.Disable) {
-                context.workspaceState.update('assetPromptDisabled', true);
-            }
-        }));
-    }
+    disposables.add(server.onServerStart(async () => {
+        // Update or add tasks.json and launch.json
+        await addAssetsIfNecessary(context, workspaceInformationProvider);
+    }));
 
     // After server is started (and projects are loaded), check to see if there are
     // any project.json projects if the suppress option is not set. If so, notify the user about migration.
@@ -189,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     }));
 
     disposables.add(server.onBeforeServerStart(path => {
-        if (options.razorDevMode) {
+        if (options.razorOptions.razorDevMode) {
             eventStream.post(new RazorDevModeActive());
         }
 
@@ -197,7 +120,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
         context.workspaceState.update('lastSolutionPathOrFolder', path);
     }));
 
-    if (options.autoStart) {
+    if (options.omnisharpOptions.autoStart) {
         server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
     }
 
@@ -209,7 +132,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     }));
 
     // Register ConfigurationProvider
-    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new CSharpConfigurationProvider(server)));
+    disposables.add(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetWorkspaceConfigurationProvider(workspaceInformationProvider, platformInfo, optionProvider, outputChannel)));
 
     context.subscriptions.push(disposables);
 

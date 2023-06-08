@@ -1,4 +1,6 @@
 {
     "omnisharp.path": "latest",
-    "omnisharp.enableRoslynAnalyzers": true
+    "omnisharp.enableRoslynAnalyzers": true,
+    "omnisharp.enableLspDriver": false,
+    "dotnet.server.useOmnisharp": true
 }

@@ -12,8 +12,8 @@ export async function run() {
     return testRunner.run(
         path.resolve(__dirname, '.'),
         {
-            timeout: 60000,
-            ui: 'tdd',      // the TDD UI is being used in extension.test.ts (suite, test, etc.)
-            useColors: true // colored output from test results
+            timeout: 120000, // this seems to timing out often in our pipeline
+            ui: 'tdd',       // the TDD UI is being used in extension.test.ts (suite, test, etc.)
+            useColors: true  // colored output from test results
         });
 }

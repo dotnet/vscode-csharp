@@ -1,0 +1,45 @@
+trigger: none # We only want to trigger manually or based on resources
+pr: none
+
+resources:
+  pipelines:
+  - pipeline: CI
+    source: vscode-csharp-next
+    trigger:
+      tags:
+      - auto-release
+
+variables:
+- group: VisualStudioMarketplace # Expected to provide VisualStudioMarketplacePAT (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
+
+jobs:
+- job: release
+  pool:
+    name: AzurePipelines-EO
+    vmImage: AzurePipelinesUbuntu20.04compliant
+  steps:
+  - checkout: none
+  - powershell: |
+      Write-Host "##vso[build.updatebuildnumber]$(resources.pipeline.CI.runName)"
+      if ('$(resources.pipeline.CI.runName)'.Contains('-')) {
+        Write-Host "##vso[task.setvariable variable=IsPrerelease]true"
+      } else {
+        Write-Host "##vso[task.setvariable variable=IsPrerelease]false"
+      }
+    displayName: ⚙ Set up pipeline
+  - download: CI
+    artifact: package
+    displayName: 🔻 Download package artifact
+  - pwsh: | # Package publishing to pre-release https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
+      $additionalPublishArgs = 'run','vsce','publish','--skip-duplicate'
+      if ($env:ISPRERELEASE -ne 'false') {
+        $additionalPublishArgs += '--pre-release'
+      }
+      $additionalPublishArgs += '--packagePath'
+      $additionalPublishArgs += Get-ChildItem *.vsix |% { $_.Name }
+      Write-Host "##[command]yarn $additionalPublishArgs"
+      yarn @additionalPublishArgs
+    displayName: 📦 Publish to Marketplace
+    workingDirectory: $(Pipeline.Workspace)/CI/package
+    env:
+      VSCE_PAT: $(VisualStudioMarketplacePAT)

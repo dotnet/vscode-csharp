@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from './platform';
+import { PlatformInformation } from './shared/platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './omnisharp/loggingEvents';
 import { EventStream } from './EventStream';
 import { getRuntimeDependenciesPackages } from './tools/RuntimeDependencyPackageUtils';
@@ -11,17 +11,18 @@ import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePa
 import IInstallDependencies from './packageManager/IInstallDependencies';
 import { AbsolutePathPackage } from './packageManager/AbsolutePathPackage';
 
-export async function installRuntimeDependencies(packageJSON: any, extensionPath: string, installDependencies: IInstallDependencies, eventStream: EventStream, platformInfo: PlatformInformation, useFramework: boolean): Promise<boolean> {
+export async function installRuntimeDependencies(packageJSON: any, extensionPath: string, installDependencies: IInstallDependencies, eventStream: EventStream, platformInfo: PlatformInformation, useFramework: boolean, requiredPackageIds: string[]): Promise<boolean> {
     const runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     const packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, extensionPath);
     const filteredPackages = filterOmniSharpPackage(packagesToInstall, useFramework);
+    const filteredRequiredPackages = filteredRequiredPackage(requiredPackageIds, filteredPackages);
 
-    if (filteredPackages.length > 0) {
+    if (filteredRequiredPackages.length > 0) {
         eventStream.post(new PackageInstallation("C# dependencies"));
         // Display platform information and RID
         eventStream.post(new LogPlatformInfo(platformInfo));
 
-        if (await installDependencies(filteredPackages)) {
+        if (await installDependencies(filteredRequiredPackages)) {
             eventStream.post(new InstallationSuccess());
         }
         else {
@@ -37,4 +38,8 @@ function filterOmniSharpPackage(packages: AbsolutePathPackage[], useFramework: b
     // Since we will have more than one OmniSharp package defined for some platforms, we need
     // to filter out the one that doesn't match which dotnet runtime is being used.
     return packages.filter(pkg => pkg.id !== "OmniSharp" || pkg.isFramework === useFramework);
+}
+
+function filteredRequiredPackage(requiredPackageIds: string[], packages: AbsolutePathPackage[]) {
+    return packages.filter(pkg => requiredPackageIds.includes(pkg.id));
 }

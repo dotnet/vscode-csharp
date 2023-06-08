@@ -1,5 +1,6 @@
 {
     "omnisharp.defaultLaunchSolution": "SolutionFilter.slnf",
     "omnisharp.path": "latest",
-    "omnisharp.enableRoslynAnalyzers": true
+    "omnisharp.enableRoslynAnalyzers": true,
+    "dotnet.server.useOmnisharp": true
 }

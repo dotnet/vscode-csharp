@@ -120,6 +120,7 @@ export function getFakeVsCode(): vscode.vscode {
             }
         },
         workspace: {
+            workspaceFolders: undefined,
             getConfiguration: (section?: string, resource?: Uri) => {
                 throw new Error("Not Implemented");
             },
@@ -180,22 +181,9 @@ export function getVSCodeWithConfig() {
     const vscode = getFakeVsCode();
 
     const _vscodeConfig = getWorkspaceConfiguration();
-    const _omnisharpConfig = getWorkspaceConfiguration();
-    const _csharpConfig = getWorkspaceConfiguration();
-    const _razorConfig = getWorkspaceConfiguration();
 
     vscode.workspace.getConfiguration = (section, resource) => {
-        if (section === undefined) {
-            return _vscodeConfig;
-        } else if (section === 'omnisharp') {
-            return _omnisharpConfig;
-        } else if (section === 'csharp') {
-            return _csharpConfig;
-        } else if (section === 'razor') {
-            return _razorConfig;
-        }
-
-        throw new Error(`Unexpected section ${section}`);
+        return _vscodeConfig;
     };
 
     return vscode;
@@ -203,5 +191,6 @@ export function getVSCodeWithConfig() {
 
 export function updateConfig(vscode: vscode.vscode, section: string | undefined, config: string, value: any) {
     const workspaceConfig = vscode.workspace.getConfiguration(section);
-    workspaceConfig.update(config, value);
+    let configEntry = section ? `${section}.${config}` : config;
+    workspaceConfig.update(configEntry, value);
 }

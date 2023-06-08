@@ -116,14 +116,23 @@ class TestLanguageMiddleware implements LanguageMiddleware {
         return newEdit;
     }
 
-    remapLocations(locations: vscode.Location[], token: vscode.CancellationToken): vscode.ProviderResult<vscode.Location[]> {
-        const remapped = new Array<vscode.Location>();
+    remapLocations(locations: vscode.Location[] | vscode.LocationLink[], token: vscode.CancellationToken): vscode.ProviderResult<Array<vscode.Location | vscode.LocationLink>> {
+        const remapped = new Array<vscode.Location | vscode.LocationLink>();
         for (const location of locations) {
-            if (location.uri.path === this.fileToRemapUri.path) {
-                // Naively return a remapped file.
-                remapped.push(new vscode.Location(this.remappedFileUri, new vscode.Position(0, 0)));
+            if (location instanceof vscode.Location) {
+                if (location.uri.path === this.fileToRemapUri.path) {
+                    // Naively return a remapped file.
+                    remapped.push(new vscode.Location(this.remappedFileUri, new vscode.Position(0, 0)));
+                } else {
+                    remapped.push(location);
+                }
             } else {
-                remapped.push(location);
+                if (location.targetUri.path === this.fileToRemapUri.path) {
+                    // Naively return a remapped file.
+                    remapped.push(new vscode.Location(this.remappedFileUri, new vscode.Position(0, 0)));
+                } else {
+                    remapped.push(location);
+                }
             }
         }
         return remapped;

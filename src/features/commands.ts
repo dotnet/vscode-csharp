@@ -5,25 +5,34 @@
 
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
-import { findLaunchTargets, LaunchTarget } from '../omnisharp/launcher';
+import { findLaunchTargets } from '../omnisharp/launcher';
+import { LaunchTarget } from "../shared/LaunchTarget";
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from '../omnisharp/protocol';
 import * as vscode from 'vscode';
-import { RemoteAttachPicker } from './processPicker';
-import { generateAssets } from '../assets';
+import { generateAssets } from '../shared/assets';
 import { ShowOmniSharpChannel, CommandDotNetRestoreStart, CommandDotNetRestoreProgress, CommandDotNetRestoreSucceeded, CommandDotNetRestoreFailed } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import CompositeDisposable from '../CompositeDisposable';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 import reportIssue from './reportIssue';
-import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
 import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
+import { IWorkspaceDebugInformationProvider } from '../shared/IWorkspaceDebugInformationProvider';
 
-export default function registerCommands(context: vscode.ExtensionContext, server: OmniSharpServer, platformInfo: PlatformInformation, eventStream: EventStream, optionProvider: OptionProvider, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver, packageJSON: any, extensionPath: string): CompositeDisposable {
+export default function registerCommands(
+        context: vscode.ExtensionContext,
+        server: OmniSharpServer,
+        platformInfo: PlatformInformation,
+        eventStream: EventStream,
+        optionProvider: OptionProvider,
+        monoResolver: IHostExecutableResolver,
+        dotnetResolver: IHostExecutableResolver,
+        workspaceInformationProvider: IWorkspaceDebugInformationProvider): CompositeDisposable {
     let disposable = new CompositeDisposable();
     disposable.add(vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
@@ -35,23 +44,8 @@ export default function registerCommands(context: vscode.ExtensionContext, serve
     disposable.add(vscode.commands.registerCommand('o.reanalyze.allProjects', async () => reAnalyzeAllProjects(server, eventStream)));
     disposable.add(vscode.commands.registerCommand('o.reanalyze.currentProject', async () => reAnalyzeCurrentProject(server, eventStream)));
 
-    // register empty handler for csharp.installDebugger
-    // running the command activates the extension, which is all we need for installation to kickoff
-    disposable.add(vscode.commands.registerCommand('csharp.downloadDebugger', () => { }));
-
-    // register process picker for attach for legacy configurations.
-    disposable.add(vscode.commands.registerCommand('csharp.listProcess', () => ""));
-    disposable.add(vscode.commands.registerCommand('csharp.listRemoteProcess', () => ""));
-
-    // List remote processes for docker extension.
-    // Change to return "" when https://github.com/microsoft/vscode/issues/110889 is resolved.
-    disposable.add(vscode.commands.registerCommand('csharp.listRemoteDockerProcess', async (args) => {
-        const attachItem = await RemoteAttachPicker.ShowAttachEntries(args, platformInfo);
-        return attachItem ? attachItem.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
-    }));
-
     // Register command for generating tasks.json and launch.json assets.
-    disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(server, selectedIndex)));
+    disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(workspaceInformationProvider, selectedIndex)));
 
     disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, context.extension.packageJSON.version, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), dotnetResolver, monoResolver)));
 

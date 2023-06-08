@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getTargetArchitecture } from '../../../src/coreclr-debug/util';
-import { PlatformInformation } from '../../../src/platform';
+import { PlatformInformation } from '../../../src/shared/platform';
 
 import { expect, should, assert } from 'chai';
 import { DotnetInfo } from '../../../src/utils/getDotnetInfo';

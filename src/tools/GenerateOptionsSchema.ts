@@ -94,6 +94,39 @@ function mergeReferences(baseDefinitions: any, additionalDefinitions: any): void
     }
 }
 
+function createContributesSettingsForDebugOptions(path: string, options: any, ignoreKeys: Set<string>, outProperties: any)
+{
+    const optionKeys = Object.keys(options);
+    for (let key of optionKeys) {
+        if (ignoreKeys.has(key)) {
+            continue;
+        }
+        const newOptionKey = path + "." + key;
+        const currentProperty: any = options[key];
+
+        // See https://code.visualstudio.com/api/references/contribution-points#contributes.configuration for supported settings UI.
+        if (currentProperty.type == "boolean" ||
+            currentProperty.type == "string" ||
+            (currentProperty.type == "object" && currentProperty.additionalProperties != null) || // map type
+            (currentProperty.type == "array" && currentProperty.items != null) // array type
+        ) {
+            outProperties[newOptionKey] = { ...currentProperty }; // Create a deep copy
+            if (currentProperty.settingsDescription) {
+                outProperties[newOptionKey].markdownDescription = currentProperty.settingsDescription;
+                delete outProperties[newOptionKey].settingsDescription;
+            }
+        }
+        // Recursively create a suboption path.
+        // E.g. csharp.debug.<object>.<propertykey>....
+        else if (currentProperty.type == "object") {
+            createContributesSettingsForDebugOptions(newOptionKey, currentProperty.properties, new Set<string>(), outProperties);
+        }
+        else {
+            throw "Unknown option type";
+        }
+    }
+}
+
 export function GenerateOptionsSchema() {
     let packageJSON: any = JSON.parse(fs.readFileSync('package.json').toString());
     let schemaJSON: any = JSON.parse(fs.readFileSync('src/tools/OptionsSchema.json').toString());
@@ -132,7 +165,34 @@ export function GenerateOptionsSchema() {
         "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
         "default": 4711
     };
-    packageJSON.contributes.configuration.properties["csharp.unitTestDebuggingOptions"].properties = unitTestDebuggingOptions;
+    packageJSON.contributes.configuration[0].properties["csharp.unitTestDebuggingOptions"].properties = unitTestDebuggingOptions;
+
+    // Delete old debug options
+    const originalContributeDebugKeys = Object.keys(packageJSON.contributes.configuration[1].properties).filter(x => x.startsWith("csharp.debug"));
+    for(let key of originalContributeDebugKeys)
+    {
+        delete packageJSON.contributes.configuration[1].properties[key];
+    }
+
+    // Remove the options that should not be shown in the settings editor.
+    const ignoreOptions: Set<string> = new Set<string>([
+        "program",
+        "cwd",
+        "args",
+        "targetArchitecture",
+        "launchSettingsFilePath",
+        "launchSettingsProfile",
+        "externalConsole",
+        "pipeTransport",
+        "launchBrowser",
+        "sourceLinkOptions",
+        "env",
+        "envFile",
+        "targetOutputLogPath",
+        "checkForDevCert"
+    ]);
+    // Using LaunchOptions as it is a superset of AttachOptions
+    createContributesSettingsForDebugOptions("csharp.debug", schemaJSON.definitions.LaunchOptions.properties, ignoreOptions, packageJSON.contributes.configuration[1].properties);
 
     let content = JSON.stringify(packageJSON, null, 2);
     if (os.platform() === 'win32') {

@@ -6,8 +6,8 @@
 import { vscode, Extension } from "../vscodeAdapter";
 import { EventStream } from "../EventStream";
 import { OpenURL } from "../omnisharp/loggingEvents";
-import { Options } from "../omnisharp/options";
-import { IHostExecutableResolver } from "../constants/IHostExecutableResolver";
+import { Options } from "../shared/options";
+import { IHostExecutableResolver } from "../shared/constants/IHostExecutableResolver";
 import { IGetDotnetInfo } from "../constants/IGetDotnetInfo";
 import { dirname } from "path";
 
