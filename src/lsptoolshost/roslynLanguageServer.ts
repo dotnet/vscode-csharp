@@ -300,14 +300,14 @@ export class RoslynLanguageServer {
         await this.sendOpenSolutionNotification();
     }
 
-    private async sendOpenSolutionNotification() {
+    private async sendOpenSolutionNotification(): Promise<void>  {
         if (this._solutionFile !== undefined && this._languageClient !== undefined && this._languageClient.isRunning()) {
             let protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
             await this._languageClient.sendNotification("solution/open", new OpenSolutionParams(protocolUri));
         }
     }
 
-    private async openDefaultSolution() {
+    private async openDefaultSolution(): Promise<void> {
         const options = this.optionProvider.GetLatestOptions();
 
         // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
@@ -325,7 +325,7 @@ export class RoslynLanguageServer {
         }
     }
 
-    private async sendOrSubscribeForServiceBrokerConnection() {
+    private async sendOrSubscribeForServiceBrokerConnection(): Promise<void>  {
         const csharpDevKitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
         if (csharpDevKitExtension) {
             const exports = await csharpDevKitExtension.activate();
