@@ -9,11 +9,11 @@
   "icon": "images/csharpIcon.png",
   "preview": false,
   "bugs": {
-    "url": "https://github.com/microsoft/vscode-dotnettools/issues"
+    "url": "https://github.com/dotnet/vscode-csharp"
   },
   "repository": {
     "type": "git",
-    "url": "https://devdiv@dev.azure.com/devdiv/DevDiv/_git/vscode-csharp-next"
+    "url": "https://github.com/dotnet/vscode-csharp"
   },
   "categories": [
     "Debuggers",
