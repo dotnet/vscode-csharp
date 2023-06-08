@@ -150,9 +150,10 @@ export class RoslynLanguageServer {
     }
 
     /**
-     * Resolves server options and starts the dotnet language server process.
+     * Resolves server options and starts the dotnet language server process. The process is started asynchronously and this method will not wait until
+     * the process is launched.
      */
-    public async start(): Promise<void> {
+    public start(): void {
         let options = this.optionProvider.GetLatestOptions();
         let logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
@@ -235,13 +236,13 @@ export class RoslynLanguageServer {
     }
 
     /**
-     * Restarts the language server.
+     * Restarts the language server. This does not wait until the server has been restarted.
      * Note that since some options affect how the language server is initialized, we must
-     * re-create the LanguageClient instance instead of just stopping/starting it.
+     * re-create the LanguageClient instance instead of just stopping/starting it. 
      */
     public async restart(): Promise<void> {
         await this.stop();
-        await this.start();
+        this.start();
     }
 
     /**
@@ -635,7 +636,7 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     });
 
     // Start the language server.
-    await _languageServer.start();
+    _languageServer.start();
 }
 
 async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vscode.CancellationToken) {
