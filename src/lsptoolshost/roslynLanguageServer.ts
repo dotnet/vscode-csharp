@@ -150,9 +150,10 @@ export class RoslynLanguageServer {
     }
 
     /**
-     * Resolves server options and starts the dotnet language server process.
+     * Resolves server options and starts the dotnet language server process. The process is started asynchronously and this method will not wait until
+     * the process is launched.
      */
-    public async start(): Promise<void> {
+    public start(): void {
         let options = this.optionProvider.GetLatestOptions();
         let logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
@@ -207,7 +208,11 @@ export class RoslynLanguageServer {
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
                 await this._languageClient!.setTrace(languageClientTraceLevel);
-                await this.sendOpenSolutionNotification();
+                if (this._solutionFile) {
+                    await this.sendOpenSolutionNotification();
+                } else {
+                    await this.openDefaultSolution();
+                }
                 await this.sendOrSubscribeForServiceBrokerConnection();
                 this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.Started);
             }
@@ -222,20 +227,6 @@ export class RoslynLanguageServer {
 
         // Register Razor dynamic file info handling
         this.registerRazor(this._languageClient);
-
-        // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
-        // disabled it.
-        if (!this._wasActivatedWithCSharpDevkit && options.commonOptions.defaultSolution !== 'disable' && this._solutionFile === undefined) {
-            if (options.commonOptions.defaultSolution !== '') {
-                this.openSolution(vscode.Uri.file(options.commonOptions.defaultSolution));
-            } else {
-                // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
-                const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
-                if (solutionUris && solutionUris.length === 1) {
-                    this.openSolution(solutionUris[0]);
-                }
-            }
-        }
     }
 
     public async stop(): Promise<void> {
@@ -245,13 +236,13 @@ export class RoslynLanguageServer {
     }
 
     /**
-     * Restarts the language server.
+     * Restarts the language server. This does not wait until the server has been restarted.
      * Note that since some options affect how the language server is initialized, we must
-     * re-create the LanguageClient instance instead of just stopping/starting it.
+     * re-create the LanguageClient instance instead of just stopping/starting it. 
      */
     public async restart(): Promise<void> {
         await this.stop();
-        await this.start();
+        this.start();
     }
 
     /**
@@ -309,14 +300,32 @@ export class RoslynLanguageServer {
         await this.sendOpenSolutionNotification();
     }
 
-    private async sendOpenSolutionNotification() {
+    private async sendOpenSolutionNotification(): Promise<void>  {
         if (this._solutionFile !== undefined && this._languageClient !== undefined && this._languageClient.isRunning()) {
             let protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
             await this._languageClient.sendNotification("solution/open", new OpenSolutionParams(protocolUri));
         }
     }
 
-    private async sendOrSubscribeForServiceBrokerConnection() {
+    private async openDefaultSolution(): Promise<void> {
+        const options = this.optionProvider.GetLatestOptions();
+
+        // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
+        // disabled it.
+        if (!this._wasActivatedWithCSharpDevkit && options.commonOptions.defaultSolution !== 'disable' && this._solutionFile === undefined) {
+            if (options.commonOptions.defaultSolution !== '') {
+                this.openSolution(vscode.Uri.file(options.commonOptions.defaultSolution));
+            } else {
+                // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
+                const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
+                if (solutionUris && solutionUris.length === 1) {
+                    this.openSolution(solutionUris[0]);
+                }
+            }
+        }
+    }
+
+    private async sendOrSubscribeForServiceBrokerConnection(): Promise<void>  {
         const csharpDevKitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
         if (csharpDevKitExtension) {
             const exports = await csharpDevKitExtension.activate();
@@ -627,7 +636,7 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     });
 
     // Start the language server.
-    await _languageServer.start();
+    _languageServer.start();
 }
 
 async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vscode.CancellationToken) {
