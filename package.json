@@ -64,10 +64,10 @@
     "test:artifacts": "tsc -p ./ && mocha out/test/artifactTests/**/*.test.js",
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "updatePackageDependencies": "gulp updatePackageDependencies"
-  },  
-	"extensionDependencies": [
-		"ms-dotnettools.vscode-dotnet-runtime"
-	],
+  },
+  "extensionDependencies": [
+    "ms-dotnettools.vscode-dotnet-runtime"
+  ],
   "dependencies": {
     "@microsoft/servicehub-framework": "4.2.99-beta",
     "@types/cross-spawn": "6.0.2",
@@ -509,8 +509,7 @@
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
-        "linux",
-        "linux-musl"
+        "linux"
       ],
       "architectures": [
         "arm64"
@@ -524,12 +523,47 @@
     },
     {
       "id": "Debugger",
+      "description": ".NET Core Debugger (linux musl / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-linux-musl-x64.zip",
+      "installPath": ".debugger",
+      "platforms": [
+        "linux-musl"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./vsdbg-ui",
+        "./vsdbg"
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui",
+      "integrity": "65AF27B65082307F6CD7B8D1858C72EFCB55C092A9E6EEA76CC3CCD482519BFC"
+    },
+    {
+      "id": "Debugger",
+      "description": ".NET Core Debugger (linux musl / ARM64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-linux-musl-arm64.zip",
+      "installPath": ".debugger",
+      "platforms": [
+        "linux-musl"
+      ],
+      "architectures": [
+        "arm64"
+      ],
+      "binaries": [
+        "./vsdbg-ui",
+        "./vsdbg"
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui",
+      "integrity": "96B3647B2303149FF8736259765438DD9C19C9A82B4C78C2AF729EB874682968"
+    },
+    {
+      "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
       "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
-        "linux",
-        "linux-musl"
+        "linux"
       ],
       "architectures": [
         "x86_64"
