@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as protocol from '../../src/omnisharp/protocol';
 import * as vscode from 'vscode';
 import * as jsonc from 'jsonc-parser';
 // import { FormattingOptions } from 'jsonc-parser';
 
-import { AssetGenerator, ProgramLaunchType, replaceCommentPropertiesWithComments, updateJsonWithComments } from '../../src/assets';
+import { AssetGenerator, ProgramLaunchType, replaceCommentPropertiesWithComments, updateJsonWithComments } from '../../src/shared/assets';
 import { parse } from 'jsonc-parser';
 import { use as chaiUse, should } from 'chai';
+import { ProjectDebugInformation } from '../../src/shared/IWorkspaceDebugInformationProvider';
+import { findNetCoreTargetFramework } from '../../src/shared/utils';
 import { isNotNull } from '../testUtil';
 
 chaiUse(require('chai-string'));
@@ -110,7 +111,7 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
         let programPath: string = launchJson[0].program;
 
-        checkProgramPath(rootPath, programPath, info.MsBuild!.Projects[0].TargetPath);
+        checkProgramPath(rootPath, programPath, info[0].outputPath);
     });
 
     [5, 6, 7, 8, 9].forEach(version => {
@@ -124,7 +125,7 @@ suite("Asset generation: csproj", () => {
             let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
             let programPath: string = launchJson[0].program;
 
-            checkProgramPath(rootPath, programPath, info.MsBuild!.Projects[0].TargetPath);
+            checkProgramPath(rootPath, programPath, info[0].outputPath);
         });
     });
 
@@ -136,7 +137,7 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
         let programPath: string = launchJson[0].program;
 
-        checkProgramPath(rootPath, programPath, info.MsBuild!.Projects[0].TargetPath);
+        checkProgramPath(rootPath, programPath, info[0].outputPath);
     });
 
     test("Create launch.json for project opened in workspace with non-relative output path", function() {
@@ -152,7 +153,7 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Console), undefined, { disallowComments: true });
         let programPath: string = launchJson[0].program;
 
-        checkProgramPath(rootPath, programPath, info.MsBuild!.Projects[0].TargetPath);
+        checkProgramPath(rootPath, programPath, info[0].outputPath);
     });
 
     test("Create launch.json for Blazor web assembly standalone project opened in workspace", () => {
@@ -190,7 +191,7 @@ suite("Asset generation: csproj", () => {
         const cwd = hostedBlazorLaunchConfig.cwd;
         const hosted = hostedBlazorLaunchConfig.hosted;
 
-        checkProgramPath(rootPath, programPath, info.MsBuild!.Projects[0].TargetPath);
+        checkProgramPath(rootPath, programPath, info[0].outputPath);
 
         cwd.should.equal('${workspaceFolder}');
         hosted.should.equal(true);
@@ -207,7 +208,7 @@ suite("Asset generation: csproj", () => {
         const cwd = hostedBlazorLaunchConfig.cwd;
         const hosted = hostedBlazorLaunchConfig.hosted;
 
-        checkProgramPath(rootPath, programPath, info.MsBuild!.Projects[0].TargetPath);
+        checkProgramPath(rootPath, programPath, info[0].outputPath);
 
         cwd.should.equal('${workspaceFolder}/nested');
         hosted.should.equal(true);
@@ -221,7 +222,7 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Web), undefined, { disallowComments: true });
         let programPath: string = launchJson[0].program;
 
-        checkProgramPath(rootPath, programPath, info.MsBuild!.Projects[0].TargetPath);
+        checkProgramPath(rootPath, programPath, info[0].outputPath);
     });
 
     test("Create launch.json for nested web project opened in workspace", () => {
@@ -232,7 +233,7 @@ suite("Asset generation: csproj", () => {
         let launchJson = parse(generator.createLaunchJsonConfigurations(ProgramLaunchType.Web), undefined, { disallowComments: true });
         let programPath: string = launchJson[0].program;
 
-        checkProgramPath(rootPath, programPath, info.MsBuild!.Projects[0].TargetPath);
+        checkProgramPath(rootPath, programPath, info[0].outputPath);
     });
 
     test("Add a new item to JSON", () => {
@@ -320,7 +321,7 @@ suite("Asset generation: csproj", () => {
         let info = createMSBuildWorkspaceInformation(path.join(rootPath, 'testApp.csproj'), 'testApp', 'netcoreapp1.0', /*targetPath*/ undefined, /*isExe*/ true, /*isWebProject*/ true);
         let generator = new AssetGenerator(info, createMockWorkspaceFolder(rootPath));
         generator.setStartupProject(0);
-        let launchConfigurations: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(ProgramLaunchType.Web);
+        let launchConfigurations: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(ProgramLaunchType.Web, false);
 
         launchConfigurations.should.have.lengthOf(2);
 
@@ -351,33 +352,18 @@ function createMockWorkspaceFolder(rootPath: string): vscode.WorkspaceFolder {
     };
 }
 
-function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: string, targetFrameworkShortName: string, targetPath: string | undefined = undefined, isExe: boolean = true, isWebProject: boolean = false, isBlazorWebAssemblyStandalone: boolean = false, isBlazorWebAssemblyHosted: boolean = false): protocol.WorkspaceInformationResponse {
-    return {
-        MsBuild: {
-            SolutionPath: '',
-            Projects: [
-                {
-                    ProjectGuid: '',
-                    Path: projectPath,
-                    AssemblyName: assemblyName,
-                    TargetPath: targetPath ?? path.join(path.dirname(projectPath), 'bin', 'Debug', new Date().getTime().toString(), targetFrameworkShortName, `${assemblyName}.dll`),
-                    TargetFramework: '',
-                    SourceFiles: [],
-                    TargetFrameworks: [
-                        {
-                            Name: '',
-                            FriendlyName: '',
-                            ShortName: targetFrameworkShortName
-                        }
-                    ],
-                    OutputPath: '',
-                    IsExe: isExe,
-                    IsUnityProject: false,
-                    IsWebProject: isWebProject,
-                    IsBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted,
-                    IsBlazorWebAssemblyStandalone: isBlazorWebAssemblyStandalone,
-                }
-            ],
-        }
-    };
+function createMSBuildWorkspaceInformation(projectPath: string, assemblyName: string, targetFrameworkShortName: string, targetPath: string | undefined = undefined, isExe: boolean = true, isWebProject: boolean = false, isBlazorWebAssemblyStandalone: boolean = false, isBlazorWebAssemblyHosted: boolean = false): ProjectDebugInformation[] {
+    return [
+            {
+                projectPath: projectPath,
+                solutionPath: null,
+                targetsDotnetCore: findNetCoreTargetFramework([targetFrameworkShortName]) !== undefined,
+                outputPath: targetPath ?? path.join(path.dirname(projectPath), 'bin', 'Debug', new Date().getTime().toString(), targetFrameworkShortName, `${assemblyName}.dll`),
+                projectName: projectPath,
+                isExe: isExe,
+                isWebProject: isWebProject,
+                isBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted,
+                isBlazorWebAssemblyStandalone: isBlazorWebAssemblyStandalone
+            }
+    ];
 }

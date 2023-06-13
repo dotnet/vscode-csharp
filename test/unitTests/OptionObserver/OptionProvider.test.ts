@@ -6,9 +6,9 @@
 import { should, expect } from 'chai';
 import { getVSCodeWithConfig, updateConfig } from "../testAssets/Fakes";
 import { vscode } from "../../../src/vscodeAdapter";
-import OptionProvider from '../../../src/observers/OptionProvider';
+import OptionProvider from '../../../src/shared/observers/OptionProvider';
 import { Subject } from 'rxjs';
-import { Options } from '../../../src/omnisharp/options';
+import { Options } from '../../../src/shared/options';
 
 suite('OptionProvider', () => {
     suiteSetup(() => should());
@@ -34,6 +34,6 @@ suite('OptionProvider', () => {
         updateConfig(vscode, changingConfig, 'path', "anotherPath");
         optionObservable.next(Options.Read(vscode));
         let options = optionProvider.GetLatestOptions();
-        expect(options.path).to.be.equal("anotherPath");
+        expect(options.commonOptions.serverPath).to.be.equal("anotherPath");
     });
 });

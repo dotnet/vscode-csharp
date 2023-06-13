@@ -10,7 +10,7 @@ import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/CreateTmpAsset';
 import { InstallZip } from '../../../src/packageManager/ZipInstaller';
 import { EventStream } from '../../../src/EventStream';
-import { PlatformInformation } from '../../../src/platform';
+import { PlatformInformation } from '../../../src/shared/platform';
 import { BaseEvent, InstallationStart, ZipError } from '../../../src/omnisharp/loggingEvents';
 import { createTestFile } from '../testAssets/TestFile';
 import TestZip from '../testAssets/TestZip';

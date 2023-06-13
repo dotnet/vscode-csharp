@@ -6,7 +6,7 @@
 import * as vscode from "vscode";
 import * as semver from "semver";
 import { getDotnetInfo } from "../utils/getDotnetInfo";
-import { Options } from "./options";
+import { Options } from "../shared/options";
 import { getMonoVersion } from "../utils/getMonoVersion";
 import { OmniSharpMonoResolver } from "./OmniSharpMonoResolver";
 import { getMSBuildVersion } from "../utils/getMSBuildInfo";
@@ -52,8 +52,8 @@ export async function validateRequirements(options: Options): Promise<boolean> {
 }
 
 async function checkRequirements(options: Options): Promise<RequirementResult> {
-    if (options.useModernNet) {
-        const dotnetInfo = await getDotnetInfo(options.dotNetCliPaths);
+    if (options.omnisharpOptions.useModernNet) {
+        const dotnetInfo = await getDotnetInfo(options.omnisharpOptions.dotNetCliPaths);
         const needsDotNetSdk = dotnetInfo.Version === undefined || semver.lt(dotnetInfo.Version, '6.0.0');
         return {
             needsDotNetSdk,

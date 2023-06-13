@@ -9,7 +9,7 @@ import * as serverUtils from '../omnisharp/utils';
 import { createRequest } from '../omnisharp/typeConversion';
 import { RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range } from 'vscode';
 
-export default class OmnisharpRenameProvider extends AbstractSupport implements RenameProvider {
+export default class OmniSharpRenameProvider extends AbstractSupport implements RenameProvider {
 
     public async provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit | undefined> {
 

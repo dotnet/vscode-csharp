@@ -13,7 +13,7 @@ import SymbolKinds = protocol.V2.SymbolKinds;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
 import { toRange3 } from '../omnisharp/typeConversion';
 
-export default class OmnisharpDocumentSymbolProvider extends AbstractSupport implements vscode.DocumentSymbolProvider {
+export default class OmniSharpDocumentSymbolProvider extends AbstractSupport implements vscode.DocumentSymbolProvider {
 
     async provideDocumentSymbols(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> {
         try {

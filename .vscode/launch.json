@@ -49,7 +49,7 @@
                 "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/featureTests",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "featureTests"
+                "OSVC_SUITE": "featureTests",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -73,7 +73,8 @@
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "singleCsproj"
+                "OSVC_SUITE": "singleCsproj",
+                "OMNISHARP_ENGINE": "stdio",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -97,7 +98,8 @@
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "BasicRazorApp2_1"
+                "OSVC_SUITE": "BasicRazorApp2_1",
+                "OMNISHARP_ENGINE": "stdio",
             },
         },
         {
@@ -116,7 +118,80 @@
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "slnWithCsproj"
+                "OSVC_SUITE": "slnWithCsproj",
+                "OMNISHARP_ENGINE": "stdio",
+            },
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Launch singleCsproj Workspace Tests [LSP]",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "singleCsproj",
+                "OMNISHARP_ENGINE": "lsp",
+            },
+            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Launch razorcsproj Workspace Tests [LSP]",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "BasicRazorApp2_1",
+                "OMNISHARP_ENGINE": "lsp",
+            },
+        },
+        {
+            "name": "Launch slnWithCsproj Workspace Tests [LSP]",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--disable-extensions",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
+                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "slnWithCsproj",
+                "OMNISHARP_ENGINE": "lsp",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -140,7 +215,7 @@
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "slnFilterWithCsproj"
+                "OSVC_SUITE": "slnFilterWithCsproj",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -164,7 +239,7 @@
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
                 "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "slnWithGenerator"
+                "OSVC_SUITE": "slnWithGenerator",
             },
             "sourceMaps": true,
             "outFiles": [

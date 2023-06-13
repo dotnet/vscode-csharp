@@ -8,7 +8,6 @@ import * as optionsSchemaGenerator from './src/tools/GenerateOptionsSchema';
 import * as packageDependencyUpdater from './src/tools/UpdatePackageDependencies';
 
 require('./tasks/testTasks');
-require('./tasks/onlinePackagingTasks');
 require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
 

@@ -5,10 +5,10 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 import { Advisor } from '../../src/features/diagnosticsProvider';
 import { EventStream } from '../../src/EventStream';
 import { EventType } from '../../src/omnisharp/EventType';
+import { OmnisharpExtensionExports } from '../../src/CSharpExtensionExports';
 
 export interface ActivationResult {
     readonly advisor: Advisor;
@@ -16,33 +16,36 @@ export interface ActivationResult {
 }
 
 export async function activateCSharpExtension(): Promise<ActivationResult> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const configuration = vscode.workspace.getConfiguration();
+    configuration.update('omnisharp.enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp' ? true : false);
+    if (process.env.OMNISHARP_LOCATION) {
+        configuration.update('path', process.env.OMNISHARP_LOCATION);
+    }
+
+    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>("ms-dotnettools.csharp");
     if (!csharpExtension) {
         throw new Error("Failed to find installation of ms-dotnettools.csharp");
     }
 
-    if (!csharpExtension.isActive) {
-        await csharpExtension.activate();
-    }
+    // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
+    await csharpExtension.activate();
 
-    try {
-        await csharpExtension.exports.initializationFinished();
-        const advisor = await csharpExtension.exports.getAdvisor();
-        const eventStream = csharpExtension.exports.eventStream;
-        console.log("ms-dotnettools.csharp activated");
-        return {
-            advisor: advisor,
-            eventStream: eventStream
-        };
-    }
-    catch (err) {
-        console.log(JSON.stringify(err));
-        throw err;
-    }
+    await csharpExtension.exports.initializationFinished();
+    console.log("ms-dotnettools.csharp activated");
+
+    // Output the directory where logs are being written so if a test fails we can match it to the right logs.
+    console.log(`Extension log directory: ${csharpExtension.exports.logDirectory}`);
+
+    let activationResult: ActivationResult = {
+        advisor: await csharpExtension.exports.getAdvisor(),
+        eventStream: csharpExtension.exports.eventStream,
+    };
+
+    return activationResult;
 }
 
 export async function restartOmniSharpServer(): Promise<void> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>("ms-dotnettools.csharp");
     if (!csharpExtension) {
         throw new Error("Failed to find installation of ms-dotnettools.csharp");
     }

@@ -1,0 +1,42 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - feature/*
+    - prerelease
+    - main
+
+pr:
+- feature/*
+- prerelease
+- main
+
+variables:
+  - name: prereleaseFlag
+    value: '--prerelease'
+
+stages:
+- stage: Build
+  dependsOn: []
+  jobs:
+  - job: Build
+    steps:
+    - template: azure-pipelines/build.yml
+      parameters:
+        prereleaseFlag: $(prereleaseFlag)
+
+- stage: Test
+  displayName: Test
+  dependsOn: []
+  jobs:
+  - job: Test
+    strategy:
+      matrix:
+        linux:
+          vmImage: ubuntu-latest
+    pool:
+      vmImage: $(vmImage)
+    steps:
+    - template: azure-pipelines/test.yml
+
+# TODO: add compliance stage

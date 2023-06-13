@@ -6,12 +6,12 @@
 import { expect, should } from "chai";
 import * as vscode from "vscode";
 import * as path from 'path';
-import CSharpDefinitionProvider from "../../src/features/definitionProvider";
+import OmniSharpDefinitionProvider from "../../src/features/definitionProvider";
 import { activateCSharpExtension, isSlnWithGenerator, restartOmniSharpServer } from "./integrationHelpers";
 import { assertWithPoll, sleep } from "./poll";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 
-suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
+suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {

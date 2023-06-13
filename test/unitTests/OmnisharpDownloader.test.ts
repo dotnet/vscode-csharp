@@ -6,7 +6,7 @@
 import { OmnisharpDownloader } from "../../src/omnisharp/OmnisharpDownloader";
 import NetworkSettings from "../../src/NetworkSettings";
 import { EventStream } from "../../src/EventStream";
-import { PlatformInformation } from "../../src/platform";
+import { PlatformInformation } from "../../src/shared/platform";
 import { CreateTmpDir, TmpAsset } from "../../src/CreateTmpAsset";
 import * as util from '../../src/common';
 import * as path from 'path';

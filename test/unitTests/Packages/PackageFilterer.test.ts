@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as chai from 'chai';
-import { PlatformInformation } from "../../../src/platform";
+import { PlatformInformation } from "../../../src/shared/platform";
 import { getNotInstalledPackagesForPlatform } from "../../../src/packageManager/PackageFilterer";
 import { Package } from '../../../src/packageManager/Package';
 import { AbsolutePathPackage } from '../../../src/packageManager/AbsolutePathPackage';

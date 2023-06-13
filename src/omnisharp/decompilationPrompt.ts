@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import OptionProvider from "../observers/OptionProvider";
+import OptionProvider from "../shared/observers/OptionProvider";
 
 const DecompilationAuthorizedOption = "csharp.decompilationAuthorized";
 
@@ -15,7 +15,7 @@ export async function resetDecompilationAuthorization(context: vscode.ExtensionC
 export async function getDecompilationAuthorization(context: vscode.ExtensionContext, optionProvider: OptionProvider) {
     // If decompilation is disabled, then return false
     const options = optionProvider.GetLatestOptions();
-    if (options.enableDecompilationSupport === false) {
+    if (options.omnisharpOptions.enableDecompilationSupport === false) {
         return false;
     }
 

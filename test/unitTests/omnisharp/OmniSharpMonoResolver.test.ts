@@ -5,7 +5,7 @@
 
 import { OmniSharpMonoResolver } from "../../../src/omnisharp/OmniSharpMonoResolver";
 
-import { Options } from "../../../src/omnisharp/options";
+import { Options } from "../../../src/shared/options";
 import { use as chaiUse, expect } from "chai";
 import { join } from "path";
 import { getEmptyOptions } from "../Fakes/FakeOptions";
@@ -36,7 +36,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
         let monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
-            monoPath: monoPath
+            omnisharpOptions: { ...options.omnisharpOptions, monoPath: monoPath },
         });
 
         expect(monoInfo.version).to.be.equal(higherMonoVersion);
@@ -48,7 +48,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
 
         await expect(monoResolver.getHostExecutableInfo({
             ...options,
-            monoPath: monoPath
+            omnisharpOptions: { ...options.omnisharpOptions, monoPath: monoPath },
         })).to.be.rejected;
     });
 
@@ -56,7 +56,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
         let monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
-            monoPath: monoPath
+            omnisharpOptions: { ...options.omnisharpOptions, monoPath: monoPath },
         });
 
         expect(getMonoCalled).to.be.equal(true);

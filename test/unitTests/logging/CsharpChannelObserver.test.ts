@@ -5,7 +5,7 @@
 
 import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
-import { CsharpChannelObserver } from '../../../src/observers/CsharpChannelObserver';
+import { CsharpChannelObserver } from '../../../src/shared/observers/CsharpChannelObserver';
 import { InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent, PackageInstallStart, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
 
 suite("CsharpChannelObserver", () => {

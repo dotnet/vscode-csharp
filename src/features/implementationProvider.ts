@@ -9,7 +9,7 @@ import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toLocation } from '../omnisharp/typeConversion';
 import { TextDocument, Position, CancellationToken, ImplementationProvider, Definition } from 'vscode';
 
-export default class CSharpImplementationProvider extends AbstractSupport implements ImplementationProvider {
+export default class OmniSharpImplementationProvider extends AbstractSupport implements ImplementationProvider {
     public async provideImplementation(document: TextDocument, position: Position, token: CancellationToken): Promise<Definition | undefined> {
         const request = createRequest<FindImplementationsRequest>(document, position);
 

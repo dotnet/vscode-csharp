@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { should, expect } from 'chai';
 import { TelemetryObserver } from '../../../src/observers/TelemetryObserver';
-import { PlatformInformation } from '../../../src/platform';
+import { PlatformInformation } from '../../../src/shared/platform';
 import { PackageInstallation, InstallationFailure, InstallationSuccess, TestExecutionCountReport, TelemetryEventWithMeasures, OmnisharpDelayTrackerEventMeasures, OmnisharpStart, TelemetryEvent, ProjectConfiguration, TelemetryErrorEvent } from '../../../src/omnisharp/loggingEvents';
 import { getNullTelemetryReporter } from '../testAssets/Fakes';
 import { Package } from '../../../src/packageManager/Package';

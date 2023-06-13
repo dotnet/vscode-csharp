@@ -4,13 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import CSharpDefinitionProvider from "../../src/features/definitionProvider";
+import OmniSharpDefinitionProvider from "../../src/features/definitionProvider";
 import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect, should } from "chai";
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartOmniSharpServer } from './integrationHelpers';
 
-suite(`${CSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
+suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {

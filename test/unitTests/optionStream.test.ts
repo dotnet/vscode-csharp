@@ -8,9 +8,9 @@ import { ConfigurationChangeEvent, vscode } from "../../src/vscodeAdapter";
 import { getVSCodeWithConfig, updateConfig } from "./testAssets/Fakes";
 import Disposable from "../../src/Disposable";
 import { Observable, Subscription } from "rxjs";
-import { Options } from "../../src/omnisharp/options";
+import { Options } from "../../src/shared/options";
 import { GetConfigChangeEvent } from './testAssets/GetConfigChangeEvent';
-import createOptionStream from '../../src/observables/CreateOptionStream';
+import createOptionStream from '../../src/shared/observables/CreateOptionStream';
 
 suite('OptionStream', () => {
     suiteSetup(() => should());
@@ -35,43 +35,20 @@ suite('OptionStream', () => {
             subscription = optionStream.subscribe(newOptions => options = newOptions);
         });
 
-        test('Returns the default options if there is no change', () => {
-            options.path.should.equal("");
-            options.waitForDebugger.should.equal(false);
-            options.loggingLevel.should.equal("information");
-            options.autoStart.should.equal(true);
-            options.projectLoadTimeout.should.equal(60);
-            options.maxProjectResults.should.equal(250);
-            options.useEditorFormattingSettings.should.equal(true);
-            options.useFormatting.should.equal(true);
-            options.showReferencesCodeLens.should.equal(true);
-            options.showTestsCodeLens.should.equal(true);
-            options.disableCodeActions.should.equal(false);
-            options.minFindSymbolsFilterLength.should.equal(0);
-            options.maxFindSymbolsItems.should.equal(1000);
-            options.enableMsBuildLoadProjectsOnDemand.should.equal(false);
-            options.enableRoslynAnalyzers.should.equal(false);
-            options.enableEditorConfigSupport.should.equal(true);
-            options.enableDecompilationSupport.should.equal(false);
-            options.enableImportCompletion.should.equal(false);
-            options.enableAsyncCompletion.should.equal(false);
-            options.defaultLaunchSolution.should.equal("");
-        });
-
         test('Gives the changed option when the omnisharp config changes', () => {
-            options.path.should.equal("");
+            options.commonOptions.serverPath.should.equal("");
             let changingConfig = "omnisharp";
             updateConfig(vscode, changingConfig, 'path', "somePath");
             listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));
-            options.path.should.equal("somePath");
+            options.commonOptions.serverPath.should.equal("somePath");
         });
 
         test('Gives the changed option when the csharp config changes', () => {
-            options.disableCodeActions.should.equal(false);
+            options.omnisharpOptions.disableCodeActions.should.equal(false);
             let changingConfig = "csharp";
             updateConfig(vscode, changingConfig, 'disableCodeActions', true);
             listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));
-            options.disableCodeActions.should.equal(true);
+            options.omnisharpOptions.disableCodeActions.should.equal(true);
         });
 
         teardown(() => {

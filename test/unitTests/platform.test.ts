@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { LinuxDistribution } from '../../src/platform';
+import { LinuxDistribution } from '../../src/shared/platform';
 import { should } from 'chai';
 
 suite("Platform", () => {

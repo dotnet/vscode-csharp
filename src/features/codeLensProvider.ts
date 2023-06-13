@@ -9,9 +9,9 @@ import * as vscode from 'vscode';
 import { toLocation } from '../omnisharp/typeConversion';
 import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
-import { Options } from '../omnisharp/options';
+import { Options } from '../shared/options';
 import TestManager from './dotnetTest';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 
 import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;
@@ -90,7 +90,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 
     async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.CodeLens[]> {
         const options = this.optionProvider.GetLatestOptions();
-        if (!options.showReferencesCodeLens && !options.showTestsCodeLens) {
+        if (!options.omnisharpOptions.showReferencesCodeLens && !options.omnisharpOptions.showTestsCodeLens) {
             return [];
         }
 
@@ -201,14 +201,14 @@ function createCodeLenses(elements: Structure.CodeElement[], fileName: string, o
 function createCodeLensesForElement(element: Structure.CodeElement, fileName: string, options: Options): vscode.CodeLens[] {
     let results: vscode.CodeLens[] = [];
 
-    if (options.showReferencesCodeLens && isValidElementForReferencesCodeLens(element, options)) {
+    if (options.omnisharpOptions.showReferencesCodeLens && isValidElementForReferencesCodeLens(element, options)) {
         let range = element.Ranges[SymbolRangeNames.Name];
         if (range) {
             results.push(new ReferencesCodeLens(range, fileName));
         }
     }
 
-    if (options.showTestsCodeLens) {
+    if (options.omnisharpOptions.showTestsCodeLens) {
         if (element.Kind === SymbolKinds.Method) {
             const test = getTest(element);
             if (test !== undefined) {
@@ -260,7 +260,7 @@ function isValidElementForReferencesCodeLens(element: Structure.CodeElement, opt
         return false;
     }
 
-    if(options.filteredSymbolsCodeLens.includes(element.Name)) {
+    if(options.omnisharpOptions.filteredSymbolsCodeLens.includes(element.Name)) {
         return false;
     }
 

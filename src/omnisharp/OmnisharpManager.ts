@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as util from '../common';
 import { OmnisharpDownloader } from './OmnisharpDownloader';
-import { PlatformInformation } from '../platform';
+import { PlatformInformation } from '../shared/platform';
 import { modernNetVersion } from './OmnisharpPackageCreator';
 
 export class OmnisharpManager {

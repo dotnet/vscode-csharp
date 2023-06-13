@@ -1,0 +1,27 @@
+steps:
+
+# The server package is downloaded from NuGet
+- task: NuGetAuthenticate@1
+
+- task: NodeTool@0
+  displayName: 'Install Node.js 16.x'
+  inputs:
+    versionSpec: '16.x'
+
+- task: UseDotNet@2
+
+# Set the CI build number to the VSIX version we're creating from this build.
+- script: |
+    dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
+    $(Agent.BuildDirectory)/nbgv cloud
+
+- script: |
+    npm ci
+    npm i -g gulp
+  displayName: 'Install dependencies'
+
+- script: npm run compile
+  displayName: 'Compile'
+
+- script: npm run vscode:prepublish
+  displayName: 'Prepublish VSIXs'

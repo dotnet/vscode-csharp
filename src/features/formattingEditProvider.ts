@@ -8,7 +8,7 @@ import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { DocumentRangeFormattingEditProvider, FormattingOptions, CancellationToken, TextEdit, TextDocument, Range, Position } from 'vscode';
 
-export default class FormattingSupport extends AbstractSupport implements DocumentRangeFormattingEditProvider {
+export default class OmniSharpFormatProvider extends AbstractSupport implements DocumentRangeFormattingEditProvider {
 
     public async provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
 
@@ -23,7 +23,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
         try {
             let res = await serverUtils.formatRange(this._server, request, token);
             if (res && Array.isArray(res.Changes)) {
-                return res.Changes.map(FormattingSupport._asEditOptionation);
+                return res.Changes.map(OmniSharpFormatProvider._asEditOptionation);
             }
         }
         catch {}
@@ -43,7 +43,7 @@ export default class FormattingSupport extends AbstractSupport implements Docume
         try {
             let res = await serverUtils.formatAfterKeystroke(this._server, request, token);
             if (res && Array.isArray(res.Changes)) {
-                return res.Changes.map(FormattingSupport._asEditOptionation);
+                return res.Changes.map(OmniSharpFormatProvider._asEditOptionation);
             }
         }
         catch {}

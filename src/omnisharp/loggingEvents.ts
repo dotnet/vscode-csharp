@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from "../platform";
+import { PlatformInformation } from "../shared/platform";
 import { Request } from "./requestQueue";
 import * as protocol from './protocol';
-import { LaunchTarget } from "./launcher";
+import { LaunchTarget } from "../shared/LaunchTarget";
 import { EventType } from "./EventType";
 
 export interface BaseEvent {
@@ -349,10 +349,6 @@ export class DotNetTestDebugComplete implements BaseEvent {
 }
 export class DownloadValidation implements BaseEvent {
     type = EventType.DownloadValidation;
-}
-export class DevCertCreationFailure implements BaseEvent {
-    type = EventType.DevCertCreationFailure;
-    constructor(public errorMessage: string) { }
 }
 export class ShowChannel implements BaseEvent {
     type = EventType.ShowChannel;

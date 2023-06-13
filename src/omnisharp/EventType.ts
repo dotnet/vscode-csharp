@@ -85,7 +85,7 @@ export enum EventType {
     TelemetryErrorEvent = 78,
     OmnisharpServerRequestCancelled = 79,
     BackgroundDiagnosticStatus = 80,
-    DevCertCreationFailure = 81,
+    // DevCertCreationFailure = 81, Removed as we push to output channel directly
     ShowChannel = 82,
 }
 

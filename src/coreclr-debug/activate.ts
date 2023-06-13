@@ -7,16 +7,21 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from './../common';
 import { CoreClrDebugUtil, getTargetArchitecture } from './util';
-import { PlatformInformation } from './../platform';
+import { PlatformInformation } from '../shared/platform';
 import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
-import CSharpExtensionExports from '../CSharpExtensionExports';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
 import { getDotnetInfo } from '../utils/getDotnetInfo';
-import { DotnetDebugConfigurationProvider } from './debugConfigurationProvider';
-import { Options } from '../omnisharp/options';
+import { Options } from '../shared/options';
+import { RemoteAttachPicker } from '../features/processPicker';
+import CompositeDisposable from '../CompositeDisposable';
+import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
+import OptionProvider from '../shared/observers/OptionProvider';
 
-export async function activate(thisExtension: vscode.Extension<CSharpExtensionExports>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, options: Options) {
+export async function activate(thisExtension: vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, csharpOutputChannel: vscode.OutputChannel, optionProvider: OptionProvider) {
+    let disposables = new CompositeDisposable();
+
+    const options: Options = optionProvider.GetLatestOptions();
     const debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
     if (!CoreClrDebugUtil.existsSync(debugUtil.debugAdapterDir())) {
@@ -31,11 +36,37 @@ export async function activate(thisExtension: vscode.Extension<CSharpExtensionEx
         completeDebuggerInstall(debugUtil, platformInformation, eventStream, options);
     }
 
+    // register process picker for attach for legacy configurations.
+    disposables.add(vscode.commands.registerCommand('csharp.listProcess', () => ""));
+    disposables.add(vscode.commands.registerCommand('csharp.listRemoteProcess', () => ""));
+
+    // List remote processes for docker extension.
+    // Change to return "" when https://github.com/microsoft/vscode/issues/110889 is resolved.
+    disposables.add(vscode.commands.registerCommand('csharp.listRemoteDockerProcess', async (args) => {
+        const attachItem = await RemoteAttachPicker.ShowAttachEntries(args, platformInformation);
+        return attachItem ? attachItem.id : Promise.reject<string>(new Error("Could not find a process id to attach."));
+    }));
+
+    // Register a command to fire attach to process for the coreclr debug engine.
+    disposables.add(vscode.commands.registerCommand('csharp.attachToProcess', async () => {
+        vscode.debug.startDebugging(
+            undefined,
+            {
+                "name": ".NET Core Attach",
+                "type": "coreclr",
+                "request": "attach"
+            },
+            undefined
+        );
+    }));
+
     const factory = new DebugAdapterExecutableFactory(debugUtil, platformInformation, eventStream, thisExtension.packageJSON, thisExtension.extensionPath, options);
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('clr', new DotnetDebugConfigurationProvider(platformInformation, eventStream, options)));
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
-    context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
+    /** 'clr' type does not have a intial configuration provider, but we need to register it to support the common debugger features listed in {@link BaseVsDbgConfigurationProvider} */
+    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('clr', new BaseVsDbgConfigurationProvider(platformInformation, optionProvider, csharpOutputChannel)));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
+
+    context.subscriptions.push(disposables);
 }
 
 async function checkIsValidArchitecture(platformInformation: PlatformInformation, eventStream: EventStream): Promise<boolean> {
@@ -73,7 +104,7 @@ async function checkIsValidArchitecture(platformInformation: PlatformInformation
 
 async function completeDebuggerInstall(debugUtil: CoreClrDebugUtil, platformInformation: PlatformInformation, eventStream: EventStream, options: Options): Promise<boolean> {
     try {
-        await debugUtil.checkDotNetCli(options.dotNetCliPaths);
+        await debugUtil.checkDotNetCli(options.omnisharpOptions.dotNetCliPaths);
         const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
@@ -169,17 +200,44 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
-            const dotNetInfo = await getDotnetInfo(this.options.dotNetCliPaths);
+            const dotNetInfo = await getDotnetInfo(this.options.omnisharpOptions.dotNetCliPaths);
             const targetArchitecture = getTargetArchitecture(this.platformInfo, _session.configuration.targetArchitecture, dotNetInfo);
             const command = path.join(common.getExtensionPath(), ".debugger", targetArchitecture, "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
-            executable = new vscode.DebugAdapterExecutable(command, [], {
-                env: {
-                    DOTNET_ROOT: dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '',
-                }
-            });
+
+            // Look to see if DOTNET_ROOT is set, then use dotnet cli path
+            let dotnetRoot: string = process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+
+            let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
+            if (dotnetRoot) {
+                options = {
+                    env: {
+                        DOTNET_ROOT: dotnetRoot,
+                    }
+                };
+            }
+
+            executable = new vscode.DebugAdapterExecutable(command, [], options);
         }
 
         // make VS Code launch the DA executable
         return executable;
     }
+}
+
+let _brokeredServicePipeName: string | undefined;
+
+/**
+ * Initialize brokered service pipe name from C# dev kit, if available.
+ * 
+ * @param csDevKitPipeName Activated brokered service pipe name activated by {@link CSharpDevKitExports}.
+ */
+export function initializeBrokeredServicePipeName(csDevKitPipeName: string) {
+    _brokeredServicePipeName = csDevKitPipeName;
+}
+
+/**
+ * Fetch the brokered service pipe name from C# dev kit, if available.
+ */
+export function getBrokeredServicePipeName(): string | undefined {
+    return _brokeredServicePipeName;
 }

@@ -7,7 +7,7 @@ import { OmnisharpManager } from "../../src/omnisharp/OmnisharpManager";
 import MockHttpsServer from "./testAssets/MockHttpsServer";
 import TestZip from "./testAssets/TestZip";
 import { createTestFile } from "./testAssets/TestFile";
-import { PlatformInformation } from "../../src/platform";
+import { PlatformInformation } from "../../src/shared/platform";
 import { OmnisharpDownloader } from "../../src/omnisharp/OmnisharpDownloader";
 import NetworkSettings from "../../src/NetworkSettings";
 import { EventStream } from "../../src/EventStream";
