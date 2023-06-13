@@ -7,11 +7,6 @@ steps:
 
 - template: prereqs.yml
 
-- task: UseDotNet@2
-  displayName: 'Install .NET Core SDKs'
-  inputs:
-    version: '7.0.100'
-
 - pwsh: |
     if ($IsLinux) {
       Write-Host "Activating screen emulation"
