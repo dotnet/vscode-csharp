@@ -7,7 +7,6 @@ steps:
   clean: true
   submodules: true
   fetchTags: false
-  fetchDepth: 0
 
 - template: prereqs.yml
 
