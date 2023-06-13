@@ -437,6 +437,7 @@ export class RoslynLanguageServer {
             _channel.appendLine(`Starting server at ${serverPath}`);
         }
 
+        // shouldn't this arg only be set if it's running with CSDevKit?
         args.push("--telemetryLevel", this.telemetryReporter.telemetryLevel);
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
@@ -527,9 +528,6 @@ export class RoslynLanguageServer {
         const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
 
         const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
-
-        // required for the telemetry service to work
-        await exports.writeCommonPropsAsync(this.context);
 
         let args: string[] = [];
 
