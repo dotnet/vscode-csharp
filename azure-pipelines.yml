@@ -42,5 +42,3 @@ stages:
       demands: $(demandsName)
     steps:
     - template: azure-pipelines/test.yml
-
-# TODO: add compliance stage
