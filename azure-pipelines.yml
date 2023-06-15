@@ -3,12 +3,10 @@ trigger:
   branches:
     include:
     - feature/*
-    - prerelease
     - main
 
 pr:
 - feature/*
-- prerelease
 - main
 
 variables:
