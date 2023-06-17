@@ -12,7 +12,7 @@ use(require("chai-string"));
 suite("OmnisharpDebugModeLoggerObserver", () => {
     suiteSetup(() => should());
     let logOutput = "";
-    let observer = new OmnisharpDebugModeLoggerObserver({
+    const observer = new OmnisharpDebugModeLoggerObserver({
         ...getNullChannel(),
         append: (text: string) => { logOutput += text; },
     });
@@ -31,14 +31,14 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
     });
 
     test(`OmnisharpServerEnqueueRequest: Name and Command is logged`, () => {
-        let event = new OmnisharpServerEnqueueRequest("foo", "someCommand");
+        const event = new OmnisharpServerEnqueueRequest("foo", "someCommand");
         observer.post(event);
         expect(logOutput).to.contain(event.queueName);
         expect(logOutput).to.contain(event.command);
     });
 
     test(`OmnisharpServerDequeueRequest: QueueName, QueueStatus, Command and Id is logged`, () => {
-        let event = new OmnisharpServerDequeueRequest("foo", "pending", "someCommand", 1);
+        const event = new OmnisharpServerDequeueRequest("foo", "pending", "someCommand", 1);
         observer.post(event);
         expect(logOutput).to.contain(event.queueName);
         expect(logOutput).to.contain(event.queueStatus);
@@ -47,14 +47,14 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
     });
 
     test(`OmnisharpProcessRequestStart: Name and slots is logged`, () => {
-        let event = new OmnisharpServerProcessRequestStart("foobar", 2);
+        const event = new OmnisharpServerProcessRequestStart("foobar", 2);
         observer.post(event);
         expect(logOutput).to.contain(event.name);
         expect(logOutput).to.contain(event.availableRequestSlots);
     });
 
     test(`OmnisharpServerRequestCancelled: Name and Id is logged`, () => {
-        let event = new OmnisharpServerRequestCancelled("foobar", 23);
+        const event = new OmnisharpServerRequestCancelled("foobar", 23);
         observer.post(event);
         expect(logOutput).to.contain(event.command);
         expect(logOutput).to.contain(event.id);
@@ -74,7 +74,7 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
 
     suite('OmnisharpEventPacketReceived', () => {
         test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are logged`, () => {
-            let event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
+            const event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
             observer.post(event);
             expect(logOutput).to.contain(event.message);
             expect(logOutput).to.contain(event.name);
@@ -97,14 +97,14 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
 
     suite('OmnisharpRequestMessage', () => {
         test(`Request Command and Id is logged`, () => {
-            let event = new OmnisharpRequestMessage({ command: "someCommand", onSuccess: () => { }, onError: () => { } }, 1);
+            const event = new OmnisharpRequestMessage({ command: "someCommand", onSuccess: () => { }, onError: () => { } }, 1);
             observer.post(event);
             expect(logOutput).to.contain(event.id);
             expect(logOutput).to.contain(event.request.command);
         });
 
         test(`Request Data is logged when it is not empty`, () => {
-            let event = new OmnisharpRequestMessage({ command: "someCommand", onSuccess: () => { }, onError: () => { }, data: "someData" }, 1);
+            const event = new OmnisharpRequestMessage({ command: "someCommand", onSuccess: () => { }, onError: () => { }, data: "someData" }, 1);
             observer.post(event);
             expect(logOutput).to.contain(event.request.data);
         });

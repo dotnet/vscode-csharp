@@ -24,7 +24,7 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
 
     public constructor(private server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
-        let disposable = new CompositeDisposable();
+        const disposable = new CompositeDisposable();
         disposable.add(vscode.commands.registerCommand('o.fixAll.solution', async () => this.fixAllMenu(server, protocol.FixAllScope.Solution)));
         disposable.add(vscode.commands.registerCommand('o.fixAll.project', async () => this.fixAllMenu(server, protocol.FixAllScope.Project)));
         disposable.add(vscode.commands.registerCommand('o.fixAll.document', async () => this.fixAllMenu(server, protocol.FixAllScope.Document)));
@@ -56,7 +56,7 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
             return;
         }
 
-        let availableFixes = await serverUtils.getFixAll(server, { FileName: fileName, Scope: scope });
+        const availableFixes = await serverUtils.getFixAll(server, { FileName: fileName, Scope: scope });
 
         let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
 
@@ -75,7 +75,7 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
 
         let filter: FixAllItem[] | undefined;
         if (action !== "Fix all issues") {
-            let actionTokens = action.split(":");
+            const actionTokens = action.split(":");
             filter = [{ Id: actionTokens[0], Message: actionTokens[1] }];
         }
 
@@ -83,7 +83,7 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
     }
 
     private async applyFixes(fileName: string, scope: FixAllScope, fixAllFilter: FixAllItem[] | undefined): Promise<void> {
-        let response = await serverUtils.runFixAll(this.server, {
+        const response = await serverUtils.runFixAll(this.server, {
             FileName: fileName,
             Scope: scope,
             FixAllFilter: fixAllFilter,

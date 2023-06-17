@@ -70,8 +70,8 @@ suite("FileDownloader", () => {
         ].forEach((elem) => {
             suite(elem.description, () => {
                 test('File is downloaded', async () => {
-                    let buffer = await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
-                    let text = buffer.toString('utf8');
+                    const buffer = await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(elem.urlPath), getURL(elem.fallBackUrlPath));
+                    const text = buffer.toString('utf8');
                     expect(text).to.be.equal("Test content");
                 });
 
@@ -85,8 +85,8 @@ suite("FileDownloader", () => {
 
     suite('If the response status Code is 301, redirect occurs and the download succeeds', () => {
         test('File is downloaded from the redirect url', async () => {
-            let buffer = await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(redirectUrlPath));
-            let text = buffer.toString('utf8');
+            const buffer = await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(redirectUrlPath));
+            const text = buffer.toString('utf8');
             expect(text).to.be.equal("Test content");
         });
     });
@@ -102,7 +102,7 @@ suite("FileDownloader", () => {
         });
 
         test('Download Start and Download Failure events are created', async () => {
-            let eventsSequence = [
+            const eventsSequence = [
                 new DownloadStart(fileDescription),
                 new DownloadFailure(`Failed to download from ${server.baseUrl}${errorUrlPath}. Error code '404')`)
             ];

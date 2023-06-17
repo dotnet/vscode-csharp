@@ -18,7 +18,7 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
     return new Promise<void>((resolve, reject) => {
         yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipFile) => {
             if (err !== null) {
-                let message = "C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking";
+                const message = "C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking";
                 eventStream.post(new ZipError(message));
                 return reject(new NestedError(message));
             }
@@ -26,7 +26,7 @@ export async function InstallZip(buffer: Buffer, description: string, destinatio
             zipFile.readEntry();
 
             zipFile.on('entry', async (entry: yauzl.Entry) => {
-                let absoluteEntryPath = path.resolve(destinationInstallPath.value, entry.fileName);
+                const absoluteEntryPath = path.resolve(destinationInstallPath.value, entry.fileName);
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it

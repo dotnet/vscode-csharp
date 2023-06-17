@@ -29,9 +29,9 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);
 
-        let fileName = 'A.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let filePath = path.join(projectDirectory, fileName);
+        const fileName = 'A.cs';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
     });
 

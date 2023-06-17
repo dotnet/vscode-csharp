@@ -88,7 +88,7 @@ export class RoslynLanguageServer {
     /**
      * The timeout for stopping the language server (in ms).
      */
-    private static _stopTimeout: number = 10000;
+    private static _stopTimeout = 10000;
     private _languageClient: LanguageClient | undefined;
 
     /**
@@ -120,7 +120,7 @@ export class RoslynLanguageServer {
     ) {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
         this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
-            let csharpDevkitExtension = getCSharpDevKit();
+            const csharpDevkitExtension = getCSharpDevKit();
 
             if (this._wasActivatedWithCSharpDevkit === undefined) {
                 // Haven't activated yet.
@@ -133,7 +133,7 @@ export class RoslynLanguageServer {
                 // We previously started without C# Dev Kit and its now installed.
                 // Offer a prompt to restart the server to use C# Dev Kit.
                 _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
-                let message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
+                const message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
                 ShowInformationMessage(vscode, message, { title, command });
             } else {
                 // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
@@ -155,18 +155,18 @@ export class RoslynLanguageServer {
      * the process is launched.
      */
     public start(): void {
-        let options = this.optionProvider.GetLatestOptions();
-        let logLevel = options.languageServerOptions.logLevel;
+        const options = this.optionProvider.GetLatestOptions();
+        const logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
 
-        let serverOptions: ServerOptions = async () => {
+        const serverOptions: ServerOptions = async () => {
             return await this.startServer(logLevel);
         };
 
-        let documentSelector = options.languageServerOptions.documentSelector;
+        const documentSelector = options.languageServerOptions.documentSelector;
 
         // Options to control the language client
-        let clientOptions: LanguageClientOptions = {
+        const clientOptions: LanguageClientOptions = {
             // Register the server for plain csharp documents
             documentSelector: documentSelector,
             synchronize: {
@@ -192,7 +192,7 @@ export class RoslynLanguageServer {
         };
 
         // Create the language client and start the client.
-        let client = new LanguageClient(
+        const client = new LanguageClient(
             'microsoft-codeanalysis-languageserver',
             'Microsoft.CodeAnalysis.LanguageServer',
             serverOptions,
@@ -270,7 +270,7 @@ export class RoslynLanguageServer {
             throw new Error('Tried to send request while server is not started.');
         }
 
-        let response = await this._languageClient!.sendRequest(type, params, token);
+        const response = await this._languageClient!.sendRequest(type, params, token);
         return response;
     }
 
@@ -282,12 +282,12 @@ export class RoslynLanguageServer {
             throw new Error('Tried to send request while server is not started.');
         }
 
-        let response = await this._languageClient!.sendRequest(type, token);
+        const response = await this._languageClient!.sendRequest(type, token);
         return response;
     }
 
     public async registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<SolutionSnapshotId> {
-        let response = await _languageServer.sendRequest0(RegisterSolutionSnapshotRequest.type, token);
+        const response = await _languageServer.sendRequest0(RegisterSolutionSnapshotRequest.type, token);
         if (response)
         {
             return new SolutionSnapshotId(response.id);
@@ -303,7 +303,7 @@ export class RoslynLanguageServer {
 
     private async sendOpenSolutionNotification(): Promise<void>  {
         if (this._solutionFile !== undefined && this._languageClient !== undefined && this._languageClient.isRunning()) {
-            let protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
+            const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
             await this._languageClient.sendNotification("solution/open", new OpenSolutionParams(protocolUri));
         }
     }
@@ -350,12 +350,12 @@ export class RoslynLanguageServer {
             throw new Error('Tried to send request while server is not started.');
         }
 
-        let capabilities: any = this._languageClient.initializeResult?.capabilities;
+        const capabilities: any = this._languageClient.initializeResult?.capabilities;
         return capabilities;
     }
 
     private getServerPath(options: Options) {
-        let clientRoot = __dirname;
+        const clientRoot = __dirname;
 
         let serverPath = options.commonOptions.serverPath;
         if (!serverPath) {
@@ -372,13 +372,13 @@ export class RoslynLanguageServer {
 
     private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
 
-        let options = this.optionProvider.GetLatestOptions();
-        let serverPath = this.getServerPath(options);
+        const options = this.optionProvider.GetLatestOptions();
+        const serverPath = this.getServerPath(options);
 
         let dotnetRuntimePath = options.commonOptions.dotnetPath;
         if (!dotnetRuntimePath)
         {
-            let dotnetPath = await acquireDotNetProcessDependencies(serverPath);
+            const dotnetPath = await acquireDotNetProcessDependencies(serverPath);
             dotnetRuntimePath = path.dirname(dotnetPath);
         }
 
@@ -442,7 +442,7 @@ export class RoslynLanguageServer {
         args.push("--telemetryLevel", this.telemetryReporter.telemetryLevel);
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
-        let cpOptions: cp.SpawnOptionsWithoutStdio = {
+        const cpOptions: cp.SpawnOptionsWithoutStdio = {
             detached: true,
             windowsHide: true,
             env: env
@@ -479,7 +479,7 @@ export class RoslynLanguageServer {
             client.sendNotification(DidCloseTextDocumentNotification.method, notification);
         });
         vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
-            let diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
+            const diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
             return await this.sendRequest(diagnosticRequestType, request, CancellationToken.None);
         });
 
@@ -530,7 +530,7 @@ export class RoslynLanguageServer {
 
         const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
 
-        let args: string[] = [];
+        const args: string[] = [];
 
         args.push("--sharedDependencies");
         args.push(exports.components['@microsoft/visualstudio-server-shared']);
@@ -549,7 +549,7 @@ export class RoslynLanguageServer {
 
         const starredCompletionComponentPath = exports.components["@vsintellicode/starred-suggestions-csharp"];
 
-        let csharpIntelliCodeArgs: string[] = [ "--starredCompletionComponentPath", starredCompletionComponentPath ];
+        const csharpIntelliCodeArgs: string[] = [ "--starredCompletionComponentPath", starredCompletionComponentPath ];
         return csharpIntelliCodeArgs;
     }
 
@@ -606,7 +606,7 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, _languageServer, platformInfo, optionProvider, _channel);
 
-    let options = optionProvider.GetLatestOptions();
+    const options = optionProvider.GetLatestOptions();
     let source = new vscode.CancellationTokenSource();
     vscode.workspace.onDidChangeTextDocument(async e => {
         if (!options.languageServerOptions.documentSelector.includes(e.document.languageId))
@@ -650,7 +650,7 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
     const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();
     const request: RoslynProtocol.OnAutoInsertParams = { _vs_textDocument: textDocument, _vs_position: position, _vs_ch: change.text, _vs_options: formattingOptions };
-    let response = await _languageServer.sendRequest(OnAutoInsertRequest.type, request, token);
+    const response = await _languageServer.sendRequest(OnAutoInsertRequest.type, request, token);
     if (response)
     {
         const textEdit = response._vs_textEdit;
@@ -659,7 +659,7 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
         const docComment = new vscode.SnippetString(textEdit.newText);
         const code: any = vscode;
         const textEdits = [new code.SnippetTextEdit(new vscode.Range(startPosition, endPosition), docComment)];
-        let edit = new vscode.WorkspaceEdit();
+        const edit = new vscode.WorkspaceEdit();
         edit.set(e.document.uri, textEdits);
 
         const applied = vscode.workspace.applyEdit(edit);
@@ -687,7 +687,7 @@ export async function deactivate() {
 // VS code will have a default session id when running under tests. Since we may still
 // report telemetry, we need to give a unique session id instead of the default value.
 function getSessionId(): string {
-    let sessionId = vscode.env.sessionId;
+    const sessionId = vscode.env.sessionId;
 
     // 'somevalue.sessionid' is the test session id provided by vs code
     if (sessionId.toLowerCase() === 'somevalue.sessionid') {

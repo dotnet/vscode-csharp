@@ -47,7 +47,7 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
                 this.handleOmnisharpEventPacketReceived(<OmnisharpEventPacketReceived>event);
                 break;
         }
-    }
+    };
 
     private handleOmnisharpServerOnServerError(event: OmnisharpServerOnServerError) {
         if (event.err.cmd === "dotnet --version") {

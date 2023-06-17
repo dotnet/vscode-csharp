@@ -23,5 +23,5 @@ export default class OptionProvider {
 
     public dispose = () => {
         this.subscription.unsubscribe();
-    }
+    };
 }

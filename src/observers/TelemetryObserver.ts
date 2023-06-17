@@ -30,7 +30,7 @@ export class TelemetryObserver {
     }
 
     public post = (event: BaseEvent) => {
-        let telemetryProps = this.getTelemetryProps();
+        const telemetryProps = this.getTelemetryProps();
         switch (event.type) {
             case EventType.OmnisharpInitialisation:
                 this.handleOmnisharpInitialisation(<OmnisharpInitialisation>event);
@@ -52,18 +52,18 @@ export class TelemetryObserver {
                 this.handleTestExecutionCountReport(<TestExecutionCountReport>event);
                 break;
             case EventType.TelemetryEvent:
-                let telemetryEvent = <TelemetryEvent>event;
+                const telemetryEvent = <TelemetryEvent>event;
                 this.reporter.sendTelemetryEvent(telemetryEvent.eventName, telemetryEvent.properties, telemetryEvent.measures);
                 break;
             case EventType.TelemetryErrorEvent:
-                let telemetryErrorEvent = <TelemetryErrorEvent>event;
+                const telemetryErrorEvent = <TelemetryErrorEvent>event;
                 this.reporter.sendTelemetryErrorEvent(telemetryErrorEvent.eventName, telemetryErrorEvent.properties, telemetryErrorEvent.measures, telemetryErrorEvent.errorProps);
                 break;
             case EventType.ProjectConfigurationReceived:
                 this.handleProjectConfigurationReceived(<ProjectConfiguration>event, telemetryProps);
                 break;
         }
-    }
+    };
 
     private handleTelemetryEventMeasures(event: TelemetryEventWithMeasures) {
         this.reporter.sendTelemetryEvent(event.eventName, undefined, event.measures);
@@ -100,7 +100,7 @@ export class TelemetryObserver {
     }
 
     private handleProjectConfigurationReceived(event: ProjectConfiguration, telemetryProps: { [key: string]: string }) {
-        let projectConfig = event.projectConfiguration;
+        const projectConfig = event.projectConfiguration;
         telemetryProps['SolutionId'] = this.solutionId ?? "";
         telemetryProps['ProjectId'] = projectConfig.ProjectId;
         telemetryProps['SessionId'] = projectConfig.SessionId;
@@ -117,7 +117,7 @@ export class TelemetryObserver {
     }
 
     private getTelemetryProps() {
-        let telemetryProps: { [key: string]: string } = {
+        const telemetryProps: { [key: string]: string } = {
             'platform.architecture': this.platformInfo.architecture,
             'platform.platform': this.platformInfo.platform
         };

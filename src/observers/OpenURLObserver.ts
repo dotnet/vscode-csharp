@@ -15,9 +15,9 @@ export class OpenURLObserver {
     public post = (event: BaseEvent) => {
         switch (event.type) {
             case EventType.OpenURL:
-                let url = (<OpenURL>event).url;
+                const url = (<OpenURL>event).url;
                 this.vscode.env.openExternal(this.vscode.Uri.parse(url));
                 break;
         }
-    }
+    };
 }

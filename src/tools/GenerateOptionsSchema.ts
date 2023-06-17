@@ -10,7 +10,7 @@ function AppendFieldsToObject(reference: any, obj: any) {
 
     // Make sure it is an object type
     if (typeof obj == 'object') {
-        for (let referenceKey in reference) {
+        for (const referenceKey in reference) {
             // If key exists in original object and is an object.
             if (obj.hasOwnProperty(referenceKey)) {
                 obj[referenceKey] = AppendFieldsToObject(reference[referenceKey], obj[referenceKey]);
@@ -26,13 +26,13 @@ function AppendFieldsToObject(reference: any, obj: any) {
 
 // Combines two object's fields, giving the parentDefault a higher precedence.
 function MergeDefaults(parentDefault: any, childDefault: any) {
-    let newDefault: any = {};
+    const newDefault: any = {};
 
-    for (let attrname in childDefault) {
+    for (const attrname in childDefault) {
         newDefault[attrname] = childDefault[attrname];
     }
 
-    for (let attrname in parentDefault) {
+    for (const attrname in parentDefault) {
         newDefault[attrname] = parentDefault[attrname];
     }
 
@@ -41,7 +41,7 @@ function MergeDefaults(parentDefault: any, childDefault: any) {
 
 function UpdateDefaults(object: any, defaults: any) {
     if (defaults != null) {
-        for (let key in object) {
+        for (const key in object) {
             if (object[key].hasOwnProperty('type') && object[key].type === 'object' && object[key].properties !== null) {
                 object[key].properties = UpdateDefaults(object[key].properties, MergeDefaults(defaults, object[key].default));
             } else if (key in defaults) {
@@ -54,20 +54,20 @@ function UpdateDefaults(object: any, defaults: any) {
 }
 
 function ReplaceReferences(definitions: any, objects: any) {
-    for (let key in objects) {
+    for (const key in objects) {
         if (objects[key].hasOwnProperty('$ref')) {
             // $ref is formatted as "#/definitions/ObjectName"
-            let referenceStringArray: string[] = objects[key]['$ref'].split('/');
+            const referenceStringArray: string[] = objects[key]['$ref'].split('/');
 
             // Getting "ObjectName"
-            let referenceName: string = referenceStringArray[referenceStringArray.length - 1];
+            const referenceName: string = referenceStringArray[referenceStringArray.length - 1];
 
             // Make sure reference has replaced its own $ref fields and hope there are no recursive references.
             definitions[referenceName] = ReplaceReferences(definitions, definitions[referenceName]);
 
             // Retrieve ObjectName from definitions. (TODO: Does not retrieve inner objects)
             // Need to deep copy, there are no functions in these objects.
-            let reference: any = JSON.parse(JSON.stringify(definitions[referenceName]));
+            const reference: any = JSON.parse(JSON.stringify(definitions[referenceName]));
 
             objects[key] = AppendFieldsToObject(reference, objects[key]);
 
@@ -86,7 +86,7 @@ function ReplaceReferences(definitions: any, objects: any) {
 }
 
 function mergeReferences(baseDefinitions: any, additionalDefinitions: any): void {
-    for (let key in additionalDefinitions) {
+    for (const key in additionalDefinitions) {
         if (baseDefinitions[key]) {
             throw `Error: '${key}' defined in multiple schema files.`;
         }
@@ -97,7 +97,7 @@ function mergeReferences(baseDefinitions: any, additionalDefinitions: any): void
 function createContributesSettingsForDebugOptions(path: string, options: any, ignoreKeys: Set<string>, outProperties: any)
 {
     const optionKeys = Object.keys(options);
-    for (let key of optionKeys) {
+    for (const key of optionKeys) {
         if (ignoreKeys.has(key)) {
             continue;
         }
@@ -128,9 +128,9 @@ function createContributesSettingsForDebugOptions(path: string, options: any, ig
 }
 
 export function GenerateOptionsSchema() {
-    let packageJSON: any = JSON.parse(fs.readFileSync('package.json').toString());
-    let schemaJSON: any = JSON.parse(fs.readFileSync('src/tools/OptionsSchema.json').toString());
-    let symbolSettingsJSON: any = JSON.parse(fs.readFileSync('src/tools/VSSymbolSettings.json').toString());
+    const packageJSON: any = JSON.parse(fs.readFileSync('package.json').toString());
+    const schemaJSON: any = JSON.parse(fs.readFileSync('src/tools/OptionsSchema.json').toString());
+    const symbolSettingsJSON: any = JSON.parse(fs.readFileSync('src/tools/VSSymbolSettings.json').toString());
     mergeReferences(schemaJSON.definitions, symbolSettingsJSON.definitions);
 
     schemaJSON.definitions = ReplaceReferences(schemaJSON.definitions, schemaJSON.definitions);
@@ -145,7 +145,7 @@ export function GenerateOptionsSchema() {
     packageJSON.contributes.debuggers[1].configurationAttributes.attach = schemaJSON.definitions.AttachOptions;
 
     // Make a copy of the options for unit test debugging
-    let unitTestDebuggingOptions = JSON.parse(JSON.stringify(schemaJSON.definitions.AttachOptions.properties));
+    const unitTestDebuggingOptions = JSON.parse(JSON.stringify(schemaJSON.definitions.AttachOptions.properties));
     // Remove the options we don't want
     delete unitTestDebuggingOptions.processName;
     delete unitTestDebuggingOptions.processId;
@@ -169,7 +169,7 @@ export function GenerateOptionsSchema() {
 
     // Delete old debug options
     const originalContributeDebugKeys = Object.keys(packageJSON.contributes.configuration[1].properties).filter(x => x.startsWith("csharp.debug"));
-    for(let key of originalContributeDebugKeys)
+    for(const key of originalContributeDebugKeys)
     {
         delete packageJSON.contributes.configuration[1].properties[key];
     }

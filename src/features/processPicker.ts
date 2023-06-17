@@ -57,15 +57,15 @@ export class RemoteAttachPicker {
             // Check if we are on a 64 bit Windows
             if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {
                 // If this doesn't exist, a lot more than OmniSharp is going to break.
-                let sysRoot = process.env.SystemRoot!;
-                let oldPath = path.join(sysRoot, 'System32');
-                let newPath = path.join(sysRoot, 'sysnative');
+                const sysRoot = process.env.SystemRoot!;
+                const oldPath = path.join(sysRoot, 'System32');
+                const newPath = path.join(sysRoot, 'sysnative');
 
                 // Escape backslashes, replace and ignore casing
-                let regex = RegExp(oldPath.replace(/\\/g, '\\\\'), "ig");
+                const regex = RegExp(oldPath.replace(/\\/g, '\\\\'), "ig");
 
                 // Replace System32 with sysnative
-                let newProgram = program.replace(regex, newPath);
+                const newProgram = program.replace(regex, newPath);
 
                 // Check if program strong contains System32 directory.
                 // And if the program does not exist in System32, but it does in sysnative.
@@ -88,7 +88,7 @@ export class RemoteAttachPicker {
         let pipeArgs: string[] | string = pipeTransport.pipeArgs;
         let pipeCwd: string = pipeTransport.pipeCwd;
         let quoteArgs: boolean = pipeTransport.quoteArgs != null ? pipeTransport.quoteArgs : true; // default value is true
-        let platformSpecificPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform);
+        const platformSpecificPipeTransportOptions = this.getPlatformSpecificPipeTransportOptions(pipeTransport, osPlatform);
 
         if (platformSpecificPipeTransportOptions !== undefined) {
             pipeProgram = platformSpecificPipeTransportOptions.pipeProgram || pipeProgram;
@@ -178,7 +178,7 @@ export class RemoteAttachPicker {
     }
 
     // Quote the arg if the flag is enabled and there is a space.
-    public static quoteArg(arg: string, quoteArg: boolean = true): string {
+    public static quoteArg(arg: string, quoteArg = true): string {
         if (quoteArg && arg.includes(' ')) {
             return `"${arg}"`;
         }
@@ -201,7 +201,7 @@ export class RemoteAttachPicker {
 
         // Grab selected name from UI
         // Args may be null if ran with F1
-        let name: string = args ? args.name : null;
+        const name: string = args ? args.name : null;
 
         if (!name) {
             // Config name not found.
@@ -231,13 +231,13 @@ export class RemoteAttachPicker {
         return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < "${scriptPath}"`, pipeCwd, channel, platformInfo).then(output => {
             // OS will be on first line
             // Processess will follow if listed
-            let lines = output.split(/\r?\n/);
+            const lines = output.split(/\r?\n/);
 
             if (lines.length == 0) {
                 return Promise.reject<AttachItem[]>(new Error("Pipe transport failed to get OS and processes."));
             }
             else {
-                let remoteOS = lines[0].replace(/[\r\n]+/g, '');
+                const remoteOS = lines[0].replace(/[\r\n]+/g, '');
 
                 if (remoteOS != "Linux" && remoteOS != "Darwin") {
                     return Promise.reject<AttachItem[]>(new Error(`Operating system "${remoteOS}"" not supported.`));
@@ -247,7 +247,7 @@ export class RemoteAttachPicker {
                 if (lines.length == 1) {
                     return Promise.reject<AttachItem[]>(new Error("Transport attach could not obtain processes list."));
                 } else {
-                    let processes = lines.slice(1);
+                    const processes = lines.slice(1);
                     return sortProcessEntries(PsOutputParser.parseProcessFromPsArray(processes), remoteOS);
                 }
             }
@@ -287,7 +287,7 @@ abstract class DotNetAttachItemsProvider implements AttachItemsProvider {
 function sortProcessEntries(processEntries: Process[], osPlatform: string): AttachItem[] {
     // localeCompare is significantly slower than < and > (2000 ms vs 80 ms for 10,000 elements)
     // We can change to localeCompare if this becomes an issue
-    let dotnetProcessName = (osPlatform === 'win32') ? 'dotnet.exe' : 'dotnet';
+    const dotnetProcessName = (osPlatform === 'win32') ? 'dotnet.exe' : 'dotnet';
     processEntries = processEntries.sort((a, b) => {
         if (a.name.toLowerCase() === dotnetProcessName && b.name.toLowerCase() === dotnetProcessName) {
             if (a.commandLine !== undefined && b.commandLine !== undefined) {
@@ -306,7 +306,7 @@ function sortProcessEntries(processEntries: Process[], osPlatform: string): Atta
         }
     });
 
-    let attachItems = processEntries.map(process => ({
+    const attachItems = processEntries.map(process => ({
         label: process.name,
         description: process.pid,
         detail: process.commandLine,
@@ -358,17 +358,17 @@ export class PsOutputParser {
 
     // Only public for tests.
     public static parseProcessFromPs(processes: string): Process[] {
-        let lines = processes.split(os.EOL);
-        let processEntries: Process[] = [];
+        const lines = processes.split(os.EOL);
+        const processEntries: Process[] = [];
 
         // lines[0] is the header of the table
         for (let i = 1; i < lines.length; i++) {
-            let line = lines[i];
+            const line = lines[i];
             if (!line) {
                 continue;
             }
 
-            let process = this.parseLineFromPs(line);
+            const process = this.parseLineFromPs(line);
             if (process) {
                 processEntries.push(process);
             }
@@ -378,16 +378,16 @@ export class PsOutputParser {
     }
 
     public static parseProcessFromPsArray(lines: string[]): Process[] {
-        let processEntries: Process[] = [];
+        const processEntries: Process[] = [];
 
         // lines[0] is the header of the table
         for (let i = 1; i < lines.length; i++) {
-            let line = lines[i];
+            const line = lines[i];
             if (!line) {
                 continue;
             }
 
-            let process = this.parseLineFromPs(line);
+            const process = this.parseLineFromPs(line);
             if (process) {
                 processEntries.push(process);
             }
@@ -430,8 +430,8 @@ export class CimAttachItemsProvider extends DotNetAttachItemsProvider {
     constructor(private pwsh: string) { super(); }
 
     protected async getInternalProcessEntries(): Promise<Process[]> {
-        const pwshCommand: string = `${this.pwsh} -NoProfile -Command`;
-        const cimCommand: string = 'Get-CimInstance Win32_Process | Select-Object Name,ProcessId,CommandLine | ConvertTo-JSON';
+        const pwshCommand = `${this.pwsh} -NoProfile -Command`;
+        const cimCommand = 'Get-CimInstance Win32_Process | Select-Object Name,ProcessId,CommandLine | ConvertTo-JSON';
         const processes: string = await execChildProcess(`${pwshCommand} "${cimCommand}"`);
         return CimProcessParser.ParseProcessFromCim(processes);
     }
@@ -491,12 +491,12 @@ export class WmicOutputParser {
 
     // Only public for tests.
     public static parseProcessFromWmic(processes: string): Process[] {
-        let lines = processes.split(os.EOL);
+        const lines = processes.split(os.EOL);
         let currentProcess: Partial<Process> = {};
-        let processEntries: Process[] = [];
+        const processEntries: Process[] = [];
 
         for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
+            const line = lines[i];
             if (!line) {
                 continue;
             }
@@ -514,9 +514,9 @@ export class WmicOutputParser {
     }
 
     private static parseLineFromWmic(line: string, process: Partial<Process>) {
-        let splitter = line.indexOf('=');
+        const splitter = line.indexOf('=');
         if (splitter >= 0) {
-            let key = line.slice(0, line.indexOf('='));
+            const key = line.slice(0, line.indexOf('='));
             let value = line.slice(line.indexOf('=') + 1);
             if (key === WmicOutputParser.wmicNameTitle) {
                 process.name = value.trim();
@@ -559,9 +559,9 @@ async function execChildProcess(process: string): Promise<string> {
 // It can be invoked from "c:\windows\sysnative\bash.exe", so adding "c:\windows\sysnative" to path if we identify
 // VSCode is running in windows and doesn't have it in the path.
 async function GetSysNativePathIfNeeded(platformInfo: PlatformInformation): Promise<NodeJS.ProcessEnv> {
-    let env = process.env;
+    const env = process.env;
     if (platformInfo.isWindows() && platformInfo.architecture === "x86_64") {
-        let sysnative: String = process.env.WINDIR + "\\sysnative";
+        const sysnative: string = process.env.WINDIR + "\\sysnative";
         env.Path = process.env.PATH + ";" + sysnative;
     }
 

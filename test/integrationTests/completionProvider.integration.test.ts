@@ -23,13 +23,13 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        let fileName = 'completion.cs';
-        let dir = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const fileName = 'completion.cs';
+        const dir = testAssetWorkspace.projects[0].projectDirectoryPath;
         fileUri = vscode.Uri.file(path.join(dir, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
 
         // The override bit is commented out to allow later debugging to work correctly.
-        let overrideUncomment = new vscode.WorkspaceEdit();
+        const overrideUncomment = new vscode.WorkspaceEdit();
         overrideUncomment.delete(fileUri, new vscode.Range(new vscode.Position(11, 8), new vscode.Position(11, 11)));
         await vscode.workspace.applyEdit(overrideUncomment);
 
@@ -41,12 +41,12 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
     });
 
     test("Returns the completion items", async () => {
-        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), " "));
+        const completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), " "));
         expect(completionList.items).to.not.be.empty;
     });
 
     test("Resolve adds documentation", async () => {
-        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), /*trigger character*/ undefined, /* completions to resolve */ 10));
+        const completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(8, 31), /*trigger character*/ undefined, /* completions to resolve */ 10));
         // At least some of the first 10 fully-resolved elements should have documentation attached. If this ever ends up not being
         // true, adjust the cutoff appropriately.
         const documentation = completionList.items.slice(0, 9).filter(item => item.documentation);
@@ -54,7 +54,7 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
     });
 
     test("Override completion has additional edits sync", async () => {
-        let completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(11, 17), " ", 4));
+        const completionList = <vscode.CompletionList>(await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", fileUri, new vscode.Position(11, 17), " ", 4));
         const nonSnippets = completionList.items.filter(c => c.kind != vscode.CompletionItemKind.Snippet);
 
         let sawAdditionalTextEdits = false;

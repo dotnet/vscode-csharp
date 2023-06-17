@@ -14,11 +14,11 @@ suite('BackgroundWorkStatusBarObserver', () => {
 
     let showCalled: boolean;
     let hideCalled: boolean;
-    let statusBarItem = <StatusBarItem>{
+    const statusBarItem = <StatusBarItem>{
         show: () => { showCalled = true; },
         hide: () => { hideCalled = true; }
     };
-    let observer = new BackgroundWorkStatusBarObserver(statusBarItem);
+    const observer = new BackgroundWorkStatusBarObserver(statusBarItem);
 
     setup(() => {
         showCalled = false;
@@ -26,7 +26,7 @@ suite('BackgroundWorkStatusBarObserver', () => {
     });
 
     test('OmnisharpBackgroundDiagnosticStatus.Processing: Show processing message', () => {
-        let event = new OmnisharpBackgroundDiagnosticStatus({ Status: BackgroundDiagnosticStatus.Progress, NumberFilesRemaining: 0, NumberFilesTotal: 0, NumberProjects: 0 });
+        const event = new OmnisharpBackgroundDiagnosticStatus({ Status: BackgroundDiagnosticStatus.Progress, NumberFilesRemaining: 0, NumberFilesTotal: 0, NumberProjects: 0 });
         observer.post(event);
         expect(hideCalled).to.be.false;
         expect(showCalled).to.be.true;
@@ -34,7 +34,7 @@ suite('BackgroundWorkStatusBarObserver', () => {
     });
 
     test('OmnisharpBackgroundDiagnosticStatus.Ready: Hide processing message', () => {
-        let event = new OmnisharpBackgroundDiagnosticStatus({ Status: BackgroundDiagnosticStatus.Finished, NumberFilesRemaining: 0, NumberFilesTotal: 0, NumberProjects: 0 });
+        const event = new OmnisharpBackgroundDiagnosticStatus({ Status: BackgroundDiagnosticStatus.Finished, NumberFilesRemaining: 0, NumberFilesTotal: 0, NumberProjects: 0 });
         observer.post(event);
         expect(hideCalled).to.be.true;
         expect(showCalled).to.be.false;

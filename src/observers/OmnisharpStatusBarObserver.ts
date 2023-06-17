@@ -20,7 +20,7 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', StatusBarColors.Red, 'Error starting OmniSharp');
                 break;
             case EventType.OmnisharpServerOnStdErr:
-                let msg = (<OmnisharpServerOnStdErr>event).message;
+                const msg = (<OmnisharpServerOnStdErr>event).message;
                 this.SetAndShowStatusBar('$(flame)', 'o.showOutput', StatusBarColors.Red, `OmniSharp process errored:${msg}`);
                 break;
             case EventType.OmnisharpOnBeforeServerInstall:
@@ -45,10 +45,10 @@ export class OmnisharpStatusBarObserver extends BaseStatusBarItemObserver {
                 this.ResetAndHideStatusBar();
                 break;
             case EventType.DownloadProgress:
-                let progressEvent = <DownloadProgress>event;
+                const progressEvent = <DownloadProgress>event;
                 this.SetAndShowStatusBar("$(cloud-download) Downloading packages", '', '', `Downloading package '${progressEvent.packageDescription}'... ${progressEvent.downloadPercentage}%`);
                 break;
         }
-    }
+    };
 }
 

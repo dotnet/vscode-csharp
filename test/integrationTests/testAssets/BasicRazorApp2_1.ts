@@ -5,7 +5,7 @@
 
 import { ITestAssetWorkspace } from "./testAssets";
 
-let workspace: ITestAssetWorkspace = {
+const workspace: ITestAssetWorkspace = {
     description: "Basic Razor app",
     projects: [{
         relativeFilePath: "BasicRazorApp2_1.csproj"

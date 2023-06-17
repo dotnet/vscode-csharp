@@ -12,7 +12,7 @@ export default async function spawnGit(args?: string[], options?: SpawnSyncOptio
         };
     }
 
-    let optionsWithFullEnvironment: SpawnSyncOptions = {
+    const optionsWithFullEnvironment: SpawnSyncOptions = {
         ...options,
         env: {
             ...process.env,

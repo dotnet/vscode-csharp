@@ -11,40 +11,40 @@ import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import { OmnisharpServerMsBuildProjectDiagnostics, OmnisharpServerOnError, OmnisharpServerUnresolvedDependencies, WorkspaceInformationUpdated } from '../../../src/omnisharp/loggingEvents';
 
 export const getNullChannel = (): vscode.OutputChannel => {
-    let returnChannel: vscode.OutputChannel = {
+    const returnChannel: vscode.OutputChannel = {
         name: "",
-        append: (value: string) => { },
-        appendLine: (value: string) => { },
-        clear: () => { },
-        show: (preserveFocusOrColumn?: boolean | vscode.ViewColumn, preserveFocus?: boolean) => { },
-        hide: () => { },
-        dispose: () => { }
+        append: (_value: string) => { /** empty */ },
+        appendLine: (_value: string) => { /** empty */  },
+        clear: () => { /** empty */ },
+        show: (_preserveFocusOrColumn?: boolean | vscode.ViewColumn, _preserveFocus?: boolean) => { /** empty */ },
+        hide: () => { /** empty */ },
+        dispose: () => { /** empty */ }
     };
     return returnChannel;
 };
 
 export const getNullTelemetryReporter = (): ITelemetryReporter => {
-    let reporter: ITelemetryReporter = {
-        sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => { },
-        sendTelemetryErrorEvent: (eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]) => { }
+    const reporter: ITelemetryReporter = {
+        sendTelemetryEvent: (_eventName: string, _properties?: { [key: string]: string }, _measures?: { [key: string]: number }) => { /** empty */ },
+        sendTelemetryErrorEvent: (_eventName: string, _properties?: { [key: string]: string; }, _measures?: { [key: string]: number; }, _errorProps?: string[]) => { /** empty */ }
     };
 
     return reporter;
 };
 
 export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
-    let values: { [key: string]: any } = {};
+    const values: { [key: string]: any } = {};
 
-    let configuration: vscode.WorkspaceConfiguration = {
+    const configuration: vscode.WorkspaceConfiguration = {
         get<T>(section: string, defaultValue?: T): T | undefined {
-            let result = <T>values[section];
+            const result = <T>values[section];
             return result ?? defaultValue;
         },
         has: (section: string) => {
             return values[section] !== undefined;
         },
         inspect: () => { throw new Error("Not Implemented"); },
-        update: async (section: string, value: any, configurationTarget?: vscode.ConfigurationTarget | boolean) => {
+        update: async (section: string, value: any, _configurationTarget?: vscode.ConfigurationTarget | boolean) => {
             values[section] = value;
             return Promise.resolve();
         }
@@ -98,39 +98,39 @@ export function getUnresolvedDependenices(fileName: string): OmnisharpServerUnre
 export function getFakeVsCode(): vscode.vscode {
     return {
         commands: {
-            executeCommand: <T>(command: string, ...rest: any[]) => {
+            executeCommand: <_T>(_command: string, ..._rest: any[]) => {
                 throw new Error("Not Implemented");
             }
         },
         languages: {
-            match: (selector: DocumentSelector, document: TextDocument) => {
+            match: (_selector: DocumentSelector, _document: TextDocument) => {
                 throw new Error("Not Implemented");
             }
         },
         window: {
             activeTextEditor: undefined,
-            showInformationMessage: <T extends MessageItem>(message: string, ...items: T[]) => {
+            showInformationMessage: <T extends MessageItem>(_message: string, ..._items: T[]) => {
                 throw new Error("Not Implemented");
             },
-            showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => {
+            showWarningMessage: <T extends MessageItem>(_message: string, ..._items: T[]) => {
                 throw new Error("Not Implemented");
             },
-            showErrorMessage: (message: string, ...items: string[]) => {
+            showErrorMessage: (_message: string, ..._items: string[]) => {
                 throw new Error("Not Implemented");
             }
         },
         workspace: {
             workspaceFolders: undefined,
-            getConfiguration: (section?: string, resource?: Uri) => {
+            getConfiguration: (_section?: string, _resource?: Uri) => {
                 throw new Error("Not Implemented");
             },
-            asRelativePath: (pathOrUri: string | Uri, includeWorkspaceFolder?: boolean) => {
+            asRelativePath: (_pathOrUri: string | Uri, _includeWorkspaceFolder?: boolean) => {
                 throw new Error("Not Implemented");
             },
-            createFileSystemWatcher: (globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean) => {
+            createFileSystemWatcher: (_globPattern: GlobPattern, _ignoreCreateEvents?: boolean, _ignoreChangeEvents?: boolean, _ignoreDeleteEvents?: boolean) => {
                 throw new Error("Not Implemented");
             },
-            onDidChangeConfiguration: (listener: (e: ConfigurationChangeEvent) => any, thisArgs?: any, disposables?: Disposable[]): Disposable => {
+            onDidChangeConfiguration: (_listener: (e: ConfigurationChangeEvent) => any, _thisArgs?: any, _disposables?: Disposable[]): Disposable => {
                 throw new Error("Not Implemented");
             }
         },
@@ -182,7 +182,7 @@ export function getVSCodeWithConfig() {
 
     const _vscodeConfig = getWorkspaceConfiguration();
 
-    vscode.workspace.getConfiguration = (section, resource) => {
+    vscode.workspace.getConfiguration = (_section, _resource) => {
         return _vscodeConfig;
     };
 
@@ -191,6 +191,6 @@ export function getVSCodeWithConfig() {
 
 export function updateConfig(vscode: vscode.vscode, section: string | undefined, config: string, value: any) {
     const workspaceConfig = vscode.workspace.getConfiguration(section);
-    let configEntry = section ? `${section}.${config}` : config;
+    const configEntry = section ? `${section}.${config}` : config;
     workspaceConfig.update(configEntry, value);
 }

@@ -56,7 +56,7 @@ export class Options {
 
                 // If we didn't have an absolute workspace setting, then check each workspace folder and resolve any relative paths against it
                 if(defaultSolution == '') {
-                    for (let workspaceFolder of vscode.workspace.workspaceFolders) {
+                    for (const workspaceFolder of vscode.workspace.workspaceFolders) {
                         const workspaceFolderConfig = vscode.workspace.getConfiguration(undefined, workspaceFolder.uri);
                         const defaultSolutionFromWorkspaceFolder = Options.readOption<string>(workspaceFolderConfig, 'dotnet.defaultSolution', '', 'omnisharp.defaultLaunchSolution');
                         if (defaultSolutionFromWorkspaceFolder !== '' && defaultSolutionFromWorkspaceFolder !== "disable") {
@@ -125,9 +125,9 @@ export class Options {
         const suppressDotnetRestoreNotification = Options.readOption<boolean>(config, 'csharp.suppressDotnetRestoreNotification', false);
 
         // Options for MS.CA.LanguageServer
-        let languageServerLogLevel = Options.readOption<string>(config, 'dotnet.server.trace', 'Information');
-        let documentSelector = Options.readOption<DocumentSelector>(config, 'dotnet.server.documentSelector', ['csharp']);
-        let extensionPaths = Options.readOption<string[] | null>(config, 'dotnet.server.extensionPaths', null);
+        const languageServerLogLevel = Options.readOption<string>(config, 'dotnet.server.trace', 'Information');
+        const documentSelector = Options.readOption<DocumentSelector>(config, 'dotnet.server.documentSelector', ['csharp']);
+        const extensionPaths = Options.readOption<string[] | null>(config, 'dotnet.server.extensionPaths', null);
 
         // Options that apply to Razor
         const razorDevMode = Options.readOption<boolean>(config, 'razor.devmode', false) ?? false;
@@ -216,7 +216,7 @@ export class Options {
 
     }
 
-    public static getExcludedPaths(vscode: vscode, includeSearchExcludes: boolean = false): string[] {
+    public static getExcludedPaths(vscode: vscode, includeSearchExcludes = false): string[] {
         const workspaceConfig = vscode.workspace.getConfiguration();
 
         let excludePaths = getExcludes(workspaceConfig, 'files.exclude');

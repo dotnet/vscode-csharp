@@ -22,12 +22,12 @@ suite('OmnisharpStatusBarObserver', () => {
         hideCalled = false;
     });
 
-    let statusBarItem = <StatusBarItem>{
+    const statusBarItem = <StatusBarItem>{
         show: () => { showCalled = true; },
         hide: () => { hideCalled = true; }
     };
 
-    let observer = new OmnisharpStatusBarObserver(statusBarItem);
+    const observer = new OmnisharpStatusBarObserver(statusBarItem);
 
     [
         new OmnisharpServerOnServerError("someError"),
@@ -43,7 +43,7 @@ suite('OmnisharpStatusBarObserver', () => {
     });
 
     test(`${OmnisharpServerOnStdErr.name}: Status bar is shown with the error text`, () => {
-        let event = new OmnisharpServerOnStdErr("std error");
+        const event = new OmnisharpServerOnStdErr("std error");
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBarItem.color).to.equal(StatusBarColors.Red);
@@ -54,7 +54,7 @@ suite('OmnisharpStatusBarObserver', () => {
 
 
     test('OnBeforeServerInstall: Status bar is shown with the installation text', () => {
-        let event = new OmnisharpOnBeforeServerInstall();
+        const event = new OmnisharpOnBeforeServerInstall();
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBarItem.text).to.be.equal('$(flame) Installing OmniSharp...');
@@ -62,7 +62,7 @@ suite('OmnisharpStatusBarObserver', () => {
     });
 
     test('OnBeforeServerStart: Status bar is shown with the starting text', () => {
-        let event = new OmnisharpOnBeforeServerStart();
+        const event = new OmnisharpOnBeforeServerStart();
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBarItem.color).to.equal(StatusBarColors.Yellow);
@@ -72,7 +72,7 @@ suite('OmnisharpStatusBarObserver', () => {
     });
 
     test('OnServerStart: Status bar is shown with the flame and "Running" text', () => {
-        let event = new OmnisharpServerOnStart();
+        const event = new OmnisharpServerOnStart();
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBarItem.text).to.be.equal('$(flame)');
@@ -81,7 +81,7 @@ suite('OmnisharpStatusBarObserver', () => {
     });
 
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {
-        let event = new OmnisharpServerOnStop();
+        const event = new OmnisharpServerOnStop();
         observer.post(event);
         expect(hideCalled).to.be.true;
         expect(statusBarItem.text).to.be.equal('');
@@ -90,31 +90,31 @@ suite('OmnisharpStatusBarObserver', () => {
     });
 
     test('DownloadStart: Text and tooltip are set ', () => {
-        let event = new DownloadStart("somePackage");
+        const event = new DownloadStart("somePackage");
         observer.post(event);
         expect(statusBarItem.text).to.contain("Downloading packages");
         expect(statusBarItem.tooltip).to.contain(event.packageDescription);
     });
 
     test('InstallationProgress: Text and tooltip are set', () => {
-        let event = new InstallationStart("somePackage");
+        const event = new InstallationStart("somePackage");
         observer.post(event);
         expect(statusBarItem.text).to.contain("Installing packages");
         expect(statusBarItem.tooltip).to.contain(event.packageDescription);
     });
 
     test('DownloadProgress: Tooltip contains package description and download percentage', () => {
-        let event = new DownloadProgress(50, "somePackage");
+        const event = new DownloadProgress(50, "somePackage");
         observer.post(event);
         expect(statusBarItem.tooltip).to.contain(event.packageDescription);
         expect(statusBarItem.tooltip).to.contain(event.downloadPercentage);
     });
 
     test('InstallationSuccess: Status bar is hidden and the attributes are set to undefined', () => {
-        let installationEvent = new InstallationStart("somePackage");
+        const installationEvent = new InstallationStart("somePackage");
         observer.post(installationEvent);
 
-        let successEvent = new InstallationSuccess();
+        const successEvent = new InstallationSuccess();
         observer.post(successEvent);
 
         expect(hideCalled).to.be.true;

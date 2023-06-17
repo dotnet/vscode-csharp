@@ -51,7 +51,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             return null;
         }
 
-        let brokeredServicePipeName = getBrokeredServicePipeName();
+        const brokeredServicePipeName = getBrokeredServicePipeName();
         if (brokeredServicePipeName !== undefined) {
             debugConfiguration.brokeredServicePipeName = brokeredServicePipeName;
         }
@@ -76,8 +76,8 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                 process = await RemoteAttachPicker.ShowAttachEntries(debugConfiguration, this.platformInformation);
             }
             else {
-                let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
-                let attacher = new AttachPicker(attachItemsProvider);
+                const attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
+                const attacher = new AttachPicker(attachItemsProvider);
                 process = await attacher.ShowAttachEntries();
             }
 
@@ -156,11 +156,11 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
     }
 
     private loadSettingDebugOptions(debugConfiguration: vscode.DebugConfiguration): void {
-        let debugOptions = vscode.workspace.getConfiguration('csharp').get('debug');
-        let result = JSON.parse(JSON.stringify(debugOptions));
-        let keys = Object.keys(result);
+        const debugOptions = vscode.workspace.getConfiguration('csharp').get('debug');
+        const result = JSON.parse(JSON.stringify(debugOptions));
+        const keys = Object.keys(result);
 
-        for (let key of keys) {
+        for (const key of keys) {
             // Skip since option is set in the launch.json configuration
             // Skip 'console' option since this should be set when we know this is a console project.
             if (debugConfiguration.hasOwnProperty(key) || key === "console") {
@@ -195,27 +195,27 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
     private checkForDevCerts(dotnetPath: string) {
         hasDotnetDevCertsHttps(dotnetPath).then(async (returnData) => {
-            let errorCode = returnData.error?.code;
+            const errorCode = returnData.error?.code;
             if (errorCode === CertToolStatusCodes.CertificateNotTrusted || errorCode === CertToolStatusCodes.ErrorNoValidCertificateFound) {
-                const labelYes: string = "Yes";
-                const labelNotNow: string = "Not Now";
-                const labelMoreInfo: string = "More Information";
+                const labelYes = "Yes";
+                const labelNotNow = "Not Now";
+                const labelMoreInfo = "More Information";
 
                 const result = await vscode.window.showInformationMessage(
                     "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?",
                     { title: labelYes }, { title: labelNotNow, isCloseAffordance: true }, { title: labelMoreInfo }
                 );
                 if (result?.title === labelYes) {
-                    let returnData = await createSelfSignedCert(dotnetPath);
+                    const returnData = await createSelfSignedCert(dotnetPath);
                     if (returnData.error === null) //if the prcess returns 0, returnData.error is null, otherwise the return code can be acessed in returnData.error.code
                     {
-                        let message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
+                        const message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
                         vscode.window.showInformationMessage(`Self-signed certificate sucessfully ${message}.`);
                     }
                     else {
                         this.csharpOutputChannel.appendLine(`Couldn't create self-signed certificate. ${returnData.error.message}\ncode: ${returnData.error.code}\nstdout: ${returnData.stdout}`);
 
-                        const labelShowOutput: string = "Show Output";
+                        const labelShowOutput = "Show Output";
                         const result = await vscode.window.showWarningMessage("Couldn't create self-signed certificate. See output for more information.", labelShowOutput);
                         if (result === labelShowOutput) {
                             this.csharpOutputChannel.show();

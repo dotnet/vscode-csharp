@@ -155,7 +155,7 @@ suite("getTargetArchitecture Tests", () => {
                 RuntimeId: "osx.11.0-x86_64",
             };
 
-            let fn = function () { getTargetArchitecture(platformInfo, "x64", dotnetInfo); };
+            const fn = function () { getTargetArchitecture(platformInfo, "x64", dotnetInfo); };
 
             expect(fn).to.throw("The value 'x64' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.");
         });
@@ -168,7 +168,7 @@ suite("getTargetArchitecture Tests", () => {
                 RuntimeId: "osx.11.0-FUTURE_ISA",
             };
 
-            let fn = function () { getTargetArchitecture(platformInfo, undefined, dotnetInfo); };
+            const fn = function () { getTargetArchitecture(platformInfo, undefined, dotnetInfo); };
 
             expect(fn).to.throw(`Unexpected RuntimeId 'osx.11.0-FUTURE_ISA'.`);
         });

@@ -13,18 +13,18 @@ export default class OmniSharpDocumentHighlightProvider extends AbstractSupport 
 
     public async provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
 
-        let req = createRequest<protocol.FindUsagesRequest>(resource, position);
+        const req = createRequest<protocol.FindUsagesRequest>(resource, position);
         req.OnlyThisFile = true;
         req.ExcludeDefinition = false;
 
         try {
-            let res = await serverUtils.findUsages(this._server, req, token);
+            const res = await serverUtils.findUsages(this._server, req, token);
 
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(OmniSharpDocumentHighlightProvider._asDocumentHighlight);
             }
         }
-        catch {}
+        catch { /* empty */ }
 
         return [];
     }

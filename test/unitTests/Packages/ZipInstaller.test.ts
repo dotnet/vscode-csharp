@@ -18,7 +18,7 @@ import TestEventBus from '../testAssets/TestEventBus';
 import { AbsolutePath } from '../../../src/packageManager/AbsolutePath';
 
 chai.use(require("chai-as-promised"));
-let expect = chai.expect;
+const expect = chai.expect;
 
 suite('ZipInstaller', () => {
     const binaries = [
@@ -49,15 +49,15 @@ suite('ZipInstaller', () => {
 
     test('The folder is unzipped and all the files are present at the expected paths', async () => {
         await InstallZip(testZip.buffer, fileDescription, installationPath, [], eventStream);
-        for (let elem of testZip.files) {
-            let filePath = path.join(installationPath.value, elem.path);
+        for (const elem of testZip.files) {
+            const filePath = path.join(installationPath.value, elem.path);
             expect(await util.fileExists(filePath)).to.be.true;
         }
     });
 
     test('The folder is unzipped and all the expected events are created', async () => {
         await InstallZip(testZip.buffer, fileDescription, installationPath, [], eventStream);
-        let eventSequence: BaseEvent[] = [
+        const eventSequence: BaseEvent[] = [
             new InstallationStart(fileDescription)
         ];
         expect(eventBus.getEvents()).to.be.deep.equal(eventSequence);
@@ -65,11 +65,11 @@ suite('ZipInstaller', () => {
 
     test('The folder is unzipped and the binaries have the expected permissions(except on Windows)', async () => {
         if (!((await PlatformInformation.GetCurrent()).isWindows())) {
-            let absoluteBinaries = binaries.map(binary => AbsolutePath.getAbsolutePath(installationPath.value, binary.path));
+            const absoluteBinaries = binaries.map(binary => AbsolutePath.getAbsolutePath(installationPath.value, binary.path));
             await InstallZip(testZip.buffer, fileDescription, installationPath, absoluteBinaries, eventStream);
-            for (let binaryPath of absoluteBinaries) {
+            for (const binaryPath of absoluteBinaries) {
                 expect(await util.fileExists(binaryPath.value)).to.be.true;
-                let mode = (await fs.stat(binaryPath.value)).mode;
+                const mode = (await fs.stat(binaryPath.value)).mode;
                 expect(mode & 0o7777).to.be.equal(0o755, `Expected mode for path ${binaryPath}`);
             }
         }
@@ -84,7 +84,7 @@ suite('ZipInstaller', () => {
             await InstallZip(Buffer.from("some content", "utf8"), "Text File", installationPath, [], eventStream);
         }
         catch{
-            let eventSequence: BaseEvent[] = [
+            const eventSequence: BaseEvent[] = [
                 new InstallationStart("Text File"),
                 new ZipError("C# Extension was unable to download its dependencies. Please check your internet connection. If you use a proxy server, please visit https://aka.ms/VsCodeCsharpNetworking")
             ];

@@ -15,7 +15,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         return _dotnetInfo;
     }
 
-    let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
+    const dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     try {
         const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} --info`, process.cwd(), process.env);
@@ -56,11 +56,11 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
 }
 
 export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined{
-    let dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
+    const dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
     let dotnetExecutablePath: string | undefined;
 
     for (const dotnetPath of dotNetCliPaths) {
-        let dotnetFullPath = join(dotnetPath, dotnetExeName);
+        const dotnetFullPath = join(dotnetPath, dotnetExeName);
         if (CoreClrDebugUtil.existsSync(dotnetFullPath)) {
             dotnetExecutablePath = dotnetFullPath;
             break;

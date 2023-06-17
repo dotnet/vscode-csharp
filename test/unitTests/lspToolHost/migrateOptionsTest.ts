@@ -9,8 +9,8 @@ import { migrateOptions } from '../../../src/shared/MigrateOptions';
 import { assert } from 'chai';
 
 suite("Migrate configuration should in package.json", () => {
-    let packageJson = JSON.parse(readFileSync('package.json').toString());
-    let configurations = Object.keys(packageJson["contributes"]["configuration"]["properties"]);
+    const packageJson = JSON.parse(readFileSync('package.json').toString());
+    const configurations = Object.keys(packageJson["contributes"]["configuration"]["properties"]);
 
     migrateOptions.forEach((data) => {
         assert.include(configurations, data.roslynOption);

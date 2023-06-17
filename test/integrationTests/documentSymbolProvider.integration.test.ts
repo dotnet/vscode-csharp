@@ -27,9 +27,9 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         const activation = await integrationHelpers.activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        let fileName = 'documentSymbols.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let filePath = path.join(projectDirectory, fileName);
+        const fileName = 'documentSymbols.cs';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
 
         await vscode.commands.executeCommand("vscode.open", fileUri);
@@ -42,7 +42,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Returns all elements", async function () {
-        let symbols = await GetDocumentSymbols(fileUri);
+        const symbols = await GetDocumentSymbols(fileUri);
 
         // The count can vary:
         // Some builds of OmniSharp return a tree data structure with one root element

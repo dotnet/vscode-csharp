@@ -52,7 +52,7 @@ type State = {
     telemetryIntervalId: NodeJS.Timeout,
 };
 
-export module Events {
+export namespace Events {
     export const StateChanged = 'stateChanged';
 
     export const StdOut = 'stdout';
@@ -148,7 +148,7 @@ export class OmniSharpServer {
             throw new Error('OmniSharp server is not running.');
         }
 
-        let { engine } = this._state;
+        const { engine } = this._state;
         await engine.waitForInitialize();
     }
 
@@ -298,7 +298,7 @@ export class OmniSharpServer {
         const disposables = new CompositeDisposable();
 
         let engine: IEngine | undefined;
-        let omnisharpOptions = options.omnisharpOptions;
+        const omnisharpOptions = options.omnisharpOptions;
         if (omnisharpOptions.enableLspDriver) {
             engine = new LspEngine(
                 this._eventBus,
@@ -395,7 +395,7 @@ export class OmniSharpServer {
         ];
 
         let razorPluginPath: string | undefined;
-        let razorOptions = options.razorOptions;
+        const razorOptions = options.razorOptions;
         // Razor support only exists for certain platforms, so only load the plugin if present
         razorPluginPath = razorOptions.razorPluginPath.length > 0 ? razorOptions.razorPluginPath : path.join(
             this.extensionPath,
@@ -567,14 +567,14 @@ export class OmniSharpServer {
         } else {
             this.updateProjectDebouncer.next(new ObservableEvents.ProjectModified());
         }
-    }
+    };
 
     private updateProjectInfo = async () => {
         this.firstUpdateProject = false;
-        let info = await serverUtils.requestWorkspaceInformation(this);
+        const info = await serverUtils.requestWorkspaceInformation(this);
         //once we get the info, push the event into the event stream
         this.eventStream.post(new ObservableEvents.WorkspaceInformationUpdated(info));
-    }
+    };
 
     public async stop(): Promise<void> {
         // We're already stopped, nothing to do :).
@@ -687,14 +687,14 @@ export class OmniSharpServer {
             );
         }
 
-        let { engine } = this._state;
+        const { engine } = this._state;
 
         let startTime: number;
         startTime = Date.now();
         const response = await engine.makeRequest<TResponse>(command, data, token);
 
-        let endTime = Date.now();
-        let elapsedTime = endTime - startTime;
+        const endTime = Date.now();
+        const elapsedTime = endTime - startTime;
         this._recordRequestDelay(command, elapsedTime);
 
         return response;

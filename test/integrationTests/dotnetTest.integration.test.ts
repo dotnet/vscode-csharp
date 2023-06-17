@@ -36,9 +36,9 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
 
             eventStream = activation.eventStream;
 
-            let fileName = 'UnitTest1.cs';
-            let projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
-            let filePath = path.join(projectDirectory, fileName);
+            const fileName = 'UnitTest1.cs';
+            const projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
+            const filePath = path.join(projectDirectory, fileName);
             fileUri = vscode.Uri.file(filePath);
 
             await vscode.commands.executeCommand("vscode.open", fileUri);

@@ -62,7 +62,7 @@ export class LspEngine implements IEngine {
 
     public async start(cwd: string, args: string[], launchTarget: LaunchTarget, launchPath: string, options: Options): Promise<void> {
         const configuration = await configure(cwd, ['-lsp', '--encoding', 'ascii'].concat(args), launchPath, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
-        let serverOptions: ServerOptions = {
+        const serverOptions: ServerOptions = {
             run: {
                 command: configuration.path,
                 args: configuration.args,
@@ -83,7 +83,7 @@ export class LspEngine implements IEngine {
 
         const languageMiddlewareFeature = this.languageMiddlewareFeature;
 
-        let clientOptions: LanguageClientOptions = {
+        const clientOptions: LanguageClientOptions = {
             // errorHandler: {
             //     error(error, message, count) {
             //         return ErrorAction.Continue;
@@ -254,7 +254,7 @@ export class LspEngine implements IEngine {
         function disableFeature(ctor: {
             new(...args: any[]): StaticFeature | DynamicFeature<any>;
         }): void {
-            let index = features.findIndex((z) => z instanceof ctor);
+            const index = features.findIndex((z) => z instanceof ctor);
             if (index > -1) {
                 features.splice(index, 1);
             }
@@ -429,5 +429,5 @@ export class LspEngine implements IEngine {
                 }
             },
         };
-    }
+    };
 }

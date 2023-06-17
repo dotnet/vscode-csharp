@@ -14,7 +14,7 @@ import { DocumentSynchronizationFailure } from '../omnisharp/loggingEvents';
 
 async function trackCurrentVirtualDocuments(server: OmniSharpServer, eventStream: EventStream) {
     for (let i = 0; i < workspace.textDocuments.length; i++) {
-        let document = workspace.textDocuments[i];
+        const document = workspace.textDocuments[i];
 
         if (!shouldIgnoreDocument(document, server)) {
             await openVirtualDocument(document, server, eventStream);
@@ -39,7 +39,7 @@ export function isVirtualCSharpDocument(document: TextDocument) {
 }
 
 function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: EventStream): IDisposable {
-    let onTextDocumentOpen = workspace.onDidOpenTextDocument(async document => {
+    const onTextDocumentOpen = workspace.onDidOpenTextDocument(async document => {
         if (shouldIgnoreDocument(document, server)) {
             return;
         }
@@ -47,7 +47,7 @@ function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: Event
         await openVirtualDocument(document, server, eventStream);
     });
 
-    let onTextDocumentChange = workspace.onDidChangeTextDocument(async changeEvent => {
+    const onTextDocumentChange = workspace.onDidChangeTextDocument(async changeEvent => {
         const document = changeEvent.document;
 
         if (shouldIgnoreDocument(document, server)) {
@@ -57,7 +57,7 @@ function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: Event
         await changeVirtualDocument(document, server, eventStream);
     });
 
-    let onTextDocumentClose = workspace.onDidCloseTextDocument(async document => {
+    const onTextDocumentClose = workspace.onDidCloseTextDocument(async document => {
         if (shouldIgnoreDocument(document, server)) {
             return;
         }
@@ -92,7 +92,7 @@ async function openVirtualDocument(document: TextDocument, server: OmniSharpServ
         path = document.uri.path;
     }
 
-    let req = { FileName: path, changeType: FileChangeType.Create };
+    const req = { FileName: path, changeType: FileChangeType.Create };
     try {
         await serverUtils.filesChanged(server, [req]);
 
@@ -126,7 +126,7 @@ async function closeVirtualDocument(document: TextDocument, server: OmniSharpSer
         path = document.uri.path;
     }
 
-    let req = { FileName: path, changeType: FileChangeType.Delete };
+    const req = { FileName: path, changeType: FileChangeType.Delete };
     try {
         await serverUtils.filesChanged(server, [req]);
     }

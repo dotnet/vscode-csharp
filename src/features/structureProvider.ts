@@ -10,14 +10,14 @@ import { V2 } from "../omnisharp/protocol";
 
 export class OmniSharpStructureProvider extends AbstractSupport implements FoldingRangeProvider {
     async provideFoldingRanges(document: TextDocument, context: FoldingContext, token: CancellationToken): Promise<FoldingRange[]> {
-        let request: V2.BlockStructureRequest = {
+        const request: V2.BlockStructureRequest = {
             FileName: document.fileName,
         };
 
         try {
-            let response = await blockStructure(this._server, request, token);
-            let ranges: FoldingRange[] = [];
-            for (let member of response.Spans) {
+            const response = await blockStructure(this._server, request, token);
+            const ranges: FoldingRange[] = [];
+            for (const member of response.Spans) {
                 ranges.push(new FoldingRange(member.Range.Start.Line, member.Range.End.Line, this.GetType(member.Kind)));
             }
 

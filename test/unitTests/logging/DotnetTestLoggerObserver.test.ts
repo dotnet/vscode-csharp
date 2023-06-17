@@ -14,7 +14,7 @@ chai.use(require('chai-string'));
 
 suite(`${DotNetTestLoggerObserver.name}`, () => {
     let appendedMessage: string;
-    let observer = new DotNetTestLoggerObserver({
+    const observer = new DotNetTestLoggerObserver({
         ...getNullChannel(),
         append: (text: string) => { appendedMessage += text; },
     });
@@ -67,19 +67,19 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
     });
 
     test(`${DotNetTestDebugProcessStart.name}: Target process id is logged`, () => {
-        let event = new DotNetTestDebugProcessStart(111);
+        const event = new DotNetTestDebugProcessStart(111);
         observer.post(event);
         expect(appendedMessage).to.contain(event.targetProcessId);
     });
 
     test(`${DotNetTestDebugComplete.name}: Message is logged`, () => {
-        let event = new DotNetTestDebugComplete();
+        const event = new DotNetTestDebugComplete();
         observer.post(event);
         expect(appendedMessage).to.not.be.empty;
     });
 
     suite(`${ReportDotNetTestResults.name}`, () => {
-        let event = new ReportDotNetTestResults(
+        const event = new ReportDotNetTestResults(
             [
                 getDotNetTestResults("foo", "failed", "assertion failed", "stacktrace1", ["message1", "message2"], ["errorMessage1"]),
                 getDotNetTestResults("failinator", "failed", "error occurred", "stacktrace2", [], []),

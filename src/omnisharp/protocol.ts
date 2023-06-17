@@ -7,7 +7,7 @@ import * as path from 'path';
 import { CompletionTriggerKind, CompletionItemKind, CompletionItemTag, InsertTextFormat } from 'vscode-languageserver-protocol';
 import { findNetCoreTargetFramework, findNetFrameworkTargetFramework, findNetStandardTargetFramework } from '../shared/utils';
 
-export module Requests {
+export namespace Requests {
     export const AddToProject = '/addtoproject';
     export const CodeCheck = '/codecheck';
     export const CodeFormat = '/codeformat';
@@ -83,8 +83,7 @@ export interface Request extends FileBasedRequest {
     ApplyChangesTogether?: boolean;
 }
 
-export interface FindImplementationsRequest extends Request {
-}
+export type FindImplementationsRequest = Request
 
 export interface LinePositionSpanTextChange {
     NewText: string;
@@ -124,13 +123,9 @@ export interface ChangeBufferRequest {
     NewText: string;
 }
 
-export interface AddToProjectRequest extends Request {
-    //?
-}
+export type AddToProjectRequest = Request
 
-export interface RemoveFromProjectRequest extends Request {
-    //?
-}
+export type RemoveFromProjectRequest = Request
 
 export interface FindUsagesRequest extends Request {
     //        MaxWidth: number; ?
@@ -396,8 +391,7 @@ export interface RenamedFileResponse extends FileOperationResponse {
     NewFileName: string;
 }
 
-export interface OpenFileResponse extends FileOperationResponse {
-}
+export type OpenFileResponse = FileOperationResponse
 
 export enum FileModificationType {
     Modified,
@@ -509,14 +503,12 @@ export interface RunFixAllRequest extends FileBasedRequest {
     ApplyChanges: boolean;
 }
 
-export interface ReAnalyzeRequest extends FileBasedRequest {
-}
+export type ReAnalyzeRequest = FileBasedRequest
 
 export interface ReAnalyzeReponse {
 }
 
-export interface QuickInfoRequest extends Request {
-}
+export type QuickInfoRequest = Request
 
 export interface QuickInfoResponse {
     Markdown?: string;
@@ -573,16 +565,14 @@ export interface SourceGeneratedFileInfo {
     DocumentGuid: string;
 }
 
-export interface SourceGeneratedFileRequest extends SourceGeneratedFileInfo {
-}
+export type SourceGeneratedFileRequest = SourceGeneratedFileInfo
 
 export interface SourceGeneratedFileResponse {
     Source: string;
     SourceName: string;
 }
 
-export interface UpdateSourceGeneratedFileRequest extends SourceGeneratedFileInfo {
-}
+export type UpdateSourceGeneratedFileRequest = SourceGeneratedFileInfo
 
 interface UpdateSourceGeneratedFileNotModifiedResponse {
     UpdateType: Exclude<UpdateType, UpdateType.Modified>;
@@ -601,8 +591,7 @@ export enum UpdateType {
     Modified
 }
 
-export interface SourceGeneratedFileClosedRequest extends SourceGeneratedFileInfo {
-}
+export type SourceGeneratedFileClosedRequest = SourceGeneratedFileInfo
 
 export interface InlayHintRequest {
     Location: V2.Location;
@@ -641,7 +630,7 @@ export interface GoToTypeDefinitionResponse {
 
 export namespace V2 {
 
-    export module Requests {
+    export namespace Requests {
         export const GetCodeActions = '/v2/getcodeactions';
         export const RunCodeAction = '/v2/runcodeaction';
         export const GetTestStartInfo = '/v2/getteststartinfo';
@@ -778,11 +767,9 @@ export namespace V2 {
         TargetFrameworkVersion?: string;
     }
 
-    export interface DebugTestGetStartInfoRequest extends SingleTestRequest {
-    }
+    export type DebugTestGetStartInfoRequest = SingleTestRequest
 
-    export interface DebugTestClassGetStartInfoRequest extends MultiTestRequest {
-    }
+    export type DebugTestClassGetStartInfoRequest = MultiTestRequest
 
     export interface DebugTestGetStartInfoResponse {
         FileName: string;
@@ -801,15 +788,12 @@ export namespace V2 {
     export interface DebugTestLaunchResponse {
     }
 
-    export interface DebugTestStopRequest extends Request {
-    }
+    export type DebugTestStopRequest = Request
 
     export interface DebugTestStopResponse {
     }
 
-    export interface DiscoverTestsRequest extends BaseTestRequest {
-
-    }
+    export type DiscoverTestsRequest = BaseTestRequest
 
     export interface TestInfo {
         FullyQualifiedName: string;
@@ -823,8 +807,7 @@ export namespace V2 {
         Tests: TestInfo[];
     }
 
-    export interface GetTestStartInfoRequest extends SingleTestRequest {
-    }
+    export type GetTestStartInfoRequest = SingleTestRequest
 
     export interface GetTestStartInfoResponse {
         Executable: string;
@@ -832,19 +815,15 @@ export namespace V2 {
         WorkingDirectory: string;
     }
 
-    export interface RunTestRequest extends SingleTestRequest {
-    }
+    export type RunTestRequest = SingleTestRequest
 
-    export interface RunTestsInClassRequest extends MultiTestRequest {
-    }
+    export type RunTestsInClassRequest = MultiTestRequest
 
-    export interface RunTestsInContextRequest extends TestsInContextRequest {
-    }
+    export type RunTestsInContextRequest = TestsInContextRequest
 
-    export interface DebugTestsInContextGetStartInfoRequest extends TestsInContextRequest {
-    }
+    export type DebugTestsInContextGetStartInfoRequest = TestsInContextRequest
 
-    export module TestOutcomes {
+    export namespace TestOutcomes {
         export const None = 'none';
         export const Passed = 'passed';
         export const Failed = 'failed';
@@ -886,7 +865,7 @@ export namespace V2 {
         Kind: string;
     }
 
-    export module SymbolKinds {
+    export namespace SymbolKinds {
         // types
         export const Class = 'class';
         export const Delegate = 'delegate';
@@ -911,7 +890,7 @@ export namespace V2 {
         export const Unknown = 'unknown';
     }
 
-    export module SymbolAccessibilities {
+    export namespace SymbolAccessibilities {
         export const Internal = 'internal';
         export const Private = 'private';
         export const PrivateProtected = 'private protected';
@@ -920,14 +899,14 @@ export namespace V2 {
         export const Public = 'public';
     }
 
-    export module SymbolPropertyNames {
+    export namespace SymbolPropertyNames {
         export const Accessibility = 'accessibility';
         export const Static = 'static';
         export const TestFramework = 'testFramework';
         export const TestMethodName = 'testMethodName';
     }
 
-    export module SymbolRangeNames {
+    export namespace SymbolRangeNames {
         export const Attributes = 'attributes';
         export const Full = 'full';
         export const Name = 'name';
@@ -943,8 +922,7 @@ export namespace V2 {
             Properties?: { [name: string]: any };
         }
 
-        export interface CodeStructureRequest extends FileBasedRequest {
-        }
+        export type CodeStructureRequest = FileBasedRequest
 
         export interface CodeStructureResponse {
             Elements?: CodeElement[];
@@ -952,7 +930,7 @@ export namespace V2 {
 
         export function walkCodeElements(elements: CodeElement[], action: (element: CodeElement, parentElement?: CodeElement) => void) {
             function walker(elements: CodeElement[], parentElement?: CodeElement) {
-                for (let element of elements) {
+                for (const element of elements) {
                     action(element, parentElement);
 
                     if (element.Children) {
@@ -981,7 +959,7 @@ export namespace V2 {
 }
 
 export function isDotNetCoreProject(project: MSBuildProject): boolean {
-    let tfms = project.TargetFrameworks.map(tf => tf.ShortName);
+    const tfms = project.TargetFrameworks.map(tf => tf.ShortName);
     return findNetCoreTargetFramework(tfms) !== undefined ||
         findNetStandardTargetFramework(tfms) !== undefined ||
         findNetFrameworkTargetFramework(tfms) !== undefined;
@@ -994,10 +972,10 @@ export interface ProjectDescriptor {
 }
 
 export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationResponse): ProjectDescriptor[] {
-    let result = [];
+    const result = [];
 
     if (info.DotNet && info.DotNet.Projects.length > 0) {
-        for (let project of info.DotNet.Projects) {
+        for (const project of info.DotNet.Projects) {
             result.push({
                 Name: project.Name,
                 Directory: project.Path,
@@ -1007,7 +985,7 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
     }
 
     if (info.MsBuild && info.MsBuild.Projects.length > 0) {
-        for (let project of info.MsBuild.Projects) {
+        for (const project of info.MsBuild.Projects) {
             if (isDotNetCoreProject(project)) {
                 result.push({
                     Name: path.basename(project.Path),

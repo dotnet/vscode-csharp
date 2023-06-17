@@ -24,7 +24,7 @@ export default class OmniSharpCompletionProvider extends AbstractProvider implem
     }
 
     public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken, context: CompletionContext): Promise<CompletionList | undefined> {
-        let request = createRequest<protocol.CompletionRequest>(document, position);
+        const request = createRequest<protocol.CompletionRequest>(document, position);
         request.CompletionTrigger = (context.triggerKind + 1) as LspCompletionTriggerKind;
         request.TriggerCharacter = context.triggerCharacter;
 
@@ -60,7 +60,7 @@ export default class OmniSharpCompletionProvider extends AbstractProvider implem
                 mappedItems = mappedItems.filter(item => (<CompletionItemLabel>item.label).label !== "await" || !item.additionalTextEdits);
             }
 
-            let lastCompletions = new Map();
+            const lastCompletions = new Map();
 
             for (let i = 0; i < mappedItems.length; i++) {
                 lastCompletions.set(mappedItems[i], response.Items[i]);

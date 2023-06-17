@@ -107,14 +107,14 @@ async function installDebugger(packageJSON: any, platformInfo: PlatformInformati
 }
 
 async function installPackageJsonDependency(dependencyName: string, packageJSON: any, platformInfo: PlatformInformation) {
-    let eventStream = new EventStream();
+    const eventStream = new EventStream();
     const logger = new Logger(message => process.stdout.write(message));
-    let stdoutObserver = new CsharpLoggerObserver(logger);
+    const stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
-    let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
+    const runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
         .filter(dep => (dep.isFramework === undefined || !dep.isFramework) && dep.id === dependencyName);
-    let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
-    let provider = () => new NetworkSettings('', true);
+    const packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
+    const provider = () => new NetworkSettings('', true);
     if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
         throw Error("Failed to download package.");
     }
@@ -129,12 +129,12 @@ async function acquireNugetPackage(packageName: string, packageVersion: string):
         return packageOutputPath;
     }
 
-    let dotnetArgs = [ 'restore', path.join(rootPath, 'server'), `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}` ];
+    const dotnetArgs = [ 'restore', path.join(rootPath, 'server'), `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}` ];
     if (argv.interactive) {
         dotnetArgs.push('--interactive');
     }
 
-    let process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
+    const process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
     await new Promise( (resolve) => {
         process.on('exit', (exitCode, signal) => {
             if (exitCode !== 0) {
@@ -167,7 +167,7 @@ async function doPackageOffline() {
         // Now that we've updated the version, get the package.json.
         const packageJSON = getPackageJSON();
 
-        for (let p of platformSpecificPackages) {
+        for (const p of platformSpecificPackages) {
             try {
                 if (process.platform === 'win32' && !p.rid.startsWith('win')) {
                     console.warn(`Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`);

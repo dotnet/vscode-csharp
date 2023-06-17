@@ -33,8 +33,8 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     });
 
     test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion}`, async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
-        let monoInfo = await monoResolver.getHostExecutableInfo({
+        const monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
+        const monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
             omnisharpOptions: { ...options.omnisharpOptions, monoPath: monoPath },
         });
@@ -44,7 +44,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     });
 
     test(`it throws exception if version is less than ${requiredMonoVersion}`, async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono(lowerMonoVersion));
+        const monoResolver = new OmniSharpMonoResolver(getMono(lowerMonoVersion));
 
         await expect(monoResolver.getHostExecutableInfo({
             ...options,
@@ -53,8 +53,8 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     });
 
     test("sets the environment with the monoPath", async () => {
-        let monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
-        let monoInfo = await monoResolver.getHostExecutableInfo({
+        const monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
+        const monoInfo = await monoResolver.getHostExecutableInfo({
             ...options,
             omnisharpOptions: { ...options.omnisharpOptions, monoPath: monoPath },
         });

@@ -29,7 +29,7 @@ suite('WarningMessageObserver', () => {
     let scheduler: TestScheduler;
     let assertionObservable: Subject<string>;
     let observer: WarningMessageObserver;
-    let vscode: vscode = getFakeVsCode();
+    const vscode: vscode = getFakeVsCode();
 
     vscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
         warningMessages.push(message);
@@ -64,12 +64,12 @@ suite('WarningMessageObserver', () => {
     });
 
     test('OmnisharpServerMsBuildProjectDiagnostics: No action is taken if the errors array is empty', () => {
-        let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
+        const event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
             []);
-        let marble = `a`;
-        let marble_event_map = { a: event };
-        let eventList = scheduler.createHotObservable(marble, marble_event_map);
+        const marble = `a`;
+        const marble_event_map = { a: event };
+        const eventList = scheduler.createHotObservable(marble, marble_event_map);
         eventList.subscribe(e => observer.post(e));
         scheduler.flush();
         expect(warningMessages).to.be.empty;
@@ -77,13 +77,13 @@ suite('WarningMessageObserver', () => {
     });
 
     test('OmnisharpServerMsBuildProjectDiagnostics: No event is posted if warning is disabled', () => {
-        let newObserver = new WarningMessageObserver(vscode, () => true, scheduler);
-        let event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
+        const newObserver = new WarningMessageObserver(vscode, () => true, scheduler);
+        const event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
             [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)]);
-        let marble = `a`;
-        let marble_event_map = { a: event };
-        let eventList = scheduler.createHotObservable(marble, marble_event_map);
+        const marble = `a`;
+        const marble_event_map = { a: event };
+        const eventList = scheduler.createHotObservable(marble, marble_event_map);
         eventList.subscribe(e => newObserver.post(e));
         scheduler.flush();
         expect(warningMessages).to.be.empty;
@@ -120,9 +120,9 @@ suite('WarningMessageObserver', () => {
     ].forEach(elem => {
         suite(`${elem.eventA.constructor.name}`, () => {
             test(`When the event is fired then a warning message is displayed`, () => {
-                let marble = `${timeToMarble(1500)}a`;
-                let marble_event_map = { a: elem.eventA };
-                let eventList = scheduler.createHotObservable(marble, marble_event_map);
+                const marble = `${timeToMarble(1500)}a`;
+                const marble_event_map = { a: elem.eventA };
+                const eventList = scheduler.createHotObservable(marble, marble_event_map);
                 eventList.subscribe(e => observer.post(e));
                 scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3000)}a`, { a: elem.assertion1 });
                 scheduler.flush();
@@ -131,9 +131,9 @@ suite('WarningMessageObserver', () => {
             });
 
             test(`When events are fired rapidly, then they are debounced by 1500 ms`, () => {
-                let marble = `${timeToMarble(1000)}a${timeToMarble(500)}b${timeToMarble(500)}c`;
-                let marble_event_map = { a: elem.eventA, b: elem.eventB, c: elem.eventC };
-                let eventList = scheduler.createHotObservable(marble, marble_event_map);
+                const marble = `${timeToMarble(1000)}a${timeToMarble(500)}b${timeToMarble(500)}c`;
+                const marble_event_map = { a: elem.eventA, b: elem.eventB, c: elem.eventC };
+                const eventList = scheduler.createHotObservable(marble, marble_event_map);
                 eventList.subscribe(e => observer.post(e));
                 scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3520)}a`, { a: elem.assertion1 });
                 scheduler.flush();
@@ -143,9 +143,9 @@ suite('WarningMessageObserver', () => {
             });
 
             test(`When events are 1500 ms apart, then they are not debounced`, () => {
-                let marble = `${timeToMarble(1000)}a${timeToMarble(490)}b${timeToMarble(1500)}c`;
-                let marble_event_map = { a: elem.eventA, b: elem.eventB, c: elem.eventC };
-                let eventList = scheduler.createHotObservable(marble, marble_event_map);
+                const marble = `${timeToMarble(1000)}a${timeToMarble(490)}b${timeToMarble(1500)}c`;
+                const marble_event_map = { a: elem.eventA, b: elem.eventB, c: elem.eventC };
+                const eventList = scheduler.createHotObservable(marble, marble_event_map);
                 eventList.subscribe(e => observer.post(e));
                 scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3000)}a${timeToMarble(1500)}b`,
                     {
@@ -158,8 +158,8 @@ suite('WarningMessageObserver', () => {
             });
 
             test(`Given a warning message, when the user clicks ok the command is executed`, async () => {
-                let marble = `${timeToMarble(1500)}a`;
-                let eventList = scheduler.createHotObservable(marble, { a: elem.eventA });
+                const marble = `${timeToMarble(1500)}a`;
+                const eventList = scheduler.createHotObservable(marble, { a: elem.eventA });
                 scheduler.expectObservable(eventList.pipe(map(e => observer.post(e))));
                 scheduler.flush();
                 doClickOk();
@@ -168,8 +168,8 @@ suite('WarningMessageObserver', () => {
             });
 
             test(`Given a warning message, when the user clicks cancel the command is not executed`, async () => {
-                let marble = `${timeToMarble(1500)}a--|`;
-                let eventList = scheduler.createHotObservable(marble, { a: elem.eventA });
+                const marble = `${timeToMarble(1500)}a--|`;
+                const eventList = scheduler.createHotObservable(marble, { a: elem.eventA });
                 scheduler.expectObservable(eventList.pipe(map(e => observer.post(e))));
                 scheduler.flush();
                 doClickCancel();

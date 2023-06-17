@@ -24,7 +24,7 @@ import { modernNetVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
         const networkSettingsProvider = () => new NetworkSettings('', false);
         let eventStream: EventStream;
         const installPath = "somePath";
-        let platformInfo = new PlatformInformation("win32", "x86");
+        const platformInfo = new PlatformInformation("win32", "x86");
         let downloader: OmnisharpDownloader;
         let server: MockHttpsServer;
         let extensionPath: string;
@@ -55,14 +55,14 @@ import { modernNetVersion } from "../../src/omnisharp/OmnisharpPackageCreator";
 
         test('Packages are downloaded and installed', async () => {
             await downloader.DownloadAndInstallOmnisharp(version, useFramework, server.baseUrl, installPath);
-            for (let elem of testZip.files) {
-                let filePath = path.join(extensionPath, installPath, version + suffix, elem.path);
+            for (const elem of testZip.files) {
+                const filePath = path.join(extensionPath, installPath, version + suffix, elem.path);
                 expect(await util.fileExists(filePath)).to.be.true;
             }
         });
 
         test('Events are created', async () => {
-            let expectedSequence = [
+            const expectedSequence = [
                 new PackageInstallation('OmniSharp Version = 1.2.3'),
                 new LogPlatformInfo(new PlatformInformation("win32", "x86")),
                 new PackageInstallStart(),

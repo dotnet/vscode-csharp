@@ -21,12 +21,12 @@ suite("InformationMessageObserver", () => {
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
     let commandDone: Promise<void> | undefined;
-    let vscode = getVsCode();
-    let optionObservable = new Subject<Options>();
-    let optionProvider = new OptionProvider(optionObservable);
+    const vscode = getVsCode();
+    const optionObservable = new Subject<Options>();
+    const optionProvider = new OptionProvider(optionObservable);
     let infoMessage: string | undefined;
     let invokedCommand: string | undefined;
-    let observer: InformationMessageObserver = new InformationMessageObserver(vscode, optionProvider);
+    const observer: InformationMessageObserver = new InformationMessageObserver(vscode, optionProvider);
 
     setup(() => {
         infoMessage = undefined;
@@ -91,7 +91,7 @@ suite("InformationMessageObserver", () => {
     });
 
     function getVsCode() {
-        let vscode = getVSCodeWithConfig();
+        const vscode = getVSCodeWithConfig();
         vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
             return new Promise<T | undefined>(resolve => {

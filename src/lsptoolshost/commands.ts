@@ -68,7 +68,7 @@ async function completionComplexEdit(uriStr: string, textEdit: vscode.TextEdit, 
 
   if (editor !== undefined) {
 
-    let newRange = editor.document.validateRange(
+    const newRange = editor.document.validateRange(
       new vscode.Range(textEdit.range.start.line, textEdit.range.start.character, textEdit.range.end.line, textEdit.range.end.character));
 
     // HACK: 
@@ -82,8 +82,8 @@ async function completionComplexEdit(uriStr: string, textEdit: vscode.TextEdit, 
         success = await editor.insertSnippet(new vscode.SnippetString(textEdit.newText));       
       }
       else{  
-        let edit = new vscode.WorkspaceEdit();
-        let newTextEdit = vscode.TextEdit.replace(newRange, textEdit.newText);  
+        const edit = new vscode.WorkspaceEdit();
+        const newTextEdit = vscode.TextEdit.replace(newRange, textEdit.newText);  
         edit.set(editor.document.uri, [newTextEdit]);
         success = await vscode.workspace.applyEdit(edit);
   

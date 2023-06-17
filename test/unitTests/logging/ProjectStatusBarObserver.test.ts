@@ -14,11 +14,11 @@ suite('ProjectStatusBarObserver', () => {
 
     let showCalled: boolean;
     let hideCalled: boolean;
-    let statusBarItem = <StatusBarItem>{
+    const statusBarItem = <StatusBarItem>{
         show: () => { showCalled = true; },
         hide: () => { hideCalled = true; }
     };
-    let observer = new ProjectStatusBarObserver(statusBarItem);
+    const observer = new ProjectStatusBarObserver(statusBarItem);
 
     setup(() => {
         showCalled = false;
@@ -26,7 +26,7 @@ suite('ProjectStatusBarObserver', () => {
     });
 
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {
-        let event = new OmnisharpServerOnStop();
+        const event = new OmnisharpServerOnStop();
         observer.post(event);
         expect(hideCalled).to.be.true;
         expect(statusBarItem.text).to.be.equal('');
@@ -35,7 +35,7 @@ suite('ProjectStatusBarObserver', () => {
     });
 
     test('OnMultipleLaunchTargets: Status bar is shown with the select project option and the comand to pick a project', () => {
-        let event = new OmnisharpOnMultipleLaunchTargets([]);
+        const event = new OmnisharpOnMultipleLaunchTargets([]);
         observer.post(event);
         expect(showCalled).to.be.true;
         expect(statusBarItem.text).to.contain('Select project');
@@ -44,7 +44,7 @@ suite('ProjectStatusBarObserver', () => {
 
     suite('WorkspaceInformationUpdated', () => {
         test('Project status is hidden if there is no MSBuild Object', () => {
-            let event = getWorkspaceInformationUpdated(undefined);
+            const event = getWorkspaceInformationUpdated(undefined);
             observer.post(event);
             expect(hideCalled).to.be.true;
             expect(statusBarItem.text).to.be.equal('');
@@ -52,7 +52,7 @@ suite('ProjectStatusBarObserver', () => {
         });
 
         test('Project status is shown if there is an MSBuild object', () => {
-            let event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
+            const event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
             observer.post(event);
             expect(showCalled).to.be.true;
             expect(statusBarItem.text).to.contain(event.info.MsBuild?.SolutionPath);

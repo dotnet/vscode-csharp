@@ -16,13 +16,13 @@ chai.use(require('chai-arrays'));
 
 suite('TelemetryReporterObserver', () => {
     suiteSetup(() => should());
-    let platformInfo = new PlatformInformation("linux", "architecture");
+    const platformInfo = new PlatformInformation("linux", "architecture");
     let name = "";
     let property: { [key: string]: string } | undefined = undefined;
     let measure: { [key: string]: number }[] = [];
     let errorProp: string[][] = [];
-    let useModernNet = true;
-    let observer = new TelemetryObserver(platformInfo, () => {
+    const useModernNet = true;
+    const observer = new TelemetryObserver(platformInfo, () => {
         return {
             ...getNullTelemetryReporter,
             sendTelemetryEvent: (eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }) => {
@@ -47,13 +47,13 @@ suite('TelemetryReporterObserver', () => {
     });
 
     test('PackageInstallation: AcquisitionStart is reported', () => {
-        let event = new PackageInstallation("somePackage");
+        const event = new PackageInstallation("somePackage");
         observer.post(event);
         expect(name).to.be.not.empty;
     });
 
     test('InstallationSuccess: Telemetry props contain installation stage', () => {
-        let event = new InstallationSuccess();
+        const event = new InstallationSuccess();
         observer.post(event);
         expect(name).to.be.equal("AcquisitionSucceeded");
         expect(property).to.have.property("installStage", "completeSuccess");
@@ -69,7 +69,7 @@ suite('TelemetryReporterObserver', () => {
         const fileExtensions = [".cs", ".cshtml"];
         const fileCounts = [7, 3];
         const sdkStyleProject = true;
-        let event = new ProjectConfiguration({
+        const event = new ProjectConfiguration({
             ProjectCapabilities: projectCapabilities,
             TargetFrameworks: targetFrameworks,
             ProjectId: projectId,
@@ -107,7 +107,7 @@ suite('TelemetryReporterObserver', () => {
     });
 
     test(`${TelemetryEvent.name}: SendTelemetry event is called with the name, properties and measures`, () => {
-        let event = new TelemetryEvent("someName", { "key": "value" }, { someKey: 1 });
+        const event = new TelemetryEvent("someName", { "key": "value" }, { someKey: 1 });
         observer.post(event);
         expect(name).to.contain(event.eventName);
         expect(measure).to.be.containingAllOf([event.measures]);
@@ -115,7 +115,7 @@ suite('TelemetryReporterObserver', () => {
     });
 
     test(`${TelemetryErrorEvent.name}: SendTelemetry error event is called with the name, properties, measures, and errorProps`, () => {
-        let event = new TelemetryErrorEvent("someName", { "key": "value" }, { someKey: 1 }, ["StackTrace"]);
+        const event = new TelemetryErrorEvent("someName", { "key": "value" }, { someKey: 1 }, ["StackTrace"]);
         observer.post(event);
         expect(name).to.contain(event.eventName);
         expect(measure).to.be.containingAllOf([event.measures]);
@@ -125,7 +125,7 @@ suite('TelemetryReporterObserver', () => {
 
     suite('InstallationFailure', () => {
         test("Telemetry Props contains platform information, install stage and an event name", () => {
-            let event = new InstallationFailure("someStage", "someError");
+            const event = new InstallationFailure("someStage", "someError");
             observer.post(event);
             expect(name).to.be.equal("AcquisitionFailed");
             expect(property).to.have.property("platform.architecture", platformInfo.architecture);
@@ -134,8 +134,8 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test(`Telemetry Props contains message and packageUrl if error is package error`, () => {
-            let error = new PackageError("someError", <Package>{ "description": "foo", "url": "someurl" }, undefined);
-            let event = new InstallationFailure("someStage", error);
+            const error = new PackageError("someError", <Package>{ "description": "foo", "url": "someurl" }, undefined);
+            const event = new InstallationFailure("someStage", error);
             observer.post(event);
             expect(name).to.be.equal("AcquisitionFailed");
             expect(property).to.have.property("error.message", error.message);
@@ -145,7 +145,7 @@ suite('TelemetryReporterObserver', () => {
 
     suite('TestExecutionCountReport', () => {
         test('SendTelemetryEvent is called for "RunTest" and "DebugTest"', () => {
-            let event = new TestExecutionCountReport({ "framework1": 20 }, { "framework2": 30 });
+            const event = new TestExecutionCountReport({ "framework1": 20 }, { "framework2": 30 });
             observer.post(event);
             expect(name).to.contain("RunTest");
             expect(name).to.contain("DebugTest");
@@ -153,7 +153,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty run count', () => {
-            let event = new TestExecutionCountReport({ "framework1": 20 }, undefined!);
+            const event = new TestExecutionCountReport({ "framework1": 20 }, undefined!);
             observer.post(event);
             expect(name).to.not.contain("RunTest");
             expect(name).to.contain("DebugTest");
@@ -161,7 +161,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty debug count', () => {
-            let event = new TestExecutionCountReport(undefined!, { "framework1": 20 });
+            const event = new TestExecutionCountReport(undefined!, { "framework1": 20 });
             observer.post(event);
             expect(name).to.contain("RunTest");
             expect(name).to.not.contain("DebugTest");
@@ -169,7 +169,7 @@ suite('TelemetryReporterObserver', () => {
         });
 
         test('SendTelemetryEvent is not called for empty debug and run counts', () => {
-            let event = new TestExecutionCountReport(undefined!, undefined!);
+            const event = new TestExecutionCountReport(undefined!, undefined!);
             observer.post(event);
             expect(name).to.be.empty;
             expect(measure).to.be.empty;

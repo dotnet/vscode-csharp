@@ -48,11 +48,11 @@ const testData = [
 ];
 
 suite("Server option name to vscode configuration name test", () => {
-    let packageJson = JSON.parse(readFileSync('package.json').toString());
-    let configurations = Object.keys(packageJson["contributes"]["configuration"][1]["properties"]);
+    const packageJson = JSON.parse(readFileSync('package.json').toString());
+    const configurations = Object.keys(packageJson["contributes"]["configuration"][1]["properties"]);
 
     testData.forEach((data) => {
-        let actualName = convertServerOptionNameToClientConfigurationName(data.serverOption);
+        const actualName = convertServerOptionNameToClientConfigurationName(data.serverOption);
         expect(actualName).to.equal(data.vsCodeConfiguration);
         if (data.declareInPackageJson) {
             assert.include(configurations, data.vsCodeConfiguration);

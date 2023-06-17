@@ -10,12 +10,12 @@ import * as os from 'os';
 import { PlatformInformation } from '../shared/platform';
 import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
 
-const MINIMUM_SUPPORTED_DOTNET_CLI: string = '1.0.0';
+const MINIMUM_SUPPORTED_DOTNET_CLI = '1.0.0';
 
 export class CoreClrDebugUtil {
-    private _extensionDir: string = '';
-    private _debugAdapterDir: string = '';
-    private _installCompleteFilePath: string = '';
+    private _extensionDir = '';
+    private _debugAdapterDir = '';
+    private _installCompleteFilePath = '';
 
     constructor(extensionDir: string) {
         this._extensionDir = extensionDir;
@@ -99,7 +99,7 @@ export class CoreClrDebugUtil {
     }
 }
 
-const MINIMUM_SUPPORTED_ARM64_DOTNET_CLI: string = '6.0.0';
+const MINIMUM_SUPPORTED_ARM64_DOTNET_CLI = '6.0.0';
 
 export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string | undefined, dotnetInfo: DotnetInfo): string {
     if (!platformInfo.isMacOS() && !platformInfo.isWindows())

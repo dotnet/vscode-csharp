@@ -23,8 +23,8 @@ suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        let fileName = 'implementation.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const fileName = 'implementation.cs';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
 
@@ -36,7 +36,7 @@ suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description
     });
 
     test("Returns the implementation", async () => {
-        let implementationList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeImplementationProvider", fileUri, new vscode.Position(4, 22)));
+        const implementationList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeImplementationProvider", fileUri, new vscode.Position(4, 22)));
         expect(implementationList.length).to.be.equal(2);
     });
 });

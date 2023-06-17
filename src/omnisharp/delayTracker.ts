@@ -13,13 +13,13 @@ const NonFocusDelayMax = 3000;
 export class DelayTracker {
     private _name: string;
 
-    private _immediateDelays: number = 0;      // 0-25 milliseconds
-    private _nearImmediateDelays: number = 0;  // 26-50 milliseconds
-    private _shortDelays: number = 0;          // 51-250 milliseconds
-    private _mediumDelays: number = 0;         // 251-500 milliseconds
-    private _idleDelays: number = 0;           // 501-1500 milliseconds
-    private _nonFocusDelays: number = 0;       // 1501-3000 milliseconds
-    private _bigDelays: number = 0;            // 3000+ milliseconds
+    private _immediateDelays = 0;      // 0-25 milliseconds
+    private _nearImmediateDelays = 0;  // 26-50 milliseconds
+    private _shortDelays = 0;          // 51-250 milliseconds
+    private _mediumDelays = 0;         // 251-500 milliseconds
+    private _idleDelays = 0;           // 501-1500 milliseconds
+    private _nonFocusDelays = 0;       // 1501-3000 milliseconds
+    private _bigDelays = 0;            // 3000+ milliseconds
 
     constructor(name: string) {
         this._name = name;

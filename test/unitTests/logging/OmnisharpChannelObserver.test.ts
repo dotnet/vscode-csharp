@@ -17,8 +17,8 @@ suite("OmnisharpChannelObserver", () => {
     let hasCleared: boolean;
     let preserveFocus: boolean | undefined;
     let vscode: vscode;
-    let optionObservable = new Subject<Options>();
-    let optionProvider = new OptionProvider(optionObservable);
+    const optionObservable = new Subject<Options>();
+    const optionProvider = new OptionProvider(optionObservable);
     let observer: OmnisharpChannelObserver;
 
     setup(() => {

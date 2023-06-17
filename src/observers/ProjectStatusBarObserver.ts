@@ -21,11 +21,11 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
             case EventType.WorkspaceInformationUpdated:
                 this.handleWorkspaceInformationUpdated(<WorkspaceInformationUpdated>event);
         }
-    }
+    };
 
     private handleWorkspaceInformationUpdated(event: WorkspaceInformationUpdated) {
         let label: string;
-        let msbuild = event.info.MsBuild;
+        const msbuild = event.info.MsBuild;
         if (msbuild && msbuild.SolutionPath) {
             label = basename(msbuild.SolutionPath);
             this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');

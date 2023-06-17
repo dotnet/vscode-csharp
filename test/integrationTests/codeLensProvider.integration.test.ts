@@ -27,12 +27,12 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        let fileName = 'Program.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let filePath = path.join(projectDirectory, fileName);
+        const fileName = 'Program.cs';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
 
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        const csharpConfig = vscode.workspace.getConfiguration('csharp');
         await csharpConfig.update('referencesCodeLens.enabled', true);
         await csharpConfig.update('testsCodeLens.enabled', true);
 
@@ -46,20 +46,20 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     });
 
     test("Returns all code lenses", async function () {
-        let codeLenses = await GetCodeLenses(fileUri);
+        const codeLenses = await GetCodeLenses(fileUri);
         expect(codeLenses.length).to.equal(2);
 
-        for (let codeLens of codeLenses) {
+        for (const codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.false;
             expect(codeLens.command).to.be.undefined;
         }
     });
 
     test("Returns all resolved code lenses", async function () {
-        let codeLenses = await GetCodeLenses(fileUri, 100);
+        const codeLenses = await GetCodeLenses(fileUri, 100);
         expect(codeLenses.length).to.equal(2);
 
-        for (let codeLens of codeLenses) {
+        for (const codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
             isNotNull(codeLens.command);
             expect(codeLens.command.title).to.equal("0 references");
@@ -81,9 +81,9 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
             const activation = await activateCSharpExtension();
             await testAssetWorkspace.restoreAndWait(activation);
 
-            let fileName = 'UnitTest1.cs';
-            let projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
-            let filePath = path.join(projectDirectory, fileName);
+            const fileName = 'UnitTest1.cs';
+            const projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
+            const filePath = path.join(projectDirectory, fileName);
             fileUri = vscode.Uri.file(filePath);
 
             await vscode.commands.executeCommand("vscode.open", fileUri);
@@ -96,14 +96,14 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
 
     /* Skip this test until we are able to understand the cause of flakiness */
     test.skip("Returns no references code lenses when 'csharp.referencesCodeLens.enabled' option is set to false", async function () {
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        const csharpConfig = vscode.workspace.getConfiguration('csharp');
         await csharpConfig.update('referencesCodeLens.enabled', false);
         await csharpConfig.update('testsCodeLens.enabled', true);
 
-        let codeLenses = await GetCodeLenses(fileUri, 100);
+        const codeLenses = await GetCodeLenses(fileUri, 100);
         expect(codeLenses.length).to.equal(4);
 
-        for (let codeLens of codeLenses) {
+        for (const codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
             isNotNull(codeLens.command);
             expect(codeLens.command.command).to.be.oneOf(['dotnet.test.run', 'dotnet.classTests.run', 'dotnet.test.debug', 'dotnet.classTests.debug']);
@@ -112,14 +112,14 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
     });
 
     test("Returns no test code lenses when 'csharp.testsCodeLens.enabled' option is set to false", async function () {
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        const csharpConfig = vscode.workspace.getConfiguration('csharp');
         await csharpConfig.update('referencesCodeLens.enabled', true);
         await csharpConfig.update('testsCodeLens.enabled', false);
 
-        let codeLenses = await GetCodeLenses(fileUri, 100);
+        const codeLenses = await GetCodeLenses(fileUri, 100);
         expect(codeLenses.length).to.equal(2);
 
-        for (let codeLens of codeLenses) {
+        for (const codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
             isNotNull(codeLens.command);
             expect(codeLens.command.command).to.be.equal('editor.action.showReferences');
@@ -128,11 +128,11 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
     });
 
     test("Returns no code lenses when 'csharp.referencesCodeLens.enabled' and 'csharp.testsCodeLens.enabled' options are set to false", async function () {
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        const csharpConfig = vscode.workspace.getConfiguration('csharp');
         await csharpConfig.update('referencesCodeLens.enabled', false);
         await csharpConfig.update('testsCodeLens.enabled', false);
 
-        let codeLenses = await GetCodeLenses(fileUri, 100);
+        const codeLenses = await GetCodeLenses(fileUri, 100);
         expect(codeLenses.length).to.equal(0);
     });
 });

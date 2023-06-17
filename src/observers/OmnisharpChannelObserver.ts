@@ -27,7 +27,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver {
                 this.clearChannel();
                 break;
         }
-    }
+    };
 
     private async handleOmnisharpServerOnStdErr(event: OmnisharpServerOnStdErr) {
         if (this.optionProvider.GetLatestOptions().omnisharpOptions.showOmnisharpLogOnError) {

@@ -36,7 +36,7 @@ export async function activateCSharpExtension(): Promise<ActivationResult> {
     // Output the directory where logs are being written so if a test fails we can match it to the right logs.
     console.log(`Extension log directory: ${csharpExtension.exports.logDirectory}`);
 
-    let activationResult: ActivationResult = {
+    const activationResult: ActivationResult = {
         advisor: await csharpExtension.exports.getAdvisor(),
         eventStream: csharpExtension.exports.eventStream,
     };

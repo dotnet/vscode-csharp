@@ -9,136 +9,136 @@ import { should } from 'chai';
 suite("Remote Process Picker: Validate quoting arguments.", () => {
     suiteSetup(() => should());
     test("Argument with no spaces", () => {
-        let nonQuotedArg = RemoteAttachPicker.quoteArg("C:\\Users\\nospace\\program.exe");
+        const nonQuotedArg = RemoteAttachPicker.quoteArg("C:\\Users\\nospace\\program.exe");
 
         nonQuotedArg.should.deep.equal("C:\\Users\\nospace\\program.exe");
     });
 
     test("Argument with spaces", () => {
-        let nonQuotedArg = RemoteAttachPicker.quoteArg("C:\\Users\\s p a c e\\program.exe");
+        const nonQuotedArg = RemoteAttachPicker.quoteArg("C:\\Users\\s p a c e\\program.exe");
 
         nonQuotedArg.should.deep.equal("\"C:\\Users\\s p a c e\\program.exe\"");
     });
 
     test("Argument with spaces with no quotes", () => {
-        let nonQuotedArg = RemoteAttachPicker.quoteArg("C:\\Users\\s p a c e\\program.exe", false);
+        const nonQuotedArg = RemoteAttachPicker.quoteArg("C:\\Users\\s p a c e\\program.exe", false);
 
         nonQuotedArg.should.deep.equal("C:\\Users\\s p a c e\\program.exe");
     });
 
     test("WSL with array arguments and quote args", () => {
-        let pipeTransport = GetWindowsWSLLaunchJSONWithArrayArgs();
+        const pipeTransport = GetWindowsWSLLaunchJSONWithArrayArgs();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
 
         pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c \"" + RemoteAttachPicker.scriptShellCmd + "\"");
     });
 
     test("WSL with array arguments and no quote args", () => {
-        let pipeTransport = GetWindowsWSLLaunchJSONWithArrayArgs();
+        const pipeTransport = GetWindowsWSLLaunchJSONWithArrayArgs();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
 
         pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c " + RemoteAttachPicker.scriptShellCmd);
     });
 
     test("WSL with array arguments + debugger command and quote args", () => {
-        let pipeTransport = GetWindowsWSLLaunchJSONWithArrayArgsAndDebuggerCommand();
+        const pipeTransport = GetWindowsWSLLaunchJSONWithArrayArgsAndDebuggerCommand();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
 
         pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c \"" + RemoteAttachPicker.scriptShellCmd + "\" -- ignored");
     });
 
     test("WSL with array arguments + debugger command and no quote args", () => {
-        let pipeTransport = GetWindowsWSLLaunchJSONWithArrayArgsAndDebuggerCommand();
+        const pipeTransport = GetWindowsWSLLaunchJSONWithArrayArgsAndDebuggerCommand();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
 
         pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c " + RemoteAttachPicker.scriptShellCmd + " -- ignored");
     });
 
     test("WSL with string arguments and quote args", () => {
-        let pipeTransport = GetWindowsWSLLaunchJSONWithStringArgs();
+        const pipeTransport = GetWindowsWSLLaunchJSONWithStringArgs();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
 
         pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c \"" + RemoteAttachPicker.scriptShellCmd + "\"");
     });
 
     test("WSL with string arguments and no quote args", () => {
-        let pipeTransport = GetWindowsWSLLaunchJSONWithStringArgs();
+        const pipeTransport = GetWindowsWSLLaunchJSONWithStringArgs();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
 
         pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c " + RemoteAttachPicker.scriptShellCmd);
     });
 
     test("WSL with string arguments + debugger command and quote args", () => {
-        let pipeTransport = GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand();
+        const pipeTransport = GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
 
         pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c " + RemoteAttachPicker.scriptShellCmd + " -- ignored");
     });
 
     test("WSL with string arguments + debugger command and no quote args", () => {
-        let pipeTransport = GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand();
+        const pipeTransport = GetWindowsWSLLaunchJSONWithStringArgsAndDebuggerCommand();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, false);
 
         pipeCmd.should.deep.equal("C:\\System32\\bash.exe -c " + RemoteAttachPicker.scriptShellCmd + " -- ignored");
     });
 
     test("Windows Docker with string args, debuggerCommand", () => {
-        let pipeTransport = GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand();
+        const pipeTransport = GetWindowsDockerLaunchJSONWithStringArgsAndDebuggerCommand();
 
         // quoteArgs flag should be ignored
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromString(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs);
 
         pipeCmd.should.deep.equal("docker -i exec 1234567 " + RemoteAttachPicker.scriptShellCmd);
     });
 
     test("Windows Docker with array args", () => {
-        let pipeTransport = GetWindowsDockerLaunchJSONWithArrayArgs();
+        const pipeTransport = GetWindowsDockerLaunchJSONWithArrayArgs();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, pipeTransport.quoteArgs);
 
         pipeCmd.should.deep.equal("docker -i exec 1234567 " + RemoteAttachPicker.scriptShellCmd);
 
     });
 
     test("Windows Docker with array args with quotes", () => {
-        let pipeTransport = GetWindowsDockerLaunchJSONWithArrayArgs();
+        const pipeTransport = GetWindowsDockerLaunchJSONWithArrayArgs();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
 
         pipeCmd.should.deep.equal("docker -i exec 1234567 \"" + RemoteAttachPicker.scriptShellCmd + "\"");
 
     });
 
     test("Linux dotnet with array args and spaces", () => {
-        let pipeTransport = GetLinuxLaunchJSONWithArrayArgs();
+        const pipeTransport = GetLinuxLaunchJSONWithArrayArgs();
 
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
 
         pipeCmd.should.deep.equal(`/usr/bin/shared/dotnet bin/framework/myprogram.dll \"argument with spaces\" \"${RemoteAttachPicker.scriptShellCmd}\"`);
     });
 
     test("Multiple ${debuggerCommand} in string args", () => {
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromString("program.exe", "".concat(RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand), true);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromString("program.exe", "".concat(RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand, " ", RemoteAttachPicker.debuggerCommand), true);
 
         pipeCmd.should.deep.equal("program.exe " + RemoteAttachPicker.scriptShellCmd + " " + RemoteAttachPicker.scriptShellCmd + " " + RemoteAttachPicker.scriptShellCmd);
     });
 
     test("Multiple ${debuggerCommand} in array args", () => {
-        let pipeCmd = RemoteAttachPicker.createPipeCmdFromArray("program.exe", [RemoteAttachPicker.debuggerCommand, RemoteAttachPicker.debuggerCommand, RemoteAttachPicker.debuggerCommand], true);
+        const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray("program.exe", [RemoteAttachPicker.debuggerCommand, RemoteAttachPicker.debuggerCommand, RemoteAttachPicker.debuggerCommand], true);
 
         pipeCmd.should.deep.equal("program.exe \"" + RemoteAttachPicker.scriptShellCmd + "\" \"" + RemoteAttachPicker.scriptShellCmd + "\" \"" + RemoteAttachPicker.scriptShellCmd + "\"");
     });
 
     test("OS Specific Configurations", () => {
-        let launch = GetOSSpecificJSON();
+        const launch = GetOSSpecificJSON();
 
         let pipeTransport = RemoteAttachPicker.getPipeTransportOptions(launch, "win32");
 

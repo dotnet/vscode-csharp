@@ -30,8 +30,8 @@ export async function buildEditForResponse(changes: FileOperationResponse[], lan
         if (change.ModificationType == FileModificationType.Modified) {
             const modifiedChange = <ModifiedFileResponse>change;
             const uri = vscode.Uri.file(modifiedChange.FileName);
-            let edits: vscode.TextEdit[] = [];
-            for (let textChange of modifiedChange.Changes) {
+            const edits: vscode.TextEdit[] = [];
+            for (const textChange of modifiedChange.Changes) {
                 edits.push(vscode.TextEdit.replace(toRange2(textChange), textChange.NewText));
             }
 

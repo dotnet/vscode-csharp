@@ -47,10 +47,10 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
         request.textDocument.uri = UriConverter.serialize(virtualCSharpUri);
         const response: DocumentDiagnosticReport = await vscode.commands.executeCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, request);
         if (response.kind === "full") {
-            let changedDiagnostics: FullDocumentDiagnosticReport = response as FullDocumentDiagnosticReport;
-            let remappedDiagnostics = new Array<Diagnostic>();
-            for (let diagnostic of changedDiagnostics.items) {
-                let convertedRange = new vscode.Range(diagnostic.range.start.line, diagnostic.range.start.character, diagnostic.range.end.line, diagnostic.range.end.character);
+            const changedDiagnostics: FullDocumentDiagnosticReport = response as FullDocumentDiagnosticReport;
+            const remappedDiagnostics = new Array<Diagnostic>();
+            for (const diagnostic of changedDiagnostics.items) {
+                const convertedRange = new vscode.Range(diagnostic.range.start.line, diagnostic.range.start.character, diagnostic.range.end.line, diagnostic.range.end.character);
                 const remappedResponse = await this.serviceClient.mapToDocumentRanges(
                     LanguageKind.CSharp,
                     [convertedRange],

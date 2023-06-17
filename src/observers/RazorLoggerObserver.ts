@@ -20,7 +20,7 @@ export class RazorLoggerObserver extends BaseLoggerObserver {
                 this.handleRazorDevMode();
                 break;
         }
-    }
+    };
 
     private handleRazorPluginPathSpecifiedMessage(event: RazorPluginPathSpecified) {
         this.logger.appendLine('Razor Plugin Path Specified');

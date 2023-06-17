@@ -26,7 +26,7 @@ export class ErrorMessageObserver {
             case EventType.IntegrityCheckFailure:
                 this.handleIntegrityCheckFailure(<IntegrityCheckFailure>event);
         }
-    }
+    };
 
     handleIntegrityCheckFailure(event: IntegrityCheckFailure) {
         if (!event.retry) {

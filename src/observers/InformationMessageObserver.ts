@@ -19,12 +19,12 @@ export class InformationMessageObserver {
                 this.handleOmnisharpServerUnresolvedDependencies(<ObservableEvent.OmnisharpServerUnresolvedDependencies>event);
                 break;
         }
-    }
+    };
 
     private async handleOmnisharpServerUnresolvedDependencies(event: ObservableEvent.OmnisharpServerUnresolvedDependencies) {
         //to do: determine if we need the unresolved dependencies message
         if (!this.optionProvider.GetLatestOptions().omnisharpOptions.suppressDotnetRestoreNotification) {
-            let message = `There are unresolved dependencies. Please execute the restore command to continue.`;
+            const message = `There are unresolved dependencies. Please execute the restore command to continue.`;
             return showInformationMessage(this.vscode, message, { title: "Restore", command: "dotnet.restore.all" });
         }
     }

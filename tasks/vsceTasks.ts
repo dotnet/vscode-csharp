@@ -12,7 +12,7 @@ import { vscePath } from './projectPaths';
 /// Packaging (VSIX) Tasks
 export async function createPackageAsync(outputFolder: string, prerelease: boolean, packageName?: string, vscodePlatformId?: string) {
 
-    let vsceArgs = [];
+    const vsceArgs = [];
     let packagePath = undefined;
 
     if (!(await util.fileExists(vscePath))) {

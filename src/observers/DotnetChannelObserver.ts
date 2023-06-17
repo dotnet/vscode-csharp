@@ -15,5 +15,5 @@ export class DotNetChannelObserver extends BaseChannelObserver {
                 this.showChannel(true);
                 break;
         }
-    }
+    };
 }

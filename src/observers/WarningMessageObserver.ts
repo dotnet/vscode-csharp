@@ -17,7 +17,7 @@ export class WarningMessageObserver {
     constructor(private vscode: vscode, private disableMsBuildDiagnosticWarning: () => boolean, scheduler?: Scheduler) {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
         this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe(async event => {
-            let message = "Some projects have trouble loading. Please review the output for more details.";
+            const message = "Some projects have trouble loading. Please review the output for more details.";
             await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
         });
     }
@@ -31,7 +31,7 @@ export class WarningMessageObserver {
                 this.handleOmnisharpServerMsBuildProjectDiagnostics(<OmnisharpServerMsBuildProjectDiagnostics>event);
                 break;
         }
-    }
+    };
 
     private handleOmnisharpServerMsBuildProjectDiagnostics(event: OmnisharpServerMsBuildProjectDiagnostics) {
         if (!this.disableMsBuildDiagnosticWarning() && event.diagnostics.Errors.length > 0) {

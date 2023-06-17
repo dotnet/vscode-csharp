@@ -20,5 +20,5 @@ export default class DotnetTestChannelObserver extends BaseChannelObserver {
                 this.showChannel(true);
                 break;
         }
-    }
+    };
 }

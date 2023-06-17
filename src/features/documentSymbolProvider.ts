@@ -32,10 +32,10 @@ export default class OmniSharpDocumentSymbolProvider extends AbstractSupport imp
 }
 
 function createSymbols(elements: Structure.CodeElement[], parentElement?: Structure.CodeElement): vscode.DocumentSymbol[] {
-    let results: vscode.DocumentSymbol[] = [];
+    const results: vscode.DocumentSymbol[] = [];
 
     elements.forEach(element => {
-        let symbol = createSymbolForElement(element, parentElement);
+        const symbol = createSymbolForElement(element, parentElement);
         if (element.Children) {
             symbol.children = createSymbols(element.Children, element);
         }

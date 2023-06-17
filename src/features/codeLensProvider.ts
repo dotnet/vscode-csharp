@@ -129,7 +129,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         };
 
         try {
-            let result = await serverUtils.findUsages(this._server, request, token);
+            const result = await serverUtils.findUsages(this._server, request, token);
             if (!result || !result.QuickFixes) {
                 return undefined;
             }
@@ -187,10 +187,10 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
 }
 
 function createCodeLenses(elements: Structure.CodeElement[], fileName: string, options: Options): vscode.CodeLens[] {
-    let results: vscode.CodeLens[] = [];
+    const results: vscode.CodeLens[] = [];
 
     Structure.walkCodeElements(elements, element => {
-        let codeLenses = createCodeLensesForElement(element, fileName, options);
+        const codeLenses = createCodeLensesForElement(element, fileName, options);
 
         results.push(...codeLenses);
     });
@@ -199,10 +199,10 @@ function createCodeLenses(elements: Structure.CodeElement[], fileName: string, o
 }
 
 function createCodeLensesForElement(element: Structure.CodeElement, fileName: string, options: Options): vscode.CodeLens[] {
-    let results: vscode.CodeLens[] = [];
+    const results: vscode.CodeLens[] = [];
 
     if (options.omnisharpOptions.showReferencesCodeLens && isValidElementForReferencesCodeLens(element, options)) {
-        let range = element.Ranges[SymbolRangeNames.Name];
+        const range = element.Ranges[SymbolRangeNames.Name];
         if (range) {
             results.push(new ReferencesCodeLens(range, fileName));
         }
@@ -212,7 +212,7 @@ function createCodeLensesForElement(element: Structure.CodeElement, fileName: st
         if (element.Kind === SymbolKinds.Method) {
             const test = getTest(element);
             if (test !== undefined) {
-                let range = element.Ranges[SymbolRangeNames.Name];
+                const range = element.Ranges[SymbolRangeNames.Name];
                 if (range !== undefined) {
                     results.push(new RunTestsCodeLens(range, fileName, element.DisplayName,/*isTestContainer*/ false, test.framework, [test.methodName]));
                     results.push(new DebugTestsCodeLens(range, fileName, element.DisplayName,/*isTestContainer*/ false, test.framework, [test.methodName]));
@@ -232,7 +232,7 @@ function createCodeLensesForElement(element: Structure.CodeElement, fileName: st
                     .filter(test => test.framework === testFramework)
                     .map(test => test.methodName);
 
-                let range = element.Ranges[SymbolRangeNames.Name];
+                const range = element.Ranges[SymbolRangeNames.Name];
                 results.push(new RunTestsCodeLens(range, fileName, element.DisplayName,/*isTestContainer*/ true, testFramework, testMethodNames));
                 results.push(new DebugTestsCodeLens(range, fileName, element.DisplayName,/*isTestContainer*/ true, testFramework, testMethodNames));
             }

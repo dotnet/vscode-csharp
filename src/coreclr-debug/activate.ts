@@ -19,13 +19,13 @@ import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider'
 import OptionProvider from '../shared/observers/OptionProvider';
 
 export async function activate(thisExtension: vscode.Extension<any>, context: vscode.ExtensionContext, platformInformation: PlatformInformation, eventStream: EventStream, csharpOutputChannel: vscode.OutputChannel, optionProvider: OptionProvider) {
-    let disposables = new CompositeDisposable();
+    const disposables = new CompositeDisposable();
 
     const options: Options = optionProvider.GetLatestOptions();
     const debugUtil = new CoreClrDebugUtil(context.extensionPath);
 
     if (!CoreClrDebugUtil.existsSync(debugUtil.debugAdapterDir())) {
-        let isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
+        const isValidArchitecture: boolean = await checkIsValidArchitecture(platformInformation, eventStream);
         // If this is a valid architecture, we should have had a debugger, so warn if we didn't, otherwise
         // a warning was already issued, so do nothing.
         if (isValidArchitecture) {
@@ -143,12 +143,12 @@ function showDotnetToolsWarning(message: string): void {
         vscode.window.showErrorMessage(message,
             goToSettingsMessage, getDotNetMessage, helpMessage).then(value => {
                 if (value === getDotNetMessage) {
-                    let dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
+                    const dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
                     vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
                 } else if (value === goToSettingsMessage) {
                     vscode.commands.executeCommand('workbench.action.openGlobalSettings');
                 } else if (value == helpMessage) {
-                    let helpURL = 'https://aka.ms/VSCode-CS-DotnetNotFoundHelp';
+                    const helpURL = 'https://aka.ms/VSCode-CS-DotnetNotFoundHelp';
                     vscode.env.openExternal(vscode.Uri.parse(helpURL));
                 }
             });
@@ -164,7 +164,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
     }
 
     async createDebugAdapterDescriptor(_session: vscode.DebugSession, executable: vscode.DebugAdapterExecutable | undefined): Promise<vscode.DebugAdapterDescriptor> {
-        let util = new CoreClrDebugUtil(common.getExtensionPath());
+        const util = new CoreClrDebugUtil(common.getExtensionPath());
 
         // Check for .debugger folder. Handle if it does not exist.
         if (!CoreClrDebugUtil.existsSync(util.debugAdapterDir())) {
@@ -188,7 +188,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             }
             // install.complete does not exist, check dotnetCLI to see if we can complete.
             else if (!CoreClrDebugUtil.existsSync(util.installCompleteFilePath())) {
-                let success = await completeDebuggerInstall(this.debugUtil, this.platformInfo, this.eventStream, this.options);
+                const success = await completeDebuggerInstall(this.debugUtil, this.platformInfo, this.eventStream, this.options);
                 if (!success) {
                     this.eventStream.post(new DebuggerNotInstalledFailure());
                     throw new Error('Failed to complete the installation of the C# extension. Please see the error in the output window below.');
@@ -205,7 +205,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             const command = path.join(common.getExtensionPath(), ".debugger", targetArchitecture, "vsdbg-ui" + CoreClrDebugUtil.getPlatformExeExtension());
 
             // Look to see if DOTNET_ROOT is set, then use dotnet cli path
-            let dotnetRoot: string = process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+            const dotnetRoot: string = process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
 
             let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
             if (dotnetRoot) {

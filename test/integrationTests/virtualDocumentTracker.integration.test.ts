@@ -46,8 +46,8 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
     test("Virtual documents are operated on.", async () => {
         await vscode.workspace.openTextDocument(virtualUri);
 
-        let position = new vscode.Position(2, 0);
-        let completionList = <vscode.CompletionList>await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", virtualUri, position);
+        const position = new vscode.Position(2, 0);
+        const completionList = <vscode.CompletionList>await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", virtualUri, position);
 
         expect(completionList.items).to.not.be.empty;
     });

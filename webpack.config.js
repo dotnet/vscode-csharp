@@ -5,7 +5,7 @@
 
 //@ts-check
 
-const path = require('path');
+import * as path from 'path';
 /**@type {import('webpack').Configuration}*/
 const config = {
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
@@ -37,6 +37,6 @@ const config = {
             }]
         }]
     },
-}
+};
 
 module.exports = config;

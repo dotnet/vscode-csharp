@@ -77,10 +77,10 @@ export function resourcesToLaunchTargets(resources: vscode.Uri[], workspaceFolde
         return [vslsTarget];
     }
 
-    let workspaceFolderToUriMap = new Map<number, vscode.Uri[]>();
+    const workspaceFolderToUriMap = new Map<number, vscode.Uri[]>();
 
-    for (let resource of localResources) {
-        let folder = vscode.workspace.getWorkspaceFolder(resource);
+    for (const resource of localResources) {
+        const folder = vscode.workspace.getWorkspaceFolder(resource);
         if (folder) {
             let buckets: vscode.Uri[];
 
@@ -103,7 +103,7 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
     let projectJsonTargets: LaunchTarget[] = [];
     let projectRootTargets: LaunchTarget[] = [];
     let projectTargets: LaunchTarget[] = [];
-    let otherTargets: LaunchTarget[] = [];
+    const otherTargets: LaunchTarget[] = [];
 
     workspaceFolderToUriMap.forEach((resources, folderIndex) => {
         let hasProjectJsonAtRoot = false;
@@ -111,8 +111,8 @@ export function resourcesAndFolderMapToLaunchTargets(resources: vscode.Uri[], wo
         let hasCake = false;
         let hasCs = false;
 
-        let folder = workspaceFolders[folderIndex];
-        let folderPath = folder.uri.fsPath;
+        const folder = workspaceFolders[folderIndex];
+        const folderPath = folder.uri.fsPath;
 
         resources.forEach(resource => {
             // Add .sln and .slnf files
@@ -293,8 +293,8 @@ export async function launchOmniSharp(cwd: string, args: string[], launchPath: s
 
 export async function configure(cwd: string, args: string[], launchPath: string, platformInfo: PlatformInformation, options: Options, monoResolver: IHostExecutableResolver, dotnetResolver: IHostExecutableResolver): Promise<LaunchConfiguration> {
     if (options.omnisharpOptions.useEditorFormattingSettings) {
-        let globalConfig = vscode.workspace.getConfiguration('', null);
-        let csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
+        const globalConfig = vscode.workspace.getConfiguration('', null);
+        const csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
 
         args.push(`formattingOptions:useTabs=${!getConfigurationValue(globalConfig, csharpConfig, 'editor.insertSpaces', true)}`);
         args.push(`formattingOptions:tabSize=${getConfigurationValue(globalConfig, csharpConfig, 'editor.tabSize', 4)}`);
@@ -341,9 +341,9 @@ export async function configure(cwd: string, args: string[], launchPath: string,
         };
     }
 
-    let monoInfo = await monoResolver.getHostExecutableInfo(options);
+    const monoInfo = await monoResolver.getHostExecutableInfo(options);
     if (monoInfo !== undefined) {
-        let argsCopy = args.slice(0); // create copy of details args
+        const argsCopy = args.slice(0); // create copy of details args
         argsCopy.unshift(launchPath);
         argsCopy.unshift("--assembly-loader=strict");
 
@@ -429,7 +429,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): Interme
         '"' + argsCopy.map(escapeIfNeeded).join(' ') + '"'
     ].join(' ')];
 
-    let process = spawn('cmd', argsCopy, {
+    const process = spawn('cmd', argsCopy, {
         windowsVerbatimArguments: true,
         detached: false,
         cwd: cwd
@@ -443,7 +443,7 @@ function launchWindows(launchPath: string, cwd: string, args: string[]): Interme
 }
 
 function launchNixMono(launchPath: string, cwd: string, args: string[], environment: NodeJS.ProcessEnv): ChildProcessWithoutNullStreams {
-    let process = spawn('mono', args, {
+    const process = spawn('mono', args, {
         detached: false,
         cwd: cwd,
         env: environment

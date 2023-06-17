@@ -70,7 +70,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     // After server is started (and projects are loaded), check to see if there are
     // any project.json projects if the suppress option is not set. If so, notify the user about migration.
-    let csharpConfig = vscode.workspace.getConfiguration('csharp');
+    const csharpConfig = vscode.workspace.getConfiguration('csharp');
     if (!csharpConfig.get<boolean>('suppressProjectJsonWarning')) {
         disposables.add(server.onServerStart(() => {
             utils.requestWorkspaceInformation(server)
@@ -89,7 +89,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
 
     // Send telemetry about the sorts of projects the server was started on.
     disposables.add(server.onServerStart(() => {
-        let measures: { [key: string]: number } = {};
+        const measures: { [key: string]: number } = {};
 
         utils.requestWorkspaceInformation(server)
             .then(workspaceInfo => {

@@ -51,7 +51,7 @@ suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, 
         expect(definitionList[0].uri.path).to.contain("GeneratedCode.cs");
 
         const generatedCodeUri = definitionList[0].uri;
-        let generatedCodeDocument = await vscode.workspace.openTextDocument(generatedCodeUri);
+        const generatedCodeDocument = await vscode.workspace.openTextDocument(generatedCodeUri);
         expect(generatedCodeDocument.getText()).contains("Hello world!");
         expect(generatedCodeDocument.getText()).does.not.contain("Goodbye");
 

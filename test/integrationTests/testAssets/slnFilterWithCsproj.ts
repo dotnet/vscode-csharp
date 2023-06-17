@@ -5,7 +5,7 @@
 
 import { ITestAssetWorkspace } from "./testAssets";
 
-let workspace: ITestAssetWorkspace = {
+const workspace: ITestAssetWorkspace = {
     description: "sln filter with a csproj's",
     projects: [{
         relativeFilePath: "src/app/app.csproj"

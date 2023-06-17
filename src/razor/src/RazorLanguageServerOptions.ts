@@ -11,5 +11,5 @@ export interface RazorLanguageServerOptions {
     outputChannel?: vscode.OutputChannel;
     debug?: boolean;
     trace: Trace;
-    usingOmniSharp: Boolean;
+    usingOmniSharp: boolean;
 }

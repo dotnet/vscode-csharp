@@ -23,9 +23,9 @@ export default class TestZip {
     }
 
     public static async createTestZipAsync(...filesToAdd: TestFile[]): Promise<TestZip> {
-        let buffers: any[] = [];
-        let finalBuffer = await new Promise<Buffer>((resolve, reject) => {
-            let archive = archiver('zip');
+        const buffers: any[] = [];
+        const finalBuffer = await new Promise<Buffer>((resolve, reject) => {
+            const archive = archiver('zip');
             archive.on('warning', function (err: any) {
                 if (err.code === 'ENOENT') {
                     console.log(err);

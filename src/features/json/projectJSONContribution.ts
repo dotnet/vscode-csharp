@@ -38,12 +38,12 @@ export class ProjectJSONContribution implements IJSONContribution {
     private async getNugetIndex(): Promise<NugetServices> {
         if (this.nugetIndexPromise === undefined) {
             const indexContent = await this.makeJSONRequest<NuGetIndexResponse>(FEED_INDEX_URL);
-            let services: NugetServices = {};
+            const services: NugetServices = {};
             if (indexContent && Array.isArray(indexContent.resources)) {
-                let resources = indexContent.resources;
+                const resources = indexContent.resources;
                 for (let i = resources.length - 1; i >= 0; i--) {
-                    let type = resources[i]['@type'];
-                    let id = resources[i]['@id'];
+                    const type = resources[i]['@type'];
+                    const id = resources[i]['@id'];
                     if (type && id) {
                         services[type] = id;
                     }
@@ -56,7 +56,7 @@ export class ProjectJSONContribution implements IJSONContribution {
 
     private async getNugetService(serviceType: string): Promise<string> {
         const services = await this.getNugetIndex();
-        let serviceURL = services[serviceType];
+        const serviceURL = services[serviceType];
         if (!serviceURL) {
             return Promise.reject(localize('json.nugget.error.missingservice', 'NuGet index document is missing service {0}', serviceType));
         }
@@ -101,9 +101,9 @@ export class ProjectJSONContribution implements IJSONContribution {
 
                 const response = await this.makeJSONRequest<NuGetSearchAutocompleteServiceResponse>(queryUrl);
                 if (Array.isArray(response.data)) {
-                    let results = response.data;
+                    const results = response.data;
                     for (let i = 0; i < results.length; i++) {
-                        let name = results[i];
+                        const name = results[i];
                         let insertText = JSON.stringify(name);
                         if (addValue) {
                             insertText += ': "{{}}"';
@@ -111,7 +111,7 @@ export class ProjectJSONContribution implements IJSONContribution {
                                 insertText += ',';
                             }
                         }
-                        let proposal = new CompletionItem(name);
+                        const proposal = new CompletionItem(name);
                         proposal.kind = CompletionItemKind.Property;
                         proposal.insertText = insertText;
                         proposal.filterText = JSON.stringify(name);
@@ -132,16 +132,16 @@ export class ProjectJSONContribution implements IJSONContribution {
         if ((location.matches(['dependencies', '*']) || location.matches(['frameworks', '*', 'dependencies', '*']) || location.matches(['frameworks', '*', 'frameworkAssemblies', '*']))) {
             try {
                 const service = await this.getNugetService('PackageBaseAddress/3.0.0');
-                let currentKey = location.path[location.path.length - 1];
+                const currentKey = location.path[location.path.length - 1];
                 if (typeof currentKey === 'string') {
-                    let queryUrl = service + currentKey + '/index.json';
+                    const queryUrl = service + currentKey + '/index.json';
                     const response = await this.makeJSONRequest<NuGetFlatContainerPackageResponse>(queryUrl);
                     if (Array.isArray(response.versions)) {
-                        let results = response.versions;
+                        const results = response.versions;
                         for (let i = 0; i < results.length; i++) {
-                            let curr = results[i];
-                            let name = JSON.stringify(curr);
-                            let proposal = new CompletionItem(name);
+                            const curr = results[i];
+                            const name = JSON.stringify(curr);
+                            const proposal = new CompletionItem(name);
                             proposal.kind = CompletionItemKind.Class;
                             proposal.insertText = name;
                             proposal.documentation = '';
@@ -160,7 +160,7 @@ export class ProjectJSONContribution implements IJSONContribution {
     }
 
     public async collectDefaultSuggestions(resource: string, result: ISuggestionsCollector): Promise<void> {
-        let defaultValue = {
+        const defaultValue = {
             'version': '{{1.0.0-*}}',
             'dependencies': {},
             'frameworks': {
@@ -168,7 +168,7 @@ export class ProjectJSONContribution implements IJSONContribution {
                 'dnxcore50': {}
             }
         };
-        let proposal = new CompletionItem(localize('json.project.default', 'Default project.json'));
+        const proposal = new CompletionItem(localize('json.project.default', 'Default project.json'));
         proposal.kind = CompletionItemKind.Module;
         proposal.insertText = JSON.stringify(defaultValue, null, '\t');
         result.add(proposal);
@@ -176,7 +176,7 @@ export class ProjectJSONContribution implements IJSONContribution {
 
     public async resolveSuggestion(item: CompletionItem): Promise<CompletionItem | undefined> {
         if (item.kind === CompletionItemKind.Property) {
-            let pack = item.label;
+            const pack = item.label;
             const info = await this.getInfo(<string>pack);
             if (info !== undefined) {
                 item.documentation = info.description;
@@ -191,13 +191,13 @@ export class ProjectJSONContribution implements IJSONContribution {
     private async getInfo(pack: string): Promise<{ description: string; version: string } | undefined> {
         try {
             const service = await this.getNugetService('SearchQueryService');
-            let queryUrl = service + '?q=' + encodeURIComponent(pack) + '&take=' + 5;
+            const queryUrl = service + '?q=' + encodeURIComponent(pack) + '&take=' + 5;
             const response = await this.makeJSONRequest<NuGetSearchQueryServiceResponse>(queryUrl);
             if (Array.isArray(response.data)) {
-                let results = response.data;
+                const results = response.data;
                 let info: { description: string; version: string } | undefined;
                 for (let i = 0; i < results.length; i++) {
-                    let res = results[i];
+                    const res = results[i];
                     if (res.id === pack) {
                         info = {
                             description: res.description,
@@ -216,11 +216,11 @@ export class ProjectJSONContribution implements IJSONContribution {
 
     public async getInfoContribution(resource: string, location: Location): Promise<MarkedString[] | undefined> {
         if ((location.matches(['dependencies', '*']) || location.matches(['frameworks', '*', 'dependencies', '*']) || location.matches(['frameworks', '*', 'frameworkAssemblies', '*']))) {
-            let pack = location.path[location.path.length - 1];
+            const pack = location.path[location.path.length - 1];
             if (typeof pack === 'string') {
                 const info = await this.getInfo(pack);
                 if (info !== undefined) {
-                    let htmlContent: MarkedString[] = [];
+                    const htmlContent: MarkedString[] = [];
                     htmlContent.push(localize('json.nugget.package.hover', '{0}', pack));
                     htmlContent.push(info.description);
                     htmlContent.push(info.version);

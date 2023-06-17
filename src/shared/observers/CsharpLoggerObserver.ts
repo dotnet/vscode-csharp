@@ -9,7 +9,7 @@ import { PackageError } from "../../packageManager/PackageError";
 import { EventType } from "../../omnisharp/EventType";
 
 export class CsharpLoggerObserver extends BaseLoggerObserver {
-    private dots: number = 0;
+    private dots = 0;
 
     public post = (event: Event.BaseEvent) => {
         switch (event.type) {
@@ -69,7 +69,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
                 this.handleIntegrityCheckSuccess(<Event.IntegrityCheckSuccess>event);
                 break;
         }
-    }
+    };
 
     private handleDownloadValidation(event: Event.DownloadValidation) {
         this.logger.appendLine("Validating download...");
@@ -128,7 +128,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleDownloadProgress(event: Event.DownloadProgress) {
-        let newDots = Math.ceil(event.downloadPercentage / 5);
+        const newDots = Math.ceil(event.downloadPercentage / 5);
         this.logger.append('.'.repeat(newDots - this.dots));
         this.dots = newDots;
     }

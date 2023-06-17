@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -75,11 +76,11 @@ function isWhitespace(code: number) {
 
 function cleanJsonText(text: string) {
 
-    let parts: string[] = [];
+    const parts: string[] = [];
     let partStart = 0;
 
     let index = 0;
-    let length = text.length;
+    const length = text.length;
 
     function next(): number {
         const result = peek();
@@ -87,7 +88,7 @@ function cleanJsonText(text: string) {
         return result;
     }
 
-    function peek(offset: number = 0): number {
+    function peek(offset = 0): number {
         return text.charCodeAt(index + offset);
     }
 
@@ -110,7 +111,7 @@ function cleanJsonText(text: string) {
                 break;
             }
 
-            let code = next();
+            const code = next();
 
             if (code === CharCode.doubleQuote) {
                 // End of string. We're done
@@ -131,7 +132,7 @@ function cleanJsonText(text: string) {
     }
 
     while (true) {
-        let code = next();
+        const code = next();
 
         switch (code) {
             // byte-order mark
@@ -187,15 +188,16 @@ function cleanJsonText(text: string) {
 
                 break;
 
-            case CharCode.comma:
+            case CharCode.comma: {
                 // Ignore trailing commas in object member lists and array element lists
-                let nextCode = peekPastWhitespace();
+                const nextCode = peekPastWhitespace();
                 if (nextCode === CharCode.closeBrace || nextCode === CharCode.closeBracket) {
                     parts.push(text.substring(partStart, index - 1));
                     partStart = index;
                 }
 
                 break;
+            }
             default:
         }
 

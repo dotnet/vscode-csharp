@@ -25,10 +25,10 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         await registerLanguageMiddleware();
         await testAssetWorkspace.restore();
 
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let remappedFileName = 'remapped.txt';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const remappedFileName = 'remapped.txt';
         remappedFileUri = vscode.Uri.file(path.join(projectDirectory, remappedFileName));
-        let fileName = 'remap.cs';
+        const fileName = 'remap.cs';
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
 
@@ -44,19 +44,19 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         // Avoid flakiness with renames.
         await new Promise(r => setTimeout(r, 2000));
 
-        let workspaceEdit = <vscode.WorkspaceEdit>(await vscode.commands.executeCommand(
+        const workspaceEdit = <vscode.WorkspaceEdit>(await vscode.commands.executeCommand(
             "vscode.executeDocumentRenameProvider",
             fileUri,
             new vscode.Position(4, 30),
             'newName'));
 
-        let entries = workspaceEdit!.entries();
+        const entries = workspaceEdit!.entries();
         expect(entries.length).to.be.equal(1);
         expect(entries[0][0].path).to.be.equal(remappedFileUri.path);
     });
 
     test("Returns the remapped references", async () => {
-        let references = <vscode.Location[]>(await vscode.commands.executeCommand(
+        const references = <vscode.Location[]>(await vscode.commands.executeCommand(
             "vscode.executeReferenceProvider",
             fileUri,
             new vscode.Position(4, 30)));
@@ -65,7 +65,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
     });
 
     test("Returns the remapped definition", async () => {
-        let definitions = <vscode.Location[]>(await vscode.commands.executeCommand(
+        const definitions = <vscode.Location[]>(await vscode.commands.executeCommand(
             "vscode.executeDefinitionProvider",
             fileUri,
             new vscode.Position(4, 30)));
@@ -74,7 +74,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
     });
 
     test("Returns the remapped implementations", async () => {
-        let implementations = <vscode.Location[]>(await vscode.commands.executeCommand(
+        const implementations = <vscode.Location[]>(await vscode.commands.executeCommand(
             "vscode.executeImplementationProvider",
             fileUri,
             new vscode.Position(4, 30)));
@@ -94,10 +94,10 @@ class TestLanguageMiddleware implements LanguageMiddleware {
     private readonly fileToRemapUri: vscode.Uri;
 
     constructor() {
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let remappedFileName = 'remapped.txt';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const remappedFileName = 'remapped.txt';
         this.remappedFileUri = vscode.Uri.file(path.join(projectDirectory, remappedFileName));
-        let fileToRemap = 'remap.cs';
+        const fileToRemap = 'remap.cs';
         this.fileToRemapUri = vscode.Uri.file(path.join(projectDirectory, fileToRemap));
     }
 

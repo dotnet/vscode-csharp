@@ -8,16 +8,16 @@ import assert = require('node:assert');
 export function convertServerOptionNameToClientConfigurationName(section: string) : string | null {
     // Server name would be in format {languageName}|{grouping}.{name} or
     // {grouping}.{name} if this option can be applied to multiple languages.
-    let languageNameIndex = section.indexOf('|');
+    const languageNameIndex = section.indexOf('|');
     if (languageNameIndex == -1 || section.substring(0, languageNameIndex) == 'csharp') {
         // 1. locate the last dot to find the {name} part.
-        let lastDotIndex = section.lastIndexOf('.');
+        const lastDotIndex = section.lastIndexOf('.');
         assert(lastDotIndex !== -1, `There is no . in ${section}.`);
-        let optionName = section.substring(lastDotIndex + 1);
+        const optionName = section.substring(lastDotIndex + 1);
 
         // 2. Get {grouping} part.
-        let startIndex = languageNameIndex == -1 ? 0 : languageNameIndex + 1;
-        let optionGroupName = section.substring(startIndex, lastDotIndex);
+        const startIndex = languageNameIndex == -1 ? 0 : languageNameIndex + 1;
+        const optionGroupName = section.substring(startIndex, lastDotIndex);
 
         // 3. {name} part from roslyn would be in editorconfig-like form.
         // A valid prefix here is dotnet, csharp or no prefix
@@ -27,13 +27,13 @@ export function convertServerOptionNameToClientConfigurationName(section: string
         // Name: dotnet_insertion_behavior
         // Expect result is: dotnet.implmentType.insertionBehavior
         const prefixes = ['dotnet', 'csharp'];
-        let optionNamePrefix = getPrefix(optionName, prefixes);
+        const optionNamePrefix = getPrefix(optionName, prefixes);
 
-        let featureName = optionNamePrefix == '' ? optionName: optionName.substring(optionNamePrefix.length + 1);
+        const featureName = optionNamePrefix == '' ? optionName: optionName.substring(optionNamePrefix.length + 1);
 
         // Finally, convert everything to camel case and put them together.
-        let camelCaseGroupName = convertToCamelCase(optionGroupName, '_');
-        let camelCaseFeatureName = convertToCamelCase(featureName, '_');
+        const camelCaseGroupName = convertToCamelCase(optionGroupName, '_');
+        const camelCaseFeatureName = convertToCamelCase(featureName, '_');
         return optionNamePrefix == ''
             ? camelCaseGroupName.concat('.', camelCaseFeatureName)
             : convertToCamelCase(optionNamePrefix, '_').concat('.', camelCaseGroupName, '.', camelCaseFeatureName);
@@ -55,13 +55,13 @@ function getPrefix(section: string, prefixes: string[]) {
 }
 
 function convertToCamelCase(inputString: string, delimiter: string): string {
-    let words = inputString.split(delimiter).map(word => word.toLowerCase());
+    const words = inputString.split(delimiter).map(word => word.toLowerCase());
     if (words.length <= 1) {
         return inputString.toLowerCase();
     }
 
-    let firstWord = words[0];
-    let capitalizedWords = words.slice(1).map(capitalize);
+    const firstWord = words[0];
+    const capitalizedWords = words.slice(1).map(capitalize);
     return firstWord.concat(...capitalizedWords);
 }
 

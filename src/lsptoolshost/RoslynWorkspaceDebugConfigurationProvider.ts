@@ -19,7 +19,7 @@ import { UriConverter } from './uriConverter';
             return;
         }
 
-        let params: RoslynProtocol.WorkspaceDebugConfigurationParams = {
+        const params: RoslynProtocol.WorkspaceDebugConfigurationParams = {
             workspacePath: UriConverter.serialize(workspaceFolder)
         };
 

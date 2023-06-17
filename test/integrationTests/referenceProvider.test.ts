@@ -23,8 +23,8 @@ suite(`${OmniSharpReferenceProvider.name}: ${testAssetWorkspace.description}`, (
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        let fileName = 'reference.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const fileName = 'reference.cs';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         await vscode.commands.executeCommand("vscode.open", fileUri);
 
@@ -36,7 +36,7 @@ suite(`${OmniSharpReferenceProvider.name}: ${testAssetWorkspace.description}`, (
     });
 
     test("Returns the reference without declaration", async () => {
-        let referenceList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeReferenceProvider", fileUri, new vscode.Position(6, 22)));
+        const referenceList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeReferenceProvider", fileUri, new vscode.Position(6, 22)));
         expect(referenceList.length).to.be.equal(1);
         expect(referenceList[0].range.start.line).to.be.equal(13);
     });

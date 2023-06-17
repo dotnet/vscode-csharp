@@ -33,7 +33,7 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
         }
 
         try {
-            let info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
+            const info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
             if (!info) {
                 vscode.window.showErrorMessage("Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.");
                 return [];

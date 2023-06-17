@@ -46,7 +46,7 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
                 this.handleDotnetTestsDebugInContextStart(<DotNetTestDebugInContextStart>event);
                 break;
         }
-    }
+    };
 
     private handleDotNetTestDebugWarning(event: DotNetTestDebugWarning) {
         this.logger.appendLine(`Warning: ${event.message}`);
@@ -96,7 +96,7 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
             const totalTests = results.length;
 
             let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
-            for (let result of results) {
+            for (const result of results) {
                 this.logTestResult(result);
                 switch (result.Outcome) {
                     case protocol.V2.TestOutcomes.Failed:

@@ -50,7 +50,7 @@ export async function updatePackageDependencies(): Promise<void> {
         throw new Error("Unexpected 'NEW_DEPS_VERSION' value. Expected format similar to: 1.2.3.");
     }
 
-    let packageJSON: PackageJSONFile = JSON.parse(fs.readFileSync('package.json').toString());
+    const packageJSON: PackageJSONFile = JSON.parse(fs.readFileSync('package.json').toString());
 
     const eventStream = new EventStream();
     eventStream.subscribe((event: Event.BaseEvent) => {
@@ -90,7 +90,7 @@ export async function updatePackageDependencies(): Promise<void> {
 
     if (newPrimaryUrls) {
         const newPrimaryUrlArray = newPrimaryUrls.split(',');
-        for (let urlToUpdate of newPrimaryUrlArray) {
+        for (const urlToUpdate of newPrimaryUrlArray) {
             if (!urlToUpdate.startsWith("https://")) {
                 throw new Error("Unexpected 'NEW_DEPS_URLS' value. All URLs should start with 'https://'.");
             }
@@ -101,17 +101,17 @@ export async function updatePackageDependencies(): Promise<void> {
 
         // First build the map
         packageJSON.runtimeDependencies.forEach(dependency => {
-            let fileName = getLowercaseFileNameFromUrl(dependency.url);
-            let existingDependency = mapFileNameToDependency[fileName];
+            const fileName = getLowercaseFileNameFromUrl(dependency.url);
+            const existingDependency = mapFileNameToDependency[fileName];
             if (existingDependency !== undefined) {
                 throw new Error(`Multiple dependencies found with filename '${fileName}': '${existingDependency.url}' and '${dependency.url}'.`);
             }
             mapFileNameToDependency[fileName] = dependency;
         });
 
-        let findDependencyToUpdate = (url: string): Package => {
-            let fileName = getLowercaseFileNameFromUrl(url);
-            let dependency = mapFileNameToDependency[fileName];
+        const findDependencyToUpdate = (url: string): Package => {
+            const fileName = getLowercaseFileNameFromUrl(url);
+            const dependency = mapFileNameToDependency[fileName];
             if (dependency === undefined) {
                 throw new Error(`Unable to update item for url '${url}'. No 'runtimeDependency' found with filename '${fileName}'.`);
             }
@@ -119,7 +119,7 @@ export async function updatePackageDependencies(): Promise<void> {
         };
 
         // First quickly make sure we could match up the URL to an existing item.
-        for (let urlToUpdate of newPrimaryUrlArray) {
+        for (const urlToUpdate of newPrimaryUrlArray) {
             const dependency = findDependencyToUpdate(urlToUpdate);
             //Fallback url should contain a version
             verifyVersionSubstringCount(dependency.fallbackUrl, true);
@@ -127,8 +127,8 @@ export async function updatePackageDependencies(): Promise<void> {
             verifyVersionSubstringCount(dependency.installTestPath);
         }
 
-        for (let urlToUpdate of newPrimaryUrlArray) {
-            let dependency = findDependencyToUpdate(urlToUpdate);
+        for (const urlToUpdate of newPrimaryUrlArray) {
+            const dependency = findDependencyToUpdate(urlToUpdate);
             dependency.url = urlToUpdate;
 
             await updateDependency(dependency);
@@ -137,7 +137,7 @@ export async function updatePackageDependencies(): Promise<void> {
     else {
         let packageFound = false;
         // First quickly make sure that 'url' contains a version
-        for (let dependency of packageJSON.runtimeDependencies) {
+        for (const dependency of packageJSON.runtimeDependencies) {
             if (dependency.id !== packageId) {
                 continue;
             }
@@ -152,7 +152,7 @@ export async function updatePackageDependencies(): Promise<void> {
         }
 
         // Now update the versions
-        for (let dependency of packageJSON.runtimeDependencies) {
+        for (const dependency of packageJSON.runtimeDependencies) {
             if (dependency.id !== packageId) {
                 continue;
             }
@@ -235,13 +235,13 @@ function getLowercaseFileNameFromUrl(url: string): string {
         throw new Error(`Unexpected URL '${url}'. URL expected to end with '.zip'.`);
     }
 
-    let index = url.lastIndexOf("/");
+    const index = url.lastIndexOf("/");
     let fileName = url.substr(index + 1).toLowerCase();
 
     if (fileName.startsWith("omnisharp")) {
         // Omnisharp versions are always after the last '-'.
         // e.g. we want omnisharp-win-x86 from omnisharp-win-x86-1.39.3.zip
-        let lastDash = fileName.lastIndexOf('-');
+        const lastDash = fileName.lastIndexOf('-');
         fileName = fileName.substr(0, lastDash);
         return fileName;
     } else if (fileName.startsWith("coreclr-debug")) {
@@ -250,7 +250,7 @@ function getLowercaseFileNameFromUrl(url: string): string {
     } else if (fileName.startsWith("razorlanguageserver")) {
         // Razor versions are everything after the second to last dash.
         // e.g. we want razorlanguageserver-win-x64 from razorlanguageserver-win-x64-7.0.0-preview.23067.5.zip
-        let secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
+        const secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
         fileName = fileName.substr(0, secondToLastDash);
         return fileName;
     } else {

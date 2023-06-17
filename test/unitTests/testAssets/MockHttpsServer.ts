@@ -35,8 +35,8 @@ export default class MockHttpsServer {
     }
 
     public static async CreateMockHttpsServer(): Promise<MockHttpsServer> {
-        let port = await getPort();
-        let server = new ServerMock(null,
+        const port = await getPort();
+        const server = new ServerMock(null,
             {
                 host: "localhost",
                 port: port,

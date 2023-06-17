@@ -19,13 +19,13 @@ if (!tty.getWindowSize) {
 
 function setupLogging() {
     if (process.env.CODE_EXTENSIONS_PATH && process.env.OSVC_SUITE) {
-        let logDirPath = path.join(process.env.CODE_EXTENSIONS_PATH, "./.logs");
+        const logDirPath = path.join(process.env.CODE_EXTENSIONS_PATH, "./.logs");
 
         if (!fs.existsSync(logDirPath)) {
             fs.mkdirSync(logDirPath);
         }
 
-        let logFilePath = path.join(logDirPath, `${process.env.OSVC_SUITE}.log`);
+        const logFilePath = path.join(logDirPath, `${process.env.OSVC_SUITE}.log`);
 
         SubscribeToAllLoggers(message => fs.appendFileSync(logFilePath, message));
     }

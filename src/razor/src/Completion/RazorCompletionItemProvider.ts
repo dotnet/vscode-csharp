@@ -123,7 +123,7 @@ export class RazorCompletionItemProvider
                 // for intellicode items, manually set the insertText to avoid including stars in the commit
                 if (completionItem.label.toString().includes('\u2605')){
                     // vscode.CompletionItem does not have textEditText, which was added in 3.17
-                    let intellicodeCompletion: CompletionItem = completionItem as CompletionItem;
+                    const intellicodeCompletion: CompletionItem = completionItem as CompletionItem;
                     if (intellicodeCompletion.textEditText){
                         completionItem.insertText = intellicodeCompletion.textEditText;
                     }
@@ -192,7 +192,7 @@ export class RazorCompletionItemProvider
         // if it does we use LSP calls directly to Roslyn since there's no
         // equivalent vscode command to generically do that.
         if ((<CompletionItem>item).data) {
-            let newItem = await vscode
+            const newItem = await vscode
                 .commands
                 .executeCommand<vscode.CompletionItem>(
                     RoslynLanguageServer.resolveCompletionsCommand,
@@ -205,13 +205,13 @@ export class RazorCompletionItemProvider
             item = newItem;
 
             if (item.command && item.command.arguments?.length === 4) {
-                let uri = vscode.Uri.parse(item.command.arguments[0]);
+                const uri = vscode.Uri.parse(item.command.arguments[0]);
 
                 if (uri && RazorConventions.isRazorCSharpFile(uri)) {
-                    let razorUri = RazorConventions.getRazorDocumentUri(uri);
-                    let textEdit = item.command.arguments[1] as vscode.TextEdit;
+                    const razorUri = RazorConventions.getRazorDocumentUri(uri);
+                    const textEdit = item.command.arguments[1] as vscode.TextEdit;
 
-                    let remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(razorUri, textEdit, this.serviceClient, this.logger, token);
+                    const remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(razorUri, textEdit, this.serviceClient, this.logger, token);
 
                     if (remappedEdit) {
                         item.command.arguments[0] = razorUri;

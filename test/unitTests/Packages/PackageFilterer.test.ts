@@ -9,12 +9,12 @@ import { Package } from '../../../src/packageManager/Package';
 import { AbsolutePathPackage } from '../../../src/packageManager/AbsolutePathPackage';
 import { join } from 'path';
 
-let expect = chai.expect;
+const expect = chai.expect;
 const mock = require("mock-fs");
 
 suite(`${getNotInstalledPackagesForPlatform.name}`, () => {
     let absolutePathPackages: AbsolutePathPackage[];
-    let extensionPath = "/ExtensionPath";
+    const extensionPath = "/ExtensionPath";
     const packages = <Package[]>[
         {
             "description": "linux-Architecture1 uninstalled package",
@@ -57,7 +57,7 @@ suite(`${getNotInstalledPackagesForPlatform.name}`, () => {
 
     setup(async () => {
         absolutePathPackages = packages.map(pkg => AbsolutePathPackage.getAbsolutePathPackage(pkg, extensionPath));
-        let installLockPath = join(absolutePathPackages[1].installPath.value, "install.Lock");
+        const installLockPath = join(absolutePathPackages[1].installPath.value, "install.Lock");
         //mock the install lock path so the package should be filtered
         mock({
             [installLockPath]: "no content"
@@ -65,8 +65,8 @@ suite(`${getNotInstalledPackagesForPlatform.name}`, () => {
     });
 
     test('Filters the packages based on Platform Information', async () => {
-        let platformInfo = new PlatformInformation("win32", "architecture2");
-        let filteredPackages = await getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
+        const platformInfo = new PlatformInformation("win32", "architecture2");
+        const filteredPackages = await getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
         expect(filteredPackages[0].description).to.be.equal("win32-Architecture2 uninstalled package");
         expect(filteredPackages[0].platforms[0]).to.be.equal("win32");
@@ -74,8 +74,8 @@ suite(`${getNotInstalledPackagesForPlatform.name}`, () => {
     });
 
     test('Returns only the packages where install.Lock is not present', async () => {
-        let platformInfo = new PlatformInformation("linux", "architecture1");
-        let filteredPackages = await getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
+        const platformInfo = new PlatformInformation("linux", "architecture1");
+        const filteredPackages = await getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
         expect(filteredPackages.length).to.be.equal(1);
         expect(filteredPackages[0].description).to.be.equal("linux-Architecture1 uninstalled package");
         expect(filteredPackages[0].platforms[0]).to.be.equal("linux");

@@ -34,7 +34,7 @@ suite(`${OpenURLObserver.name}`, () => {
     });
 
     test("openExternal function is called and the url is passed through the vscode.Uri.parse function", () => {
-        let event = new OpenURL(url);
+        const event = new OpenURL(url);
         observer.post(event);
         expect(valueToBeParsed).to.be.equal(url);
         expect(openExternalCalled).to.be.true;

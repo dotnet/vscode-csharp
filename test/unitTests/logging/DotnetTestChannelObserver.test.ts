@@ -12,7 +12,7 @@ suite("DotnetTestChannelObserver", () => {
     let hasShown: boolean;
     let preserveFocus: boolean;
 
-    let observer = new DotnetTestChannelObserver({
+    const observer = new DotnetTestChannelObserver({
         ...getNullChannel(),
         show: (preserve) => {
             hasShown = true;

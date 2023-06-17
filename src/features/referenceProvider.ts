@@ -20,12 +20,12 @@ export default class OmniSharpReferenceProvider extends AbstractSupport implemen
 
     public async provideReferences(document: TextDocument, position: Position, options: { includeDeclaration: boolean;}, token: CancellationToken): Promise<Location[]> {
 
-        let req = createRequest<protocol.FindUsagesRequest>(document, position);
+        const req = createRequest<protocol.FindUsagesRequest>(document, position);
         req.OnlyThisFile = false;
         req.ExcludeDefinition = true;
 
         try {
-            let res = await serverUtils.findUsages(this._server, req, token);
+            const res = await serverUtils.findUsages(this._server, req, token);
             if (res && Array.isArray(res.QuickFixes)) {
                 const references = res.QuickFixes.map(l => this.mapToLocationWithGeneratedInfoPopulation(l));
 

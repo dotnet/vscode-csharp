@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export let testPackageJSON = {
+export const testPackageJSON = {
     "runtimeDependencies": [
         {
             "description": "OmniSharp for Windows (.NET 4.7.2 / x86)",

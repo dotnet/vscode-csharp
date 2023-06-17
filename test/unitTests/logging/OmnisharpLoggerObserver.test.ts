@@ -13,11 +13,11 @@ suite("OmnisharpLoggerObserver", () => {
     suiteSetup(() => should());
 
     let logOutput = "";
-    let channel = <OutputChannel>{
+    const channel = <OutputChannel>{
         ...getNullChannel(),
         append: (text: string) => { logOutput += text; }
     };
-    let observer = new OmnisharpLoggerObserver(channel, <PlatformInformation>{
+    const observer = new OmnisharpLoggerObserver(channel, <PlatformInformation>{
         architecture: "x128",
         platform: "TestOS"
     });
@@ -29,7 +29,7 @@ suite("OmnisharpLoggerObserver", () => {
     suite('OmnisharpServerMsBuildProjectDiagnostics', () => {
 
         test("Logged message is empty if there are no warnings and erros", () => {
-            let event = new OmnisharpServerMsBuildProjectDiagnostics({
+            const event = new OmnisharpServerMsBuildProjectDiagnostics({
                 FileName: "someFile",
                 Warnings: [],
                 Errors: []
@@ -39,7 +39,7 @@ suite("OmnisharpLoggerObserver", () => {
         });
 
         test(`Logged message contains the Filename if there is atleast one error or warning`, () => {
-            let event = new OmnisharpServerMsBuildProjectDiagnostics({
+            const event = new OmnisharpServerMsBuildProjectDiagnostics({
                 FileName: "someFile",
                 Warnings: [{ FileName: "warningFile", LogLevel: "", Text: "", StartLine: 0, EndLine: 0, StartColumn: 0, EndColumn: 0 }],
                 Errors: []
@@ -88,7 +88,7 @@ suite("OmnisharpLoggerObserver", () => {
     });
 
     test(`OmnisharpServerOnServerError: Message is logged`, () => {
-        let event = new OmnisharpServerOnServerError("on server error message");
+        const event = new OmnisharpServerOnServerError("on server error message");
         observer.post(event);
         expect(logOutput).to.contain(event.err);
     });
@@ -105,7 +105,7 @@ suite("OmnisharpLoggerObserver", () => {
     });
 
     test('OmnisharpFailure: Failure message is logged', () => {
-        let event = new OmnisharpFailure("failureMessage", new Error("errorMessage"));
+        const event = new OmnisharpFailure("failureMessage", new Error("errorMessage"));
         observer.post(event);
         expect(logOutput).to.contain(event.message);
     });
@@ -127,13 +127,13 @@ suite("OmnisharpLoggerObserver", () => {
         });
 
         test('Throws error on unknown log level', () => {
-            let event = new OmnisharpEventPacketReceived("random log level", "foo", "someMessage");
-            let fn = function () { observer.post(event); };
+            const event = new OmnisharpEventPacketReceived("random log level", "foo", "someMessage");
+            const fn = function () { observer.post(event); };
             expect(fn).to.throw(Error);
         });
 
         test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are not logged`, () => {
-            let event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
+            const event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
             observer.post(event);
             expect(logOutput).to.be.empty;
         });
@@ -167,8 +167,8 @@ suite("OmnisharpLoggerObserver", () => {
 
     suite('OmnisharpServerOnError', () => {
         test(`Doesnot throw error if FileName is null`, () => {
-            let event = new OmnisharpServerOnError({ Text: "someText", FileName: null!, Line: 1, Column: 2 });
-            let fn = function () { observer.post(event); };
+            const event = new OmnisharpServerOnError({ Text: "someText", FileName: null!, Line: 1, Column: 2 });
+            const fn = function () { observer.post(event); };
             expect(fn).to.not.throw(Error);
         });
 

@@ -23,7 +23,7 @@ export default class OmniSharpDefinitionProvider extends AbstractSupport impleme
     }
 
     public async provideDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location[]> {
-        let req = <V2.GoToDefinitionRequest>createRequest(document, position);
+        const req = <V2.GoToDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;
 
         try {
@@ -36,7 +36,7 @@ export default class OmniSharpDefinitionProvider extends AbstractSupport impleme
     }
 
     public async provideTypeDefinition(document: TextDocument, position: Position, token: CancellationToken): Promise<Location[]> {
-        let req = <GoToTypeDefinitionRequest>createRequest(document, position);
+        const req = <GoToTypeDefinitionRequest>createRequest(document, position);
         req.WantMetadata = true;
 
         try {
@@ -48,9 +48,9 @@ export default class OmniSharpDefinitionProvider extends AbstractSupport impleme
         }
     }
 
-    private async GetLocationsFromResponse<TReponse> (response: GoToTypeDefinitionResponse | V2.GoToDefinitionResponse, token: CancellationToken): Promise<Location[]>
+    private async GetLocationsFromResponse (response: GoToTypeDefinitionResponse | V2.GoToDefinitionResponse, token: CancellationToken): Promise<Location[]>
     {
-        let locations: Location[] = [];
+        const locations: Location[] = [];
         if (response && response.Definitions) {
             for (const definition of response.Definitions) {
                 if (definition.MetadataSource) {
@@ -87,7 +87,7 @@ export default class OmniSharpDefinitionProvider extends AbstractSupport impleme
                     locations.push(new Location(uri, vscodeRange));
                 } else if (definition.SourceGeneratedFileInfo) {
                     // File is source generated
-                    let uri = this.sourceGeneratedDocumentProvider.addSourceGeneratedFileWithoutInitialContent(definition.SourceGeneratedFileInfo, definition.Location.FileName);
+                    const uri = this.sourceGeneratedDocumentProvider.addSourceGeneratedFileWithoutInitialContent(definition.SourceGeneratedFileInfo, definition.Location.FileName);
                     locations.push(new Location(uri, toRange3(definition.Location.Range)));
                 } else {
                     // if it is a normal source definition, convert the response to a location

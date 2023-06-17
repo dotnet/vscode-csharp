@@ -15,8 +15,8 @@ suite("JSON", () => {
     "hello": "world"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(text);
     });
@@ -31,8 +31,8 @@ suite("JSON", () => {
     "from": "json"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -49,8 +49,8 @@ suite("JSON", () => {
     "hello": "world\\""
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -67,8 +67,8 @@ suite("JSON", () => {
     "hello": "world"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -84,8 +84,8 @@ suite("JSON", () => {
     "hello": "world"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -101,8 +101,8 @@ suite("JSON", () => {
     "hello": "world"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -113,8 +113,8 @@ suite("JSON", () => {
     "hello": "world // comment"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(text);
     });
@@ -130,8 +130,8 @@ suite("JSON", () => {
     "hello": "world\\""
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -147,8 +147,8 @@ suite("JSON", () => {
     "hello": "world"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -165,8 +165,8 @@ suite("JSON", () => {
     "from": "json"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -182,8 +182,8 @@ suite("JSON", () => {
     "hello": "world"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -199,8 +199,8 @@ suite("JSON", () => {
     "hello": "wo/**/rld"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -216,8 +216,8 @@ suite("JSON", () => {
     "hello": "world"
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -239,8 +239,8 @@ suite("JSON", () => {
     }
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -262,8 +262,8 @@ suite("JSON", () => {
     ]
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });
@@ -281,8 +281,8 @@ suite("JSON", () => {
     }
 }`;
 
-        let json = tolerantParse(text);
-        let result = JSON.stringify(json, null, 4);
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
 
         result.should.equal(expected);
     });

@@ -15,7 +15,7 @@ export async function DownloadFile(description: string, eventStream: EventStream
     eventStream.post(new DownloadStart(description));
 
     try {
-        let buffer = await downloadFile(description, url, eventStream, networkSettingsProvider);
+        const buffer = await downloadFile(description, url, eventStream, networkSettingsProvider);
         eventStream.post(new DownloadSuccess(` Done!`));
         return buffer;
     }
@@ -26,7 +26,7 @@ export async function DownloadFile(description: string, eventStream: EventStream
         if (fallbackUrl !== undefined) {
             eventStream.post(new DownloadFallBack(fallbackUrl));
             try {
-                let buffer = await downloadFile(description, fallbackUrl, eventStream, networkSettingsProvider);
+                const buffer = await downloadFile(description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
                 return buffer;
             }
@@ -53,10 +53,10 @@ async function downloadFile(description: string, urlString: string, eventStream:
         rejectUnauthorized: strictSSL,
     };
 
-    let buffers: any[] = [];
+    const buffers: any[] = [];
 
     return new Promise<Buffer>((resolve, reject) => {
-        let request = https.request(options, response => {
+        const request = https.request(options, response => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
                 if (response.headers.location === undefined) {
@@ -77,7 +77,7 @@ async function downloadFile(description: string, urlString: string, eventStream:
             }
 
             // Downloading - hook up events
-            let packageSize = parseInt(response.headers['content-length'], 10);
+            const packageSize = parseInt(response.headers['content-length'], 10);
             let downloadedBytes = 0;
             let downloadPercentage = 0;
 
@@ -88,7 +88,7 @@ async function downloadFile(description: string, urlString: string, eventStream:
                 buffers.push(data);
 
                 // Update status bar item with percentage
-                let newPercentage = Math.ceil(100 * (downloadedBytes / packageSize));
+                const newPercentage = Math.ceil(100 * (downloadedBytes / packageSize));
                 if (newPercentage !== downloadPercentage) {
                     downloadPercentage = newPercentage;
                     eventStream.post(new DownloadProgress(downloadPercentage, description));

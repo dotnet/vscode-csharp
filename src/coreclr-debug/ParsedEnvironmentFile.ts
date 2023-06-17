@@ -15,7 +15,7 @@ export class ParsedEnvironmentFile {
     }
 
     public static CreateFromFile(envFile: string, initialEnv: { [key: string]: any } | undefined): ParsedEnvironmentFile {
-        let content: string = fs.readFileSync(envFile, "utf8");
+        const content: string = fs.readFileSync(envFile, "utf8");
         return this.CreateFromContent(content, envFile, initialEnv);
     }
 
@@ -25,13 +25,13 @@ export class ParsedEnvironmentFile {
             content = content.substring(1);
         }
 
-        let parseErrors: string[] = [];
-        let safeInitialEnv = initialEnv ?? {};
-        let env = {...safeInitialEnv};
+        const parseErrors: string[] = [];
+        const safeInitialEnv = initialEnv ?? {};
+        const env = {...safeInitialEnv};
 
         content.split("\n").forEach(line => {
             // Split the line between key and value
-            const match = line.match(/^\s*([\w\.\-]+)\s*=\s*(.*)?\s*$/);
+            const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
 
             if (match !== null) {
                 const key = match[1];
@@ -50,7 +50,7 @@ export class ParsedEnvironmentFile {
             }
             else {
                 // Blank lines and lines starting with # are no parse errors
-                const comments: RegExp = new RegExp(/^\s*(#|$)/);
+                const comments = new RegExp(/^\s*(#|$)/);
                 if (!comments.test(line)) {
                     parseErrors.push(line);
                 }

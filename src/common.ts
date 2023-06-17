@@ -24,7 +24,7 @@ export function getExtensionPath() {
 }
 
 export function getUnixTempDirectory() {
-    let envTmp = process.env.TMPDIR;
+    const envTmp = process.env.TMPDIR;
     if (!envTmp) {
         return "/tmp/";
     }
@@ -89,13 +89,13 @@ export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
                 return resolve([]);
             }
 
-            let lines = stdout.split(os.EOL);
-            let pairs = lines.map(line => line.trim().split(/\s+/));
+            const lines = stdout.split(os.EOL);
+            const pairs = lines.map(line => line.trim().split(/\s+/));
 
-            let children = [];
+            const children = [];
 
-            for (let pair of pairs) {
-                let ppid = parseInt(pair[0]);
+            for (const pair of pairs) {
+                const ppid = parseInt(pair[0]);
                 if (ppid === pid) {
                     children.push(parseInt(pair[1]));
                 }
@@ -107,7 +107,7 @@ export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
 }
 
 export async function fileExists(filePath: string): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve) => {
         fs.stat(filePath, (err, stats) => {
             if (stats && stats.isFile()) {
                 resolve(true);
@@ -144,7 +144,7 @@ export enum InstallFileType {
 }
 
 export function getInstallFilePath(folderPath: AbsolutePath, type: InstallFileType): string {
-    let installFile = 'install.' + InstallFileType[type];
+    const installFile = 'install.' + InstallFileType[type];
     return path.resolve(folderPath.value, installFile);
 }
 
@@ -179,7 +179,7 @@ export async function deleteInstallFile(folderPath: AbsolutePath, type: InstallF
 }
 
 export function convertNativePathToPosix(pathString: string): string {
-    let parts = pathString.split(path.sep);
+    const parts = pathString.split(path.sep);
     return parts.join(path.posix.sep);
 }
 
@@ -214,8 +214,7 @@ export function findPowerShell(): string | undefined {
                 if (fs.statSync(candidate).isFile()) {
                     return name;
                 }
-            } catch (e) {
-            }
+            } catch (e) { /* empty */ }
         }
     }
 }

@@ -14,7 +14,7 @@ function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
 
     return workspace.onDidChangeTextDocument(event => {
 
-        let { document, contentChanges } = event;
+        const { document, contentChanges } = event;
         if (document.isUntitled || document.languageId !== 'csharp' || document.uri.scheme !== 'file' || contentChanges.length === 0) {
             return;
         }
@@ -38,7 +38,7 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
                 return;
             }
 
-            let req = { FileName: uri.fsPath, changeType };
+            const req = { FileName: uri.fsPath, changeType };
 
             serverUtils.filesChanged(server, [req]).catch(err => {
                 console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
@@ -54,7 +54,7 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
             }
 
             if (changeType === FileChangeType.Delete) {
-                let requests = [{ FileName: uri.fsPath, changeType: FileChangeType.DirectoryDelete }];
+                const requests = [{ FileName: uri.fsPath, changeType: FileChangeType.DirectoryDelete }];
 
                 serverUtils.filesChanged(server, requests).catch(err => {
                     console.warn(`[o] failed to forward file change event for ${uri.fsPath}`, err);
@@ -65,12 +65,12 @@ function forwardFileChanges(server: OmniSharpServer): IDisposable {
     }
 
     const watcher = workspace.createFileSystemWatcher('**/*.*');
-    let d1 = watcher.onDidCreate(onFileSystemEvent(FileChangeType.Create));
-    let d2 = watcher.onDidDelete(onFileSystemEvent(FileChangeType.Delete));
-    let d3 = watcher.onDidChange(onFileSystemEvent(FileChangeType.Change));
+    const d1 = watcher.onDidCreate(onFileSystemEvent(FileChangeType.Create));
+    const d2 = watcher.onDidDelete(onFileSystemEvent(FileChangeType.Delete));
+    const d3 = watcher.onDidChange(onFileSystemEvent(FileChangeType.Change));
 
     const watcherForFolders = workspace.createFileSystemWatcher('**/');
-    let d4 = watcherForFolders.onDidDelete(onFolderEvent(FileChangeType.Delete));
+    const d4 = watcherForFolders.onDidDelete(onFolderEvent(FileChangeType.Delete));
 
     return new CompositeDisposable(watcher, d1, d2, d3, watcherForFolders, d4);
 }

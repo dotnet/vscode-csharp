@@ -18,7 +18,7 @@ suite("DotnetLoggerObserver", () => {
     ].forEach((event: EventWithMessage) => {
         test(`${event.constructor.name}: Message is logged`, () => {
             let appendedMessage = "";
-            let observer = new DotnetLoggerObserver({
+            const observer = new DotnetLoggerObserver({
                 ...getNullChannel(),
                 append: (text: string) => { appendedMessage += text; },
             });

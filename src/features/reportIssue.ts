@@ -25,7 +25,7 @@ export default async function reportIssue(vscode: vscode, csharpExtVersion: stri
     }
 
     const monoInfo = await getMonoIfPlatformValid(isValidPlatformForMono, options, monoResolver);
-    let extensions = getInstalledExtensions(vscode);
+    const extensions = getInstalledExtensions(vscode);
 
     const body = `## Issue Description ##
 ## Steps to Reproduce ##
@@ -55,7 +55,7 @@ ${generateExtensionTable(extensions)}
 </details>
 `;
 
-    const queryStringPrefix: string = "?";
+    const queryStringPrefix = "?";
     const issueDefault = "Please paste the output from your clipboard";
     const fullUrl = `${issuesUrl}${queryStringPrefix}body=${issueDefault}`;
     await vscode.env.clipboard.writeText(body);
@@ -109,7 +109,7 @@ async function getMonoIfPlatformValid(isValidPlatformForMono: boolean, options: 
 
 
 function getInstalledExtensions(vscode: vscode) {
-    let extensions = vscode.extensions.all
+    const extensions = vscode.extensions.all
         .filter(extension => extension.packageJSON.isBuiltin === false);
 
     return extensions.sort(sortExtensions);

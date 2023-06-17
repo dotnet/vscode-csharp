@@ -15,17 +15,17 @@ suite(`${isValidDownload.name}`, () => {
     const validIntegrity = "eb7201b5d986919e0ac67c820886358869d8f7059193d33c902ad7fe1688e1e9";
 
     test('Returns false for non-matching integrity', async () => {
-        let result = await isValidDownload(sampleBuffer, "inValidIntegrity", new EventStream());
+        const result = await isValidDownload(sampleBuffer, "inValidIntegrity", new EventStream());
         expect(result).to.be.false;
     });
 
     test('Returns true for matching integrity', async () => {
-        let result = await isValidDownload(sampleBuffer, validIntegrity, new EventStream());
+        const result = await isValidDownload(sampleBuffer, validIntegrity, new EventStream());
         expect(result).to.be.true;
     });
 
     test('Returns true if no integrity has been specified', async () => {
-        let result = await isValidDownload(sampleBuffer, undefined, new EventStream());
+        const result = await isValidDownload(sampleBuffer, undefined, new EventStream());
         expect(result).to.be.true;
     });
 });

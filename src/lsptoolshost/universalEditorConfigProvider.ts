@@ -20,8 +20,8 @@ export function readEquivalentVsCodeConfiguration(serverSideOptionName: string) 
         return undefined;
     }
 
-    let readerFunction = universalEditorConfigOptionsToReaderMap.get(serverSideOptionName)!;
-    let config = workspace.getConfiguration("", { languageId: "csharp" });
+    const readerFunction = universalEditorConfigOptionsToReaderMap.get(serverSideOptionName)!;
+    const config = workspace.getConfiguration("", { languageId: "csharp" });
     return readerFunction(config);
 }
 
@@ -30,7 +30,7 @@ function readTabSize(configuration: WorkspaceConfiguration) : string {
 }
 
 function readIndentSize(configuration: WorkspaceConfiguration) : string {
-    let indentSize = readValueIfDetectIndentationIsOff<string>(configuration, "editor.indentSize", "4");
+    const indentSize = readValueIfDetectIndentationIsOff<string>(configuration, "editor.indentSize", "4");
     // indent size could be a number or 'tabSize'. If it is 'tabSize', read the 'tabSize' section from config.
     if (indentSize == "tabSize") {
         return readTabSize(configuration);
@@ -40,12 +40,12 @@ function readIndentSize(configuration: WorkspaceConfiguration) : string {
 }
 
 function readInsertSpaces(configuration: WorkspaceConfiguration) : string {
-    let insertSpace = readValueIfDetectIndentationIsOff<boolean>(configuration, "editor.insertSpaces", true);
+    const insertSpace = readValueIfDetectIndentationIsOff<boolean>(configuration, "editor.insertSpaces", true);
     return insertSpace ? "space" : "tab";
 }
 
 function readEol(configuration: WorkspaceConfiguration) : string {
-    let eol = readVsCodeConfigurations<string>(configuration, "files.eol");
+    const eol = readVsCodeConfigurations<string>(configuration, "files.eol");
     if (eol === "\n") {
         return "lf";
     }
@@ -72,7 +72,7 @@ function readValueIfDetectIndentationIsOff<T>(configuration: WorkspaceConfigurat
 }
 
 function readVsCodeConfigurations<T>(configuration: WorkspaceConfiguration, vscodeConfigName : string) : T {
-    let configValue = configuration.get<T>(vscodeConfigName);
+    const configValue = configuration.get<T>(vscodeConfigName);
     if (configValue === undefined) {
         // We are reading vscode built-in configurations, so we should at least get default value.
         throw new Error(`Can't read ${vscodeConfigName} from the client.`);

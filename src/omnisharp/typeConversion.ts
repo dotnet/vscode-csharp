@@ -30,12 +30,12 @@ export function toVscodeLocation(omnisharpLocation: protocol.V2.Location): vscod
 }
 
 export function toRange(rangeLike: { Line: number; Column: number; EndLine: number; EndColumn: number; }): vscode.Range {
-    let { Line, Column, EndLine, EndColumn } = rangeLike;
+    const { Line, Column, EndLine, EndColumn } = rangeLike;
     return toVSCodeRange(Line, Column, EndLine, EndColumn);
 }
 
 export function toRange2(rangeLike: { StartLine: number; StartColumn: number; EndLine: number; EndColumn: number; }): vscode.Range {
-    let { StartLine, StartColumn, EndLine, EndColumn } = rangeLike;
+    const { StartLine, StartColumn, EndLine, EndColumn } = rangeLike;
     return toVSCodeRange(StartLine, StartColumn, EndLine, EndColumn);
 }
 
@@ -66,7 +66,7 @@ export function toVSCodeTextEdit(textChange: protocol.LinePositionSpanTextChange
     return new vscode.TextEdit(toRange2(textChange), textChange.NewText);
 }
 
-export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position, includeBuffer: boolean = false): T {
+export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position, includeBuffer = false): T {
     // for metadata sources, we need to remove the [metadata] from the filename, and prepend the $metadata$ authority
     // this is expected by the Omnisharp server to support metadata-to-metadata navigation
     const fileName = document.uri.scheme === "omnisharp-metadata" ?

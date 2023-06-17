@@ -24,18 +24,18 @@ export const migrateOptions = [
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {
-    let configuration = vscode.workspace.getConfiguration();
+    const configuration = vscode.workspace.getConfiguration();
     for (const {omnisharpOption, roslynOption} of migrateOptions) {
         if (!configuration.has(omnisharpOption)) {
             continue;
         }
 
-        let inspectionValueOfRoslynOption = configuration.inspect(roslynOption);
+        const inspectionValueOfRoslynOption = configuration.inspect(roslynOption);
         if (inspectionValueOfRoslynOption == undefined) {
             continue;
         }
 
-        let roslynOptionValue = configuration.get(roslynOption);
+        const roslynOptionValue = configuration.get(roslynOption);
         if (roslynOptionValue == undefined) {
             continue;
         }
@@ -47,9 +47,9 @@ export async function MigrateOptions(vscode: vscode): Promise<void> {
 }
 
 async function MoveOptionsValue(fromOption: string, toOption: string, workspaceConfig: WorkspaceConfiguration) : Promise<void> {
-    let inspectionValue = workspaceConfig.inspect<any>(fromOption);
+    const inspectionValue = workspaceConfig.inspect<any>(fromOption);
     if (inspectionValue !== undefined) {
-        let {key: _, defaultValue: __, globalValue, workspaceValue, workspaceFolderValue} = inspectionValue;
+        const {key: _, defaultValue: __, globalValue, workspaceValue, workspaceFolderValue} = inspectionValue;
         if (globalValue !== undefined) {
             await workspaceConfig.update(toOption, globalValue, ConfigurationTarget.Global);
             await workspaceConfig.update(fromOption, undefined, ConfigurationTarget.Global);

@@ -44,7 +44,7 @@ suite(`${reportIssue.name}`, () => {
     let fakeDotnetResolver : FakeDotnetResolver;
     let eventStream: EventStream;
     let eventBus: TestEventBus;
-    let getDotnetInfo = FakeGetDotnetInfo;
+    const getDotnetInfo = FakeGetDotnetInfo;
     let options: Options;
     let issueBody: string;
 
@@ -66,14 +66,14 @@ suite(`${reportIssue.name}`, () => {
 
     test(`${OpenURL.name} event is created`, async () => {
         await reportIssue(vscode, csharpExtVersion, eventStream, getDotnetInfo, isValidForMono, options, fakeDotnetResolver, fakeMonoResolver);
-        let events = eventBus.getEvents();
+        const events = eventBus.getEvents();
         expect(events).to.have.length(1);
         expect(events[0].constructor.name).to.be.equal(`${OpenURL.name}`);
     });
 
     test(`${OpenURL.name} event is created with the omnisharp-vscode github repo issues url`, async () => {
         await reportIssue(vscode, csharpExtVersion, eventStream, getDotnetInfo, false, options, fakeDotnetResolver, fakeMonoResolver);
-        let url = (<OpenURL>eventBus.getEvents()[0]).url;
+        const url = (<OpenURL>eventBus.getEvents()[0]).url;
         expect(url).to.include("https://github.com/OmniSharp/omnisharp-vscode/issues/new?body=Please paste the output from your clipboard");
     });
 

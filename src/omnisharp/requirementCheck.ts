@@ -24,7 +24,7 @@ export async function validateRequirements(options: Options): Promise<boolean> {
         const downloadSdk = await promptToDownloadDotNetSDK();
 
         if (downloadSdk === PromptResult.Yes) {
-            let dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
+            const dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
             vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
         } else if (downloadSdk === PromptResult.No) {
             vscode.commands.executeCommand('workbench.action.openGlobalSettings');
@@ -39,7 +39,7 @@ export async function validateRequirements(options: Options): Promise<boolean> {
         const downloadMono = await promptToDownloadMono();
 
         if (downloadMono === PromptResult.Yes) {
-            let monoURL = 'https://www.mono-project.com/download/stable/';
+            const monoURL = 'https://www.mono-project.com/download/stable/';
             vscode.env.openExternal(vscode.Uri.parse(monoURL));
         } else if (downloadMono === PromptResult.No) {
             vscode.commands.executeCommand('workbench.action.openGlobalSettings');

@@ -14,26 +14,26 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
 
     public async provideSignatureHelp(document: TextDocument, position: Position, token: CancellationToken): Promise<SignatureHelp | undefined> {
 
-        let req = createRequest(document, position);
+        const req = createRequest(document, position);
 
         try {
-            let res = await serverUtils.signatureHelp(this._server, req, token);
+            const res = await serverUtils.signatureHelp(this._server, req, token);
 
             if (!res) {
                 return undefined;
             }
 
-            let ret = new SignatureHelp();
+            const ret = new SignatureHelp();
             ret.activeSignature = res.ActiveSignature;
             ret.activeParameter = res.ActiveParameter;
 
-            for (let signature of res.Signatures) {
+            for (const signature of res.Signatures) {
 
-                let signatureInfo = new SignatureInformation(signature.Label, signature.StructuredDocumentation.SummaryText);
+                const signatureInfo = new SignatureInformation(signature.Label, signature.StructuredDocumentation.SummaryText);
                 ret.signatures.push(signatureInfo);
 
-                for (let parameter of signature.Parameters) {
-                    let parameterInfo = new ParameterInformation(
+                for (const parameter of signature.Parameters) {
+                    const parameterInfo = new ParameterInformation(
                         parameter.Label,
                         this.GetParameterDocumentation(parameter));
 
@@ -49,9 +49,9 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
     }
 
     private GetParameterDocumentation(parameter: SignatureHelpParameter) {
-        let summary = parameter.Documentation;
+        const summary = parameter.Documentation;
         if (summary.length > 0) {
-            let paramText = `**${parameter.Name}**: ${summary}`;
+            const paramText = `**${parameter.Name}**: ${summary}`;
             return new MarkdownString(paramText);
         }
 

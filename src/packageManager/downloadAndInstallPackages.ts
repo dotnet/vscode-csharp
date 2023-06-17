@@ -18,17 +18,17 @@ import { DownloadValidator } from './isValidDownload';
 
 export async function downloadAndInstallPackages(packages: AbsolutePathPackage[], provider: NetworkSettingsProvider, eventStream: EventStream, downloadValidator: DownloadValidator): Promise<boolean> {
     eventStream.post(new PackageInstallStart());
-    for (let pkg of packages) {
+    for (const pkg of packages) {
         let installationStage = "touchBeginFile";
         try {
             mkdirpSync(pkg.installPath.value);
             await touchInstallFile(pkg.installPath, InstallFileType.Begin);
             let count = 1;
-            let willTryInstallingPackage = () => count <= 2; // try 2 times
+            const willTryInstallingPackage = () => count <= 2; // try 2 times
             while (willTryInstallingPackage()) {
                 count = count + 1;
                 installationStage = "downloadPackage";
-                let buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
+                const buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
                 if (downloadValidator(buffer, pkg.integrity, eventStream)) {
                     installationStage = "installPackage";
                     await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
@@ -43,7 +43,7 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
         }
         catch (error) {
             if (error instanceof NestedError) {
-                let packageError = new PackageError(error.message, pkg, error.err);
+                const packageError = new PackageError(error.message, pkg, error.err);
                 eventStream.post(new InstallationFailure(installationStage, packageError));
             }
             else {

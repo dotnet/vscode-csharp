@@ -140,7 +140,7 @@ suite(OmnisharpManager.name, () => {
             });
 
             test('Installs the latest version and returns the launch path ', async () => {
-                let launchPath = await manager.GetOmniSharpLaunchPath(defaultVersion, "latest", useFramework, extensionPath);
+                const launchPath = await manager.GetOmniSharpLaunchPath(defaultVersion, "latest", useFramework, extensionPath);
                 if (useFramework) {
                     if (elem.platformInfo.isWindows()) {
                         expect(launchPath).to.be.equal(path.join(extensionPath, installPath, latestVersion + suffix, "OmniSharp.exe"));
@@ -155,7 +155,7 @@ suite(OmnisharpManager.name, () => {
             });
 
             test('Installs the test version and returns the launch path', async () => {
-                let launchPath = await manager.GetOmniSharpLaunchPath(defaultVersion, testVersion, useFramework, extensionPath);
+                const launchPath = await manager.GetOmniSharpLaunchPath(defaultVersion, testVersion, useFramework, extensionPath);
                 if (useFramework) {
                     if (elem.platformInfo.isWindows()) {
                         expect(launchPath).to.be.equal(path.join(extensionPath, installPath, testVersion + suffix, "OmniSharp.exe"));
@@ -171,8 +171,8 @@ suite(OmnisharpManager.name, () => {
 
             test('Downloads package from given url and installs them at the specified path', async () => {
                 await manager.GetOmniSharpLaunchPath(defaultVersion, testVersion, useFramework, extensionPath);
-                for (let elem of testZip.files) {
-                    let filePath = path.join(extensionPath, installPath, testVersion + suffix, elem.path);
+                for (const elem of testZip.files) {
+                    const filePath = path.join(extensionPath, installPath, testVersion + suffix, elem.path);
                     expect(await util.fileExists(filePath)).to.be.true;
                 }
             });
@@ -191,6 +191,6 @@ suite(OmnisharpManager.name, () => {
 });
 
 function GetTestOmniSharpManager(platformInfo: PlatformInformation, eventStream: EventStream, extensionPath: string, serverUrl: string): OmnisharpManager {
-    let downloader = new OmnisharpDownloader(() => new NetworkSettings('', false), eventStream, testPackageJSON, platformInfo, extensionPath);
+    const downloader = new OmnisharpDownloader(() => new NetworkSettings('', false), eventStream, testPackageJSON, platformInfo, extensionPath);
     return new OmnisharpManager(downloader, platformInfo, serverUrl);
 }

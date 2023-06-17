@@ -22,7 +22,7 @@ export async function assertWithPoll<T>(
     let assertResult: Error | undefined = undefined;
 
     while (duration > 0) {
-        let value = await getValue();
+        const value = await getValue();
 
         try {
             assertResult = undefined;
@@ -53,7 +53,7 @@ export async function pollDoesNotHappen<T>(
     step: number,
     expression: (input: T) => boolean = defaultPollExpression): Promise<void> {
     while (duration > 0) {
-        let value = await getValue();
+        const value = await getValue();
 
         if (expression(value)) {
             throw new Error("Polling succeeded within the alotted duration, but should not have.");

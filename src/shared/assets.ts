@@ -224,7 +224,7 @@ export class AssetGenerator {
     }
 
     private createBuildTaskDescription(): tasks.TaskDescription {
-        let commandArgs = ['build'];
+        const commandArgs = ['build'];
 
         this.AddAdditionalCommandArgs(commandArgs);
 
@@ -239,7 +239,7 @@ export class AssetGenerator {
 
 
     private createPublishTaskDescription(): tasks.TaskDescription {
-        let commandArgs = ['publish'];
+        const commandArgs = ['publish'];
 
         this.AddAdditionalCommandArgs(commandArgs);
 
@@ -253,7 +253,7 @@ export class AssetGenerator {
     }
 
     private createWatchTaskDescription(): tasks.TaskDescription {
-        let commandArgs = ['watch', 'run'];
+        const commandArgs = ['watch', 'run'];
 
         const buildProject = this.getBuildProjectPath();
         if (buildProject) {
@@ -313,7 +313,7 @@ export class AssetGenerator {
     }
 
     private findExecutableMSBuildProjects(projects: ProjectDebugInformation[]) {
-        let result: ProjectDebugInformation[] = [];
+        const result: ProjectDebugInformation[] = [];
     
         projects.forEach(project => {
             const projectIsNotNetFramework = project.targetsDotnetCore || project.isBlazorWebAssemblyStandalone;
@@ -472,7 +472,7 @@ async function getOperations(generator: AssetGenerator): Promise<AssetOperations
  * Finds a build task if there is one. Only handles new format.
  */
 function getBuildTasks(tasksConfiguration: tasks.TaskConfiguration): tasks.TaskDescription[] {
-    let result: tasks.TaskDescription[] = [];
+    const result: tasks.TaskDescription[] = [];
 
     function findBuildTask(tasksDescriptions: tasks.TaskDescription[] | undefined) {
         let buildTask = undefined;
@@ -527,7 +527,7 @@ export async function getBuildOperations(generator: AssetGenerator): Promise<Ass
                         return resolve({ updateTasksJson: false });
                     }
 
-                    let buildTasks = getBuildTasks(tasksConfiguration);
+                    const buildTasks = getBuildTasks(tasksConfiguration);
 
                     resolve({ updateTasksJson: buildTasks.length === 0 });
                 });
@@ -585,8 +585,8 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
 }
 
 function getBuildAssetsNotificationSetting() {
-    const newSettingName: string = 'suppressBuildAssetsNotification';
-    let csharpConfig = vscode.workspace.getConfiguration('csharp');
+    const newSettingName = 'suppressBuildAssetsNotification';
+    const csharpConfig = vscode.workspace.getConfiguration('csharp');
     if (csharpConfig.has(newSettingName)) {
         return csharpConfig.get<boolean>(newSettingName);
     }
@@ -722,7 +722,7 @@ export async function addAssetsIfNecessary(context: vscode.ExtensionContext, wor
         return;
     }
 
-    let generationResults = vscode.workspace.workspaceFolders.map(async (workspaceFolder) => 
+    const generationResults = vscode.workspace.workspaceFolders.map(async (workspaceFolder) => 
     {
         const info = await workspaceInformationProvider.getWorkspaceDebugInformation(workspaceFolder.uri);
         if (!info || info.length === 0) {
@@ -766,7 +766,7 @@ async function getExistingAssets(generator: AssetGenerator) {
         let assets: string[] = [];
         if (fs.pathExistsSync(generator.tasksJsonPath)) {
             const content = fs.readFileSync(generator.tasksJsonPath).toString();
-            let taskLabels = ["build", "publish", "watch"];
+            const taskLabels = ["build", "publish", "watch"];
             const tasks = jsonc.parse(content)?.tasks?.
                 map((t: { label: string; }) => t.label).
                 filter((l: string) => taskLabels.includes(l));
@@ -776,7 +776,7 @@ async function getExistingAssets(generator: AssetGenerator) {
 
         if (fs.pathExistsSync(generator.launchJsonPath)) {
             const content = fs.readFileSync(generator.launchJsonPath).toString();
-            let configurationNames = [
+            const configurationNames = [
                 ".NET Core Launch (console)",
                 ".NET Core Launch (web)",
                 ".NET Core Attach",
@@ -793,8 +793,8 @@ async function getExistingAssets(generator: AssetGenerator) {
     });
 }
 
-async function shouldGenerateAssets(generator: AssetGenerator): Promise<Boolean> {
-    return new Promise<Boolean>((resolve, reject) => {
+async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
         getExistingAssets(generator).then(res => {
             if (res.length > 0) {
                 const yesItem = { title: 'Yes' };
@@ -825,8 +825,8 @@ export async function generateAssets(workspaceInformationProvider: IWorkspaceDeb
             return;
         }
 
-        for(let workspaceFolder of vscode.workspace.workspaceFolders) {
-            let workspaceInformation = await workspaceInformationProvider.getWorkspaceDebugInformation(workspaceFolder.uri);
+        for(const workspaceFolder of vscode.workspace.workspaceFolders) {
+            const workspaceInformation = await workspaceInformationProvider.getWorkspaceDebugInformation(workspaceFolder.uri);
             if (workspaceInformation && workspaceInformation.length > 0) {
                 // Currently the server only runs in a single workspace.  So we can just find the workspace folder from any of the projects.
                 const resourcePath = workspaceInformation[0].projectPath;
@@ -836,7 +836,7 @@ export async function generateAssets(workspaceInformationProvider: IWorkspaceDeb
                 }
     
                 const generator = new AssetGenerator(workspaceInformation, workspaceFolder);
-                let doGenerateAssets = await shouldGenerateAssets(generator);
+                const doGenerateAssets = await shouldGenerateAssets(generator);
                 if (!doGenerateAssets) {
                     return; // user cancelled
                 }
@@ -867,35 +867,35 @@ export async function generateAssets(workspaceInformationProvider: IWorkspaceDeb
 
 export function replaceCommentPropertiesWithComments(text: string) {
     // replacing dummy properties OS-COMMENT with the normal comment syntax
-    let regex = /["']OS-COMMENT\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
-    let withComments = text.replace(regex, '// $1');
+    const regex = /["']OS-COMMENT\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
+    const withComments = text.replace(regex, '// $1');
 
     return withComments;
 }
 
 export function updateJsonWithComments(text: string, replacements: any[], nodeName: string, keyName: string, formattingOptions: FormattingOptions): string {
-    let modificationOptions: ModificationOptions = {
+    const modificationOptions: ModificationOptions = {
         formattingOptions
     };
 
     // parse using jsonc because there are comments
     // only use this to determine what to change
     // we will modify it as text to keep existing comments
-    let parsed = jsonc.parse(text);
-    let items = parsed[nodeName];
-    let itemKeys: string[] = items.map((i: { [x: string]: string; }) => i[keyName]);
+    const parsed = jsonc.parse(text);
+    const items = parsed[nodeName];
+    const itemKeys: string[] = items.map((i: { [x: string]: string; }) => i[keyName]);
 
     let modified = text;
     // count how many items we inserted to ensure we are putting items at the end
     // in the same order as they are in the replacements array
     let insertCount = 0;
     replacements.map((replacement: { [x: string]: string; }) => {
-        let index = itemKeys.indexOf(replacement[keyName]);
+        const index = itemKeys.indexOf(replacement[keyName]);
 
-        let found = index >= 0;
-        let modificationIndex = found ? index : items.length + insertCount++;
-        let edits = jsonc.modify(modified, [nodeName, modificationIndex], replacement, modificationOptions);
-        let updated = jsonc.applyEdits(modified, edits);
+        const found = index >= 0;
+        const modificationIndex = found ? index : items.length + insertCount++;
+        const edits = jsonc.modify(modified, [nodeName, modificationIndex], replacement, modificationOptions);
+        const updated = jsonc.applyEdits(modified, edits);
 
         // we need to carry out the changes one by one, because we are inserting into the json
         // and so we cannot just figure out all the edits from the original text, instead we need to apply

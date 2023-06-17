@@ -24,7 +24,7 @@ class InternalServiceError extends Error {}
 // The error that is thrown if we are unable to get services through getProxy.
 class UnavaliableLaunchServiceError extends Error {}
 
-const workspaceFolderToken: string = "${workspaceFolder}";
+const workspaceFolderToken = "${workspaceFolder}";
 /**
  * Replaces '${workspaceFolder}' with the current folder while keeping path separators consistent.
  *
@@ -136,12 +136,12 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
      * @returns
      */
     private async resolveDebugConfigurationWithWorkspaceDebugInformationProvider(folder: vscode.WorkspaceFolder, projectPath: string): Promise<vscode.DebugConfiguration> {
-        let info: ProjectDebugInformation[] | undefined = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
+        const info: ProjectDebugInformation[] | undefined = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
         if (!info) {
             throw new Error("Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.");
         }
 
-        for (let index: number = 0; index < info.length; index++) {
+        for (let index = 0; index < info.length; index++) {
             const normalizedInfoProjectPath = info[index].projectPath.replace(/[\\/]+/g, '/');
             const normalizedProjectPath = projectPath.replace(/[\\/]+/g, '/');
 

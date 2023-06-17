@@ -23,17 +23,17 @@ export class Advisor {
 
     private _disposable: CompositeDisposable;
     private _server: OmniSharpServer;
-    private _packageRestoreCounter: number = 0;
+    private _packageRestoreCounter = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
 
     constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
         this._server = server;
 
-        let d1 = server.onProjectChange(this._onProjectChange, this);
-        let d2 = server.onProjectAdded(this._onProjectAdded, this);
-        let d3 = server.onProjectRemoved(this._onProjectRemoved, this);
-        let d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
-        let d5 = server.onPackageRestore(this._onPackageRestore, this);
+        const d1 = server.onProjectChange(this._onProjectChange, this);
+        const d2 = server.onProjectAdded(this._onProjectAdded, this);
+        const d3 = server.onProjectRemoved(this._onProjectRemoved, this);
+        const d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
+        const d5 = server.onPackageRestore(this._onPackageRestore, this);
         this._disposable = new CompositeDisposable(d1, d2, d3, d4, d5);
     }
 
@@ -97,11 +97,11 @@ export class Advisor {
     }
 
     private _isOverFileLimit(): boolean {
-        let opts = this.optionProvider.GetLatestOptions();
-        let fileLimit = opts.omnisharpOptions.maxProjectFileCountForDiagnosticAnalysis;
+        const opts = this.optionProvider.GetLatestOptions();
+        const fileLimit = opts.omnisharpOptions.maxProjectFileCountForDiagnosticAnalysis;
         if (fileLimit > 0) {
             let sourceFileCount = 0;
-            for (let key in this._projectSourceFileCounts) {
+            for (const key in this._projectSourceFileCounts) {
                 sourceFileCount += this._projectSourceFileCounts[key];
                 if (sourceFileCount > fileLimit) {
                     return true;
@@ -143,7 +143,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
 
         this._subscriptions.push(this._validateAllPipe
             .pipe(debounceTime(3000))
-            .subscribe(reason => {
+            .subscribe(() => {
                 if (this._validationAdvisor.shouldValidateAll()) {
                     this._validateEntireWorkspace();
                 }
@@ -170,7 +170,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
         this._validateCurrentDocumentPipe.complete();
         this._subscriptions.forEach(x => x.unsubscribe());
         this._disposable.dispose();
-    }
+    };
 
     private shouldIgnoreDocument(document: TextDocument) {
         if (document.languageId !== 'csharp') {
@@ -235,10 +235,10 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
             return;
         }
 
-        let source = new vscode.CancellationTokenSource();
+        const source = new vscode.CancellationTokenSource();
         try {
-            let value = await serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token);
-            let quickFixes = value.QuickFixes;
+            const value = await serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token);
+            const quickFixes = value.QuickFixes;
             // Easy case: If there are no diagnostics in the file, we can clear it quickly.
             if (quickFixes.length === 0) {
                 if (this._diagnostics.has(document.uri)) {
@@ -256,7 +256,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
             }
 
             // (re)set new diagnostics for this document
-            let diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
+            const diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
 
             this._diagnostics.set(document.uri, diagnosticsInFile.map(x => x.diagnostic));
         }
@@ -268,8 +268,8 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
     // On large workspaces (if maxProjectFileCountForDiagnosticAnalysis) is less than workspace size,
     // diagnostic fallback to mode where only open documents are analyzed.
     private async _validateOpenDocuments() {
-        for (let editor of vscode.window.visibleTextEditors) {
-            let document = editor.document;
+        for (const editor of vscode.window.visibleTextEditors) {
+            const document = editor.document;
             if (this.shouldIgnoreDocument(document)) {
                 continue;
             }
@@ -285,16 +285,16 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
     }
 
     private async _validateEntireWorkspace() {
-        let value = await serverUtils.codeCheck(this._server, {}, new vscode.CancellationTokenSource().token);
+        const value = await serverUtils.codeCheck(this._server, {}, new vscode.CancellationTokenSource().token);
 
-        let quickFixes = value.QuickFixes
+        const quickFixes = value.QuickFixes
             .sort((a, b) => a.FileName.localeCompare(b.FileName));
 
-        let entries: [vscode.Uri, vscode.Diagnostic[] | undefined][] = [];
+        const entries: [vscode.Uri, vscode.Diagnostic[] | undefined][] = [];
         let lastEntry: [vscode.Uri, vscode.Diagnostic[]] | undefined;
 
-        for (let diagnosticInFile of this._mapQuickFixesAsDiagnosticsInFile(quickFixes)) {
-            let uri = vscode.Uri.file(diagnosticInFile.fileName);
+        for (const diagnosticInFile of this._mapQuickFixesAsDiagnosticsInFile(quickFixes)) {
+            const uri = vscode.Uri.file(diagnosticInFile.fileName);
 
             if (lastEntry !== undefined && lastEntry[0].toString() === uri.toString()) {
                 lastEntry[1].push(diagnosticInFile.diagnostic);
@@ -320,15 +320,15 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
     }
 
     private _asDiagnosticInFileIfAny(quickFix: protocol.QuickFix): { diagnostic: vscode.Diagnostic, fileName: string } | undefined {
-        let display = this._getDiagnosticDisplay(quickFix, this._asDiagnosticSeverity(quickFix));
+        const display = this._getDiagnosticDisplay(quickFix, this._asDiagnosticSeverity(quickFix));
 
         if (display.severity === "hidden") {
             return undefined;
         }
 
-        let message = `${quickFix.Text} [${quickFix.Projects.map(n => this._asProjectLabel(n)).join(', ')}]`;
+        const message = `${quickFix.Text} [${quickFix.Projects.map(n => this._asProjectLabel(n)).join(', ')}]`;
 
-        let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, display.severity);
+        const diagnostic = new vscode.Diagnostic(toRange(quickFix), message, display.severity);
         diagnostic.source = 'csharp';
         diagnostic.code = quickFix.Id;
 
@@ -341,7 +341,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
 
     private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean } {
         // These hard coded values bring the goodness of fading even when analyzers are disabled.
-        let isFadeout = (quickFix.Tags?.find(x => x.toLowerCase() === 'unnecessary') !== undefined)
+        const isFadeout = (quickFix.Tags?.find(x => x.toLowerCase() === 'unnecessary') !== undefined)
             || quickFix.Id == "CS0162"  // CS0162: Unreachable code
             || quickFix.Id == "CS0219"  // CS0219: Unused variable
             || quickFix.Id == "CS8019"; // CS8019: Unnecessary using

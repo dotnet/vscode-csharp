@@ -21,7 +21,7 @@ export const getMonoVersion: IGetMonoVersion = async (environment: NodeJS.Proces
         });
 
         childprocess.stdout.on('close', () => {
-            let match = versionRegexp.exec(stdout);
+            const match = versionRegexp.exec(stdout);
 
             if (match && match.length > 1) {
                 resolve(match[1]);

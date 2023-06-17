@@ -25,5 +25,5 @@ export default abstract class AbstractProvider {
 
     dispose = () => {
         this._disposables.dispose();
-    }
+    };
 }

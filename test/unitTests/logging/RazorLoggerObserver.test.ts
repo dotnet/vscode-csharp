@@ -12,7 +12,7 @@ use(require("chai-string"));
 suite("RazorLoggerObserver", () => {
     suiteSetup(() => should());
     let logOutput = "";
-    let observer = new RazorLoggerObserver({
+    const observer = new RazorLoggerObserver({
         ...getNullChannel(),
         append: (text: string) => { logOutput += text; },
     });
@@ -22,19 +22,19 @@ suite("RazorLoggerObserver", () => {
     });
 
     test(`RazorPluginPathSpecified: Path is logged`, () => {
-        let event = new RazorPluginPathSpecified("somePath");
+        const event = new RazorPluginPathSpecified("somePath");
         observer.post(event);
         expect(logOutput).to.contain(event.path);
     });
 
     test(`RazorPluginPathDoesNotExist: Path is logged`, () => {
-        let event = new RazorPluginPathDoesNotExist("somePath");
+        const event = new RazorPluginPathDoesNotExist("somePath");
         observer.post(event);
         expect(logOutput).to.contain(event.path);
     });
 
     test(`RazorDevModeActive: Logs dev mode active`, () => {
-        let event = new RazorDevModeActive();
+        const event = new RazorDevModeActive();
         observer.post(event);
         expect(logOutput).to.contain('Razor dev mode active');
     });

@@ -8,7 +8,7 @@ import * as fs from 'async-file';
 import * as glob from 'glob-promise';
 import * as path from 'path';
 
-let vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));
+const vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));
 
 suite("Omnisharp-Vscode VSIX", async () => {
     suiteSetup(async () => {

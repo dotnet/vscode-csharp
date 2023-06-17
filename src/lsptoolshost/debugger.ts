@@ -16,11 +16,11 @@ import { DotnetConfigurationResolver } from '../shared/dotnetConfigurationProvid
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 export function registerDebugger(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer, platformInfo: PlatformInformation, optionProvider: OptionProvider, csharpOutputChannel: vscode.OutputChannel) {
-    let workspaceInformationProvider: IWorkspaceDebugInformationProvider = new RoslynWorkspaceDebugInformationProvider(languageServer);
+    const workspaceInformationProvider: IWorkspaceDebugInformationProvider = new RoslynWorkspaceDebugInformationProvider(languageServer);
 
-    let disposable = languageServer.registerStateChangeEvent(async (state) => {
+    const disposable = languageServer.registerStateChangeEvent(async (state) => {
         if (state === ServerStateChange.ProjectInitializationComplete) {
-            let csharpDevkitExtension = getCSharpDevKit();
+            const csharpDevkitExtension = getCSharpDevKit();
             if (!csharpDevkitExtension) {
                 // Update or add tasks.json and launch.json
                 await addAssetsIfNecessary(context, workspaceInformationProvider);

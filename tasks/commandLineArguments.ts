@@ -6,7 +6,7 @@
 import * as minimist from 'minimist';
 import * as path from 'path';
 
-let argv = minimist(process.argv.slice(2), {
+const argv = minimist(process.argv.slice(2), {
     boolean: ['retainVsix']
 });
 

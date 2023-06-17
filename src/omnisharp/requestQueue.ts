@@ -55,7 +55,7 @@ class RequestQueue {
     }
 
     public cancelRequest(request: Request) {
-        let index = this._pending.indexOf(request);
+        const index = this._pending.indexOf(request);
         if (index !== -1) {
             this._pending.splice(index, 1);
             this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, "pending", request.command));

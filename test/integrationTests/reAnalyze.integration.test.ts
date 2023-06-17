@@ -20,7 +20,7 @@ chai.use(require('chai-arrays'));
 chai.use(require('chai-fs'));
 
 function listenEvents<T extends BaseEvent>(stream: EventStream, type: EventType): T[] {
-    let results: T[] = [];
+    const results: T[] = [];
 
     stream.subscribe((event: BaseEvent) => {
         if (event.type === type) {
@@ -48,7 +48,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
 
         eventStream = activation.eventStream;
 
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         interfaceUri = vscode.Uri.file(path.join(projectDirectory, 'ISomeInterface.cs'));
         interfaceImplUri = vscode.Uri.file(path.join(projectDirectory, 'SomeInterfaceImpl.cs'));
 
@@ -63,11 +63,11 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When interface is manually renamed, then return correct analysis after re-analysis of project", async function () {
-        let diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
+        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
 
         await vscode.commands.executeCommand("vscode.open", interfaceUri);
 
-        let editor = vscode.window.activeTextEditor;
+        const editor = vscode.window.activeTextEditor;
 
         await editor!.edit(editorBuilder => editorBuilder.replace(new vscode.Range(2, 0, 2, 50), 'public interface ISomeInterfaceRenamedNow'));
 
@@ -83,7 +83,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When re-analyze of project is executed then eventually get notified about them.", async function () {
-        let diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
+        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
@@ -92,7 +92,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     });
 
     test("When re-analyze of all projects is executed then eventually get notified about them.", async function () {
-        let diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
+        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
 
         await vscode.commands.executeCommand('o.reanalyze.allProjects', interfaceImplUri);
 

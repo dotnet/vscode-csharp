@@ -17,9 +17,9 @@ chaiUse(require('chai-string'));
 suite("ErrorMessageObserver", () => {
     suiteSetup(() => should());
 
-    let vscode: vscode = getFakeVsCode();
+    const vscode: vscode = getFakeVsCode();
     let errorMessage: string | undefined;
-    let observer = new ErrorMessageObserver(vscode);
+    const observer = new ErrorMessageObserver(vscode);
 
     vscode.window.showErrorMessage = async (message: string, ...items: string[]) => {
         errorMessage = message;
@@ -43,18 +43,18 @@ suite("ErrorMessageObserver", () => {
 
     suite(`${IntegrityCheckFailure.name}`, () => {
         test("Package Description and url are logged when we are not retrying", () => {
-            let description = 'someDescription';
-            let url = 'someUrl';
-            let event = new IntegrityCheckFailure(description, url, false);
+            const description = 'someDescription';
+            const url = 'someUrl';
+            const event = new IntegrityCheckFailure(description, url, false);
             observer.post(event);
             expect(errorMessage).to.contain(description);
             expect(errorMessage).to.contain(url);
         });
 
         test("Nothing is shown if we are retrying", () => {
-            let description = 'someDescription';
-            let url = 'someUrl';
-            let event = new IntegrityCheckFailure(description, url, true);
+            const description = 'someDescription';
+            const url = 'someUrl';
+            const event = new IntegrityCheckFailure(description, url, true);
             observer.post(event);
             expect(errorMessage).to.be.undefined;
         });

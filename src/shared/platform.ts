@@ -82,9 +82,9 @@ export class LinuxDistribution {
         for (let line of lines) {
             line = line.trim();
 
-            let equalsIndex = line.indexOf('=');
+            const equalsIndex = line.indexOf('=');
             if (equalsIndex >= 0) {
-                let key = line.substring(0, equalsIndex);
+                const key = line.substring(0, equalsIndex);
                 let value = line.substring(equalsIndex + 1);
 
                 // Strip double quotes if necessary

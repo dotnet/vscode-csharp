@@ -9,7 +9,7 @@ import { codeExtensionPath, featureTestRunnerPath, integrationTestRunnerPath, mo
 import spawnNode from './spawnNode';
 
 gulp.task("test:feature", async () => {
-    let env = {
+    const env = {
         OSVC_SUITE: "featureTests",
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_PATH: path.join(testRootPath, "featureTests"),
@@ -64,7 +64,7 @@ gulp.task("test:integration:lsp", gulp.series(projectNames.map(projectName => `t
 gulp.task("test", gulp.series("test:feature", "test:unit", "test:integration:stdio"));
 
 async function runIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
-    let env = {
+    const env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, "integrationTests"),
         CODE_EXTENSIONS_PATH: codeExtensionPath,

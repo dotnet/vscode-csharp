@@ -35,7 +35,7 @@ export class MappingHelpers {
 
             // Re-map each edit to its position in the original Razor document.
             for (const edit of edits) {
-                let remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(documentUri, edit, serviceClient, logger, token);
+                const remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(documentUri, edit, serviceClient, logger, token);
 
                 if (remappedEdit) {
                     this.addElementToDictionary(map, documentUri, remappedEdit);

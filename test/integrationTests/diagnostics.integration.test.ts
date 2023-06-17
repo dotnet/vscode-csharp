@@ -41,9 +41,9 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);
 
-        let fileName = 'diagnostics.cs';
-        let secondaryFileName = 'secondaryDiagnostics.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const fileName = 'diagnostics.cs';
+        const secondaryFileName = 'secondaryDiagnostics.cs';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
 
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
         secondaryFileUri = vscode.Uri.file(path.join(projectDirectory, secondaryFileName));
@@ -114,13 +114,13 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Return unnecessary tag in case of unused variable", async function () {
-            let result = await poll(
+            const result = await poll(
                 () => vscode.languages.getDiagnostics(fileUri),
                 /*duration*/ 30 * 1000,
                 /*step*/ 500,
                 result => result.find(x => x.code === "CS0219") != undefined);
 
-            let cs0219 = result.find(x => x.code === "CS0219");
+            const cs0219 = result.find(x => x.code === "CS0219");
             isNotNull(cs0219);
             if (cs0219.tags) { // not currently making it through lsp 100% of the time
                 expect(cs0219.tags).to.include(vscode.DiagnosticTag.Unnecessary);
@@ -128,13 +128,13 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Return unnecessary tag in case of unnesessary using", async function () {
-            let result = await poll(
+            const result = await poll(
                 () => vscode.languages.getDiagnostics(fileUri),
                 /*duration*/ 30 * 1000,
                 /*step*/ 500,
                 result => result.find(x => x.code === "CS8019") != undefined);
 
-            let cs8019 = result.find(x => x.code === "CS8019");
+            const cs8019 = result.find(x => x.code === "CS8019");
             isNotNull(cs8019);
             if (cs8019.tags) { // not currently making it through lsp 100% of the time
                 expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
@@ -142,13 +142,13 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         });
 
         test("Return fadeout diagnostics like unused variables based on roslyn analyzers", async function () {
-            let result = await poll(
+            const result = await poll(
                 () => vscode.languages.getDiagnostics(fileUri),
                 /*duration*/ 30 * 1000,
                 /*step*/ 500,
                 result => result.find(x => x.code === "IDE0059") != undefined);
 
-            let ide0059 = result.find(x => x.code === "IDE0059");
+            const ide0059 = result.find(x => x.code === "IDE0059");
             isNotNull(ide0059);
             if (ide0059.tags) { // not currently making it through lsp 100% of the time
                 expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);

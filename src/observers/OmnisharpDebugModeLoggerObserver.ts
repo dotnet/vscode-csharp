@@ -36,7 +36,7 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
                 this.handleOmnisharpEventPacketReceived(<OmnisharpEventPacketReceived>event);
                 break;
         }
-    }
+    };
 
     private handleOmnisharpRequestMessage(event: OmnisharpRequestMessage) {
         this.logger.append(`makeRequest: ${event.request.command} (${event.id})`);

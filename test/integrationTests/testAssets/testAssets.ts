@@ -26,8 +26,8 @@ export class TestAssetProject {
     }
 
     async addFileWithContents(fileName: string, contents: string): Promise<vscode.Uri> {
-        let dir = this.projectDirectoryPath;
-        let loc = path.join(dir, fileName);
+        const dir = this.projectDirectoryPath;
+        const loc = path.join(dir, fileName);
         await fs.writeTextFile(loc, contents);
         return vscode.Uri.file(loc);
     }
@@ -103,14 +103,14 @@ export class TestAssetWorkspace {
     }
 
     async cleanupWorkspace(): Promise<void> {
-        let workspaceRootPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
-        let cleanUpRoutine = async () => {
+        const workspaceRootPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+        const cleanUpRoutine = async () => {
             await vscode.commands.executeCommand("workbench.action.closeAllEditors");
             await spawnGit(["clean", "-xdf", "."], { cwd: workspaceRootPath });
             await spawnGit(["checkout", "--", "."], { cwd: workspaceRootPath });
         };
 
-        let sleep = async () => new Promise((resolve) => setTimeout(resolve, 2 * 1000));
+        const sleep = async () => new Promise((resolve) => setTimeout(resolve, 2 * 1000));
 
         try {
             await cleanUpRoutine();

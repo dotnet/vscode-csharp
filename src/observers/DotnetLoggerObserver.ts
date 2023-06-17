@@ -19,5 +19,5 @@ export class DotnetLoggerObserver extends BaseLoggerObserver {
                 this.logger.appendLine((<CommandDotNetRestoreFailed>event).message);
                 break;
         }
-    }
+    };
 }

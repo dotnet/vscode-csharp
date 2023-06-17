@@ -25,9 +25,9 @@ export class OmnisharpDownloader {
     }
 
     public async DownloadAndInstallOmnisharp(version: string, useFramework: boolean, serverUrl: string, installPath: string): Promise<boolean> {
-        let runtimeDependencies = getRuntimeDependenciesPackages(this.packageJSON);
-        let omniSharpPackages = GetPackagesFromVersion(version, useFramework, runtimeDependencies, serverUrl, installPath);
-        let packagesToInstall = await getAbsolutePathPackagesToInstall(omniSharpPackages, this.platformInfo, this.extensionPath);
+        const runtimeDependencies = getRuntimeDependenciesPackages(this.packageJSON);
+        const omniSharpPackages = GetPackagesFromVersion(version, useFramework, runtimeDependencies, serverUrl, installPath);
+        const packagesToInstall = await getAbsolutePathPackagesToInstall(omniSharpPackages, this.platformInfo, this.extensionPath);
         if (packagesToInstall.length > 0) {
             this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
@@ -40,11 +40,11 @@ export class OmnisharpDownloader {
     }
 
     public async GetLatestVersion(serverUrl: string, latestVersionFileServerPath: string): Promise<string> {
-        let description = "Latest OmniSharp Version Information";
-        let url = `${serverUrl}/${latestVersionFileServerPath}`;
+        const description = "Latest OmniSharp Version Information";
+        const url = `${serverUrl}/${latestVersionFileServerPath}`;
         try {
             this.eventStream.post(new LatestBuildDownloadStart());
-            let versionBuffer = await DownloadFile(description, this.eventStream, this.networkSettingsProvider, url);
+            const versionBuffer = await DownloadFile(description, this.eventStream, this.networkSettingsProvider, url);
             return versionBuffer.toString('utf8');
         }
         catch (error) {

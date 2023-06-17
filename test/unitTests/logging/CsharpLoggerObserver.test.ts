@@ -15,11 +15,11 @@ suite("CsharpLoggerObserver", () => {
     suiteSetup(() => should());
 
     let logOutput = "";
-    let observer = new CsharpLoggerObserver({
+    const observer = new CsharpLoggerObserver({
         ...getNullChannel(),
         append: (text?: string) => { logOutput += text || ""; },
     });
-    let pkg: Package = {
+    const pkg: Package = {
         id: "id",
         description: "description",
         url: "url",
@@ -32,7 +32,7 @@ suite("CsharpLoggerObserver", () => {
     });
 
     test('PlatformInfo: Logs contain the Platform and Architecture', () => {
-        let event = new Event.LogPlatformInfo(new PlatformInformation("linux", "MyArchitecture"));
+        const event = new Event.LogPlatformInfo(new PlatformInformation("linux", "MyArchitecture"));
         observer.post(event);
         expect(logOutput).to.contain("linux");
         expect(logOutput).to.contain("MyArchitecture");
@@ -40,21 +40,21 @@ suite("CsharpLoggerObserver", () => {
 
     suite("InstallationFailure", () => {
         test('Stage and Error is logged if not a PackageError', () => {
-            let event = new Event.InstallationFailure("someStage", new Error("someError"));
+            const event = new Event.InstallationFailure("someStage", new Error("someError"));
             observer.post(event);
             expect(logOutput).to.contain(event.stage);
             expect(logOutput).to.contain(event.error.toString());
         });
 
         test('Stage and Error is logged if a PackageError without inner error', () => {
-            let event = new Event.InstallationFailure("someStage", new PackageError("someError", pkg, undefined));
+            const event = new Event.InstallationFailure("someStage", new PackageError("someError", pkg, undefined));
             observer.post(event);
             expect(logOutput).to.contain(event.stage);
             expect(logOutput).to.contain(event.error.message);
         });
 
         test('Stage and Inner error is logged if a PackageError without inner error', () => {
-            let event = new Event.InstallationFailure("someStage", new PackageError("someError", pkg, new Error("innerError")));
+            const event = new Event.InstallationFailure("someStage", new PackageError("someError", pkg, new Error("innerError")));
             observer.post(event);
             expect(logOutput).to.contain(event.stage);
             expect(logOutput).to.contain(event.error.innerError.toString());
@@ -62,7 +62,7 @@ suite("CsharpLoggerObserver", () => {
     });
 
     suite('Download', () => {
-        let packageName = "somePackage";
+        const packageName = "somePackage";
         [
             {
                 events: [],
@@ -104,7 +104,7 @@ suite("CsharpLoggerObserver", () => {
             test(`Prints the download status to the logger as ${element.expected}`, () => {
                 let logOutput = "";
 
-                let observer = new CsharpLoggerObserver({
+                const observer = new CsharpLoggerObserver({
                     ...getNullChannel(),
                     appendLine: (text?: string) => { logOutput += `${text}\n`; },
                     append: (text?: string) => { logOutput += text; }
@@ -132,60 +132,60 @@ suite("CsharpLoggerObserver", () => {
         }));
 
     test(`ActivationFailure: Some message is logged`, () => {
-        let event = new Event.ActivationFailure();
+        const event = new Event.ActivationFailure();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
     test(`ProjectJsonDeprecatedWarning: Some message is logged`, () => {
-        let event = new Event.ProjectJsonDeprecatedWarning();
+        const event = new Event.ProjectJsonDeprecatedWarning();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
     test(`InstallationSuccess: Some message is logged`, () => {
-        let event = new Event.InstallationSuccess();
+        const event = new Event.InstallationSuccess();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });
 
     test(`InstallationProgress: Progress message is logged`, () => {
-        let event = new Event.InstallationStart("somPackage");
+        const event = new Event.InstallationStart("somPackage");
         observer.post(event);
         expect(logOutput).to.contain(event.packageDescription);
     });
 
     test('PackageInstallation: Package name is logged', () => {
-        let event = new Event.PackageInstallation("somePackage");
+        const event = new Event.PackageInstallation("somePackage");
         observer.post(event);
         expect(logOutput).to.contain(event.packageInfo);
     });
 
     test('DownloadFallBack: The fallbackurl is logged', () => {
-        let event = new Event.DownloadFallBack("somrurl");
+        const event = new Event.DownloadFallBack("somrurl");
         observer.post(event);
         expect(logOutput).to.contain(event.fallbackUrl);
     });
 
     test(`${Event.IntegrityCheckFailure.name}: Package Description is logged when we are retrying`, () => {
-        let description = 'someDescription';
-        let url = 'someUrl';
-        let event = new Event.IntegrityCheckFailure(description, url, true);
+        const description = 'someDescription';
+        const url = 'someUrl';
+        const event = new Event.IntegrityCheckFailure(description, url, true);
         observer.post(event);
         expect(logOutput).to.contain(description);
     });
 
     test(`${Event.IntegrityCheckFailure.name}: Package Description and url are logged when we are not retrying`, () => {
-        let description = 'someDescription';
-        let url = 'someUrl';
-        let event = new Event.IntegrityCheckFailure(description, url, false);
+        const description = 'someDescription';
+        const url = 'someUrl';
+        const event = new Event.IntegrityCheckFailure(description, url, false);
         observer.post(event);
         expect(logOutput).to.contain(description);
         expect(logOutput).to.contain(url);
     });
 
     test(`${Event.IntegrityCheckSuccess.name}: Some message is logged`, () => {
-        let event = new Event.IntegrityCheckSuccess();
+        const event = new Event.IntegrityCheckSuccess();
         observer.post(event);
         expect(logOutput).to.not.be.empty;
     });

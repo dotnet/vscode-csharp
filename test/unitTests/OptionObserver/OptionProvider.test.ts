@@ -28,12 +28,12 @@ suite('OptionProvider', () => {
     });
 
     test("Gives the latest options when options are changed", () => {
-        let changingConfig = "omnisharp";
+        const changingConfig = "omnisharp";
         updateConfig(vscode, changingConfig, 'path', "somePath");
         optionObservable.next(Options.Read(vscode));
         updateConfig(vscode, changingConfig, 'path', "anotherPath");
         optionObservable.next(Options.Read(vscode));
-        let options = optionProvider.GetLatestOptions();
+        const options = optionProvider.GetLatestOptions();
         expect(options.commonOptions.serverPath).to.be.equal("anotherPath");
     });
 });

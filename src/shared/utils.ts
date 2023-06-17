@@ -36,7 +36,7 @@ export function findNetStandardTargetFramework(tfmShortNames: string[]): string 
 }
 
 export function isWebProject(projectPath: string): boolean {
-    let projectFileText = fs.readFileSync(projectPath, 'utf8');
+    const projectFileText = fs.readFileSync(projectPath, 'utf8');
 
     // Assume that this is an MSBuild project. In that case, look for the 'Sdk="Microsoft.NET.Sdk.Web"' attribute.
     // TODO: Have OmniSharp provide the list of SDKs used by a project and check that list instead.

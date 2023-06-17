@@ -22,7 +22,7 @@ export default class Disposable implements IDisposable {
 
     public dispose = (): void => {
         this.onDispose();
-    }
+    };
 }
 
 export interface IDisposable {

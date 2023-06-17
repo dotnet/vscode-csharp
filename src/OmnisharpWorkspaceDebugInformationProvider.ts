@@ -21,7 +21,7 @@ export class OmnisharpWorkspaceDebugInformationProvider implements IWorkspaceDeb
 
         const workspaceInfo = await serverUtils.requestWorkspaceInformation(this.server);
 
-        let projects: ProjectDebugInformation[] | undefined = workspaceInfo.MsBuild?.Projects.map(p => {
+        const projects: ProjectDebugInformation[] | undefined = workspaceInfo.MsBuild?.Projects.map(p => {
             const targetsDotnetCore = findNetCoreTargetFramework(p.TargetFrameworks.map(tf => tf.ShortName)) !== undefined;
             return {
                 projectPath: p.Path,

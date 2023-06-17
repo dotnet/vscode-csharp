@@ -12,7 +12,7 @@ export default class OmniSharpFormatProvider extends AbstractSupport implements 
 
     public async provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
 
-        let request = <protocol.FormatRangeRequest>{
+        const request = <protocol.FormatRangeRequest>{
             FileName: document.fileName,
             Line: range.start.line,
             Column: range.start.character,
@@ -21,19 +21,19 @@ export default class OmniSharpFormatProvider extends AbstractSupport implements 
         };
 
         try {
-            let res = await serverUtils.formatRange(this._server, request, token);
+            const res = await serverUtils.formatRange(this._server, request, token);
             if (res && Array.isArray(res.Changes)) {
                 return res.Changes.map(OmniSharpFormatProvider._asEditOptionation);
             }
         }
-        catch {}
+        catch { /* empty */ }
 
         return [];
     }
 
     public async provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
 
-        let request = <protocol.FormatAfterKeystrokeRequest>{
+        const request = <protocol.FormatAfterKeystrokeRequest>{
             FileName: document.fileName,
             Line: position.line,
             Column: position.character,
@@ -41,12 +41,12 @@ export default class OmniSharpFormatProvider extends AbstractSupport implements 
         };
 
         try {
-            let res = await serverUtils.formatAfterKeystroke(this._server, request, token);
+            const res = await serverUtils.formatAfterKeystroke(this._server, request, token);
             if (res && Array.isArray(res.Changes)) {
                 return res.Changes.map(OmniSharpFormatProvider._asEditOptionation);
             }
         }
-        catch {}
+        catch { /* empty */ }
 
         return [];
     }

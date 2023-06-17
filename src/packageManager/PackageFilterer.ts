@@ -8,7 +8,7 @@ import * as util from '../common';
 import { AbsolutePathPackage } from "./AbsolutePathPackage";
 
 export async function getNotInstalledPackagesForPlatform(packages: AbsolutePathPackage[], platformInfo: PlatformInformation): Promise<AbsolutePathPackage[]> {
-    let platformPackages = filterPlatformPackages(packages, platformInfo);
+    const platformPackages = filterPlatformPackages(packages, platformInfo);
     return filterAlreadyInstalledPackages(platformPackages);
 }
 

@@ -8,7 +8,7 @@
 //
 // All messages are sent as UTF-8 JSON text with a tailing '\n'
 export namespace DebuggerEventsProtocol {
-    export module EventType {
+    export namespace EventType {
         // Indicates that the vsdbg-ui has received the attach or launch request and is starting up
         export const Starting = "starting";
         // Indicates that vsdbg-ui has successfully launched the specified process.

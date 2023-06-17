@@ -22,5 +22,5 @@ export class CsharpChannelObserver extends BaseChannelObserver {
                 this.showChannel(false);
                 break;
         }
-    }
+    };
 }

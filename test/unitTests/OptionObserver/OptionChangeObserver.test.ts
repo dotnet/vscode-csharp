@@ -96,7 +96,7 @@ suite("OmniSharpConfigChangeObserver", () => {
     });
 
     function getVSCode(): vscode {
-        let vscode = getVSCodeWithConfig();
+        const vscode = getVSCodeWithConfig();
         vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
             return new Promise<T | undefined>(resolve => {

@@ -176,7 +176,7 @@ export class StdioEngine implements IEngine {
                 cleanupPromise = utils
                     .getUnixChildProcessIds(this._serverProcess.pid!)
                     .then((children) => {
-                        for (let child of children) {
+                        for (const child of children) {
                             process.kill(child, 'SIGTERM');
                         }
 
@@ -185,7 +185,7 @@ export class StdioEngine implements IEngine {
             }
         }
 
-        let disposables = this._disposables;
+        const disposables = this._disposables;
         this._disposables = undefined;
 
         return cleanupPromise.then(() => {
@@ -199,7 +199,7 @@ export class StdioEngine implements IEngine {
 
     public async waitForInitialize(): Promise<void> {
         while (!this._requestQueue.isEmpty()) {
-            let p = new Promise((resolve) => setTimeout(resolve, 100));
+            const p = new Promise((resolve) => setTimeout(resolve, 100));
             await p;
         }
     }
@@ -246,7 +246,7 @@ export class StdioEngine implements IEngine {
         }
 
         this._serverProcess.stderr!.on('data', (data: Buffer) => {
-            let trimData = removeBOMFromBuffer(data);
+            const trimData = removeBOMFromBuffer(data);
             if (trimData.length > 0) {
                 this._fireEvent(Events.StdErr, trimData.toString());
             }
@@ -432,7 +432,7 @@ export class StdioEngine implements IEngine {
     ): Promise<TResponse> {
         let request: Request;
 
-        let promise = new Promise<TResponse>((resolve, reject) => {
+        const promise = new Promise<TResponse>((resolve, reject) => {
             request = {
                 command,
                 data,

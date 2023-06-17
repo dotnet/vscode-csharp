@@ -13,7 +13,7 @@ suite("DotnetChannelObserver", () => {
     let hasShown: boolean;
     let hasCleared: boolean;
 
-    let observer = new DotNetChannelObserver({
+    const observer = new DotNetChannelObserver({
         ...getNullChannel(),
         clear: () => { hasCleared = true; },
         show: () => { hasShown = true; }
@@ -25,7 +25,7 @@ suite("DotnetChannelObserver", () => {
     });
 
     test(`CommandDotNetRestoreStart : Clears and shows the channel`, () => {
-        let event = new CommandDotNetRestoreStart();
+        const event = new CommandDotNetRestoreStart();
         observer.post(event);
         expect(hasCleared).to.be.true;
         expect(hasShown).to.be.true;

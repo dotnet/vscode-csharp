@@ -199,7 +199,7 @@ export default class OmniSharpSemanticTokensProvider extends AbstractProvider im
             return null;
         }
 
-        let req = createRequest<protocol.V2.SemanticHighlightRequest>(document, new vscode.Position(0, 0));
+        const req = createRequest<protocol.V2.SemanticHighlightRequest>(document, new vscode.Position(0, 0));
         req.Range = range;
 
         const versionBeforeRequest = document.version;
@@ -219,7 +219,7 @@ export default class OmniSharpSemanticTokensProvider extends AbstractProvider im
         }
 
         const builder = new vscode.SemanticTokensBuilder();
-        for (let span of response.Spans) {
+        for (const span of response.Spans) {
             const tokenType = classificationToToken[span.Type];
             if (tokenType === undefined) {
                 continue;
@@ -235,7 +235,7 @@ export default class OmniSharpSemanticTokensProvider extends AbstractProvider im
             }
 
             // We can use the returned range because we made sure the document version is the same.
-            let spanRange = toRange2(span);
+            const spanRange = toRange2(span);
             for (let line = spanRange.start.line; line <= spanRange.end.line; line++) {
                 const startCharacter = (line === spanRange.start.line ? spanRange.start.character : 0);
                 const endCharacter = (line === spanRange.end.line ? spanRange.end.character : document.lineAt(line).text.length);

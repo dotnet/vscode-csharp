@@ -31,7 +31,7 @@ async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | nul
         return;
     }
 
-    let actualRanges = [];
+    const actualRanges = [];
     let lastLine = 0;
     let lastCharacter = 0;
     for (let i = 0; i < actual.data.length; i += 5) {
@@ -68,14 +68,14 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
     });
 
     test('Semantic Highlighting returns null when disabled', async () => {
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        const csharpConfig = vscode.workspace.getConfiguration('csharp');
         await csharpConfig.update('semanticHighlighting.enabled', false, vscode.ConfigurationTarget.Global);
 
         await assertTokens(fileUri, /*expected*/ null);
     });
 
     test('Semantic Highlighting returns classified tokens when enabled', async () => {
-        let csharpConfig = vscode.workspace.getConfiguration('csharp');
+        const csharpConfig = vscode.workspace.getConfiguration('csharp');
         await csharpConfig.update('semanticHighlighting.enabled', true, vscode.ConfigurationTarget.Global);
 
         await assertTokens(fileUri, [

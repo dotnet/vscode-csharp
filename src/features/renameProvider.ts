@@ -13,13 +13,13 @@ export default class OmniSharpRenameProvider extends AbstractSupport implements 
 
     public async provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit | undefined> {
 
-        let req = createRequest<protocol.RenameRequest>(document, position);
+        const req = createRequest<protocol.RenameRequest>(document, position);
         req.WantsTextChanges = true;
         req.RenameTo = newName;
         req.ApplyTextChanges = false;
 
         try {
-            let response = await serverUtils.rename(this._server, req, token);
+            const response = await serverUtils.rename(this._server, req, token);
 
             if (!response) {
                 return undefined;

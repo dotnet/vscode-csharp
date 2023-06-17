@@ -21,7 +21,7 @@ import { AbsolutePath } from '../../../src/packageManager/AbsolutePath';
 import { DownloadValidator } from '../../../src/packageManager/isValidDownload';
 
 chai.use(chaiAsPromised);
-let expect = chai.expect;
+const expect = chai.expect;
 
 suite(`${downloadAndInstallPackages.name}`, () => {
     let tmpInstallDir: TmpAsset;
@@ -32,7 +32,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
     let eventBus: TestEventBus;
     let downloadablePackage: AbsolutePathPackage[];
     let notDownloadablePackage: AbsolutePathPackage[];
-    let downloadValidator: DownloadValidator = () => true;
+    const downloadValidator: DownloadValidator = () => true;
 
     const packageDescription = "Test Package";
     const networkSettingsProvider = () => new NetworkSettings('', false);
@@ -70,8 +70,8 @@ suite(`${downloadAndInstallPackages.name}`, () => {
     suite("If the download and install succeeds", () => {
         test("The expected files are installed at the specified path", async () => {
             await downloadAndInstallPackages(downloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
-            for (let elem of testZip.files) {
-                let filePath = path.join(tmpDirPath, elem.path);
+            for (const elem of testZip.files) {
+                const filePath = path.join(tmpDirPath, elem.path);
                 expect(await util.fileExists(filePath)).to.be.true;
             }
         });
@@ -82,7 +82,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
         });
 
         test("Events are created in the correct order", async () => {
-            let eventsSequence = [
+            const eventsSequence = [
                 new PackageInstallStart(),
                 new DownloadStart(packageDescription),
                 new DownloadSizeObtained(testZip.size),
@@ -97,7 +97,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
 
         test("If the download validation fails for the first time and passed second time, the correct events are logged", async () => {
             let count = 1;
-            let downloadValidator = () => {
+            const downloadValidator = () => {
                 if (count > 1) {
                     return true; // fail the first time and then pass the subsequent times
                 }
@@ -106,7 +106,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 return false;
             };
 
-            let eventsSequence = [
+            const eventsSequence = [
                 new PackageInstallStart(),
                 new DownloadStart(packageDescription),
                 new DownloadSizeObtained(testZip.size),
@@ -127,8 +127,8 @@ suite(`${downloadAndInstallPackages.name}`, () => {
 
     suite("If the download and install fails", () => {
         test("If the download succeeds but the validation fails, events are logged", async () => {
-            let downloadValidator = () => false;
-            let eventsSequence = [
+            const downloadValidator = () => false;
+            const eventsSequence = [
                 new PackageInstallStart(),
                 new DownloadStart(packageDescription),
                 new DownloadSizeObtained(testZip.size),
@@ -147,18 +147,18 @@ suite(`${downloadAndInstallPackages.name}`, () => {
         });
 
         test("Returns false when the download fails", async () => {
-            let eventsSequence = [
+            const eventsSequence = [
                 new PackageInstallStart(),
                 new DownloadStart(packageDescription),
                 new DownloadFailure(`Failed to download from ${notDownloadablePackage[0].url}. Error code '404')`),
             ];
 
             await downloadAndInstallPackages(notDownloadablePackage, networkSettingsProvider, eventStream, downloadValidator);
-            let obtainedEvents = eventBus.getEvents();
+            const obtainedEvents = eventBus.getEvents();
             expect(obtainedEvents[0]).to.be.deep.equal(eventsSequence[0]);
             expect(obtainedEvents[1]).to.be.deep.equal(eventsSequence[1]);
             expect(obtainedEvents[2]).to.be.deep.equal(eventsSequence[2]);
-            let installationFailureEvent = <InstallationFailure>obtainedEvents[3];
+            const installationFailureEvent = <InstallationFailure>obtainedEvents[3];
             expect(installationFailureEvent.stage).to.be.equal("downloadPackage");
             expect(installationFailureEvent.error).to.not.be.null;
         });

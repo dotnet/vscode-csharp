@@ -32,11 +32,11 @@ const deferredSet = new Set<string>();
 
 const nonDeferredSet = new Set<string>();
 
-for (let command of priorityCommands) {
+for (const command of priorityCommands) {
     nonDeferredSet.add(command);
 }
 
-for (let command of normalCommands) {
+for (const command of normalCommands) {
     nonDeferredSet.add(command);
 }
 

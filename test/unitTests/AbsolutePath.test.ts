@@ -24,7 +24,7 @@ suite(AbsolutePath.name, () => {
     });
 
     test(`${AbsolutePath.getAbsolutePath.name}: Returns an absolute path based by resolving the path with the value to prepend`, () => {
-        let absolutePath = AbsolutePath.getAbsolutePath(tmpPath.name, "somePath");
+        const absolutePath = AbsolutePath.getAbsolutePath(tmpPath.name, "somePath");
         expect(absolutePath.value).to.be.equal(join(tmpPath.name, "somePath"));
     });
 });

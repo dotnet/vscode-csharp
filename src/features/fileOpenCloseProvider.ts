@@ -24,8 +24,8 @@ class FileOpenCloseProvider implements IDisposable {
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
 
         setTimeout(async () => {
-            for (let editor of vscode.window.visibleTextEditors) {
-                let document = editor.document;
+            for (const editor of vscode.window.visibleTextEditors) {
+                const document = editor.document;
 
                 await this._onDocumentOpen(document);
             }

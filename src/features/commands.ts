@@ -33,7 +33,7 @@ export default function registerCommands(
         monoResolver: IHostExecutableResolver,
         dotnetResolver: IHostExecutableResolver,
         workspaceInformationProvider: IWorkspaceDebugInformationProvider): CompositeDisposable {
-    let disposable = new CompositeDisposable();
+    const disposable = new CompositeDisposable();
     disposable.add(vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server, optionProvider)));
     disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
@@ -41,8 +41,8 @@ export default function registerCommands(
     disposable.add(vscode.commands.registerCommand('dotnet.restore.project', async () => pickProjectAndDotnetRestore(server, eventStream)));
     disposable.add(vscode.commands.registerCommand('dotnet.restore.all', async () => dotnetRestoreAllProjects(server, eventStream)));
 
-    disposable.add(vscode.commands.registerCommand('o.reanalyze.allProjects', async () => reAnalyzeAllProjects(server, eventStream)));
-    disposable.add(vscode.commands.registerCommand('o.reanalyze.currentProject', async () => reAnalyzeCurrentProject(server, eventStream)));
+    disposable.add(vscode.commands.registerCommand('o.reanalyze.allProjects', async () => reAnalyzeAllProjects(server)));
+    disposable.add(vscode.commands.registerCommand('o.reanalyze.currentProject', async () => reAnalyzeCurrentProject(server)));
 
     // Register command for generating tasks.json and launch.json assets.
     disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(workspaceInformationProvider, selectedIndex)));
@@ -74,12 +74,12 @@ async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSh
 }
 
 async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider): Promise<void> {
-    let options = optionProvider.GetLatestOptions();
+    const options = optionProvider.GetLatestOptions();
     return findLaunchTargets(options).then(async targets => {
 
-        let currentPath = server.getSolutionPathOrFolder();
+        const currentPath = server.getSolutionPathOrFolder();
         if (currentPath) {
-            for (let target of targets) {
+            for (const target of targets) {
                 if (target.target === currentPath) {
                     target.label = `\u2713 ${target.label}`;
                 }
@@ -134,20 +134,20 @@ function projectsToCommands(projects: protocol.ProjectDescriptor[], eventStream:
 }
 
 async function pickProjectAndDotnetRestore(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
-    let descriptors = await getProjectDescriptors(server);
+    const descriptors = await getProjectDescriptors(server);
     eventStream.post(new CommandDotNetRestoreStart());
-    let commands = await Promise.all(projectsToCommands(descriptors, eventStream));
-    let command = await vscode.window.showQuickPick(commands);
+    const commands = await Promise.all(projectsToCommands(descriptors, eventStream));
+    const command = await vscode.window.showQuickPick(commands);
     if (command) {
         return command.execute();
     }
 }
 
-async function reAnalyzeAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+async function reAnalyzeAllProjects(server: OmniSharpServer): Promise<void> {
     await serverUtils.reAnalyze(server, {});
 }
 
-async function reAnalyzeCurrentProject(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
+async function reAnalyzeCurrentProject(server: OmniSharpServer): Promise<void> {
     const activeTextEditor = vscode.window.activeTextEditor;
     if (activeTextEditor === undefined) {
         return;
@@ -159,9 +159,9 @@ async function reAnalyzeCurrentProject(server: OmniSharpServer, eventStream: Eve
 }
 
 async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: EventStream): Promise<void> {
-    let descriptors = await getProjectDescriptors(server);
+    const descriptors = await getProjectDescriptors(server);
     eventStream.post(new CommandDotNetRestoreStart());
-    for (let descriptor of descriptors) {
+    for (const descriptor of descriptors) {
         await dotnetRestore(descriptor.Directory, eventStream, descriptor.Name);
     }
 }
@@ -171,8 +171,8 @@ async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.
         return Promise.reject('OmniSharp server is not running.');
     }
 
-    let info = await serverUtils.requestWorkspaceInformation(server);
-    let descriptors = protocol.getDotNetCoreProjectDescriptors(info);
+    const info = await serverUtils.requestWorkspaceInformation(server);
+    const descriptors = protocol.getDotNetCoreProjectDescriptors(info);
     if (descriptors.length === 0) {
         return Promise.reject("No .NET Core projects found");
     }
@@ -182,14 +182,14 @@ async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.
 
 export async function dotnetRestore(cwd: string, eventStream: EventStream, filePath?: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        let cmd = 'dotnet';
-        let args = ['restore'];
+        const cmd = 'dotnet';
+        const args = ['restore'];
 
         if (filePath) {
             args.push(filePath);
         }
 
-        let dotnet = cp.spawn(cmd, args, { cwd: cwd, env: process.env });
+        const dotnet = cp.spawn(cmd, args, { cwd: cwd, env: process.env });
 
         function handleData(stream: NodeJS.ReadableStream) {
             stream.on('data', chunk => {
@@ -204,7 +204,7 @@ export async function dotnetRestore(cwd: string, eventStream: EventStream, fileP
         handleData(dotnet.stdout);
         handleData(dotnet.stderr);
 
-        dotnet.on('close', (code, signal) => {
+        dotnet.on('close', (code) => {
             eventStream.post(new CommandDotNetRestoreSucceeded(`Done: ${code}.`));
             resolve();
         });
