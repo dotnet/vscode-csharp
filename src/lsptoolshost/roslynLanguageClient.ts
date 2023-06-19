@@ -8,7 +8,7 @@ import CompositeDisposable from "../CompositeDisposable";
 import { IDisposable } from "../Disposable";
 
 /**
- * Implementation of the base LangaugeClient type that allows for additional items to be disposed of
+ * Implementation of the base LanguageClient type that allows for additional items to be disposed of
  * when the base LanguageClient instance is disposed.
  */
 export class RoslynLanguageClient extends LanguageClient {
