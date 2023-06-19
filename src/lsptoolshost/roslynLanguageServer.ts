@@ -14,7 +14,6 @@ import { UriConverter } from './uriConverter';
 import {
     DidChangeTextDocumentNotification,
     DidCloseTextDocumentNotification,
-    LanguageClient,
     LanguageClientOptions,
     ServerOptions,
     DidCloseTextDocumentParams,
@@ -56,6 +55,7 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../CSharpIntelliCodeExports';
 import { csharpDevkitExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { randomUUID } from 'crypto';
+import { RoslynLanguageClientInstance } from './roslynLanguageClient';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -89,7 +89,7 @@ export class RoslynLanguageServer {
      * The timeout for stopping the language server (in ms).
      */
     private static _stopTimeout: number = 10000;
-    private _languageClient: LanguageClient | undefined;
+    private _languageClient: RoslynLanguageClientInstance | undefined;
 
     /**
      * Flag indicating if C# Devkit was installed the last time we activated.
@@ -192,7 +192,7 @@ export class RoslynLanguageServer {
         };
 
         // Create the language client and start the client.
-        let client = new LanguageClient(
+        let client = new RoslynLanguageClientInstance(
             'microsoft-codeanalysis-languageserver',
             'Microsoft.CodeAnalysis.LanguageServer',
             serverOptions,
@@ -460,7 +460,7 @@ export class RoslynLanguageServer {
         return childProcess;
     }
 
-    private registerRazor(client: LanguageClient) {
+    private registerRazor(client: RoslynLanguageClientInstance) {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
         client.onRequest(
@@ -472,40 +472,40 @@ export class RoslynLanguageServer {
 
         // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
         // notifications along to Roslyn. didOpen notifications are handled separately via the vscode.openTextDocument method.
-        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidChangeCommand, (notification: DidChangeTextDocumentParams) => {
+        client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.roslynDidChangeCommand, (notification: DidChangeTextDocumentParams) => {
             client.sendNotification(DidChangeTextDocumentNotification.method, notification);
-        });
-        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidCloseCommand, (notification: DidCloseTextDocumentParams) => {
+        }));
+        client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.roslynDidCloseCommand, (notification: DidCloseTextDocumentParams) => {
             client.sendNotification(DidCloseTextDocumentNotification.method, notification);
-        });
-        vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
+        }));
+        client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
             let diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
             return await this.sendRequest(diagnosticRequestType, request, CancellationToken.None);
-        });
+        }));
 
         // The VS Code API for code actions (and the vscode.CodeAction type) doesn't support everything that LSP supports,
         // namely the data property, which Razor needs to identify which code actions are on their allow list, so we need
         // to expose a command for them to directly invoke our code actions LSP endpoints, rather than use built-in commands.
-        vscode.commands.registerCommand(RoslynLanguageServer.provideCodeActionsCommand, async (request: CodeActionParams) => {
+        client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.provideCodeActionsCommand, async (request: CodeActionParams) => {
             return await this.sendRequest(CodeActionRequest.type, request, CancellationToken.None);
-        });
-        vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
+        }));
+        client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
             return await this.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
-        });
+        }));
 
-        vscode.commands.registerCommand(RoslynLanguageServer.provideCompletionsCommand, async (request: CompletionParams) => {
+        client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.provideCompletionsCommand, async (request: CompletionParams) => {
             return await this.sendRequest(CompletionRequest.type, request, CancellationToken.None);
-        });
-        vscode.commands.registerCommand(RoslynLanguageServer.resolveCompletionsCommand, async (request: CompletionItem) => {
+        }));
+        client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.resolveCompletionsCommand, async (request: CompletionItem) => {
             return await this.sendRequest(CompletionResolveRequest.type, request, CancellationToken.None);
-        });
+        }));
 
         // Roslyn is responsible for producing a json file containing information for Razor, that comes from the compilation for
         // a project. We want to defer this work until necessary, so this command is called by the Razor document manager to tell
         // us when they need us to initialize the Razor things.
-        vscode.commands.registerCommand(RoslynLanguageServer.razorInitializeCommand, () => {
+        client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.razorInitializeCommand, () => {
             client.sendNotification("razor/initialize", { });
-        });
+        }));
     }
 
     private getServerFileName() {
