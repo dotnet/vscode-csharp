@@ -53,15 +53,13 @@ import { Options } from '../shared/options';
 import { ServerStateChange } from './ServerStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../CSharpIntelliCodeExports';
-import { csharpDevkitExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { csharpDevkitExtensionId, csharpDevkitIntelliCodeExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { randomUUID } from 'crypto';
-import { RoslynLanguageClientInstance } from './roslynLanguageClient';
+import { RoslynLanguageClient } from './roslynLanguageClient';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
-
-export const CSharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
 
 export class RoslynLanguageServer {
 
@@ -89,7 +87,7 @@ export class RoslynLanguageServer {
      * The timeout for stopping the language server (in ms).
      */
     private static _stopTimeout: number = 10000;
-    private _languageClient: RoslynLanguageClientInstance | undefined;
+    private _languageClient: RoslynLanguageClient | undefined;
 
     /**
      * Flag indicating if C# Devkit was installed the last time we activated.
@@ -161,7 +159,7 @@ export class RoslynLanguageServer {
         };
 
         // Create the language client and start the client.
-        let client = new RoslynLanguageClientInstance(
+        let client = new RoslynLanguageClient(
             'microsoft-codeanalysis-languageserver',
             'Microsoft.CodeAnalysis.LanguageServer',
             serverOptions,
@@ -388,7 +386,7 @@ export class RoslynLanguageServer {
             this._wasActivatedWithCSharpDevkit = true;
 
             // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
-            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(CSharpDevkitIntelliCodeExtensionId);
+            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(csharpDevkitIntelliCodeExtensionId);
             if (csharpDevkitIntelliCodeExtension) {
                 _channel.appendLine("Activating C# + C# Dev Kit + C# IntelliCode...");
                 const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension);
@@ -432,7 +430,7 @@ export class RoslynLanguageServer {
         return childProcess;
     }
 
-    private registerRazor(client: RoslynLanguageClientInstance) {
+    private registerRazor(client: RoslynLanguageClient) {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
         client.onRequest(
@@ -480,7 +478,7 @@ export class RoslynLanguageServer {
         }));
     }
 
-    private registerExtensionsChanged(languageClient: RoslynLanguageClientInstance) {
+    private registerExtensionsChanged(languageClient: RoslynLanguageClient) {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
         languageClient.addDisposable(vscode.extensions.onDidChange(async () => {
             let csharpDevkitExtension = getCSharpDevKit();
@@ -505,7 +503,7 @@ export class RoslynLanguageServer {
         }));
     }
 
-    private registerTelemtryChanged(languageClient: RoslynLanguageClientInstance) {
+    private registerTelemtryChanged(languageClient: RoslynLanguageClient) {
         // Subscribe to telemetry events so we can enable/disable as needed
         languageClient.addDisposable(vscode.env.onDidChangeTelemetryEnabled((isEnabled: boolean) => {
             const title = 'Restart Language Server';

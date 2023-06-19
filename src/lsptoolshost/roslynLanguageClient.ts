@@ -3,11 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { LanguageClient, LanguageClientOptions, ServerOptions, Trace } from "vscode-languageclient/node";
+import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient/node";
 import CompositeDisposable from "../CompositeDisposable";
 import { IDisposable } from "../Disposable";
 
-export class RoslynLanguageClientInstance extends LanguageClient {
+/**
+ * Implementation of the base LangaugeClient type that allows for additional items to be disposed of
+ * when the base LanguageClient instance is disposed.
+ */
+export class RoslynLanguageClient extends LanguageClient {
 
     private readonly _disposables: CompositeDisposable;
 
