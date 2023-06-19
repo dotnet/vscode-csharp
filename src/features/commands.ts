@@ -18,9 +18,9 @@ import { EventStream } from '../EventStream';
 import { PlatformInformation } from '../shared/platform';
 import CompositeDisposable from '../CompositeDisposable';
 import OptionProvider from '../shared/observers/OptionProvider';
-import reportIssue from './reportIssue';
+import reportIssue from '../shared/reportIssue';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
-import { getDotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
 import { IWorkspaceDebugInformationProvider } from '../shared/IWorkspaceDebugInformationProvider';
 
@@ -47,7 +47,7 @@ export default function registerCommands(
     // Register command for generating tasks.json and launch.json assets.
     disposable.add(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(workspaceInformationProvider, selectedIndex)));
 
-    disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, context.extension.packageJSON.version, eventStream, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), dotnetResolver, monoResolver)));
+    disposable.add(vscode.commands.registerCommand('csharp.reportIssue', async () => reportIssue(vscode, context.extension.packageJSON.version, getDotnetInfo, platformInfo.isValidPlatformForMono(), optionProvider.GetLatestOptions(), dotnetResolver, monoResolver)));
 
     disposable.add(vscode.commands.registerCommand('csharp.showDecompilationTerms', async () => showDecompilationTerms(context, server, optionProvider)));
 

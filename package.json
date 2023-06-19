@@ -1677,8 +1677,7 @@
       {
         "command": "csharp.reportIssue",
         "title": "Report an issue",
-        "category": "CSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "category": "CSharp"
       },
       {
         "command": "csharp.showDecompilationTerms",

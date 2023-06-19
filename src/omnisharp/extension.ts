@@ -22,7 +22,7 @@ import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
 import { getDecompilationAuthorization } from './decompilationPrompt';
-import { DotnetResolver } from '../shared/DotnetResolver';
+import { DotnetResolver } from './DotnetResolver';
 import { Advisor } from '../features/diagnosticsProvider';
 import { OmnisharpWorkspaceDebugInformationProvider } from '../OmnisharpWorkspaceDebugInformationProvider';
 

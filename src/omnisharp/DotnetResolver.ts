@@ -9,8 +9,8 @@ import * as semver from "semver";
 import { promisify } from "util";
 import { HostExecutableInformation } from "../shared/constants/HostExecutableInformation";
 import { IHostExecutableResolver } from "../shared/constants/IHostExecutableResolver";
-import { Options } from "./options";
-import { PlatformInformation } from "./platform";
+import { Options } from "../shared/options";
+import { PlatformInformation } from "../shared/platform";
 
 export class DotnetResolver implements IHostExecutableResolver {
     private readonly minimumDotnetVersion = "6.0.100";

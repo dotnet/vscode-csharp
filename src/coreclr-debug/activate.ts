@@ -11,7 +11,7 @@ import { PlatformInformation } from '../shared/platform';
 import { DebuggerPrerequisiteWarning, DebuggerPrerequisiteFailure, DebuggerNotInstalledFailure } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
 import { getRuntimeDependencyPackageWithId } from '../tools/RuntimeDependencyPackageUtils';
-import { getDotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { Options } from '../shared/options';
 import { RemoteAttachPicker } from '../features/processPicker';
 import CompositeDisposable from '../CompositeDisposable';
