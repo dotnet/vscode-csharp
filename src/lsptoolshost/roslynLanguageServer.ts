@@ -61,7 +61,7 @@ let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
-const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
+export const CSharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
 
 export class RoslynLanguageServer {
 
@@ -117,38 +117,7 @@ export class RoslynLanguageServer {
         private optionProvider: OptionProvider,
         private context: vscode.ExtensionContext,
         private telemetryReporter: TelemetryReporter
-    ) {
-        // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
-        this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
-            let csharpDevkitExtension = getCSharpDevKit();
-
-            if (this._wasActivatedWithCSharpDevkit === undefined) {
-                // Haven't activated yet.
-                return;
-            }
-
-            const title = 'Restart Language Server';
-            const command = 'dotnet.restartServer';
-            if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
-                // We previously started without C# Dev Kit and its now installed.
-                // Offer a prompt to restart the server to use C# Dev Kit.
-                _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
-                let message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
-                ShowInformationMessage(vscode, message, { title, command });
-            } else {
-                // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
-                // which will automatically restart this extension too.
-            }
-        }));
-
-        // Subscribe to telemetry events so we can enable/disable as needed
-        this.context.subscriptions.push(vscode.env.onDidChangeTelemetryEnabled((isEnabled: boolean) => {
-            const title = 'Restart Language Server';
-            const command = 'dotnet.restartServer';
-            const message = 'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
-            ShowInformationMessage(vscode, message, { title, command });
-        }));
-    }
+    ) { }
 
     /**
      * Resolves server options and starts the dotnet language server process. The process is started asynchronously and this method will not wait until
@@ -222,6 +191,9 @@ export class RoslynLanguageServer {
         this._languageClient.onNotification(ProjectInitializationCompleteNotification.type, () => {
            this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.ProjectInitializationComplete);
         });
+
+        this.registerExtensionsChanged(this._languageClient);
+        this.registerTelemtryChanged(this._languageClient);
 
         // Start the client. This will also launch the server
         this._languageClient.start();
@@ -416,7 +388,7 @@ export class RoslynLanguageServer {
             this._wasActivatedWithCSharpDevkit = true;
 
             // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
-            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(csharpDevkitIntelliCodeExtensionId);
+            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(CSharpDevkitIntelliCodeExtensionId);
             if (csharpDevkitIntelliCodeExtension) {
                 _channel.appendLine("Activating C# + C# Dev Kit + C# IntelliCode...");
                 const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension);
@@ -505,6 +477,41 @@ export class RoslynLanguageServer {
         // us when they need us to initialize the Razor things.
         client.addDisposable(vscode.commands.registerCommand(RoslynLanguageServer.razorInitializeCommand, () => {
             client.sendNotification("razor/initialize", { });
+        }));
+    }
+
+    private registerExtensionsChanged(languageClient: RoslynLanguageClientInstance) {
+        // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
+        languageClient.addDisposable(vscode.extensions.onDidChange(async () => {
+            let csharpDevkitExtension = getCSharpDevKit();
+
+            if (this._wasActivatedWithCSharpDevkit === undefined) {
+                // Haven't activated yet.
+                return;
+            }
+
+            const title = 'Restart Language Server';
+            const command = 'dotnet.restartServer';
+            if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
+                // We previously started without C# Dev Kit and its now installed.
+                // Offer a prompt to restart the server to use C# Dev Kit.
+                _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
+                let message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
+                ShowInformationMessage(vscode, message, { title, command });
+            } else {
+                // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
+                // which will automatically restart this extension too.
+            }
+        }));
+    }
+
+    private registerTelemtryChanged(languageClient: RoslynLanguageClientInstance) {
+        // Subscribe to telemetry events so we can enable/disable as needed
+        languageClient.addDisposable(vscode.env.onDidChangeTelemetryEnabled((isEnabled: boolean) => {
+            const title = 'Restart Language Server';
+            const command = 'dotnet.restartServer';
+            const message = 'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
+            ShowInformationMessage(vscode, message, { title, command });
         }));
     }
 
