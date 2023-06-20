@@ -433,7 +433,7 @@ export class RoslynLanguageServer {
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
             const argsWithPath = [ serverPath ].concat(args);
-            childProcess = cp.spawn('dotnet', argsWithPath, cpOptions);
+            childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
             childProcess = cp.spawn(serverPath, args, cpOptions);
