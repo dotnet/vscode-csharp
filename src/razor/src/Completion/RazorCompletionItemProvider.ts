@@ -31,6 +31,7 @@ export class RazorCompletionItemProvider
             // "@" is not a valid trigger character for C# / HTML and therefore we need to translate
             // it into a non-trigger invocation.
             const modifiedTriggerCharacter = context.triggerCharacter === '@' ? undefined : context.triggerCharacter;
+            const triggerKind = context.triggerCharacter === '@' ? CompletionTriggerKind.Invoked : getTriggerKind(context.triggerKind);
 
             let completions: vscode.CompletionList | vscode.CompletionItem[];
 
@@ -42,7 +43,7 @@ export class RazorCompletionItemProvider
             if (language === LanguageKind.CSharp) {
                 const params: CompletionParams = {
                     context: {
-                        triggerKind: getTriggerKind(context.triggerKind),
+                        triggerKind: triggerKind,
                         triggerCharacter: modifiedTriggerCharacter
                     },
                     textDocument: {

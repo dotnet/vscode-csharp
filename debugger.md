@@ -66,9 +66,9 @@ Your project is now all set. Set a breakpoint or two where you want to stop, cli
 ### Debugging Code compiled on another computer
 If your code was built on a different computer from where you would like to run in there are a few things to keep in mind --
 
-* **Source Maps**: Unless your local source code is at exactly the same path as where the code was originally built you will need to add a [sourceFileMap](https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#source-file-map) to launch.json.
+* **Source Maps**: Unless your local source code is at exactly the same path as where the code was originally built you will need to add a [sourceFileMap](https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md#source-file-map) to launch.json.
 * **Portable PDBs**: If the code was built on Windows, it might have been built using Windows PDBs instead of portable PDBs, but the C# extension only supports portable PDBs. See the [portable PDB documentation](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs#how-to-generate-portable-pdbs) for more information.
-* **Debug vs. Release**: It is much easier to debug code which has been compiled in the `Debug` configuration. So unless the issue you are looking at only reproduces with optimizations, it is much better to use Debug bits. If you do need to debug optimized code, you will need to disable [justMyCode](https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#just-my-code) in launch.json.
+* **Debug vs. Release**: It is much easier to debug code which has been compiled in the `Debug` configuration. So unless the issue you are looking at only reproduces with optimizations, it is much better to use Debug bits. If you do need to debug optimized code, you will need to disable [justMyCode](https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md#just-my-code) in launch.json.
 
 #### [Configurating launch.json for C# Debugging](debugger-launchjson.md)
 

@@ -4,12 +4,12 @@ trigger:
     include:
     - feature/*
     - prerelease
-    - release
+    - main
 
 pr:
 - feature/*
 - prerelease
-- release
+- main
 
 variables:
   - name: prereleaseFlag
@@ -24,6 +24,9 @@ stages:
     - template: azure-pipelines/build.yml
       parameters:
         prereleaseFlag: $(prereleaseFlag)
+    pool:
+      name: NetCore-Public
+      demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
 
 - stage: Test
   displayName: Test
@@ -33,10 +36,9 @@ stages:
     strategy:
       matrix:
         linux:
-          vmImage: ubuntu-latest
+          demandsName: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
     pool:
-      vmImage: $(vmImage)
+      name: NetCore-Public
+      demands: $(demandsName)
     steps:
     - template: azure-pipelines/test.yml
-
-# TODO: add compliance stage

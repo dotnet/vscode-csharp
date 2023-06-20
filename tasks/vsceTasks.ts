@@ -48,7 +48,7 @@ export async function createPackageAsync(outputFolder: string, prerelease: boole
         vsceArgs.push("--pre-release");
     }
 
-    vsceArgs.push('--baseContentUrl', 'https://devdiv.visualstudio.com/DevDiv/_git/vscode-csharp-next?path=/');
+    vsceArgs.push('--baseContentUrl', 'https://github.com/dotnet/vscode-csharp');
 
     const spawnResult = await spawnNode(vsceArgs);
     if (spawnResult.code != 0) {

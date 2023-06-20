@@ -9,11 +9,11 @@
   "icon": "images/csharpIcon.png",
   "preview": false,
   "bugs": {
-    "url": "https://github.com/microsoft/vscode-dotnettools/issues"
+    "url": "https://github.com/dotnet/vscode-csharp"
   },
   "repository": {
     "type": "git",
-    "url": "https://devdiv@dev.azure.com/devdiv/DevDiv/_git/vscode-csharp-next"
+    "url": "https://github.com/dotnet/vscode-csharp"
   },
   "categories": [
     "Debuggers",
@@ -35,7 +35,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.7.0-2.23272.9",
+    "roslyn": "4.7.0-3.23316.4",
     "omniSharp": "1.39.6",
     "razor": "7.0.0-preview.23275.2"
   },
@@ -64,10 +64,10 @@
     "test:artifacts": "tsc -p ./ && mocha out/test/artifactTests/**/*.test.js",
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "updatePackageDependencies": "gulp updatePackageDependencies"
-  },  
-	"extensionDependencies": [
-		"ms-dotnettools.vscode-dotnet-runtime"
-	],
+  },
+  "extensionDependencies": [
+    "ms-dotnettools.vscode-dotnet-runtime"
+  ],
   "dependencies": {
     "@microsoft/servicehub-framework": "4.2.99-beta",
     "@types/cross-spawn": "6.0.2",
@@ -91,9 +91,9 @@
     "tmp": "0.0.33",
     "vscode-html-languageservice": "^5.0.1",
     "vscode-js-debug-browsers": "^1.0.5",
-    "vscode-jsonrpc": "8.0.2",
-    "vscode-languageclient": "8.0.2",
-    "vscode-languageserver-protocol": "3.17.2",
+    "vscode-jsonrpc": "8.2.0-next.0",
+    "vscode-languageclient": "8.2.0-next.1",
+    "vscode-languageserver-protocol": "3.17.4-next.1",
     "vscode-languageserver-textdocument": "^1.0.5",
     "vscode-nls": "5.0.1",
     "yauzl": "2.10.0"
@@ -141,7 +141,7 @@
     "typescript": "4.6.3",
     "unzipper": "0.10.11",
     "vsce": "2.9.2",
-    "webpack": "5.75.0",
+    "webpack": "5.76.0",
     "webpack-cli": "4.6.0"
   },
   "runtimeDependencies": [
@@ -422,7 +422,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -432,12 +432,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "10F4DA0626D3BA8599FA27A6C1AE6293037158350A30B55501664DA56E4D7FC9"
+      "integrity": "F8EE956167EE6BCDB39EDB9E377F5C5EB06A50C56F85C9F77F7E8CEFAC2FA6E5"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -446,12 +446,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "85426D6D98DBCFA1220F5A74D51D8FDB530903F612BF95A406E95D18F67E4821"
+      "integrity": "053CD0366ACD224C7232E983FF3DB0E162C02148D0EDED60E247C1D50D8C2BC8"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -465,12 +465,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "26EAAFBF98420244C0E4A0F55BE4DEB35562F33EEF7EA02520D6A3903C73548F"
+      "integrity": "31FD387AE90A558057F7BF7A2D0E93C1080B0A11D170F5FB7D75928A98B49617"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -483,12 +483,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "62F8FC9BBE629A730242498960BAFFC61BCCD233927F9FAF2754808BF8987BC5"
+      "integrity": "85D18DA22979AA5A1DB0B71C3C104F1E3DB1A67E8D69F3AF634543667853CB74"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -501,16 +501,15 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "EEFDE5B41B02E5C787958D1302F8E90F8CF165EA09EAA949EEC35DA471CFFF7B"
+      "integrity": "1678AD79ABCEB767FCC9CD5B9CEA82A0A25EC7CC49E91CE45275D2556B3AB410"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
-        "linux",
-        "linux-musl"
+        "linux"
       ],
       "architectures": [
         "arm64"
@@ -520,15 +519,14 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "7AABCD29BEB5E9D44075663C5C9F9B677D81DFE55EBBD83E8C8628E867957DE5"
+      "integrity": "2685C26EEBC577985A843F97FD1EE8BC284C58F47B41D2AA2672860D059EDA5A"
     },
     {
       "id": "Debugger",
-      "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-1-25-7/coreclr-debug-linux-x64.zip",
+      "description": ".NET Core Debugger (linux musl / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
-        "linux",
         "linux-musl"
       ],
       "architectures": [
@@ -539,7 +537,43 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "EC3DFFC66BAD360E1536EF501676EDA0DECA6AAB7D1B5FC0DDE03BAFBBD2B543"
+      "integrity": "F11261E1ADEFEB31BDFCD677E510597C94CBCD45A76139DF37AA24D3B4221D1D"
+    },
+    {
+      "id": "Debugger",
+      "description": ".NET Core Debugger (linux musl / ARM64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-linux-musl-arm64.zip",
+      "installPath": ".debugger",
+      "platforms": [
+        "linux-musl"
+      ],
+      "architectures": [
+        "arm64"
+      ],
+      "binaries": [
+        "./vsdbg-ui",
+        "./vsdbg"
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui",
+      "integrity": "25BB43CF3989A239288F6988A35C7EB96C9EC9729ECD886B0D630FB9D42CFAAF"
+    },
+    {
+      "id": "Debugger",
+      "description": ".NET Core Debugger (linux / x64)",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-1/coreclr-debug-linux-x64.zip",
+      "installPath": ".debugger",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./vsdbg-ui",
+        "./vsdbg"
+      ],
+      "installTestPath": "./.debugger/vsdbg-ui",
+      "integrity": "26233E972BDDC41D22456DE1639E0B7028902D28CA83926A83432FFE8C6E654C"
     },
     {
       "id": "Razor",
@@ -679,6 +713,7 @@
     "onDebugResolve:dotnet",
     "onLanguage:csharp",
     "onLanguage:aspnetcorerazor",
+    "onLanguage:dotnetProject",
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
@@ -3982,7 +4017,7 @@
                 "description": "Environment variables passed to dotnet. Only valid for hosted apps."
               },
               "dotNetConfig": {
-                "description": "Options passed to the underlying .NET debugger. For more info, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger.md.",
+                "description": "Options passed to the underlying .NET debugger. For more info, see https://github.com/dotnet/vscode-csharp/blob/main/debugger.md.",
                 "type": "object",
                 "required": [],
                 "default": {},
@@ -4123,7 +4158,8 @@
         "languages": [
           "csharp",
           "razor",
-          "aspnetcorerazor"
+          "aspnetcorerazor",
+          "dotnetProject"
         ],
         "variables": {},
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
@@ -4740,6 +4776,16 @@
         "configuration": "./src/razor/language-configuration.json",
         "aliases": [
           "ASP.NET Razor"
+        ]
+      },
+      {
+        "id": "dotnetProject",
+        "extensions": [
+          ".csproj",
+          ".sln"
+        ],
+        "aliases": [
+          ".NET Project"
         ]
       }
     ],
