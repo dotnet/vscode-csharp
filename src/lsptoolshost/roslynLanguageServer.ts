@@ -14,7 +14,6 @@ import { UriConverter } from './uriConverter';
 import {
     DidChangeTextDocumentNotification,
     DidCloseTextDocumentNotification,
-    LanguageClient,
     LanguageClientOptions,
     ServerOptions,
     DidCloseTextDocumentParams,
@@ -53,16 +52,15 @@ import { Options } from '../shared/options';
 import { ServerStateChange } from './ServerStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../CSharpIntelliCodeExports';
-import { csharpDevkitExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { csharpDevkitExtensionId, csharpDevkitIntelliCodeExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { randomUUID } from 'crypto';
 import { DotnetRuntimeExtensionResolver } from './dotnetRuntimeExtensionResolver';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
+import { RoslynLanguageClient } from './roslynLanguageClient';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
-
-const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
 
 export class RoslynLanguageServer {
 
@@ -90,7 +88,7 @@ export class RoslynLanguageServer {
      * The timeout for stopping the language server (in ms).
      */
     private static _stopTimeout: number = 10000;
-    private _languageClient: LanguageClient | undefined;
+    private _languageClient: RoslynLanguageClient | undefined;
 
     /**
      * Flag indicating if C# Devkit was installed the last time we activated.
@@ -119,38 +117,7 @@ export class RoslynLanguageServer {
         private optionProvider: OptionProvider,
         private context: vscode.ExtensionContext,
         private telemetryReporter: TelemetryReporter
-    ) {
-        // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
-        this.context.subscriptions.push(vscode.extensions.onDidChange(async () => {
-            let csharpDevkitExtension = getCSharpDevKit();
-
-            if (this._wasActivatedWithCSharpDevkit === undefined) {
-                // Haven't activated yet.
-                return;
-            }
-
-            const title = 'Restart Language Server';
-            const command = 'dotnet.restartServer';
-            if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
-                // We previously started without C# Dev Kit and its now installed.
-                // Offer a prompt to restart the server to use C# Dev Kit.
-                _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
-                let message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
-                ShowInformationMessage(vscode, message, { title, command });
-            } else {
-                // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
-                // which will automatically restart this extension too.
-            }
-        }));
-
-        // Subscribe to telemetry events so we can enable/disable as needed
-        this.context.subscriptions.push(vscode.env.onDidChangeTelemetryEnabled((isEnabled: boolean) => {
-            const title = 'Restart Language Server';
-            const command = 'dotnet.restartServer';
-            const message = 'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
-            ShowInformationMessage(vscode, message, { title, command });
-        }));
-    }
+    ) { }
 
     /**
      * Resolves server options and starts the dotnet language server process. The process is started asynchronously and this method will not wait until
@@ -194,7 +161,7 @@ export class RoslynLanguageServer {
         };
 
         // Create the language client and start the client.
-        let client = new LanguageClient(
+        let client = new RoslynLanguageClient(
             'microsoft-codeanalysis-languageserver',
             'Microsoft.CodeAnalysis.LanguageServer',
             serverOptions,
@@ -225,11 +192,14 @@ export class RoslynLanguageServer {
            this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.ProjectInitializationComplete);
         });
 
+        this.registerExtensionsChanged(this._languageClient);
+        this.registerTelemetryChanged(this._languageClient);
+
         // Start the client. This will also launch the server
         this._languageClient.start();
 
         // Register Razor dynamic file info handling
-        this.registerRazor(this._languageClient);
+        this.registerDynamicFileInfo(this._languageClient);
     }
 
     public async stop(): Promise<void> {
@@ -285,6 +255,18 @@ export class RoslynLanguageServer {
         }
 
         let response = await this._languageClient!.sendRequest(type, token);
+        return response;
+    }
+
+    /**
+     * Sends an LSP notification to the server with a given method and parameters.
+     */
+    public async sendNotification<Params>(method: string, params: Params): Promise<any> {
+        if (!this.isRunning()) {
+            throw new Error('Tried to send request while server is not started.');
+        }
+
+        let response = await this._languageClient!.sendNotification(method, params);
         return response;
     }
 
@@ -437,7 +419,7 @@ export class RoslynLanguageServer {
         return childProcess;
     }
 
-    private registerRazor(client: LanguageClient) {
+    private registerDynamicFileInfo(client: RoslynLanguageClient) {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
         client.onRequest(
@@ -446,43 +428,41 @@ export class RoslynLanguageServer {
         client.onNotification(
             RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
             async notification => vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification));
+    }
 
-        // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
-        // notifications along to Roslyn. didOpen notifications are handled separately via the vscode.openTextDocument method.
-        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidChangeCommand, (notification: DidChangeTextDocumentParams) => {
-            client.sendNotification(DidChangeTextDocumentNotification.method, notification);
-        });
-        vscode.commands.registerCommand(RoslynLanguageServer.roslynDidCloseCommand, (notification: DidCloseTextDocumentParams) => {
-            client.sendNotification(DidCloseTextDocumentNotification.method, notification);
-        });
-        vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
-            let diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
-            return await this.sendRequest(diagnosticRequestType, request, CancellationToken.None);
-        });
+    private registerExtensionsChanged(languageClient: RoslynLanguageClient) {
+        // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
+        languageClient.addDisposable(vscode.extensions.onDidChange(async () => {
+            let csharpDevkitExtension = getCSharpDevKit();
 
-        // The VS Code API for code actions (and the vscode.CodeAction type) doesn't support everything that LSP supports,
-        // namely the data property, which Razor needs to identify which code actions are on their allow list, so we need
-        // to expose a command for them to directly invoke our code actions LSP endpoints, rather than use built-in commands.
-        vscode.commands.registerCommand(RoslynLanguageServer.provideCodeActionsCommand, async (request: CodeActionParams) => {
-            return await this.sendRequest(CodeActionRequest.type, request, CancellationToken.None);
-        });
-        vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
-            return await this.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
-        });
+            if (this._wasActivatedWithCSharpDevkit === undefined) {
+                // Haven't activated yet.
+                return;
+            }
 
-        vscode.commands.registerCommand(RoslynLanguageServer.provideCompletionsCommand, async (request: CompletionParams) => {
-            return await this.sendRequest(CompletionRequest.type, request, CancellationToken.None);
-        });
-        vscode.commands.registerCommand(RoslynLanguageServer.resolveCompletionsCommand, async (request: CompletionItem) => {
-            return await this.sendRequest(CompletionResolveRequest.type, request, CancellationToken.None);
-        });
+            const title = 'Restart Language Server';
+            const command = 'dotnet.restartServer';
+            if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
+                // We previously started without C# Dev Kit and its now installed.
+                // Offer a prompt to restart the server to use C# Dev Kit.
+                _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
+                let message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
+                ShowInformationMessage(vscode, message, { title, command });
+            } else {
+                // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
+                // which will automatically restart this extension too.
+            }
+        }));
+    }
 
-        // Roslyn is responsible for producing a json file containing information for Razor, that comes from the compilation for
-        // a project. We want to defer this work until necessary, so this command is called by the Razor document manager to tell
-        // us when they need us to initialize the Razor things.
-        vscode.commands.registerCommand(RoslynLanguageServer.razorInitializeCommand, () => {
-            client.sendNotification("razor/initialize", { });
-        });
+    private registerTelemetryChanged(languageClient: RoslynLanguageClient) {
+        // Subscribe to telemetry events so we can enable/disable as needed
+        languageClient.addDisposable(vscode.env.onDidChangeTelemetryEnabled((isEnabled: boolean) => {
+            const title = 'Restart Language Server';
+            const command = 'dotnet.restartServer';
+            const message = 'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
+            ShowInformationMessage(vscode, message, { title, command });
+        }));
     }
 
     private async getCSharpDevkitExportArgs(csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>, options: Options) : Promise<string[]> {
@@ -564,6 +544,8 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     // Register any commands that need to be handled by the extension.
     registerCommands(context, _languageServer, optionProvider, hostExecutableResolver);
 
+    registerRazorCommands(context, _languageServer);
+
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, _languageServer, platformInfo, optionProvider, _channel);
 
@@ -633,6 +615,45 @@ function getServerFileName(platformInfo: PlatformInformation) {
     }
 
     return `${serverFileName}${extension}`;
+}
+
+function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
+    // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
+    // notifications along to Roslyn. didOpen notifications are handled separately via the vscode.openTextDocument method.
+    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.roslynDidChangeCommand, async (notification: DidChangeTextDocumentParams) => {
+        await languageServer.sendNotification(DidChangeTextDocumentNotification.method, notification);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.roslynDidCloseCommand, async (notification: DidCloseTextDocumentParams) => {
+        await languageServer.sendNotification(DidCloseTextDocumentNotification.method, notification);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
+        let diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
+        return await languageServer.sendRequest(diagnosticRequestType, request, CancellationToken.None);
+    }));
+
+    // The VS Code API for code actions (and the vscode.CodeAction type) doesn't support everything that LSP supports,
+    // namely the data property, which Razor needs to identify which code actions are on their allow list, so we need
+    // to expose a command for them to directly invoke our code actions LSP endpoints, rather than use built-in commands.
+    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.provideCodeActionsCommand, async (request: CodeActionParams) => {
+        return await languageServer.sendRequest(CodeActionRequest.type, request, CancellationToken.None);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
+        return await languageServer.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.provideCompletionsCommand, async (request: CompletionParams) => {
+        return await languageServer.sendRequest(CompletionRequest.type, request, CancellationToken.None);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.resolveCompletionsCommand, async (request: CompletionItem) => {
+        return await languageServer.sendRequest(CompletionResolveRequest.type, request, CancellationToken.None);
+    }));
+
+    // Roslyn is responsible for producing a json file containing information for Razor, that comes from the compilation for
+    // a project. We want to defer this work until necessary, so this command is called by the Razor document manager to tell
+    // us when they need us to initialize the Razor things.
+    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.razorInitializeCommand, async () => {
+        await languageServer.sendNotification("razor/initialize", { });
+    }));
 }
 
 async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vscode.CancellationToken) {
