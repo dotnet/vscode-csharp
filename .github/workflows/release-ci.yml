@@ -36,60 +36,13 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-darwin-arm64.vsix
-
-    - name: Upload release build (darwin-x64)
-      id: upload-release-asset-darwin-x64
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-darwin-x64.vsix
-
-    - name: Upload release build (linux-arm64)
-      id: upload-release-asset-linux-arm64
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-linux-arm64.vsix
-
-    - name: Upload release build (linux-x64)
-      id: upload-release-asset-linux-x64
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-linux-x64.vsix
-        
-    - name: Upload release build (alpine-arm64)
-      id: upload-release-asset-alpine-arm64
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-alpine-arm64.vsix
-
-    - name: Upload release build (alpine-x64)
-      id: upload-release-asset-alpine-x64
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-alpine-x64.vsix
-
-    - name: Upload release build (win32-arm64)
-      id: upload-release-asset-win32-arm64
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-win32-arm64.vsix
-
-    - name: Upload release build (win32-ia32)
-      id: upload-release-asset-win32-ia32
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-win32-ia32.vsix
-
-    - name: Upload release build (win32-x64)
-      id: upload-release-asset-win32-x64
-      uses: softprops/action-gh-release@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./csharp-${{ env.VERSION }}-win32-x64.vsix
+        files: |
+          ./csharp-${{ env.VERSION }}-darwin-arm64.vsix
+          ./csharp-${{ env.VERSION }}-darwin-x64.vsix
+          ./csharp-${{ env.VERSION }}-linux-arm64.vsix
+          ./csharp-${{ env.VERSION }}-linux-x64.vsix
+          ./csharp-${{ env.VERSION }}-alpine-arm64.vsix
+          ./csharp-${{ env.VERSION }}-alpine-x64.vsix
+          ./csharp-${{ env.VERSION }}-win32-arm64.vsix
+          ./csharp-${{ env.VERSION }}-win32-ia32.vsix
+          ./csharp-${{ env.VERSION }}-win32-x64.vsix
