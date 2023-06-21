@@ -13,7 +13,7 @@ import { getUriPath } from '../UriPaths';
 import { ProvisionalCompletionOrchestrator } from './ProvisionalCompletionOrchestrator';
 import { LanguageKind } from '../RPC/LanguageKind';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
-import { CompletionItem, CompletionList, CompletionParams, CompletionTriggerKind } from 'vscode-languageclient';
+import { CompletionItem, CompletionList, CompletionParams, CompletionTriggerKind, MarkupContent } from 'vscode-languageclient';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import * as RazorConventions from '../RazorConventions';
 import { MappingHelpers } from '../Mapping/MappingHelpers';
@@ -210,11 +210,11 @@ export class RazorCompletionItemProvider
 
             item = newItem;
 
-            // The documentation object Roslyn returns can have a different
-            // shape than what the client expects, so we do a conversion here.
-            const markdownString = <vscode.MarkdownString>(item.documentation);
-            if (markdownString && markdownString.value) {
-                item.documentation = new vscode.MarkdownString(markdownString.value);
+            // The documentation object Roslyn returns is a MarkupContent,
+            // which we need to convert to a MarkupString.
+            const markupContent = <MarkupContent>(<unknown>(item.documentation));
+            if (markupContent && markupContent.value) {
+                item.documentation = new vscode.MarkdownString(markupContent.value);
             }
 
             if (item.command && item.command.arguments?.length === 4) {
