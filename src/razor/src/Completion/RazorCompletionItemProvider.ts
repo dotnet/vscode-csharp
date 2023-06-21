@@ -47,6 +47,11 @@ export class RazorCompletionItemProvider
                     position: projectedPosition
                 };
 
+                // For CSharp, completions need to keep the "data" field on the
+                // completion item for lazily resolving the edits in the
+                // resolveCompletionItem step. Using the vs code command drops
+                // that field because it doesn't exist in the declared vs code
+                // CompletionItem type.
                 completions = await vscode
                     .commands
                     .executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
@@ -67,11 +72,6 @@ export class RazorCompletionItemProvider
                     : completions ? completions.items       // was vscode.CompletionList
                         : [];
             
-            // For CSharp, completions need to keep the "data" field
-            // on the completion item for lazily resolving the edits in
-            // the resolveCompletionItem step. Using the vs code command
-            // drops that field because it doesn't exist in the declared vs code
-            // CompletionItem type.
             const data = (<CompletionList>completions)?.itemDefaults?.data;
 
             // There are times when the generated code will not line up with the content of the .razor/.cshtml file.
@@ -131,7 +131,9 @@ export class RazorCompletionItemProvider
                     }
                 }
 
-                (<CompletionItem>completionItem).data = data;
+                if (!(<CompletionItem>completionItem).data) {
+                    (<CompletionItem>completionItem).data = data;
+                }
             }
 
             const isIncomplete = completions instanceof Array ? false
