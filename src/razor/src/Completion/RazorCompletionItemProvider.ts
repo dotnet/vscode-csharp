@@ -211,7 +211,7 @@ export class RazorCompletionItemProvider
             item = newItem;
 
             // The documentation object Roslyn returns is a MarkupContent,
-            // which we need to convert to a MarkupString.
+            // which we need to convert to a MarkdownString.
             const markupContent = <MarkupContent>(<unknown>(item.documentation));
             if (markupContent && markupContent.value) {
                 item.documentation = new vscode.MarkdownString(markupContent.value);
