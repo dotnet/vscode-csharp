@@ -36,7 +36,6 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             dotnetRuntimePath = path.dirname(dotnetInfo.path);
         }
 
-        // TODO need exe?
         const dotnetExecutableName = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const dotnetExecutablePath = path.join(dotnetRuntimePath, dotnetExecutableName);
         if (!existsSync(dotnetExecutablePath)) {

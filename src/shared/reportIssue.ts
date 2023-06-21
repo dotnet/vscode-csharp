@@ -65,9 +65,8 @@ ${generateExtensionTable(extensions)}
 </details>
 `;
 
-    const queryStringPrefix: string = "?";
     const issueDefault = "Please paste the output from your clipboard";
-    const fullUrl = `${issuesUrl}${queryStringPrefix}body=${issueDefault}`;
+    const fullUrl = `${issuesUrl}?body=${issueDefault}`;
     await vscode.env.clipboard.writeText(body);
     vscode.env.openExternal(vscode.Uri.parse(fullUrl));
 }
@@ -105,7 +104,7 @@ async function getMonoIfPlatformValid(options: Options, monoResolver: IHostExecu
         monoVersion = `OmniSharp using mono: ${monoInfo.version}`;
     }
     catch (error) {
-        monoVersion = `There is a problem with running OmniSharp on mono: ${error}`;
+        monoVersion = error instanceof Error ? error.message : `${error}`;
     }
 
     return `<details><summary>Mono Information</summary>
