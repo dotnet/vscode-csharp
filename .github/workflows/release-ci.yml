@@ -33,99 +33,63 @@ jobs:
 
     - name: Upload release build (darwin-arm64)
       id: upload-release-asset-darwin-arm64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-darwin-arm64.vsix
-        asset_name: csharp-${{ env.VERSION }}-darwin-arm64.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-darwin-arm64.vsix
 
     - name: Upload release build (darwin-x64)
       id: upload-release-asset-darwin-x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-darwin-x64.vsix
-        asset_name: csharp-${{ env.VERSION }}-darwin-x64.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-darwin-x64.vsix
 
     - name: Upload release build (linux-arm64)
       id: upload-release-asset-linux-arm64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-linux-arm64.vsix
-        asset_name: csharp-${{ env.VERSION }}-linux-arm64.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-linux-arm64.vsix
 
     - name: Upload release build (linux-x64)
       id: upload-release-asset-linux-x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-linux-x64.vsix
-        asset_name: csharp-${{ env.VERSION }}-linux-x64.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-linux-x64.vsix
         
     - name: Upload release build (alpine-arm64)
       id: upload-release-asset-alpine-arm64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-alpine-arm64.vsix
-        asset_name: csharp-${{ env.VERSION }}-alpine-arm64.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-alpine-arm64.vsix
 
     - name: Upload release build (alpine-x64)
       id: upload-release-asset-alpine-x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-alpine-x64.vsix
-        asset_name: csharp-${{ env.VERSION }}-alpine-x64.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-alpine-x64.vsix
 
     - name: Upload release build (win32-arm64)
       id: upload-release-asset-win32-arm64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-win32-arm64.vsix
-        asset_name: csharp-${{ env.VERSION }}-win32-arm64.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-win32-arm64.vsix
 
     - name: Upload release build (win32-ia32)
       id: upload-release-asset-win32-ia32
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-win32-ia32.vsix
-        asset_name: csharp-${{ env.VERSION }}-win32-ia32.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-win32-ia32.vsix
 
     - name: Upload release build (win32-x64)
       id: upload-release-asset-win32-x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./csharp-${{ env.VERSION }}-win32-x64.vsix
-        asset_name: csharp-${{ env.VERSION }}-win32-x64.vsix
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: ./csharp-${{ env.VERSION }}-win32-x64.vsix
