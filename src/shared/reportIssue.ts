@@ -8,8 +8,7 @@ import { Options } from "../shared/options";
 import { IHostExecutableResolver } from "../shared/constants/IHostExecutableResolver";
 import { basename, dirname } from "path";
 import { DotnetInfo } from "./utils/getDotnetInfo";
-
-const issuesUrl = "https://github.com/dotnet/vscode-csharp/issues/new";
+import { CSharpExtensionId } from "../constants/CSharpExtensionId";
 
 export default async function reportIssue(
     vscode: vscode,
@@ -65,10 +64,10 @@ ${generateExtensionTable(extensions)}
 </details>
 `;
 
-    const issueDefault = "Please paste the output from your clipboard";
-    const fullUrl = `${issuesUrl}?body=${issueDefault}`;
-    await vscode.env.clipboard.writeText(body);
-    vscode.env.openExternal(vscode.Uri.parse(fullUrl));
+    await vscode.commands.executeCommand("workbench.action.openIssueReporter", {
+        extensionId: CSharpExtensionId,
+        issueBody: body
+    });
 }
 
 function sortExtensions(a: Extension<any>, b: Extension<any>): number {

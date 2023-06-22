@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { URI } from 'vscode-uri';
 import { getFakeVsCode } from "../testAssets/Fakes";
 import reportIssue from "../../../src/shared/reportIssue";
 import { expect } from "chai";
@@ -55,14 +54,9 @@ suite(`${reportIssue.name}`, () => {
 
     setup(() => {
         vscode = getFakeVsCode();
-        vscode.Uri.parse = (value) => {  return URI.parse(value); };
-        vscode.env.openExternal = async (value) => {
-            return Promise.resolve(true);
-        };
-
-        vscode.env.clipboard.writeText = async (body: string) => {
-            issueBody = body;
-            return Promise.resolve();
+        vscode.commands.executeCommand = async (command: string, ...rest: any[]) => {
+            issueBody = rest[0].issueBody;
+            return undefined;
         };
 
         vscode.version = vscodeVersion;
