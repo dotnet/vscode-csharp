@@ -23,13 +23,23 @@ To **test** do the following: `npm run test` or <kbd>F5</kbd> in VS Code with th
 
 ### Using a locally developed Roslyn server
 
-https://github.com/dotnet/roslyn contains the server implementation.  Follow the instructions there to build the repo as normal.  Once built, the server executable will be located in the build output directory, typically 
+https://github.com/dotnet/roslyn contains the server implementation.  Follow the instructions there to build the repo as normal.  Once built, the server executable will be located in the build output directory, typically
 
 `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net7.0/Microsoft.CodeAnalysis.LanguageServer.exe`
 
 depending on which configuration is built.  Then, launch the extension here and change the VSCode setting `dotnet.server.path` to point to the Roslyn executable path you built above and restart the language server.
 
 If you need to debug the server, you can set the VSCode setting `dotnet.server.waitForDebugger` to true.  This will trigger a `Debugger.Launch()` on the server side as it starts.
+
+### Using a locally developed Razor server
+
+https://github.com/dotnet/razor contains the server implementation.  Follow the instructions there to build the repo as normal.  Once built, the server will be located in the build output directory, typically
+
+`$razorRepoRoot/artifacts/bin/rzls/Debug/net7.0`
+
+depending on which configuration is built.  Then, launch the extension here and change the VSCode setting `razor.languageServer.directory` to point to the Razor executable path you built above and reload the window.
+
+If you need to debug the server, you can set the VSCode setting `razor.languageServer.debug` to true.  This will trigger a `Debugger.Launch()` on the server side as it starts. You can also set `razor.trace` to `Verbose` to get more log messages in the output window
 
 ### Creating VSIXs
 
