@@ -127,11 +127,15 @@ export function getTargetArchitecture(platformInfo: PlatformInformation, launchJ
     }
 
     // Otherwise, look at the runtime ID.
-    if (dotnetInfo.RuntimeId?.includes('arm64'))
+    if (!dotnetInfo.RuntimeId) {
+        throw new Error(`Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.`)
+    }
+
+    if (dotnetInfo.RuntimeId.includes('arm64'))
     {
         return 'arm64';
     }
-    else if (dotnetInfo.RuntimeId?.includes('x64'))
+    else if (dotnetInfo.RuntimeId.includes('x64'))
     {
         return 'x86_64';
     }
