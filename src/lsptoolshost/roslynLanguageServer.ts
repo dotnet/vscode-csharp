@@ -423,6 +423,9 @@ export class RoslynLanguageServer {
         // shouldn't this arg only be set if it's running with CSDevKit?
         args.push("--telemetryLevel", this.telemetryReporter.telemetryLevel);
 
+        let language = vscode.env.language;
+        args.push("--language", language);
+
         let childProcess: cp.ChildProcessWithoutNullStreams;
         let cpOptions: cp.SpawnOptionsWithoutStdio = {
             detached: true,
