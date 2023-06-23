@@ -13,7 +13,7 @@ import { getUriPath } from '../UriPaths';
 import { ProvisionalCompletionOrchestrator } from './ProvisionalCompletionOrchestrator';
 import { LanguageKind } from '../RPC/LanguageKind';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
-import { CompletionItem, CompletionParams, CompletionTriggerKind } from 'vscode-languageclient';
+import { CompletionItem, CompletionList, CompletionParams, CompletionTriggerKind, MarkupContent } from 'vscode-languageclient';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import * as RazorConventions from '../RazorConventions';
 import { MappingHelpers } from '../Mapping/MappingHelpers';
@@ -35,11 +35,6 @@ export class RazorCompletionItemProvider
 
             let completions: vscode.CompletionList | vscode.CompletionItem[];
 
-            // For CSharp, completions need to keep the "data" field
-            // on the completion item for lazily resolving the edits in
-            // the resolveCompletionItem step. Using the vs code command
-            // drops that field because it doesn't exist in the declared vs code
-            // CompletionItem type.
             if (language === LanguageKind.CSharp) {
                 const params: CompletionParams = {
                     context: {
@@ -52,6 +47,11 @@ export class RazorCompletionItemProvider
                     position: projectedPosition
                 };
 
+                // For CSharp, completions need to keep the "data" field on the
+                // completion item for lazily resolving the edits in the
+                // resolveCompletionItem step. Using the vs code command drops
+                // that field because it doesn't exist in the declared vs code
+                // CompletionItem type.
                 completions = await vscode
                     .commands
                     .executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
@@ -71,6 +71,8 @@ export class RazorCompletionItemProvider
                 completions instanceof Array ? completions  // was vscode.CompletionItem[]
                     : completions ? completions.items       // was vscode.CompletionList
                         : [];
+            
+            const data = (<CompletionList>completions)?.itemDefaults?.data;
 
             // There are times when the generated code will not line up with the content of the .razor/.cshtml file.
             // Therefore, we need to offset all completion items' characters by a certain amount in order
@@ -79,7 +81,7 @@ export class RazorCompletionItemProvider
             const completionCharacterOffset = projectedPosition.character - hostDocumentPosition.character;
             for (const completionItem of completionItems) {
                 const doc = completionItem.documentation as vscode.MarkdownString;
-                if (doc) {
+                if (doc && doc.value) {
                     // Without this, the documentation doesn't get rendered in the editor.
                     const newDoc = new vscode.MarkdownString(doc.value);
                     newDoc.isTrusted = doc.isTrusted;
@@ -127,6 +129,10 @@ export class RazorCompletionItemProvider
                     if (intellicodeCompletion.textEditText){
                         completionItem.insertText = intellicodeCompletion.textEditText;
                     }
+                }
+
+                if (!(<CompletionItem>completionItem).data) {
+                    (<CompletionItem>completionItem).data = data;
                 }
             }
 
@@ -204,6 +210,13 @@ export class RazorCompletionItemProvider
 
             item = newItem;
 
+            // The documentation object Roslyn returns is a MarkupContent,
+            // which we need to convert to a MarkdownString.
+            const markupContent = <MarkupContent>(<unknown>(item.documentation));
+            if (markupContent && markupContent.value) {
+                item.documentation = new vscode.MarkdownString(markupContent.value);
+            }
+
             if (item.command && item.command.arguments?.length === 4) {
                 const uri = vscode.Uri.parse(item.command.arguments[0]);
 
@@ -238,4 +251,3 @@ function getTriggerKind(triggerKind: vscode.CompletionTriggerKind): CompletionTr
 
     }
 }
-
