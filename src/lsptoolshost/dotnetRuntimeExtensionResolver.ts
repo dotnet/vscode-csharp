@@ -7,7 +7,6 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { HostExecutableInformation } from "../shared/constants/HostExecutableInformation";
 import { IHostExecutableResolver } from "../shared/constants/IHostExecutableResolver";
-import { getServerPath } from "../lsptoolshost/roslynLanguageServer";
 import { PlatformInformation } from "../shared/platform";
 import { Options } from "../shared/options";
 import { existsSync } from 'fs';
@@ -20,16 +19,21 @@ interface IDotnetAcquireResult {
 }
 
 /**
- * Resolves the dotnet runtime from given options and the dotnet runtime VSCode extension.
+ * Resolves the dotnet runtime for a server executable from given options and the dotnet runtime VSCode extension.
  */
 export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
-    constructor(private platformInfo: PlatformInformation) { }
+    constructor(
+        private platformInfo: PlatformInformation,
+        /**
+         * This is a function instead of a string because the server path can change while the extension is active (when the option changes).
+         */
+        private getServerPath: (options: Options, platform: PlatformInformation) => string) { }
 
     private hostInfo: HostExecutableInformation | undefined;
 
     async getHostExecutableInfo(options: Options): Promise<HostExecutableInformation> {
         let dotnetRuntimePath = options.commonOptions.dotnetPath;
-        const serverPath = getServerPath(options, this.platformInfo);
+        const serverPath = this.getServerPath(options, this.platformInfo);
         if (!dotnetRuntimePath)
         {
             let dotnetInfo = await this.acquireDotNetProcessDependencies(serverPath);

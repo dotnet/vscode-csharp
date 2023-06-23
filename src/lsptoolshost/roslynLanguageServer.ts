@@ -538,7 +538,7 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     _traceChannel = vscode.window.createOutputChannel("C# LSP Trace Logs");
 
-    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(platformInfo);
+    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(platformInfo, getServerPath);
     _languageServer = new RoslynLanguageServer(platformInfo, hostExecutableResolver, optionProvider, context, reporter);
 
     // Register any commands that need to be handled by the extension.
@@ -584,7 +584,7 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     _languageServer.start();
 }
 
-export function getServerPath(options: Options, platformInfo: PlatformInformation) {
+function getServerPath(options: Options, platformInfo: PlatformInformation) {
     let clientRoot = __dirname;
 
     let serverPath = options.commonOptions.serverPath;
