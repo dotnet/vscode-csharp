@@ -38,7 +38,7 @@ import {
     CompletionItem,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
-import { acquireDotNetProcessDependencies } from './dotnetRuntime';
+import { getDotNetProcessInfo } from '../shared/dotnetRuntime';
 import { readConfigurations } from './configurationMiddleware';
 import OptionProvider from '../shared/observers/OptionProvider';
 import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfoHandler';
@@ -209,7 +209,7 @@ export class RoslynLanguageServer {
     /**
      * Restarts the language server. This does not wait until the server has been restarted.
      * Note that since some options affect how the language server is initialized, we must
-     * re-create the LanguageClient instance instead of just stopping/starting it. 
+     * re-create the LanguageClient instance instead of just stopping/starting it.
      */
     public async restart(): Promise<void> {
         await this.stop();
@@ -356,31 +356,9 @@ export class RoslynLanguageServer {
 
         let options = this.optionProvider.GetLatestOptions();
         let serverPath = this.getServerPath(options);
+        let [appPath, env, args] = await getDotNetProcessInfo(serverPath, this.platformInfo, options);
 
-        let dotnetRuntimePath = options.commonOptions.dotnetPath;
-        if (!dotnetRuntimePath)
-        {
-            let dotnetPath = await acquireDotNetProcessDependencies(serverPath);
-            dotnetRuntimePath = path.dirname(dotnetPath);
-        }
-
-        const dotnetExecutableName = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
-        const dotnetExecutablePath = path.join(dotnetRuntimePath, dotnetExecutableName);
-        if (!fs.existsSync(dotnetExecutablePath)) {
-            throw new Error(`Cannot find dotnet path '${dotnetExecutablePath}'`);
-        }
-
-        _channel.appendLine("Dotnet path: " + dotnetExecutablePath);
-
-        // Take care to always run .NET processes on the runtime that we intend.
-        // The dotnet.exe we point to should not go looking for other runtimes.
-        const env: NodeJS.ProcessEnv =  { ...process.env };
-        env.DOTNET_ROOT = dotnetRuntimePath;
-        env.DOTNET_MULTILEVEL_LOOKUP = '0';
-        // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
-        env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
-
-        let args: string[] = [ ];
+        _channel.appendLine("Dotnet path: " + appPath);
 
         if (options.commonOptions.waitForDebugger) {
             args.push("--debug");
@@ -427,17 +405,10 @@ export class RoslynLanguageServer {
         let cpOptions: cp.SpawnOptionsWithoutStdio = {
             detached: true,
             windowsHide: true,
-            env: env
+            env: env,
         };
 
-        if (serverPath.endsWith('.dll')) {
-            // If we were given a path to a dll, launch that via dotnet.
-            const argsWithPath = [ serverPath ].concat(args);
-            childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
-        } else {
-            // Otherwise assume we were given a path to an executable.
-            childProcess = cp.spawn(serverPath, args, cpOptions);
-        }
+        childProcess = cp.spawn(appPath, args, cpOptions);
 
         return childProcess;
     }

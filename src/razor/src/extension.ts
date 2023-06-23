@@ -43,6 +43,9 @@ import { SemanticTokensRangeHandler } from './Semantic/SemanticTokensRangeHandle
 import { RazorSignatureHelpProvider } from './SignatureHelp/RazorSignatureHelpProvider';
 import { TelemetryReporter } from './TelemetryReporter';
 import { RazorDiagnosticHandler } from './Diagnostics/RazorDiagnosticHandler';
+import { PlatformInformation } from '../../shared/platform';
+import createOptionStream from '../../shared/observables/CreateOptionStream';
+import OptionProvider from '../../shared/observers/OptionProvider';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -52,11 +55,14 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         create: <T>() => new vscode.EventEmitter<T>(),
     };
 
+    const optionStream = createOptionStream(vscode);
+    let optionProvider = new OptionProvider(optionStream);
     const languageServerTrace = resolveRazorLanguageServerTrace(vscodeType);
     const logger = new RazorLogger(vscodeType, eventEmitterFactory, languageServerTrace);
 
     try {
-        const languageServerClient = new RazorLanguageServerClient(vscodeType, languageServerDir, telemetryReporter, logger);
+        const platformInfo = await PlatformInformation.GetCurrent();
+        const languageServerClient = new RazorLanguageServerClient(vscodeType, languageServerDir, telemetryReporter, platformInfo, optionProvider, logger);
         const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
 
         const documentManager = new RazorDocumentManager(languageServerClient, logger);

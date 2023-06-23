@@ -32,25 +32,17 @@ export function resolveRazorLanguageServerOptions(
 }
 
 function findLanguageServerExecutable(withinDir: string) {
-    const extension = isWindows() ? '.exe' : '';
-    const executablePath = path.join(
-        withinDir,
-        `rzls${extension}`);
+    const isSelfContained = fs.existsSync(path.join(withinDir, 'coreclr.dll'));
     let fullPath = '';
-
-    if (fs.existsSync(executablePath)) {
-        fullPath = executablePath;
+    if (isSelfContained) {
+        const fileName = isWindows() ? 'rzls.exe' : 'rzls';
+        fullPath = path.join(withinDir, fileName);
     } else {
-        // Exe doesn't exist.
-        const dllPath = path.join(
-            withinDir,
-            'rzls.dll');
+        fullPath = path.join(withinDir, 'rzls.dll');
+    }
 
-        if (!fs.existsSync(dllPath)) {
-            throw new Error(`Could not find Razor Language Server executable within directory '${withinDir}'`);
-        }
-
-        fullPath = dllPath;
+    if (!fs.existsSync(fullPath)) {
+        throw new Error(`Could not find Razor Language Server executable within directory '${withinDir}'`);
     }
 
     return fullPath;

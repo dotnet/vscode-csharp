@@ -4,7 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
 import { CSharpExtensionId } from '../constants/CSharpExtensionId';
+import { PlatformInformation } from './platform';
+import { Options } from './options';
 
 export const DotNetRuntimeVersion = '7.0';
 
@@ -55,4 +59,34 @@ export async function acquireDotNetProcessDependencies(path: string) {
     await vscode.commands.executeCommand('dotnet.ensureDotnetDependencies', { command: dotnetPath, arguments: args });
 
     return dotnetPath;
+}
+
+export async function getDotNetProcessInfo(appPath: string, platformInfo: PlatformInformation, options: Options): Promise<[appPath: string, env: NodeJS.ProcessEnv, args: string[]]> {
+    let dotnetRuntimePath = options.commonOptions.dotnetPath;
+    if (!dotnetRuntimePath) {
+        let dotnetPath = await acquireDotNetProcessDependencies(appPath);
+        dotnetRuntimePath = path.dirname(dotnetPath);
+    }
+
+    // Take care to always run .NET processes on the runtime that we intend.
+    // The dotnet.exe we point to should not go looking for other runtimes.
+    const env: NodeJS.ProcessEnv =  { ...process.env };
+    env.DOTNET_ROOT = dotnetRuntimePath;
+    env.DOTNET_MULTILEVEL_LOOKUP = '0';
+    // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
+    env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
+
+    let args: string[] = [ ];
+    if (!appPath.endsWith('.dll')) {
+        return [appPath, env, args];
+    }
+
+    const dotnetFileName = platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
+    const dotnetPath = path.join(dotnetRuntimePath, dotnetFileName);
+    if (!fs.existsSync(dotnetPath)) {
+        throw new Error(`Cannot find dotnet path '${dotnetPath}'`);
+    }
+
+    args.push(appPath);
+    return [dotnetPath, env, args];
 }
