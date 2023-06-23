@@ -34,8 +34,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
     async getHostExecutableInfo(options: Options): Promise<HostExecutableInformation> {
         let dotnetRuntimePath = options.commonOptions.dotnetPath;
         const serverPath = this.getServerPath(options, this.platformInfo);
-        if (!dotnetRuntimePath)
-        {
+        if (!dotnetRuntimePath) {
             let dotnetInfo = await this.acquireDotNetProcessDependencies(serverPath);
             dotnetRuntimePath = path.dirname(dotnetInfo.path);
         }
