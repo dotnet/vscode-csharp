@@ -5,8 +5,10 @@
 
 
 import * as fs from 'async-file';
+import * as getPort from 'get-port';
 
-const getPort = require('get-port');
+// There are no typings for this library.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const ServerMock = require("mock-http-server");
 
 export default class MockHttpsServer {
@@ -31,7 +33,7 @@ export default class MockHttpsServer {
     }
 
     public async stop() {
-        return new Promise((resolve, reject) => this.server.stop(resolve));
+        return new Promise((resolve, _) => this.server.stop(resolve));
     }
 
     public static async CreateMockHttpsServer(): Promise<MockHttpsServer> {

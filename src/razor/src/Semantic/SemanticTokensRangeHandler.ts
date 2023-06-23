@@ -27,8 +27,8 @@ export class SemanticTokensRangeHandler {
     }
 
     private async getSemanticTokens(
-        semanticTokensParams: SerializableSemanticTokensParams,
-        cancellationToken: vscode.CancellationToken): Promise<ProvideSemanticTokensResponse> {
+        _semanticTokensParams: SerializableSemanticTokensParams,
+        _cancellationToken: vscode.CancellationToken): Promise<ProvideSemanticTokensResponse> {
 
         // This is currently a no-op since (1) the default C# semantic tokens experience is already powerful and
         // (2) there seems to be an issue with the semantic tokens execute command - possibly either O# not

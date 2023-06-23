@@ -40,7 +40,7 @@ export default class OmniSharpWorkspaceSymbolProvider extends AbstractSupport im
                 return res.QuickFixes.map(symbol => this._asSymbolInformation(symbol));
             }
         }
-        catch {}
+        catch { /* empty */ }
 
         return [];
     }

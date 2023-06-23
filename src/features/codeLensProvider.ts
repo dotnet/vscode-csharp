@@ -100,7 +100,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
                 return createCodeLenses(response.Elements, document.fileName, options);
             }
         }
-        catch (error) { }
+        catch (error) { /* empty */ }
 
         return [];
     }

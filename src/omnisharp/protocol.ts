@@ -83,7 +83,7 @@ export interface Request extends FileBasedRequest {
     ApplyChangesTogether?: boolean;
 }
 
-export type FindImplementationsRequest = Request
+export type FindImplementationsRequest = Request;
 
 export interface LinePositionSpanTextChange {
     NewText: string;
@@ -123,9 +123,9 @@ export interface ChangeBufferRequest {
     NewText: string;
 }
 
-export type AddToProjectRequest = Request
+export type AddToProjectRequest = Request;
 
-export type RemoveFromProjectRequest = Request
+export type RemoveFromProjectRequest = Request;
 
 export interface FindUsagesRequest extends Request {
     //        MaxWidth: number; ?
@@ -391,7 +391,7 @@ export interface RenamedFileResponse extends FileOperationResponse {
     NewFileName: string;
 }
 
-export type OpenFileResponse = FileOperationResponse
+export type OpenFileResponse = FileOperationResponse;
 
 export enum FileModificationType {
     Modified,
@@ -503,12 +503,9 @@ export interface RunFixAllRequest extends FileBasedRequest {
     ApplyChanges: boolean;
 }
 
-export type ReAnalyzeRequest = FileBasedRequest
+export type ReAnalyzeRequest = FileBasedRequest;
 
-export interface ReAnalyzeReponse {
-}
-
-export type QuickInfoRequest = Request
+export type QuickInfoRequest = Request;
 
 export interface QuickInfoResponse {
     Markdown?: string;
@@ -565,14 +562,14 @@ export interface SourceGeneratedFileInfo {
     DocumentGuid: string;
 }
 
-export type SourceGeneratedFileRequest = SourceGeneratedFileInfo
+export type SourceGeneratedFileRequest = SourceGeneratedFileInfo;
 
 export interface SourceGeneratedFileResponse {
     Source: string;
     SourceName: string;
 }
 
-export type UpdateSourceGeneratedFileRequest = SourceGeneratedFileInfo
+export type UpdateSourceGeneratedFileRequest = SourceGeneratedFileInfo;
 
 interface UpdateSourceGeneratedFileNotModifiedResponse {
     UpdateType: Exclude<UpdateType, UpdateType.Modified>;
@@ -591,7 +588,7 @@ export enum UpdateType {
     Modified
 }
 
-export type SourceGeneratedFileClosedRequest = SourceGeneratedFileInfo
+export type SourceGeneratedFileClosedRequest = SourceGeneratedFileInfo;
 
 export interface InlayHintRequest {
     Location: V2.Location;
@@ -767,9 +764,9 @@ export namespace V2 {
         TargetFrameworkVersion?: string;
     }
 
-    export type DebugTestGetStartInfoRequest = SingleTestRequest
+    export type DebugTestGetStartInfoRequest = SingleTestRequest;
 
-    export type DebugTestClassGetStartInfoRequest = MultiTestRequest
+    export type DebugTestClassGetStartInfoRequest = MultiTestRequest;
 
     export interface DebugTestGetStartInfoResponse {
         FileName: string;
@@ -785,15 +782,9 @@ export namespace V2 {
         TargetProcessId: number;
     }
 
-    export interface DebugTestLaunchResponse {
-    }
+    export type DebugTestStopRequest = Request;
 
-    export type DebugTestStopRequest = Request
-
-    export interface DebugTestStopResponse {
-    }
-
-    export type DiscoverTestsRequest = BaseTestRequest
+    export type DiscoverTestsRequest = BaseTestRequest;
 
     export interface TestInfo {
         FullyQualifiedName: string;
@@ -807,7 +798,7 @@ export namespace V2 {
         Tests: TestInfo[];
     }
 
-    export type GetTestStartInfoRequest = SingleTestRequest
+    export type GetTestStartInfoRequest = SingleTestRequest;
 
     export interface GetTestStartInfoResponse {
         Executable: string;
@@ -815,13 +806,13 @@ export namespace V2 {
         WorkingDirectory: string;
     }
 
-    export type RunTestRequest = SingleTestRequest
+    export type RunTestRequest = SingleTestRequest;
 
-    export type RunTestsInClassRequest = MultiTestRequest
+    export type RunTestsInClassRequest = MultiTestRequest;
 
-    export type RunTestsInContextRequest = TestsInContextRequest
+    export type RunTestsInContextRequest = TestsInContextRequest;
 
-    export type DebugTestsInContextGetStartInfoRequest = TestsInContextRequest
+    export type DebugTestsInContextGetStartInfoRequest = TestsInContextRequest;
 
     export namespace TestOutcomes {
         export const None = 'none';
@@ -922,7 +913,7 @@ export namespace V2 {
             Properties?: { [name: string]: any };
         }
 
-        export type CodeStructureRequest = FileBasedRequest
+        export type CodeStructureRequest = FileBasedRequest;
 
         export interface CodeStructureResponse {
             Elements?: CodeElement[];

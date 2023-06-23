@@ -38,5 +38,5 @@ export interface IEngine {
         data?: any,
         token?: CancellationToken,
     ): Promise<TResponse>;
-    addListener<T = {}>(event: string, listener: (e: T) => void): Disposable;
+    addListener<T = object>(event: string, listener: (e: T) => void): Disposable;
 }

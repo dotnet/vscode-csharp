@@ -10,6 +10,8 @@ import { AbsolutePathPackage } from '../../../src/packageManager/AbsolutePathPac
 import { join } from 'path';
 
 const expect = chai.expect;
+// There are no typings for this library.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const mock = require("mock-fs");
 
 suite(`${getNotInstalledPackagesForPlatform.name}`, () => {

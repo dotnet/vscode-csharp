@@ -8,7 +8,7 @@ import { mapAsync } from '../common';
 import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from "../shared/IWorkspaceDebugInformationProvider";
 import { isBlazorWebAssemblyHosted, isBlazorWebAssemblyProject, isWebProject } from '../shared/utils';
 import { RoslynLanguageServer } from "./roslynLanguageServer";
-import { RoslynProtocol, WorkspaceDebugConfigurationRequest } from "./roslynProtocol";
+import { WorkspaceDebugConfigurationParams, WorkspaceDebugConfigurationRequest } from "./roslynProtocol";
 import { UriConverter } from './uriConverter';
 
  export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugInformationProvider {
@@ -19,7 +19,7 @@ import { UriConverter } from './uriConverter';
             return;
         }
 
-        const params: RoslynProtocol.WorkspaceDebugConfigurationParams = {
+        const params: WorkspaceDebugConfigurationParams = {
             workspacePath: UriConverter.serialize(workspaceFolder)
         };
 

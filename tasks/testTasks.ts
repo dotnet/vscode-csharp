@@ -75,7 +75,7 @@ async function runIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp'
         CODE_DISABLE_EXTENSIONS: 'true',
     };
 
-    const result = await spawnNode([integrationTestRunnerPath], { env, cwd: rootPath });
+    const result = await spawnNode([integrationTestRunnerPath, '--enable-source-maps'], { env, cwd: rootPath });
 
     if (result.code === null || result.code > 0) {
         // Ensure that gulp fails when tests fail

@@ -128,7 +128,7 @@ export class OmnisharpLoggerObserver extends BaseLoggerObserver {
 
     private _isFilterableOutput(event: OmnisharpEventPacketReceived) {
         // filter messages like: /codecheck: 200 339ms
-        const timing200Pattern = /^\/[\/\w]+: 200 \d+ms/;
+        const timing200Pattern = /^\/[/\w]+: 200 \d+ms/;
 
         return event.logLevel === "INFORMATION"
             && event.name === "OmniSharp.Middleware.LoggingMiddleware"

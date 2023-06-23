@@ -16,12 +16,12 @@ export class InformationMessageObserver {
     public post = (event: ObservableEvent.BaseEvent) => {
         switch (event.type) {
             case EventType.OmnisharpServerUnresolvedDependencies:
-                this.handleOmnisharpServerUnresolvedDependencies(<ObservableEvent.OmnisharpServerUnresolvedDependencies>event);
+                this.handleOmnisharpServerUnresolvedDependencies();
                 break;
         }
     };
 
-    private async handleOmnisharpServerUnresolvedDependencies(event: ObservableEvent.OmnisharpServerUnresolvedDependencies) {
+    private async handleOmnisharpServerUnresolvedDependencies() {
         //to do: determine if we need the unresolved dependencies message
         if (!this.optionProvider.GetLatestOptions().omnisharpOptions.suppressDotnetRestoreNotification) {
             const message = `There are unresolved dependencies. Please execute the restore command to continue.`;

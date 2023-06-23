@@ -12,10 +12,6 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
 import { isNotNull } from '../testUtil';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 async function setDiagnosticWorkspaceLimit(to: number | null) {
     const csharpConfig = vscode.workspace.getConfiguration('csharp');
     await csharpConfig.update('maxProjectFileCountForDiagnosticAnalysis', to);

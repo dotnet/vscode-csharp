@@ -10,10 +10,6 @@ import { activateCSharpExtension, isSlnWithGenerator } from './integrationHelper
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { IDisposable } from '../../src/Disposable';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function () {
     const virtualScheme = "virtual";
     let virtualDocumentRegistration: IDisposable;
@@ -56,7 +52,7 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
 class VirtualCSharpDocumentProvider implements vscode.TextDocumentContentProvider {
     onDidChange?: vscode.Event<vscode.Uri>;
 
-    provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): vscode.ProviderResult<string> {
+    provideTextDocumentContent(_uri: vscode.Uri, _token: vscode.CancellationToken): vscode.ProviderResult<string> {
         return `namespace Test
 {
 

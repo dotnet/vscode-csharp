@@ -2,12 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { use, should, expect } from 'chai';
+import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { OmnisharpServerVerboseMessage, EventWithMessage, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived, OmnisharpServerProcessRequestComplete, OmnisharpServerRequestCancelled } from '../../../src/omnisharp/loggingEvents';
 import { OmnisharpDebugModeLoggerObserver } from '../../../src/observers/OmnisharpDebugModeLoggerObserver';
-
-use(require("chai-string"));
 
 suite("OmnisharpDebugModeLoggerObserver", () => {
     suiteSetup(() => should());
@@ -73,7 +71,7 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
     });
 
     suite('OmnisharpEventPacketReceived', () => {
-        test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are logged`, () => {
+        test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^/[/w]+: 200 d+ms/ are logged`, () => {
             const event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
             observer.post(event);
             expect(logOutput).to.contain(event.message);
@@ -97,14 +95,14 @@ suite("OmnisharpDebugModeLoggerObserver", () => {
 
     suite('OmnisharpRequestMessage', () => {
         test(`Request Command and Id is logged`, () => {
-            const event = new OmnisharpRequestMessage({ command: "someCommand", onSuccess: () => { }, onError: () => { } }, 1);
+            const event = new OmnisharpRequestMessage({ command: "someCommand", onSuccess: () => { /* empty */ }, onError: () => { /* empty */ } }, 1);
             observer.post(event);
             expect(logOutput).to.contain(event.id);
             expect(logOutput).to.contain(event.request.command);
         });
 
         test(`Request Data is logged when it is not empty`, () => {
-            const event = new OmnisharpRequestMessage({ command: "someCommand", onSuccess: () => { }, onError: () => { }, data: "someData" }, 1);
+            const event = new OmnisharpRequestMessage({ command: "someCommand", onSuccess: () => { /* empty */ }, onError: () => { /* empty */ }, data: "someData" }, 1);
             observer.post(event);
             expect(logOutput).to.contain(event.request.data);
         });

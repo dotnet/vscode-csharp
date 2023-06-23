@@ -36,7 +36,7 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
             async (request: DocumentDiagnosticParams, token: vscode.CancellationToken) => this.getDiagnostic(request, token));
     }
 
-    private async getDiagnostic(request: DocumentDiagnosticParams, cancellationToken: vscode.CancellationToken): Promise<DocumentDiagnosticReport | undefined> {
+    private async getDiagnostic(request: DocumentDiagnosticParams, _: vscode.CancellationToken): Promise<DocumentDiagnosticReport | undefined> {
         if (!this.documentManager.roslynActivated) {
             return undefined;
         }

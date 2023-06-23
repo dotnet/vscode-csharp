@@ -16,7 +16,7 @@ export class WarningMessageObserver {
 
     constructor(private vscode: vscode, private disableMsBuildDiagnosticWarning: () => boolean, scheduler?: Scheduler) {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
-        this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe(async event => {
+        this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe(async _ => {
             const message = "Some projects have trouble loading. Please review the output for more details.";
             await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
         });

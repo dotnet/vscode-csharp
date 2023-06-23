@@ -35,7 +35,7 @@ export async function updatePackageDependencies(): Promise<void> {
         console.log();
         console.log("To use:");
         const setEnvVarPrefix = os.platform() === 'win32' ? "set " : "export ";
-        const setEnvVarQuote = os.platform() === 'win32' ? "" : "\'";
+        const setEnvVarQuote = os.platform() === 'win32' ? "" : "'";
         console.log(`  ${setEnvVarPrefix}NEW_DEPS_URLS=${setEnvVarQuote}https://example1/foo-osx.zip,https://example1/foo-win.zip,https://example1/foo-linux.zip${setEnvVarQuote}`);
         console.log("-or-");
         console.log(`  ${setEnvVarPrefix}NEW_DEPS_ID=${setEnvVarQuote}Debugger${setEnvVarQuote}`);

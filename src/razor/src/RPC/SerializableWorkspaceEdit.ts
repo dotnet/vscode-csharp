@@ -41,7 +41,7 @@ export function convertWorkspaceEditFromSerializable(data: SerializableWorkspace
 
     if (data.changes !== undefined) {
         for (const uri in data.changes) {
-            if (!data.changes.hasOwnProperty(uri)) {
+            if (!Object.prototype.hasOwnProperty.call(data.changes, uri)) {
                 continue;
             }
             const changes = data.changes[uri].map(convertTextEditFromSerializable);

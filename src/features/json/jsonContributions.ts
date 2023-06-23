@@ -39,7 +39,7 @@ export function addJSONProviders(): CompositeDisposable {
     }
 
     configureHttpRequest();
-    subscriptions.add(workspace.onDidChangeConfiguration(e => configureHttpRequest()));
+    subscriptions.add(workspace.onDidChangeConfiguration(_e => configureHttpRequest()));
 
     // register completion and hove providers for JSON setting file(s)
     const contributions = [new ProjectJSONContribution(xhr)];
@@ -58,7 +58,7 @@ export class JSONHoverProvider implements HoverProvider {
     constructor(private jsonContribution: IJSONContribution) {
     }
 
-    public async provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover | undefined> {
+    public async provideHover(document: TextDocument, position: Position, _: CancellationToken): Promise<Hover | undefined> {
         const offset = document.offsetAt(position);
         const location = getLocation(document.getText(), offset);
         const node = location.previousNode;
@@ -82,7 +82,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
     constructor(private jsonContribution: IJSONContribution) {
     }
 
-    public async resolveCompletionItem(item: CompletionItem, token: CancellationToken): Promise<CompletionItem> {
+    public async resolveCompletionItem(item: CompletionItem, _: CancellationToken): Promise<CompletionItem> {
         if (this.jsonContribution.resolveSuggestion) {
             const resolver = await this.jsonContribution.resolveSuggestion(item);
             if (resolver !== undefined) {
@@ -92,7 +92,7 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
         return item;
     }
 
-    public async provideCompletionItems(document: TextDocument, position: Position, token: CancellationToken): Promise<CompletionList | undefined> {
+    public async provideCompletionItems(document: TextDocument, position: Position, _: CancellationToken): Promise<CompletionList | undefined> {
         const currentWord = this.getCurrentWord(document, position);
         let overwriteRange: Range | undefined;
         const items: CompletionItem[] = [];
@@ -114,7 +114,6 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
                 if (!proposed[<string>suggestion.label]) {
                     proposed[<string>suggestion.label] = true;
                     if (overwriteRange !== undefined) {
-                        suggestion.insertText = suggestion.insertText;
                         suggestion.range = overwriteRange;
                     }
 

@@ -45,7 +45,7 @@ import { DynamicFileInfoHandler } from '../razor/src/DynamicFile/DynamicFileInfo
 import ShowInformationMessage from '../shared/observers/utils/ShowInformationMessage';
 import EventEmitter = require('events');
 import Disposable from '../Disposable';
-import { RegisterSolutionSnapshotRequest, OnAutoInsertRequest, RoslynProtocol, ProjectInitializationCompleteNotification } from './roslynProtocol';
+import * as RoslynProtocol from './roslynProtocol';
 import { OpenSolutionParams } from './OpenSolutionParams';
 import { CSharpDevKitExports } from '../CSharpDevKitExports';
 import { ISolutionSnapshotProvider, SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
@@ -86,7 +86,7 @@ export class RoslynLanguageServer {
     /**
      * The timeout for stopping the language server (in ms).
      */
-    private static _stopTimeout: number = 10000;
+    private static _stopTimeout = 10000;
     private _languageClient: RoslynLanguageClient | undefined;
 
     /**
@@ -159,7 +159,7 @@ export class RoslynLanguageServer {
         };
 
         // Create the language client and start the client.
-        let client = new RoslynLanguageClient(
+        const client = new RoslynLanguageClient(
             'microsoft-codeanalysis-languageserver',
             'Microsoft.CodeAnalysis.LanguageServer',
             serverOptions,
@@ -186,7 +186,7 @@ export class RoslynLanguageServer {
             }
         });
 
-        this._languageClient.onNotification(ProjectInitializationCompleteNotification.type, () => {
+        this._languageClient.onNotification(RoslynProtocol.ProjectInitializationCompleteNotification.type, () => {
            this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.ProjectInitializationComplete);
         });
 
@@ -264,12 +264,12 @@ export class RoslynLanguageServer {
             throw new Error('Tried to send request while server is not started.');
         }
 
-        let response = await this._languageClient!.sendNotification(method, params);
+        const response = await this._languageClient!.sendNotification(method, params);
         return response;
     }
 
     public async registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<SolutionSnapshotId> {
-        const response = await _languageServer.sendRequest0(RegisterSolutionSnapshotRequest.type, token);
+        const response = await _languageServer.sendRequest0(RoslynProtocol.RegisterSolutionSnapshotRequest.type, token);
         if (response)
         {
             return new SolutionSnapshotId(response.id);
@@ -456,7 +456,7 @@ export class RoslynLanguageServer {
     private registerExtensionsChanged(languageClient: RoslynLanguageClient) {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
         languageClient.addDisposable(vscode.extensions.onDidChange(async () => {
-            let csharpDevkitExtension = getCSharpDevKit();
+            const csharpDevkitExtension = getCSharpDevKit();
 
             if (this._wasActivatedWithCSharpDevkit === undefined) {
                 // Haven't activated yet.
@@ -469,7 +469,7 @@ export class RoslynLanguageServer {
                 // We previously started without C# Dev Kit and its now installed.
                 // Offer a prompt to restart the server to use C# Dev Kit.
                 _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
-                let message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
+                const message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
                 ShowInformationMessage(vscode, message, { title, command });
             } else {
                 // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
@@ -480,7 +480,7 @@ export class RoslynLanguageServer {
 
     private registerTelemetryChanged(languageClient: RoslynLanguageClient) {
         // Subscribe to telemetry events so we can enable/disable as needed
-        languageClient.addDisposable(vscode.env.onDidChangeTelemetryEnabled((isEnabled: boolean) => {
+        languageClient.addDisposable(vscode.env.onDidChangeTelemetryEnabled((_: boolean) => {
             const title = 'Restart Language Server';
             const command = 'dotnet.restartServer';
             const message = 'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
@@ -633,7 +633,7 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
         await languageServer.sendNotification(DidCloseTextDocumentNotification.method, notification);
     }));
     context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
-        let diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
+        const diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
         return await languageServer.sendRequest(diagnosticRequestType, request, CancellationToken.None);
     }));
 
@@ -671,7 +671,7 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
     const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();
     const request: RoslynProtocol.OnAutoInsertParams = { _vs_textDocument: textDocument, _vs_position: position, _vs_ch: change.text, _vs_options: formattingOptions };
-    const response = await _languageServer.sendRequest(OnAutoInsertRequest.type, request, token);
+    const response = await _languageServer.sendRequest(RoslynProtocol.OnAutoInsertRequest.type, request, token);
     if (response)
     {
         const textEdit = response._vs_textEdit;

@@ -12,10 +12,6 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 import { Advisor } from '../../src/features/diagnosticsProvider';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 function setLimit(to: number | null) {
     const csharpConfig = vscode.workspace.getConfiguration('csharp');
     return csharpConfig.update('maxProjectFileCountForDiagnosticAnalysis', to);

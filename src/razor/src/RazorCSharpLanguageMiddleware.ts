@@ -27,7 +27,7 @@ export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
         private readonly serviceClient: RazorLanguageServiceClient,
         private readonly logger: RazorLogger) {}
 
-    public async remapWorkspaceEdit(workspaceEdit: vscode.WorkspaceEdit, token: vscode.CancellationToken) {
+    public async remapWorkspaceEdit(workspaceEdit: vscode.WorkspaceEdit, _: vscode.CancellationToken) {
         const map = new Map<vscode.Uri, vscode.TextEdit[]>();
 
         // The returned edits will be for the projected C# documents. We now need to re-map that to the original document.
@@ -76,7 +76,7 @@ export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
         return result;
     }
 
-    public async remapLocations(locations: vscode.Location[], token: vscode.CancellationToken) {
+    public async remapLocations(locations: vscode.Location[], _: vscode.CancellationToken) {
         const result: vscode.Location[] = [];
 
         for (const location of locations) {

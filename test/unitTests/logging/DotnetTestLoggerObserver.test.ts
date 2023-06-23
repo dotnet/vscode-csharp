@@ -10,7 +10,6 @@ import DotNetTestLoggerObserver from '../../../src/observers/DotnetTestLoggerObs
 import * as protocol from '../../../src/omnisharp/protocol';
 
 const expect = chai.expect;
-chai.use(require('chai-string'));
 
 suite(`${DotNetTestLoggerObserver.name}`, () => {
     let appendedMessage: string;

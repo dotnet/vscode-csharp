@@ -230,8 +230,8 @@ export class Options {
         function getExcludes(config: WorkspaceConfiguration, option: string): string[] {
             const optionValue = config.get<{ [i: string]: boolean }>(option, {});
             return Object.entries(optionValue)
-                .filter(([key, value]) => value)
-                .map(([key, value]) => key);
+                .filter(([_, value]) => value)
+                .map(([key, _]) => key);
         }
     }
 

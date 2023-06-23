@@ -9,13 +9,13 @@ import * as glob from 'glob-promise';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { SubscribeToAllLoggers } from "../src/logger";
+import * as tty from 'tty';
 
 // Linux: prevent a weird NPE when mocha on Linux requires the window size from the TTY
 // Since we are not running in a tty environment, we just implementt he method statically
-const tty = require('tty');
-if (!tty.getWindowSize) {
-    tty.getWindowSize = function () { return [80, 75]; };
-}
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+tty.getWindowSize = function () { return [80, 75]; };
 
 function setupLogging() {
     if (process.env.CODE_EXTENSIONS_PATH && process.env.OSVC_SUITE) {
@@ -45,9 +45,6 @@ export async function run(testsRoot: string, options?: Mocha.MochaOptions) {
     const mocha = new Mocha(options);
 
     setupLogging();
-
-    // Enable source map support
-    require('source-map-support').install();
 
     // Glob test files
     const files = await glob('**/**.test.js', { cwd: testsRoot });

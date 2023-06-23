@@ -357,7 +357,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
             "ASPNETCORE_ENVIRONMENT": "Development"
         },
         "sourceFileMap": {
-            "/Views": "\${workspaceFolder}/Views"
+            "/Views": "${workspaceFolder}/Views"
         }
     };
 
@@ -545,7 +545,7 @@ async function getLaunchOperations(generator: AssetGenerator, operations: AssetO
         return Promise.resolve(operations);
     }
 
-    return new Promise<AssetOperations>((resolve, reject) => {
+    return new Promise<AssetOperations>((resolve, _) => {
         return fs.exists(generator.launchJsonPath, exists => {
             if (exists) {
                 resolve(operations);
@@ -569,7 +569,7 @@ interface PromptItem extends vscode.MessageItem {
 }
 
 async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
-    return new Promise<PromptResult>((resolve, reject) => {
+    return new Promise<PromptResult>((resolve, _) => {
         const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
         const noItem: PromptItem = { title: 'Not Now', result: PromptResult.No, isCloseAffordance: true };
         const disableItem: PromptItem = { title: "Don't Ask Again", result: PromptResult.Disable };
@@ -762,7 +762,7 @@ export async function addAssetsIfNecessary(context: vscode.ExtensionContext, wor
 }
 
 async function getExistingAssets(generator: AssetGenerator) {
-    return new Promise<string[]>((resolve, reject) => {
+    return new Promise<string[]>((resolve, _) => {
         let assets: string[] = [];
         if (fs.pathExistsSync(generator.tasksJsonPath)) {
             const content = fs.readFileSync(generator.tasksJsonPath).toString();
@@ -794,7 +794,7 @@ async function getExistingAssets(generator: AssetGenerator) {
 }
 
 async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve, _) => {
         getExistingAssets(generator).then(res => {
             if (res.length > 0) {
                 const yesItem = { title: 'Yes' };
@@ -867,7 +867,7 @@ export async function generateAssets(workspaceInformationProvider: IWorkspaceDeb
 
 export function replaceCommentPropertiesWithComments(text: string) {
     // replacing dummy properties OS-COMMENT with the normal comment syntax
-    const regex = /["']OS-COMMENT\d*["']\s*\:\s*["'](.*)["']\s*?,/gi;
+    const regex = /["']OS-COMMENT\d*["']\s*:\s*["'](.*)["']\s*?,/gi;
     const withComments = text.replace(regex, '// $1');
 
     return withComments;

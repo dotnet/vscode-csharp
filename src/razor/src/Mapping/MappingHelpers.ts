@@ -58,7 +58,7 @@ export class MappingHelpers {
         textEdit: vscode.TextEdit,
         serviceClient: RazorLanguageServiceClient,
         logger: RazorLogger,
-        token: vscode.CancellationToken): Promise<vscode.TextEdit | undefined> {
+        _: vscode.CancellationToken): Promise<vscode.TextEdit | undefined> {
 
         const remappedResponse = await serviceClient.mapToDocumentRanges(
             LanguageKind.CSharp,
@@ -88,7 +88,7 @@ export class MappingHelpers {
         location: vscode.Location,
         serviceClient: RazorLanguageServiceClient,
         logger: RazorLogger,
-        token: vscode.CancellationToken) {
+        _: vscode.CancellationToken) {
 
         if (!isRazorCSharpFile(location.uri)) {
             // This location exists outside of a Razor document. Leave it unchanged.

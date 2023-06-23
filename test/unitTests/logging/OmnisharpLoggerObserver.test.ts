@@ -132,7 +132,7 @@ suite("OmnisharpLoggerObserver", () => {
             expect(fn).to.throw(Error);
         });
 
-        test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^\/[\/\w]+: 200 \d+ms/ are not logged`, () => {
+        test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^/[/w]+: 200 d+ms/ are not logged`, () => {
             const event = new OmnisharpEventPacketReceived("INFORMATION", "OmniSharp.Middleware.LoggingMiddleware", "/codecheck: 200 339ms");
             observer.post(event);
             expect(logOutput).to.be.empty;

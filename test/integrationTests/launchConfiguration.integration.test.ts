@@ -12,10 +12,6 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll } from './poll';
 import { isNotNull } from '../testUtil';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
@@ -39,7 +35,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         vscode.commands.executeCommand("dotnet.generateAssets", 0);
         await poll(async () => fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
 
-        const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((e) => {
+        const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((_) => {
             onChangeSubscription.dispose();
             isNotNull(vscode.debug.activeDebugSession);
             expect(vscode.debug.activeDebugSession.type).to.equal("coreclr");
@@ -49,7 +45,7 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         expect(result, "Debugger could not be started.");
 
         const debugSessionTerminated = new Promise<void>(resolve => {
-            const onTerminateSubscription = vscode.debug.onDidTerminateDebugSession((e) => {
+            const onTerminateSubscription = vscode.debug.onDidTerminateDebugSession((_) => {
                 onTerminateSubscription.dispose();
                 resolve();
             });

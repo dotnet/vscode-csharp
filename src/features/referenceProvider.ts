@@ -34,7 +34,7 @@ export default class OmniSharpReferenceProvider extends AbstractSupport implemen
                 return result;
             }
         }
-        catch {}
+        catch { /* empty */ }
 
         return [];
     }

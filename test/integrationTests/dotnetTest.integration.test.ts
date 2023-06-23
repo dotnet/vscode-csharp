@@ -15,10 +15,6 @@ import { OmnisharpRequestMessage } from '../../src/omnisharp/loggingEvents';
 import { V2 } from '../../src/omnisharp/protocol';
 import { isNotNull } from '../testUtil';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
     let eventStream: EventStream;

@@ -10,10 +10,6 @@ import { should, expect } from 'chai';
 import * as integrationHelpers from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 

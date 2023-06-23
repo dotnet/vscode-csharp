@@ -9,7 +9,7 @@ import { IGetMonoVersion } from '../constants/IGetMonoVersion';
 export const getMonoVersion: IGetMonoVersion = async (environment: NodeJS.ProcessEnv) => {
     const versionRegexp = /(\d+\.\d+\.\d+)/;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _) => {
         const childprocess = spawn('mono', ['--version'], { env: environment });
         childprocess.on('error', () => {
             resolve(undefined);

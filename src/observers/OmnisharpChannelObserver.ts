@@ -5,7 +5,7 @@
 
 import { BaseChannelObserver } from "./BaseChannelObserver";
 import { OutputChannel } from '../vscodeAdapter';
-import { BaseEvent, OmnisharpServerOnStdErr } from '../omnisharp/loggingEvents';
+import { BaseEvent } from '../omnisharp/loggingEvents';
 import { EventType } from "../omnisharp/EventType";
 import OptionProvider from "../shared/observers/OptionProvider";
 
@@ -21,7 +21,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver {
                 this.showChannel(true);
                 break;
             case EventType.OmnisharpServerOnStdErr:
-                this.handleOmnisharpServerOnStdErr(<OmnisharpServerOnStdErr>event);
+                this.handleOmnisharpServerOnStdErr();
                 break;
             case EventType.OmnisharpRestart:
                 this.clearChannel();
@@ -29,7 +29,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver {
         }
     };
 
-    private async handleOmnisharpServerOnStdErr(event: OmnisharpServerOnStdErr) {
+    private async handleOmnisharpServerOnStdErr() {
         if (this.optionProvider.GetLatestOptions().omnisharpOptions.showOmnisharpLogOnError) {
             this.showChannel(true);
         }

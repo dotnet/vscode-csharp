@@ -240,7 +240,6 @@ export class IntegrityCheckFailure {
 
 export class IntegrityCheckSuccess {
     type = EventType.IntegrityCheckSuccess;
-    constructor() { }
 }
 
 export class RazorPluginPathSpecified implements BaseEvent {

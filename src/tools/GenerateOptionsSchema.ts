@@ -12,7 +12,7 @@ function AppendFieldsToObject(reference: any, obj: any) {
     if (typeof obj == 'object') {
         for (const referenceKey in reference) {
             // If key exists in original object and is an object.
-            if (obj.hasOwnProperty(referenceKey)) {
+            if (Object.prototype.hasOwnProperty.call(obj, referenceKey)) {
                 obj[referenceKey] = AppendFieldsToObject(reference[referenceKey], obj[referenceKey]);
             } else {
                 // Does not exist in current object context
@@ -42,7 +42,7 @@ function MergeDefaults(parentDefault: any, childDefault: any) {
 function UpdateDefaults(object: any, defaults: any) {
     if (defaults != null) {
         for (const key in object) {
-            if (object[key].hasOwnProperty('type') && object[key].type === 'object' && object[key].properties !== null) {
+            if (Object.prototype.hasOwnProperty.call(object[key], 'type') && object[key].type === 'object' && object[key].properties !== null) {
                 object[key].properties = UpdateDefaults(object[key].properties, MergeDefaults(defaults, object[key].default));
             } else if (key in defaults) {
                 object[key].default = defaults[key];
@@ -55,7 +55,7 @@ function UpdateDefaults(object: any, defaults: any) {
 
 function ReplaceReferences(definitions: any, objects: any) {
     for (const key in objects) {
-        if (objects[key].hasOwnProperty('$ref')) {
+        if (Object.prototype.hasOwnProperty.call(objects[key], '$ref')) {
             // $ref is formatted as "#/definitions/ObjectName"
             const referenceStringArray: string[] = objects[key]['$ref'].split('/');
 
@@ -76,7 +76,7 @@ function ReplaceReferences(definitions: any, objects: any) {
         }
 
         // Recursively replace references if this object has properties.
-        if (objects[key].hasOwnProperty('type') && objects[key].type === 'object' && objects[key].properties !== null) {
+        if (Object.prototype.hasOwnProperty.call(objects[key], 'type') && objects[key].type === 'object' && objects[key].properties !== null) {
             objects[key].properties = ReplaceReferences(definitions, objects[key].properties);
             objects[key].properties = UpdateDefaults(objects[key].properties, objects[key].default);
         }

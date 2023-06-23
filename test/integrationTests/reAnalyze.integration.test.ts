@@ -15,10 +15,6 @@ import { EventType } from '../../src/omnisharp/EventType';
 import { BaseEvent, OmnisharpBackgroundDiagnosticStatus } from '../../src/omnisharp/loggingEvents';
 import { BackgroundDiagnosticStatus } from '../../src/omnisharp/protocol';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 function listenEvents<T extends BaseEvent>(stream: EventStream, type: EventType): T[] {
     const results: T[] = [];
 

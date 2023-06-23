@@ -3,16 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { use as chaiUse, expect, should } from 'chai';
+import { expect, should } from 'chai';
 import { vscode } from '../../../src/vscodeAdapter';
 import { getFakeVsCode } from '../testAssets/Fakes';
 
 
 import { ErrorMessageObserver } from '../../../src/observers/ErrorMessageObserver';
 import { ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, EventWithMessage, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
-
-chaiUse(require('chai-as-promised'));
-chaiUse(require('chai-string'));
 
 suite("ErrorMessageObserver", () => {
     suiteSetup(() => should());
@@ -21,7 +18,7 @@ suite("ErrorMessageObserver", () => {
     let errorMessage: string | undefined;
     const observer = new ErrorMessageObserver(vscode);
 
-    vscode.window.showErrorMessage = async (message: string, ...items: string[]) => {
+    vscode.window.showErrorMessage = async (message: string, ..._: string[]) => {
         errorMessage = message;
         return Promise.resolve<string>("Done");
     };

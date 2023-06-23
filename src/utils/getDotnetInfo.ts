@@ -29,9 +29,9 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         const lines = data.replace(/\r/mg, '').split('\n');
         for (const line of lines) {
             let match: RegExpMatchArray | null;
-            if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
+            if ((match = /^ Version:\s*([^\s].*)$/.exec(line))) {
                 version = match[1];
-            } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
+            } else if ((match = /^ RID:\s*([\w\-.]+)$/.exec(line))) {
                 runtimeId = match[1];
             }
 

@@ -571,7 +571,7 @@ async function GetSysNativePathIfNeeded(platformInfo: PlatformInformation): Prom
 async function execChildProcessAndOutputErrorToChannel(process: string, workingDirectory: string, channel: vscode.OutputChannel, platformInfo: PlatformInformation): Promise<string> {
     channel.appendLine(`Executing: ${process}`);
 
-    return new Promise<string>(async (resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         return GetSysNativePathIfNeeded(platformInfo).then(newEnv => {
             child_process.exec(process, { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
                 let channelOutput = "";

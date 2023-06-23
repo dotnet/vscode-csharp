@@ -12,10 +12,6 @@ import * as path from 'path';
 import { assertWithPoll } from './poll';
 import { isNotNull } from '../testUtil';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
@@ -49,6 +45,6 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
 
         await vscode.commands.executeCommand(codeAction.command.command, ...codeAction.command.arguments);
 
-        await assertWithPoll(() => { }, 15 * 1000, 500, _ => expect(vscode.window.activeTextEditor!.document.fileName).contains("C.cs"));
+        await assertWithPoll(() => { /* empty */ }, 15 * 1000, 500, _ => expect(vscode.window.activeTextEditor!.document.fileName).contains("C.cs"));
     });
 });

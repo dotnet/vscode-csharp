@@ -143,18 +143,18 @@ function readOwnPackageJson() {
 }
 
 function findInDirectoryOrAncestor(dir: string, filename: string) {
-    while (true) {
-        const candidate = path.join(dir, filename);
+    let searchDir: string | undefined = dir;
+    while (searchDir) {
+        const candidate = path.join(searchDir, filename);
         if (fs.existsSync(candidate)) {
             return candidate;
         }
 
-        const parentDir = path.dirname(dir);
-        if (parentDir === dir) {
-            throw new Error(`Could not find '${filename}' in or above '${dir}'.`);
-        }
-
-        dir = parentDir;
+        const parentDir = path.dirname(searchDir);
+        searchDir = parentDir === dir ? undefined : parentDir;
     }
+
+    throw new Error(`Could not find '${filename}' in or above '${dir}'.`);
+    
 }
 

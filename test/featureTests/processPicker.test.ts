@@ -122,7 +122,7 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
 
         const pipeCmd = RemoteAttachPicker.createPipeCmdFromArray(pipeTransport.pipeProgram, pipeTransport.pipeArgs, true);
 
-        pipeCmd.should.deep.equal(`/usr/bin/shared/dotnet bin/framework/myprogram.dll \"argument with spaces\" \"${RemoteAttachPicker.scriptShellCmd}\"`);
+        pipeCmd.should.deep.equal(`/usr/bin/shared/dotnet bin/framework/myprogram.dll "argument with spaces" "${RemoteAttachPicker.scriptShellCmd}"`);
     });
 
     test("Multiple ${debuggerCommand} in string args", () => {
@@ -192,8 +192,7 @@ suite("Remote Process Picker: Validate quoting arguments.", () => {
         const process3: Process = parsedOutput[2];
         const process4: Process = parsedOutput[3];
 
-        const should = require('chai').should();
-        should.not.exist(process1.commandLine);
+        should().not.exist(process1.commandLine);
         process1.name.should.equal('System Idle Process');
         process1.pid.should.equal('0');
 

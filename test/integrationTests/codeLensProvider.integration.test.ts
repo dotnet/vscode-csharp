@@ -11,10 +11,6 @@ import { activateCSharpExtension, isSlnWithCsproj, isSlnWithGenerator } from './
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { isNotNull } from '../testUtil';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 

@@ -28,7 +28,7 @@ const VOID_ELEMENTS: string[] = [
 export class RazorLanguageConfiguration {
     public register() {
         const configurationRegistration = vscode.languages.setLanguageConfiguration(RazorLanguage.id, {
-            wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\$\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\s]+)/g,
+            wordPattern: /(-?\d*\.\d\w*)|([^`~!@$^&*()\-=+[{\]}\\|;:'",.<>/\s]+)/g,
             onEnterRules: [
                 {
                     beforeText: new RegExp(

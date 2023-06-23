@@ -193,7 +193,7 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
             if (enableProposedApis) {
                 const proposedApisFeature = new ProposedApisFeature();
 
-                await proposedApisFeature.register(vscodeType, localRegistrations);
+                await proposedApisFeature.register(vscodeType);
             }
 
             razorCodeActionRunner.register();

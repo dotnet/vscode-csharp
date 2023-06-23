@@ -17,7 +17,6 @@ import TestZip from '../testAssets/TestZip';
 import TestEventBus from '../testAssets/TestEventBus';
 import { AbsolutePath } from '../../../src/packageManager/AbsolutePath';
 
-chai.use(require("chai-as-promised"));
 const expect = chai.expect;
 
 suite('ZipInstaller', () => {

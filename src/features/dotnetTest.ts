@@ -11,7 +11,7 @@ import * as serverUtils from "../omnisharp/utils";
 import * as utils from '../common';
 import * as vscode from 'vscode';
 import AbstractProvider from './abstractProvider';
-import { DebuggerEventsProtocol } from '../coreclr-debug/debuggerEventsProtocol';
+import * as DebuggerEventsProtocol from '../coreclr-debug/debuggerEventsProtocol';
 import { OmniSharpServer } from '../omnisharp/server';
 import { TestExecutionCountReport, ReportDotNetTestResults, DotNetTestRunStart, DotNetTestMessage, DotNetTestRunFailure, DotNetTestsInClassRunStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestDebugComplete, DotNetTestDebugStart, DotNetTestsInClassDebugStart, DotNetTestDebugStartFailure, DotNetTestRunInContextStart, DotNetTestDebugInContextStart } from '../omnisharp/loggingEvents';
 import { EventStream } from '../EventStream';
@@ -182,7 +182,7 @@ export default class TestManager extends AbstractProvider {
             const response = await serverUtils.discoverTests(this._server, request);
             return response.Tests;
         }
-        catch {}
+        catch { /* empty */ }
 
         return undefined;
     }
@@ -586,13 +586,14 @@ class DebugEventListener {
                 }
 
                 switch (event.eventType) {
-                    case DebuggerEventsProtocol.EventType.ProcessLaunched:
+                    case DebuggerEventsProtocol.ProcessLaunched: {
                         const processLaunchedEvent = <DebuggerEventsProtocol.ProcessLaunchedEvent>(event);
                         this._eventStream.post(new DotNetTestDebugProcessStart(processLaunchedEvent.targetProcessId));
                         this.onProcessLaunched(processLaunchedEvent.targetProcessId);
                         break;
+                    }
 
-                    case DebuggerEventsProtocol.EventType.DebuggingStopped:
+                    case DebuggerEventsProtocol.DebuggingStopped:
                         this._eventStream.post(new DotNetTestDebugComplete());
                         this.onDebuggingStopped();
                         break;

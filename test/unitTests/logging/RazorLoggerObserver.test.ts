@@ -2,12 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { use, should, expect } from 'chai';
+import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/Fakes';
 import { RazorLoggerObserver } from '../../../src/observers/RazorLoggerObserver';
 import { RazorPluginPathSpecified, RazorPluginPathDoesNotExist, RazorDevModeActive } from '../../../src/omnisharp/loggingEvents';
-
-use(require("chai-string"));
 
 suite("RazorLoggerObserver", () => {
     suiteSetup(() => should());

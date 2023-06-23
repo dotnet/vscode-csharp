@@ -8,9 +8,6 @@ import * as vscode from 'vscode';
 import { expect, should } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
 
 suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () {
 

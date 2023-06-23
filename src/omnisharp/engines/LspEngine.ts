@@ -27,7 +27,7 @@ import { Events, OmniSharpServer } from '../server';
 import { IEngine } from './IEngine';
 import { PlatformInformation } from '../../shared/platform';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
-import { Command, DynamicFeature, LanguageClientOptions, RequestType, StaticFeature, Trace } from 'vscode-languageclient';
+import { Command, DynamicFeature, LanguageClientOptions, RequestType0, StaticFeature, Trace } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { SelectionRangeFeature } from 'vscode-languageclient/lib/common/selectionRange';
 import { ColorProviderFeature } from 'vscode-languageclient/lib/common/colorProvider';
@@ -303,7 +303,7 @@ export class LspEngine implements IEngine {
         return this.client.start();
     }
 
-    async registerProviders(server: OmniSharpServer, optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature, eventStream: EventStream, advisor: Advisor, testManager: dotnetTest): Promise<Disposable> {
+    async registerProviders(_server: OmniSharpServer, _optionProvider: OptionProvider, _languageMiddlewareFeature: LanguageMiddlewareFeature, _eventStream: EventStream, _advisor: Advisor, _testManager: dotnetTest): Promise<Disposable> {
         // Register providers for functionality implemented outside of the O# LSP.
         return new CompositeDisposable();
     }
@@ -324,10 +324,10 @@ export class LspEngine implements IEngine {
         return this._initializeTask;
 
         async function waitForReady(client: LanguageClient) {
-            const statusRequest = new RequestType<{}, boolean, void>(
+            const statusRequest = new RequestType0<boolean, void>(
                 'o#/checkreadystatus'
             );
-            while (!await client.sendRequest(statusRequest, {})) {
+            while (!await client.sendRequest(statusRequest)) {
                 await new Promise((r) => setTimeout(r, 100));
             }
         }
@@ -379,7 +379,7 @@ export class LspEngine implements IEngine {
         throw error;
     }
 
-    public addListener<T = {}>(event: string, listener: (e: T) => void): Disposable {
+    public addListener<T = object>(event: string, listener: (e: T) => void): Disposable {
         const eventName = `o#/${event}`.replace(/\/\//g, '/').toLowerCase();
         this.eventBus.addListener(eventName, listener);
 
@@ -397,9 +397,9 @@ export class LspEngine implements IEngine {
                     registrations: true
                 };
             },
-            dispose() { },
-            fillClientCapabilities(capabilities) { },
-            initialize: (capabilities, documentSelector) => {
+            dispose() { /* empty */ },
+            fillClientCapabilities(_) { /* empty */ },
+            initialize: (_capabilities, _documentSelector) => {
                 client.onNotification(
                     'o#/log',
                     (packet: protocol.WireProtocol.EventPacket) => {

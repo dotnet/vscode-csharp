@@ -58,7 +58,7 @@ export async function downloadAndInstallPackages(packages: AbsolutePathPackage[]
                     await deleteInstallFile(pkg.installPath, InstallFileType.Begin);
                 }
             }
-            catch (error) { }
+            catch (error) { /* empty */ }
         }
     }
 

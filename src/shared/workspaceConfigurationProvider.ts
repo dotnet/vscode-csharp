@@ -25,7 +25,7 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
     /**
      * Returns a list of initial debug configurations based on contextual information, e.g. package.json or folder.
      */
-    async provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration[]> {
+    async provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, _?: vscode.CancellationToken): Promise<vscode.DebugConfiguration[]> {
 
         if (!folder || !folder.uri) {
             vscode.window.showErrorMessage("Cannot create .NET debug configurations. No workspace folder was selected.");

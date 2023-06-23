@@ -962,7 +962,7 @@ interface Thenable<T> {
     then<TResult>(onfulfilled?: (value: T) => TResult | Thenable<TResult>, onrejected?: (reason: any) => void): Thenable<TResult>;
 }
 
-export interface Extension<T> {
+export interface Extension<_T> {
     readonly id: string;
     readonly packageJSON: any;
 }

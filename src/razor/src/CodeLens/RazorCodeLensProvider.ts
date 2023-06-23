@@ -48,7 +48,7 @@ export class RazorCodeLensProvider
         documentManager.onRazorInitialized(() => onCodeLensChangedEmitter.fire());
     }
 
-    public async provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken) {
+    public async provideCodeLenses(document: vscode.TextDocument, _: vscode.CancellationToken) {
         try {
             // If a Razor file is open in VS Code at start up, we can be called before Razor is initialized.
             // We don't want to answer those calls, but we'll be refreshed when everything is ready.

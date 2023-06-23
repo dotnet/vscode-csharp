@@ -20,7 +20,7 @@ suite(`${OpenURLObserver.name}`, () => {
         vscode = getFakeVsCode();
         openExternalCalled = false;
         valueToBeParsed = undefined;
-        vscode.env.openExternal = async (target: Uri) => {
+        vscode.env.openExternal = async (_: Uri) => {
             openExternalCalled = true;
             return true;
         };

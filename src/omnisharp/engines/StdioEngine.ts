@@ -161,7 +161,7 @@ export class StdioEngine implements IEngine {
                 cleanupPromise = new Promise<void>((resolve, reject) => {
                     const killer = exec(
                         `taskkill /F /T /PID ${this._serverProcess!.pid}`,
-                        (err, stdout, stderr) => {
+                        (err, _stdout, _stderr) => {
                             if (err) {
                                 return reject(err);
                             }
@@ -204,7 +204,7 @@ export class StdioEngine implements IEngine {
         }
     }
 
-    public addListener<T = {}>(
+    public addListener<T = object>(
         event: string,
         listener: (e: T) => void
     ): Disposable {
@@ -259,6 +259,8 @@ export class StdioEngine implements IEngine {
         });
 
         const promise = new Promise<void>((resolve, reject) => {
+            // Bogus warning.
+            // eslint-disable-next-line prefer-const
             let listener: Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
@@ -278,7 +280,7 @@ export class StdioEngine implements IEngine {
             }, timeoutDuration);
 
             // handle started-event
-            listener = this.addListener(Events.Started, (e) => {
+            listener = this.addListener(Events.Started, (_) => {
                 if (listener) {
                     listener.dispose();
                 }

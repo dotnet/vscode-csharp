@@ -79,7 +79,7 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
                         const shortMessage = 'project.json is no longer a supported project format for .NET Core applications.';
                         const moreDetailItem: vscode.MessageItem = { title: 'More Detail' };
                         vscode.window.showWarningMessage(shortMessage, moreDetailItem)
-                            .then(item => {
+                            .then(_ => {
                                 eventStream.post(new ProjectJsonDeprecatedWarning());
                             });
                     }
@@ -137,6 +137,6 @@ export async function activate(context: vscode.ExtensionContext, packageJSON: an
     context.subscriptions.push(disposables);
 
     return new Promise<ActivationResult>(resolve =>
-        server.onServerStart(e =>
+        server.onServerStart(_ =>
             resolve({ server, advisor, testManager })));
 }

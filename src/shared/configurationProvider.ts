@@ -27,7 +27,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
     //#region DebugConfigurationProvider
 
-    async resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | undefined | null> {
+    async resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, _?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | undefined | null> {
         // Check to see if we are in the "Run and Debug" scenario.
         if (Object.keys(debugConfiguration).length == 0) {
             const csharpDevkitExtension = getCSharpDevKit();
@@ -44,7 +44,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
     /**
      * Try to add all missing attributes to the debug configuration being launched.
      */
-    async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined> {
+    async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, _?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined> {
 
         if (!debugConfiguration.type) {
             // If the config doesn't look functional force VSCode to open a configuration file https://github.com/Microsoft/vscode/issues/54213
@@ -163,7 +163,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         for (const key of keys) {
             // Skip since option is set in the launch.json configuration
             // Skip 'console' option since this should be set when we know this is a console project.
-            if (debugConfiguration.hasOwnProperty(key) || key === "console") {
+            if (Object.prototype.hasOwnProperty.call(debugConfiguration, key) || key === "console") {
                 continue;
             }
 

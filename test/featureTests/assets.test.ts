@@ -10,12 +10,10 @@ import * as jsonc from 'jsonc-parser';
 
 import { AssetGenerator, ProgramLaunchType, replaceCommentPropertiesWithComments, updateJsonWithComments } from '../../src/shared/assets';
 import { parse } from 'jsonc-parser';
-import { use as chaiUse, should } from 'chai';
+import { should } from 'chai';
 import { ProjectDebugInformation } from '../../src/shared/IWorkspaceDebugInformationProvider';
 import { findNetCoreTargetFramework } from '../../src/shared/utils';
 import { isNotNull } from '../testUtil';
-
-chaiUse(require('chai-string'));
 
 suite("Asset generation: csproj", () => {
     suiteSetup(() => should());

@@ -25,8 +25,7 @@ export async function getMSBuildVersion(): Promise<string | undefined> {
             _msbuildVersion = match[1];
         }
     }
-    catch {
-    }
+    catch { /* empty */ }
 
     return _msbuildVersion;
 }

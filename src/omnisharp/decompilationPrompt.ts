@@ -44,7 +44,7 @@ interface PromptItem extends vscode.MessageItem {
 }
 
 async function promptToAcceptDecompilationTerms() {
-    return new Promise<PromptResult>((resolve, reject) => {
+    return new Promise<PromptResult>((resolve, _) => {
         const message = `IMPORTANT: C# extension includes decompiling functionality (“Decompiler”) that enables reproducing source code from binary code. By accessing and using the Decompiler, you agree to the terms for the Decompiler below. If you do not agree with these terms, do not access or use the Decompiler.
 
 You acknowledge that binary code and source code might be protected by copyright and trademark laws.  Before using the Decompiler on any binary code, you need to first:

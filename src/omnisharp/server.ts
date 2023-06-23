@@ -129,7 +129,7 @@ export class OmniSharpServer {
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
         this.updateProjectDebouncer
             .pipe(debounceTime(1500))
-            .subscribe((event) => {
+            .subscribe((_) => {
                 this.updateProjectInfo();
             });
         this.firstUpdateProject = true;
@@ -394,10 +394,9 @@ export class OmniSharpServer {
             omnisharpOptions.loggingLevel,
         ];
 
-        let razorPluginPath: string | undefined;
         const razorOptions = options.razorOptions;
         // Razor support only exists for certain platforms, so only load the plugin if present
-        razorPluginPath = razorOptions.razorPluginPath.length > 0 ? razorOptions.razorPluginPath : path.join(
+        const razorPluginPath = razorOptions.razorPluginPath.length > 0 ? razorOptions.razorPluginPath : path.join(
             this.extensionPath,
             '.razor',
             'OmniSharpPlugin',
@@ -629,7 +628,7 @@ export class OmniSharpServer {
                     /*ignoreChangeEvents*/ true,
                     /*ignoreDeleteEvents*/ true);
 
-                watcher.onDidCreate(uri => {
+                watcher.onDidCreate(_ => {
                     watcher.dispose();
                     resolve();
                 });
@@ -689,8 +688,7 @@ export class OmniSharpServer {
 
         const { engine } = this._state;
 
-        let startTime: number;
-        startTime = Date.now();
+        const startTime = Date.now();
         const response = await engine.makeRequest<TResponse>(command, data, token);
 
         const endTime = Date.now();
@@ -698,5 +696,9 @@ export class OmniSharpServer {
         this._recordRequestDelay(command, elapsedTime);
 
         return response;
+    }
+
+    public async makeRequest0(command: string, data?: any, token?: CancellationToken): Promise<void> {
+        await this.makeRequest<Record<string, never>>(command, data, token);
     }
 }

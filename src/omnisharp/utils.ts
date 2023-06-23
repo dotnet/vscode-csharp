@@ -30,7 +30,7 @@ export async function filesChanged(server: OmniSharpServer, requests: protocol.R
 }
 
 export async function findImplementations(server: OmniSharpServer, request: protocol.FindImplementationsRequest, token: vscode.CancellationToken) {
-    return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.FindImplementations, request);
+    return server.makeRequest<protocol.QuickFixResponse>(protocol.Requests.FindImplementations, request, token);
 }
 
 export async function findSymbols(server: OmniSharpServer, request: protocol.FindSymbolsRequest, token: vscode.CancellationToken) {
@@ -138,7 +138,7 @@ export async function getMetadata(server: OmniSharpServer, request: protocol.Met
 }
 
 export async function reAnalyze(server: OmniSharpServer, request: protocol.ReAnalyzeRequest) {
-    return server.makeRequest<protocol.ReAnalyzeReponse>(protocol.Requests.ReAnalyze, request);
+    return server.makeRequest<Record<string, never>>(protocol.Requests.ReAnalyze, request);
 }
 
 export async function getTestStartInfo(server: OmniSharpServer, request: protocol.V2.GetTestStartInfoRequest) {
@@ -170,11 +170,11 @@ export async function debugTestsInContextGetStartInfo(server: OmniSharpServer, r
 }
 
 export async function debugTestLaunch(server: OmniSharpServer, request: protocol.V2.DebugTestLaunchRequest) {
-    return server.makeRequest<protocol.V2.DebugTestLaunchResponse>(protocol.V2.Requests.DebugTestLaunch, request);
+    return server.makeRequest0(protocol.V2.Requests.DebugTestLaunch, request);
 }
 
 export async function debugTestStop(server: OmniSharpServer, request: protocol.V2.DebugTestStopRequest) {
-    return server.makeRequest<protocol.V2.DebugTestStopResponse>(protocol.V2.Requests.DebugTestStop, request);
+    return server.makeRequest0(protocol.V2.Requests.DebugTestStop, request);
 }
 
 export async function getSemanticHighlights(server: OmniSharpServer, request: protocol.V2.SemanticHighlightRequest) {

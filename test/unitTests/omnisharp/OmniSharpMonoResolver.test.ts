@@ -6,11 +6,9 @@
 import { OmniSharpMonoResolver } from "../../../src/omnisharp/OmniSharpMonoResolver";
 
 import { Options } from "../../../src/shared/options";
-import { use as chaiUse, expect } from "chai";
+import { expect } from "chai";
 import { join } from "path";
 import { getEmptyOptions } from "../Fakes/FakeOptions";
-
-chaiUse(require('chai-as-promised'));
 
 suite(`${OmniSharpMonoResolver.name}`, () => {
     let getMonoCalled: boolean;
@@ -22,7 +20,7 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
     const requiredMonoVersion = "6.4.0";
     const higherMonoVersion = "6.6.0";
 
-    const getMono = (version: string) => async (env: NodeJS.ProcessEnv) => {
+    const getMono = (version: string) => async (_: NodeJS.ProcessEnv) => {
         getMonoCalled = true;
         return Promise.resolve(version);
     };

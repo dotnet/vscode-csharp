@@ -11,8 +11,6 @@ import { DownloadStart, DownloadSizeObtained, DownloadProgress, DownloadSuccess,
 import MockHttpsServer from '../testAssets/MockHttpsServer';
 import TestEventBus from '../testAssets/TestEventBus';
 
-chai.use(require("chai-as-promised"));
-chai.use(require('chai-arrays'));
 const expect = chai.expect;
 
 suite("FileDownloader", () => {
@@ -97,7 +95,7 @@ suite("FileDownloader", () => {
             try {
                 await downloadPromise;
             }
-            catch { }
+            catch { /* empty */ }
             expect(downloadPromise).be.rejected;
         });
 

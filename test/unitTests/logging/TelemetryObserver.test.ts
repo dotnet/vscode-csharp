@@ -11,9 +11,6 @@ import { Package } from '../../../src/packageManager/Package';
 import { PackageError } from '../../../src/packageManager/PackageError';
 import { isNotNull } from '../../testUtil';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-
 suite('TelemetryReporterObserver', () => {
     suiteSetup(() => should());
     const platformInfo = new PlatformInformation("linux", "architecture");

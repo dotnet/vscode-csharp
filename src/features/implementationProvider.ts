@@ -20,7 +20,7 @@ export default class OmniSharpImplementationProvider extends AbstractSupport imp
             // Allow language middlewares to re-map its edits if necessary.
             const result = await this._languageMiddlewareFeature.remap("remapLocations", implementations, token);
             return result;
-        } catch {}
+        } catch { /* empty */ }
 
         return undefined;
     }

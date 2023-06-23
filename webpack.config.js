@@ -5,7 +5,9 @@
 
 //@ts-check
 
-import * as path from 'path';
+// Import statements do not work outside of modules.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require('path');
 /**@type {import('webpack').Configuration}*/
 const config = {
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/

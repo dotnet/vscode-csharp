@@ -28,7 +28,7 @@ export class RazorLanguageFeatureBase {
 
         switch (languageResponse.kind) {
             case LanguageKind.CSharp:
-            case LanguageKind.Html:
+            case LanguageKind.Html: {
                 const razorDocument = await this.documentManager.getDocument(document.uri);
                 const projectedDocument = languageResponse.kind === LanguageKind.CSharp
                     ? razorDocument.csharpDocument
@@ -59,7 +59,7 @@ export class RazorLanguageFeatureBase {
                     position: languageResponse.position,
                     languageKind: languageResponse.kind,
                 } as ProjectionResult;
-
+            }
             default:
                 return null;
         }

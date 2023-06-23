@@ -29,7 +29,7 @@ export class FoldingRangeHandler {
 
     private async provideFoldingRanges(
         foldingRangeParams: SerializableFoldingRangeParams,
-        cancellationToken: vscode.CancellationToken) {
+        _: vscode.CancellationToken) {
         try {
             const razorDocumentUri = vscode.Uri.parse(foldingRangeParams.textDocument.uri, true);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);

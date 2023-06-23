@@ -10,10 +10,6 @@ import { should, assert } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 interface ExpectedToken {
     startLine: number;
     character: number;

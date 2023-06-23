@@ -33,7 +33,7 @@ export class ColorPresentationHandler {
 
     private async provideHtmlColorPresentation(
         colorPresentationParams: SerializableColorPresentationParams,
-        cancellationToken: vscode.CancellationToken) {
+        _: vscode.CancellationToken) {
         try {
             const razorDocumentUri = vscode.Uri.parse(`${colorPresentationParams.textDocument.uri}`, true);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);

@@ -7,35 +7,30 @@
 // property on a launch or attach request.
 //
 // All messages are sent as UTF-8 JSON text with a tailing '\n'
-export namespace DebuggerEventsProtocol {
-    export namespace EventType {
-        // Indicates that the vsdbg-ui has received the attach or launch request and is starting up
-        export const Starting = "starting";
-        // Indicates that vsdbg-ui has successfully launched the specified process.
-        // The ProcessLaunchedEvent interface details the event payload.
-        export const ProcessLaunched = "processLaunched";
-        // Debug session is ending
-        export const DebuggingStopped = "debuggingStopped";
+export const Starting = "starting";
+// Indicates that vsdbg-ui has successfully launched the specified process.
+// The ProcessLaunchedEvent interface details the event payload.
+export const ProcessLaunched = "processLaunched";
+// Debug session is ending
+export const DebuggingStopped = "debuggingStopped";
+
+export interface DebuggerEvent {
+    // Contains one of the 'DebuggerEventsProtocol.EventType' values
+    eventType: string;
+}
+
+export interface ProcessLaunchedEvent extends DebuggerEvent {
+    // Process id of the newly-launched target process
+    targetProcessId: number;
+}
+
+// Decodes a packet received from the debugger into an event
+export function decodePacket(packet: Buffer): DebuggerEvent {
+    // Verify the message ends in a newline
+    if (packet[packet.length - 1] != 10 /*\n*/) {
+        throw new Error("Unexpected message received from debugger.");
     }
 
-    export interface DebuggerEvent {
-        // Contains one of the 'DebuggerEventsProtocol.EventType' values
-        eventType: string;
-    }
-
-    export interface ProcessLaunchedEvent extends DebuggerEvent {
-        // Process id of the newly-launched target process
-        targetProcessId: number;
-    }
-
-    // Decodes a packet received from the debugger into an event
-    export function decodePacket(packet: Buffer): DebuggerEvent {
-        // Verify the message ends in a newline
-        if (packet[packet.length - 1] != 10 /*\n*/) {
-            throw new Error("Unexpected message received from debugger.");
-        }
-
-        const message = packet.toString('utf-8', 0, packet.length - 1);
-        return JSON.parse(message);
-    }
+    const message = packet.toString('utf-8', 0, packet.length - 1);
+    return JSON.parse(message);
 }

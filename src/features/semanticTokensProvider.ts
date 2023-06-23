@@ -188,7 +188,7 @@ export default class OmniSharpSemanticTokensProvider extends AbstractProvider im
         return this._provideSemanticTokens(document, v2Range, token);
     }
 
-    async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range | undefined, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
+    async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range | undefined, _: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
         // We can only semantically highlight file from disk.
         if (document.uri.scheme !== "file") {
             return null;

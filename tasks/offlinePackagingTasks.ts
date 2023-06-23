@@ -24,6 +24,8 @@ import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 import path = require('path');
+// There are no typings for this library.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const argv = require('yargs').argv;
 
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
@@ -136,7 +138,7 @@ async function acquireNugetPackage(packageName: string, packageVersion: string):
 
     const process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
     await new Promise( (resolve) => {
-        process.on('exit', (exitCode, signal) => {
+        process.on('exit', (exitCode, _) => {
             if (exitCode !== 0) {
                 throw new Error(`Failed to download nuget package ${packageName}.${packageVersion}`);
             }

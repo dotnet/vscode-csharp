@@ -51,14 +51,16 @@ export class TelemetryObserver {
             case EventType.TestExecutionCountReport:
                 this.handleTestExecutionCountReport(<TestExecutionCountReport>event);
                 break;
-            case EventType.TelemetryEvent:
+            case EventType.TelemetryEvent: {
                 const telemetryEvent = <TelemetryEvent>event;
                 this.reporter.sendTelemetryEvent(telemetryEvent.eventName, telemetryEvent.properties, telemetryEvent.measures);
                 break;
-            case EventType.TelemetryErrorEvent:
+            }
+            case EventType.TelemetryErrorEvent: {
                 const telemetryErrorEvent = <TelemetryErrorEvent>event;
                 this.reporter.sendTelemetryErrorEvent(telemetryErrorEvent.eventName, telemetryErrorEvent.properties, telemetryErrorEvent.measures, telemetryErrorEvent.errorProps);
                 break;
+            }
             case EventType.ProjectConfigurationReceived:
                 this.handleProjectConfigurationReceived(<ProjectConfiguration>event, telemetryProps);
                 break;

@@ -5,14 +5,11 @@
 
 import { InformationMessageObserver } from '../../../src/observers/InformationMessageObserver';
 import OptionProvider from '../../../src/shared/observers/OptionProvider';
-import { use as chaiUse, expect, should } from 'chai';
+import { expect, should } from 'chai';
 import { getUnresolvedDependenices, updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
 import { Subject, from as observableFrom } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { Options } from '../../../src/shared/options';
-
-chaiUse(require('chai-as-promised'));
-chaiUse(require('chai-string'));
 
 suite("InformationMessageObserver", () => {
     suiteSetup(() => should());
@@ -105,7 +102,7 @@ suite("InformationMessageObserver", () => {
             });
         };
 
-        vscode.commands.executeCommand = async (command: string, ...rest: any[]) => {
+        vscode.commands.executeCommand = async (command: string, ..._: any[]) => {
             invokedCommand = command;
             signalCommandDone();
             return undefined;

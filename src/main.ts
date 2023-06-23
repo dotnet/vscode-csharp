@@ -297,7 +297,7 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
 }
 
 function profferBrokeredServices(context: vscode.ExtensionContext, serviceContainer: GlobalBrokeredServiceContainer) {
-    context.subscriptions.push(serviceContainer.profferServiceFactory(Descriptors.solutionSnapshotProviderRegistration, (mk, op, sb) => new SolutionSnapshotProvider()));
+    context.subscriptions.push(serviceContainer.profferServiceFactory(Descriptors.solutionSnapshotProviderRegistration, (_mk, _op, _sb) => new SolutionSnapshotProvider()));
 }
 
 function isSupportedPlatform(platform: PlatformInformation): boolean {

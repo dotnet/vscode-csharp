@@ -4,15 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { WarningMessageObserver } from '../../../src/observers/WarningMessageObserver';
-import { assert, use as chaiUse, expect, should } from 'chai';
+import { assert, expect, should } from 'chai';
 import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from '../testAssets/Fakes';
 import { vscode } from '../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing';
 import { from as observableFrom, Subject } from 'rxjs';
 import { timeout, map } from 'rxjs/operators';
-
-chaiUse(require('chai-as-promised'));
-chaiUse(require('chai-string'));
 
 suite('WarningMessageObserver', () => {
     suiteSetup(() => should());
@@ -45,7 +42,7 @@ suite('WarningMessageObserver', () => {
         });
     };
 
-    vscode.commands.executeCommand = async (command: string, ...rest: any[]) => {
+    vscode.commands.executeCommand = async (command: string, ..._: any[]) => {
         invokedCommand = command;
         signalCommandDone();
         return undefined;

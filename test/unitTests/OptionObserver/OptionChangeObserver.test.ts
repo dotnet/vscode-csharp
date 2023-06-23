@@ -3,16 +3,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/
 
-import { use as chaiUse, expect, should } from 'chai';
+import { expect, should } from 'chai';
 import { updateConfig, getVSCodeWithConfig } from '../testAssets/Fakes';
 import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
 import { vscode } from '../../../src/vscodeAdapter';
 import { ShowConfigChangePrompt } from '../../../src/shared/observers/OptionChangeObserver';
 import { Options } from '../../../src/shared/options';
-
-chaiUse(require('chai-as-promised'));
-chaiUse(require('chai-string'));
 
 suite("OmniSharpConfigChangeObserver", () => {
     suiteSetup(() => should());
@@ -110,7 +107,7 @@ suite("OmniSharpConfigChangeObserver", () => {
             });
         };
 
-        vscode.commands.executeCommand = async (command: string, ...rest: any[]) => {
+        vscode.commands.executeCommand = async (command: string, ..._: any[]) => {
             invokedCommand = command;
             signalCommandDone();
             return undefined;

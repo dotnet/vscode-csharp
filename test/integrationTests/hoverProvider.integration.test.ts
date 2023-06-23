@@ -12,10 +12,6 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 export type Test = 'a' | 'b' | ['c', any];
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`Hover Provider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();

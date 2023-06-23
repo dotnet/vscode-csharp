@@ -100,7 +100,7 @@ interface PromptItem extends vscode.MessageItem {
 }
 
 async function promptToDownloadDotNetSDK() {
-    return new Promise<PromptResult>((resolve, reject) => {
+    return new Promise<PromptResult>((resolve, _) => {
         const message = 'OmniSharp requires an install of the .NET SDK to provide language services when `omnisharp.useModernNet` is enabled in Settings. Please install the latest .NET SDK and restart vscode. If you continue see this error after installing .NET and restarting vscode, you may need to log out and log back in or restart your system for changes to the PATH to take effect.';
 
         const messageOptions: vscode.MessageOptions = { modal: true };
@@ -114,7 +114,7 @@ async function promptToDownloadDotNetSDK() {
 }
 
 async function promptToDownloadMono() {
-    return new Promise<PromptResult>((resolve, reject) => {
+    return new Promise<PromptResult>((resolve, _) => {
         const message = 'OmniSharp requires a complete install of Mono (including MSBuild) to provide language services when `omnisharp.useModernNet` is disabled in Settings. Please install the latest Mono and restart.';
 
         const messageOptions: vscode.MessageOptions = { modal: true };
