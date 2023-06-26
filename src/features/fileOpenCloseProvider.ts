@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IDisposable } from "../Disposable";
+import { IDisposable } from "../disposable";
 import { OmniSharpServer } from "../omnisharp/server";
 import * as vscode from 'vscode';
-import CompositeDisposable from "../CompositeDisposable";
+import CompositeDisposable from "../compositeDisposable";
 import * as serverUtils from '../omnisharp/utils';
 import { isVirtualCSharpDocument } from "./virtualDocumentTracker";
 

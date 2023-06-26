@@ -11,7 +11,7 @@ import { parse } from 'jsonc-parser';
 import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider';
 import { PlatformInformation } from './platform';
 import { BaseVsDbgConfigurationProvider } from './configurationProvider';
-import OptionProvider from './observers/OptionProvider';
+import OptionProvider from './observers/optionProvider';
 
 /**
  * This class will be used for providing debug configurations given workspace information.

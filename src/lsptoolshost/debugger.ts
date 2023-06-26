@@ -8,10 +8,10 @@ import { addAssetsIfNecessary, generateAssets } from '../shared/assets';
 import { DotnetWorkspaceConfigurationProvider } from '../shared/workspaceConfigurationProvider';
 import { IWorkspaceDebugInformationProvider } from '../shared/IWorkspaceDebugInformationProvider';
 import { RoslynLanguageServer } from './roslynLanguageServer';
-import { RoslynWorkspaceDebugInformationProvider } from './RoslynWorkspaceDebugConfigurationProvider';
+import { RoslynWorkspaceDebugInformationProvider } from './roslynWorkspaceDebugConfigurationProvider';
 import { PlatformInformation } from '../shared/platform';
-import OptionProvider from '../shared/observers/OptionProvider';
-import { ServerStateChange } from './ServerStateChange';
+import OptionProvider from '../shared/observers/optionProvider';
+import { ServerStateChange } from './serverStateChange';
 import { DotnetConfigurationResolver } from '../shared/dotnetConfigurationProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 

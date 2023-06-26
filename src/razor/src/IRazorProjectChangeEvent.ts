@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { IRazorProject } from './IRazorProject';
-import { RazorProjectChangeKind } from './RazorProjectChangeKind';
+import { RazorProjectChangeKind } from './razorProjectChangeKind';
 
 export interface IRazorProjectChangeEvent {
     readonly project: IRazorProject;

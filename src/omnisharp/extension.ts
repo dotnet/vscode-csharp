@@ -13,18 +13,18 @@ import TestManager from '../features/dotnetTest';
 import registerCommands from '../features/commands';
 import { PlatformInformation } from '../shared/platform';
 import { ProjectJsonDeprecatedWarning, OmnisharpStart, RazorDevModeActive } from './loggingEvents';
-import { EventStream } from '../EventStream';
-import { NetworkSettingsProvider } from '../NetworkSettings';
-import CompositeDisposable from '../CompositeDisposable';
-import Disposable from '../Disposable';
-import OptionProvider from '../shared/observers/OptionProvider';
-import { OmniSharpMonoResolver } from './OmniSharpMonoResolver';
+import { EventStream } from '../eventStream';
+import { NetworkSettingsProvider } from '../networkSettings';
+import CompositeDisposable from '../compositeDisposable';
+import Disposable from '../disposable';
+import OptionProvider from '../shared/observers/optionProvider';
+import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
-import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
 import { getDecompilationAuthorization } from './decompilationPrompt';
-import { DotnetResolver } from '../shared/DotnetResolver';
+import { DotnetResolver } from '../shared/dotnetResolver';
 import { Advisor } from '../features/diagnosticsProvider';
-import { OmnisharpWorkspaceDebugInformationProvider } from '../OmnisharpWorkspaceDebugInformationProvider';
+import { OmnisharpWorkspaceDebugInformationProvider } from '../omnisharpWorkspaceDebugInformationProvider';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;

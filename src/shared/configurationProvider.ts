@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { ParsedEnvironmentFile } from '../coreclr-debug/ParsedEnvironmentFile';
-import { getBrokeredServicePipeName } from '../coreclr-debug/activate';
+import { ParsedEnvironmentFile } from '../coreclrDebug/parsedEnvironmentFile';
+import { getBrokeredServicePipeName } from '../coreclrDebug/activate';
 
 import { MessageItem } from '../vscodeAdapter';
-import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/DotnetDevCertsHttps';
+import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/dotnetDevCertsHttps';
 import { AttachItem, RemoteAttachPicker, DotNetAttachItemsProviderFactory, AttachPicker } from '../features/processPicker';
 import { PlatformInformation } from './platform';
-import OptionProvider from './observers/OptionProvider';
+import OptionProvider from './observers/optionProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 /**

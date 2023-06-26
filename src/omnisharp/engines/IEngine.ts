@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from '../../vscodeAdapter';
-import { LaunchTarget } from "../../shared/LaunchTarget";
+import { LaunchTarget } from "../../shared/launchTarget";
 import { Options } from '../../shared/options';
-import Disposable from '../../Disposable';
+import Disposable from '../../disposable';
 import { OmniSharpServer } from '../server';
-import { LanguageMiddlewareFeature } from '../LanguageMiddlewareFeature';
-import OptionProvider from '../../shared/observers/OptionProvider';
+import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
+import OptionProvider from '../../shared/observers/optionProvider';
 import { Advisor } from '../../features/diagnosticsProvider';
 import TestManager from '../../features/dotnetTest';
-import { EventStream } from '../../EventStream';
+import { EventStream } from '../../eventStream';
 
 export interface IEngine {
     start(

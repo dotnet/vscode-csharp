@@ -6,9 +6,9 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Advisor } from '../../src/features/diagnosticsProvider';
-import { EventStream } from '../../src/EventStream';
-import { EventType } from '../../src/omnisharp/EventType';
-import { OmnisharpExtensionExports } from '../../src/CSharpExtensionExports';
+import { EventStream } from '../../src/eventStream';
+import { EventType } from '../../src/omnisharp/eventType';
+import { OmnisharpExtensionExports } from '../../src/csharpExtensionExports';
 
 export interface ActivationResult {
     readonly advisor: Advisor;
@@ -18,7 +18,7 @@ export interface ActivationResult {
 export async function activateCSharpExtension(): Promise<ActivationResult> {
     // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
     const vscodeDotnetRuntimeExtensionId = "ms-dotnettools.vscode-dotnet-runtime";
-    let dotnetRuntimeExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
+    const dotnetRuntimeExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
     if (!dotnetRuntimeExtension) {
         await vscode.commands.executeCommand("workbench.extensions.installExtension", vscodeDotnetRuntimeExtensionId);
         await vscode.commands.executeCommand("workbench.action.reloadWindow");

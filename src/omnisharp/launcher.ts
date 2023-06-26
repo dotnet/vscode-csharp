@@ -11,7 +11,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Options } from '../shared/options';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
-import { LaunchTarget, LaunchTargetKind, createLaunchTargetForSolution } from '../shared/LaunchTarget';
+import { LaunchTarget, LaunchTargetKind, createLaunchTargetForSolution } from '../shared/launchTarget';
 
 export const vslsTarget: LaunchTarget = {
     label: "VSLS",

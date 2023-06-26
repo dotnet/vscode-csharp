@@ -10,8 +10,8 @@ import { should, expect } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll, assertWithPoll } from './poll';
-import { EventStream } from '../../src/EventStream';
-import { EventType } from '../../src/omnisharp/EventType';
+import { EventStream } from '../../src/eventStream';
+import { EventType } from '../../src/omnisharp/eventType';
 import { BaseEvent, OmnisharpBackgroundDiagnosticStatus } from '../../src/omnisharp/loggingEvents';
 import { BackgroundDiagnosticStatus } from '../../src/omnisharp/protocol';
 

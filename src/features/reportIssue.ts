@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { vscode, Extension } from "../vscodeAdapter";
-import { EventStream } from "../EventStream";
+import { EventStream } from "../eventStream";
 import { OpenURL } from "../omnisharp/loggingEvents";
 import { Options } from "../shared/options";
 import { IHostExecutableResolver } from "../shared/constants/IHostExecutableResolver";

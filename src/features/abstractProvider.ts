@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { OmniSharpServer } from '../omnisharp/server';
-import CompositeDisposable from '../CompositeDisposable';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import CompositeDisposable from '../compositeDisposable';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 
 export default abstract class AbstractProvider {
 

@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Location, getLocation, createScanner, SyntaxKind } from 'jsonc-parser';
-import { ProjectJSONContribution } from './projectJSONContribution';
+import { ProjectJSONContribution } from './projectJsonContribution';
 import { configure as configureXHR, xhr } from 'request-light';
 
 import {
     CompletionItem, CompletionItemProvider, CompletionList, TextDocument, Position, Hover, HoverProvider,
     CancellationToken, Range, MarkedString, DocumentSelector, languages, workspace
 } from 'vscode';
-import CompositeDisposable from '../../CompositeDisposable';
+import CompositeDisposable from '../../compositeDisposable';
 
 export interface ISuggestionsCollector {
     add(suggestion: CompletionItem): void;

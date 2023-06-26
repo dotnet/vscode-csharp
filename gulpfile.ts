@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as gulp from 'gulp';
-import * as optionsSchemaGenerator from './src/tools/GenerateOptionsSchema';
-import * as packageDependencyUpdater from './src/tools/UpdatePackageDependencies';
+import * as optionsSchemaGenerator from './src/tools/generateOptionsSchema';
+import * as packageDependencyUpdater from './src/tools/updatePackageDependencies';
 
 require('./tasks/testTasks');
 require('./tasks/offlinePackagingTasks');

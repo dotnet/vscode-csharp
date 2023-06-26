@@ -6,8 +6,8 @@
 import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { EventStream } from '../../../src/EventStream';
-import { EventType } from '../../../src/omnisharp/EventType';
+import { EventStream } from '../../../src/eventStream';
+import { EventType } from '../../../src/omnisharp/eventType';
 import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
 import { ActivationResult } from '../integrationHelpers';
 import { poll } from '../poll';

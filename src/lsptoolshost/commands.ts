@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { UriConverter } from './uriConverter';
 import * as languageClient from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from './roslynLanguageServer';
-import { createLaunchTargetForSolution } from '../shared/LaunchTarget';
+import { createLaunchTargetForSolution } from '../shared/launchTarget';
 
 export function registerCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     // It is very important to be careful about the types used as parameters for these command callbacks.

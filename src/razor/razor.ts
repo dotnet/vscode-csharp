@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as Razor from '../../src/razor/src/extension';
-import { EventStream } from '../EventStream';
+import { EventStream } from '../eventStream';
 
 export async function activateRazorExtension(context: vscode.ExtensionContext, extensionPath: string, eventStream: EventStream) {
     const razorConfig = vscode.workspace.getConfiguration('razor');

@@ -10,7 +10,7 @@ import { createRequest, toRange3, toVscodeLocation } from '../omnisharp/typeConv
 import AbstractSupport from './abstractProvider';
 import DefinitionMetadataOrSourceGeneratedDocumentProvider from './definitionMetadataDocumentProvider';
 import { OmniSharpServer } from '../omnisharp/server';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
 export default class OmniSharpDefinitionProvider extends AbstractSupport implements DefinitionProvider, TypeDefinitionProvider {

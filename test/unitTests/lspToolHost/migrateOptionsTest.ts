@@ -5,7 +5,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {readFileSync} from 'fs';
-import { migrateOptions } from '../../../src/shared/MigrateOptions';
+import { migrateOptions } from '../../../src/shared/migrateOptions';
 import { assert } from 'chai';
 
 suite("Migrate configuration should in package.json", () => {

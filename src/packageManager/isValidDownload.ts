@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as crypto from "crypto";
-import { EventStream } from "../EventStream";
+import { EventStream } from "../eventStream";
 import { IntegrityCheckSuccess, DownloadValidation } from "../omnisharp/loggingEvents";
 
 export interface DownloadValidator {

@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getFakeVsCode } from "../testAssets/Fakes";
+import { getFakeVsCode } from "../testAssets/fakes";
 import reportIssue from "../../../src/features/reportIssue";
-import { EventStream } from "../../../src/EventStream";
-import TestEventBus from "../testAssets/TestEventBus";
+import { EventStream } from "../../../src/eventStream";
+import TestEventBus from "../testAssets/testEventBus";
 import { expect } from "chai";
 import { OpenURL } from "../../../src/omnisharp/loggingEvents";
 import { vscode } from "../../../src/vscodeAdapter";
 import { Options } from "../../../src/shared/options";
-import { FakeGetDotnetInfo, fakeDotnetInfo } from "../Fakes/FakeGetDotnetInfo";
-import { FakeMonoResolver, fakeMonoInfo } from "../Fakes/FakeMonoResolver";
-import { FakeDotnetResolver } from "../Fakes/FakeDotnetResolver";
+import { FakeGetDotnetInfo, fakeDotnetInfo } from "../fakes/fakeGetDotnetInfo";
+import { FakeMonoResolver, fakeMonoInfo } from "../fakes/fakeMonoResolver";
+import { FakeDotnetResolver } from "../fakes/fakeDotnetResolver";
 
 suite(`${reportIssue.name}`, () => {
     const vscodeVersion = "myVersion";

@@ -11,13 +11,13 @@ import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { Options } from '../shared/options';
 import TestManager from './dotnetTest';
-import OptionProvider from '../shared/observers/OptionProvider';
+import OptionProvider from '../shared/observers/optionProvider';
 
 import Structure = protocol.V2.Structure;
 import SymbolKinds = protocol.V2.SymbolKinds;
 import SymbolPropertyNames = protocol.V2.SymbolPropertyNames;
 import SymbolRangeNames = protocol.V2.SymbolRangeNames;
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 
 abstract class OmniSharpCodeLens extends vscode.CodeLens {
     constructor(

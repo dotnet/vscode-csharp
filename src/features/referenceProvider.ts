@@ -9,7 +9,7 @@ import * as serverUtils from '../omnisharp/utils';
 import {createRequest, toLocation, toLocationFromUri} from '../omnisharp/typeConversion';
 import {ReferenceProvider, Location, TextDocument, CancellationToken, Position} from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
 export default class OmniSharpReferenceProvider extends AbstractSupport implements ReferenceProvider {

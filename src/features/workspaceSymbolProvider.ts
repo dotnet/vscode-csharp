@@ -5,12 +5,12 @@
 
 import AbstractSupport from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
-import OptionProvider from '../shared/observers/OptionProvider';
+import OptionProvider from '../shared/observers/optionProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConversion';
 import { CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind, Location } from 'vscode';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
 
 

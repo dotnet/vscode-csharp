@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { LanguageClient, LanguageClientOptions, ServerOptions } from "vscode-languageclient/node";
-import CompositeDisposable from "../CompositeDisposable";
-import { IDisposable } from "../Disposable";
+import CompositeDisposable from "../compositeDisposable";
+import { IDisposable } from "../disposable";
 
 /**
  * Implementation of the base LanguageClient type that allows for additional items to be disposed of

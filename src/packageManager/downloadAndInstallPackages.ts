@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PackageError } from './PackageError';
-import { NestedError } from "../NestedError";
-import { DownloadFile } from './FileDownloader';
-import { InstallZip } from './ZipInstaller';
-import { EventStream } from '../EventStream';
-import { NetworkSettingsProvider } from "../NetworkSettings";
-import { AbsolutePathPackage } from "./AbsolutePathPackage";
+import { PackageError } from './packageError';
+import { NestedError } from "../nestedError";
+import { DownloadFile } from './fileDownloader';
+import { InstallZip } from './zipInstaller';
+import { EventStream } from '../eventStream';
+import { NetworkSettingsProvider } from "../networkSettings";
+import { AbsolutePathPackage } from "./absolutePathPackage";
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from "../common";
 import { InstallationFailure, IntegrityCheckFailure } from "../omnisharp/loggingEvents";
 import { mkdirpSync } from "fs-extra";

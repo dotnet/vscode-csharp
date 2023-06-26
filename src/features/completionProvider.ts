@@ -9,7 +9,7 @@ import * as protocol from "../omnisharp/protocol";
 import * as serverUtils from '../omnisharp/utils';
 import { CancellationToken, CompletionTriggerKind as LspCompletionTriggerKind, InsertTextFormat } from "vscode-languageserver-protocol";
 import { createRequest } from "../omnisharp/typeConversion";
-import { LanguageMiddlewareFeature } from "../omnisharp/LanguageMiddlewareFeature";
+import { LanguageMiddlewareFeature } from "../omnisharp/languageMiddlewareFeature";
 import { OmniSharpServer } from "../omnisharp/server";
 import { isVirtualCSharpDocument } from "./virtualDocumentTracker";
 

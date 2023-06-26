@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Options } from "../options";
-import { HostExecutableInformation } from "./HostExecutableInformation";
+import { HostExecutableInformation } from "./hostExecutableInformation";
 
 export interface IHostExecutableResolver {
     getHostExecutableInfo(options: Options): Promise<HostExecutableInformation>;

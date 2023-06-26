@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { GlobalBrokeredServiceContainer, IRemoteServiceBroker, IServiceBroker, ServiceAudience, ServiceMoniker, ServiceRegistration } from '@microsoft/servicehub-framework';
-import Descriptors from './Descriptors';
+import Descriptors from './descriptors';
 
 export class CSharpExtensionServiceBroker extends GlobalBrokeredServiceContainer {
     registerExternalServices(...monikers: ServiceMoniker[]) {

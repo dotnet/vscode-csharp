@@ -10,8 +10,8 @@ import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toRange2 } from '../omnisharp/typeConversion';
 import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
-import OptionProvider from '../shared/observers/OptionProvider';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import OptionProvider from '../shared/observers/optionProvider';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 
 // The default TokenTypes defined by VS Code https://github.com/microsoft/vscode/blob/master/src/vs/platform/theme/common/tokenClassificationRegistry.ts#L393
 enum DefaultTokenType {

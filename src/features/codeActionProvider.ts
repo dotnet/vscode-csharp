@@ -8,9 +8,9 @@ import { OmniSharpServer } from '../omnisharp/server';
 import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import CompositeDisposable from '../CompositeDisposable';
-import OptionProvider from '../shared/observers/OptionProvider';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import CompositeDisposable from '../compositeDisposable';
+import OptionProvider from '../shared/observers/optionProvider';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBuilder';
 
 export default class OmniSharpCodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider<vscode.CodeAction> {

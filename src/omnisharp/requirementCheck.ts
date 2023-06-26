@@ -8,8 +8,8 @@ import * as semver from "semver";
 import { getDotnetInfo } from "../utils/getDotnetInfo";
 import { Options } from "../shared/options";
 import { getMonoVersion } from "../utils/getMonoVersion";
-import { OmniSharpMonoResolver } from "./OmniSharpMonoResolver";
-import { getMSBuildVersion } from "../utils/getMSBuildInfo";
+import { OmniSharpMonoResolver } from "./omniSharpMonoResolver";
+import { getMSBuildVersion } from "../utils/getMsBuildInfo";
 
 export interface RequirementResult {
     needsDotNetSdk: boolean;

@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from "vscode";
-import OptionProvider from "../shared/observers/OptionProvider";
+import OptionProvider from "../shared/observers/optionProvider";
 
 const DecompilationAuthorizedOption = "csharp.decompilationAuthorized";
 

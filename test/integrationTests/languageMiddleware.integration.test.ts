@@ -8,7 +8,7 @@ import * as path from "path";
 import testAssetWorkspace from "./testAssets/testAssetWorkspace";
 import { expect, should } from "chai";
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import { LanguageMiddleware, LanguageMiddlewareFeature } from "../../src/omnisharp/LanguageMiddlewareFeature";
+import { LanguageMiddleware, LanguageMiddlewareFeature } from "../../src/omnisharp/languageMiddlewareFeature";
 
 suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;

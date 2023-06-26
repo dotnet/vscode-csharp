@@ -11,15 +11,15 @@ import * as serverUtils from "../omnisharp/utils";
 import * as utils from '../common';
 import * as vscode from 'vscode';
 import AbstractProvider from './abstractProvider';
-import * as DebuggerEventsProtocol from '../coreclr-debug/debuggerEventsProtocol';
+import * as DebuggerEventsProtocol from '../coreclrDebug/debuggerEventsProtocol';
 import { OmniSharpServer } from '../omnisharp/server';
 import { TestExecutionCountReport, ReportDotNetTestResults, DotNetTestRunStart, DotNetTestMessage, DotNetTestRunFailure, DotNetTestsInClassRunStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestDebugComplete, DotNetTestDebugStart, DotNetTestsInClassDebugStart, DotNetTestDebugStartFailure, DotNetTestRunInContextStart, DotNetTestDebugInContextStart } from '../omnisharp/loggingEvents';
-import { EventStream } from '../EventStream';
+import { EventStream } from '../eventStream';
 import LaunchConfiguration from './launchConfiguration';
-import Disposable from '../Disposable';
-import CompositeDisposable from '../CompositeDisposable';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
-import OptionProvider from '../shared/observers/OptionProvider';
+import Disposable from '../disposable';
+import CompositeDisposable from '../compositeDisposable';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
+import OptionProvider from '../shared/observers/optionProvider';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 

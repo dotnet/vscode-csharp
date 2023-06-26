@@ -5,7 +5,7 @@
 
 import * as prioritization from './prioritization';
 import { OmnisharpServerProcessRequestComplete, OmnisharpServerProcessRequestStart, OmnisharpServerDequeueRequest, OmnisharpServerEnqueueRequest } from './loggingEvents';
-import { EventStream } from '../EventStream';
+import { EventStream } from '../eventStream';
 
 export interface Request {
     command: string;

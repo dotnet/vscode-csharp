@@ -11,7 +11,7 @@ import { ITestAssetWorkspace, TestAssetWorkspace } from './testAssets';
 import singleCsproj from './singleCsproj';
 import slnWithCsproj from './slnWithCsproj';
 import slnFilterWithCsproj from './slnFilterWithCsproj';
-import BasicRazorApp2_1 from './BasicRazorApp2_1';
+import BasicRazorApp2_1 from './basicRazorApp21';
 import slnWithGenerator from './slnWithGenerator';
 
 const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {

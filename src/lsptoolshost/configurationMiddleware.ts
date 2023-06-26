@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import {
     ConfigurationParams,
 } from 'vscode-languageclient/node';
-import { convertServerOptionNameToClientConfigurationName as convertServerOptionNameToClientConfigurationName } from './OptionNameConverter';
+import { convertServerOptionNameToClientConfigurationName as convertServerOptionNameToClientConfigurationName } from './optionNameConverter';
 import { readEquivalentVsCodeConfiguration } from './universalEditorConfigProvider';
 
 export function readConfigurations(params: ConfigurationParams): (string | null)[] {

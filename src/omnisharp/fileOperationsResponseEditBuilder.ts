@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
-import { LanguageMiddlewareFeature } from './LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
 import { FileModificationType, FileOperationResponse, ModifiedFileResponse, RenamedFileResponse } from "./protocol";
 import { toRange2 } from './typeConversion';
 

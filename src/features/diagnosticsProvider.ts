@@ -9,15 +9,15 @@ import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConversion';
 import * as vscode from 'vscode';
-import CompositeDisposable from '../CompositeDisposable';
-import { IDisposable } from '../Disposable';
+import CompositeDisposable from '../compositeDisposable';
+import { IDisposable } from '../disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
-import OptionProvider from '../shared/observers/OptionProvider';
+import OptionProvider from '../shared/observers/optionProvider';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { BackgroundDiagnosticStatus } from '../omnisharp/protocol';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 
 export class Advisor {
 

@@ -5,7 +5,7 @@
 
 import * as serverUtils from '../omnisharp/utils';
 import { CancellationToken, Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor, Uri, window, workspace } from 'vscode';
-import { IDisposable } from '../Disposable';
+import { IDisposable } from '../disposable';
 import { SourceGeneratedFileInfo, SourceGeneratedFileResponse, UpdateType } from '../omnisharp/protocol';
 import { OmniSharpServer } from '../omnisharp/server';
 

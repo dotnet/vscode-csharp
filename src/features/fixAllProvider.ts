@@ -8,9 +8,9 @@ import * as serverUtils from '../omnisharp/utils';
 import * as protocol from '../omnisharp/protocol';
 import { OmniSharpServer } from '../omnisharp/server';
 import { FixAllScope, FixAllItem } from '../omnisharp/protocol';
-import CompositeDisposable from '../CompositeDisposable';
+import CompositeDisposable from '../compositeDisposable';
 import AbstractProvider from './abstractProvider';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBuilder';
 import { CancellationToken } from 'vscode-languageserver-protocol';
 

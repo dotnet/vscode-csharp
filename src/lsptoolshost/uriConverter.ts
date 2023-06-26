@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CSharpProjectedDocumentContentProvider } from '../razor/src/CSharp/CSharpProjectedDocumentContentProvider';
+import { CSharpProjectedDocumentContentProvider } from '../razor/src/csharp/csharpProjectedDocumentContentProvider';
 
 export class UriConverter {
     public static serialize(uri: vscode.Uri): string {

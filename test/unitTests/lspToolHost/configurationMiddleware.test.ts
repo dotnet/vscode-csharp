@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {assert, expect} from 'chai';
-import {convertServerOptionNameToClientConfigurationName} from '../../../src/lsptoolshost/OptionNameConverter';
+import {convertServerOptionNameToClientConfigurationName} from '../../../src/lsptoolshost/optionNameConverter';
 import {readFileSync} from 'fs';
 
 const testData = [

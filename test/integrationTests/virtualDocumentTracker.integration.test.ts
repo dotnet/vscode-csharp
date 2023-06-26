@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { expect, should } from 'chai';
 import { activateCSharpExtension, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { IDisposable } from '../../src/Disposable';
+import { IDisposable } from '../../src/disposable';
 
 suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function () {
     const virtualScheme = "virtual";

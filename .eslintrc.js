@@ -8,7 +8,8 @@ module.exports = {
     ],
     parser: "@typescript-eslint/parser",
     plugins: [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "unicorn"
     ],
     root: true,
     rules: {
@@ -24,7 +25,17 @@ module.exports = {
                 "caughtErrorsIgnorePattern": "^_"
             }
         ],
-        "@typescript-eslint/no-namespace": "off"
+        "@typescript-eslint/no-namespace": "off",
+        "unicorn/filename-case": [
+            "error",
+            {
+                "case": "camelCase",
+                "ignore": [
+                    "I[A-Z].*\\.ts$",
+                    "vscode-tasks\\.d\\.ts"
+                ]
+            }
+        ]
     },
     ignorePatterns: [
         "out/",

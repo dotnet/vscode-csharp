@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider';
 import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, getBuildOperations } from './assets';
 import { getServiceBroker } from '../lsptoolshost/services/brokeredServicesHosting';
-import Descriptors from '../lsptoolshost/services/Descriptors';
+import Descriptors from '../lsptoolshost/services/descriptors';
 import { DotnetDebugConfigurationServiceErrorKind, IDotnetDebugConfigurationService, IDotnetDebugConfigurationServiceResult } from '../lsptoolshost/services/IDotnetDebugConfigurationService';
 
 // User errors that can be shown to the user.

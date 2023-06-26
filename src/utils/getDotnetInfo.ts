@@ -5,7 +5,7 @@
 
 import { join } from "path";
 import { execChildProcess } from "../common";
-import { CoreClrDebugUtil } from "../coreclr-debug/util";
+import { CoreClrDebugUtil } from "../coreclrDebug/util";
 
 let _dotnetInfo: DotnetInfo | undefined;
 

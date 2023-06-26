@@ -7,8 +7,8 @@ import { Uri, workspace } from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 import { FileChangeType } from '../omnisharp/protocol';
-import { IDisposable } from '../Disposable';
-import CompositeDisposable from '../CompositeDisposable';
+import { IDisposable } from '../disposable';
+import CompositeDisposable from '../compositeDisposable';
 
 function forwardDocumentChanges(server: OmniSharpServer): IDisposable {
 

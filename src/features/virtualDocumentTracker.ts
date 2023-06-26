@@ -7,9 +7,9 @@ import { workspace, TextDocument, Uri } from 'vscode';
 import { OmniSharpServer } from '../omnisharp/server';
 import * as serverUtils from '../omnisharp/utils';
 import { FileChangeType } from '../omnisharp/protocol';
-import { IDisposable } from '../Disposable';
-import CompositeDisposable from '../CompositeDisposable';
-import { EventStream } from '../EventStream';
+import { IDisposable } from '../disposable';
+import CompositeDisposable from '../compositeDisposable';
+import { EventStream } from '../eventStream';
 import { DocumentSynchronizationFailure } from '../omnisharp/loggingEvents';
 
 async function trackCurrentVirtualDocuments(server: OmniSharpServer, eventStream: EventStream) {

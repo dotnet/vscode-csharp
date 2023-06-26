@@ -5,12 +5,12 @@
 
 import { should } from 'chai';
 import { ConfigurationChangeEvent, vscode } from "../../src/vscodeAdapter";
-import { getVSCodeWithConfig, updateConfig } from "./testAssets/Fakes";
-import Disposable from "../../src/Disposable";
+import { getVSCodeWithConfig, updateConfig } from "./testAssets/fakes";
+import Disposable from "../../src/disposable";
 import { Observable, Subscription } from "rxjs";
 import { Options } from "../../src/shared/options";
-import { GetConfigChangeEvent } from './testAssets/GetConfigChangeEvent';
-import createOptionStream from '../../src/shared/observables/CreateOptionStream';
+import { GetConfigChangeEvent } from './testAssets/getConfigChangeEvent';
+import createOptionStream from '../../src/shared/observables/createOptionStream';
 
 suite('OptionStream', () => {
     suiteSetup(() => should());
