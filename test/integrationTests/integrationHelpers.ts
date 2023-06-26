@@ -16,6 +16,14 @@ export interface ActivationResult {
 }
 
 export async function activateCSharpExtension(): Promise<ActivationResult> {
+    // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
+    const vscodeDotnetRuntimeExtensionId = "ms-dotnettools.vscode-dotnet-runtime";
+    let dotnetRuntimeExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
+    if (!dotnetRuntimeExtension) {
+        await vscode.commands.executeCommand("workbench.extensions.installExtension", vscodeDotnetRuntimeExtensionId);
+        await vscode.commands.executeCommand("workbench.action.reloadWindow");
+    }
+
     const configuration = vscode.workspace.getConfiguration();
     configuration.update('omnisharp.enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp' ? true : false);
     if (process.env.OMNISHARP_LOCATION) {
