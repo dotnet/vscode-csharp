@@ -6,6 +6,7 @@
   "displayName": "C#",
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
+  "qna": "https://github.com/dotnet/vscode-csharp/issues",
   "icon": "images/csharpIcon.png",
   "preview": false,
   "bugs": {
