@@ -137,8 +137,18 @@ export class RoslynLanguageServer {
             // Register the server for plain csharp documents
             documentSelector: documentSelector,
             synchronize: {
-                // Notify the server about file changes to '.clientrc files contain in the workspace
-                fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*')
+                // Notify the server about file changes to all supported files contained in the workspace
+                fileEvents: [
+                    vscode.workspace.createFileSystemWatcher('**/*.sln'),
+                    vscode.workspace.createFileSystemWatcher('**/*.slnf'),
+                    vscode.workspace.createFileSystemWatcher('**/*.csproj'),
+                    vscode.workspace.createFileSystemWatcher('**/project.json'),
+                    vscode.workspace.createFileSystemWatcher('**/*.cs'),
+                    vscode.workspace.createFileSystemWatcher('**/*.cshtml'),
+                    vscode.workspace.createFileSystemWatcher('**/*.razor'),
+                    vscode.workspace.createFileSystemWatcher('**/*.csx'),
+                    vscode.workspace.createFileSystemWatcher('**/*.cake'),
+                ]
             },
             traceOutputChannel: _traceChannel,
             outputChannel: _channel,
