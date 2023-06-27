@@ -4,7 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { ParsedEnvironmentFile } from '../../src/coreclrDebug/parsedEnvironmentFile';
-import { should, expect } from 'chai';
+import { use, should, expect } from 'chai';
+import * as chaiString from 'chai-string';
+
+use(chaiString);
 
 suite('ParsedEnvironmentFile', () => {
     suiteSetup(() => should());

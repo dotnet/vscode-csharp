@@ -2,7 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { should, expect } from 'chai';
+import { use, should, expect } from 'chai';
+import * as chaiString from 'chai-string';
 import { getNullChannel } from '../testAssets/fakes';
 import {
     OmnisharpServerVerboseMessage,
@@ -16,6 +17,8 @@ import {
     OmnisharpServerRequestCancelled,
 } from '../../../src/omnisharp/loggingEvents';
 import { OmnisharpDebugModeLoggerObserver } from '../../../src/observers/omnisharpDebugModeLoggerObserver';
+
+use(chaiString);
 
 suite('OmnisharpDebugModeLoggerObserver', () => {
     suiteSetup(() => should());

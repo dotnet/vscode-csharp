@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as chai from 'chai';
+import * as chaiString from 'chai-string';
 import { getNullChannel } from '../testAssets/fakes';
 import {
     EventWithMessage,
@@ -24,6 +25,7 @@ import DotNetTestLoggerObserver from '../../../src/observers/dotnetTestLoggerObs
 import * as protocol from '../../../src/omnisharp/protocol';
 
 const expect = chai.expect;
+chai.use(chaiString);
 
 suite(`${DotNetTestLoggerObserver.name}`, () => {
     let appendedMessage: string;

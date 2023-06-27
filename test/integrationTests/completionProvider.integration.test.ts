@@ -7,8 +7,11 @@ import OmniSharpCompletionProvider from '../../src/features/completionProvider';
 import * as vscode from 'vscode';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as path from 'path';
-import { expect, should } from 'chai';
+import { use, expect, should } from 'chai';
+import * as chaiArray from 'chai-arrays';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+
+use(chaiArray);
 
 suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;

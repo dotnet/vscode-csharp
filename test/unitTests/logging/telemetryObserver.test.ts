@@ -2,7 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { should, expect } from 'chai';
+import { use, should, expect } from 'chai';
+import * as chaiArray from 'chai-arrays';
 import { TelemetryObserver } from '../../../src/observers/telemetryObserver';
 import { PlatformInformation } from '../../../src/shared/platform';
 import {
@@ -21,6 +22,8 @@ import { getNullTelemetryReporter } from '../testAssets/fakes';
 import { Package } from '../../../src/packageManager/package';
 import { PackageError } from '../../../src/packageManager/packageError';
 import { isNotNull } from '../../testUtil';
+
+use(chaiArray);
 
 suite('TelemetryReporterObserver', () => {
     suiteSetup(() => should());

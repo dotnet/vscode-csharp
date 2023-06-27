@@ -3,11 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect, should } from 'chai';
+import { use, expect, should } from 'chai';
+import * as chaiArray from 'chai-arrays';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+
+use(chaiArray);
 
 const onTypeFormatProviderCommand = 'vscode.executeFormatOnTypeProvider';
 

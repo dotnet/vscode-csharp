@@ -15,10 +15,13 @@ import {
     updateJsonWithComments,
 } from '../../src/shared/assets';
 import { parse } from 'jsonc-parser';
-import { should } from 'chai';
+import { use, should } from 'chai';
+import * as chaiString from 'chai-string';
 import { ProjectDebugInformation } from '../../src/shared/IWorkspaceDebugInformationProvider';
 import { findNetCoreTargetFramework } from '../../src/shared/utils';
 import { isNotNull } from '../testUtil';
+
+use(chaiString);
 
 suite('Asset generation: csproj', () => {
     suiteSetup(() => should());
