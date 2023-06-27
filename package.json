@@ -6,6 +6,7 @@
   "displayName": "C#",
   "author": "Microsoft Corporation",
   "license": "SEE LICENSE IN RuntimeLicenses/license.txt",
+  "qna": "https://github.com/dotnet/vscode-csharp/issues",
   "icon": "images/csharpIcon.png",
   "preview": false,
   "bugs": {
@@ -35,7 +36,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.7.0-3.23316.4",
+    "roslyn": "4.7.0-3.23326.2",
     "omniSharp": "1.39.6",
     "razor": "7.0.0-preview.23275.2"
   },
