@@ -3,13 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ITestAssetWorkspace } from "./testAssets";
+import { ITestAssetWorkspace } from './testAssets';
 
 const workspace: ITestAssetWorkspace = {
     description: "sln filter with a csproj's",
-    projects: [{
-        relativeFilePath: "src/app/app.csproj"
-    }]
+    projects: [
+        {
+            relativeFilePath: 'src/app/app.csproj',
+        },
+    ],
 };
 
 export default workspace;

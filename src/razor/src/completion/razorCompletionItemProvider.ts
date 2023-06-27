@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
@@ -14,25 +13,31 @@ import { getUriPath } from '../uriPaths';
 import { ProvisionalCompletionOrchestrator } from './provisionalCompletionOrchestrator';
 import { LanguageKind } from '../rpc/languageKind';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
-import { CompletionItem, CompletionList, CompletionParams, CompletionTriggerKind, MarkupContent } from 'vscode-languageclient';
+import {
+    CompletionItem,
+    CompletionList,
+    CompletionParams,
+    CompletionTriggerKind,
+    MarkupContent,
+} from 'vscode-languageclient';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import * as RazorConventions from '../razorConventions';
 import { MappingHelpers } from '../mapping/mappingHelpers';
 
-export class RazorCompletionItemProvider
-    extends RazorLanguageFeatureBase
-    implements vscode.CompletionItemProvider {
-
+export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implements vscode.CompletionItemProvider {
     public static async getCompletions(
-        projectedUri: vscode.Uri, hostDocumentPosition: vscode.Position,
-        projectedPosition: vscode.Position, context: vscode.CompletionContext,
-        language: LanguageKind) {
-
+        projectedUri: vscode.Uri,
+        hostDocumentPosition: vscode.Position,
+        projectedPosition: vscode.Position,
+        context: vscode.CompletionContext,
+        language: LanguageKind
+    ) {
         if (projectedUri) {
             // "@" is not a valid trigger character for C# / HTML and therefore we need to translate
             // it into a non-trigger invocation.
             const modifiedTriggerCharacter = context.triggerCharacter === '@' ? undefined : context.triggerCharacter;
-            const triggerKind = context.triggerCharacter === '@' ? CompletionTriggerKind.Invoked : getTriggerKind(context.triggerKind);
+            const triggerKind =
+                context.triggerCharacter === '@' ? CompletionTriggerKind.Invoked : getTriggerKind(context.triggerKind);
 
             let completions: vscode.CompletionList | vscode.CompletionItem[];
 
@@ -40,12 +45,12 @@ export class RazorCompletionItemProvider
                 const params: CompletionParams = {
                     context: {
                         triggerKind: triggerKind,
-                        triggerCharacter: modifiedTriggerCharacter
+                        triggerCharacter: modifiedTriggerCharacter,
                     },
                     textDocument: {
                         uri: UriConverter.serialize(projectedUri),
                     },
-                    position: projectedPosition
+                    position: projectedPosition,
                 };
 
                 // For CSharp, completions need to keep the "data" field on the
@@ -53,26 +58,26 @@ export class RazorCompletionItemProvider
                 // resolveCompletionItem step. Using the vs code command drops
                 // that field because it doesn't exist in the declared vs code
                 // CompletionItem type.
-                completions = await vscode
-                    .commands
-                    .executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
-                        RoslynLanguageServer.provideCompletionsCommand,
-                        params);
+                completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
+                    RoslynLanguageServer.provideCompletionsCommand,
+                    params
+                );
             } else {
-                completions = await vscode
-                    .commands
-                    .executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
-                        'vscode.executeCompletionItemProvider',
-                        projectedUri,
-                        projectedPosition,
-                        modifiedTriggerCharacter);
+                completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
+                    'vscode.executeCompletionItemProvider',
+                    projectedUri,
+                    projectedPosition,
+                    modifiedTriggerCharacter
+                );
             }
 
             const completionItems =
-                completions instanceof Array ? completions  // was vscode.CompletionItem[]
-                    : completions ? completions.items       // was vscode.CompletionList
-                        : [];
-            
+                completions instanceof Array
+                    ? completions // was vscode.CompletionItem[]
+                    : completions
+                    ? completions.items // was vscode.CompletionList
+                    : [];
+
             const data = (<CompletionList>completions)?.itemDefaults?.data;
 
             // There are times when the generated code will not line up with the content of the .razor/.cshtml file.
@@ -93,21 +98,45 @@ export class RazorCompletionItemProvider
                     const range = completionItem.range;
                     const insertingRange = (range as any).inserting;
                     if (insertingRange) {
-                        const insertingRangeStart = this.offsetColumn(completionCharacterOffset, hostDocumentPosition.line, insertingRange.start);
-                        const insertingRangeEnd = this.offsetColumn(completionCharacterOffset, hostDocumentPosition.line, insertingRange.end);
+                        const insertingRangeStart = this.offsetColumn(
+                            completionCharacterOffset,
+                            hostDocumentPosition.line,
+                            insertingRange.start
+                        );
+                        const insertingRangeEnd = this.offsetColumn(
+                            completionCharacterOffset,
+                            hostDocumentPosition.line,
+                            insertingRange.end
+                        );
                         (range as any).inserting = new vscode.Range(insertingRangeStart, insertingRangeEnd);
                     }
 
                     const replacingRange = (range as any).replacing;
                     if (replacingRange) {
-                        const replacingRangeStart = this.offsetColumn(completionCharacterOffset, hostDocumentPosition.line, replacingRange.start);
-                        const replacingRangeEnd = this.offsetColumn(completionCharacterOffset, hostDocumentPosition.line, replacingRange.end);
+                        const replacingRangeStart = this.offsetColumn(
+                            completionCharacterOffset,
+                            hostDocumentPosition.line,
+                            replacingRange.start
+                        );
+                        const replacingRangeEnd = this.offsetColumn(
+                            completionCharacterOffset,
+                            hostDocumentPosition.line,
+                            replacingRange.end
+                        );
                         (range as any).replacing = new vscode.Range(replacingRangeStart, replacingRangeEnd);
                     }
 
                     if (range instanceof vscode.Range && range.start && range.end) {
-                        const rangeStart = this.offsetColumn(completionCharacterOffset, hostDocumentPosition.line, range.start);
-                        const rangeEnd = this.offsetColumn(completionCharacterOffset, hostDocumentPosition.line, range.end);
+                        const rangeStart = this.offsetColumn(
+                            completionCharacterOffset,
+                            hostDocumentPosition.line,
+                            range.start
+                        );
+                        const rangeEnd = this.offsetColumn(
+                            completionCharacterOffset,
+                            hostDocumentPosition.line,
+                            range.end
+                        );
                         completionItem.range = new vscode.Range(rangeStart, rangeEnd);
                     }
                 }
@@ -115,19 +144,19 @@ export class RazorCompletionItemProvider
                 // textEdit is deprecated in favor of .range. Clear out its value to avoid any unexpected behavior.
                 completionItem.textEdit = undefined;
 
-                if (context.triggerCharacter === '@' &&
-                    completionItem.commitCharacters) {
+                if (context.triggerCharacter === '@' && completionItem.commitCharacters) {
                     // We remove `{`, '(', and '*' from the commit characters to prevent auto-completing the first
                     // completion item with a curly brace when a user intended to type `@{}` or `@()`.
                     completionItem.commitCharacters = completionItem.commitCharacters.filter(
-                        commitChar => commitChar !== '{' && commitChar !== '(' && commitChar !== '*');
+                        (commitChar) => commitChar !== '{' && commitChar !== '(' && commitChar !== '*'
+                    );
                 }
 
                 // for intellicode items, manually set the insertText to avoid including stars in the commit
-                if (completionItem.label.toString().includes('\u2605')){
+                if (completionItem.label.toString().includes('\u2605')) {
                     // vscode.CompletionItem does not have textEditText, which was added in 3.17
                     const intellicodeCompletion: CompletionItem = completionItem as CompletionItem;
-                    if (intellicodeCompletion.textEditText){
+                    if (intellicodeCompletion.textEditText) {
                         completionItem.insertText = intellicodeCompletion.textEditText;
                     }
                 }
@@ -137,17 +166,13 @@ export class RazorCompletionItemProvider
                 }
             }
 
-            const isIncomplete = completions instanceof Array ? false
-                : completions ? completions.isIncomplete
-                    : false;
+            const isIncomplete = completions instanceof Array ? false : completions ? completions.isIncomplete : false;
             return new vscode.CompletionList(completionItems, isIncomplete);
         }
     }
 
     private static offsetColumn(offset: number, hostDocumentLine: number, projectedPosition: vscode.Position) {
-        const offsetPosition = new vscode.Position(
-            hostDocumentLine,
-            projectedPosition.character - offset);
+        const offsetPosition = new vscode.Position(hostDocumentLine, projectedPosition.character - offset);
         return offsetPosition;
     }
 
@@ -156,18 +181,24 @@ export class RazorCompletionItemProvider
         documentManager: RazorDocumentManager,
         serviceClient: RazorLanguageServiceClient,
         private readonly provisionalCompletionOrchestrator: ProvisionalCompletionOrchestrator,
-        logger: RazorLogger) {
+        logger: RazorLogger
+    ) {
         super(documentSynchronizer, documentManager, serviceClient, logger);
     }
 
     public async provideCompletionItems(
-        document: vscode.TextDocument, position: vscode.Position,
-        token: vscode.CancellationToken, context: vscode.CompletionContext) {
+        document: vscode.TextDocument,
+        position: vscode.Position,
+        token: vscode.CancellationToken,
+        context: vscode.CompletionContext
+    ) {
         const projection = await this.getProjection(document, position, token);
 
         if (this.logger.verboseEnabled) {
-            this.logger.logVerbose(`Providing completions for document ${getUriPath(document.uri)} ` +
-                `at location (${position.line}, ${position.character})`);
+            this.logger.logVerbose(
+                `Providing completions for document ${getUriPath(document.uri)} ` +
+                    `at location (${position.line}, ${position.character})`
+            );
         }
 
         if (!projection) {
@@ -177,7 +208,8 @@ export class RazorCompletionItemProvider
         const provisionalCompletions = await this.provisionalCompletionOrchestrator.tryGetProvisionalCompletions(
             document.uri,
             projection,
-            context);
+            context
+        );
         if (provisionalCompletions) {
             return provisionalCompletions;
         }
@@ -189,21 +221,24 @@ export class RazorCompletionItemProvider
             position,
             projection.position,
             context,
-            projection.languageKind);
+            projection.languageKind
+        );
 
         return completionList;
     }
 
-    public async resolveCompletionItem(item: vscode.CompletionItem, token: vscode.CancellationToken): Promise<vscode.CompletionItem> {
+    public async resolveCompletionItem(
+        item: vscode.CompletionItem,
+        token: vscode.CancellationToken
+    ): Promise<vscode.CompletionItem> {
         // We assume that only the RoslynLanguageServer provides data, which
         // if it does we use LSP calls directly to Roslyn since there's no
         // equivalent vscode command to generically do that.
         if ((<CompletionItem>item).data) {
-            const newItem = await vscode
-                .commands
-                .executeCommand<vscode.CompletionItem>(
-                    RoslynLanguageServer.resolveCompletionsCommand,
-                    item);
+            const newItem = await vscode.commands.executeCommand<vscode.CompletionItem>(
+                RoslynLanguageServer.resolveCompletionsCommand,
+                item
+            );
 
             if (!newItem) {
                 return item;
@@ -213,7 +248,7 @@ export class RazorCompletionItemProvider
 
             // The documentation object Roslyn returns is a MarkupContent,
             // which we need to convert to a MarkdownString.
-            const markupContent = <MarkupContent>(<unknown>(item.documentation));
+            const markupContent = <MarkupContent>(<unknown>item.documentation);
             if (markupContent && markupContent.value) {
                 item.documentation = new vscode.MarkdownString(markupContent.value);
             }
@@ -225,7 +260,13 @@ export class RazorCompletionItemProvider
                     const razorUri = RazorConventions.getRazorDocumentUri(uri);
                     const textEdit = item.command.arguments[1] as vscode.TextEdit;
 
-                    const remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(razorUri, textEdit, this.serviceClient, this.logger, token);
+                    const remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(
+                        razorUri,
+                        textEdit,
+                        this.serviceClient,
+                        this.logger,
+                        token
+                    );
 
                     if (remappedEdit) {
                         item.command.arguments[0] = razorUri;
@@ -249,6 +290,5 @@ function getTriggerKind(triggerKind: vscode.CompletionTriggerKind): CompletionTr
             return CompletionTriggerKind.TriggerForIncompleteCompletions;
         default:
             throw new Error(`Unexpected completion trigger kind: ${triggerKind}`);
-
     }
 }

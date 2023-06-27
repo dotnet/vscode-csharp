@@ -5,7 +5,7 @@
 
 import assert = require('node:assert');
 
-export function convertServerOptionNameToClientConfigurationName(section: string) : string | null {
+export function convertServerOptionNameToClientConfigurationName(section: string): string | null {
     // Server name would be in format {languageName}|{grouping}.{name} or
     // {grouping}.{name} if this option can be applied to multiple languages.
     const languageNameIndex = section.indexOf('|');
@@ -29,7 +29,7 @@ export function convertServerOptionNameToClientConfigurationName(section: string
         const prefixes = ['dotnet', 'csharp'];
         const optionNamePrefix = getPrefix(optionName, prefixes);
 
-        const featureName = optionNamePrefix == '' ? optionName: optionName.substring(optionNamePrefix.length + 1);
+        const featureName = optionNamePrefix == '' ? optionName : optionName.substring(optionNamePrefix.length + 1);
 
         // Finally, convert everything to camel case and put them together.
         const camelCaseGroupName = convertToCamelCase(optionGroupName, '_');
@@ -55,7 +55,7 @@ function getPrefix(section: string, prefixes: string[]) {
 }
 
 function convertToCamelCase(inputString: string, delimiter: string): string {
-    const words = inputString.split(delimiter).map(word => word.toLowerCase());
+    const words = inputString.split(delimiter).map((word) => word.toLowerCase());
     if (words.length <= 1) {
         return inputString.toLowerCase();
     }
@@ -66,5 +66,5 @@ function convertToCamelCase(inputString: string, delimiter: string): string {
 }
 
 function capitalize(inputString: string): string {
-   return inputString.charAt(0).toUpperCase() + inputString.substring(1);
+    return inputString.charAt(0).toUpperCase() + inputString.substring(1);
 }

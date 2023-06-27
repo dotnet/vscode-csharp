@@ -13,7 +13,7 @@ export async function CreateTmpFile(): Promise<TmpAsset> {
                 return reject(new NestedError('Error from tmp.file', err));
             }
             if (fd == 0) {
-                return reject(new NestedError("Temporary package file unavailable"));
+                return reject(new NestedError('Temporary package file unavailable'));
             }
 
             resolve(<tmp.SynchrounousResult>{ name: path, fd: fd, removeCallback: cleanupCallback });
@@ -23,7 +23,7 @@ export async function CreateTmpFile(): Promise<TmpAsset> {
     return {
         fd: tmpFile.fd,
         name: tmpFile.name,
-        dispose: tmpFile.removeCallback
+        dispose: tmpFile.removeCallback,
     };
 }
 
@@ -43,12 +43,11 @@ export async function CreateTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
         name: tmpDir.name,
         dispose: () => {
             if (unsafeCleanup) {
-                rimraf(tmpDir.name);//to delete directories that have folders inside them
-            }
-            else {
+                rimraf(tmpDir.name); //to delete directories that have folders inside them
+            } else {
                 tmpDir.removeCallback();
             }
-        }
+        },
     };
 }
 

@@ -18,28 +18,38 @@ import { SerializableOnTypeFormattingParams } from './serializableOnTypeFormatti
 export class FormattingHandler {
     private static readonly provideFormattingEndpoint = 'razor/htmlFormatting';
     private static readonly provideOnTypeFormattingEndpoint = 'razor/htmlOnTypeFormatting';
-    private formattingRequestType: RequestType<SerializableFormattingParams, SerializableFormattingResponse, any> = new RequestType(FormattingHandler.provideFormattingEndpoint);
-    private onTypeFormattingRequestType: RequestType<SerializableOnTypeFormattingParams, SerializableFormattingResponse, any> = new RequestType(FormattingHandler.provideOnTypeFormattingEndpoint);
+    private formattingRequestType: RequestType<SerializableFormattingParams, SerializableFormattingResponse, any> =
+        new RequestType(FormattingHandler.provideFormattingEndpoint);
+    private onTypeFormattingRequestType: RequestType<
+        SerializableOnTypeFormattingParams,
+        SerializableFormattingResponse,
+        any
+    > = new RequestType(FormattingHandler.provideOnTypeFormattingEndpoint);
     private emptyFormattingResponse = new SerializableFormattingResponse();
 
     constructor(
         private readonly documentManager: RazorDocumentManager,
         private readonly documentSynchronizer: RazorDocumentSynchronizer,
         private readonly serverClient: RazorLanguageServerClient,
-        private readonly logger: RazorLogger) { }
+        private readonly logger: RazorLogger
+    ) {}
 
     public async register() {
         await this.serverClient.onRequestWithParams<SerializableFormattingParams, SerializableFormattingResponse, any>(
             this.formattingRequestType,
-            async (request, token) => this.provideFormatting(request, token));
-        await this.serverClient.onRequestWithParams<SerializableOnTypeFormattingParams, SerializableFormattingResponse, any>(
-            this.onTypeFormattingRequestType,
-            async (request, token) => this.provideOnTypeFormatting(request, token));
+            async (request, token) => this.provideFormatting(request, token)
+        );
+        await this.serverClient.onRequestWithParams<
+            SerializableOnTypeFormattingParams,
+            SerializableFormattingResponse,
+            any
+        >(this.onTypeFormattingRequestType, async (request, token) => this.provideOnTypeFormatting(request, token));
     }
 
     private async provideFormatting(
         formattingParams: SerializableFormattingParams,
-        cancellationToken: vscode.CancellationToken) {
+        cancellationToken: vscode.CancellationToken
+    ) {
         try {
             const razorDocumentUri = vscode.Uri.parse(formattingParams.textDocument.uri);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
@@ -48,7 +58,12 @@ export class FormattingHandler {
             }
 
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
-            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.csharpDocument, formattingParams.hostDocumentVersion, cancellationToken);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
+                textDocument,
+                razorDocument.csharpDocument,
+                formattingParams.hostDocumentVersion,
+                cancellationToken
+            );
             if (!synchronized) {
                 return this.emptyFormattingResponse;
             }
@@ -58,7 +73,8 @@ export class FormattingHandler {
             const textEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
                 'vscode.executeFormatDocumentProvider',
                 virtualHtmlUri,
-                formattingParams.options);
+                formattingParams.options
+            );
 
             if (textEdits === undefined) {
                 return this.emptyFormattingResponse;
@@ -76,7 +92,8 @@ export class FormattingHandler {
 
     private async provideOnTypeFormatting(
         formattingParams: SerializableOnTypeFormattingParams,
-        cancellationToken: vscode.CancellationToken) {
+        cancellationToken: vscode.CancellationToken
+    ) {
         try {
             const razorDocumentUri = vscode.Uri.parse(formattingParams.textDocument.uri);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
@@ -85,7 +102,12 @@ export class FormattingHandler {
             }
 
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
-            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.csharpDocument, formattingParams.hostDocumentVersion, cancellationToken);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
+                textDocument,
+                razorDocument.csharpDocument,
+                formattingParams.hostDocumentVersion,
+                cancellationToken
+            );
             if (!synchronized) {
                 return this.emptyFormattingResponse;
             }
@@ -97,7 +119,8 @@ export class FormattingHandler {
                 virtualHtmlUri,
                 formattingParams.position,
                 formattingParams.ch,
-                formattingParams.options);
+                formattingParams.options
+            );
 
             if (textEdits === undefined) {
                 return this.emptyFormattingResponse;
@@ -121,8 +144,7 @@ export class FormattingHandler {
             // The below workaround is needed due to a bug on the HTML side where
             // they'll sometimes send us an end position that exceeds the length
             // of the document. Tracked by https://github.com/microsoft/vscode/issues/175298.
-            if (textEdit.range.end.line > zeroBasedLineCount ||
-                textEdit.range.start.line > zeroBasedLineCount) {
+            if (textEdit.range.end.line > zeroBasedLineCount || textEdit.range.start.line > zeroBasedLineCount) {
                 const lastLineLength = this.getLastLineLength(htmlDocText);
                 const updatedPosition = new vscode.Position(zeroBasedLineCount, lastLineLength);
 

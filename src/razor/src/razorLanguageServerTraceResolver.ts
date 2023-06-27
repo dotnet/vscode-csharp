@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { Trace } from './trace';
 import * as vscode from './vscodeAdapter';
 
@@ -24,7 +23,7 @@ function parseTraceString(traceString: string | undefined) {
         case 'Verbose':
             return Trace.Verbose;
         default:
-            console.log('Invalid trace setting for Razor language server. Defaulting to \'Off\'');
+            console.log("Invalid trace setting for Razor language server. Defaulting to 'Off'");
             return Trace.Off;
     }
 }

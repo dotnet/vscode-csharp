@@ -3,13 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, DotNetTestRunStart, DotNetTestMessage, ReportDotNetTestResults, DotNetTestDebugStart, DotNetTestDebugWarning, DotNetTestDebugProcessStart, DotNetTestsInClassDebugStart, DotNetTestsInClassRunStart, DotNetTestRunInContextStart, DotNetTestDebugInContextStart } from "../omnisharp/loggingEvents";
-import { BaseLoggerObserver } from "./baseLoggerObserver";
+import {
+    BaseEvent,
+    DotNetTestRunStart,
+    DotNetTestMessage,
+    ReportDotNetTestResults,
+    DotNetTestDebugStart,
+    DotNetTestDebugWarning,
+    DotNetTestDebugProcessStart,
+    DotNetTestsInClassDebugStart,
+    DotNetTestsInClassRunStart,
+    DotNetTestRunInContextStart,
+    DotNetTestDebugInContextStart,
+} from '../omnisharp/loggingEvents';
+import { BaseLoggerObserver } from './baseLoggerObserver';
 import * as protocol from '../omnisharp/protocol';
-import { EventType } from "../omnisharp/eventType";
+import { EventType } from '../omnisharp/eventType';
 
 export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
-
     public post = (event: BaseEvent) => {
         switch (event.type) {
             case EventType.DotNetTestRunStart:
@@ -31,7 +42,7 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
                 this.handleDotNetTestDebugProcessStart(<DotNetTestDebugProcessStart>event);
                 break;
             case EventType.DotNetTestDebugComplete:
-                this.logger.appendLine("Debugging complete.\n");
+                this.logger.appendLine('Debugging complete.\n');
                 break;
             case EventType.DotNetTestsInClassDebugStart:
                 this.handleDotnetTestsInClassDebugStart(<DotNetTestsInClassDebugStart>event);
@@ -73,12 +84,16 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleDotnetTestsRunInContextStart(event: DotNetTestRunInContextStart) {
-        this.logger.appendLine(`----- Running test(s) in context "${event.fileName}(${event.line + 1},${event.column + 1})" -----`);
+        this.logger.appendLine(
+            `----- Running test(s) in context "${event.fileName}(${event.line + 1},${event.column + 1})" -----`
+        );
         this.logger.appendLine('');
     }
 
     private handleDotnetTestsDebugInContextStart(event: DotNetTestDebugInContextStart) {
-        this.logger.appendLine(`----- Debugging test(s) in context "${event.fileName}(${event.line + 1},${event.column + 1})" -----`);
+        this.logger.appendLine(
+            `----- Debugging test(s) in context "${event.fileName}(${event.line + 1},${event.column + 1})" -----`
+        );
         this.logger.appendLine('');
     }
 
@@ -88,14 +103,16 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
 
     private handleReportDotnetTestResults(event: ReportDotNetTestResults) {
         if (event.results) {
-            this.logger.appendLine("----- Test Execution Summary -----");
+            this.logger.appendLine('----- Test Execution Summary -----');
             this.logger.appendLine('');
 
             // Omnisharp returns null results if there are build failures
             const results = event.results;
             const totalTests = results.length;
 
-            let totalPassed = 0, totalFailed = 0, totalSkipped = 0;
+            let totalPassed = 0,
+                totalFailed = 0,
+                totalSkipped = 0;
             for (const result of results) {
                 this.logTestResult(result);
                 switch (result.Outcome) {
@@ -111,7 +128,9 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
                 }
             }
 
-            this.logger.appendLine(`Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`);
+            this.logger.appendLine(
+                `Total tests: ${totalTests}. Passed: ${totalPassed}. Failed: ${totalFailed}. Skipped: ${totalSkipped}`
+            );
             this.logger.appendLine('');
         }
     }
@@ -131,13 +150,13 @@ export default class DotNetTestLoggerObserver extends BaseLoggerObserver {
         }
 
         if (result.StandardOutput && result.StandardOutput.length > 0) {
-            this.logger.appendLine("Standard Output Messages:");
-            result.StandardOutput.forEach(message => this.logger.appendLine(message));
+            this.logger.appendLine('Standard Output Messages:');
+            result.StandardOutput.forEach((message) => this.logger.appendLine(message));
         }
 
         if (result.StandardError && result.StandardError.length > 0) {
-            this.logger.appendLine("Standard Error Messages:");
-            result.StandardError.forEach(message => this.logger.appendLine(message));
+            this.logger.appendLine('Standard Error Messages:');
+            result.StandardError.forEach((message) => this.logger.appendLine(message));
         }
 
         this.logger.appendLine();

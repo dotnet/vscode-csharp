@@ -5,28 +5,34 @@
 import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/fakes';
 import { RazorLoggerObserver } from '../../../src/observers/razorLoggerObserver';
-import { RazorPluginPathSpecified, RazorPluginPathDoesNotExist, RazorDevModeActive } from '../../../src/omnisharp/loggingEvents';
+import {
+    RazorPluginPathSpecified,
+    RazorPluginPathDoesNotExist,
+    RazorDevModeActive,
+} from '../../../src/omnisharp/loggingEvents';
 
-suite("RazorLoggerObserver", () => {
+suite('RazorLoggerObserver', () => {
     suiteSetup(() => should());
-    let logOutput = "";
+    let logOutput = '';
     const observer = new RazorLoggerObserver({
         ...getNullChannel(),
-        append: (text: string) => { logOutput += text; },
+        append: (text: string) => {
+            logOutput += text;
+        },
     });
 
     setup(() => {
-        logOutput = "";
+        logOutput = '';
     });
 
     test(`RazorPluginPathSpecified: Path is logged`, () => {
-        const event = new RazorPluginPathSpecified("somePath");
+        const event = new RazorPluginPathSpecified('somePath');
         observer.post(event);
         expect(logOutput).to.contain(event.path);
     });
 
     test(`RazorPluginPathDoesNotExist: Path is logged`, () => {
-        const event = new RazorPluginPathDoesNotExist("somePath");
+        const event = new RazorPluginPathDoesNotExist('somePath');
         observer.post(event);
         expect(logOutput).to.contain(event.path);
     });

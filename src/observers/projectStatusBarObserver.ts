@@ -4,16 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { basename } from 'path';
-import { BaseEvent, WorkspaceInformationUpdated } from "../omnisharp/loggingEvents";
+import { BaseEvent, WorkspaceInformationUpdated } from '../omnisharp/loggingEvents';
 import { BaseStatusBarItemObserver } from './baseStatusBarItemObserver';
 import { EventType } from '../omnisharp/eventType';
 
 export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
-
     public post = (event: BaseEvent) => {
         switch (event.type) {
             case EventType.OmnisharpOnMultipleLaunchTargets:
-                this.SetAndShowStatusBar('$(file-submodule) Select project', 'o.pickProjectAndStart', 'rgb(90, 218, 90)');
+                this.SetAndShowStatusBar(
+                    '$(file-submodule) Select project',
+                    'o.pickProjectAndStart',
+                    'rgb(90, 218, 90)'
+                );
                 break;
             case EventType.OmnisharpServerOnStop:
                 this.ResetAndHideStatusBar();
@@ -29,8 +32,7 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
         if (msbuild && msbuild.SolutionPath) {
             label = basename(msbuild.SolutionPath);
             this.SetAndShowStatusBar('$(file-directory) ' + label, 'o.pickProjectAndStart');
-        }
-        else {
+        } else {
             this.ResetAndHideStatusBar();
         }
     }

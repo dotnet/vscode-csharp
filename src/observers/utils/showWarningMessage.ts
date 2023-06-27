@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from "../../vscodeAdapter";
-import MessageItemWithCommand from "./messageItemWithCommand";
+import { vscode } from '../../vscodeAdapter';
+import MessageItemWithCommand from './messageItemWithCommand';
 
 export default async function showWarningMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
     try {
@@ -12,8 +12,7 @@ export default async function showWarningMessage(vscode: vscode, message: string
         if (value?.command) {
             await vscode.commands.executeCommand<string>(value.command);
         }
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
     }
 }

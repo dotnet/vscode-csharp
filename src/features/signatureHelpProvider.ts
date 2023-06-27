@@ -6,14 +6,24 @@
 import AbstractSupport from './abstractProvider';
 import * as serverUtils from '../omnisharp/utils';
 import { createRequest } from '../omnisharp/typeConversion';
-import { SignatureHelpProvider, SignatureHelp, SignatureInformation, ParameterInformation, CancellationToken, TextDocument, Position } from 'vscode';
+import {
+    SignatureHelpProvider,
+    SignatureHelp,
+    SignatureInformation,
+    ParameterInformation,
+    CancellationToken,
+    TextDocument,
+    Position,
+} from 'vscode';
 import { MarkdownString } from 'vscode';
 import { SignatureHelpParameter } from '../omnisharp/protocol';
 
 export default class OmniSharpSignatureHelpProvider extends AbstractSupport implements SignatureHelpProvider {
-
-    public async provideSignatureHelp(document: TextDocument, position: Position, token: CancellationToken): Promise<SignatureHelp | undefined> {
-
+    public async provideSignatureHelp(
+        document: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): Promise<SignatureHelp | undefined> {
         const req = createRequest(document, position);
 
         try {
@@ -28,22 +38,24 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
             ret.activeParameter = res.ActiveParameter;
 
             for (const signature of res.Signatures) {
-
-                const signatureInfo = new SignatureInformation(signature.Label, signature.StructuredDocumentation.SummaryText);
+                const signatureInfo = new SignatureInformation(
+                    signature.Label,
+                    signature.StructuredDocumentation.SummaryText
+                );
                 ret.signatures.push(signatureInfo);
 
                 for (const parameter of signature.Parameters) {
                     const parameterInfo = new ParameterInformation(
                         parameter.Label,
-                        this.GetParameterDocumentation(parameter));
+                        this.GetParameterDocumentation(parameter)
+                    );
 
                     signatureInfo.parameters.push(parameterInfo);
                 }
             }
 
             return ret;
-        }
-        catch (error) {
+        } catch (error) {
             return undefined;
         }
     }
@@ -55,6 +67,6 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
             return new MarkdownString(paramText);
         }
 
-        return "";
+        return '';
     }
 }

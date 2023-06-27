@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { expect, should } from 'chai';
 import { updateConfig, getVSCodeWithConfig } from '../testAssets/fakes';
 import { timeout } from 'rxjs/operators';
@@ -12,7 +11,7 @@ import { vscode } from '../../../src/vscodeAdapter';
 import { ShowConfigChangePrompt } from '../../../src/shared/observers/optionChangeObserver';
 import { Options } from '../../../src/shared/options';
 
-suite("LanguageServerConfigChangeObserver", () => {
+suite('LanguageServerConfigChangeObserver', () => {
     suiteSetup(() => should());
 
     let doClickOk: () => void;
@@ -27,16 +26,23 @@ suite("LanguageServerConfigChangeObserver", () => {
     setup(() => {
         vscode = getVSCode();
         optionObservable = new BehaviorSubject<Options>(Options.Read(vscode));
-        ShowConfigChangePrompt(optionObservable, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode);
-        commandDone = new Promise<void>(resolve => {
-            signalCommandDone = () => { resolve(); };
+        ShowConfigChangePrompt(
+            optionObservable,
+            'dotnet.restartServer',
+            Options.shouldLanguageServerOptionChangeTriggerReload,
+            vscode
+        );
+        commandDone = new Promise<void>((resolve) => {
+            signalCommandDone = () => {
+                resolve();
+            };
         });
     });
 
     [
-        { config: "dotnet", section: "server.documentSelector", value: ['other'] },
-        { config: "dotnet", section: "server.trace", value: 'trace' },
-    ].forEach(elem => {
+        { config: 'dotnet', section: 'server.documentSelector', value: ['other'] },
+        { config: 'dotnet', section: 'server.trace', value: 'trace' },
+    ].forEach((elem) => {
         suite(`When the ${elem.config} ${elem.section} changes`, () => {
             setup(() => {
                 expect(infoMessage).to.be.undefined;
@@ -46,7 +52,9 @@ suite("LanguageServerConfigChangeObserver", () => {
             });
 
             test(`The information message is shown`, async () => {
-                expect(infoMessage).to.be.equal("C# configuration has changed. Would you like to relaunch the Language Server with your changes?");
+                expect(infoMessage).to.be.equal(
+                    'C# configuration has changed. Would you like to relaunch the Language Server with your changes?'
+                );
             });
 
             test('Given an information message if the user clicks cancel, the command is not executed', async () => {
@@ -65,9 +73,9 @@ suite("LanguageServerConfigChangeObserver", () => {
 
     suite('Information Message is not shown if no change in value', () => {
         [
-            { config: "dotnet", section: "server.documentSelector", value: ['csharp'] },
-            { config: "dotnet", section: "server.trace", value: 'Information' },
-        ].forEach(elem => {
+            { config: 'dotnet', section: 'server.documentSelector', value: ['csharp'] },
+            { config: 'dotnet', section: 'server.trace', value: 'Information' },
+        ].forEach((elem) => {
             test(`${elem.config} ${elem.section}`, async () => {
                 expect(infoMessage).to.be.undefined;
                 expect(invokedCommand).to.be.undefined;
@@ -80,11 +88,11 @@ suite("LanguageServerConfigChangeObserver", () => {
 
     suite('Information Message is not shown on change in', () => {
         [
-            { config: "omnisharp", section: 'useModernNet', value: false },
-            { config: "csharp", section: 'format.enable', value: false },
-            { config: "files", section: 'exclude', value: false },
-            { config: "search", section: 'exclude', value: 1000 },
-        ].forEach(elem => {
+            { config: 'omnisharp', section: 'useModernNet', value: false },
+            { config: 'csharp', section: 'format.enable', value: false },
+            { config: 'files', section: 'exclude', value: false },
+            { config: 'search', section: 'exclude', value: 1000 },
+        ].forEach((elem) => {
             test(`${elem.config} ${elem.section}`, async () => {
                 expect(infoMessage).to.be.undefined;
                 expect(invokedCommand).to.be.undefined;
@@ -105,7 +113,7 @@ suite("LanguageServerConfigChangeObserver", () => {
         const vscode = getVSCodeWithConfig();
         vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
-            return new Promise<T | undefined>(resolve => {
+            return new Promise<T | undefined>((resolve) => {
                 doClickCancel = () => {
                     resolve(undefined);
                 };

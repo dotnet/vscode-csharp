@@ -4,16 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import {
-    ConfigurationParams,
-} from 'vscode-languageclient/node';
+import { ConfigurationParams } from 'vscode-languageclient/node';
 import { convertServerOptionNameToClientConfigurationName as convertServerOptionNameToClientConfigurationName } from './optionNameConverter';
 import { readEquivalentVsCodeConfiguration } from './universalEditorConfigProvider';
 
 export function readConfigurations(params: ConfigurationParams): (string | null)[] {
     // Note: null means there is no such configuration in client.
     // If the configuration is null, should push 'null' to result.
-    const result : (string | null)[] = [];
+    const result: (string | null)[] = [];
     const settings = vscode.workspace.getConfiguration();
 
     for (const configurationItem of params.items) {
@@ -38,7 +36,7 @@ export function readConfigurations(params: ConfigurationParams): (string | null)
         }
 
         value = readEquivalentVsCodeConfiguration(clientSideName);
-        if (value !== undefined) {  
+        if (value !== undefined) {
             result.push(value);
             continue;
         }

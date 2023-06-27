@@ -3,20 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 import { LanguageKind } from '../rpc/languageKind';
 
 export class RazorDocumentHighlightProvider
     extends RazorLanguageFeatureBase
-    implements vscode.DocumentHighlightProvider {
-
+    implements vscode.DocumentHighlightProvider
+{
     public async provideDocumentHighlights(
         document: vscode.TextDocument,
         position: vscode.Position,
-        token: vscode.CancellationToken) {
-
+        token: vscode.CancellationToken
+    ) {
         const projection = await this.getProjection(document, position, token);
         if (!projection || projection.languageKind === LanguageKind.Razor) {
             return;
@@ -25,7 +24,8 @@ export class RazorDocumentHighlightProvider
         const highlights = await vscode.commands.executeCommand<vscode.DocumentHighlight[]>(
             'vscode.executeDocumentHighlights',
             projection.uri,
-            projection.position);
+            projection.position
+        );
 
         if (!highlights || highlights.length === 0) {
             return;
@@ -38,11 +38,10 @@ export class RazorDocumentHighlightProvider
             const remappedResponse = await this.serviceClient.mapToDocumentRanges(
                 projection.languageKind,
                 [highlight.range],
-                document.uri);
+                document.uri
+            );
 
-            if (!remappedResponse ||
-                !remappedResponse.ranges ||
-                !remappedResponse.ranges[0]) {
+            if (!remappedResponse || !remappedResponse.ranges || !remappedResponse.ranges[0]) {
                 // Couldn't remap the projected highlight location.
                 continue;
             }
@@ -52,9 +51,7 @@ export class RazorDocumentHighlightProvider
                 continue;
             }
 
-            const remappedHighlight = new vscode.DocumentHighlight(
-                remappedResponse.ranges[0],
-                highlight.kind);
+            const remappedHighlight = new vscode.DocumentHighlight(remappedResponse.ranges[0], highlight.kind);
             remappedHighlights.push(remappedHighlight);
         }
 

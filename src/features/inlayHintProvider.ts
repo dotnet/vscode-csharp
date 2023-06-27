@@ -8,7 +8,12 @@ import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import CompositeDisposable from '../compositeDisposable';
-import { InlayHint, InlayHintRequest, InlayHintResolve as InlayHintResolveRequest, LinePositionSpanTextChange } from '../omnisharp/protocol';
+import {
+    InlayHint,
+    InlayHintRequest,
+    InlayHintResolve as InlayHintResolveRequest,
+    LinePositionSpanTextChange,
+} from '../omnisharp/protocol';
 import { fromVSCodeRange, toVSCodePosition, toVSCodeTextEdit } from '../omnisharp/typeConversion';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 
@@ -20,18 +25,25 @@ export default class OmniSharpInlayHintProvider extends AbstractProvider impleme
 
     constructor(server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
-        this.addDisposables(new CompositeDisposable(
-            this._onDidChangeInlayHints,
-            vscode.workspace.onDidChangeTextDocument(e => {
-                if (e.document.languageId === 'csharp') {
-                    this._onDidChangeInlayHints.fire();
-                }
-            })));
+        this.addDisposables(
+            new CompositeDisposable(
+                this._onDidChangeInlayHints,
+                vscode.workspace.onDidChangeTextDocument((e) => {
+                    if (e.document.languageId === 'csharp') {
+                        this._onDidChangeInlayHints.fire();
+                    }
+                })
+            )
+        );
     }
 
-    async provideInlayHints(document: vscode.TextDocument, range: vscode.Range, token: vscode.CancellationToken): Promise<vscode.InlayHint[]> {
+    async provideInlayHints(
+        document: vscode.TextDocument,
+        range: vscode.Range,
+        token: vscode.CancellationToken
+    ): Promise<vscode.InlayHint[]> {
         // Exclude documents from other schemes, such as those in the diff view.
-        if (document.uri.scheme !== "file") {
+        if (document.uri.scheme !== 'file') {
             return [];
         }
 
@@ -42,8 +54,8 @@ export default class OmniSharpInlayHintProvider extends AbstractProvider impleme
         const request: InlayHintRequest = {
             Location: {
                 FileName: document.fileName,
-                Range: fromVSCodeRange(range)
-            }
+                Range: fromVSCodeRange(range),
+            },
         };
 
         try {
@@ -79,7 +91,7 @@ export default class OmniSharpInlayHintProvider extends AbstractProvider impleme
         return {
             label: inlayHint.Label,
             position: toVSCodePosition(inlayHint.Position),
-            tooltip: new vscode.MarkdownString(inlayHint.Tooltip ?? ""),
+            tooltip: new vscode.MarkdownString(inlayHint.Tooltip ?? ''),
             textEdits: toVSCodeTextEdits(inlayHint.TextEdits),
         };
 

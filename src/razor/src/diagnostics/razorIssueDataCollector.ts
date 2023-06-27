@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as os from 'os';
 import * as vscode from 'vscode';
 import { RazorLogger } from '../razorLogger';
@@ -17,12 +16,14 @@ export class ReportIssueDataCollector {
     private lastFocusedRazorDocument: vscode.TextDocument | undefined;
     constructor(
         private readonly razorFileFocusChange: vscode.Event<vscode.TextDocument>,
-        private readonly logger: RazorLogger) {
-    }
+        private readonly logger: RazorLogger
+    ) {}
 
     public start() {
-        this.focusRegistration = this.razorFileFocusChange((razorDocument) => this.lastFocusedRazorDocument = razorDocument);
-        this.logRegistration = this.logger.onLog(message => this.logMessages.push(message));
+        this.focusRegistration = this.razorFileFocusChange(
+            (razorDocument) => (this.lastFocusedRazorDocument = razorDocument)
+        );
+        this.logRegistration = this.logger.onLog((message) => this.logMessages.push(message));
 
         this.logger.outputChannel.show(/* preserveFocus: */ true);
         this.logger.logAlways('-- Starting Issue Data Collection-- ');

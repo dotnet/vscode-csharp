@@ -6,7 +6,5 @@
 import { DocumentUri } from 'vscode-languageclient/node';
 
 export class OpenSolutionParams {
-    constructor(
-        public readonly solution: DocumentUri) {
-    }
+    constructor(public readonly solution: DocumentUri) {}
 }

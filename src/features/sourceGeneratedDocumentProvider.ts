@@ -4,13 +4,23 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as serverUtils from '../omnisharp/utils';
-import { CancellationToken, Event, EventEmitter, TextDocument, TextDocumentContentProvider, TextEditor, Uri, window, workspace } from 'vscode';
+import {
+    CancellationToken,
+    Event,
+    EventEmitter,
+    TextDocument,
+    TextDocumentContentProvider,
+    TextEditor,
+    Uri,
+    window,
+    workspace,
+} from 'vscode';
 import { IDisposable } from '../disposable';
 import { SourceGeneratedFileInfo, SourceGeneratedFileResponse, UpdateType } from '../omnisharp/protocol';
 import { OmniSharpServer } from '../omnisharp/server';
 
 export default class SourceGeneratedDocumentProvider implements TextDocumentContentProvider, IDisposable {
-    readonly scheme = "omnisharp-source-generated";
+    readonly scheme = 'omnisharp-source-generated';
     private _registration?: IDisposable;
     private _documents: Map<SourceGeneratedFileInfo, SourceGeneratedFileResponse>;
     private _uriToDocumentInfo: Map<string, SourceGeneratedFileInfo>;
@@ -23,7 +33,10 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
         this._documents = new Map<SourceGeneratedFileInfo, SourceGeneratedFileResponse>();
         this._uriToDocumentInfo = new Map<string, SourceGeneratedFileInfo>();
         this._documentClosedSubscription = workspace.onDidCloseTextDocument(this.onTextDocumentClosed, this);
-        this._visibleTextEditorsChangedSubscription = window.onDidChangeVisibleTextEditors(this.onVisibleTextEditorsChanged, this);
+        this._visibleTextEditorsChangedSubscription = window.onDidChangeVisibleTextEditors(
+            this.onVisibleTextEditorsChanged,
+            this
+        );
         this._onDidChangeEmitter = new EventEmitter<Uri>();
         this.onDidChange = this._onDidChangeEmitter.event;
     }
@@ -53,7 +66,7 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
                     const update = await serverUtils.getUpdatedSourceGeneratedFile(this.server, existingInfo);
                     switch (update.UpdateType) {
                         case UpdateType.Deleted:
-                            existingResponse.Source = "Document is no longer being generated.";
+                            existingResponse.Source = 'Document is no longer being generated.';
                             break;
                         case UpdateType.Modified:
                             existingResponse.Source = update.Source;
@@ -115,6 +128,6 @@ export default class SourceGeneratedDocumentProvider implements TextDocumentCont
     }
 
     private getUriForName(sourceName: string): Uri {
-        return Uri.parse(this.scheme + ":///" + sourceName);
+        return Uri.parse(this.scheme + ':///' + sourceName);
     }
 }

@@ -10,9 +10,12 @@ import { createRequest } from '../omnisharp/typeConversion';
 import { RenameProvider, WorkspaceEdit, TextDocument, Uri, CancellationToken, Position, Range } from 'vscode';
 
 export default class OmniSharpRenameProvider extends AbstractSupport implements RenameProvider {
-
-    public async provideRenameEdits(document: TextDocument, position: Position, newName: string, token: CancellationToken): Promise<WorkspaceEdit | undefined> {
-
+    public async provideRenameEdits(
+        document: TextDocument,
+        position: Position,
+        newName: string,
+        token: CancellationToken
+    ): Promise<WorkspaceEdit | undefined> {
         const req = createRequest<protocol.RenameRequest>(document, position);
         req.WantsTextChanges = true;
         req.RenameTo = newName;
@@ -26,21 +29,22 @@ export default class OmniSharpRenameProvider extends AbstractSupport implements 
             }
 
             const edit = new WorkspaceEdit();
-            response.Changes.forEach(change => {
+            response.Changes.forEach((change) => {
                 const uri = Uri.file(change.FileName);
 
-                change.Changes.forEach(change => {
-                    edit.replace(uri,
+                change.Changes.forEach((change) => {
+                    edit.replace(
+                        uri,
                         new Range(change.StartLine, change.StartColumn, change.EndLine, change.EndColumn),
-                        change.NewText);
+                        change.NewText
+                    );
                 });
             });
 
             // Allow language middlewares to re-map its edits if necessary.
-            const result = await this._languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, token);
+            const result = await this._languageMiddlewareFeature.remap('remapWorkspaceEdit', edit, token);
             return result;
-        }
-        catch (error) {
+        } catch (error) {
             return undefined;
         }
     }

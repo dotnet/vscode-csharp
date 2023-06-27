@@ -14,11 +14,10 @@ export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {
             const asProjectEvent = <OmnisharpBackgroundDiagnosticStatus>event;
 
             if (asProjectEvent.message.Status !== BackgroundDiagnosticStatus.Finished) {
-                const {NumberFilesRemaining, NumberFilesTotal} = asProjectEvent.message;
+                const { NumberFilesRemaining, NumberFilesTotal } = asProjectEvent.message;
                 const message = `Analyzing ${NumberFilesTotal} files - Remaining ${NumberFilesRemaining} files`;
                 this.SetAndShowStatusBar(`$(sync~spin) ${message}`, 'o.showOutput', undefined, `${message}`);
-            }
-            else {
+            } else {
                 this.ResetAndHideStatusBar();
             }
         }

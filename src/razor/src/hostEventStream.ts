@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 // Bits in this file are contracts defined in https://github.com/omnisharp/omnisharp-vscode
 
 export interface HostEventStream {
@@ -13,8 +12,8 @@ export interface HostEventStream {
 export function createTelemetryEvent(
     eventName: string,
     properties?: { [key: string]: string },
-    measures?: { [key: string]: number }): TelemetryEvent {
-
+    measures?: { [key: string]: number }
+): TelemetryEvent {
     return {
         type: EventType.TelemetryEvent,
         eventName,
@@ -27,8 +26,8 @@ export function createTelemetryErrorEvent(
     eventName: string,
     properties?: { [key: string]: string },
     measures?: { [key: string]: number },
-    errorProps?: string[]): TelemetryErrorEvent {
-
+    errorProps?: string[]
+): TelemetryErrorEvent {
     return {
         type: EventType.TelemetryErrorEvent,
         eventName,

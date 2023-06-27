@@ -7,11 +7,16 @@ import { expect, should } from 'chai';
 import { vscode } from '../../../src/vscodeAdapter';
 import { getFakeVsCode } from '../testAssets/fakes';
 
-
 import { ErrorMessageObserver } from '../../../src/observers/errorMessageObserver';
-import { ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, EventWithMessage, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
+import {
+    ZipError,
+    DotNetTestRunFailure,
+    DotNetTestDebugStartFailure,
+    EventWithMessage,
+    IntegrityCheckFailure,
+} from '../../../src/omnisharp/loggingEvents';
 
-suite("ErrorMessageObserver", () => {
+suite('ErrorMessageObserver', () => {
     suiteSetup(() => should());
 
     const vscode: vscode = getFakeVsCode();
@@ -20,7 +25,7 @@ suite("ErrorMessageObserver", () => {
 
     vscode.window.showErrorMessage = async (message: string, ..._: string[]) => {
         errorMessage = message;
-        return Promise.resolve<string>("Done");
+        return Promise.resolve<string>('Done');
     };
 
     setup(() => {
@@ -28,9 +33,9 @@ suite("ErrorMessageObserver", () => {
     });
 
     [
-        new ZipError("This is an error"),
-        new DotNetTestRunFailure("This is a failure message"),
-        new DotNetTestDebugStartFailure("Start failure")
+        new ZipError('This is an error'),
+        new DotNetTestRunFailure('This is a failure message'),
+        new DotNetTestDebugStartFailure('Start failure'),
     ].forEach((event: EventWithMessage) => {
         test(`${event.constructor.name}: Error message is shown`, () => {
             observer.post(event);
@@ -39,7 +44,7 @@ suite("ErrorMessageObserver", () => {
     });
 
     suite(`${IntegrityCheckFailure.name}`, () => {
-        test("Package Description and url are logged when we are not retrying", () => {
+        test('Package Description and url are logged when we are not retrying', () => {
             const description = 'someDescription';
             const url = 'someUrl';
             const event = new IntegrityCheckFailure(description, url, false);
@@ -48,7 +53,7 @@ suite("ErrorMessageObserver", () => {
             expect(errorMessage).to.contain(url);
         });
 
-        test("Nothing is shown if we are retrying", () => {
+        test('Nothing is shown if we are retrying', () => {
             const description = 'someDescription';
             const url = 'someUrl';
             const event = new IntegrityCheckFailure(description, url, true);

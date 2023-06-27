@@ -31,20 +31,23 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
-        vscode.commands.executeCommand("dotnet.generateAssets", 0);
+    test('Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session', async () => {
+        vscode.commands.executeCommand('dotnet.generateAssets', 0);
         await poll(async () => fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
 
         const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((_) => {
             onChangeSubscription.dispose();
             isNotNull(vscode.debug.activeDebugSession);
-            expect(vscode.debug.activeDebugSession.type).to.equal("coreclr");
+            expect(vscode.debug.activeDebugSession.type).to.equal('coreclr');
         });
 
-        const result = await vscode.debug.startDebugging(vscode.workspace.workspaceFolders![0], ".NET Core Launch (console)");
-        expect(result, "Debugger could not be started.");
+        const result = await vscode.debug.startDebugging(
+            vscode.workspace.workspaceFolders![0],
+            '.NET Core Launch (console)'
+        );
+        expect(result, 'Debugger could not be started.');
 
-        const debugSessionTerminated = new Promise<void>(resolve => {
+        const debugSessionTerminated = new Promise<void>((resolve) => {
             const onTerminateSubscription = vscode.debug.onDidTerminateDebugSession((_) => {
                 onTerminateSubscription.dispose();
                 resolve();

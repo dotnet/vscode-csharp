@@ -14,8 +14,10 @@ import SymbolRangeNames = protocol.V2.SymbolRangeNames;
 import { toRange3 } from '../omnisharp/typeConversion';
 
 export default class OmniSharpDocumentSymbolProvider extends AbstractSupport implements vscode.DocumentSymbolProvider {
-
-    async provideDocumentSymbols(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.DocumentSymbol[]> {
+    async provideDocumentSymbols(
+        document: vscode.TextDocument,
+        token: vscode.CancellationToken
+    ): Promise<vscode.DocumentSymbol[]> {
         try {
             const response = await serverUtils.codeStructure(this._server, { FileName: document.fileName }, token);
 
@@ -24,17 +26,19 @@ export default class OmniSharpDocumentSymbolProvider extends AbstractSupport imp
             }
 
             return [];
-        }
-        catch (error) {
+        } catch (error) {
             return [];
         }
     }
 }
 
-function createSymbols(elements: Structure.CodeElement[], parentElement?: Structure.CodeElement): vscode.DocumentSymbol[] {
+function createSymbols(
+    elements: Structure.CodeElement[],
+    parentElement?: Structure.CodeElement
+): vscode.DocumentSymbol[] {
     const results: vscode.DocumentSymbol[] = [];
 
-    elements.forEach(element => {
+    elements.forEach((element) => {
         const symbol = createSymbolForElement(element, parentElement);
         if (element.Children) {
             symbol.children = createSymbols(element.Children, element);
@@ -56,7 +60,8 @@ function getNameForElement(element: Structure.CodeElement, parentElement?: Struc
             return element.Name;
 
         case SymbolKinds.Namespace:
-            return typeof parentElement !== 'undefined' && element.DisplayName.startsWith(`${parentElement.DisplayName}.`)
+            return typeof parentElement !== 'undefined' &&
+                element.DisplayName.startsWith(`${parentElement.DisplayName}.`)
                 ? element.DisplayName.slice(parentElement.DisplayName.length + 1)
                 : element.DisplayName;
 
@@ -76,16 +81,25 @@ function getNameForElement(element: Structure.CodeElement, parentElement?: Struc
     }
 }
 
-function createSymbolForElement(element: Structure.CodeElement, parentElement?: Structure.CodeElement): vscode.DocumentSymbol {
+function createSymbolForElement(
+    element: Structure.CodeElement,
+    parentElement?: Structure.CodeElement
+): vscode.DocumentSymbol {
     const fullRange = element.Ranges[SymbolRangeNames.Full];
     const nameRange = element.Ranges[SymbolRangeNames.Name];
     const name = getNameForElement(element, parentElement);
     const details = name === element.DisplayName ? '' : element.DisplayName;
 
-    return new vscode.DocumentSymbol(name, details, toSymbolKind(element.Kind), toRange3(fullRange), toRange3(nameRange));
+    return new vscode.DocumentSymbol(
+        name,
+        details,
+        toSymbolKind(element.Kind),
+        toRange3(fullRange),
+        toRange3(nameRange)
+    );
 }
 
-const kinds: { [kind: string]: vscode.SymbolKind; } = {};
+const kinds: { [kind: string]: vscode.SymbolKind } = {};
 
 kinds[SymbolKinds.Class] = vscode.SymbolKind.Class;
 kinds[SymbolKinds.Delegate] = vscode.SymbolKind.Class;

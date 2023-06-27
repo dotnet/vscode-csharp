@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { IRazorDocumentChangeEvent } from '../document/IRazorDocumentChangeEvent';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
@@ -16,8 +15,7 @@ export class HtmlPreviewPanel {
     private panel: vscode.WebviewPanel | undefined;
     private htmlContent: string | undefined;
 
-    constructor(
-        private readonly documentManager: RazorDocumentManager) {
+    constructor(private readonly documentManager: RazorDocumentManager) {
         documentManager.onChange(async (event) => this.documentChanged(event));
     }
 
@@ -28,11 +26,13 @@ export class HtmlPreviewPanel {
             this.panel = vscode.window.createWebviewPanel(
                 HtmlPreviewPanel.viewType,
                 'Razor HTML Preview',
-                vscode.ViewColumn.Two, {
-                enableScripts: true,
-                // Dissallow any remote sources
-                localResourceRoots: [],
-            });
+                vscode.ViewColumn.Two,
+                {
+                    enableScripts: true,
+                    // Dissallow any remote sources
+                    localResourceRoots: [],
+                }
+            );
             this.attachToCurrentPanel();
         }
 
@@ -50,9 +50,11 @@ export class HtmlPreviewPanel {
             return;
         }
 
-        if (event.kind === RazorDocumentChangeKind.htmlChanged ||
+        if (
+            event.kind === RazorDocumentChangeKind.htmlChanged ||
             event.kind === RazorDocumentChangeKind.opened ||
-            event.kind === RazorDocumentChangeKind.closed) {
+            event.kind === RazorDocumentChangeKind.closed
+        ) {
             await this.update();
         }
     }
@@ -63,7 +65,7 @@ export class HtmlPreviewPanel {
             return;
         }
 
-        this.panel.webview.onDidReceiveMessage(async message => {
+        this.panel.webview.onDidReceiveMessage(async (message) => {
             switch (message.command) {
                 case 'copy':
                     if (!this.htmlContent) {
@@ -75,7 +77,7 @@ export class HtmlPreviewPanel {
                     return;
             }
         });
-        this.panel.onDidDispose(() => this.panel = undefined);
+        this.panel.onDidDispose(() => (this.panel = undefined));
     }
 
     private async update() {

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorLanguage } from '../razorLanguage';
 import { RazorLogger } from '../razorLogger';
@@ -18,7 +17,7 @@ export class ReportIssueDataCollectorFactory {
 
     public register() {
         return vscode.window.onDidChangeActiveTextEditor((newEditor) => {
-            if (newEditor && RazorLanguage.fileExtensions.some(ext => newEditor.document.fileName.endsWith(ext))) {
+            if (newEditor && RazorLanguage.fileExtensions.some((ext) => newEditor.document.fileName.endsWith(ext))) {
                 this.onRazorDocumentFocusedEmitter.fire(newEditor.document);
             }
         });

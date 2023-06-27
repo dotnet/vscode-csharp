@@ -4,8 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { CompletionTriggerKind, CompletionItemKind, CompletionItemTag, InsertTextFormat } from 'vscode-languageserver-protocol';
-import { findNetCoreTargetFramework, findNetFrameworkTargetFramework, findNetStandardTargetFramework } from '../shared/utils';
+import {
+    CompletionTriggerKind,
+    CompletionItemKind,
+    CompletionItemTag,
+    InsertTextFormat,
+} from 'vscode-languageserver-protocol';
+import {
+    findNetCoreTargetFramework,
+    findNetFrameworkTargetFramework,
+    findNetStandardTargetFramework,
+} from '../shared/utils';
 
 export namespace Requests {
     export const AddToProject = '/addtoproject';
@@ -182,7 +191,6 @@ export interface ResourceLocation {
     Column: number;
 }
 
-
 export interface Error {
     Message: string;
     Line: number;
@@ -284,7 +292,7 @@ export interface ProjectInformationResponse {
 export enum BackgroundDiagnosticStatus {
     Started = 0,
     Progress = 1,
-    Finished = 2
+    Finished = 2,
 }
 
 export interface BackgroundDiagnosticStatusMessage {
@@ -478,16 +486,16 @@ export interface FilesChangedRequest extends Request {
 }
 
 export enum FileChangeType {
-    Change = "Change",
-    Create = "Create",
-    Delete = "Delete",
-    DirectoryDelete = "DirectoryDelete"
+    Change = 'Change',
+    Create = 'Create',
+    Delete = 'Delete',
+    DirectoryDelete = 'DirectoryDelete',
 }
 
 export enum FixAllScope {
-    Document = "Document",
-    Project = "Project",
-    Solution = "Solution"
+    Document = 'Document',
+    Project = 'Project',
+    Solution = 'Solution',
 }
 
 export interface GetFixAllRequest extends FileBasedRequest {
@@ -580,12 +588,14 @@ interface UpdateSourceGeneratedFileModifiedResponse {
     Source: string;
 }
 
-export type UpdateSourceGeneratedFileResponse = UpdateSourceGeneratedFileNotModifiedResponse | UpdateSourceGeneratedFileModifiedResponse;
+export type UpdateSourceGeneratedFileResponse =
+    | UpdateSourceGeneratedFileNotModifiedResponse
+    | UpdateSourceGeneratedFileModifiedResponse;
 
 export enum UpdateType {
     Unchanged,
     Deleted,
-    Modified
+    Modified,
 }
 
 export type SourceGeneratedFileClosedRequest = SourceGeneratedFileInfo;
@@ -624,16 +634,14 @@ export interface GoToTypeDefinitionResponse {
     Definitions?: Definition[];
 }
 
-
 export namespace V2 {
-
     export namespace Requests {
         export const GetCodeActions = '/v2/getcodeactions';
         export const RunCodeAction = '/v2/runcodeaction';
         export const GetTestStartInfo = '/v2/getteststartinfo';
         export const RunTest = '/v2/runtest';
-        export const RunAllTestsInClass = "/v2/runtestsinclass";
-        export const RunTestsInContext = "/v2/runtestsincontext";
+        export const RunAllTestsInClass = '/v2/runtestsinclass';
+        export const RunTestsInContext = '/v2/runtestsincontext';
         export const DebugTestGetStartInfo = '/v2/debugtest/getstartinfo';
         export const DebugTestsInClassGetStartInfo = '/v2/debugtestsinclass/getstartinfo';
         export const DebugTestsInContextGetStartInfo = '/v2/debugtestsincontext/getstartinfo';
@@ -919,7 +927,10 @@ export namespace V2 {
             Elements?: CodeElement[];
         }
 
-        export function walkCodeElements(elements: CodeElement[], action: (element: CodeElement, parentElement?: CodeElement) => void) {
+        export function walkCodeElements(
+            elements: CodeElement[],
+            action: (element: CodeElement, parentElement?: CodeElement) => void
+        ) {
             function walker(elements: CodeElement[], parentElement?: CodeElement) {
                 for (const element of elements) {
                     action(element, parentElement);
@@ -950,10 +961,12 @@ export namespace V2 {
 }
 
 export function isDotNetCoreProject(project: MSBuildProject): boolean {
-    const tfms = project.TargetFrameworks.map(tf => tf.ShortName);
-    return findNetCoreTargetFramework(tfms) !== undefined ||
+    const tfms = project.TargetFrameworks.map((tf) => tf.ShortName);
+    return (
+        findNetCoreTargetFramework(tfms) !== undefined ||
         findNetStandardTargetFramework(tfms) !== undefined ||
-        findNetFrameworkTargetFramework(tfms) !== undefined;
+        findNetFrameworkTargetFramework(tfms) !== undefined
+    );
 }
 
 export interface ProjectDescriptor {
@@ -970,7 +983,7 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
             result.push({
                 Name: project.Name,
                 Directory: project.Path,
-                FilePath: path.join(project.Path, 'project.json')
+                FilePath: path.join(project.Path, 'project.json'),
             });
         }
     }
@@ -981,7 +994,7 @@ export function getDotNetCoreProjectDescriptors(info: WorkspaceInformationRespon
                 result.push({
                     Name: path.basename(project.Path),
                     Directory: path.dirname(project.Path),
-                    FilePath: project.Path
+                    FilePath: project.Path,
                 });
             }
         }

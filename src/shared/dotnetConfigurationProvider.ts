@@ -9,7 +9,11 @@ import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './I
 import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, getBuildOperations } from './assets';
 import { getServiceBroker } from '../lsptoolshost/services/brokeredServicesHosting';
 import Descriptors from '../lsptoolshost/services/descriptors';
-import { DotnetDebugConfigurationServiceErrorKind, IDotnetDebugConfigurationService, IDotnetDebugConfigurationServiceResult } from '../lsptoolshost/services/IDotnetDebugConfigurationService';
+import {
+    DotnetDebugConfigurationServiceErrorKind,
+    IDotnetDebugConfigurationService,
+    IDotnetDebugConfigurationServiceResult,
+} from '../lsptoolshost/services/IDotnetDebugConfigurationService';
 
 // User errors that can be shown to the user.
 class LaunchServiceError extends Error {}
@@ -24,7 +28,7 @@ class InternalServiceError extends Error {}
 // The error that is thrown if we are unable to get services through getProxy.
 class UnavaliableLaunchServiceError extends Error {}
 
-const workspaceFolderToken = "${workspaceFolder}";
+const workspaceFolderToken = '${workspaceFolder}';
 /**
  * Replaces '${workspaceFolder}' with the current folder while keeping path separators consistent.
  *
@@ -32,19 +36,14 @@ const workspaceFolderToken = "${workspaceFolder}";
  * @param folderPath The current workspace folder
  * @returns A fully resolved path to the .csproj
  */
-function resolveWorkspaceFolderToken(projectPath: string, folderPath: string): string
-{
-    if (projectPath.startsWith(workspaceFolderToken))
-    {
+function resolveWorkspaceFolderToken(projectPath: string, folderPath: string): string {
+    if (projectPath.startsWith(workspaceFolderToken)) {
         const relativeProjectPath: string = projectPath.substring(workspaceFolderToken.length);
 
         // Keep the path seperate consistant
-        if (relativeProjectPath.startsWith('/'))
-        {
+        if (relativeProjectPath.startsWith('/')) {
             folderPath = folderPath.replace(/[\\/]+/g, '/');
-        }
-        else
-        {
+        } else {
             folderPath = folderPath.replace(/[\\/]+/g, '\\');
         }
 
@@ -59,40 +58,51 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
 
     //#region vscode.DebugConfigurationProvider
 
-    async resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | undefined> {
+    async resolveDebugConfiguration(
+        folder: vscode.WorkspaceFolder | undefined,
+        debugConfiguration: vscode.DebugConfiguration,
+        token?: vscode.CancellationToken
+    ): Promise<vscode.DebugConfiguration | undefined> {
         /** This {@link vscode.DebugConfigurationProvider} does not handle Run and Debug */
         if (debugConfiguration.type === undefined) {
             return debugConfiguration;
         }
 
-        if (debugConfiguration.request !== "launch") {
+        if (debugConfiguration.request !== 'launch') {
             throw new Error(`'${debugConfiguration.request}' is unsupported.`);
         }
 
         let projectPath: string = debugConfiguration.projectPath;
-        if (folder && projectPath)
-        {
+        if (folder && projectPath) {
             projectPath = resolveWorkspaceFolderToken(projectPath, folder.uri.fsPath);
 
-            const dotnetDebugServiceProxy = await getServiceBroker()?.getProxy<IDotnetDebugConfigurationService>(Descriptors.dotnetDebugConfigurationService);
+            const dotnetDebugServiceProxy = await getServiceBroker()?.getProxy<IDotnetDebugConfigurationService>(
+                Descriptors.dotnetDebugConfigurationService
+            );
             try {
                 if (dotnetDebugServiceProxy) {
-                    const result: IDotnetDebugConfigurationServiceResult = await dotnetDebugServiceProxy.resolveDebugConfigurationWithLaunchConfigurationService(projectPath, debugConfiguration, token);
+                    const result: IDotnetDebugConfigurationServiceResult =
+                        await dotnetDebugServiceProxy.resolveDebugConfigurationWithLaunchConfigurationService(
+                            projectPath,
+                            debugConfiguration,
+                            token
+                        );
                     return this.resolveDotnetDebugConfigurationServiceResult(projectPath, result);
                 } else {
                     throw new UnavaliableLaunchServiceError();
                 }
-            }
-            catch (e) {
+            } catch (e) {
                 if (e instanceof UnavaliableLaunchServiceError) {
-                    return await this.resolveDebugConfigurationWithWorkspaceDebugInformationProvider(folder, projectPath);
+                    return await this.resolveDebugConfigurationWithWorkspaceDebugInformationProvider(
+                        folder,
+                        projectPath
+                    );
                 } else if (e instanceof StopDebugLaunchServiceError) {
                     return undefined;
                 } else {
                     throw e;
                 }
-            }
-            finally {
+            } finally {
                 dotnetDebugServiceProxy?.dispose();
             }
         }
@@ -102,7 +112,10 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
 
     //#endregion
 
-    private resolveDotnetDebugConfigurationServiceResult(projectPath: string, result: IDotnetDebugConfigurationServiceResult): vscode.DebugConfiguration {
+    private resolveDotnetDebugConfigurationServiceResult(
+        projectPath: string,
+        result: IDotnetDebugConfigurationServiceResult
+    ): vscode.DebugConfiguration {
         if (result.error) {
             const errorResult = result.error;
             switch (errorResult.kind) {
@@ -119,12 +132,15 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
         const debugConfigArray = result.configurations;
         if (debugConfigArray.length == 0) {
             throw new LaunchServiceError(`No launchable target found for '${projectPath}'`);
-        } if (debugConfigArray.length == 1) {
+        }
+        if (debugConfigArray.length == 1) {
             return debugConfigArray[0];
         } else if (debugConfigArray.length > 1) {
-            throw new InternalServiceError("Multiple launch targets is not yet supported.");
+            throw new InternalServiceError('Multiple launch targets is not yet supported.');
         } else {
-            throw new InternalServiceError("Unexpected configuration array from IDotnetDebugConfigurationServiceResult.");
+            throw new InternalServiceError(
+                'Unexpected configuration array from IDotnetDebugConfigurationServiceResult.'
+            );
         }
     }
 
@@ -135,10 +151,16 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
      * @param projectPath The expected path to the .csproj
      * @returns
      */
-    private async resolveDebugConfigurationWithWorkspaceDebugInformationProvider(folder: vscode.WorkspaceFolder, projectPath: string): Promise<vscode.DebugConfiguration> {
-        const info: ProjectDebugInformation[] | undefined = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
+    private async resolveDebugConfigurationWithWorkspaceDebugInformationProvider(
+        folder: vscode.WorkspaceFolder,
+        projectPath: string
+    ): Promise<vscode.DebugConfiguration> {
+        const info: ProjectDebugInformation[] | undefined =
+            await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
         if (!info) {
-            throw new Error("Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.");
+            throw new Error(
+                'Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.'
+            );
         }
 
         for (let index = 0; index < info.length; index++) {
@@ -158,14 +180,17 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                     await addTasksJsonIfNecessary(generator, buildOperations);
 
                     const programLaunchType = generator.computeProgramLaunchType();
-                    const generatedDebugConfigurations: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(programLaunchType, true);
+                    const generatedDebugConfigurations: vscode.DebugConfiguration[] =
+                        generator.createLaunchJsonConfigurationsArray(programLaunchType, true);
 
                     if (generatedDebugConfigurations.length === 1) {
                         const result = generatedDebugConfigurations[0];
                         // TODO: Pass through the launch configuration id if ILaunchConfigurationService names them the same or parse and return the actual one.
                         return result;
                     } else {
-                        throw new Error(`Unable to determine a configuration for '${projectPath}'. Please generate C# debug assets instead.`);
+                        throw new Error(
+                            `Unable to determine a configuration for '${projectPath}'. Please generate C# debug assets instead.`
+                        );
                     }
                 } else {
                     throw new Error(`'${projectPath}' is not an executable project.`);

@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IHostExecutableResolver } from "../../../src/shared/constants/IHostExecutableResolver";
-import { HostExecutableInformation } from "../../../src/shared/constants/hostExecutableInformation";
+import { IHostExecutableResolver } from '../../../src/shared/constants/IHostExecutableResolver';
+import { HostExecutableInformation } from '../../../src/shared/constants/hostExecutableInformation';
 
 export const fakeMonoInfo: HostExecutableInformation = {
-    version: "someMonoVersion",
-    path: "somePath",
-    env: { }
+    version: 'someMonoVersion',
+    path: 'somePath',
+    env: {},
 };
 
 export class FakeMonoResolver implements IHostExecutableResolver {

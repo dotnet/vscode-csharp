@@ -5,25 +5,34 @@
 
 import * as vscode from 'vscode';
 import { mapAsync } from '../common';
-import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from "../shared/IWorkspaceDebugInformationProvider";
+import {
+    IWorkspaceDebugInformationProvider,
+    ProjectDebugInformation,
+} from '../shared/IWorkspaceDebugInformationProvider';
 import { isBlazorWebAssemblyHosted, isBlazorWebAssemblyProject, isWebProject } from '../shared/utils';
-import { RoslynLanguageServer } from "./roslynLanguageServer";
-import { WorkspaceDebugConfigurationParams, WorkspaceDebugConfigurationRequest } from "./roslynProtocol";
+import { RoslynLanguageServer } from './roslynLanguageServer';
+import { WorkspaceDebugConfigurationParams, WorkspaceDebugConfigurationRequest } from './roslynProtocol';
 import { UriConverter } from './uriConverter';
 
- export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugInformationProvider {
-    constructor(private server: RoslynLanguageServer) { }
+export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugInformationProvider {
+    constructor(private server: RoslynLanguageServer) {}
 
-    public async getWorkspaceDebugInformation(workspaceFolder: vscode.Uri): Promise<ProjectDebugInformation[] | undefined> {
+    public async getWorkspaceDebugInformation(
+        workspaceFolder: vscode.Uri
+    ): Promise<ProjectDebugInformation[] | undefined> {
         if (!this.server.isRunning()) {
             return;
         }
 
         const params: WorkspaceDebugConfigurationParams = {
-            workspacePath: UriConverter.serialize(workspaceFolder)
+            workspacePath: UriConverter.serialize(workspaceFolder),
         };
 
-        const response = await this.server.sendRequest(WorkspaceDebugConfigurationRequest.type, params, new vscode.CancellationTokenSource().token);
+        const response = await this.server.sendRequest(
+            WorkspaceDebugConfigurationRequest.type,
+            params,
+            new vscode.CancellationTokenSource().token
+        );
 
         // LSP serializes and deserializes URIs as (URI formatted) strings not actual types.  So convert to the actual type here.
         const projects: ProjectDebugInformation[] | undefined = await mapAsync(response, async (p) => {
@@ -36,9 +45,14 @@ import { UriConverter } from './uriConverter';
                 targetsDotnetCore: p.targetsDotnetCore,
                 isExe: p.isExe,
                 isWebProject: webProject,
-                isBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted(p.isExe, webProject, webAssemblyBlazor, p.targetsDotnetCore),
+                isBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted(
+                    p.isExe,
+                    webProject,
+                    webAssemblyBlazor,
+                    p.targetsDotnetCore
+                ),
                 isBlazorWebAssemblyStandalone: webAssemblyBlazor,
-                solutionPath: p.solutionPath
+                solutionPath: p.solutionPath,
             };
         });
 

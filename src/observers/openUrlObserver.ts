@@ -3,14 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from "../vscodeAdapter";
-import { BaseEvent, OpenURL } from "../omnisharp/loggingEvents";
-import { EventType } from "../omnisharp/eventType";
+import { vscode } from '../vscodeAdapter';
+import { BaseEvent, OpenURL } from '../omnisharp/loggingEvents';
+import { EventType } from '../omnisharp/eventType';
 
 export class OpenURLObserver {
-
-    constructor(private vscode: vscode) {
-    }
+    constructor(private vscode: vscode) {}
 
     public post = (event: BaseEvent) => {
         switch (event.type) {

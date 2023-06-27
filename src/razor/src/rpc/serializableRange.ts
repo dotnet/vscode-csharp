@@ -3,9 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
-import { convertPositionFromSerializable, convertPositionToSerializable, SerializablePosition } from './serializablePosition';
+import {
+    convertPositionFromSerializable,
+    convertPositionToSerializable,
+    SerializablePosition,
+} from './serializablePosition';
 
 // We'd typically just use vscode.Range here; however, that type doesn't serialize properly over the wire.
 export interface SerializableRange {
@@ -21,7 +24,5 @@ export function convertRangeToSerializable(range: vscode.Range): SerializableRan
 }
 
 export function convertRangeFromSerializable(range: SerializableRange): vscode.Range {
-    return new vscode.Range(
-        convertPositionFromSerializable(range.start),
-        convertPositionFromSerializable(range.end));
+    return new vscode.Range(convertPositionFromSerializable(range.start), convertPositionFromSerializable(range.end));
 }

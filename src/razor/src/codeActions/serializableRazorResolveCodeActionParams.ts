@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { LanguageKind } from '../rpc/languageKind';
 import { CodeAction } from 'vscode-languageserver-protocol';
 

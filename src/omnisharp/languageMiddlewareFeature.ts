@@ -11,12 +11,22 @@ export interface LanguageMiddleware extends RemapApi {
 }
 
 interface RemapApi {
-    remapWorkspaceEdit?(workspaceEdit: vscode.WorkspaceEdit, token: vscode.CancellationToken): vscode.ProviderResult<vscode.WorkspaceEdit>;
-    remapLocations?(locations: vscode.Location[] | vscode.LocationLink[], token: vscode.CancellationToken): vscode.ProviderResult<Array<vscode.Location | vscode.LocationLink>>;
+    remapWorkspaceEdit?(
+        workspaceEdit: vscode.WorkspaceEdit,
+        token: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.WorkspaceEdit>;
+    remapLocations?(
+        locations: vscode.Location[] | vscode.LocationLink[],
+        token: vscode.CancellationToken
+    ): vscode.ProviderResult<Array<vscode.Location | vscode.LocationLink>>;
 }
 
-type GetRemapType<T extends (parameter: any, token: vscode.CancellationToken) => any>
-    = T extends (parameter: infer R, token: vscode.CancellationToken) => vscode.ProviderResult<infer R> ? R : any;
+type GetRemapType<T extends (parameter: any, token: vscode.CancellationToken) => any> = T extends (
+    parameter: infer R,
+    token: vscode.CancellationToken
+) => vscode.ProviderResult<infer R>
+    ? R
+    : any;
 
 type RemapParameterType<M extends keyof RemapApi> = GetRemapType<NonNullable<RemapApi[M]>>;
 
@@ -35,9 +45,11 @@ export class LanguageMiddlewareFeature implements IDisposable {
 
     public register(): void {
         this._registration = vscode.commands.registerCommand(
-            'omnisharp.registerLanguageMiddleware', (middleware: LanguageMiddleware) => {
+            'omnisharp.registerLanguageMiddleware',
+            (middleware: LanguageMiddleware) => {
                 this._middlewares.push(middleware);
-            });
+            }
+        );
     }
 
     public getLanguageMiddlewares(): LanguageMiddleware[] {
@@ -45,7 +57,10 @@ export class LanguageMiddlewareFeature implements IDisposable {
     }
 
     public async remap<M extends keyof RemapApi, P extends RemapParameterType<M>>(
-        remapType: M, original: P, token: vscode.CancellationToken): Promise<P> {
+        remapType: M,
+        original: P,
+        token: vscode.CancellationToken
+    ): Promise<P> {
         try {
             const languageMiddlewares = this.getLanguageMiddlewares();
             let remapped = original;
@@ -64,8 +79,7 @@ export class LanguageMiddlewareFeature implements IDisposable {
             }
 
             return remapped;
-        }
-        catch (error) {
+        } catch (error) {
             // Something happened while remapping. Return the original.
             return original;
         }

@@ -11,7 +11,10 @@ export function toLocation(location: protocol.ResourceLocation | protocol.QuickF
     return toLocationFromUri(fileName, location);
 }
 
-export function toLocationFromUri(uri: vscode.Uri, location: protocol.ResourceLocation | protocol.QuickFix): vscode.Location {
+export function toLocationFromUri(
+    uri: vscode.Uri,
+    location: protocol.ResourceLocation | protocol.QuickFix
+): vscode.Location {
     const position = new vscode.Position(location.Line, location.Column);
 
     const endLine = (<protocol.QuickFix>location).EndLine;
@@ -29,12 +32,17 @@ export function toVscodeLocation(omnisharpLocation: protocol.V2.Location): vscod
     return new vscode.Location(vscode.Uri.file(omnisharpLocation.FileName), toRange3(omnisharpLocation.Range));
 }
 
-export function toRange(rangeLike: { Line: number; Column: number; EndLine: number; EndColumn: number; }): vscode.Range {
+export function toRange(rangeLike: { Line: number; Column: number; EndLine: number; EndColumn: number }): vscode.Range {
     const { Line, Column, EndLine, EndColumn } = rangeLike;
     return toVSCodeRange(Line, Column, EndLine, EndColumn);
 }
 
-export function toRange2(rangeLike: { StartLine: number; StartColumn: number; EndLine: number; EndColumn: number; }): vscode.Range {
+export function toRange2(rangeLike: {
+    StartLine: number;
+    StartColumn: number;
+    EndLine: number;
+    EndColumn: number;
+}): vscode.Range {
     const { StartLine, StartColumn, EndLine, EndColumn } = rangeLike;
     return toVSCodeRange(StartLine, StartColumn, EndLine, EndColumn);
 }
@@ -43,14 +51,19 @@ export function toRange3(range: protocol.V2.Range): vscode.Range {
     return toVSCodeRange(range.Start.Line, range.Start.Column, range.End.Line, range.End.Column);
 }
 
-export function toVSCodeRange(StartLine: number, StartColumn: number, EndLine: number, EndColumn: number): vscode.Range {
+export function toVSCodeRange(
+    StartLine: number,
+    StartColumn: number,
+    EndLine: number,
+    EndColumn: number
+): vscode.Range {
     return new vscode.Range(StartLine, StartColumn, EndLine, EndColumn);
 }
 
 export function fromVSCodeRange(range: vscode.Range): protocol.V2.Range {
     return {
         Start: fromVSCodePosition(range.start),
-        End: fromVSCodePosition(range.end)
+        End: fromVSCodePosition(range.end),
     };
 }
 
@@ -66,12 +79,17 @@ export function toVSCodeTextEdit(textChange: protocol.LinePositionSpanTextChange
     return new vscode.TextEdit(toRange2(textChange), textChange.NewText);
 }
 
-export function createRequest<T extends protocol.Request>(document: vscode.TextDocument, where: vscode.Position, includeBuffer = false): T {
+export function createRequest<T extends protocol.Request>(
+    document: vscode.TextDocument,
+    where: vscode.Position,
+    includeBuffer = false
+): T {
     // for metadata sources, we need to remove the [metadata] from the filename, and prepend the $metadata$ authority
     // this is expected by the Omnisharp server to support metadata-to-metadata navigation
-    const fileName = document.uri.scheme === "omnisharp-metadata" ?
-        `${document.uri.authority}${document.fileName.replace("[metadata] ", "")}` :
-        document.fileName;
+    const fileName =
+        document.uri.scheme === 'omnisharp-metadata'
+            ? `${document.uri.authority}${document.fileName.replace('[metadata] ', '')}`
+            : document.fileName;
 
     const request: protocol.Request = {
         FileName: fileName,

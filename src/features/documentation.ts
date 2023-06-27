@@ -31,9 +31,9 @@ export function extractSummaryText(xmlDocComment: string): string {
 }
 
 export function GetDocumentationString(structDoc: protocol.DocumentationComment) {
-    const newLine = "\n\n";
-    let documentation = "";
-    
+    const newLine = '\n\n';
+    let documentation = '';
+
     if (structDoc) {
         if (structDoc.SummaryText) {
             documentation += structDoc.SummaryText + newLine;
@@ -41,10 +41,10 @@ export function GetDocumentationString(structDoc: protocol.DocumentationComment)
 
         documentation = documentation.trim();
     }
-    
+
     return documentation;
 }
 
 export function displayDocumentationObject(obj: protocol.DocumentationItem): string {
-    return obj.Name + ": " + obj.Documentation;
+    return obj.Name + ': ' + obj.Documentation;
 }

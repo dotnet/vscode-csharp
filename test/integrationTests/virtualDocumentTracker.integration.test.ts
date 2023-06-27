@@ -11,7 +11,7 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { IDisposable } from '../../src/disposable';
 
 suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function () {
-    const virtualScheme = "virtual";
+    const virtualScheme = 'virtual';
     let virtualDocumentRegistration: IDisposable;
     let virtualUri: vscode.Uri;
 
@@ -26,8 +26,13 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
         await testAssetWorkspace.restoreAndWait(activation);
 
         const virtualCSharpDocumentProvider = new VirtualCSharpDocumentProvider();
-        virtualDocumentRegistration = vscode.workspace.registerTextDocumentContentProvider(virtualScheme, virtualCSharpDocumentProvider);
-        virtualUri = vscode.Uri.parse(`${virtualScheme}://${testAssetWorkspace.projects[0].projectDirectoryPath}/_virtualFile.cs`);
+        virtualDocumentRegistration = vscode.workspace.registerTextDocumentContentProvider(
+            virtualScheme,
+            virtualCSharpDocumentProvider
+        );
+        virtualUri = vscode.Uri.parse(
+            `${virtualScheme}://${testAssetWorkspace.projects[0].projectDirectoryPath}/_virtualFile.cs`
+        );
     });
 
     suiteTeardown(async () => {
@@ -39,11 +44,13 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
         virtualDocumentRegistration?.dispose();
     });
 
-    test("Virtual documents are operated on.", async () => {
+    test('Virtual documents are operated on.', async () => {
         await vscode.workspace.openTextDocument(virtualUri);
 
         const position = new vscode.Position(2, 0);
-        const completionList = <vscode.CompletionList>await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", virtualUri, position);
+        const completionList = <vscode.CompletionList>(
+            await vscode.commands.executeCommand('vscode.executeCompletionItemProvider', virtualUri, position)
+        );
 
         expect(completionList.items).to.not.be.empty;
     });

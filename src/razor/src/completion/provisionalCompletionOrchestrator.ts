@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { CSharpProjectedDocument } from '../csharp/csharpProjectedDocument';
 import { CSharpProjectedDocumentContentProvider } from '../csharp/csharpProjectedDocumentContentProvider';
@@ -23,8 +22,8 @@ export class ProvisionalCompletionOrchestrator {
         private readonly documentManager: RazorDocumentManager,
         private readonly projectedCSharpProvider: CSharpProjectedDocumentContentProvider,
         private readonly serviceClient: RazorLanguageServiceClient,
-        private readonly logger: RazorLogger) {
-    }
+        private readonly logger: RazorLogger
+    ) {}
 
     public register() {
         if (vscode.window.activeTextEditor) {
@@ -35,9 +34,10 @@ export class ProvisionalCompletionOrchestrator {
         // Because of this restriction we do a best effort to understand when the user has gone onto
         // different actions (other than viewing completion).
 
-        const onDidChangeSelectionRegistration = vscode.window.onDidChangeTextEditorSelection(
-            async args => this.tryRemoveProvisionalDot(args.textEditor.document));
-        const onDidChangeRegistration = vscode.workspace.onDidChangeTextDocument(async args => {
+        const onDidChangeSelectionRegistration = vscode.window.onDidChangeTextEditorSelection(async (args) =>
+            this.tryRemoveProvisionalDot(args.textEditor.document)
+        );
+        const onDidChangeRegistration = vscode.workspace.onDidChangeTextDocument(async (args) => {
             if (args.contentChanges.length === 1 && args.contentChanges[0].text === '.') {
                 // Don't want to remove a provisional dot that we just added.
                 return;
@@ -45,7 +45,7 @@ export class ProvisionalCompletionOrchestrator {
 
             await this.tryRemoveProvisionalDot(args.document);
         });
-        const onDidChangeActiveEditorRegistration = vscode.window.onDidChangeActiveTextEditor(async args => {
+        const onDidChangeActiveEditorRegistration = vscode.window.onDidChangeActiveTextEditor(async (args) => {
             if (this.currentActiveDocument) {
                 await this.tryRemoveProvisionalDot(this.currentActiveDocument);
             }
@@ -60,13 +60,15 @@ export class ProvisionalCompletionOrchestrator {
         return vscode.Disposable.from(
             onDidChangeRegistration,
             onDidChangeSelectionRegistration,
-            onDidChangeActiveEditorRegistration);
+            onDidChangeActiveEditorRegistration
+        );
     }
 
     public async tryGetProvisionalCompletions(
         hostDocumentUri: vscode.Uri,
         projection: ProjectionResult,
-        completionContext: vscode.CompletionContext) {
+        completionContext: vscode.CompletionContext
+    ) {
         // We expect to be called in scenarios where the user has just typed a dot after
         // some identifier.
         // Such as (cursor is pipe): "DateTime.| "
@@ -87,13 +89,11 @@ export class ProvisionalCompletionOrchestrator {
             return null;
         }
 
-        const previousCharacterPosition = new vscode.Position(
-            htmlPosition.line,
-            htmlPosition.character - 1,
-        );
+        const previousCharacterPosition = new vscode.Position(htmlPosition.line, htmlPosition.character - 1);
         const previousCharacterQuery = await this.serviceClient.languageQuery(
             previousCharacterPosition,
-            hostDocumentUri);
+            hostDocumentUri
+        );
 
         if (previousCharacterQuery.kind !== LanguageKind.CSharp) {
             return null;
@@ -104,8 +104,10 @@ export class ProvisionalCompletionOrchestrator {
         const absoluteIndex = previousCharacterQuery.positionIndex;
 
         if (this.logger.verboseEnabled) {
-            this.logger.logVerbose(`Applying provisional completion on ${projectedDocument.uri} ` +
-                `at (${previousCharacterQuery.position.line}, ${previousCharacterQuery.position.character})`);
+            this.logger.logVerbose(
+                `Applying provisional completion on ${projectedDocument.uri} ` +
+                    `at (${previousCharacterQuery.position.line}, ${previousCharacterQuery.position.character})`
+            );
         }
 
         // Edit the projected document to contain a '.'. This allows C# completion to provide valid completion items
@@ -125,13 +127,15 @@ export class ProvisionalCompletionOrchestrator {
 
         const provisionalPosition = new vscode.Position(
             previousCharacterQuery.position.line,
-            previousCharacterQuery.position.character + 1);
+            previousCharacterQuery.position.character + 1
+        );
         const completionList = await RazorCompletionItemProvider.getCompletions(
             projectedDocument.uri,
             htmlPosition,
             provisionalPosition,
             completionContext,
-            projection.languageKind);
+            projection.languageKind
+        );
 
         // We track when we add provisional dots to avoid doing unnecessary work on commonly invoked events.
         this.provisionalDotsMayBeActive = true;

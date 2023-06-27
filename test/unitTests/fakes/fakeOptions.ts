@@ -3,24 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Options } from "../../../src/shared/options";
+import { Options } from '../../../src/shared/options';
 
 export function getEmptyOptions(): Options {
     return new Options(
         {
-            dotnetPath: "",
+            dotnetPath: '',
             waitForDebugger: false,
-            serverPath: "",
+            serverPath: '',
             useOmnisharpServer: true,
             excludePaths: [],
-            defaultSolution: ""
+            defaultSolution: '',
         },
         {
             useModernNet: false,
-            monoPath: "",
-            loggingLevel: "",
+            monoPath: '',
+            loggingLevel: '',
             autoStart: false,
-            projectFilesExcludePattern: "",
+            projectFilesExcludePattern: '',
             projectLoadTimeout: 0,
             maxProjectResults: 0,
             useEditorFormattingSettings: false,
@@ -36,10 +36,10 @@ export function getEmptyOptions(): Options {
             minFindSymbolsFilterLength: 0,
             maxFindSymbolsItems: 0,
             enableMsBuildLoadProjectsOnDemand: false,
-            sdkPath: "",
-            sdkVersion: "",
+            sdkPath: '',
+            sdkVersion: '',
             sdkIncludePrereleases: false,
-            testRunSettings: "",
+            testRunSettings: '',
             dotNetCliPaths: [],
             useFormatting: false,
             showReferencesCodeLens: false,
@@ -63,13 +63,13 @@ export function getEmptyOptions(): Options {
             suppressDotnetRestoreNotification: false,
         },
         {
-            logLevel: "",
+            logLevel: '',
             documentSelector: ['csharp'],
             extensionsPaths: null,
         },
         {
             razorDevMode: false,
-            razorPluginPath: "",
+            razorPluginPath: '',
         }
     );
 }

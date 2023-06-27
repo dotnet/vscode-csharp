@@ -6,17 +6,25 @@
 import { should, expect } from 'chai';
 import { getNullChannel } from '../testAssets/fakes';
 import { CsharpChannelObserver } from '../../../src/shared/observers/csharpChannelObserver';
-import { InstallationFailure, DebuggerNotInstalledFailure, DebuggerPrerequisiteFailure, ProjectJsonDeprecatedWarning, BaseEvent, PackageInstallStart, IntegrityCheckFailure } from '../../../src/omnisharp/loggingEvents';
+import {
+    InstallationFailure,
+    DebuggerNotInstalledFailure,
+    DebuggerPrerequisiteFailure,
+    ProjectJsonDeprecatedWarning,
+    BaseEvent,
+    PackageInstallStart,
+    IntegrityCheckFailure,
+} from '../../../src/omnisharp/loggingEvents';
 
-suite("CsharpChannelObserver", () => {
+suite('CsharpChannelObserver', () => {
     suiteSetup(() => should());
     [
-        new InstallationFailure("someStage", "someError"),
+        new InstallationFailure('someStage', 'someError'),
         new DebuggerNotInstalledFailure(),
-        new DebuggerPrerequisiteFailure("some failure"),
+        new DebuggerPrerequisiteFailure('some failure'),
         new ProjectJsonDeprecatedWarning(),
-        new IntegrityCheckFailure("", "", true),
-        new PackageInstallStart()
+        new IntegrityCheckFailure('', '', true),
+        new PackageInstallStart(),
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is shown and preserve focus is set to true`, () => {
             let hasShown = false;
@@ -26,7 +34,7 @@ suite("CsharpChannelObserver", () => {
                 show: (preserve) => {
                     hasShown = true;
                     preserveFocus = preserve ?? false;
-                }
+                },
             });
 
             observer.post(event);

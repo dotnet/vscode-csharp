@@ -4,22 +4,34 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as https from 'https';
-import { EventStream } from "../eventStream";
-import { DownloadSuccess, DownloadStart, DownloadFallBack, DownloadFailure, DownloadProgress, DownloadSizeObtained } from "../omnisharp/loggingEvents";
-import { NestedError } from "../nestedError";
+import { EventStream } from '../eventStream';
+import {
+    DownloadSuccess,
+    DownloadStart,
+    DownloadFallBack,
+    DownloadFailure,
+    DownloadProgress,
+    DownloadSizeObtained,
+} from '../omnisharp/loggingEvents';
+import { NestedError } from '../nestedError';
 import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../networkSettings';
 
-export async function DownloadFile(description: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider, url: string, fallbackUrl?: string): Promise<Buffer> {
+export async function DownloadFile(
+    description: string,
+    eventStream: EventStream,
+    networkSettingsProvider: NetworkSettingsProvider,
+    url: string,
+    fallbackUrl?: string
+): Promise<Buffer> {
     eventStream.post(new DownloadStart(description));
 
     try {
         const buffer = await downloadFile(description, url, eventStream, networkSettingsProvider);
         eventStream.post(new DownloadSuccess(` Done!`));
         return buffer;
-    }
-    catch (primaryUrlError) {
+    } catch (primaryUrlError) {
         // If the package has a fallback Url, and downloading from the primary Url failed, try again from
         // the fallback. This is used for debugger packages as some users have had issues downloading from
         // the CDN link
@@ -29,18 +41,21 @@ export async function DownloadFile(description: string, eventStream: EventStream
                 const buffer = await downloadFile(description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
                 return buffer;
-            }
-            catch (fallbackUrlError) {
+            } catch (fallbackUrlError) {
                 throw primaryUrlError;
             }
-        }
-        else {
+        } else {
             throw primaryUrlError;
         }
     }
 }
 
-async function downloadFile(description: string, urlString: string, eventStream: EventStream, networkSettingsProvider: NetworkSettingsProvider): Promise<Buffer> {
+async function downloadFile(
+    description: string,
+    urlString: string,
+    eventStream: EventStream,
+    networkSettingsProvider: NetworkSettingsProvider
+): Promise<Buffer> {
     const url = parseUrl(urlString);
     const networkSettings = networkSettingsProvider();
     const proxy = networkSettings.proxy;
@@ -56,18 +71,23 @@ async function downloadFile(description: string, urlString: string, eventStream:
     const buffers: any[] = [];
 
     return new Promise<Buffer>((resolve, reject) => {
-        const request = https.request(options, response => {
+        const request = https.request(options, (response) => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
                 if (response.headers.location === undefined) {
-                    eventStream.post(new DownloadFailure(`Failed to download from ${urlString}. Redirected without location header`));
+                    eventStream.post(
+                        new DownloadFailure(`Failed to download from ${urlString}. Redirected without location header`)
+                    );
                     return reject(new NestedError('Missing location'));
                 }
-                return resolve(downloadFile(description, response.headers.location, eventStream, networkSettingsProvider));
-            }
-            else if (response.statusCode !== 200) {
+                return resolve(
+                    downloadFile(description, response.headers.location, eventStream, networkSettingsProvider)
+                );
+            } else if (response.statusCode !== 200) {
                 // Download failed - print error message
-                eventStream.post(new DownloadFailure(`Failed to download from ${urlString}. Error code '${response.statusCode}')`));
+                eventStream.post(
+                    new DownloadFailure(`Failed to download from ${urlString}. Error code '${response.statusCode}')`)
+                );
                 return reject(new NestedError(response.statusCode!.toString())); // Known to exist because this is from a ClientRequest
             }
 
@@ -83,7 +103,7 @@ async function downloadFile(description: string, urlString: string, eventStream:
 
             eventStream.post(new DownloadSizeObtained(packageSize));
 
-            response.on('data', data => {
+            response.on('data', (data) => {
                 downloadedBytes += data.length;
                 buffers.push(data);
 
@@ -99,12 +119,17 @@ async function downloadFile(description: string, urlString: string, eventStream:
                 resolve(Buffer.concat(buffers));
             });
 
-            response.on('error', err => {
-                reject(new NestedError(`Failed to download from ${urlString}. Error Message: ${err.message} || 'NONE'}`, err));
+            response.on('error', (err) => {
+                reject(
+                    new NestedError(
+                        `Failed to download from ${urlString}. Error Message: ${err.message} || 'NONE'}`,
+                        err
+                    )
+                );
             });
         });
 
-        request.on('error', err => {
+        request.on('error', (err) => {
             reject(new NestedError(`Request error: ${err.message || 'NONE'}`, err));
         });
 

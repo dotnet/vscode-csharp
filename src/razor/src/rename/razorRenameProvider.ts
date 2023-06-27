@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
@@ -13,23 +12,21 @@ import { RazorLogger } from '../razorLogger';
 import { LanguageKind } from '../rpc/languageKind';
 import { MappingHelpers } from '../mapping/mappingHelpers';
 
-export class RazorRenameProvider
-    extends RazorLanguageFeatureBase
-    implements vscode.RenameProvider {
-
+export class RazorRenameProvider extends RazorLanguageFeatureBase implements vscode.RenameProvider {
     constructor(
         documentSynchronizer: RazorDocumentSynchronizer,
         documentManager: RazorDocumentManager,
         serviceClient: RazorLanguageServiceClient,
-        logger: RazorLogger) {
+        logger: RazorLogger
+    ) {
         super(documentSynchronizer, documentManager, serviceClient, logger);
     }
 
     public async prepareRename(
         document: vscode.TextDocument,
         position: vscode.Position,
-        token: vscode.CancellationToken) {
-
+        token: vscode.CancellationToken
+    ) {
         const projection = await this.getProjection(document, position, token);
         if (!projection || projection.languageKind !== LanguageKind.CSharp) {
             // We only support C# renames for now. Reject the rename request.
@@ -38,7 +35,7 @@ export class RazorRenameProvider
             // other servers from being able to return a response instead.
             // Null is the only return that allows us to handle renaming
             // from the Razor language server.
-            return null;  // Promise.reject('Cannot rename this symbol.');
+            return null; // Promise.reject('Cannot rename this symbol.');
         }
 
         const range = document.getWordRangeAtPosition(position);
@@ -49,8 +46,8 @@ export class RazorRenameProvider
         document: vscode.TextDocument,
         position: vscode.Position,
         newName: string,
-        token: vscode.CancellationToken) {
-
+        token: vscode.CancellationToken
+    ) {
         const projection = await this.getProjection(document, position, token);
         if (!projection) {
             return;
@@ -65,11 +62,16 @@ export class RazorRenameProvider
             'vscode.executeDocumentRenameProvider',
             projection.uri,
             projection.position,
-            newName,
+            newName
         );
 
         // Re-map the rename location to the original Razor document
-        const remappedResponse = await MappingHelpers.remapGeneratedFileWorkspaceEdit(response, this.serviceClient, this.logger, token);
+        const remappedResponse = await MappingHelpers.remapGeneratedFileWorkspaceEdit(
+            response,
+            this.serviceClient,
+            this.logger,
+            token
+        );
         return remappedResponse;
     }
 }

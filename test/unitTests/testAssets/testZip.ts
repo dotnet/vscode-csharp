@@ -7,8 +7,7 @@ import * as archiver from 'archiver';
 import { TestFile } from './testFile';
 
 export default class TestZip {
-    constructor(private readonly _buffer: Buffer, private readonly _files: TestFile[]) {
-    }
+    constructor(private readonly _buffer: Buffer, private readonly _files: TestFile[]) {}
 
     get buffer(): Buffer {
         return this._buffer;
@@ -34,14 +33,13 @@ export default class TestZip {
                     reject(err);
                 }
             });
-            archive.on('data', data => buffers.push(data));
+            archive.on('data', (data) => buffers.push(data));
             archive.on('error', reject);
             archive.on('end', () => resolve(Buffer.concat(buffers)));
-            filesToAdd.forEach(elem => archive.append(elem.content, { name: elem.path }));
+            filesToAdd.forEach((elem) => archive.append(elem.content, { name: elem.path }));
             archive.finalize();
         });
 
         return new TestZip(finalBuffer, filesToAdd);
     }
 }
-

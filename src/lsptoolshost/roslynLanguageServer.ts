@@ -62,7 +62,6 @@ let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
 export class RoslynLanguageServer {
-
     // These are commands that are invoked by the Razor extension, and are used to send LSP requests to the Roslyn LSP server
     public static readonly roslynDidOpenCommand: string = 'roslyn.openRazorCSharp';
     public static readonly roslynDidChangeCommand: string = 'roslyn.changeRazorCSharp';
@@ -81,7 +80,7 @@ export class RoslynLanguageServer {
     /**
      * Event name used to fire events to the _eventBus when the server state changes.
      */
-    private static readonly serverStateChangeEvent: string = "serverStateChange";
+    private static readonly serverStateChangeEvent: string = 'serverStateChange';
 
     /**
      * The timeout for stopping the language server (in ms).
@@ -115,7 +114,7 @@ export class RoslynLanguageServer {
         private optionProvider: OptionProvider,
         private context: vscode.ExtensionContext,
         private telemetryReporter: TelemetryReporter
-    ) { }
+    ) {}
 
     /**
      * Resolves server options and starts the dotnet language server process. The process is started asynchronously and this method will not wait until
@@ -138,7 +137,7 @@ export class RoslynLanguageServer {
             documentSelector: documentSelector,
             synchronize: {
                 // Notify the server about file changes to '.clientrc files contain in the workspace
-                fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*')
+                fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*'),
             },
             traceOutputChannel: _traceChannel,
             outputChannel: _channel,
@@ -154,8 +153,8 @@ export class RoslynLanguageServer {
             middleware: {
                 workspace: {
                     configuration: (params) => readConfigurations(params),
-                }
-            }
+                },
+            },
         };
 
         // Create the language client and start the client.
@@ -187,7 +186,10 @@ export class RoslynLanguageServer {
         });
 
         this._languageClient.onNotification(RoslynProtocol.ProjectInitializationCompleteNotification.type, () => {
-           this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.ProjectInitializationComplete);
+            this._eventBus.emit(
+                RoslynLanguageServer.serverStateChangeEvent,
+                ServerStateChange.ProjectInitializationComplete
+            );
         });
 
         this.registerExtensionsChanged(this._languageClient);
@@ -209,7 +211,7 @@ export class RoslynLanguageServer {
     /**
      * Restarts the language server. This does not wait until the server has been restarted.
      * Note that since some options affect how the language server is initialized, we must
-     * re-create the LanguageClient instance instead of just stopping/starting it. 
+     * re-create the LanguageClient instance instead of just stopping/starting it.
      */
     public async restart(): Promise<void> {
         await this.stop();
@@ -222,7 +224,9 @@ export class RoslynLanguageServer {
      */
     public registerStateChangeEvent(listener: (event: ServerStateChange) => Promise<any>): Disposable {
         this._eventBus.addListener(RoslynLanguageServer.serverStateChangeEvent, listener);
-        return new Disposable(() => this._eventBus.removeListener(RoslynLanguageServer.serverStateChangeEvent, listener));
+        return new Disposable(() =>
+            this._eventBus.removeListener(RoslynLanguageServer.serverStateChangeEvent, listener)
+        );
     }
 
     /**
@@ -235,7 +239,11 @@ export class RoslynLanguageServer {
     /**
      * Makes an LSP request to the server with a given type and parameters.
      */
-    public async sendRequest<Params, Response, Error>(type: RequestType<Params, Response, Error>, params: Params, token: vscode.CancellationToken): Promise<Response> {
+    public async sendRequest<Params, Response, Error>(
+        type: RequestType<Params, Response, Error>,
+        params: Params,
+        token: vscode.CancellationToken
+    ): Promise<Response> {
         if (!this.isRunning()) {
             throw new Error('Tried to send request while server is not started.');
         }
@@ -247,7 +255,10 @@ export class RoslynLanguageServer {
     /**
      * Makes an LSP request to the server with a given type and no parameters
      */
-    public async sendRequest0<Response, Error>(type: RequestType0<Response, Error>, token: vscode.CancellationToken): Promise<Response> {
+    public async sendRequest0<Response, Error>(
+        type: RequestType0<Response, Error>,
+        token: vscode.CancellationToken
+    ): Promise<Response> {
         if (!this.isRunning()) {
             throw new Error('Tried to send request while server is not started.');
         }
@@ -268,10 +279,9 @@ export class RoslynLanguageServer {
         return response;
     }
 
-    public async registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<SolutionSnapshotId> {
+    public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {
         const response = await _languageServer.sendRequest0(RoslynProtocol.RegisterSolutionSnapshotRequest.type, token);
-        if (response)
-        {
+        if (response) {
             return new SolutionSnapshotId(response.id);
         }
 
@@ -283,10 +293,14 @@ export class RoslynLanguageServer {
         await this.sendOpenSolutionNotification();
     }
 
-    private async sendOpenSolutionNotification(): Promise<void>  {
-        if (this._solutionFile !== undefined && this._languageClient !== undefined && this._languageClient.isRunning()) {
+    private async sendOpenSolutionNotification(): Promise<void> {
+        if (
+            this._solutionFile !== undefined &&
+            this._languageClient !== undefined &&
+            this._languageClient.isRunning()
+        ) {
             const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
-            await this._languageClient.sendNotification("solution/open", new OpenSolutionParams(protocolUri));
+            await this._languageClient.sendNotification('solution/open', new OpenSolutionParams(protocolUri));
         }
     }
 
@@ -295,7 +309,11 @@ export class RoslynLanguageServer {
 
         // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
         // disabled it.
-        if (!this._wasActivatedWithCSharpDevkit && options.commonOptions.defaultSolution !== 'disable' && this._solutionFile === undefined) {
+        if (
+            !this._wasActivatedWithCSharpDevkit &&
+            options.commonOptions.defaultSolution !== 'disable' &&
+            this._solutionFile === undefined
+        ) {
             if (options.commonOptions.defaultSolution !== '') {
                 this.openSolution(vscode.Uri.file(options.commonOptions.defaultSolution));
             } else {
@@ -308,7 +326,7 @@ export class RoslynLanguageServer {
         }
     }
 
-    private async sendOrSubscribeForServiceBrokerConnection(): Promise<void>  {
+    private async sendOrSubscribeForServiceBrokerConnection(): Promise<void> {
         const csharpDevKitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
         if (csharpDevKitExtension) {
             const exports = await csharpDevKitExtension.activate();
@@ -319,15 +337,17 @@ export class RoslynLanguageServer {
             // then we have no projects, and so this extension won't have anything to do.
             if (exports.hasServerProcessLoaded()) {
                 const pipeName = await exports.getBrokeredServiceServerPipeName();
-                this._languageClient?.sendNotification("serviceBroker/connect", { pipeName: pipeName });
+                this._languageClient?.sendNotification('serviceBroker/connect', { pipeName: pipeName });
             } else {
                 // We'll subscribe if the process later launches, and call this function again to send the pipe name.
-                this.context.subscriptions.push(exports.serverProcessLoaded(async() => this.sendOrSubscribeForServiceBrokerConnection()));
+                this.context.subscriptions.push(
+                    exports.serverProcessLoaded(async () => this.sendOrSubscribeForServiceBrokerConnection())
+                );
             }
         }
     }
 
-    public getServerCapabilities() : any {
+    public getServerCapabilities(): any {
         if (!this._languageClient) {
             throw new Error('Tried to send request while server is not started.');
         }
@@ -353,13 +373,11 @@ export class RoslynLanguageServer {
     }
 
     private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
-
         const options = this.optionProvider.GetLatestOptions();
         const serverPath = this.getServerPath(options);
 
         let dotnetRuntimePath = options.commonOptions.dotnetPath;
-        if (!dotnetRuntimePath)
-        {
+        if (!dotnetRuntimePath) {
             const dotnetPath = await acquireDotNetProcessDependencies(serverPath);
             dotnetRuntimePath = path.dirname(dotnetPath);
         }
@@ -370,24 +388,24 @@ export class RoslynLanguageServer {
             throw new Error(`Cannot find dotnet path '${dotnetExecutablePath}'`);
         }
 
-        _channel.appendLine("Dotnet path: " + dotnetExecutablePath);
+        _channel.appendLine('Dotnet path: ' + dotnetExecutablePath);
 
         // Take care to always run .NET processes on the runtime that we intend.
         // The dotnet.exe we point to should not go looking for other runtimes.
-        const env: NodeJS.ProcessEnv =  { ...process.env };
+        const env: NodeJS.ProcessEnv = { ...process.env };
         env.DOTNET_ROOT = dotnetRuntimePath;
         env.DOTNET_MULTILEVEL_LOOKUP = '0';
         // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
         env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
 
-        let args: string[] = [ ];
+        let args: string[] = [];
 
         if (options.commonOptions.waitForDebugger) {
-            args.push("--debug");
+            args.push('--debug');
         }
 
         if (logLevel) {
-            args.push("--logLevel", logLevel);
+            args.push('--logLevel', logLevel);
         }
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -398,21 +416,25 @@ export class RoslynLanguageServer {
             this._wasActivatedWithCSharpDevkit = true;
 
             // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
-            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(csharpDevkitIntelliCodeExtensionId);
+            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(
+                csharpDevkitIntelliCodeExtensionId
+            );
             if (csharpDevkitIntelliCodeExtension) {
-                _channel.appendLine("Activating C# + C# Dev Kit + C# IntelliCode...");
-                const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension);
+                _channel.appendLine('Activating C# + C# Dev Kit + C# IntelliCode...');
+                const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(
+                    csharpDevkitIntelliCodeExtension
+                );
                 args = args.concat(csharpDevkitIntelliCodeArgs);
             } else {
-                _channel.appendLine("Activating C# + C# Dev Kit...");
+                _channel.appendLine('Activating C# + C# Dev Kit...');
             }
 
             const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension, options);
             args = args.concat(csharpDevkitArgs);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
-            _channel.appendLine("Activating C# standalone...");
-            vscode.commands.executeCommand("setContext", "dotnet.server.activatedStandalone", true);
+            _channel.appendLine('Activating C# standalone...');
+            vscode.commands.executeCommand('setContext', 'dotnet.server.activatedStandalone', true);
             this._wasActivatedWithCSharpDevkit = false;
         }
 
@@ -421,18 +443,18 @@ export class RoslynLanguageServer {
         }
 
         // shouldn't this arg only be set if it's running with CSDevKit?
-        args.push("--telemetryLevel", this.telemetryReporter.telemetryLevel);
+        args.push('--telemetryLevel', this.telemetryReporter.telemetryLevel);
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
         const cpOptions: cp.SpawnOptionsWithoutStdio = {
             detached: true,
             windowsHide: true,
-            env: env
+            env: env,
         };
 
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
-            const argsWithPath = [ serverPath ].concat(args);
+            const argsWithPath = [serverPath].concat(args);
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
@@ -445,47 +467,52 @@ export class RoslynLanguageServer {
     private registerDynamicFileInfo(client: RoslynLanguageClient) {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
-        client.onRequest(
-            RoslynLanguageServer.provideRazorDynamicFileInfoMethodName,
-            async request => vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request));
-        client.onNotification(
-            RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
-            async notification => vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification));
+        client.onRequest(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName, async (request) =>
+            vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
+        );
+        client.onNotification(RoslynLanguageServer.removeRazorDynamicFileInfoMethodName, async (notification) =>
+            vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification)
+        );
     }
 
     private registerExtensionsChanged(languageClient: RoslynLanguageClient) {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
-        languageClient.addDisposable(vscode.extensions.onDidChange(async () => {
-            const csharpDevkitExtension = getCSharpDevKit();
+        languageClient.addDisposable(
+            vscode.extensions.onDidChange(async () => {
+                const csharpDevkitExtension = getCSharpDevKit();
 
-            if (this._wasActivatedWithCSharpDevkit === undefined) {
-                // Haven't activated yet.
-                return;
-            }
+                if (this._wasActivatedWithCSharpDevkit === undefined) {
+                    // Haven't activated yet.
+                    return;
+                }
 
-            const title = 'Restart Language Server';
-            const command = 'dotnet.restartServer';
-            if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
-                // We previously started without C# Dev Kit and its now installed.
-                // Offer a prompt to restart the server to use C# Dev Kit.
-                _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
-                const message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
-                ShowInformationMessage(vscode, message, { title, command });
-            } else {
-                // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
-                // which will automatically restart this extension too.
-            }
-        }));
+                const title = 'Restart Language Server';
+                const command = 'dotnet.restartServer';
+                if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
+                    // We previously started without C# Dev Kit and its now installed.
+                    // Offer a prompt to restart the server to use C# Dev Kit.
+                    _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
+                    const message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
+                    ShowInformationMessage(vscode, message, { title, command });
+                } else {
+                    // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
+                    // which will automatically restart this extension too.
+                }
+            })
+        );
     }
 
     private registerTelemetryChanged(languageClient: RoslynLanguageClient) {
         // Subscribe to telemetry events so we can enable/disable as needed
-        languageClient.addDisposable(vscode.env.onDidChangeTelemetryEnabled((_: boolean) => {
-            const title = 'Restart Language Server';
-            const command = 'dotnet.restartServer';
-            const message = 'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
-            ShowInformationMessage(vscode, message, { title, command });
-        }));
+        languageClient.addDisposable(
+            vscode.env.onDidChangeTelemetryEnabled((_: boolean) => {
+                const title = 'Restart Language Server';
+                const command = 'dotnet.restartServer';
+                const message =
+                    'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
+                ShowInformationMessage(vscode, message, { title, command });
+            })
+        );
     }
 
     private getServerFileName() {
@@ -505,58 +532,68 @@ export class RoslynLanguageServer {
         return `${serverFileName}${extension}`;
     }
 
-    private async getCSharpDevkitExportArgs(csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>, options: Options) : Promise<string[]> {
+    private async getCSharpDevkitExportArgs(
+        csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>,
+        options: Options
+    ): Promise<string[]> {
         const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
 
-        const extensionPaths = options.languageServerOptions.extensionsPaths || [this.getLanguageServicesDevKitComponentPath(exports)];
+        const extensionPaths = options.languageServerOptions.extensionsPaths || [
+            this.getLanguageServicesDevKitComponentPath(exports),
+        ];
 
         const args: string[] = [];
 
-        args.push("--sharedDependencies");
+        args.push('--sharedDependencies');
         args.push(exports.components['@microsoft/visualstudio-server-shared']);
 
         for (const extensionPath of extensionPaths) {
-            args.push("--extension");
+            args.push('--extension');
             args.push(extensionPath);
         }
 
-        args.push("--sessionId", getSessionId());
+        args.push('--sessionId', getSessionId());
         return args;
     }
 
-    private async getCSharpDevkitIntelliCodeExportArgs(csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>) : Promise<string[]> {
+    private async getCSharpDevkitIntelliCodeExportArgs(
+        csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>
+    ): Promise<string[]> {
         const exports = await csharpDevkitIntelliCodeExtension.activate();
 
-        const starredCompletionComponentPath = exports.components["@vsintellicode/starred-suggestions-csharp"];
+        const starredCompletionComponentPath = exports.components['@vsintellicode/starred-suggestions-csharp'];
 
-        const csharpIntelliCodeArgs: string[] = [ "--starredCompletionComponentPath", starredCompletionComponentPath ];
+        const csharpIntelliCodeArgs: string[] = ['--starredCompletionComponentPath', starredCompletionComponentPath];
         return csharpIntelliCodeArgs;
     }
 
-    private getLanguageServicesDevKitComponentPath(csharpDevKitExports: CSharpDevKitExports) : string {
+    private getLanguageServicesDevKitComponentPath(csharpDevKitExports: CSharpDevKitExports): string {
         return path.join(
-            csharpDevKitExports.components["@microsoft/visualstudio-languageservices-devkit"],
-            "Microsoft.VisualStudio.LanguageServices.DevKit.dll");
+            csharpDevKitExports.components['@microsoft/visualstudio-languageservices-devkit'],
+            'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
+        );
     }
 
     private GetTraceLevel(logLevel: string): Trace {
         switch (logLevel) {
-            case "Trace":
+            case 'Trace':
                 return Trace.Verbose;
-            case "Debug":
+            case 'Debug':
                 return Trace.Messages;
-            case "Information":
+            case 'Information':
                 return Trace.Off;
-            case "Warning":
+            case 'Warning':
                 return Trace.Off;
-            case "Error":
+            case 'Error':
                 return Trace.Off;
-            case "Critical":
+            case 'Critical':
                 return Trace.Off;
-            case "None":
+            case 'None':
                 return Trace.Off;
             default:
-                _channel.appendLine(`Invalid log level ${logLevel}, server will not start. Please set the 'dotnet.server.trace' configuration to a valid value`);
+                _channel.appendLine(
+                    `Invalid log level ${logLevel}, server will not start. Please set the 'dotnet.server.trace' configuration to a valid value`
+                );
                 throw new Error(`Invalid log level ${logLevel}`);
         }
     }
@@ -571,12 +608,17 @@ export class SolutionSnapshotProvider implements ISolutionSnapshotProvider {
     }
 }
 
-export async function activateRoslynLanguageServer(context: vscode.ExtensionContext, platformInfo: PlatformInformation, optionProvider: OptionProvider, outputChannel: vscode.OutputChannel, reporter: TelemetryReporter) {
-
+export async function activateRoslynLanguageServer(
+    context: vscode.ExtensionContext,
+    platformInfo: PlatformInformation,
+    optionProvider: OptionProvider,
+    outputChannel: vscode.OutputChannel,
+    reporter: TelemetryReporter
+) {
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
-    _traceChannel = vscode.window.createOutputChannel("C# LSP Trace Logs");
+    _traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
 
     _languageServer = new RoslynLanguageServer(platformInfo, optionProvider, context, reporter);
 
@@ -590,9 +632,8 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
 
     const options = optionProvider.GetLatestOptions();
     let source = new vscode.CancellationTokenSource();
-    vscode.workspace.onDidChangeTextDocument(async e => {
-        if (!options.languageServerOptions.documentSelector.includes(e.document.languageId))
-        {
+    vscode.workspace.onDidChangeTextDocument(async (e) => {
+        if (!options.languageServerOptions.documentSelector.includes(e.document.languageId)) {
             return;
         }
 
@@ -626,40 +667,76 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
 function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
     // notifications along to Roslyn. didOpen notifications are handled separately via the vscode.openTextDocument method.
-    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.roslynDidChangeCommand, async (notification: DidChangeTextDocumentParams) => {
-        await languageServer.sendNotification(DidChangeTextDocumentNotification.method, notification);
-    }));
-    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.roslynDidCloseCommand, async (notification: DidCloseTextDocumentParams) => {
-        await languageServer.sendNotification(DidCloseTextDocumentNotification.method, notification);
-    }));
-    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.roslynPullDiagnosticCommand, async (request: DocumentDiagnosticParams) => {
-        const diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(DocumentDiagnosticRequest.method);
-        return await languageServer.sendRequest(diagnosticRequestType, request, CancellationToken.None);
-    }));
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.roslynDidChangeCommand,
+            async (notification: DidChangeTextDocumentParams) => {
+                await languageServer.sendNotification(DidChangeTextDocumentNotification.method, notification);
+            }
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.roslynDidCloseCommand,
+            async (notification: DidCloseTextDocumentParams) => {
+                await languageServer.sendNotification(DidCloseTextDocumentNotification.method, notification);
+            }
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.roslynPullDiagnosticCommand,
+            async (request: DocumentDiagnosticParams) => {
+                const diagnosticRequestType = new RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any>(
+                    DocumentDiagnosticRequest.method
+                );
+                return await languageServer.sendRequest(diagnosticRequestType, request, CancellationToken.None);
+            }
+        )
+    );
 
     // The VS Code API for code actions (and the vscode.CodeAction type) doesn't support everything that LSP supports,
     // namely the data property, which Razor needs to identify which code actions are on their allow list, so we need
     // to expose a command for them to directly invoke our code actions LSP endpoints, rather than use built-in commands.
-    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.provideCodeActionsCommand, async (request: CodeActionParams) => {
-        return await languageServer.sendRequest(CodeActionRequest.type, request, CancellationToken.None);
-    }));
-    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
-        return await languageServer.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
-    }));
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.provideCodeActionsCommand,
+            async (request: CodeActionParams) => {
+                return await languageServer.sendRequest(CodeActionRequest.type, request, CancellationToken.None);
+            }
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(RoslynLanguageServer.resolveCodeActionCommand, async (request: CodeAction) => {
+            return await languageServer.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
+        })
+    );
 
-    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.provideCompletionsCommand, async (request: CompletionParams) => {
-        return await languageServer.sendRequest(CompletionRequest.type, request, CancellationToken.None);
-    }));
-    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.resolveCompletionsCommand, async (request: CompletionItem) => {
-        return await languageServer.sendRequest(CompletionResolveRequest.type, request, CancellationToken.None);
-    }));
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.provideCompletionsCommand,
+            async (request: CompletionParams) => {
+                return await languageServer.sendRequest(CompletionRequest.type, request, CancellationToken.None);
+            }
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.resolveCompletionsCommand,
+            async (request: CompletionItem) => {
+                return await languageServer.sendRequest(CompletionResolveRequest.type, request, CancellationToken.None);
+            }
+        )
+    );
 
     // Roslyn is responsible for producing a json file containing information for Razor, that comes from the compilation for
     // a project. We want to defer this work until necessary, so this command is called by the Razor document manager to tell
     // us when they need us to initialize the Razor things.
-    context.subscriptions.push(vscode.commands.registerCommand(RoslynLanguageServer.razorInitializeCommand, async () => {
-        await languageServer.sendNotification("razor/initialize", { });
-    }));
+    context.subscriptions.push(
+        vscode.commands.registerCommand(RoslynLanguageServer.razorInitializeCommand, async () => {
+            await languageServer.sendNotification('razor/initialize', {});
+        })
+    );
 }
 
 async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vscode.CancellationToken) {
@@ -670,10 +747,14 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
     const uri = UriConverter.serialize(e.document.uri);
     const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();
-    const request: RoslynProtocol.OnAutoInsertParams = { _vs_textDocument: textDocument, _vs_position: position, _vs_ch: change.text, _vs_options: formattingOptions };
+    const request: RoslynProtocol.OnAutoInsertParams = {
+        _vs_textDocument: textDocument,
+        _vs_position: position,
+        _vs_ch: change.text,
+        _vs_options: formattingOptions,
+    };
     const response = await _languageServer.sendRequest(RoslynProtocol.OnAutoInsertRequest.type, request, token);
-    if (response)
-    {
+    if (response) {
         const textEdit = response._vs_textEdit;
         const startPosition = new vscode.Position(textEdit.range.start.line, textEdit.range.start.character);
         const endPosition = new vscode.Position(textEdit.range.end.line, textEdit.range.end.character);
@@ -685,12 +766,12 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
 
         const applied = vscode.workspace.applyEdit(edit);
         if (!applied) {
-            throw new Error("Tried to insert a comment but an error occurred.");
+            throw new Error('Tried to insert a comment but an error occurred.');
         }
     }
 }
 
-function getFormattingOptions() : FormattingOptions {
+function getFormattingOptions(): FormattingOptions {
     const editorConfig = vscode.workspace.getConfiguration('editor');
     const tabSize = editorConfig.get<number>('tabSize') ?? 4;
     const insertSpaces = editorConfig.get<boolean>('insertSpaces') ?? true;

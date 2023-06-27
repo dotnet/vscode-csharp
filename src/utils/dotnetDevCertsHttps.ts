@@ -4,22 +4,34 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as cp from 'child_process';
-import { getExtensionPath } from "../common";
+import { getExtensionPath } from '../common';
 
-// Will return true if `dotnet dev-certs https --check` succesfully finds a trusted development certificate. 
+// Will return true if `dotnet dev-certs https --check` succesfully finds a trusted development certificate.
 export async function hasDotnetDevCertsHttps(dotnetPath: string): Promise<ExecReturnData> {
-    return await execChildProcess(`${dotnetPath ? dotnetPath : 'dotnet'} dev-certs https --check --trust`, process.cwd(), process.env);
+    return await execChildProcess(
+        `${dotnetPath ? dotnetPath : 'dotnet'} dev-certs https --check --trust`,
+        process.cwd(),
+        process.env
+    );
 }
 
 // Will run `dotnet dev-certs https --trust` to prompt the user to create a trusted self signed certificates. Retruns true if sucessfull.
 export async function createSelfSignedCert(dotnetPath: string): Promise<ExecReturnData> {
-    return await execChildProcess(`${dotnetPath ? dotnetPath : 'dotnet'} dev-certs https --trust`, process.cwd(), process.env);
+    return await execChildProcess(
+        `${dotnetPath ? dotnetPath : 'dotnet'} dev-certs https --trust`,
+        process.cwd(),
+        process.env
+    );
 }
 
-async function execChildProcess(command: string, workingDirectory: string = getExtensionPath(), env: NodeJS.ProcessEnv = {}): Promise<ExecReturnData> {
+async function execChildProcess(
+    command: string,
+    workingDirectory: string = getExtensionPath(),
+    env: NodeJS.ProcessEnv = {}
+): Promise<ExecReturnData> {
     return new Promise<ExecReturnData>((resolve) => {
         cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024, env: env }, (error, stdout, stderr) => {
-            resolve({error, stdout, stderr});
+            resolve({ error, stdout, stderr });
         });
     });
 }
@@ -30,8 +42,7 @@ interface ExecReturnData {
     stderr: string;
 }
 
-export enum CertToolStatusCodes
-{
+export enum CertToolStatusCodes {
     CriticalError = -1,
     Success = 0,
     // Following are from trusting the certificate (dotnet dev-certs https --trust)

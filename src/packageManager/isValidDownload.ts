@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as crypto from "crypto";
-import { EventStream } from "../eventStream";
-import { IntegrityCheckSuccess, DownloadValidation } from "../omnisharp/loggingEvents";
+import * as crypto from 'crypto';
+import { EventStream } from '../eventStream';
+import { IntegrityCheckSuccess, DownloadValidation } from '../omnisharp/loggingEvents';
 
 export interface DownloadValidator {
     (buffer: Buffer, integrity: string | undefined, eventStream: EventStream): boolean;
@@ -18,8 +18,7 @@ export function isValidDownload(buffer: Buffer, integrity: string | undefined, e
         if (value === integrity.toUpperCase()) {
             eventStream.post(new IntegrityCheckSuccess());
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

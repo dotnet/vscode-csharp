@@ -6,10 +6,14 @@
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
 import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
-import { FileModificationType, FileOperationResponse, ModifiedFileResponse, RenamedFileResponse } from "./protocol";
+import { FileModificationType, FileOperationResponse, ModifiedFileResponse, RenamedFileResponse } from './protocol';
 import { toRange2 } from './typeConversion';
 
-export async function buildEditForResponse(changes: FileOperationResponse[], languageMiddlewareFeature: LanguageMiddlewareFeature, token: vscode.CancellationToken): Promise<boolean> {
+export async function buildEditForResponse(
+    changes: FileOperationResponse[],
+    languageMiddlewareFeature: LanguageMiddlewareFeature,
+    token: vscode.CancellationToken
+): Promise<boolean> {
     let edit = new vscode.WorkspaceEdit();
 
     let fileToOpen: Uri | undefined;
@@ -47,7 +51,7 @@ export async function buildEditForResponse(changes: FileOperationResponse[], lan
     }
 
     // Allow language middlewares to re-map its edits if necessary.
-    edit = await languageMiddlewareFeature.remap("remapWorkspaceEdit", edit, token);
+    edit = await languageMiddlewareFeature.remap('remapWorkspaceEdit', edit, token);
 
     const applyEditPromise = vscode.workspace.applyEdit(edit);
 
@@ -56,8 +60,8 @@ export async function buildEditForResponse(changes: FileOperationResponse[], lan
     // If files were renamed that weren't the active editor, their tabs will
     // be left open and marked as "deleted" by VS Code
     return fileToOpen !== undefined
-        ? applyEditPromise.then(_ => {
-            return vscode.commands.executeCommand("vscode.open", fileToOpen);
-        })
+        ? applyEditPromise.then((_) => {
+              return vscode.commands.executeCommand('vscode.open', fileToOpen);
+          })
         : applyEditPromise;
 }

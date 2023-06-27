@@ -25,11 +25,9 @@ interface NugetServices {
 }
 
 export class ProjectJSONContribution implements IJSONContribution {
-
     private nugetIndexPromise?: Promise<NugetServices>;
 
-    public constructor(private requestService: XHRRequest) {
-    }
+    public constructor(private requestService: XHRRequest) {}
 
     public getDocumentSelector(): DocumentSelector {
         return [{ language: 'json', pattern: '**/project.json' }];
@@ -58,14 +56,16 @@ export class ProjectJSONContribution implements IJSONContribution {
         const services = await this.getNugetIndex();
         const serviceURL = services[serviceType];
         if (!serviceURL) {
-            return Promise.reject(localize('json.nugget.error.missingservice', 'NuGet index document is missing service {0}', serviceType));
+            return Promise.reject(
+                localize('json.nugget.error.missingservice', 'NuGet index document is missing service {0}', serviceType)
+            );
         }
         return serviceURL;
     }
 
     private async makeJSONRequest<T>(url: string): Promise<T> {
         const response = await this.requestService({
-            url: url
+            url: url,
         });
 
         try {
@@ -73,12 +73,23 @@ export class ProjectJSONContribution implements IJSONContribution {
                 try {
                     return JSON.parse(response.responseText) as T;
                 } catch (e) {
-                    return Promise.reject(localize('json.nugget.error.invalidformat', '{0} is not a valid JSON document', url));
+                    return Promise.reject(
+                        localize('json.nugget.error.invalidformat', '{0} is not a valid JSON document', url)
+                    );
                 }
             }
-            return Promise.reject(localize('json.nugget.error.indexaccess', 'Request to {0} failed: {1}', url, response.responseText));
+            return Promise.reject(
+                localize('json.nugget.error.indexaccess', 'Request to {0} failed: {1}', url, response.responseText)
+            );
         } catch (error) {
-            return Promise.reject(localize('json.nugget.error.access', 'Request to {0} failed: {1}', url, getErrorStatusDescription((error as XHRResponse).status)));
+            return Promise.reject(
+                localize(
+                    'json.nugget.error.access',
+                    'Request to {0} failed: {1}',
+                    url,
+                    getErrorStatusDescription((error as XHRResponse).status)
+                )
+            );
         }
     }
 
@@ -88,8 +99,13 @@ export class ProjectJSONContribution implements IJSONContribution {
         currentWord: string,
         addValue: boolean,
         isLast: boolean,
-        result: ISuggestionsCollector): Promise<void> {
-        if ((location.matches(['dependencies']) || location.matches(['frameworks', '*', 'dependencies']) || location.matches(['frameworks', '*', 'frameworkAssemblies']))) {
+        result: ISuggestionsCollector
+    ): Promise<void> {
+        if (
+            location.matches(['dependencies']) ||
+            location.matches(['frameworks', '*', 'dependencies']) ||
+            location.matches(['frameworks', '*', 'frameworkAssemblies'])
+        ) {
             try {
                 const service = await this.getNugetService('SearchAutocompleteService');
                 let queryUrl: string;
@@ -128,8 +144,16 @@ export class ProjectJSONContribution implements IJSONContribution {
         }
     }
 
-    public async collectValueSuggestions(resource: string, location: Location, result: ISuggestionsCollector): Promise<void> {
-        if ((location.matches(['dependencies', '*']) || location.matches(['frameworks', '*', 'dependencies', '*']) || location.matches(['frameworks', '*', 'frameworkAssemblies', '*']))) {
+    public async collectValueSuggestions(
+        resource: string,
+        location: Location,
+        result: ISuggestionsCollector
+    ): Promise<void> {
+        if (
+            location.matches(['dependencies', '*']) ||
+            location.matches(['frameworks', '*', 'dependencies', '*']) ||
+            location.matches(['frameworks', '*', 'frameworkAssemblies', '*'])
+        ) {
             try {
                 const service = await this.getNugetService('PackageBaseAddress/3.0.0');
                 const currentKey = location.path[location.path.length - 1];
@@ -161,12 +185,12 @@ export class ProjectJSONContribution implements IJSONContribution {
 
     public async collectDefaultSuggestions(resource: string, result: ISuggestionsCollector): Promise<void> {
         const defaultValue = {
-            'version': '{{1.0.0-*}}',
-            'dependencies': {},
-            'frameworks': {
-                'dnx451': {},
-                'dnxcore50': {}
-            }
+            version: '{{1.0.0-*}}',
+            dependencies: {},
+            frameworks: {
+                dnx451: {},
+                dnxcore50: {},
+            },
         };
         const proposal = new CompletionItem(localize('json.project.default', 'Default project.json'));
         proposal.kind = CompletionItemKind.Module;
@@ -213,9 +237,12 @@ export class ProjectJSONContribution implements IJSONContribution {
         }
     }
 
-
     public async getInfoContribution(resource: string, location: Location): Promise<MarkedString[] | undefined> {
-        if ((location.matches(['dependencies', '*']) || location.matches(['frameworks', '*', 'dependencies', '*']) || location.matches(['frameworks', '*', 'frameworkAssemblies', '*']))) {
+        if (
+            location.matches(['dependencies', '*']) ||
+            location.matches(['frameworks', '*', 'dependencies', '*']) ||
+            location.matches(['frameworks', '*', 'frameworkAssemblies', '*'])
+        ) {
             const pack = location.path[location.path.length - 1];
             if (typeof pack === 'string') {
                 const info = await this.getInfo(pack);

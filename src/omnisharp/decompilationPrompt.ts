@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
+import OptionProvider from '../shared/observers/optionProvider';
 
-import * as vscode from "vscode";
-import OptionProvider from "../shared/observers/optionProvider";
-
-const DecompilationAuthorizedOption = "csharp.decompilationAuthorized";
+const DecompilationAuthorizedOption = 'csharp.decompilationAuthorized';
 
 export async function resetDecompilationAuthorization(context: vscode.ExtensionContext) {
     context.globalState.update(DecompilationAuthorizedOption, undefined);
@@ -37,7 +36,7 @@ export async function getDecompilationAuthorization(context: vscode.ExtensionCon
 enum PromptResult {
     Dismissed,
     Yes,
-    No
+    No,
 }
 
 interface PromptItem extends vscode.MessageItem {
@@ -63,7 +62,8 @@ I agree to all of the foregoing:`;
         const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
         const noItem: PromptItem = { title: 'No', result: PromptResult.No, isCloseAffordance: true };
 
-        vscode.window.showWarningMessage(message, messageOptions, noItem, yesItem)
-            .then(selection => resolve(selection?.result ?? PromptResult.Dismissed));
+        vscode.window
+            .showWarningMessage(message, messageOptions, noItem, yesItem)
+            .then((selection) => resolve(selection?.result ?? PromptResult.Dismissed));
     });
 }

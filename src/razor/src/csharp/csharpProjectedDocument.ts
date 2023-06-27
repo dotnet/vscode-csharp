@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { IProjectedDocument } from '../projection/IProjectedDocument';
 import { ServerTextChange } from '../rpc/serverTextChange';
 import { getUriPath } from '../uriPaths';

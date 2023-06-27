@@ -19,9 +19,12 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
     private readonly edgeBrowserType = 'pwa-msedge';
     private readonly chromeBrowserType = 'pwa-chrome';
 
-    constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) { }
+    constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) {}
 
-    public async resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, configuration: vscode.DebugConfiguration): Promise<vscode.DebugConfiguration | undefined> {
+    public async resolveDebugConfiguration(
+        folder: vscode.WorkspaceFolder | undefined,
+        configuration: vscode.DebugConfiguration
+    ): Promise<vscode.DebugConfiguration | undefined> {
         /**
          * The Blazor WebAssembly app should only be launched if the
          * launch configuration is a launch request. Attach requests will
@@ -31,27 +34,35 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             await this.launchApp(folder, configuration);
         }
 
-        let inspectUri = '{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}';
+        let inspectUri =
+            '{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}';
         let url = 'https://localhost:5001';
         try {
             if (folder !== undefined) {
                 let folderPath = configuration.cwd ? configuration.cwd : fileURLToPath(folder.uri.toString());
                 folderPath = folderPath.replace('${workspaceFolder}', fileURLToPath(folder.uri.toString()));
-                const launchSettings = JSON.parse(readFileSync(join(folderPath, 'Properties', 'launchSettings.json'), 'utf8'));
-                if (launchSettings?.profiles && launchSettings?.profiles[Object.keys(launchSettings.profiles)[0]]?.inspectUri) {
+                const launchSettings = JSON.parse(
+                    readFileSync(join(folderPath, 'Properties', 'launchSettings.json'), 'utf8')
+                );
+                if (
+                    launchSettings?.profiles &&
+                    launchSettings?.profiles[Object.keys(launchSettings.profiles)[0]]?.inspectUri
+                ) {
                     inspectUri = launchSettings.profiles[Object.keys(launchSettings.profiles)[0]].inspectUri;
-                    url = launchSettings.profiles[Object.keys(launchSettings.profiles)[0]].applicationUrl.split(';', 1)[0];
+                    url = launchSettings.profiles[Object.keys(launchSettings.profiles)[0]].applicationUrl.split(
+                        ';',
+                        1
+                    )[0];
                 }
             }
         } catch (error: any) {
-            this.logger.logError('[DEBUGGER] Error while getting information from launchSettings.json: ', error as Error);
+            this.logger.logError(
+                '[DEBUGGER] Error while getting information from launchSettings.json: ',
+                error as Error
+            );
         }
 
-        await this.launchBrowser(
-            folder,
-            configuration,
-            inspectUri,
-            url);
+        await this.launchBrowser(folder, configuration, inspectUri, url);
 
         /**
          * If `resolveDebugConfiguration` returns undefined, then the debugger
@@ -89,11 +100,13 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         try {
             await this.vscodeType.debug.startDebugging(folder, app);
             if (process.platform !== 'win32') {
-                const terminate = this.vscodeType.debug.onDidTerminateDebugSession(async event => {
+                const terminate = this.vscodeType.debug.onDidTerminateDebugSession(async (event) => {
                     const blazorDevServer = 'blazor-devserver\\.dll';
                     const dir = folder && folder.uri && folder.uri.fsPath;
                     const regexEscapedDir = dir!.toLowerCase()!.replace(/\//g, '\\/');
-                    const launchedApp = configuration.hosted ? app.program : `${regexEscapedDir}.*${blazorDevServer}|${blazorDevServer}.*${regexEscapedDir}`;
+                    const launchedApp = configuration.hosted
+                        ? app.program
+                        : `${regexEscapedDir}.*${blazorDevServer}|${blazorDevServer}.*${regexEscapedDir}`;
                     await onDidTerminateDebugSession(event, this.logger, launchedApp);
                     terminate.dispose();
                 });
@@ -103,11 +116,19 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         }
     }
 
-    private async launchBrowser(folder: vscode.WorkspaceFolder | undefined, configuration: vscode.DebugConfiguration, inspectUri: string, url: string) {
+    private async launchBrowser(
+        folder: vscode.WorkspaceFolder | undefined,
+        configuration: vscode.DebugConfiguration,
+        inspectUri: string,
+        url: string
+    ) {
         const configBrowser = configuration.browser;
-        const browserType = configBrowser === 'edge'  ? this.edgeBrowserType 
-                            : configBrowser === 'chrome' ? this.chromeBrowserType 
-                            : await this.determineBrowserType();
+        const browserType =
+            configBrowser === 'edge'
+                ? this.edgeBrowserType
+                : configBrowser === 'chrome'
+                ? this.chromeBrowserType
+                : await this.determineBrowserType();
         if (!browserType) {
             return;
         }
@@ -140,12 +161,9 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
              */
             await this.vscodeType.debug.startDebugging(folder, browser);
         } catch (error) {
-            this.logger.logError(
-                '[DEBUGGER] Error when launching browser debugger: ',
-                error as Error,
-            );
+            this.logger.logError('[DEBUGGER] Error when launching browser debugger: ', error as Error);
             const message = `There was an unexpected error while launching your debugging session. Check the console for helpful logs and visit the debugging docs for more info.`;
-            this.vscodeType.window.showErrorMessage(message, `View Debug Docs`, `Ignore`).then(async result => {
+            this.vscodeType.window.showErrorMessage(message, `View Debug Docs`, `Ignore`).then(async (result) => {
                 if (result === 'View Debug Docs') {
                     const debugDocsUri = 'https://aka.ms/blazorwasmcodedebug';
                     await this.vscodeType.commands.executeCommand(`vcode.open`, debugDocsUri);
@@ -154,8 +172,8 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         }
     }
 
-    private async determineBrowserType() {     
-        // There was no browser specified by the user, so we will do some auto-detection to find a browser, 
+    private async determineBrowserType() {
+        // There was no browser specified by the user, so we will do some auto-detection to find a browser,
         // favoring chrome if multiple valid options are installed.
         const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises, null);
         const chromeInstallations = await chromeBrowserFinder.findAll();

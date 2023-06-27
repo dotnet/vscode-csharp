@@ -13,13 +13,13 @@ const NonFocusDelayMax = 3000;
 export class DelayTracker {
     private _name: string;
 
-    private _immediateDelays = 0;      // 0-25 milliseconds
-    private _nearImmediateDelays = 0;  // 26-50 milliseconds
-    private _shortDelays = 0;          // 51-250 milliseconds
-    private _mediumDelays = 0;         // 251-500 milliseconds
-    private _idleDelays = 0;           // 501-1500 milliseconds
-    private _nonFocusDelays = 0;       // 1501-3000 milliseconds
-    private _bigDelays = 0;            // 3000+ milliseconds
+    private _immediateDelays = 0; // 0-25 milliseconds
+    private _nearImmediateDelays = 0; // 26-50 milliseconds
+    private _shortDelays = 0; // 51-250 milliseconds
+    private _mediumDelays = 0; // 251-500 milliseconds
+    private _idleDelays = 0; // 501-1500 milliseconds
+    private _nonFocusDelays = 0; // 1501-3000 milliseconds
+    private _bigDelays = 0; // 3000+ milliseconds
 
     constructor(name: string) {
         this._name = name;
@@ -28,23 +28,17 @@ export class DelayTracker {
     public reportDelay(elapsedTime: number) {
         if (elapsedTime <= ImmedateDelayMax) {
             this._immediateDelays += 1;
-        }
-        else if (elapsedTime <= NearImmediateDelayMax) {
+        } else if (elapsedTime <= NearImmediateDelayMax) {
             this._nearImmediateDelays += 1;
-        }
-        else if (elapsedTime <= ShortDelayMax) {
+        } else if (elapsedTime <= ShortDelayMax) {
             this._shortDelays += 1;
-        }
-        else if (elapsedTime <= MediumDelayMax) {
+        } else if (elapsedTime <= MediumDelayMax) {
             this._mediumDelays += 1;
-        }
-        else if (elapsedTime <= IdleDelayMax) {
+        } else if (elapsedTime <= IdleDelayMax) {
             this._idleDelays += 1;
-        }
-        else if (elapsedTime <= NonFocusDelayMax) {
+        } else if (elapsedTime <= NonFocusDelayMax) {
             this._nonFocusDelays += 1;
-        }
-        else {
+        } else {
             this._bigDelays += 1;
         }
     }
@@ -64,13 +58,15 @@ export class DelayTracker {
     }
 
     public hasMeasures() {
-        return this._immediateDelays > 0
-            || this._nearImmediateDelays > 0
-            || this._shortDelays > 0
-            || this._mediumDelays > 0
-            || this._idleDelays > 0
-            || this._nonFocusDelays > 0
-            || this._bigDelays > 0;
+        return (
+            this._immediateDelays > 0 ||
+            this._nearImmediateDelays > 0 ||
+            this._shortDelays > 0 ||
+            this._mediumDelays > 0 ||
+            this._idleDelays > 0 ||
+            this._nonFocusDelays > 0 ||
+            this._bigDelays > 0
+        );
     }
 
     public getMeasures(): { [key: string]: number } {
@@ -81,7 +77,7 @@ export class DelayTracker {
             mediumDelays: this._mediumDelays,
             idleDelays: this._idleDelays,
             nonFocusDelays: this._nonFocusDelays,
-            bigDelays: this._bigDelays
+            bigDelays: this._bigDelays,
         };
     }
 }

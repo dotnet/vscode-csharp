@@ -3,7 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { FormattingOptions, InsertTextFormat, MessageDirection, NotificationType, Position, RequestType, RequestType0, TextDocumentIdentifier, TextEdit, URI, integer } from "vscode-languageserver-protocol";
+import {
+    FormattingOptions,
+    InsertTextFormat,
+    MessageDirection,
+    NotificationType,
+    Position,
+    RequestType,
+    RequestType0,
+    TextDocumentIdentifier,
+    TextEdit,
+    URI,
+    integer,
+} from 'vscode-languageserver-protocol';
 
 export interface WorkspaceDebugConfigurationParams {
     /**
@@ -61,7 +73,7 @@ export interface OnAutoInsertResponseItem {
 export interface RegisterSolutionSnapshotResponseItem {
     /**
      * Represents a solution snapshot.
-    */
+     */
     id: integer;
 }
 
@@ -88,4 +100,3 @@ export namespace ProjectInitializationCompleteNotification {
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
     export const type = new NotificationType(method);
 }
-

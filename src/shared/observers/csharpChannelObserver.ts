@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseChannelObserver } from "../../observers/baseChannelObserver";
-import { EventType } from "../../omnisharp/eventType";
-import { BaseEvent } from "../../omnisharp/loggingEvents";
+import { BaseChannelObserver } from '../../observers/baseChannelObserver';
+import { EventType } from '../../omnisharp/eventType';
+import { BaseEvent } from '../../omnisharp/loggingEvents';
 
 export class CsharpChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {

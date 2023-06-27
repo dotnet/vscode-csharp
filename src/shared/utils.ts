@@ -8,7 +8,7 @@ import * as path from 'path';
 
 export function findNetFrameworkTargetFramework(tfmShortNames: string[]): string | undefined {
     const regexp = new RegExp('^net[1-4]');
-    return tfmShortNames.find(tf => regexp.test(tf));
+    return tfmShortNames.find((tf) => regexp.test(tf));
 }
 
 export function findNetCoreTargetFramework(tfmShortNames: string[]): string | undefined {
@@ -16,15 +16,15 @@ export function findNetCoreTargetFramework(tfmShortNames: string[]): string | un
 }
 
 export function findNetCoreAppTargetFramework(tfmShortNames: string[]): string | undefined {
-    return tfmShortNames.find(tf => tf.startsWith('netcoreapp'));
+    return tfmShortNames.find((tf) => tf.startsWith('netcoreapp'));
 }
 
 export function findModernNetFrameworkTargetFramework(tfmShortNames: string[]): string | undefined {
     const regexp = new RegExp('^net[5-9]');
-    let targetFramework = tfmShortNames.find(tf => regexp.test(tf));
+    let targetFramework = tfmShortNames.find((tf) => regexp.test(tf));
 
     // Shortname is being reported as net50 instead of net5.0
-    if (targetFramework !== undefined && targetFramework.charAt(4) !== ".") {
+    if (targetFramework !== undefined && targetFramework.charAt(4) !== '.') {
         targetFramework = `${targetFramework.substring(0, 4)}.${targetFramework.substring(4)}`;
     }
 
@@ -32,7 +32,7 @@ export function findModernNetFrameworkTargetFramework(tfmShortNames: string[]): 
 }
 
 export function findNetStandardTargetFramework(tfmShortNames: string[]): string | undefined {
-    return tfmShortNames.find(tf => tf.startsWith('netstandard'));
+    return tfmShortNames.find((tf) => tf.startsWith('netstandard'));
 }
 
 export function isWebProject(projectPath: string): boolean {
@@ -67,7 +67,12 @@ export async function isBlazorWebAssemblyProject(projectPath: string): Promise<b
     return false;
 }
 
-export function isBlazorWebAssemblyHosted(isExeProject: boolean, isWebProject: boolean, isProjectBlazorWebAssemblyProject: boolean, targetsDotnetCore: boolean): boolean {
+export function isBlazorWebAssemblyHosted(
+    isExeProject: boolean,
+    isWebProject: boolean,
+    isProjectBlazorWebAssemblyProject: boolean,
+    targetsDotnetCore: boolean
+): boolean {
     if (!isProjectBlazorWebAssemblyProject) {
         return false;
     }

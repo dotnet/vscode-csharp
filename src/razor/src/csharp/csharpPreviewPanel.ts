@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { IRazorDocumentChangeEvent } from '../document/IRazorDocumentChangeEvent';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
@@ -16,8 +15,7 @@ export class CSharpPreviewPanel {
     private panel: vscode.WebviewPanel | undefined;
     private csharpContent: string | undefined;
 
-    constructor(
-        private readonly documentManager: RazorDocumentManager) {
+    constructor(private readonly documentManager: RazorDocumentManager) {
         documentManager.onChange(async (event) => this.documentChanged(event));
     }
 
@@ -28,11 +26,13 @@ export class CSharpPreviewPanel {
             this.panel = vscode.window.createWebviewPanel(
                 CSharpPreviewPanel.viewType,
                 'Razor C# Preview',
-                vscode.ViewColumn.Two, {
-                enableScripts: true,
-                // Disallow any remote sources
-                localResourceRoots: [],
-            });
+                vscode.ViewColumn.Two,
+                {
+                    enableScripts: true,
+                    // Disallow any remote sources
+                    localResourceRoots: [],
+                }
+            );
             this.attachToCurrentPanel();
         }
 
@@ -50,9 +50,11 @@ export class CSharpPreviewPanel {
             return;
         }
 
-        if (event.kind === RazorDocumentChangeKind.csharpChanged ||
+        if (
+            event.kind === RazorDocumentChangeKind.csharpChanged ||
             event.kind === RazorDocumentChangeKind.opened ||
-            event.kind === RazorDocumentChangeKind.closed) {
+            event.kind === RazorDocumentChangeKind.closed
+        ) {
             await this.update();
         }
     }
@@ -63,7 +65,7 @@ export class CSharpPreviewPanel {
             return;
         }
 
-        this.panel.webview.onDidReceiveMessage(async message => {
+        this.panel.webview.onDidReceiveMessage(async (message) => {
             switch (message.command) {
                 case 'copy':
                     if (!this.csharpContent) {
@@ -75,7 +77,7 @@ export class CSharpPreviewPanel {
                     return;
             }
         });
-        this.panel.onDidDispose(() => this.panel = undefined);
+        this.panel.onDidDispose(() => (this.panel = undefined));
     }
 
     private async update() {

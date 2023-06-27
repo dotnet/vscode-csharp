@@ -11,6 +11,6 @@ export interface TestFile {
 export function createTestFile(content: string, path: string): TestFile {
     return {
         content,
-        path
+        path,
     };
 }

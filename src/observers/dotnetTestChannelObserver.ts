@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseChannelObserver } from "./baseChannelObserver";
-import { BaseEvent } from "../omnisharp/loggingEvents";
-import { EventType } from "../omnisharp/eventType";
+import { BaseChannelObserver } from './baseChannelObserver';
+import { BaseEvent } from '../omnisharp/loggingEvents';
+import { EventType } from '../omnisharp/eventType';
 
 export default class DotnetTestChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {

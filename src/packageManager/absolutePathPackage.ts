@@ -3,12 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Package } from "./package";
-import { IPackage } from "./IPackage";
-import { AbsolutePath } from "./absolutePath";
+import { Package } from './package';
+import { IPackage } from './IPackage';
+import { AbsolutePath } from './absolutePath';
 
 export class AbsolutePathPackage implements IPackage {
-    constructor(public id: string,
+    constructor(
+        public id: string,
         public description: string,
         public url: string,
         public platforms: string[],
@@ -19,8 +20,8 @@ export class AbsolutePathPackage implements IPackage {
         public fallbackUrl?: string,
         public platformId?: string,
         public integrity?: string,
-        public isFramework?: boolean) {
-    }
+        public isFramework?: boolean
+    ) {}
 
     public static getAbsolutePathPackage(pkg: Package, extensionPath: string) {
         return new AbsolutePathPackage(
@@ -50,7 +51,7 @@ function getAbsoluteInstallTestPath(pkg: Package, extensionPath: string): Absolu
 
 function getAbsoluteBinaries(pkg: Package, extensionPath: string): AbsolutePath[] | undefined {
     const basePath = getAbsoluteInstallPath(pkg, extensionPath).value;
-    return pkg.binaries?.map(value => AbsolutePath.getAbsolutePath(basePath, value));
+    return pkg.binaries?.map((value) => AbsolutePath.getAbsolutePath(basePath, value));
 }
 
 function getAbsoluteInstallPath(pkg: Package, extensionPath: string): AbsolutePath {

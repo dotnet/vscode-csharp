@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import * as os from 'os';
 
 function AppendFieldsToObject(reference: any, obj: any) {
-
     // Make sure it is an object type
     if (typeof obj == 'object') {
         for (const referenceKey in reference) {
@@ -42,8 +41,15 @@ function MergeDefaults(parentDefault: any, childDefault: any) {
 function UpdateDefaults(object: any, defaults: any) {
     if (defaults != null) {
         for (const key in object) {
-            if (Object.prototype.hasOwnProperty.call(object[key], 'type') && object[key].type === 'object' && object[key].properties !== null) {
-                object[key].properties = UpdateDefaults(object[key].properties, MergeDefaults(defaults, object[key].default));
+            if (
+                Object.prototype.hasOwnProperty.call(object[key], 'type') &&
+                object[key].type === 'object' &&
+                object[key].properties !== null
+            ) {
+                object[key].properties = UpdateDefaults(
+                    object[key].properties,
+                    MergeDefaults(defaults, object[key].default)
+                );
             } else if (key in defaults) {
                 object[key].default = defaults[key];
             }
@@ -76,7 +82,11 @@ function ReplaceReferences(definitions: any, objects: any) {
         }
 
         // Recursively replace references if this object has properties.
-        if (Object.prototype.hasOwnProperty.call(objects[key], 'type') && objects[key].type === 'object' && objects[key].properties !== null) {
+        if (
+            Object.prototype.hasOwnProperty.call(objects[key], 'type') &&
+            objects[key].type === 'object' &&
+            objects[key].properties !== null
+        ) {
             objects[key].properties = ReplaceReferences(definitions, objects[key].properties);
             objects[key].properties = UpdateDefaults(objects[key].properties, objects[key].default);
         }
@@ -94,21 +104,26 @@ function mergeReferences(baseDefinitions: any, additionalDefinitions: any): void
     }
 }
 
-function createContributesSettingsForDebugOptions(path: string, options: any, ignoreKeys: Set<string>, outProperties: any)
-{
+function createContributesSettingsForDebugOptions(
+    path: string,
+    options: any,
+    ignoreKeys: Set<string>,
+    outProperties: any
+) {
     const optionKeys = Object.keys(options);
     for (const key of optionKeys) {
         if (ignoreKeys.has(key)) {
             continue;
         }
-        const newOptionKey = path + "." + key;
+        const newOptionKey = path + '.' + key;
         const currentProperty: any = options[key];
 
         // See https://code.visualstudio.com/api/references/contribution-points#contributes.configuration for supported settings UI.
-        if (currentProperty.type == "boolean" ||
-            currentProperty.type == "string" ||
-            (currentProperty.type == "object" && currentProperty.additionalProperties != null) || // map type
-            (currentProperty.type == "array" && currentProperty.items != null) // array type
+        if (
+            currentProperty.type == 'boolean' ||
+            currentProperty.type == 'string' ||
+            (currentProperty.type == 'object' && currentProperty.additionalProperties != null) || // map type
+            (currentProperty.type == 'array' && currentProperty.items != null) // array type
         ) {
             outProperties[newOptionKey] = { ...currentProperty }; // Create a deep copy
             if (currentProperty.settingsDescription) {
@@ -118,11 +133,15 @@ function createContributesSettingsForDebugOptions(path: string, options: any, ig
         }
         // Recursively create a suboption path.
         // E.g. csharp.debug.<object>.<propertykey>....
-        else if (currentProperty.type == "object") {
-            createContributesSettingsForDebugOptions(newOptionKey, currentProperty.properties, new Set<string>(), outProperties);
-        }
-        else {
-            throw "Unknown option type";
+        else if (currentProperty.type == 'object') {
+            createContributesSettingsForDebugOptions(
+                newOptionKey,
+                currentProperty.properties,
+                new Set<string>(),
+                outProperties
+            );
+        } else {
+            throw 'Unknown option type';
         }
     }
 }
@@ -151,57 +170,63 @@ export function GenerateOptionsSchema() {
     delete unitTestDebuggingOptions.processId;
     delete unitTestDebuggingOptions.pipeTransport;
     // Add the additional options we do want
-    unitTestDebuggingOptions["type"] = {
-        "type": "string",
-        "enum": [
-            "coreclr",
-            "clr"
-        ],
-        "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
-        "default": "coreclr"
+    unitTestDebuggingOptions['type'] = {
+        type: 'string',
+        enum: ['coreclr', 'clr'],
+        description:
+            "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+        default: 'coreclr',
     };
-    unitTestDebuggingOptions["debugServer"] = {
-        "type": "number",
-        "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
-        "default": 4711
+    unitTestDebuggingOptions['debugServer'] = {
+        type: 'number',
+        description:
+            'For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode',
+        default: 4711,
     };
-    packageJSON.contributes.configuration[0].properties["csharp.unitTestDebuggingOptions"].properties = unitTestDebuggingOptions;
+    packageJSON.contributes.configuration[0].properties['csharp.unitTestDebuggingOptions'].properties =
+        unitTestDebuggingOptions;
 
     // Delete old debug options
-    const originalContributeDebugKeys = Object.keys(packageJSON.contributes.configuration[1].properties).filter(x => x.startsWith("csharp.debug"));
-    for(const key of originalContributeDebugKeys)
-    {
+    const originalContributeDebugKeys = Object.keys(packageJSON.contributes.configuration[1].properties).filter((x) =>
+        x.startsWith('csharp.debug')
+    );
+    for (const key of originalContributeDebugKeys) {
         delete packageJSON.contributes.configuration[1].properties[key];
     }
 
     // Remove the options that should not be shown in the settings editor.
     const ignoreOptions: Set<string> = new Set<string>([
-        "program",
-        "cwd",
-        "args",
-        "targetArchitecture",
-        "launchSettingsFilePath",
-        "launchSettingsProfile",
-        "externalConsole",
-        "pipeTransport",
-        "launchBrowser",
-        "sourceLinkOptions",
-        "env",
-        "envFile",
-        "targetOutputLogPath",
-        "checkForDevCert"
+        'program',
+        'cwd',
+        'args',
+        'targetArchitecture',
+        'launchSettingsFilePath',
+        'launchSettingsProfile',
+        'externalConsole',
+        'pipeTransport',
+        'launchBrowser',
+        'sourceLinkOptions',
+        'env',
+        'envFile',
+        'targetOutputLogPath',
+        'checkForDevCert',
     ]);
     // Using LaunchOptions as it is a superset of AttachOptions
-    createContributesSettingsForDebugOptions("csharp.debug", schemaJSON.definitions.LaunchOptions.properties, ignoreOptions, packageJSON.contributes.configuration[1].properties);
+    createContributesSettingsForDebugOptions(
+        'csharp.debug',
+        schemaJSON.definitions.LaunchOptions.properties,
+        ignoreOptions,
+        packageJSON.contributes.configuration[1].properties
+    );
 
     let content = JSON.stringify(packageJSON, null, 2);
     if (os.platform() === 'win32') {
-        content = content.replace(/\n/gm, "\r\n");
+        content = content.replace(/\n/gm, '\r\n');
     }
 
     // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
     // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
-    content = content.replace(/\u200b/gm, "\\u200b");
+    content = content.replace(/\u200b/gm, '\\u200b');
 
     fs.writeFileSync('package.json', content);
 }

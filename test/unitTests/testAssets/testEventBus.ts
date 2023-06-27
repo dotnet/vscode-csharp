@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { EventStream } from "../../../src/eventStream";
-import { BaseEvent } from "../../../src/omnisharp/loggingEvents";
-import Disposable, { IDisposable } from "../../../src/disposable";
+import { EventStream } from '../../../src/eventStream';
+import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
+import Disposable, { IDisposable } from '../../../src/disposable';
 
 export default class TestEventBus {
     private eventBus: Array<BaseEvent>;
@@ -13,7 +13,7 @@ export default class TestEventBus {
 
     constructor(eventStream: EventStream) {
         this.eventBus = [];
-        this.disposable = new Disposable(eventStream.subscribe(event => this.eventBus.push(event)));
+        this.disposable = new Disposable(eventStream.subscribe((event) => this.eventBus.push(event)));
     }
 
     public getEvents(): Array<BaseEvent> {

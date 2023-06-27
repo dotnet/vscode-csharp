@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { expect, should } from 'chai';
 import { updateConfig, getVSCodeWithConfig } from '../testAssets/fakes';
 import { timeout } from 'rxjs/operators';
@@ -12,7 +11,7 @@ import { vscode } from '../../../src/vscodeAdapter';
 import { ShowConfigChangePrompt } from '../../../src/shared/observers/optionChangeObserver';
 import { Options } from '../../../src/shared/options';
 
-suite("OmniSharpConfigChangeObserver", () => {
+suite('OmniSharpConfigChangeObserver', () => {
     suiteSetup(() => should());
 
     let doClickOk: () => void;
@@ -28,18 +27,20 @@ suite("OmniSharpConfigChangeObserver", () => {
         vscode = getVSCode();
         optionObservable = new BehaviorSubject<Options>(Options.Read(vscode));
         ShowConfigChangePrompt(optionObservable, 'o.restart', Options.shouldOmnisharpOptionChangeTriggerReload, vscode);
-        commandDone = new Promise<void>(resolve => {
-            signalCommandDone = () => { resolve(); };
+        commandDone = new Promise<void>((resolve) => {
+            signalCommandDone = () => {
+                resolve();
+            };
         });
     });
 
     [
-        { config: "omnisharp", section: "path", value: "somePath" },
-        { config: "omnisharp", section: "waitForDebugger", value: true },
-        { config: "omnisharp", section: "enableMsBuildLoadProjectsOnDemand", value: true },
-        { config: "omnisharp", section: "useModernNet", value: false },
-        { config: "omnisharp", section: 'loggingLevel', value: 'verbose' }
-    ].forEach(elem => {
+        { config: 'omnisharp', section: 'path', value: 'somePath' },
+        { config: 'omnisharp', section: 'waitForDebugger', value: true },
+        { config: 'omnisharp', section: 'enableMsBuildLoadProjectsOnDemand', value: true },
+        { config: 'omnisharp', section: 'useModernNet', value: false },
+        { config: 'omnisharp', section: 'loggingLevel', value: 'verbose' },
+    ].forEach((elem) => {
         suite(`When the ${elem.config} ${elem.section} changes`, () => {
             setup(() => {
                 expect(infoMessage).to.be.undefined;
@@ -49,7 +50,9 @@ suite("OmniSharpConfigChangeObserver", () => {
             });
 
             test(`The information message is shown`, async () => {
-                expect(infoMessage).to.be.equal("C# configuration has changed. Would you like to relaunch the Language Server with your changes?");
+                expect(infoMessage).to.be.equal(
+                    'C# configuration has changed. Would you like to relaunch the Language Server with your changes?'
+                );
             });
 
             test('Given an information message if the user clicks cancel, the command is not executed', async () => {
@@ -61,22 +64,22 @@ suite("OmniSharpConfigChangeObserver", () => {
             test('Given an information message if the user clicks Restore, the command is executed', async () => {
                 doClickOk();
                 await commandDone;
-                expect(invokedCommand).to.be.equal("o.restart");
+                expect(invokedCommand).to.be.equal('o.restart');
             });
         });
     });
 
     suite('Information Message is not shown on change in', () => {
         [
-            { config: "csharp", section: 'disableCodeActions', value: true },
-            { config: "csharp", section: 'testsCodeLens.enabled', value: false },
-            { config: "omnisharp", section: 'referencesCodeLens.enabled', value: false },
-            { config: "csharp", section: 'format.enable', value: false },
-            { config: "omnisharp", section: 'useEditorFormattingSettings', value: false },
-            { config: "omnisharp", section: 'maxProjectResults', value: 1000 },
-            { config: "omnisharp", section: 'projectLoadTimeout', value: 1000 },
-            { config: "omnisharp", section: 'autoStart', value: false }
-        ].forEach(elem => {
+            { config: 'csharp', section: 'disableCodeActions', value: true },
+            { config: 'csharp', section: 'testsCodeLens.enabled', value: false },
+            { config: 'omnisharp', section: 'referencesCodeLens.enabled', value: false },
+            { config: 'csharp', section: 'format.enable', value: false },
+            { config: 'omnisharp', section: 'useEditorFormattingSettings', value: false },
+            { config: 'omnisharp', section: 'maxProjectResults', value: 1000 },
+            { config: 'omnisharp', section: 'projectLoadTimeout', value: 1000 },
+            { config: 'omnisharp', section: 'autoStart', value: false },
+        ].forEach((elem) => {
             test(`${elem.config} ${elem.section}`, async () => {
                 expect(infoMessage).to.be.undefined;
                 expect(invokedCommand).to.be.undefined;
@@ -97,7 +100,7 @@ suite("OmniSharpConfigChangeObserver", () => {
         const vscode = getVSCodeWithConfig();
         vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
-            return new Promise<T | undefined>(resolve => {
+            return new Promise<T | undefined>((resolve) => {
                 doClickCancel = () => {
                     resolve(undefined);
                 };

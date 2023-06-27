@@ -5,10 +5,17 @@
 
 import { expect } from 'chai';
 import { getNullChannel } from '../testAssets/fakes';
-import { BaseEvent, DotNetTestsInClassDebugStart, DotNetTestRunStart, DotNetTestRunFailure, DotNetTestsInClassRunStart, DotNetTestDebugStart } from '../../../src/omnisharp/loggingEvents';
+import {
+    BaseEvent,
+    DotNetTestsInClassDebugStart,
+    DotNetTestRunStart,
+    DotNetTestRunFailure,
+    DotNetTestsInClassRunStart,
+    DotNetTestDebugStart,
+} from '../../../src/omnisharp/loggingEvents';
 import DotnetTestChannelObserver from '../../../src/observers/dotnetTestChannelObserver';
 
-suite("DotnetTestChannelObserver", () => {
+suite('DotnetTestChannelObserver', () => {
     let hasShown: boolean;
     let preserveFocus: boolean;
 
@@ -17,7 +24,7 @@ suite("DotnetTestChannelObserver", () => {
         show: (preserve) => {
             hasShown = true;
             preserveFocus = preserve ?? false;
-        }
+        },
     });
 
     setup(() => {
@@ -25,11 +32,11 @@ suite("DotnetTestChannelObserver", () => {
     });
 
     [
-        new DotNetTestRunStart("foo"),
-        new DotNetTestRunFailure("some failure"),
-        new DotNetTestsInClassRunStart("someclass"),
-        new DotNetTestDebugStart("foo"),
-        new DotNetTestsInClassDebugStart("someclass")
+        new DotNetTestRunStart('foo'),
+        new DotNetTestRunFailure('some failure'),
+        new DotNetTestsInClassRunStart('someclass'),
+        new DotNetTestDebugStart('foo'),
+        new DotNetTestsInClassDebugStart('someclass'),
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is shown and preserve focus is set to true`, () => {
             expect(hasShown).to.be.false;

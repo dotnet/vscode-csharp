@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { expect, should } from 'chai';
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -44,9 +43,13 @@ suite(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`
 
     test('Triple slash inserts doc comment snippet', async () => {
         const commentPosition = new vscode.Position(2, 7);
-        const formatEdits = <vscode.TextEdit[]>(await vscode.commands.executeCommand(onTypeFormatProviderCommand, fileUri, commentPosition, '/'));
+        const formatEdits = <vscode.TextEdit[]>(
+            await vscode.commands.executeCommand(onTypeFormatProviderCommand, fileUri, commentPosition, '/')
+        );
         expect(formatEdits).ofSize(1);
-        expect(normalizeNewlines(formatEdits[0].newText)).eq(" <summary>\n    /// \n    /// </summary>\n    /// <param name=\"param1\"></param>\n    /// <param name=\"param2\"></param>\n    /// <returns></returns>");
+        expect(normalizeNewlines(formatEdits[0].newText)).eq(
+            ' <summary>\n    /// \n    /// </summary>\n    /// <param name="param1"></param>\n    /// <param name="param2"></param>\n    /// <returns></returns>'
+        );
         expect(formatEdits[0].range.start.line).eq(commentPosition.line);
         expect(formatEdits[0].range.start.character).eq(commentPosition.character);
         expect(formatEdits[0].range.end.line).eq(commentPosition.line);
@@ -55,9 +58,11 @@ suite(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`
 
     test('Enter in comment inserts triple-slashes preceding', async () => {
         const commentPosition = new vscode.Position(9, 0);
-        const formatEdits = <vscode.TextEdit[]>(await vscode.commands.executeCommand(onTypeFormatProviderCommand, fileUri, commentPosition, '\n'));
+        const formatEdits = <vscode.TextEdit[]>(
+            await vscode.commands.executeCommand(onTypeFormatProviderCommand, fileUri, commentPosition, '\n')
+        );
         expect(formatEdits).ofSize(1);
-        expect(formatEdits[0].newText).eq("    /// ");
+        expect(formatEdits[0].newText).eq('    /// ');
         expect(formatEdits[0].range.start.line).eq(commentPosition.line);
         expect(formatEdits[0].range.start.character).eq(commentPosition.character);
         expect(formatEdits[0].range.end.line).eq(commentPosition.line);

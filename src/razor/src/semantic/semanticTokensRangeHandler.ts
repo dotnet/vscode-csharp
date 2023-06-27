@@ -12,24 +12,34 @@ import { SerializableSemanticTokensParams } from './serializableSemanticTokensPa
 
 export class SemanticTokensRangeHandler {
     private static readonly getSemanticTokensRangeEndpoint = 'razor/provideSemanticTokensRange';
-    private semanticTokensRequestType: RequestType<SerializableSemanticTokensParams, ProvideSemanticTokensResponse, any> =
-        new RequestType(SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint);
+    private semanticTokensRequestType: RequestType<
+        SerializableSemanticTokensParams,
+        ProvideSemanticTokensResponse,
+        any
+    > = new RequestType(SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint);
     private emptySemanticTokensResponse: ProvideSemanticTokensResponse = new ProvideSemanticTokensResponse(
         new SemanticTokensResponse(new Array<number>(), ''),
-        null);
+        null
+    );
 
-    constructor(private readonly serverClient: RazorLanguageServerClient) { }
+    constructor(private readonly serverClient: RazorLanguageServerClient) {}
 
     public async register() {
-        await this.serverClient.onRequestWithParams<SerializableSemanticTokensParams, ProvideSemanticTokensResponse, any>(
+        await this.serverClient.onRequestWithParams<
+            SerializableSemanticTokensParams,
+            ProvideSemanticTokensResponse,
+            any
+        >(
             this.semanticTokensRequestType,
-            async (request: SerializableSemanticTokensParams, token: vscode.CancellationToken) => this.getSemanticTokens(request, token));
+            async (request: SerializableSemanticTokensParams, token: vscode.CancellationToken) =>
+                this.getSemanticTokens(request, token)
+        );
     }
 
     private async getSemanticTokens(
         _semanticTokensParams: SerializableSemanticTokensParams,
-        _cancellationToken: vscode.CancellationToken): Promise<ProvideSemanticTokensResponse> {
-
+        _cancellationToken: vscode.CancellationToken
+    ): Promise<ProvideSemanticTokensResponse> {
         // This is currently a no-op since (1) the default C# semantic tokens experience is already powerful and
         // (2) there seems to be an issue with the semantic tokens execute command - possibly either O# not
         // returning tokens, or an issue with the command itself:

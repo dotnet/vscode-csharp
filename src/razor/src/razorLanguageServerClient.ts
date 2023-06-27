@@ -3,23 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
-import {
-    RequestHandler,
-    RequestType,
-} from 'vscode-jsonrpc';
-import {
-    GenericNotificationHandler,
-    InitializeResult,
-    LanguageClientOptions,
-    State,
-} from 'vscode-languageclient';
-import {
-    LanguageClient,
-    ServerOptions,
-} from 'vscode-languageclient/node';
+import { RequestHandler, RequestType } from 'vscode-jsonrpc';
+import { GenericNotificationHandler, InitializeResult, LanguageClientOptions, State } from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
@@ -46,7 +34,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         private readonly vscodeType: typeof vscode,
         private readonly languageServerDir: string,
         private readonly telemetryReporter: TelemetryReporter,
-        private readonly logger: RazorLogger) {
+        private readonly logger: RazorLogger
+    ) {
         this.isStarted = false;
 
         this.setupLanguageServer();
@@ -75,8 +64,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     public onStop(listener: () => any) {
         this.eventBus.addListener(events.ServerStop, listener);
 
-        const disposable = new vscode.Disposable(() =>
-            this.eventBus.removeListener(events.ServerStop, listener));
+        const disposable = new vscode.Disposable(() => this.eventBus.removeListener(events.ServerStop, listener));
         return disposable;
     }
 
@@ -97,19 +85,21 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         // change events to detect when restarts are occuring and then properly reject the Language Server
         // start listeners.
         let restartCount = 0;
-        const didChangeStateDisposable = this.client.onDidChangeState((stateChangeEvent: { newState: any; oldState: any; }) => {
-            if (stateChangeEvent.oldState === State.Starting && stateChangeEvent.newState === State.Stopped) {
-                restartCount++;
+        const didChangeStateDisposable = this.client.onDidChangeState(
+            (stateChangeEvent: { newState: any; oldState: any }) => {
+                if (stateChangeEvent.oldState === State.Starting && stateChangeEvent.newState === State.Stopped) {
+                    restartCount++;
 
-                if (restartCount === 5) {
-                    // Timeout, the built-in LanguageClient retries a hardcoded 5 times before giving up. We tie into that
-                    // and then given up on starting the language server if we can't start by then.
-                    reject('Server failed to start after retrying 5 times.');
+                    if (restartCount === 5) {
+                        // Timeout, the built-in LanguageClient retries a hardcoded 5 times before giving up. We tie into that
+                        // and then given up on starting the language server if we can't start by then.
+                        reject('Server failed to start after retrying 5 times.');
+                    }
+                } else if (stateChangeEvent.newState === State.Running) {
+                    restartCount = 0;
                 }
-            } else if (stateChangeEvent.newState === State.Running) {
-                restartCount = 0;
             }
-        });
+        );
 
         try {
             this.logger.logMessage('Starting Razor Language Server...');
@@ -134,7 +124,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         } catch (error) {
             vscode.window.showErrorMessage(
                 'Razor Language Server failed to start unexpectedly, ' +
-                'please check the \'Razor Log\' and report an issue.');
+                    "please check the 'Razor Log' and report an issue."
+            );
 
             this.telemetryReporter.reportErrorOnServerStart(error as Error);
             reject(error);
@@ -200,8 +191,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             resolve();
         } catch (error) {
             vscode.window.showErrorMessage(
-                'Razor Language Server failed to stop correctly, ' +
-                'please check the \'Razor Log\' and report an issue.');
+                'Razor Language Server failed to stop correctly, ' + "please check the 'Razor Log' and report an issue."
+            );
 
             reject(error);
         }
@@ -211,18 +202,25 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
     private setupLanguageServer() {
         const languageServerTrace = resolveRazorLanguageServerTrace(this.vscodeType);
-        const options: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(this.vscodeType, this.languageServerDir, languageServerTrace, this.logger);
+        const options: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
+            this.vscodeType,
+            this.languageServerDir,
+            languageServerTrace,
+            this.logger
+        );
 
         this.clientOptions = {
             outputChannel: options.outputChannel,
-            documentSelector: [ { language: RazorLanguage.id, pattern: RazorLanguage.globbingPattern } ],
+            documentSelector: [{ language: RazorLanguage.id, pattern: RazorLanguage.globbingPattern }],
         };
 
         const args: string[] = [];
         let command = options.serverPath;
         if (options.serverPath.endsWith('.dll')) {
-            this.logger.logMessage('Razor Language Server path is an assembly. ' +
-                'Using \'dotnet\' from the current path to start the server.');
+            this.logger.logMessage(
+                'Razor Language Server path is an assembly. ' +
+                    "Using 'dotnet' from the current path to start the server."
+            );
 
             command = 'dotnet';
             args.push(options.serverPath);
@@ -254,6 +252,11 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         }
 
         this.serverOptions = { command, args };
-        this.client = new LanguageClient('razorLanguageServer', 'Razor Language Server', this.serverOptions, this.clientOptions);
+        this.client = new LanguageClient(
+            'razorLanguageServer',
+            'Razor Language Server',
+            this.serverOptions,
+            this.clientOptions
+        );
     }
 }

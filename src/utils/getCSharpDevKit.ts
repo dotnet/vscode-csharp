@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CSharpDevKitExports } from "../csharpDevKitExports";
+import { CSharpDevKitExports } from '../csharpDevKitExports';
 
-export const csharpDevkitExtensionId = "ms-dotnettools.csdevkit";
-export const csharpDevkitIntelliCodeExtensionId = "ms-dotnettools.vscodeintellicode-csharp";
+export const csharpDevkitExtensionId = 'ms-dotnettools.csdevkit';
+export const csharpDevkitIntelliCodeExtensionId = 'ms-dotnettools.vscodeintellicode-csharp';
 
 export function getCSharpDevKit(): vscode.Extension<CSharpDevKitExports> | undefined {
     return vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);

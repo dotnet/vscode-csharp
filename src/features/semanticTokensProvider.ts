@@ -155,12 +155,18 @@ enum SemanticHighlightClassification {
 }
 
 enum SemanticHighlightModifier {
-    Static
+    Static,
 }
 
-export default class OmniSharpSemanticTokensProvider extends AbstractProvider implements vscode.DocumentSemanticTokensProvider, vscode.DocumentRangeSemanticTokensProvider {
-
-    constructor(server: OmniSharpServer, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+export default class OmniSharpSemanticTokensProvider
+    extends AbstractProvider
+    implements vscode.DocumentSemanticTokensProvider, vscode.DocumentRangeSemanticTokensProvider
+{
+    constructor(
+        server: OmniSharpServer,
+        private optionProvider: OptionProvider,
+        languageMiddlewareFeature: LanguageMiddlewareFeature
+    ) {
         super(server, languageMiddlewareFeature);
     }
 
@@ -168,29 +174,38 @@ export default class OmniSharpSemanticTokensProvider extends AbstractProvider im
         return new vscode.SemanticTokensLegend(tokenLegendMap, tokenModifiersLegend);
     }
 
-    async provideDocumentSemanticTokens(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
-
+    async provideDocumentSemanticTokens(
+        document: vscode.TextDocument,
+        token: vscode.CancellationToken
+    ): Promise<vscode.SemanticTokens | null> {
         return this._provideSemanticTokens(document, undefined, token);
     }
 
-    async provideDocumentRangeSemanticTokens(document: vscode.TextDocument, range: vscode.Range, token: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
-
+    async provideDocumentRangeSemanticTokens(
+        document: vscode.TextDocument,
+        range: vscode.Range,
+        token: vscode.CancellationToken
+    ): Promise<vscode.SemanticTokens | null> {
         const v2Range: protocol.V2.Range = {
             Start: {
                 Line: range.start.line,
-                Column: range.start.character
+                Column: range.start.character,
             },
             End: {
                 Line: range.end.line,
-                Column: range.end.character
-            }
+                Column: range.end.character,
+            },
         };
         return this._provideSemanticTokens(document, v2Range, token);
     }
 
-    async _provideSemanticTokens(document: vscode.TextDocument, range: protocol.V2.Range | undefined, _: vscode.CancellationToken): Promise<vscode.SemanticTokens | null> {
+    async _provideSemanticTokens(
+        document: vscode.TextDocument,
+        range: protocol.V2.Range | undefined,
+        _: vscode.CancellationToken
+    ): Promise<vscode.SemanticTokens | null> {
         // We can only semantically highlight file from disk.
-        if (document.uri.scheme !== "file") {
+        if (document.uri.scheme !== 'file') {
             return null;
         }
 
@@ -225,7 +240,10 @@ export default class OmniSharpSemanticTokensProvider extends AbstractProvider im
                 continue;
             }
 
-            let tokenModifiers = span.Modifiers.reduce((modifiers, modifier) => modifiers + classificationModifierToTokenModifier[modifier], 0);
+            let tokenModifiers = span.Modifiers.reduce(
+                (modifiers, modifier) => modifiers + classificationModifierToTokenModifier[modifier],
+                0
+            );
 
             // We could add a separate classification for constants but they are
             // supported as a readonly variable. Until we start getting more complete
@@ -237,8 +255,9 @@ export default class OmniSharpSemanticTokensProvider extends AbstractProvider im
             // We can use the returned range because we made sure the document version is the same.
             const spanRange = toRange2(span);
             for (let line = spanRange.start.line; line <= spanRange.end.line; line++) {
-                const startCharacter = (line === spanRange.start.line ? spanRange.start.character : 0);
-                const endCharacter = (line === spanRange.end.line ? spanRange.end.character : document.lineAt(line).text.length);
+                const startCharacter = line === spanRange.start.line ? spanRange.start.character : 0;
+                const endCharacter =
+                    line === spanRange.end.line ? spanRange.end.character : document.lineAt(line).text.length;
                 builder.push(line, startCharacter, endCharacter - startCharacter, tokenType, tokenModifiers);
             }
         }
@@ -271,37 +290,37 @@ tokenLegendMap[DefaultTokenType.property] = SemanticTokenTypes.property;
 tokenLegendMap[DefaultTokenType.enumMember] = SemanticTokenTypes.enumMember;
 tokenLegendMap[DefaultTokenType.event] = SemanticTokenTypes.event;
 tokenLegendMap[DefaultTokenType.label] = 'label';
-tokenLegendMap[CustomTokenType.controlKeyword] = "controlKeyword";
-tokenLegendMap[CustomTokenType.operatorOverloaded] = "operatorOverloaded";
+tokenLegendMap[CustomTokenType.controlKeyword] = 'controlKeyword';
+tokenLegendMap[CustomTokenType.operatorOverloaded] = 'operatorOverloaded';
 tokenLegendMap[CustomTokenType.preprocessorKeyword] = SemanticTokenTypes.macro;
-tokenLegendMap[CustomTokenType.preprocessorText] = "preprocessorText";
-tokenLegendMap[CustomTokenType.excludedCode] = "excludedCode";
-tokenLegendMap[CustomTokenType.punctuation] = "punctuation";
-tokenLegendMap[CustomTokenType.stringVerbatim] = "stringVerbatim";
-tokenLegendMap[CustomTokenType.stringEscapeCharacter] = "stringEscapeCharacter";
-tokenLegendMap[CustomTokenType.delegate] = "delegate";
-tokenLegendMap[CustomTokenType.module] = "module";
-tokenLegendMap[CustomTokenType.extensionMethod] = "extensionMethod";
-tokenLegendMap[CustomTokenType.field] = "field";
+tokenLegendMap[CustomTokenType.preprocessorText] = 'preprocessorText';
+tokenLegendMap[CustomTokenType.excludedCode] = 'excludedCode';
+tokenLegendMap[CustomTokenType.punctuation] = 'punctuation';
+tokenLegendMap[CustomTokenType.stringVerbatim] = 'stringVerbatim';
+tokenLegendMap[CustomTokenType.stringEscapeCharacter] = 'stringEscapeCharacter';
+tokenLegendMap[CustomTokenType.delegate] = 'delegate';
+tokenLegendMap[CustomTokenType.module] = 'module';
+tokenLegendMap[CustomTokenType.extensionMethod] = 'extensionMethod';
+tokenLegendMap[CustomTokenType.field] = 'field';
 tokenLegendMap[CustomTokenType.local] = SemanticTokenTypes.variable;
-tokenLegendMap[CustomTokenType.xmlDocCommentAttributeName] = "xmlDocCommentAttributeName";
-tokenLegendMap[CustomTokenType.xmlDocCommentAttributeQuotes] = "xmlDocCommentAttributeQuotes";
-tokenLegendMap[CustomTokenType.xmlDocCommentAttributeValue] = "xmlDocCommentAttributeValue";
-tokenLegendMap[CustomTokenType.xmlDocCommentCDataSection] = "xmlDocCommentCDataSection";
-tokenLegendMap[CustomTokenType.xmlDocCommentComment] = "xmlDocCommentComment";
-tokenLegendMap[CustomTokenType.xmlDocCommentDelimiter] = "xmlDocCommentDelimiter";
-tokenLegendMap[CustomTokenType.xmlDocCommentEntityReference] = "xmlDocCommentEntityReference";
-tokenLegendMap[CustomTokenType.xmlDocCommentName] = "xmlDocCommentName";
-tokenLegendMap[CustomTokenType.xmlDocCommentProcessingInstruction] = "xmlDocCommentProcessingInstruction";
-tokenLegendMap[CustomTokenType.xmlDocCommentText] = "xmlDocCommentText";
-tokenLegendMap[CustomTokenType.regexComment] = "regexComment";
-tokenLegendMap[CustomTokenType.regexCharacterClass] = "regexCharacterClass";
-tokenLegendMap[CustomTokenType.regexAnchor] = "regexAnchor";
-tokenLegendMap[CustomTokenType.regexQuantifier] = "regexQuantifier";
-tokenLegendMap[CustomTokenType.regexGrouping] = "regexGrouping";
-tokenLegendMap[CustomTokenType.regexAlternation] = "regexAlternation";
-tokenLegendMap[CustomTokenType.regexSelfEscapedCharacter] = "regexText";
-tokenLegendMap[CustomTokenType.regexOtherEscape] = "regexSelfEscapedCharacter";
+tokenLegendMap[CustomTokenType.xmlDocCommentAttributeName] = 'xmlDocCommentAttributeName';
+tokenLegendMap[CustomTokenType.xmlDocCommentAttributeQuotes] = 'xmlDocCommentAttributeQuotes';
+tokenLegendMap[CustomTokenType.xmlDocCommentAttributeValue] = 'xmlDocCommentAttributeValue';
+tokenLegendMap[CustomTokenType.xmlDocCommentCDataSection] = 'xmlDocCommentCDataSection';
+tokenLegendMap[CustomTokenType.xmlDocCommentComment] = 'xmlDocCommentComment';
+tokenLegendMap[CustomTokenType.xmlDocCommentDelimiter] = 'xmlDocCommentDelimiter';
+tokenLegendMap[CustomTokenType.xmlDocCommentEntityReference] = 'xmlDocCommentEntityReference';
+tokenLegendMap[CustomTokenType.xmlDocCommentName] = 'xmlDocCommentName';
+tokenLegendMap[CustomTokenType.xmlDocCommentProcessingInstruction] = 'xmlDocCommentProcessingInstruction';
+tokenLegendMap[CustomTokenType.xmlDocCommentText] = 'xmlDocCommentText';
+tokenLegendMap[CustomTokenType.regexComment] = 'regexComment';
+tokenLegendMap[CustomTokenType.regexCharacterClass] = 'regexCharacterClass';
+tokenLegendMap[CustomTokenType.regexAnchor] = 'regexAnchor';
+tokenLegendMap[CustomTokenType.regexQuantifier] = 'regexQuantifier';
+tokenLegendMap[CustomTokenType.regexGrouping] = 'regexGrouping';
+tokenLegendMap[CustomTokenType.regexAlternation] = 'regexAlternation';
+tokenLegendMap[CustomTokenType.regexSelfEscapedCharacter] = 'regexText';
+tokenLegendMap[CustomTokenType.regexOtherEscape] = 'regexSelfEscapedCharacter';
 
 const tokenModifiersLegend: string[] = [];
 tokenModifiersLegend[DefaultTokenModifier.declaration] = 'declaration';
@@ -350,15 +369,21 @@ classificationToToken[SemanticHighlightClassification.PropertyName] = DefaultTok
 classificationToToken[SemanticHighlightClassification.EventName] = DefaultTokenType.event;
 classificationToToken[SemanticHighlightClassification.NamespaceName] = DefaultTokenType.namespace;
 classificationToToken[SemanticHighlightClassification.LabelName] = DefaultTokenType.label;
-classificationToToken[SemanticHighlightClassification.XmlDocCommentAttributeName] = CustomTokenType.xmlDocCommentAttributeName;
-classificationToToken[SemanticHighlightClassification.XmlDocCommentAttributeQuotes] = CustomTokenType.xmlDocCommentAttributeQuotes;
-classificationToToken[SemanticHighlightClassification.XmlDocCommentAttributeValue] = CustomTokenType.xmlDocCommentAttributeValue;
-classificationToToken[SemanticHighlightClassification.XmlDocCommentCDataSection] = CustomTokenType.xmlDocCommentCDataSection;
+classificationToToken[SemanticHighlightClassification.XmlDocCommentAttributeName] =
+    CustomTokenType.xmlDocCommentAttributeName;
+classificationToToken[SemanticHighlightClassification.XmlDocCommentAttributeQuotes] =
+    CustomTokenType.xmlDocCommentAttributeQuotes;
+classificationToToken[SemanticHighlightClassification.XmlDocCommentAttributeValue] =
+    CustomTokenType.xmlDocCommentAttributeValue;
+classificationToToken[SemanticHighlightClassification.XmlDocCommentCDataSection] =
+    CustomTokenType.xmlDocCommentCDataSection;
 classificationToToken[SemanticHighlightClassification.XmlDocCommentComment] = CustomTokenType.xmlDocCommentComment;
 classificationToToken[SemanticHighlightClassification.XmlDocCommentDelimiter] = CustomTokenType.xmlDocCommentDelimiter;
-classificationToToken[SemanticHighlightClassification.XmlDocCommentEntityReference] = CustomTokenType.xmlDocCommentEntityReference;
+classificationToToken[SemanticHighlightClassification.XmlDocCommentEntityReference] =
+    CustomTokenType.xmlDocCommentEntityReference;
 classificationToToken[SemanticHighlightClassification.XmlDocCommentName] = CustomTokenType.xmlDocCommentName;
-classificationToToken[SemanticHighlightClassification.XmlDocCommentProcessingInstruction] = CustomTokenType.xmlDocCommentProcessingInstruction;
+classificationToToken[SemanticHighlightClassification.XmlDocCommentProcessingInstruction] =
+    CustomTokenType.xmlDocCommentProcessingInstruction;
 classificationToToken[SemanticHighlightClassification.XmlDocCommentText] = CustomTokenType.xmlDocCommentText;
 classificationToToken[SemanticHighlightClassification.XmlLiteralAttributeName] = undefined;
 classificationToToken[SemanticHighlightClassification.XmlLiteralAttributeQuotes] = undefined;
@@ -378,7 +403,8 @@ classificationToToken[SemanticHighlightClassification.RegexQuantifier] = CustomT
 classificationToToken[SemanticHighlightClassification.RegexGrouping] = CustomTokenType.regexGrouping;
 classificationToToken[SemanticHighlightClassification.RegexAlternation] = CustomTokenType.regexAlternation;
 classificationToToken[SemanticHighlightClassification.RegexText] = DefaultTokenType.regexp;
-classificationToToken[SemanticHighlightClassification.RegexSelfEscapedCharacter] = CustomTokenType.regexSelfEscapedCharacter;
+classificationToToken[SemanticHighlightClassification.RegexSelfEscapedCharacter] =
+    CustomTokenType.regexSelfEscapedCharacter;
 classificationToToken[SemanticHighlightClassification.RegexOtherEscape] = CustomTokenType.regexOtherEscape;
 
 const classificationModifierToTokenModifier: number[] = [];

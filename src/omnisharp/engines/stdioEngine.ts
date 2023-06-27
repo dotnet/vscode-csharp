@@ -7,7 +7,7 @@ import * as protocol from '../protocol';
 import * as utils from '../../common';
 import { CancellationToken } from '../../vscodeAdapter';
 import { ChildProcess, exec } from 'child_process';
-import { LaunchTarget } from "../../shared/launchTarget";
+import { LaunchTarget } from '../../shared/launchTarget';
 import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from '../requestQueue';
 import { EventEmitter } from 'events';
@@ -20,10 +20,7 @@ import { EventStream } from '../../eventStream';
 import CompositeDisposable from '../../compositeDisposable';
 import Disposable from '../../disposable';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
-import {
-    removeBOMFromBuffer,
-    removeBOMFromString,
-} from '../../utils/removeBom';
+import { removeBOMFromBuffer, removeBOMFromString } from '../../utils/removeBom';
 import { IEngine } from './IEngine';
 import { Events, OmniSharpServer } from '../server';
 import DefinitionMetadataDocumentProvider from '../../features/definitionMetadataDocumentProvider';
@@ -72,14 +69,17 @@ export class StdioEngine implements IEngine {
     ) {
         this._eventBus = eventBus;
         this._disposables = disposables;
-        this._requestQueue = new RequestQueueCollection(
-            this.eventStream,
-            8,
-            (request) => this._makeRequest(request)
-        );
+        this._requestQueue = new RequestQueueCollection(this.eventStream, 8, (request) => this._makeRequest(request));
     }
 
-    async registerProviders(server: OmniSharpServer, optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature, eventStream: EventStream, advisor: Advisor, testManager: TestManager): Promise<Disposable> {
+    async registerProviders(
+        server: OmniSharpServer,
+        optionProvider: OptionProvider,
+        languageMiddlewareFeature: LanguageMiddlewareFeature,
+        eventStream: EventStream,
+        advisor: Advisor,
+        testManager: TestManager
+    ): Promise<Disposable> {
         const documentSelector: vscode.DocumentSelector = {
             language: 'csharp',
         };
@@ -97,34 +97,126 @@ export class StdioEngine implements IEngine {
         sourceGeneratedDocumentProvider.register();
         localDisposables.add(sourceGeneratedDocumentProvider);
 
-        localDisposables.add(vscode.languages.registerCodeLensProvider(documentSelector, new OmniSharpCodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerDocumentHighlightProvider(documentSelector, new OmniSharpDocumentHighlightProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerDocumentSymbolProvider(documentSelector, new OmniSharpDocumentSymbolProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerHoverProvider(documentSelector, new OmniSharpHoverProvider(server, languageMiddlewareFeature)));
-        localDisposables.add(vscode.languages.registerRenameProvider(documentSelector, new OmniSharpRenameProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(
+            vscode.languages.registerCodeLensProvider(
+                documentSelector,
+                new OmniSharpCodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerDocumentHighlightProvider(
+                documentSelector,
+                new OmniSharpDocumentHighlightProvider(server, languageMiddlewareFeature)
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerDocumentSymbolProvider(
+                documentSelector,
+                new OmniSharpDocumentSymbolProvider(server, languageMiddlewareFeature)
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerHoverProvider(
+                documentSelector,
+                new OmniSharpHoverProvider(server, languageMiddlewareFeature)
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerRenameProvider(
+                documentSelector,
+                new OmniSharpRenameProvider(server, languageMiddlewareFeature)
+            )
+        );
         if (options.omnisharpOptions.useFormatting) {
-            localDisposables.add(vscode.languages.registerDocumentRangeFormattingEditProvider(documentSelector, new OmniSharpFormatProvider(server, languageMiddlewareFeature)));
-            localDisposables.add(vscode.languages.registerOnTypeFormattingEditProvider(documentSelector, new OmniSharpFormatProvider(server, languageMiddlewareFeature), '}', '/', '\n', ';'));
+            localDisposables.add(
+                vscode.languages.registerDocumentRangeFormattingEditProvider(
+                    documentSelector,
+                    new OmniSharpFormatProvider(server, languageMiddlewareFeature)
+                )
+            );
+            localDisposables.add(
+                vscode.languages.registerOnTypeFormattingEditProvider(
+                    documentSelector,
+                    new OmniSharpFormatProvider(server, languageMiddlewareFeature),
+                    '}',
+                    '/',
+                    '\n',
+                    ';'
+                )
+            );
         }
         const completionProvider = new OmniSharpCompletionProvider(server, languageMiddlewareFeature);
-        localDisposables.add(vscode.languages.registerCompletionItemProvider(documentSelector, completionProvider, '.', ' '));
-        localDisposables.add(vscode.commands.registerCommand(CompletionAfterInsertCommand, async (item, document) => completionProvider.afterInsert(item, document)));
-        localDisposables.add(vscode.languages.registerWorkspaceSymbolProvider(new OmniSharpWorkspaceSymbolProvider(server, optionProvider, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
-        localDisposables.add(vscode.languages.registerSignatureHelpProvider(documentSelector, new OmniSharpSignatureHelpProvider(server, languageMiddlewareFeature), '(', ','));
+        localDisposables.add(
+            vscode.languages.registerCompletionItemProvider(documentSelector, completionProvider, '.', ' ')
+        );
+        localDisposables.add(
+            vscode.commands.registerCommand(CompletionAfterInsertCommand, async (item, document) =>
+                completionProvider.afterInsert(item, document)
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerWorkspaceSymbolProvider(
+                new OmniSharpWorkspaceSymbolProvider(
+                    server,
+                    optionProvider,
+                    languageMiddlewareFeature,
+                    sourceGeneratedDocumentProvider
+                )
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerSignatureHelpProvider(
+                documentSelector,
+                new OmniSharpSignatureHelpProvider(server, languageMiddlewareFeature),
+                '(',
+                ','
+            )
+        );
         // Since the FixAllProviders registers its own commands, we must instantiate it and add it to the localDisposables
         // so that it will be cleaned up if OmniSharp is restarted.
         const fixAllProvider = new OmniSharpFixAllProvider(server, languageMiddlewareFeature);
         localDisposables.add(fixAllProvider);
-        localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, fixAllProvider, OmniSharpFixAllProvider.metadata));
+        localDisposables.add(
+            vscode.languages.registerCodeActionsProvider(
+                documentSelector,
+                fixAllProvider,
+                OmniSharpFixAllProvider.metadata
+            )
+        );
         localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature, optionProvider));
 
-        const definitionProvider = new OmniSharpDefinitionProvider(server, definitionMetadataDocumentProvider, sourceGeneratedDocumentProvider, languageMiddlewareFeature);
+        const definitionProvider = new OmniSharpDefinitionProvider(
+            server,
+            definitionMetadataDocumentProvider,
+            sourceGeneratedDocumentProvider,
+            languageMiddlewareFeature
+        );
         localDisposables.add(vscode.languages.registerTypeDefinitionProvider(documentSelector, definitionProvider));
-        localDisposables.add(vscode.languages.registerTypeDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
+        localDisposables.add(
+            vscode.languages.registerTypeDefinitionProvider(
+                { scheme: definitionMetadataDocumentProvider.scheme },
+                definitionProvider
+            )
+        );
         localDisposables.add(vscode.languages.registerDefinitionProvider(documentSelector, definitionProvider));
-        localDisposables.add(vscode.languages.registerDefinitionProvider({ scheme: definitionMetadataDocumentProvider.scheme }, definitionProvider));
-        localDisposables.add(vscode.languages.registerReferenceProvider(documentSelector, new OmniSharpReferenceProvider(server, languageMiddlewareFeature, sourceGeneratedDocumentProvider)));
-        localDisposables.add(vscode.languages.registerImplementationProvider(documentSelector, new OmniSharpImplementationProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(
+            vscode.languages.registerDefinitionProvider(
+                { scheme: definitionMetadataDocumentProvider.scheme },
+                definitionProvider
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerReferenceProvider(
+                documentSelector,
+                new OmniSharpReferenceProvider(server, languageMiddlewareFeature, sourceGeneratedDocumentProvider)
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerImplementationProvider(
+                documentSelector,
+                new OmniSharpImplementationProvider(server, languageMiddlewareFeature)
+            )
+        );
 
         localDisposables.add(forwardChanges(server));
         // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
@@ -134,12 +226,33 @@ export class StdioEngine implements IEngine {
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
 
         localDisposables.add(trackVirtualDocuments(server, eventStream));
-        localDisposables.add(vscode.languages.registerFoldingRangeProvider(documentSelector, new OmniSharpStructureProvider(server, languageMiddlewareFeature)));
+        localDisposables.add(
+            vscode.languages.registerFoldingRangeProvider(
+                documentSelector,
+                new OmniSharpStructureProvider(server, languageMiddlewareFeature)
+            )
+        );
         localDisposables.add(fileOpenClose(server));
 
-        const semanticTokensProvider = new OmniSharpSemanticTokensProvider(server, optionProvider, languageMiddlewareFeature);
-        localDisposables.add(vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
-        localDisposables.add(vscode.languages.registerDocumentRangeSemanticTokensProvider(documentSelector, semanticTokensProvider, semanticTokensProvider.getLegend()));
+        const semanticTokensProvider = new OmniSharpSemanticTokensProvider(
+            server,
+            optionProvider,
+            languageMiddlewareFeature
+        );
+        localDisposables.add(
+            vscode.languages.registerDocumentSemanticTokensProvider(
+                documentSelector,
+                semanticTokensProvider,
+                semanticTokensProvider.getLegend()
+            )
+        );
+        localDisposables.add(
+            vscode.languages.registerDocumentRangeSemanticTokensProvider(
+                documentSelector,
+                semanticTokensProvider,
+                semanticTokensProvider.getLegend()
+            )
+        );
 
         const inlayHintsProvider = new OmniSharpInlayHintProvider(server, languageMiddlewareFeature);
         localDisposables.add(vscode.languages.registerInlayHintsProvider(documentSelector, inlayHintsProvider));
@@ -159,29 +272,24 @@ export class StdioEngine implements IEngine {
                 // processes are *not* killed but become root
                 // processes. Therefore we use TASKKILL.EXE
                 cleanupPromise = new Promise<void>((resolve, reject) => {
-                    const killer = exec(
-                        `taskkill /F /T /PID ${this._serverProcess!.pid}`,
-                        (err, _stdout, _stderr) => {
-                            if (err) {
-                                return reject(err);
-                            }
+                    const killer = exec(`taskkill /F /T /PID ${this._serverProcess!.pid}`, (err, _stdout, _stderr) => {
+                        if (err) {
+                            return reject(err);
                         }
-                    );
+                    });
 
                     killer.on('exit', resolve);
                     killer.on('error', reject);
                 });
             } else {
                 // Kill Unix process and children
-                cleanupPromise = utils
-                    .getUnixChildProcessIds(this._serverProcess.pid!)
-                    .then((children) => {
-                        for (const child of children) {
-                            process.kill(child, 'SIGTERM');
-                        }
+                cleanupPromise = utils.getUnixChildProcessIds(this._serverProcess.pid!).then((children) => {
+                    for (const child of children) {
+                        process.kill(child, 'SIGTERM');
+                    }
 
-                        this._serverProcess!.kill('SIGTERM');
-                    });
+                    this._serverProcess!.kill('SIGTERM');
+                });
             }
         }
 
@@ -204,14 +312,9 @@ export class StdioEngine implements IEngine {
         }
     }
 
-    public addListener<T = object>(
-        event: string,
-        listener: (e: T) => void
-    ): Disposable {
+    public addListener<T = object>(event: string, listener: (e: T) => void): Disposable {
         this._eventBus.addListener(event, listener);
-        return new Disposable(() =>
-            this._eventBus.removeListener(event, listener)
-        );
+        return new Disposable(() => this._eventBus.removeListener(event, listener));
     }
 
     public async start(
@@ -242,7 +345,7 @@ export class StdioEngine implements IEngine {
 
         this._serverProcess = launchResult.process;
         if (this._serverProcess === undefined) {
-            throw new Error("Server launch failed.");
+            throw new Error('Server launch failed.');
         }
 
         this._serverProcess.stderr!.on('data', (data: Buffer) => {
@@ -309,9 +412,7 @@ export class StdioEngine implements IEngine {
         line = removeBOMFromString(line);
 
         if (line[0] !== '{') {
-            this.eventStream.post(
-                new ObservableEvents.OmnisharpServerMessage(line)
-            );
+            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(line));
             return;
         }
 
@@ -330,32 +431,21 @@ export class StdioEngine implements IEngine {
 
         switch (packet.Type) {
             case 'response':
-                this._handleResponsePacket(
-                    <protocol.WireProtocol.ResponsePacket>packet
-                );
+                this._handleResponsePacket(<protocol.WireProtocol.ResponsePacket>packet);
                 break;
             case 'event':
-                this._handleEventPacket(
-                    <protocol.WireProtocol.EventPacket>packet
-                );
+                this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
                 break;
             default:
                 this.eventStream.post(
-                    new ObservableEvents.OmnisharpServerMessage(
-                        `Unknown packet type: ${packet.Type}`
-                    )
+                    new ObservableEvents.OmnisharpServerMessage(`Unknown packet type: ${packet.Type}`)
                 );
                 break;
         }
     }
 
-    private _handleResponsePacket(
-        packet: protocol.WireProtocol.ResponsePacket
-    ) {
-        const request = this._requestQueue.dequeue(
-            packet.Command,
-            packet.Request_seq
-        );
+    private _handleResponsePacket(packet: protocol.WireProtocol.ResponsePacket) {
+        const request = this._requestQueue.dequeue(packet.Command, packet.Request_seq);
 
         if (!request) {
             this.eventStream.post(
@@ -381,19 +471,11 @@ export class StdioEngine implements IEngine {
         this._requestQueue.drain();
     }
 
-    private _handleEventPacket(
-        packet: protocol.WireProtocol.EventPacket
-    ): void {
+    private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
         if (packet.Event === 'log') {
-            const entry = <{ LogLevel: string; Name: string; Message: string }>(
-                packet.Body
-            );
+            const entry = <{ LogLevel: string; Name: string; Message: string }>packet.Body;
             this.eventStream.post(
-                new ObservableEvents.OmnisharpEventPacketReceived(
-                    entry.LogLevel,
-                    entry.Name,
-                    entry.Message
-                )
+                new ObservableEvents.OmnisharpEventPacketReceived(entry.LogLevel, entry.Name, entry.Message)
             );
         } else {
             // fwd all other events
@@ -415,9 +497,7 @@ export class StdioEngine implements IEngine {
             Arguments: request.data,
         };
 
-        this.eventStream.post(
-            new ObservableEvents.OmnisharpRequestMessage(request, id)
-        );
+        this.eventStream.post(new ObservableEvents.OmnisharpRequestMessage(request, id));
         this._serverProcess?.stdin!.write(JSON.stringify(requestPacket) + '\n');
         return id;
     }
@@ -427,11 +507,7 @@ export class StdioEngine implements IEngine {
     }
 
     // --- requests et al
-    public async makeRequest<TResponse>(
-        command: string,
-        data?: any,
-        token?: CancellationToken
-    ): Promise<TResponse> {
+    public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
         let request: Request;
 
         const promise = new Promise<TResponse>((resolve, reject) => {

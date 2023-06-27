@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DotnetInfo } from "../utils/getDotnetInfo";
+import { DotnetInfo } from '../utils/getDotnetInfo';
 
 export interface IGetDotnetInfo {
     (dotNetCliPaths: string[]): Promise<DotnetInfo>;

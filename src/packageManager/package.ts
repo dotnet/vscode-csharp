@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IPackage } from "./IPackage";
+import { IPackage } from './IPackage';
 
 export interface Package extends IPackage {
     installPath?: string;

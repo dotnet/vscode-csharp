@@ -3,19 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { exec } from "child_process";
+import { exec } from 'child_process';
 import * as path from 'path';
-import * as semver from "semver";
-import { promisify } from "util";
-import { HostExecutableInformation } from "./constants/hostExecutableInformation";
-import { IHostExecutableResolver } from "./constants/IHostExecutableResolver";
-import { Options } from "./options";
-import { PlatformInformation } from "./platform";
+import * as semver from 'semver';
+import { promisify } from 'util';
+import { HostExecutableInformation } from './constants/hostExecutableInformation';
+import { IHostExecutableResolver } from './constants/IHostExecutableResolver';
+import { Options } from './options';
+import { PlatformInformation } from './platform';
 
 export class DotnetResolver implements IHostExecutableResolver {
-    private readonly minimumDotnetVersion = "6.0.100";
+    private readonly minimumDotnetVersion = '6.0.100';
 
-    constructor(private platformInfo: PlatformInformation) { }
+    constructor(private platformInfo: PlatformInformation) {}
 
     public async getHostExecutableInfo(options: Options): Promise<HostExecutableInformation> {
         const dotnet = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
@@ -38,13 +38,15 @@ export class DotnetResolver implements IHostExecutableResolver {
         }
 
         if (semver.lt(dotnetVersion, this.minimumDotnetVersion)) {
-            throw new Error(`Found dotnet version ${dotnetVersion}. Minimum required version is ${this.minimumDotnetVersion}.`);
+            throw new Error(
+                `Found dotnet version ${dotnetVersion}. Minimum required version is ${this.minimumDotnetVersion}.`
+            );
         }
 
         return {
             version: result.stdout,
             path: options.commonOptions.dotnetPath,
-            env
+            env,
         };
     }
 }

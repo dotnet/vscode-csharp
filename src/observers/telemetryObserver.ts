@@ -5,15 +5,33 @@
 
 import * as crypto from 'crypto';
 import { machineIdSync } from 'node-machine-id';
-import { PlatformInformation } from "../shared/platform";
-import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration, TelemetryErrorEvent, OmnisharpInitialisation } from "../omnisharp/loggingEvents";
-import { PackageError } from "../packageManager/packageError";
-import { EventType } from "../omnisharp/eventType";
-import { getDotnetInfo, DotnetInfo } from "../utils/getDotnetInfo";
+import { PlatformInformation } from '../shared/platform';
+import {
+    BaseEvent,
+    InstallationFailure,
+    TestExecutionCountReport,
+    TelemetryEventWithMeasures,
+    TelemetryEvent,
+    ProjectConfiguration,
+    TelemetryErrorEvent,
+    OmnisharpInitialisation,
+} from '../omnisharp/loggingEvents';
+import { PackageError } from '../packageManager/packageError';
+import { EventType } from '../omnisharp/eventType';
+import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
 
 export interface ITelemetryReporter {
-    sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }): void;
-    sendTelemetryErrorEvent(eventName: string, properties?: { [key: string]: string; }, measures?: { [key: string]: number; }, errorProps?: string[]): void;
+    sendTelemetryEvent(
+        eventName: string,
+        properties?: { [key: string]: string },
+        measures?: { [key: string]: number }
+    ): void;
+    sendTelemetryErrorEvent(
+        eventName: string,
+        properties?: { [key: string]: string },
+        measures?: { [key: string]: number },
+        errorProps?: string[]
+    ): void;
 }
 
 export class TelemetryObserver {
@@ -36,7 +54,7 @@ export class TelemetryObserver {
                 this.handleOmnisharpInitialisation(<OmnisharpInitialisation>event);
                 break;
             case EventType.PackageInstallation:
-                this.reporter.sendTelemetryEvent("AcquisitionStart");
+                this.reporter.sendTelemetryEvent('AcquisitionStart');
                 break;
             case EventType.InstallationFailure:
                 this.handleInstallationFailure(<InstallationFailure>event, telemetryProps);
@@ -53,12 +71,21 @@ export class TelemetryObserver {
                 break;
             case EventType.TelemetryEvent: {
                 const telemetryEvent = <TelemetryEvent>event;
-                this.reporter.sendTelemetryEvent(telemetryEvent.eventName, telemetryEvent.properties, telemetryEvent.measures);
+                this.reporter.sendTelemetryEvent(
+                    telemetryEvent.eventName,
+                    telemetryEvent.properties,
+                    telemetryEvent.measures
+                );
                 break;
             }
             case EventType.TelemetryErrorEvent: {
                 const telemetryErrorEvent = <TelemetryErrorEvent>event;
-                this.reporter.sendTelemetryErrorEvent(telemetryErrorEvent.eventName, telemetryErrorEvent.properties, telemetryErrorEvent.measures, telemetryErrorEvent.errorProps);
+                this.reporter.sendTelemetryErrorEvent(
+                    telemetryErrorEvent.eventName,
+                    telemetryErrorEvent.properties,
+                    telemetryErrorEvent.measures,
+                    telemetryErrorEvent.errorProps
+                );
                 break;
             }
             case EventType.ProjectConfigurationReceived:
@@ -76,12 +103,12 @@ export class TelemetryObserver {
         this.solutionId = this.createSolutionId(event.solutionPath);
     }
 
-    private handleInstallationSuccess(telemetryProps: { [key: string]: string; }) {
+    private handleInstallationSuccess(telemetryProps: { [key: string]: string }) {
         telemetryProps['installStage'] = 'completeSuccess';
         this.reporter.sendTelemetryEvent('AcquisitionSucceeded', telemetryProps);
     }
 
-    private handleInstallationFailure(event: InstallationFailure, telemetryProps: { [key: string]: string; }) {
+    private handleInstallationFailure(event: InstallationFailure, telemetryProps: { [key: string]: string }) {
         telemetryProps['installStage'] = event.stage;
         if (event.error instanceof PackageError) {
             // we can log the message in a PackageError to telemetry as we do not put PII in PackageError messages
@@ -103,25 +130,25 @@ export class TelemetryObserver {
 
     private handleProjectConfigurationReceived(event: ProjectConfiguration, telemetryProps: { [key: string]: string }) {
         const projectConfig = event.projectConfiguration;
-        telemetryProps['SolutionId'] = this.solutionId ?? "";
+        telemetryProps['SolutionId'] = this.solutionId ?? '';
         telemetryProps['ProjectId'] = projectConfig.ProjectId;
         telemetryProps['SessionId'] = projectConfig.SessionId;
-        telemetryProps['OutputType'] = projectConfig.OutputKind?.toString() ?? "";
-        telemetryProps['ProjectCapabilities'] = projectConfig.ProjectCapabilities?.join(" ") ?? "";
-        telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join("|");
-        telemetryProps['References'] = projectConfig.References.join("|");
-        telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join("|");
-        telemetryProps['FileCounts'] = projectConfig.FileCounts?.join("|") ?? "";
-        telemetryProps['NetSdkVersion'] = this.dotnetInfo?.Version ?? "";
+        telemetryProps['OutputType'] = projectConfig.OutputKind?.toString() ?? '';
+        telemetryProps['ProjectCapabilities'] = projectConfig.ProjectCapabilities?.join(' ') ?? '';
+        telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join('|');
+        telemetryProps['References'] = projectConfig.References.join('|');
+        telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join('|');
+        telemetryProps['FileCounts'] = projectConfig.FileCounts?.join('|') ?? '';
+        telemetryProps['NetSdkVersion'] = this.dotnetInfo?.Version ?? '';
         telemetryProps['useModernNet'] = this.useModernNet.toString();
         telemetryProps['sdkStyleProject'] = projectConfig.SdkStyleProject.toString();
-        this.reporter.sendTelemetryEvent("ProjectConfiguration", telemetryProps);
+        this.reporter.sendTelemetryEvent('ProjectConfiguration', telemetryProps);
     }
 
     private getTelemetryProps() {
         const telemetryProps: { [key: string]: string } = {
             'platform.architecture': this.platformInfo.architecture,
-            'platform.platform': this.platformInfo.platform
+            'platform.platform': this.platformInfo.platform,
         };
 
         if (this.platformInfo.distribution) {
@@ -137,6 +164,9 @@ export class TelemetryObserver {
         const machineId = machineIdSync();
         const machineHash = crypto.createHash('sha256').update(machineId).digest('hex');
 
-        return crypto.createHash('sha256').update(solutionHash + machineHash).digest('hex');
+        return crypto
+            .createHash('sha256')
+            .update(solutionHash + machineHash)
+            .digest('hex');
     }
 }

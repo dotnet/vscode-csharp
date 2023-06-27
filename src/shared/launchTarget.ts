@@ -13,7 +13,7 @@ export enum LaunchTargetKind {
     Folder,
     Csx,
     Cake,
-    LiveShare
+    LiveShare,
 }
 
 /**
@@ -35,6 +35,6 @@ export function createLaunchTargetForSolution(resource: vscode.Uri): LaunchTarge
         description: vscode.workspace.asRelativePath(dirname),
         target: resource.fsPath,
         directory: path.dirname(resource.fsPath),
-        workspaceKind: LaunchTargetKind.Solution
+        workspaceKind: LaunchTargetKind.Solution,
     };
 }

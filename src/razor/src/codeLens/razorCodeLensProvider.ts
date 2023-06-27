@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
@@ -15,18 +14,15 @@ import { LanguageKind } from '../rpc/languageKind';
 import { RazorCodeLens } from './razorCodeLens';
 import { MappingHelpers } from '../mapping/mappingHelpers';
 
-export class RazorCodeLensProvider
-    extends RazorLanguageFeatureBase
-    implements vscode.CodeLensProvider {
-
+export class RazorCodeLensProvider extends RazorLanguageFeatureBase implements vscode.CodeLensProvider {
     public onDidChangeCodeLenses: vscode.Event<void>;
 
     constructor(
         documentSynchronizer: RazorDocumentSynchronizer,
         documentManager: RazorDocumentManager,
         serviceClient: RazorLanguageServiceClient,
-        logger: RazorLogger) {
-
+        logger: RazorLogger
+    ) {
         super(documentSynchronizer, documentManager, serviceClient, logger);
 
         const onCodeLensChangedEmitter = new vscode.EventEmitter<void>();
@@ -40,9 +36,11 @@ export class RazorCodeLensProvider
             // Sometimes when a file already open in the editor is renamed, provideCodeLens would return empty
             // because the background C# document is not ready yet. So, when that happens we should manually invoke
             // a code lens refresh after waiting for a little while.
-            const openDocumentUris = vscode.workspace.textDocuments.filter(doc => !doc.isClosed).map(doc => doc.uri);
+            const openDocumentUris = vscode.workspace.textDocuments
+                .filter((doc) => !doc.isClosed)
+                .map((doc) => doc.uri);
             if (openDocumentUris.includes(event.document.uri)) {
-                await new Promise(r => setTimeout(r, 5000));
+                await new Promise((r) => setTimeout(r, 5000));
                 onCodeLensChangedEmitter.fire();
             }
         });
@@ -65,9 +63,10 @@ export class RazorCodeLensProvider
             const csharpDocument = razorDocument.csharpDocument;
 
             // Get all the code lenses that applies to our projected C# document.
-            const codeLenses = await vscode.commands.executeCommand<vscode.CodeLens[]>(
+            const codeLenses = (await vscode.commands.executeCommand<vscode.CodeLens[]>(
                 'vscode.executeCodeLensProvider',
-                csharpDocument.uri) as vscode.CodeLens[];
+                csharpDocument.uri
+            )) as vscode.CodeLens[];
             if (!codeLenses) {
                 return;
             }
@@ -78,9 +77,15 @@ export class RazorCodeLensProvider
                 const result = await this.serviceClient.mapToDocumentRanges(
                     LanguageKind.CSharp,
                     [codeLens.range],
-                    razorDocument.uri);
+                    razorDocument.uri
+                );
                 if (result && result.ranges.length > 0) {
-                    const newCodeLens = new RazorCodeLens(result.ranges[0], razorDocument.uri, document, codeLens.command);
+                    const newCodeLens = new RazorCodeLens(
+                        result.ranges[0],
+                        razorDocument.uri,
+                        document,
+                        codeLens.command
+                    );
                     remappedCodeLenses.push(newCodeLens);
                 } else {
                     // This means this CodeLens was for non-user code. We can safely ignore those.
@@ -88,7 +93,6 @@ export class RazorCodeLensProvider
             }
 
             return remappedCodeLenses;
-
         } catch (error) {
             this.logger.logWarning(`provideCodeLens failed with ${error}`);
             return [];
@@ -101,7 +105,10 @@ export class RazorCodeLensProvider
         }
     }
 
-    private async resolveRazorCodeLens(codeLens: RazorCodeLens, token: vscode.CancellationToken): Promise<vscode.CodeLens> {
+    private async resolveRazorCodeLens(
+        codeLens: RazorCodeLens,
+        token: vscode.CancellationToken
+    ): Promise<vscode.CodeLens> {
         // Initialize with default values.
         codeLens.command = {
             title: '',
@@ -121,13 +128,18 @@ export class RazorCodeLensProvider
                 return codeLens;
             }
 
-            const references = await vscode.commands.executeCommand<vscode.Location[]>(
+            const references = (await vscode.commands.executeCommand<vscode.Location[]>(
                 'vscode.executeReferenceProvider',
                 projection.uri,
-                projection.position) as vscode.Location[];
+                projection.position
+            )) as vscode.Location[];
 
             const remappedReferences = await MappingHelpers.remapGeneratedFileLocations(
-                references, this.serviceClient, this.logger, token);
+                references,
+                this.serviceClient,
+                this.logger,
+                token
+            );
 
             // We now have a list of references to show in the CodeLens.
             const count = remappedReferences.length;
@@ -138,7 +150,6 @@ export class RazorCodeLensProvider
             };
 
             return codeLens;
-
         } catch (error) {
             this.logger.logWarning(`resolveCodeLens failed with ${error}`);
             return codeLens;

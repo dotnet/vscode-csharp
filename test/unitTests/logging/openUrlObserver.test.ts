@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OpenURLObserver } from "../../../src/observers/openUrlObserver";
-import { vscode, Uri } from "../../../src/vscodeAdapter";
-import { getFakeVsCode } from "../testAssets/fakes";
-import { OpenURL } from "../../../src/omnisharp/loggingEvents";
-import { expect } from "chai";
+import { OpenURLObserver } from '../../../src/observers/openUrlObserver';
+import { vscode, Uri } from '../../../src/vscodeAdapter';
+import { getFakeVsCode } from '../testAssets/fakes';
+import { OpenURL } from '../../../src/omnisharp/loggingEvents';
+import { expect } from 'chai';
 
 suite(`${OpenURLObserver.name}`, () => {
     let observer: OpenURLObserver;
     let vscode: vscode;
     let valueToBeParsed: string | undefined;
-    const url = "someUrl";
+    const url = 'someUrl';
     let openExternalCalled: boolean;
 
     setup(() => {
@@ -33,7 +33,7 @@ suite(`${OpenURLObserver.name}`, () => {
         observer = new OpenURLObserver(vscode);
     });
 
-    test("openExternal function is called and the url is passed through the vscode.Uri.parse function", () => {
+    test('openExternal function is called and the url is passed through the vscode.Uri.parse function', () => {
         const event = new OpenURL(url);
         observer.post(event);
         expect(valueToBeParsed).to.be.equal(url);

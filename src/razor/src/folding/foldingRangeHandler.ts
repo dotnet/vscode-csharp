@@ -13,23 +13,34 @@ import { SerializableFoldingRangeResponse } from './serializableFoldingRangeResp
 
 export class FoldingRangeHandler {
     private static readonly provideFoldingRange = 'razor/foldingRange';
-    private foldingRangeRequestType: RequestType<SerializableFoldingRangeParams, SerializableFoldingRangeResponse, any> = new RequestType(FoldingRangeHandler.provideFoldingRange);
-    private emptyFoldingRangeReponse: SerializableFoldingRangeResponse = new SerializableFoldingRangeResponse(new Array<FoldingRange>(), new Array<FoldingRange>());
+    private foldingRangeRequestType: RequestType<
+        SerializableFoldingRangeParams,
+        SerializableFoldingRangeResponse,
+        any
+    > = new RequestType(FoldingRangeHandler.provideFoldingRange);
+    private emptyFoldingRangeReponse: SerializableFoldingRangeResponse = new SerializableFoldingRangeResponse(
+        new Array<FoldingRange>(),
+        new Array<FoldingRange>()
+    );
 
     constructor(
         private readonly serverClient: RazorLanguageServerClient,
         private readonly documentManager: RazorDocumentManager,
-        private readonly logger: RazorLogger) { }
+        private readonly logger: RazorLogger
+    ) {}
 
     public async register() {
-        await this.serverClient.onRequestWithParams<SerializableFoldingRangeParams, SerializableFoldingRangeResponse, any>(
-            this.foldingRangeRequestType,
-            async (request, token) => this.provideFoldingRanges(request, token));
+        await this.serverClient.onRequestWithParams<
+            SerializableFoldingRangeParams,
+            SerializableFoldingRangeResponse,
+            any
+        >(this.foldingRangeRequestType, async (request, token) => this.provideFoldingRanges(request, token));
     }
 
     private async provideFoldingRanges(
         foldingRangeParams: SerializableFoldingRangeParams,
-        _: vscode.CancellationToken) {
+        _: vscode.CancellationToken
+    ) {
         try {
             const razorDocumentUri = vscode.Uri.parse(foldingRangeParams.textDocument.uri, true);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
@@ -40,13 +51,28 @@ export class FoldingRangeHandler {
             const virtualHtmlUri = razorDocument.htmlDocument.uri;
             const virtualCSharpUri = razorDocument.csharpDocument.uri;
 
-            const htmlFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>('vscode.executeFoldingRangeProvider', virtualHtmlUri);
-            const csharpFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>('vscode.executeFoldingRangeProvider', virtualCSharpUri);
+            const htmlFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>(
+                'vscode.executeFoldingRangeProvider',
+                virtualHtmlUri
+            );
+            const csharpFoldingRanges = await vscode.commands.executeCommand<vscode.FoldingRange[]>(
+                'vscode.executeFoldingRangeProvider',
+                virtualCSharpUri
+            );
 
-            const convertedHtmlFoldingRanges = htmlFoldingRanges === undefined ? new Array<FoldingRange>() : this.convertFoldingRanges(htmlFoldingRanges);
-            const convertedCSharpFoldingRanges = csharpFoldingRanges === undefined ? new Array<FoldingRange>() : this.convertFoldingRanges(csharpFoldingRanges);
+            const convertedHtmlFoldingRanges =
+                htmlFoldingRanges === undefined
+                    ? new Array<FoldingRange>()
+                    : this.convertFoldingRanges(htmlFoldingRanges);
+            const convertedCSharpFoldingRanges =
+                csharpFoldingRanges === undefined
+                    ? new Array<FoldingRange>()
+                    : this.convertFoldingRanges(csharpFoldingRanges);
 
-            const response = new SerializableFoldingRangeResponse(convertedHtmlFoldingRanges, convertedCSharpFoldingRanges);
+            const response = new SerializableFoldingRangeResponse(
+                convertedHtmlFoldingRanges,
+                convertedCSharpFoldingRanges
+            );
             return response;
         } catch (error) {
             this.logger.logWarning(`${FoldingRangeHandler.provideFoldingRange} failed with ${error}`);
@@ -57,7 +83,7 @@ export class FoldingRangeHandler {
 
     private convertFoldingRanges(foldingRanges: vscode.FoldingRange[]) {
         const convertedFoldingRanges = new Array<FoldingRange>();
-        foldingRanges.forEach(foldingRange => {
+        foldingRanges.forEach((foldingRange) => {
             const convertedFoldingRange: FoldingRange = {
                 startLine: foldingRange.start,
                 startCharacter: 0,

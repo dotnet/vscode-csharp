@@ -15,30 +15,42 @@ import { SerializableColorPresentationParams } from './serializableColorPresenta
 
 export class ColorPresentationHandler {
     private static readonly provideHtmlColorPresentation = 'razor/provideHtmlColorPresentation';
-    private colorPresentationRequestType: RequestType<SerializableColorPresentationParams, SerializableColorPresentation[], any> =
-        new RequestType(ColorPresentationHandler.provideHtmlColorPresentation);
+    private colorPresentationRequestType: RequestType<
+        SerializableColorPresentationParams,
+        SerializableColorPresentation[],
+        any
+    > = new RequestType(ColorPresentationHandler.provideHtmlColorPresentation);
     private emptyColorInformationResponse: SerializableColorPresentation[] = [];
 
     constructor(
         private readonly documentManager: RazorDocumentManager,
         private readonly serverClient: RazorLanguageServerClient,
-        private readonly logger: RazorLogger) {
-    }
+        private readonly logger: RazorLogger
+    ) {}
 
     public async register() {
-        await this.serverClient.onRequestWithParams<SerializableColorPresentationParams, SerializableColorPresentation[], any>(
+        await this.serverClient.onRequestWithParams<
+            SerializableColorPresentationParams,
+            SerializableColorPresentation[],
+            any
+        >(
             this.colorPresentationRequestType,
-            async (request: SerializableColorPresentationParams, token: vscode.CancellationToken) => this.provideHtmlColorPresentation(request, token));
+            async (request: SerializableColorPresentationParams, token: vscode.CancellationToken) =>
+                this.provideHtmlColorPresentation(request, token)
+        );
     }
 
     private async provideHtmlColorPresentation(
         colorPresentationParams: SerializableColorPresentationParams,
-        _: vscode.CancellationToken) {
+        _: vscode.CancellationToken
+    ) {
         try {
             const razorDocumentUri = vscode.Uri.parse(`${colorPresentationParams.textDocument.uri}`, true);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
             if (razorDocument === undefined) {
-                this.logger.logWarning(`Could not find Razor document ${razorDocumentUri}; returning empty color information.`);
+                this.logger.logWarning(
+                    `Could not find Razor document ${razorDocumentUri}; returning empty color information.`
+                );
                 return this.emptyColorInformationResponse;
             }
 
@@ -46,13 +58,15 @@ export class ColorPresentationHandler {
                 colorPresentationParams.color.red,
                 colorPresentationParams.color.green,
                 colorPresentationParams.color.blue,
-                colorPresentationParams.color.alpha);
+                colorPresentationParams.color.alpha
+            );
             const virtualHtmlUri = razorDocument.htmlDocument.uri;
 
             const colorPresentations = await vscode.commands.executeCommand<vscode.ColorPresentation[]>(
                 'vscode.executeColorPresentationProvider',
                 color,
-                new ColorPresentationContext(virtualHtmlUri, colorPresentationParams.range));
+                new ColorPresentationContext(virtualHtmlUri, colorPresentationParams.range)
+            );
 
             const serializableColorPresentations = this.SerializeColorPresentations(colorPresentations);
             return serializableColorPresentations;
@@ -83,7 +97,8 @@ export class ColorPresentationHandler {
             const serializableColorPresentation = new SerializableColorPresentation(
                 colorPresentation.label,
                 serializedTextEdit,
-                serializableAdditionalTextEdits);
+                serializableAdditionalTextEdits
+            );
             serializableColorPresentations.push(serializableColorPresentation);
         }
 

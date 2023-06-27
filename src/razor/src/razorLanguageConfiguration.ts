@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorLanguage } from './razorLanguage';
 
@@ -33,13 +32,17 @@ export class RazorLanguageConfiguration {
             onEnterRules: [
                 {
                     beforeText: new RegExp(
-                        `<(?!(?:${VOID_ELEMENTS.join('|')}))([_:\\w][_:\\w-.\\d]*)([^/>]*(?!/)>)[^<]*$`, 'i'),
+                        `<(?!(?:${VOID_ELEMENTS.join('|')}))([_:\\w][_:\\w-.\\d]*)([^/>]*(?!/)>)[^<]*$`,
+                        'i'
+                    ),
                     afterText: /^<\/([_:\w][_:\w-.\d]*)\s*>/i,
                     action: { indentAction: vscode.IndentAction.IndentOutdent },
                 },
                 {
                     beforeText: new RegExp(
-                        `<(?!(?:${VOID_ELEMENTS.join('|')}))(\\w[\\w\\d]*)([^/>]*(?!/)>)[^<]*$`, 'i'),
+                        `<(?!(?:${VOID_ELEMENTS.join('|')}))(\\w[\\w\\d]*)([^/>]*(?!/)>)[^<]*$`,
+                        'i'
+                    ),
                     action: { indentAction: vscode.IndentAction.Indent },
                 },
             ],

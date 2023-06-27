@@ -6,7 +6,5 @@
 import { DocumentUri } from 'vscode-languageclient/node';
 
 export class RemoveDynamicFileParams {
-    constructor(
-        public readonly razorFiles: DocumentUri[]) {
-    }
+    constructor(public readonly razorFiles: DocumentUri[]) {}
 }

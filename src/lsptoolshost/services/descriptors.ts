@@ -3,7 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Formatters, MessageDelimiters, ServiceJsonRpcDescriptor, ServiceMoniker, ServiceRpcDescriptor } from '@microsoft/servicehub-framework';
+import {
+    Formatters,
+    MessageDelimiters,
+    ServiceJsonRpcDescriptor,
+    ServiceMoniker,
+    ServiceRpcDescriptor,
+} from '@microsoft/servicehub-framework';
 
 export default class Descriptors {
     /**
@@ -14,15 +20,16 @@ export default class Descriptors {
         new ServiceJsonRpcDescriptor(
             ServiceMoniker.create('Microsoft.CodeAnalysis.LanguageClient.SolutionSnapshotProvider', '0.1'),
             Formatters.MessagePack,
-            MessageDelimiters.BigEndianInt32LengthHeader,
-        ),
+            MessageDelimiters.BigEndianInt32LengthHeader
+        )
     );
 
     static readonly dotnetDebugConfigurationService: ServiceRpcDescriptor = new ServiceJsonRpcDescriptor(
         ServiceMoniker.create('Microsoft.VisualStudio.Debugger.DotnetDebugConfigurationService', '0.1'),
-        Formatters.MessagePack, MessageDelimiters.BigEndianInt32LengthHeader,
+        Formatters.MessagePack,
+        MessageDelimiters.BigEndianInt32LengthHeader,
         {
-            protocolMajorVersion: 3
+            protocolMajorVersion: 3,
         }
     );
 }

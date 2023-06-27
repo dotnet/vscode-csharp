@@ -14,12 +14,19 @@ export class ParsedEnvironmentFile {
         this.Warning = warning;
     }
 
-    public static CreateFromFile(envFile: string, initialEnv: { [key: string]: any } | undefined): ParsedEnvironmentFile {
-        const content: string = fs.readFileSync(envFile, "utf8");
+    public static CreateFromFile(
+        envFile: string,
+        initialEnv: { [key: string]: any } | undefined
+    ): ParsedEnvironmentFile {
+        const content: string = fs.readFileSync(envFile, 'utf8');
         return this.CreateFromContent(content, envFile, initialEnv);
     }
 
-    public static CreateFromContent(content: string, envFile: string, initialEnv: { [key: string]: any } | undefined): ParsedEnvironmentFile {
+    public static CreateFromContent(
+        content: string,
+        envFile: string,
+        initialEnv: { [key: string]: any } | undefined
+    ): ParsedEnvironmentFile {
         // Remove UTF-8 BOM if present
         if (content.charAt(0) === '\uFEFF') {
             content = content.substring(1);
@@ -27,9 +34,9 @@ export class ParsedEnvironmentFile {
 
         const parseErrors: string[] = [];
         const safeInitialEnv = initialEnv ?? {};
-        const env = {...safeInitialEnv};
+        const env = { ...safeInitialEnv };
 
-        content.split("\n").forEach(line => {
+        content.split('\n').forEach((line) => {
             // Split the line between key and value
             const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
 
@@ -39,16 +46,15 @@ export class ParsedEnvironmentFile {
                     return;
                 }
 
-                let value = match[2] ?? "";
+                let value = match[2] ?? '';
                 if (value.length > 0 && value.charAt(0) === '"' && value.charAt(value.length - 1) === '"') {
-                    value = value.replace(/\\n/gm, "\n");
+                    value = value.replace(/\\n/gm, '\n');
                 }
 
-                value = value.replace(/(^['"]|['"]$)/g, "");
+                value = value.replace(/(^['"]|['"]$)/g, '');
 
                 env[key] = value;
-            }
-            else {
+            } else {
                 // Blank lines and lines starting with # are no parse errors
                 const comments = new RegExp(/^\s*(#|$)/);
                 if (!comments.test(line)) {
@@ -60,7 +66,7 @@ export class ParsedEnvironmentFile {
         // show error message if single lines cannot get parsed
         let warning: string | undefined;
         if (parseErrors.length !== 0) {
-            warning = `Ignoring non-parseable lines in envFile ${envFile}: ${parseErrors.join(", ")}.`;
+            warning = `Ignoring non-parseable lines in envFile ${envFile}: ${parseErrors.join(', ')}.`;
         }
 
         return new ParsedEnvironmentFile(env, warning);

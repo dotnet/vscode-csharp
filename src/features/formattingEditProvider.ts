@@ -6,18 +6,29 @@
 import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import { DocumentRangeFormattingEditProvider, FormattingOptions, CancellationToken, TextEdit, TextDocument, Range, Position } from 'vscode';
+import {
+    DocumentRangeFormattingEditProvider,
+    FormattingOptions,
+    CancellationToken,
+    TextEdit,
+    TextDocument,
+    Range,
+    Position,
+} from 'vscode';
 
 export default class OmniSharpFormatProvider extends AbstractSupport implements DocumentRangeFormattingEditProvider {
-
-    public async provideDocumentRangeFormattingEdits(document: TextDocument, range: Range, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
-
+    public async provideDocumentRangeFormattingEdits(
+        document: TextDocument,
+        range: Range,
+        options: FormattingOptions,
+        token: CancellationToken
+    ): Promise<TextEdit[]> {
         const request = <protocol.FormatRangeRequest>{
             FileName: document.fileName,
             Line: range.start.line,
             Column: range.start.character,
             EndLine: range.end.line,
-            EndColumn: range.end.character
+            EndColumn: range.end.character,
         };
 
         try {
@@ -25,19 +36,25 @@ export default class OmniSharpFormatProvider extends AbstractSupport implements 
             if (res && Array.isArray(res.Changes)) {
                 return res.Changes.map(OmniSharpFormatProvider._asEditOptionation);
             }
+        } catch {
+            /* empty */
         }
-        catch { /* empty */ }
 
         return [];
     }
 
-    public async provideOnTypeFormattingEdits(document: TextDocument, position: Position, ch: string, options: FormattingOptions, token: CancellationToken): Promise<TextEdit[]> {
-
+    public async provideOnTypeFormattingEdits(
+        document: TextDocument,
+        position: Position,
+        ch: string,
+        options: FormattingOptions,
+        token: CancellationToken
+    ): Promise<TextEdit[]> {
         const request = <protocol.FormatAfterKeystrokeRequest>{
             FileName: document.fileName,
             Line: position.line,
             Column: position.character,
-            Character: ch
+            Character: ch,
         };
 
         try {
@@ -45,8 +62,9 @@ export default class OmniSharpFormatProvider extends AbstractSupport implements 
             if (res && Array.isArray(res.Changes)) {
                 return res.Changes.map(OmniSharpFormatProvider._asEditOptionation);
             }
+        } catch {
+            /* empty */
         }
-        catch { /* empty */ }
 
         return [];
     }
@@ -54,6 +72,7 @@ export default class OmniSharpFormatProvider extends AbstractSupport implements 
     private static _asEditOptionation(change: protocol.TextChange): TextEdit {
         return new TextEdit(
             new Range(change.StartLine, change.StartColumn, change.EndLine, change.EndColumn),
-            change.NewText);
+            change.NewText
+        );
     }
 }

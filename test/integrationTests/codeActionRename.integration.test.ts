@@ -35,16 +35,27 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Code actions can rename and open files", async () => {
-        await vscode.commands.executeCommand("vscode.open", fileUri);
-        const codeActions = await vscode.commands.executeCommand<vscode.CodeAction[]>("vscode.executeCodeActionProvider", fileUri, new vscode.Range(0, 7, 0, 7));
-        const codeAction = codeActions.find(codeAction => codeAction.title == "Rename file to C.cs");
+    test('Code actions can rename and open files', async () => {
+        await vscode.commands.executeCommand('vscode.open', fileUri);
+        const codeActions = await vscode.commands.executeCommand<vscode.CodeAction[]>(
+            'vscode.executeCodeActionProvider',
+            fileUri,
+            new vscode.Range(0, 7, 0, 7)
+        );
+        const codeAction = codeActions.find((codeAction) => codeAction.title == 'Rename file to C.cs');
         expect(codeAction, "Didn't find rename class code action");
         isNotNull(codeAction?.command?.command);
         isNotNull(codeAction?.command?.arguments);
 
         await vscode.commands.executeCommand(codeAction.command.command, ...codeAction.command.arguments);
 
-        await assertWithPoll(() => { /* empty */ }, 15 * 1000, 500, _ => expect(vscode.window.activeTextEditor!.document.fileName).contains("C.cs"));
+        await assertWithPoll(
+            () => {
+                /* empty */
+            },
+            15 * 1000,
+            500,
+            (_) => expect(vscode.window.activeTextEditor!.document.fileName).contains('C.cs')
+        );
     });
 });

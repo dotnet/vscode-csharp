@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { LanguageKind } from '../rpc/languageKind';
 import { isRazorCSharpFile, getRazorDocumentUri } from '../razorConventions';
@@ -17,7 +16,8 @@ export class MappingHelpers {
         workspaceEdit: vscode.WorkspaceEdit,
         serviceClient: RazorLanguageServiceClient,
         logger: RazorLogger,
-        token: vscode.CancellationToken) {
+        token: vscode.CancellationToken
+    ) {
         const map = new Map<vscode.Uri, vscode.TextEdit[]>();
 
         // The returned edits will be for the projected C# documents. We now need to re-map that to the original document.
@@ -36,7 +36,13 @@ export class MappingHelpers {
 
             // Re-map each edit to its position in the original Razor document.
             for (const edit of edits) {
-                const remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(documentUri, edit, serviceClient, logger, token);
+                const remappedEdit = await MappingHelpers.remapGeneratedFileTextEdit(
+                    documentUri,
+                    edit,
+                    serviceClient,
+                    logger,
+                    token
+                );
 
                 if (remappedEdit) {
                     this.addElementToDictionary(map, documentUri, remappedEdit);
@@ -59,16 +65,11 @@ export class MappingHelpers {
         textEdit: vscode.TextEdit,
         serviceClient: RazorLanguageServiceClient,
         logger: RazorLogger,
-        _: vscode.CancellationToken): Promise<vscode.TextEdit | undefined> {
+        _: vscode.CancellationToken
+    ): Promise<vscode.TextEdit | undefined> {
+        const remappedResponse = await serviceClient.mapToDocumentRanges(LanguageKind.CSharp, [textEdit.range], uri);
 
-        const remappedResponse = await serviceClient.mapToDocumentRanges(
-            LanguageKind.CSharp,
-            [textEdit.range],
-            uri);
-
-        if (!remappedResponse ||
-            !remappedResponse.ranges ||
-            !remappedResponse.ranges[0]) {
+        if (!remappedResponse || !remappedResponse.ranges || !remappedResponse.ranges[0]) {
             // This is kind of wrong. Workspace edits commonly consist of a bunch of different edits which
             // don't make sense individually. If we try to introspect on them individually there won't be
             // enough context to do anything intelligent. But we also need to know if the edit can just
@@ -79,7 +80,8 @@ export class MappingHelpers {
             const remappedEdit = new vscode.TextEdit(remappedResponse.ranges[0], textEdit.newText);
 
             logger.logVerbose(
-                `Re-mapping text ${textEdit.newText} at ${textEdit.range} in ${uri.path} to ${remappedResponse.ranges[0]} in ${uri.path}`);
+                `Re-mapping text ${textEdit.newText} at ${textEdit.range} in ${uri.path} to ${remappedResponse.ranges[0]} in ${uri.path}`
+            );
 
             return remappedEdit;
         }
@@ -89,8 +91,8 @@ export class MappingHelpers {
         location: vscode.Location,
         serviceClient: RazorLanguageServiceClient,
         logger: RazorLogger,
-        _: vscode.CancellationToken) {
-
+        _: vscode.CancellationToken
+    ) {
         if (!isRazorCSharpFile(location.uri)) {
             // This location exists outside of a Razor document. Leave it unchanged.
             return location;
@@ -101,18 +103,18 @@ export class MappingHelpers {
         const remappedResponse = await serviceClient.mapToDocumentRanges(
             LanguageKind.CSharp,
             [location.range],
-            documentUri);
+            documentUri
+        );
 
-        if (!remappedResponse ||
-            !remappedResponse.ranges ||
-            !remappedResponse.ranges[0]) {
+        if (!remappedResponse || !remappedResponse.ranges || !remappedResponse.ranges[0]) {
             // Something went wrong when re-mapping to the original document. Ignore this location.
             logger.logWarning(`Unable to remap file ${location.uri.path} at ${location.range}.`);
             return;
         }
 
         logger.logVerbose(
-            `Re-mapping location ${location.range} in ${location.uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`);
+            `Re-mapping location ${location.range} in ${location.uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`
+        );
 
         const newLocation = new vscode.Location(documentUri, remappedResponse.ranges[0]);
         return newLocation;
@@ -122,8 +124,8 @@ export class MappingHelpers {
         locations: vscode.Location[],
         serviceClient: RazorLanguageServiceClient,
         logger: RazorLogger,
-        token: vscode.CancellationToken) {
-
+        token: vscode.CancellationToken
+    ) {
         const result: vscode.Location[] = [];
         for (const location of locations) {
             const remappedLocation = await this.remapGeneratedFileLocation(location, serviceClient, logger, token);
@@ -144,7 +146,11 @@ export class MappingHelpers {
         return result;
     }
 
-    private static addElementToDictionary(map: Map<vscode.Uri, vscode.TextEdit[]>, uri: vscode.Uri, edit: vscode.TextEdit) {
+    private static addElementToDictionary(
+        map: Map<vscode.Uri, vscode.TextEdit[]>,
+        uri: vscode.Uri,
+        edit: vscode.TextEdit
+    ) {
         let mapArray: vscode.TextEdit[] | undefined;
 
         if (map.has(uri)) {

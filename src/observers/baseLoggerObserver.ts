@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../vscodeAdapter';
-import { Logger } from "../logger";
+import { Logger } from '../logger';
 import { BaseEvent } from '../omnisharp/loggingEvents';
 
 export abstract class BaseLoggerObserver {
@@ -12,8 +12,7 @@ export abstract class BaseLoggerObserver {
     constructor(channel: vscode.OutputChannel | Logger) {
         if (channel instanceof Logger) {
             this.logger = channel;
-        }
-        else {
+        } else {
             this.logger = new Logger((message) => channel.append(message));
         }
     }

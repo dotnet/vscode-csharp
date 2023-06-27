@@ -20,7 +20,6 @@ import { BackgroundDiagnosticStatus } from '../omnisharp/protocol';
 import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 
 export class Advisor {
-
     private _disposable: CompositeDisposable;
     private _server: OmniSharpServer;
     private _packageRestoreCounter = 0;
@@ -42,14 +41,11 @@ export class Advisor {
     }
 
     public shouldValidateFiles(): boolean {
-        return this._isServerStarted()
-            && !this._isRestoringPackages();
+        return this._isServerStarted() && !this._isRestoringPackages();
     }
 
     public shouldValidateAll(): boolean {
-        return this._isServerStarted()
-            && !this._isRestoringPackages()
-            && !this._isOverFileLimit();
+        return this._isServerStarted() && !this._isRestoringPackages() && !this._isOverFileLimit();
     }
 
     private _updateProjectFileCount(path: string, fileCount: number): void {
@@ -112,12 +108,16 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature, options: OptionProvider): IDisposable {
+export default function reportDiagnostics(
+    server: OmniSharpServer,
+    advisor: Advisor,
+    languageMiddlewareFeature: LanguageMiddlewareFeature,
+    options: OptionProvider
+): IDisposable {
     return new OmniSharpDiagnosticsProvider(server, advisor, languageMiddlewareFeature, options);
 }
 
 class OmniSharpDiagnosticsProvider extends AbstractSupport {
-
     private _validationAdvisor: Advisor;
     private _disposable: CompositeDisposable;
     private _diagnostics: vscode.DiagnosticCollection;
@@ -127,48 +127,56 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
     private _subscriptions: Subscription[] = [];
     private _suppressHiddenDiagnostics: boolean;
 
-    constructor(server: OmniSharpServer, validationAdvisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature, options: OptionProvider) {
+    constructor(
+        server: OmniSharpServer,
+        validationAdvisor: Advisor,
+        languageMiddlewareFeature: LanguageMiddlewareFeature,
+        options: OptionProvider
+    ) {
         super(server, languageMiddlewareFeature);
 
         this._analyzersEnabled = vscode.workspace.getConfiguration('omnisharp').get('enableRoslynAnalyzers', false);
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
-        this._suppressHiddenDiagnostics = vscode.workspace.getConfiguration('csharp').get('suppressHiddenDiagnostics', true);
+        this._suppressHiddenDiagnostics = vscode.workspace
+            .getConfiguration('csharp')
+            .get('suppressHiddenDiagnostics', true);
 
         if (!options.GetLatestOptions().omnisharpOptions.enableLspDriver) {
-            this._subscriptions.push(this._validateCurrentDocumentPipe
-                .pipe(debounceTime(750))
-                .subscribe(async document => await this._validateDocument(document)));
+            this._subscriptions.push(
+                this._validateCurrentDocumentPipe
+                    .pipe(debounceTime(750))
+                    .subscribe(async (document) => await this._validateDocument(document))
+            );
         }
 
-        this._subscriptions.push(this._validateAllPipe
-            .pipe(debounceTime(3000))
-            .subscribe(() => {
+        this._subscriptions.push(
+            this._validateAllPipe.pipe(debounceTime(3000)).subscribe(() => {
                 if (this._validationAdvisor.shouldValidateAll()) {
                     this._validateEntireWorkspace();
-                }
-                else if (this._validationAdvisor.shouldValidateFiles()) {
+                } else if (this._validationAdvisor.shouldValidateFiles()) {
                     this._validateOpenDocuments();
                 }
-            }));
+            })
+        );
 
-
-        this._disposable = new CompositeDisposable(this._diagnostics,
-            this._server.onPackageRestore(() => this._validateAllPipe.next("onPackageRestore"), this),
-            this._server.onProjectChange(() => this._validateAllPipe.next("onProjectChanged"), this),
+        this._disposable = new CompositeDisposable(
+            this._diagnostics,
+            this._server.onPackageRestore(() => this._validateAllPipe.next('onPackageRestore'), this),
+            this._server.onProjectChange(() => this._validateAllPipe.next('onProjectChanged'), this),
             this._server.onBackgroundDiagnosticStatus(this._onBackgroundAnalysis, this),
-            vscode.workspace.onDidOpenTextDocument(event => this._onDocumentOpenOrChange(event), this),
-            vscode.workspace.onDidChangeTextDocument(event => this._onDocumentOpenOrChange(event.document), this),
+            vscode.workspace.onDidOpenTextDocument((event) => this._onDocumentOpenOrChange(event), this),
+            vscode.workspace.onDidChangeTextDocument((event) => this._onDocumentOpenOrChange(event.document), this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentClose, this),
-            vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this),
-            vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
+            vscode.window.onDidChangeActiveTextEditor((event) => this._onDidChangeActiveTextEditor(event), this),
+            vscode.window.onDidChangeWindowState((event) => this._OnDidChangeWindowState(event), this)
         );
     }
 
     public dispose = () => {
         this._validateAllPipe.complete();
         this._validateCurrentDocumentPipe.complete();
-        this._subscriptions.forEach(x => x.unsubscribe());
+        this._subscriptions.forEach((x) => x.unsubscribe());
         this._disposable.dispose();
     };
 
@@ -177,8 +185,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
             return true;
         }
 
-        if (document.uri.scheme !== 'file' &&
-            !isVirtualCSharpDocument(document)) {
+        if (document.uri.scheme !== 'file' && !isVirtualCSharpDocument(document)) {
             return true;
         }
 
@@ -208,13 +215,12 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
         // This check is just small perf optimization to reduce queries
         // for omnisharp with analyzers (which has event to notify about updates.)
         if (!this._analyzersEnabled) {
-            this._validateAllPipe.next("onDocumentOpenOrChange");
+            this._validateAllPipe.next('onDocumentOpenOrChange');
         }
     }
 
     private _onBackgroundAnalysis(event: protocol.BackgroundDiagnosticStatusMessage) {
-        if (event.Status == BackgroundDiagnosticStatus.Finished &&
-            event.NumberFilesRemaining === 0) {
+        if (event.Status == BackgroundDiagnosticStatus.Finished && event.NumberFilesRemaining === 0) {
             this._validateAllPipe.next();
         }
     }
@@ -251,16 +257,21 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
             // If we're over the file limit and the file shouldn't have diagnostics, don't add them. This can
             // happen if a file is opened then immediately closed, as the on doc close event will occur before
             // diagnostics come back from the server.
-            if (!this._validationAdvisor.shouldValidateAll() && vscode.workspace.textDocuments.every(doc => doc.uri !== document.uri)) {
+            if (
+                !this._validationAdvisor.shouldValidateAll() &&
+                vscode.workspace.textDocuments.every((doc) => doc.uri !== document.uri)
+            ) {
                 return;
             }
 
             // (re)set new diagnostics for this document
             const diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
 
-            this._diagnostics.set(document.uri, diagnosticsInFile.map(x => x.diagnostic));
-        }
-        catch (error) {
+            this._diagnostics.set(
+                document.uri,
+                diagnosticsInFile.map((x) => x.diagnostic)
+            );
+        } catch (error) {
             return;
         }
     }
@@ -278,17 +289,21 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diagnostic: vscode.Diagnostic, fileName: string }[] {
+    private _mapQuickFixesAsDiagnosticsInFile(
+        quickFixes: protocol.QuickFix[]
+    ): { diagnostic: vscode.Diagnostic; fileName: string }[] {
         return quickFixes
-            .map(quickFix => this._asDiagnosticInFileIfAny(quickFix))
-            .filter((diagnosticInFile): diagnosticInFile is NonNullable<typeof diagnosticInFile> => diagnosticInFile !== undefined);
+            .map((quickFix) => this._asDiagnosticInFileIfAny(quickFix))
+            .filter(
+                (diagnosticInFile): diagnosticInFile is NonNullable<typeof diagnosticInFile> =>
+                    diagnosticInFile !== undefined
+            );
     }
 
     private async _validateEntireWorkspace() {
         const value = await serverUtils.codeCheck(this._server, {}, new vscode.CancellationTokenSource().token);
 
-        const quickFixes = value.QuickFixes
-            .sort((a, b) => a.FileName.localeCompare(b.FileName));
+        const quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
 
         const entries: [vscode.Uri, vscode.Diagnostic[] | undefined][] = [];
         let lastEntry: [vscode.Uri, vscode.Diagnostic[]] | undefined;
@@ -310,7 +325,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
 
         // Clear diagnostics for files that no longer have any diagnostics.
         this._diagnostics.forEach((uri) => {
-            if (entries.find(tuple => tuple[0].toString() === uri.toString()) === undefined) {
+            if (entries.find((tuple) => tuple[0].toString() === uri.toString()) === undefined) {
                 this._diagnostics.delete(uri);
             }
         });
@@ -319,14 +334,16 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
         this._diagnostics.set(entries);
     }
 
-    private _asDiagnosticInFileIfAny(quickFix: protocol.QuickFix): { diagnostic: vscode.Diagnostic, fileName: string } | undefined {
+    private _asDiagnosticInFileIfAny(
+        quickFix: protocol.QuickFix
+    ): { diagnostic: vscode.Diagnostic; fileName: string } | undefined {
         const display = this._getDiagnosticDisplay(quickFix, this._asDiagnosticSeverity(quickFix));
 
-        if (display.severity === "hidden") {
+        if (display.severity === 'hidden') {
             return undefined;
         }
 
-        const message = `${quickFix.Text} [${quickFix.Projects.map(n => this._asProjectLabel(n)).join(', ')}]`;
+        const message = `${quickFix.Text} [${quickFix.Projects.map((n) => this._asProjectLabel(n)).join(', ')}]`;
 
         const diagnostic = new vscode.Diagnostic(toRange(quickFix), message, display.severity);
         diagnostic.source = 'csharp';
@@ -339,12 +356,16 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
         return { diagnostic: diagnostic, fileName: quickFix.FileName };
     }
 
-    private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean } {
+    private _getDiagnosticDisplay(
+        quickFix: protocol.QuickFix,
+        severity: vscode.DiagnosticSeverity | 'hidden'
+    ): { severity: vscode.DiagnosticSeverity | 'hidden'; isFadeout: boolean } {
         // These hard coded values bring the goodness of fading even when analyzers are disabled.
-        const isFadeout = (quickFix.Tags?.find(x => x.toLowerCase() === 'unnecessary') !== undefined)
-            || quickFix.Id == "CS0162"  // CS0162: Unreachable code
-            || quickFix.Id == "CS0219"  // CS0219: Unused variable
-            || quickFix.Id == "CS8019"; // CS8019: Unnecessary using
+        const isFadeout =
+            quickFix.Tags?.find((x) => x.toLowerCase() === 'unnecessary') !== undefined ||
+            quickFix.Id == 'CS0162' || // CS0162: Unreachable code
+            quickFix.Id == 'CS0219' || // CS0219: Unused variable
+            quickFix.Id == 'CS8019'; // CS8019: Unnecessary using
 
         if (isFadeout && ['hidden', 'none'].includes(quickFix.LogLevel.toLowerCase())) {
             // Theres no such thing as hidden severity in VSCode,
@@ -356,7 +377,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
         return { severity: severity, isFadeout };
     }
 
-    private _asDiagnosticSeverity(quickFix: protocol.QuickFix): vscode.DiagnosticSeverity | "hidden" {
+    private _asDiagnosticSeverity(quickFix: protocol.QuickFix): vscode.DiagnosticSeverity | 'hidden' {
         switch (quickFix.LogLevel.toLowerCase()) {
             case 'error':
                 return vscode.DiagnosticSeverity.Error;
@@ -366,11 +387,11 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
                 return vscode.DiagnosticSeverity.Information;
             case 'hidden':
                 if (this._suppressHiddenDiagnostics) {
-                    return "hidden";
+                    return 'hidden';
                 }
                 return vscode.DiagnosticSeverity.Hint;
             default:
-                return "hidden";
+                return 'hidden';
         }
     }
 

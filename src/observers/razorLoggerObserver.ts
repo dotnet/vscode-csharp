@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from "./baseLoggerObserver";
-import { RazorPluginPathSpecified, BaseEvent, RazorPluginPathDoesNotExist } from "../omnisharp/loggingEvents";
-import { EventType } from "../omnisharp/eventType";
+import { BaseLoggerObserver } from './baseLoggerObserver';
+import { RazorPluginPathSpecified, BaseEvent, RazorPluginPathDoesNotExist } from '../omnisharp/loggingEvents';
+import { EventType } from '../omnisharp/eventType';
 
 export class RazorLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {
@@ -31,7 +31,9 @@ export class RazorLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleRazorPluginPathDoesNotExistMessage(event: RazorPluginPathSpecified) {
-        this.logger.appendLine(`[error]: Razor plugin path was specified as '${event.path}' but does not exist on disk.`);
+        this.logger.appendLine(
+            `[error]: Razor plugin path was specified as '${event.path}' but does not exist on disk.`
+        );
     }
 
     private handleRazorDevMode() {

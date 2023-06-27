@@ -18,8 +18,10 @@ import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer
 export class CodeActionsHandler {
     private static readonly provideCodeActionsEndpoint = 'razor/provideCodeActions';
     private static readonly resolveCodeActionsEndpoint = 'razor/resolveCodeActions';
-    private codeActionRequestType: RequestType<SerializableDelegatedCodeActionParams, CodeAction[], any> = new RequestType(CodeActionsHandler.provideCodeActionsEndpoint);
-    private codeActionResolveRequestType: RequestType<SerializableRazorResolveCodeActionParams, CodeAction, any> = new RequestType(CodeActionsHandler.resolveCodeActionsEndpoint);
+    private codeActionRequestType: RequestType<SerializableDelegatedCodeActionParams, CodeAction[], any> =
+        new RequestType(CodeActionsHandler.provideCodeActionsEndpoint);
+    private codeActionResolveRequestType: RequestType<SerializableRazorResolveCodeActionParams, CodeAction, any> =
+        new RequestType(CodeActionsHandler.resolveCodeActionsEndpoint);
     private emptyCodeActionResponse: CodeAction[] = [];
     private emptyCodeAction: CodeAction = <CodeAction>{};
 
@@ -27,21 +29,27 @@ export class CodeActionsHandler {
         private readonly documentManager: RazorDocumentManager,
         private readonly documentSynchronizer: RazorDocumentSynchronizer,
         private readonly serverClient: RazorLanguageServerClient,
-        private readonly logger: RazorLogger) { }
+        private readonly logger: RazorLogger
+    ) {}
 
     public async register() {
         await this.serverClient.onRequestWithParams<SerializableDelegatedCodeActionParams, CodeAction[], any>(
             this.codeActionRequestType,
-            async (request: SerializableDelegatedCodeActionParams, token: vscode.CancellationToken) => this.provideCodeActions(request, token));
+            async (request: SerializableDelegatedCodeActionParams, token: vscode.CancellationToken) =>
+                this.provideCodeActions(request, token)
+        );
 
         await this.serverClient.onRequestWithParams<SerializableRazorResolveCodeActionParams, CodeAction, any>(
             this.codeActionResolveRequestType,
-            async (request: SerializableRazorResolveCodeActionParams, token: vscode.CancellationToken) => this.resolveCodeAction(request, token));
+            async (request: SerializableRazorResolveCodeActionParams, token: vscode.CancellationToken) =>
+                this.resolveCodeAction(request, token)
+        );
     }
 
     private async provideCodeActions(
         delegatedCodeActionParams: SerializableDelegatedCodeActionParams,
-        token: vscode.CancellationToken) {
+        token: vscode.CancellationToken
+    ) {
         try {
             const codeActionParams = delegatedCodeActionParams.codeActionParams;
             const razorDocumentUri = vscode.Uri.parse(codeActionParams.textDocument.uri, true);
@@ -62,7 +70,12 @@ export class CodeActionsHandler {
             }
 
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
-            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.csharpDocument, delegatedCodeActionParams.hostDocumentVersion, token);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
+                textDocument,
+                razorDocument.csharpDocument,
+                delegatedCodeActionParams.hostDocumentVersion,
+                token
+            );
             if (!synchronized) {
                 return this.emptyCodeActionResponse;
             }
@@ -71,7 +84,9 @@ export class CodeActionsHandler {
             const virtualCSharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
             codeActionParams.textDocument = TextDocumentIdentifier.create(virtualCSharpUri);
 
-            return <CodeAction[]>await vscode.commands.executeCommand(RoslynLanguageServer.provideCodeActionsCommand, codeActionParams);
+            return <CodeAction[]>(
+                await vscode.commands.executeCommand(RoslynLanguageServer.provideCodeActionsCommand, codeActionParams)
+            );
         } catch (error) {
             this.logger.logWarning(`${CodeActionsHandler.provideCodeActionsEndpoint} failed with ${error}`);
         }
@@ -81,7 +96,8 @@ export class CodeActionsHandler {
 
     private async resolveCodeAction(
         resolveCodeActionParams: SerializableRazorResolveCodeActionParams,
-        token: vscode.CancellationToken) {
+        token: vscode.CancellationToken
+    ) {
         try {
             const codeAction = resolveCodeActionParams.codeAction;
             const razorDocumentUri = vscode.Uri.parse(resolveCodeActionParams.uri, true);
@@ -96,14 +112,21 @@ export class CodeActionsHandler {
             }
 
             const textDocument = await vscode.workspace.openTextDocument(razorDocument.uri);
-            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.csharpDocument, resolveCodeActionParams.hostDocumentVersion, token);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
+                textDocument,
+                razorDocument.csharpDocument,
+                resolveCodeActionParams.hostDocumentVersion,
+                token
+            );
             if (!synchronized) {
                 return this.emptyCodeAction;
             }
 
             // Call Roslyn. Since this code action came from Roslyn, we don't even have to point it
             // to the virtual C# document.
-            return <CodeAction>await vscode.commands.executeCommand(RoslynLanguageServer.resolveCodeActionCommand, codeAction);
+            return <CodeAction>(
+                await vscode.commands.executeCommand(RoslynLanguageServer.resolveCodeActionCommand, codeAction)
+            );
         } catch (error) {
             this.logger.logWarning(`${CodeActionsHandler.resolveCodeActionsEndpoint} failed with ${error}`);
         }

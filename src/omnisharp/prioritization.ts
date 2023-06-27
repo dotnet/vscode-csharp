@@ -9,7 +9,7 @@ const priorityCommands = [
     protocol.Requests.ChangeBuffer,
     protocol.Requests.FormatAfterKeystroke,
     protocol.Requests.FormatRange,
-    protocol.Requests.UpdateBuffer
+    protocol.Requests.UpdateBuffer,
 ];
 
 const normalCommands = [
@@ -23,7 +23,7 @@ const normalCommands = [
     protocol.Requests.RunCodeAction,
     protocol.Requests.SignatureHelp,
     protocol.Requests.TypeLookup,
-    protocol.Requests.GoToTypeDefinition
+    protocol.Requests.GoToTypeDefinition,
 ];
 
 const prioritySet = new Set<string>(priorityCommands);

@@ -3,18 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 
-export class RazorHoverProvider
-    extends RazorLanguageFeatureBase
-    implements vscode.HoverProvider {
-
+export class RazorHoverProvider extends RazorLanguageFeatureBase implements vscode.HoverProvider {
     public async provideHover(
-        document: vscode.TextDocument, position: vscode.Position,
-        token: vscode.CancellationToken) {
-
+        document: vscode.TextDocument,
+        position: vscode.Position,
+        token: vscode.CancellationToken
+    ) {
         const projection = await this.getProjection(document, position, token);
         if (!projection) {
             return;
@@ -23,7 +20,8 @@ export class RazorHoverProvider
         const results = await vscode.commands.executeCommand<vscode.Hover[]>(
             'vscode.executeHoverProvider',
             projection.uri,
-            projection.position);
+            projection.position
+        );
 
         if (!results || results.length === 0) {
             return;
@@ -32,7 +30,7 @@ export class RazorHoverProvider
         // At the vscode.HoverProvider layer we can only return a single hover result. Because of this limitation we need to
         // be smart about combining multiple hovers content or only take a single hover result. For now we'll only take one
         // of them and then based on user feedback we can change this approach in the future.
-        const applicableHover = results.filter(item => item.range)[0];
+        const applicableHover = results.filter((item) => item.range)[0];
         if (!applicableHover) {
             // No hovers available with a range.
             return;
@@ -42,11 +40,10 @@ export class RazorHoverProvider
         const remappedResponse = await this.serviceClient.mapToDocumentRanges(
             projection.languageKind,
             [applicableHover.range!],
-            document.uri);
+            document.uri
+        );
 
-        if (!remappedResponse ||
-            !remappedResponse.ranges ||
-            !remappedResponse.ranges[0]) {
+        if (!remappedResponse || !remappedResponse.ranges || !remappedResponse.ranges[0]) {
             // Couldn't remap the projected hover location, there's no hover information available.
             return;
         }
@@ -66,7 +63,7 @@ export class RazorHoverProvider
                 const markdownString = new vscode.MarkdownString(content);
                 rewrittenContent.push(markdownString);
             } else if ((content as { language: string; value: string }).language) {
-                const contentObject = (content as { language: string; value: string });
+                const contentObject = content as { language: string; value: string };
                 const markdownString = new vscode.MarkdownString();
                 markdownString.appendCodeblock(contentObject.value, contentObject.language);
                 rewrittenContent.push(markdownString);

@@ -16,10 +16,7 @@ export class ReportIssueCommand {
     private readonly issueCreator: ReportIssueCreator;
     private readonly dataCollectorFactory: ReportIssueDataCollectorFactory;
 
-    constructor(
-        private readonly vscodeApi: api,
-        documentManager: RazorDocumentManager,
-        logger: RazorLogger) {
+    constructor(private readonly vscodeApi: api, documentManager: RazorDocumentManager, logger: RazorLogger) {
         this.dataCollectorFactory = new ReportIssueDataCollectorFactory(logger);
         this.issueCreator = new ReportIssueCreator(this.vscodeApi, documentManager);
         this.issuePanel = new ReportIssuePanel(this.dataCollectorFactory, this.issueCreator, logger);
@@ -29,13 +26,16 @@ export class ReportIssueCommand {
         const registrations: vscode.Disposable[] = [];
         registrations.push(
             this.dataCollectorFactory.register(),
-            this.vscodeApi.commands.registerCommand('razor.reportIssue', async () => this.issuePanel.show()));
+            this.vscodeApi.commands.registerCommand('razor.reportIssue', async () => this.issuePanel.show())
+        );
         if (this.vscodeApi.window.registerWebviewPanelSerializer) {
-            registrations.push(this.vscodeApi.window.registerWebviewPanelSerializer(ReportIssuePanel.viewType, {
-                deserializeWebviewPanel: async (panel: vscode.WebviewPanel) => {
-                    await this.issuePanel.revive(panel);
-                },
-            }));
+            registrations.push(
+                this.vscodeApi.window.registerWebviewPanelSerializer(ReportIssuePanel.viewType, {
+                    deserializeWebviewPanel: async (panel: vscode.WebviewPanel) => {
+                        await this.issuePanel.revive(panel);
+                    },
+                })
+            );
         }
 
         return this.vscodeApi.Disposable.from(...registrations);

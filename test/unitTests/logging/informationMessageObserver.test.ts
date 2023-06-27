@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { InformationMessageObserver } from '../../../src/observers/informationMessageObserver';
 import OptionProvider from '../../../src/shared/observers/optionProvider';
 import { expect, should } from 'chai';
@@ -12,7 +11,7 @@ import { Subject, from as observableFrom } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { Options } from '../../../src/shared/options';
 
-suite("InformationMessageObserver", () => {
+suite('InformationMessageObserver', () => {
     suiteSetup(() => should());
 
     let doClickOk: () => void;
@@ -29,20 +28,22 @@ suite("InformationMessageObserver", () => {
     setup(() => {
         infoMessage = undefined;
         invokedCommand = undefined;
-        commandDone = new Promise<void>(resolve => {
-            signalCommandDone = () => { resolve(); };
+        commandDone = new Promise<void>((resolve) => {
+            signalCommandDone = () => {
+                resolve();
+            };
         });
     });
 
     [
         {
-            event: getUnresolvedDependenices("someFile"),
-            expectedCommand: "dotnet.restore.all"
-        }
+            event: getUnresolvedDependenices('someFile'),
+            expectedCommand: 'dotnet.restore.all',
+        },
     ].forEach((elem) => {
         suite(elem.event.constructor.name, () => {
             suite('Suppress Dotnet Restore Notification is true', () => {
-                setup(() =>  {
+                setup(() => {
                     updateConfig(vscode, 'csharp', 'suppressDotnetRestoreNotification', true);
                     optionObservable.next(Options.Read(vscode));
                 });
@@ -92,7 +93,7 @@ suite("InformationMessageObserver", () => {
         const vscode = getVSCodeWithConfig();
         vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
             infoMessage = message;
-            return new Promise<T | undefined>(resolve => {
+            return new Promise<T | undefined>((resolve) => {
                 doClickCancel = () => {
                     resolve(undefined);
                 };

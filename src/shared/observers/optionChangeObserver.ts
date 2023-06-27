@@ -3,18 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
-import { vscode } from "../../vscodeAdapter";
-import { Options } from "../options";
-import ShowInformationMessage from "./utils/showInformationMessage";
-import { Observable } from "rxjs";
-import Disposable from "../../disposable";
+import { vscode } from '../../vscodeAdapter';
+import { Options } from '../options';
+import ShowInformationMessage from './utils/showInformationMessage';
+import { Observable } from 'rxjs';
+import Disposable from '../../disposable';
 import { filter } from 'rxjs/operators';
 
-function OptionChangeObservable(optionObservable: Observable<Options>, shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean): Observable<Options> {
+function OptionChangeObservable(
+    optionObservable: Observable<Options>,
+    shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean
+): Observable<Options> {
     let options: Options;
     return optionObservable.pipe(
-        filter(newOptions => {
+        filter((newOptions) => {
             const changed = options && shouldOptionChangeTriggerReload(options, newOptions);
             options = newOptions;
             return changed;
@@ -22,13 +24,17 @@ function OptionChangeObservable(optionObservable: Observable<Options>, shouldOpt
     );
 }
 
-export function ShowConfigChangePrompt(optionObservable: Observable<Options>, commandName: string, shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean, vscode: vscode): Disposable {
-    const subscription = OptionChangeObservable(optionObservable, shouldOptionChangeTriggerReload)
-        .subscribe(_ => {
-            const message = "C# configuration has changed. Would you like to relaunch the Language Server with your changes?";
-            ShowInformationMessage(vscode, message, { title: "Restart Language Server", command: commandName });
-        });
+export function ShowConfigChangePrompt(
+    optionObservable: Observable<Options>,
+    commandName: string,
+    shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean,
+    vscode: vscode
+): Disposable {
+    const subscription = OptionChangeObservable(optionObservable, shouldOptionChangeTriggerReload).subscribe((_) => {
+        const message =
+            'C# configuration has changed. Would you like to relaunch the Language Server with your changes?';
+        ShowInformationMessage(vscode, message, { title: 'Restart Language Server', command: commandName });
+    });
 
     return new Disposable(subscription);
 }
-

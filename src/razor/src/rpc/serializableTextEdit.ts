@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { convertRangeFromSerializable, convertRangeToSerializable, SerializableRange } from './serializableRange';
 
@@ -21,7 +20,5 @@ export function convertTextEditToSerializable(textEdit: vscode.TextEdit): Serial
 }
 
 export function convertTextEditFromSerializable(textEdit: SerializableTextEdit): vscode.TextEdit {
-    return new vscode.TextEdit(
-        convertRangeFromSerializable(textEdit.range),
-        textEdit.newText);
+    return new vscode.TextEdit(convertRangeFromSerializable(textEdit.range), textEdit.newText);
 }

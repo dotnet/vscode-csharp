@@ -6,7 +6,5 @@
 import { DocumentUri } from 'vscode-languageclient/node';
 
 export class ProvideDynamicFileResponse {
-    constructor(
-        public readonly generatedFiles: (DocumentUri | null)[]) {
-    }
+    constructor(public readonly generatedFiles: (DocumentUri | null)[]) {}
 }

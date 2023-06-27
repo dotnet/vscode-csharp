@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import * as path from 'path';
 
@@ -49,8 +48,8 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
         interfaceUri = vscode.Uri.file(path.join(projectDirectory, 'ISomeInterface.cs'));
         interfaceImplUri = vscode.Uri.file(path.join(projectDirectory, 'SomeInterfaceImpl.cs'));
 
-        await vscode.commands.executeCommand("vscode.open", interfaceImplUri);
-        await vscode.commands.executeCommand("vscode.open", interfaceUri);
+        await vscode.commands.executeCommand('vscode.open', interfaceImplUri);
+        await vscode.commands.executeCommand('vscode.open', interfaceUri);
 
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
@@ -59,41 +58,78 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("When interface is manually renamed, then return correct analysis after re-analysis of project", async function () {
-        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
+    test('When interface is manually renamed, then return correct analysis after re-analysis of project', async function () {
+        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(
+            eventStream,
+            EventType.BackgroundDiagnosticStatus
+        );
 
-        await vscode.commands.executeCommand("vscode.open", interfaceUri);
+        await vscode.commands.executeCommand('vscode.open', interfaceUri);
 
         const editor = vscode.window.activeTextEditor;
 
-        await editor!.edit(editorBuilder => editorBuilder.replace(new vscode.Range(2, 0, 2, 50), 'public interface ISomeInterfaceRenamedNow'));
+        await editor!.edit((editorBuilder) =>
+            editorBuilder.replace(new vscode.Range(2, 0, 2, 50), 'public interface ISomeInterfaceRenamedNow')
+        );
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === BackgroundDiagnosticStatus.Finished) !== undefined);
+        await poll(
+            () => diagnosticStatusEvents,
+            15 * 1000,
+            500,
+            (r) => r.find((x) => x.message.Status === BackgroundDiagnosticStatus.Finished) !== undefined
+        );
 
         await assertWithPoll(
             () => vscode.languages.getDiagnostics(interfaceImplUri),
             15 * 1000,
             500,
-            res => expect(res.find(x => x.message.includes("CS0246"))));
+            (res) => expect(res.find((x) => x.message.includes('CS0246')))
+        );
     });
 
-    test("When re-analyze of project is executed then eventually get notified about them.", async function () {
-        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
+    test('When re-analyze of project is executed then eventually get notified about them.', async function () {
+        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(
+            eventStream,
+            EventType.BackgroundDiagnosticStatus
+        );
 
         await vscode.commands.executeCommand('o.reanalyze.currentProject', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status !== BackgroundDiagnosticStatus.Finished) != undefined);
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === BackgroundDiagnosticStatus.Finished) != undefined);
+        await poll(
+            () => diagnosticStatusEvents,
+            15 * 1000,
+            500,
+            (r) => r.find((x) => x.message.Status !== BackgroundDiagnosticStatus.Finished) != undefined
+        );
+        await poll(
+            () => diagnosticStatusEvents,
+            15 * 1000,
+            500,
+            (r) => r.find((x) => x.message.Status === BackgroundDiagnosticStatus.Finished) != undefined
+        );
     });
 
-    test("When re-analyze of all projects is executed then eventually get notified about them.", async function () {
-        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(eventStream, EventType.BackgroundDiagnosticStatus);
+    test('When re-analyze of all projects is executed then eventually get notified about them.', async function () {
+        const diagnosticStatusEvents = listenEvents<OmnisharpBackgroundDiagnosticStatus>(
+            eventStream,
+            EventType.BackgroundDiagnosticStatus
+        );
 
         await vscode.commands.executeCommand('o.reanalyze.allProjects', interfaceImplUri);
 
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status !== BackgroundDiagnosticStatus.Finished) != undefined);
-        await poll(() => diagnosticStatusEvents, 15 * 1000, 500, r => r.find(x => x.message.Status === BackgroundDiagnosticStatus.Finished) != undefined);
+        await poll(
+            () => diagnosticStatusEvents,
+            15 * 1000,
+            500,
+            (r) => r.find((x) => x.message.Status !== BackgroundDiagnosticStatus.Finished) != undefined
+        );
+        await poll(
+            () => diagnosticStatusEvents,
+            15 * 1000,
+            500,
+            (r) => r.find((x) => x.message.Status === BackgroundDiagnosticStatus.Finished) != undefined
+        );
     });
 });

@@ -3,14 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseEvent, ZipError, DotNetTestRunFailure, DotNetTestDebugStartFailure, IntegrityCheckFailure } from "../omnisharp/loggingEvents";
-import { vscode } from "../vscodeAdapter";
-import showErrorMessage from "./utils/showErrorMessage";
-import { EventType } from "../omnisharp/eventType";
+import {
+    BaseEvent,
+    ZipError,
+    DotNetTestRunFailure,
+    DotNetTestDebugStartFailure,
+    IntegrityCheckFailure,
+} from '../omnisharp/loggingEvents';
+import { vscode } from '../vscodeAdapter';
+import showErrorMessage from './utils/showErrorMessage';
+import { EventType } from '../omnisharp/eventType';
 
 export class ErrorMessageObserver {
-    constructor(private vscode: vscode) {
-    }
+    constructor(private vscode: vscode) {}
 
     public post = (event: BaseEvent) => {
         switch (event.type) {
@@ -30,7 +35,10 @@ export class ErrorMessageObserver {
 
     handleIntegrityCheckFailure(event: IntegrityCheckFailure) {
         if (!event.retry) {
-            showErrorMessage(this.vscode, `Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download`);
+            showErrorMessage(
+                this.vscode,
+                `Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download`
+            );
         }
     }
 

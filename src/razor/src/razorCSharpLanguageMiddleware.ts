@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { getRazorDocumentUri, isRazorCSharpFile } from './razorConventions';
 import { RazorLanguageServiceClient } from './razorLanguageServiceClient';
@@ -13,20 +12,23 @@ import { LanguageKind } from './rpc/languageKind';
 // This interface should exactly match the `LanguageMiddleware` interface defined in Omnisharp.
 // https://github.com/OmniSharp/omnisharp-vscode/blob/master/src/omnisharp/LanguageMiddlewareFeature.ts#L9-L16
 interface LanguageMiddleware {
-
     language: string;
 
-    remapWorkspaceEdit?(workspaceEdit: vscode.WorkspaceEdit, token: vscode.CancellationToken): vscode.ProviderResult<vscode.WorkspaceEdit>;
+    remapWorkspaceEdit?(
+        workspaceEdit: vscode.WorkspaceEdit,
+        token: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.WorkspaceEdit>;
 
-    remapLocations?(locations: vscode.Location[], token: vscode.CancellationToken): vscode.ProviderResult<vscode.Location[]>;
+    remapLocations?(
+        locations: vscode.Location[],
+        token: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.Location[]>;
 }
 
 export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
     public readonly language = 'Razor';
 
-    constructor(
-        private readonly serviceClient: RazorLanguageServiceClient,
-        private readonly logger: RazorLogger) {}
+    constructor(private readonly serviceClient: RazorLanguageServiceClient, private readonly logger: RazorLogger) {}
 
     public async remapWorkspaceEdit(workspaceEdit: vscode.WorkspaceEdit, _: vscode.CancellationToken) {
         const map = new Map<vscode.Uri, vscode.TextEdit[]>();
@@ -50,11 +52,10 @@ export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
                 const remappedResponse = await this.serviceClient.mapToDocumentRanges(
                     LanguageKind.CSharp,
                     [edit.range],
-                    documentUri);
+                    documentUri
+                );
 
-                if (!remappedResponse ||
-                    !remappedResponse.ranges ||
-                    !remappedResponse.ranges[0]) {
+                if (!remappedResponse || !remappedResponse.ranges || !remappedResponse.ranges[0]) {
                     // This is kind of wrong. Workspace edits commonly consist of a bunch of different edits which
                     // don't make sense individually. If we try to introspect on them individually there won't be
                     // enough context to do anything intelligent. But we also need to know if the edit can just
@@ -65,11 +66,11 @@ export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
                     const remappedEdit = new vscode.TextEdit(remappedResponse.ranges[0], edit.newText);
 
                     this.logger.logVerbose(
-                        `Re-mapping text ${edit.newText} at ${edit.range} in ${uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`);
+                        `Re-mapping text ${edit.newText} at ${edit.range} in ${uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`
+                    );
 
                     this.addElementToDictionary(map, documentUri, remappedEdit);
                 }
-
             }
         }
 
@@ -92,11 +93,10 @@ export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
             const remappedResponse = await this.serviceClient.mapToDocumentRanges(
                 LanguageKind.CSharp,
                 [location.range],
-                documentUri);
+                documentUri
+            );
 
-            if (!remappedResponse ||
-                !remappedResponse.ranges ||
-                !remappedResponse.ranges[0]) {
+            if (!remappedResponse || !remappedResponse.ranges || !remappedResponse.ranges[0]) {
                 // Something went wrong when re-mapping to the original document. Ignore this location.
                 this.logger.logWarning(`Unable to remap file ${location.uri.path} at ${location.range}.`);
                 continue;
@@ -106,7 +106,8 @@ export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
             result.push(newLocation);
 
             this.logger.logVerbose(
-                `Re-mapping location ${location.range} in ${location.uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`);
+                `Re-mapping location ${location.range} in ${location.uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`
+            );
         }
 
         return result;

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { IEventEmitterFactory } from '../IEventEmitterFactory';
@@ -22,8 +21,13 @@ export class RazorHtmlFeature {
         documentManager: RazorDocumentManager,
         serviceClient: RazorLanguageServiceClient,
         eventEmitterFactory: IEventEmitterFactory,
-        logger: RazorLogger) {
-        this.projectionProvider = new HtmlProjectedDocumentContentProvider(documentManager, eventEmitterFactory, logger);
+        logger: RazorLogger
+    ) {
+        this.projectionProvider = new HtmlProjectedDocumentContentProvider(
+            documentManager,
+            eventEmitterFactory,
+            logger
+        );
         this.htmlTagCompletionProvider = new HtmlTagCompletionProvider(documentManager, serviceClient);
         this.htmlPreviewPanel = new HtmlPreviewPanel(documentManager);
     }
@@ -31,18 +35,21 @@ export class RazorHtmlFeature {
     public register() {
         const registrations = [
             vscode.workspace.registerTextDocumentContentProvider(
-                HtmlProjectedDocumentContentProvider.scheme, this.projectionProvider),
-            vscode.commands.registerCommand(
-                'extension.showRazorHtmlWindow', async () => this.htmlPreviewPanel.show()),
+                HtmlProjectedDocumentContentProvider.scheme,
+                this.projectionProvider
+            ),
+            vscode.commands.registerCommand('extension.showRazorHtmlWindow', async () => this.htmlPreviewPanel.show()),
             this.htmlTagCompletionProvider.register(),
         ];
 
         if (vscode.window.registerWebviewPanelSerializer) {
-            registrations.push(vscode.window.registerWebviewPanelSerializer(HtmlPreviewPanel.viewType, {
-                deserializeWebviewPanel: async (panel: vscode.WebviewPanel) => {
-                    await this.htmlPreviewPanel.revive(panel);
-                },
-            }));
+            registrations.push(
+                vscode.window.registerWebviewPanelSerializer(HtmlPreviewPanel.viewType, {
+                    deserializeWebviewPanel: async (panel: vscode.WebviewPanel) => {
+                        await this.htmlPreviewPanel.revive(panel);
+                    },
+                })
+            );
         }
 
         return vscode.Disposable.from(...registrations);

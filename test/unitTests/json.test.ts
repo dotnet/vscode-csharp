@@ -6,12 +6,11 @@
 import { should } from 'chai';
 import { tolerantParse } from '../../src/json';
 
-suite("JSON", () => {
+suite('JSON', () => {
     suiteSetup(() => should());
 
-    test("no comments", () => {
-        const text =
-            `{
+    test('no comments', () => {
+        const text = `{
     "hello": "world"
 }`;
 
@@ -21,12 +20,10 @@ suite("JSON", () => {
         result.should.equal(text);
     });
 
-    test("no comments (minified)", () => {
-        const text =
-            `{"hello":"world","from":"json"}`;
+    test('no comments (minified)', () => {
+        const text = `{"hello":"world","from":"json"}`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world",
     "from": "json"
 }`;
@@ -37,15 +34,13 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("single-line comment before JSON", () => {
-        const text =
-            `// comment
+    test('single-line comment before JSON', () => {
+        const text = `// comment
 {
     "hello": "world\\"" // comment
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world\\""
 }`;
 
@@ -55,15 +50,13 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("single-line comment on separate line", () => {
-        const text =
-            `{
+    test('single-line comment on separate line', () => {
+        const text = `{
     // comment
     "hello": "world"
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world"
 }`;
 
@@ -73,14 +66,12 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("single-line comment at end of line", () => {
-        const text =
-            `{
+    test('single-line comment at end of line', () => {
+        const text = `{
     "hello": "world" // comment
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world"
 }`;
 
@@ -90,14 +81,12 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("single-line comment at end of text", () => {
-        const text =
-            `{
+    test('single-line comment at end of text', () => {
+        const text = `{
     "hello": "world"
 } // comment`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world"
 }`;
 
@@ -107,9 +96,8 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("ignore single-line comment inside string", () => {
-        const text =
-            `{
+    test('ignore single-line comment inside string', () => {
+        const text = `{
     "hello": "world // comment"
 }`;
 
@@ -119,14 +107,12 @@ suite("JSON", () => {
         result.should.equal(text);
     });
 
-    test("single-line comment after string with escaped double quote", () => {
-        const text =
-            `{
+    test('single-line comment after string with escaped double quote', () => {
+        const text = `{
     "hello": "world\\"" // comment
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world\\""
 }`;
 
@@ -136,14 +122,12 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("multi-line comment at start of text", () => {
-        const text =
-            `/**/{
+    test('multi-line comment at start of text', () => {
+        const text = `/**/{
     "hello": "world"
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world"
 }`;
 
@@ -153,15 +137,13 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("comment out key/value pair", () => {
-        const text =
-            `{
+    test('comment out key/value pair', () => {
+        const text = `{
     /*"hello": "world"*/
     "from": "json"
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "from": "json"
 }`;
 
@@ -171,14 +153,12 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("multi-line comment at end of text", () => {
-        const text =
-            `{
+    test('multi-line comment at end of text', () => {
+        const text = `{
     "hello": "world"
 }/**/`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world"
 }`;
 
@@ -188,14 +168,12 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("ignore multi-line comment inside string", () => {
-        const text =
-            `{
+    test('ignore multi-line comment inside string', () => {
+        const text = `{
     "hello": "wo/**/rld"
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "wo/**/rld"
 }`;
 
@@ -205,14 +183,12 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("ignore BOM", () => {
-        const text =
-            `\uFEFF{
+    test('ignore BOM', () => {
+        const text = `\uFEFF{
     "hello": "world"
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "hello": "world"
 }`;
 
@@ -222,17 +198,15 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("ignore trailing comma in object member list", () => {
-        const text =
-            `{
+    test('ignore trailing comma in object member list', () => {
+        const text = `{
     "obj": {
         "hello": "world",
         "from": "json",
     }
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "obj": {
         "hello": "world",
         "from": "json"
@@ -245,17 +219,15 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("ignore trailing comma in array element list", () => {
-        const text =
-            `{
+    test('ignore trailing comma in array element list', () => {
+        const text = `{
     "array": [
         "element1",
         "element2",
     ]
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "array": [
         "element1",
         "element2"
@@ -268,14 +240,12 @@ suite("JSON", () => {
         result.should.equal(expected);
     });
 
-    test("ignore trailing comma in object member list with leading and trailing whitespace", () => {
-        const text =
-            `{
+    test('ignore trailing comma in object member list with leading and trailing whitespace', () => {
+        const text = `{
     "obj": { "a" : 1 , }
 }`;
 
-        const expected =
-            `{
+        const expected = `{
     "obj": {
         "a": 1
     }

@@ -3,10 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from "./baseLoggerObserver";
+import { BaseLoggerObserver } from './baseLoggerObserver';
 import * as os from 'os';
-import { BaseEvent, OmnisharpRequestMessage, OmnisharpServerEnqueueRequest, OmnisharpServerDequeueRequest, OmnisharpServerRequestCancelled, OmnisharpServerVerboseMessage, OmnisharpServerProcessRequestStart, OmnisharpEventPacketReceived } from "../omnisharp/loggingEvents";
-import { EventType } from "../omnisharp/eventType";
+import {
+    BaseEvent,
+    OmnisharpRequestMessage,
+    OmnisharpServerEnqueueRequest,
+    OmnisharpServerDequeueRequest,
+    OmnisharpServerRequestCancelled,
+    OmnisharpServerVerboseMessage,
+    OmnisharpServerProcessRequestStart,
+    OmnisharpEventPacketReceived,
+} from '../omnisharp/loggingEvents';
+import { EventType } from '../omnisharp/eventType';
 
 export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {
@@ -52,7 +61,11 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     }
 
     private handleOmnisharpServerDequeueRequest(event: OmnisharpServerDequeueRequest) {
-        this.logger.appendLine(`Dequeue from ${event.queueName} with status ${event.queueStatus} request for ${event.command}${event.id ? ` (${event.id})` : ''}.`);
+        this.logger.appendLine(
+            `Dequeue from ${event.queueName} with status ${event.queueStatus} request for ${event.command}${
+                event.id ? ` (${event.id})` : ''
+            }.`
+        );
         this.logger.appendLine();
     }
 
@@ -74,7 +87,7 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
         if (this._isFilterableOutput(event)) {
             let output = `[${this.getLogLevelPrefix(event.logLevel)}]: ${event.name}${os.EOL}${event.message}`;
 
-            const newLinePlusPadding = os.EOL + "        ";
+            const newLinePlusPadding = os.EOL + '        ';
             output = output.replace(os.EOL, newLinePlusPadding);
 
             this.logger.appendLine(output);
@@ -85,20 +98,29 @@ export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
         // filter messages like: /codecheck: 200 339ms
         const timing200Pattern = /^\/[/\w]+: 200 \d+ms/;
 
-        return event.logLevel === "INFORMATION"
-            && event.name === "OmniSharp.Middleware.LoggingMiddleware"
-            && timing200Pattern.test(event.message);
+        return (
+            event.logLevel === 'INFORMATION' &&
+            event.name === 'OmniSharp.Middleware.LoggingMiddleware' &&
+            timing200Pattern.test(event.message)
+        );
     }
 
     private getLogLevelPrefix(logLevel: string) {
         switch (logLevel) {
-            case "TRACE": return "trce";
-            case "DEBUG": return "dbug";
-            case "INFORMATION": return "info";
-            case "WARNING": return "warn";
-            case "ERROR": return "fail";
-            case "CRITICAL": return "crit";
-            default: throw new Error(`Unknown log level value: ${logLevel}`);
+            case 'TRACE':
+                return 'trce';
+            case 'DEBUG':
+                return 'dbug';
+            case 'INFORMATION':
+                return 'info';
+            case 'WARNING':
+                return 'warn';
+            case 'ERROR':
+                return 'fail';
+            case 'CRITICAL':
+                return 'crit';
+            default:
+                throw new Error(`Unknown log level value: ${logLevel}`);
         }
     }
 }

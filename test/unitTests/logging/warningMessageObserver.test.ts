@@ -3,10 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { WarningMessageObserver } from '../../../src/observers/warningMessageObserver';
 import { assert, expect, should } from 'chai';
-import { getFakeVsCode, getMSBuildDiagnosticsMessage, getOmnisharpMSBuildProjectDiagnosticsEvent, getOmnisharpServerOnErrorEvent } from '../testAssets/fakes';
+import {
+    getFakeVsCode,
+    getMSBuildDiagnosticsMessage,
+    getOmnisharpMSBuildProjectDiagnosticsEvent,
+    getOmnisharpServerOnErrorEvent,
+} from '../testAssets/fakes';
 import { vscode } from '../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing';
 import { from as observableFrom, Subject } from 'rxjs';
@@ -18,8 +22,10 @@ suite('WarningMessageObserver', () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
-    let commandDone = new Promise<void>(resolve => {
-        signalCommandDone = () => { resolve(); };
+    let commandDone = new Promise<void>((resolve) => {
+        signalCommandDone = () => {
+            resolve();
+        };
     });
 
     let warningMessages: string[];
@@ -32,7 +38,7 @@ suite('WarningMessageObserver', () => {
     vscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
         warningMessages.push(message);
         assertionObservable.next(`[${warningMessages.length}] ${message}`);
-        return new Promise<T | undefined>(resolve => {
+        return new Promise<T | undefined>((resolve) => {
             doClickCancel = () => {
                 resolve(undefined);
             };
@@ -56,19 +62,23 @@ suite('WarningMessageObserver', () => {
         observer = new WarningMessageObserver(vscode, () => false, scheduler);
         warningMessages = [];
         invokedCommand = undefined;
-        commandDone = new Promise<void>(resolve => {
-            signalCommandDone = () => { resolve(); };
+        commandDone = new Promise<void>((resolve) => {
+            signalCommandDone = () => {
+                resolve();
+            };
         });
     });
 
     test('OmnisharpServerMsBuildProjectDiagnostics: No action is taken if the errors array is empty', () => {
-        const event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
-            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
-            []);
+        const event = getOmnisharpMSBuildProjectDiagnosticsEvent(
+            'someFile',
+            [getMSBuildDiagnosticsMessage('warningFile', '', '', 0, 0, 0, 0)],
+            []
+        );
         const marble = `a`;
         const marble_event_map = { a: event };
         const eventList = scheduler.createHotObservable(marble, marble_event_map);
-        eventList.subscribe(e => observer.post(e));
+        eventList.subscribe((e) => observer.post(e));
         scheduler.flush();
         expect(warningMessages).to.be.empty;
         expect(invokedCommand).to.be.undefined;
@@ -76,13 +86,15 @@ suite('WarningMessageObserver', () => {
 
     test('OmnisharpServerMsBuildProjectDiagnostics: No event is posted if warning is disabled', () => {
         const newObserver = new WarningMessageObserver(vscode, () => true, scheduler);
-        const event = getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
-            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)],
-            [getMSBuildDiagnosticsMessage("warningFile", "", "", 0, 0, 0, 0)]);
+        const event = getOmnisharpMSBuildProjectDiagnosticsEvent(
+            'someFile',
+            [getMSBuildDiagnosticsMessage('warningFile', '', '', 0, 0, 0, 0)],
+            [getMSBuildDiagnosticsMessage('warningFile', '', '', 0, 0, 0, 0)]
+        );
         const marble = `a`;
         const marble_event_map = { a: event };
         const eventList = scheduler.createHotObservable(marble, marble_event_map);
-        eventList.subscribe(e => newObserver.post(e));
+        eventList.subscribe((e) => newObserver.post(e));
         scheduler.flush();
         expect(warningMessages).to.be.empty;
         expect(invokedCommand).to.be.undefined;
@@ -90,38 +102,44 @@ suite('WarningMessageObserver', () => {
 
     [
         {
-            eventA: getOmnisharpMSBuildProjectDiagnosticsEvent("someFile",
-                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
-                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]),
+            eventA: getOmnisharpMSBuildProjectDiagnosticsEvent(
+                'someFile',
+                [getMSBuildDiagnosticsMessage('warningFile', '', '', 1, 2, 3, 4)],
+                [getMSBuildDiagnosticsMessage('errorFile', '', '', 5, 6, 7, 8)]
+            ),
 
-            eventB: getOmnisharpMSBuildProjectDiagnosticsEvent("BFile",
-                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
-                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]),
+            eventB: getOmnisharpMSBuildProjectDiagnosticsEvent(
+                'BFile',
+                [getMSBuildDiagnosticsMessage('warningFile', '', '', 1, 2, 3, 4)],
+                [getMSBuildDiagnosticsMessage('errorFile', '', '', 5, 6, 7, 8)]
+            ),
 
-            eventC: getOmnisharpMSBuildProjectDiagnosticsEvent("CFile",
-                [getMSBuildDiagnosticsMessage("warningFile", "", "", 1, 2, 3, 4)],
-                [getMSBuildDiagnosticsMessage("errorFile", "", "", 5, 6, 7, 8)]),
+            eventC: getOmnisharpMSBuildProjectDiagnosticsEvent(
+                'CFile',
+                [getMSBuildDiagnosticsMessage('warningFile', '', '', 1, 2, 3, 4)],
+                [getMSBuildDiagnosticsMessage('errorFile', '', '', 5, 6, 7, 8)]
+            ),
             assertion1: '[1] Some projects have trouble loading. Please review the output for more details.',
             assertion2: '[2] Some projects have trouble loading. Please review the output for more details.',
-            expected: "Some projects have trouble loading. Please review the output for more details.",
-            command: "o.showOutput"
+            expected: 'Some projects have trouble loading. Please review the output for more details.',
+            command: 'o.showOutput',
         },
         {
-            eventA: getOmnisharpServerOnErrorEvent("someText1", "someFile1", 1, 2),
-            eventB: getOmnisharpServerOnErrorEvent("someText2", "someFile2", 1, 2),
-            eventC: getOmnisharpServerOnErrorEvent("someText3", "someFile3", 1, 2),
+            eventA: getOmnisharpServerOnErrorEvent('someText1', 'someFile1', 1, 2),
+            eventB: getOmnisharpServerOnErrorEvent('someText2', 'someFile2', 1, 2),
+            eventC: getOmnisharpServerOnErrorEvent('someText3', 'someFile3', 1, 2),
             assertion1: '[1] Some projects have trouble loading. Please review the output for more details.',
             assertion2: '[2] Some projects have trouble loading. Please review the output for more details.',
-            expected: "Some projects have trouble loading. Please review the output for more details.",
-            command: "o.showOutput"
-        }
-    ].forEach(elem => {
+            expected: 'Some projects have trouble loading. Please review the output for more details.',
+            command: 'o.showOutput',
+        },
+    ].forEach((elem) => {
         suite(`${elem.eventA.constructor.name}`, () => {
             test(`When the event is fired then a warning message is displayed`, () => {
                 const marble = `${timeToMarble(1500)}a`;
                 const marble_event_map = { a: elem.eventA };
                 const eventList = scheduler.createHotObservable(marble, marble_event_map);
-                eventList.subscribe(e => observer.post(e));
+                eventList.subscribe((e) => observer.post(e));
                 scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3000)}a`, { a: elem.assertion1 });
                 scheduler.flush();
                 expect(warningMessages.length).to.be.equal(1);
@@ -132,7 +150,7 @@ suite('WarningMessageObserver', () => {
                 const marble = `${timeToMarble(1000)}a${timeToMarble(500)}b${timeToMarble(500)}c`;
                 const marble_event_map = { a: elem.eventA, b: elem.eventB, c: elem.eventC };
                 const eventList = scheduler.createHotObservable(marble, marble_event_map);
-                eventList.subscribe(e => observer.post(e));
+                eventList.subscribe((e) => observer.post(e));
                 scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3520)}a`, { a: elem.assertion1 });
                 scheduler.flush();
 
@@ -144,12 +162,11 @@ suite('WarningMessageObserver', () => {
                 const marble = `${timeToMarble(1000)}a${timeToMarble(490)}b${timeToMarble(1500)}c`;
                 const marble_event_map = { a: elem.eventA, b: elem.eventB, c: elem.eventC };
                 const eventList = scheduler.createHotObservable(marble, marble_event_map);
-                eventList.subscribe(e => observer.post(e));
-                scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3000)}a${timeToMarble(1500)}b`,
-                    {
-                        a: elem.assertion1,
-                        b: elem.assertion2
-                    });
+                eventList.subscribe((e) => observer.post(e));
+                scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3000)}a${timeToMarble(1500)}b`, {
+                    a: elem.assertion1,
+                    b: elem.assertion2,
+                });
                 scheduler.flush();
                 expect(warningMessages.length).to.be.equal(2);
                 expect(warningMessages[0]).to.be.equal(elem.expected);
@@ -158,7 +175,7 @@ suite('WarningMessageObserver', () => {
             test(`Given a warning message, when the user clicks ok the command is executed`, async () => {
                 const marble = `${timeToMarble(1500)}a`;
                 const eventList = scheduler.createHotObservable(marble, { a: elem.eventA });
-                scheduler.expectObservable(eventList.pipe(map(e => observer.post(e))));
+                scheduler.expectObservable(eventList.pipe(map((e) => observer.post(e))));
                 scheduler.flush();
                 doClickOk();
                 await commandDone;
@@ -168,7 +185,7 @@ suite('WarningMessageObserver', () => {
             test(`Given a warning message, when the user clicks cancel the command is not executed`, async () => {
                 const marble = `${timeToMarble(1500)}a--|`;
                 const eventList = scheduler.createHotObservable(marble, { a: elem.eventA });
-                scheduler.expectObservable(eventList.pipe(map(e => observer.post(e))));
+                scheduler.expectObservable(eventList.pipe(map((e) => observer.post(e))));
                 scheduler.flush();
                 doClickCancel();
                 await expect(observableFrom(commandDone).pipe(timeout(1)).toPromise()).to.be.rejected;
@@ -179,9 +196,9 @@ suite('WarningMessageObserver', () => {
 });
 
 function timeToMarble(timeinMilliseconds: number): string {
-    let marble = "";
-    for (let i = 0; i < (timeinMilliseconds / 10); i++) {
-        marble += "-";
+    let marble = '';
+    for (let i = 0; i < timeinMilliseconds / 10; i++) {
+        marble += '-';
     }
     return marble;
 }

@@ -62,18 +62,22 @@ export class CoreClrDebugUtil {
         try {
             const dotnetInfo = await getDotnetInfo(dotNetCliPaths);
             if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
-                throw new Error(`The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ${MINIMUM_SUPPORTED_DOTNET_CLI}.`);
+                throw new Error(
+                    `The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ${MINIMUM_SUPPORTED_DOTNET_CLI}.`
+                );
             }
         } catch (error) {
             const message = error instanceof Error ? error.message : `${error}`;
-            throw new Error(`The .NET Core SDK cannot be located: ${message}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.`);
+            throw new Error(
+                `The .NET Core SDK cannot be located: ${message}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.`
+            );
         }
     }
 
     public static isMacOSSupported(): boolean {
         // .NET Core 2.0 requires macOS 10.12 (Sierra), which is Darwin 16.0+
         // Darwin version chart: https://en.wikipedia.org/wiki/Darwin_(operating_system)
-        return semver.gte(os.release(), "16.0.0");
+        return semver.gte(os.release(), '16.0.0');
     }
 
     public static existsSync(path: string): boolean {
@@ -101,9 +105,12 @@ export class CoreClrDebugUtil {
 
 const MINIMUM_SUPPORTED_ARM64_DOTNET_CLI = '6.0.0';
 
-export function getTargetArchitecture(platformInfo: PlatformInformation, launchJsonTargetArchitecture: string | undefined, dotnetInfo: DotnetInfo): string {
-    if (!platformInfo.isMacOS() && !platformInfo.isWindows())
-    {
+export function getTargetArchitecture(
+    platformInfo: PlatformInformation,
+    launchJsonTargetArchitecture: string | undefined,
+    dotnetInfo: DotnetInfo
+): string {
+    if (!platformInfo.isMacOS() && !platformInfo.isWindows()) {
         // Nothing to do here.
         return '';
     }
@@ -111,28 +118,24 @@ export function getTargetArchitecture(platformInfo: PlatformInformation, launchJ
     // On Windows ARM64 and Apple M1 Machines, we need to determine if we need to use the 'x86_64' or 'arm64' debugger.
 
     // 'targetArchitecture' is specified in launch.json configuration, use that.
-    if (launchJsonTargetArchitecture)
-    {
-        if (launchJsonTargetArchitecture !== "x86_64" && launchJsonTargetArchitecture !== "arm64")
-        {
-            throw new Error(`The value '${launchJsonTargetArchitecture}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`);
+    if (launchJsonTargetArchitecture) {
+        if (launchJsonTargetArchitecture !== 'x86_64' && launchJsonTargetArchitecture !== 'arm64') {
+            throw new Error(
+                `The value '${launchJsonTargetArchitecture}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`
+            );
         }
         return launchJsonTargetArchitecture;
     }
 
     // If we are lower than .NET 6, use 'x86_64' since 'arm64' was not supported until .NET 6.
-    if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_ARM64_DOTNET_CLI))
-    {
+    if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_ARM64_DOTNET_CLI)) {
         return 'x86_64';
     }
 
     // Otherwise, look at the runtime ID.
-    if (dotnetInfo.RuntimeId.includes('arm64'))
-    {
+    if (dotnetInfo.RuntimeId.includes('arm64')) {
         return 'arm64';
-    }
-    else if (dotnetInfo.RuntimeId.includes('x64'))
-    {
+    } else if (dotnetInfo.RuntimeId.includes('x64')) {
         return 'x86_64';
     }
 

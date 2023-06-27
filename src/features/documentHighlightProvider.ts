@@ -7,12 +7,21 @@ import AbstractSupport from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toRange } from '../omnisharp/typeConversion';
-import { DocumentHighlightProvider, DocumentHighlight, DocumentHighlightKind, CancellationToken, TextDocument, Position } from 'vscode';
+import {
+    DocumentHighlightProvider,
+    DocumentHighlight,
+    DocumentHighlightKind,
+    CancellationToken,
+    TextDocument,
+    Position,
+} from 'vscode';
 
 export default class OmniSharpDocumentHighlightProvider extends AbstractSupport implements DocumentHighlightProvider {
-
-    public async provideDocumentHighlights(resource: TextDocument, position: Position, token: CancellationToken): Promise<DocumentHighlight[]> {
-
+    public async provideDocumentHighlights(
+        resource: TextDocument,
+        position: Position,
+        token: CancellationToken
+    ): Promise<DocumentHighlight[]> {
         const req = createRequest<protocol.FindUsagesRequest>(resource, position);
         req.OnlyThisFile = true;
         req.ExcludeDefinition = false;
@@ -23,8 +32,9 @@ export default class OmniSharpDocumentHighlightProvider extends AbstractSupport 
             if (res && Array.isArray(res.QuickFixes)) {
                 return res.QuickFixes.map(OmniSharpDocumentHighlightProvider._asDocumentHighlight);
             }
+        } catch {
+            /* empty */
         }
-        catch { /* empty */ }
 
         return [];
     }

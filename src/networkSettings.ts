@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from "./vscodeAdapter";
+import { vscode } from './vscodeAdapter';
 
 export default class NetworkSettings {
-    constructor(public readonly proxy: string, public readonly strictSSL: boolean) {
-    }
+    constructor(public readonly proxy: string, public readonly strictSSL: boolean) {}
 }
 
 export interface NetworkSettingsProvider {

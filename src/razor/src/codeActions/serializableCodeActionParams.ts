@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { CodeActionContext } from 'vscode-languageserver-protocol';
 import { SerializableRange } from '../rpc/serializableRange';
 import { SerializableTextDocumentIdentifier } from '../rpc/serializableTextDocumentIdentifier';

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { SerializableRenameDocument } from '../rename/serializableRenameDocument';
 import { SerializableCreateDocument } from './serializableCreateDocument';
@@ -11,10 +10,14 @@ import { SerializableDeleteDocument } from './serializableDeleteDocument';
 import { SerializableTextDocumentEdit } from './serializableTextDocumentEdit';
 import { convertTextEditFromSerializable, SerializableTextEdit } from './serializableTextEdit';
 
-type SerializableDocumentChange = SerializableCreateDocument | SerializableRenameDocument | SerializableDeleteDocument | SerializableTextDocumentEdit;
+type SerializableDocumentChange =
+    | SerializableCreateDocument
+    | SerializableRenameDocument
+    | SerializableDeleteDocument
+    | SerializableTextDocumentEdit;
 
 export interface SerializableWorkspaceEdit {
-    changes?: {[key: string]: Array<SerializableTextEdit>};
+    changes?: { [key: string]: Array<SerializableTextEdit> };
     documentChanges?: Array<SerializableDocumentChange>;
 }
 
@@ -28,7 +31,11 @@ export function convertWorkspaceEditFromSerializable(data: SerializableWorkspace
                 workspaceEdit.createFile(vscode.Uri.parse(createDocumentChange.uri), createDocumentChange.options);
             } else if (documentChange.kind === 'rename') {
                 const renameDocumentChange = documentChange as SerializableRenameDocument;
-                workspaceEdit.renameFile(vscode.Uri.parse(renameDocumentChange.oldUri), vscode.Uri.parse(renameDocumentChange.newUri), renameDocumentChange.options);
+                workspaceEdit.renameFile(
+                    vscode.Uri.parse(renameDocumentChange.oldUri),
+                    vscode.Uri.parse(renameDocumentChange.newUri),
+                    renameDocumentChange.options
+                );
             } else if (documentChange.kind === 'delete') {
                 const deleteDocumentChange = documentChange as SerializableDeleteDocument;
                 workspaceEdit.deleteFile(vscode.Uri.parse(deleteDocumentChange.uri), deleteDocumentChange.options);

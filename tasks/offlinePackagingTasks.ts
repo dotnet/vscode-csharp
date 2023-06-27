@@ -18,7 +18,13 @@ import { downloadAndInstallPackages } from '../src/packageManager/downloadAndIns
 import { getRuntimeDependenciesPackages } from '../src/tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
 import { commandLineOptions } from '../tasks/commandLineArguments';
-import { codeExtensionPath, packedVsixOutputRoot, languageServerDirectory, nugetTempPath, rootPath } from '../tasks/projectPaths';
+import {
+    codeExtensionPath,
+    packedVsixOutputRoot,
+    languageServerDirectory,
+    nugetTempPath,
+    rootPath,
+} from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
@@ -29,15 +35,15 @@ const argv = require('yargs').argv;
 
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
 export const platformSpecificPackages = [
-    { vsceTarget: "win32-x64", rid: "win-x64", platformInfo: new PlatformInformation('win32', 'x86_64') },
-    { vsceTarget: "win32-ia32", rid: "win-x86", platformInfo: new PlatformInformation('win32', 'x86') },
-    { vsceTarget: "win32-arm64", rid: "win-arm64", platformInfo: new PlatformInformation('win32', 'arm64') },
-    { vsceTarget: "linux-x64", rid: "linux-x64", platformInfo: new PlatformInformation('linux', 'x86_64') },
-    { vsceTarget: "linux-arm64", rid: "linux-arm64", platformInfo: new PlatformInformation('linux', 'arm64') },
-    { vsceTarget: "alpine-x64", rid: "alpine-x64", platformInfo: new PlatformInformation('linux-musl', 'x86_64') },
-    { vsceTarget: "alpine-arm64", rid: "alpine-arm64", platformInfo: new PlatformInformation('linux-musl', 'arm64') },
-    { vsceTarget: "darwin-x64", rid: "osx-x64", platformInfo: new PlatformInformation('darwin', 'x86_64') },
-    { vsceTarget: "darwin-arm64", rid: "osx-arm64", platformInfo: new PlatformInformation('darwin', 'arm64') }
+    { vsceTarget: 'win32-x64', rid: 'win-x64', platformInfo: new PlatformInformation('win32', 'x86_64') },
+    { vsceTarget: 'win32-ia32', rid: 'win-x86', platformInfo: new PlatformInformation('win32', 'x86') },
+    { vsceTarget: 'win32-arm64', rid: 'win-arm64', platformInfo: new PlatformInformation('win32', 'arm64') },
+    { vsceTarget: 'linux-x64', rid: 'linux-x64', platformInfo: new PlatformInformation('linux', 'x86_64') },
+    { vsceTarget: 'linux-arm64', rid: 'linux-arm64', platformInfo: new PlatformInformation('linux', 'arm64') },
+    { vsceTarget: 'alpine-x64', rid: 'alpine-x64', platformInfo: new PlatformInformation('linux-musl', 'x86_64') },
+    { vsceTarget: 'alpine-arm64', rid: 'alpine-arm64', platformInfo: new PlatformInformation('linux-musl', 'arm64') },
+    { vsceTarget: 'darwin-x64', rid: 'osx-x64', platformInfo: new PlatformInformation('darwin', 'x86_64') },
+    { vsceTarget: 'darwin-arm64', rid: 'osx-arm64', platformInfo: new PlatformInformation('darwin', 'arm64') },
 ];
 
 gulp.task('vsix:release:package', async () => {
@@ -59,8 +65,7 @@ gulp.task('installDependencies', async () => {
         await installRoslyn(packageJSON, platform);
         await installDebugger(packageJSON, platform);
         await installRazor(packageJSON, platform);
-    }
-    catch (err) {
+    } catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
         // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
         // stack trace of this line. So that seperates the two stack traces.
@@ -77,9 +82,12 @@ async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformatio
     let serverPlatform: string;
     if (platformInfo === undefined) {
         serverPlatform = 'neutral';
-    }
-    else {
-        serverPlatform = platformSpecificPackages.find(p => p.platformInfo.platform === platformInfo.platform && p.platformInfo.architecture === platformInfo.architecture)!.rid;
+    } else {
+        serverPlatform = platformSpecificPackages.find(
+            (p) =>
+                p.platformInfo.platform === platformInfo.platform &&
+                p.platformInfo.architecture === platformInfo.architecture
+        )!.rid;
     }
 
     // Get the directory containing the server executable for the current platform.
@@ -100,24 +108,33 @@ async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformatio
 }
 
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
-    return await installPackageJsonDependency("Razor", packageJSON, platformInfo);
+    return await installPackageJsonDependency('Razor', packageJSON, platformInfo);
 }
 
 async function installDebugger(packageJSON: any, platformInfo: PlatformInformation) {
-    return await installPackageJsonDependency("Debugger", packageJSON, platformInfo);
+    return await installPackageJsonDependency('Debugger', packageJSON, platformInfo);
 }
 
-async function installPackageJsonDependency(dependencyName: string, packageJSON: any, platformInfo: PlatformInformation) {
+async function installPackageJsonDependency(
+    dependencyName: string,
+    packageJSON: any,
+    platformInfo: PlatformInformation
+) {
     const eventStream = new EventStream();
-    const logger = new Logger(message => process.stdout.write(message));
+    const logger = new Logger((message) => process.stdout.write(message));
     const stdoutObserver = new CsharpLoggerObserver(logger);
     eventStream.subscribe(stdoutObserver.post);
-    const runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
-        .filter(dep => (dep.isFramework === undefined || !dep.isFramework) && dep.id === dependencyName);
-    const packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
+    const runTimeDependencies = getRuntimeDependenciesPackages(packageJSON).filter(
+        (dep) => (dep.isFramework === undefined || !dep.isFramework) && dep.id === dependencyName
+    );
+    const packagesToInstall = await getAbsolutePathPackagesToInstall(
+        runTimeDependencies,
+        platformInfo,
+        codeExtensionPath
+    );
     const provider = () => new NetworkSettings('', true);
     if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
-        throw Error("Failed to download package.");
+        throw Error('Failed to download package.');
     }
 }
 
@@ -130,13 +147,17 @@ async function acquireNugetPackage(packageName: string, packageVersion: string):
         return packageOutputPath;
     }
 
-    const dotnetArgs = [ 'restore', path.join(rootPath, 'server'), `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}` ];
+    const dotnetArgs = [
+        'restore',
+        path.join(rootPath, 'server'),
+        `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}`,
+    ];
     if (argv.interactive) {
         dotnetArgs.push('--interactive');
     }
 
     const process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
-    await new Promise( (resolve) => {
+    await new Promise((resolve) => {
         process.on('exit', (exitCode, _) => {
             if (exitCode !== 0) {
                 throw new Error(`Failed to download nuget package ${packageName}.${packageVersion}`);
@@ -153,7 +174,6 @@ async function acquireNugetPackage(packageName: string, packageVersion: string):
 }
 
 async function doPackageOffline() {
-
     // Set the package version using git versioning.
     const versionInfo = await nbgv.getVersion();
     console.log(versionInfo.npmPackageVersion);
@@ -171,13 +191,14 @@ async function doPackageOffline() {
         for (const p of platformSpecificPackages) {
             try {
                 if (process.platform === 'win32' && !p.rid.startsWith('win')) {
-                    console.warn(`Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`);
+                    console.warn(
+                        `Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`
+                    );
                     continue;
                 }
 
                 await buildVsix(packageJSON, packedVsixOutputRoot, prerelease, p.vsceTarget, p.platformInfo);
-            }
-            catch (err) {
+            } catch (err) {
                 const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
                 // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
                 // stack trace of this line. So that seperates the two stack traces.
@@ -187,8 +208,7 @@ async function doPackageOffline() {
 
         // Also output the platform neutral VSIX using the platform neutral server bits we created before.
         await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
-    }
-    finally {
+    } finally {
         // Reset package version to the placeholder value.
         await nbgv.resetPackageVersionPlaceholder();
     }
@@ -202,7 +222,13 @@ async function cleanAsync(deleteVsix: boolean) {
     }
 }
 
-async function buildVsix(packageJSON: any, outputFolder: string, prerelease: boolean, vsceTarget?: string, platformInfo?: PlatformInformation) {
+async function buildVsix(
+    packageJSON: any,
+    outputFolder: string,
+    prerelease: boolean,
+    vsceTarget?: string,
+    platformInfo?: PlatformInformation
+) {
     await cleanAsync(false);
 
     await installRoslyn(packageJSON, platformInfo);

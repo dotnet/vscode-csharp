@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { CSharpProjectedDocumentContentProvider } from '../csharp/csharpProjectedDocumentContentProvider';
 import { HtmlProjectedDocumentContentProvider } from '../html/htmlProjectedDocumentContentProvider';
@@ -18,16 +17,13 @@ export class RazorDocumentSynchronizer {
     private readonly synchronizations: { [uri: string]: SynchronizationContext[] } = {};
     private synchronizationIdentifier = 0;
 
-    constructor(
-        private readonly documentManager: RazorDocumentManager,
-        private readonly logger: RazorLogger) {
-    }
+    constructor(private readonly documentManager: RazorDocumentManager, private readonly logger: RazorLogger) {}
 
     public register() {
-        const documentManagerRegistration = this.documentManager.onChange(
-            event => this.documentChanged(event));
-        const textDocumentChangeRegistration = vscode.workspace.onDidChangeTextDocument(
-            event => this.textDocumentChanged(event));
+        const documentManagerRegistration = this.documentManager.onChange((event) => this.documentChanged(event));
+        const textDocumentChangeRegistration = vscode.workspace.onDidChangeTextDocument((event) =>
+            this.textDocumentChanged(event)
+        );
 
         return vscode.Disposable.from(documentManagerRegistration, textDocumentChangeRegistration);
     }
@@ -36,8 +32,8 @@ export class RazorDocumentSynchronizer {
         hostDocument: vscode.TextDocument,
         projectedDocument: IProjectedDocument,
         expectedHostDocumentVersion: number,
-        token: vscode.CancellationToken) {
-
+        token: vscode.CancellationToken
+    ) {
         const logId = ++this.synchronizationIdentifier;
 
         const documentKey = getUriPath(projectedDocument.uri);
@@ -47,13 +43,15 @@ export class RazorDocumentSynchronizer {
                 `${logId} - Synchronizing '${documentKey}':
     Currently at ${projectedDocument.hostDocumentSyncVersion}, synchronizing to version '${ehdv}'.
     Current host document version: '${hostDocument.version}'
-    Current projected document version: '${projectedDocument.projectedDocumentSyncVersion}'`);
+    Current projected document version: '${projectedDocument.projectedDocumentSyncVersion}'`
+            );
         }
 
         if (hostDocument.version !== expectedHostDocumentVersion) {
             if (this.logger.verboseEnabled) {
                 this.logger.logVerbose(
-                    `${logId} - toHostDocumentVersion and hostDocument.version already out of date.`);
+                    `${logId} - toHostDocumentVersion and hostDocument.version already out of date.`
+                );
             }
 
             // Already out-of-date. Allowing synchronizations for now to see if this actually causes any issues.
@@ -64,21 +62,22 @@ export class RazorDocumentSynchronizer {
             projectedDocument,
             expectedHostDocumentVersion,
             hostDocument,
-            token);
+            token
+        );
 
         try {
             if (projectedDocument.hostDocumentSyncVersion !== expectedHostDocumentVersion) {
                 if (this.logger.verboseEnabled) {
                     this.logger.logVerbose(
                         `${logId} - Projected document not in sync with host document, waiting for update...
-    Current host document sync version: ${projectedDocument.hostDocumentSyncVersion}`);
+    Current host document sync version: ${projectedDocument.hostDocumentSyncVersion}`
+                    );
                 }
                 await context.onProjectedDocumentSynchronized;
             }
 
             if (this.logger.verboseEnabled) {
-                this.logger.logVerbose(
-                    `${logId} - Projected document in sync with host document`);
+                this.logger.logVerbose(`${logId} - Projected document in sync with host document`);
             }
 
             // Projected document is the one we expect.
@@ -89,14 +88,14 @@ export class RazorDocumentSynchronizer {
                 if (this.logger.verboseEnabled) {
                     this.logger.logVerbose(
                         `${logId} - Projected text document not in sync with data type, waiting for update...
-    Current projected text document sync version: ${projectedTextDocumentVersion}`);
+    Current projected text document sync version: ${projectedTextDocumentVersion}`
+                    );
                 }
                 await context.onProjectedTextDocumentSynchronized;
             }
 
             if (this.logger.verboseEnabled) {
-                this.logger.logVerbose(
-                    `${logId} - Projected text document in sync with data type`);
+                this.logger.logVerbose(`${logId} - Projected text document in sync with data type`);
             }
 
             // Projected text document is the one we expect
@@ -104,8 +103,7 @@ export class RazorDocumentSynchronizer {
             this.removeSynchronization(context);
 
             if (this.logger.verboseEnabled) {
-                this.logger.logVerbose(
-                    `${logId} - Synchronization failed: ${cancellationReason}`);
+                this.logger.logVerbose(`${logId} - Synchronization failed: ${cancellationReason}`);
             }
 
             return false;
@@ -114,8 +112,7 @@ export class RazorDocumentSynchronizer {
         this.removeSynchronization(context);
 
         if (this.logger.verboseEnabled) {
-            this.logger.logVerbose(
-                `${logId} - Synchronization successful!`);
+            this.logger.logVerbose(`${logId} - Synchronization successful!`);
         }
 
         return true;
@@ -131,7 +128,7 @@ export class RazorDocumentSynchronizer {
             return;
         }
 
-        this.synchronizations[documentKey] = synchronizations.filter(item => item !== context);
+        this.synchronizations[documentKey] = synchronizations.filter((item) => item !== context);
     }
 
     private createSynchronizationContext(
@@ -139,8 +136,8 @@ export class RazorDocumentSynchronizer {
         projectedDocument: IProjectedDocument,
         toHostDocumentVersion: number,
         hostDocument: vscode.TextDocument,
-        token: vscode.CancellationToken) {
-
+        token: vscode.CancellationToken
+    ) {
         const rejectionsForCancel: Array<(reason: string) => void> = [];
         let projectedDocumentSynchronized: () => void = Function;
         const onProjectedDocumentSynchronized = new Promise<void>((resolve, reject) => {
@@ -188,8 +185,10 @@ export class RazorDocumentSynchronizer {
     }
 
     private textDocumentChanged(event: vscode.TextDocumentChangeEvent) {
-        if (event.document.uri.scheme !== CSharpProjectedDocumentContentProvider.scheme &&
-            event.document.uri.scheme !== HtmlProjectedDocumentContentProvider.scheme) {
+        if (
+            event.document.uri.scheme !== CSharpProjectedDocumentContentProvider.scheme &&
+            event.document.uri.scheme !== HtmlProjectedDocumentContentProvider.scheme
+        ) {
             return;
         }
 

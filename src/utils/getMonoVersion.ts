@@ -16,7 +16,7 @@ export const getMonoVersion: IGetMonoVersion = async (environment: NodeJS.Proces
         });
 
         let stdout = '';
-        childprocess.stdout.on('data', data => {
+        childprocess.stdout.on('data', (data) => {
             stdout += data.toString();
         });
 
@@ -25,8 +25,7 @@ export const getMonoVersion: IGetMonoVersion = async (environment: NodeJS.Proces
 
             if (match && match.length > 1) {
                 resolve(match[1]);
-            }
-            else {
+            } else {
                 resolve(undefined);
             }
         });

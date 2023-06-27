@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorLanguageServerClient } from './razorLanguageServerClient';
 import { LanguageKind } from './rpc/languageKind';
@@ -14,8 +13,7 @@ import { RazorMapToDocumentRangesResponse } from './rpc/razorMapToDocumentRanges
 import { convertRangeFromSerializable, convertRangeToSerializable } from './rpc/serializableRange';
 
 export class RazorLanguageServiceClient {
-    constructor(private readonly serverClient: RazorLanguageServerClient) {
-    }
+    constructor(private readonly serverClient: RazorLanguageServerClient) {}
 
     public async languageQuery(position: vscode.Position, uri: vscode.Uri) {
         await this.ensureStarted();
@@ -36,7 +34,10 @@ export class RazorLanguageServiceClient {
         }
 
         const request = new RazorMapToDocumentRangesRequest(languageKind, serializableRanges, uri);
-        const response = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>('razor/mapToDocumentRanges', request);
+        const response = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>(
+            'razor/mapToDocumentRanges',
+            request
+        );
         const responseRanges = [];
         for (const range of response.ranges) {
             if (range.start.line >= 0) {

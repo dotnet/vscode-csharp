@@ -15,8 +15,15 @@ import { ServerStateChange } from './serverStateChange';
 import { DotnetConfigurationResolver } from '../shared/dotnetConfigurationProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
-export function registerDebugger(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer, platformInfo: PlatformInformation, optionProvider: OptionProvider, csharpOutputChannel: vscode.OutputChannel) {
-    const workspaceInformationProvider: IWorkspaceDebugInformationProvider = new RoslynWorkspaceDebugInformationProvider(languageServer);
+export function registerDebugger(
+    context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
+    platformInfo: PlatformInformation,
+    optionProvider: OptionProvider,
+    csharpOutputChannel: vscode.OutputChannel
+) {
+    const workspaceInformationProvider: IWorkspaceDebugInformationProvider =
+        new RoslynWorkspaceDebugInformationProvider(languageServer);
 
     const disposable = languageServer.registerStateChangeEvent(async (state) => {
         if (state === ServerStateChange.ProjectInitializationComplete) {
@@ -30,7 +37,26 @@ export function registerDebugger(context: vscode.ExtensionContext, languageServe
     context.subscriptions.push(disposable);
 
     // Register ConfigurationProvider
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('dotnet', new DotnetConfigurationResolver(workspaceInformationProvider)));
-    context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('coreclr', new DotnetWorkspaceConfigurationProvider(workspaceInformationProvider, platformInfo, optionProvider, csharpOutputChannel)));
-    context.subscriptions.push(vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => generateAssets(workspaceInformationProvider, selectedIndex)));
+    context.subscriptions.push(
+        vscode.debug.registerDebugConfigurationProvider(
+            'dotnet',
+            new DotnetConfigurationResolver(workspaceInformationProvider)
+        )
+    );
+    context.subscriptions.push(
+        vscode.debug.registerDebugConfigurationProvider(
+            'coreclr',
+            new DotnetWorkspaceConfigurationProvider(
+                workspaceInformationProvider,
+                platformInfo,
+                optionProvider,
+                csharpOutputChannel
+            )
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) =>
+            generateAssets(workspaceInformationProvider, selectedIndex)
+        )
+    );
 }

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import * as path from 'path';
 
@@ -17,7 +16,10 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        if (integrationHelpers.isRazorWorkspace(vscode.workspace) || integrationHelpers.isSlnWithGenerator(vscode.workspace)) {
+        if (
+            integrationHelpers.isRazorWorkspace(vscode.workspace) ||
+            integrationHelpers.isSlnWithGenerator(vscode.workspace)
+        ) {
             this.skip();
         }
 
@@ -29,7 +31,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
 
-        await vscode.commands.executeCommand("vscode.open", fileUri);
+        await vscode.commands.executeCommand('vscode.open', fileUri);
 
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
@@ -38,7 +40,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns all elements", async function () {
+    test('Returns all elements', async function () {
         const symbols = await GetDocumentSymbols(fileUri);
 
         // The count can vary:
@@ -52,5 +54,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
 });
 
 async function GetDocumentSymbols(fileUri: vscode.Uri) {
-    return <vscode.SymbolInformation[]>await vscode.commands.executeCommand("vscode.executeDocumentSymbolProvider", fileUri);
+    return <vscode.SymbolInformation[]>(
+        await vscode.commands.executeCommand('vscode.executeDocumentSymbolProvider', fileUri)
+    );
 }

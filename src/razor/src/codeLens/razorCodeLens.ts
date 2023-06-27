@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 
 export class RazorCodeLens extends vscode.CodeLens {
@@ -11,8 +10,8 @@ export class RazorCodeLens extends vscode.CodeLens {
         range: vscode.Range,
         public uri: vscode.Uri,
         public document: vscode.TextDocument,
-        command?: vscode.Command) {
-
+        command?: vscode.Command
+    ) {
         super(range, command);
     }
 }

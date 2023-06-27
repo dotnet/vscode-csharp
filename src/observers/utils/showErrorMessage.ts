@@ -3,13 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from "../../vscodeAdapter";
+import { vscode } from '../../vscodeAdapter';
 
 export default async function showErrorMessage(vscode: vscode, message: string, ...items: string[]) {
     try {
         await vscode.window.showErrorMessage(message, ...items);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
     }
 }

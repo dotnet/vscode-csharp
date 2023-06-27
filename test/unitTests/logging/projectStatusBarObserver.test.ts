@@ -15,8 +15,12 @@ suite('ProjectStatusBarObserver', () => {
     let showCalled: boolean;
     let hideCalled: boolean;
     const statusBarItem = <StatusBarItem>{
-        show: () => { showCalled = true; },
-        hide: () => { hideCalled = true; }
+        show: () => {
+            showCalled = true;
+        },
+        hide: () => {
+            hideCalled = true;
+        },
     };
     const observer = new ProjectStatusBarObserver(statusBarItem);
 
@@ -52,7 +56,7 @@ suite('ProjectStatusBarObserver', () => {
         });
 
         test('Project status is shown if there is an MSBuild object', () => {
-            const event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation("somePath", []));
+            const event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation('somePath', []));
             observer.post(event);
             expect(showCalled).to.be.true;
             expect(statusBarItem.text).to.contain(event.info.MsBuild?.SolutionPath);

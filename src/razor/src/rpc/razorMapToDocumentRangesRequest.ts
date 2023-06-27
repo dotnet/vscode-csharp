@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { LanguageKind } from './languageKind';
 import { SerializableRange } from './serializableRange';
@@ -14,7 +13,8 @@ export class RazorMapToDocumentRangesRequest {
     constructor(
         public readonly kind: LanguageKind,
         public readonly projectedRanges: SerializableRange[],
-        razorDocumentUri: vscode.Uri) {
+        razorDocumentUri: vscode.Uri
+    ) {
         this.razorDocumentUri = razorDocumentUri.toString();
     }
 }

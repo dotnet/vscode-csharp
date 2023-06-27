@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { debounceTime } from 'rxjs/operators';
 import { vscode } from '../vscodeAdapter';
-import { BaseEvent, OmnisharpServerMsBuildProjectDiagnostics } from "../omnisharp/loggingEvents";
+import { BaseEvent, OmnisharpServerMsBuildProjectDiagnostics } from '../omnisharp/loggingEvents';
 import { Scheduler, Subject } from 'rxjs';
 
 import showWarningMessage from './utils/showWarningMessage';
@@ -17,9 +16,9 @@ export class WarningMessageObserver {
 
     constructor(private vscode: vscode, private disableMsBuildDiagnosticWarning: () => boolean, scheduler?: Scheduler) {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
-        this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe(async _ => {
-            const message = "Some projects have trouble loading. Please review the output for more details.";
-            await showWarningMessage(this.vscode, message, { title: "Show Output", command: 'o.showOutput' });
+        this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe(async (_) => {
+            const message = 'Some projects have trouble loading. Please review the output for more details.';
+            await showWarningMessage(this.vscode, message, { title: 'Show Output', command: 'o.showOutput' });
         });
     }
 

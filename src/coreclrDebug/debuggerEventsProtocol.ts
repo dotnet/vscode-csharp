@@ -7,12 +7,12 @@
 // property on a launch or attach request.
 //
 // All messages are sent as UTF-8 JSON text with a tailing '\n'
-export const Starting = "starting";
+export const Starting = 'starting';
 // Indicates that vsdbg-ui has successfully launched the specified process.
 // The ProcessLaunchedEvent interface details the event payload.
-export const ProcessLaunched = "processLaunched";
+export const ProcessLaunched = 'processLaunched';
 // Debug session is ending
-export const DebuggingStopped = "debuggingStopped";
+export const DebuggingStopped = 'debuggingStopped';
 
 export interface DebuggerEvent {
     // Contains one of the 'DebuggerEventsProtocol.EventType' values
@@ -28,7 +28,7 @@ export interface ProcessLaunchedEvent extends DebuggerEvent {
 export function decodePacket(packet: Buffer): DebuggerEvent {
     // Verify the message ends in a newline
     if (packet[packet.length - 1] != 10 /*\n*/) {
-        throw new Error("Unexpected message received from debugger.");
+        throw new Error('Unexpected message received from debugger.');
     }
 
     const message = packet.toString('utf-8', 0, packet.length - 1);

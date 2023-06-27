@@ -15,19 +15,30 @@ import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBui
 import { CancellationToken } from 'vscode-languageserver-protocol';
 
 export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
-    public static fixAllCodeActionKind =
-      vscode.CodeActionKind.SourceFixAll.append('csharp');
+    public static fixAllCodeActionKind = vscode.CodeActionKind.SourceFixAll.append('csharp');
 
     public static metadata: vscode.CodeActionProviderMetadata = {
-      providedCodeActionKinds: [OmniSharpFixAllProvider.fixAllCodeActionKind]
+        providedCodeActionKinds: [OmniSharpFixAllProvider.fixAllCodeActionKind],
     };
 
     public constructor(private server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         const disposable = new CompositeDisposable();
-        disposable.add(vscode.commands.registerCommand('o.fixAll.solution', async () => this.fixAllMenu(server, protocol.FixAllScope.Solution)));
-        disposable.add(vscode.commands.registerCommand('o.fixAll.project', async () => this.fixAllMenu(server, protocol.FixAllScope.Project)));
-        disposable.add(vscode.commands.registerCommand('o.fixAll.document', async () => this.fixAllMenu(server, protocol.FixAllScope.Document)));
+        disposable.add(
+            vscode.commands.registerCommand('o.fixAll.solution', async () =>
+                this.fixAllMenu(server, protocol.FixAllScope.Solution)
+            )
+        );
+        disposable.add(
+            vscode.commands.registerCommand('o.fixAll.project', async () =>
+                this.fixAllMenu(server, protocol.FixAllScope.Project)
+            )
+        );
+        disposable.add(
+            vscode.commands.registerCommand('o.fixAll.document', async () =>
+                this.fixAllMenu(server, protocol.FixAllScope.Document)
+            )
+        );
         this.addDisposables(disposable);
     }
 
@@ -35,7 +46,7 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
         document: vscode.TextDocument,
         _range: vscode.Range | vscode.Selection,
         context: vscode.CodeActionContext,
-        _token: vscode.CancellationToken,
+        _token: vscode.CancellationToken
     ): Promise<vscode.CodeAction[]> {
         console.log(context);
         if (!context.only) {
@@ -58,15 +69,15 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
 
         const availableFixes = await serverUtils.getFixAll(server, { FileName: fileName, Scope: scope });
 
-        let targets = availableFixes.Items.map(x => `${x.Id}: ${x.Message}`);
+        let targets = availableFixes.Items.map((x) => `${x.Id}: ${x.Message}`);
 
         if (scope === protocol.FixAllScope.Document) {
-            targets = ["Fix all issues", ...targets];
+            targets = ['Fix all issues', ...targets];
         }
 
         const action = await vscode.window.showQuickPick(targets, {
             matchOnDescription: true,
-            placeHolder: `Select fix all action`
+            placeHolder: `Select fix all action`,
         });
 
         if (action === undefined) {
@@ -74,22 +85,26 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
         }
 
         let filter: FixAllItem[] | undefined;
-        if (action !== "Fix all issues") {
-            const actionTokens = action.split(":");
+        if (action !== 'Fix all issues') {
+            const actionTokens = action.split(':');
             filter = [{ Id: actionTokens[0], Message: actionTokens[1] }];
         }
 
         await this.applyFixes(fileName, scope, filter);
     }
 
-    private async applyFixes(fileName: string, scope: FixAllScope, fixAllFilter: FixAllItem[] | undefined): Promise<void> {
+    private async applyFixes(
+        fileName: string,
+        scope: FixAllScope,
+        fixAllFilter: FixAllItem[] | undefined
+    ): Promise<void> {
         const response = await serverUtils.runFixAll(this.server, {
             FileName: fileName,
             Scope: scope,
             FixAllFilter: fixAllFilter,
             WantsAllCodeActionOperations: true,
             WantsTextChanges: true,
-            ApplyChanges: false
+            ApplyChanges: false,
         });
 
         if (response) {

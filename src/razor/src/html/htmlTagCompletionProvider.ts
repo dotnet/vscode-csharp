@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import {
     getLanguageService as getHtmlLanguageService,
@@ -20,15 +19,17 @@ export class HtmlTagCompletionProvider {
     private enabled = false;
     private htmlLanguageService: HtmlLanguageService | undefined;
 
-    constructor(private readonly documentManager: IRazorDocumentManager,
-                private readonly serviceClient: RazorLanguageServiceClient) {
-    }
+    constructor(
+        private readonly documentManager: IRazorDocumentManager,
+        private readonly serviceClient: RazorLanguageServiceClient
+    ) {}
 
     public register() {
         this.htmlLanguageService = getHtmlLanguageService();
 
-        const onChangeRegistration = vscode.workspace.onDidChangeTextDocument(
-            async args => this.onDidChangeTextDocument(args.document, args.contentChanges));
+        const onChangeRegistration = vscode.workspace.onDidChangeTextDocument(async (args) =>
+            this.onDidChangeTextDocument(args.document, args.contentChanges)
+        );
 
         const onActiveTextEditorChange = vscode.window.onDidChangeActiveTextEditor(() => this.checkIfEnabled());
 
@@ -59,7 +60,8 @@ export class HtmlTagCompletionProvider {
 
     private async onDidChangeTextDocument(
         document: vscode.TextDocument,
-        changes: ReadonlyArray<vscode.TextDocumentContentChangeEvent>) {
+        changes: ReadonlyArray<vscode.TextDocumentContentChangeEvent>
+    ) {
         if (!this.enabled) {
             return;
         }
@@ -153,7 +155,8 @@ export class HtmlTagCompletionProvider {
                 document.uri.fsPath,
                 document.languageId,
                 document.version,
-                documentContent);
+                documentContent
+            );
             const htmlDocument = this.htmlLanguageService.parseHTMLDocument(serviceTextDocument);
             const tagCompletion = this.htmlLanguageService.doTagComplete(serviceTextDocument, position, htmlDocument);
 
@@ -162,8 +165,11 @@ export class HtmlTagCompletionProvider {
             }
 
             const selections = activeEditor.selections;
-            if (selections.length && selections.some(s => s.active.isEqual(position))) {
-                activeEditor.insertSnippet(new vscode.SnippetString(tagCompletion), selections.map(s => s.active));
+            if (selections.length && selections.some((s) => s.active.isEqual(position))) {
+                activeEditor.insertSnippet(
+                    new vscode.SnippetString(tagCompletion),
+                    selections.map((s) => s.active)
+                );
             } else {
                 activeEditor.insertSnippet(new vscode.SnippetString(tagCompletion), position);
             }

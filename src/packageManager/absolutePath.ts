@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from "path";
+import * as path from 'path';
 
 export class AbsolutePath {
     constructor(public value: string) {
         if (!path.isAbsolute(value)) {
-            throw new Error("The path must be absolute");
+            throw new Error('The path must be absolute');
         }
     }
 

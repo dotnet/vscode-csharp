@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken } from '../../vscodeAdapter';
-import { LaunchTarget } from "../../shared/launchTarget";
+import { LaunchTarget } from '../../shared/launchTarget';
 import { Options } from '../../shared/options';
 import Disposable from '../../disposable';
 import { OmniSharpServer } from '../server';
@@ -15,13 +15,7 @@ import TestManager from '../../features/dotnetTest';
 import { EventStream } from '../../eventStream';
 
 export interface IEngine {
-    start(
-        cwd: string,
-        args: string[],
-        launchTarget: LaunchTarget,
-        launchPath: string,
-        options: Options,
-    ): Promise<void>;
+    start(cwd: string, args: string[], launchTarget: LaunchTarget, launchPath: string, options: Options): Promise<void>;
     stop(): Promise<void>;
     registerProviders(
         server: OmniSharpServer,
@@ -29,14 +23,10 @@ export interface IEngine {
         languageMiddlewareFeature: LanguageMiddlewareFeature,
         eventStream: EventStream,
         advisor: Advisor,
-        testManager: TestManager,
+        testManager: TestManager
     ): Promise<Disposable>;
     waitForInitialize(): Promise<void>;
     dispose(): void;
-    makeRequest<TResponse>(
-        command: string,
-        data?: any,
-        token?: CancellationToken,
-    ): Promise<TResponse>;
+    makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse>;
     addListener<T = object>(event: string, listener: (e: T) => void): Disposable;
 }

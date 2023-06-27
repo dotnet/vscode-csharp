@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import removeBomBuffer = require("strip-bom-buf");
-import removeBomString from "strip-bom";
+import removeBomBuffer = require('strip-bom-buf');
+import removeBomString from 'strip-bom';
 
 export function removeBOMFromBuffer(buffer: Buffer): Buffer {
     return removeBomBuffer(buffer);

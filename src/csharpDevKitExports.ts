@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 
-import { IServiceBroker } from "@microsoft/servicehub-framework";
+import { IServiceBroker } from '@microsoft/servicehub-framework';
 
 export interface CSharpDevKitExports {
     serviceBroker: IServiceBroker;

@@ -7,9 +7,7 @@ import * as vscode from '../vscodeAdapter';
 import { BaseEvent } from '../omnisharp/loggingEvents';
 
 export abstract class BaseChannelObserver {
-
-    constructor(private channel: vscode.OutputChannel) {
-    }
+    constructor(private channel: vscode.OutputChannel) {}
 
     abstract post: (event: BaseEvent) => void;
 

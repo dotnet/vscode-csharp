@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { SerializablePosition } from '../rpc/serializablePosition';
 import { SerializableTextDocumentIdentifier } from '../rpc/serializableTextDocumentIdentifier';

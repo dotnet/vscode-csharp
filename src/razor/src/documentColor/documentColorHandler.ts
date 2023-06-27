@@ -15,34 +15,53 @@ import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer
 
 export class DocumentColorHandler {
     private static readonly provideHtmlDocumentColorEndpoint = 'razor/provideHtmlDocumentColor';
-    private documentColorRequestType: RequestType<SerializableDocumentColorParams, SerializableColorInformation[], any> = new RequestType(DocumentColorHandler.provideHtmlDocumentColorEndpoint);
+    private documentColorRequestType: RequestType<
+        SerializableDocumentColorParams,
+        SerializableColorInformation[],
+        any
+    > = new RequestType(DocumentColorHandler.provideHtmlDocumentColorEndpoint);
     private emptyColorInformationResponse: SerializableColorInformation[] = [];
 
     constructor(
         private readonly documentManager: RazorDocumentManager,
         private readonly documentSynchronizer: RazorDocumentSynchronizer,
         private readonly serverClient: RazorLanguageServerClient,
-        private readonly logger: RazorLogger) { }
+        private readonly logger: RazorLogger
+    ) {}
 
     public async register() {
-        await this.serverClient.onRequestWithParams<SerializableDocumentColorParams, SerializableColorInformation[], any>(
+        await this.serverClient.onRequestWithParams<
+            SerializableDocumentColorParams,
+            SerializableColorInformation[],
+            any
+        >(
             this.documentColorRequestType,
-            async (request: SerializableDocumentColorParams, token: vscode.CancellationToken) => this.provideHtmlDocumentColors(request, token));
+            async (request: SerializableDocumentColorParams, token: vscode.CancellationToken) =>
+                this.provideHtmlDocumentColors(request, token)
+        );
     }
 
     private async provideHtmlDocumentColors(
         documentColorParams: SerializableDocumentColorParams,
-        cancellationToken: vscode.CancellationToken) {
+        cancellationToken: vscode.CancellationToken
+    ) {
         try {
             const razorDocumentUri = vscode.Uri.parse(documentColorParams.textDocument.uri, true);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
             if (razorDocument === undefined) {
-                this.logger.logWarning(`Could not find Razor document ${razorDocumentUri}; returning empty color information.`);
+                this.logger.logWarning(
+                    `Could not find Razor document ${razorDocumentUri}; returning empty color information.`
+                );
                 return this.emptyColorInformationResponse;
             }
 
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
-            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(textDocument, razorDocument.htmlDocument, documentColorParams._razor_hostDocumentVersion, cancellationToken);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
+                textDocument,
+                razorDocument.htmlDocument,
+                documentColorParams._razor_hostDocumentVersion,
+                cancellationToken
+            );
             if (!synchronized) {
                 return this.emptyColorInformationResponse;
             }
@@ -51,7 +70,8 @@ export class DocumentColorHandler {
 
             const colorInformation = await vscode.commands.executeCommand<vscode.ColorInformation[]>(
                 'vscode.executeDocumentColorProvider',
-                virtualHtmlUri);
+                virtualHtmlUri
+            );
 
             const serializableColorInformation = new Array<SerializableColorInformation>();
             for (const color of colorInformation) {

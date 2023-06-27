@@ -3,13 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { SerializableRange } from '../rpc/serializableRange';
 
 export class SerializableColorInformation {
-    constructor(
-        public readonly range: SerializableRange,
-        public readonly color: vscode.Color) {
-    }
+    constructor(public readonly range: SerializableRange, public readonly color: vscode.Color) {}
 }

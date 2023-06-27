@@ -14,9 +14,9 @@ export class UriConverter {
             // Since it's desirable that  URIs follow the same scheme across different OSs regardless of
             // path separator, cause generation to happen as if it was a file scheme and then replace
             // with the actual scheme. This behavior follows the expectations in RazorDynamicFileInfoProvider.cs
-            const fileSchemUri = uri.with({scheme: 'file'});
+            const fileSchemUri = uri.with({ scheme: 'file' });
             const uriString = fileSchemUri.toString(true);
-            return uri.scheme + uriString.slice("file".length);
+            return uri.scheme + uriString.slice('file'.length);
         } else {
             // Fix issue in System.Uri where file:///c%3A/file.txt is not a valid Windows path
             return uri.toString(true);

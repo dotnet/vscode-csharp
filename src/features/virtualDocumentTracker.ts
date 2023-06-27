@@ -39,7 +39,7 @@ export function isVirtualCSharpDocument(document: TextDocument) {
 }
 
 function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: EventStream): IDisposable {
-    const onTextDocumentOpen = workspace.onDidOpenTextDocument(async document => {
+    const onTextDocumentOpen = workspace.onDidOpenTextDocument(async (document) => {
         if (shouldIgnoreDocument(document, server)) {
             return;
         }
@@ -47,7 +47,7 @@ function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: Event
         await openVirtualDocument(document, server, eventStream);
     });
 
-    const onTextDocumentChange = workspace.onDidChangeTextDocument(async changeEvent => {
+    const onTextDocumentChange = workspace.onDidChangeTextDocument(async (changeEvent) => {
         const document = changeEvent.document;
 
         if (shouldIgnoreDocument(document, server)) {
@@ -57,7 +57,7 @@ function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: Event
         await changeVirtualDocument(document, server, eventStream);
     });
 
-    const onTextDocumentClose = workspace.onDidCloseTextDocument(async document => {
+    const onTextDocumentClose = workspace.onDidCloseTextDocument(async (document) => {
         if (shouldIgnoreDocument(document, server)) {
             return;
         }
@@ -66,10 +66,7 @@ function trackFutureVirtualDocuments(server: OmniSharpServer, eventStream: Event
     });
 
     // We already track text document changes for virtual documents in our change forwarder.
-    return new CompositeDisposable(
-        onTextDocumentOpen,
-        onTextDocumentClose,
-        onTextDocumentChange);
+    return new CompositeDisposable(onTextDocumentOpen, onTextDocumentClose, onTextDocumentChange);
 }
 
 function shouldIgnoreDocument(document: TextDocument, server: OmniSharpServer): boolean {
@@ -98,8 +95,7 @@ async function openVirtualDocument(document: TextDocument, server: OmniSharpServ
 
         // Trigger a change for the opening so we can get content refreshed.
         await changeVirtualDocument(document, server, eventStream);
-    }
-    catch (error) {
+    } catch (error) {
         logSynchronizationFailure(document.uri, error, server, eventStream);
     }
 }
@@ -113,8 +109,7 @@ async function changeVirtualDocument(document: TextDocument, server: OmniSharpSe
 
     try {
         await serverUtils.updateBuffer(server, { Buffer: document.getText(), FileName: document.fileName });
-    }
-    catch (error) {
+    } catch (error) {
         logSynchronizationFailure(document.uri, error, server, eventStream);
     }
 }
@@ -129,8 +124,7 @@ async function closeVirtualDocument(document: TextDocument, server: OmniSharpSer
     const req = { FileName: path, changeType: FileChangeType.Delete };
     try {
         await serverUtils.filesChanged(server, [req]);
-    }
-    catch (error) {
+    } catch (error) {
         logSynchronizationFailure(document.uri, error, server, eventStream);
     }
 }

@@ -11,10 +11,9 @@ import { IGetMonoVersion } from '../constants/IGetMonoVersion';
 import { Options } from '../shared/options';
 
 export class OmniSharpMonoResolver implements IHostExecutableResolver {
-    private readonly minimumMonoVersion = "6.4.0";
+    private readonly minimumMonoVersion = '6.4.0';
 
-    constructor(private getMonoVersion: IGetMonoVersion) {
-    }
+    constructor(private getMonoVersion: IGetMonoVersion) {}
 
     public async getHostExecutableInfo(options: Options): Promise<HostExecutableInformation> {
         const env = { ...process.env };
@@ -33,7 +32,9 @@ export class OmniSharpMonoResolver implements IHostExecutableResolver {
         }
 
         if (semver.lt(monoVersion, this.minimumMonoVersion)) {
-            throw new Error(`Found Mono version ${monoVersion}. Minimum required version is ${this.minimumMonoVersion}.`);
+            throw new Error(
+                `Found Mono version ${monoVersion}. Minimum required version is ${this.minimumMonoVersion}.`
+            );
         }
 
         return {

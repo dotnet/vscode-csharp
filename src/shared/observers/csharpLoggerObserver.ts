@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from "../../observers/baseLoggerObserver";
-import * as Event from "../../omnisharp/loggingEvents";
-import { PackageError } from "../../packageManager/packageError";
-import { EventType } from "../../omnisharp/eventType";
+import { BaseLoggerObserver } from '../../observers/baseLoggerObserver';
+import * as Event from '../../omnisharp/loggingEvents';
+import { PackageError } from '../../packageManager/packageError';
+import { EventType } from '../../omnisharp/eventType';
 
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots = 0;
@@ -14,7 +14,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
     public post = (event: Event.BaseEvent) => {
         switch (event.type) {
             case EventType.ActivationFailure:
-                this.logger.appendLine("[ERROR]: C# Extension failed to get platform information.");
+                this.logger.appendLine('[ERROR]: C# Extension failed to get platform information.');
                 break;
             case EventType.PackageInstallation:
                 this.handlePackageInstallation(<Event.PackageInstallation>event);
@@ -45,7 +45,9 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
                 this.handleEventWithMessage(<Event.EventWithMessage>event);
                 break;
             case EventType.ProjectJsonDeprecatedWarning:
-                this.logger.appendLine("Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details).");
+                this.logger.appendLine(
+                    "Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details)."
+                );
                 break;
             case EventType.DownloadFallBack:
                 this.handleDownloadFallback(<Event.DownloadFallBack>event);
@@ -57,7 +59,7 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
                 this.handleDocumentSynchronizationFailure(<Event.DocumentSynchronizationFailure>event);
                 break;
             case EventType.LatestBuildDownloadStart:
-                this.logger.appendLine("Getting latest OmniSharp version information");
+                this.logger.appendLine('Getting latest OmniSharp version information');
                 break;
             case EventType.IntegrityCheckFailure:
                 this.handleIntegrityCheckFailure(<Event.IntegrityCheckFailure>event);
@@ -72,19 +74,20 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
     };
 
     private handleDownloadValidation() {
-        this.logger.appendLine("Validating download...");
+        this.logger.appendLine('Validating download...');
     }
 
     private handleIntegrityCheckSuccess() {
-        this.logger.appendLine("Integrity Check succeeded.");
+        this.logger.appendLine('Integrity Check succeeded.');
     }
 
     private handleIntegrityCheckFailure(event: Event.IntegrityCheckFailure) {
         if (event.retry) {
             this.logger.appendLine(`Package ${event.packageDescription} failed integrity check. Retrying..`);
-        }
-        else {
-            this.logger.appendLine(`Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download.`);
+        } else {
+            this.logger.appendLine(
+                `Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download.`
+            );
         }
     }
 
@@ -115,12 +118,10 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
         if (event.error instanceof PackageError) {
             if (event.error.innerError) {
                 this.logger.appendLine(event.error.innerError.toString());
-            }
-            else {
+            } else {
                 this.logger.appendLine(event.error.message);
             }
-        }
-        else {
+        } else {
             // do not log raw errorMessage in telemetry as it is likely to contain PII.
             this.logger.appendLine(event.error.toString());
         }

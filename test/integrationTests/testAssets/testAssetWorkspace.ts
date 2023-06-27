@@ -19,12 +19,10 @@ const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     slnWithCsproj,
     slnFilterWithCsproj,
     BasicRazorApp2_1,
-    slnWithGenerator
+    slnWithGenerator,
 };
 
-const workspaceName = vscode.workspace.workspaceFolders![0].uri.fsPath
-    .split(path.sep)
-    .pop();
+const workspaceName = vscode.workspace.workspaceFolders![0].uri.fsPath.split(path.sep).pop();
 
 const activeTestAssetWorkspace = new TestAssetWorkspace(testAssetWorkspaces[workspaceName!]);
 

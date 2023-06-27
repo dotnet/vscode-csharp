@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IDisposable } from "../disposable";
-import { OmniSharpServer } from "../omnisharp/server";
+import { IDisposable } from '../disposable';
+import { OmniSharpServer } from '../omnisharp/server';
 import * as vscode from 'vscode';
-import CompositeDisposable from "../compositeDisposable";
+import CompositeDisposable from '../compositeDisposable';
 import * as serverUtils from '../omnisharp/utils';
-import { isVirtualCSharpDocument } from "./virtualDocumentTracker";
+import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 
 export default function fileOpenClose(server: OmniSharpServer): IDisposable {
     return new FileOpenCloseProvider(server);
@@ -31,7 +31,8 @@ class FileOpenCloseProvider implements IDisposable {
             }
         }, 0);
 
-        this._disposable = new CompositeDisposable(this._diagnostics,
+        this._disposable = new CompositeDisposable(
+            this._diagnostics,
             vscode.workspace.onDidOpenTextDocument(this._onDocumentOpen, this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentClose, this),
             vscode.window.onDidChangeActiveTextEditor(this._onActiveTextEditorChange, this)
@@ -81,8 +82,7 @@ function shouldIgnoreDocument(document: vscode.TextDocument) {
         return true;
     }
 
-    if (document.uri.scheme !== 'file' &&
-        !isVirtualCSharpDocument(document)) {
+    if (document.uri.scheme !== 'file' && !isVirtualCSharpDocument(document)) {
         return true;
     }
 

@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { join } from "path";
-import { execChildProcess } from "../common";
-import { CoreClrDebugUtil } from "../coreclrDebug/util";
+import { join } from 'path';
+import { execChildProcess } from '../common';
+import { CoreClrDebugUtil } from '../coreclrDebug/util';
 
-export const MSBUILD_MISSING_MESSAGE = "A valid msbuild installation could not be found.";
+export const MSBUILD_MISSING_MESSAGE = 'A valid msbuild installation could not be found.';
 
 let _msbuildVersion: string | undefined;
 
@@ -24,8 +24,9 @@ export async function getMSBuildVersion(): Promise<string | undefined> {
         if (match) {
             _msbuildVersion = match[1];
         }
+    } catch {
+        /* empty */
     }
-    catch { /* empty */ }
 
     return _msbuildVersion;
 }

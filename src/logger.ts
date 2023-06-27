@@ -25,7 +25,7 @@ export class Logger {
     private _appendCore(message: string): void {
         if (this._atLineStart) {
             if (this._indentLevel > 0) {
-                const indent = " ".repeat(this._indentLevel * this._indentSize);
+                const indent = ' '.repeat(this._indentLevel * this._indentSize);
                 this.write(indent);
             }
 
@@ -49,11 +49,11 @@ export class Logger {
         }
     }
 
-    public append(message = ""): void {
+    public append(message = ''): void {
         this._appendCore(message);
     }
 
-    public appendLine(message = ""): void {
+    public appendLine(message = ''): void {
         this._appendCore(message + '\n');
         this._atLineStart = true;
     }

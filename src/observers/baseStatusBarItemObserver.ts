@@ -7,9 +7,7 @@ import { StatusBarItem } from '../vscodeAdapter';
 import { BaseEvent } from '../omnisharp/loggingEvents';
 
 export abstract class BaseStatusBarItemObserver {
-
-    constructor(private statusBarItem: StatusBarItem) {
-    }
+    constructor(private statusBarItem: StatusBarItem) {}
 
     public SetAndShowStatusBar(text: string, command: string, color?: string, tooltip?: string) {
         this.statusBarItem.text = text;

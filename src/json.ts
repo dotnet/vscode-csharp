@@ -9,13 +9,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 const enum CharCode {
-    asterisk = 0x2a,     // *
-    backSlash = 0x5c,    // \
-    closeBrace = 0x7d,   // }
+    asterisk = 0x2a, // *
+    backSlash = 0x5c, // \
+    closeBrace = 0x7d, // }
     closeBracket = 0x5d, // ]
-    comma = 0x2c,        // ,
-    doubleQuote = 0x22,  // "
-    slash = 0x2f,        // /
+    comma = 0x2c, // ,
+    doubleQuote = 0x22, // "
+    slash = 0x2f, // /
 
     byteOrderMark = 0xfeff,
 
@@ -51,35 +51,38 @@ const enum CharCode {
 }
 
 function isLineBreak(code: number) {
-    return code === CharCode.lineFeed
-        || code === CharCode.carriageReturn
-        || code === CharCode.verticalTab
-        || code === CharCode.formFeed
-        || code === CharCode.lineSeparator
-        || code === CharCode.paragraphSeparator;
+    return (
+        code === CharCode.lineFeed ||
+        code === CharCode.carriageReturn ||
+        code === CharCode.verticalTab ||
+        code === CharCode.formFeed ||
+        code === CharCode.lineSeparator ||
+        code === CharCode.paragraphSeparator
+    );
 }
 
 function isWhitespace(code: number) {
-    return code === CharCode.space
-        || code === CharCode.tab
-        || code === CharCode.lineFeed
-        || code === CharCode.verticalTab
-        || code === CharCode.formFeed
-        || code === CharCode.carriageReturn
-        || code === CharCode.nextLine
-        || code === CharCode.nonBreakingSpace
-        || code === CharCode.ogham
-        || (code >= CharCode.enQuad && code <= CharCode.zeroWidthSpace)
-        || code === CharCode.lineSeparator
-        || code === CharCode.paragraphSeparator
-        || code === CharCode.narrowNoBreakSpace
-        || code === CharCode.mathematicalSpace
-        || code === CharCode.ideographicSpace
-        || code === CharCode.byteOrderMark;
+    return (
+        code === CharCode.space ||
+        code === CharCode.tab ||
+        code === CharCode.lineFeed ||
+        code === CharCode.verticalTab ||
+        code === CharCode.formFeed ||
+        code === CharCode.carriageReturn ||
+        code === CharCode.nextLine ||
+        code === CharCode.nonBreakingSpace ||
+        code === CharCode.ogham ||
+        (code >= CharCode.enQuad && code <= CharCode.zeroWidthSpace) ||
+        code === CharCode.lineSeparator ||
+        code === CharCode.paragraphSeparator ||
+        code === CharCode.narrowNoBreakSpace ||
+        code === CharCode.mathematicalSpace ||
+        code === CharCode.ideographicSpace ||
+        code === CharCode.byteOrderMark
+    );
 }
 
 function cleanJsonText(text: string) {
-
     const parts: string[] = [];
     let partStart = 0;
 
@@ -103,15 +106,15 @@ function cleanJsonText(text: string) {
         do {
             code = text.charCodeAt(pos);
             pos++;
-        }
-        while (isWhitespace(code));
+        } while (isWhitespace(code));
 
         return code;
     }
 
     function scanString() {
         while (true) {
-            if (index >= length) { // string ended unexpectedly
+            if (index >= length) {
+                // string ended unexpectedly
                 break;
             }
 

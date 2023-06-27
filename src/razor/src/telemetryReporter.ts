@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import { createTelemetryErrorEvent, createTelemetryEvent, HostEventStream } from './hostEventStream';
 import { Trace } from './trace';
 
@@ -13,18 +12,15 @@ export class TelemetryReporter {
     private readonly workspaceContainsRazorEvent = createTelemetryEvent('VSCode.Razor.WorkspaceContainsRazor');
     private reportedWorkspaceContainsRazor = false;
 
-    constructor(
-        private readonly eventStream: HostEventStream) {
+    constructor(private readonly eventStream: HostEventStream) {
         // If this telemetry reporter is created it means the rest of the Razor extension world was created.
         this.eventStream.post(this.razorExtensionActivated);
     }
 
     public reportTraceLevel(trace: Trace) {
-        const traceLevelEvent = createTelemetryEvent(
-            'VSCode.Razor.TraceLevel',
-            {
-                trace: Trace[trace],
-            });
+        const traceLevelEvent = createTelemetryEvent('VSCode.Razor.TraceLevel', {
+            trace: Trace[trace],
+        });
         this.eventStream.post(traceLevelEvent);
     }
 
@@ -70,7 +66,8 @@ export class TelemetryReporter {
                 error: JSON.stringify(error),
             },
             /*measures*/ undefined,
-            /*errorProps*/['error']);
+            /*errorProps*/ ['error']
+        );
 
         this.eventStream.post(errorOnActivationEvent);
     }

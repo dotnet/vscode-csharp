@@ -4,19 +4,23 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { DotNetChannelObserver } from "../../../src/observers/dotnetChannelObserver";
+import { DotNetChannelObserver } from '../../../src/observers/dotnetChannelObserver';
 import { getNullChannel } from '../testAssets/fakes';
 import { CommandDotNetRestoreStart } from '../../../src/omnisharp/loggingEvents';
 
-suite("DotnetChannelObserver", () => {
+suite('DotnetChannelObserver', () => {
     suiteSetup(() => should());
     let hasShown: boolean;
     let hasCleared: boolean;
 
     const observer = new DotNetChannelObserver({
         ...getNullChannel(),
-        clear: () => { hasCleared = true; },
-        show: () => { hasShown = true; }
+        clear: () => {
+            hasCleared = true;
+        },
+        show: () => {
+            hasShown = true;
+        },
     });
 
     setup(() => {

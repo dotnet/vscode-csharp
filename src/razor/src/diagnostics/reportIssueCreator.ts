@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as cp from 'child_process';
 import * as os from 'os';
 import { IRazorDocument } from '../document/IRazorDocument';
@@ -13,10 +12,7 @@ import * as vscode from '../vscodeAdapter';
 import { IReportIssueDataCollectionResult } from './IReportIssueDataCollectionResult';
 
 export class ReportIssueCreator {
-    constructor(
-        private readonly vscodeApi: vscode.api,
-        private readonly documentManager: IRazorDocumentManager) {
-    }
+    constructor(private readonly vscodeApi: vscode.api, private readonly documentManager: IRazorDocumentManager) {}
 
     public async create(collectionResult: IReportIssueDataCollectionResult) {
         let razorContent: string;
@@ -171,7 +167,9 @@ ${razorDocument.csharpDocument.getContent()}
 ////////////////////// Projected CSharp as seen by VSCode ///////////////////////`;
 
         try {
-            const csharpTextDocument = await this.vscodeApi.workspace.openTextDocument(razorDocument.csharpDocument.uri);
+            const csharpTextDocument = await this.vscodeApi.workspace.openTextDocument(
+                razorDocument.csharpDocument.uri
+            );
             if (csharpTextDocument) {
                 csharpContent = `${csharpContent}
 ${csharpTextDocument.getText()}`;
@@ -223,11 +221,13 @@ Unable to resolve VSCode's version of Html`;
 
     // Protected for testing
     protected getInstalledExtensions() {
-        const extensions: Array<vscode.Extension<any>> = this.vscodeApi.extensions.all
-            .filter(extension => extension.packageJSON.isBuiltin === false);
+        const extensions: Array<vscode.Extension<any>> = this.vscodeApi.extensions.all.filter(
+            (extension) => extension.packageJSON.isBuiltin === false
+        );
 
         return extensions.sort((a, b) =>
-            a.packageJSON.name.toLowerCase().localeCompare(b.packageJSON.name.toLowerCase()));
+            a.packageJSON.name.toLowerCase().localeCompare(b.packageJSON.name.toLowerCase())
+        );
     }
 
     // Protected for testing
@@ -238,8 +238,9 @@ Unable to resolve VSCode's version of Html`;
         }
 
         const tableHeader = `|Extension|Author|Version|${os.EOL}|---|---|---|`;
-        const table = extensions.map(
-            (e) => `|${e.packageJSON.name}|${e.packageJSON.publisher}|${e.packageJSON.version}|`).join(os.EOL);
+        const table = extensions
+            .map((e) => `|${e.packageJSON.name}|${e.packageJSON.publisher}|${e.packageJSON.version}|`)
+            .join(os.EOL);
 
         const extensionTable = `
 ${tableHeader}${os.EOL}${table};

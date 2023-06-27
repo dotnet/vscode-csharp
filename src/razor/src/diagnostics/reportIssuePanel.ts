@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as vscode from 'vscode';
 import { RazorLogger } from '../razorLogger';
 import { Trace } from '../trace';
@@ -22,8 +21,8 @@ export class ReportIssuePanel {
     constructor(
         private readonly dataCollectorFactory: ReportIssueDataCollectorFactory,
         private readonly reportIssueCreator: ReportIssueCreator,
-        private readonly logger: RazorLogger) {
-    }
+        private readonly logger: RazorLogger
+    ) {}
 
     public async show() {
         if (this.panel) {
@@ -32,11 +31,13 @@ export class ReportIssuePanel {
             this.panel = vscode.window.createWebviewPanel(
                 ReportIssuePanel.viewType,
                 'Report Razor Issue',
-                vscode.ViewColumn.Two, {
+                vscode.ViewColumn.Two,
+                {
                     enableScripts: true,
                     // Disallow any remote sources
                     localResourceRoots: [],
-                });
+                }
+            );
             this.attachToCurrentPanel();
         }
 
@@ -55,7 +56,7 @@ export class ReportIssuePanel {
             return;
         }
 
-        this.panel.webview.onDidReceiveMessage(async message => {
+        this.panel.webview.onDidReceiveMessage(async (message) => {
             switch (message.command) {
                 case 'copyIssue':
                     if (!this.issueContent) {
@@ -78,7 +79,9 @@ export class ReportIssuePanel {
                     }
                     this.issueContent = undefined;
                     this.dataCollector = this.dataCollectorFactory.create();
-                    vscode.window.showInformationMessage('Razor issue data collection started. Reproduce the issue then press "Stop"');
+                    vscode.window.showInformationMessage(
+                        'Razor issue data collection started. Reproduce the issue then press "Stop"'
+                    );
                     return;
                 case 'stopIssue':
                     if (!this.dataCollector) {
@@ -86,7 +89,9 @@ export class ReportIssuePanel {
                         return;
                     }
                     this.dataCollector.stop();
-                    vscode.window.showInformationMessage('Razor issue data collection stopped. Copying issue content...');
+                    vscode.window.showInformationMessage(
+                        'Razor issue data collection stopped. Copying issue content...'
+                    );
                     return;
             }
         });
@@ -122,8 +127,12 @@ GitHub, please remove any personal data which should not be publicly viewable.
 
 <button onclick="copyIssue()">Copy issue content again</button>`;
         } else {
-            panelBodyContent = `<p>Cannot start collecting Razor logs when <strong><em>razor.trace</em></strong> is set to <strong><em>${Trace[this.logger.trace]}</em></strong>.
-Please set <strong><em>razor.trace</em></strong> to <strong><em>${Trace[Trace.Verbose]}</em></strong> and then reload your VSCode environment and re-run the report Razor issue command.</p>`;
+            panelBodyContent = `<p>Cannot start collecting Razor logs when <strong><em>razor.trace</em></strong> is set to <strong><em>${
+                Trace[this.logger.trace]
+            }</em></strong>.
+Please set <strong><em>razor.trace</em></strong> to <strong><em>${
+                Trace[Trace.Verbose]
+            }</em></strong> and then reload your VSCode environment and re-run the report Razor issue command.</p>`;
         }
 
         this.panel.webview.html = `<!DOCTYPE html>

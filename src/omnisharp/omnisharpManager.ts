@@ -11,7 +11,6 @@ import { PlatformInformation } from '../shared/platform';
 import { modernNetVersion } from './omnisharpPackageCreator';
 
 export class OmnisharpManager {
-
     private readonly latestVersionFileServerPath = 'releases/versioninfo.txt';
 
     private readonly installPath = '.omnisharp';
@@ -21,23 +20,32 @@ export class OmnisharpManager {
         private platformInfo: PlatformInformation,
         // Only the tests set this. Instead of making this configurable,
         // we should probably just mock the HTTP requests, not create an entire mock HTTP server.
-        private serverUrl: string = 'https://roslynomnisharp.blob.core.windows.net') {
-    }
+        private serverUrl: string = 'https://roslynomnisharp.blob.core.windows.net'
+    ) {}
 
-    public async GetOmniSharpLaunchPath(defaultOmnisharpVersion: string, omnisharpPath: string, useFramework: boolean, extensionPath: string): Promise<string> {
+    public async GetOmniSharpLaunchPath(
+        defaultOmnisharpVersion: string,
+        omnisharpPath: string,
+        useFramework: boolean,
+        extensionPath: string
+    ): Promise<string> {
         if (omnisharpPath.length === 0) {
-            return this.GetLaunchPathForVersion(defaultOmnisharpVersion, this.platformInfo, useFramework, extensionPath);
+            return this.GetLaunchPathForVersion(
+                defaultOmnisharpVersion,
+                this.platformInfo,
+                useFramework,
+                extensionPath
+            );
         }
 
         // Looks at the options path, installs the dependencies and returns the path to be loaded by the omnisharp server
         if (path.isAbsolute(omnisharpPath)) {
-            if (!await util.fileExists(omnisharpPath)) {
+            if (!(await util.fileExists(omnisharpPath))) {
                 throw new Error('The system could not find the specified path');
             }
 
             return omnisharpPath;
-        }
-        else if (omnisharpPath === 'latest') {
+        } else if (omnisharpPath === 'latest') {
             return await this.InstallLatestAndReturnLaunchInfo(useFramework, extensionPath);
         }
 
@@ -50,22 +58,33 @@ export class OmnisharpManager {
         return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, extensionPath);
     }
 
-    private async InstallVersionAndReturnLaunchInfo(version: string, useFramework: boolean, extensionPath: string): Promise<string> {
+    private async InstallVersionAndReturnLaunchInfo(
+        version: string,
+        useFramework: boolean,
+        extensionPath: string
+    ): Promise<string> {
         if (semver.valid(version)) {
             await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, this.serverUrl, this.installPath);
             return this.GetLaunchPathForVersion(version, this.platformInfo, useFramework, extensionPath);
-        }
-        else {
+        } else {
             throw new Error(`Invalid OmniSharp version - ${version}`);
         }
     }
 
-    private GetLaunchPathForVersion(version: string, platformInfo: PlatformInformation, useFramework: boolean, extensionPath: string): string {
-        const basePath = path.resolve(extensionPath, this.installPath, version + (useFramework ? '' : `-net${modernNetVersion}`));
+    private GetLaunchPathForVersion(
+        version: string,
+        platformInfo: PlatformInformation,
+        useFramework: boolean,
+        extensionPath: string
+    ): string {
+        const basePath = path.resolve(
+            extensionPath,
+            this.installPath,
+            version + (useFramework ? '' : `-net${modernNetVersion}`)
+        );
         if (!useFramework) {
             return path.join(basePath, 'OmniSharp.dll');
-        }
-        else if (platformInfo.isWindows()) {
+        } else if (platformInfo.isWindows()) {
             return path.join(basePath, 'OmniSharp.exe');
         }
 

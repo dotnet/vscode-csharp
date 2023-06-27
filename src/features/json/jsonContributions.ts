@@ -8,8 +8,19 @@ import { ProjectJSONContribution } from './projectJsonContribution';
 import { configure as configureXHR, xhr } from 'request-light';
 
 import {
-    CompletionItem, CompletionItemProvider, CompletionList, TextDocument, Position, Hover, HoverProvider,
-    CancellationToken, Range, MarkedString, DocumentSelector, languages, workspace
+    CompletionItem,
+    CompletionItemProvider,
+    CompletionList,
+    TextDocument,
+    Position,
+    Hover,
+    HoverProvider,
+    CancellationToken,
+    Range,
+    MarkedString,
+    DocumentSelector,
+    languages,
+    workspace,
 } from 'vscode';
 import CompositeDisposable from '../../compositeDisposable';
 
@@ -23,7 +34,14 @@ export interface ISuggestionsCollector {
 export interface IJSONContribution {
     getDocumentSelector(): DocumentSelector;
     getInfoContribution(fileName: string, location: Location): Promise<MarkedString[] | undefined>;
-    collectPropertySuggestions(fileName: string, location: Location, currentWord: string, addValue: boolean, isLast: boolean, result: ISuggestionsCollector): Promise<void>;
+    collectPropertySuggestions(
+        fileName: string,
+        location: Location,
+        currentWord: string,
+        addValue: boolean,
+        isLast: boolean,
+        result: ISuggestionsCollector
+    ): Promise<void>;
     collectValueSuggestions(fileName: string, location: Location, result: ISuggestionsCollector): Promise<void>;
     collectDefaultSuggestions(fileName: string, result: ISuggestionsCollector): Promise<void>;
     resolveSuggestion?(item: CompletionItem): Promise<CompletionItem | undefined>;
@@ -39,14 +57,20 @@ export function addJSONProviders(): CompositeDisposable {
     }
 
     configureHttpRequest();
-    subscriptions.add(workspace.onDidChangeConfiguration(_e => configureHttpRequest()));
+    subscriptions.add(workspace.onDidChangeConfiguration((_e) => configureHttpRequest()));
 
     // register completion and hove providers for JSON setting file(s)
     const contributions = [new ProjectJSONContribution(xhr)];
-    contributions.forEach(contribution => {
+    contributions.forEach((contribution) => {
         const selector = contribution.getDocumentSelector();
         const triggerCharacters = ['"', ':', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        subscriptions.add(languages.registerCompletionItemProvider(selector, new JSONCompletionItemProvider(contribution), ...triggerCharacters));
+        subscriptions.add(
+            languages.registerCompletionItemProvider(
+                selector,
+                new JSONCompletionItemProvider(contribution),
+                ...triggerCharacters
+            )
+        );
         subscriptions.add(languages.registerHoverProvider(selector, new JSONHoverProvider(contribution)));
     });
 
@@ -54,21 +78,26 @@ export function addJSONProviders(): CompositeDisposable {
 }
 
 export class JSONHoverProvider implements HoverProvider {
+    constructor(private jsonContribution: IJSONContribution) {}
 
-    constructor(private jsonContribution: IJSONContribution) {
-    }
-
-    public async provideHover(document: TextDocument, position: Position, _: CancellationToken): Promise<Hover | undefined> {
+    public async provideHover(
+        document: TextDocument,
+        position: Position,
+        _: CancellationToken
+    ): Promise<Hover | undefined> {
         const offset = document.offsetAt(position);
         const location = getLocation(document.getText(), offset);
         const node = location.previousNode;
         if (node !== undefined && node.offset <= offset && offset <= node.offset + node.length) {
             const htmlContent = await this.jsonContribution.getInfoContribution(document.fileName, location);
             if (htmlContent !== undefined) {
-                const range = new Range(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
+                const range = new Range(
+                    document.positionAt(node.offset),
+                    document.positionAt(node.offset + node.length)
+                );
                 const result: Hover = {
                     contents: htmlContent,
-                    range: range
+                    range: range,
                 };
                 return result;
             }
@@ -78,9 +107,7 @@ export class JSONHoverProvider implements HoverProvider {
 }
 
 export class JSONCompletionItemProvider implements CompletionItemProvider {
-
-    constructor(private jsonContribution: IJSONContribution) {
-    }
+    constructor(private jsonContribution: IJSONContribution) {}
 
     public async resolveCompletionItem(item: CompletionItem, _: CancellationToken): Promise<CompletionItem> {
         if (this.jsonContribution.resolveSuggestion) {
@@ -92,7 +119,11 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
         return item;
     }
 
-    public async provideCompletionItems(document: TextDocument, position: Position, _: CancellationToken): Promise<CompletionList | undefined> {
+    public async provideCompletionItems(
+        document: TextDocument,
+        position: Position,
+        _: CancellationToken
+    ): Promise<CompletionList | undefined> {
         const currentWord = this.getCurrentWord(document, position);
         let overwriteRange: Range | undefined;
         const items: CompletionItem[] = [];
@@ -102,8 +133,20 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
         const location = getLocation(document.getText(), offset);
 
         const node = location.previousNode;
-        if (node && node.offset <= offset && offset <= node.offset + node.length && (node.type === 'property' || node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
-            overwriteRange = new Range(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
+        if (
+            node &&
+            node.offset <= offset &&
+            offset <= node.offset + node.length &&
+            (node.type === 'property' ||
+                node.type === 'string' ||
+                node.type === 'number' ||
+                node.type === 'boolean' ||
+                node.type === 'null')
+        ) {
+            overwriteRange = new Range(
+                document.positionAt(node.offset),
+                document.positionAt(node.offset + node.length)
+            );
         } else {
             overwriteRange = new Range(document.positionAt(offset - currentWord.length), position);
         }
@@ -120,20 +163,30 @@ export class JSONCompletionItemProvider implements CompletionItemProvider {
                     items.push(suggestion);
                 }
             },
-            setAsIncomplete: () => isIncomplete = true,
+            setAsIncomplete: () => (isIncomplete = true),
             error: (message: string) => console.error(message),
-            log: (message: string) => console.log(message)
+            log: (message: string) => console.log(message),
         };
 
         let collectPromise: Promise<void> | undefined;
 
         if (location.isAtPropertyKey) {
-            const addValue = !location.previousNode || !location.previousNode.colonOffset && (offset == (location.previousNode.offset + location.previousNode.length));
+            const addValue =
+                !location.previousNode ||
+                (!location.previousNode.colonOffset &&
+                    offset == location.previousNode.offset + location.previousNode.length);
             const scanner = createScanner(document.getText(), true);
             scanner.setPosition(offset);
             scanner.scan();
             const isLast = scanner.getToken() === SyntaxKind.CloseBraceToken || scanner.getToken() === SyntaxKind.EOF;
-            collectPromise = this.jsonContribution.collectPropertySuggestions(document.fileName, location, currentWord, addValue, isLast, collector);
+            collectPromise = this.jsonContribution.collectPropertySuggestions(
+                document.fileName,
+                location,
+                currentWord,
+                addValue,
+                isLast,
+                collector
+            );
         } else {
             if (location.path.length === 0) {
                 collectPromise = this.jsonContribution.collectDefaultSuggestions(document.fileName, collector);

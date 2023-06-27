@@ -6,7 +6,14 @@
 import * as fs from 'fs-extra';
 import * as vscode from 'vscode';
 
-import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, createAttachConfiguration, createFallbackLaunchConfiguration, getBuildOperations } from './assets';
+import {
+    AssetGenerator,
+    AssetOperations,
+    addTasksJsonIfNecessary,
+    createAttachConfiguration,
+    createFallbackLaunchConfiguration,
+    getBuildOperations,
+} from './assets';
 import { parse } from 'jsonc-parser';
 import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider';
 import { PlatformInformation } from './platform';
@@ -17,37 +24,48 @@ import OptionProvider from './observers/optionProvider';
  * This class will be used for providing debug configurations given workspace information.
  */
 export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfigurationProvider {
-
-    public constructor(private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider, platformInformation: PlatformInformation, optionProvider: OptionProvider, csharpOutputChannel: vscode.OutputChannel) {
+    public constructor(
+        private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider,
+        platformInformation: PlatformInformation,
+        optionProvider: OptionProvider,
+        csharpOutputChannel: vscode.OutputChannel
+    ) {
         super(platformInformation, optionProvider, csharpOutputChannel);
     }
 
     /**
      * Returns a list of initial debug configurations based on contextual information, e.g. package.json or folder.
      */
-    async provideDebugConfigurations(folder: vscode.WorkspaceFolder | undefined, _?: vscode.CancellationToken): Promise<vscode.DebugConfiguration[]> {
-
+    async provideDebugConfigurations(
+        folder: vscode.WorkspaceFolder | undefined,
+        _?: vscode.CancellationToken
+    ): Promise<vscode.DebugConfiguration[]> {
         if (!folder || !folder.uri) {
-            vscode.window.showErrorMessage("Cannot create .NET debug configurations. No workspace folder was selected.");
+            vscode.window.showErrorMessage(
+                'Cannot create .NET debug configurations. No workspace folder was selected.'
+            );
             return [];
         }
 
         try {
             const info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
             if (!info) {
-                vscode.window.showErrorMessage("Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.");
+                vscode.window.showErrorMessage(
+                    'Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.'
+                );
                 return [];
             }
 
             if (info.length === 0) {
-                vscode.window.showErrorMessage(`Cannot create .NET debug configurations. The active C# project is not within folder '${folder.uri.fsPath}'.`);
+                vscode.window.showErrorMessage(
+                    `Cannot create .NET debug configurations. The active C# project is not within folder '${folder.uri.fsPath}'.`
+                );
                 return [];
             }
 
             const generator = new AssetGenerator(info, folder);
             if (generator.hasExecutableProjects()) {
-
-                if (!await generator.selectStartupProject()) {
+                if (!(await generator.selectStartupProject())) {
                     return [];
                 }
 
@@ -59,23 +77,20 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
                 await addTasksJsonIfNecessary(generator, buildOperations);
 
                 const programLaunchType = generator.computeProgramLaunchType();
-                const launchJson: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(programLaunchType, false);
+                const launchJson: vscode.DebugConfiguration[] = generator.createLaunchJsonConfigurationsArray(
+                    programLaunchType,
+                    false
+                );
 
                 return launchJson;
-
             } else {
                 // Error to be caught in the .catch() below to write default C# configurations
-                throw new Error("Does not contain .NET Core projects.");
+                throw new Error('Does not contain .NET Core projects.');
             }
-        }
-        catch
-        {
+        } catch {
             // Provider will always create an launch.json file. Providing default C# configurations.
             // jsonc-parser's parse to convert to JSON object without comments.
-            return [
-                createFallbackLaunchConfiguration(),
-                parse(createAttachConfiguration())
-            ];
+            return [createFallbackLaunchConfiguration(), parse(createAttachConfiguration())];
         }
     }
 }

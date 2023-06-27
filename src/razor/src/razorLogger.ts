@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-
 import * as fs from 'fs';
 import * as path from 'path';
 import { IEventEmitterFactory } from './IEventEmitterFactory';
@@ -23,7 +22,8 @@ export class RazorLogger implements vscodeAdapter.Disposable {
     constructor(
         private readonly vscodeApi: vscodeAdapter.api,
         eventEmitterFactory: IEventEmitterFactory,
-        public trace: Trace) {
+        public trace: Trace
+    ) {
         this.processTraceLevel();
         this.onLogEmitter = eventEmitterFactory.create<string>();
         this.onTraceLevelChangeEmitter = eventEmitterFactory.create<Trace>();
@@ -41,9 +41,13 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         this.onTraceLevelChangeEmitter.fire(this.trace);
     }
 
-    public get onLog() { return this.onLogEmitter.event; }
+    public get onLog() {
+        return this.onLogEmitter.event;
+    }
 
-    public get onTraceLevelChange() { return this.onTraceLevelChangeEmitter.event; }
+    public get onTraceLevelChange() {
+        return this.onTraceLevelChangeEmitter.event;
+    }
 
     public logAlways(message: string) {
         this.logWithMarker(message);
@@ -105,20 +109,19 @@ ${error.stack}`;
     private logRazorInformation() {
         const packageJsonContents = readOwnPackageJson();
 
-        this.log(
-            '--------------------------------------------------------------------------------');
+        this.log('--------------------------------------------------------------------------------');
         this.log(`Razor.VSCode version ${packageJsonContents.defaults.razor}`);
-        this.log(
-            '--------------------------------------------------------------------------------');
+        this.log('--------------------------------------------------------------------------------');
         this.log(`Razor's trace level is currently set to '${Trace[this.trace]}'`);
         this.log(
-            ' - To change Razor\'s trace level set \'razor.trace\' to ' +
-            '\'Off\', \'Messages\' or \'Verbose\' and then restart VSCode.');
-        this.log(
-            ' - To report issues invoke the \'Report a Razor issue\' command via the command palette.');
+            " - To change Razor's trace level set 'razor.trace' to " +
+                "'Off', 'Messages' or 'Verbose' and then restart VSCode."
+        );
+        this.log(" - To report issues invoke the 'Report a Razor issue' command via the command palette.");
         this.log(
             '-----------------------------------------------------------------------' +
-            '------------------------------------------------------');
+                '------------------------------------------------------'
+        );
         this.log('');
     }
 
@@ -156,6 +159,4 @@ function findInDirectoryOrAncestor(dir: string, filename: string) {
     }
 
     throw new Error(`Could not find '${filename}' in or above '${dir}'.`);
-    
 }
-

@@ -18,17 +18,21 @@ export class DynamicFileInfoHandler {
     public static readonly provideDynamicFileInfoCommand = 'razor.provideDynamicFileInfo';
     public static readonly removeDynamicFileInfoCommand = 'razor.removeDynamicFileInfo';
 
-    constructor(
-        private readonly documentManager: RazorDocumentManager,
-        private readonly logger: RazorLogger) { }
+    constructor(private readonly documentManager: RazorDocumentManager, private readonly logger: RazorLogger) {}
 
     public register() {
-        vscode.commands.registerCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, async (request: ProvideDynamicFileParams) => {
-            return this.provideDynamicFileInfo(request);
-        });
-        vscode.commands.registerCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, async (request: RemoveDynamicFileParams) => {
-            this.removeDynamicFileInfo(request);
-        });
+        vscode.commands.registerCommand(
+            DynamicFileInfoHandler.provideDynamicFileInfoCommand,
+            async (request: ProvideDynamicFileParams) => {
+                return this.provideDynamicFileInfo(request);
+            }
+        );
+        vscode.commands.registerCommand(
+            DynamicFileInfoHandler.removeDynamicFileInfoCommand,
+            async (request: RemoveDynamicFileParams) => {
+                this.removeDynamicFileInfo(request);
+            }
+        );
     }
 
     // Given Razor document URIs, returns associated generated doc URIs
@@ -41,7 +45,9 @@ export class DynamicFileInfoHandler {
                 const razorDocument = await this.documentManager.getDocument(vscodeUri);
                 if (razorDocument === undefined) {
                     virtualUris.push(null);
-                    this.logger.logWarning(`Could not find Razor document ${razorDocumentUri}; adding null as a placeholder in URI array.`);
+                    this.logger.logWarning(
+                        `Could not find Razor document ${razorDocumentUri}; adding null as a placeholder in URI array.`
+                    );
                 } else {
                     // Retrieve generated doc URIs for each Razor URI we are given
                     const virtualCsharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);

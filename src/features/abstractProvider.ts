@@ -8,7 +8,6 @@ import CompositeDisposable from '../compositeDisposable';
 import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 
 export default abstract class AbstractProvider {
-
     protected _server: OmniSharpServer;
     protected _languageMiddlewareFeature: LanguageMiddlewareFeature;
     private _disposables: CompositeDisposable;
