@@ -12,9 +12,9 @@
         "vsix/": true
     },
     "csharp.suppressDotnetRestoreNotification": true,
-    "tslint.rulesDirectory": "node_modules/tslint-microsoft-contrib",
     "typescript.tsdk": "./node_modules/typescript/lib",
     "mocha.enabled": true,
     "omnisharp.autoStart": false,
-    "editor.formatOnSave": false
+    "editor.formatOnSave": false,
+    "eslint.lintTask.enable": true
 }
