@@ -1,7 +1,8 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * See LICENSE.md in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 
 import * as child_process from 'child_process';
 import * as fs from 'fs-extra';
@@ -228,7 +229,7 @@ export class RemoteAttachPicker {
     public static async getRemoteOSAndProcesses(pipeCmd: string, pipeCwd: string, channel: vscode.OutputChannel, platformInfo: PlatformInformation): Promise<AttachItem[]> {
         const scriptPath = path.join(getExtensionPath(), 'scripts', 'remoteProcessPickerScript');
 
-        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < "${scriptPath}"`, pipeCwd, channel, platformInfo).then(output => {
+        return execChildProcessAndOutputErrorToChannel(`${pipeCmd} < "${scriptPath}"`, pipeCwd, channel, platformInfo).then(async output => {
             // OS will be on first line
             // Processess will follow if listed
             const lines = output.split(/\r?\n/);
@@ -572,7 +573,7 @@ async function execChildProcessAndOutputErrorToChannel(process: string, workingD
     channel.appendLine(`Executing: ${process}`);
 
     return new Promise<string>((resolve, reject) => {
-        return GetSysNativePathIfNeeded(platformInfo).then(newEnv => {
+        GetSysNativePathIfNeeded(platformInfo).then(newEnv => {
             child_process.exec(process, { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 }, (error, stdout, stderr) => {
                 let channelOutput = "";
 

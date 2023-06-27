@@ -13,13 +13,13 @@ require('./tasks/backcompatTasks');
 
 // Disable warning about wanting an async function
 // tslint:disable-next-line
-gulp.task('generateOptionsSchema', (): Promise<void> => {
+gulp.task('generateOptionsSchema', async (): Promise<void> => {
     optionsSchemaGenerator.GenerateOptionsSchema();
     return Promise.resolve();
 });
 
 // Disable warning about wanting an async function
 // tslint:disable-next-line
-gulp.task('updatePackageDependencies', (): Promise<void> => {
+gulp.task('updatePackageDependencies', async (): Promise<void> => {
     return packageDependencyUpdater.updatePackageDependencies();
 });
