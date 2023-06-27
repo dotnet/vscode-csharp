@@ -45,6 +45,8 @@ const testData = [
     { serverOption: "csharp|code_style.formatting.indentation_and_spacing.indent_style", vsCodeConfiguration: "codeStyle.formatting.indentationAndSpacing.indentStyle", declareInPackageJson: false},
     { serverOption: "csharp|code_style.formatting.new_line.end_of_line", vsCodeConfiguration: "codeStyle.formatting.newLine.endOfLine", declareInPackageJson: false},
     { serverOption: "code_style.formatting.new_line.insert_final_newline", vsCodeConfiguration: "codeStyle.formatting.newLine.insertFinalNewline", declareInPackageJson: false},
+    { serverOption: "mystery_language|background_analysis.dotnet_solution_crawler_background_analysis_scope", vsCodeConfiguration: "dotnet.backgroundAnalysis.solutionCrawlerBackgroundAnalysisScope", declareInPackageJson: true},
+    { serverOption: "mystery_language|background_analysis.dotnet_compiler_diagnostics_scope", vsCodeConfiguration: "dotnet.backgroundAnalysis.compilerDiagnosticsScope", declareInPackageJson: true},
 ];
 
 suite("Server option name to vscode configuration name test", () => {

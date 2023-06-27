@@ -1274,6 +1274,42 @@
             "description": "Show regular expressions in completion list.",
             "order": 20
           },
+          "dotnet.backgroundAnalysis.solutionCrawlerBackgroundAnalysisScope": {
+            "type": "string",
+            "enum": [
+              "activeFile",
+              "openFiles",
+              "fullSolution",
+              "none"
+            ],
+            "default": "openFiles",
+            "enumDescriptions": [
+              "Current document (not yet supported)",
+              "Open documents",
+              "Entire solution",
+              "None"
+            ],
+            "description": "Run background code analysis for:",
+            "order": 30
+          },
+          "dotnet.backgroundAnalysis.compilerDiagnosticsScope": {
+            "type": "string",
+            "enum": [
+              "activeFile",
+              "openFiles",
+              "fullSolution",
+              "none"
+            ],
+            "default": "openFiles",
+            "enumDescriptions": [
+              "Current document (not yet supported)",
+              "Open documents",
+              "Entire solution",
+              "None"
+            ],
+            "description": "Show compiler errors and warnings for:",
+            "order": 30
+          },
           "dotnet.highlighting.highlightRelatedRegexComponents": {
             "type": "boolean",
             "default": "true",
