@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as semver from 'semver';
-import { getDotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { Options } from '../shared/options';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { OmniSharpMonoResolver } from './omniSharpMonoResolver';

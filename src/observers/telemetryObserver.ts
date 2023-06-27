@@ -18,7 +18,7 @@ import {
 } from '../omnisharp/loggingEvents';
 import { PackageError } from '../packageManager/packageError';
 import { EventType } from '../omnisharp/eventType';
-import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo, DotnetInfo } from '../shared/utils/getDotnetInfo';
 
 export interface ITelemetryReporter {
     sendTelemetryEvent(

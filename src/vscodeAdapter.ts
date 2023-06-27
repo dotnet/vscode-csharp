@@ -953,6 +953,7 @@ interface Thenable<T> {
 export interface Extension<_T> {
     readonly id: string;
     readonly packageJSON: any;
+    readonly extensionPath: string;
 }
 
 export interface vscode {

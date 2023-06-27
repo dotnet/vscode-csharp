@@ -8,7 +8,7 @@ import * as fs from 'fs';
 import * as semver from 'semver';
 import * as os from 'os';
 import { PlatformInformation } from '../shared/platform';
-import { getDotnetInfo, DotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo, DotnetInfo } from '../shared/utils/getDotnetInfo';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI = '1.0.0';
 
@@ -133,6 +133,12 @@ export function getTargetArchitecture(
     }
 
     // Otherwise, look at the runtime ID.
+    if (!dotnetInfo.RuntimeId) {
+        throw new Error(
+            `Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.`
+        );
+    }
+
     if (dotnetInfo.RuntimeId.includes('arm64')) {
         return 'arm64';
     } else if (dotnetInfo.RuntimeId.includes('x64')) {

@@ -38,7 +38,6 @@ import {
     CompletionItem,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
-import { acquireDotNetProcessDependencies } from './dotnetRuntime';
 import { readConfigurations } from './configurationMiddleware';
 import OptionProvider from '../shared/observers/optionProvider';
 import { DynamicFileInfoHandler } from '../razor/src/dynamicFile/dynamicFileInfoHandler';
@@ -55,6 +54,8 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../csharpIntelliCodeExports';
 import { csharpDevkitExtensionId, csharpDevkitIntelliCodeExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { randomUUID } from 'crypto';
+import { DotnetRuntimeExtensionResolver } from './dotnetRuntimeExtensionResolver';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
 
 let _languageServer: RoslynLanguageServer;
@@ -111,6 +112,7 @@ export class RoslynLanguageServer {
 
     constructor(
         private platformInfo: PlatformInformation,
+        private hostExecutableResolver: IHostExecutableResolver,
         private optionProvider: OptionProvider,
         private context: vscode.ExtensionContext,
         private telemetryReporter: TelemetryReporter
@@ -356,37 +358,13 @@ export class RoslynLanguageServer {
         return capabilities;
     }
 
-    private getServerPath(options: Options) {
-        const clientRoot = __dirname;
-
-        let serverPath = options.commonOptions.serverPath;
-        if (!serverPath) {
-            // Option not set, use the path from the extension.
-            serverPath = path.join(clientRoot, '..', '.roslyn', this.getServerFileName());
-        }
-
-        if (!fs.existsSync(serverPath)) {
-            throw new Error(`Cannot find language server in path '${serverPath}'`);
-        }
-
-        return serverPath;
-    }
-
     private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
         const options = this.optionProvider.GetLatestOptions();
-        const serverPath = this.getServerPath(options);
+        const serverPath = getServerPath(options, this.platformInfo);
 
-        let dotnetRuntimePath = options.commonOptions.dotnetPath;
-        if (!dotnetRuntimePath) {
-            const dotnetPath = await acquireDotNetProcessDependencies(serverPath);
-            dotnetRuntimePath = path.dirname(dotnetPath);
-        }
-
-        const dotnetExecutableName = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
-        const dotnetExecutablePath = path.join(dotnetRuntimePath, dotnetExecutableName);
-        if (!fs.existsSync(dotnetExecutablePath)) {
-            throw new Error(`Cannot find dotnet path '${dotnetExecutablePath}'`);
-        }
+        const dotnetInfo = await this.hostExecutableResolver.getHostExecutableInfo(options);
+        const dotnetRuntimePath = path.dirname(dotnetInfo.path);
+        const dotnetExecutablePath = dotnetInfo.path;
 
         _channel.appendLine('Dotnet path: ' + dotnetExecutablePath);
 
@@ -515,23 +493,6 @@ export class RoslynLanguageServer {
         );
     }
 
-    private getServerFileName() {
-        const serverFileName = 'Microsoft.CodeAnalysis.LanguageServer';
-        let extension = '';
-        if (this.platformInfo.isWindows()) {
-            extension = '.exe';
-        }
-
-        if (this.platformInfo.isMacOS()) {
-            // MacOS executables must be signed with codesign.  Currently all Roslyn server executables are built on windows
-            // and therefore dotnet publish does not automatically sign them.
-            // Tracking bug - https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
-            extension = '.dll';
-        }
-
-        return `${serverFileName}${extension}`;
-    }
-
     private async getCSharpDevkitExportArgs(
         csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>,
         options: Options
@@ -620,10 +581,11 @@ export async function activateRoslynLanguageServer(
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     _traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
 
-    _languageServer = new RoslynLanguageServer(platformInfo, optionProvider, context, reporter);
+    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(platformInfo, getServerPath);
+    _languageServer = new RoslynLanguageServer(platformInfo, hostExecutableResolver, optionProvider, context, reporter);
 
     // Register any commands that need to be handled by the extension.
-    registerCommands(context, _languageServer);
+    registerCommands(context, _languageServer, optionProvider, hostExecutableResolver);
 
     registerRazorCommands(context, _languageServer);
 
@@ -662,6 +624,39 @@ export async function activateRoslynLanguageServer(
 
     // Start the language server.
     _languageServer.start();
+}
+
+function getServerPath(options: Options, platformInfo: PlatformInformation) {
+    const clientRoot = __dirname;
+
+    let serverPath = options.commonOptions.serverPath;
+    if (!serverPath) {
+        // Option not set, use the path from the extension.
+        serverPath = path.join(clientRoot, '..', '.roslyn', getServerFileName(platformInfo));
+    }
+
+    if (!fs.existsSync(serverPath)) {
+        throw new Error(`Cannot find language server in path '${serverPath}'`);
+    }
+
+    return serverPath;
+}
+
+function getServerFileName(platformInfo: PlatformInformation) {
+    const serverFileName = 'Microsoft.CodeAnalysis.LanguageServer';
+    let extension = '';
+    if (platformInfo.isWindows()) {
+        extension = '.exe';
+    }
+
+    if (platformInfo.isMacOS()) {
+        // MacOS executables must be signed with codesign.  Currently all Roslyn server executables are built on windows
+        // and therefore dotnet publish does not automatically sign them.
+        // Tracking bug - https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
+        extension = '.dll';
+    }
+
+    return `${serverFileName}${extension}`;
 }
 
 function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {

@@ -8,8 +8,17 @@ import { UriConverter } from './uriConverter';
 import * as languageClient from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { createLaunchTargetForSolution } from '../shared/launchTarget';
+import reportIssue from '../shared/reportIssue';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
+import OptionProvider from '../shared/observers/optionProvider';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 
-export function registerCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
+export function registerCommands(
+    context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
+    optionProvider: OptionProvider,
+    hostExecutableResolver: IHostExecutableResolver
+) {
     // It is very important to be careful about the types used as parameters for these command callbacks.
     // If the arguments are coming from the server as json, it is NOT appropriate to use type definitions
     // from the normal vscode API (e.g. vscode.Location) as input parameters.
@@ -28,6 +37,18 @@ export function registerCommands(context: vscode.ExtensionContext, languageServe
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer))
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('csharp.reportIssue', async () =>
+            reportIssue(
+                vscode,
+                context.extension.packageJSON.version,
+                getDotnetInfo,
+                /*shouldIncludeMonoInfo:*/ false,
+                optionProvider.GetLatestOptions(),
+                hostExecutableResolver
+            )
+        )
     );
 }
 

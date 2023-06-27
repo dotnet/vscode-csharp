@@ -4,16 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getFakeVsCode } from '../testAssets/fakes';
-import reportIssue from '../../../src/features/reportIssue';
-import { EventStream } from '../../../src/eventStream';
-import TestEventBus from '../testAssets/testEventBus';
+import reportIssue from '../../../src/shared/reportIssue';
 import { expect } from 'chai';
-import { OpenURL } from '../../../src/omnisharp/loggingEvents';
 import { vscode } from '../../../src/vscodeAdapter';
 import { Options } from '../../../src/shared/options';
-import { FakeGetDotnetInfo, fakeDotnetInfo } from '../fakes/fakeGetDotnetInfo';
 import { FakeMonoResolver, fakeMonoInfo } from '../fakes/fakeMonoResolver';
 import { FakeDotnetResolver } from '../fakes/fakeDotnetResolver';
+import { DotnetInfo } from '../../../src/shared/utils/getDotnetInfo';
+import { getEmptyOptions } from '../fakes/fakeOptions';
 
 suite(`${reportIssue.name}`, () => {
     const vscodeVersion = 'myVersion';
@@ -28,6 +26,7 @@ suite(`${reportIssue.name}`, () => {
             isBuiltin: true,
         },
         id: 'id1',
+        extensionPath: 'c:/extensions/abc-x64',
     };
 
     const extension2 = {
@@ -38,63 +37,33 @@ suite(`${reportIssue.name}`, () => {
             isBuiltin: false,
         },
         id: 'id2',
+        extensionPath: 'c:/extensions/xyz-x64',
+    };
+
+    const fakeDotnetInfo: DotnetInfo = {
+        FullInfo: 'myDotnetInfo',
+        Version: '1.0.x',
+        RuntimeId: 'win10-x64',
     };
 
     let fakeMonoResolver: FakeMonoResolver;
     let fakeDotnetResolver: FakeDotnetResolver;
-    let eventStream: EventStream;
-    let eventBus: TestEventBus;
-    const getDotnetInfo = FakeGetDotnetInfo;
+    const getDotnetInfo = async () => Promise.resolve(fakeDotnetInfo);
     let options: Options;
     let issueBody: string;
 
     setup(() => {
         vscode = getFakeVsCode();
-
-        vscode.env.clipboard.writeText = async (body: string) => {
-            issueBody = body;
-            return Promise.resolve();
+        vscode.commands.executeCommand = async (command: string, ...rest: any[]) => {
+            issueBody = rest[0].issueBody;
+            return undefined;
         };
 
         vscode.version = vscodeVersion;
         vscode.extensions.all = [extension1, extension2];
-        eventStream = new EventStream();
-        eventBus = new TestEventBus(eventStream);
         fakeMonoResolver = new FakeMonoResolver();
         fakeDotnetResolver = new FakeDotnetResolver();
-    });
-
-    test(`${OpenURL.name} event is created`, async () => {
-        await reportIssue(
-            vscode,
-            csharpExtVersion,
-            eventStream,
-            getDotnetInfo,
-            isValidForMono,
-            options,
-            fakeDotnetResolver,
-            fakeMonoResolver
-        );
-        const events = eventBus.getEvents();
-        expect(events).to.have.length(1);
-        expect(events[0].constructor.name).to.be.equal(`${OpenURL.name}`);
-    });
-
-    test(`${OpenURL.name} event is created with the omnisharp-vscode github repo issues url`, async () => {
-        await reportIssue(
-            vscode,
-            csharpExtVersion,
-            eventStream,
-            getDotnetInfo,
-            false,
-            options,
-            fakeDotnetResolver,
-            fakeMonoResolver
-        );
-        const url = (<OpenURL>eventBus.getEvents()[0]).url;
-        expect(url).to.include(
-            'https://github.com/OmniSharp/omnisharp-vscode/issues/new?body=Please paste the output from your clipboard'
-        );
+        options = getEmptyOptions();
     });
 
     suite('The body is passed to the vscode clipboard and', () => {
@@ -102,7 +71,6 @@ suite(`${reportIssue.name}`, () => {
             await reportIssue(
                 vscode,
                 csharpExtVersion,
-                eventStream,
                 getDotnetInfo,
                 isValidForMono,
                 options,
@@ -116,7 +84,6 @@ suite(`${reportIssue.name}`, () => {
             await reportIssue(
                 vscode,
                 csharpExtVersion,
-                eventStream,
                 getDotnetInfo,
                 isValidForMono,
                 options,
@@ -130,7 +97,6 @@ suite(`${reportIssue.name}`, () => {
             await reportIssue(
                 vscode,
                 csharpExtVersion,
-                eventStream,
                 getDotnetInfo,
                 isValidForMono,
                 options,
@@ -144,7 +110,6 @@ suite(`${reportIssue.name}`, () => {
             await reportIssue(
                 vscode,
                 csharpExtVersion,
-                eventStream,
                 getDotnetInfo,
                 isValidForMono,
                 options,
@@ -158,7 +123,6 @@ suite(`${reportIssue.name}`, () => {
             await reportIssue(
                 vscode,
                 csharpExtVersion,
-                eventStream,
                 getDotnetInfo,
                 isValidForMono,
                 options,
@@ -173,7 +137,6 @@ suite(`${reportIssue.name}`, () => {
             await reportIssue(
                 vscode,
                 csharpExtVersion,
-                eventStream,
                 getDotnetInfo,
                 false,
                 options,
@@ -187,7 +150,6 @@ suite(`${reportIssue.name}`, () => {
             await reportIssue(
                 vscode,
                 csharpExtVersion,
-                eventStream,
                 getDotnetInfo,
                 isValidForMono,
                 options,

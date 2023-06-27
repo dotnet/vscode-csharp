@@ -24,9 +24,9 @@ import { EventStream } from '../eventStream';
 import { PlatformInformation } from '../shared/platform';
 import CompositeDisposable from '../compositeDisposable';
 import OptionProvider from '../shared/observers/optionProvider';
-import reportIssue from './reportIssue';
+import reportIssue from '../shared/reportIssue';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
-import { getDotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
 import { IWorkspaceDebugInformationProvider } from '../shared/IWorkspaceDebugInformationProvider';
 
@@ -79,7 +79,6 @@ export default function registerCommands(
             reportIssue(
                 vscode,
                 context.extension.packageJSON.version,
-                eventStream,
                 getDotnetInfo,
                 platformInfo.isValidPlatformForMono(),
                 optionProvider.GetLatestOptions(),

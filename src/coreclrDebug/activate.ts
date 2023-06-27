@@ -15,7 +15,7 @@ import {
 } from '../omnisharp/loggingEvents';
 import { EventStream } from '../eventStream';
 import { getRuntimeDependencyPackageWithId } from '../tools/runtimeDependencyPackageUtils';
-import { getDotnetInfo } from '../utils/getDotnetInfo';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { Options } from '../shared/options';
 import { RemoteAttachPicker } from '../features/processPicker';
 import CompositeDisposable from '../compositeDisposable';

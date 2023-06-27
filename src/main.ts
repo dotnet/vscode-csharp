@@ -33,7 +33,6 @@ import DotNetTestChannelObserver from './observers/dotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/dotnetTestLoggerObserver';
 import { ShowConfigChangePrompt } from './shared/observers/optionChangeObserver';
 import createOptionStream from './shared/observables/createOptionStream';
-import { OpenURLObserver } from './observers/openUrlObserver';
 import { activateRazorExtension } from './razor/razor';
 import { RazorLoggerObserver } from './observers/razorLoggerObserver';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
@@ -203,9 +202,6 @@ export async function activate(
         backgroundWorkStatusBar.name = 'C# Code Analysis';
         const backgroundWorkStatusBarObserver = new BackgroundWorkStatusBarObserver(backgroundWorkStatusBar);
         eventStream.subscribe(backgroundWorkStatusBarObserver.post);
-
-        const openURLObserver = new OpenURLObserver(vscode);
-        eventStream.subscribe(openURLObserver.post);
 
         const debugMode = false;
         if (debugMode) {

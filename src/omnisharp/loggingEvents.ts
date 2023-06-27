@@ -243,11 +243,6 @@ export class DocumentSynchronizationFailure implements BaseEvent {
     constructor(public documentPath: string, public errorMessage: string) {}
 }
 
-export class OpenURL {
-    type = EventType.OpenURL;
-    constructor(public url: string) {}
-}
-
 export class IntegrityCheckFailure {
     type = EventType.IntegrityCheckFailure;
     constructor(public packageDescription: string, public url: string, public retry: boolean) {}

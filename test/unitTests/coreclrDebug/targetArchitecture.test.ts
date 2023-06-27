@@ -7,7 +7,7 @@ import { getTargetArchitecture } from '../../../src/coreclrDebug/util';
 import { PlatformInformation } from '../../../src/shared/platform';
 
 import { expect, should, assert } from 'chai';
-import { DotnetInfo } from '../../../src/utils/getDotnetInfo';
+import { DotnetInfo } from '../../../src/shared/utils/getDotnetInfo';
 
 suite('getTargetArchitecture Tests', () => {
     suiteSetup(() => should());
