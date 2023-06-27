@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
+import * as cp from 'child_process';
 import {
     RequestHandler,
     RequestType,
@@ -25,6 +26,9 @@ import { resolveRazorLanguageServerOptions } from './RazorLanguageServerOptionsR
 import { resolveRazorLanguageServerTrace } from './RazorLanguageServerTraceResolver';
 import { RazorLogger } from './RazorLogger';
 import { TelemetryReporter } from './TelemetryReporter';
+import { getDotNetProcessInfo } from '../../shared/dotnetRuntime';
+import { PlatformInformation } from '../../shared/platform';
+import OptionProvider from '../../shared/observers/OptionProvider';
 
 const events = {
     ServerStop: 'ServerStop',
@@ -32,7 +36,6 @@ const events = {
 
 export class RazorLanguageServerClient implements vscode.Disposable {
     private clientOptions!: LanguageClientOptions;
-    private serverOptions!: ServerOptions;
     private client!: LanguageClient;
     private onStartListeners: Array<() => Promise<any>> = [];
     private onStartedListeners: Array<() => Promise<any>> = [];
@@ -45,6 +48,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         private readonly vscodeType: typeof vscode,
         private readonly languageServerDir: string,
         private readonly telemetryReporter: TelemetryReporter,
+        private readonly platformInfo: PlatformInformation,
+        private readonly optionProvider: OptionProvider,
         private readonly logger: RazorLogger) {
         this.isStarted = false;
 
@@ -208,26 +213,12 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         return this.stopHandle;
     }
 
-    private setupLanguageServer() {
-        const languageServerTrace = resolveRazorLanguageServerTrace(this.vscodeType);
-        const options: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(this.vscodeType, this.languageServerDir, languageServerTrace, this.logger);
+    private async startServer(options: RazorLanguageServerOptions): Promise<cp.ChildProcess> {
 
-        this.clientOptions = {
-            outputChannel: options.outputChannel,
-            documentSelector: [ { language: RazorLanguage.id, pattern: RazorLanguage.globbingPattern } ],
-        };
-
-        const args: string[] = [];
-        let command = options.serverPath;
-        if (options.serverPath.endsWith('.dll')) {
-            this.logger.logMessage('Razor Language Server path is an assembly. ' +
-                'Using \'dotnet\' from the current path to start the server.');
-
-            command = 'dotnet';
-            args.push(options.serverPath);
-        }
+        let [appPath, env, args] = await getDotNetProcessInfo(options.serverPath, this.platformInfo, this.optionProvider.GetLatestOptions());
 
         this.logger.logMessage(`Razor language server path: ${options.serverPath}`);
+        this.logger.logMessage(`Razor language app path: ${appPath}`);
 
         args.push('--trace');
         args.push(options.trace.toString());
@@ -252,7 +243,30 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('true');
         }
 
-        this.serverOptions = { command, args };
-        this.client = new LanguageClient('razorLanguageServer', 'Razor Language Server', this.serverOptions, this.clientOptions);
+        let childProcess: cp.ChildProcessWithoutNullStreams;
+        let cpOptions: cp.SpawnOptionsWithoutStdio = {
+            detached: true,
+            windowsHide: true,
+            env: env,
+        };
+
+        childProcess = cp.spawn(appPath, args, cpOptions);
+
+        return childProcess;
+    }
+
+    private setupLanguageServer() {
+        const languageServerTrace = resolveRazorLanguageServerTrace(this.vscodeType);
+        const options: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(this.vscodeType, this.languageServerDir, languageServerTrace, this.logger);
+
+        this.clientOptions = {
+            outputChannel: options.outputChannel,
+            documentSelector: [ { language: RazorLanguage.id, pattern: RazorLanguage.globbingPattern } ],
+        };
+
+        let serverOptions: ServerOptions = async () => {
+            return await this.startServer(options);
+        };
+        this.client = new LanguageClient('razorLanguageServer', 'Razor Language Server', serverOptions, this.clientOptions);
     }
 }
