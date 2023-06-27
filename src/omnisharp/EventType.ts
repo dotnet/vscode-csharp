@@ -40,7 +40,6 @@ export enum EventType {
     DotNetTestsInClassRunStart = 33,
     DotNetTestsInClassDebugStart = 34,
     DocumentSynchronizationFailure = 35,
-    OpenURL = 36,
     IntegrityCheckFailure = 37,
     IntegrityCheckSuccess = 38,
     RazorPluginPathSpecified = 39,

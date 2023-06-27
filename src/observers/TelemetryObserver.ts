@@ -9,7 +9,7 @@ import { PlatformInformation } from "../shared/platform";
 import { BaseEvent, InstallationFailure, TestExecutionCountReport, TelemetryEventWithMeasures, TelemetryEvent, ProjectConfiguration, TelemetryErrorEvent, OmnisharpInitialisation } from "../omnisharp/loggingEvents";
 import { PackageError } from "../packageManager/PackageError";
 import { EventType } from "../omnisharp/EventType";
-import { getDotnetInfo, DotnetInfo } from "../utils/getDotnetInfo";
+import { getDotnetInfo, DotnetInfo } from "../shared/utils/getDotnetInfo";
 
 export interface ITelemetryReporter {
     sendTelemetryEvent(eventName: string, properties?: { [key: string]: string }, measures?: { [key: string]: number }): void;

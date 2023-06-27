@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { join } from "path";
-import { execChildProcess } from "../common";
-import { CoreClrDebugUtil } from "../coreclr-debug/util";
+import { execChildProcess } from "../../common";
+import { CoreClrDebugUtil } from "../../coreclr-debug/util";
 
 let _dotnetInfo: DotnetInfo | undefined;
 
@@ -29,21 +29,21 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         const lines = data.replace(/\r/mg, '').split('\n');
         for (const line of lines) {
             let match: RegExpMatchArray | null;
-            if (match = /^\ Version:\s*([^\s].*)$/.exec(line)) {
+            if (match = /^\s*Version:\s*([^\s].*)$/.exec(line)) {
                 version = match[1];
             } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
                 runtimeId = match[1];
             }
+        }
 
-            if (version !== undefined && runtimeId !== undefined) {
-                _dotnetInfo = {
-                    CliPath: cliPath,
-                    FullInfo: fullInfo,
-                    Version: version,
-                    RuntimeId: runtimeId,
-                };
-                return _dotnetInfo;
-            }
+        if (version !== undefined) {
+            _dotnetInfo = {
+                CliPath: cliPath,
+                FullInfo: fullInfo,
+                Version: version,
+                RuntimeId: runtimeId,
+            };
+            return _dotnetInfo;
         }
 
         throw new Error('Failed to parse dotnet version information');
@@ -73,5 +73,6 @@ export interface DotnetInfo {
     CliPath?: string;
     FullInfo: string;
     Version: string;
-    RuntimeId: string;
+    /* a runtime-only install of dotnet will not output a runtimeId in dotnet --info. */
+    RuntimeId?: string;
 }
