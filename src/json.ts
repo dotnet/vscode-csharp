@@ -112,12 +112,7 @@ function cleanJsonText(text: string) {
     }
 
     function scanString() {
-        while (true) {
-            if (index >= length) {
-                // string ended unexpectedly
-                break;
-            }
-
+        while (index < length) {
             const code = next();
 
             if (code === CharCode.doubleQuote) {
@@ -138,6 +133,7 @@ function cleanJsonText(text: string) {
         }
     }
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         const code = next();
 
