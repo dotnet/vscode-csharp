@@ -1277,14 +1277,12 @@
           "dotnet.backgroundAnalysis.solutionCrawlerBackgroundAnalysisScope": {
             "type": "string",
             "enum": [
-              "activeFile",
               "openFiles",
               "fullSolution",
               "none"
             ],
             "default": "openFiles",
             "enumDescriptions": [
-              "Current document (not yet supported)",
               "Open documents",
               "Entire solution",
               "None"
@@ -1295,14 +1293,12 @@
           "dotnet.backgroundAnalysis.compilerDiagnosticsScope": {
             "type": "string",
             "enum": [
-              "activeFile",
               "openFiles",
               "fullSolution",
               "none"
             ],
             "default": "openFiles",
             "enumDescriptions": [
-              "Current document (not yet supported)",
               "Open documents",
               "Entire solution",
               "None"
