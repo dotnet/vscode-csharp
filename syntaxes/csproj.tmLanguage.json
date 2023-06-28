@@ -1,0 +1,12 @@
+{
+    "fileTypes": [
+      "csproj"
+    ],
+    "name": ".NET Project",
+    "patterns": [
+      {
+        "include": "xml"
+      }
+    ],
+    "scopeName": "xml.csproj"
+  }

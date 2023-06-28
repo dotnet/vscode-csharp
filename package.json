@@ -714,6 +714,7 @@
     "onLanguage:csharp",
     "onLanguage:aspnetcorerazor",
     "onLanguage:dotnetProject",
+    "onLanguage:vsSolution",
     "onCommand:o.restart",
     "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
@@ -4159,7 +4160,8 @@
           "csharp",
           "razor",
           "aspnetcorerazor",
-          "dotnetProject"
+          "dotnetProject",
+          "vsSolution"
         ],
         "variables": {},
         "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
@@ -4781,11 +4783,19 @@
       {
         "id": "dotnetProject",
         "extensions": [
-          ".csproj",
-          ".sln"
+          "csproj"
         ],
         "aliases": [
           ".NET Project"
+        ]
+      },
+      {
+        "id": "vsSolution",
+        "extensions": [
+          "sln"
+        ],
+        "aliases": [
+          "VS Solution"
         ]
       }
     ],
@@ -4794,6 +4804,11 @@
         "language": "aspnetcorerazor",
         "scopeName": "text.aspnetcorerazor",
         "path": "./src/razor/syntaxes/aspnetcorerazor.tmLanguage.json"
+      },
+      {
+        "scopeName": "xml.csproj",
+        "path": "/src/syntaxes/csproj.tmLanguage.json",
+        "injectTo": [ "xml" ]
       }
     ],
     "menus": {
