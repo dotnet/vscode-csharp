@@ -5,12 +5,12 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { HostExecutableInformation } from "../shared/constants/HostExecutableInformation";
-import { IHostExecutableResolver } from "../shared/constants/IHostExecutableResolver";
-import { PlatformInformation } from "../shared/platform";
-import { Options } from "../shared/options";
+import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
+import { PlatformInformation } from '../shared/platform';
+import { Options } from '../shared/options';
 import { existsSync } from 'fs';
-import { CSharpExtensionId } from '../constants/CSharpExtensionId';
+import { CSharpExtensionId } from '../constants/csharpExtensionId';
 
 export const DotNetRuntimeVersion = '7.0';
 
@@ -27,7 +27,8 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         /**
          * This is a function instead of a string because the server path can change while the extension is active (when the option changes).
          */
-        private getServerPath: (options: Options, platform: PlatformInformation) => string) { }
+        private getServerPath: (options: Options, platform: PlatformInformation) => string
+    ) {}
 
     private hostInfo: HostExecutableInformation | undefined;
 
@@ -35,7 +36,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         let dotnetRuntimePath = options.commonOptions.dotnetPath;
         const serverPath = this.getServerPath(options, this.platformInfo);
         if (!dotnetRuntimePath) {
-            let dotnetInfo = await this.acquireDotNetProcessDependencies(serverPath);
+            const dotnetInfo = await this.acquireDotNetProcessDependencies(serverPath);
             dotnetRuntimePath = path.dirname(dotnetInfo.path);
         }
 
@@ -46,7 +47,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         }
 
         return {
-            version: "", /* We don't need to know the version - we've already downloaded the correct one */
+            version: '' /* We don't need to know the version - we've already downloaded the correct one */,
             path: dotnetExecutablePath,
             env: process.env,
         };
@@ -80,7 +81,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         return (this.hostInfo = {
             version: DotNetRuntimeVersion,
             path: status.dotnetPath,
-            env: process.env
+            env: process.env,
         });
     }
 
@@ -94,11 +95,11 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
 
         const args = [path];
         // This will install any missing Linux dependencies.
-        await vscode.commands.executeCommand('dotnet.ensureDotnetDependencies', { command: dotnetPath, arguments: args });
+        await vscode.commands.executeCommand('dotnet.ensureDotnetDependencies', {
+            command: dotnetPath,
+            arguments: args,
+        });
 
         return dotnetPath;
     }
 }
-
-
-

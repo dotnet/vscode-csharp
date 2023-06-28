@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { join } from "path";
-import { execChildProcess } from "../../common";
-import { CoreClrDebugUtil } from "../../coreclr-debug/util";
+import { join } from 'path';
+import { execChildProcess } from '../../common';
+import { CoreClrDebugUtil } from '../../coreclrDebug/util';
 
 let _dotnetInfo: DotnetInfo | undefined;
 
@@ -15,7 +15,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         return _dotnetInfo;
     }
 
-    let dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
+    const dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     try {
         const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} --info`, process.cwd(), process.env);
@@ -26,12 +26,12 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         let version: string | undefined;
         let runtimeId: string | undefined;
 
-        const lines = data.replace(/\r/mg, '').split('\n');
+        const lines = data.replace(/\r/gm, '').split('\n');
         for (const line of lines) {
             let match: RegExpMatchArray | null;
-            if (match = /^\s*Version:\s*([^\s].*)$/.exec(line)) {
+            if ((match = /^\s*Version:\s*([^\s].*)$/.exec(line))) {
                 version = match[1];
-            } else if (match = /^\ RID:\s*([\w\-\.]+)$/.exec(line)) {
+            } else if ((match = /^ RID:\s*([\w\-.]+)$/.exec(line))) {
                 runtimeId = match[1];
             }
         }
@@ -47,20 +47,18 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         }
 
         throw new Error('Failed to parse dotnet version information');
-    }
-    catch
-    {
+    } catch {
         // something went wrong with spawning 'dotnet --info'
         throw new Error('A valid dotnet installation could not be found');
     }
 }
 
-export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined{
-    let dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
+export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined {
+    const dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
     let dotnetExecutablePath: string | undefined;
 
     for (const dotnetPath of dotNetCliPaths) {
-        let dotnetFullPath = join(dotnetPath, dotnetExeName);
+        const dotnetFullPath = join(dotnetPath, dotnetExeName);
         if (CoreClrDebugUtil.existsSync(dotnetFullPath)) {
             dotnetExecutablePath = dotnetFullPath;
             break;

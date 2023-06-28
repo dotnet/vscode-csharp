@@ -4,20 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import {
-    ConfigurationParams,
-} from 'vscode-languageclient/node';
-import { convertServerOptionNameToClientConfigurationName as convertServerOptionNameToClientConfigurationName } from './OptionNameConverter';
+import { ConfigurationParams } from 'vscode-languageclient/node';
+import { convertServerOptionNameToClientConfigurationName as convertServerOptionNameToClientConfigurationName } from './optionNameConverter';
 import { readEquivalentVsCodeConfiguration } from './universalEditorConfigProvider';
 
 export function readConfigurations(params: ConfigurationParams): (string | null)[] {
     // Note: null means there is no such configuration in client.
     // If the configuration is null, should push 'null' to result.
-    const result : (string | null)[] = [];
-    let settings = vscode.workspace.getConfiguration();
+    const result: (string | null)[] = [];
+    const settings = vscode.workspace.getConfiguration();
 
     for (const configurationItem of params.items) {
-        let section = configurationItem.section;
+        const section = configurationItem.section;
         // Currently only support global option.
         if (section === undefined || configurationItem.scopeUri !== undefined) {
             result.push(null);
@@ -25,7 +23,7 @@ export function readConfigurations(params: ConfigurationParams): (string | null)
         }
 
         // Server use a different name compare to the name defined in client, so do the remapping.
-        let clientSideName = convertServerOptionNameToClientConfigurationName(section);
+        const clientSideName = convertServerOptionNameToClientConfigurationName(section);
         if (clientSideName == null) {
             result.push(null);
             continue;
@@ -38,7 +36,7 @@ export function readConfigurations(params: ConfigurationParams): (string | null)
         }
 
         value = readEquivalentVsCodeConfiguration(clientSideName);
-        if (value !== undefined) {  
+        if (value !== undefined) {
             result.push(value);
             continue;
         }

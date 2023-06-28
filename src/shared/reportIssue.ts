@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Extension, vscode } from "../vscodeAdapter";
-import { Options } from "../shared/options";
-import { IHostExecutableResolver } from "../shared/constants/IHostExecutableResolver";
-import { basename, dirname } from "path";
-import { DotnetInfo } from "./utils/getDotnetInfo";
-import { CSharpExtensionId } from "../constants/CSharpExtensionId";
+import { Extension, vscode } from '../vscodeAdapter';
+import { Options } from '../shared/options';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
+import { basename, dirname } from 'path';
+import { DotnetInfo } from './utils/getDotnetInfo';
+import { CSharpExtensionId } from '../constants/csharpExtensionId';
 
 export default async function reportIssue(
     vscode: vscode,
@@ -17,24 +17,25 @@ export default async function reportIssue(
     shouldIncludeMonoInfo: boolean,
     options: Options,
     dotnetResolver: IHostExecutableResolver,
-    monoResolver?: IHostExecutableResolver) {
+    monoResolver?: IHostExecutableResolver
+) {
     // Get info for the dotnet that the language server executable is run on, not the dotnet the language server will execute user code on.
     let fullDotnetInfo: string | undefined;
     try {
         const info = await dotnetResolver.getHostExecutableInfo(options);
-        const dotnetInfo = await getDotnetInfo([ dirname(info.path) ]);
+        const dotnetInfo = await getDotnetInfo([dirname(info.path)]);
         fullDotnetInfo = dotnetInfo.FullInfo;
     } catch (error) {
         const message = error instanceof Error ? error.message : `${error}`;
         fullDotnetInfo = message;
     }
 
-    let monoInfo = "";
+    let monoInfo = '';
     if (shouldIncludeMonoInfo && monoResolver) {
         monoInfo = await getMonoIfPlatformValid(options, monoResolver);
     }
-    
-    let extensions = getInstalledExtensions(vscode);
+
+    const extensions = getInstalledExtensions(vscode);
 
     const useOmnisharp = options.commonOptions.useOmnisharpServer;
     const logInfo = getLogInfo(useOmnisharp);
@@ -64,14 +65,13 @@ ${generateExtensionTable(extensions)}
 </details>
 `;
 
-    await vscode.commands.executeCommand("workbench.action.openIssueReporter", {
+    await vscode.commands.executeCommand('workbench.action.openIssueReporter', {
         extensionId: CSharpExtensionId,
-        issueBody: body
+        issueBody: body,
     });
 }
 
 function sortExtensions(a: Extension<any>, b: Extension<any>): number {
-
     if (a.packageJSON.name.toLowerCase() < b.packageJSON.name.toLowerCase()) {
         return -1;
     }
@@ -83,11 +83,18 @@ function sortExtensions(a: Extension<any>, b: Extension<any>): number {
 
 function generateExtensionTable(extensions: Extension<any>[]) {
     if (extensions.length <= 0) {
-        return "none";
+        return 'none';
     }
 
     const tableHeader = `|Extension|Author|Version|Folder Name|\n|---|---|---|---|`;
-    const table = extensions.map((e) => `|${e.packageJSON.name}|${e.packageJSON.publisher}|${e.packageJSON.version}|${basename(e.extensionPath)}|`).join("\n");
+    const table = extensions
+        .map(
+            (e) =>
+                `|${e.packageJSON.name}|${e.packageJSON.publisher}|${e.packageJSON.version}|${basename(
+                    e.extensionPath
+                )}|`
+        )
+        .join('\n');
 
     const extensionTable = `
 ${tableHeader}\n${table};
@@ -97,12 +104,11 @@ ${tableHeader}\n${table};
 }
 
 async function getMonoIfPlatformValid(options: Options, monoResolver: IHostExecutableResolver): Promise<string> {
-    let monoVersion = "Unknown Mono version";
+    let monoVersion = 'Unknown Mono version';
     try {
         const monoInfo = await monoResolver.getHostExecutableInfo(options);
         monoVersion = `OmniSharp using mono: ${monoInfo.version}`;
-    }
-    catch (error) {
+    } catch (error) {
         monoVersion = error instanceof Error ? error.message : `${error}`;
     }
 
@@ -133,8 +139,7 @@ Additionally, if you can reproduce the issue reliably, set the value of the \`do
 }
 
 function getInstalledExtensions(vscode: vscode) {
-    let extensions = vscode.extensions.all
-        .filter(extension => extension.packageJSON.isBuiltin === false);
+    const extensions = vscode.extensions.all.filter((extension) => extension.packageJSON.isBuiltin === false);
 
     return extensions.sort(sortExtensions);
 }

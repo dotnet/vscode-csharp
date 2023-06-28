@@ -1,10 +1,10 @@
-﻿/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
+﻿/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
 import { IRazorProject } from './IRazorProject';
-import { RazorProjectChangeKind } from './RazorProjectChangeKind';
+import { RazorProjectChangeKind } from './razorProjectChangeKind';
 
 export interface IRazorProjectChangeEvent {
     readonly project: IRazorProject;
