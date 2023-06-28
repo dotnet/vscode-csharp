@@ -1274,7 +1274,7 @@
             "description": "Show regular expressions in completion list.",
             "order": 20
           },
-          "dotnet.backgroundAnalysis.solutionCrawlerBackgroundAnalysisScope": {
+          "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
             "type": "string",
             "enum": [
               "openFiles",

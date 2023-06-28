@@ -30,6 +30,12 @@ export function convertServerOptionNameToClientConfigurationName(section: string
         let optionNamePrefix = getPrefix(optionName, prefixes);
 
         let featureName = optionNamePrefix == '' ? optionName: optionName.substring(optionNamePrefix.length + 1);
+        
+        // Handle special case for background analysis option: we want to avoid
+        // 'solution crawler' terminology in the user facing VSCode option.
+        if (featureName =="solution_crawler_background_analysis_scope") {
+            featureName = "analyzer_diagnostics_scope";
+        }
 
         // Finally, convert everything to camel case and put them together.
         let camelCaseGroupName = convertToCamelCase(optionGroupName, '_');
