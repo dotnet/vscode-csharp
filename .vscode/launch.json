@@ -118,7 +118,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/omnisharp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
