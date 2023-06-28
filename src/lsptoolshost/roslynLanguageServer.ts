@@ -623,6 +623,14 @@ export async function activateRoslynLanguageServer(context: vscode.ExtensionCont
     _languageServer.start();
 }
 
+export async function waitForProjectInitialization() : Promise<void> {
+    _languageServer.registerStateChangeEvent(async (state) => {
+        if (state === ServerStateChange.ProjectInitializationComplete) {
+            return Promise.resolve();
+        }
+    });
+}
+
 function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
     // notifications along to Roslyn. didOpen notifications are handled separately via the vscode.openTextDocument method.

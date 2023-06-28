@@ -125,12 +125,36 @@
             "env": {
                 "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/omnisharp_slnWithCsproj.code-workspace",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
                 "OMNISHARP_ENGINE": "stdio",
             },
-            "stopOnEntry": false,
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Blue: Launch slnWithCsproj Workspace Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/blue_slnWithCsproj.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests/integrationTestsBlue",
+            ],
+            "env": {
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/blue_slnWithCsproj.code-workspace",
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "slnWithCsproj",
+            },
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js",
@@ -159,7 +183,6 @@
                 "OSVC_SUITE": "singleCsproj",
                 "OMNISHARP_ENGINE": "lsp",
             },
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js",
@@ -198,14 +221,14 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/omnisharp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
                 "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/omnisharp_slnWithCsproj.code-workspace",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
                 "OMNISHARP_ENGINE": "lsp",
