@@ -14,11 +14,11 @@ export async function restartRoslynLanguageServer(): Promise<void> {
     }
 
     if (!csharpExtension.isActive) {
-        await activateCSharpExtensionNoOmnisharp();
+        await activateCSharpExtension();
     }
 }
 
-export async function activateCSharpExtensionNoOmnisharp(): Promise<void> {
+export async function activateCSharpExtension(): Promise<void> {
      // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
      const vscodeDotnetRuntimeExtensionId = "ms-dotnettools.vscode-dotnet-runtime";
      let dotnetRuntimeExtension = vscode.extensions.getExtension<CSharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
