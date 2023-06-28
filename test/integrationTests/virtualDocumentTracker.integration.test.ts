@@ -8,14 +8,10 @@ import * as vscode from 'vscode';
 import { expect, should } from 'chai';
 import { activateCSharpExtension, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { IDisposable } from '../../src/Disposable';
-
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
+import { IDisposable } from '../../src/disposable';
 
 suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function () {
-    const virtualScheme = "virtual";
+    const virtualScheme = 'virtual';
     let virtualDocumentRegistration: IDisposable;
     let virtualUri: vscode.Uri;
 
@@ -30,8 +26,13 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
         await testAssetWorkspace.restoreAndWait(activation);
 
         const virtualCSharpDocumentProvider = new VirtualCSharpDocumentProvider();
-        virtualDocumentRegistration = vscode.workspace.registerTextDocumentContentProvider(virtualScheme, virtualCSharpDocumentProvider);
-        virtualUri = vscode.Uri.parse(`${virtualScheme}://${testAssetWorkspace.projects[0].projectDirectoryPath}/_virtualFile.cs`);
+        virtualDocumentRegistration = vscode.workspace.registerTextDocumentContentProvider(
+            virtualScheme,
+            virtualCSharpDocumentProvider
+        );
+        virtualUri = vscode.Uri.parse(
+            `${virtualScheme}://${testAssetWorkspace.projects[0].projectDirectoryPath}/_virtualFile.cs`
+        );
     });
 
     suiteTeardown(async () => {
@@ -43,11 +44,13 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
         virtualDocumentRegistration?.dispose();
     });
 
-    test("Virtual documents are operated on.", async () => {
+    test('Virtual documents are operated on.', async () => {
         await vscode.workspace.openTextDocument(virtualUri);
 
-        let position = new vscode.Position(2, 0);
-        let completionList = <vscode.CompletionList>await vscode.commands.executeCommand("vscode.executeCompletionItemProvider", virtualUri, position);
+        const position = new vscode.Position(2, 0);
+        const completionList = <vscode.CompletionList>(
+            await vscode.commands.executeCommand('vscode.executeCompletionItemProvider', virtualUri, position)
+        );
 
         expect(completionList.items).to.not.be.empty;
     });
@@ -56,7 +59,7 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
 class VirtualCSharpDocumentProvider implements vscode.TextDocumentContentProvider {
     onDidChange?: vscode.Event<vscode.Uri>;
 
-    provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): vscode.ProviderResult<string> {
+    provideTextDocumentContent(_uri: vscode.Uri, _token: vscode.CancellationToken): vscode.ProviderResult<string> {
         return `namespace Test
 {
 

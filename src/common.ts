@@ -7,7 +7,7 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { AbsolutePath } from './packageManager/AbsolutePath';
+import { AbsolutePath } from './packageManager/absolutePath';
 
 let extensionPath: string;
 
@@ -24,9 +24,9 @@ export function getExtensionPath() {
 }
 
 export function getUnixTempDirectory() {
-    let envTmp = process.env.TMPDIR;
+    const envTmp = process.env.TMPDIR;
     if (!envTmp) {
-        return "/tmp/";
+        return '/tmp/';
     }
 
     return envTmp;
@@ -38,14 +38,14 @@ export function sum<T>(arr: T[], selector: (item: T) => number): number {
 
 export async function mapAsync<T1, T2>(
     array: T1[],
-    selector: (value: T1, index: number, array: T1[]) => Promise<T2>,
+    selector: (value: T1, index: number, array: T1[]) => Promise<T2>
 ): Promise<T2[]> {
     return Promise.all(array.map(selector));
 }
 
 export async function filterAsync<T>(
     array: T[],
-    predicate: (value: T, index: number, array: T[]) => Promise<boolean>,
+    predicate: (value: T, index: number, array: T[]) => Promise<boolean>
 ): Promise<T[]> {
     const filterMap = await mapAsync(array, predicate);
     return array.filter((_, index) => filterMap[index]);
@@ -56,18 +56,22 @@ export function safeLength<T>(arr: T[] | undefined) {
     return arr ? arr.length : 0;
 }
 
-export async function execChildProcess(command: string, workingDirectory: string = getExtensionPath(), env: NodeJS.ProcessEnv = {}): Promise<string> {
+export async function execChildProcess(
+    command: string,
+    workingDirectory: string = getExtensionPath(),
+    env: NodeJS.ProcessEnv = {}
+): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024, env: env }, (error, stdout, stderr) => {
             if (error) {
-                reject(new Error(`${error}
+                reject(
+                    new Error(`${error}
 ${stdout}
-${stderr}`));
-            }
-            else if (stderr && !stderr.includes("screen size is bogus")) {
+${stderr}`)
+                );
+            } else if (stderr && !stderr.includes('screen size is bogus')) {
                 reject(new Error(stderr));
-            }
-            else {
+            } else {
                 resolve(stdout);
             }
         });
@@ -81,7 +85,7 @@ export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
                 return reject(error);
             }
 
-            if (stderr && !stderr.includes("screen size is bogus")) {
+            if (stderr && !stderr.includes('screen size is bogus')) {
                 return reject(new Error(stderr));
             }
 
@@ -89,13 +93,13 @@ export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
                 return resolve([]);
             }
 
-            let lines = stdout.split(os.EOL);
-            let pairs = lines.map(line => line.trim().split(/\s+/));
+            const lines = stdout.split(os.EOL);
+            const pairs = lines.map((line) => line.trim().split(/\s+/));
 
-            let children = [];
+            const children = [];
 
-            for (let pair of pairs) {
-                let ppid = parseInt(pair[0]);
+            for (const pair of pairs) {
+                const ppid = parseInt(pair[0]);
                 if (ppid === pid) {
                     children.push(parseInt(pair[1]));
                 }
@@ -107,12 +111,11 @@ export async function getUnixChildProcessIds(pid: number): Promise<number[]> {
 }
 
 export async function fileExists(filePath: string): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
+    return new Promise<boolean>((resolve) => {
         fs.stat(filePath, (err, stats) => {
             if (stats && stats.isFile()) {
                 resolve(true);
-            }
-            else {
+            } else {
                 resolve(false);
             }
         });
@@ -120,31 +123,30 @@ export async function fileExists(filePath: string): Promise<boolean> {
 }
 
 export async function deleteIfExists(filePath: string): Promise<void> {
-    return fileExists(filePath)
-        .then(async (exists: boolean) => {
-            return new Promise<void>((resolve, reject) => {
-                if (!exists) {
-                    return resolve();
+    return fileExists(filePath).then(async (exists: boolean) => {
+        return new Promise<void>((resolve, reject) => {
+            if (!exists) {
+                return resolve();
+            }
+
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    return reject(err);
                 }
 
-                fs.unlink(filePath, err => {
-                    if (err) {
-                        return reject(err);
-                    }
-
-                    resolve();
-                });
+                resolve();
             });
         });
+    });
 }
 
 export enum InstallFileType {
     Begin,
-    Lock
+    Lock,
 }
 
 export function getInstallFilePath(folderPath: AbsolutePath, type: InstallFileType): string {
-    let installFile = 'install.' + InstallFileType[type];
+    const installFile = 'install.' + InstallFileType[type];
     return path.resolve(folderPath.value, installFile);
 }
 
@@ -154,7 +156,7 @@ export async function installFileExists(folderPath: AbsolutePath, type: InstallF
 
 export async function touchInstallFile(folderPath: AbsolutePath, type: InstallFileType): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        fs.writeFile(getInstallFilePath(folderPath, type), '', err => {
+        fs.writeFile(getInstallFilePath(folderPath, type), '', (err) => {
             if (err) {
                 reject(err);
                 return;
@@ -167,7 +169,7 @@ export async function touchInstallFile(folderPath: AbsolutePath, type: InstallFi
 
 export async function deleteInstallFile(folderPath: AbsolutePath, type: InstallFileType): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-        fs.unlink(getInstallFilePath(folderPath, type), err => {
+        fs.unlink(getInstallFilePath(folderPath, type), (err) => {
             if (err) {
                 reject(err);
                 return;
@@ -179,7 +181,7 @@ export async function deleteInstallFile(folderPath: AbsolutePath, type: InstallF
 }
 
 export function convertNativePathToPosix(pathString: string): string {
-    let parts = pathString.split(path.sep);
+    const parts = pathString.split(path.sep);
     return parts.join(path.posix.sep);
 }
 
@@ -196,25 +198,30 @@ export function isSubfolderOf(subfolder: string, folder: string): boolean {
     const folderArray: string[] = folder.split(path.sep);
 
     // Check to see that every sub directory in subfolder exists in folder.
-    return subfolderArray.length <= folderArray.length && subfolderArray.every((subpath, index) => folderArray[index] === subpath);
+    return (
+        subfolderArray.length <= folderArray.length &&
+        subfolderArray.every((subpath, index) => folderArray[index] === subpath)
+    );
 }
 
 /**
  * Find PowerShell executable from PATH (for Windows only).
  */
 export function findPowerShell(): string | undefined {
-    const dirs: string[] = (process.env.PATH || '').replace(/"+/g, '').split(';').filter(x => x);
+    const dirs: string[] = (process.env.PATH || '')
+        .replace(/"+/g, '')
+        .split(';')
+        .filter((x) => x);
     const names: string[] = ['pwsh.exe', 'powershell.exe'];
     for (const name of names) {
-        const candidates: string[] = dirs.reduce<string[]>((paths, dir) => [
-            ...paths, path.join(dir, name)
-        ], []);
+        const candidates: string[] = dirs.reduce<string[]>((paths, dir) => [...paths, path.join(dir, name)], []);
         for (const candidate of candidates) {
             try {
                 if (fs.statSync(candidate).isFile()) {
                     return name;
                 }
             } catch (e) {
+                /* empty */
             }
         }
     }
