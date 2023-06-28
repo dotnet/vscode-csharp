@@ -190,24 +190,24 @@ const testData = [
         declareInPackageJson: false,
     },
     {
-        serverOption: "csharp|background_analysis.dotnet_solution_crawler_background_analysis_scope",
-        vsCodeConfiguration: "dotnet.backgroundAnalysis.analyzerDiagnosticsScope",
-        declareInPackageJson: true
+        serverOption: 'csharp|background_analysis.dotnet_analyzer_diagnostics_scope',
+        vsCodeConfiguration: 'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
+        declareInPackageJson: true,
     },
     {
-        serverOption: "mystery_language|background_analysis.dotnet_solution_crawler_background_analysis_scope",
+        serverOption: 'mystery_language|background_analysis.dotnet_analyzer_diagnostics_scope',
         vsCodeConfiguration: null,
-        declareInPackageJson: false
+        declareInPackageJson: false,
     },
     {
-        serverOption: "csharp|background_analysis.dotnet_compiler_diagnostics_scope",
-        vsCodeConfiguration: "dotnet.backgroundAnalysis.compilerDiagnosticsScope",
-        declareInPackageJson: true
+        serverOption: 'csharp|background_analysis.dotnet_compiler_diagnostics_scope',
+        vsCodeConfiguration: 'dotnet.backgroundAnalysis.compilerDiagnosticsScope',
+        declareInPackageJson: true,
     },
     {
-        serverOption: "mystery_language|background_analysis.dotnet_compiler_diagnostics_scope",
+        serverOption: 'mystery_language|background_analysis.dotnet_compiler_diagnostics_scope',
         vsCodeConfiguration: null,
-        declareInPackageJson: false
+        declareInPackageJson: false,
     },
 ];
 
