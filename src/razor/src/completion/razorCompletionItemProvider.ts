@@ -90,7 +90,7 @@ export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implem
                 if (doc && doc.value) {
                     // Without this, the documentation doesn't get rendered in the editor.
                     const newDoc = new vscode.MarkdownString(doc.value);
-                    newDoc.isTrusted = doc.isTrusted;
+                    newDoc.isTrusted = false;
                     completionItem.documentation = newDoc;
                 }
 
