@@ -575,7 +575,7 @@ export async function activateRoslynLanguageServer(
     optionProvider: OptionProvider,
     outputChannel: vscode.OutputChannel,
     reporter: TelemetryReporter
-) {
+): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
@@ -624,6 +624,8 @@ export async function activateRoslynLanguageServer(
 
     // Start the language server.
     _languageServer.start();
+
+    return _languageServer;
 }
 
 function getServerPath(options: Options, platformInfo: PlatformInformation) {
