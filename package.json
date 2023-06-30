@@ -36,7 +36,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.7.0-3.23326.2",
+    "roslyn": "4.7.0-3.23328.5",
     "omniSharp": "1.39.6",
     "razor": "7.0.0-preview.23328.2"
   },
@@ -1292,6 +1292,38 @@
             "default": "true",
             "description": "Show regular expressions in completion list.",
             "order": 20
+          },
+          "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
+            "type": "string",
+            "enum": [
+              "openFiles",
+              "fullSolution",
+              "none"
+            ],
+            "default": "openFiles",
+            "enumDescriptions": [
+              "Open documents",
+              "Entire solution",
+              "None"
+            ],
+            "description": "Run background code analysis for:",
+            "order": 30
+          },
+          "dotnet.backgroundAnalysis.compilerDiagnosticsScope": {
+            "type": "string",
+            "enum": [
+              "openFiles",
+              "fullSolution",
+              "none"
+            ],
+            "default": "openFiles",
+            "enumDescriptions": [
+              "Open documents",
+              "Entire solution",
+              "None"
+            ],
+            "description": "Show compiler errors and warnings for:",
+            "order": 30
           },
           "dotnet.highlighting.highlightRelatedRegexComponents": {
             "type": "boolean",

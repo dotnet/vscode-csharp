@@ -189,6 +189,26 @@ const testData = [
         vsCodeConfiguration: 'codeStyle.formatting.newLine.insertFinalNewline',
         declareInPackageJson: false,
     },
+    {
+        serverOption: 'csharp|background_analysis.dotnet_analyzer_diagnostics_scope',
+        vsCodeConfiguration: 'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
+        declareInPackageJson: true,
+    },
+    {
+        serverOption: 'mystery_language|background_analysis.dotnet_analyzer_diagnostics_scope',
+        vsCodeConfiguration: null,
+        declareInPackageJson: false,
+    },
+    {
+        serverOption: 'csharp|background_analysis.dotnet_compiler_diagnostics_scope',
+        vsCodeConfiguration: 'dotnet.backgroundAnalysis.compilerDiagnosticsScope',
+        declareInPackageJson: true,
+    },
+    {
+        serverOption: 'mystery_language|background_analysis.dotnet_compiler_diagnostics_scope',
+        vsCodeConfiguration: null,
+        declareInPackageJson: false,
+    },
 ];
 
 suite('Server option name to vscode configuration name test', () => {
