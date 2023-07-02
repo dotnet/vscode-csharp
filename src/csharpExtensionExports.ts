@@ -27,4 +27,5 @@ export interface CSharpExtensionExports {
         params: Params,
         token: vscode.CancellationToken
     ) => Promise<Response>;
+    serverExecutablePath: () => Promise<string | undefined>;
 }

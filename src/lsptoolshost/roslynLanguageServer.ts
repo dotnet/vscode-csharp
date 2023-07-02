@@ -110,6 +110,11 @@ export class RoslynLanguageServer {
      */
     private _solutionFile: vscode.Uri | undefined;
 
+    /**
+     * The path to the server executable that is being run, or undefined if none was.
+     */
+    private _serverExecutablePath: string | undefined;
+
     constructor(
         private platformInfo: PlatformInformation,
         private hostExecutableResolver: IHostExecutableResolver,
@@ -360,7 +365,7 @@ export class RoslynLanguageServer {
 
     private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
         const options = this.optionProvider.GetLatestOptions();
-        const serverPath = getServerPath(options, this.platformInfo);
+        this._serverExecutablePath = getServerPath(options, this.platformInfo);
 
         const dotnetInfo = await this.hostExecutableResolver.getHostExecutableInfo(options);
         const dotnetRuntimePath = path.dirname(dotnetInfo.path);
@@ -417,7 +422,7 @@ export class RoslynLanguageServer {
         }
 
         if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
-            _channel.appendLine(`Starting server at ${serverPath}`);
+            _channel.appendLine(`Starting server at ${this._serverExecutablePath}`);
         }
 
         // shouldn't this arg only be set if it's running with CSDevKit?
@@ -430,13 +435,13 @@ export class RoslynLanguageServer {
             env: env,
         };
 
-        if (serverPath.endsWith('.dll')) {
+        if (this._serverExecutablePath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
-            const argsWithPath = [serverPath].concat(args);
+            const argsWithPath = [this._serverExecutablePath].concat(args);
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
-            childProcess = cp.spawn(serverPath, args, cpOptions);
+            childProcess = cp.spawn(this._serverExecutablePath, args, cpOptions);
         }
 
         return childProcess;
@@ -557,6 +562,10 @@ export class RoslynLanguageServer {
                 );
                 throw new Error(`Invalid log level ${logLevel}`);
         }
+    }
+
+    public getServerExecutablePath(): string | undefined {
+        return this._serverExecutablePath;
     }
 }
 

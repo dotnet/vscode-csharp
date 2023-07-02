@@ -30,4 +30,9 @@ export class RoslynLanguageServerExport {
         const newType = new RequestType<Params, Response, Error>(type.method);
         return await server.sendRequest(newType, params, token);
     }
+
+    public async serverExecutablePath(): Promise<string | undefined> {
+        const server = await this.ensureServer();
+        return server.getServerExecutablePath();
+    }
 }
