@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-*  Copyright (c) Microsoft Corporation. All rights reserved.
-*  Licensed under the MIT License. See License.txt in the project root for license information.
-*--------------------------------------------------------------------------------------------*/
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -10,29 +10,28 @@ import { should, expect } from 'chai';
 import * as integrationHelpers from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
     suiteSetup(async function () {
         should();
 
-        if (integrationHelpers.isRazorWorkspace(vscode.workspace) || integrationHelpers.isSlnWithGenerator(vscode.workspace)) {
+        if (
+            integrationHelpers.isRazorWorkspace(vscode.workspace) ||
+            integrationHelpers.isSlnWithGenerator(vscode.workspace)
+        ) {
             this.skip();
         }
 
         const activation = await integrationHelpers.activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        let fileName = 'documentSymbols.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let filePath = path.join(projectDirectory, fileName);
+        const fileName = 'documentSymbols.cs';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
 
-        await vscode.commands.executeCommand("vscode.open", fileUri);
+        await vscode.commands.executeCommand('vscode.open', fileUri);
 
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
@@ -41,8 +40,8 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns all elements", async function () {
-        let symbols = await GetDocumentSymbols(fileUri);
+    test('Returns all elements', async function () {
+        const symbols = await GetDocumentSymbols(fileUri);
 
         // The count can vary:
         // Some builds of OmniSharp return a tree data structure with one root element
@@ -55,5 +54,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
 });
 
 async function GetDocumentSymbols(fileUri: vscode.Uri) {
-    return <vscode.SymbolInformation[]>await vscode.commands.executeCommand("vscode.executeDocumentSymbolProvider", fileUri);
+    return <vscode.SymbolInformation[]>(
+        await vscode.commands.executeCommand('vscode.executeDocumentSymbolProvider', fileUri)
+    );
 }

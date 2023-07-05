@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should } from 'chai';
-import { ConfigurationChangeEvent, vscode } from "../../src/vscodeAdapter";
-import { getVSCodeWithConfig, updateConfig } from "./testAssets/Fakes";
-import Disposable from "../../src/Disposable";
-import { Observable, Subscription } from "rxjs";
-import { Options } from "../../src/shared/options";
-import { GetConfigChangeEvent } from './testAssets/GetConfigChangeEvent';
-import createOptionStream from '../../src/shared/observables/CreateOptionStream';
+import { ConfigurationChangeEvent, vscode } from '../../src/vscodeAdapter';
+import { getVSCodeWithConfig, updateConfig } from './testAssets/fakes';
+import Disposable from '../../src/disposable';
+import { Observable, Subscription } from 'rxjs';
+import { Options } from '../../src/shared/options';
+import { GetConfigChangeEvent } from './testAssets/getConfigChangeEvent';
+import createOptionStream from '../../src/shared/observables/createOptionStream';
 
 suite('OptionStream', () => {
     suiteSetup(() => should());
@@ -32,22 +32,22 @@ suite('OptionStream', () => {
         let options: Options;
 
         setup(() => {
-            subscription = optionStream.subscribe(newOptions => options = newOptions);
+            subscription = optionStream.subscribe((newOptions) => (options = newOptions));
         });
 
         test('Gives the changed option when the omnisharp config changes', () => {
-            options.commonOptions.serverPath.should.equal("");
-            let changingConfig = "omnisharp";
-            updateConfig(vscode, changingConfig, 'path', "somePath");
-            listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));
-            options.commonOptions.serverPath.should.equal("somePath");
+            options.commonOptions.serverPath.should.equal('');
+            const changingConfig = 'omnisharp';
+            updateConfig(vscode, changingConfig, 'path', 'somePath');
+            listenerFunction.forEach((listener) => listener(GetConfigChangeEvent(changingConfig)));
+            options.commonOptions.serverPath.should.equal('somePath');
         });
 
         test('Gives the changed option when the csharp config changes', () => {
             options.omnisharpOptions.disableCodeActions.should.equal(false);
-            let changingConfig = "csharp";
+            const changingConfig = 'csharp';
             updateConfig(vscode, changingConfig, 'disableCodeActions', true);
-            listenerFunction.forEach(listener => listener(GetConfigChangeEvent(changingConfig)));
+            listenerFunction.forEach((listener) => listener(GetConfigChangeEvent(changingConfig)));
             options.omnisharpOptions.disableCodeActions.should.equal(true);
         });
 
@@ -61,9 +61,15 @@ suite('OptionStream', () => {
 
     test('Dispose is called when the last subscriber unsubscribes', () => {
         disposeCalled.should.equal(false);
-        let subscription1 = optionStream.subscribe(_ => { });
-        let subscription2 = optionStream.subscribe(_ => { });
-        let subscription3 = optionStream.subscribe(_ => { });
+        const subscription1 = optionStream.subscribe((_) => {
+            /** empty */
+        });
+        const subscription2 = optionStream.subscribe((_) => {
+            /** empty */
+        });
+        const subscription3 = optionStream.subscribe((_) => {
+            /** empty */
+        });
         subscription1.unsubscribe();
         disposeCalled.should.equal(false);
         subscription2.unsubscribe();
@@ -73,11 +79,16 @@ suite('OptionStream', () => {
     });
 
     function getVSCode(listenerFunction: Array<(e: ConfigurationChangeEvent) => any>): vscode {
-        let vscode = getVSCodeWithConfig();
+        const vscode = getVSCodeWithConfig();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        vscode.workspace.onDidChangeConfiguration = (listener: (e: ConfigurationChangeEvent) => any, thisArgs?: any, disposables?: Disposable[]) => {
+        vscode.workspace.onDidChangeConfiguration = (
+            listener: (e: ConfigurationChangeEvent) => any,
+            _thisArgs?: any,
+            _disposables?: Disposable[]
+        ) => {
             listenerFunction.push(listener);
-            return new Disposable(() => disposeCalled = true);
+            return new Disposable(() => (disposeCalled = true));
         };
 
         return vscode;
