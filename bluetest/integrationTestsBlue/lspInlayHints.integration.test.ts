@@ -25,25 +25,25 @@ suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
         }
 
         const editorConfig = vscode.workspace.getConfiguration('editor');
-        await editorConfig.update('inlayHints.enabled', true, vscode.ConfigurationTarget.WorkspaceFolder);
+        await editorConfig.update('inlayHints.enabled', true);
         const dotnetConfig = vscode.workspace.getConfiguration('dotnet');
-        await dotnetConfig.update('inlayHints.enableInlayHintsForParameters', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await dotnetConfig.update('inlayHints.enableInlayHintsForLiteralParameters', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await dotnetConfig.update('inlayHints.enableInlayHintsForObjectCreationParameters', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await dotnetConfig.update('inlayHints.enableInlayHintsForIndexerParameters', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await dotnetConfig.update('inlayHints.enableInlayHintsForOtherParameters', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatMatchArgumentName', true, vscode.ConfigurationTarget.WorkspaceFolder);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForParameters', true);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForLiteralParameters', true);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForObjectCreationParameters', true);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForIndexerParameters', true);
+        await dotnetConfig.update('inlayHints.enableInlayHintsForOtherParameters', true);
+        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix', true);
+        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent', true);
+        await dotnetConfig.update('inlayHints.suppressInlayHintsForParametersThatMatchArgumentName', true);
 
         const csharpConfig = vscode.workspace.getConfiguration('csharp');
-        await csharpConfig.update('inlayHints.enableInlayHintsForTypes', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await csharpConfig.update('inlayHints.enableInlayHintsForImplicitVariableTypes', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await csharpConfig.update('inlayHints.enableInlayHintsForLambdaParameterTypes', true, vscode.ConfigurationTarget.WorkspaceFolder);
-        await csharpConfig.update('inlayHints.enableInlayHintsForImplicitObjectCreation', true, vscode.ConfigurationTarget.WorkspaceFolder);
+        await csharpConfig.update('inlayHints.enableInlayHintsForTypes', true);
+        await csharpConfig.update('inlayHints.enableInlayHintsForImplicitVariableTypes', true);
+        await csharpConfig.update('inlayHints.enableInlayHintsForLambdaParameterTypes', true);
+        await csharpConfig.update('inlayHints.enableInlayHintsForImplicitObjectCreation', true);
 
         await restartRoslynLanguageServer();
-        //await testAssetWorkspace.restore();
+        await vscode.commands.executeCommand("dotnet.restartServer");
 
         const fileName = 'inlayHints.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

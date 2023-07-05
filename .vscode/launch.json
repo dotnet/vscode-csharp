@@ -144,7 +144,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/blue_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests/integrationTestsBlue",
+                "--extensionTestsPath=${workspaceRoot}/out/bluetest/integrationTestsBlue",
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -153,7 +153,7 @@
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js",
-                "${workspaceRoot}/out/test/**/*.js"
+                "${workspaceRoot}/out/bluetest/**/*.js"
             ],
             "preLaunchTask": "buildDev"
         },
