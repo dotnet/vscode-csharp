@@ -43,7 +43,6 @@ suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
         await csharpConfig.update('inlayHints.enableInlayHintsForImplicitObjectCreation', true);
 
         await restartRoslynLanguageServer();
-        await vscode.commands.executeCommand("dotnet.restartServer");
 
         const fileName = 'inlayHints.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

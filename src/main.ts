@@ -43,7 +43,7 @@ import { installRuntimeDependencies } from './InstallRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/BackgroundWorkStatusBarObserver';
 import { getDotnetPackApi } from './DotnetPack';
-import { SolutionSnapshotProvider, activateRoslynLanguageServer, waitForProjectInitialization } from "./lsptoolshost/roslynLanguageServer";
+import { SolutionSnapshotProvider, activateRoslynLanguageServer } from "./lsptoolshost/roslynLanguageServer";
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/MigrateOptions';
 import { getBrokeredServiceContainer } from './lsptoolshost/services/brokeredServicesHosting';
@@ -112,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
     let omnisharpLangServicePromise : Promise<OmniSharp.ActivationResult> | undefined = undefined;
     let omnisharpRazorPromise : Promise<void> | undefined = undefined;
     let roslynLanguageServerPromise : Promise<void> | undefined = undefined;
-    let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
+    //let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer)
     {
@@ -129,7 +129,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(ShowConfigChangePrompt(optionStream, 'dotnet.restartServer', Options.shouldLanguageServerOptionChangeTriggerReload, vscode));
         roslynLanguageServerPromise = activateRoslynLanguageServer(context, platformInfo, optionProvider, csharpChannel, reporter);
-        projectInitializationCompletePromise = waitForProjectInitialization();
+        //projectInitializationCompletePromise = waitForProjectInitialization();
     }
     else
     {
@@ -239,7 +239,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<CSharp
             initializationFinished: async () => {
                 await coreClrDebugPromise;
                 await roslynLanguageServerPromise;
-                await projectInitializationCompletePromise;
+                //await projectInitializationCompletePromise;
             },
             profferBrokeredServices: container => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath
