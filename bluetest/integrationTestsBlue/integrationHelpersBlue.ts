@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { CSharpExtensionExports } from "../../../src/CSharpExtensionExports";
+import { CSharpExtensionExports } from "../../src/CSharpExtensionExports";
 
 export async function restartRoslynLanguageServer(): Promise<void> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");

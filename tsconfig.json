@@ -20,5 +20,5 @@
         "tasks",
         "test",
         "typings"
-    ]
+, "bluetest/integrationTestsBlue"    ]
 }

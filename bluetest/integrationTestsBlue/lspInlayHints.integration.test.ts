@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 import { should, assert } from 'chai';
-import testAssetWorkspace from '../testAssets/testAssetWorkspace';
+import testAssetWorkspace from '../../test/integrationTests/testAssets/testAssetWorkspace';
 import * as path from 'path';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartRoslynLanguageServer } from './integrationHelpersBlue';
 
