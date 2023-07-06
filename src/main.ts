@@ -85,10 +85,8 @@ export async function activate(
     const razorOptions = optionProvider.GetLatestOptions().razorOptions;
     requiredPackageIds.push('Razor');
 
-    const csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
-    const useOmnisharpServer =
-        !csharpDevkitExtension && optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
-    if (useOmnisharpServer) {
+    const useOmnisharpServer = optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
+    if (optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer) {
         requiredPackageIds.push('OmniSharp');
     }
 
