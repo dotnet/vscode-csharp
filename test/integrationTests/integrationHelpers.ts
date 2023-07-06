@@ -18,11 +18,15 @@ export interface ActivationResult {
 export async function activateCSharpExtension(): Promise<ActivationResult> {
     // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
     const vscodeDotnetRuntimeExtensionId = 'ms-dotnettools.vscode-dotnet-runtime';
+    console.log('Checking for .NET runtime extension');
     const dotnetRuntimeExtension =
         vscode.extensions.getExtension<OmnisharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
     if (!dotnetRuntimeExtension) {
+        console.log('Didnt find it, installing');
         await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId);
+        console.log('Reloading window');
         await vscode.commands.executeCommand('workbench.action.reloadWindow');
+        console.log('Reloaded');
     }
 
     const configuration = vscode.workspace.getConfiguration();
@@ -37,8 +41,9 @@ export async function activateCSharpExtension(): Promise<ActivationResult> {
     }
 
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
+    console.log('Call the actual activate function');
     await csharpExtension.activate();
-
+    console.log('finished activae, calling initializedFinished');
     await csharpExtension.exports.initializationFinished();
     console.log('ms-dotnettools.csharp activated');
 
