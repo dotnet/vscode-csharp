@@ -208,15 +208,12 @@ export async function activate(
     context.subscriptions.push(disposables);
 
     console.log('Returning a promise');
-    return new Promise<ActivationResult>((resolve) =>
-    {
+    return new Promise<ActivationResult>((resolve) => {
         console.log('calling OnServerStart');
 
         return server.onServerStart((_) => {
             console.log('Calling resolve');
-
-                return resolve({ server, advisor, testManager });
-            });
-        }
-    );
+            return resolve({ server, advisor, testManager });
+        });
+    });
 }
