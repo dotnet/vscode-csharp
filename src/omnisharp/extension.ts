@@ -42,6 +42,7 @@ export async function activate(
     extensionPath: string,
     outputChannel: vscode.OutputChannel
 ) {
+    console.log('Beginning O# activation');
     const disposables = new CompositeDisposable();
 
     const options = optionProvider.GetLatestOptions();
@@ -54,6 +55,7 @@ export async function activate(
 
     const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
 
+    console.log('Constructing server');
     const server = new OmniSharpServer(
         vscode,
         provider,
@@ -69,6 +71,7 @@ export async function activate(
         outputChannel,
         languageMiddlewareFeature
     );
+    console.log('Constructing advisor and test manager');
     const advisor = new Advisor(server, optionProvider); // create before server is started
     const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
     const workspaceInformationProvider = new OmnisharpWorkspaceDebugInformationProvider(server);
@@ -88,6 +91,7 @@ export async function activate(
         })
     );
 
+    console.log('Registering commands');
     disposables.add(
         registerCommands(
             context,
@@ -172,9 +176,11 @@ export async function activate(
         })
     );
 
+    console.log('Calling autostart');
     if (options.omnisharpOptions.autoStart) {
         server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
     }
+    console.log('done autostart');
 
     // stop server on deactivate
     disposables.add(
@@ -198,9 +204,19 @@ export async function activate(
         )
     );
 
+    console.log('Pushing disposables');
     context.subscriptions.push(disposables);
 
+    console.log('Returning a promise');
     return new Promise<ActivationResult>((resolve) =>
-        server.onServerStart((_) => resolve({ server, advisor, testManager }))
+    {
+        console.log('calling OnServerStart');
+
+        return server.onServerStart((_) => {
+            console.log('Calling resolve');
+
+                return resolve({ server, advisor, testManager });
+            });
+        }
     );
 }
