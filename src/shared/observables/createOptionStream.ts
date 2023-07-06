@@ -9,7 +9,7 @@ import { Observable, Observer } from 'rxjs';
 import { publishBehavior } from 'rxjs/operators';
 import { csharpDevkitExtensionId } from '../../utils/getCSharpDevKit';
 
-export default function createOptionStream(vscode: vscode, ): Observable<Options> {
+export default function createOptionStream(vscode: vscode): Observable<Options> {
     return Observable.create((observer: Observer<Options>) => {
         const disposable = vscode.workspace.onDidChangeConfiguration((e) => {
             //if the omnisharp or csharp configuration are affected only then read the options
