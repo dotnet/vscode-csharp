@@ -18,14 +18,14 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
 
-        console.log("Checking if razor workspace or solution with generator");
+        console.log('Checking if razor workspace or solution with generator');
 
         if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            console.log("skipping test");
+            console.log('skipping test');
             this.skip();
         }
 
-        console.log("Running test");
+        console.log('Running test');
 
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);
