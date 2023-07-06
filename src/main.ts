@@ -283,8 +283,11 @@ export async function activate(
 
         return {
             initializationFinished: async () => {
+                console.log('awaiting coreClrDebugPromise');
                 await coreClrDebugPromise;
+                console.log('awaiting roslynLanguageServerPromise');
                 await roslynLanguageServerPromise;
+                console.log('done');
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,
@@ -292,13 +295,18 @@ export async function activate(
     } else {
         return {
             initializationFinished: async () => {
+                console.log('awaiting omnisharpLangServicePromise');
                 const langService = await omnisharpLangServicePromise;
+                console.log('awaiting waitForInitialize');
                 await langService!.server.waitForInitialize();
+                console.log('awaiting coreClrDebugPromise');
                 await coreClrDebugPromise;
 
                 if (omnisharpRazorPromise) {
+                    console.log('awaiting omnisharpRazorPromise');
                     await omnisharpRazorPromise;
                 }
+                console.log('done');
             },
             getAdvisor: async () => {
                 const langService = await omnisharpLangServicePromise;
