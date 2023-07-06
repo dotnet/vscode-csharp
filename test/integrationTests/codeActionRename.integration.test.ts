@@ -25,15 +25,18 @@ suite(`Code Action Rename ${testAssetWorkspace.description}`, function () {
             this.skip();
         }
 
-        console.log('Running test');
+        console.log('Activating CSharp Extension');
 
         const activation = await activateCSharpExtension();
+        console.log('Activated CSharp Extension. Running restore');
         await testAssetWorkspace.restoreAndWait(activation);
-
+        console.log('Restore finished');
         const fileName = 'A.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
+
+        console.log('Setup finished');
     });
 
     suiteTeardown(async () => {
