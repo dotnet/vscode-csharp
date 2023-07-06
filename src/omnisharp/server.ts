@@ -298,9 +298,15 @@ export class OmniSharpServer {
             return;
         }
 
+        console.log('getting latest options');
+
         const options = this.optionProvider.GetLatestOptions();
 
+        console.log('got options');
+
         if (!(await validateRequirements(options))) {
+            console.log('options failed to validate');
+
             this.eventStream.post(
                 new ObservableEvents.OmnisharpServerMessage(
                     'OmniSharp failed to start because of missing requirements.'
@@ -314,6 +320,8 @@ export class OmniSharpServer {
         let engine: IEngine | undefined;
         const omnisharpOptions = options.omnisharpOptions;
         if (omnisharpOptions.enableLspDriver) {
+            console.log('using lspengine');
+
             engine = new LspEngine(
                 this._eventBus,
                 this.eventStream,
@@ -326,6 +334,8 @@ export class OmniSharpServer {
                 this.dotnetResolver
             );
         } else {
+            console.log('using StdioEngine');
+
             engine = new StdioEngine(
                 this._eventBus,
                 this.eventStream,
@@ -426,8 +436,11 @@ export class OmniSharpServer {
             omnisharpOptions.loggingLevel,
         ];
 
+        console.log('getting razor options');
         const razorOptions = options.razorOptions;
         // Razor support only exists for certain platforms, so only load the plugin if present
+        console.log('looking for razor plugin');
+
         const razorPluginPath =
             razorOptions.razorPluginPath.length > 0
                 ? razorOptions.razorPluginPath
@@ -437,6 +450,9 @@ export class OmniSharpServer {
                       'OmniSharpPlugin',
                       'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll'
                   );
+
+        console.log(`Razor plug in at ${razorPluginPath}`);
+
         if (fs.existsSync(razorPluginPath)) {
             args.push('--plugin', razorPluginPath);
         }
@@ -564,6 +580,11 @@ export class OmniSharpServer {
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
+            console.log(`calling engine.start with ${cwd}`);
+            console.log(`calling engine.start with ${launchTarget}`);
+            console.log(`calling engine.start with ${launchPath}`);
+            console.log(`calling engine.start with ${args}`);
+
             await engine.start(cwd, args, launchTarget, launchPath, options);
 
             this._setState({
