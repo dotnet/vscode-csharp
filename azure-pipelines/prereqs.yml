@@ -11,7 +11,7 @@ steps:
 - task: UseDotNet@2
   displayName: 'Install .NET Core SDKs'
   inputs:
-    version: '7.0.305'
+    version: '7.0.100'
 
 # Set the CI build number to the VSIX version we're creating from this build.
 - script: |
