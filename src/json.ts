@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 const enum CharCode {
-    asterisk = 0x2a,     // *
-    backSlash = 0x5c,    // \
-    closeBrace = 0x7d,   // }
+    asterisk = 0x2a, // *
+    backSlash = 0x5c, // \
+    closeBrace = 0x7d, // }
     closeBracket = 0x5d, // ]
-    comma = 0x2c,        // ,
-    doubleQuote = 0x22,  // "
-    slash = 0x2f,        // /
+    comma = 0x2c, // ,
+    doubleQuote = 0x22, // "
+    slash = 0x2f, // /
 
     byteOrderMark = 0xfeff,
 
@@ -46,40 +46,43 @@ const enum CharCode {
 }
 
 function isLineBreak(code: number) {
-    return code === CharCode.lineFeed
-        || code === CharCode.carriageReturn
-        || code === CharCode.verticalTab
-        || code === CharCode.formFeed
-        || code === CharCode.lineSeparator
-        || code === CharCode.paragraphSeparator;
+    return (
+        code === CharCode.lineFeed ||
+        code === CharCode.carriageReturn ||
+        code === CharCode.verticalTab ||
+        code === CharCode.formFeed ||
+        code === CharCode.lineSeparator ||
+        code === CharCode.paragraphSeparator
+    );
 }
 
 function isWhitespace(code: number) {
-    return code === CharCode.space
-        || code === CharCode.tab
-        || code === CharCode.lineFeed
-        || code === CharCode.verticalTab
-        || code === CharCode.formFeed
-        || code === CharCode.carriageReturn
-        || code === CharCode.nextLine
-        || code === CharCode.nonBreakingSpace
-        || code === CharCode.ogham
-        || (code >= CharCode.enQuad && code <= CharCode.zeroWidthSpace)
-        || code === CharCode.lineSeparator
-        || code === CharCode.paragraphSeparator
-        || code === CharCode.narrowNoBreakSpace
-        || code === CharCode.mathematicalSpace
-        || code === CharCode.ideographicSpace
-        || code === CharCode.byteOrderMark;
+    return (
+        code === CharCode.space ||
+        code === CharCode.tab ||
+        code === CharCode.lineFeed ||
+        code === CharCode.verticalTab ||
+        code === CharCode.formFeed ||
+        code === CharCode.carriageReturn ||
+        code === CharCode.nextLine ||
+        code === CharCode.nonBreakingSpace ||
+        code === CharCode.ogham ||
+        (code >= CharCode.enQuad && code <= CharCode.zeroWidthSpace) ||
+        code === CharCode.lineSeparator ||
+        code === CharCode.paragraphSeparator ||
+        code === CharCode.narrowNoBreakSpace ||
+        code === CharCode.mathematicalSpace ||
+        code === CharCode.ideographicSpace ||
+        code === CharCode.byteOrderMark
+    );
 }
 
 function cleanJsonText(text: string) {
-
-    let parts: string[] = [];
+    const parts: string[] = [];
     let partStart = 0;
 
     let index = 0;
-    let length = text.length;
+    const length = text.length;
 
     function next(): number {
         const result = peek();
@@ -87,7 +90,7 @@ function cleanJsonText(text: string) {
         return result;
     }
 
-    function peek(offset: number = 0): number {
+    function peek(offset = 0): number {
         return text.charCodeAt(index + offset);
     }
 
@@ -98,19 +101,14 @@ function cleanJsonText(text: string) {
         do {
             code = text.charCodeAt(pos);
             pos++;
-        }
-        while (isWhitespace(code));
+        } while (isWhitespace(code));
 
         return code;
     }
 
     function scanString() {
-        while (true) {
-            if (index >= length) { // string ended unexpectedly
-                break;
-            }
-
-            let code = next();
+        while (index < length) {
+            const code = next();
 
             if (code === CharCode.doubleQuote) {
                 // End of string. We're done
@@ -130,8 +128,9 @@ function cleanJsonText(text: string) {
         }
     }
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
-        let code = next();
+        const code = next();
 
         switch (code) {
             // byte-order mark
@@ -187,15 +186,16 @@ function cleanJsonText(text: string) {
 
                 break;
 
-            case CharCode.comma:
+            case CharCode.comma: {
                 // Ignore trailing commas in object member lists and array element lists
-                let nextCode = peekPastWhitespace();
+                const nextCode = peekPastWhitespace();
                 if (nextCode === CharCode.closeBrace || nextCode === CharCode.closeBracket) {
                     parts.push(text.substring(partStart, index - 1));
                     partStart = index;
                 }
 
                 break;
+            }
             default:
         }
 

@@ -11,11 +11,9 @@ export interface ISolutionSnapshotProvider {
      * Returns the id of the current solution snapshot.
      * The id can be used to access the snapshot in the Roslyn process, until it is discarded.
      */
-    registerSolutionSnapshot(token: vscode.CancellationToken) : Promise<SolutionSnapshotId>;
+    registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId>;
 }
 
-export class SolutionSnapshotId
-{
-    constructor(public Id: integer) {
-    }
+export class SolutionSnapshotId {
+    constructor(public Id: integer) {}
 }

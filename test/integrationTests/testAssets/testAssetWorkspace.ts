@@ -11,7 +11,7 @@ import { ITestAssetWorkspace, TestAssetWorkspace } from './testAssets';
 import singleCsproj from './singleCsproj';
 import slnWithCsproj from './slnWithCsproj';
 import slnFilterWithCsproj from './slnFilterWithCsproj';
-import BasicRazorApp2_1 from './BasicRazorApp2_1';
+import BasicRazorApp2_1 from './basicRazorApp21';
 import slnWithGenerator from './slnWithGenerator';
 
 const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
@@ -19,12 +19,10 @@ const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     slnWithCsproj,
     slnFilterWithCsproj,
     BasicRazorApp2_1,
-    slnWithGenerator
+    slnWithGenerator,
 };
 
-const workspaceName = vscode.workspace.workspaceFolders![0].uri.fsPath
-    .split(path.sep)
-    .pop();
+const workspaceName = vscode.workspace.workspaceFolders![0].uri.fsPath.split(path.sep).pop();
 
 const activeTestAssetWorkspace = new TestAssetWorkspace(testAssetWorkspaces[workspaceName!]);
 

@@ -4,30 +4,43 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { ParsedEnvironmentFile } from '../coreclr-debug/ParsedEnvironmentFile';
-import { getBrokeredServicePipeName } from '../coreclr-debug/activate';
+import { ParsedEnvironmentFile } from '../coreclrDebug/parsedEnvironmentFile';
+import { getBrokeredServicePipeName } from '../coreclrDebug/activate';
 
 import { MessageItem } from '../vscodeAdapter';
-import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/DotnetDevCertsHttps';
-import { AttachItem, RemoteAttachPicker, DotNetAttachItemsProviderFactory, AttachPicker } from '../features/processPicker';
+import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/dotnetDevCertsHttps';
+import {
+    AttachItem,
+    RemoteAttachPicker,
+    DotNetAttachItemsProviderFactory,
+    AttachPicker,
+} from '../features/processPicker';
 import { PlatformInformation } from './platform';
-import OptionProvider from './observers/OptionProvider';
+import OptionProvider from './observers/optionProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 /**
  * Class used for debug configurations that will be sent to the debugger registered by {@link DebugAdapterExecutableFactory}
- * 
+ *
  * This class will handle:
- * 1. Setting options that were set under csharp.debug.* 
+ * 1. Setting options that were set under csharp.debug.*
  * 2. Show the process picker if the request type is attach and if process is not set.
  * 3. Handle registering developer certs for web development.
  */
 export class BaseVsDbgConfigurationProvider implements vscode.DebugConfigurationProvider {
-    public constructor(protected platformInformation: PlatformInformation, private optionProvider: OptionProvider, private csharpOutputChannel: vscode.OutputChannel) { }
+    public constructor(
+        protected platformInformation: PlatformInformation,
+        private optionProvider: OptionProvider,
+        private csharpOutputChannel: vscode.OutputChannel
+    ) {}
 
     //#region DebugConfigurationProvider
 
-    async resolveDebugConfiguration(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | undefined | null> {
+    async resolveDebugConfiguration(
+        folder: vscode.WorkspaceFolder | undefined,
+        debugConfiguration: vscode.DebugConfiguration,
+        _?: vscode.CancellationToken
+    ): Promise<vscode.DebugConfiguration | undefined | null> {
         // Check to see if we are in the "Run and Debug" scenario.
         if (Object.keys(debugConfiguration).length == 0) {
             const csharpDevkitExtension = getCSharpDevKit();
@@ -44,24 +57,27 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
     /**
      * Try to add all missing attributes to the debug configuration being launched.
      */
-    async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined> {
-
+    async resolveDebugConfigurationWithSubstitutedVariables(
+        folder: vscode.WorkspaceFolder | undefined,
+        debugConfiguration: vscode.DebugConfiguration,
+        _?: vscode.CancellationToken
+    ): Promise<vscode.DebugConfiguration | null | undefined> {
         if (!debugConfiguration.type) {
             // If the config doesn't look functional force VSCode to open a configuration file https://github.com/Microsoft/vscode/issues/54213
             return null;
         }
 
-        let brokeredServicePipeName = getBrokeredServicePipeName();
+        const brokeredServicePipeName = getBrokeredServicePipeName();
         if (brokeredServicePipeName !== undefined) {
             debugConfiguration.brokeredServicePipeName = brokeredServicePipeName;
         }
 
-        if (debugConfiguration.request === "launch") {
+        if (debugConfiguration.request === 'launch') {
             if (!debugConfiguration.cwd && !debugConfiguration.pipeTransport) {
                 debugConfiguration.cwd = folder?.uri.fsPath; // Workspace folder
             }
 
-            debugConfiguration.internalConsoleOptions ??= "openOnSessionStart";
+            debugConfiguration.internalConsoleOptions ??= 'openOnSessionStart';
 
             // read from envFile and set config.env
             if (debugConfiguration.envFile !== undefined && debugConfiguration.envFile.length > 0) {
@@ -70,35 +86,38 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         }
 
         // Process Id is empty, handle Attach to Process Dialog.
-        if (debugConfiguration.request === "attach" && !debugConfiguration.processId && !debugConfiguration.processName) {
+        if (
+            debugConfiguration.request === 'attach' &&
+            !debugConfiguration.processId &&
+            !debugConfiguration.processName
+        ) {
             let process: AttachItem | undefined;
             if (debugConfiguration.pipeTransport) {
                 process = await RemoteAttachPicker.ShowAttachEntries(debugConfiguration, this.platformInformation);
-            }
-            else {
-                let attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
-                let attacher = new AttachPicker(attachItemsProvider);
+            } else {
+                const attachItemsProvider = DotNetAttachItemsProviderFactory.Get();
+                const attacher = new AttachPicker(attachItemsProvider);
                 process = await attacher.ShowAttachEntries();
             }
 
             if (process !== undefined) {
                 debugConfiguration.processId = process.id;
 
-                if (debugConfiguration.type == "coreclr" &&
+                if (
+                    debugConfiguration.type == 'coreclr' &&
                     this.platformInformation.isMacOS() &&
-                    this.platformInformation.architecture == 'arm64') {
+                    this.platformInformation.architecture == 'arm64'
+                ) {
                     // For Apple Silicon M1, it is possible that the process we are attaching to is being emulated as x86_64.
                     // The process is emulated if it has process flags has P_TRANSLATED (0x20000).
                     if (process.flags & 0x20000) {
-                        debugConfiguration.targetArchitecture = "x86_64";
-                    }
-                    else {
-                        debugConfiguration.targetArchitecture = "arm64";
+                        debugConfiguration.targetArchitecture = 'x86_64';
+                    } else {
+                        debugConfiguration.targetArchitecture = 'arm64';
                     }
                 }
-            }
-            else {
-                vscode.window.showErrorMessage("No process was selected.", { modal: true });
+            } else {
+                vscode.window.showErrorMessage('No process was selected.', { modal: true });
                 return undefined;
             }
         }
@@ -107,8 +126,17 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         // Linux -- not supported by the .NET CLI as there isn't a single root cert store
         // VS Code remoting/Web UI -- the trusted cert work would need to happen on the client machine, but we don't have a way to run code there currently
         // pipeTransport -- the dev cert on the server will be different from the client
-        if (!this.platformInformation.isLinux() && !vscode.env.remoteName && vscode.env.uiKind != vscode.UIKind.Web && !debugConfiguration.pipeTransport) {
-            if (debugConfiguration.checkForDevCert === undefined && debugConfiguration.serverReadyAction && debugConfiguration.type === "coreclr") {
+        if (
+            !this.platformInformation.isLinux() &&
+            !vscode.env.remoteName &&
+            vscode.env.uiKind != vscode.UIKind.Web &&
+            !debugConfiguration.pipeTransport
+        ) {
+            if (
+                debugConfiguration.checkForDevCert === undefined &&
+                debugConfiguration.serverReadyAction &&
+                debugConfiguration.type === 'coreclr'
+            ) {
                 debugConfiguration.checkForDevCert = true;
             }
 
@@ -127,7 +155,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
      */
     private parseEnvFile(envFile: string, config: vscode.DebugConfiguration): vscode.DebugConfiguration {
         try {
-            const parsedFile = ParsedEnvironmentFile.CreateFromFile(envFile, config["env"]);
+            const parsedFile = ParsedEnvironmentFile.CreateFromFile(envFile, config['env']);
 
             // show error message if single lines cannot get parsed
             if (parsedFile.Warning) {
@@ -135,8 +163,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             }
 
             config.env = parsedFile.Env;
-        }
-        catch (e) {
+        } catch (e) {
             throw new Error(`Can't parse envFile ${envFile} because of ${e}`);
         }
 
@@ -156,14 +183,14 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
     }
 
     private loadSettingDebugOptions(debugConfiguration: vscode.DebugConfiguration): void {
-        let debugOptions = vscode.workspace.getConfiguration('csharp').get('debug');
-        let result = JSON.parse(JSON.stringify(debugOptions));
-        let keys = Object.keys(result);
+        const debugOptions = vscode.workspace.getConfiguration('csharp').get('debug');
+        const result = JSON.parse(JSON.stringify(debugOptions));
+        const keys = Object.keys(result);
 
-        for (let key of keys) {
+        for (const key of keys) {
             // Skip since option is set in the launch.json configuration
             // Skip 'console' option since this should be set when we know this is a console project.
-            if (debugConfiguration.hasOwnProperty(key) || key === "console") {
+            if (Object.prototype.hasOwnProperty.call(debugConfiguration, key) || key === 'console') {
                 continue;
             }
 
@@ -175,48 +202,56 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
     }
 
     private CheckIfSettingIsEmpty(input: any): boolean {
-        switch (typeof (input)) {
-            case "object":
+        switch (typeof input) {
+            case 'object':
                 if (Array.isArray(input)) {
                     return input.length === 0;
-                }
-                else {
+                } else {
                     return Object.keys(input).length === 0;
                 }
-            case "string":
+            case 'string':
                 return !input;
-            case "boolean":
-            case "number":
+            case 'boolean':
+            case 'number':
                 return false; // booleans and numbers are never empty
             default:
-                throw "Unknown type to check to see if setting is empty";
+                throw 'Unknown type to check to see if setting is empty';
         }
     }
 
     private checkForDevCerts(dotnetPath: string) {
         hasDotnetDevCertsHttps(dotnetPath).then(async (returnData) => {
-            let errorCode = returnData.error?.code;
-            if (errorCode === CertToolStatusCodes.CertificateNotTrusted || errorCode === CertToolStatusCodes.ErrorNoValidCertificateFound) {
-                const labelYes: string = "Yes";
-                const labelNotNow: string = "Not Now";
-                const labelMoreInfo: string = "More Information";
+            const errorCode = returnData.error?.code;
+            if (
+                errorCode === CertToolStatusCodes.CertificateNotTrusted ||
+                errorCode === CertToolStatusCodes.ErrorNoValidCertificateFound
+            ) {
+                const labelYes = 'Yes';
+                const labelNotNow = 'Not Now';
+                const labelMoreInfo = 'More Information';
 
                 const result = await vscode.window.showInformationMessage(
-                    "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?",
-                    { title: labelYes }, { title: labelNotNow, isCloseAffordance: true }, { title: labelMoreInfo }
+                    'The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?',
+                    { title: labelYes },
+                    { title: labelNotNow, isCloseAffordance: true },
+                    { title: labelMoreInfo }
                 );
                 if (result?.title === labelYes) {
-                    let returnData = await createSelfSignedCert(dotnetPath);
-                    if (returnData.error === null) //if the prcess returns 0, returnData.error is null, otherwise the return code can be acessed in returnData.error.code
-                    {
-                        let message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
+                    const returnData = await createSelfSignedCert(dotnetPath);
+                    if (returnData.error === null) {
+                        //if the prcess returns 0, returnData.error is null, otherwise the return code can be acessed in returnData.error.code
+                        const message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
                         vscode.window.showInformationMessage(`Self-signed certificate sucessfully ${message}.`);
-                    }
-                    else {
-                        this.csharpOutputChannel.appendLine(`Couldn't create self-signed certificate. ${returnData.error.message}\ncode: ${returnData.error.code}\nstdout: ${returnData.stdout}`);
+                    } else {
+                        this.csharpOutputChannel.appendLine(
+                            `Couldn't create self-signed certificate. ${returnData.error.message}\ncode: ${returnData.error.code}\nstdout: ${returnData.stdout}`
+                        );
 
-                        const labelShowOutput: string = "Show Output";
-                        const result = await vscode.window.showWarningMessage("Couldn't create self-signed certificate. See output for more information.", labelShowOutput);
+                        const labelShowOutput = 'Show Output';
+                        const result = await vscode.window.showWarningMessage(
+                            "Couldn't create self-signed certificate. See output for more information.",
+                            labelShowOutput
+                        );
                         if (result === labelShowOutput) {
                             this.csharpOutputChannel.show();
                         }

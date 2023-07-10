@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CSharpExtensionId } from '../constants/CSharpExtensionId';
+import { CSharpExtensionId } from '../constants/csharpExtensionId';
 
 export const DotNetRuntimeVersion = '7.0';
 

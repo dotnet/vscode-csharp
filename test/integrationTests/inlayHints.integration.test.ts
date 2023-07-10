@@ -6,15 +6,16 @@
 import * as vscode from 'vscode';
 
 import { should, assert } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartOmniSharpServer } from './integrationHelpers';
+import {
+    activateCSharpExtension,
+    isRazorWorkspace,
+    isSlnWithGenerator,
+    restartOmniSharpServer,
+} from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as path from 'path';
 import { InlayHint, LinePositionSpanTextChange } from '../../src/omnisharp/protocol';
 import { isNotNull } from '../testUtil';
-
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
 
 suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
@@ -54,7 +55,7 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
 
-        await vscode.commands.executeCommand("vscode.open", fileUri);
+        await vscode.commands.executeCommand('vscode.open', fileUri);
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
@@ -62,18 +63,52 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Hints retrieved for region", async () => {
+    test('Hints retrieved for region', async () => {
         const range = new vscode.Range(new vscode.Position(4, 8), new vscode.Position(15, 85));
-        const hints: vscode.InlayHint[] = await vscode.commands.executeCommand('vscode.executeInlayHintProvider', fileUri, range);
+        const hints: vscode.InlayHint[] = await vscode.commands.executeCommand(
+            'vscode.executeInlayHintProvider',
+            fileUri,
+            range
+        );
 
         assert.lengthOf(hints, 6);
 
-        assertInlayHintEqual(hints[0], { Label: 'InlayHints ', Position: { Line: 6, Column: 12 }, Data: {}, TextEdits: [{ StartLine: 6, StartColumn: 8, EndLine: 6, EndColumn: 11, NewText: 'InlayHints' }] });
-        assertInlayHintEqual(hints[1], { Label: ' InlayHints', Position: { Line: 7, Column: 27 }, Data: {}, TextEdits: [{ StartLine: 7, StartColumn: 27, EndLine: 7, EndColumn: 27, NewText: ' InlayHints' }] });
-        assertInlayHintEqual(hints[2], { Label: 'string ', Position: { Line: 8, Column: 28 }, Data: {}, TextEdits: [{ StartLine: 8, StartColumn: 28, EndLine: 8, EndColumn: 28, NewText: 'string ' }] });
-        assertInlayHintEqual(hints[3], { Label: 'i: ', Position: { Line: 9, Column: 17 }, Data: {}, TextEdits: [{ StartLine: 9, StartColumn: 17, EndLine: 9, EndColumn: 17, NewText: 'i: ' }] });
-        assertInlayHintEqual(hints[4], { Label: 'param1: ', Position: { Line: 10, Column: 15 }, Data: {}, TextEdits: [{ StartLine: 10, StartColumn: 15, EndLine: 10, EndColumn: 15, NewText: 'param1: ' }] });
-        assertInlayHintEqual(hints[5], { Label: 'param1: ', Position: { Line: 11, Column: 27 }, Data: {}, TextEdits: [{ StartLine: 11, StartColumn: 27, EndLine: 11, EndColumn: 27, NewText: 'param1: ' }] });
+        assertInlayHintEqual(hints[0], {
+            Label: 'InlayHints ',
+            Position: { Line: 6, Column: 12 },
+            Data: {},
+            TextEdits: [{ StartLine: 6, StartColumn: 8, EndLine: 6, EndColumn: 11, NewText: 'InlayHints' }],
+        });
+        assertInlayHintEqual(hints[1], {
+            Label: ' InlayHints',
+            Position: { Line: 7, Column: 27 },
+            Data: {},
+            TextEdits: [{ StartLine: 7, StartColumn: 27, EndLine: 7, EndColumn: 27, NewText: ' InlayHints' }],
+        });
+        assertInlayHintEqual(hints[2], {
+            Label: 'string ',
+            Position: { Line: 8, Column: 28 },
+            Data: {},
+            TextEdits: [{ StartLine: 8, StartColumn: 28, EndLine: 8, EndColumn: 28, NewText: 'string ' }],
+        });
+        assertInlayHintEqual(hints[3], {
+            Label: 'i: ',
+            Position: { Line: 9, Column: 17 },
+            Data: {},
+            TextEdits: [{ StartLine: 9, StartColumn: 17, EndLine: 9, EndColumn: 17, NewText: 'i: ' }],
+        });
+        assertInlayHintEqual(hints[4], {
+            Label: 'param1: ',
+            Position: { Line: 10, Column: 15 },
+            Data: {},
+            TextEdits: [{ StartLine: 10, StartColumn: 15, EndLine: 10, EndColumn: 15, NewText: 'param1: ' }],
+        });
+        assertInlayHintEqual(hints[5], {
+            Label: 'param1: ',
+            Position: { Line: 11, Column: 27 },
+            Data: {},
+            TextEdits: [{ StartLine: 11, StartColumn: 27, EndLine: 11, EndColumn: 27, NewText: 'param1: ' }],
+        });
 
         function assertInlayHintEqual(actual: vscode.InlayHint, expected: InlayHint) {
             assert.equal(actual.label, expected.Label);

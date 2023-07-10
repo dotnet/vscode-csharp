@@ -9,7 +9,7 @@ const priorityCommands = [
     protocol.Requests.ChangeBuffer,
     protocol.Requests.FormatAfterKeystroke,
     protocol.Requests.FormatRange,
-    protocol.Requests.UpdateBuffer
+    protocol.Requests.UpdateBuffer,
 ];
 
 const normalCommands = [
@@ -23,7 +23,7 @@ const normalCommands = [
     protocol.Requests.RunCodeAction,
     protocol.Requests.SignatureHelp,
     protocol.Requests.TypeLookup,
-    protocol.Requests.GoToTypeDefinition
+    protocol.Requests.GoToTypeDefinition,
 ];
 
 const prioritySet = new Set<string>(priorityCommands);
@@ -32,11 +32,11 @@ const deferredSet = new Set<string>();
 
 const nonDeferredSet = new Set<string>();
 
-for (let command of priorityCommands) {
+for (const command of priorityCommands) {
     nonDeferredSet.add(command);
 }
 
-for (let command of normalCommands) {
+for (const command of normalCommands) {
     nonDeferredSet.add(command);
 }
 
