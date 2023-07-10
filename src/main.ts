@@ -296,8 +296,10 @@ export async function activate(
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,
-            sendRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
-            serverExecutablePath: async () => await languageServerExport.serverExecutablePath(),
+            experimental: {
+                sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
+                serverExecutablePath: async () => await languageServerExport.serverExecutablePath(),
+            }
         };
     } else {
         return {

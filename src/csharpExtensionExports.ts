@@ -22,7 +22,11 @@ export interface CSharpExtensionExports {
     initializationFinished: () => Promise<void>;
     logDirectory: string;
     profferBrokeredServices: (container: GlobalBrokeredServiceContainer) => void;
-    sendRequest: <Params, Response, Error>(
+    experimental: CSharpExtensionExperimentalExports;
+}
+
+export interface CSharpExtensionExperimentalExports {
+    sendServerRequest: <Params, Response, Error>(
         type: RequestType<Params, Response, Error>,
         params: Params,
         token: vscode.CancellationToken
