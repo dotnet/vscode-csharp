@@ -15,7 +15,7 @@ export default function createOptionStream(vscode: vscode): Observable<Options> 
             //if the omnisharp or csharp configuration are affected only then read the options
             if (
                 e.affectsConfiguration('dotnet') ||
-                (!vscode.extensions.getExtension(csharpDevkitExtensionId) && e.affectsConfiguration('omnisharp')) ||
+                (e.affectsConfiguration('omnisharp') && !vscode.extensions.getExtension(csharpDevkitExtensionId)) ||
                 e.affectsConfiguration('csharp')
             ) {
                 observer.next(Options.Read(vscode));
