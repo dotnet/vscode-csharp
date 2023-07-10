@@ -3,13 +3,24 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { GlobalBrokeredServiceContainer, IRemoteServiceBroker, IServiceBroker, ServiceAudience, ServiceMoniker, ServiceRegistration } from '@microsoft/servicehub-framework';
-import Descriptors from './Descriptors';
+import {
+    GlobalBrokeredServiceContainer,
+    IRemoteServiceBroker,
+    IServiceBroker,
+    ServiceAudience,
+    ServiceMoniker,
+    ServiceRegistration,
+} from '@microsoft/servicehub-framework';
+import Descriptors from './descriptors';
 
 export class CSharpExtensionServiceBroker extends GlobalBrokeredServiceContainer {
     registerExternalServices(...monikers: ServiceMoniker[]) {
         const externalRegistration = new ServiceRegistration(ServiceAudience.local, false);
-        this.register(monikers.map(mk => { return { moniker: mk, registration: externalRegistration }; }));
+        this.register(
+            monikers.map((mk) => {
+                return { moniker: mk, registration: externalRegistration };
+            })
+        );
     }
 }
 
@@ -19,9 +30,7 @@ export function getBrokeredServiceContainer(): CSharpExtensionServiceBroker {
         _csharpExtensionServiceBroker = new CSharpExtensionServiceBroker();
         // Register any brokered services that come from other extensions so that we can proffer them later.
 
-        _csharpExtensionServiceBroker.registerExternalServices(
-            Descriptors.dotnetDebugConfigurationService.moniker
-        );
+        _csharpExtensionServiceBroker.registerExternalServices(Descriptors.dotnetDebugConfigurationService.moniker);
     }
     return _csharpExtensionServiceBroker;
 }

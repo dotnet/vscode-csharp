@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import AbstractProvider from "./abstractProvider";
+import AbstractProvider from './abstractProvider';
 
-export class FixAll extends AbstractProvider
-{
-}
+export class FixAll extends AbstractProvider {}

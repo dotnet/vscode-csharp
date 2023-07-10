@@ -8,19 +8,18 @@ import * as fs from 'async-file';
 import * as glob from 'glob-promise';
 import * as path from 'path';
 
-let vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));
+const vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));
 
-suite("Omnisharp-Vscode VSIX", async () => {
+suite('Omnisharp-Vscode VSIX', async () => {
     suiteSetup(async () => {
         chai.should();
-
     });
 
-    test("At least one vsix file should be produced", () => {
-        vsixFiles.length.should.be.greaterThan(0, "the build should produce at least one vsix file");
+    test('At least one vsix file should be produced', () => {
+        vsixFiles.length.should.be.greaterThan(0, 'the build should produce at least one vsix file');
     });
 
-    vsixFiles.forEach(element => {
+    vsixFiles.forEach((element) => {
         // We're packaging the platform specific Roslyn server with ready to run in the vsix, so the size should be roughly ~50MB
         // We also publish the Razor server, which is roughly ~75MB
         const sizeInMB = 220;

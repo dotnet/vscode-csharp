@@ -12,10 +12,6 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { poll } from './poll';
 import { isNotNull } from '../testUtil';
 
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
-
 suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {
         should();
@@ -35,21 +31,24 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session", async () => {
-        vscode.commands.executeCommand("dotnet.generateAssets", 0);
+    test('Starting .NET Core Launch (console) from the workspace root should create an Active Debug Session', async () => {
+        vscode.commands.executeCommand('dotnet.generateAssets', 0);
         await poll(async () => fs.exists(testAssetWorkspace.launchJsonPath), 10000, 100);
 
-        const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((e) => {
+        const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((_) => {
             onChangeSubscription.dispose();
             isNotNull(vscode.debug.activeDebugSession);
-            expect(vscode.debug.activeDebugSession.type).to.equal("coreclr");
+            expect(vscode.debug.activeDebugSession.type).to.equal('coreclr');
         });
 
-        let result = await vscode.debug.startDebugging(vscode.workspace.workspaceFolders![0], ".NET Core Launch (console)");
-        expect(result, "Debugger could not be started.");
+        const result = await vscode.debug.startDebugging(
+            vscode.workspace.workspaceFolders![0],
+            '.NET Core Launch (console)'
+        );
+        expect(result, 'Debugger could not be started.');
 
-        let debugSessionTerminated = new Promise<void>(resolve => {
-            const onTerminateSubscription = vscode.debug.onDidTerminateDebugSession((e) => {
+        const debugSessionTerminated = new Promise<void>((resolve) => {
+            const onTerminateSubscription = vscode.debug.onDidTerminateDebugSession((_) => {
                 onTerminateSubscription.dispose();
                 resolve();
             });
