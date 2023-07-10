@@ -10,9 +10,13 @@ import spawnNode from '../tasks/spawnNode';
 import { vscePath } from './projectPaths';
 
 /// Packaging (VSIX) Tasks
-export async function createPackageAsync(outputFolder: string, prerelease: boolean, packageName?: string, vscodePlatformId?: string) {
-
-    let vsceArgs = [];
+export async function createPackageAsync(
+    outputFolder: string,
+    prerelease: boolean,
+    packageName?: string,
+    vscodePlatformId?: string
+) {
+    const vsceArgs = [];
     let packagePath = undefined;
 
     if (!(await util.fileExists(vscePath))) {
@@ -22,30 +26,26 @@ export async function createPackageAsync(outputFolder: string, prerelease: boole
     vsceArgs.push(vscePath);
     vsceArgs.push('package'); // package command
 
-    if (!(fs.existsSync(outputFolder)))
-    {
+    if (!fs.existsSync(outputFolder)) {
         fs.mkdirSync(outputFolder);
     }
 
     vsceArgs.push('-o');
-    if (packageName !== undefined)
-    {
+    if (packageName !== undefined) {
         //if we have specified an output folder then put the files in that output folder
         packagePath = path.join(outputFolder, packageName);
         vsceArgs.push(packagePath);
-    }
-    else
-    {
+    } else {
         vsceArgs.push(outputFolder);
     }
 
     if (vscodePlatformId !== undefined) {
-        vsceArgs.push("--target");
+        vsceArgs.push('--target');
         vsceArgs.push(vscodePlatformId);
     }
 
     if (prerelease) {
-        vsceArgs.push("--pre-release");
+        vsceArgs.push('--pre-release');
     }
 
     vsceArgs.push('--baseContentUrl', 'https://github.com/dotnet/vscode-csharp');

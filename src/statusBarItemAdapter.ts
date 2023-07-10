@@ -7,7 +7,6 @@ import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 
 export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
-
     get alignment(): vscodeAdapter.StatusBarAlignment {
         return this.statusBarItem.alignment;
     }
@@ -68,6 +67,5 @@ export class StatusBarItemAdapter implements vscodeAdapter.StatusBarItem {
         this.statusBarItem.dispose();
     }
 
-    constructor(private statusBarItem: vscode.StatusBarItem) {
-    }
+    constructor(private statusBarItem: vscode.StatusBarItem) {}
 }

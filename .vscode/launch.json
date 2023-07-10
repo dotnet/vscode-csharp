@@ -281,10 +281,25 @@
                 "updatePackageDependencies"
             ],
             "env": {
-                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-linux-x64-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-linux-x86-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-linux-arm64-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-osx-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-win-x64-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-win-x86-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-win-arm64-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-linux-musl-x64-net6.0-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-linux-musl-arm64-net6.0-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-linux-x64-net6.0-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-linux-arm64-net6.0-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-osx-x64-net6.0-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-osx-arm64-net6.0-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-win-x64-net6.0-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-win-x86-net6.0-1.39.6.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.6/omnisharp-win-arm64-net6.0-1.39.6.zip",
-                "NEW_DEPS_VERSION": "1.39.6"
+                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-linux-x64-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-linux-x86-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-linux-arm64-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-osx-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-win-x64-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-win-x86-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-win-arm64-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-linux-musl-x64-net6.0-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-linux-musl-arm64-net6.0-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-linux-x64-net6.0-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-linux-arm64-net6.0-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-osx-x64-net6.0-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-osx-arm64-net6.0-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-win-x64-net6.0-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-win-x86-net6.0-1.39.7.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.7/omnisharp-win-arm64-net6.0-1.39.7.zip",
+                "NEW_DEPS_VERSION": "1.39.7"
             },
             "cwd": "${workspaceFolder}"
-        }
+        },
+        {
+          "type": "node",
+          "request": "launch",
+          "name": "Update razor package dependencies",
+          "preLaunchTask": "build",
+          "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+          "args": [
+              "updatePackageDependencies"
+          ],
+          "env": {
+              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/6301924acc5020d6545f4573bbb70b88/razorlanguageserver-linux-arm64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/4e07791acfef2a373dbe497ab2477d55/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/28003bc9d9c7fdfc288dd113be8fe64d/razorlanguageserver-linux-musl-x64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/c22da9d1dbcbf7fd50bd893d845414d7/razorlanguageserver-linux-x64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/4be79e180c7421f9234ffdbed655a83c/razorlanguageserver-osx-arm64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/814246e6af4cf35db8151d0ee0e82021/razorlanguageserver-osx-x64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/0b1fb7614fbe7a9a9cd2c5470c8865fa/razorlanguageserver-win-arm64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/c51fc9fae3f6fa2b1992df6dd16f50d2/razorlanguageserver-win-x64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/17ba6e72f65b30a6ddd68dade60343e8/razorlanguageserver-win-x86-7.0.0-preview.23301.2.zip",
+              "NEW_DEPS_VERSION": "7.0.0-preview.23301.2"
+          },
+          "cwd": "${workspaceFolder}"
+      }
     ]
 }

@@ -1,13 +1,13 @@
 /*---------------------------------------------------------------------------------------------
-*  Copyright (c) Microsoft Corporation. All rights reserved.
-*  Licensed under the MIT License. See License.txt in the project root for license information.
-*--------------------------------------------------------------------------------------------*/
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from "vscode";
-import OmniSharpImplementationProvider from "../../src/features/implementationProvider";
-import * as path from "path";
-import testAssetWorkspace from "./testAssets/testAssetWorkspace";
-import { expect, should } from "chai";
+import * as vscode from 'vscode';
+import OmniSharpImplementationProvider from '../../src/features/implementationProvider';
+import * as path from 'path';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { expect, should } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 
 suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description}`, () => {
@@ -23,10 +23,10 @@ suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
-        let fileName = 'implementation.cs';
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const fileName = 'implementation.cs';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
-        await vscode.commands.executeCommand("vscode.open", fileUri);
+        await vscode.commands.executeCommand('vscode.open', fileUri);
 
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
@@ -35,8 +35,14 @@ suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns the implementation", async () => {
-        let implementationList = <vscode.Location[]>(await vscode.commands.executeCommand("vscode.executeImplementationProvider", fileUri, new vscode.Position(4, 22)));
+    test('Returns the implementation', async () => {
+        const implementationList = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeImplementationProvider',
+                fileUri,
+                new vscode.Position(4, 22)
+            )
+        );
         expect(implementationList.length).to.be.equal(2);
     });
 });

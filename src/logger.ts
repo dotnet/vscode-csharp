@@ -13,9 +13,9 @@ export class Logger {
     private _writer: (message: string) => void;
     private _prefix: string | undefined;
 
-    private _indentLevel: number = 0;
-    private _indentSize: number = 4;
-    private _atLineStart: boolean = false;
+    private _indentLevel = 0;
+    private _indentSize = 4;
+    private _atLineStart = false;
 
     constructor(writer: (message: string) => void, prefix?: string) {
         this._writer = writer;
@@ -25,7 +25,7 @@ export class Logger {
     private _appendCore(message: string): void {
         if (this._atLineStart) {
             if (this._indentLevel > 0) {
-                const indent = " ".repeat(this._indentLevel * this._indentSize);
+                const indent = ' '.repeat(this._indentLevel * this._indentSize);
                 this.write(indent);
             }
 
@@ -49,11 +49,11 @@ export class Logger {
         }
     }
 
-    public append(message: string = ""): void {
+    public append(message = ''): void {
         this._appendCore(message);
     }
 
-    public appendLine(message: string = ""): void {
+    public appendLine(message = ''): void {
         this._appendCore(message + '\n');
         this._atLineStart = true;
     }

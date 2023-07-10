@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { IDisposable } from "../Disposable";
-import { OmniSharpServer } from "../omnisharp/server";
+import { IDisposable } from '../disposable';
+import { OmniSharpServer } from '../omnisharp/server';
 import * as vscode from 'vscode';
-import CompositeDisposable from "../CompositeDisposable";
+import CompositeDisposable from '../compositeDisposable';
 import * as serverUtils from '../omnisharp/utils';
-import { isVirtualCSharpDocument } from "./virtualDocumentTracker";
+import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 
 export default function fileOpenClose(server: OmniSharpServer): IDisposable {
     return new FileOpenCloseProvider(server);
@@ -24,14 +24,15 @@ class FileOpenCloseProvider implements IDisposable {
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
 
         setTimeout(async () => {
-            for (let editor of vscode.window.visibleTextEditors) {
-                let document = editor.document;
+            for (const editor of vscode.window.visibleTextEditors) {
+                const document = editor.document;
 
                 await this._onDocumentOpen(document);
             }
         }, 0);
 
-        this._disposable = new CompositeDisposable(this._diagnostics,
+        this._disposable = new CompositeDisposable(
+            this._diagnostics,
             vscode.workspace.onDidOpenTextDocument(this._onDocumentOpen, this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentClose, this),
             vscode.window.onDidChangeActiveTextEditor(this._onActiveTextEditorChange, this)
@@ -81,8 +82,7 @@ function shouldIgnoreDocument(document: vscode.TextDocument) {
         return true;
     }
 
-    if (document.uri.scheme !== 'file' &&
-        !isVirtualCSharpDocument(document)) {
+    if (document.uri.scheme !== 'file' && !isVirtualCSharpDocument(document)) {
         return true;
     }
 
