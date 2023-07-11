@@ -16,8 +16,8 @@ import showErrorMessage from '../../../observers/utils/showErrorMessage';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     private static readonly autoDetectUserNotice = `Run and Debug: auto-detection found {0} for a launch browser`;
-    private static readonly edgeBrowserType = 'pwa-msedge';
-    private static readonly chromeBrowserType = 'pwa-chrome';
+    private static readonly edgeBrowserType = 'msedge';
+    private static readonly chromeBrowserType = 'chrome';
 
     constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) {}
 
