@@ -20,4 +20,5 @@ export interface CSharpExtensionExports {
     initializationFinished: () => Promise<void>;
     logDirectory: string;
     profferBrokeredServices: (container: GlobalBrokeredServiceContainer) => void;
+    determineBrowserType: () => Promise<string | undefined>;
 }

@@ -15,9 +15,9 @@ import showInformationMessage from '../../../shared/observers/utils/showInformat
 import showErrorMessage from '../../../observers/utils/showErrorMessage';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
-    private readonly autoDetectUserNotice = `Run and Debug: auto-detection found {0} for a launch browser`;
-    private readonly edgeBrowserType = 'msedge';
-    private readonly chromeBrowserType = 'chrome';
+    private static readonly autoDetectUserNotice = `Run and Debug: auto-detection found {0} for a launch browser`;
+    private static readonly edgeBrowserType = 'msedge';
+    private static readonly chromeBrowserType = 'chrome';
 
     constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) {}
 
@@ -125,10 +125,10 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         const configBrowser = configuration.browser;
         const browserType =
             configBrowser === 'edge'
-                ? this.edgeBrowserType
+                ? BlazorDebugConfigurationProvider.edgeBrowserType
                 : configBrowser === 'chrome'
-                ? this.chromeBrowserType
-                : await this.determineBrowserType();
+                ? BlazorDebugConfigurationProvider.chromeBrowserType
+                : await BlazorDebugConfigurationProvider.determineBrowserType();
         if (!browserType) {
             return;
         }
@@ -172,7 +172,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         }
     }
 
-    private async determineBrowserType() {
+    public static async determineBrowserType() {
         // There was no browser specified by the user, so we will do some auto-detection to find a browser,
         // favoring chrome if multiple valid options are installed.
         const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises, null);
