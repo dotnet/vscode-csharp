@@ -11,10 +11,8 @@ import { PlatformInformation } from '../shared/platform';
 import { Options } from '../shared/options';
 import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
-import { Logger } from '../logger';
 
 export const DotNetRuntimeVersion = '7.0';
-export let logger: Logger;
 
 interface IDotnetAcquireResult {
     dotnetPath: string;
@@ -103,9 +101,5 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         });
 
         return dotnetPath;
-    }
-
-    private async delay(ms: number) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }
