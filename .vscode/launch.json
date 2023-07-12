@@ -149,6 +149,7 @@
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
+                "AUTOMATED_TESTING": "true",
             },
             "sourceMaps": true,
             "outFiles": [

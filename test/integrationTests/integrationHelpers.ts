@@ -24,9 +24,13 @@ export async function activateCSharpExtension(): Promise<ActivationResult> {
         await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId);
         await vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
-    
+
     const configuration = vscode.workspace.getConfiguration();
-    configuration.update('omnisharp.enableLspDriver', process.env.OMNISHARP_DRIVER === 'lsp' ? true : false, vscode.ConfigurationTarget.WorkspaceFolder);
+    configuration.update(
+        'omnisharp.enableLspDriver',
+        process.env.OMNISHARP_DRIVER === 'lsp' ? true : false,
+        vscode.ConfigurationTarget.WorkspaceFolder
+    );
     if (process.env.OMNISHARP_LOCATION) {
         configuration.update('path', process.env.OMNISHARP_LOCATION, vscode.ConfigurationTarget.WorkspaceFolder);
     }

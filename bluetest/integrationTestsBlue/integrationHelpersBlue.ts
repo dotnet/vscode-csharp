@@ -5,12 +5,12 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { CSharpExtensionExports } from "../../src/CSharpExtensionExports";
+import { CSharpExtensionExports } from '../../src/csharpExtensionExports';
 
 export async function restartRoslynLanguageServer(): Promise<void> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
-        throw new Error("Failed to find installation of ms-dotnettools.csharp");
+        throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
     if (!csharpExtension.isActive) {
@@ -19,24 +19,25 @@ export async function restartRoslynLanguageServer(): Promise<void> {
 }
 
 export async function activateCSharpExtension(): Promise<void> {
-     // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
-     const vscodeDotnetRuntimeExtensionId = "ms-dotnettools.vscode-dotnet-runtime";
-     let dotnetRuntimeExtension = vscode.extensions.getExtension<CSharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
-     if (!dotnetRuntimeExtension) {
-         await vscode.commands.executeCommand("workbench.extensions.installExtension", vscodeDotnetRuntimeExtensionId);
-         await vscode.commands.executeCommand("workbench.action.reloadWindow");
-     }
+    // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
+    const vscodeDotnetRuntimeExtensionId = 'ms-dotnettools.vscode-dotnet-runtime';
+    const dotnetRuntimeExtension =
+        vscode.extensions.getExtension<CSharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
+    if (!dotnetRuntimeExtension) {
+        await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId);
+        await vscode.commands.executeCommand('workbench.action.reloadWindow');
+    }
 
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
-        throw new Error("Failed to find installation of ms-dotnettools.csharp");
+        throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
     await csharpExtension.activate();
-    
+
     await csharpExtension.exports.initializationFinished();
-    console.log("ms-dotnettools.csharp activated");
+    console.log('ms-dotnettools.csharp activated');
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {
@@ -48,7 +49,7 @@ export function isSlnWithCsproj(workspace: typeof vscode.workspace) {
 }
 
 export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
-    return isGivenSln(workspace,  'slnWithGenerator');
+    return isGivenSln(workspace, 'slnWithGenerator');
 }
 
 function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {

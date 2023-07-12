@@ -659,12 +659,21 @@ function getServerFileName(platformInfo: PlatformInformation) {
     return `${serverFileName}${extension}`;
 }
 
-export async function waitForProjectInitialization() : Promise<void> {
+export async function waitForProjectInitialization(): Promise<void> {
     _languageServer.registerStateChangeEvent(async (state) => {
         if (state === ServerStateChange.ProjectInitializationComplete) {
             return Promise.resolve();
         }
     });
+    /*
+    return new Promise((resolve, _) => {
+        _languageServer.registerStateChangeEvent(async (state) => {
+            if (state === ServerStateChange.ProjectInitializationComplete) {
+                resolve();
+            }
+        });
+    });
+    */
 }
 
 function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {

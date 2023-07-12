@@ -42,7 +42,11 @@ import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/backgroundWorkStatusBarObserver';
 import { getDotnetPackApi } from './dotnetPack';
-import { SolutionSnapshotProvider, activateRoslynLanguageServer, waitForProjectInitialization } from './lsptoolshost/roslynLanguageServer';
+import {
+    SolutionSnapshotProvider,
+    activateRoslynLanguageServer,
+    waitForProjectInitialization,
+} from './lsptoolshost/roslynLanguageServer';
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/migrateOptions';
 import { getBrokeredServiceContainer } from './lsptoolshost/services/brokeredServicesHosting';
@@ -117,7 +121,6 @@ export async function activate(
     let roslynLanguageServerPromise: Promise<void> | undefined = undefined;
     let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
-    
     if (!useOmnisharpServer) {
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
         // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
@@ -288,7 +291,7 @@ export async function activate(
             initializationFinished: async () => {
                 await coreClrDebugPromise;
                 await roslynLanguageServerPromise;
-                //await projectInitializationCompletePromise;
+                await projectInitializationCompletePromise;
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,

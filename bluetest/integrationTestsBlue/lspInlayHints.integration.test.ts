@@ -8,11 +8,12 @@ import * as vscode from 'vscode';
 import { should, assert } from 'chai';
 import testAssetWorkspace from '../../test/integrationTests/testAssets/testAssetWorkspace';
 import * as path from 'path';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator, restartRoslynLanguageServer } from './integrationHelpersBlue';
-
-const chai = require('chai');
-chai.use(require('chai-arrays'));
-chai.use(require('chai-fs'));
+import {
+    activateCSharpExtension,
+    isRazorWorkspace,
+    isSlnWithGenerator,
+    restartRoslynLanguageServer,
+} from './integrationHelpersBlue';
 
 suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
@@ -49,7 +50,7 @@ suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
         const filePath = path.join(projectDirectory, fileName);
         fileUri = vscode.Uri.file(filePath);
 
-        await vscode.commands.executeCommand("vscode.open", fileUri);
+        await vscode.commands.executeCommand('vscode.open', fileUri);
         await activateCSharpExtension();
     });
 
@@ -57,9 +58,13 @@ suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Hints retrieved for region", async () => {
+    test('Hints retrieved for region', async () => {
         const range = new vscode.Range(new vscode.Position(4, 8), new vscode.Position(15, 85));
-        const hints: vscode.InlayHint[] = await vscode.commands.executeCommand('vscode.executeInlayHintProvider', fileUri, range);
+        const hints: vscode.InlayHint[] = await vscode.commands.executeCommand(
+            'vscode.executeInlayHintProvider',
+            fileUri,
+            range
+        );
 
         assert.lengthOf(hints, 6);
 
