@@ -37,65 +37,79 @@ async function runTestsInContext(
     await runTests(request, languageServer, dotnetTestChannel);
 }
 
+let _testRunInProgress = false;
+
 async function runTests(
     request: RunTestsParams,
     languageServer: RoslynLanguageServer,
     dotnetTestChannel: vscode.OutputChannel
 ) {
+    if (_testRunInProgress) {
+        vscode.window.showErrorMessage('Test run already in progress');
+        return;
+    }
+
+    _testRunInProgress = true;
+
     dotnetTestChannel.show(true);
-    vscode.window.withProgress(
-        {
-            location: vscode.ProgressLocation.Notification,
-            title: 'Dotnet Test',
-            cancellable: true,
-        },
-        async (progress, token) => {
-            let totalReportedComplete = 0;
-            const writeOutput = (output: RunTestsPartialResult) => {
-                if (output.message) {
-                    dotnetTestChannel.appendLine(output.message);
-                }
+    vscode.window
+        .withProgress(
+            {
+                location: vscode.ProgressLocation.Notification,
+                title: 'Dotnet Test',
+                cancellable: true,
+            },
+            async (progress, token) => {
+                let totalReportedComplete = 0;
+                const writeOutput = (output: RunTestsPartialResult) => {
+                    if (output.message) {
+                        dotnetTestChannel.appendLine(output.message);
+                    }
 
-                if (output.progress) {
-                    const totalTests = output.progress.totalTests;
-                    const completed =
-                        output.progress.testsPassed + output.progress.testsFailed + output.progress.testsSkipped;
+                    if (output.progress) {
+                        const totalTests = output.progress.totalTests;
+                        const completed =
+                            output.progress.testsPassed + output.progress.testsFailed + output.progress.testsSkipped;
 
-                    // VSCode requires us to report the additional amount completed (in x out of 100) from this report compared to what we've previously reported.
-                    const reportIncrement = ((completed - totalReportedComplete) / totalTests) * 100;
-                    progress.report({ message: output.stage, increment: reportIncrement });
-                    totalReportedComplete = completed;
-                } else {
-                    progress.report({ message: output.stage });
-                }
-            };
+                        // VSCode requires us to report the additional amount completed (in x out of 100) from this report compared to what we've previously reported.
+                        const reportIncrement = ((completed - totalReportedComplete) / totalTests) * 100;
+                        progress.report({ message: output.stage, increment: reportIncrement });
+                        totalReportedComplete = completed;
+                    } else {
+                        progress.report({ message: output.stage });
+                    }
+                };
 
-            progress.report({ message: 'Saving files...' });
-            // Ensure all files are saved before we run tests so they accurately reflect what the user has requested to run.
-            await vscode.workspace.saveAll(/*includeUntitled*/ false);
+                progress.report({ message: 'Saving files...' });
+                // Ensure all files are saved before we run tests so they accurately reflect what the user has requested to run.
+                await vscode.workspace.saveAll(/*includeUntitled*/ false);
 
-            progress.report({ message: 'Requesting server...' });
-            const responsePromise = languageServer.sendRequestWithProgress(
-                RunTestsRequest.type,
-                request,
-                async (p) => {
-                    writeOutput(p);
-                },
-                token
-            );
+                progress.report({ message: 'Requesting server...' });
+                const responsePromise = languageServer.sendRequestWithProgress(
+                    RunTestsRequest.type,
+                    request,
+                    async (p) => {
+                        writeOutput(p);
+                    },
+                    token
+                );
 
-            await responsePromise.then(
-                (result) => {
-                    result.forEach((r) => {
-                        writeOutput(r);
-                    });
-                    return;
-                },
-                (err) => {
-                    dotnetTestChannel.appendLine(err);
-                    return;
-                }
-            );
-        }
-    );
+                await responsePromise.then(
+                    (result) => {
+                        result.forEach((r) => {
+                            writeOutput(r);
+                        });
+                        return;
+                    },
+                    (err) => {
+                        dotnetTestChannel.appendLine(err);
+                        return;
+                    }
+                );
+            }
+        )
+        .then(
+            () => (_testRunInProgress = false),
+            () => (_testRunInProgress = false)
+        );
 }
