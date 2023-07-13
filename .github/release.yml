@@ -11,7 +11,7 @@ changelog:
     - title: Bug fixes 🛠️
       labels:
         - bug
-    - title: C# on LSP (Omnisharp Parity)
+    - title: 'C# on LSP (Omnisharp Parity)'
       labels:
         - Omnisharp-Parity
     - title: Omnisharp (Legacy support)
