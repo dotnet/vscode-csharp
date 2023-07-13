@@ -17,9 +17,7 @@ const unknown = 'unknown';
  * https://www.freedesktop.org/software/systemd/man/os-release.html
  */
 export class LinuxDistribution {
-    public constructor(
-        public name: string,
-        public version: string) { }
+    public constructor(public name: string, public version: string) {}
 
     public static async GetCurrent(): Promise<LinuxDistribution> {
         // Try /etc/os-release and fallback to /usr/lib/os-release per the synopsis
@@ -40,15 +38,30 @@ export class LinuxDistribution {
      */
     public toTelemetryString(): string {
         const allowedList = [
-            'alpine', 'antergos', 'arch', 'centos', 'debian', 'deepin', 'elementary',
-            'fedora', 'galliumos', 'gentoo', 'kali', 'linuxmint', 'manjoro', 'neon',
-            'opensuse', 'parrot', 'rhel', 'ubuntu', 'zorin'
+            'alpine',
+            'antergos',
+            'arch',
+            'centos',
+            'debian',
+            'deepin',
+            'elementary',
+            'fedora',
+            'galliumos',
+            'gentoo',
+            'kali',
+            'linuxmint',
+            'manjoro',
+            'neon',
+            'opensuse',
+            'parrot',
+            'rhel',
+            'ubuntu',
+            'zorin',
         ];
 
         if (this.name === unknown || allowedList.indexOf(this.name) >= 0) {
             return this.toString();
-        }
-        else {
+        } else {
             // Having a hash of the name will be helpful to identify spikes in the 'other'
             // bucket when a new distro becomes popular and needs to be added to the
             // allowed list above.
@@ -66,8 +79,7 @@ export class LinuxDistribution {
             fs.readFile(filePath, 'utf8', (error, data) => {
                 if (error) {
                     reject(error);
-                }
-                else {
+                } else {
                     resolve(LinuxDistribution.FromReleaseInfo(data));
                 }
             });
@@ -82,9 +94,9 @@ export class LinuxDistribution {
         for (let line of lines) {
             line = line.trim();
 
-            let equalsIndex = line.indexOf('=');
+            const equalsIndex = line.indexOf('=');
             if (equalsIndex >= 0) {
-                let key = line.substring(0, equalsIndex);
+                const key = line.substring(0, equalsIndex);
                 let value = line.substring(equalsIndex + 1);
 
                 // Strip double quotes if necessary
@@ -94,8 +106,7 @@ export class LinuxDistribution {
 
                 if (key === 'ID') {
                     name = value;
-                }
-                else if (key === 'VERSION_ID') {
+                } else if (key === 'VERSION_ID') {
                     version = value;
                 }
 
@@ -110,11 +121,7 @@ export class LinuxDistribution {
 }
 
 export class PlatformInformation {
-    public constructor(
-        public platform: string,
-        public architecture: string,
-        public distribution?: LinuxDistribution) {
-    }
+    public constructor(public platform: string, public architecture: string, public distribution?: LinuxDistribution) {}
 
     public isWindows(): boolean {
         return this.platform === 'win32';
@@ -141,15 +148,13 @@ export class PlatformInformation {
         const platform = os.platform();
         if (platform === 'win32') {
             return new PlatformInformation(platform, PlatformInformation.GetWindowsArchitecture());
-        }
-        else if (platform === 'darwin') {
+        } else if (platform === 'darwin') {
             return new PlatformInformation(platform, await PlatformInformation.GetUnixArchitecture());
-        }
-        else if (platform === 'linux') {
+        } else if (platform === 'linux') {
             const [isMusl, architecture, distribution] = await Promise.all([
                 PlatformInformation.GetIsMusl(),
                 PlatformInformation.GetUnixArchitecture(),
-                LinuxDistribution.GetCurrent()
+                LinuxDistribution.GetCurrent(),
             ]);
             return new PlatformInformation(isMusl ? 'linux-musl' : platform, architecture, distribution);
         }
@@ -160,19 +165,17 @@ export class PlatformInformation {
     private static GetWindowsArchitecture(): string {
         if (process.env.PROCESSOR_ARCHITECTURE === 'x86' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
             return 'x86';
-        }
-        else if (process.env.PROCESSOR_ARCHITECTURE === 'ARM64' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
+        } else if (process.env.PROCESSOR_ARCHITECTURE === 'ARM64' && process.env.PROCESSOR_ARCHITEW6432 === undefined) {
             return 'arm64';
-        }
-        else {
+        } else {
             return 'x86_64';
         }
     }
 
     private static async GetUnixArchitecture(): Promise<string> {
         const architecture = (await util.execChildProcess('uname -m', __dirname)).trim();
-        if (architecture === "aarch64") {
-            return "arm64";
+        if (architecture === 'aarch64') {
+            return 'arm64';
         }
         return architecture;
     }

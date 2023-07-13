@@ -15,14 +15,14 @@ export function extractSummaryText(xmlDocComment: string): string {
 
     let summary = xmlDocComment;
 
-    let startIndex = summary.search(summaryStartTag);
+    const startIndex = summary.search(summaryStartTag);
     if (startIndex < 0) {
         return summary;
     }
 
     summary = summary.slice(startIndex + '<summary>'.length);
 
-    let endIndex = summary.search(summaryEndTag);
+    const endIndex = summary.search(summaryEndTag);
     if (endIndex < 0) {
         return summary;
     }
@@ -31,9 +31,9 @@ export function extractSummaryText(xmlDocComment: string): string {
 }
 
 export function GetDocumentationString(structDoc: protocol.DocumentationComment) {
-    let newLine = "\n\n";
-    let documentation = "";
-    
+    const newLine = '\n\n';
+    let documentation = '';
+
     if (structDoc) {
         if (structDoc.SummaryText) {
             documentation += structDoc.SummaryText + newLine;
@@ -41,10 +41,10 @@ export function GetDocumentationString(structDoc: protocol.DocumentationComment)
 
         documentation = documentation.trim();
     }
-    
+
     return documentation;
 }
 
 export function displayDocumentationObject(obj: protocol.DocumentationItem): string {
-    return obj.Name + ": " + obj.Documentation;
+    return obj.Name + ': ' + obj.Documentation;
 }

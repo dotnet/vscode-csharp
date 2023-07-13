@@ -8,22 +8,34 @@ import { OmniSharpServer } from '../omnisharp/server';
 import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
-import CompositeDisposable from '../CompositeDisposable';
-import OptionProvider from '../shared/observers/OptionProvider';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import CompositeDisposable from '../compositeDisposable';
+import OptionProvider from '../shared/observers/optionProvider';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBuilder';
 
-export default class OmniSharpCodeActionProvider extends AbstractProvider implements vscode.CodeActionProvider<vscode.CodeAction> {
+export default class OmniSharpCodeActionProvider
+    extends AbstractProvider
+    implements vscode.CodeActionProvider<vscode.CodeAction>
+{
     private _commandId: string;
 
-    constructor(server: OmniSharpServer, private optionProvider: OptionProvider, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(
+        server: OmniSharpServer,
+        private optionProvider: OptionProvider,
+        languageMiddlewareFeature: LanguageMiddlewareFeature
+    ) {
         super(server, languageMiddlewareFeature);
         this._commandId = 'omnisharp.runCodeAction';
         const registerCommandDisposable = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
         this.addDisposables(new CompositeDisposable(registerCommandDisposable));
     }
 
-    public async provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): Promise<vscode.CodeAction[] | undefined> {
+    public async provideCodeActions(
+        document: vscode.TextDocument,
+        range: vscode.Range | vscode.Selection,
+        context: vscode.CodeActionContext,
+        token: vscode.CancellationToken
+    ): Promise<vscode.CodeAction[] | undefined> {
         const options = this.optionProvider.GetLatestOptions();
         if (options.omnisharpOptions.disableCodeActions) {
             return;
@@ -45,19 +57,19 @@ export default class OmniSharpCodeActionProvider extends AbstractProvider implem
         if (range instanceof vscode.Selection && !range.isEmpty) {
             request.Selection = {
                 Start: { Line: range.start.line, Column: range.start.character },
-                End: { Line: range.end.line, Column: range.end.character }
+                End: { Line: range.end.line, Column: range.end.character },
             };
         }
 
         try {
             const response = await serverUtils.getCodeActions(this._server, request, token);
-            return response.CodeActions.map(codeAction => {
+            return response.CodeActions.map((codeAction) => {
                 const runRequest: protocol.V2.RunCodeActionRequest = {
                     ...request,
                     Identifier: codeAction.Identifier,
                     WantsTextChanges: true,
                     WantsAllCodeActionOperations: true,
-                    ApplyTextChanges: false
+                    ApplyTextChanges: false,
                 };
 
                 return {
@@ -66,7 +78,7 @@ export default class OmniSharpCodeActionProvider extends AbstractProvider implem
                     command: {
                         title: codeAction.Name,
                         command: this._commandId,
-                        arguments: [runRequest, token]
+                        arguments: [runRequest, token],
                     },
                 };
             });
@@ -90,7 +102,10 @@ export default class OmniSharpCodeActionProvider extends AbstractProvider implem
         }
     }
 
-    private async _runCodeAction(req: protocol.V2.RunCodeActionRequest, token: vscode.CancellationToken): Promise<boolean | string | undefined> {
+    private async _runCodeAction(
+        req: protocol.V2.RunCodeActionRequest,
+        token: vscode.CancellationToken
+    ): Promise<boolean | string | undefined> {
         try {
             const response = await serverUtils.runCodeAction(this._server, req);
             if (response) {

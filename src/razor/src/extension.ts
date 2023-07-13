@@ -1,52 +1,58 @@
-﻿/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
+﻿/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
 import * as vscodeapi from 'vscode';
 import { ExtensionContext } from 'vscode';
-import { BlazorDebugConfigurationProvider } from './BlazorDebug/BlazorDebugConfigurationProvider';
-import { CodeActionsHandler } from './CodeActions/CodeActionsHandler';
-import { RazorCodeActionRunner } from './CodeActions/RazorCodeActionRunner';
-import { RazorCodeLensProvider } from './CodeLens/RazorCodeLensProvider';
-import { ColorPresentationHandler } from './ColorPresentation/ColorPresentationHandler';
-import { ProvisionalCompletionOrchestrator } from './Completion/ProvisionalCompletionOrchestrator';
-import { RazorCompletionItemProvider } from './Completion/RazorCompletionItemProvider';
-import { listenToConfigurationChanges } from './ConfigurationChangeListener';
-import { RazorCSharpFeature } from './CSharp/RazorCSharpFeature';
-import { RazorDefinitionProvider } from './Definition/RazorDefinitionProvider';
-import { ReportIssueCommand } from './Diagnostics/ReportIssueCommand';
-import { RazorDocumentManager } from './Document/RazorDocumentManager';
-import { RazorDocumentSynchronizer } from './Document/RazorDocumentSynchronizer';
-import { DocumentColorHandler } from './DocumentColor/DocumentColorHandler';
-import { RazorDocumentHighlightProvider } from './DocumentHighlight/RazorDocumentHighlightProvider';
-import { reportTelemetryForDocuments } from './DocumentTelemetryListener';
-import { DynamicFileInfoHandler } from './DynamicFile/DynamicFileInfoHandler';
-import { FoldingRangeHandler } from './Folding/FoldingRangeHandler';
-import { FormattingHandler } from './Formatting/FormattingHandler';
-import { HostEventStream } from './HostEventStream';
-import { RazorHoverProvider } from './Hover/RazorHoverProvider';
-import { RazorHtmlFeature } from './Html/RazorHtmlFeature';
+import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
+import { CodeActionsHandler } from './codeActions/codeActionsHandler';
+import { RazorCodeActionRunner } from './codeActions/razorCodeActionRunner';
+import { RazorCodeLensProvider } from './codeLens/razorCodeLensProvider';
+import { ColorPresentationHandler } from './colorPresentation/colorPresentationHandler';
+import { ProvisionalCompletionOrchestrator } from './completion/provisionalCompletionOrchestrator';
+import { RazorCompletionItemProvider } from './completion/razorCompletionItemProvider';
+import { listenToConfigurationChanges } from './configurationChangeListener';
+import { RazorCSharpFeature } from './csharp/razorCSharpFeature';
+import { RazorDefinitionProvider } from './definition/razorDefinitionProvider';
+import { ReportIssueCommand } from './diagnostics/reportIssueCommand';
+import { RazorDocumentManager } from './document/razorDocumentManager';
+import { RazorDocumentSynchronizer } from './document/razorDocumentSynchronizer';
+import { DocumentColorHandler } from './documentColor/documentColorHandler';
+import { RazorDocumentHighlightProvider } from './documentHighlight/razorDocumentHighlightProvider';
+import { reportTelemetryForDocuments } from './documentTelemetryListener';
+import { DynamicFileInfoHandler } from './dynamicFile/dynamicFileInfoHandler';
+import { FoldingRangeHandler } from './folding/foldingRangeHandler';
+import { FormattingHandler } from './formatting/formattingHandler';
+import { HostEventStream } from './hostEventStream';
+import { RazorHoverProvider } from './hover/razorHoverProvider';
+import { RazorHtmlFeature } from './html/razorHtmlFeature';
 import { IEventEmitterFactory } from './IEventEmitterFactory';
-import { RazorImplementationProvider } from './Implementation/RazorImplementationProvider';
-import { ProposedApisFeature } from './ProposedApisFeature';
-import { RazorLanguage } from './RazorLanguage';
-import { RazorLanguageConfiguration } from './RazorLanguageConfiguration';
-import { RazorLanguageServerClient } from './RazorLanguageServerClient';
-import { resolveRazorLanguageServerTrace } from './RazorLanguageServerTraceResolver';
-import { RazorLanguageServiceClient } from './RazorLanguageServiceClient';
-import { RazorLogger } from './RazorLogger';
-import { RazorReferenceProvider } from './Reference/RazorReferenceProvider';
-import { RazorRenameProvider } from './Rename/RazorRenameProvider';
-import { SemanticTokensRangeHandler } from './Semantic/SemanticTokensRangeHandler';
-import { RazorSignatureHelpProvider } from './SignatureHelp/RazorSignatureHelpProvider';
-import { TelemetryReporter } from './TelemetryReporter';
-import { RazorDiagnosticHandler } from './Diagnostics/RazorDiagnosticHandler';
+import { RazorImplementationProvider } from './implementation/razorImplementationProvider';
+import { ProposedApisFeature } from './proposedApisFeature';
+import { RazorLanguage } from './razorLanguage';
+import { RazorLanguageConfiguration } from './razorLanguageConfiguration';
+import { RazorLanguageServerClient } from './razorLanguageServerClient';
+import { resolveRazorLanguageServerTrace } from './razorLanguageServerTraceResolver';
+import { RazorLanguageServiceClient } from './razorLanguageServiceClient';
+import { RazorLogger } from './razorLogger';
+import { RazorReferenceProvider } from './reference/razorReferenceProvider';
+import { RazorRenameProvider } from './rename/razorRenameProvider';
+import { SemanticTokensRangeHandler } from './semantic/semanticTokensRangeHandler';
+import { RazorSignatureHelpProvider } from './signatureHelp/razorSignatureHelpProvider';
+import { TelemetryReporter } from './telemetryReporter';
+import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
-export async function activate(vscodeType: typeof vscodeapi, context: ExtensionContext, languageServerDir: string, eventStream: HostEventStream, enableProposedApis = false) {
+export async function activate(
+    vscodeType: typeof vscodeapi,
+    context: ExtensionContext,
+    languageServerDir: string,
+    eventStream: HostEventStream,
+    enableProposedApis = false
+) {
     const telemetryReporter = new TelemetryReporter(eventStream);
     const eventEmitterFactory: IEventEmitterFactory = {
         create: <T>() => new vscode.EventEmitter<T>(),
@@ -56,7 +62,12 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
     const logger = new RazorLogger(vscodeType, eventEmitterFactory, languageServerTrace);
 
     try {
-        const languageServerClient = new RazorLanguageServerClient(vscodeType, languageServerDir, telemetryReporter, logger);
+        const languageServerClient = new RazorLanguageServerClient(
+            vscodeType,
+            languageServerDir,
+            telemetryReporter,
+            logger
+        );
         const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
 
         const documentManager = new RazorDocumentManager(languageServerClient, logger);
@@ -68,13 +79,16 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
         const localRegistrations: vscode.Disposable[] = [];
         const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, logger);
         const razorCodeActionRunner = new RazorCodeActionRunner(languageServerClient, logger);
-        const codeActionsHandler = new CodeActionsHandler(documentManager, documentSynchronizer, languageServerClient, logger);
+        const codeActionsHandler = new CodeActionsHandler(
+            documentManager,
+            documentSynchronizer,
+            languageServerClient,
+            logger
+        );
 
         // Our dynamic file handler needs to be registered regardless of whether the Razor language server starts
         // since the Roslyn implementation expects the dynamic file commands to always be registered.
-        const dynamicFileInfoProvider = new DynamicFileInfoHandler(
-            documentManager,
-            logger);
+        const dynamicFileInfoProvider = new DynamicFileInfoHandler(documentManager, logger);
         dynamicFileInfoProvider.register();
 
         languageServerClient.onStart(async () => {
@@ -82,74 +96,90 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 documentManager,
                 csharpFeature.projectionProvider,
                 languageServiceClient,
-                logger);
+                logger
+            );
             const semanticTokenHandler = new SemanticTokensRangeHandler(languageServerClient);
             const colorPresentationHandler = new ColorPresentationHandler(
                 documentManager,
                 languageServerClient,
-                logger);
+                logger
+            );
             const documentColorHandler = new DocumentColorHandler(
                 documentManager,
                 documentSynchronizer,
                 languageServerClient,
-                logger);
-            const foldingRangeHandler = new FoldingRangeHandler(
-                languageServerClient,
-                documentManager,
-                logger);
+                logger
+            );
+            const foldingRangeHandler = new FoldingRangeHandler(languageServerClient, documentManager, logger);
             const formattingHandler = new FormattingHandler(
                 documentManager,
                 documentSynchronizer,
                 languageServerClient,
-                logger);
+                logger
+            );
 
             const completionItemProvider = new RazorCompletionItemProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
                 provisionalCompletionOrchestrator,
-                logger);
+                logger
+            );
             const signatureHelpProvider = new RazorSignatureHelpProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
-                logger);
+                logger
+            );
             const definitionProvider = new RazorDefinitionProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
-                logger);
+                logger
+            );
             const implementationProvider = new RazorImplementationProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
-                logger);
+                logger
+            );
             const hoverProvider = new RazorHoverProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
-                logger);
+                logger
+            );
             const codeLensProvider = new RazorCodeLensProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
-                logger);
+                logger
+            );
             const renameProvider = new RazorRenameProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
-                logger);
+                logger
+            );
             const referenceProvider = new RazorReferenceProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
-                logger);
+                logger
+            );
             const documentHighlightProvider = new RazorDocumentHighlightProvider(
                 documentSynchronizer,
                 documentManager,
                 languageServiceClient,
-                logger);
-            const razorDiagnosticHandler = new RazorDiagnosticHandler(documentSynchronizer, languageServerClient, languageServiceClient, documentManager, logger);
+                logger
+            );
+            const razorDiagnosticHandler = new RazorDiagnosticHandler(
+                documentSynchronizer,
+                languageServerClient,
+                languageServiceClient,
+                documentManager,
+                logger
+            );
 
             localRegistrations.push(
                 languageConfiguration.register(),
@@ -157,43 +187,30 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 vscodeType.languages.registerCompletionItemProvider(
                     RazorLanguage.id,
                     completionItemProvider,
-                    '.', '<', '@'),
-                vscodeType.languages.registerSignatureHelpProvider(
-                    RazorLanguage.id,
-                    signatureHelpProvider,
-                    '(', ','),
-                vscodeType.languages.registerDefinitionProvider(
-                    RazorLanguage.id,
-                    definitionProvider),
-                vscodeType.languages.registerImplementationProvider(
-                    RazorLanguage.id,
-                    implementationProvider),
-                vscodeType.languages.registerHoverProvider(
-                    RazorLanguage.documentSelector,
-                    hoverProvider),
-                vscodeType.languages.registerReferenceProvider(
-                    RazorLanguage.id,
-                    referenceProvider),
-                vscodeType.languages.registerCodeLensProvider(
-                    RazorLanguage.id,
-                    codeLensProvider),
-                vscodeType.languages.registerRenameProvider(
-                    RazorLanguage.id,
-                    renameProvider),
-                vscodeType.languages.registerDocumentHighlightProvider(
-                    RazorLanguage.id,
-                    documentHighlightProvider),
+                    '.',
+                    '<',
+                    '@'
+                ),
+                vscodeType.languages.registerSignatureHelpProvider(RazorLanguage.id, signatureHelpProvider, '(', ','),
+                vscodeType.languages.registerDefinitionProvider(RazorLanguage.id, definitionProvider),
+                vscodeType.languages.registerImplementationProvider(RazorLanguage.id, implementationProvider),
+                vscodeType.languages.registerHoverProvider(RazorLanguage.documentSelector, hoverProvider),
+                vscodeType.languages.registerReferenceProvider(RazorLanguage.id, referenceProvider),
+                vscodeType.languages.registerCodeLensProvider(RazorLanguage.id, codeLensProvider),
+                vscodeType.languages.registerRenameProvider(RazorLanguage.id, renameProvider),
+                vscodeType.languages.registerDocumentHighlightProvider(RazorLanguage.id, documentHighlightProvider),
                 documentManager.register(),
                 csharpFeature.register(),
                 htmlFeature.register(),
                 documentSynchronizer.register(),
                 reportIssueCommand.register(),
-                listenToConfigurationChanges(languageServerClient));
+                listenToConfigurationChanges(languageServerClient)
+            );
 
             if (enableProposedApis) {
                 const proposedApisFeature = new ProposedApisFeature();
 
-                await proposedApisFeature.register(vscodeType, localRegistrations);
+                await proposedApisFeature.register(vscodeType);
             }
 
             razorCodeActionRunner.register();
@@ -205,12 +222,12 @@ export async function activate(vscodeType: typeof vscodeapi, context: ExtensionC
                 formattingHandler.register(),
                 semanticTokenHandler.register(),
                 razorDiagnosticHandler.register(),
-                codeActionsHandler.register()
+                codeActionsHandler.register(),
             ]);
         });
 
         const onStopRegistration = languageServerClient.onStop(() => {
-            localRegistrations.forEach(r => r.dispose());
+            localRegistrations.forEach((r) => r.dispose());
             localRegistrations.length = 0;
         });
 
@@ -234,8 +251,8 @@ async function startLanguageServer(
     vscodeType: typeof vscodeapi,
     languageServerClient: RazorLanguageServerClient,
     logger: RazorLogger,
-    context: vscode.ExtensionContext) {
-
+    context: vscode.ExtensionContext
+) {
     const razorFiles = await vscodeType.workspace.findFiles(RazorLanguage.globbingPattern);
     if (razorFiles.length === 0) {
         // No Razor files in workspace, language server should stay off until one is added or opened.

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DebugConfiguration } from "vscode";
+import { DebugConfiguration } from 'vscode';
 
 export default interface LaunchConfiguration extends DebugConfiguration {
     debuggerEventsPipeName?: string;
