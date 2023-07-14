@@ -409,6 +409,8 @@ export class RoslynLanguageServer {
 
             const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension, options);
             args = args.concat(csharpDevkitArgs);
+
+            await this.setupDevKitEnvironment(env, csharpDevkitExtension);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             _channel.appendLine('Activating C# standalone...');
@@ -526,6 +528,14 @@ export class RoslynLanguageServer {
 
         const csharpIntelliCodeArgs: string[] = ['--starredCompletionComponentPath', starredCompletionComponentPath];
         return csharpIntelliCodeArgs;
+    }
+
+    private async setupDevKitEnvironment(
+        env: NodeJS.ProcessEnv,
+        csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>
+    ): Promise<void> {
+        const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
+        await exports.setupTelemetryEnvironmentAsync(env);
     }
 
     private getLanguageServicesDevKitComponentPath(csharpDevKitExports: CSharpDevKitExports): string {
