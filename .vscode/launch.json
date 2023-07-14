@@ -48,8 +48,6 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/featureTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/featureTests",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "featureTests",
             },
@@ -73,12 +71,8 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "singleCsproj",
-                "OMNISHARP_ENGINE": "stdio",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -101,12 +95,8 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "BasicRazorApp2_1",
-                "OMNISHARP_ENGINE": "stdio",
             },
         },
         {
@@ -149,7 +139,6 @@
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
-                "AUTOMATED_TESTING": "true",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -172,12 +161,8 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "singleCsproj",
-                "OMNISHARP_ENGINE": "lsp",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -200,12 +185,8 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "BasicRazorApp2_1",
-                "OMNISHARP_ENGINE": "lsp",
             },
         },
         {
@@ -217,17 +198,13 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/omnisharp_slnWithCsproj.code-workspace",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithCsproj",
-                "OMNISHARP_ENGINE": "lsp",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -250,9 +227,6 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnFilterWithCsproj",
             },
@@ -277,9 +251,6 @@
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "slnWithGenerator",
             },
