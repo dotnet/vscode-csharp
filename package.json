@@ -36,7 +36,7 @@
   },
   "defaults": {
     "omniSharp": "1.39.7",
-    "razor": "7.0.0-preview.23258.1"
+    "razor": "7.0.0-preview.23363.1"
   },
   "main": "./dist/extension",
   "scripts": {
@@ -67,7 +67,7 @@
     "http-proxy-agent": "4.0.1",
     "https-proxy-agent": "5.0.0",
     "jsonc-parser": "3.0.0",
-    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/4602907d6f698a6bf4b70562105a1a71/microsoft.aspnetcore.razor.vscode-7.0.0-preview.23258.1.tgz",
+    "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/0af42abab690d5de903a4a814d6aedc1/microsoft.aspnetcore.razor.vscode-7.0.0-preview.23363.1.tgz",
     "node-machine-id": "1.1.12",
     "request-light": "0.4.0",
     "rxjs": "6.6.7",
@@ -523,7 +523,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/d67585e2b3009d700c70f6f3f7ec666f/razorlanguageserver-win-x64-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/8d42e62ea4051381c219b3e31bc4eced/razorlanguageserver-win-x64-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -535,7 +535,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/dc253426025d44bf9f78e9d69b1b946e/razorlanguageserver-win-x86-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/e440c4f3a4a96334fe177513935fa010/razorlanguageserver-win-x86-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -547,7 +547,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/c6a4cc07ec8a8e089ce3a8e618e2df35/razorlanguageserver-win-arm64-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/4ef26e45cf32fe8d51c0e7dd21f1fef6/razorlanguageserver-win-arm64-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -559,7 +559,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/86cc790bb4a8c703cbec0e3260b63620/razorlanguageserver-linux-x64-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/6d4e23a3c7cf0465743950a39515a716/razorlanguageserver-linux-x64-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -574,7 +574,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/cbd4a5d06dfd59faf0afca97cb44c2d8/razorlanguageserver-linux-arm64-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/85deebd44647ebf65724cc291d722283/razorlanguageserver-linux-arm64-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -589,7 +589,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/8eb49bd7a28941933356bdb206864b2d/razorlanguageserver-linux-musl-x64-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/4f0caa94ae182785655efb15eafcef23/razorlanguageserver-linux-musl-x64-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -604,7 +604,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/6ddcb891121eef359196e37ab1f4f31d/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/0a24828206a6f3b4bc743d058ef88ce7/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -619,7 +619,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/cd0a3b009315c636383c21962d312d8a/razorlanguageserver-osx-x64-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/2afcafaf41082989efcc10405abb9314/razorlanguageserver-osx-x64-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -634,7 +634,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/4ccf25e1-f154-4946-b682-0cdfd35a60ce/274355756fd7dd499d0116f063b2cd67/razorlanguageserver-osx-arm64-7.0.0-preview.23258.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/8bf2ed2f00d481a5987e3eb5165afddd/razorlanguageserver-osx-arm64-7.0.0-preview.23363.1.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"

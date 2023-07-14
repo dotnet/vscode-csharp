@@ -33,6 +33,10 @@ If you still need Unity or .NET Framework support, you can set `omnisharp.useMod
 
 See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
 
+## What's new in 1.26.1
+* Update Razor to 7.0.0-preview.23363.1
+  * Remove unsupported features (PR: [#8951](https://github.com/dotnet/razor/pull/8951))
+
 ## What's new in 1.26.0
 * Update OmniSharp to 1.39.7 (PR: [#5840](https://github.com/OmniSharp/omnisharp-vscode/pull/5840))
   * Respond to breaking change in VSCode 1.79.2 in completion (PR:[#2542](https://github.com/OmniSharp/omnisharp-roslyn/pull/2542))
