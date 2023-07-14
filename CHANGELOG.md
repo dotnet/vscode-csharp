@@ -13,8 +13,8 @@
   * As a workaround, make an edit within the file before using Rename Symbol.
 
 ## 1.26.1
-* Update Razor to 7.0.0-preview.23357.1
-  * Remove unsupported features (PR: [#8913](https://github.com/dotnet/razor/pull/8913))
+* Update Razor to 7.0.0-preview.23363.1
+  * Remove unsupported features (PR: [#8951](https://github.com/dotnet/razor/pull/8951))
 
 ## 1.26.0
 * Update OmniSharp to 1.39.7 (PR: [#5840](https://github.com/OmniSharp/omnisharp-vscode/pull/5840))
