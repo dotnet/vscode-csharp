@@ -535,6 +535,13 @@ export class RoslynLanguageServer {
         csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>
     ): Promise<void> {
         const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
+
+        // setupTelemetryEnvironmentAsync was a later addition to devkit (not in preview 1)
+        // so it may not exist in whatever version of devkit the user has installed
+        if (!exports.setupTelemetryEnvironmentAsync) {
+            return;
+        }
+
         await exports.setupTelemetryEnvironmentAsync(env);
     }
 
