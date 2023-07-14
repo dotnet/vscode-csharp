@@ -14,6 +14,7 @@ import {
     isSlnWithGenerator,
     restartRoslynLanguageServer,
 } from './integrationHelpersBlue';
+import { InlayHint, InlayHintKind, Position } from 'vscode-languageserver-protocol';
 
 suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
@@ -66,43 +67,20 @@ suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
             range
         );
 
-        assert.lengthOf(hints, 6);
+        assert.lengthOf(hints, 5);
 
-        /*
-        assertInlayHintEqual(hints[0], { Label: 'InlayHints ', Position: { Line: 6, Column: 12 }, Data: {}, TextEdits: [{ StartLine: 6, StartColumn: 8, EndLine: 6, EndColumn: 11, NewText: 'InlayHints' }] });
-        assertInlayHintEqual(hints[1], { Label: ' InlayHints', Position: { Line: 7, Column: 27 }, Data: {}, TextEdits: [{ StartLine: 7, StartColumn: 27, EndLine: 7, EndColumn: 27, NewText: ' InlayHints' }] });
-        assertInlayHintEqual(hints[2], { Label: 'string ', Position: { Line: 8, Column: 28 }, Data: {}, TextEdits: [{ StartLine: 8, StartColumn: 28, EndLine: 8, EndColumn: 28, NewText: 'string ' }] });
-        assertInlayHintEqual(hints[3], { Label: 'i: ', Position: { Line: 9, Column: 17 }, Data: {}, TextEdits: [{ StartLine: 9, StartColumn: 17, EndLine: 9, EndColumn: 17, NewText: 'i: ' }] });
-        assertInlayHintEqual(hints[4], { Label: 'param1: ', Position: { Line: 10, Column: 15 }, Data: {}, TextEdits: [{ StartLine: 10, StartColumn: 15, EndLine: 10, EndColumn: 15, NewText: 'param1: ' }] });
-        assertInlayHintEqual(hints[5], { Label: 'param1: ', Position: { Line: 11, Column: 27 }, Data: {}, TextEdits: [{ StartLine: 11, StartColumn: 27, EndLine: 11, EndColumn: 27, NewText: 'param1: ' }] });
+        assertInlayHintEqual(hints[0], InlayHint.create(Position.create(6, 12), 'InlayHints', InlayHintKind.Type));
+        assertInlayHintEqual(hints[1], InlayHint.create(Position.create(7, 27), 'InlayHints', InlayHintKind.Type));
+        assertInlayHintEqual(hints[2], InlayHint.create(Position.create(9, 17), 'i:', InlayHintKind.Parameter));
+        assertInlayHintEqual(hints[3], InlayHint.create(Position.create(10, 15), 'param1:', InlayHintKind.Parameter));
+        assertInlayHintEqual(hints[4], InlayHint.create(Position.create(11, 27), 'param1:', InlayHintKind.Parameter));
 
         function assertInlayHintEqual(actual: vscode.InlayHint, expected: InlayHint) {
-            assert.equal(actual.label, expected.Label);
-            assert.equal(actual.position.line, expected.Position.Line);
-            assert.equal(actual.position.character, expected.Position.Column);
-
-            if (!actual.textEdits) {
-                assert.isUndefined(expected.TextEdits);
-                return;
-            }
-
-            isNotNull(expected.TextEdits);
-            assert.equal(actual.textEdits.length, expected.TextEdits.length);
-            for (let i = 0; i < actual.textEdits.length; i++) {
-                const actualTextEdit = actual.textEdits[i];
-                const expectedTextEdit = expected.TextEdits[i];
-
-                assertTextEditEqual(actualTextEdit, expectedTextEdit);
-            }
+            const actualLabel = actual.label as string;
+            assert.equal(actualLabel, expected.label);
+            assert.equal(actual.position.line, expected.position.line);
+            assert.equal(actual.position.character, expected.position.character);
+            assert.equal(actual.kind, expected.kind);
         }
-
-        function assertTextEditEqual(actual: vscode.TextEdit, expected: LinePositionSpanTextChange) {
-            assert.equal(actual.range.start.line, expected.StartLine);
-            assert.equal(actual.range.start.character, expected.StartColumn);
-            assert.equal(actual.range.end.line, expected.EndLine);
-            assert.equal(actual.range.end.character, expected.EndColumn);
-            assert.equal(actual.newText, expected.NewText);
-        }
-        */
     });
 });
