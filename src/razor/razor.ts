@@ -7,12 +7,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as Razor from '../../src/razor/src/extension';
+import * as RazorOmnisharp from 'microsoft.aspnetcore.razor.vscode';
 import { EventStream } from '../eventStream';
 
 export async function activateRazorExtension(
     context: vscode.ExtensionContext,
     extensionPath: string,
-    eventStream: EventStream
+    eventStream: EventStream,
+    useOmnisharpServer: boolean
 ) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
     const configuredLanguageServerDir = razorConfig.get<string>('languageServer.directory', '');
@@ -20,7 +22,11 @@ export async function activateRazorExtension(
         configuredLanguageServerDir.length > 0 ? configuredLanguageServerDir : path.join(extensionPath, '.razor');
 
     if (fs.existsSync(languageServerDir)) {
-        await Razor.activate(vscode, context, languageServerDir, eventStream, /* enableProposedApis: */ false);
+        if (!useOmnisharpServer) {
+            await Razor.activate(vscode, context, languageServerDir, eventStream, /* enableProposedApis: */ false);
+        } else {
+            await RazorOmnisharp.activate(vscode, context, languageServerDir, eventStream, /* enableProposedApis: */ false);
+        }
     } else {
         vscode.window.showWarningMessage(
             `Cannot load Razor language server because the directory was not found: '${languageServerDir}'`

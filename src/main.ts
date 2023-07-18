@@ -126,7 +126,7 @@ export async function activate(
         // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
         //     for dynamic file info once project system is ready ->
         // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-        await activateRazorExtension(context, context.extension.extensionPath, eventStream);
+        await activateRazorExtension(context, context.extension.extensionPath, eventStream, useOmnisharpServer);
 
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(
@@ -239,7 +239,7 @@ export async function activate(
         eventStream.subscribe(razorObserver.post);
 
         if (!razorOptions.razorDevMode) {
-            omnisharpRazorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
+            omnisharpRazorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream, useOmnisharpServer);
         }
     }
 
