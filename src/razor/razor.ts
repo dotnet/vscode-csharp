@@ -25,7 +25,13 @@ export async function activateRazorExtension(
         if (!useOmnisharpServer) {
             await Razor.activate(vscode, context, languageServerDir, eventStream, /* enableProposedApis: */ false);
         } else {
-            await RazorOmnisharp.activate(vscode, context, languageServerDir, eventStream, /* enableProposedApis: */ false);
+            await RazorOmnisharp.activate(
+                vscode,
+                context,
+                languageServerDir,
+                eventStream,
+                /* enableProposedApis: */ false
+            );
         }
     } else {
         vscode.window.showWarningMessage(

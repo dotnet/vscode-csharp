@@ -239,7 +239,12 @@ export async function activate(
         eventStream.subscribe(razorObserver.post);
 
         if (!razorOptions.razorDevMode) {
-            omnisharpRazorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream, useOmnisharpServer);
+            omnisharpRazorPromise = activateRazorExtension(
+                context,
+                context.extension.extensionPath,
+                eventStream,
+                useOmnisharpServer
+            );
         }
     }
 
