@@ -51,6 +51,7 @@ import Descriptors from './lsptoolshost/services/descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
 import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
+import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -288,6 +289,7 @@ export async function activate(
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,
+            determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
         };
     } else {
         return {
