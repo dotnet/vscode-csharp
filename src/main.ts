@@ -300,7 +300,6 @@ export async function activate(
             determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
             experimental: {
                 sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
-                serverExecutablePath: async () => await languageServerExport.serverExecutablePath(),
             },
         };
     } else {

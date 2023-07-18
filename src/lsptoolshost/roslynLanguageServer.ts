@@ -120,7 +120,8 @@ export class RoslynLanguageServer {
         private hostExecutableResolver: IHostExecutableResolver,
         private optionProvider: OptionProvider,
         private context: vscode.ExtensionContext,
-        private telemetryReporter: TelemetryReporter
+        private telemetryReporter: TelemetryReporter,
+        private additionalExtensionPaths: string[]
     ) {}
 
     /**
@@ -391,6 +392,10 @@ export class RoslynLanguageServer {
             args.push('--logLevel', logLevel);
         }
 
+        if (this.additionalExtensionPaths.length > 0) {
+            args.push('--additionalExtensions', `"${this.additionalExtensionPaths.join(',')}"`);
+        }
+
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
         // in our activation because C# Dev Kit depends on C# activation completing.
@@ -608,7 +613,15 @@ export async function activateRoslynLanguageServer(
     _traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
 
     const hostExecutableResolver = new DotnetRuntimeExtensionResolver(platformInfo, getServerPath);
-    _languageServer = new RoslynLanguageServer(platformInfo, hostExecutableResolver, optionProvider, context, reporter);
+    const additionalExtensionPaths = scanExtensionPlugins();
+    _languageServer = new RoslynLanguageServer(
+        platformInfo,
+        hostExecutableResolver,
+        optionProvider,
+        context,
+        reporter,
+        additionalExtensionPaths
+    );
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, _languageServer, optionProvider, hostExecutableResolver);
@@ -652,6 +665,28 @@ export async function activateRoslynLanguageServer(
     _languageServer.start();
 
     return _languageServer;
+
+    function scanExtensionPlugins(): string[] {
+        return vscode.extensions.all.flatMap((extension) => {
+            const loadPaths = extension.packageJSON.contributes?.['csharpExtensionLoadPaths'];
+            if (loadPaths === undefined || loadPaths === null) {
+                _traceChannel.appendLine(`Extension ${extension.id} does not contribute csharpExtensionLoadPaths`);
+                return [];
+            }
+
+            if (!Array.isArray(loadPaths) || loadPaths.some((loadPath) => typeof loadPath !== 'string')) {
+                _channel.appendLine(
+                    `Extension ${
+                        extension.id
+                    } has invalid csharpExtensionLoadPaths. Expected string array, found ${typeof loadPaths}`
+                );
+                return [];
+            }
+
+            _traceChannel.appendLine(`Extension ${extension.id} contributes csharpExtensionLoadPaths: ${loadPaths}`);
+            return loadPaths;
+        });
+    }
 }
 
 function getServerPath(options: Options, platformInfo: PlatformInformation) {
