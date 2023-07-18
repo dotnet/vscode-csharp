@@ -22,7 +22,7 @@ jobs:
     vmImage: ubuntu-latest
   steps:
   - task: DownloadPipelineArtifact@2
-    displayName: 'Download artifacts from build pipeline.'
+    displayName: '📦 Download artifacts from build pipeline.'
     inputs:
       buildType: 'specific'
       project: 'internal'
@@ -59,13 +59,13 @@ jobs:
       if ($({ parameters.test-run })) {
         Write-Host "In test mode, command is printed instead of run."
         Write-Host "Command run is: vsce $($additionalPublishArgs)."
-        Write-Host "Verify PAT."
+        Write-Host "🔒 Verify PAT."
         vsce verify-pat ms-dotnettools
       }
       else {
         vsce @additionalPublishArgs
       }
-    displayName: 📦 Publish to Marketplace
+    displayName: 🚀 Publish to Marketplace
     workingDirectory: $(Pipeline.Workspace)
     env:
       VSCE_PAT: $(VSCodeMarketplacePAT)
