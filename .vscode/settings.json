@@ -11,10 +11,14 @@
         "out/": true,
         "vsix/": true
     },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "csharp.suppressDotnetRestoreNotification": true,
     "typescript.tsdk": "./node_modules/typescript/lib",
     "mocha.enabled": true,
     "omnisharp.autoStart": false,
     "editor.formatOnSave": false,
-    "eslint.lintTask.enable": true
+    "eslint.lintTask.enable": true,
+    "dotnet.defaultSolution": "disable"
 }
