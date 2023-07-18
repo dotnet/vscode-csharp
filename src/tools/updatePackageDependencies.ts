@@ -20,7 +20,7 @@ interface PackageJSONFile {
     };
 }
 
-const dottedVersionRegExp = /[0-9]+\.[0-9]+\.[0-9]+/g;
+const dottedVersionRegExp = /[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*/g;
 const dashedVersionRegExp = /[0-9]+-[0-9]+-[0-9]+/g;
 
 export async function updatePackageDependencies(): Promise<void> {
@@ -47,7 +47,7 @@ export async function updatePackageDependencies(): Promise<void> {
         return;
     }
 
-    if (!/^[0-9]+\.[0-9]+\.[0-9]+$/.test(newVersion)) {
+    if (!/^[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*$/.test(newVersion)) {
         throw new Error("Unexpected 'NEW_DEPS_VERSION' value. Expected format similar to: 1.2.3.");
     }
 

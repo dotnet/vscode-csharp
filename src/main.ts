@@ -55,6 +55,7 @@ import Descriptors from './lsptoolshost/services/descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
 import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
+import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
 import { RoslynLanguageServerExport } from './lsptoolshost/roslynLanguageServerExportChannel';
 
 export async function activate(
@@ -296,6 +297,7 @@ export async function activate(
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,
+            determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
             experimental: {
                 sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
                 serverExecutablePath: async () => await languageServerExport.serverExecutablePath(),
