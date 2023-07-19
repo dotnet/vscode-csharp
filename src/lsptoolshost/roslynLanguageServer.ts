@@ -657,16 +657,14 @@ function getServerPath(options: Options, platformInfo: PlatformInformation) {
     return serverPath;
 }
 
-function getInstalledServerPath(platformInfo: PlatformInformation) {
+function getInstalledServerPath(platformInfo: PlatformInformation): string {
     const clientRoot = __dirname;
     const serverFilePath = path.join(clientRoot, '..', '.roslyn', 'Microsoft.CodeAnalysis.LanguageServer');
 
     let extension = '';
     if (platformInfo.isWindows()) {
         extension = '.exe';
-    }
-
-    if (platformInfo.isMacOS()) {
+    } else if (platformInfo.isMacOS()) {
         // MacOS executables must be signed with codesign.  Currently all Roslyn server executables are built on windows
         // and therefore dotnet publish does not automatically sign them.
         // Tracking bug - https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
