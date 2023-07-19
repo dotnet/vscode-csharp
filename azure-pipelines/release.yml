@@ -57,7 +57,7 @@ jobs:
       $additionalPublishArgs += Get-ChildItem $publishArtifacts *.vsix
 
       Write-Host "Command run is: vsce $($additionalPublishArgs)."
-      If ("$({ parameters.test-run })" -eq "true") {
+      If ("${{ parameters.test-run }}" -eq "true") {
         Write-Host "In test mode, command is printed instead of run."
         Write-Host "🔒 Verify PAT."
         vsce verify-pat ms-dotnettools
