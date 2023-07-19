@@ -2,7 +2,7 @@ trigger: none
 pr: none
 
 parameters:
-  - name: test-run
+  - name: test
     type: boolean
     default: true
   - name: branch
@@ -42,7 +42,7 @@ jobs:
       $publishArtifacts = $allArtifacts[0]
       Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
-      $additionalPublishArgs = "publish","--skip-duplicate"
+      $additionalPublishArgs = , "publish"
       # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
       If ("${{ parameters.branch }}" -eq "prerelease") {
         $additionalPublishArgs += "--pre-release"
@@ -56,13 +56,13 @@ jobs:
       $additionalPublishArgs += '--packagePath'
       $additionalPublishArgs += Get-ChildItem $publishArtifacts *.vsix
 
-      if ($({ parameters.test-run })) {
+      Write-Host "Command run is: vsce $($additionalPublishArgs)."
+      If ("${{ parameters.test }}" -eq "true") {
         Write-Host "In test mode, command is printed instead of run."
-        Write-Host "Command run is: vsce $($additionalPublishArgs)."
         Write-Host "🔒 Verify PAT."
         vsce verify-pat ms-dotnettools
       }
-      else {
+      Else {
         vsce @additionalPublishArgs
       }
     displayName: 🚀 Publish to Marketplace
