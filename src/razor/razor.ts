@@ -22,7 +22,7 @@ export async function activateRazorExtension(
         configuredLanguageServerDir.length > 0
             ? configuredLanguageServerDir
             : useOmnisharpServer
-            ? path.join(extensionPath, '.razor/omnisharp')
+            ? path.join(extensionPath, '.razoromnisharp')
             : path.join(extensionPath, '.razor');
 
     if (fs.existsSync(languageServerDir)) {

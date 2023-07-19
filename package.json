@@ -718,7 +718,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Windows / x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/8d42e62ea4051381c219b3e31bc4eced/razorlanguageserver-win-x64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "win32"
       ],
@@ -730,7 +730,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Windows / x86)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/e440c4f3a4a96334fe177513935fa010/razorlanguageserver-win-x86-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "win32"
       ],
@@ -742,7 +742,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Windows / ARM64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/4ef26e45cf32fe8d51c0e7dd21f1fef6/razorlanguageserver-win-arm64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "win32"
       ],
@@ -754,7 +754,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Linux / x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/6d4e23a3c7cf0465743950a39515a716/razorlanguageserver-linux-x64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "linux"
       ],
@@ -769,7 +769,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Linux ARM64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/85deebd44647ebf65724cc291d722283/razorlanguageserver-linux-arm64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "linux"
       ],
@@ -784,7 +784,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Linux musl / x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/4f0caa94ae182785655efb15eafcef23/razorlanguageserver-linux-musl-x64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "linux-musl"
       ],
@@ -799,7 +799,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Linux musl ARM64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/0a24828206a6f3b4bc743d058ef88ce7/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "linux-musl"
       ],
@@ -814,7 +814,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (macOS / x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/2afcafaf41082989efcc10405abb9314/razorlanguageserver-osx-x64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "darwin"
       ],
@@ -829,7 +829,7 @@
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (macOS ARM64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/8bf2ed2f00d481a5987e3eb5165afddd/razorlanguageserver-osx-arm64-7.0.0-preview.23363.1.zip",
-      "installPath": ".razor/omnisharp",
+      "installPath": ".razoromnisharp",
       "platforms": [
         "darwin"
       ],
