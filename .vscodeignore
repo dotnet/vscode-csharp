@@ -4,6 +4,7 @@
 !.roslyn/**
 !.omnisharp/**
 !.razor/**
+!.razoromnisharp/**
 .rpt2_cache/**
 .github/**
 .vscode/**
