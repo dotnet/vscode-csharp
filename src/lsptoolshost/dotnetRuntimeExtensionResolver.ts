@@ -88,18 +88,17 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
     /**
      * Acquires the .NET runtime and any other dependencies required to spawn a particular .NET executable.
      * @param path The path to the entrypoint assembly. Typically a .dll.
-     * @returns The path to the `dotnet` command to use to spawn the process.
      */
-    private async acquireDotNetProcessDependencies(path: string) {
-        const dotnetPath = await this.acquireRuntime();
+    private async acquireDotNetProcessDependencies(path: string): Promise<HostExecutableInformation> {
+        const dotnetInfo = await this.acquireRuntime();
 
         const args = [path];
         // This will install any missing Linux dependencies.
         await vscode.commands.executeCommand('dotnet.ensureDotnetDependencies', {
-            command: dotnetPath,
+            command: dotnetInfo.path,
             arguments: args,
         });
 
-        return dotnetPath;
+        return dotnetInfo;
     }
 }
