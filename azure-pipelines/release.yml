@@ -45,7 +45,7 @@ jobs:
       $additionalPublishArgs = "publish"
       # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
       If ("${{ parameters.branch }}" -eq "prerelease") {
-        $additionalPublishArgs += "--pre-release"
+        $additionalPublishArgs += " --pre-release"
         Write-Host "Publish to pre-release channel."
       } ElseIf ("${{ parameters.branch }}" -eq "release") {
         Write-Host "Publish to release channel."
@@ -53,7 +53,7 @@ jobs:
         throw "Unexpected branch name: ${{ parameters.branch }}."
       }
 
-      $additionalPublishArgs += '--packagePath'
+      $additionalPublishArgs += ' --packagePath '
       $additionalPublishArgs += Get-ChildItem $publishArtifacts *.vsix
 
       Write-Host "Command run is: vsce $($additionalPublishArgs)."
