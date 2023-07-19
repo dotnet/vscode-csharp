@@ -56,13 +56,13 @@ jobs:
       $additionalPublishArgs += '--packagePath'
       $additionalPublishArgs += Get-ChildItem $publishArtifacts *.vsix
 
-      if ($({ parameters.test-run })) {
+      If ("$({ parameters.test-run })" -eq "true") {
         Write-Host "In test mode, command is printed instead of run."
         Write-Host "Command run is: vsce $($additionalPublishArgs)."
         Write-Host "🔒 Verify PAT."
         vsce verify-pat ms-dotnettools
       }
-      else {
+      Else {
         vsce @additionalPublishArgs
       }
     displayName: 🚀 Publish to Marketplace
