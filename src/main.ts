@@ -255,7 +255,7 @@ export async function activate(
             );
 
             await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(
-                context.extension.packageJSON.defaults.razor
+                context.extension.packageJSON.defaults.razorOmnisharp
             );
             omnisharpRazorPromise = activateRazorExtension(
                 context,
