@@ -585,10 +585,6 @@ export class RoslynLanguageServer {
                 throw new Error(`Invalid log level ${logLevel}`);
         }
     }
-
-    public getServerExecutablePath(): string | undefined {
-        return this._serverExecutablePath;
-    }
 }
 
 /**
