@@ -52,9 +52,17 @@ jobs:
       } Else {
         throw "Unexpected branch name: ${{ parameters.branch }}."
       }
-
       $additionalPublishArgs += '--packagePath'
-      $additionalPublishArgs += Get-ChildItem $publishArtifacts *.vsix
+
+      $platforms = "arm64", "x64", "ia32"
+      $allVsixs = Get-ChildItem $publishArtifacts *.vsix
+      foreach ($vsix in $allVsixs) {
+        foreach ($plat in $platforms) {
+          if ($vsix.Name.Contains($plat)) {
+              $additionalPublishArgs += $vsix
+          }
+        }
+      }
 
       Write-Host "Command run is: vsce $($additionalPublishArgs)."
       If ("${{ parameters.test }}" -eq "true") {
