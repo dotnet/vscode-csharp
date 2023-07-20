@@ -54,7 +54,6 @@
   "scripts": {
     "vscode:prepublish": "tsc -p ./ && webpack --mode production",
     "compile": "tsc -p ./ && npx eslint ./",
-    "lint": "eslint --fix ./",
     "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
@@ -66,9 +65,6 @@
     "test:integration:slnWithCsproj": "tsc -p ./ && gulp test:integration:slnWithCsproj",
     "test:integration:slnFilterWithCsproj": "tsc -p ./ && gulp test:integration:slnFilterWithCsproj",
     "test:artifacts": "tsc -p ./ && mocha out/test/artifactTests/**/*.test.js",
-    "translations-export": "gulp translations-export",
-    "translations-generate": "gulp translations-generate",
-    "translations-import": "gulp translations-import",
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "updatePackageDependencies": "gulp updatePackageDependencies",
     "l10nDevGenerateLocalizationBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
