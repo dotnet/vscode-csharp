@@ -644,12 +644,10 @@ export async function activateRoslynLanguageServer(
 }
 
 function getServerPath(options: Options, platformInfo: PlatformInformation) {
-    const clientRoot = __dirname;
-
     let serverPath = options.commonOptions.serverPath;
     if (!serverPath) {
         // Option not set, use the path from the extension.
-        serverPath = path.join(clientRoot, '..', '.roslyn', getServerFileName(platformInfo));
+        serverPath = getInstalledServerPath(platformInfo);
     }
 
     if (!fs.existsSync(serverPath)) {
@@ -659,21 +657,27 @@ function getServerPath(options: Options, platformInfo: PlatformInformation) {
     return serverPath;
 }
 
-function getServerFileName(platformInfo: PlatformInformation) {
-    const serverFileName = 'Microsoft.CodeAnalysis.LanguageServer';
+function getInstalledServerPath(platformInfo: PlatformInformation): string {
+    const clientRoot = __dirname;
+    const serverFilePath = path.join(clientRoot, '..', '.roslyn', 'Microsoft.CodeAnalysis.LanguageServer');
+
     let extension = '';
     if (platformInfo.isWindows()) {
         extension = '.exe';
-    }
-
-    if (platformInfo.isMacOS()) {
+    } else if (platformInfo.isMacOS()) {
         // MacOS executables must be signed with codesign.  Currently all Roslyn server executables are built on windows
         // and therefore dotnet publish does not automatically sign them.
         // Tracking bug - https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
         extension = '.dll';
     }
 
-    return `${serverFileName}${extension}`;
+    let pathWithExtension = `${serverFilePath}${extension}`;
+    if (!fs.existsSync(pathWithExtension)) {
+        // We might be running a platform neutral vsix which has no executable, instead we run the dll directly.
+        pathWithExtension = `${serverFilePath}.dll`;
+    }
+
+    return pathWithExtension;
 }
 
 function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
