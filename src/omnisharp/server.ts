@@ -433,7 +433,7 @@ export class OmniSharpServer {
                 ? razorOptions.razorPluginPath
                 : path.join(
                       this.extensionPath,
-                      '.razor',
+                      '.razoromnisharp',
                       'OmniSharpPlugin',
                       'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll'
                   );
