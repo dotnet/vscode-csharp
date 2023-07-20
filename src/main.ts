@@ -77,6 +77,7 @@ export async function activate(
     const reporter = new TelemetryReporter(context.extension.id, context.extension.packageJSON.version, aiKey);
 
     const csharpChannel = vscode.window.createOutputChannel('C#');
+    const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
     const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     const csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
     eventStream.subscribe(csharpchannelObserver.post);
@@ -148,6 +149,7 @@ export async function activate(
             platformInfo,
             optionProvider,
             csharpChannel,
+            dotnetTestChannel,
             reporter
         );
     } else {
@@ -157,7 +159,6 @@ export async function activate(
         eventStream.subscribe(dotnetChannelObserver.post);
         eventStream.subscribe(dotnetLoggerObserver.post);
 
-        const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
         const dotnetTestChannelObserver = new DotNetTestChannelObserver(dotnetTestChannel);
         const dotnetTestLoggerObserver = new DotNetTestLoggerObserver(dotnetTestChannel);
         eventStream.subscribe(dotnetTestChannelObserver.post);

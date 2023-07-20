@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as cp from 'child_process';
+import * as uuid from 'uuid';
 import { registerCommands } from './commands';
 import { registerDebugger } from './debugger';
 import { UriConverter } from './uriConverter';
@@ -36,6 +37,8 @@ import {
     CompletionRequest,
     CompletionResolveRequest,
     CompletionItem,
+    PartialResultParams,
+    ProtocolRequestType,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -57,6 +60,7 @@ import { randomUUID } from 'crypto';
 import { DotnetRuntimeExtensionResolver } from './dotnetRuntimeExtensionResolver';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
+import { registerUnitTestingCommands } from './unitTesting';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -269,6 +273,28 @@ export class RoslynLanguageServer {
         return response;
     }
 
+    public async sendRequestWithProgress<P extends PartialResultParams, R, PR, E, RO>(
+        type: ProtocolRequestType<P, R, PR, E, RO>,
+        params: P,
+        onProgress: (p: PR) => Promise<any>,
+        cancellationToken?: vscode.CancellationToken
+    ): Promise<R> {
+        if (!this._languageClient) {
+            throw new Error('Tried to send request while server is not started.');
+        }
+        // Generate a UUID for our partial result token and apply it to our request.
+        const partialResultToken: string = uuid.v4();
+        params.partialResultToken = partialResultToken;
+        // Register the callback for progress events.
+        const disposable = this._languageClient.onProgress(type, partialResultToken, async (partialResult) => {
+            await onProgress(partialResult);
+        });
+        const response = await this._languageClient
+            .sendRequest(type, params, cancellationToken)
+            .finally(() => disposable.dispose());
+        return response;
+    }
+
     /**
      * Sends an LSP notification to the server with a given method and parameters.
      */
@@ -424,6 +450,8 @@ export class RoslynLanguageServer {
 
         // shouldn't this arg only be set if it's running with CSDevKit?
         args.push('--telemetryLevel', this.telemetryReporter.telemetryLevel);
+
+        args.push('--extensionLogDirectory', this.context.logUri.fsPath);
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
         const cpOptions: cp.SpawnOptionsWithoutStdio = {
@@ -591,6 +619,7 @@ export async function activateRoslynLanguageServer(
     platformInfo: PlatformInformation,
     optionProvider: OptionProvider,
     outputChannel: vscode.OutputChannel,
+    dotnetTestChannel: vscode.OutputChannel,
     reporter: TelemetryReporter
 ) {
     // Create a channel for outputting general logs from the language server.
@@ -605,6 +634,8 @@ export async function activateRoslynLanguageServer(
     registerCommands(context, _languageServer, optionProvider, hostExecutableResolver);
 
     registerRazorCommands(context, _languageServer);
+
+    registerUnitTestingCommands(context, _languageServer, dotnetTestChannel);
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, _languageServer, platformInfo, optionProvider, _channel);
