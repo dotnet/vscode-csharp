@@ -12,6 +12,14 @@
 * Renaming symbol fails within a file that had recently been renamed without saving changes.
   * As a workaround, make an edit within the file before using Rename Symbol.
 
+## 1.26.0
+* Update OmniSharp to 1.39.7 (PR: [#5840](https://github.com/OmniSharp/omnisharp-vscode/pull/5840))
+  * Respond to breaking change in VSCode 1.79.2 in completion (PR:[#2542](https://github.com/OmniSharp/omnisharp-roslyn/pull/2542))
+  * Use dotnet-cake for build (PR:[#2537](https://github.com/OmniSharp/omnisharp-roslyn/pull/2537))
+  * Implement LSP CodeAction resolve (PR:[#2467](https://github.com/OmniSharp/omnisharp-roslyn/pull/2467))
+* Update debugger to 1.25.8 (PR: [#5706](https://github.com/OmniSharp/omnisharp-vscode/pull/5706))
+* Updates to README, default branch and repo link (PR: [#5709](https://github.com/OmniSharp/omnisharp-vscode/pull/5709))
+
 ## 1.25.9
 * Readme updates (PR: [#5705](https://github.com/OmniSharp/omnisharp-vscode/pull/5672))
 

@@ -15,9 +15,9 @@ import showInformationMessage from '../../../shared/observers/utils/showInformat
 import showErrorMessage from '../../../observers/utils/showErrorMessage';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
-    private readonly autoDetectUserNotice = `Run and Debug: auto-detection found {0} for a launch browser`;
-    private readonly edgeBrowserType = 'pwa-msedge';
-    private readonly chromeBrowserType = 'pwa-chrome';
+    private static readonly autoDetectUserNotice: string = `Run and Debug: auto-detection found {0} for a launch browser`;
+    private static readonly edgeBrowserType: string = 'msedge';
+    private static readonly chromeBrowserType: string = 'chrome';
 
     constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) {}
 
@@ -125,10 +125,10 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         const configBrowser = configuration.browser;
         const browserType =
             configBrowser === 'edge'
-                ? this.edgeBrowserType
+                ? BlazorDebugConfigurationProvider.edgeBrowserType
                 : configBrowser === 'chrome'
-                ? this.chromeBrowserType
-                : await this.determineBrowserType();
+                ? BlazorDebugConfigurationProvider.chromeBrowserType
+                : await BlazorDebugConfigurationProvider.determineBrowserType();
         if (!browserType) {
             return;
         }
@@ -172,21 +172,27 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         }
     }
 
-    private async determineBrowserType() {
+    public static async determineBrowserType(): Promise<string | undefined> {
         // There was no browser specified by the user, so we will do some auto-detection to find a browser,
         // favoring chrome if multiple valid options are installed.
         const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises, null);
         const chromeInstallations = await chromeBrowserFinder.findAll();
         if (chromeInstallations.length > 0) {
-            showInformationMessage(vscode, this.autoDetectUserNotice.replace('{0}', `'Chrome'`));
-            return this.chromeBrowserType;
+            showInformationMessage(
+                vscode,
+                BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Chrome'`)
+            );
+            return BlazorDebugConfigurationProvider.chromeBrowserType;
         }
 
         const edgeBrowserFinder = new EdgeBrowserFinder(process.env, promises, null);
         const edgeInstallations = await edgeBrowserFinder.findAll();
         if (edgeInstallations.length > 0) {
-            showInformationMessage(vscode, this.autoDetectUserNotice.replace('{0}', `'Edge'`));
-            return this.edgeBrowserType;
+            showInformationMessage(
+                vscode,
+                BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Edge'`)
+            );
+            return BlazorDebugConfigurationProvider.edgeBrowserType;
         }
 
         showErrorMessage(vscode, 'Run and Debug: A valid browser is not installed');

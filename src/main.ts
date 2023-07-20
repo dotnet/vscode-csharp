@@ -51,6 +51,8 @@ import Descriptors from './lsptoolshost/services/descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
 import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
+import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
+import { RazorOmnisharpDownloader } from './razor/razorOmnisharpDownloader';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -126,7 +128,12 @@ export async function activate(
         // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
         //     for dynamic file info once project system is ready ->
         // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-        await activateRazorExtension(context, context.extension.extensionPath, eventStream);
+        await activateRazorExtension(
+            context,
+            context.extension.extensionPath,
+            eventStream,
+            /* useOmnisharpServer */ false
+        );
 
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(
@@ -239,7 +246,24 @@ export async function activate(
         eventStream.subscribe(razorObserver.post);
 
         if (!razorOptions.razorDevMode) {
-            omnisharpRazorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
+            // Download Razor O# server
+            const razorOmnisharpDownloader = new RazorOmnisharpDownloader(
+                networkSettingsProvider,
+                eventStream,
+                context.extension.packageJSON,
+                platformInfo,
+                context.extension.extensionPath
+            );
+
+            await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(
+                context.extension.packageJSON.defaults.razorOmnisharp
+            );
+            omnisharpRazorPromise = activateRazorExtension(
+                context,
+                context.extension.extensionPath,
+                eventStream,
+                /* useOmnisharpServer */ true
+            );
         }
     }
 
@@ -289,6 +313,7 @@ export async function activate(
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,
+            determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
         };
     } else {
         return {
