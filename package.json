@@ -123,7 +123,7 @@
     "@types/tmp": "0.0.33",
     "@types/unzipper": "^0.9.1",
     "@types/vinyl": "~2.0.6",
-    "@types/vscode": "1.69.0",
+    "@types/vscode": "1.73.0",
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@vscode/l10n-dev": "^0.0.28",
@@ -851,7 +851,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.69.0"
+    "vscode": "^1.73.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
