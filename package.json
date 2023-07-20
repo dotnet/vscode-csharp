@@ -42,6 +42,7 @@
     "razorOmnisharp": "7.0.0-preview.23363.1"
   },
   "main": "./dist/extension",
+  "l10n": "./l10n",
   "brokeredServices": [
     {
       "moniker": {
