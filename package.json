@@ -70,7 +70,9 @@
     "translations-generate": "gulp translations-generate",
     "translations-import": "gulp translations-import",
     "unpackage:vsix": "gulp vsix:release:unpackage",
-    "updatePackageDependencies": "gulp updatePackageDependencies"
+    "updatePackageDependencies": "gulp updatePackageDependencies",
+    "l10nDevGenerateLocalizationBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
+    "l10nDevGenerateXlf": "npx @vscode/l10n-dev -generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile vscode-csharp.xlf"
   },
   "extensionDependencies": [
     "ms-dotnettools.vscode-dotnet-runtime"
