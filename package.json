@@ -1328,7 +1328,7 @@
         "properties": {
           "dotnet.defaultSolution": {
             "type": "string",
-            "description": "The path of the default solution to be opened in the workspace, or set to 'disable' to skip it.",
+            "description": "$configuration.dotnet.defaultSolution.description%",
             "order": 0
           },
           "dotnet.dotnetPath": {
