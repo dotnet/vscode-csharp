@@ -11,7 +11,11 @@ jobs:
     displayName: 'Install Node.js 16.x'
     inputs:
       versionSpec: '16.x'
-
+  - checkout: self
+    clean: true
+    submodules: true
+    fetchTags: false
+    fetchDepth: 0
   - script: |
       npm run l10nDevGenerateLocalizationBundle
       npm run l10nDevGenerateXlf
