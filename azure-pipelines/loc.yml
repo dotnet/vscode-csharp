@@ -1,7 +1,6 @@
 trigger: none
 pr: none
 
-
 jobs
 - job: Localization
   pool:
