@@ -311,9 +311,7 @@ export async function activate(
     if (!useOmnisharpServer) {
         tryGetCSharpDevKitExtensionExports(csharpLogObserver);
 
-        const languageServerExport = new RoslynLanguageServerExport(
-            roslynLanguageServerPromise!
-        );
+        const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerPromise!);
         return {
             initializationFinished: async () => {
                 await coreClrDebugPromise;
