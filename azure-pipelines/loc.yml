@@ -1,5 +1,5 @@
 steps:
-- pwsh: |
+- script: |
     npm run l10nDevGenerateLocalizationBundle
     npm run l10nDevGenerateXlf
 - task: OneLocBuild@2
