@@ -1,17 +1,32 @@
-steps:
-- script: |
-    npm run l10nDevGenerateLocalizationBundle
-    npm run l10nDevGenerateXlf
-- task: OneLocBuild@2
-  env:
-    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-  inputs:
-    locProj: '/loc/LocProject.json'
-    outDir: '$(Build.ArtifactStagingDirectory)'
-    isCreatePrSelected: false
-    packageSourceAuth: 'patAuth'
-    patVariable: '$(OneLocBuildPat)'
-    LclSource: lclFilesfromPackage
-    LclPackageId: 'Test'
+trigger: none
+pr: none
+
+
+jobs
+- job: Localization
+  pool:
+    name: NetCore1ESPool-Svc-Internal
+    demands: ImageOverride -equals windows.vs2022preview.amd64
+  steps:
+  - task: NodeTool@0
+    displayName: 'Install Node.js 16.x'
+    inputs:
+      versionSpec: '16.x'
+
+  - script: |
+      npm run l10nDevGenerateLocalizationBundle
+      npm run l10nDevGenerateXlf
+    displayName: Generate xlf files
+  - task: OneLocBuild@2
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      locProj: '/loc/LocProject.json'
+      outDir: '$(Build.ArtifactStagingDirectory)'
+      isCreatePrSelected: false
+      packageSourceAuth: 'patAuth'
+      patVariable: '$(OneLocBuildPat)'
+      LclSource: lclFilesfromPackage
+      LclPackageId: 'Test'
 
     # TODO import and create PR if needed
