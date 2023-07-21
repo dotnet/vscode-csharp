@@ -24,3 +24,5 @@ steps:
 
 - script: npm run test:artifacts
   displayName: 'Run artifacts tests'
+
+- template: loc.yml

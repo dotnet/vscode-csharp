@@ -1,0 +1,17 @@
+steps:
+- pwsh: |
+    npm run l10nDevGenerateLocalizationBundle
+    npm run l10nDevGenerateXlf
+- task: OneLocBuild@2
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  inputs:
+    locProj: '/loc/LocProject.json'
+    outDir: '$(Build.ArtifactStagingDirectory)'
+    isCreatePrSelected: false
+    packageSourceAuth: 'patAuth'
+    patVariable: '$(OneLocBuildPat)'
+    LclSource: lclFilesfromPackage
+    LclPackageId: 'Test'
+
+    # TODO import and create PR if needed
