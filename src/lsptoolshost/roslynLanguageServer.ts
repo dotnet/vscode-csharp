@@ -660,7 +660,9 @@ export async function activateRoslynLanguageServer(
         const capabilities = await _languageServer.getServerCapabilities();
 
         if (capabilities._vs_onAutoInsertProvider) {
-            if (!capabilities._vs_onAutoInsertProvider._vs_triggerCharacters.includes(change.text)) {
+            const changeTrimmed = change.text.replace(/(?!^)\s+/g, '');
+
+            if (!capabilities._vs_onAutoInsertProvider._vs_triggerCharacters.includes(changeTrimmed)) {
                 return;
             }
 
@@ -794,10 +796,12 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
     const uri = UriConverter.serialize(e.document.uri);
     const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();
+    const changeTrimmed = change.text.replace(/(?!^)\s+/g, '');
+
     const request: RoslynProtocol.OnAutoInsertParams = {
         _vs_textDocument: textDocument,
         _vs_position: position,
-        _vs_ch: change.text,
+        _vs_ch: changeTrimmed,
         _vs_options: formattingOptions,
     };
     const response = await _languageServer.sendRequest(RoslynProtocol.OnAutoInsertRequest.type, request, token);
