@@ -24,12 +24,9 @@ jobs:
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
-      locProj: '/loc/LocProject.json'
+      locProj: loc/LocProject.json
       outDir: '$(Build.ArtifactStagingDirectory)'
       isCreatePrSelected: false
-      packageSourceAuth: 'patAuth'
-      patVariable: '$(OneLocBuildPat)'
-      LclSource: lclFilesfromPackage
       LclPackageId: 'Test'
 
     # TODO import and create PR if needed
