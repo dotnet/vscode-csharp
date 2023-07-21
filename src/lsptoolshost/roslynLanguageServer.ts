@@ -413,8 +413,8 @@ export class RoslynLanguageServer {
             args.push('--logLevel', logLevel);
         }
 
-        if (this.additionalExtensionPaths.length > 0) {
-            args.push('--additionalExtensions', `"${this.additionalExtensionPaths.join(',')}"`);
+        for (const extensionPath of this.additionalExtensionPaths) {
+            args.push('--extension', `"${extensionPath}"`);
         }
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -690,7 +690,7 @@ export async function activateRoslynLanguageServer(
 
     function scanExtensionPlugins(): string[] {
         return vscode.extensions.all.flatMap((extension) => {
-            const loadPaths = extension.packageJSON.contributes?.['csharpExtensionLoadPaths'];
+            let loadPaths = extension.packageJSON.contributes?.['csharpExtensionLoadPaths'];
             if (loadPaths === undefined || loadPaths === null) {
                 _traceChannel.appendLine(`Extension ${extension.id} does not contribute csharpExtensionLoadPaths`);
                 return [];
@@ -698,13 +698,12 @@ export async function activateRoslynLanguageServer(
 
             if (!Array.isArray(loadPaths) || loadPaths.some((loadPath) => typeof loadPath !== 'string')) {
                 _channel.appendLine(
-                    `Extension ${
-                        extension.id
-                    } has invalid csharpExtensionLoadPaths. Expected string array, found ${typeof loadPaths}`
+                    `Extension ${extension.id} has invalid csharpExtensionLoadPaths. Expected string array, found ${loadPaths}`
                 );
                 return [];
             }
 
+            loadPaths = loadPaths.map((loadPath) => path.join(extension.extensionPath, loadPath));
             _traceChannel.appendLine(`Extension ${extension.id} contributes csharpExtensionLoadPaths: ${loadPaths}`);
             return loadPaths;
         });

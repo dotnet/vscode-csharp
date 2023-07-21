@@ -312,7 +312,7 @@ export async function activate(
         tryGetCSharpDevKitExtensionExports(csharpLogObserver);
 
         const languageServerExport = new RoslynLanguageServerExport(
-            <Promise<RoslynLanguageServer>>roslynLanguageServerPromise
+            roslynLanguageServerPromise!
         );
         return {
             initializationFinished: async () => {
