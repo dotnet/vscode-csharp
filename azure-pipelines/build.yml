@@ -9,7 +9,7 @@ steps:
   fetchTags: false
   fetchDepth: 0
 
-# - template: prereqs.yml
+- template: prereqs.yml
 
 # - script: gulp 'vsix:release:package' ${{ parameters.prereleaseFlag }}
 #   displayName: 'Build VSIXs'
