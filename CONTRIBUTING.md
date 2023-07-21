@@ -25,9 +25,9 @@ To **test** do the following: `npm run test` or <kbd>F5</kbd> in VS Code with th
 
 https://github.com/dotnet/roslyn contains the server implementation.  Follow the instructions there to build the repo as normal.  Once built, the server executable will be located in the build output directory, typically
 
-`$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net7.0/Microsoft.CodeAnalysis.LanguageServer.exe`
+`$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net7.0/Microsoft.CodeAnalysis.LanguageServer.dll`
 
-depending on which configuration is built.  Then, launch the extension here and change the VSCode setting `dotnet.server.path` to point to the Roslyn executable path you built above and restart the language server.
+depending on which configuration is built.  Then, launch the extension here and change the VSCode setting `dotnet.server.path` to point to the Roslyn dll path you built above and restart the language server.
 
 If you need to debug the server, you can set the VSCode setting `dotnet.server.waitForDebugger` to true.  This will trigger a `Debugger.Launch()` on the server side as it starts.
 
