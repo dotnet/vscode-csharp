@@ -42,7 +42,11 @@ import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/backgroundWorkStatusBarObserver';
 import { getDotnetPackApi } from './dotnetPack';
-import { SolutionSnapshotProvider, activateRoslynLanguageServer } from './lsptoolshost/roslynLanguageServer';
+import {
+    RoslynLanguageServer,
+    SolutionSnapshotProvider,
+    activateRoslynLanguageServer,
+} from './lsptoolshost/roslynLanguageServer';
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/migrateOptions';
 import { getBrokeredServiceContainer } from './lsptoolshost/services/brokeredServicesHosting';
@@ -53,6 +57,7 @@ import { CSharpExtensionExports, OmnisharpExtensionExports } from './csharpExten
 import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
 import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
 import { RazorOmnisharpDownloader } from './razor/razorOmnisharpDownloader';
+import { RoslynLanguageServerExport } from './lsptoolshost/roslynLanguageServerExportChannel';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -117,7 +122,7 @@ export async function activate(
 
     let omnisharpLangServicePromise: Promise<OmniSharp.ActivationResult> | undefined = undefined;
     let omnisharpRazorPromise: Promise<void> | undefined = undefined;
-    let roslynLanguageServerPromise: Promise<void> | undefined = undefined;
+    let roslynLanguageServerPromise: Promise<RoslynLanguageServer> | undefined = undefined;
 
     if (!useOmnisharpServer) {
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
@@ -306,6 +311,7 @@ export async function activate(
     if (!useOmnisharpServer) {
         tryGetCSharpDevKitExtensionExports(csharpLogObserver);
 
+        const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerPromise!);
         return {
             initializationFinished: async () => {
                 await coreClrDebugPromise;
@@ -314,6 +320,9 @@ export async function activate(
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,
             determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
+            experimental: {
+                sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
+            },
         };
     } else {
         return {
