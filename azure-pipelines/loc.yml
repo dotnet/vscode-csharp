@@ -34,6 +34,6 @@ jobs:
       patVariable: $(dn-bot-ceapex-package-r)
       packageSourceAuth: patAuth
       lclSource: lclFilesfromPackage
-      LclPackageId: 'Test'
+      # LclPackageId: 'Test'
 
     # TODO import and create PR if needed
