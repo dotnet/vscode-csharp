@@ -13,5 +13,5 @@ export interface CSharpDevKitExports {
     components: Readonly<{ [key: string]: string }>;
     hasServerProcessLoaded: () => boolean;
     serverProcessLoaded: vscode.Event<void>;
-    writeCommonPropsAsync: (context: vscode.ExtensionContext) => Promise<string | undefined>;
+    setupTelemetryEnvironmentAsync: (env: NodeJS.ProcessEnv) => Promise<string | undefined>;
 }

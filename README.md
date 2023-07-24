@@ -1,7 +1,7 @@
 ## C# for Visual Studio Code
-C# is the feature-rich, language support for C# and is shipped as part of [C# Dev Kit][csdevkitextension]. This version of the extension is currently in pre-release and available for you to use today.
+A [Visual Studio Code](https://code.visualstudio.com/) [extension](https://marketplace.visualstudio.com/VSCode) that provides rich language support for C# and is shipped as part of [C# Dev Kit][csdevkitextension]. 
 
-C# is an extension that contributes to the [C# Dev Kit extension][csdevkitextension] for Visual Studio Code to provide performant and reliable language support. Under the hood, this extension is powered by a Language Server Protocol (LSP) Tools Host which integrates with open source components like [Roslyn](https://github.com/dotnet/roslyn)  and [Razor](https://github.com/dotnet/razor) to provide rich type information and a faster, more reliable C# experience.
+This pre-release version of the extension is available for use today, and offers performant and reliable support for coding in C#. Powered by a Language Server Protocol (LSP) Tools Host, this extension integrates with open source components like [Roslyn](https://github.com/dotnet/roslyn) and [Razor](https://github.com/dotnet/razor) to provide rich type information and a faster, more reliable C# experience.
 
 ## Recommended Install
 While it is possible to use the C# extension as a standalone extension, we highly recommend using [C# Dev Kit][csdevkitextension].

@@ -3,10 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import { Advisor } from './features/diagnosticsProvider';
 import { EventStream } from './eventStream';
 import TestManager from './features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
+import { RequestType } from 'vscode-languageclient/node';
 
 export interface OmnisharpExtensionExports {
     initializationFinished: () => Promise<void>;
@@ -20,4 +22,14 @@ export interface CSharpExtensionExports {
     initializationFinished: () => Promise<void>;
     logDirectory: string;
     profferBrokeredServices: (container: GlobalBrokeredServiceContainer) => void;
+    determineBrowserType: () => Promise<string | undefined>;
+    experimental: CSharpExtensionExperimentalExports;
+}
+
+export interface CSharpExtensionExperimentalExports {
+    sendServerRequest: <Params, Response, Error>(
+        type: RequestType<Params, Response, Error>,
+        params: Params,
+        token: vscode.CancellationToken
+    ) => Promise<Response>;
 }
