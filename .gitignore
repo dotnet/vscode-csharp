@@ -8,6 +8,7 @@ out
 .vs/
 .debugger/
 .razor/
+.razoromnisharp/
 .vscode-test/
 dist/
 *.razor.json
