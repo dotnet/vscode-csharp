@@ -1,6 +1,10 @@
 trigger: none
 pr: none
 
+variables:
+# Variable group contains the PAT to LOC
+- group: OneLocBuildVariables
+
 jobs:
 - job: Localization
   pool:
@@ -27,6 +31,9 @@ jobs:
       locProj: loc/LocProject.json
       outDir: '$(Build.ArtifactStagingDirectory)'
       isCreatePrSelected: false
+      patVariable: $(dn-bot-ceapex-package-r)
+      packageSourceAuth: patAuth
+      lclSource: lclFilesfromPackage
       LclPackageId: 'Test'
 
     # TODO import and create PR if needed
