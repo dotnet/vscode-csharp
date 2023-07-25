@@ -1,45 +1,79 @@
-trigger: none # We only want to trigger manually or based on resources
+trigger: none
 pr: none
 
-resources:
-  pipelines:
-  - pipeline: CI
-    source: vscode-csharp-next
-    trigger:
-      tags:
-      - auto-release
+parameters:
+  - name: test
+    type: boolean
+    default: true
+  - name: branch
+    type: string
+    default: prerelease
+    values:
+    - prerelease
+    - release
 
 variables:
-- group: VisualStudioMarketplace # Expected to provide VisualStudioMarketplacePAT (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
+# This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
+- group: vscode-csharp release secrets
 
 jobs:
-- job: release
+- job: PublishToMarketplace
   pool:
-    name: AzurePipelines-EO
-    vmImage: AzurePipelinesUbuntu20.04compliant
+    vmImage: ubuntu-latest
   steps:
-  - checkout: none
-  - powershell: |
-      Write-Host "##vso[build.updatebuildnumber]$(resources.pipeline.CI.runName)"
-      if ('$(resources.pipeline.CI.runName)'.Contains('-')) {
-        Write-Host "##vso[task.setvariable variable=IsPrerelease]true"
-      } else {
-        Write-Host "##vso[task.setvariable variable=IsPrerelease]false"
+  - task: DownloadPipelineArtifact@2
+    displayName: '📦 Download artifacts from build pipeline.'
+    inputs:
+      buildType: 'specific'
+      project: 'internal'
+      definition: 1264
+      buildVersionToDownload: 'latestFromBranch'
+      branchName: 'refs/heads/${{ parameters.branch }}'
+  - pwsh: |
+      npm install --global vsce
+    displayName: 'Install vsce'
+  - pwsh: |
+      # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
+      $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
+      if ($allArtifacts.Length -eq 0) {
+        throw "No Artifacts is downloaded."
       }
-    displayName: ⚙ Set up pipeline
-  - download: CI
-    artifact: package
-    displayName: 🔻 Download package artifact
-  - pwsh: | # Package publishing to pre-release https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-      $additionalPublishArgs = 'run','vsce','publish','--skip-duplicate'
-      if ($env:ISPRERELEASE -ne 'false') {
-        $additionalPublishArgs += '--pre-release'
+
+      $publishArtifacts = $allArtifacts[0]
+      Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+
+      $additionalPublishArgs = , "publish"
+      # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
+      If ("${{ parameters.branch }}" -eq "prerelease") {
+        $additionalPublishArgs += "--pre-release"
+        Write-Host "Publish to pre-release channel."
+      } ElseIf ("${{ parameters.branch }}" -eq "release") {
+        Write-Host "Publish to release channel."
+      } Else {
+        throw "Unexpected branch name: ${{ parameters.branch }}."
       }
       $additionalPublishArgs += '--packagePath'
-      $additionalPublishArgs += Get-ChildItem *.vsix |% { $_.Name }
-      Write-Host "##[command]yarn $additionalPublishArgs"
-      yarn @additionalPublishArgs
-    displayName: 📦 Publish to Marketplace
-    workingDirectory: $(Pipeline.Workspace)/CI/package
+
+      $platforms = "arm64", "x64", "ia32"
+      $allVsixs = Get-ChildItem $publishArtifacts *.vsix
+      foreach ($vsix in $allVsixs) {
+        foreach ($plat in $platforms) {
+          if ($vsix.Name.Contains($plat)) {
+              $additionalPublishArgs += $vsix
+          }
+        }
+      }
+
+      Write-Host "Command run is: vsce $($additionalPublishArgs)."
+      If ("${{ parameters.test }}" -eq "true") {
+        Write-Host "In test mode, command is printed instead of run."
+        Write-Host "🔒 Verify PAT."
+        vsce verify-pat ms-dotnettools
+      }
+      Else {
+        vsce @additionalPublishArgs
+      }
+    displayName: 🚀 Publish to Marketplace
+    workingDirectory: $(Pipeline.Workspace)
     env:
-      VSCE_PAT: $(VisualStudioMarketplacePAT)
+      VSCE_PAT: $(VSCodeMarketplacePAT)

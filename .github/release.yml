@@ -1,0 +1,22 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - Infrastructure
+  categories:
+    - title: Exciting New Features 🎉
+      labels:
+        - Feature Request
+    - title: Bug fixes 🛠️
+      labels:
+        - bug
+    - title: 'C# on LSP (Omnisharp Parity)'
+      labels:
+        - Omnisharp-Parity
+    - title: Omnisharp (Legacy support)
+      labels:
+        - Omnisharp
+    - title: Other Changes
+      labels:
+        - "*"
