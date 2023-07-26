@@ -26,11 +26,11 @@ jobs:
     submodules: true
     fetchTags: false
     fetchDepth: 0
-  - script: |
-      npm install @vscode/l10n-dev
-  - script: |
-      npm run l10nDevGenerateLocalizationBundle
-      npm run l10nDevGenerateXlf
+  - script: npm install @vscode/l10n-dev
+    displayName: 'Install l10n-dev'
+  - script: npm run l10nDevGenerateLocalizationBundle
+    displayName: 'Generate bundle.l10.json'
+  - script: npm run l10nDevGenerateXlf
     displayName: Generate xlf files
   - task: OneLocBuild@2
     env:
