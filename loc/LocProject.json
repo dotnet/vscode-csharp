@@ -1,7 +1,7 @@
 {
     "Projects": [
         {
-            "LanguangeSet": "VS_Main_Languages",
+            "LanguageSet": "VS_Main_Languages",
             "LocItems": [
                 {
                     "SourceFile": "./loc/vscode-csharp.xlf",
