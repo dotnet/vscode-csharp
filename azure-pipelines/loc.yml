@@ -30,21 +30,21 @@ jobs:
       npm run l10nDevGenerateLocalizationBundle
       npm run l10nDevGenerateXlf
     displayName: Generate xlf files
-  - task: OneLocBuild@2
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      locProj: loc/LocProject.json
-      outDir: '$(Build.ArtifactStagingDirectory)'
-      isCreatePrSelected: false
-      patVariable: $(dn-bot-ceapex-package-r)
-      packageSourceAuth: patAuth
-      lclSource: lclFilesfromPackage
-      LclPackageId: 'Test'
+  # - task: OneLocBuild@2
+  #   env:
+  #     SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  #   inputs:
+  #     locProj: loc/LocProject.json
+  #     outDir: '$(Build.SourcesDirectory)/loc'
+  #     isCreatePrSelected: false
+  #     patVariable: $(dn-bot-ceapex-package-r)
+  #     packageSourceAuth: patAuth
+  #     lclSource: lclFilesfromPackage
+  #     LclPackageId: 'Test'
   - task: PublishBuildArtifacts@1
     displayName: Publish Localization Files
     inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)/loc'
+      PathtoPublish: '$(Build.SourcesDirectory)/loc'
       PublishLocation: Container
       ArtifactName: Loc
     condition: ${{ parameters.publishLocalizationFile }}
