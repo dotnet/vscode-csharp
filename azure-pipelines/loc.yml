@@ -40,7 +40,7 @@ jobs:
       patVariable: $(dn-bot-ceapex-package-r)
       packageSourceAuth: patAuth
       lclSource: lclFilesfromPackage
-      LclPackageId: 'PackageIdFromLOCTeam'
+      LclPackageId: 'LCL-JUNO-PROD-VSCODECS'
   - task: PublishBuildArtifacts@1
     displayName: Publish Localization Files
     inputs:
