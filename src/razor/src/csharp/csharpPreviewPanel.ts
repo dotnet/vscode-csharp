@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import * as l10n from '@vscode/l10n';
 import { IRazorDocumentChangeEvent } from '../document/IRazorDocumentChangeEvent';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
@@ -25,7 +26,7 @@ export class CSharpPreviewPanel {
         } else {
             this.panel = vscode.window.createWebviewPanel(
                 CSharpPreviewPanel.viewType,
-                'Razor C# Preview',
+                l10n.t('Razor C# Preview'),
                 vscode.ViewColumn.Two,
                 {
                     enableScripts: true,
@@ -61,7 +62,7 @@ export class CSharpPreviewPanel {
 
     private attachToCurrentPanel() {
         if (!this.panel) {
-            vscode.window.showErrorMessage('Unexpected error when attaching to C# preview window.');
+            vscode.window.showErrorMessage(l10n.t('Unexpected error when attaching to C# preview window.'));
             return;
         }
 
@@ -73,7 +74,7 @@ export class CSharpPreviewPanel {
                     }
 
                     await vscode.env.clipboard.writeText(this.csharpContent);
-                    vscode.window.showInformationMessage('Razor C# copied to clipboard');
+                    vscode.window.showInformationMessage(l10n.t('Razor C# copied to clipboard'));
                     return;
             }
         });
@@ -100,13 +101,17 @@ export class CSharpPreviewPanel {
         let content = this.csharpContent ? this.csharpContent : '';
         content = content.replace(/</g, '&lt;').replace(/</g, '&gt;');
 
+        const title = l10n.t('Report a Razor issue');
+        const hostDocumentPathLabel = l10n.t('Host document file path');
+        const virtualDocumentPathLabel = l10n.t('Virtual doucment file path');
+        const copyCSharpLabel = l10n.t('Copy C#');
         this.panel.webview.html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report a Razor issue</title>
+    <title>${title}</title>
     <style>
         button {
             background-color: #eff3f6;
@@ -133,9 +138,9 @@ export class CSharpPreviewPanel {
     </script>
 </head>
 <body>
-    <p>Host document file path: <strong>${hostDocumentFilePath}</strong></p>
-    <p>Virtual document file path: <strong>${virtualDocumentFilePath}</strong></p
-    <p><button onclick="copy()">Copy C#</button></p>
+    <p>${hostDocumentPathLabel}: <strong>${hostDocumentFilePath}</strong></p>
+    <p>${virtualDocumentPathLabel}: <strong>${virtualDocumentFilePath}</strong></p
+    <p><button onclick="copy()">${copyCSharpLabel}</button></p>
     <hr />
     <pre>${content}</pre>
 </body>

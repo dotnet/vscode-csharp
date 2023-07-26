@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import * as l10n from '@vscode/l10n';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
@@ -144,7 +145,7 @@ export class RazorCodeLensProvider extends RazorLanguageFeatureBase implements v
             // We now have a list of references to show in the CodeLens.
             const count = remappedReferences.length;
             codeLens.command = {
-                title: count === 1 ? '1 reference' : `${count} references`,
+                title: count === 1 ? l10n.t('1 reference') : l10n.t('{count} references', count),
                 command: 'editor.action.showReferences',
                 arguments: [razorDocument.uri, codeLens.range.start, remappedReferences],
             };

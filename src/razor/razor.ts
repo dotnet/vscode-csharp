@@ -6,6 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as l10n from '@vscode/l10n';
 import * as Razor from '../../src/razor/src/extension';
 import { EventStream } from '../eventStream';
 
@@ -23,7 +24,7 @@ export async function activateRazorExtension(
         await Razor.activate(vscode, context, languageServerDir, eventStream, /* enableProposedApis: */ false);
     } else {
         vscode.window.showWarningMessage(
-            `Cannot load Razor language server because the directory was not found: '${languageServerDir}'`
+            l10n.t("Cannot load Razor language server because the directory was not found: '{0}'", languageServerDir)
         );
     }
 }

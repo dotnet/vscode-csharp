@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import * as l10n from '@vscode/l10n';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
@@ -289,6 +290,6 @@ function getTriggerKind(triggerKind: vscode.CompletionTriggerKind): CompletionTr
         case vscode.CompletionTriggerKind.TriggerForIncompleteCompletions:
             return CompletionTriggerKind.TriggerForIncompleteCompletions;
         default:
-            throw new Error(`Unexpected completion trigger kind: ${triggerKind}`);
+            throw new Error(l10n.t('Unexpected completion trigger kind: {0}', triggerKind));
     }
 }
