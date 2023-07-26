@@ -52,6 +52,13 @@ jobs:
       PublishLocation: Container
       ArtifactName: Loc
     condition: ${{ parameters.publishLocalizationFile }}
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish l10n file'
+    inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)/l10n'
+      PublishLocation: Container
+      ArtifactName: l10n
+    condition: ${{ parameters.publishLocalizationFile }}
 
 
     # TODO import and create PR if needed
