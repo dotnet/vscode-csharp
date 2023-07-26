@@ -5,7 +5,8 @@
             "LocItems": [
                 {
                     "SourceFile": "./loc/vscode-csharp.xlf",
-                    "CopyOption": "LangIDOnName"
+                    "CopyOption": "LangIDOnName",
+                    "OutputPath": "./loc/"
                 }
             ]
         }

@@ -1,6 +1,12 @@
 trigger: none
 pr: none
 
+parameters:
+  - name: publishLocalizationFile
+    type: boolean
+    default: true
+
+
 variables:
 # Variable group contains the PAT to LOC
 - group: OneLocBuildVariables
@@ -35,5 +41,12 @@ jobs:
       packageSourceAuth: patAuth
       lclSource: lclFilesfromPackage
       LclPackageId: 'Test'
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Localization Files
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/loc'
+      PublishLocation: Container
+      ArtifactName: Loc
+    condition: ${{ parameters.publishLocalizationFile }}
 
     # TODO import and create PR if needed
