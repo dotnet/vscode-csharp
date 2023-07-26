@@ -143,7 +143,6 @@ export class RoslynLanguageServer {
             // Register the server for plain csharp documents
             documentSelector: documentSelector,
             synchronize: {
-                // Notify the server about file changes to '.clientrc files contain in the workspace
                 fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*'),
             },
             traceOutputChannel: _traceChannel,
