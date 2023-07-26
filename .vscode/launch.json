@@ -134,7 +134,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/lsptoolshosttest/integrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/lsptoolshosttest/lspToolsHostIntegrationTests",
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
