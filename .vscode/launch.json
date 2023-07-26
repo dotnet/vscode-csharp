@@ -68,7 +68,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -92,7 +92,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -110,7 +110,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -134,7 +134,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/lsptoolshosttest/integrationTests",
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -158,7 +158,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -182,7 +182,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -200,7 +200,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -224,7 +224,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -248,7 +248,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
