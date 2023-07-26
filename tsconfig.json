@@ -18,7 +18,7 @@
         "gulpfile.ts", // tslint gets quite angry if we don't do this
         "src",
         "tasks",
+        "omnisharptest",
         "test",
-        "typings"
-, "bluetest/integrationTestsBlue"    ]
+        "typings"   ]
 }
