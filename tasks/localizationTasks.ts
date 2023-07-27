@@ -7,19 +7,35 @@ import * as gulp from 'gulp';
 import spawnNode from './spawnNode';
 import * as process from 'node:process';
 import { EOL } from 'os';
+import * as fs from 'fs';
 
 gulp.task('publish localization content', async () => {
     const userName = process.argv[1];
     const email = process.argv[2];
 });
 
-async function git_branch(): Promise<string[]> {
-    const result = await git('branch');
-    return result.split(EOL).filter((fileName) => fileName === '');
+async function git_fetch(options: string[]): Promise<void> {
+    await git('fetch', options);
 }
 
-async function git_add(files: string[]) {
-    await git('add', files);
+async function git_remote(options: string[]): Promise<void> {
+    await git('remote', options);
+}
+
+async function git_push(): Promise<void> {
+    await git('push');
+}
+
+async function git_checkout(options: string[]): Promise<void> {
+    await git('checkout', options);
+}
+
+async function git_add(filesOrDirectories: string[]): Promise<void> {
+    await git('add', filesOrDirectories);
+}
+
+async function git_commit(commitMessage: string): Promise<void> {
+    await git('commit', ['-m', commitMessage]);
 }
 
 async function git_diff(): Promise<string[]> {
@@ -27,7 +43,13 @@ async function git_diff(): Promise<string[]> {
     return result
         .split(EOL)
         .map((fileName, _) => fileName.trim())
-        .filter((fileName) => fileName === '');
+        .filter((fileName) => {
+            if (fileName == '') {
+                return false;
+            }
+            const stat = fs.lstatSync(fileName);
+            return stat.isFile || stat.isDirectory;
+        });
 }
 
 async function git(command: string, args?: string[]): Promise<string> {
@@ -47,4 +69,3 @@ async function git(command: string, args?: string[]): Promise<string> {
         throw err;
     }
 }
-
