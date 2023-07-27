@@ -4,23 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as gulp from 'gulp';
-import * as git from 'simple-git';
-import { file } from 'tmp';
+import { Octokit, App } from "octokit";
 
 gulp.task('publish localization content', async () => {
-    const hasChange = await HasChange();
-    if (!hasChange) {
-        console.log('git status is clean. Skip publishing localization content.');
-        return;
-    }
-
-    const diffSummary = await git.simpleGit().diffSummary();
-    const changedFiles = diffSummary.files.map((diffFile) => diffFile.file);
-
-
+    const userName = process.argv[1];
+    const email = process.argv[2];
 });
-
-async function HasChange(): Promise<boolean> {
-    const status = await git.simpleGit().status();
-    return status.isClean();
-}

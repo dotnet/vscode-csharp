@@ -6,7 +6,6 @@ parameters:
     type: boolean
     default: true
 
-
 variables:
 # Variable group contains the PAT to LOC
 - group: OneLocBuildVariables

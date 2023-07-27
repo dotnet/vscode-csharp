@@ -92,7 +92,6 @@
     "request-light": "0.4.0",
     "rxjs": "6.6.7",
     "semver": "5.7.2",
-    "simple-git": "^3.19.1",
     "stream": "0.0.2",
     "strip-bom": "5.0.0",
     "strip-bom-buf": "2.0.0",
