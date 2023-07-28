@@ -103,7 +103,7 @@ export class CSharpPreviewPanel {
 
         const title = l10n.t('Report a Razor issue');
         const hostDocumentPathLabel = l10n.t('Host document file path');
-        const virtualDocumentPathLabel = l10n.t('Virtual doucment file path');
+        const virtualDocumentPathLabel = l10n.t('Virtual document file path');
         const copyCSharpLabel = l10n.t('Copy C#');
         this.panel.webview.html = `<!DOCTYPE html>
 <html lang="en">

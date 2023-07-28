@@ -145,7 +145,7 @@ export class RazorCodeLensProvider extends RazorLanguageFeatureBase implements v
             // We now have a list of references to show in the CodeLens.
             const count = remappedReferences.length;
             codeLens.command = {
-                title: count === 1 ? l10n.t('1 reference') : l10n.t('{count} references', count),
+                title: count === 1 ? l10n.t('1 reference') : l10n.t('{0} references', count),
                 command: 'editor.action.showReferences',
                 arguments: [razorDocument.uri, codeLens.range.start, remappedReferences],
             };

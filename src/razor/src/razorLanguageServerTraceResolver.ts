@@ -24,7 +24,7 @@ function parseTraceString(traceString: string | undefined) {
         case 'Verbose':
             return Trace.Verbose;
         default:
-            console.log(l10n.t("Invalid trace setting for Razor language server. Defaulting to 'Off'"));
+            console.log(l10n.t("Invalid trace setting for Razor language server. Defaulting to '{0}'", 'Off'));
             return Trace.Off;
     }
 }

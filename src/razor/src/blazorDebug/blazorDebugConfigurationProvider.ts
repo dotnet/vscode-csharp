@@ -168,10 +168,10 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             const message = l10n.t(
                 'There was an unexpected error while launching your debugging session. Check the console for helpful logs and visit the debugging docs for more info.'
             );
-            const viewDebugDocs = l10n.t('View Debug Docs');
-            const ignore = l10n.t('Ignore');
-            this.vscodeType.window.showErrorMessage(message, viewDebugDocs, ignore).then(async (result) => {
-                if (result === viewDebugDocs) {
+            const viewDebugDocsButton = l10n.t('View Debug Docs');
+            const ignoreButton = l10n.t('Ignore');
+            this.vscodeType.window.showErrorMessage(message, viewDebugDocsButton, ignoreButton).then(async (result) => {
+                if (result === viewDebugDocsButton) {
                     const debugDocsUri = 'https://aka.ms/blazorwasmcodedebug';
                     await this.vscodeType.commands.executeCommand(`vcode.open`, debugDocsUri);
                 }

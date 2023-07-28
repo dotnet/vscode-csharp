@@ -49,7 +49,7 @@ export class ReportIssueCreator {
 
         const issueType = l10n.t('Is this a Bug or Feature request?');
 
-        const defaultIssueType = l10n.t('Is this a Bug or Feature request?');
+        const defaultIssueType = l10n.t('Bug');
 
         const reproStepsHeader = l10n.t('Steps to reproduce');
         const genericPlaceholderContent = l10n.t('Please fill in this section');
