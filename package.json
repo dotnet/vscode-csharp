@@ -107,6 +107,7 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
+    "@octokit/auth-token": "^4.0.0",
     "@types/archiver": "5.1.0",
     "@types/chai": "4.2.16",
     "@types/chai-arrays": "2.0.0",
