@@ -31,7 +31,7 @@ function verifyOnlyLocalizationFileAreGenerated(diffFilesAndDirectories: string[
     const allPossibleLocalizationFiles = getAllPossibleLocalizationFileNames();
 
     for (const fileOrDirectory in diffFilesAndDirectories) {
-        console.log(`Verify ${fileOrDirectory}.`)
+        console.log(`Verify ${fileOrDirectory}.`);
         const stat = fs.statSync(fileOrDirectory);
         if (stat.isFile() && allPossibleLocalizationFiles.every((name) => fileOrDirectory.endsWith(name))) {
             return false;
@@ -61,7 +61,7 @@ gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
     console.log(parsedArgs);
     await git_add(['-A']);
-    const diffResults = await git_diff(['HEAD', '--name-only']);
+    const diffResults = await git_diff(['HEAD --name-only']);
     if (diffResults.length == 0) {
         console.log('No localization files generated.');
         return;
