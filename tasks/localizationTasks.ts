@@ -15,9 +15,7 @@ type Options = {
     userName: string;
     email: string;
     commitSha: string;
-    currentBranch: string;
     targetRemoteRepo: string;
-    targetBranch: string;
 };
 
 gulp.task('publish localization content', async () => {
