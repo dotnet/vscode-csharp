@@ -9,6 +9,8 @@ import { EOL } from 'os';
 import * as minimist from 'minimist';
 import { createTokenAuth } from '@octokit/auth-token';
 import { spawnSync } from 'node:child_process';
+import * as fs from 'fs';
+import * as util from 'node:util';
 
 type Options = {
     userName: string;
@@ -17,6 +19,43 @@ type Options = {
     targetRemoteRepo: string;
     pat?: string;
 };
+
+const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
+const locFiles = ['bundle.l10n.%s.json', 'package.nls.%s.json'];
+
+function verifyOnlyLocalizationFileAreGenerated(diffFilesAndDirectories: string[]): boolean {
+    if (diffFilesAndDirectories.length == 0) {
+        return false;
+    }
+
+    const allPossibleLocalizationFiles = getAllPossibleLocalizationFileNames();
+
+    for (const fileOrDirectory in diffFilesAndDirectories) {
+        console.log(`Verify ${fileOrDirectory}.`)
+        const stat = fs.statSync(fileOrDirectory);
+        if (stat.isFile() && allPossibleLocalizationFiles.every((name) => fileOrDirectory.endsWith(name))) {
+            return false;
+        }
+
+        if (stat.isDirectory() && fileOrDirectory !== 'l10n') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function getAllPossibleLocalizationFileNames(): string[] {
+    const files = [];
+    for (const lang of localizationLanguages) {
+        for (const file in locFiles) {
+            files.push(util.format(file, lang));
+        }
+    }
+    // English
+    files.push('bundile.l10n.json');
+    return files;
+}
 
 gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
@@ -28,8 +67,9 @@ gulp.task('publish localization content', async () => {
         return;
     }
 
-    if (diffResults.some((file) => !file.endsWith('.json'))) {
-        console.log('non-json files are modified, it is very likely to be an error, skip PR creation.');
+    if (!verifyOnlyLocalizationFileAreGenerated(diffResults)) {
+        console.log('Invalid LOC files are generated, it is very likely to be an error, skip PR creation.');
+        console.log(`Generated files: ${diffResults}`);
         return;
     }
 
