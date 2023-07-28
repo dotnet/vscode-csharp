@@ -6,7 +6,6 @@
 import * as gulp from 'gulp';
 import * as process from 'node:process';
 import { EOL } from 'os';
-import * as fs from 'fs';
 import * as minimist from 'minimist';
 import { createTokenAuth } from '@octokit/auth-token';
 import { spawnSync } from 'node:child_process';
@@ -22,7 +21,8 @@ type Options = {
 gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
     console.log(parsedArgs);
-    const diffResults = await git_diff();
+    await git_add(['-A']);
+    const diffResults = await git_diff(['HEAD', '--name-only']);
     if (diffResults.length == 0) {
         console.log('No localization files generated.');
         return;
@@ -46,7 +46,6 @@ gulp.task('publish localization content', async () => {
     await git_remote(['add', 'targetRepo', parsedArgs.targetRemoteRepo]);
     await git_fetch(['targetRepo']);
     await git_checkout(['-b', `localization/${parsedArgs.commitSha}`]);
-    await git_add(diffResults);
     await git_commit(`Localization result of ${parsedArgs.commitSha}. `);
     await git_push(['-u', parsedArgs.targetRemoteRepo]);
 });
@@ -79,18 +78,9 @@ async function git_commit(commitMessage: string): Promise<void> {
     await git('commit', ['-m', commitMessage]);
 }
 
-async function git_diff(): Promise<string[]> {
-    const result = await git('diff', ['--name-only']);
-    return result
-        .split(EOL)
-        .map((fileName, _) => fileName.trim())
-        .filter((fileName) => {
-            if (fileName == '') {
-                return false;
-            }
-            const stat = fs.lstatSync(fileName);
-            return !stat.isFile && !stat.isDirectory;
-        });
+async function git_diff(args?: string[]): Promise<string[]> {
+    const result = await git('diff', args);
+    return result.split(EOL).map((fileName, _) => fileName.trim());
 }
 
 async function git(command: string, args?: string[]): Promise<string> {
