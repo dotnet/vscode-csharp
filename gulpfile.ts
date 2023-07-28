@@ -10,6 +10,7 @@ import * as packageDependencyUpdater from './src/tools/updatePackageDependencies
 require('./tasks/testTasks');
 require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
+require('./tasks/localizationTasks');
 
 // Disable warning about wanting an async function
 // tslint:disable-next-line

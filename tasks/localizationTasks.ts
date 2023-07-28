@@ -4,18 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as gulp from 'gulp';
-import spawnNode from './spawnNode';
 import * as process from 'node:process';
 import { EOL } from 'os';
 import * as fs from 'fs';
 import * as minimist from 'minimist';
 import { createTokenAuth } from '@octokit/auth-token';
+import { spawnSync } from 'node:child_process';
 
 type Options = {
     userName: string;
     email: string;
     commitSha: string;
     targetRemoteRepo: string;
+    pat?: string;
 };
 
 gulp.task('publish localization content', async () => {
@@ -33,7 +34,7 @@ gulp.task('publish localization content', async () => {
     }
 
     console.log('Authenticate PAT.');
-    const pat = process.env['GitHubPAT'];
+    const pat = parsedArgs.pat ?? process.env['GitHubPAT'];
     if (!pat) {
         throw 'No GitHub Pat found.';
     }
@@ -96,15 +97,15 @@ async function git(command: string, args?: string[]): Promise<string> {
     const errorMessage = `Failed to execute git ${command}`;
     try {
         console.log(`git ${command} ${args}`);
-        const { code, stdout } = await spawnNode(['git', command].concat(args ?? []));
-        if (code !== 0) {
-            throw errorMessage;
+        const git = spawnSync('git', [command].concat(args ?? []));
+        const err = git.stderr.toString();
+        if (err.length > 0) {
+            console.log(errorMessage);
+            throw err;
         }
-        if (typeof stdout === 'string') {
-            return stdout;
-        } else {
-            return stdout.toString();
-        }
+
+        const stdio = git.stdout.toString();
+        return stdio;
     } catch (err) {
         console.log(err);
         throw err;
