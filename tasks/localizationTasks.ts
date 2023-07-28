@@ -89,7 +89,7 @@ async function git_diff(): Promise<string[]> {
                 return false;
             }
             const stat = fs.lstatSync(fileName);
-            return stat.isFile || stat.isDirectory;
+            return !stat.isFile && !stat.isDirectory;
         });
 }
 
