@@ -111,6 +111,10 @@ gulp.task('publish localization content', async () => {
         throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
     }
 
+    if (listPullRequest.data.some((pr) => pr.state === 'open')) {
+        console.log('Pull request already exists.');
+        return;
+    }
 
     await octokit.rest.pulls.create({
         body: `Localization result based on ${parsedArgs.commitSha}`,
