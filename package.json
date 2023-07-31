@@ -76,6 +76,7 @@
   ],
   "dependencies": {
     "@microsoft/servicehub-framework": "4.2.99-beta",
+    "@octokit/rest": "^20.0.1",
     "@types/cross-spawn": "6.0.2",
     "@vscode/debugprotocol": "1.56.0",
     "@vscode/extension-telemetry": "0.6.2",

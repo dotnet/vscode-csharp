@@ -11,12 +11,14 @@ import { spawnSync } from 'node:child_process';
 import * as fs from 'fs';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
+import { Octokit } from '@octokit/rest';
 
 type Options = {
     userName: string;
     email: string;
     commitSha: string;
     targetRemoteRepo: string;
+    baseBranch: string;
     pat?: string;
 };
 
@@ -92,10 +94,19 @@ gulp.task('publish localization content', async () => {
 
     await git(['config', '--local', 'user.name', parsedArgs.userName]);
     await git(['config', '--local', 'user.email', parsedArgs.email]);
-
     await git(['checkout', '-b', `localization/${parsedArgs.commitSha}`]);
     await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
     await git(['push', '-u', parsedArgs.targetRemoteRepo]);
+
+    const octokit = new Octokit(auth);
+    octokit.rest.pulls.create({
+        body: `Localization result based on ${parsedArgs.commitSha}`,
+        owner: 'roslyn-ide',
+        repo: 'https://github.com/dotnet/vscode-csharp.git',
+        title: `Localization result based on ${parsedArgs.commitSha}`,
+        head: newBranchName,
+        base: parsedArgs.baseBranch,
+    });
 });
 
 async function git_diff(args: string[]): Promise<string[]> {
