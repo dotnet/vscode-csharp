@@ -100,7 +100,19 @@ gulp.task('publish localization content', async () => {
     await git(['push', '-u', parsedArgs.targetRemoteRepo]);
 
     const octokit = new Octokit(auth);
-    octokit.rest.pulls.create({
+    const listPullRequest = await octokit.rest.pulls.list({
+        owner: parsedArgs.codeOwnwer,
+        repo: parsedArgs.targetRemoteRepo,
+        head: newBranchName,
+        base: parsedArgs.baseBranch,
+    });
+
+    if (listPullRequest.status != 200) {
+        throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
+    }
+
+
+    await octokit.rest.pulls.create({
         body: `Localization result based on ${parsedArgs.commitSha}`,
         owner: parsedArgs.codeOwnwer,
         repo: parsedArgs.targetRemoteRepo,
