@@ -60,7 +60,7 @@ function getAllPossibleLocalizationFileNames(): string[] {
 
 gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
-    await git_add(['-A']);
+    await git(['add', '-A']);
     const diffResults = await git_diff(['--name-only', 'HEAD']);
     if (diffResults.length == 0) {
         console.log('No localization files generated.');
@@ -80,45 +80,26 @@ gulp.task('publish localization content', async () => {
 
     const auth = createTokenAuth(pat);
     await auth();
-    await git_config(['--local', 'user.name', parsedArgs.userName]);
-    await git_config(['--local', 'user.email', parsedArgs.email]);
-    await git_remote(['add', 'targetRepo', parsedArgs.targetRemoteRepo]);
-    await git_fetch(['targetRepo']);
-    await git_checkout(['-b', `localization/${parsedArgs.commitSha}`]);
-    await git_commit(['-m', `Localization result of ${parsedArgs.commitSha}.`]);
-    await git_push(['-u', parsedArgs.targetRemoteRepo]);
+    await git(['add', 'targetRepo', parsedArgs.targetRemoteRepo]);
+    await git(['fetch', 'targetRepo']);
+    const newBranchName = `localization/${parsedArgs.commitSha}`;
+    const lsRemote = await git(['ls-remote', 'targetRepo', 'refs/head/' + newBranchName]);
+    if (lsRemote.trim() !== '') {
+        // If the localization branch of this commit already exists, don't try to create another one.
+        console.log(`${newBranchName} alreay exists in ${parsedArgs.targetRemoteRepo}.`);
+        return;
+    }
+
+    await git(['config', '--local', 'user.name', parsedArgs.userName]);
+    await git(['config', '--local', 'user.email', parsedArgs.email]);
+
+    await git(['checkout', '-b', `localization/${parsedArgs.commitSha}`]);
+    await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
+    await git(['push', '-u', parsedArgs.targetRemoteRepo]);
 });
 
-async function git_config(options: string[]) {
-    await git('config', options);
-}
-
-async function git_fetch(options: string[]): Promise<void> {
-    await git('fetch', options);
-}
-
-async function git_remote(options: string[]): Promise<void> {
-    await git('remote', options);
-}
-
-async function git_push(options: string[]): Promise<void> {
-    await git('push', options);
-}
-
-async function git_checkout(options: string[]): Promise<void> {
-    await git('checkout', options);
-}
-
-async function git_add(filesOrDirectories: string[]): Promise<void> {
-    await git('add', filesOrDirectories);
-}
-
-async function git_commit(options: string[]): Promise<void> {
-    await git('commit', options);
-}
-
-async function git_diff(args?: string[]): Promise<string[]> {
-    const result = await git('diff', args);
+async function git_diff(args: string[]): Promise<string[]> {
+    const result = await git(['diff'].concat(args));
     // Line ending from the stdout of git is '\n' even on Windows.
     return result
         .replaceAll('\n', EOL)
@@ -127,13 +108,12 @@ async function git_diff(args?: string[]): Promise<string[]> {
         .filter((fileName) => fileName.length !== 0);
 }
 
-async function git(command: string, args?: string[]): Promise<string> {
-    const childProcessArgs = [command].concat(args ?? []);
-    console.log(`git ${childProcessArgs.join(' ')}`);
-    const git = spawnSync('git', childProcessArgs);
+async function git(args: string[]): Promise<string> {
+    console.log(`git ${args.join(' ')}`);
+    const git = spawnSync('git', args);
     if (git.status != 0) {
         const err = git.stderr.toString();
-        console.log(`Failed to execute git ${command}.`);
+        console.log(`Failed to execute git ${args.join(' ')}.`);
         throw err;
     }
 
