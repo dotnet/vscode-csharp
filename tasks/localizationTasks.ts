@@ -5,18 +5,18 @@
 
 import * as gulp from 'gulp';
 import * as process from 'node:process';
-import { EOL } from 'os';
 import * as minimist from 'minimist';
 // import { createTokenAuth } from '@octokit/auth-token';
 import { spawnSync } from 'node:child_process';
 import * as fs from 'fs';
 import * as util from 'node:util';
+import { EOL } from 'node:os';
+import spawnNode from './spawnNode';
 
 type Options = {
     userName: string;
     email: string;
     commitSha: string;
-    branch: string;
     targetRemoteRepo: string;
     pat?: string;
 };
@@ -29,11 +29,11 @@ function onlyLocalizationFileAreGenerated(diffFilesAndDirectories: string[]): bo
         return false;
     }
 
-    const allPossibleLocalizationFiles = getAllPossibleLocalizationFileNames();
+    const allPossibleLocalizationFileNames = getAllPossibleLocalizationFileNames();
 
     for (const fileOrDirectory of diffFilesAndDirectories) {
         const stat = fs.statSync(fileOrDirectory);
-        if (stat.isFile() && allPossibleLocalizationFiles.some((name) => !fileOrDirectory.endsWith(name))) {
+        if (stat.isFile() && !allPossibleLocalizationFileNames.some((name) => fileOrDirectory.endsWith(name))) {
             console.log(`${fileOrDirectory} is not a localization file.`);
             return false;
         }
@@ -50,12 +50,12 @@ function onlyLocalizationFileAreGenerated(diffFilesAndDirectories: string[]): bo
 function getAllPossibleLocalizationFileNames(): string[] {
     const files = [];
     for (const lang of localizationLanguages) {
-        for (const file in locFiles) {
+        for (const file of locFiles) {
             files.push(util.format(file, lang));
         }
     }
     // English
-    files.push('bundile.l10n.json');
+    files.push('bundle.l10n.json');
     return files;
 }
 
@@ -63,16 +63,15 @@ gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
     console.log(parsedArgs);
     await git_add(['-A']);
-    const diffResults = await git_diff(['--name-only', parsedArgs.branch]);
+    const diffResults = await git_diff(['--name-only', 'HEAD']);
     if (diffResults.length == 0) {
         console.log('No localization files generated.');
         return;
     }
 
+    console.log(`Diff Result: ${diffResults}.`);
     if (!onlyLocalizationFileAreGenerated(diffResults)) {
-        console.log('Invalid LOC files are generated, it is very likely to be an error, skip PR creation.');
-        console.log(`Generated files: ${diffResults}`);
-        return;
+        throw 'Invalid localization files are generated, it is very likely to be an error, skip PR creation.';
     }
 
     console.log('Authenticate PAT.');
@@ -123,23 +122,24 @@ async function git_add(filesOrDirectories: string[]): Promise<void> {
 
 async function git_diff(args?: string[]): Promise<string[]> {
     const result = await git('diff', args);
-    return result.split(EOL).map((fileName, _) => fileName.trim());
+    // Line ending from the stdout of git is '\n' even on Windows.
+    return result
+        .replaceAll('\n', EOL)
+        .split(EOL)
+        .map((fileName, _) => fileName.trim())
+        .filter((fileName) => fileName.length !== 0);
 }
 
 async function git(command: string, args?: string[]): Promise<string> {
-    try {
-        console.log(`git ${command} ${args}`);
-        const git = spawnSync('git', [command].concat(args ?? []));
-        if (git.status != 0) {
-            const err = git.stderr.toString();
-            console.log(`Failed to execute git ${command}.`);
-            throw err;
-        }
-
-        const stdout = git.stdout.toString();
-        return stdout;
-    } catch (err) {
-        console.log(err);
+    const childProcessArgs = [command].concat(args ?? []);
+    console.log(`git ${childProcessArgs.join(' ')}`);
+    const git = spawnSync('git', childProcessArgs);
+    if (git.status != 0) {
+        const err = git.stderr.toString();
+        console.log(`Failed to execute git ${command}.`);
         throw err;
     }
+
+    const stdout = git.stdout.toString();
+    return stdout;
 }
