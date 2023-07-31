@@ -31,14 +31,15 @@ function onlyLocalizationFileAreGenerated(diffFilesAndDirectories: string[]): bo
 
     const allPossibleLocalizationFiles = getAllPossibleLocalizationFileNames();
 
-    for (const fileOrDirectory in diffFilesAndDirectories) {
-        console.log(`Verify ${fileOrDirectory}.`);
+    for (const fileOrDirectory of diffFilesAndDirectories) {
         const stat = fs.statSync(fileOrDirectory);
-        if (stat.isFile() && !allPossibleLocalizationFiles.every((name) => fileOrDirectory.endsWith(name))) {
+        if (stat.isFile() && allPossibleLocalizationFiles.some((name) => !fileOrDirectory.endsWith(name))) {
+            console.log(`${fileOrDirectory} is not a localization file.`);
             return false;
         }
 
         if (stat.isDirectory() && fileOrDirectory !== 'l10n') {
+            console.log(`${fileOrDirectory} is not a localization directory.`);
             return false;
         }
     }
@@ -126,18 +127,17 @@ async function git_diff(args?: string[]): Promise<string[]> {
 }
 
 async function git(command: string, args?: string[]): Promise<string> {
-    const errorMessage = `Failed to execute git ${command}`;
     try {
         console.log(`git ${command} ${args}`);
         const git = spawnSync('git', [command].concat(args ?? []));
-        const err = git.stderr.toString();
-        if (err.length > 0) {
-            console.log(errorMessage);
+        if (git.status != 0) {
+            const err = git.stderr.toString();
+            console.log(`Failed to execute git ${command}.`);
             throw err;
         }
 
-        const stdio = git.stdout.toString();
-        return stdio;
+        const stdout = git.stdout.toString();
+        return stdout;
     } catch (err) {
         console.log(err);
         throw err;
