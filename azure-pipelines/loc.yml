@@ -27,9 +27,9 @@ jobs:
     fetchDepth: 0
   - script: |
       npm ci
-      npm install -g @vscode/l10n-dev
       npm install -g gulp
-    displayName: 'Install l10n-dev'
+      npm install -g @vscode/l10n-dev
+    displayName: 'Install l10n-dev and gulp.'
   - script: npm run l10nDevGenerateLocalizationBundle
     displayName: 'Generate bundle.l10.json'
   - script: npm run l10nDevGenerateXlf
