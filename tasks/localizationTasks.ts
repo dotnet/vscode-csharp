@@ -16,6 +16,7 @@ type Options = {
     userName: string;
     email: string;
     commitSha: string;
+    branch: string;
     targetRemoteRepo: string;
     pat?: string;
 };
@@ -61,7 +62,7 @@ gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
     console.log(parsedArgs);
     await git_add(['-A']);
-    const diffResults = await git_diff(['HEAD --name-only']);
+    const diffResults = await git_diff([`${parsedArgs.branch} --name-only`]);
     if (diffResults.length == 0) {
         console.log('No localization files generated.');
         return;
