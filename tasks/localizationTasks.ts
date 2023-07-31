@@ -19,6 +19,7 @@ type Options = {
     commitSha: string;
     targetRemoteRepo: string;
     baseBranch: string;
+    codeOwnwer: string;
     pat?: string;
 };
 
@@ -101,8 +102,8 @@ gulp.task('publish localization content', async () => {
     const octokit = new Octokit(auth);
     octokit.rest.pulls.create({
         body: `Localization result based on ${parsedArgs.commitSha}`,
-        owner: 'roslyn-ide',
-        repo: 'https://github.com/dotnet/vscode-csharp.git',
+        owner: parsedArgs.codeOwnwer,
+        repo: parsedArgs.targetRemoteRepo,
         title: `Localization result based on ${parsedArgs.commitSha}`,
         head: newBranchName,
         base: parsedArgs.baseBranch,
