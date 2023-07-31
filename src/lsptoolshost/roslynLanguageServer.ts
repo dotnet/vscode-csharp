@@ -143,8 +143,8 @@ export class RoslynLanguageServer {
             // Register the server for plain csharp documents
             documentSelector: documentSelector,
             synchronize: {
-                // Notify the server about file changes to '.clientrc files contain in the workspace
-                fileEvents: vscode.workspace.createFileSystemWatcher('**/*.*'),
+                // Notify the server about file changes to all supported files contained in the workspace
+                fileEvents: [],
             },
             traceOutputChannel: _traceChannel,
             outputChannel: _channel,
@@ -673,13 +673,16 @@ export async function activateRoslynLanguageServer(
         const capabilities = await _languageServer.getServerCapabilities();
 
         if (capabilities._vs_onAutoInsertProvider) {
-            if (!capabilities._vs_onAutoInsertProvider._vs_triggerCharacters.includes(change.text)) {
+            // Regular expression to match all whitespace characters except the newline character
+            const changeTrimmed = change.text.replace(/[^\S\n]+/g, '');
+
+            if (!capabilities._vs_onAutoInsertProvider._vs_triggerCharacters.includes(changeTrimmed)) {
                 return;
             }
 
             source.cancel();
             source = new vscode.CancellationTokenSource();
-            await applyAutoInsertEdit(e, source.token);
+            await applyAutoInsertEdit(e, changeTrimmed, source.token);
         }
     });
 
@@ -745,6 +748,16 @@ function getInstalledServerPath(platformInfo: PlatformInformation): string {
     }
 
     return pathWithExtension;
+}
+
+export async function waitForProjectInitialization(): Promise<void> {
+    return new Promise((resolve, _) => {
+        _languageServer.registerStateChangeEvent(async (state) => {
+            if (state === ServerStateChange.ProjectInitializationComplete) {
+                resolve();
+            }
+        });
+    });
 }
 
 function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
@@ -822,7 +835,11 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
     );
 }
 
-async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vscode.CancellationToken) {
+async function applyAutoInsertEdit(
+    e: vscode.TextDocumentChangeEvent,
+    changeTrimmed: string,
+    token: vscode.CancellationToken
+) {
     const change = e.contentChanges[0];
 
     // Need to add 1 since the server expects the position to be where the caret is after the last token has been inserted.
@@ -833,9 +850,10 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
     const request: RoslynProtocol.OnAutoInsertParams = {
         _vs_textDocument: textDocument,
         _vs_position: position,
-        _vs_ch: change.text,
+        _vs_ch: changeTrimmed,
         _vs_options: formattingOptions,
     };
+
     const response = await _languageServer.sendRequest(RoslynProtocol.OnAutoInsertRequest.type, request, token);
     if (response) {
         const textEdit = response._vs_textEdit;
