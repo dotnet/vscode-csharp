@@ -9,6 +9,7 @@ import * as minimist from 'minimist';
 import { createTokenAuth } from '@octokit/auth-token';
 import { spawnSync } from 'node:child_process';
 import * as fs from 'fs';
+import * as path from 'path';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
 import { Octokit } from '@octokit/rest';
@@ -34,14 +35,14 @@ function getGeneratedLocalizationChanges(diffFilesAndDirectories: string[]): str
     const allPossibleLocalizationFileNames = getAllPossibleLocalizationFileNames();
     const changedLocFilesOrDirectory = [];
 
-    for (const fileOrDirectory of diffFilesAndDirectories) {
-        const stat = fs.statSync(fileOrDirectory);
-        if (stat.isFile() && allPossibleLocalizationFileNames.some((name) => fileOrDirectory.endsWith(name))) {
-            console.log(`${fileOrDirectory} is changed as localization file.`)
-            changedLocFilesOrDirectory.push(fileOrDirectory);
+    for (const diffFileOrDirectory of diffFilesAndDirectories) {
+        const stat = fs.statSync(diffFileOrDirectory);
+        if (stat.isFile() && allPossibleLocalizationFileNames.some((locFileName) => path.basename(diffFileOrDirectory) === locFileName)) {
+            console.log(`${diffFileOrDirectory} is changed as localization file.`)
+            changedLocFilesOrDirectory.push(diffFileOrDirectory);
         }
 
-        if (stat.isDirectory() && fileOrDirectory !== 'l10n') {
+        if (stat.isDirectory() && diffFileOrDirectory !== 'l10n') {
             console.log('l10n is changed as localization directory.')
             changedLocFilesOrDirectory.push('l10n');
         }
