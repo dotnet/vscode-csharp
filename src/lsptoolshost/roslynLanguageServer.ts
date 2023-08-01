@@ -207,6 +207,8 @@ export class RoslynLanguageServer {
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo(this._languageClient);
+
+        this.registerDebuggerAttach(this._languageClient);
     }
 
     public async stop(): Promise<void> {
@@ -485,6 +487,25 @@ export class RoslynLanguageServer {
         );
         client.onNotification(RoslynLanguageServer.removeRazorDynamicFileInfoMethodName, async (notification) =>
             vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification)
+        );
+    }
+
+    private registerDebuggerAttach(client: RoslynLanguageClient) {
+        client.onRequest<RoslynProtocol.DebugAttachParams, RoslynProtocol.DebugAttachResult, void>(
+            RoslynProtocol.DebugAttachRequest.type,
+            async (request) => {
+                const debugConfiguration: vscode.DebugConfiguration = {
+                    name: '.NET Core Attach',
+                    type: 'coreclr',
+                    request: 'attach',
+                    processId: request.processId,
+                };
+
+                const result = await vscode.debug.startDebugging(undefined, debugConfiguration, undefined);
+                return {
+                    didAttach: result,
+                };
+            }
         );
     }
 
