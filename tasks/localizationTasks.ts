@@ -37,13 +37,16 @@ function getGeneratedLocalizationChanges(diffFilesAndDirectories: string[]): str
 
     for (const diffFileOrDirectory of diffFilesAndDirectories) {
         const stat = fs.statSync(diffFileOrDirectory);
-        if (stat.isFile() && allPossibleLocalizationFileNames.some((locFileName) => path.basename(diffFileOrDirectory) === locFileName)) {
-            console.log(`${diffFileOrDirectory} is changed as localization file.`)
+        if (
+            stat.isFile() &&
+            allPossibleLocalizationFileNames.some((locFileName) => path.basename(diffFileOrDirectory) === locFileName)
+        ) {
+            console.log(`${diffFileOrDirectory} is changed as localization file.`);
             changedLocFilesOrDirectory.push(diffFileOrDirectory);
         }
 
         if (stat.isDirectory() && diffFileOrDirectory !== 'l10n') {
-            console.log('l10n is changed as localization directory.')
+            console.log('l10n is changed as localization directory.');
             changedLocFilesOrDirectory.push('l10n');
         }
     }
