@@ -26,27 +26,28 @@ type Options = {
 const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
 const locFiles = ['bundle.l10n.%s.json', 'package.nls.%s.json'];
 
-function onlyLocalizationFileAreGenerated(diffFilesAndDirectories: string[]): boolean {
+function getGeneratedLocalizationChanges(diffFilesAndDirectories: string[]): string[] {
     if (diffFilesAndDirectories.length == 0) {
-        return false;
+        return [];
     }
 
     const allPossibleLocalizationFileNames = getAllPossibleLocalizationFileNames();
+    const changedLocFilesOrDirectory = [];
 
     for (const fileOrDirectory of diffFilesAndDirectories) {
         const stat = fs.statSync(fileOrDirectory);
-        if (stat.isFile() && !allPossibleLocalizationFileNames.some((name) => fileOrDirectory.endsWith(name))) {
-            console.log(`${fileOrDirectory} is not a localization file.`);
-            return false;
+        if (stat.isFile() && allPossibleLocalizationFileNames.some((name) => fileOrDirectory.endsWith(name))) {
+            console.log(`${fileOrDirectory} is changed as localization file.`)
+            changedLocFilesOrDirectory.push(fileOrDirectory);
         }
 
         if (stat.isDirectory() && fileOrDirectory !== 'l10n') {
-            console.log(`${fileOrDirectory} is not a localization directory.`);
-            return false;
+            console.log('l10n is changed as localization directory.')
+            changedLocFilesOrDirectory.push('l10n');
         }
     }
 
-    return true;
+    return changedLocFilesOrDirectory;
 }
 
 function getAllPossibleLocalizationFileNames(): string[] {
@@ -63,18 +64,25 @@ function getAllPossibleLocalizationFileNames(): string[] {
 
 gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
-    await git(['add', '-A']);
     const diffResults = await git_diff(['--name-only', 'HEAD']);
     if (diffResults.length == 0) {
-        console.log('No localization files generated.');
+        console.log('No file changes');
         return;
     }
 
-    console.log(`Diff Result: ${diffResults}.`);
-    if (!onlyLocalizationFileAreGenerated(diffResults)) {
-        throw 'Invalid localization files are generated, it is very likely to be an error, skip PR creation.';
+    const localizationChanges = getGeneratedLocalizationChanges(diffResults);
+    if (localizationChanges.length == 0) {
+        console.log('No localization file changed');
+        return;
     }
 
+    const newBranchName = `localization/${parsedArgs.commitSha}`;
+    await git(['config', '--local', 'user.name', parsedArgs.userName]);
+    await git(['config', '--local', 'user.email', parsedArgs.email]);
+    await git(['add'].concat(localizationChanges));
+    await git(['checkout', '-b', newBranchName]);
+    await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
+    await git(['add', 'targetRepo', parsedArgs.targetRemoteRepo]);
     console.log('Authenticate PAT.');
     const pat = parsedArgs.pat ?? process.env['GitHubPAT'];
     if (!pat) {
@@ -83,20 +91,15 @@ gulp.task('publish localization content', async () => {
 
     const auth = createTokenAuth(pat);
     await auth();
-    await git(['add', 'targetRepo', parsedArgs.targetRemoteRepo]);
     await git(['fetch', 'targetRepo']);
-    const newBranchName = `localization/${parsedArgs.commitSha}`;
+
     const lsRemote = await git(['ls-remote', 'targetRepo', 'refs/head/' + newBranchName]);
     if (lsRemote.trim() !== '') {
         // If the localization branch of this commit already exists, don't try to create another one.
-        console.log(`${newBranchName} alreay exists in ${parsedArgs.targetRemoteRepo}.`);
+        console.log(`${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}.`);
         return;
     }
 
-    await git(['config', '--local', 'user.name', parsedArgs.userName]);
-    await git(['config', '--local', 'user.email', parsedArgs.email]);
-    await git(['checkout', '-b', `localization/${parsedArgs.commitSha}`]);
-    await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
     await git(['push', '-u', parsedArgs.targetRemoteRepo]);
 
     const octokit = new Octokit(auth);
