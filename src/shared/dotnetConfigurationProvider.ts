@@ -14,6 +14,7 @@ import {
     IDotnetDebugConfigurationService,
     IDotnetDebugConfigurationServiceResult,
 } from '../lsptoolshost/services/IDotnetDebugConfigurationService';
+import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider';
 
 // User errors that can be shown to the user.
 class LaunchServiceError extends Error {}
@@ -54,7 +55,10 @@ function resolveWorkspaceFolderToken(projectPath: string, folderPath: string): s
 }
 
 export class DotnetConfigurationResolver implements vscode.DebugConfigurationProvider {
-    constructor(private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider) {}
+    constructor(
+        private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider,
+        private dotnetWorkspaceConfigurationProvider: DotnetWorkspaceConfigurationProvider
+    ) {}
 
     //#region vscode.DebugConfigurationProvider
 
@@ -198,5 +202,18 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
             }
         }
         throw new Error(`Unable to determine debug settings for project '${projectPath}'`);
+    }
+
+    // Workaround for VS Code not calling into the 'coreclr' resolveDebugConfigurationWithSubstitutedVariables
+    async resolveDebugConfigurationWithSubstitutedVariables(
+        folder: vscode.WorkspaceFolder | undefined,
+        debugConfiguration: vscode.DebugConfiguration,
+        token?: vscode.CancellationToken
+    ): Promise<vscode.DebugConfiguration | null | undefined> {
+        return this.dotnetWorkspaceConfigurationProvider.resolveDebugConfigurationWithSubstitutedVariables(
+            folder,
+            debugConfiguration,
+            token
+        );
     }
 }

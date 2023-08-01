@@ -46,6 +46,7 @@ import {
     RoslynLanguageServer,
     SolutionSnapshotProvider,
     activateRoslynLanguageServer,
+    waitForProjectInitialization,
 } from './lsptoolshost/roslynLanguageServer';
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/migrateOptions';
@@ -123,6 +124,7 @@ export async function activate(
     let omnisharpLangServicePromise: Promise<OmniSharp.ActivationResult> | undefined = undefined;
     let omnisharpRazorPromise: Promise<void> | undefined = undefined;
     let roslynLanguageServerPromise: Promise<RoslynLanguageServer> | undefined = undefined;
+    let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer) {
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
@@ -157,6 +159,7 @@ export async function activate(
             dotnetTestChannel,
             reporter
         );
+        projectInitializationCompletePromise = waitForProjectInitialization();
     } else {
         const dotnetChannel = vscode.window.createOutputChannel('.NET');
         const dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -316,6 +319,7 @@ export async function activate(
             initializationFinished: async () => {
                 await coreClrDebugPromise;
                 await roslynLanguageServerPromise;
+                await projectInitializationCompletePromise;
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,
