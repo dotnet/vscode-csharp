@@ -189,7 +189,7 @@ ${extensionTable}
 
     // Protected for testing
     protected async getProjectedCSharp(razorDocument: IRazorDocument) {
-        const projectedCSharpHeaderFooter = l10n.t('CSharp as seen by extension');
+        const projectedCSharpHeaderFooter = l10n.t('Projected CSharp as seen by extension');
 
         let csharpContent = `////////////////////// ${projectedCSharpHeaderFooter} ///////////////////////
 ${razorDocument.csharpDocument.getContent()}
