@@ -25,13 +25,16 @@ jobs:
     submodules: true
     fetchTags: false
     fetchDepth: 0
-  - script: | 
+  - pwsh: | 
       npm install -g @vscode/l10n-dev
       npm install -g gulp
+      npm install -g typescript
     displayName: 'Install tools'
-  - script: npm run l10nDevGenerateLocalizationBundle
+  - pwsh: npm run compile
+    displayName: 'Compile'
+  - pwsh: npm run l10nDevGenerateLocalizationBundle
     displayName: 'Generate bundle.l10.json'
-  - script: npm run l10nDevGenerateXlf
+  - pwsh: npm run l10nDevGenerateXlf
     displayName: 'Generate xlf files from bundle.10n.json'
   - task: OneLocBuild@2
     env:
@@ -44,9 +47,9 @@ jobs:
       packageSourceAuth: patAuth
       lclSource: lclFilesfromPackage
       LclPackageId: 'LCL-JUNO-PROD-VSCODECS'
-  - script: npm run l10nDevImportXlf
+  - pwsh: npm run l10nDevImportXlf
     displayName: 'Import xlf to json.'
-  - script: gulp 'publish localization content' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo 'https://github.com/dotnet/vscode-csharp.git' --baseBranch 'refs/head/main' --codeOwner dotnet/roslyn-ide
+  - pwsh: gulp 'publish localization content' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo 'https://github.com/dotnet/vscode-csharp.git' --baseBranch 'refs/head/main' --codeOwner dotnet/roslyn-ide
     displayName: 'Create PR in GitHub.'
     env:
       GitHubPAT: $(BotAccount-dotnet-bot-repo-PAT)
