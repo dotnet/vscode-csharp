@@ -42,7 +42,12 @@ import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/backgroundWorkStatusBarObserver';
 import { getDotnetPackApi } from './dotnetPack';
-import { SolutionSnapshotProvider, activateRoslynLanguageServer } from './lsptoolshost/roslynLanguageServer';
+import {
+    RoslynLanguageServer,
+    SolutionSnapshotProvider,
+    activateRoslynLanguageServer,
+    waitForProjectInitialization,
+} from './lsptoolshost/roslynLanguageServer';
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/migrateOptions';
 import { getBrokeredServiceContainer } from './lsptoolshost/services/brokeredServicesHosting';
@@ -52,6 +57,8 @@ import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework'
 import { CSharpExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
 import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
 import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
+import { RazorOmnisharpDownloader } from './razor/razorOmnisharpDownloader';
+import { RoslynLanguageServerExport } from './lsptoolshost/roslynLanguageServerExportChannel';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -76,6 +83,7 @@ export async function activate(
     const reporter = new TelemetryReporter(context.extension.id, context.extension.packageJSON.version, aiKey);
 
     const csharpChannel = vscode.window.createOutputChannel('C#');
+    const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
     const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     const csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
     eventStream.subscribe(csharpchannelObserver.post);
@@ -115,7 +123,8 @@ export async function activate(
 
     let omnisharpLangServicePromise: Promise<OmniSharp.ActivationResult> | undefined = undefined;
     let omnisharpRazorPromise: Promise<void> | undefined = undefined;
-    let roslynLanguageServerPromise: Promise<void> | undefined = undefined;
+    let roslynLanguageServerPromise: Promise<RoslynLanguageServer> | undefined = undefined;
+    let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer) {
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
@@ -126,7 +135,12 @@ export async function activate(
         // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
         //     for dynamic file info once project system is ready ->
         // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-        await activateRazorExtension(context, context.extension.extensionPath, eventStream);
+        await activateRazorExtension(
+            context,
+            context.extension.extensionPath,
+            eventStream,
+            /* useOmnisharpServer */ false
+        );
 
         context.subscriptions.push(optionProvider);
         context.subscriptions.push(
@@ -142,8 +156,10 @@ export async function activate(
             platformInfo,
             optionProvider,
             csharpChannel,
+            dotnetTestChannel,
             reporter
         );
+        projectInitializationCompletePromise = waitForProjectInitialization();
     } else {
         const dotnetChannel = vscode.window.createOutputChannel('.NET');
         const dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -151,7 +167,6 @@ export async function activate(
         eventStream.subscribe(dotnetChannelObserver.post);
         eventStream.subscribe(dotnetLoggerObserver.post);
 
-        const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
         const dotnetTestChannelObserver = new DotNetTestChannelObserver(dotnetTestChannel);
         const dotnetTestLoggerObserver = new DotNetTestLoggerObserver(dotnetTestChannel);
         eventStream.subscribe(dotnetTestChannelObserver.post);
@@ -239,7 +254,24 @@ export async function activate(
         eventStream.subscribe(razorObserver.post);
 
         if (!razorOptions.razorDevMode) {
-            omnisharpRazorPromise = activateRazorExtension(context, context.extension.extensionPath, eventStream);
+            // Download Razor O# server
+            const razorOmnisharpDownloader = new RazorOmnisharpDownloader(
+                networkSettingsProvider,
+                eventStream,
+                context.extension.packageJSON,
+                platformInfo,
+                context.extension.extensionPath
+            );
+
+            await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(
+                context.extension.packageJSON.defaults.razorOmnisharp
+            );
+            omnisharpRazorPromise = activateRazorExtension(
+                context,
+                context.extension.extensionPath,
+                eventStream,
+                /* useOmnisharpServer */ true
+            );
         }
     }
 
@@ -282,14 +314,19 @@ export async function activate(
     if (!useOmnisharpServer) {
         tryGetCSharpDevKitExtensionExports(csharpLogObserver);
 
+        const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerPromise!);
         return {
             initializationFinished: async () => {
                 await coreClrDebugPromise;
                 await roslynLanguageServerPromise;
+                await projectInitializationCompletePromise;
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,
             determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
+            experimental: {
+                sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
+            },
         };
     } else {
         return {
