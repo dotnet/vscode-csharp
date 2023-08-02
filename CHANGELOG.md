@@ -7,7 +7,7 @@
 - [O# Parity] Out of proc design time builds / legacy csproj support [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
 - [O# Parity] Run and debug tests in context [#5719](https://github.com/dotnet/vscode-csharp/issues/5719)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
-- Pre-Release version not working but Release version is working [#5980](https://github.com/dotnet/vscode-csharp/issues/5980)
+- ProcessFrameworkReferences task failed unexpectedly [#5980](https://github.com/dotnet/vscode-csharp/issues/5980)
 
 ## Latest
 Updated CHANGELOG.md (PR: [#5992](https://github.com/dotnet/vscode-csharp/pull/5992))
