@@ -12,7 +12,7 @@ variables:
 
 stages:
 - stage: LocalizationStage
-  condition: eq($(Build.SourceBranch), 'refs/head/')
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/dev/shech/LOC')
   jobs:
   - job: Localization
     pool:

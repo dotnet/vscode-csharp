@@ -135,7 +135,7 @@ gulp.task('publish localization content', async () => {
         // Note: don't print PAT to console
         false
     );
-    await git(['fetch', 'targetRepo']);
+    await git(['fetch', remoteRepoAlias]);
 
     const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
     if (lsRemote.trim() !== '') {
