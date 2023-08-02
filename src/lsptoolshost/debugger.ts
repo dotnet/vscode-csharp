@@ -36,23 +36,22 @@ export function registerDebugger(
     });
     context.subscriptions.push(disposable);
 
+    const dotnetWorkspaceConfigurationProvider = new DotnetWorkspaceConfigurationProvider(
+        workspaceInformationProvider,
+        platformInfo,
+        optionProvider,
+        csharpOutputChannel
+    );
+
     // Register ConfigurationProvider
     context.subscriptions.push(
         vscode.debug.registerDebugConfigurationProvider(
             'dotnet',
-            new DotnetConfigurationResolver(workspaceInformationProvider)
+            new DotnetConfigurationResolver(workspaceInformationProvider, dotnetWorkspaceConfigurationProvider)
         )
     );
     context.subscriptions.push(
-        vscode.debug.registerDebugConfigurationProvider(
-            'coreclr',
-            new DotnetWorkspaceConfigurationProvider(
-                workspaceInformationProvider,
-                platformInfo,
-                optionProvider,
-                csharpOutputChannel
-            )
-        )
+        vscode.debug.registerDebugConfigurationProvider('coreclr', dotnetWorkspaceConfigurationProvider)
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) =>

@@ -76,6 +76,11 @@ export interface RunTestsParams extends lsp.WorkDoneProgressParams, lsp.PartialR
      * Note that this does not have to only include tests, for example this could be a range representing a class.
      */
     range: lsp.Range;
+
+    /**
+     * Whether the request should attempt to call back to the client to attach a debugger before running the tests.
+     */
+    attachDebugger: boolean;
 }
 
 export interface TestProgress {
@@ -101,6 +106,14 @@ export interface RunTestsPartialResult {
     stage: string;
     message: string;
     progress?: TestProgress;
+}
+
+export interface DebugAttachParams {
+    processId: number;
+}
+
+export interface DebugAttachResult {
+    didAttach: boolean;
 }
 
 export namespace WorkspaceDebugConfigurationRequest {
@@ -139,4 +152,10 @@ export namespace RunTestsRequest {
         void,
         void
     >(method);
+}
+
+export namespace DebugAttachRequest {
+    export const method = 'workspace/attachDebugger';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.RequestType<DebugAttachParams, DebugAttachResult, void>(method);
 }

@@ -5,6 +5,7 @@
 
 import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
+import * as l10n from '@vscode/l10n';
 import { RequestHandler, RequestType } from 'vscode-jsonrpc';
 import { GenericNotificationHandler, InitializeResult, LanguageClientOptions, State } from 'vscode-languageclient';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
@@ -93,7 +94,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
                     if (restartCount === 5) {
                         // Timeout, the built-in LanguageClient retries a hardcoded 5 times before giving up. We tie into that
                         // and then given up on starting the language server if we can't start by then.
-                        reject('Server failed to start after retrying 5 times.');
+                        reject(l10n.t('Server failed to start after retrying 5 times.'));
                     }
                 } else if (stateChangeEvent.newState === State.Running) {
                     restartCount = 0;
@@ -123,8 +124,9 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             didChangeStateDisposable.dispose();
         } catch (error) {
             vscode.window.showErrorMessage(
-                'Razor Language Server failed to start unexpectedly, ' +
-                    "please check the 'Razor Log' and report an issue."
+                l10n.t(
+                    "Razor Language Server failed to start unexpectedly, please check the 'Razor Log' and report an issue."
+                )
             );
 
             this.telemetryReporter.reportErrorOnServerStart(error as Error);
@@ -136,7 +138,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
     public async sendRequest<TResponseType>(method: string, param: any) {
         if (!this.isStarted) {
-            throw new Error('Tried to send requests while server is not started.');
+            throw new Error(l10n.t('Tried to send requests while server is not started.'));
         }
 
         return this.client.sendRequest<TResponseType>(method, param);
@@ -144,7 +146,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
     public async onRequestWithParams<P, R, E>(method: RequestType<P, R, E>, handler: RequestHandler<P, R, E>) {
         if (!this.isStarted) {
-            throw new Error('Tried to bind on request logic while server is not started.');
+            throw new Error(l10n.t('Tried to bind on request logic while server is not started.'));
         }
 
         this.client.onRequest(method, handler);
@@ -152,7 +154,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
     public onNotification(method: string, handler: GenericNotificationHandler) {
         if (!this.isStarted) {
-            throw new Error('Tried to bind on notification logic while server is not started.');
+            throw new Error(l10n.t('Tried to bind on notification logic while server is not started.'));
         }
 
         this.client.onNotification(method, handler);
@@ -176,7 +178,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         });
 
         if (!this.startHandle) {
-            reject(new Error('Cannot stop Razor Language Server as it is already stopped.'));
+            reject(new Error(l10n.t('Cannot stop Razor Language Server as it is already stopped.')));
         }
 
         this.logger.logMessage('Stopping Razor Language Server.');
@@ -191,7 +193,9 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             resolve();
         } catch (error) {
             vscode.window.showErrorMessage(
-                'Razor Language Server failed to stop correctly, ' + "please check the 'Razor Log' and report an issue."
+                l10n.t(
+                    "Razor Language Server failed to stop correctly, please check the 'Razor Log' and report an issue."
+                )
             );
 
             reject(error);
