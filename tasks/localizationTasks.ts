@@ -7,7 +7,6 @@ import * as gulp from 'gulp';
 import * as process from 'node:process';
 import * as minimist from 'minimist';
 import { spawnSync } from 'node:child_process';
-import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
@@ -24,42 +23,15 @@ type Options = {
 const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
 const locFiles = ['bundle.l10n.%s.json', 'package.nls.%s.json'];
 
-function getGeneratedLocalizationChanges(diffFilesAndDirectories: string[]): string[] {
-    if (diffFilesAndDirectories.length == 0) {
-        return [];
-    }
-
-    const allPossibleLocalizationFileNames = getAllPossibleLocalizationFileNames();
-    const changedLocFilesOrDirectory = [];
-
-    for (const diffFileOrDirectory of diffFilesAndDirectories) {
-        const stat = fs.statSync(diffFileOrDirectory);
-        if (
-            stat.isFile() &&
-            allPossibleLocalizationFileNames.some((locFileName) => path.basename(diffFileOrDirectory) === locFileName)
-        ) {
-            console.log(`${diffFileOrDirectory} is changed.`);
-            changedLocFilesOrDirectory.push(diffFileOrDirectory);
-        }
-
-        if (stat.isDirectory() && diffFileOrDirectory !== 'l10n') {
-            console.log('l10n is changed.');
-            changedLocFilesOrDirectory.push('l10n');
-        }
-    }
-
-    return changedLocFilesOrDirectory;
-}
-
-function getAllPossibleLocalizationFileNames(): string[] {
+function getAllPossibleLocalizationFiles(): string[] {
     const files = [];
     for (const lang of localizationLanguages) {
         for (const file of locFiles) {
-            files.push(util.format(file, lang));
+            files.push('l10n' + path.delimiter + util.format(file, lang));
         }
     }
     // English
-    files.push('bundle.l10n.json');
+    files.push(`l10n${path.delimiter}bundle.l10n.json`);
     return files;
 }
 
@@ -96,19 +68,16 @@ async function git(args: string[], printCommand = true): Promise<string> {
 
 gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
-    await git(['add', '-A']);
-    const diffResults = await git_diff(['--name-only', 'HEAD']);
-    if (diffResults.length == 0) {
-        console.log('No git file changes');
-        return;
-    }
+    const localizationChanges = getAllPossibleLocalizationFiles();
+    await git(['add'].concat(localizationChanges));
 
-    const localizationChanges = getGeneratedLocalizationChanges(diffResults);
-    if (localizationChanges.length == 0) {
+    const diff = await git_diff(['--name-only']);
+    if (diff.length == 0) {
         console.log('No localization file changed');
         return;
     }
-    await git(['reset']);
+    console.log(`Changed files going to be staged: ${diff}`);
+
     const newBranchName = `localization/${parsedArgs.commitSha}`;
     // Make this optional so it can be tested locally by using dev's information. In real CI user name and email are always supplied.
     if (parsedArgs.userName) {
@@ -118,8 +87,6 @@ gulp.task('publish localization content', async () => {
         await git(['config', '--local', 'user.email', parsedArgs.email]);
     }
 
-    console.log(`Changed files going to be staged: ${localizationChanges}`);
-    await git(['add'].concat(localizationChanges));
     await git(['checkout', '-b', newBranchName]);
     await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
 
