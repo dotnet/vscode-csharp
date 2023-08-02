@@ -225,6 +225,24 @@ export async function activate(
             eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
         }
 
+        const razorObserver = new RazorLoggerObserver(csharpChannel);
+        eventStream.subscribe(razorObserver.post);
+
+        if (!razorOptions.razorDevMode) {
+            // Download Razor O# server
+            const razorOmnisharpDownloader = new RazorOmnisharpDownloader(
+                networkSettingsProvider,
+                eventStream,
+                context.extension.packageJSON,
+                platformInfo,
+                context.extension.extensionPath
+            );
+
+            await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(
+                context.extension.packageJSON.defaults.razorOmnisharp
+            );
+        }
+
         // activate language services
         omnisharpLangServicePromise = OmniSharp.activate(
             context,
@@ -250,22 +268,7 @@ export async function activate(
             })
         );
 
-        const razorObserver = new RazorLoggerObserver(csharpChannel);
-        eventStream.subscribe(razorObserver.post);
-
         if (!razorOptions.razorDevMode) {
-            // Download Razor O# server
-            const razorOmnisharpDownloader = new RazorOmnisharpDownloader(
-                networkSettingsProvider,
-                eventStream,
-                context.extension.packageJSON,
-                platformInfo,
-                context.extension.extensionPath
-            );
-
-            await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(
-                context.extension.packageJSON.defaults.razorOmnisharp
-            );
             omnisharpRazorPromise = activateRazorExtension(
                 context,
                 context.extension.extensionPath,
