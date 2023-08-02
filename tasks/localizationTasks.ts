@@ -116,7 +116,6 @@ gulp.task('publish localization content', async () => {
 
     await git(['push', '-u', remoteRepoAlias]);
     const octokit = new Octokit({ auth: pat });
-    await octokit.auth();
     const listPullRequest = await octokit.rest.pulls.list({
         owner: parsedArgs.codeOwner,
         repo: parsedArgs.targetRemoteRepo,
