@@ -16,10 +16,10 @@ import { Octokit } from '@octokit/rest';
 type Options = {
     userName: string;
     email: string;
+    owner: string;
     commitSha: string;
     targetRemoteRepo: string;
     baseBranch: string;
-    pat?: string;
 };
 
 const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
@@ -64,83 +64,6 @@ function getAllPossibleLocalizationFileNames(): string[] {
     return files;
 }
 
-gulp.task('publish localization content', async () => {
-    const parsedArgs = minimist<Options>(process.argv.slice(2));
-    await git(['add', '-A']);
-    const diffResults = await git_diff(['--name-only', 'HEAD']);
-    if (diffResults.length == 0) {
-        console.log('No file changes');
-        return;
-    }
-
-    const localizationChanges = getGeneratedLocalizationChanges(diffResults);
-    if (localizationChanges.length == 0) {
-        console.log('No localization file changed');
-        return;
-    }
-    await git(['reset']);
-    const newBranchName = `localization/${parsedArgs.commitSha}`;
-    await git(['config', '--local', 'user.name', parsedArgs.userName]);
-    await git(['config', '--local', 'user.email', parsedArgs.email]);
-
-    console.log(`Changed files going to be staged: ${localizationChanges}`);
-    await git(['add'].concat(localizationChanges));
-    await git(['checkout', '-b', newBranchName]);
-    await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
-
-    const pat = parsedArgs.pat ?? process.env['GitHubPAT'];
-    if (!pat) {
-        throw 'No GitHub Pat found.';
-    }
-
-    const remoteRepoAlias = 'targetRepo';
-    // Note: don't print token
-    await git(
-        [
-            'remote',
-            'add',
-            remoteRepoAlias,
-            `https://${parsedArgs.userName}:${pat}@github.com/${parsedArgs.targetRemoteRepo}.git`,
-        ],
-        false
-    );
-    await git(['fetch', 'targetRepo']);
-
-    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
-    if (lsRemote.trim() !== '') {
-        // If the localization branch of this commit already exists, don't try to create another one.
-        console.log(`${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}.`);
-        return;
-    }
-
-    await git(['push', '-u', remoteRepoAlias]);
-    const octokit = new Octokit({ auth: pat });
-    const listPullRequest = await octokit.rest.pulls.list({
-        owner: 'dotnet',
-        repo: 'vscode-csharp',
-    });
-
-    if (listPullRequest.status != 200) {
-        throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
-    }
-
-    const title = `Localization result based on ${parsedArgs.commitSha}`;
-    if (listPullRequest.data.some((pr) => pr.title === title)) {
-        console.log('Pull request already exists.');
-        return;
-    }
-
-    const pullRequest = await octokit.rest.pulls.create({
-        body: `Localization result based on ${parsedArgs.commitSha}`,
-        owner: 'dotnet',
-        repo: 'vscode-csharp',
-        title: title,
-        head: newBranchName,
-        base: parsedArgs.baseBranch,
-    });
-    console.log(`Created pull request: ${pullRequest.url}.`);
-});
-
 async function git_diff(args: string[]): Promise<string[]> {
     const result = await git(['diff'].concat(args));
     // Line ending from the stdout of git is '\n' even on Windows.
@@ -159,7 +82,9 @@ async function git(args: string[], printCommand = true): Promise<string> {
     const git = spawnSync('git', args);
     if (git.status != 0) {
         const err = git.stderr.toString();
-        console.log(`Failed to execute git ${args.join(' ')}.`);
+        if (printCommand) {
+            console.log(`Failed to execute git ${args.join(' ')}.`);
+        }
         throw err;
     }
 
@@ -169,3 +94,81 @@ async function git(args: string[], printCommand = true): Promise<string> {
     }
     return stdout;
 }
+
+gulp.task('publish localization content', async () => {
+    const parsedArgs = minimist<Options>(process.argv.slice(2));
+    await git(['add', '-A']);
+    const diffResults = await git_diff(['--name-only', 'HEAD']);
+    if (diffResults.length == 0) {
+        console.log('No git file changes');
+        return;
+    }
+
+    const localizationChanges = getGeneratedLocalizationChanges(diffResults);
+    if (localizationChanges.length == 0) {
+        console.log('No localization file changed');
+        return;
+    }
+    await git(['reset']);
+    const newBranchName = `localization/${parsedArgs.commitSha}`;
+    await git(['config', '--local', 'user.name', parsedArgs.userName]);
+    await git(['config', '--local', 'user.email', parsedArgs.email]);
+
+    console.log(`Changed files going to be staged: ${localizationChanges}`);
+    await git(['add'].concat(localizationChanges));
+    await git(['checkout', '-b', newBranchName]);
+    await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
+
+    const pat = process.env['GitHubPAT'];
+    if (!pat) {
+        throw 'No GitHub Pat found.';
+    }
+
+    const remoteRepoAlias = 'targetRepo';
+    await git(
+        [
+            'remote',
+            'add',
+            remoteRepoAlias,
+            `https://${parsedArgs.userName}:${pat}@github.com/${parsedArgs.owner}/${parsedArgs.targetRemoteRepo}.git`,
+        ],
+        // Note: don't print PAT to console
+        false
+    );
+    await git(['fetch', 'targetRepo']);
+
+    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
+    if (lsRemote.trim() !== '') {
+        // If the localization branch of this commit already exists, don't try to create another one.
+        console.log(`${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}. Skip pushing.`);
+    } else {
+        await git(['push', '-u', remoteRepoAlias]);
+    }
+
+    const octokit = new Octokit({ auth: pat });
+    const listPullRequest = await octokit.rest.pulls.list({
+        owner: parsedArgs.owner,
+        repo: parsedArgs.targetRemoteRepo,
+    });
+
+    if (listPullRequest.status != 200) {
+        throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
+    }
+
+    const title = `Localization result based on ${parsedArgs.commitSha}`;
+    if (listPullRequest.data.some((pr) => pr.title === title)) {
+        console.log('Pull request with the same name already exists. Skip creation.');
+        return;
+    }
+
+    const pullRequest = await octokit.rest.pulls.create({
+        body: title,
+        owner: parsedArgs.owner,
+        repo: parsedArgs.targetRemoteRepo,
+        title: title,
+        head: newBranchName,
+        base: parsedArgs.baseBranch,
+    });
+
+    console.log(`Created pull request: ${pullRequest.data.html_url}.`);
+});
