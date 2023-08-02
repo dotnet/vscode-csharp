@@ -68,6 +68,7 @@ function getAllPossibleLocalizationFileNames(): string[] {
 
 gulp.task('publish localization content', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
+    await git(['add', '-A']);
     const diffResults = await git_diff(['--name-only', 'HEAD']);
     if (diffResults.length == 0) {
         console.log('No file changes');
@@ -79,7 +80,7 @@ gulp.task('publish localization content', async () => {
         console.log('No localization file changed');
         return;
     }
-
+    await git(['reset']);
     const newBranchName = `localization/${parsedArgs.commitSha}`;
     await git(['config', '--local', 'user.name', parsedArgs.userName]);
     await git(['config', '--local', 'user.email', parsedArgs.email]);
