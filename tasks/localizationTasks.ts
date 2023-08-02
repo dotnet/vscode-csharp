@@ -87,7 +87,7 @@ gulp.task('publish localization content', async () => {
     await git(['add'].concat(localizationChanges));
     await git(['checkout', '-b', newBranchName]);
     await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
-    await git(['add', 'targetRepo', parsedArgs.targetRemoteRepo]);
+    await git(['remote', 'add', 'targetRepo', parsedArgs.targetRemoteRepo]);
     console.log('Authenticate PAT.');
     const pat = parsedArgs.pat ?? process.env['GitHubPAT'];
     if (!pat) {
