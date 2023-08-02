@@ -9,31 +9,30 @@ import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConversion';
 import * as vscode from 'vscode';
-import CompositeDisposable from '../CompositeDisposable';
-import { IDisposable } from '../Disposable';
+import CompositeDisposable from '../compositeDisposable';
+import { IDisposable } from '../disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
-import OptionProvider from '../observers/OptionProvider';
+import OptionProvider from '../shared/observers/optionProvider';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { BackgroundDiagnosticStatus } from '../omnisharp/protocol';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 
 export class Advisor {
-
     private _disposable: CompositeDisposable;
     private _server: OmniSharpServer;
-    private _packageRestoreCounter: number = 0;
+    private _packageRestoreCounter = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
 
     constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
         this._server = server;
 
-        let d1 = server.onProjectChange(this._onProjectChange, this);
-        let d2 = server.onProjectAdded(this._onProjectAdded, this);
-        let d3 = server.onProjectRemoved(this._onProjectRemoved, this);
-        let d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
-        let d5 = server.onPackageRestore(this._onPackageRestore, this);
+        const d1 = server.onProjectChange(this._onProjectChange, this);
+        const d2 = server.onProjectAdded(this._onProjectAdded, this);
+        const d3 = server.onProjectRemoved(this._onProjectRemoved, this);
+        const d4 = server.onBeforePackageRestore(this._onBeforePackageRestore, this);
+        const d5 = server.onPackageRestore(this._onPackageRestore, this);
         this._disposable = new CompositeDisposable(d1, d2, d3, d4, d5);
     }
 
@@ -42,14 +41,11 @@ export class Advisor {
     }
 
     public shouldValidateFiles(): boolean {
-        return this._isServerStarted()
-            && !this._isRestoringPackages();
+        return this._isServerStarted() && !this._isRestoringPackages();
     }
 
     public shouldValidateAll(): boolean {
-        return this._isServerStarted()
-            && !this._isRestoringPackages()
-            && !this._isOverFileLimit();
+        return this._isServerStarted() && !this._isRestoringPackages() && !this._isOverFileLimit();
     }
 
     private _updateProjectFileCount(path: string, fileCount: number): void {
@@ -97,11 +93,11 @@ export class Advisor {
     }
 
     private _isOverFileLimit(): boolean {
-        let opts = this.optionProvider.GetLatestOptions();
-        let fileLimit = opts.maxProjectFileCountForDiagnosticAnalysis;
+        const opts = this.optionProvider.GetLatestOptions();
+        const fileLimit = opts.omnisharpOptions.maxProjectFileCountForDiagnosticAnalysis;
         if (fileLimit > 0) {
             let sourceFileCount = 0;
-            for (let key in this._projectSourceFileCounts) {
+            for (const key in this._projectSourceFileCounts) {
                 sourceFileCount += this._projectSourceFileCounts[key];
                 if (sourceFileCount > fileLimit) {
                     return true;
@@ -112,12 +108,16 @@ export class Advisor {
     }
 }
 
-export default function reportDiagnostics(server: OmniSharpServer, advisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature): IDisposable {
-    return new DiagnosticsProvider(server, advisor, languageMiddlewareFeature);
+export default function reportDiagnostics(
+    server: OmniSharpServer,
+    advisor: Advisor,
+    languageMiddlewareFeature: LanguageMiddlewareFeature,
+    options: OptionProvider
+): IDisposable {
+    return new OmniSharpDiagnosticsProvider(server, advisor, languageMiddlewareFeature, options);
 }
 
-class DiagnosticsProvider extends AbstractSupport {
-
+class OmniSharpDiagnosticsProvider extends AbstractSupport {
     private _validationAdvisor: Advisor;
     private _disposable: CompositeDisposable;
     private _diagnostics: vscode.DiagnosticCollection;
@@ -127,56 +127,65 @@ class DiagnosticsProvider extends AbstractSupport {
     private _subscriptions: Subscription[] = [];
     private _suppressHiddenDiagnostics: boolean;
 
-    constructor(server: OmniSharpServer, validationAdvisor: Advisor, languageMiddlewareFeature: LanguageMiddlewareFeature) {
+    constructor(
+        server: OmniSharpServer,
+        validationAdvisor: Advisor,
+        languageMiddlewareFeature: LanguageMiddlewareFeature,
+        options: OptionProvider
+    ) {
         super(server, languageMiddlewareFeature);
 
         this._analyzersEnabled = vscode.workspace.getConfiguration('omnisharp').get('enableRoslynAnalyzers', false);
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
-        this._suppressHiddenDiagnostics = vscode.workspace.getConfiguration('csharp').get('suppressHiddenDiagnostics', true);
+        this._suppressHiddenDiagnostics = vscode.workspace
+            .getConfiguration('csharp')
+            .get('suppressHiddenDiagnostics', true);
 
-        this._subscriptions.push(this._validateCurrentDocumentPipe
-            .pipe(debounceTime(750))
-            .subscribe(async document => await this._validateDocument(document)));
+        if (!options.GetLatestOptions().omnisharpOptions.enableLspDriver) {
+            this._subscriptions.push(
+                this._validateCurrentDocumentPipe
+                    .pipe(debounceTime(750))
+                    .subscribe(async (document) => await this._validateDocument(document))
+            );
+        }
 
-        this._subscriptions.push(this._validateAllPipe
-            .pipe(debounceTime(3000))
-            .subscribe(reason => {
+        this._subscriptions.push(
+            this._validateAllPipe.pipe(debounceTime(3000)).subscribe(() => {
                 if (this._validationAdvisor.shouldValidateAll()) {
                     this._validateEntireWorkspace();
-                }
-                else if (this._validationAdvisor.shouldValidateFiles()) {
+                } else if (this._validationAdvisor.shouldValidateFiles()) {
                     this._validateOpenDocuments();
                 }
-            }));
+            })
+        );
 
-
-        this._disposable = new CompositeDisposable(this._diagnostics,
-            this._server.onPackageRestore(() => this._validateAllPipe.next("onPackageRestore"), this),
-            this._server.onProjectChange(() => this._validateAllPipe.next("onProjectChanged"), this),
+        this._disposable = new CompositeDisposable(
+            this._diagnostics,
+            this._server.onPackageRestore(() => this._validateAllPipe.next('onPackageRestore'), this),
+            this._server.onProjectChange(() => this._validateAllPipe.next('onProjectChanged'), this),
             this._server.onBackgroundDiagnosticStatus(this._onBackgroundAnalysis, this),
-            vscode.workspace.onDidOpenTextDocument(event => this._onDocumentOpenOrChange(event), this),
-            vscode.workspace.onDidChangeTextDocument(event => this._onDocumentOpenOrChange(event.document), this),
+            vscode.workspace.onDidOpenTextDocument((event) => this._onDocumentOpenOrChange(event), this),
+            vscode.workspace.onDidChangeTextDocument((event) => this._onDocumentOpenOrChange(event.document), this),
             vscode.workspace.onDidCloseTextDocument(this._onDocumentClose, this),
-            vscode.window.onDidChangeActiveTextEditor(event => this._onDidChangeActiveTextEditor(event), this),
-            vscode.window.onDidChangeWindowState(event => this._OnDidChangeWindowState(event), this),
+            vscode.window.onDidChangeActiveTextEditor((event) => this._onDidChangeActiveTextEditor(event), this),
+            vscode.window.onDidChangeWindowState((event) => this._OnDidChangeWindowState(event), this)
         );
     }
 
     public dispose = () => {
         this._validateAllPipe.complete();
         this._validateCurrentDocumentPipe.complete();
-        this._subscriptions.forEach(x => x.unsubscribe());
+        this._subscriptions.forEach((x) => x.unsubscribe());
         this._disposable.dispose();
-    }
+    };
 
     private shouldIgnoreDocument(document: TextDocument) {
         if (document.languageId !== 'csharp') {
             return true;
         }
 
-        if (document.uri.scheme !== 'file' &&
-            !isVirtualCSharpDocument(document)) {
+        if (document.uri.scheme !== 'file' && !isVirtualCSharpDocument(document)) {
             return true;
         }
 
@@ -206,13 +215,12 @@ class DiagnosticsProvider extends AbstractSupport {
         // This check is just small perf optimization to reduce queries
         // for omnisharp with analyzers (which has event to notify about updates.)
         if (!this._analyzersEnabled) {
-            this._validateAllPipe.next("onDocumentOpenOrChange");
+            this._validateAllPipe.next('onDocumentOpenOrChange');
         }
     }
 
     private _onBackgroundAnalysis(event: protocol.BackgroundDiagnosticStatusMessage) {
-        if (event.Status == BackgroundDiagnosticStatus.Finished &&
-            event.NumberFilesRemaining === 0) {
+        if (event.Status == BackgroundDiagnosticStatus.Finished && event.NumberFilesRemaining === 0) {
             this._validateAllPipe.next();
         }
     }
@@ -233,10 +241,10 @@ class DiagnosticsProvider extends AbstractSupport {
             return;
         }
 
-        let source = new vscode.CancellationTokenSource();
+        const source = new vscode.CancellationTokenSource();
         try {
-            let value = await serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token);
-            let quickFixes = value.QuickFixes;
+            const value = await serverUtils.codeCheck(this._server, { FileName: document.fileName }, source.token);
+            const quickFixes = value.QuickFixes;
             // Easy case: If there are no diagnostics in the file, we can clear it quickly.
             if (quickFixes.length === 0) {
                 if (this._diagnostics.has(document.uri)) {
@@ -246,12 +254,24 @@ class DiagnosticsProvider extends AbstractSupport {
                 return;
             }
 
-            // (re)set new diagnostics for this document
-            let diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
+            // If we're over the file limit and the file shouldn't have diagnostics, don't add them. This can
+            // happen if a file is opened then immediately closed, as the on doc close event will occur before
+            // diagnostics come back from the server.
+            if (
+                !this._validationAdvisor.shouldValidateAll() &&
+                vscode.workspace.textDocuments.every((doc) => doc.uri !== document.uri)
+            ) {
+                return;
+            }
 
-            this._diagnostics.set(document.uri, diagnosticsInFile.map(x => x.diagnostic));
-        }
-        catch (error) {
+            // (re)set new diagnostics for this document
+            const diagnosticsInFile = this._mapQuickFixesAsDiagnosticsInFile(quickFixes);
+
+            this._diagnostics.set(
+                document.uri,
+                diagnosticsInFile.map((x) => x.diagnostic)
+            );
+        } catch (error) {
             return;
         }
     }
@@ -259,8 +279,8 @@ class DiagnosticsProvider extends AbstractSupport {
     // On large workspaces (if maxProjectFileCountForDiagnosticAnalysis) is less than workspace size,
     // diagnostic fallback to mode where only open documents are analyzed.
     private async _validateOpenDocuments() {
-        for (let editor of vscode.window.visibleTextEditors) {
-            let document = editor.document;
+        for (const editor of vscode.window.visibleTextEditors) {
+            const document = editor.document;
             if (this.shouldIgnoreDocument(document)) {
                 continue;
             }
@@ -269,23 +289,27 @@ class DiagnosticsProvider extends AbstractSupport {
         }
     }
 
-    private _mapQuickFixesAsDiagnosticsInFile(quickFixes: protocol.QuickFix[]): { diagnostic: vscode.Diagnostic, fileName: string }[] {
+    private _mapQuickFixesAsDiagnosticsInFile(
+        quickFixes: protocol.QuickFix[]
+    ): { diagnostic: vscode.Diagnostic; fileName: string }[] {
         return quickFixes
-            .map(quickFix => this._asDiagnosticInFileIfAny(quickFix))
-            .filter((diagnosticInFile): diagnosticInFile is NonNullable<typeof diagnosticInFile> => diagnosticInFile !== undefined);
+            .map((quickFix) => this._asDiagnosticInFileIfAny(quickFix))
+            .filter(
+                (diagnosticInFile): diagnosticInFile is NonNullable<typeof diagnosticInFile> =>
+                    diagnosticInFile !== undefined
+            );
     }
 
     private async _validateEntireWorkspace() {
-        let value = await serverUtils.codeCheck(this._server, {}, new vscode.CancellationTokenSource().token);
+        const value = await serverUtils.codeCheck(this._server, {}, new vscode.CancellationTokenSource().token);
 
-        let quickFixes = value.QuickFixes
-            .sort((a, b) => a.FileName.localeCompare(b.FileName));
+        const quickFixes = value.QuickFixes.sort((a, b) => a.FileName.localeCompare(b.FileName));
 
-        let entries: [vscode.Uri, vscode.Diagnostic[] | undefined][] = [];
+        const entries: [vscode.Uri, vscode.Diagnostic[] | undefined][] = [];
         let lastEntry: [vscode.Uri, vscode.Diagnostic[]] | undefined;
 
-        for (let diagnosticInFile of this._mapQuickFixesAsDiagnosticsInFile(quickFixes)) {
-            let uri = vscode.Uri.file(diagnosticInFile.fileName);
+        for (const diagnosticInFile of this._mapQuickFixesAsDiagnosticsInFile(quickFixes)) {
+            const uri = vscode.Uri.file(diagnosticInFile.fileName);
 
             if (lastEntry !== undefined && lastEntry[0].toString() === uri.toString()) {
                 lastEntry[1].push(diagnosticInFile.diagnostic);
@@ -301,7 +325,7 @@ class DiagnosticsProvider extends AbstractSupport {
 
         // Clear diagnostics for files that no longer have any diagnostics.
         this._diagnostics.forEach((uri) => {
-            if (entries.find(tuple => tuple[0].toString() === uri.toString()) === undefined) {
+            if (entries.find((tuple) => tuple[0].toString() === uri.toString()) === undefined) {
                 this._diagnostics.delete(uri);
             }
         });
@@ -310,16 +334,18 @@ class DiagnosticsProvider extends AbstractSupport {
         this._diagnostics.set(entries);
     }
 
-    private _asDiagnosticInFileIfAny(quickFix: protocol.QuickFix): { diagnostic: vscode.Diagnostic, fileName: string } | undefined {
-        let display = this._getDiagnosticDisplay(quickFix, this._asDiagnosticSeverity(quickFix));
+    private _asDiagnosticInFileIfAny(
+        quickFix: protocol.QuickFix
+    ): { diagnostic: vscode.Diagnostic; fileName: string } | undefined {
+        const display = this._getDiagnosticDisplay(quickFix, this._asDiagnosticSeverity(quickFix));
 
-        if (display.severity === "hidden") {
+        if (display.severity === 'hidden') {
             return undefined;
         }
 
-        let message = `${quickFix.Text} [${quickFix.Projects.map(n => this._asProjectLabel(n)).join(', ')}]`;
+        const message = `${quickFix.Text} [${quickFix.Projects.map((n) => this._asProjectLabel(n)).join(', ')}]`;
 
-        let diagnostic = new vscode.Diagnostic(toRange(quickFix), message, display.severity);
+        const diagnostic = new vscode.Diagnostic(toRange(quickFix), message, display.severity);
         diagnostic.source = 'csharp';
         diagnostic.code = quickFix.Id;
 
@@ -330,12 +356,16 @@ class DiagnosticsProvider extends AbstractSupport {
         return { diagnostic: diagnostic, fileName: quickFix.FileName };
     }
 
-    private _getDiagnosticDisplay(quickFix: protocol.QuickFix, severity: vscode.DiagnosticSeverity | "hidden"): { severity: vscode.DiagnosticSeverity | "hidden", isFadeout: boolean } {
+    private _getDiagnosticDisplay(
+        quickFix: protocol.QuickFix,
+        severity: vscode.DiagnosticSeverity | 'hidden'
+    ): { severity: vscode.DiagnosticSeverity | 'hidden'; isFadeout: boolean } {
         // These hard coded values bring the goodness of fading even when analyzers are disabled.
-        let isFadeout = (quickFix.Tags?.find(x => x.toLowerCase() === 'unnecessary') !== undefined)
-            || quickFix.Id == "CS0162"  // CS0162: Unreachable code
-            || quickFix.Id == "CS0219"  // CS0219: Unused variable
-            || quickFix.Id == "CS8019"; // CS8019: Unnecessary using
+        const isFadeout =
+            quickFix.Tags?.find((x) => x.toLowerCase() === 'unnecessary') !== undefined ||
+            quickFix.Id == 'CS0162' || // CS0162: Unreachable code
+            quickFix.Id == 'CS0219' || // CS0219: Unused variable
+            quickFix.Id == 'CS8019'; // CS8019: Unnecessary using
 
         if (isFadeout && ['hidden', 'none'].includes(quickFix.LogLevel.toLowerCase())) {
             // Theres no such thing as hidden severity in VSCode,
@@ -347,7 +377,7 @@ class DiagnosticsProvider extends AbstractSupport {
         return { severity: severity, isFadeout };
     }
 
-    private _asDiagnosticSeverity(quickFix: protocol.QuickFix): vscode.DiagnosticSeverity | "hidden" {
+    private _asDiagnosticSeverity(quickFix: protocol.QuickFix): vscode.DiagnosticSeverity | 'hidden' {
         switch (quickFix.LogLevel.toLowerCase()) {
             case 'error':
                 return vscode.DiagnosticSeverity.Error;
@@ -357,11 +387,11 @@ class DiagnosticsProvider extends AbstractSupport {
                 return vscode.DiagnosticSeverity.Information;
             case 'hidden':
                 if (this._suppressHiddenDiagnostics) {
-                    return "hidden";
+                    return 'hidden';
                 }
                 return vscode.DiagnosticSeverity.Hint;
             default:
-                return "hidden";
+                return 'hidden';
         }
     }
 

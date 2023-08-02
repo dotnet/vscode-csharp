@@ -1,14 +1,14 @@
 /*---------------------------------------------------------------------------------------------
-*  Copyright (c) Microsoft Corporation. All rights reserved.
-*  Licensed under the MIT License. See License.txt in the project root for license information.
-*--------------------------------------------------------------------------------------------*/
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from "vscode";
-import * as path from "path";
-import testAssetWorkspace from "./testAssets/testAssetWorkspace";
-import { expect, should } from "chai";
+import * as vscode from 'vscode';
+import * as path from 'path';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { expect, should } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import { LanguageMiddleware, LanguageMiddlewareFeature } from "../../src/omnisharp/LanguageMiddlewareFeature";
+import { LanguageMiddleware, LanguageMiddlewareFeature } from '../../src/omnisharp/languageMiddlewareFeature';
 
 suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
@@ -25,12 +25,12 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         await registerLanguageMiddleware();
         await testAssetWorkspace.restore();
 
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let remappedFileName = 'remapped.txt';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const remappedFileName = 'remapped.txt';
         remappedFileUri = vscode.Uri.file(path.join(projectDirectory, remappedFileName));
-        let fileName = 'remap.cs';
+        const fileName = 'remap.cs';
         fileUri = vscode.Uri.file(path.join(projectDirectory, fileName));
-        await vscode.commands.executeCommand("vscode.open", fileUri);
+        await vscode.commands.executeCommand('vscode.open', fileUri);
 
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
@@ -39,45 +39,52 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test("Returns the remapped workspaceEdit", async () => {
-
+    test('Returns the remapped workspaceEdit', async () => {
         // Avoid flakiness with renames.
-        await new Promise(r => setTimeout(r, 2000));
+        await new Promise((r) => setTimeout(r, 2000));
 
-        let workspaceEdit = <vscode.WorkspaceEdit>(await vscode.commands.executeCommand(
-            "vscode.executeDocumentRenameProvider",
-            fileUri,
-            new vscode.Position(4, 30),
-            'newName'));
+        const workspaceEdit = <vscode.WorkspaceEdit>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDocumentRenameProvider',
+                fileUri,
+                new vscode.Position(4, 30),
+                'newName'
+            )
+        );
 
-        let entries = workspaceEdit!.entries();
+        const entries = workspaceEdit!.entries();
         expect(entries.length).to.be.equal(1);
         expect(entries[0][0].path).to.be.equal(remappedFileUri.path);
     });
 
-    test("Returns the remapped references", async () => {
-        let references = <vscode.Location[]>(await vscode.commands.executeCommand(
-            "vscode.executeReferenceProvider",
-            fileUri,
-            new vscode.Position(4, 30)));
+    test('Returns the remapped references', async () => {
+        const references = <vscode.Location[]>(
+            await vscode.commands.executeCommand('vscode.executeReferenceProvider', fileUri, new vscode.Position(4, 30))
+        );
         expect(references.length).to.be.equal(1);
         expect(references[0].uri.path).to.be.equal(remappedFileUri.path);
     });
 
-    test("Returns the remapped definition", async () => {
-        let definitions = <vscode.Location[]>(await vscode.commands.executeCommand(
-            "vscode.executeDefinitionProvider",
-            fileUri,
-            new vscode.Position(4, 30)));
+    test('Returns the remapped definition', async () => {
+        const definitions = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDefinitionProvider',
+                fileUri,
+                new vscode.Position(4, 30)
+            )
+        );
         expect(definitions.length).to.be.equal(1);
         expect(definitions[0].uri.path).to.be.equal(remappedFileUri.path);
     });
 
-    test("Returns the remapped implementations", async () => {
-        let implementations = <vscode.Location[]>(await vscode.commands.executeCommand(
-            "vscode.executeImplementationProvider",
-            fileUri,
-            new vscode.Position(4, 30)));
+    test('Returns the remapped implementations', async () => {
+        const implementations = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeImplementationProvider',
+                fileUri,
+                new vscode.Position(4, 30)
+            )
+        );
         expect(implementations.length).to.be.equal(1);
         expect(implementations[0].uri.path).to.be.equal(remappedFileUri.path);
     });
@@ -94,14 +101,17 @@ class TestLanguageMiddleware implements LanguageMiddleware {
     private readonly fileToRemapUri: vscode.Uri;
 
     constructor() {
-        let projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
-        let remappedFileName = 'remapped.txt';
+        const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
+        const remappedFileName = 'remapped.txt';
         this.remappedFileUri = vscode.Uri.file(path.join(projectDirectory, remappedFileName));
-        let fileToRemap = 'remap.cs';
+        const fileToRemap = 'remap.cs';
         this.fileToRemapUri = vscode.Uri.file(path.join(projectDirectory, fileToRemap));
     }
 
-    remapWorkspaceEdit(workspaceEdit: vscode.WorkspaceEdit, token: vscode.CancellationToken): vscode.ProviderResult<vscode.WorkspaceEdit> {
+    remapWorkspaceEdit(
+        workspaceEdit: vscode.WorkspaceEdit,
+        _: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.WorkspaceEdit> {
         const newEdit = new vscode.WorkspaceEdit();
         for (const entry of workspaceEdit.entries()) {
             const uri = entry[0];
@@ -116,14 +126,26 @@ class TestLanguageMiddleware implements LanguageMiddleware {
         return newEdit;
     }
 
-    remapLocations(locations: vscode.Location[], token: vscode.CancellationToken): vscode.ProviderResult<vscode.Location[]> {
-        const remapped = new Array<vscode.Location>();
+    remapLocations(
+        locations: vscode.Location[] | vscode.LocationLink[],
+        _: vscode.CancellationToken
+    ): vscode.ProviderResult<Array<vscode.Location | vscode.LocationLink>> {
+        const remapped = new Array<vscode.Location | vscode.LocationLink>();
         for (const location of locations) {
-            if (location.uri.path === this.fileToRemapUri.path) {
-                // Naively return a remapped file.
-                remapped.push(new vscode.Location(this.remappedFileUri, new vscode.Position(0, 0)));
+            if (location instanceof vscode.Location) {
+                if (location.uri.path === this.fileToRemapUri.path) {
+                    // Naively return a remapped file.
+                    remapped.push(new vscode.Location(this.remappedFileUri, new vscode.Position(0, 0)));
+                } else {
+                    remapped.push(location);
+                }
             } else {
-                remapped.push(location);
+                if (location.targetUri.path === this.fileToRemapUri.path) {
+                    // Naively return a remapped file.
+                    remapped.push(new vscode.Location(this.remappedFileUri, new vscode.Position(0, 0)));
+                } else {
+                    remapped.push(location);
+                }
             }
         }
         return remapped;

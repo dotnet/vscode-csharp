@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { spawnSync, SpawnSyncOptions } from "child_process";
-import { nodePath, rootPath } from "./projectPaths";
+import { spawnSync, SpawnSyncOptions } from 'child_process';
+import { nodePath, rootPath } from './projectPaths';
 
 export default async function spawnNode(args?: string[], options?: SpawnSyncOptions) {
     if (!options) {
         options = {
-            env: {}
+            env: {},
         };
     }
 
@@ -18,9 +18,9 @@ export default async function spawnNode(args?: string[], options?: SpawnSyncOpti
         ...options,
         env: {
             ...process.env,
-            ...options.env
+            ...options.env,
         },
-        stdio: "inherit"
+        stdio: 'inherit',
     };
 
     console.log(`starting ${nodePath} ${args ? args.join(' ') : ''}`);

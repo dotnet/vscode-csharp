@@ -3,21 +3,21 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { SpawnSyncOptions, spawnSync } from "child_process";
+import { SpawnSyncOptions, spawnSync } from 'child_process';
 
 export default async function spawnGit(args?: string[], options?: SpawnSyncOptions) {
     if (!options) {
         options = {
-            env: {}
+            env: {},
         };
     }
 
-    let optionsWithFullEnvironment: SpawnSyncOptions = {
+    const optionsWithFullEnvironment: SpawnSyncOptions = {
         ...options,
         env: {
             ...process.env,
-            ...options.env
-        }
+            ...options.env,
+        },
     };
 
     const buffer = spawnSync('git', args, optionsWithFullEnvironment);

@@ -5,6 +5,8 @@
 
 //@ts-check
 
+// Import statements do not work outside of modules.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -37,6 +39,6 @@ const config = {
             }]
         }]
     },
-}
+};
 
 module.exports = config;

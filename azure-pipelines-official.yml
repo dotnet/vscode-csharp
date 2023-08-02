@@ -1,0 +1,26 @@
+trigger:
+  branches:
+    include:
+    - main
+    - prerelease
+    - release
+pr: none
+
+variables:
+  - name: prereleaseFlag
+    value: ''
+
+stages:
+- stage: Build
+  dependsOn: []
+  jobs:
+  - job: Build
+    steps:
+    - template: azure-pipelines/build.yml
+      parameters:
+        prereleaseFlag: $(prereleaseFlag)
+    pool:
+      name: NetCore1ESPool-Internal
+      demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+
+# TODO: add compliance, signing.
