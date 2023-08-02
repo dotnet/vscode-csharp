@@ -19,7 +19,6 @@ type Options = {
     commitSha: string;
     targetRemoteRepo: string;
     baseBranch: string;
-    codeOwner: string;
     pat?: string;
 };
 
@@ -117,7 +116,7 @@ gulp.task('publish localization content', async () => {
     await git(['push', '-u', remoteRepoAlias]);
     const octokit = new Octokit({ auth: pat });
     const listPullRequest = await octokit.rest.pulls.list({
-        owner: parsedArgs.codeOwner,
+        owner: parsedArgs.userName,
         repo: parsedArgs.targetRemoteRepo,
         head: newBranchName,
         base: parsedArgs.baseBranch,
@@ -134,7 +133,7 @@ gulp.task('publish localization content', async () => {
 
     const pullRequest = await octokit.rest.pulls.create({
         body: `Localization result based on ${parsedArgs.commitSha}`,
-        owner: parsedArgs.codeOwner,
+        owner: parsedArgs.userName,
         repo: parsedArgs.targetRemoteRepo,
         title: `Localization result based on ${parsedArgs.commitSha}`,
         head: newBranchName,

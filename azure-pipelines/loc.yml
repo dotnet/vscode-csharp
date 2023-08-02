@@ -50,7 +50,7 @@ jobs:
       LclPackageId: 'LCL-JUNO-PROD-VSCODECS'
   - pwsh: npm run l10nDevImportXlf
     displayName: 'Import xlf to json.'
-  - pwsh: gulp 'publish localization content' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo 'dotnet/vscode-csharp' --baseBranch 'refs/head/main' --codeOwner dotnet/roslyn-ide
+  - pwsh: gulp 'publish localization content' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo 'dotnet/vscode-csharp' --baseBranch 'main'
     displayName: 'Create PR in GitHub.'
     env:
       GitHubPAT: $(BotAccount-dotnet-bot-repo-PAT)
