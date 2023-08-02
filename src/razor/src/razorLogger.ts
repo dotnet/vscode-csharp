@@ -5,13 +5,15 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { IEventEmitterFactory } from './IEventEmitterFactory';
-import { Trace } from './trace';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
+import * as l10n from '@vscode/l10n';
+import { IEventEmitterFactory } from './IEventEmitterFactory';
+import { Trace } from './trace';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';
+    public static readonly verbositySetting = 'razor.trace';
     public verboseEnabled!: boolean;
     public messageEnabled!: boolean;
     public readonly outputChannel: vscodeAdapter.OutputChannel;
@@ -158,5 +160,5 @@ function findInDirectoryOrAncestor(dir: string, filename: string) {
         searchDir = parentDir === dir ? undefined : parentDir;
     }
 
-    throw new Error(`Could not find '${filename}' in or above '${dir}'.`);
+    throw new Error(l10n.t("Could not find '{0}' in or above '{1}'.", filename, dir));
 }
