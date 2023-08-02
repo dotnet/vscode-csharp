@@ -28,6 +28,3 @@ coverage/
 
 \.DS_Store
 vsix/
-
-loc/*.xlf
-loc/loc/

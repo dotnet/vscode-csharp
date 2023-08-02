@@ -27,7 +27,6 @@ azure-pipelines
 .gitignore
 CODEOWNERS
 gulpfile.ts
-l10n/
 !install.Lock
 ISSUE_TEMPLATE
 .mocharc.jsonc
