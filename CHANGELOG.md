@@ -10,7 +10,8 @@
 - ProcessFrameworkReferences task failed unexpectedly [#5980](https://github.com/dotnet/vscode-csharp/issues/5980)
 
 ## Latest
-Updated CHANGELOG.md (PR: [#5992](https://github.com/dotnet/vscode-csharp/pull/5992))
+* Updated CHANGELOG.md (PR: [#5992](https://github.com/dotnet/vscode-csharp/pull/5992))
+* Add back accidentally excluded changelog file from vsix (PR: [#5991](https://github.com/dotnet/vscode-csharp/pull/5991))
 
 ## 2.0.320
 We are switching to the new Roslyn language server as the default. We recognize that this version doesn’t have full parity with the OmniSharp version. If you need one of these features before we can get to it, you can switch back to OmniSharp by following these [instructions](https://github.com/dotnet/vscode-csharp#how-to-use-omnisharp).
