@@ -20,7 +20,7 @@ type Options = {
     commitSha: string;
     targetRemoteRepo: string;
     baseBranch: string;
-    codeOwnwer: string;
+    codeOwner: string;
     pat?: string;
 };
 
@@ -89,29 +89,32 @@ gulp.task('publish localization content', async () => {
     await git(['add'].concat(localizationChanges));
     await git(['checkout', '-b', newBranchName]);
     await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
-    await git(['remote', 'add', 'targetRepo', parsedArgs.targetRemoteRepo]);
+
     console.log('Authenticate PAT.');
     const pat = parsedArgs.pat ?? process.env['GitHubPAT'];
     if (!pat) {
         throw 'No GitHub Pat found.';
     }
-
     const auth = createTokenAuth(pat);
     await auth();
+
+    const remoteRepoAlias = 'targetRepo'
+    // Note: don't print token
+    await git(['remote', 'add', remoteRepoAlias, `https://${parsedArgs.userName}:${pat}@github.com/${parsedArgs.targetRemoteRepo}.git`], false);
     await git(['fetch', 'targetRepo']);
 
-    const lsRemote = await git(['ls-remote', 'targetRepo', 'refs/head/' + newBranchName]);
+    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
     if (lsRemote.trim() !== '') {
         // If the localization branch of this commit already exists, don't try to create another one.
         console.log(`${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}.`);
         return;
     }
 
-    await git(['push', '-u', 'targetRepo']);
+    await git(['push', '-u', remoteRepoAlias]);
 
     const octokit = new Octokit(auth);
     const listPullRequest = await octokit.rest.pulls.list({
-        owner: parsedArgs.codeOwnwer,
+        owner: parsedArgs.codeOwner,
         repo: parsedArgs.targetRemoteRepo,
         head: newBranchName,
         base: parsedArgs.baseBranch,
@@ -128,7 +131,7 @@ gulp.task('publish localization content', async () => {
 
     const pullRequest = await octokit.rest.pulls.create({
         body: `Localization result based on ${parsedArgs.commitSha}`,
-        owner: parsedArgs.codeOwnwer,
+        owner: parsedArgs.codeOwner,
         repo: parsedArgs.targetRemoteRepo,
         title: `Localization result based on ${parsedArgs.commitSha}`,
         head: newBranchName,
@@ -147,8 +150,11 @@ async function git_diff(args: string[]): Promise<string[]> {
         .filter((fileName) => fileName.length !== 0);
 }
 
-async function git(args: string[]): Promise<string> {
-    console.log(`git ${args.join(' ')}`);
+async function git(args: string[], printCommand: boolean = true): Promise<string> {
+    if (printCommand) {
+        console.log(`git ${args.join(' ')}`);
+    }
+
     const git = spawnSync('git', args);
     if (git.status != 0) {
         const err = git.stderr.toString();
@@ -157,6 +163,8 @@ async function git(args: string[]): Promise<string> {
     }
 
     const stdout = git.stdout.toString();
-    console.log(stdout);
+    if (printCommand) {
+        console.log(stdout);
+    }
     return stdout;
 }
