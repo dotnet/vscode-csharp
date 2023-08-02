@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as l10n from '@vscode/l10n';
 import { IRazorDocumentChangeEvent } from '../document/IRazorDocumentChangeEvent';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
@@ -26,7 +25,7 @@ export class HtmlPreviewPanel {
         } else {
             this.panel = vscode.window.createWebviewPanel(
                 HtmlPreviewPanel.viewType,
-                l10n.t('Razor HTML Preview'),
+                vscode.l10n.t('Razor HTML Preview'),
                 vscode.ViewColumn.Two,
                 {
                     enableScripts: true,
@@ -62,7 +61,7 @@ export class HtmlPreviewPanel {
 
     private attachToCurrentPanel() {
         if (!this.panel) {
-            vscode.window.showErrorMessage(l10n.t('Unexpected error when attaching to HTML preview window.'));
+            vscode.window.showErrorMessage(vscode.l10n.t('Unexpected error when attaching to HTML preview window.'));
             return;
         }
 
@@ -74,7 +73,7 @@ export class HtmlPreviewPanel {
                     }
 
                     await vscode.env.clipboard.writeText(this.htmlContent);
-                    vscode.window.showInformationMessage(l10n.t('Razor HTML copied to clipboard'));
+                    vscode.window.showInformationMessage(vscode.l10n.t('Razor HTML copied to clipboard'));
                     return;
             }
         });
@@ -101,10 +100,10 @@ export class HtmlPreviewPanel {
         let content = this.htmlContent ? this.htmlContent : '';
         content = content.replace(/</g, '&lt;').replace(/</g, '&gt;');
 
-        const title = l10n.t('Report a Razor issue');
-        const hostDocumentPathLabel = l10n.t('Host document file path');
-        const virtualDocumentPathLabel = l10n.t('Virtual document file path');
-        const copyHtmlLabel = l10n.t('Copy Html');
+        const title = vscode.l10n.t('Report a Razor issue');
+        const hostDocumentPathLabel = vscode.l10n.t('Host document file path');
+        const virtualDocumentPathLabel = vscode.l10n.t('Virtual document file path');
+        const copyHtmlLabel = vscode.l10n.t('Copy Html');
 
         this.panel.webview.html = `<!DOCTYPE html>
 <html lang="en">

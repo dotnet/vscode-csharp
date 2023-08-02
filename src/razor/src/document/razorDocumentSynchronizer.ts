@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as l10n from '@vscode/l10n';
 import { CSharpProjectedDocumentContentProvider } from '../csharp/csharpProjectedDocumentContentProvider';
 import { HtmlProjectedDocumentContentProvider } from '../html/htmlProjectedDocumentContentProvider';
 import { IProjectedDocument } from '../projection/IProjectedDocument';
@@ -152,10 +151,10 @@ export class RazorDocumentSynchronizer {
         });
 
         token.onCancellationRequested((reason) => {
-            context.cancel(l10n.t('Token cancellation requested: {0}', reason));
+            context.cancel(vscode.l10n.t('Token cancellation requested: {0}', reason));
         });
         const timeoutId = setTimeout(() => {
-            context.cancel(l10n.t('Synchronization timed out'));
+            context.cancel(vscode.l10n.t('Synchronization timed out'));
         }, 2000);
         const context: SynchronizationContext = {
             projectedDocument,

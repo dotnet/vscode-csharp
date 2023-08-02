@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as l10n from '@vscode/l10n';
 import { RazorLogger } from '../razorLogger';
 import { Trace } from '../trace';
 import { ReportIssueCreator } from './reportIssueCreator';
@@ -31,7 +30,7 @@ export class ReportIssuePanel {
         } else {
             this.panel = vscode.window.createWebviewPanel(
                 ReportIssuePanel.viewType,
-                l10n.t('Report Razor Issue'),
+                vscode.l10n.t('Report Razor Issue'),
                 vscode.ViewColumn.Two,
                 {
                     enableScripts: true,
@@ -53,7 +52,9 @@ export class ReportIssuePanel {
 
     private attachToCurrentPanel() {
         if (!this.panel) {
-            vscode.window.showErrorMessage(l10n.t('Unexpected error when attaching to report Razor issue window.'));
+            vscode.window.showErrorMessage(
+                vscode.l10n.t('Unexpected error when attaching to report Razor issue window.')
+            );
             return;
         }
 
@@ -63,7 +64,7 @@ export class ReportIssuePanel {
                     if (!this.issueContent) {
                         if (!this.dataCollector) {
                             vscode.window.showErrorMessage(
-                                l10n.t('You must first start the data collection before copying.')
+                                vscode.l10n.t('You must first start the data collection before copying.')
                             );
                             return;
                         }
@@ -73,7 +74,7 @@ export class ReportIssuePanel {
                     }
 
                     await vscode.env.clipboard.writeText(this.issueContent);
-                    vscode.window.showInformationMessage(l10n.t('Razor issue copied to clipboard'));
+                    vscode.window.showInformationMessage(vscode.l10n.t('Razor issue copied to clipboard'));
                     return;
                 case 'startIssue':
                     if (this.dataCollector) {
@@ -83,19 +84,19 @@ export class ReportIssuePanel {
                     this.issueContent = undefined;
                     this.dataCollector = this.dataCollectorFactory.create();
                     vscode.window.showInformationMessage(
-                        l10n.t('Razor issue data collection started. Reproduce the issue then press "Stop"')
+                        vscode.l10n.t('Razor issue data collection started. Reproduce the issue then press "Stop"')
                     );
                     return;
                 case 'stopIssue':
                     if (!this.dataCollector) {
                         vscode.window.showErrorMessage(
-                            l10n.t('You must first start the data collection before stopping.')
+                            vscode.l10n.t('You must first start the data collection before stopping.')
                         );
                         return;
                     }
                     this.dataCollector.stop();
                     vscode.window.showInformationMessage(
-                        l10n.t('Razor issue data collection stopped. Copying issue content...')
+                        vscode.l10n.t('Razor issue data collection stopped. Copying issue content...')
                     );
                     return;
             }
@@ -118,29 +119,29 @@ export class ReportIssuePanel {
 
         let panelBodyContent = '';
         if (this.logger.trace.valueOf() === Trace.Verbose) {
-            const startButtonLabel = l10n.t('Start');
+            const startButtonLabel = vscode.l10n.t('Start');
             const startButton = `<button onclick="startIssue()">${startButtonLabel}</button>`;
-            const firstLine = l10n.t('Press {0}', startButton);
-            const secondLine = l10n.t('Perform the actions (or no action) that resulted in your Razor issue');
+            const firstLine = vscode.l10n.t('Press {0}', startButton);
+            const secondLine = vscode.l10n.t('Perform the actions (or no action) that resulted in your Razor issue');
 
-            const stopButtonLabel = l10n.t('Stop');
+            const stopButtonLabel = vscode.l10n.t('Stop');
             const stopButton = `<button onclick="stopIssue()">${stopButtonLabel}</button>`;
-            const thirdLine = l10n.t('Click {0}. This will copy all relevant issue information.', stopButton);
+            const thirdLine = vscode.l10n.t('Click {0}. This will copy all relevant issue information.', stopButton);
 
-            const gitHubAnchorLabel = l10n.t('Go to GitHub');
+            const gitHubAnchorLabel = vscode.l10n.t('Go to GitHub');
             const gitHubAnchor = `<a href="https://github.com/dotnet/razor/issues/new?template=bug_report.md&labels=vscode%2C+bug">${gitHubAnchorLabel}</a>`;
-            const fourthLine = l10n.t(
+            const fourthLine = vscode.l10n.t(
                 "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.",
                 gitHubAnchor
             );
 
             const ll_cc = vscode.env.language; // may have the 'cc' portion or just be the language 'll' portion
             const privacyAnchor = `<a href="https://privacy.microsoft.com/${ll_cc}/privacystatement">https://privacy.microsoft.com/${ll_cc}/privacystatement</a>`;
-            const privacyStatement = l10n.t(
+            const privacyStatement = vscode.l10n.t(
                 'Privacy Alert! The contents copied to your clipboard may contain personal data. Prior to posting to GitHub, please remove any personal data which should not be publicly viewable.'
             );
 
-            const copyIssueContentLabel = l10n.t('Copy issue content again');
+            const copyIssueContentLabel = vscode.l10n.t('Copy issue content again');
 
             panelBodyContent = `<ol>
     <li>${firstLine}</li>
@@ -161,7 +162,7 @@ ${privacyAnchor}
 
             panelBodyContent =
                 '<p>' +
-                l10n.t(
+                vscode.l10n.t(
                     'Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.',
                     verbositySettingName,
                     currentVerbositySettingValue,
@@ -170,7 +171,7 @@ ${privacyAnchor}
                 '</p>';
         }
 
-        const title: string = l10n.t('Report a Razor issue');
+        const title: string = vscode.l10n.t('Report a Razor issue');
         this.panel.webview.html = `<!DOCTYPE html>
 <html lang="en">
 <head>
