@@ -1,12 +1,12 @@
 /*---------------------------------------------------------------------------------------------
-*  Copyright (c) Microsoft Corporation. All rights reserved.
-*  Licensed under the MIT License. See License.txt in the project root for license information.
-*--------------------------------------------------------------------------------------------*/
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from "vscode";
-import OptionProvider from "../observers/OptionProvider";
+import * as vscode from 'vscode';
+import OptionProvider from '../shared/observers/optionProvider';
 
-const DecompilationAuthorizedOption = "csharp.decompilationAuthorized";
+const DecompilationAuthorizedOption = 'csharp.decompilationAuthorized';
 
 export async function resetDecompilationAuthorization(context: vscode.ExtensionContext) {
     context.globalState.update(DecompilationAuthorizedOption, undefined);
@@ -15,7 +15,7 @@ export async function resetDecompilationAuthorization(context: vscode.ExtensionC
 export async function getDecompilationAuthorization(context: vscode.ExtensionContext, optionProvider: OptionProvider) {
     // If decompilation is disabled, then return false
     const options = optionProvider.GetLatestOptions();
-    if (options.enableDecompilationSupport === false) {
+    if (options.omnisharpOptions.enableDecompilationSupport === false) {
         return false;
     }
 
@@ -36,7 +36,7 @@ export async function getDecompilationAuthorization(context: vscode.ExtensionCon
 enum PromptResult {
     Dismissed,
     Yes,
-    No
+    No,
 }
 
 interface PromptItem extends vscode.MessageItem {
@@ -44,7 +44,7 @@ interface PromptItem extends vscode.MessageItem {
 }
 
 async function promptToAcceptDecompilationTerms() {
-    return new Promise<PromptResult>((resolve, reject) => {
+    return new Promise<PromptResult>((resolve, _) => {
         const message = `IMPORTANT: C# extension includes decompiling functionality (“Decompiler”) that enables reproducing source code from binary code. By accessing and using the Decompiler, you agree to the terms for the Decompiler below. If you do not agree with these terms, do not access or use the Decompiler.
 
 You acknowledge that binary code and source code might be protected by copyright and trademark laws.  Before using the Decompiler on any binary code, you need to first:
@@ -62,7 +62,8 @@ I agree to all of the foregoing:`;
         const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
         const noItem: PromptItem = { title: 'No', result: PromptResult.No, isCloseAffordance: true };
 
-        vscode.window.showWarningMessage(message, messageOptions, noItem, yesItem)
-            .then(selection => resolve(selection?.result ?? PromptResult.Dismissed));
+        vscode.window
+            .showWarningMessage(message, messageOptions, noItem, yesItem)
+            .then((selection) => resolve(selection?.result ?? PromptResult.Dismissed));
     });
 }

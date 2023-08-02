@@ -1,15 +1,15 @@
 /*---------------------------------------------------------------------------------------------
-*  Copyright (c) Microsoft Corporation. All rights reserved.
-*  Licensed under the MIT License. See License.txt in the project root for license information.
-*--------------------------------------------------------------------------------------------*/
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from "vscode";
-import * as semver from "semver";
-import { getDotnetInfo } from "../utils/getDotnetInfo";
-import { Options } from "./options";
-import { getMonoVersion } from "../utils/getMonoVersion";
-import { OmniSharpMonoResolver } from "./OmniSharpMonoResolver";
-import { getMSBuildVersion } from "../utils/getMSBuildInfo";
+import * as vscode from 'vscode';
+import * as semver from 'semver';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
+import { Options } from '../shared/options';
+import { getMonoVersion } from '../utils/getMonoVersion';
+import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
+import { getMSBuildVersion } from '../utils/getMsBuildInfo';
 
 export interface RequirementResult {
     needsDotNetSdk: boolean;
@@ -24,7 +24,7 @@ export async function validateRequirements(options: Options): Promise<boolean> {
         const downloadSdk = await promptToDownloadDotNetSDK();
 
         if (downloadSdk === PromptResult.Yes) {
-            let dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
+            const dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
             vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
         } else if (downloadSdk === PromptResult.No) {
             vscode.commands.executeCommand('workbench.action.openGlobalSettings');
@@ -33,13 +33,13 @@ export async function validateRequirements(options: Options): Promise<boolean> {
         return false;
     }
 
-    if (result.needsMono
-        || result.needsMSBuildTools) { // Since we are currently not checking for MSBuild Tools on Windows this indicates a partial install of Mono.
+    if (result.needsMono || result.needsMSBuildTools) {
+        // Since we are currently not checking for MSBuild Tools on Windows this indicates a partial install of Mono.
 
         const downloadMono = await promptToDownloadMono();
 
         if (downloadMono === PromptResult.Yes) {
-            let monoURL = 'https://www.mono-project.com/download/stable/';
+            const monoURL = 'https://www.mono-project.com/download/stable/';
             vscode.env.openExternal(vscode.Uri.parse(monoURL));
         } else if (downloadMono === PromptResult.No) {
             vscode.commands.executeCommand('workbench.action.openGlobalSettings');
@@ -52,8 +52,8 @@ export async function validateRequirements(options: Options): Promise<boolean> {
 }
 
 async function checkRequirements(options: Options): Promise<RequirementResult> {
-    if (options.useModernNet) {
-        const dotnetInfo = await getDotnetInfo(options.dotNetCliPaths);
+    if (options.omnisharpOptions.useModernNet) {
+        const dotnetInfo = await getDotnetInfo(options.omnisharpOptions.dotNetCliPaths);
         const needsDotNetSdk = dotnetInfo.Version === undefined || semver.lt(dotnetInfo.Version, '6.0.0');
         return {
             needsDotNetSdk,
@@ -69,8 +69,7 @@ async function checkRequirements(options: Options): Promise<RequirementResult> {
             needsDotNetSdk: false,
             needsMono: false,
         };
-    }
-    else {
+    } else {
         const monoResolver = new OmniSharpMonoResolver(getMonoVersion);
         let monoError = false;
         try {
@@ -92,7 +91,7 @@ async function checkRequirements(options: Options): Promise<RequirementResult> {
 enum PromptResult {
     Dismissed,
     Yes,
-    No
+    No,
 }
 
 interface PromptItem extends vscode.MessageItem {
@@ -100,29 +99,33 @@ interface PromptItem extends vscode.MessageItem {
 }
 
 async function promptToDownloadDotNetSDK() {
-    return new Promise<PromptResult>((resolve, reject) => {
-        const message = 'OmniSharp requires an install of the .NET SDK to provide language services when `omnisharp.useModernNet` is enabled in Settings. Please install the latest .NET SDK and restart vscode. If you continue see this error after installing .NET and restarting vscode, you may need to log out and log back in or restart your system for changes to the PATH to take effect.';
+    return new Promise<PromptResult>((resolve, _) => {
+        const message =
+            'OmniSharp requires an install of the .NET SDK to provide language services when `omnisharp.useModernNet` is enabled in Settings. Please install the latest .NET SDK and restart vscode. If you continue see this error after installing .NET and restarting vscode, you may need to log out and log back in or restart your system for changes to the PATH to take effect.';
 
         const messageOptions: vscode.MessageOptions = { modal: true };
 
         const yesItem: PromptItem = { title: 'Get the SDK', result: PromptResult.Yes };
         const noItem: PromptItem = { title: 'Open settings', result: PromptResult.No, isCloseAffordance: true };
 
-        vscode.window.showErrorMessage(message, messageOptions, noItem, yesItem)
-            .then(selection => resolve(selection?.result ?? PromptResult.Dismissed));
+        vscode.window
+            .showErrorMessage(message, messageOptions, noItem, yesItem)
+            .then((selection) => resolve(selection?.result ?? PromptResult.Dismissed));
     });
 }
 
 async function promptToDownloadMono() {
-    return new Promise<PromptResult>((resolve, reject) => {
-        const message = 'OmniSharp requires a complete install of Mono (including MSBuild) to provide language services when `omnisharp.useModernNet` is disabled in Settings. Please install the latest Mono and restart.';
+    return new Promise<PromptResult>((resolve, _) => {
+        const message =
+            'OmniSharp requires a complete install of Mono (including MSBuild) to provide language services when `omnisharp.useModernNet` is disabled in Settings. Please install the latest Mono and restart.';
 
         const messageOptions: vscode.MessageOptions = { modal: true };
 
         const yesItem: PromptItem = { title: 'Download Mono', result: PromptResult.Yes };
         const noItem: PromptItem = { title: 'Open settings', result: PromptResult.No, isCloseAffordance: true };
 
-        vscode.window.showErrorMessage(message, messageOptions, noItem, yesItem)
-            .then(selection => resolve(selection?.result ?? PromptResult.Dismissed));
+        vscode.window
+            .showErrorMessage(message, messageOptions, noItem, yesItem)
+            .then((selection) => resolve(selection?.result ?? PromptResult.Dismissed));
     });
 }

@@ -41,15 +41,15 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/featureTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/featureTests",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "featureTests"
+                "OSVC_SUITE": "featureTests",
             },
             "sourceMaps": true,
             "outFiles": [
@@ -63,21 +63,21 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "singleCsproj"
+                "OSVC_SUITE": "singleCsproj",
             },
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/dist/*.js"
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
             ],
             "preLaunchTask": "buildDev"
         },
@@ -87,17 +87,16 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "BasicRazorApp2_1"
+                "OSVC_SUITE": "BasicRazorApp2_1",
             },
         },
         {
@@ -106,21 +105,111 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
-                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "slnWithCsproj"
+                "OSVC_SUITE": "slnWithCsproj",
             },
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/dist/*.js"
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "LSP Tools Host: Launch slnWithCsproj Workspace Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/lsptoolshosttest/lspToolsHostIntegrationTests",
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "slnWithCsproj",
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/bluetest/**/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Launch singleCsproj Workspace Tests [LSP]",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "singleCsproj",
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Launch razorcsproj Workspace Tests [LSP]",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "BasicRazorApp2_1",
+            },
+        },
+        {
+            "name": "Launch slnWithCsproj Workspace Tests [LSP]",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "slnWithCsproj",
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
             ],
             "preLaunchTask": "buildDev"
         },
@@ -130,21 +219,21 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "slnFilterWithCsproj"
+                "OSVC_SUITE": "slnFilterWithCsproj",
             },
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/dist/*.js"
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
             ],
             "preLaunchTask": "buildDev"
         },
@@ -154,21 +243,21 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "--disable-extensions",
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
-                "CODE_WORKSPACE_ROOT": "${workspaceRoot}",
-                "CODE_TESTS_PATH": "${workspaceRoot}/out/test/integrationTests",
-                "CODE_TESTS_WORKSPACE": "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "OSVC_SUITE": "slnWithGenerator"
+                "OSVC_SUITE": "slnWithGenerator",
             },
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceRoot}/dist/*.js"
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
             ],
             "preLaunchTask": "buildDev"
         },
@@ -186,6 +275,21 @@
                 "NEW_DEPS_VERSION": "1.39.7"
             },
             "cwd": "${workspaceFolder}"
-        }
+        },
+        {
+          "type": "node",
+          "request": "launch",
+          "name": "Update razor package dependencies",
+          "preLaunchTask": "build",
+          "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+          "args": [
+              "updatePackageDependencies"
+          ],
+          "env": {
+              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/6301924acc5020d6545f4573bbb70b88/razorlanguageserver-linux-arm64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/4e07791acfef2a373dbe497ab2477d55/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/28003bc9d9c7fdfc288dd113be8fe64d/razorlanguageserver-linux-musl-x64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/c22da9d1dbcbf7fd50bd893d845414d7/razorlanguageserver-linux-x64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/4be79e180c7421f9234ffdbed655a83c/razorlanguageserver-osx-arm64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/814246e6af4cf35db8151d0ee0e82021/razorlanguageserver-osx-x64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/0b1fb7614fbe7a9a9cd2c5470c8865fa/razorlanguageserver-win-arm64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/c51fc9fae3f6fa2b1992df6dd16f50d2/razorlanguageserver-win-x64-7.0.0-preview.23301.2.zip,https://download.visualstudio.microsoft.com/download/pr/fddc6f7e-083a-44bd-9a8d-200a4146b13b/17ba6e72f65b30a6ddd68dade60343e8/razorlanguageserver-win-x86-7.0.0-preview.23301.2.zip",
+              "NEW_DEPS_VERSION": "7.0.0-preview.23301.2"
+          },
+          "cwd": "${workspaceFolder}"
+      }
     ]
 }

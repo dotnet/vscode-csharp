@@ -4,11 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { assert } from "chai";
-import { LaunchTargetKind, resourcesAndFolderMapToLaunchTargets, resourcesToLaunchTargets, vsls, vslsTarget } from "../../src/omnisharp/launcher";
+import { assert } from 'chai';
+import {
+    resourcesAndFolderMapToLaunchTargets,
+    resourcesToLaunchTargets,
+    vsls,
+    vslsTarget,
+} from '../../src/omnisharp/launcher';
+import { LaunchTargetKind } from '../../src/shared/launchTarget';
 
 suite(`launcher:`, () => {
-    const workspaceFolders: vscode.WorkspaceFolder[] = [{ uri: vscode.Uri.parse('/'), name: "root", index: 0 }];
+    const workspaceFolders: vscode.WorkspaceFolder[] = [{ uri: vscode.Uri.parse('/'), name: 'root', index: 0 }];
     const maxProjectResults = 250;
 
     test(`Returns the LiveShare launch target when processing vsls resources`, () => {
@@ -20,8 +26,8 @@ suite(`launcher:`, () => {
 
         const launchTargets = resourcesToLaunchTargets(testResources, workspaceFolders, maxProjectResults);
 
-        const liveShareTarget = launchTargets.find(target => target === vslsTarget);
-        assert.exists(liveShareTarget, "Launch targets was not the Visual Studio Live Share target.");
+        const liveShareTarget = launchTargets.find((target) => target === vslsTarget);
+        assert.exists(liveShareTarget, 'Launch targets was not the Visual Studio Live Share target.');
     });
 
     test(`Does not return the LiveShare launch target when processing local resources`, () => {
@@ -32,10 +38,15 @@ suite(`launcher:`, () => {
         ];
         const folderMap = new Map<number, vscode.Uri[]>([[0, testResources]]);
 
-        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, workspaceFolders, folderMap, maxProjectResults);
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(
+            testResources,
+            workspaceFolders,
+            folderMap,
+            maxProjectResults
+        );
 
-        const liveShareTarget = launchTargets.find(target => target === vslsTarget);
-        assert.notExists(liveShareTarget, "Launch targets contained the Visual Studio Live Share target.");
+        const liveShareTarget = launchTargets.find((target) => target === vslsTarget);
+        assert.notExists(liveShareTarget, 'Launch targets contained the Visual Studio Live Share target.');
     });
 
     test(`Returns a Solution and Project target`, () => {
@@ -46,12 +57,21 @@ suite(`launcher:`, () => {
         ];
         const folderMap = new Map<number, vscode.Uri[]>([[0, testResources]]);
 
-        const launchTargets = resourcesAndFolderMapToLaunchTargets(testResources, workspaceFolders, folderMap, maxProjectResults);
+        const launchTargets = resourcesAndFolderMapToLaunchTargets(
+            testResources,
+            workspaceFolders,
+            folderMap,
+            maxProjectResults
+        );
 
-        const solutionTarget = launchTargets.find(target => target.workspaceKind === LaunchTargetKind.Solution && target.label === "test.sln");
-        assert.exists(solutionTarget, "Launch targets did not include `/test.sln`");
+        const solutionTarget = launchTargets.find(
+            (target) => target.workspaceKind === LaunchTargetKind.Solution && target.label === 'test.sln'
+        );
+        assert.exists(solutionTarget, 'Launch targets did not include `/test.sln`');
 
-        const projectTarget = launchTargets.find(target => target.workspaceKind === LaunchTargetKind.Project && target.label === "test.csproj");
-        assert.exists(projectTarget, "Launch targets did not include `/test/test.csproj`");
+        const projectTarget = launchTargets.find(
+            (target) => target.workspaceKind === LaunchTargetKind.Project && target.label === 'test.csproj'
+        );
+        assert.exists(projectTarget, 'Launch targets did not include `/test/test.csproj`');
     });
 });

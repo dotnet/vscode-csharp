@@ -5,10 +5,10 @@
 
 import { TextDocument, TextDocumentContentProvider, Uri, workspace } from 'vscode';
 import { MetadataResponse } from '../omnisharp/protocol';
-import { IDisposable } from '../Disposable';
+import { IDisposable } from '../disposable';
 
 export default class DefinitionMetadataDocumentProvider implements TextDocumentContentProvider, IDisposable {
-    readonly scheme = "omnisharp-metadata";
+    readonly scheme = 'omnisharp-metadata';
     private _registration?: IDisposable;
     private _documents: Map<string, MetadataResponse>;
     private _documentClosedSubscription: IDisposable;
@@ -53,7 +53,8 @@ export default class DefinitionMetadataDocumentProvider implements TextDocumentC
     }
 
     private createUri(sourceName: string): Uri {
-        return Uri.parse(this.scheme + "://" +
-            sourceName.replace(/\\/g, "/").replace(/(.*)\/(.*)/g, "$1/[metadata] $2"));
+        return Uri.parse(
+            this.scheme + '://' + sourceName.replace(/\\/g, '/').replace(/(.*)\/(.*)/g, '$1/[metadata] $2')
+        );
     }
 }

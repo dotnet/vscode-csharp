@@ -3,34 +3,34 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { LinuxDistribution } from '../../src/platform';
+import { LinuxDistribution } from '../../src/shared/platform';
 import { should } from 'chai';
 
-suite("Platform", () => {
+suite('Platform', () => {
     suiteSetup(() => should());
 
-    test("Retrieve correct information for Ubuntu 14.04", () => {
+    test('Retrieve correct information for Ubuntu 14.04', () => {
         const dist = distro_ubuntu_14_04();
 
         dist.name.should.equal('ubuntu');
         dist.version.should.equal('14.04');
     });
 
-    test("Retrieve correct information for Fedora 23", () => {
+    test('Retrieve correct information for Fedora 23', () => {
         const dist = distro_fedora_23();
 
         dist.name.should.equal('fedora');
         dist.version.should.equal('23');
     });
 
-    test("Retrieve correct information for Debian 8", () => {
+    test('Retrieve correct information for Debian 8', () => {
         const dist = distro_debian_8();
 
         dist.name.should.equal('debian');
         dist.version.should.equal('8');
     });
 
-    test("Retrieve correct information for CentOS 7", () => {
+    test('Retrieve correct information for CentOS 7', () => {
         const dist = distro_centos_7();
 
         dist.name.should.equal('centos');

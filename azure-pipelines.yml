@@ -1,0 +1,44 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - feature/*
+    - prerelease
+    - main
+
+pr:
+- feature/*
+- prerelease
+- main
+
+variables:
+  - name: prereleaseFlag
+    value: '--prerelease'
+
+stages:
+- stage: Build
+  dependsOn: []
+  jobs:
+  - job: Build
+    steps:
+    - template: azure-pipelines/build.yml
+      parameters:
+        prereleaseFlag: $(prereleaseFlag)
+    pool:
+      name: NetCore-Public
+      demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+
+- stage: Test
+  displayName: Test
+  dependsOn: []
+  jobs:
+  - job: Test
+    strategy:
+      matrix:
+        linux:
+          demandsName: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+    pool:
+      name: NetCore-Public
+      demands: $(demandsName)
+    steps:
+    - template: azure-pipelines/test.yml

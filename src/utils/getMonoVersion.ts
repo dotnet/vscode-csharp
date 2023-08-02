@@ -9,24 +9,23 @@ import { IGetMonoVersion } from '../constants/IGetMonoVersion';
 export const getMonoVersion: IGetMonoVersion = async (environment: NodeJS.ProcessEnv) => {
     const versionRegexp = /(\d+\.\d+\.\d+)/;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _) => {
         const childprocess = spawn('mono', ['--version'], { env: environment });
         childprocess.on('error', () => {
             resolve(undefined);
         });
 
         let stdout = '';
-        childprocess.stdout.on('data', data => {
+        childprocess.stdout.on('data', (data) => {
             stdout += data.toString();
         });
 
         childprocess.stdout.on('close', () => {
-            let match = versionRegexp.exec(stdout);
+            const match = versionRegexp.exec(stdout);
 
             if (match && match.length > 1) {
                 resolve(match[1]);
-            }
-            else {
+            } else {
                 resolve(undefined);
             }
         });

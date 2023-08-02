@@ -1,0 +1,14 @@
+{
+    "folders": [
+        {
+            "path": ".."
+        }
+    ],
+    "settings": {
+        "omnisharp.path": "latest",
+        "omnisharp.enableRoslynAnalyzers": true,
+        "dotnet.server.useOmnisharp": true,
+        "omnisharp.enableLspDriver": true,
+        "dotnet.defaultSolution": "b_SecondInOrder_SlnFile.sln",
+    }
+}

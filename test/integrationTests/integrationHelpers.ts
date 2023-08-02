@@ -5,10 +5,10 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import CSharpExtensionExports from '../../src/CSharpExtensionExports';
 import { Advisor } from '../../src/features/diagnosticsProvider';
-import { EventStream } from '../../src/EventStream';
-import { EventType } from '../../src/omnisharp/EventType';
+import { EventStream } from '../../src/eventStream';
+import { EventType } from '../../src/omnisharp/eventType';
+import { OmnisharpExtensionExports } from '../../src/csharpExtensionExports';
 
 export interface ActivationResult {
     readonly advisor: Advisor;
@@ -16,35 +16,51 @@ export interface ActivationResult {
 }
 
 export async function activateCSharpExtension(): Promise<ActivationResult> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
+    const vscodeDotnetRuntimeExtensionId = 'ms-dotnettools.vscode-dotnet-runtime';
+    const dotnetRuntimeExtension =
+        vscode.extensions.getExtension<OmnisharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
+    if (!dotnetRuntimeExtension) {
+        await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId);
+        await vscode.commands.executeCommand('workbench.action.reloadWindow');
+    }
+
+    const configuration = vscode.workspace.getConfiguration();
+    configuration.update(
+        'omnisharp.enableLspDriver',
+        process.env.OMNISHARP_DRIVER === 'lsp' ? true : false,
+        vscode.ConfigurationTarget.WorkspaceFolder
+    );
+    if (process.env.OMNISHARP_LOCATION) {
+        configuration.update('path', process.env.OMNISHARP_LOCATION, vscode.ConfigurationTarget.WorkspaceFolder);
+    }
+
+    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
-        throw new Error("Failed to find installation of ms-dotnettools.csharp");
+        throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
-    if (!csharpExtension.isActive) {
-        await csharpExtension.activate();
-    }
+    // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
+    await csharpExtension.activate();
 
-    try {
-        await csharpExtension.exports.initializationFinished();
-        const advisor = await csharpExtension.exports.getAdvisor();
-        const eventStream = csharpExtension.exports.eventStream;
-        console.log("ms-dotnettools.csharp activated");
-        return {
-            advisor: advisor,
-            eventStream: eventStream
-        };
-    }
-    catch (err) {
-        console.log(JSON.stringify(err));
-        throw err;
-    }
+    await csharpExtension.exports.initializationFinished();
+    console.log('ms-dotnettools.csharp activated');
+
+    // Output the directory where logs are being written so if a test fails we can match it to the right logs.
+    console.log(`Extension log directory: ${csharpExtension.exports.logDirectory}`);
+
+    const activationResult: ActivationResult = {
+        advisor: await csharpExtension.exports.getAdvisor(),
+        eventStream: csharpExtension.exports.eventStream,
+    };
+
+    return activationResult;
 }
 
 export async function restartOmniSharpServer(): Promise<void> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
+    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
-        throw new Error("Failed to find installation of ms-dotnettools.csharp");
+        throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
     if (!csharpExtension.isActive) {
@@ -52,18 +68,17 @@ export async function restartOmniSharpServer(): Promise<void> {
     }
 
     try {
-        await new Promise<void>(resolve => {
-            const hook = csharpExtension.exports.eventStream.subscribe(event => {
+        await new Promise<void>((resolve) => {
+            const hook = csharpExtension.exports.eventStream.subscribe((event) => {
                 if (event.type == EventType.OmnisharpStart) {
                     hook.unsubscribe();
                     resolve();
                 }
             });
-            vscode.commands.executeCommand("o.restart");
+            vscode.commands.executeCommand('o.restart');
         });
-        console.log("OmniSharp restarted");
-    }
-    catch (err) {
+        console.log('OmniSharp restarted');
+    } catch (err) {
         console.log(JSON.stringify(err));
         throw err;
     }
@@ -78,7 +93,7 @@ export function isSlnWithCsproj(workspace: typeof vscode.workspace) {
 }
 
 export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
-    return isGivenSln(workspace,  'slnWithGenerator');
+    return isGivenSln(workspace, 'slnWithGenerator');
 }
 
 function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {
