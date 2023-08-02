@@ -53,8 +53,8 @@
   ],
   "scripts": {
     "vscode:prepublish": "tsc -p ./ && webpack --mode production",
-    "compile": "tsc -p ./ && npx eslint ./",
-    "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development",
+    "compile": "tsc -p ./ && npx eslint ./ && gulp l10nDevGenerateLocalizationBundle",
+    "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development && gulp l10nDevGenerateLocalizationBundle",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
     "test": "tsc -p ./ && gulp test",
