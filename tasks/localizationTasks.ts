@@ -115,10 +115,9 @@ gulp.task('publish localization content', async () => {
 
     await git(['push', '-u', remoteRepoAlias]);
     const octokit = new Octokit({ auth: pat });
-    const remoteRepoUri = `https://github.com/${parsedArgs.targetRemoteRepo}.git`;
     const listPullRequest = await octokit.rest.pulls.list({
-        owner: parsedArgs.userName,
-        repo: remoteRepoUri,
+        owner: 'dotnet',
+        repo: 'vscode-csharp',
         head: newBranchName,
         base: parsedArgs.baseBranch,
     });
@@ -134,8 +133,8 @@ gulp.task('publish localization content', async () => {
 
     const pullRequest = await octokit.rest.pulls.create({
         body: `Localization result based on ${parsedArgs.commitSha}`,
-        owner: parsedArgs.userName,
-        repo: remoteRepoUri,
+        owner: 'dotnet',
+        repo: 'vscode-csharp',
         title: `Localization result based on ${parsedArgs.commitSha}`,
         head: newBranchName,
         base: parsedArgs.baseBranch,
