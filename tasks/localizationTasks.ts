@@ -6,7 +6,6 @@
 import * as gulp from 'gulp';
 import * as process from 'node:process';
 import * as minimist from 'minimist';
-import { createTokenAuth } from '@octokit/auth-token';
 import { spawnSync } from 'node:child_process';
 import * as fs from 'fs';
 import * as path from 'path';
