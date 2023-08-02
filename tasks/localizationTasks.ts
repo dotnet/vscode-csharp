@@ -128,6 +128,7 @@ gulp.task('publish localization content', async () => {
 
     if (listPullRequest.data.length > 0) {
         console.log('Pull request already exists.');
+        console.log(listPullRequest.data);
         return;
     }
 
