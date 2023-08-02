@@ -14,9 +14,8 @@ import { EOL } from 'node:os';
 import { Octokit } from '@octokit/rest';
 
 type Options = {
-    userName: string;
-    email: string;
-    owner: string;
+    userName?: string;
+    email?: string;
     commitSha: string;
     targetRemoteRepo: string;
     baseBranch: string;
@@ -111,8 +110,13 @@ gulp.task('publish localization content', async () => {
     }
     await git(['reset']);
     const newBranchName = `localization/${parsedArgs.commitSha}`;
-    await git(['config', '--local', 'user.name', parsedArgs.userName]);
-    await git(['config', '--local', 'user.email', parsedArgs.email]);
+    // Make this optional so it can be tested locally by using dev's information. In real CI user name and email are always supplied.
+    if (parsedArgs.userName) {
+        await git(['config', '--local', 'user.name', parsedArgs.userName]);
+    }
+    if (parsedArgs.email) {
+        await git(['config', '--local', 'user.email', parsedArgs.email]);
+    }
 
     console.log(`Changed files going to be staged: ${localizationChanges}`);
     await git(['add'].concat(localizationChanges));
@@ -130,7 +134,7 @@ gulp.task('publish localization content', async () => {
             'remote',
             'add',
             remoteRepoAlias,
-            `https://${parsedArgs.userName}:${pat}@github.com/${parsedArgs.owner}/${parsedArgs.targetRemoteRepo}.git`,
+            `https://${parsedArgs.userName}:${pat}@github.com/dotnet/${parsedArgs.targetRemoteRepo}.git`,
         ],
         // Note: don't print PAT to console
         false
@@ -147,7 +151,7 @@ gulp.task('publish localization content', async () => {
 
     const octokit = new Octokit({ auth: pat });
     const listPullRequest = await octokit.rest.pulls.list({
-        owner: parsedArgs.owner,
+        owner: 'dotnet',
         repo: parsedArgs.targetRemoteRepo,
     });
 
@@ -163,7 +167,7 @@ gulp.task('publish localization content', async () => {
 
     const pullRequest = await octokit.rest.pulls.create({
         body: title,
-        owner: parsedArgs.owner,
+        owner: 'dotnet',
         repo: parsedArgs.targetRemoteRepo,
         title: title,
         head: newBranchName,
