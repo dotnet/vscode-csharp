@@ -27,5 +27,5 @@ export default async function spawnNode(args?: string[], options?: SpawnSyncOpti
 
     const buffer = spawnSync(nodePath, args, optionsWithFullEnvironment);
 
-    return { code: buffer.status, signal: buffer.signal, stdout: buffer.stdout };
+    return { code: buffer.status, signal: buffer.signal };
 }
