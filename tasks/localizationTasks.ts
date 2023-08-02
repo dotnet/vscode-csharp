@@ -98,9 +98,17 @@ gulp.task('publish localization content', async () => {
     const auth = createTokenAuth(pat);
     await auth();
 
-    const remoteRepoAlias = 'targetRepo'
+    const remoteRepoAlias = 'targetRepo';
     // Note: don't print token
-    await git(['remote', 'add', remoteRepoAlias, `https://${parsedArgs.userName}:${pat}@github.com/${parsedArgs.targetRemoteRepo}.git`], false);
+    await git(
+        [
+            'remote',
+            'add',
+            remoteRepoAlias,
+            `https://${parsedArgs.userName}:${pat}@github.com/${parsedArgs.targetRemoteRepo}.git`,
+        ],
+        false
+    );
     await git(['fetch', 'targetRepo']);
 
     const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
@@ -150,7 +158,7 @@ async function git_diff(args: string[]): Promise<string[]> {
         .filter((fileName) => fileName.length !== 0);
 }
 
-async function git(args: string[], printCommand: boolean = true): Promise<string> {
+async function git(args: string[], printCommand = true): Promise<string> {
     if (printCommand) {
         console.log(`git ${args.join(' ')}`);
     }
