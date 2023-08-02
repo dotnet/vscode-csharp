@@ -118,17 +118,15 @@ gulp.task('publish localization content', async () => {
     const listPullRequest = await octokit.rest.pulls.list({
         owner: 'dotnet',
         repo: 'vscode-csharp',
-        head: newBranchName,
-        base: parsedArgs.baseBranch,
     });
 
     if (listPullRequest.status != 200) {
         throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
     }
 
-    if (listPullRequest.data.length > 0) {
+    const title = `Localization result based on ${parsedArgs.commitSha}`;
+    if (listPullRequest.data.some((pr) => pr.title === title)) {
         console.log('Pull request already exists.');
-        console.log(listPullRequest.data);
         return;
     }
 
@@ -136,7 +134,7 @@ gulp.task('publish localization content', async () => {
         body: `Localization result based on ${parsedArgs.commitSha}`,
         owner: 'dotnet',
         repo: 'vscode-csharp',
-        title: `Localization result based on ${parsedArgs.commitSha}`,
+        title: title,
         head: newBranchName,
         base: parsedArgs.baseBranch,
     });
