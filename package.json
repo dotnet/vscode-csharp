@@ -53,8 +53,9 @@
   ],
   "scripts": {
     "vscode:prepublish": "tsc -p ./ && webpack --mode production",
-    "compile": "tsc -p ./ && npx eslint ./ && gulp l10nDevGenerateLocalizationBundle",
-    "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development && gulp l10nDevGenerateLocalizationBundle",
+    "l10nDevGenerateLocalizationBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
+    "compile": "tsc -p ./ && npx eslint ./ && npm run l10nDevGenerateLocalizationBundle",
+    "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development && npm run l10nDevGenerateLocalizationBundle",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
     "test": "tsc -p ./ && gulp test",
@@ -67,7 +68,6 @@
     "test:artifacts": "tsc -p ./ && mocha out/test/artifactTests/**/*.test.js",
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "updatePackageDependencies": "gulp updatePackageDependencies",
-    "l10nDevGenerateLocalizationBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
     "l10nDevGenerateXlf": "npx @vscode/l10n-dev generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile ./loc/vscode-csharp.xlf",
     "l10nDevImportXlf": "npx @vscode/l10n-dev import-xlf ./loc/vscode-csharp.*.xlf --outDir ./l10n"
   },
