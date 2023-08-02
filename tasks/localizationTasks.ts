@@ -41,12 +41,12 @@ function getGeneratedLocalizationChanges(diffFilesAndDirectories: string[]): str
             stat.isFile() &&
             allPossibleLocalizationFileNames.some((locFileName) => path.basename(diffFileOrDirectory) === locFileName)
         ) {
-            console.log(`${diffFileOrDirectory} is changed as localization file.`);
+            console.log(`${diffFileOrDirectory} is changed.`);
             changedLocFilesOrDirectory.push(diffFileOrDirectory);
         }
 
         if (stat.isDirectory() && diffFileOrDirectory !== 'l10n') {
-            console.log('l10n is changed as localization directory.');
+            console.log('l10n is changed.');
             changedLocFilesOrDirectory.push('l10n');
         }
     }
@@ -84,6 +84,8 @@ gulp.task('publish localization content', async () => {
     const newBranchName = `localization/${parsedArgs.commitSha}`;
     await git(['config', '--local', 'user.name', parsedArgs.userName]);
     await git(['config', '--local', 'user.email', parsedArgs.email]);
+
+    console.log(`Changed files going to be staged: ${localizationChanges}`);
     await git(['add'].concat(localizationChanges));
     await git(['checkout', '-b', newBranchName]);
     await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
@@ -119,12 +121,12 @@ gulp.task('publish localization content', async () => {
         throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
     }
 
-    if (listPullRequest.data.some((pr) => pr.state === 'open')) {
+    if (listPullRequest.data.length > 0) {
         console.log('Pull request already exists.');
         return;
     }
 
-    await octokit.rest.pulls.create({
+    const pullRequest = await octokit.rest.pulls.create({
         body: `Localization result based on ${parsedArgs.commitSha}`,
         owner: parsedArgs.codeOwnwer,
         repo: parsedArgs.targetRemoteRepo,
@@ -132,6 +134,7 @@ gulp.task('publish localization content', async () => {
         head: newBranchName,
         base: parsedArgs.baseBranch,
     });
+    console.log(`Created pull request: ${pullRequest.url}.`);
 });
 
 async function git_diff(args: string[]): Promise<string[]> {
@@ -154,5 +157,6 @@ async function git(args: string[]): Promise<string> {
     }
 
     const stdout = git.stdout.toString();
+    console.log(stdout);
     return stdout;
 }
