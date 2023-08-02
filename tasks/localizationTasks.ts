@@ -90,13 +90,10 @@ gulp.task('publish localization content', async () => {
     await git(['checkout', '-b', newBranchName]);
     await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
 
-    console.log('Authenticate PAT.');
     const pat = parsedArgs.pat ?? process.env['GitHubPAT'];
     if (!pat) {
         throw 'No GitHub Pat found.';
     }
-    const auth = createTokenAuth(pat);
-    await auth();
 
     const remoteRepoAlias = 'targetRepo';
     // Note: don't print token
@@ -119,8 +116,8 @@ gulp.task('publish localization content', async () => {
     }
 
     await git(['push', '-u', remoteRepoAlias]);
-
-    const octokit = new Octokit({ auth });
+    const octokit = new Octokit({ auth: pat });
+    await octokit.auth();
     const listPullRequest = await octokit.rest.pulls.list({
         owner: parsedArgs.codeOwner,
         repo: parsedArgs.targetRemoteRepo,

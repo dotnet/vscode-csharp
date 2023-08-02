@@ -19,6 +19,7 @@ jobs:
   - task: NodeTool@0
     displayName: 'Install Node.js 18.x'
     inputs:
+      # Octokit client needs 18.x to have 'fetch' function.
       versionSpec: '18.x'
   - checkout: self
     clean: true
