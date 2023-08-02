@@ -4,11 +4,13 @@ trigger:
     include:
     - feature/*
     - prerelease
+    - release
     - main
 
 pr:
 - feature/*
 - prerelease
+- release
 - main
 
 variables:
