@@ -27,11 +27,11 @@ function getAllPossibleLocalizationFiles(): string[] {
     const files = [];
     for (const lang of localizationLanguages) {
         for (const file of locFiles) {
-            files.push('l10n' + path.delimiter + util.format(file, lang));
+            files.push('l10n' + path.sep + util.format(file, lang));
         }
     }
     // English
-    files.push(`l10n${path.delimiter}bundle.l10n.json`);
+    files.push(`l10n${path.sep}bundle.l10n.json`);
     return files;
 }
 
