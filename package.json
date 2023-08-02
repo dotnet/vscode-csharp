@@ -1333,7 +1333,7 @@
         "properties": {
           "dotnet.defaultSolution": {
             "type": "string",
-            "description": "$configuration.dotnet.defaultSolution.description%",
+            "description": "%configuration.dotnet.defaultSolution.description%",
             "order": 0
           },
           "dotnet.dotnetPath": {
