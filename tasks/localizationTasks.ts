@@ -120,7 +120,9 @@ gulp.task('publish localization content', async () => {
     const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
     if (lsRemote.trim() !== '') {
         // If the localization branch of this commit already exists, don't try to create another one.
-        console.log(`${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}. Skip pushing.`);
+        console.log(
+            `##vso[task.logissue type=error]${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}. Skip pushing.`
+        );
     } else {
         await git(['push', '-u', remoteRepoAlias]);
     }
