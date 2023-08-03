@@ -1,16 +1,19 @@
-## Known Issues in 1.25.8
+## Known Issues in 2.0.320
+ 
+- Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
+- [O# Parity] FixAll support for code fixes and refactorings [#5735](https://github.com/dotnet/vscode-csharp/issues/5735)
+- [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
+- [O# Parity] Support loading non-solution based projects/files [#5722](https://github.com/dotnet/vscode-csharp/issues/5722)
+- [O# Parity] Out of proc design time builds / legacy csproj support [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
+- [O# Parity] Run and debug tests in context [#5719](https://github.com/dotnet/vscode-csharp/issues/5719)
+- Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
+- ProcessFrameworkReferences task failed unexpectedly [#5980](https://github.com/dotnet/vscode-csharp/issues/5980)
 
-* For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useModernNet": false`.
-* After selecting a solution filter (*.slnf) from the project selector, the solution's name will be displayed in the status bar instead of the filter's.
-* Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
-  * Not all platforms ship with the Razor LSP, such as Linux arm64.
-  * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
-  * Error squiggles misaligned for expressions near the start of a new line
-  * Emmet based abbreviation expansion is not yet supported (See note in readme for how to enable through your settings.json)
-* There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
-  * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
-* Renaming symbol fails within a file that had recently been renamed without saving changes.
-  * As a workaround, make an edit within the file before using Rename Symbol.
+## Latest
+Updated CHANGELOG.md (PR: [#5992](https://github.com/dotnet/vscode-csharp/pull/5992))
+
+## 2.0.320
+We are switching to the new Roslyn language server as the default. We recognize that this version doesn’t have full parity with the OmniSharp version. If you need one of these features before we can get to it, you can switch back to OmniSharp by following these [instructions](https://github.com/dotnet/vscode-csharp#how-to-use-omnisharp).
 
 ## 1.26.1
 * Update Razor to 7.0.0-preview.23363.1
