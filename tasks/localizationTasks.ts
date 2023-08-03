@@ -11,7 +11,6 @@ import * as path from 'path';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
 import { Octokit } from '@octokit/rest';
-import * as fs from 'fs';
 
 type Options = {
     userName?: string;
@@ -28,19 +27,11 @@ function getAllPossibleLocalizationFiles(): string[] {
     const files = [];
     for (const lang of localizationLanguages) {
         for (const file of locFiles) {
-            const filePath = 'l10n' + path.sep + util.format(file, lang);
-            files.push(filePath);
+            files.push('l10n' + path.sep + util.format(file, lang));
         }
     }
-
     // English
     files.push(`l10n${path.sep}bundle.l10n.json`);
-    files.forEach((file) => {
-        if (!fs.existsSync(file)) {
-            throw `${file} doesn't exist!`;
-        }
-    });
-
     return files;
 }
 
