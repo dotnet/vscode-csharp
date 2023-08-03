@@ -143,7 +143,6 @@ export class RoslynLanguageServer {
             // Register the server for plain csharp documents
             documentSelector: documentSelector,
             synchronize: {
-                // Notify the server about file changes to all supported files contained in the workspace
                 fileEvents: [],
             },
             traceOutputChannel: _traceChannel,
