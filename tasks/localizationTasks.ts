@@ -71,7 +71,7 @@ gulp.task('publish localization content', async () => {
     const localizationChanges = getAllPossibleLocalizationFiles();
     await git(['add'].concat(localizationChanges));
 
-    const diff = await git_diff(['--name-only']);
+    const diff = await git_diff(['--name-only', 'HEAD']);
     if (diff.length == 0) {
         console.log('No localization file changed');
         return;
