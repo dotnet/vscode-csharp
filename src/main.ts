@@ -314,6 +314,11 @@ export async function activate(
         );
     }
 
+    const activationProperties: { [key: string]: string } = {
+        serverKind: useOmnisharpServer ? 'OmniSharp' : 'Roslyn',
+    };
+    reporter.sendTelemetryEvent('CSharpActivated', activationProperties);
+
     if (!useOmnisharpServer) {
         tryGetCSharpDevKitExtensionExports(csharpLogObserver);
 
