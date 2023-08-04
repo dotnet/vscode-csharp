@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
-import * as l10n from '@vscode/l10n';
 import { IEventEmitterFactory } from './IEventEmitterFactory';
 import { Trace } from './trace';
 
@@ -160,5 +159,5 @@ function findInDirectoryOrAncestor(dir: string, filename: string) {
         searchDir = parentDir === dir ? undefined : parentDir;
     }
 
-    throw new Error(l10n.t("Could not find '{0}' in or above '{1}'.", filename, dir));
+    throw new Error(vscode.l10n.t("Could not find '{0}' in or above '{1}'.", filename, dir));
 }

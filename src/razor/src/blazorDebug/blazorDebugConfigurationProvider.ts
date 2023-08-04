@@ -7,7 +7,6 @@ import { promises, readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
-import * as l10n from '@vscode/l10n';
 import { ChromeBrowserFinder, EdgeBrowserFinder } from 'vscode-js-debug-browsers';
 import { RazorLogger } from '../razorLogger';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
@@ -16,7 +15,7 @@ import showInformationMessage from '../../../shared/observers/utils/showInformat
 import showErrorMessage from '../../../observers/utils/showErrorMessage';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
-    private static readonly autoDetectUserNotice: string = l10n.t(
+    private static readonly autoDetectUserNotice: string = vscode.l10n.t(
         'Run and Debug: auto-detection found {0} for a launch browser'
     );
     private static readonly edgeBrowserType: string = 'msedge';
@@ -165,11 +164,11 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             await this.vscodeType.debug.startDebugging(folder, browser);
         } catch (error) {
             this.logger.logError('[DEBUGGER] Error when launching browser debugger: ', error as Error);
-            const message = l10n.t(
+            const message = vscode.l10n.t(
                 'There was an unexpected error while launching your debugging session. Check the console for helpful logs and visit the debugging docs for more info.'
             );
-            const viewDebugDocsButton = l10n.t('View Debug Docs');
-            const ignoreButton = l10n.t('Ignore');
+            const viewDebugDocsButton = vscode.l10n.t('View Debug Docs');
+            const ignoreButton = vscode.l10n.t('Ignore');
             this.vscodeType.window.showErrorMessage(message, viewDebugDocsButton, ignoreButton).then(async (result) => {
                 if (result === viewDebugDocsButton) {
                     const debugDocsUri = 'https://aka.ms/blazorwasmcodedebug';
@@ -202,7 +201,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             return BlazorDebugConfigurationProvider.edgeBrowserType;
         }
 
-        showErrorMessage(vscode, l10n.t('Run and Debug: A valid browser is not installed'));
+        showErrorMessage(vscode, vscode.l10n.t('Run and Debug: A valid browser is not installed'));
         return undefined;
     }
 }

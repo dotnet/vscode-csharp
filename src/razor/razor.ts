@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import * as RazorOmniSharp from 'microsoft.aspnetcore.razor.vscode';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as l10n from '@vscode/l10n';
 import * as Razor from '../../src/razor/src/extension';
 import { EventStream } from '../eventStream';
 
@@ -40,7 +39,10 @@ export async function activateRazorExtension(
         }
     } else {
         vscode.window.showWarningMessage(
-            l10n.t("Cannot load Razor language server because the directory was not found: '{0}'", languageServerDir)
+            vscode.l10n.t(
+                "Cannot load Razor language server because the directory was not found: '{0}'",
+                languageServerDir
+            )
         );
     }
 }
