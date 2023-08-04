@@ -10,6 +10,9 @@
 - ProcessFrameworkReferences task failed unexpectedly [#5980](https://github.com/dotnet/vscode-csharp/issues/5980)
 
 ## Latest
+* Update Roslyn to 4.8.0-1.23403.6 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
+  * Upgrade NuGet.Frameworks to fix loading projects with the 7.0.4xx (PR:[#69354](https://github.com/dotnet/roslyn/pull/69354))
+  * Emulate suggestion mode in LSP completion by always soft-select (PR:[#69327](https://github.com/dotnet/roslyn/pull/69327))
 * Updated CHANGELOG.md (PR: [#5992](https://github.com/dotnet/vscode-csharp/pull/5992))
 * Add back accidentally excluded changelog file from vsix (PR: [#5991](https://github.com/dotnet/vscode-csharp/pull/5991))
 
