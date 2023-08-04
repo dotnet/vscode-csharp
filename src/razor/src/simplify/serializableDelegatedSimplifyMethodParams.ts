@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { OptionalVersionedTextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { SerializableTextDocumentIdentifierAndVersion } from './serializableTextDocumentIdentifierAndVersion';
+import { TextEdit } from 'vscode-html-languageservice';
 
-export interface SerializableDelegatedSimplifyTypeNamesParams {
+export interface SerializableDelegatedSimplifyMethodParams {
     identifier: SerializableTextDocumentIdentifierAndVersion;
-    codeBehindIdentifier: OptionalVersionedTextDocumentIdentifier;
-    fullyQualifiedTypeNames: string[];
-    absoluteIndex: number;
+    requiresVirtualDocument: boolean;
+    textEdit: TextEdit;
 }

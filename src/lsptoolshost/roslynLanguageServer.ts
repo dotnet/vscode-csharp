@@ -61,7 +61,8 @@ import { DotnetRuntimeExtensionResolver } from './dotnetRuntimeExtensionResolver
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
 import { registerUnitTestingCommands } from './unitTesting';
-import SerializableSimplifyTypeNamesParams from '../razor/src/simplify/serializableSimplifyTypeNamesParams';
+import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
+import { TextEdit } from 'vscode-html-languageservice';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -77,7 +78,7 @@ export class RoslynLanguageServer {
     public static readonly resolveCodeActionCommand: string = 'roslyn.resolveCodeAction';
     public static readonly provideCompletionsCommand: string = 'roslyn.provideCompletions';
     public static readonly resolveCompletionsCommand: string = 'roslyn.resolveCompletion';
-    public static readonly roslynSimplifyTypeNamesCommand: string = 'roslyn.simplifyTypeNames';
+    public static readonly roslynSimplifyTypeNamesCommand: string = 'roslyn.simplifyMethod';
     public static readonly razorInitializeCommand: string = 'razor.initialize';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
@@ -896,12 +897,10 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
     context.subscriptions.push(
         vscode.commands.registerCommand(
             RoslynLanguageServer.roslynSimplifyTypeNamesCommand,
-            async (request: SerializableSimplifyTypeNamesParams) => {
-                const simplifyTypeNamesRequestType = new RequestType<
-                    SerializableSimplifyTypeNamesParams,
-                    string[],
-                    any
-                >('textDocument/simplifyTypeNames');
+            async (request: SerializableSimplifyMethodParams) => {
+                const simplifyTypeNamesRequestType = new RequestType<SerializableSimplifyMethodParams, TextEdit[], any>(
+                    'roslyn/simplifyMethod'
+                );
                 return await languageServer.sendRequest(simplifyTypeNamesRequestType, request, CancellationToken.None);
             }
         )

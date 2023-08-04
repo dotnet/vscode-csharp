@@ -12,14 +12,15 @@ import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
-import { SerializableDelegatedSimplifyTypeNamesParams } from './serializableDelegatedSimplifyTypeNamesParams';
+import { SerializableDelegatedSimplifyMethodParams } from './serializableDelegatedSimplifyMethodParams';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
-import SerializableSimplifyTypeNamesParams from './serializableSimplifyTypeNamesParams';
+import SerializableSimplifyMethodParams from './serializableSimplifyMethodParams';
+import { TextEdit } from 'vscode-html-languageservice';
 
-export class RazorSimplifyTypeNamesHandler extends RazorLanguageFeatureBase {
-    private static readonly razorSimplifyTypeNamesCommand = 'razor/simplifyTypeNames';
-    private simplifyTypeNamesRequestType: RequestType<SerializableDelegatedSimplifyTypeNamesParams, string[], any> =
-        new RequestType(RazorSimplifyTypeNamesHandler.razorSimplifyTypeNamesCommand);
+export class RazorSimplifyMethodHandler extends RazorLanguageFeatureBase {
+    private static readonly razorSimplifyMethodCommand = 'razor/simplifyMethod';
+    private simplifyTypeNamesRequestType: RequestType<SerializableDelegatedSimplifyMethodParams, TextEdit[], any> =
+        new RequestType(RazorSimplifyMethodHandler.razorSimplifyMethodCommand);
 
     constructor(
         documentSynchronizer: RazorDocumentSynchronizer,
@@ -33,34 +34,34 @@ export class RazorSimplifyTypeNamesHandler extends RazorLanguageFeatureBase {
 
     public async register() {
         await this.serverClient.onRequestWithParams<
-            SerializableDelegatedSimplifyTypeNamesParams,
-            string[] | undefined,
+            SerializableDelegatedSimplifyMethodParams,
+            TextEdit[] | undefined,
             any
         >(
             this.simplifyTypeNamesRequestType,
-            async (request: SerializableDelegatedSimplifyTypeNamesParams, token: vscode.CancellationToken) =>
+            async (request: SerializableDelegatedSimplifyMethodParams, token: vscode.CancellationToken) =>
                 this.getSimplifiedTypeNames(request, token)
         );
     }
 
     private async getSimplifiedTypeNames(
-        request: SerializableDelegatedSimplifyTypeNamesParams,
+        request: SerializableDelegatedSimplifyMethodParams,
         _: vscode.CancellationToken
-    ): Promise<string[] | undefined> {
+    ): Promise<TextEdit[] | undefined> {
         if (!this.documentManager.roslynActivated) {
             return undefined;
         }
 
-        const razorDocumentUri = vscode.Uri.parse(request.identifier.textDocumentIdentifier.uri, true);
-        const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
-        const virtualCSharpUri = razorDocument.csharpDocument.uri;
-        const params = new SerializableSimplifyTypeNamesParams(
-            TextDocumentIdentifier.create(UriConverter.serialize(virtualCSharpUri)),
-            request.codeBehindIdentifier,
-            request.fullyQualifiedTypeNames,
-            request.absoluteIndex
-        );
-        const response: string[] | undefined = await vscode.commands.executeCommand(
+        let identifier = request.identifier.textDocumentIdentifier;
+        if (request.requiresVirtualDocument) {
+            const razorDocumentUri = vscode.Uri.parse(request.identifier.textDocumentIdentifier.uri, true);
+            const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
+            const virtualCSharpUri = razorDocument.csharpDocument.uri;
+            identifier = TextDocumentIdentifier.create(UriConverter.serialize(virtualCSharpUri));
+        }
+
+        const params = new SerializableSimplifyMethodParams(identifier, request.textEdit);
+        const response: TextEdit[] | undefined = await vscode.commands.executeCommand(
             RoslynLanguageServer.roslynSimplifyTypeNamesCommand,
             params
         );
