@@ -1,0 +1,73 @@
+trigger: none
+pr: none
+
+parameters:
+  - name: publishLocalizationFile
+    type: boolean
+    default: true
+
+variables:
+# Variable group contains the PAT to LOC
+- group: OneLocBuildVariables
+
+stages:
+- stage: LocalizationStage
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+  jobs:
+  - job: Localization
+    pool:
+      name: NetCore1ESPool-Internal
+      demands: ImageOverride -equals windows.vs2022preview.amd64
+    steps:
+    - task: NodeTool@0
+      displayName: 'Install Node.js 18.x'
+      inputs:
+        # Octokit client needs 18.x to have 'fetch' function.
+        versionSpec: '18.x'
+    - checkout: self
+      clean: true
+      submodules: true
+      fetchTags: false
+      fetchDepth: 0
+    - pwsh: | 
+        npm install
+        npm install -g @vscode/l10n-dev
+        npm install -g gulp
+      displayName: 'Install tools'
+    - pwsh: npm run compile
+      displayName: 'Compile'
+    - pwsh: npm run l10nDevGenerateLocalizationBundle
+      displayName: 'Generate bundle.l10.json'
+    - pwsh: npm run l10nDevGenerateXlf
+      displayName: 'Generate xlf files from bundle.10n.json'
+    - task: OneLocBuild@2
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+      inputs:
+        locProj: loc/LocProject.json
+        outDir: '$(Build.SourcesDirectory)/loc'
+        isCreatePrSelected: false
+        patVariable: $(dn-bot-ceapex-package-r)
+        packageSourceAuth: patAuth
+        lclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-VSCODECS'
+    - pwsh: npm run l10nDevImportXlf
+      displayName: 'Import xlf to json.'
+    - pwsh: gulp 'publish localization content' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --commitSha $(Build.SourceVersion) --targetRemoteRepo vscode-csharp --baseBranch 'main'
+      displayName: 'Create PR in GitHub.'
+      env:
+        GitHubPAT: $(BotAccount-dotnet-bot-repo-PAT)
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Localization Files'
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/loc'
+        PublishLocation: Container
+        ArtifactName: Loc
+      condition: ${{ parameters.publishLocalizationFile }}
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish l10n file'
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/l10n'
+        PublishLocation: Container
+        ArtifactName: l10n
+      condition: ${{ parameters.publishLocalizationFile }}

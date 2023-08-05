@@ -519,7 +519,7 @@ export class RoslynLanguageServer {
                     return;
                 }
 
-                const title = 'Restart Language Server';
+                const title = vscode.l10n.t('Restart Language Server');
                 const command = 'dotnet.restartServer';
                 if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
                     // We previously started without C# Dev Kit and its now installed.

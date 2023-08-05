@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Trace } from './trace';
-import * as vscode from './vscodeAdapter';
-import * as l10n from '@vscode/l10n';
+import * as vscodeAdapter from './vscodeAdapter';
+import * as vscode from 'vscode';
 
-export function resolveRazorLanguageServerTrace(vscodeApi: vscode.api) {
+export function resolveRazorLanguageServerTrace(vscodeApi: vscodeAdapter.api) {
     const languageConfig = vscodeApi.workspace.getConfiguration('razor');
     const traceString = languageConfig.get<string>('trace');
     const trace = parseTraceString(traceString);
@@ -24,7 +24,7 @@ function parseTraceString(traceString: string | undefined) {
         case 'Verbose':
             return Trace.Verbose;
         default:
-            console.log(l10n.t("Invalid trace setting for Razor language server. Defaulting to '{0}'", 'Off'));
+            console.log(vscode.l10n.t("Invalid trace setting for Razor language server. Defaulting to '{0}'", 'Off'));
             return Trace.Off;
     }
 }

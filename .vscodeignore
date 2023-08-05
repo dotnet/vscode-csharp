@@ -30,7 +30,10 @@ gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
 .mocharc.jsonc
+!README.md
+!CHANGELOG.md
 *.md
+CONTRIBUTING.md
 *.vscodeignore
 *.yml
 package-lock.json
