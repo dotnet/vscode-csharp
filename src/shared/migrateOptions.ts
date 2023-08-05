@@ -57,6 +57,14 @@ export const migrateOptions = [
         omnisharpOption: 'omnisharp.enableImportCompletion',
         roslynOption: 'dotnet.completion.showCompletionItemsFromUnimportedNamespaces',
     },
+    {
+        omnisharpOption: 'csharp.referencesCodeLens.enabled',
+        roslynOption: 'dotnet.codeLens.enableReferencesCodeLens',
+    },
+    {
+        omnisharpOption: 'csharp.testsCodeLens.enabled',
+        roslynOption: 'dotnet.codeLens.enableTestsCodeLens',
+    },
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {

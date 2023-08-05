@@ -164,8 +164,18 @@ export class Options {
         const dotNetCliPaths = Options.readOption<string[]>(config, 'omnisharp.dotNetCliPaths', []);
 
         const useFormatting = Options.readOption<boolean>(config, 'csharp.format.enable', true);
-        const showReferencesCodeLens = Options.readOption<boolean>(config, 'csharp.referencesCodeLens.enabled', true);
-        const showTestsCodeLens = Options.readOption<boolean>(config, 'csharp.testsCodeLens.enabled', true);
+        const showReferencesCodeLens = Options.readOption<boolean>(
+            config,
+            'dotnet.codeLens.enableReferencesCodeLens',
+            true,
+            'csharp.referencesCodeLens.enabled'
+        );
+        const showTestsCodeLens = Options.readOption<boolean>(
+            config,
+            'dotnet.codeLens.enableTestsCodeLens',
+            true,
+            'csharp.testsCodeLens.enabled'
+        );
         const filteredSymbolsCodeLens = Options.readOption<string[]>(
             config,
             'csharp.referencesCodeLens.filteredSymbols',

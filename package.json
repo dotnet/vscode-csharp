@@ -36,7 +36,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.8.0-1.23403.6",
+    "roslyn": "4.8.0-1.23404.8",
     "omniSharp": "1.39.7",
     "razor": "7.0.0-preview.23328.2",
     "razorOmnisharp": "7.0.0-preview.23363.1"
@@ -1138,11 +1138,6 @@
             "default": true,
             "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
           },
-          "csharp.referencesCodeLens.enabled": {
-            "type": "boolean",
-            "default": true,
-            "description": "Specifies whether the references CodeLens should be shown."
-          },
           "csharp.referencesCodeLens.filteredSymbols": {
             "type": "array",
             "items": {
@@ -1150,11 +1145,6 @@
             },
             "default": [],
             "description": "Array of custom symbol names for which CodeLens should be disabled."
-          },
-          "csharp.testsCodeLens.enabled": {
-            "type": "boolean",
-            "default": true,
-            "description": "Specifies whether the run and debug test CodeLens should be shown."
           },
           "csharp.maxProjectFileCountForDiagnosticAnalysis": {
             "type": "number",
@@ -1402,6 +1392,16 @@
             ],
             "description": "Generation behavior of properties when implement interface or abstract class.",
             "order": 10
+          },
+          "dotnet.codeLens.enableReferencesCodeLens": {
+            "type": "boolean",
+            "default": true,
+            "description": "Specifies whether the references CodeLens should be shown."
+          },
+          "dotnet.codeLens.enableTestsCodeLens": {
+            "type": "boolean",
+            "default": true,
+            "description": "Specifies whether the run and debug test CodeLens should be shown."
           },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",

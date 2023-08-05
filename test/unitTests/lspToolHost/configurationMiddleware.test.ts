@@ -209,6 +209,26 @@ const testData = [
         vsCodeConfiguration: null,
         declareInPackageJson: false,
     },
+    {
+        serverOption: 'csharp|code_lens.dotnet_enable_references_code_lens',
+        vsCodeConfiguration: 'dotnet.codeLens.enableReferencesCodeLens',
+        declareInPackageJson: true,
+    },
+    {
+        serverOption: 'mystery_language|code_lens.dotnet_enable_references_code_lens',
+        vsCodeConfiguration: null,
+        declareInPackageJson: false,
+    },
+    {
+        serverOption: 'csharp|code_lens.dotnet_enable_tests_code_lens',
+        vsCodeConfiguration: 'dotnet.codeLens.enableTestsCodeLens',
+        declareInPackageJson: true,
+    },
+    {
+        serverOption: 'mystery_language|code_lens.dotnet_enable_tests_code_lens',
+        vsCodeConfiguration: null,
+        declareInPackageJson: false,
+    },
 ];
 
 suite('Server option name to vscode configuration name test', () => {
