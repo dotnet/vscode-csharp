@@ -1,20 +1,19 @@
-## Known Issues in 2.0.320
+## Known Issues
  
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - [O# Parity] FixAll support for code fixes and refactorings [#5735](https://github.com/dotnet/vscode-csharp/issues/5735)
 - [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
-- [O# Parity] Support loading non-solution based projects/files [#5722](https://github.com/dotnet/vscode-csharp/issues/5722)
-- [O# Parity] Out of proc design time builds / legacy csproj support [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
+- [O# Parity] Support loading projects/files without a solution file [#5722](https://github.com/dotnet/vscode-csharp/issues/5722)
+- [O# Parity] Some csproj projects will not correctly load [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
 - [O# Parity] Run and debug tests in context [#5719](https://github.com/dotnet/vscode-csharp/issues/5719)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
-- ProcessFrameworkReferences task failed unexpectedly [#5980](https://github.com/dotnet/vscode-csharp/issues/5980)
 
 ## Latest
-* Update Roslyn to 4.8.0-1.23403.6 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
-  * Upgrade NuGet.Frameworks to fix loading projects with the 7.0.4xx (PR:[#69354](https://github.com/dotnet/roslyn/pull/69354))
-  * Emulate suggestion mode in LSP completion by always soft-select (PR:[#69327](https://github.com/dotnet/roslyn/pull/69327))
+* Update Roslyn to 4.8.0-1.23403.6 (PR: [#6003](https://github.com/dotnet/vscode-csharp/pull/6003))
+  * Fix issue where the ProcessFrameworkReferences task causes projects to fail to load (PR: [#69354](https://github.com/dotnet/roslyn/pull/69354))
+  * Emulate suggestion mode in LSP completion by always soft-selecting (PR: [#69327](https://github.com/dotnet/roslyn/pull/69327))
 * Updated CHANGELOG.md (PR: [#5992](https://github.com/dotnet/vscode-csharp/pull/5992))
-* Add back accidentally excluded changelog file from vsix (PR: [#5991](https://github.com/dotnet/vscode-csharp/pull/5991))
+* Add back accidentally-excluded changelog file from the extension (PR: [#5991](https://github.com/dotnet/vscode-csharp/pull/5991))
 
 ## 2.0.320
 We are switching to the new Roslyn language server as the default. We recognize that this version doesn’t have full parity with the OmniSharp version. If you need one of these features before we can get to it, you can switch back to OmniSharp by following these [instructions](https://github.com/dotnet/vscode-csharp#how-to-use-omnisharp).
