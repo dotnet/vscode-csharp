@@ -1,6 +1,16 @@
 trigger: none
 pr: none
 
+resources:
+  pipelines:
+    - pipeline: releaseCI
+      source: dotnet-vscode-csharp
+      trigger:
+        branches:
+          include:
+            - prerelease
+            - release
+
 parameters:
   - name: test
     type: boolean
@@ -22,58 +32,62 @@ jobs:
     vmImage: ubuntu-latest
   steps:
   - task: DownloadPipelineArtifact@2
-    displayName: '📦 Download artifacts from build pipeline.'
+    displayName: '[Manual release]📦 Download artifacts from build pipeline. .'
+    condition: eq(variables['Build.Reason'], 'Manual')
     inputs:
       buildType: 'specific'
       project: 'internal'
       definition: 1264
       buildVersionToDownload: 'latestFromBranch'
       branchName: 'refs/heads/${{ parameters.branch }}'
+  - download: releaseCI
+    displayName: '[Auto release]📦 Download artifacts from build pipeline..'
+    condition: eq(variables['Build.Reason'], 'ResourceTrigger')
   - pwsh: |
       npm install --global vsce
     displayName: 'Install vsce'
-  - pwsh: |
-      # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-      $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
-      if ($allArtifacts.Length -eq 0) {
-        throw "No Artifacts is downloaded."
-      }
+  # - pwsh: |
+  #     # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
+  #     $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
+  #     if ($allArtifacts.Length -eq 0) {
+  #       throw "No Artifacts is downloaded."
+  #     }
 
-      $publishArtifacts = $allArtifacts[0]
-      Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+  #     $publishArtifacts = $allArtifacts[0]
+  #     Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
-      $additionalPublishArgs = , "publish"
-      # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-      If ("${{ parameters.branch }}" -eq "prerelease") {
-        $additionalPublishArgs += "--pre-release"
-        Write-Host "Publish to pre-release channel."
-      } ElseIf ("${{ parameters.branch }}" -eq "release") {
-        Write-Host "Publish to release channel."
-      } Else {
-        throw "Unexpected branch name: ${{ parameters.branch }}."
-      }
-      $additionalPublishArgs += '--packagePath'
+  #     $additionalPublishArgs = , "publish"
+  #     # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
+  #     If ("${{ parameters.branch }}" -eq "prerelease") {
+  #       $additionalPublishArgs += "--pre-release"
+  #       Write-Host "Publish to pre-release channel."
+  #     } ElseIf ("${{ parameters.branch }}" -eq "release") {
+  #       Write-Host "Publish to release channel."
+  #     } Else {
+  #       throw "Unexpected branch name: ${{ parameters.branch }}."
+  #     }
+  #     $additionalPublishArgs += '--packagePath'
 
-      $platforms = "arm64", "x64", "ia32"
-      $allVsixs = Get-ChildItem $publishArtifacts *.vsix
-      foreach ($vsix in $allVsixs) {
-        foreach ($plat in $platforms) {
-          if ($vsix.Name.Contains($plat)) {
-              $additionalPublishArgs += $vsix
-          }
-        }
-      }
+  #     $platforms = "arm64", "x64", "ia32"
+  #     $allVsixs = Get-ChildItem $publishArtifacts *.vsix
+  #     foreach ($vsix in $allVsixs) {
+  #       foreach ($plat in $platforms) {
+  #         if ($vsix.Name.Contains($plat)) {
+  #             $additionalPublishArgs += $vsix
+  #         }
+  #       }
+  #     }
 
-      Write-Host "Command run is: vsce $($additionalPublishArgs)."
-      If ("${{ parameters.test }}" -eq "true") {
-        Write-Host "In test mode, command is printed instead of run."
-        Write-Host "🔒 Verify PAT."
-        vsce verify-pat ms-dotnettools
-      }
-      Else {
-        vsce @additionalPublishArgs
-      }
-    displayName: 🚀 Publish to Marketplace
-    workingDirectory: $(Pipeline.Workspace)
-    env:
-      VSCE_PAT: $(VSCodeMarketplacePAT)
+  #     Write-Host "Command run is: vsce $($additionalPublishArgs)."
+  #     If ("${{ parameters.test }}" -eq "true") {
+  #       Write-Host "In test mode, command is printed instead of run."
+  #       Write-Host "🔒 Verify PAT."
+  #       vsce verify-pat ms-dotnettools
+  #     }
+  #     Else {
+  #       vsce @additionalPublishArgs
+  #     }
+  #   displayName: 🚀 Publish to Marketplace
+  #   workingDirectory: $(Pipeline.Workspace)
+  #   env:
+  #     VSCE_PAT: $(VSCodeMarketplacePAT)
