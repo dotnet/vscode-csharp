@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
 
 export interface WorkspaceDebugConfigurationParams {
@@ -116,6 +117,12 @@ export interface DebugAttachResult {
     didAttach: boolean;
 }
 
+export interface ShowToastNotificationParams {
+    messageType: lsp.MessageType;
+    message: string;
+    commands: Command[];
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -140,6 +147,12 @@ export namespace ProjectInitializationCompleteNotification {
     export const method = 'workspace/projectInitializationComplete';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.NotificationType(method);
+}
+
+export namespace ShowToastNotification {
+    export const method = 'window/showToast';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.NotificationType<ShowToastNotificationParams>(method);
 }
 
 export namespace RunTestsRequest {
