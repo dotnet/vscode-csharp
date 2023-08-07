@@ -150,7 +150,7 @@ export namespace ProjectInitializationCompleteNotification {
 }
 
 export namespace ShowToastNotification {
-    export const method = 'window/showToast';
+    export const method = 'window/_roslyn_showToast';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.NotificationType<ShowToastNotificationParams>(method);
 }
