@@ -116,6 +116,14 @@ export interface DebugAttachResult {
     didAttach: boolean;
 }
 
+export interface OpenSolutionParams {
+    solution: lsp.DocumentUri;
+}
+
+export interface OpenProjectParams {
+    projects: lsp.DocumentUri[];
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -158,4 +166,16 @@ export namespace DebugAttachRequest {
     export const method = 'workspace/attachDebugger';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.RequestType<DebugAttachParams, DebugAttachResult, void>(method);
+}
+
+export namespace OpenSolutionNotification {
+    export const method = 'solution/open';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.NotificationType<OpenSolutionParams>(method);
+}
+
+export namespace OpenProjectNotification {
+    export const method = 'project/open';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.NotificationType<OpenProjectParams>(method);
 }

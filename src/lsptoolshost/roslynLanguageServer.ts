@@ -48,8 +48,6 @@ import ShowInformationMessage from '../shared/observers/utils/showInformationMes
 import EventEmitter = require('events');
 import Disposable from '../disposable';
 import * as RoslynProtocol from './roslynProtocol';
-import { OpenSolutionParams } from './openSolutionParams';
-import { OpenProjectParams } from './openProjectParams';
 import { CSharpDevKitExports } from '../csharpDevKitExports';
 import { ISolutionSnapshotProvider, SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
 import { Options } from '../shared/options';
@@ -338,14 +336,18 @@ export class RoslynLanguageServer {
         if (this._languageClient !== undefined && this._languageClient.isRunning()) {
             if (this._solutionFile !== undefined) {
                 const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
-                await this._languageClient.sendNotification('solution/open', new OpenSolutionParams(protocolUri));
+                await this._languageClient.sendNotification(RoslynProtocol.OpenSolutionNotification.type, {
+                    solution: protocolUri,
+                });
             }
 
             if (this._projectFiles.length > 0) {
                 const projectProtocolUris = this._projectFiles.map((uri) =>
                     this._languageClient!.clientOptions.uriConverters!.code2Protocol(uri)
                 );
-                await this._languageClient.sendNotification('project/open', new OpenProjectParams(projectProtocolUris));
+                await this._languageClient.sendNotification(RoslynProtocol.OpenProjectNotification.type, {
+                    projects: projectProtocolUris,
+                });
             }
         }
     }
