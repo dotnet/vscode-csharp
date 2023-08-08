@@ -68,13 +68,13 @@ jobs:
 
       $additionalPublishArgs = , "publish"
       # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-      If (("${{ parameters.branch }}" -eq "prerelease") -or ("$(resources.pipeline.CI.sourceBranch)" -eq "refs/heads/prerelease")) {
+      If (("${{ parameters.branch }}" -eq "prerelease") -or ("$(resources.pipeline.releaseCI.sourceBranch)" -eq "refs/heads/prerelease")) {
         $additionalPublishArgs += "--pre-release"
         Write-Host "Publish to pre-release channel."
-      } ElseIf (("${{ parameters.branch }}" -eq "release") -or ("$(resources.pipeline.CI.sourceBranch)" -eq "refs/heads/release")) {
+      } ElseIf (("${{ parameters.branch }}" -eq "release") -or ("$(resources.pipeline.releaseCI.sourceBranch)" -eq "refs/heads/release")) {
         Write-Host "Publish to release channel."
       } Else {
-        throw "Unexpected branch name: ${{ parameters.branch }} or $(resources.pipeline.CI.sourceBranch)."
+        throw "Unexpected branch name: ${{ parameters.branch }} or $(resources.pipeline.releaseCI.sourceBranch)."
       }
       $additionalPublishArgs += '--packagePath'
 
