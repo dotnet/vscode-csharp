@@ -105,6 +105,11 @@ export async function updatePackageDependencies(): Promise<void> {
 
         // First build the map
         packageJSON.runtimeDependencies.forEach((dependency) => {
+            // If a packageId is specified, only look at dependencies for that package
+            if (packageId && dependency.id.toLowerCase() !== packageId.toLowerCase()) {
+                return;
+            }
+
             const fileName = getLowercaseFileNameFromUrl(dependency.url);
             const existingDependency = mapFileNameToDependency[fileName];
             if (existingDependency !== undefined) {
