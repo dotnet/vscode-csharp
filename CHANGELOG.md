@@ -10,7 +10,7 @@
 
 ## Latest
 * Change how hint diagnostics are shown so they aren't shown as blue squiggles (PR: [#69403](https://github.com/dotnet/roslyn/pull/69403))
-* Tell the language server to open projects if no solution exists (PR: [#6062](https://github.com/dotnet/vscode-csharp/pull/6062))
+* Load projects even if there is no solution file (PR: [#6062](https://github.com/dotnet/vscode-csharp/pull/6062))
 * Show toast when project loading fails (PR: [#6060](https://github.com/dotnet/vscode-csharp/pull/6060))
 * Fix misleading lsp server logs (PR: [#69378](https://github.com/dotnet/roslyn/pull/69378))
 * Add support for code lens enable/disable options to roslyn LSP (PR: [#6001](https://github.com/dotnet/vscode-csharp/pull/6001))
