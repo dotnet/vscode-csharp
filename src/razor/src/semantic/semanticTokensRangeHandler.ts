@@ -43,7 +43,7 @@ export class SemanticTokensRangeHandler {
         // This is currently a no-op since (1) the default C# semantic tokens experience is already powerful and
         // (2) there seems to be an issue with the semantic tokens execute command - possibly either O# not
         // returning tokens, or an issue with the command itself:
-        // https://github.com/dotnet/razor-tooling/issues/6922
+        // https://github.com/dotnet/razor/issues/6922
         return this.emptySemanticTokensResponse;
     }
 }
