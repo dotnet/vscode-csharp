@@ -27,7 +27,8 @@
     ".NET",
     "ASP.NET",
     ".NET Core",
-    "dotnet"
+    "dotnet",
+    "coreclr"
   ],
   "capabilities": {
     "virtualWorkspaces": false,
