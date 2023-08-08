@@ -9,7 +9,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Use hint diagnostics in vscode for better rendering in the editor (PR: [#69403](https://github.com/dotnet/roslyn/pull/69403))
+* Change how hint diagnostics are shown so they aren't shown as blue squiggles (PR: [#69403](https://github.com/dotnet/roslyn/pull/69403))
 * Tell the language server to open projects if no solution exists (PR: [#6062](https://github.com/dotnet/vscode-csharp/pull/6062))
 * Show toast when project loading fails (PR: [#6060](https://github.com/dotnet/vscode-csharp/pull/6060))
 * Fix misleading lsp server logs (PR: [#69378](https://github.com/dotnet/roslyn/pull/69378))
