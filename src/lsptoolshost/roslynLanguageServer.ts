@@ -49,7 +49,6 @@ import ShowInformationMessage from '../shared/observers/utils/showInformationMes
 import EventEmitter = require('events');
 import Disposable from '../disposable';
 import * as RoslynProtocol from './roslynProtocol';
-import { OpenSolutionParams } from './openSolutionParams';
 import { CSharpDevKitExports } from '../csharpDevKitExports';
 import { ISolutionSnapshotProvider, SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
 import { Options } from '../shared/options';
@@ -114,6 +113,9 @@ export class RoslynLanguageServer {
      * of trying to load this solution file, we'll rely on VS Code's support to eventually stop relaunching the LSP server entirely.
      */
     private _solutionFile: vscode.Uri | undefined;
+
+    /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
+    private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
     constructor(
         private platformInfo: PlatformInformation,
@@ -182,10 +184,10 @@ export class RoslynLanguageServer {
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
                 await this._languageClient!.setTrace(languageClientTraceLevel);
-                if (this._solutionFile) {
-                    await this.sendOpenSolutionNotification();
+                if (this._solutionFile || this._projectFiles.length > 0) {
+                    await this.sendOpenSolutionAndProjectsNotifications();
                 } else {
-                    await this.openDefaultSolution();
+                    await this.openDefaultSolutionOrProjects();
                 }
                 await this.sendOrSubscribeForServiceBrokerConnection();
                 this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.Started);
@@ -372,21 +374,37 @@ export class RoslynLanguageServer {
 
     public async openSolution(solutionFile: vscode.Uri): Promise<void> {
         this._solutionFile = solutionFile;
-        await this.sendOpenSolutionNotification();
+        this._projectFiles = [];
+        await this.sendOpenSolutionAndProjectsNotifications();
     }
 
-    private async sendOpenSolutionNotification(): Promise<void> {
-        if (
-            this._solutionFile !== undefined &&
-            this._languageClient !== undefined &&
-            this._languageClient.isRunning()
-        ) {
-            const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
-            await this._languageClient.sendNotification('solution/open', new OpenSolutionParams(protocolUri));
+    public async openProjects(projectFiles: vscode.Uri[]): Promise<void> {
+        this._solutionFile = undefined;
+        this._projectFiles = projectFiles;
+        await this.sendOpenSolutionAndProjectsNotifications();
+    }
+
+    private async sendOpenSolutionAndProjectsNotifications(): Promise<void> {
+        if (this._languageClient !== undefined && this._languageClient.isRunning()) {
+            if (this._solutionFile !== undefined) {
+                const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
+                await this._languageClient.sendNotification(RoslynProtocol.OpenSolutionNotification.type, {
+                    solution: protocolUri,
+                });
+            }
+
+            if (this._projectFiles.length > 0) {
+                const projectProtocolUris = this._projectFiles.map((uri) =>
+                    this._languageClient!.clientOptions.uriConverters!.code2Protocol(uri)
+                );
+                await this._languageClient.sendNotification(RoslynProtocol.OpenProjectNotification.type, {
+                    projects: projectProtocolUris,
+                });
+            }
         }
     }
 
-    private async openDefaultSolution(): Promise<void> {
+    private async openDefaultSolutionOrProjects(): Promise<void> {
         const options = this.optionProvider.GetLatestOptions();
 
         // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
@@ -401,8 +419,19 @@ export class RoslynLanguageServer {
             } else {
                 // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
                 const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
-                if (solutionUris && solutionUris.length === 1) {
-                    this.openSolution(solutionUris[0]);
+                if (solutionUris) {
+                    if (solutionUris.length === 1) {
+                        this.openSolution(solutionUris[0]);
+                    } else if (solutionUris.length === 0) {
+                        // We have no solutions, so we'll enumerate what project files we have and just use those.
+                        const projectUris = await vscode.workspace.findFiles(
+                            '**/*.csproj',
+                            '**/node_modules/**',
+                            options.omnisharpOptions.maxProjectResults
+                        );
+
+                        this.openProjects(projectUris);
+                    }
                 }
             }
         }
