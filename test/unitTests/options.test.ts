@@ -37,7 +37,7 @@ suite('Options tests', () => {
         options.omnisharpOptions.enableDecompilationSupport.should.equal(false);
         options.omnisharpOptions.enableImportCompletion.should.equal(false);
         options.omnisharpOptions.enableAsyncCompletion.should.equal(false);
-        options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(true);
+        options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(false);
         options.omnisharpOptions.testRunSettings.should.equal('');
     });
 

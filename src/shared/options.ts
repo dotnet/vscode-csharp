@@ -122,11 +122,9 @@ export class Options {
         const diagnosticAnalysisScope = Options.readOption<string>(
             config,
             'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
-            'openFiles'
+            useOmnisharpServer ? 'none' : 'openFiles'
         );
-        const enableRoslynAnalyzers =
-            Options.readOption<boolean>(config, 'omnisharp.enableRoslynAnalyzers', false) &&
-            diagnosticAnalysisScope != 'none';
+        const enableRoslynAnalyzers = diagnosticAnalysisScope != 'none';
         const enableEditorConfigSupport = Options.readOption<boolean>(
             config,
             'omnisharp.enableEditorConfigSupport',
@@ -145,9 +143,7 @@ export class Options {
             'omnisharp.enableImportCompletion'
         );
         const enableAsyncCompletion = Options.readOption<boolean>(config, 'omnisharp.enableAsyncCompletion', false);
-        const analyzeOpenDocumentsOnly =
-            Options.readOption<boolean>(config, 'omnisharp.analyzeOpenDocumentsOnly', false) ||
-            diagnosticAnalysisScope == 'openFiles';
+        const analyzeOpenDocumentsOnly = diagnosticAnalysisScope == 'openFiles';
         const organizeImportsOnFormat = Options.readOption<boolean>(config, 'omnisharp.organizeImportsOnFormat', false);
         const disableMSBuildDiagnosticWarning = Options.readOption<boolean>(
             config,
