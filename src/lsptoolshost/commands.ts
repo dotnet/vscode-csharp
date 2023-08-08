@@ -17,7 +17,8 @@ export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     optionProvider: OptionProvider,
-    hostExecutableResolver: IHostExecutableResolver
+    hostExecutableResolver: IHostExecutableResolver,
+    outputChannel: vscode.OutputChannel
 ) {
     // It is very important to be careful about the types used as parameters for these command callbacks.
     // If the arguments are coming from the server as json, it is NOT appropriate to use type definitions
@@ -49,6 +50,9 @@ export function registerCommands(
                 hostExecutableResolver
             )
         )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
 }
 

@@ -151,10 +151,10 @@ export class RazorDocumentSynchronizer {
         });
 
         token.onCancellationRequested((reason) => {
-            context.cancel(`Token cancellation requested: ${reason}`);
+            context.cancel(vscode.l10n.t('Token cancellation requested: {0}', reason));
         });
         const timeoutId = setTimeout(() => {
-            context.cancel('Synchronization timed out');
+            context.cancel(vscode.l10n.t('Synchronization timed out'));
         }, 2000);
         const context: SynchronizationContext = {
             projectedDocument,

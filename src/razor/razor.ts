@@ -39,7 +39,10 @@ export async function activateRazorExtension(
         }
     } else {
         vscode.window.showWarningMessage(
-            `Cannot load Razor language server because the directory was not found: '${languageServerDir}'`
+            vscode.l10n.t(
+                "Cannot load Razor language server because the directory was not found: '{0}'",
+                languageServerDir
+            )
         );
     }
 }
