@@ -49,7 +49,7 @@ export class AssetGenerator {
 
     public async selectStartupProject(selectedIndex?: number): Promise<boolean> {
         if (!this.hasExecutableProjects()) {
-            throw new Error('No executable projects');
+            throw new Error(vscode.l10n.t('No executable projects'));
         }
 
         if (selectedIndex !== undefined) {
@@ -68,7 +68,7 @@ export class AssetGenerator {
 
             const selectedItem = await vscode.window.showQuickPick(items, {
                 matchOnDescription: true,
-                placeHolder: 'Select the project to launch',
+                placeHolder: vscode.l10n.t('Select the project to launch'),
             });
 
             if (selectedItem === undefined) {
@@ -83,7 +83,7 @@ export class AssetGenerator {
     // This method is used by the unit tests instead of selectStartupProject
     public setStartupProject(index: number): void {
         if (index >= this.executableProjects.length) {
-            throw new Error('Invalid project index');
+            throw new Error(vscode.l10n.t('Invalid project index'));
         }
 
         this.startupProject = this.executableProjects[index];
@@ -91,7 +91,7 @@ export class AssetGenerator {
 
     public hasWebServerDependency(): boolean {
         if (!this.startupProject) {
-            throw new Error('Startup project not set');
+            throw new Error(vscode.l10n.t('Startup project not set'));
         }
 
         return this.startupProject.isWebProject;
@@ -99,7 +99,7 @@ export class AssetGenerator {
 
     public computeProgramLaunchType(): ProgramLaunchType {
         if (!this.startupProject) {
-            throw new Error('Startup project not set');
+            throw new Error(vscode.l10n.t('Startup project not set'));
         }
 
         if (this.startupProject.isBlazorWebAssemblyStandalone) {
@@ -119,7 +119,7 @@ export class AssetGenerator {
 
     private computeProgramPath(): string {
         if (!this.startupProject) {
-            throw new Error('Startup project not set');
+            throw new Error(vscode.l10n.t('Startup project not set'));
         }
 
         const relativeTargetPath = path.relative(this.workspaceFolder.uri.fsPath, this.startupProject.outputPath);
@@ -133,7 +133,7 @@ export class AssetGenerator {
 
     private computeWorkingDirectory(): string {
         if (!this.startupProject) {
-            throw new Error('Startup project not set');
+            throw new Error(vscode.l10n.t('Startup project not set'));
         }
 
         // Startup project will always be a child of the workspace folder,
@@ -355,21 +355,25 @@ export enum ProgramLaunchType {
 
 export function createWebLaunchConfiguration(programPath: string, workingDirectory: string): string {
     const configuration = {
-        'OS-COMMENT1': 'Use IntelliSense to find out which attributes exist for C# debugging',
-        'OS-COMMENT2': 'Use hover for the description of the existing attributes',
-        'OS-COMMENT3':
-            'For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md',
+        'OS-COMMENT1': vscode.l10n.t('Use IntelliSense to find out which attributes exist for C# debugging'),
+        'OS-COMMENT2': vscode.l10n.t('Use hover for the description of the existing attributes'),
+        'OS-COMMENT3': vscode.l10n.t(
+            'For further information visit {0}.',
+            'https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md'
+        ),
         name: '.NET Core Launch (web)',
         type: 'coreclr',
         request: 'launch',
         preLaunchTask: 'build',
-        'OS-COMMENT4': 'If you have changed target frameworks, make sure to update the program path.',
+        'OS-COMMENT4': vscode.l10n.t('If you have changed target frameworks, make sure to update the program path.'),
         program: `${util.convertNativePathToPosix(programPath)}`,
         args: Array(0),
         cwd: `${util.convertNativePathToPosix(workingDirectory)}`,
         stopAtEntry: false,
-        'OS-COMMENT5':
-            'Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser',
+        'OS-COMMENT5': vscode.l10n.t(
+            'Enable launching a web browser when ASP.NET Core starts. For more information: {0}',
+            'https://aka.ms/VSCode-CS-LaunchJson-WebBrowser'
+        ),
         serverReadyAction: {
             action: 'openExternally',
             pattern: '\\bNow listening on:\\s+(https?://\\S+)',
@@ -394,7 +398,7 @@ export function createBlazorWebAssemblyHostedLaunchConfiguration(
         type: 'blazorwasm',
         request: 'launch',
         hosted: true,
-        'OS-COMMENT1': 'If you have changed target frameworks, make sure to update the program path.',
+        'OS-COMMENT1': vscode.l10n.t('If you have changed target frameworks, make sure to update the program path.'),
         program: `${util.convertNativePathToPosix(programPath)}`,
         cwd: `${util.convertNativePathToPosix(workingDirectory)}`,
     };
@@ -415,20 +419,24 @@ export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDire
 
 export function createLaunchConfiguration(programPath: string, workingDirectory: string): string {
     const configuration = {
-        'OS-COMMENT1': 'Use IntelliSense to find out which attributes exist for C# debugging',
-        'OS-COMMENT2': 'Use hover for the description of the existing attributes',
-        'OS-COMMENT3':
-            'For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md',
+        'OS-COMMENT1': vscode.l10n.t('Use IntelliSense to find out which attributes exist for C# debugging'),
+        'OS-COMMENT2': vscode.l10n.t('Use hover for the description of the existing attributes'),
+        'OS-COMMENT3': vscode.l10n.t(
+            'For further information visit {0}',
+            'https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md'
+        ),
         name: '.NET Core Launch (console)',
         type: 'coreclr',
         request: 'launch',
         preLaunchTask: 'build',
-        'OS-COMMENT4': 'If you have changed target frameworks, make sure to update the program path.',
+        'OS-COMMENT4': vscode.l10n.t('If you have changed target frameworks, make sure to update the program path.'),
         program: `${util.convertNativePathToPosix(programPath)}`,
         args: Array(0),
         cwd: `${util.convertNativePathToPosix(workingDirectory)}`,
-        'OS-COMMENT5':
-            "For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console",
+        'OS-COMMENT5': vscode.l10n.t(
+            "For more information about the 'console' field, see {0}",
+            'https://aka.ms/VSCode-CS-LaunchJson-Console'
+        ),
         console: 'internalConsole',
         stopAtEntry: false,
     };
@@ -542,7 +550,7 @@ export async function getBuildOperations(generator: AssetGenerator): Promise<Ass
                     try {
                         tasksConfiguration = tolerantParse(text);
                     } catch (error) {
-                        vscode.window.showErrorMessage(`Failed to parse tasks.json file`);
+                        vscode.window.showErrorMessage(vscode.l10n.t(`Failed to parse tasks.json file`));
                         return resolve({ updateTasksJson: false });
                     }
 
@@ -591,16 +599,20 @@ interface PromptItem extends vscode.MessageItem {
 
 async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
     return new Promise<PromptResult>((resolve, _) => {
-        const yesItem: PromptItem = { title: 'Yes', result: PromptResult.Yes };
-        const noItem: PromptItem = { title: 'Not Now', result: PromptResult.No, isCloseAffordance: true };
-        const disableItem: PromptItem = { title: "Don't Ask Again", result: PromptResult.Disable };
+        const yesItem: PromptItem = { title: vscode.l10n.t('Yes'), result: PromptResult.Yes };
+        const noItem: PromptItem = {
+            title: vscode.l10n.t('Not Now'),
+            result: PromptResult.No,
+            isCloseAffordance: true,
+        };
+        const disableItem: PromptItem = { title: vscode.l10n.t("Don't Ask Again"), result: PromptResult.Disable };
 
         const projectName = path.basename(workspaceFolder.uri.fsPath);
 
         if (!getBuildAssetsNotificationSetting()) {
             vscode.window
                 .showWarningMessage(
-                    `Required assets to build and debug are missing from '${projectName}'. Add them?`,
+                    vscode.l10n.t(`Required assets to build and debug are missing from '{0}'. Add them?`, projectName),
                     disableItem,
                     noItem,
                     yesItem
@@ -830,10 +842,10 @@ async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean>
     return new Promise<boolean>((resolve, _) => {
         getExistingAssets(generator).then((res) => {
             if (res.length > 0) {
-                const yesItem = { title: 'Yes' };
-                const cancelItem = { title: 'Cancel', isCloseAffordance: true };
+                const yesItem = { title: vscode.l10n.t('Yes') };
+                const cancelItem = { title: vscode.l10n.t('Cancel'), isCloseAffordance: true };
                 vscode.window
-                    .showWarningMessage('Replace existing build and debug assets?', cancelItem, yesItem)
+                    .showWarningMessage(vscode.l10n.t('Replace existing build and debug assets?'), cancelItem, yesItem)
                     .then((selection) => {
                         if (selection === yesItem) {
                             resolve(true);
@@ -892,12 +904,17 @@ export async function generateAssets(
                 await addAssets(generator, operations);
             } else {
                 await vscode.window.showErrorMessage(
-                    `Could not locate .NET Core project in ${workspaceFolder.name}. Assets were not generated.`
+                    vscode.l10n.t(
+                        `Could not locate .NET Core project in '{0}'. Assets were not generated.`,
+                        workspaceFolder.name
+                    )
                 );
             }
         }
     } catch (err) {
-        await vscode.window.showErrorMessage(`Unable to generate assets to build and debug. ${err}`);
+        await vscode.window.showErrorMessage(
+            vscode.l10n.t('Unable to generate assets to build and debug. {0}.', `${err}`)
+        );
     }
 }
 

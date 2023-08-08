@@ -42,7 +42,7 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
     ): Promise<vscode.DebugConfiguration[]> {
         if (!folder || !folder.uri) {
             vscode.window.showErrorMessage(
-                'Cannot create .NET debug configurations. No workspace folder was selected.'
+                vscode.l10n.t('Cannot create .NET debug configurations. No workspace folder was selected.')
             );
             return [];
         }
@@ -51,14 +51,19 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
             const info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
             if (!info) {
                 vscode.window.showErrorMessage(
-                    'Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.'
+                    vscode.l10n.t(
+                        'Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.'
+                    )
                 );
                 return [];
             }
 
             if (info.length === 0) {
                 vscode.window.showErrorMessage(
-                    `Cannot create .NET debug configurations. The active C# project is not within folder '${folder.uri.fsPath}'.`
+                    vscode.l10n.t(
+                        `Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.`,
+                        folder.uri.fsPath
+                    )
                 );
                 return [];
             }
@@ -85,7 +90,7 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
                 return launchJson;
             } else {
                 // Error to be caught in the .catch() below to write default C# configurations
-                throw new Error('Does not contain .NET Core projects.');
+                throw new Error(vscode.l10n.t('Does not contain .NET Core projects.'));
             }
         } catch {
             // Provider will always create an launch.json file. Providing default C# configurations.

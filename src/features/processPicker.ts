@@ -154,7 +154,9 @@ export class RemoteAttachPicker {
                 return Promise.resolve(this.createPipeCmdFromArray(fixedPipeProgram, pipeArgs, quoteArgs));
             } else {
                 // Invalid args type
-                return Promise.reject<string>(new Error('pipeArgs must be a string or a string array type'));
+                return Promise.reject<string>(
+                    new Error(vscode.l10n.t('pipeArgs must be a string or a string array type'))
+                );
             }
         });
     }
@@ -231,17 +233,19 @@ export class RemoteAttachPicker {
 
         if (!name) {
             // Config name not found.
-            return Promise.reject<AttachItem>(new Error('Name not defined in current configuration.'));
+            return Promise.reject<AttachItem>(new Error(vscode.l10n.t('Name not defined in current configuration.')));
         }
 
         if (!args.pipeTransport || !args.pipeTransport.debuggerPath) {
             // Missing PipeTransport and debuggerPath, prompt if user wanted to just do local attach.
             return Promise.reject<AttachItem>(
                 new Error(
-                    'Configuration "' +
-                        name +
-                        '" in launch.json does not have a ' +
-                        'pipeTransport argument with debuggerPath for remote process listing.'
+                    vscode.l10n.t(
+                        'Configuration "{0}" in launch.json does not have a {1} argument with {2} for remote process listing.',
+                        name,
+                        'pipeTransport',
+                        'debuggerPath'
+                    )
                 )
             );
         } else {
@@ -261,7 +265,7 @@ export class RemoteAttachPicker {
                 ignoreFocusOut: true,
                 matchOnDescription: true,
                 matchOnDetail: true,
-                placeHolder: 'Select the process to attach to',
+                placeHolder: vscode.l10n.t('Select the process to attach to'),
             });
         }
     }
@@ -285,17 +289,23 @@ export class RemoteAttachPicker {
             const lines = output.split(/\r?\n/);
 
             if (lines.length == 0) {
-                return Promise.reject<AttachItem[]>(new Error('Pipe transport failed to get OS and processes.'));
+                return Promise.reject<AttachItem[]>(
+                    new Error(vscode.l10n.t('Pipe transport failed to get OS and processes.'))
+                );
             } else {
                 const remoteOS = lines[0].replace(/[\r\n]+/g, '');
 
                 if (remoteOS != 'Linux' && remoteOS != 'Darwin') {
-                    return Promise.reject<AttachItem[]>(new Error(`Operating system "${remoteOS}"" not supported.`));
+                    return Promise.reject<AttachItem[]>(
+                        new Error(vscode.l10n.t(`Operating system "{0}"" not supported.`, remoteOS))
+                    );
                 }
 
                 // Only got OS from uname
                 if (lines.length == 1) {
-                    return Promise.reject<AttachItem[]>(new Error('Transport attach could not obtain processes list.'));
+                    return Promise.reject<AttachItem[]>(
+                        new Error(vscode.l10n.t('Transport attach could not obtain processes list.'))
+                    );
                 } else {
                     const processes = lines.slice(1);
                     return sortProcessEntries(PsOutputParser.parseProcessFromPsArray(processes), remoteOS);
@@ -656,13 +666,13 @@ async function execChildProcessAndOutputErrorToChannel(
                     }
 
                     if (error) {
-                        channelOutput = channelOutput.concat('Error Message: ' + error.message);
+                        channelOutput = channelOutput.concat(vscode.l10n.t('Error Message: ') + error.message);
                     }
 
                     if (error || (stderr && stderr.length > 0)) {
                         channel.append(channelOutput);
                         channel.show();
-                        reject(new Error('See remote-attach output'));
+                        reject(new Error(vscode.l10n.t('See {0} output', 'remote-attach')));
                         return;
                     }
 
