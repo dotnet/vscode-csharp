@@ -16,64 +16,92 @@ variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
 - group: vscode-csharp release secrets
 
-jobs:
-- job: PublishToMarketplace
-  pool:
-    vmImage: ubuntu-latest
-  steps:
-  - task: DownloadPipelineArtifact@2
-    displayName: '📦 Download artifacts from build pipeline.'
-    inputs:
-      buildType: 'specific'
-      project: 'internal'
-      definition: 1264
-      buildVersionToDownload: 'latestFromBranch'
-      branchName: 'refs/heads/${{ parameters.branch }}'
-  - pwsh: |
-      npm install --global vsce
-    displayName: 'Install vsce'
-  - pwsh: |
-      # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-      $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
-      if ($allArtifacts.Length -eq 0) {
-        throw "No Artifacts is downloaded."
-      }
+stages:
+- stage: 'PublishStage'
+  displayName: 'Publish artifacts to markeplace stage'
+  jobs:
+  - job: PublishToMarketplace
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: DownloadPipelineArtifact@2
+      displayName: '📦 Download artifacts from build pipeline.'
+      inputs:
+        buildType: 'specific'
+        project: 'internal'
+        definition: 1264
+        buildVersionToDownload: 'latestFromBranch'
+        branchName: 'refs/heads/${{ parameters.branch }}'
+    - pwsh: |
+        npm install --global vsce
+      displayName: 'Install vsce'
+    - pwsh: |
+        # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
+        $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
+        if ($allArtifacts.Length -eq 0) {
+          throw "No Artifacts is downloaded."
+        }
 
-      $publishArtifacts = $allArtifacts[0]
-      Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+        $publishArtifacts = $allArtifacts[0]
+        Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
-      $additionalPublishArgs = , "publish"
-      # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-      If ("${{ parameters.branch }}" -eq "prerelease") {
-        $additionalPublishArgs += "--pre-release"
-        Write-Host "Publish to pre-release channel."
-      } ElseIf ("${{ parameters.branch }}" -eq "release") {
-        Write-Host "Publish to release channel."
-      } Else {
-        throw "Unexpected branch name: ${{ parameters.branch }}."
-      }
-      $additionalPublishArgs += '--packagePath'
+        $additionalPublishArgs = , "publish"
+        # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
+        If ("${{ parameters.branch }}" -eq "prerelease") {
+          $additionalPublishArgs += "--pre-release"
+          Write-Host "Publish to pre-release channel."
+        } ElseIf ("${{ parameters.branch }}" -eq "release") {
+          Write-Host "Publish to release channel."
+        } Else {
+          throw "Unexpected branch name: ${{ parameters.branch }}."
+        }
+        $additionalPublishArgs += '--packagePath'
 
-      $platforms = "arm64", "x64", "ia32"
-      $allVsixs = Get-ChildItem $publishArtifacts *.vsix
-      foreach ($vsix in $allVsixs) {
-        foreach ($plat in $platforms) {
-          if ($vsix.Name.Contains($plat)) {
-              $additionalPublishArgs += $vsix
+        $platforms = "arm64", "x64", "ia32"
+        $allVsixs = Get-ChildItem $publishArtifacts *.vsix
+        foreach ($vsix in $allVsixs) {
+          foreach ($plat in $platforms) {
+            if ($vsix.Name.Contains($plat)) {
+                $additionalPublishArgs += $vsix
+            }
           }
         }
-      }
 
-      Write-Host "Command run is: vsce $($additionalPublishArgs)."
-      If ("${{ parameters.test }}" -eq "true") {
-        Write-Host "In test mode, command is printed instead of run."
-        Write-Host "🔒 Verify PAT."
-        vsce verify-pat ms-dotnettools
-      }
-      Else {
-        vsce @additionalPublishArgs
-      }
-    displayName: 🚀 Publish to Marketplace
-    workingDirectory: $(Pipeline.Workspace)
-    env:
-      VSCE_PAT: $(VSCodeMarketplacePAT)
+        Write-Host "Command run is: vsce $($additionalPublishArgs)."
+        If ("${{ parameters.test }}") {
+          Write-Host "In test mode, command is printed instead of run."
+          Write-Host "🔒 Verify PAT."
+          vsce verify-pat ms-dotnettools
+        }
+        Else {
+          vsce @additionalPublishArgs
+        }
+      displayName: 🚀 Publish to Marketplace
+      workingDirectory: $(Pipeline.Workspace)
+      env:
+        VSCE_PAT: $(VSCodeMarketplacePAT)
+- stage: 'TagreleaseNumberToRoslyn'
+  displayName: 'Tag release number of vscode-csharp to Roslyn'
+  dependsOn: 'PublishStage'
+  condition: 'eq()'
+  jobs:
+  - job: 'TagRoslyn'
+    pool:
+      vmImage: ubuntu-latest
+    - task: NodeTool@0
+      displayName: 'Install Node.js 16.x'
+      inputs:
+        versionSpec: '16.x'
+    - checkout: self
+      clean: true
+      submodules: true
+      fetchTags: false
+      fetchDepth: 0
+    - pwsh: |
+        npm install
+        npm install -g gulp
+      displayName: 'Install tools'
+    - pwsh: npm run compile
+      displayName: 'Compile'
+    - pwsh: gulp 'Tag release information to dotnet/roslyn'
+      displayName: 'Tag roslyn'
