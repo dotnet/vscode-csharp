@@ -297,7 +297,7 @@ export class RemoteAttachPicker {
 
                 if (remoteOS != 'Linux' && remoteOS != 'Darwin') {
                     return Promise.reject<AttachItem[]>(
-                        new Error(vscode.l10n.t(`Operating system "{0}"" not supported.`, remoteOS))
+                        new Error(vscode.l10n.t('Operating system "{0}" not supported.', remoteOS))
                     );
                 }
 

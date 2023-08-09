@@ -135,7 +135,7 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
 
         const debugConfigArray = result.configurations;
         if (debugConfigArray.length == 0) {
-            throw new LaunchServiceError(vscode.l10n.t(`No launchable target found for '{0}'`, projectPath));
+            throw new LaunchServiceError(vscode.l10n.t("No launchable target found for '{0}'", projectPath));
         }
         if (debugConfigArray.length == 1) {
             return debugConfigArray[0];
@@ -202,11 +202,11 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                         );
                     }
                 } else {
-                    throw new Error(vscode.l10n.t(`'{0}' is not an executable project.`, projectPath));
+                    throw new Error(vscode.l10n.t("'{0}' is not an executable project.", projectPath));
                 }
             }
         }
-        throw new Error(vscode.l10n.t(`Unable to determine debug settings for project '{0}'`, projectPath));
+        throw new Error(vscode.l10n.t("Unable to determine debug settings for project '{0}'", projectPath));
     }
 
     // Workaround for VS Code not calling into the 'coreclr' resolveDebugConfigurationWithSubstitutedVariables

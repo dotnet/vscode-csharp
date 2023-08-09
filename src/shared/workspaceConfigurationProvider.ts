@@ -61,7 +61,7 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
             if (info.length === 0) {
                 vscode.window.showErrorMessage(
                     vscode.l10n.t(
-                        `Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.`,
+                        "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.",
                         folder.uri.fsPath
                     )
                 );

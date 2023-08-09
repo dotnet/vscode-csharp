@@ -157,5 +157,5 @@ export function getTargetArchitecture(
         return 'x86_64';
     }
 
-    throw new Error(vscode.l10n.t(`Unexpected RuntimeId {0}.`, dotnetInfo.RuntimeId));
+    throw new Error(vscode.l10n.t("Unexpected RuntimeId '{0}'.", dotnetInfo.RuntimeId));
 }

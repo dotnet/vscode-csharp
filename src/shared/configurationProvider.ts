@@ -164,7 +164,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
             config.env = parsedFile.Env;
         } catch (e) {
-            throw new Error(vscode.l10n.t(`Can't parse envFile {0} because of {1}`, envFile, `${e}`));
+            throw new Error(vscode.l10n.t("Can't parse envFile {0} because of {1}", envFile, `${e}`));
         }
 
         // remove envFile from config after parsing
@@ -244,7 +244,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                         //if the prcess returns 0, returnData.error is null, otherwise the return code can be acessed in returnData.error.code
                         const message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
                         vscode.window.showInformationMessage(
-                            vscode.l10n.t(`Self-signed certificate sucessfully {0}`, message)
+                            vscode.l10n.t('Self-signed certificate sucessfully {0}', message)
                         );
                     } else {
                         this.csharpOutputChannel.appendLine(

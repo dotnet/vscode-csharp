@@ -444,36 +444,57 @@ export function createLaunchConfiguration(programPath: string, workingDirectory:
     return JSON.stringify(configuration);
 }
 
+function wordWrapString(input: string): string[] {
+    let output: string[] = [];
+    // Split up the input's existing newlines so they don't get wordwrapped.
+    const newLineSplitInput: string[] = input.split('\n');
+    for (let i = 0; i < newLineSplitInput.length; i++) {
+        // Regex will wordwrap up to 80 characters to the next space or end of line (if the language has spaces).
+        const wordWrappedIntermediateOutput: string = newLineSplitInput[i].replace(
+            /(?![^\n]{1,80}$)([^\n]{1,80})\s/g,
+            '$1\n'
+        );
+        output = output.concat(wordWrappedIntermediateOutput.split('\n'));
+    }
+
+    return output;
+}
+
+function createWarningKeyString(warningStr: string, count: number): string {
+    return `${warningStr}${count.toString().padStart(2, '0')}`;
+}
+
 // DebugConfiguration written to launch.json when the extension fails to generate a good configuration
 export function createFallbackLaunchConfiguration(): vscode.DebugConfiguration {
-    return {
-        name: '.NET Core Launch (console)',
-        type: 'coreclr',
-        request: 'launch',
-        WARNING01: '*********************************************************************************',
-        WARNING02: 'The C# extension was unable to automatically decode projects in the current',
-        WARNING03: 'workspace to create a runnable launch.json file. A template launch.json file has',
-        WARNING04: 'been created as a placeholder.',
-        WARNING05: '',
-        WARNING06: 'If the server is currently unable to load your project, you can attempt to resolve',
-        WARNING07: "this by restoring any missing project dependencies (example: run 'dotnet restore')",
-        WARNING08: 'and by fixing any reported errors from building the projects in your workspace.',
-        WARNING09: 'If this allows the server to now load your project then --',
-        WARNING10: '  * Delete this file',
-        WARNING11: '  * Open the Visual Studio Code command palette (View->Command Palette)',
-        WARNING12: "  * run the command: '.NET: Generate Assets for Build and Debug'.",
-        WARNING13: '',
-        WARNING14: 'If your project requires a more complex launch configuration, you may wish to delete',
-        WARNING15: "this configuration and pick a different template using the 'Add Configuration...'",
-        WARNING16: 'button at the bottom of this file.',
-        WARNING17: '*********************************************************************************',
-        preLaunchTask: 'build',
-        program: '${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll',
-        args: [],
-        cwd: '${workspaceFolder}',
-        console: 'internalConsole',
-        stopAtEntry: false,
-    };
+    const warningKey = vscode.l10n.t('WARNING');
+    const warningMessage = vscode.l10n.t(
+        "The C# extension was unable to automatically decode projects in the current workspace to create a runnable launch.json file. A template launch.json file has been created as a placeholder.\n\nIf the server is currently unable to load your project, you can attempt to resolve this by restoring any missing project dependencies (example: run 'dotnet restore') and by fixing any reported errors from building the projects in your workspace.\nIf this allows the server to now load your project then --\n  * Delete this file\n  * Open the Visual Studio Code command palette (View->Command Palette)\n  * run the command: '.NET: Generate Assets for Build and Debug'.\n\nIf your project requires a more complex launch configuration, you may wish to delete this configuration and pick a different template using the 'Add Configuration...' button at the bottom of this file."
+    );
+
+    const warningMessages: string[] = wordWrapString(warningMessage);
+    const fallbackConfig: any = {};
+    fallbackConfig['name'] = '.NET Core Launch (console)';
+    fallbackConfig['type'] = 'coreclr';
+    fallbackConfig['request'] = 'launch';
+
+    // This block will generate the WARNING## keys with the wordwrapped strings.
+    fallbackConfig[createWarningKeyString(warningKey, 1)] =
+        '*********************************************************************************';
+    for (let i = 0; i < warningMessages.length; i++) {
+        fallbackConfig[createWarningKeyString(warningKey, i + 2)] = warningMessages[i];
+    }
+    fallbackConfig[createWarningKeyString(warningKey, warningMessages.length + 2)] =
+        '*********************************************************************************';
+
+    fallbackConfig['preLaunchTask'] = 'build';
+    fallbackConfig['program'] =
+        '${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll';
+    fallbackConfig['args'] = [];
+    fallbackConfig['cwd'] = '${workspaceFolder}';
+    fallbackConfig['console'] = 'internalConsole';
+    fallbackConfig['stopAtEntry'] = false;
+
+    return fallbackConfig;
 }
 
 // AttachConfiguration
@@ -550,7 +571,7 @@ export async function getBuildOperations(generator: AssetGenerator): Promise<Ass
                     try {
                         tasksConfiguration = tolerantParse(text);
                     } catch (error) {
-                        vscode.window.showErrorMessage(vscode.l10n.t(`Failed to parse tasks.json file`));
+                        vscode.window.showErrorMessage(vscode.l10n.t('Failed to parse tasks.json file'));
                         return resolve({ updateTasksJson: false });
                     }
 
@@ -612,7 +633,7 @@ async function promptToAddAssets(workspaceFolder: vscode.WorkspaceFolder) {
         if (!getBuildAssetsNotificationSetting()) {
             vscode.window
                 .showWarningMessage(
-                    vscode.l10n.t(`Required assets to build and debug are missing from '{0}'. Add them?`, projectName),
+                    vscode.l10n.t("Required assets to build and debug are missing from '{0}'. Add them?", projectName),
                     disableItem,
                     noItem,
                     yesItem
