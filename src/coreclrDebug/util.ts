@@ -3,12 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as semver from 'semver';
 import * as os from 'os';
 import { PlatformInformation } from '../shared/platform';
-import { getDotnetInfo, DotnetInfo } from '../shared/utils/getDotnetInfo';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
+import { DotnetInfo } from '../shared/utils/dotnetInfo';
 
 const MINIMUM_SUPPORTED_DOTNET_CLI = '1.0.0';
 
@@ -25,21 +27,21 @@ export class CoreClrDebugUtil {
 
     public extensionDir(): string {
         if (this._extensionDir === '') {
-            throw new Error('Failed to set extension directory');
+            throw new Error(vscode.l10n.t('Failed to set extension directory'));
         }
         return this._extensionDir;
     }
 
     public debugAdapterDir(): string {
         if (this._debugAdapterDir === '') {
-            throw new Error('Failed to set debugadpter directory');
+            throw new Error(vscode.l10n.t('Failed to set debugadpter directory'));
         }
         return this._debugAdapterDir;
     }
 
     public installCompleteFilePath(): string {
         if (this._installCompleteFilePath === '') {
-            throw new Error('Failed to set install complete file path');
+            throw new Error(vscode.l10n.t('Failed to set install complete file path'));
         }
         return this._installCompleteFilePath;
     }
@@ -63,13 +65,19 @@ export class CoreClrDebugUtil {
             const dotnetInfo = await getDotnetInfo(dotNetCliPaths);
             if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
                 throw new Error(
-                    `The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is ${MINIMUM_SUPPORTED_DOTNET_CLI}.`
+                    vscode.l10n.t(
+                        `The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is {0}.`,
+                        MINIMUM_SUPPORTED_DOTNET_CLI
+                    )
                 );
             }
         } catch (error) {
             const message = error instanceof Error ? error.message : `${error}`;
             throw new Error(
-                `The .NET Core SDK cannot be located: ${message}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.`
+                vscode.l10n.t(
+                    `The .NET Core SDK cannot be located: {0}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.`,
+                    message
+                )
             );
         }
     }
@@ -121,7 +129,10 @@ export function getTargetArchitecture(
     if (launchJsonTargetArchitecture) {
         if (launchJsonTargetArchitecture !== 'x86_64' && launchJsonTargetArchitecture !== 'arm64') {
             throw new Error(
-                `The value '${launchJsonTargetArchitecture}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`
+                vscode.l10n.t(
+                    `The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.`,
+                    launchJsonTargetArchitecture
+                )
             );
         }
         return launchJsonTargetArchitecture;
@@ -135,7 +146,9 @@ export function getTargetArchitecture(
     // Otherwise, look at the runtime ID.
     if (!dotnetInfo.RuntimeId) {
         throw new Error(
-            `Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.`
+            vscode.l10n.t(
+                `Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.`
+            )
         );
     }
 
@@ -145,5 +158,5 @@ export function getTargetArchitecture(
         return 'x86_64';
     }
 
-    throw new Error(`Unexpected RuntimeId '${dotnetInfo.RuntimeId}'.`);
+    throw new Error(vscode.l10n.t("Unexpected RuntimeId '{0}'.", dotnetInfo.RuntimeId));
 }
