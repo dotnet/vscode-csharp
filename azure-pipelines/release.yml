@@ -81,7 +81,7 @@ stages:
           vsce verify-pat ms-dotnettools
         }
         Else {
-          vsce @additionalPublishArgs
+          # vsce @additionalPublishArgs
         }
       displayName: 🚀 Publish to Marketplace
       workingDirectory: $(Pipeline.Workspace)
@@ -90,25 +90,25 @@ stages:
 - stage: 'TagreleaseNumberToRoslyn'
   displayName: 'Tag release number of vscode-csharp to Roslyn'
   dependsOn: 'PublishStage'
-  condition: 'eq()'
   jobs:
   - job: 'TagRoslyn'
     pool:
       vmImage: ubuntu-latest
-    - task: NodeTool@0
-      displayName: 'Install Node.js 16.x'
-      inputs:
-        versionSpec: '16.x'
-    - checkout: self
-      clean: true
-      submodules: true
-      fetchTags: false
-      fetchDepth: 0
-    - pwsh: |
-        npm install
-        npm install -g gulp
-      displayName: 'Install tools'
-    - pwsh: npm run compile
-      displayName: 'Compile'
-    - pwsh: gulp 'Tag release information to dotnet/roslyn'
-      displayName: 'Tag roslyn'
+    steps:
+      - task: NodeTool@0
+        displayName: 'Install Node.js 16.x'
+        inputs:
+          versionSpec: '16.x'
+      - checkout: self
+        clean: true
+        submodules: true
+        fetchTags: false
+        fetchDepth: 0
+      - pwsh: |
+          npm install
+          npm install -g gulp
+        displayName: 'Install tools'
+      - pwsh: npm run compile
+        displayName: 'Compile'
+      - pwsh: gulp 'Tag release information to dotnet/roslyn'
+        displayName: 'Tag roslyn'
