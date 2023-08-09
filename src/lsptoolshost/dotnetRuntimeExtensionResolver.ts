@@ -14,7 +14,8 @@ import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { promisify } from 'util';
 import { exec } from 'child_process';
-import { pathExistsSync } from 'fs-extra';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
+import { readFile } from 'fs/promises';
 
 export const DotNetRuntimeVersion = '7.0';
 
@@ -33,7 +34,8 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
          * This is a function instead of a string because the server path can change while the extension is active (when the option changes).
          */
         private getServerPath: (options: Options, platform: PlatformInformation) => string,
-        private channel: vscode.OutputChannel
+        private channel: vscode.OutputChannel,
+        private extensionPath: string
     ) {}
 
     private hostInfo: HostExecutableInformation | undefined;
@@ -129,16 +131,23 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
      */
     private async findDotnetFromPath(): Promise<string | undefined> {
         try {
-            // Run dotnet version to see if there is a valid dotnet on the path with a high enough version.
-            const result = await promisify(exec)(`dotnet --version`);
+            const dotnetInfo = await getDotnetInfo([]);
+            const dotnetVersionStr = dotnetInfo.Version;
 
-            if (result.stderr) {
-                throw new Error(`Unable to read dotnet version information. Error ${result.stderr}`);
+            const extensionArchitecture = await this.getArchitectureFromTargetPlatform();
+            const dotnetArchitecture = dotnetInfo.Architecture;
+
+            // If the extension arhcitecture is defined, we check that it matches the dotnet architecture.
+            // If its undefined we likely have a platform neutral server and assume it can run on any architecture.
+            if (extensionArchitecture && extensionArchitecture !== dotnetArchitecture) {
+                throw new Error(
+                    `The architecture of the .NET runtime (${dotnetArchitecture}) does not match the architecture of the extension (${extensionArchitecture}).`
+                );
             }
 
-            const dotnetVersion = semver.parse(result.stdout.trimEnd());
+            const dotnetVersion = semver.parse(dotnetVersionStr);
             if (!dotnetVersion) {
-                throw new Error(`Unknown result output from 'dotnet --version'. Received ${result.stdout}`);
+                throw new Error(`Unknown result output from 'dotnet --version'. Received ${dotnetVersionStr}`);
             }
 
             if (semver.lt(dotnetVersion, this.minimumDotnetVersion)) {
@@ -155,7 +164,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             }
 
             const path = whereOutput.stdout.trim();
-            if (!pathExistsSync(path)) {
+            if (!existsSync(path)) {
                 throw new Error(`dotnet path does not exist: ${path}`);
             }
 
@@ -171,5 +180,46 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         }
 
         return undefined;
+    }
+
+    private async getArchitectureFromTargetPlatform(): Promise<string | undefined> {
+        const vsixManifestFile = path.join(this.extensionPath, '.vsixmanifest');
+        if (!existsSync(vsixManifestFile)) {
+            // This is not an error as normal development F5 builds do not generate a .vsixmanifest file.
+            this.channel.appendLine(
+                `Unable to find extension target platform - no vsix manifest file exists at ${vsixManifestFile}`
+            );
+            return undefined;
+        }
+
+        const contents = await readFile(vsixManifestFile, 'utf-8');
+        const targetPlatformMatch = /TargetPlatform="(.*)"/.exec(contents);
+        if (!targetPlatformMatch) {
+            throw new Error(`Could not find extension target platform in ${vsixManifestFile}`);
+        }
+
+        const targetPlatform = targetPlatformMatch[1];
+
+        // The currently known extension platforms are taken from here:
+        // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
+        switch (targetPlatform) {
+            case 'win32-x64':
+            case 'linux-x64':
+            case 'alpine-x64':
+            case 'darwin-x64':
+                return 'x64';
+            case 'win32-ia32':
+                return 'x86';
+            case 'win32-arm64':
+            case 'linux-arm64':
+            case 'alpine-arm64':
+            case 'darwin-arm64':
+                return 'arm64';
+            case 'linux-armhf':
+            case 'web':
+                return undefined;
+            default:
+                throw new Error(`Unknown extension target platform: ${targetPlatform}`);
+        }
     }
 }
