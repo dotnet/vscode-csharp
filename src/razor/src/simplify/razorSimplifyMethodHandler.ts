@@ -62,7 +62,7 @@ export class RazorSimplifyMethodHandler extends RazorLanguageFeatureBase {
 
         const params = new SerializableSimplifyMethodParams(identifier, request.textEdit);
         const response: TextEdit[] | undefined = await vscode.commands.executeCommand(
-            RoslynLanguageServer.roslynSimplifyTypeNamesCommand,
+            RoslynLanguageServer.roslynSimplifyMethodCommand,
             params
         );
 

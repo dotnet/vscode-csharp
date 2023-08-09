@@ -78,7 +78,7 @@ export class RoslynLanguageServer {
     public static readonly resolveCodeActionCommand: string = 'roslyn.resolveCodeAction';
     public static readonly provideCompletionsCommand: string = 'roslyn.provideCompletions';
     public static readonly resolveCompletionsCommand: string = 'roslyn.resolveCompletion';
-    public static readonly roslynSimplifyTypeNamesCommand: string = 'roslyn.simplifyMethod';
+    public static readonly roslynSimplifyMethodCommand: string = 'roslyn.simplifyMethod';
     public static readonly razorInitializeCommand: string = 'razor.initialize';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
@@ -896,7 +896,7 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
     );
     context.subscriptions.push(
         vscode.commands.registerCommand(
-            RoslynLanguageServer.roslynSimplifyTypeNamesCommand,
+            RoslynLanguageServer.roslynSimplifyMethodCommand,
             async (request: SerializableSimplifyMethodParams) => {
                 const simplifyTypeNamesRequestType = new RequestType<SerializableSimplifyMethodParams, TextEdit[], any>(
                     'roslyn/simplifyMethod'

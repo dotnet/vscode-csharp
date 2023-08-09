@@ -181,7 +181,7 @@ export async function activate(
                 documentManager,
                 logger
             );
-            const razorSimplifyTypeNamesHandler = new RazorSimplifyMethodHandler(
+            const razorSimplifyMethodHandler = new RazorSimplifyMethodHandler(
                 documentSynchronizer,
                 languageServerClient,
                 languageServiceClient,
@@ -231,7 +231,7 @@ export async function activate(
                 semanticTokenHandler.register(),
                 razorDiagnosticHandler.register(),
                 codeActionsHandler.register(),
-                razorSimplifyTypeNamesHandler.register(),
+                razorSimplifyMethodHandler.register(),
             ]);
         });
 
