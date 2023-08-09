@@ -160,7 +160,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             const command = this.platformInfo.isWindows() ? 'where' : 'which';
             const whereOutput = await promisify(exec)(`${command} dotnet`);
             if (!whereOutput.stdout) {
-                throw new Error(`Unable to find dotnet from where.`);
+                throw new Error(`Unable to find dotnet from ${command}.`);
             }
 
             const path = whereOutput.stdout.trim();
