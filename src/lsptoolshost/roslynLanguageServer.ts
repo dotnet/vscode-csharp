@@ -898,10 +898,10 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
         vscode.commands.registerCommand(
             RoslynLanguageServer.roslynSimplifyMethodCommand,
             async (request: SerializableSimplifyMethodParams) => {
-                const simplifyTypeNamesRequestType = new RequestType<SerializableSimplifyMethodParams, TextEdit[], any>(
+                const simplifyMethodRequestType = new RequestType<SerializableSimplifyMethodParams, TextEdit[], any>(
                     'roslyn/simplifyMethod'
                 );
-                return await languageServer.sendRequest(simplifyTypeNamesRequestType, request, CancellationToken.None);
+                return await languageServer.sendRequest(simplifyMethodRequestType, request, CancellationToken.None);
             }
         )
     );

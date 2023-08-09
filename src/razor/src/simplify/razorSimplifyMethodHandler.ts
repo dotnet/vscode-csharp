@@ -19,7 +19,7 @@ import { TextEdit } from 'vscode-html-languageservice';
 
 export class RazorSimplifyMethodHandler extends RazorLanguageFeatureBase {
     private static readonly razorSimplifyMethodCommand = 'razor/simplifyMethod';
-    private simplifyTypeNamesRequestType: RequestType<SerializableDelegatedSimplifyMethodParams, TextEdit[], any> =
+    private simplifyMethodRequestType: RequestType<SerializableDelegatedSimplifyMethodParams, TextEdit[], any> =
         new RequestType(RazorSimplifyMethodHandler.razorSimplifyMethodCommand);
 
     constructor(
@@ -38,13 +38,13 @@ export class RazorSimplifyMethodHandler extends RazorLanguageFeatureBase {
             TextEdit[] | undefined,
             any
         >(
-            this.simplifyTypeNamesRequestType,
+            this.simplifyMethodRequestType,
             async (request: SerializableDelegatedSimplifyMethodParams, token: vscode.CancellationToken) =>
-                this.getSimplifiedTypeNames(request, token)
+                this.getSimplifiedMethod(request, token)
         );
     }
 
-    private async getSimplifiedTypeNames(
+    private async getSimplifiedMethod(
         request: SerializableDelegatedSimplifyMethodParams,
         _: vscode.CancellationToken
     ): Promise<TextEdit[] | undefined> {
