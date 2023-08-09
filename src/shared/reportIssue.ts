@@ -7,7 +7,7 @@ import { Extension, vscode } from '../vscodeAdapter';
 import { Options } from '../shared/options';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { basename, dirname } from 'path';
-import { DotnetInfo } from './utils/getDotnetInfo';
+import { DotnetInfo } from './utils/dotnetInfo';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
 
 export default async function reportIssue(

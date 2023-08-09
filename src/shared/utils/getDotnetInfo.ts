@@ -6,6 +6,7 @@
 import { join } from 'path';
 import { execChildProcess } from '../../common';
 import { CoreClrDebugUtil } from '../../coreclrDebug/util';
+import { DotnetInfo } from './dotnetInfo';
 
 let _dotnetInfo: DotnetInfo | undefined;
 
@@ -65,12 +66,4 @@ export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | unde
         }
     }
     return dotnetExecutablePath;
-}
-
-export interface DotnetInfo {
-    CliPath?: string;
-    FullInfo: string;
-    Version: string;
-    /* a runtime-only install of dotnet will not output a runtimeId in dotnet --info. */
-    RuntimeId?: string;
 }

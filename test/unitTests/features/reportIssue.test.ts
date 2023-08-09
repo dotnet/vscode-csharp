@@ -3,15 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getFakeVsCode } from '../../unitTests/testAssets/fakes';
+import { getFakeVsCode } from '../testAssets/fakes';
 import reportIssue from '../../../src/shared/reportIssue';
 import { expect } from 'chai';
 import { vscode } from '../../../src/vscodeAdapter';
 import { Options } from '../../../src/shared/options';
-import { FakeMonoResolver, fakeMonoInfo } from '../../unitTests/fakes/fakeMonoResolver';
-import { FakeDotnetResolver } from '../../unitTests/fakes/fakeDotnetResolver';
-import { DotnetInfo } from '../../../src/shared/utils/getDotnetInfo';
-import { getEmptyOptions } from '../../unitTests/fakes/fakeOptions';
+import { FakeMonoResolver, fakeMonoInfo } from '../fakes/fakeMonoResolver';
+import { FakeDotnetResolver } from '../fakes/fakeDotnetResolver';
+import { DotnetInfo } from '../../../src/shared/utils/dotnetInfo';
+import { getEmptyOptions } from '../fakes/fakeOptions';
 
 suite(`${reportIssue.name}`, () => {
     const vscodeVersion = 'myVersion';
