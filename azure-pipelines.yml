@@ -15,7 +15,7 @@ pr:
 
 variables:
   - name: prereleaseFlag
-    value: '--prerelease'
+    value: ''
 
 stages:
 - stage: Build
