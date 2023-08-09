@@ -119,7 +119,11 @@ export class Options {
             'omnisharp.useEditorFormattingSettings',
             true
         );
-        const enableRoslynAnalyzersLegacyOption = Options.readOption<boolean>(config, 'omnisharp.enableRoslynAnalyzers', false);
+        const enableRoslynAnalyzersLegacyOption = Options.readOption<boolean>(
+            config,
+            'omnisharp.enableRoslynAnalyzers',
+            false
+        );
         const diagnosticAnalysisScope = Options.readOption<string>(
             config,
             'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
