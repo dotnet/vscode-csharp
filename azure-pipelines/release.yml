@@ -12,6 +12,17 @@ parameters:
     - prerelease
     - release
 
+resources:
+  pipelines:
+  - pipeline: releaseCI
+    source: dotnet-vscode-csharp
+    branch: '${{ parameters.branch }}'
+  repositories:
+  - repository: vscodeCsharpRepo
+    name: dotnet-vscode-csharp
+    ref: 'refs/heads/${{ parameters.branch }}'
+    type: git
+
 variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
 - group: vscode-csharp release secrets
@@ -24,14 +35,7 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-    - task: DownloadPipelineArtifact@2
-      displayName: '📦 Download artifacts from build pipeline.'
-      inputs:
-        buildType: 'specific'
-        project: 'internal'
-        definition: 1264
-        buildVersionToDownload: 'latestFromBranch'
-        branchName: 'refs/heads/${{ parameters.branch }}'
+    - download: releaseCI
     - pwsh: |
         npm install --global vsce
       displayName: 'Install vsce'
@@ -77,13 +81,12 @@ stages:
           # vsce @additionalPublishArgs
         }
       displayName: 🚀 Publish to Marketplace
-      workingDirectory: $(Pipeline.Workspace)
+      workingDirectory: $(Pipeline.Workspace)/releaseCI
       env:
         VSCE_PAT: $(VSCodeMarketplacePAT)
 - stage: 'TagReleaseNumberToRoslyn'
   displayName: 'Tag release number of vscode-csharp to Roslyn'
   dependsOn: 'PublishStage'
-  condition: or(eq(variables['Build.SourceBranchName'], 'release'), eq(variables['Build.SourceBranchName'], 'prerelease'))
   jobs:
   - job: 'TagRoslyn'
     pool:
@@ -93,7 +96,7 @@ stages:
         displayName: 'Install Node.js 16.x'
         inputs:
           versionSpec: '16.x'
-      - checkout: self
+      - checkout: vscodeCsharpRepo
         clean: true
         submodules: true
         fetchTags: false
