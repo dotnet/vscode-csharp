@@ -37,8 +37,7 @@ gulp.task('test:feature', async () => {
 });
 
 gulp.task('test:razor', async () => {
-    // prettier-ignore
-    const result = await spawnNode([jestPath, 'out/test/razorTests/.*\.test\.js']);
+    const result = await spawnNode([jestPath, 'out/test/razorTests/.*.test.js']);
 
     if (result.code === null || result.code > 0) {
         // Ensure that gulp fails when tests fail
