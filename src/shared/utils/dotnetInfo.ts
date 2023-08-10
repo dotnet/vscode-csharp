@@ -9,4 +9,5 @@ export interface DotnetInfo {
     Version: string;
     /* a runtime-only install of dotnet will not output a runtimeId in dotnet --info. */
     RuntimeId?: string;
+    Architecture?: string;
 }

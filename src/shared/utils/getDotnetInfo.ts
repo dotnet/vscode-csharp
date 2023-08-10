@@ -26,6 +26,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
 
         let version: string | undefined;
         let runtimeId: string | undefined;
+        let architecture: string | undefined;
 
         const lines = data.replace(/\r/gm, '').split('\n');
         for (const line of lines) {
@@ -34,6 +35,8 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
                 version = match[1];
             } else if ((match = /^ RID:\s*([\w\-.]+)$/.exec(line))) {
                 runtimeId = match[1];
+            } else if ((match = /^\s*Architecture:\s*(.*)/.exec(line))) {
+                architecture = match[1];
             }
         }
 
@@ -43,6 +46,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
                 FullInfo: fullInfo,
                 Version: version,
                 RuntimeId: runtimeId,
+                Architecture: architecture,
             };
             return _dotnetInfo;
         }
