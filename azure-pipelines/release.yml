@@ -12,13 +12,6 @@ parameters:
     - prerelease
     - release
 
-resources:
- repositories:
-   - repository: roslyn
-     name: 'dotnet/roslyn'
-     type: github
-     ref: ${{ parameters.branch }}
-
 variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
 - group: vscode-csharp release secrets
@@ -87,9 +80,10 @@ stages:
       workingDirectory: $(Pipeline.Workspace)
       env:
         VSCE_PAT: $(VSCodeMarketplacePAT)
-- stage: 'TagreleaseNumberToRoslyn'
+- stage: 'TagReleaseNumberToRoslyn'
   displayName: 'Tag release number of vscode-csharp to Roslyn'
   dependsOn: 'PublishStage'
+  condition: or(eq(variables['Build.SourceBranchName'], 'release'), eq(variables['Build.SourceBranchName'], 'prerelease'))
   jobs:
   - job: 'TagRoslyn'
     pool:
