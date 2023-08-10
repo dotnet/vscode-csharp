@@ -13,6 +13,10 @@ require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
 require('./tasks/localizationTasks');
 
+gulp.task('tagRoslyn', async (): Promise<number> => {
+    return await tagRoslyn();
+});
+
 // Disable warning about wanting an async function
 // tslint:disable-next-line
 gulp.task('generateOptionsSchema', async (): Promise<void> => {
@@ -24,8 +28,4 @@ gulp.task('generateOptionsSchema', async (): Promise<void> => {
 // tslint:disable-next-line
 gulp.task('updatePackageDependencies', async (): Promise<void> => {
     return packageDependencyUpdater.updatePackageDependencies();
-});
-
-gulp.task('tagRoslyn', async (): Promise<number> => {
-    return await tagRoslyn();
 });
