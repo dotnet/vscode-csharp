@@ -9,16 +9,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Bring VS Code telemetry reporting in DevKit to match log level requirements of VS (PR: [#69444](https://github.com/dotnet/roslyn/pull/69444))
-* Use new version of protocol to correctly serialize URIs (PR: [#69453](https://github.com/dotnet/roslyn/pull/69453))
-* Fix resolving import completion item in LSP (PR: [#69454](https://github.com/dotnet/roslyn/pull/69454))
+* Fix issue with Go to Definition giving a "unable to resolve reference" error (PR: [#69453](https://github.com/dotnet/roslyn/pull/69453))
+* Fix completion items not correctly adding using statements to the top of the file (PR: [#69454](https://github.com/dotnet/roslyn/pull/69454))
 * Improve de-duping of project load failure toasts (PR: [#69455](https://github.com/dotnet/roslyn/pull/69455))
+* Bring VS Code telemetry reporting in DevKit to match log level requirements of VS (PR: [#69444](https://github.com/dotnet/roslyn/pull/69444))
 
 ## 2.0.346
 * Change how hint diagnostics are shown so they aren't shown as blue squiggles (PR: [#69403](https://github.com/dotnet/roslyn/pull/69403))
 * Load projects even if there is no solution file (PR: [#6062](https://github.com/dotnet/vscode-csharp/pull/6062))
 * Show toast when project loading fails (PR: [#6060](https://github.com/dotnet/vscode-csharp/pull/6060))
-* Fix misleading lsp server logs (PR: [#69378](https://github.com/dotnet/roslyn/pull/69378))
+* Fix misleading LSP server logs (PR: [#69378](https://github.com/dotnet/roslyn/pull/69378))
 * Add support for code lens enable/disable options to roslyn LSP (PR: [#6001](https://github.com/dotnet/vscode-csharp/pull/6001))
 * Onboard Localization pipeline (PR: [#5990](https://github.com/dotnet/vscode-csharp/pull/5990))
 * Enable loading translated strings from razor TS code (PR: [#5962](https://github.com/dotnet/vscode-csharp/pull/5962))
