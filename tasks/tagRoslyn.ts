@@ -8,21 +8,24 @@ import * as fs from 'fs';
 import axios from 'axios';
 
 export async function tagRoslyn(): Promise<number> {
-    const packageJson = JSON.parse('../package.json');
+    const packageJsonString = fs.readFileSync('./package.json').toString();
+    const packageJson = JSON.parse(packageJsonString);
     const roslynVersion = packageJson['defaults']['roslyn'];
     if (!roslynVersion) {
         LogError("Can't find roslyn version in package.json");
         return 1;
     }
 
-    const nugetFile = fs.readFileSync('../server/NuGet.config');
-    const nugetConfig = await xml2js.parseStringPromise(nugetFile);
-    const nugetServerIndex = nugetConfig.configuration.packageSources.add[0].$['msft_consumption'];
+    console.log(`Roslyn version is ${roslynVersion}`);
+    const nugetFileString = fs.readFileSync('./server/NuGet.config').toString();
+    const nugetConfig = await xml2js.parseStringPromise(nugetFileString);
+    const nugetServerIndex = nugetConfig.configuration.packageSources[0].add[0].$.value;
     if (!nugetServerIndex) {
         LogError("Can't find nuget server index.");
         return 1;
     }
 
+    console.log(`Nuget server index is ${nugetServerIndex}`);
     // Find the matching commit from nuget server
     // 1. Ask the PackageBaseAddress from nuget server index.
     // 2. Download .nuspec file. See https://learn.microsoft.com/en-us/nuget/api/package-base-address-resource#download-package-manifest-nuspec
@@ -33,27 +36,26 @@ export async function tagRoslyn(): Promise<number> {
         return 1;
     }
 
-    console.log(`nuget index file: ${indexResponse.data}.`);
     const resources = indexResponse.data['resources'] as any[];
     // This is required to be implemented in nuget server.
     const packageBaseAddress = resources.find((res, _) => res['@type'] === 'PackageBaseAddress/3.0.0');
     const id = packageBaseAddress['@id'];
+    console.log(`packageBaseAddress is: ${id}`);
 
-    const lowerCaselanguageServerPackageName = 'Microsoft.CodeAnalysis.LanguageServer'.toLocaleLowerCase();
-    const nuspecGetUrl = `${id}/${lowerCaselanguageServerPackageName}/${roslynVersion}/${lowerCaselanguageServerPackageName}.nuspec`;
+    const lowerCaseLanguageServerPackageName = 'Microsoft.CodeAnalysis.LanguageServer'.toLocaleLowerCase();
+    const nuspecGetUrl = `${id}${lowerCaseLanguageServerPackageName}/${roslynVersion}/${lowerCaseLanguageServerPackageName}.nuspec`;
+    console.log(`Url to get nuspec file is ${nuspecGetUrl}`);
     const nuspecResponse = await axios.get(nuspecGetUrl);
     if (nuspecResponse.status != 200) {
         LogError('Failed to get nuspec file from nuget server');
         return 1;
     }
 
-    console.log(`nuspect file: ${nugetConfig.data}.`);
     const nuspecFile = await xml2js.parseStringPromise(nuspecResponse.data);
-    const repoUrl = nuspecFile.package.metadata.repository[0].$['url'];
-    const commitNumber = nuspecFile.package.metadata.repository[0].$['commit'];
+    const repoUrl = nuspecFile.package.metadata[0].repository[0].$['url'];
+    const commitNumber = nuspecFile.package.metadata[0].repository[0].$['commit'];
     console.log(`repoUrl is ${repoUrl}.`);
     console.log(`commitNumber is ${commitNumber}.`);
-
     return 0;
 }
 
