@@ -4736,48 +4736,6 @@
       {
         "language": "csharp",
         "scopes": {
-          "namespace": [
-            "entity.name.namespace"
-          ],
-          "type": [
-            "entity.name.type"
-          ],
-          "class": [
-            "entity.name.type.class"
-          ],
-          "enum": [
-            "entity.name.type.enum"
-          ],
-          "interface": [
-            "entity.name.type.interface"
-          ],
-          "struct": [
-            "entity.name.type.struct"
-          ],
-          "typeParameter": [
-            "entity.name.type.type-parameter.cs"
-          ],
-          "parameter": [
-            "variable.parameter"
-          ],
-          "variable": [
-            "entity.name.variable.local.cs"
-          ],
-          "property": [
-            "variable.other.property"
-          ],
-          "enumMember": [
-            "variable.other.enummember"
-          ],
-          "method": [
-            "entity.name.function.member"
-          ],
-          "macro": [
-            "keyword.preprocessor.cs"
-          ],
-          "keyword": [
-            "keyword.cs"
-          ],
           "excludedCode": [
             "support.other.excluded.cs"
           ],
