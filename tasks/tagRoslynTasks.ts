@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as gulp from 'gulp';
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';
 import axios from 'axios';
 
-export async function tagRoslyn(): Promise<number> {
+gulp.task('tagRoslyn', async (): Promise<number> => {
     const packageJsonString = fs.readFileSync('./package.json').toString();
     const packageJson = JSON.parse(packageJsonString);
     const roslynVersion = packageJson['defaults']['roslyn'];
@@ -57,7 +58,7 @@ export async function tagRoslyn(): Promise<number> {
     console.log(`repoUrl is ${repoUrl}.`);
     console.log(`commitNumber is ${commitNumber}.`);
     return 0;
-}
+});
 
 function LogError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);

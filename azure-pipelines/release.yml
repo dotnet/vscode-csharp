@@ -108,5 +108,7 @@ stages:
         displayName: 'Install tools'
       - pwsh: npm run compile
         displayName: 'Compile'
-      - pwsh: gulp tagRoslyn
+      - pwsh: |
+          gulp --tasks
+          gulp tagRoslyn
         displayName: 'Tag release to roslyn'
