@@ -25,7 +25,6 @@
 * Enable loading translated strings from razor TS code (PR: [#5962](https://github.com/dotnet/vscode-csharp/pull/5962))
 * Update typescript and eslint plugin to remove build warning (PR: [6002](https://github.com/dotnet/vscode-csharp/pull/6002))
 * Report how the extension was activated (PR: [#6043](https://github.com/dotnet/vscode-csharp/pull/6043))
-* Update Razor to 7.0.0-preview.23410.1 (PR: )
 
 ## 2.0.328
 * Update Roslyn to 4.8.0-1.23403.6 (PR: [#6003](https://github.com/dotnet/vscode-csharp/pull/6003))
