@@ -13,6 +13,7 @@
 * Fix completion items not correctly adding using statements to the top of the file (PR: [#69454](https://github.com/dotnet/roslyn/pull/69454))
 * Improve de-duping of project load failure toasts (PR: [#69455](https://github.com/dotnet/roslyn/pull/69455))
 * Bring VS Code telemetry reporting in DevKit to match log level requirements of VS (PR: [#69444](https://github.com/dotnet/roslyn/pull/69444))
+* Update Razor to 7.0.0-preview.23410.1 (PR: [#6107](https://github.com/dotnet/vscode-csharp/pull/6107))
 
 ## 2.0.346
 * Change how hint diagnostics are shown so they aren't shown as blue squiggles (PR: [#69403](https://github.com/dotnet/roslyn/pull/69403))
