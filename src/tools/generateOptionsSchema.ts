@@ -146,13 +146,84 @@ function createContributesSettingsForDebugOptions(
     }
 }
 
+function convertStringsToLocalizeKeys(
+    path: string,
+    options: any,
+    keyToLocString: any
+) {
+    const optionKeys = Object.keys(options);
+    for (const key of optionKeys) {
+        const newOptionKey = path + '.' + key;
+        const currentProperty: any = options[key];
+
+        if (currentProperty.description) {
+            if (!keyToLocString[newOptionKey])
+            {
+                keyToLocString[newOptionKey] = currentProperty.description;
+            }
+            currentProperty.description = `%${newOptionKey}%`;
+        }
+
+        if (currentProperty.markdownDescription) {
+            if (!keyToLocString[newOptionKey])
+            {
+                keyToLocString[newOptionKey] = currentProperty.markdownDescription;
+            }
+            currentProperty.markdownDescription = `%${newOptionKey}%`;
+        }
+
+        if (currentProperty.enum && currentProperty.enumDescriptions) {
+            for (let i = 0; i < currentProperty.enum.length; i++) {
+                const enumName = currentProperty.enum[i];
+                const enumDescription = currentProperty.enumDescriptions[i];
+                const newEnumKey = newOptionKey + '.' + enumName;
+                if (!keyToLocString[newEnumKey])
+                {
+                    keyToLocString[newEnumKey] = enumDescription;
+                }
+                currentProperty.enumDescriptions[i] = `%${newEnumKey}%`;
+            }
+        }
+
+        if (currentProperty.type == 'object' && currentProperty.properties) {
+            convertStringsToLocalizeKeys(
+                newOptionKey,
+                currentProperty.properties,
+                keyToLocString
+            );
+        }
+    }
+}
+
+function writeToFile(objToWrite: any, filename: string) {
+    let content = JSON.stringify(objToWrite, null, 2);
+    if (os.platform() === 'win32') {
+        content = content.replace(/\n/gm, '\r\n');
+    }
+
+    // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
+    // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
+    content = content.replace(/\u200b/gm, '\\u200b');
+
+    fs.writeFileSync(filename, content);
+}
+
 export function GenerateOptionsSchema() {
+    const packageNlsJSON: any = JSON.parse(fs.readFileSync('package.nls.json').toString());
     const packageJSON: any = JSON.parse(fs.readFileSync('package.json').toString());
     const schemaJSON: any = JSON.parse(fs.readFileSync('src/tools/OptionsSchema.json').toString());
     const symbolSettingsJSON: any = JSON.parse(fs.readFileSync('src/tools/VSSymbolSettings.json').toString());
     mergeReferences(schemaJSON.definitions, symbolSettingsJSON.definitions);
 
     schemaJSON.definitions = ReplaceReferences(schemaJSON.definitions, schemaJSON.definitions);
+
+    // Generate keys for package.nls.json and its associated strings.
+    let keyToLocString: any = {};
+    convertStringsToLocalizeKeys('csharp.debug', schemaJSON.definitions.LaunchOptions.properties, keyToLocString);
+    convertStringsToLocalizeKeys('csharp.debug', schemaJSON.definitions.AttachOptions.properties, keyToLocString);
+
+    // Override existing package.nls.json key/values with ones from OptionsSchema.
+    Object.assign(packageNlsJSON, keyToLocString);
 
     // Hard Code adding in configurationAttributes launch and attach.
     // .NET Core
@@ -219,14 +290,7 @@ export function GenerateOptionsSchema() {
         packageJSON.contributes.configuration[1].properties
     );
 
-    let content = JSON.stringify(packageJSON, null, 2);
-    if (os.platform() === 'win32') {
-        content = content.replace(/\n/gm, '\r\n');
-    }
-
-    // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
-    // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
-    content = content.replace(/\u200b/gm, '\\u200b');
-
-    fs.writeFileSync('package.json', content);
+    // Write package.json and package.nls.json to disk
+    writeToFile(packageJSON, 'package.json');
+    writeToFile(packageNlsJSON, 'package.nls.json');
 }
