@@ -102,10 +102,13 @@ stages:
         fetchTags: false
         fetchDepth: 0
       - pwsh: |
+          npm ci
           npm install
           npm install -g gulp
         displayName: 'Install tools'
       - pwsh: npm run compile
         displayName: 'Compile'
-      - pwsh: gulp 'Tag release information to dotnet/roslyn'
-        displayName: 'Tag roslyn'
+      - pwsh: |
+          gulp --tasks
+          gulp tagRoslyn
+        displayName: 'Tag release to roslyn'

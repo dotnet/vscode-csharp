@@ -6,12 +6,12 @@
 import * as gulp from 'gulp';
 import * as optionsSchemaGenerator from './src/tools/generateOptionsSchema';
 import * as packageDependencyUpdater from './src/tools/updatePackageDependencies';
+import { tagRoslyn } from './tasks/tagRoslyn';
 
 require('./tasks/testTasks');
 require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
 require('./tasks/localizationTasks');
-require('./tasks/roslynTaggingTask');
 
 // Disable warning about wanting an async function
 // tslint:disable-next-line
@@ -24,4 +24,8 @@ gulp.task('generateOptionsSchema', async (): Promise<void> => {
 // tslint:disable-next-line
 gulp.task('updatePackageDependencies', async (): Promise<void> => {
     return packageDependencyUpdater.updatePackageDependencies();
+});
+
+gulp.task('tagRoslyn', async (): Promise<number> => {
+    return await tagRoslyn();
 });

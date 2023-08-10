@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';
 import axios from 'axios';
 
-gulp.task('Tag release information to dotnet/roslyn', async () => {
+export async function tagRoslyn(): Promise<number> {
     const packageJson = JSON.parse('../package.json');
     const roslynVersion = packageJson['defaults']['roslyn'];
     if (!roslynVersion) {
@@ -54,7 +53,9 @@ gulp.task('Tag release information to dotnet/roslyn', async () => {
     const commitNumber = nuspecFile.package.metadata.repository[0].$['commit'];
     console.log(`repoUrl is ${repoUrl}.`);
     console.log(`commitNumber is ${commitNumber}.`);
-});
+
+    return 0;
+}
 
 function LogError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
