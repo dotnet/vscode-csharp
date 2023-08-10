@@ -4737,40 +4737,40 @@
         "language": "csharp",
         "scopes": {
           "namespace": [
-            "entity.name.type.namespace.cs"
+            "entity.name.namespace"
           ],
           "type": [
             "entity.name.type"
           ],
           "class": [
-            "entity.name.type.class.cs"
+            "entity.name.type.class"
           ],
           "enum": [
-            "entity.name.type.enum.cs"
+            "entity.name.type.enum"
           ],
           "interface": [
-            "entity.name.type.interface.cs"
+            "entity.name.type.interface"
           ],
           "struct": [
-            "entity.name.type.struct.cs"
+            "entity.name.type.struct"
           ],
           "typeParameter": [
             "entity.name.type.type-parameter.cs"
           ],
           "parameter": [
-            "entity.name.variable.parameter.cs"
+            "variable.parameter"
           ],
           "variable": [
             "entity.name.variable.local.cs"
           ],
           "property": [
-            "variable.other.property.cs"
+            "variable.other.property"
           ],
           "enumMember": [
-            "variable.other.enummember.cs"
+            "variable.other.enummember"
           ],
           "method": [
-            "entity.name.function.member.cs"
+            "entity.name.function.member"
           ],
           "macro": [
             "keyword.preprocessor.cs"
@@ -4809,7 +4809,7 @@
             "entity.name.variable.field.cs"
           ],
           "constant": [
-            "variable.other.constant.cs"
+            "variable.other.constant"
           ],
           "extensionMethod": [
             "entity.name.function.extension.cs"
