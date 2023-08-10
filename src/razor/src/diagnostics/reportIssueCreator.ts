@@ -5,14 +5,18 @@
 
 import * as cp from 'child_process';
 import * as os from 'os';
+import * as vscodeAdapter from '../vscodeAdapter';
+import * as vscode from 'vscode';
 import { IRazorDocument } from '../document/IRazorDocument';
 import { IRazorDocumentManager } from '../document/IRazorDocumentManager';
 import { razorExtensionId } from '../razorExtensionId';
-import * as vscode from '../vscodeAdapter';
 import { IReportIssueDataCollectionResult } from './IReportIssueDataCollectionResult';
 
 export class ReportIssueCreator {
-    constructor(private readonly vscodeApi: vscode.api, private readonly documentManager: IRazorDocumentManager) {}
+    constructor(
+        private readonly vscodeApi: vscodeAdapter.api,
+        private readonly documentManager: IRazorDocumentManager
+    ) {}
 
     public async create(collectionResult: IReportIssueDataCollectionResult) {
         let razorContent: string;
@@ -26,17 +30,17 @@ export class ReportIssueCreator {
             csharpContent = await this.getProjectedCSharp(razorDocument);
             htmlContent = await this.getProjectedHtml(razorDocument);
         } else {
-            razorContent = 'Non Razor file as active document';
-            csharpContent = 'Could not determine CSharp content';
-            htmlContent = 'Could not determine Html content';
+            razorContent = vscode.l10n.t('Non Razor file as active document');
+            csharpContent = vscode.l10n.t('Could not determine CSharp content');
+            htmlContent = vscode.l10n.t('Could not determine Html content');
         }
 
         const razorExtensionVersion = this.getExtensionVersion();
         let dotnetInfo = '';
         try {
             dotnetInfo = await this.getDotnetInfo();
-        } catch (error) {
-            dotnetInfo = `A valid dotnet installation could not be found: ${error}`;
+        } catch (error: any) {
+            dotnetInfo = vscode.l10n.t('A valid dotnet installation could not be found: {0}', error?.toString());
         }
         const extensionTable = this.generateExtensionTable();
 
@@ -45,27 +49,55 @@ export class ReportIssueCreator {
         const sanitizedCSharpContent = this.sanitize(csharpContent);
         const sanitizedHtmlContent = this.sanitize(htmlContent);
         const sanitizedDotnetInfo = this.sanitize(dotnetInfo);
-        return `## Is this a Bug or Feature request?:
-Bug
 
-## Steps to reproduce
-------------------- Please fill in this section -------------------------
+        const issueType = vscode.l10n.t('Is this a Bug or Feature request?');
 
-## Description of the problem:
-------------------- Please fill in this section -------------------------
+        const defaultIssueType = vscode.l10n.t('Bug');
 
-Expected behavior:
+        const reproStepsHeader = vscode.l10n.t('Steps to reproduce');
+        const genericPlaceholderContent = vscode.l10n.t('Please fill in this section');
+        const problemDescriptionHeader = vscode.l10n.t('Description of the problem');
+        const expectedBehaviorHeader = vscode.l10n.t('Expected behavior');
+        const actualBehaviorHeader = vscode.l10n.t('Actual behavior');
+        const logsHeader = vscode.l10n.t('Logs');
 
-Actual behavior:
+        const omniSharpHeader = vscode.l10n.t('OmniSharp');
+        const omniSharpInstructions = vscode.l10n.t(
+            "To find the OmniSharp log, open VS Code's" + ' "Output" pane, then in the dropdown choose "OmniSharp Log".'
+        );
+        const razorHeader = vscode.l10n.t('Razor');
+        const expandText = vscode.l10n.t('Expand');
 
-## Logs
+        const workspaceInfo = vscode.l10n.t('Workspace information');
+        const razorDocument = vscode.l10n.t('Razor document');
+        const projectedCSDocument = vscode.l10n.t('Projected CSharp document');
+        const projectedHtmlDocument = vscode.l10n.t('Projected Html document');
+        const machineInfo = vscode.l10n.t('Machine information');
+        const razorVersion = vscode.l10n.t('Razor.VSCode version');
+        const vscodeVersion = vscode.l10n.t('VSCode version');
+        const extensionsLabel = vscode.l10n.t('Extensions');
 
-#### OmniSharp
-------------------- Please fill in this section -------------------------
-To find the OmniSharp log, open VS Code's "Output" pane, then in the dropdown choose "OmniSharp Log".
+        return `## ${issueType}:
+${defaultIssueType}
 
-#### Razor
-<details><summary>Expand</summary>
+## ${reproStepsHeader}:
+------------------- ${genericPlaceholderContent} -------------------------
+
+## ${problemDescriptionHeader}:
+------------------- ${genericPlaceholderContent} -------------------------
+
+${expectedBehaviorHeader}:
+
+${actualBehaviorHeader}:
+
+## ${logsHeader}
+
+#### ${omniSharpHeader}
+------------------- ${genericPlaceholderContent} -------------------------
+${omniSharpInstructions}
+
+#### ${razorHeader}
+<details><summary>${expandText}</summary>
 <p>
 
 \`\`\`
@@ -75,10 +107,10 @@ ${sanitizedLogOutput}
 </p>
 </details>
 
-## Workspace information
+## ${workspaceInfo}
 
-#### Razor document:
-<details><summary>Expand</summary>
+#### ${razorDocument}:
+<details><summary>${expandText}</summary>
 <p>
 
 \`\`\`Razor
@@ -88,8 +120,8 @@ ${sanitizedRazorContent}
 </p>
 </details>
 
-#### Projected CSharp document:
-<details><summary>Expand</summary>
+#### ${projectedCSDocument}:
+<details><summary>${expandText}</summary>
 <p>
 
 \`\`\`C#
@@ -99,8 +131,8 @@ ${sanitizedCSharpContent}
 </p>
 </details>
 
-#### Projected Html document:
-<details><summary>Expand</summary>
+#### ${projectedHtmlDocument}:
+<details><summary>${expandText}</summary>
 <p>
 
 \`\`\`Html
@@ -110,14 +142,14 @@ ${sanitizedHtmlContent}
 </p>
 </details>
 
-## Machine information
+## ${machineInfo}
 
 
-**VSCode version**: ${this.vscodeApi.version}
-**Razor.VSCode version**: ${razorExtensionVersion}
+**${vscodeVersion}**: ${this.vscodeApi.version}
+**${razorVersion}**: ${razorExtensionVersion}
 #### \`dotnet --info\`
 
-<details><summary>Expand</summary>
+<details><summary>${expandText}</summary>
 <p>
 
 \`\`\`
@@ -127,8 +159,8 @@ ${sanitizedDotnetInfo}
 </p>
 </details>
 
-#### Extensions
-<details><summary>Expand</summary>
+#### ${extensionsLabel}
+<details><summary>${expandText}</summary>
 <p>
 
 ${extensionTable}
@@ -152,7 +184,7 @@ ${extensionTable}
     }
 
     // Protected for testing
-    protected async getRazor(document: vscode.TextDocument) {
+    protected async getRazor(document: vscodeAdapter.TextDocument) {
         const content = document.getText();
 
         return content;
@@ -160,12 +192,15 @@ ${extensionTable}
 
     // Protected for testing
     protected async getProjectedCSharp(razorDocument: IRazorDocument) {
-        let csharpContent = `////////////////////// Projected CSharp as seen by extension ///////////////////////
+        const projectedCSharpHeaderFooter = vscode.l10n.t('Projected CSharp as seen by extension');
+
+        let csharpContent = `////////////////////// ${projectedCSharpHeaderFooter} ///////////////////////
 ${razorDocument.csharpDocument.getContent()}
 
 
-////////////////////// Projected CSharp as seen by VSCode ///////////////////////`;
+////////////////////// ${projectedCSharpHeaderFooter} ///////////////////////`;
 
+        const errorSuffix = vscode.l10n.t("Unable to resolve VSCode's version of CSharp");
         try {
             const csharpTextDocument = await this.vscodeApi.workspace.openTextDocument(
                 razorDocument.csharpDocument.uri
@@ -175,11 +210,11 @@ ${razorDocument.csharpDocument.getContent()}
 ${csharpTextDocument.getText()}`;
             } else {
                 csharpContent = `${csharpContent}
-Unable to resolve VSCode's version of CSharp`;
+${errorSuffix}`;
             }
         } catch (e) {
             csharpContent = `${csharpContent}
-Unable to resolve VSCode's version of CSharp`;
+${errorSuffix}`;
         }
 
         return csharpContent;
@@ -187,12 +222,14 @@ Unable to resolve VSCode's version of CSharp`;
 
     // Protected for testing
     protected async getProjectedHtml(razorDocument: IRazorDocument) {
-        let htmlContent = `////////////////////// Projected Html as seen by extension ///////////////////////
+        const projectedHTmlHeaderFooter = vscode.l10n.t('Projected Html as seen by extension');
+        let htmlContent = `////////////////////// ${projectedHTmlHeaderFooter} ///////////////////////
 ${razorDocument.htmlDocument.getContent()}
 
 
-////////////////////// Projected Html as seen by VSCode ///////////////////////`;
+////////////////////// ${projectedHTmlHeaderFooter} ///////////////////////`;
 
+        const errorSuffix = vscode.l10n.t("Unable to resolve VSCode's version of Html");
         try {
             const htmlTextDocument = await this.vscodeApi.workspace.openTextDocument(razorDocument.htmlDocument.uri);
             if (htmlTextDocument) {
@@ -200,11 +237,11 @@ ${razorDocument.htmlDocument.getContent()}
 ${htmlTextDocument.getText()}`;
             } else {
                 htmlContent = `${htmlContent}
-Unable to resolve VSCode's version of Html`;
+${errorSuffix}`;
             }
         } catch (e) {
             htmlContent = `${htmlContent}
-Unable to resolve VSCode's version of Html`;
+${errorSuffix}`;
         }
 
         return htmlContent;
@@ -214,14 +251,14 @@ Unable to resolve VSCode's version of Html`;
     protected getExtensionVersion(): string {
         const extension = this.vscodeApi.extensions.getExtension(razorExtensionId);
         if (!extension) {
-            return 'Unable to find Razor extension version.';
+            return vscode.l10n.t('Unable to find Razor extension version.');
         }
         return extension.packageJSON.version;
     }
 
     // Protected for testing
     protected getInstalledExtensions() {
-        const extensions: Array<vscode.Extension<any>> = this.vscodeApi.extensions.all.filter(
+        const extensions: Array<vscodeAdapter.Extension<any>> = this.vscodeApi.extensions.all.filter(
             (extension) => extension.packageJSON.isBuiltin === false
         );
 
@@ -237,7 +274,10 @@ Unable to resolve VSCode's version of Html`;
             return 'none';
         }
 
-        const tableHeader = `|Extension|Author|Version|${os.EOL}|---|---|---|`;
+        const extensionLabel = vscode.l10n.t('Extension');
+        const authorLabel = vscode.l10n.t('Author');
+        const versionLabel = vscode.l10n.t('Version');
+        const tableHeader = `|${extensionLabel}|${authorLabel}|${versionLabel}|${os.EOL}|---|---|---|`;
         const table = extensions
             .map((e) => `|${e.packageJSON.name}|${e.packageJSON.publisher}|${e.packageJSON.version}|`)
             .join(os.EOL);

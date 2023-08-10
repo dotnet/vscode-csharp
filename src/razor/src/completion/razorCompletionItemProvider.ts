@@ -289,6 +289,6 @@ function getTriggerKind(triggerKind: vscode.CompletionTriggerKind): CompletionTr
         case vscode.CompletionTriggerKind.TriggerForIncompleteCompletions:
             return CompletionTriggerKind.TriggerForIncompleteCompletions;
         default:
-            throw new Error(`Unexpected completion trigger kind: ${triggerKind}`);
+            throw new Error(vscode.l10n.t('Unexpected completion trigger kind: {0}', triggerKind));
     }
 }

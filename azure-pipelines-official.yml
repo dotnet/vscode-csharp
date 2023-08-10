@@ -3,11 +3,14 @@ trigger:
     include:
     - main
     - prerelease
+    - release
 pr: none
 
 variables:
-  - name: prereleaseFlag
-    value: '--prerelease'
+  ${{ if eq(variables['Build.SourceBranchName'], 'release') }}:
+    prereleaseFlag: ''
+  ${{ else }}:
+    prereleaseFlag: '--prerelease'
 
 stages:
 - stage: Build

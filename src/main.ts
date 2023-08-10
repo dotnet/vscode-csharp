@@ -46,6 +46,7 @@ import {
     RoslynLanguageServer,
     SolutionSnapshotProvider,
     activateRoslynLanguageServer,
+    waitForProjectInitialization,
 } from './lsptoolshost/roslynLanguageServer';
 import { Options } from './shared/options';
 import { MigrateOptions } from './shared/migrateOptions';
@@ -123,6 +124,7 @@ export async function activate(
     let omnisharpLangServicePromise: Promise<OmniSharp.ActivationResult> | undefined = undefined;
     let omnisharpRazorPromise: Promise<void> | undefined = undefined;
     let roslynLanguageServerPromise: Promise<RoslynLanguageServer> | undefined = undefined;
+    let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer) {
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
@@ -157,6 +159,7 @@ export async function activate(
             dotnetTestChannel,
             reporter
         );
+        projectInitializationCompletePromise = waitForProjectInitialization();
     } else {
         const dotnetChannel = vscode.window.createOutputChannel('.NET');
         const dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -222,6 +225,24 @@ export async function activate(
             eventStream.subscribe(omnisharpDebugModeLoggerObserver.post);
         }
 
+        const razorObserver = new RazorLoggerObserver(csharpChannel);
+        eventStream.subscribe(razorObserver.post);
+
+        if (!razorOptions.razorDevMode) {
+            // Download Razor O# server
+            const razorOmnisharpDownloader = new RazorOmnisharpDownloader(
+                networkSettingsProvider,
+                eventStream,
+                context.extension.packageJSON,
+                platformInfo,
+                context.extension.extensionPath
+            );
+
+            await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(
+                context.extension.packageJSON.defaults.razorOmnisharp
+            );
+        }
+
         // activate language services
         omnisharpLangServicePromise = OmniSharp.activate(
             context,
@@ -247,22 +268,7 @@ export async function activate(
             })
         );
 
-        const razorObserver = new RazorLoggerObserver(csharpChannel);
-        eventStream.subscribe(razorObserver.post);
-
         if (!razorOptions.razorDevMode) {
-            // Download Razor O# server
-            const razorOmnisharpDownloader = new RazorOmnisharpDownloader(
-                networkSettingsProvider,
-                eventStream,
-                context.extension.packageJSON,
-                platformInfo,
-                context.extension.extensionPath
-            );
-
-            await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(
-                context.extension.packageJSON.defaults.razorOmnisharp
-            );
             omnisharpRazorPromise = activateRazorExtension(
                 context,
                 context.extension.extensionPath,
@@ -308,6 +314,11 @@ export async function activate(
         );
     }
 
+    const activationProperties: { [key: string]: string } = {
+        serverKind: useOmnisharpServer ? 'OmniSharp' : 'Roslyn',
+    };
+    reporter.sendTelemetryEvent('CSharpActivated', activationProperties);
+
     if (!useOmnisharpServer) {
         tryGetCSharpDevKitExtensionExports(csharpLogObserver);
 
@@ -316,6 +327,7 @@ export async function activate(
             initializationFinished: async () => {
                 await coreClrDebugPromise;
                 await roslynLanguageServerPromise;
+                await projectInitializationCompletePromise;
             },
             profferBrokeredServices: (container) => profferBrokeredServices(context, container),
             logDirectory: context.logUri.fsPath,

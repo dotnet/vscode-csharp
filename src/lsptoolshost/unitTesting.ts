@@ -21,19 +21,31 @@ export function registerUnitTestingCommands(
     context.subscriptions.push(
         vscode.commands.registerTextEditorCommand(
             'dotnet.test.runTestsInContext',
-            async (textEditor: vscode.TextEditor) => runTestsInContext(textEditor, languageServer, dotnetTestChannel)
+            async (textEditor: vscode.TextEditor) => {
+                return runTestsInContext(false, textEditor, languageServer, dotnetTestChannel);
+            }
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerTextEditorCommand(
+            'dotnet.test.debugTestsInContext',
+            async (textEditor: vscode.TextEditor) => {
+                return runTestsInContext(true, textEditor, languageServer, dotnetTestChannel);
+            }
         )
     );
 }
 
 async function runTestsInContext(
+    debug: boolean,
     textEditor: vscode.TextEditor,
     languageServer: RoslynLanguageServer,
     dotnetTestChannel: vscode.OutputChannel
 ) {
     const contextRange: languageClient.Range = { start: textEditor.selection.active, end: textEditor.selection.active };
     const textDocument: languageClient.TextDocumentIdentifier = { uri: textEditor.document.fileName };
-    const request: RunTestsParams = { textDocument: textDocument, range: contextRange };
+    const request: RunTestsParams = { textDocument: textDocument, range: contextRange, attachDebugger: debug };
     await runTests(request, languageServer, dotnetTestChannel);
 }
 

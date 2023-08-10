@@ -14,6 +14,7 @@ import {
     IDotnetDebugConfigurationService,
     IDotnetDebugConfigurationServiceResult,
 } from '../lsptoolshost/services/IDotnetDebugConfigurationService';
+import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider';
 
 // User errors that can be shown to the user.
 class LaunchServiceError extends Error {}
@@ -54,7 +55,10 @@ function resolveWorkspaceFolderToken(projectPath: string, folderPath: string): s
 }
 
 export class DotnetConfigurationResolver implements vscode.DebugConfigurationProvider {
-    constructor(private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider) {}
+    constructor(
+        private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider,
+        private dotnetWorkspaceConfigurationProvider: DotnetWorkspaceConfigurationProvider
+    ) {}
 
     //#region vscode.DebugConfigurationProvider
 
@@ -131,7 +135,7 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
 
         const debugConfigArray = result.configurations;
         if (debugConfigArray.length == 0) {
-            throw new LaunchServiceError(`No launchable target found for '${projectPath}'`);
+            throw new LaunchServiceError(vscode.l10n.t("No launchable target found for '{0}'", projectPath));
         }
         if (debugConfigArray.length == 1) {
             return debugConfigArray[0];
@@ -159,7 +163,9 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
             await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
         if (!info) {
             throw new Error(
-                'Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.'
+                vscode.l10n.t(
+                    'Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.'
+                )
             );
         }
 
@@ -189,14 +195,30 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                         return result;
                     } else {
                         throw new Error(
-                            `Unable to determine a configuration for '${projectPath}'. Please generate C# debug assets instead.`
+                            vscode.l10n.t(
+                                `Unable to determine a configuration for '{0}'. Please generate C# debug assets instead.`,
+                                projectPath
+                            )
                         );
                     }
                 } else {
-                    throw new Error(`'${projectPath}' is not an executable project.`);
+                    throw new Error(vscode.l10n.t("'{0}' is not an executable project.", projectPath));
                 }
             }
         }
-        throw new Error(`Unable to determine debug settings for project '${projectPath}'`);
+        throw new Error(vscode.l10n.t("Unable to determine debug settings for project '{0}'", projectPath));
+    }
+
+    // Workaround for VS Code not calling into the 'coreclr' resolveDebugConfigurationWithSubstitutedVariables
+    async resolveDebugConfigurationWithSubstitutedVariables(
+        folder: vscode.WorkspaceFolder | undefined,
+        debugConfiguration: vscode.DebugConfiguration,
+        token?: vscode.CancellationToken
+    ): Promise<vscode.DebugConfiguration | null | undefined> {
+        return this.dotnetWorkspaceConfigurationProvider.resolveDebugConfigurationWithSubstitutedVariables(
+            folder,
+            debugConfiguration,
+            token
+        );
     }
 }

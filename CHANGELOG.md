@@ -1,16 +1,37 @@
-## Known Issues in 1.25.8
+## Known Issues
+ 
+- Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
+- [O# Parity] FixAll support for code fixes and refactorings [#5735](https://github.com/dotnet/vscode-csharp/issues/5735)
+- [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
+- [O# Parity] Support loading projects/files without a solution file [#5722](https://github.com/dotnet/vscode-csharp/issues/5722)
+- [O# Parity] Some csproj projects will not correctly load [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
+- [O# Parity] Run and debug tests in context [#5719](https://github.com/dotnet/vscode-csharp/issues/5719)
+- Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-* For Mono-based development (e.g. Unity) that requires full .NET framework, you need to set `"omnisharp.useModernNet": false`.
-* After selecting a solution filter (*.slnf) from the project selector, the solution's name will be displayed in the status bar instead of the filter's.
-* Known limitations with the preview Razor (cshtml) language service to be addressed in a future release:
-  * Not all platforms ship with the Razor LSP, such as Linux arm64.
-  * Only ASP.NET Core projects are supported (no support for ASP.NET projects)
-  * Error squiggles misaligned for expressions near the start of a new line
-  * Emmet based abbreviation expansion is not yet supported (See note in readme for how to enable through your settings.json)
-* There currently is no completion support for package references in csproj files. ([#1156](https://github.com/OmniSharp/omnisharp-vscode/issues/1156))
-  * As an alternative, consider installing the [MSBuild Project Tools](https://marketplace.visualstudio.com/items?itemName=tintoy.msbuild-project-tools) extension by @tintoy.
-* Renaming symbol fails within a file that had recently been renamed without saving changes.
-  * As a workaround, make an edit within the file before using Rename Symbol.
+## Latest
+* Change how hint diagnostics are shown so they aren't shown as blue squiggles (PR: [#69403](https://github.com/dotnet/roslyn/pull/69403))
+* Load projects even if there is no solution file (PR: [#6062](https://github.com/dotnet/vscode-csharp/pull/6062))
+* Show toast when project loading fails (PR: [#6060](https://github.com/dotnet/vscode-csharp/pull/6060))
+* Fix misleading lsp server logs (PR: [#69378](https://github.com/dotnet/roslyn/pull/69378))
+* Add support for code lens enable/disable options to roslyn LSP (PR: [#6001](https://github.com/dotnet/vscode-csharp/pull/6001))
+* Onboard Localization pipeline (PR: [#5990](https://github.com/dotnet/vscode-csharp/pull/5990))
+* Enable loading translated strings from razor TS code (PR: [#5962](https://github.com/dotnet/vscode-csharp/pull/5962))
+* Update typescript and eslint plugin to remove build warning (PR: [6002](https://github.com/dotnet/vscode-csharp/pull/6002))
+* Report how the extension was activated (PR: [#6043](https://github.com/dotnet/vscode-csharp/pull/6043))
+
+## 2.0.328
+* Update Roslyn to 4.8.0-1.23403.6 (PR: [#6003](https://github.com/dotnet/vscode-csharp/pull/6003))
+  * Fix issue where the ProcessFrameworkReferences task causes projects to fail to load (PR: [#69354](https://github.com/dotnet/roslyn/pull/69354))
+  * Emulate suggestion mode in LSP completion by always soft-selecting (PR: [#69327](https://github.com/dotnet/roslyn/pull/69327))
+* Updated CHANGELOG.md (PR: [#5992](https://github.com/dotnet/vscode-csharp/pull/5992))
+* Add back accidentally-excluded changelog file from the extension (PR: [#5991](https://github.com/dotnet/vscode-csharp/pull/5991))
+
+## 2.0.320
+We are switching to the new Roslyn language server as the default. We recognize that this version doesn’t have full parity with the OmniSharp version. If you need one of these features before we can get to it, you can switch back to OmniSharp by following these [instructions](https://github.com/dotnet/vscode-csharp#how-to-use-omnisharp).
+
+## 1.26.1
+* Update Razor to 7.0.0-preview.23363.1
+  * Remove unsupported features (PR: [#8951](https://github.com/dotnet/razor/pull/8951))
 
 ## 1.26.0
 * Update OmniSharp to 1.39.7 (PR: [#5840](https://github.com/OmniSharp/omnisharp-vscode/pull/5840))

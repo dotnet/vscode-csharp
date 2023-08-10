@@ -119,7 +119,18 @@ export class Options {
             'omnisharp.useEditorFormattingSettings',
             true
         );
-        const enableRoslynAnalyzers = Options.readOption<boolean>(config, 'omnisharp.enableRoslynAnalyzers', false);
+        const enableRoslynAnalyzersLegacyOption = Options.readOption<boolean>(
+            config,
+            'omnisharp.enableRoslynAnalyzers',
+            false
+        );
+        const diagnosticAnalysisScope = Options.readOption<string>(
+            config,
+            'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
+            useOmnisharpServer ? 'none' : 'openFiles'
+        );
+        const enableRoslynAnalyzersNewOption = diagnosticAnalysisScope != 'none';
+        const enableRoslynAnalyzers = enableRoslynAnalyzersLegacyOption || enableRoslynAnalyzersNewOption;
         const enableEditorConfigSupport = Options.readOption<boolean>(
             config,
             'omnisharp.enableEditorConfigSupport',
@@ -138,11 +149,13 @@ export class Options {
             'omnisharp.enableImportCompletion'
         );
         const enableAsyncCompletion = Options.readOption<boolean>(config, 'omnisharp.enableAsyncCompletion', false);
-        const analyzeOpenDocumentsOnly = Options.readOption<boolean>(
+        const analyzeOpenDocumentsOnlyLegacyOption = Options.readOption<boolean>(
             config,
             'omnisharp.analyzeOpenDocumentsOnly',
             false
         );
+        const analyzeOpenDocumentsOnlyNewOption = diagnosticAnalysisScope == 'openFiles';
+        const analyzeOpenDocumentsOnly = analyzeOpenDocumentsOnlyLegacyOption || analyzeOpenDocumentsOnlyNewOption;
         const organizeImportsOnFormat = Options.readOption<boolean>(config, 'omnisharp.organizeImportsOnFormat', false);
         const disableMSBuildDiagnosticWarning = Options.readOption<boolean>(
             config,
@@ -164,8 +177,18 @@ export class Options {
         const dotNetCliPaths = Options.readOption<string[]>(config, 'omnisharp.dotNetCliPaths', []);
 
         const useFormatting = Options.readOption<boolean>(config, 'csharp.format.enable', true);
-        const showReferencesCodeLens = Options.readOption<boolean>(config, 'csharp.referencesCodeLens.enabled', true);
-        const showTestsCodeLens = Options.readOption<boolean>(config, 'csharp.testsCodeLens.enabled', true);
+        const showReferencesCodeLens = Options.readOption<boolean>(
+            config,
+            'dotnet.codeLens.enableReferencesCodeLens',
+            true,
+            'csharp.referencesCodeLens.enabled'
+        );
+        const showTestsCodeLens = Options.readOption<boolean>(
+            config,
+            'dotnet.codeLens.enableTestsCodeLens',
+            true,
+            'csharp.testsCodeLens.enabled'
+        );
         const filteredSymbolsCodeLens = Options.readOption<string[]>(
             config,
             'csharp.referencesCodeLens.filteredSymbols',

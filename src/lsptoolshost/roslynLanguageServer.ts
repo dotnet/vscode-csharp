@@ -39,6 +39,7 @@ import {
     CompletionItem,
     PartialResultParams,
     ProtocolRequestType,
+    MessageType,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -48,7 +49,6 @@ import ShowInformationMessage from '../shared/observers/utils/showInformationMes
 import EventEmitter = require('events');
 import Disposable from '../disposable';
 import * as RoslynProtocol from './roslynProtocol';
-import { OpenSolutionParams } from './openSolutionParams';
 import { CSharpDevKitExports } from '../csharpDevKitExports';
 import { ISolutionSnapshotProvider, SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
 import { Options } from '../shared/options';
@@ -61,6 +61,8 @@ import { DotnetRuntimeExtensionResolver } from './dotnetRuntimeExtensionResolver
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
 import { registerUnitTestingCommands } from './unitTesting';
+import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
+import { TextEdit } from 'vscode-html-languageservice';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -76,6 +78,7 @@ export class RoslynLanguageServer {
     public static readonly resolveCodeActionCommand: string = 'roslyn.resolveCodeAction';
     public static readonly provideCompletionsCommand: string = 'roslyn.provideCompletions';
     public static readonly resolveCompletionsCommand: string = 'roslyn.resolveCompletion';
+    public static readonly roslynSimplifyMethodCommand: string = 'roslyn.simplifyMethod';
     public static readonly razorInitializeCommand: string = 'razor.initialize';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
@@ -114,6 +117,9 @@ export class RoslynLanguageServer {
      */
     private _solutionFile: vscode.Uri | undefined;
 
+    /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
+    private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
+
     constructor(
         private platformInfo: PlatformInformation,
         private hostExecutableResolver: IHostExecutableResolver,
@@ -143,7 +149,6 @@ export class RoslynLanguageServer {
             // Register the server for plain csharp documents
             documentSelector: documentSelector,
             synchronize: {
-                // Notify the server about file changes to all supported files contained in the workspace
                 fileEvents: [],
             },
             traceOutputChannel: _traceChannel,
@@ -182,10 +187,10 @@ export class RoslynLanguageServer {
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
                 await this._languageClient!.setTrace(languageClientTraceLevel);
-                if (this._solutionFile) {
-                    await this.sendOpenSolutionNotification();
+                if (this._solutionFile || this._projectFiles.length > 0) {
+                    await this.sendOpenSolutionAndProjectsNotifications();
                 } else {
-                    await this.openDefaultSolution();
+                    await this.openDefaultSolutionOrProjects();
                 }
                 await this.sendOrSubscribeForServiceBrokerConnection();
                 this._eventBus.emit(RoslynLanguageServer.serverStateChangeEvent, ServerStateChange.Started);
@@ -199,6 +204,57 @@ export class RoslynLanguageServer {
             );
         });
 
+        this._languageClient.onNotification(RoslynProtocol.ShowToastNotification.type, async (notification) => {
+            const messageOptions: vscode.MessageOptions = {
+                modal: false,
+            };
+            const commands = notification.commands.map((command) => command.title);
+            const executeCommandByName = async (result: string | undefined) => {
+                if (result) {
+                    const command = notification.commands.find((command) => command.title === result);
+                    if (!command) {
+                        throw new Error(`Unknown command ${result}`);
+                    }
+
+                    if (command.arguments) {
+                        await vscode.commands.executeCommand(command.command, ...command.arguments);
+                    } else {
+                        await vscode.commands.executeCommand(command.command);
+                    }
+                }
+            };
+
+            switch (notification.messageType) {
+                case MessageType.Error: {
+                    const result = await vscode.window.showErrorMessage(
+                        notification.message,
+                        messageOptions,
+                        ...commands
+                    );
+                    executeCommandByName(result);
+                    break;
+                }
+                case MessageType.Warning: {
+                    const result = await vscode.window.showWarningMessage(
+                        notification.message,
+                        messageOptions,
+                        ...commands
+                    );
+                    executeCommandByName(result);
+                    break;
+                }
+                default: {
+                    const result = await vscode.window.showInformationMessage(
+                        notification.message,
+                        messageOptions,
+                        ...commands
+                    );
+                    executeCommandByName(result);
+                    break;
+                }
+            }
+        });
+
         this.registerExtensionsChanged(this._languageClient);
         this.registerTelemetryChanged(this._languageClient);
 
@@ -207,6 +263,8 @@ export class RoslynLanguageServer {
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo(this._languageClient);
+
+        this.registerDebuggerAttach(this._languageClient);
     }
 
     public async stop(): Promise<void> {
@@ -319,21 +377,37 @@ export class RoslynLanguageServer {
 
     public async openSolution(solutionFile: vscode.Uri): Promise<void> {
         this._solutionFile = solutionFile;
-        await this.sendOpenSolutionNotification();
+        this._projectFiles = [];
+        await this.sendOpenSolutionAndProjectsNotifications();
     }
 
-    private async sendOpenSolutionNotification(): Promise<void> {
-        if (
-            this._solutionFile !== undefined &&
-            this._languageClient !== undefined &&
-            this._languageClient.isRunning()
-        ) {
-            const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
-            await this._languageClient.sendNotification('solution/open', new OpenSolutionParams(protocolUri));
+    public async openProjects(projectFiles: vscode.Uri[]): Promise<void> {
+        this._solutionFile = undefined;
+        this._projectFiles = projectFiles;
+        await this.sendOpenSolutionAndProjectsNotifications();
+    }
+
+    private async sendOpenSolutionAndProjectsNotifications(): Promise<void> {
+        if (this._languageClient !== undefined && this._languageClient.isRunning()) {
+            if (this._solutionFile !== undefined) {
+                const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);
+                await this._languageClient.sendNotification(RoslynProtocol.OpenSolutionNotification.type, {
+                    solution: protocolUri,
+                });
+            }
+
+            if (this._projectFiles.length > 0) {
+                const projectProtocolUris = this._projectFiles.map((uri) =>
+                    this._languageClient!.clientOptions.uriConverters!.code2Protocol(uri)
+                );
+                await this._languageClient.sendNotification(RoslynProtocol.OpenProjectNotification.type, {
+                    projects: projectProtocolUris,
+                });
+            }
         }
     }
 
-    private async openDefaultSolution(): Promise<void> {
+    private async openDefaultSolutionOrProjects(): Promise<void> {
         const options = this.optionProvider.GetLatestOptions();
 
         // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
@@ -348,8 +422,19 @@ export class RoslynLanguageServer {
             } else {
                 // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
                 const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
-                if (solutionUris && solutionUris.length === 1) {
-                    this.openSolution(solutionUris[0]);
+                if (solutionUris) {
+                    if (solutionUris.length === 1) {
+                        this.openSolution(solutionUris[0]);
+                    } else if (solutionUris.length === 0) {
+                        // We have no solutions, so we'll enumerate what project files we have and just use those.
+                        const projectUris = await vscode.workspace.findFiles(
+                            '**/*.csproj',
+                            '**/node_modules/**',
+                            options.omnisharpOptions.maxProjectResults
+                        );
+
+                        this.openProjects(projectUris);
+                    }
                 }
             }
         }
@@ -488,6 +573,25 @@ export class RoslynLanguageServer {
         );
     }
 
+    private registerDebuggerAttach(client: RoslynLanguageClient) {
+        client.onRequest<RoslynProtocol.DebugAttachParams, RoslynProtocol.DebugAttachResult, void>(
+            RoslynProtocol.DebugAttachRequest.type,
+            async (request) => {
+                const debugConfiguration: vscode.DebugConfiguration = {
+                    name: '.NET Core Attach',
+                    type: 'coreclr',
+                    request: 'attach',
+                    processId: request.processId,
+                };
+
+                const result = await vscode.debug.startDebugging(undefined, debugConfiguration, undefined);
+                return {
+                    didAttach: result,
+                };
+            }
+        );
+    }
+
     private registerExtensionsChanged(languageClient: RoslynLanguageClient) {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
         languageClient.addDisposable(
@@ -499,7 +603,7 @@ export class RoslynLanguageServer {
                     return;
                 }
 
-                const title = 'Restart Language Server';
+                const title = vscode.l10n.t('Restart Language Server');
                 const command = 'dotnet.restartServer';
                 if (csharpDevkitExtension && !this._wasActivatedWithCSharpDevkit) {
                     // We previously started without C# Dev Kit and its now installed.
@@ -632,7 +736,12 @@ export async function activateRoslynLanguageServer(
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     _traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
 
-    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(platformInfo, getServerPath);
+    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
+        platformInfo,
+        getServerPath,
+        outputChannel,
+        context.extensionPath
+    );
     const additionalExtensionPaths = scanExtensionPlugins();
     _languageServer = new RoslynLanguageServer(
         platformInfo,
@@ -644,7 +753,7 @@ export async function activateRoslynLanguageServer(
     );
 
     // Register any commands that need to be handled by the extension.
-    registerCommands(context, _languageServer, optionProvider, hostExecutableResolver);
+    registerCommands(context, _languageServer, optionProvider, hostExecutableResolver, _channel);
 
     registerRazorCommands(context, _languageServer);
 
@@ -673,13 +782,16 @@ export async function activateRoslynLanguageServer(
         const capabilities = await _languageServer.getServerCapabilities();
 
         if (capabilities._vs_onAutoInsertProvider) {
-            if (!capabilities._vs_onAutoInsertProvider._vs_triggerCharacters.includes(change.text)) {
+            // Regular expression to match all whitespace characters except the newline character
+            const changeTrimmed = change.text.replace(/[^\S\n]+/g, '');
+
+            if (!capabilities._vs_onAutoInsertProvider._vs_triggerCharacters.includes(changeTrimmed)) {
                 return;
             }
 
             source.cancel();
             source = new vscode.CancellationTokenSource();
-            await applyAutoInsertEdit(e, source.token);
+            await applyAutoInsertEdit(e, changeTrimmed, source.token);
         }
     });
 
@@ -747,6 +859,16 @@ function getInstalledServerPath(platformInfo: PlatformInformation): string {
     return pathWithExtension;
 }
 
+export async function waitForProjectInitialization(): Promise<void> {
+    return new Promise((resolve, _) => {
+        _languageServer.registerStateChangeEvent(async (state) => {
+            if (state === ServerStateChange.ProjectInitializationComplete) {
+                resolve();
+            }
+        });
+    });
+}
+
 function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
     // notifications along to Roslyn. didOpen notifications are handled separately via the vscode.openTextDocument method.
@@ -774,6 +896,17 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
                     DocumentDiagnosticRequest.method
                 );
                 return await languageServer.sendRequest(diagnosticRequestType, request, CancellationToken.None);
+            }
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.roslynSimplifyMethodCommand,
+            async (request: SerializableSimplifyMethodParams) => {
+                const simplifyMethodRequestType = new RequestType<SerializableSimplifyMethodParams, TextEdit[], any>(
+                    'roslyn/simplifyMethod'
+                );
+                return await languageServer.sendRequest(simplifyMethodRequestType, request, CancellationToken.None);
             }
         )
     );
@@ -822,7 +955,11 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
     );
 }
 
-async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vscode.CancellationToken) {
+async function applyAutoInsertEdit(
+    e: vscode.TextDocumentChangeEvent,
+    changeTrimmed: string,
+    token: vscode.CancellationToken
+) {
     const change = e.contentChanges[0];
 
     // Need to add 1 since the server expects the position to be where the caret is after the last token has been inserted.
@@ -833,9 +970,10 @@ async function applyAutoInsertEdit(e: vscode.TextDocumentChangeEvent, token: vsc
     const request: RoslynProtocol.OnAutoInsertParams = {
         _vs_textDocument: textDocument,
         _vs_position: position,
-        _vs_ch: change.text,
+        _vs_ch: changeTrimmed,
         _vs_options: formattingOptions,
     };
+
     const response = await _languageServer.sendRequest(RoslynProtocol.OnAutoInsertRequest.type, request, token);
     if (response) {
         const textEdit = response._vs_textEdit;

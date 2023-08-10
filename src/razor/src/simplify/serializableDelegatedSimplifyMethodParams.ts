@@ -3,8 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DocumentUri } from 'vscode-languageclient/node';
+import { SerializableTextDocumentIdentifierAndVersion } from './serializableTextDocumentIdentifierAndVersion';
+import { TextEdit } from 'vscode-html-languageservice';
 
-export class OpenSolutionParams {
-    constructor(public readonly solution: DocumentUri) {}
+export interface SerializableDelegatedSimplifyMethodParams {
+    identifier: SerializableTextDocumentIdentifierAndVersion;
+    requiresVirtualDocument: boolean;
+    textEdit: TextEdit;
 }

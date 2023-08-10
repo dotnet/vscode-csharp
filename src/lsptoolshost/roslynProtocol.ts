@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
 
 export interface WorkspaceDebugConfigurationParams {
@@ -76,6 +77,11 @@ export interface RunTestsParams extends lsp.WorkDoneProgressParams, lsp.PartialR
      * Note that this does not have to only include tests, for example this could be a range representing a class.
      */
     range: lsp.Range;
+
+    /**
+     * Whether the request should attempt to call back to the client to attach a debugger before running the tests.
+     */
+    attachDebugger: boolean;
 }
 
 export interface TestProgress {
@@ -101,6 +107,28 @@ export interface RunTestsPartialResult {
     stage: string;
     message: string;
     progress?: TestProgress;
+}
+
+export interface DebugAttachParams {
+    processId: number;
+}
+
+export interface DebugAttachResult {
+    didAttach: boolean;
+}
+
+export interface OpenSolutionParams {
+    solution: lsp.DocumentUri;
+}
+
+export interface OpenProjectParams {
+    projects: lsp.DocumentUri[];
+}
+
+export interface ShowToastNotificationParams {
+    messageType: lsp.MessageType;
+    message: string;
+    commands: Command[];
 }
 
 export namespace WorkspaceDebugConfigurationRequest {
@@ -129,6 +157,12 @@ export namespace ProjectInitializationCompleteNotification {
     export const type = new lsp.NotificationType(method);
 }
 
+export namespace ShowToastNotification {
+    export const method = 'window/_roslyn_showToast';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.NotificationType<ShowToastNotificationParams>(method);
+}
+
 export namespace RunTestsRequest {
     export const method = 'textDocument/runTests';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -139,4 +173,22 @@ export namespace RunTestsRequest {
         void,
         void
     >(method);
+}
+
+export namespace DebugAttachRequest {
+    export const method = 'workspace/attachDebugger';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.RequestType<DebugAttachParams, DebugAttachResult, void>(method);
+}
+
+export namespace OpenSolutionNotification {
+    export const method = 'solution/open';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.NotificationType<OpenSolutionParams>(method);
+}
+
+export namespace OpenProjectNotification {
+    export const method = 'project/open';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.NotificationType<OpenProjectParams>(method);
 }
