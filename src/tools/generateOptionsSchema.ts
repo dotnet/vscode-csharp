@@ -290,7 +290,7 @@ export function GenerateOptionsSchema() {
     }
 
     // Generate keys for package.nls.json and its associated strings.
-    
+
     const keyToLocString: any = {};
     convertStringsToLocalizeKeys(
         'generateOptionsSchema',
