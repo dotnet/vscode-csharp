@@ -32,12 +32,12 @@ suite('Options tests', () => {
         options.omnisharpOptions.minFindSymbolsFilterLength.should.equal(0);
         options.omnisharpOptions.maxFindSymbolsItems.should.equal(1000);
         options.omnisharpOptions.enableMsBuildLoadProjectsOnDemand.should.equal(false);
-        options.omnisharpOptions.enableRoslynAnalyzers.should.equal(false);
+        options.omnisharpOptions.enableRoslynAnalyzers.should.equal(true);
         options.omnisharpOptions.enableEditorConfigSupport.should.equal(true);
         options.omnisharpOptions.enableDecompilationSupport.should.equal(false);
         options.omnisharpOptions.enableImportCompletion.should.equal(false);
         options.omnisharpOptions.enableAsyncCompletion.should.equal(false);
-        options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(false);
+        options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(true);
         options.omnisharpOptions.testRunSettings.should.equal('');
     });
 
