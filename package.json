@@ -926,81 +926,81 @@
             "properties": {
               "sourceFileMap": {
                 "type": "object",
-                "markdownDescription": "%csharp.debug.sourceFileMap%",
+                "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
                 "additionalProperties": {
                   "type": "string"
                 }
               },
               "justMyCode": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.justMyCode%",
+                "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.requireExactSource%",
+                "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.enableStepFiltering%",
+                "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
                 "default": true
               },
               "logging": {
-                "description": "%csharp.debug.logging%",
+                "description": "%generateOptionsSchema.logging.description%",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.exceptions%",
+                    "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.moduleLoad%",
+                    "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.programOutput%",
+                    "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.engineLogging%",
+                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.browserStdOut%",
+                    "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.elapsedTiming%",
+                    "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.threadExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.processExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
                   }
                 }
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.suppressJITOptimizations%",
+                "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
               },
               "symbolOptions": {
-                "description": "%csharp.debug.symbolOptions%",
+                "description": "%generateOptionsSchema.symbolOptions.description%",
                 "default": {
                   "searchPaths": [],
                   "searchMicrosoftSymbolServer": false,
@@ -1013,26 +1013,26 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.symbolOptions.searchPaths%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchMicrosoftSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchNuGetOrgSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "%csharp.debug.symbolOptions.cachePath%",
+                    "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
                     "default": ""
                   },
                   "moduleFilter": {
-                    "description": "%csharp.debug.symbolOptions.moduleFilter%",
+                    "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
                     "default": {
                       "mode": "loadAllButExcluded",
                       "excludedModules": []
@@ -1049,10 +1049,10 @@
                           "loadOnlyIncluded"
                         ],
                         "enumDescriptions": [
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadAllButExcluded%",
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadOnlyIncluded%"
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
                         ],
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.mode%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
                         "default": "loadAllButExcluded"
                       },
                       "excludedModules": {
@@ -1060,7 +1060,7 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.excludedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
                         "default": []
                       },
                       "includedModules": {
@@ -1068,12 +1068,12 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
                         "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
                         "default": true
                       }
                     }
@@ -1081,7 +1081,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "markdownDescription": "%csharp.debug.sourceLinkOptions%",
+                "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
                 "default": {
                   "*": {
                     "enabled": true
@@ -1093,7 +1093,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
+                      "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
                       "default": "true"
                     }
                   }
@@ -1101,12 +1101,12 @@
               },
               "allowFastEvaluate": {
                 "type": "boolean",
-                "description": "%csharp.debug.allowFastEvaluate%",
+                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
                 "default": true
               },
               "targetArchitecture": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.targetArchitecture%",
+                "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
                 "enum": [
                   "x86_64",
                   "arm64"
@@ -1596,7 +1596,7 @@
           },
           "csharp.debug.stopAtEntry": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.stopAtEntry%",
+            "markdownDescription": "%generateOptionsSchema.stopAtEntry.markdownDescription%",
             "default": false
           },
           "csharp.debug.console": {
@@ -1607,16 +1607,16 @@
               "externalTerminal"
             ],
             "enumDescriptions": [
-              "%csharp.debug.console.internalConsole%",
-              "%csharp.debug.console.integratedTerminal%",
-              "%csharp.debug.console.externalTerminal%"
+              "%generateOptionsSchema.console.internalConsole.enumDescription%",
+              "%generateOptionsSchema.console.integratedTerminal.enumDescription%",
+              "%generateOptionsSchema.console.externalTerminal.enumDescription%"
             ],
-            "markdownDescription": "**Note:** _This option is only used for the 'dotnet' debug configuration type_.\n\nWhen launching console projects, indicates which console the target program should be launched into.",
+            "markdownDescription": "%generateOptionsSchema.console.settingsDescription%",
             "default": "internalConsole"
           },
           "csharp.debug.sourceFileMap": {
             "type": "object",
-            "markdownDescription": "%csharp.debug.sourceFileMap%",
+            "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
             "additionalProperties": {
               "type": "string"
             },
@@ -1624,62 +1624,62 @@
           },
           "csharp.debug.justMyCode": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.justMyCode%",
+            "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
             "default": true
           },
           "csharp.debug.requireExactSource": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.requireExactSource%",
+            "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
             "default": true
           },
           "csharp.debug.enableStepFiltering": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.enableStepFiltering%",
+            "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
             "default": true
           },
           "csharp.debug.logging.exceptions": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.logging.exceptions%",
+            "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
             "default": true
           },
           "csharp.debug.logging.moduleLoad": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.logging.moduleLoad%",
+            "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
             "default": true
           },
           "csharp.debug.logging.programOutput": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.logging.programOutput%",
+            "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
             "default": true
           },
           "csharp.debug.logging.engineLogging": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.logging.engineLogging%",
+            "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
             "default": false
           },
           "csharp.debug.logging.browserStdOut": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.logging.browserStdOut%",
+            "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
             "default": true
           },
           "csharp.debug.logging.elapsedTiming": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.logging.elapsedTiming%",
+            "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
             "default": false
           },
           "csharp.debug.logging.threadExit": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.logging.threadExit%",
+            "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
             "default": false
           },
           "csharp.debug.logging.processExit": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.logging.processExit%",
+            "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
             "default": true
           },
           "csharp.debug.suppressJITOptimizations": {
             "type": "boolean",
-            "markdownDescription": "%csharp.debug.suppressJITOptimizations%",
+            "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
             "default": false
           },
           "csharp.debug.symbolOptions.searchPaths": {
@@ -1687,22 +1687,22 @@
             "items": {
               "type": "string"
             },
-            "description": "%csharp.debug.symbolOptions.searchPaths%",
+            "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
             "default": []
           },
           "csharp.debug.symbolOptions.searchMicrosoftSymbolServer": {
             "type": "boolean",
-            "description": "%csharp.debug.symbolOptions.searchMicrosoftSymbolServer%",
+            "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
             "default": false
           },
           "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": {
             "type": "boolean",
-            "description": "%csharp.debug.symbolOptions.searchNuGetOrgSymbolServer%",
+            "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
             "default": false
           },
           "csharp.debug.symbolOptions.cachePath": {
             "type": "string",
-            "description": "%csharp.debug.symbolOptions.cachePath%",
+            "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
             "default": ""
           },
           "csharp.debug.symbolOptions.moduleFilter.mode": {
@@ -1712,10 +1712,10 @@
               "loadOnlyIncluded"
             ],
             "enumDescriptions": [
-              "%csharp.debug.symbolOptions.moduleFilter.mode.loadAllButExcluded%",
-              "%csharp.debug.symbolOptions.moduleFilter.mode.loadOnlyIncluded%"
+              "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+              "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
             ],
-            "description": "%csharp.debug.symbolOptions.moduleFilter.mode%",
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
             "default": "loadAllButExcluded"
           },
           "csharp.debug.symbolOptions.moduleFilter.excludedModules": {
@@ -1723,7 +1723,7 @@
             "items": {
               "type": "string"
             },
-            "description": "%csharp.debug.symbolOptions.moduleFilter.excludedModules%",
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
             "default": []
           },
           "csharp.debug.symbolOptions.moduleFilter.includedModules": {
@@ -1731,17 +1731,17 @@
             "items": {
               "type": "string"
             },
-            "description": "%csharp.debug.symbolOptions.moduleFilter.includedModules%",
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
             "default": []
           },
           "csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules": {
             "type": "boolean",
-            "description": "%csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules%",
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
             "default": true
           },
           "csharp.debug.allowFastEvaluate": {
             "type": "boolean",
-            "description": "%csharp.debug.allowFastEvaluate%",
+            "description": "%generateOptionsSchema.allowFastEvaluate.description%",
             "default": true
           }
         }
@@ -1960,19 +1960,19 @@
             "properties": {
               "program": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.program%",
+                "markdownDescription": "%generateOptionsSchema.program.markdownDescription%",
                 "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
               },
               "cwd": {
                 "type": "string",
-                "description": "%csharp.debug.cwd%",
+                "description": "%generateOptionsSchema.cwd.description%",
                 "default": "${workspaceFolder}"
               },
               "args": {
                 "anyOf": [
                   {
                     "type": "array",
-                    "description": "Command line arguments passed to the program.",
+                    "description": "%generateOptionsSchema.args.0.description%",
                     "items": {
                       "type": "string"
                     },
@@ -1980,18 +1980,18 @@
                   },
                   {
                     "type": "string",
-                    "description": "Stringified version of command line arguments passed to the program.",
+                    "description": "%generateOptionsSchema.args.1.description%",
                     "default": ""
                   }
                 ]
               },
               "stopAtEntry": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.stopAtEntry%",
+                "markdownDescription": "%generateOptionsSchema.stopAtEntry.markdownDescription%",
                 "default": false
               },
               "launchBrowser": {
-                "description": "%csharp.debug.launchBrowser%",
+                "description": "%generateOptionsSchema.launchBrowser.description%",
                 "default": {
                   "enabled": true
                 },
@@ -2002,16 +2002,16 @@
                 "properties": {
                   "enabled": {
                     "type": "boolean",
-                    "description": "%csharp.debug.launchBrowser.enabled%",
+                    "description": "%generateOptionsSchema.launchBrowser.enabled.description%",
                     "default": true
                   },
                   "args": {
                     "type": "string",
-                    "description": "%csharp.debug.launchBrowser.args%",
+                    "description": "%generateOptionsSchema.launchBrowser.args.description%",
                     "default": "${auto-detect-url}"
                   },
                   "osx": {
-                    "description": "%csharp.debug.launchBrowser.osx%",
+                    "description": "%generateOptionsSchema.launchBrowser.osx.description%",
                     "default": {
                       "command": "open",
                       "args": "${auto-detect-url}"
@@ -2023,18 +2023,18 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.osx.command%",
+                        "description": "%generateOptionsSchema.launchBrowser.osx.command.description%",
                         "default": "open"
                       },
                       "args": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.osx.args%",
+                        "description": "%generateOptionsSchema.launchBrowser.osx.args.description%",
                         "default": "${auto-detect-url}"
                       }
                     }
                   },
                   "linux": {
-                    "description": "%csharp.debug.launchBrowser.linux%",
+                    "description": "%generateOptionsSchema.launchBrowser.linux.description%",
                     "default": {
                       "command": "xdg-open",
                       "args": "${auto-detect-url}"
@@ -2046,18 +2046,18 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.linux.command%",
+                        "description": "%generateOptionsSchema.launchBrowser.linux.command.description%",
                         "default": "xdg-open"
                       },
                       "args": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.linux.args%",
+                        "description": "%generateOptionsSchema.launchBrowser.linux.args.description%",
                         "default": "${auto-detect-url}"
                       }
                     }
                   },
                   "windows": {
-                    "description": "%csharp.debug.launchBrowser.windows%",
+                    "description": "%generateOptionsSchema.launchBrowser.windows.description%",
                     "default": {
                       "command": "cmd.exe",
                       "args": "/C start ${auto-detect-url}"
@@ -2069,12 +2069,12 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.windows.command%",
+                        "description": "%generateOptionsSchema.launchBrowser.windows.command.description%",
                         "default": "cmd.exe"
                       },
                       "args": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.windows.args%",
+                        "description": "%generateOptionsSchema.launchBrowser.windows.args.description%",
                         "default": "/C start ${auto-detect-url}"
                       }
                     }
@@ -2086,12 +2086,12 @@
                 "additionalProperties": {
                   "type": "string"
                 },
-                "description": "%csharp.debug.env%",
+                "description": "%generateOptionsSchema.env.description%",
                 "default": {}
               },
               "envFile": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.envFile%",
+                "markdownDescription": "%generateOptionsSchema.envFile.markdownDescription%",
                 "default": "${workspaceFolder}/.env"
               },
               "console": {
@@ -2102,22 +2102,22 @@
                   "externalTerminal"
                 ],
                 "enumDescriptions": [
-                  "%csharp.debug.console.internalConsole%",
-                  "%csharp.debug.console.integratedTerminal%",
-                  "%csharp.debug.console.externalTerminal%"
+                  "%generateOptionsSchema.console.internalConsole.enumDescription%",
+                  "%generateOptionsSchema.console.integratedTerminal.enumDescription%",
+                  "%generateOptionsSchema.console.externalTerminal.enumDescription%"
                 ],
-                "markdownDescription": "%csharp.debug.console%",
-                "settingsDescription": "**Note:** _This option is only used for the 'dotnet' debug configuration type_.\n\nWhen launching console projects, indicates which console the target program should be launched into.",
+                "markdownDescription": "%generateOptionsSchema.console.markdownDescription%",
+                "settingsDescription": "%generateOptionsSchema.console.settingsDescription%",
                 "default": "internalConsole"
               },
               "externalConsole": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.externalConsole%",
+                "markdownDescription": "%generateOptionsSchema.externalConsole.markdownDescription%",
                 "default": false
               },
               "launchSettingsFilePath": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.launchSettingsFilePath%",
+                "markdownDescription": "%generateOptionsSchema.launchSettingsFilePath.markdownDescription%",
                 "default": "${workspaceFolder}/Properties/launchSettings.json"
               },
               "launchSettingsProfile": {
@@ -2129,12 +2129,12 @@
                     "type": "null"
                   }
                 ],
-                "description": "%csharp.debug.launchSettingsProfile%",
+                "description": "%generateOptionsSchema.launchSettingsProfile.description%",
                 "default": "<insert-profile-name>"
               },
               "sourceFileMap": {
                 "type": "object",
-                "markdownDescription": "%csharp.debug.sourceFileMap%",
+                "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
                 "additionalProperties": {
                   "type": "string"
                 },
@@ -2142,69 +2142,69 @@
               },
               "justMyCode": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.justMyCode%",
+                "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.requireExactSource%",
+                "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.enableStepFiltering%",
+                "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
                 "default": true
               },
               "logging": {
-                "description": "%csharp.debug.logging%",
+                "description": "%generateOptionsSchema.logging.description%",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.exceptions%",
+                    "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.moduleLoad%",
+                    "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.programOutput%",
+                    "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.engineLogging%",
+                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.browserStdOut%",
+                    "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.elapsedTiming%",
+                    "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.threadExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.processExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
                   }
                 }
               },
               "pipeTransport": {
-                "description": "%csharp.debug.pipeTransport%",
+                "description": "%generateOptionsSchema.pipeTransport.description%",
                 "type": "object",
                 "required": [
                   "debuggerPath"
@@ -2218,19 +2218,19 @@
                 "properties": {
                   "pipeCwd": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.pipeCwd%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeCwd.description%",
                     "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.pipeProgram%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeProgram.description%",
                     "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                   },
                   "pipeArgs": {
                     "anyOf": [
                       {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "%generateOptionsSchema.pipeTransport.pipeArgs.0.description%",
                         "items": {
                           "type": "string"
                         },
@@ -2238,7 +2238,7 @@
                       },
                       {
                         "type": "string",
-                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "%generateOptionsSchema.pipeTransport.pipeArgs.1.description%",
                         "default": ""
                       }
                     ],
@@ -2246,7 +2246,7 @@
                   },
                   "debuggerPath": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.debuggerPath%",
+                    "description": "%generateOptionsSchema.pipeTransport.debuggerPath.description%",
                     "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
                   },
                   "pipeEnv": {
@@ -2254,16 +2254,16 @@
                     "additionalProperties": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.pipeTransport.pipeEnv%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeEnv.description%",
                     "default": {}
                   },
                   "quoteArgs": {
                     "type": "boolean",
-                    "description": "%csharp.debug.pipeTransport.quoteArgs%",
+                    "description": "%generateOptionsSchema.pipeTransport.quoteArgs.description%",
                     "default": true
                   },
                   "windows": {
-                    "description": "%csharp.debug.pipeTransport.windows%",
+                    "description": "%generateOptionsSchema.pipeTransport.windows.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
@@ -2273,19 +2273,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.windows.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.windows.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.windows.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -2293,7 +2293,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.windows.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -2301,7 +2301,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.windows.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -2309,13 +2309,13 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.windows.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeEnv.description%",
                         "default": {}
                       }
                     }
                   },
                   "osx": {
-                    "description": "%csharp.debug.pipeTransport.osx%",
+                    "description": "%generateOptionsSchema.pipeTransport.osx.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -2325,19 +2325,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.osx.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.osx.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.osx.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -2345,7 +2345,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.osx.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -2353,7 +2353,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.osx.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -2361,13 +2361,13 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.osx.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeEnv.description%",
                         "default": {}
                       }
                     }
                   },
                   "linux": {
-                    "description": "%csharp.debug.pipeTransport.linux%",
+                    "description": "%generateOptionsSchema.pipeTransport.linux.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -2377,19 +2377,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.linux.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.linux.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.linux.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -2397,7 +2397,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.linux.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -2405,7 +2405,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.linux.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -2413,7 +2413,7 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.linux.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeEnv.description%",
                         "default": {}
                       }
                     }
@@ -2422,11 +2422,11 @@
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.suppressJITOptimizations%",
+                "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
               },
               "symbolOptions": {
-                "description": "%csharp.debug.symbolOptions%",
+                "description": "%generateOptionsSchema.symbolOptions.description%",
                 "default": {
                   "searchPaths": [],
                   "searchMicrosoftSymbolServer": false,
@@ -2439,26 +2439,26 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.symbolOptions.searchPaths%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchMicrosoftSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchNuGetOrgSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "%csharp.debug.symbolOptions.cachePath%",
+                    "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
                     "default": ""
                   },
                   "moduleFilter": {
-                    "description": "%csharp.debug.symbolOptions.moduleFilter%",
+                    "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
                     "default": {
                       "mode": "loadAllButExcluded",
                       "excludedModules": []
@@ -2475,10 +2475,10 @@
                           "loadOnlyIncluded"
                         ],
                         "enumDescriptions": [
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadAllButExcluded%",
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadOnlyIncluded%"
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
                         ],
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.mode%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
                         "default": "loadAllButExcluded"
                       },
                       "excludedModules": {
@@ -2486,7 +2486,7 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.excludedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
                         "default": []
                       },
                       "includedModules": {
@@ -2494,12 +2494,12 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
                         "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
                         "default": true
                       }
                     }
@@ -2507,7 +2507,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "markdownDescription": "%csharp.debug.sourceLinkOptions%",
+                "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
                 "default": {
                   "*": {
                     "enabled": true
@@ -2519,7 +2519,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
+                      "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
                       "default": "true"
                     }
                   }
@@ -2527,17 +2527,17 @@
               },
               "allowFastEvaluate": {
                 "type": "boolean",
-                "description": "%csharp.debug.allowFastEvaluate%",
+                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
                 "default": true
               },
               "targetOutputLogPath": {
                 "type": "string",
-                "description": "%csharp.debug.targetOutputLogPath%",
+                "description": "%generateOptionsSchema.targetOutputLogPath.description%",
                 "default": ""
               },
               "targetArchitecture": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.targetArchitecture%",
+                "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
                 "enum": [
                   "x86_64",
                   "arm64"
@@ -2545,7 +2545,7 @@
               },
               "checkForDevCert": {
                 "type": "boolean",
-                "description": "%csharp.debug.checkForDevCert%",
+                "description": "%generateOptionsSchema.checkForDevCert.description%",
                 "default": true
               }
             }
@@ -2557,94 +2557,94 @@
               "processName": {
                 "type": "string",
                 "default": "",
-                "markdownDescription": "%csharp.debug.processName%"
+                "markdownDescription": "%generateOptionsSchema.processName.markdownDescription%"
               },
               "processId": {
                 "anyOf": [
                   {
                     "type": "string",
-                    "markdownDescription": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
+                    "markdownDescription": "%generateOptionsSchema.processId.0.markdownDescription%",
                     "default": ""
                   },
                   {
                     "type": "integer",
-                    "markdownDescription": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
+                    "markdownDescription": "%generateOptionsSchema.processId.1.markdownDescription%",
                     "default": 0
                   }
                 ]
               },
               "sourceFileMap": {
                 "type": "object",
-                "markdownDescription": "%csharp.debug.sourceFileMap%",
+                "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
                 "additionalProperties": {
                   "type": "string"
                 }
               },
               "justMyCode": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.justMyCode%",
+                "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.requireExactSource%",
+                "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.enableStepFiltering%",
+                "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
                 "default": true
               },
               "logging": {
-                "description": "%csharp.debug.logging%",
+                "description": "%generateOptionsSchema.logging.description%",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.exceptions%",
+                    "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.moduleLoad%",
+                    "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.programOutput%",
+                    "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.engineLogging%",
+                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.browserStdOut%",
+                    "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.elapsedTiming%",
+                    "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.threadExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.processExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
                   }
                 }
               },
               "pipeTransport": {
-                "description": "%csharp.debug.pipeTransport%",
+                "description": "%generateOptionsSchema.pipeTransport.description%",
                 "type": "object",
                 "required": [
                   "debuggerPath"
@@ -2658,19 +2658,19 @@
                 "properties": {
                   "pipeCwd": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.pipeCwd%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeCwd.description%",
                     "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.pipeProgram%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeProgram.description%",
                     "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                   },
                   "pipeArgs": {
                     "anyOf": [
                       {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "%generateOptionsSchema.pipeTransport.pipeArgs.0.description%",
                         "items": {
                           "type": "string"
                         },
@@ -2678,7 +2678,7 @@
                       },
                       {
                         "type": "string",
-                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "%generateOptionsSchema.pipeTransport.pipeArgs.1.description%",
                         "default": ""
                       }
                     ],
@@ -2686,7 +2686,7 @@
                   },
                   "debuggerPath": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.debuggerPath%",
+                    "description": "%generateOptionsSchema.pipeTransport.debuggerPath.description%",
                     "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
                   },
                   "pipeEnv": {
@@ -2694,16 +2694,16 @@
                     "additionalProperties": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.pipeTransport.pipeEnv%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeEnv.description%",
                     "default": {}
                   },
                   "quoteArgs": {
                     "type": "boolean",
-                    "description": "%csharp.debug.pipeTransport.quoteArgs%",
+                    "description": "%generateOptionsSchema.pipeTransport.quoteArgs.description%",
                     "default": true
                   },
                   "windows": {
-                    "description": "%csharp.debug.pipeTransport.windows%",
+                    "description": "%generateOptionsSchema.pipeTransport.windows.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
@@ -2713,19 +2713,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.windows.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.windows.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.windows.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -2733,7 +2733,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.windows.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -2741,7 +2741,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.windows.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -2749,13 +2749,13 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.windows.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeEnv.description%",
                         "default": {}
                       }
                     }
                   },
                   "osx": {
-                    "description": "%csharp.debug.pipeTransport.osx%",
+                    "description": "%generateOptionsSchema.pipeTransport.osx.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -2765,19 +2765,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.osx.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.osx.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.osx.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -2785,7 +2785,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.osx.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -2793,7 +2793,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.osx.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -2801,13 +2801,13 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.osx.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeEnv.description%",
                         "default": {}
                       }
                     }
                   },
                   "linux": {
-                    "description": "%csharp.debug.pipeTransport.linux%",
+                    "description": "%generateOptionsSchema.pipeTransport.linux.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -2817,19 +2817,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.linux.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.linux.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.linux.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -2837,7 +2837,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.linux.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -2845,7 +2845,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.linux.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -2853,7 +2853,7 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.linux.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeEnv.description%",
                         "default": {}
                       }
                     }
@@ -2862,11 +2862,11 @@
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.suppressJITOptimizations%",
+                "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
               },
               "symbolOptions": {
-                "description": "%csharp.debug.symbolOptions%",
+                "description": "%generateOptionsSchema.symbolOptions.description%",
                 "default": {
                   "searchPaths": [],
                   "searchMicrosoftSymbolServer": false,
@@ -2879,26 +2879,26 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.symbolOptions.searchPaths%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchMicrosoftSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchNuGetOrgSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "%csharp.debug.symbolOptions.cachePath%",
+                    "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
                     "default": ""
                   },
                   "moduleFilter": {
-                    "description": "%csharp.debug.symbolOptions.moduleFilter%",
+                    "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
                     "default": {
                       "mode": "loadAllButExcluded",
                       "excludedModules": []
@@ -2915,10 +2915,10 @@
                           "loadOnlyIncluded"
                         ],
                         "enumDescriptions": [
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadAllButExcluded%",
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadOnlyIncluded%"
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
                         ],
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.mode%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
                         "default": "loadAllButExcluded"
                       },
                       "excludedModules": {
@@ -2926,7 +2926,7 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.excludedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
                         "default": []
                       },
                       "includedModules": {
@@ -2934,12 +2934,12 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
                         "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
                         "default": true
                       }
                     }
@@ -2947,7 +2947,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "markdownDescription": "%csharp.debug.sourceLinkOptions%",
+                "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
                 "default": {
                   "*": {
                     "enabled": true
@@ -2959,7 +2959,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
+                      "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
                       "default": "true"
                     }
                   }
@@ -2967,12 +2967,12 @@
               },
               "allowFastEvaluate": {
                 "type": "boolean",
-                "description": "%csharp.debug.allowFastEvaluate%",
+                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
                 "default": true
               },
               "targetArchitecture": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.targetArchitecture%",
+                "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
                 "enum": [
                   "x86_64",
                   "arm64"
@@ -3114,19 +3114,19 @@
             "properties": {
               "program": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.program%",
+                "markdownDescription": "%generateOptionsSchema.program.markdownDescription%",
                 "default": "${workspaceFolder}/bin/Debug/<insert-target-framework-here>/<insert-project-name-here>.dll"
               },
               "cwd": {
                 "type": "string",
-                "description": "%csharp.debug.cwd%",
+                "description": "%generateOptionsSchema.cwd.description%",
                 "default": "${workspaceFolder}"
               },
               "args": {
                 "anyOf": [
                   {
                     "type": "array",
-                    "description": "Command line arguments passed to the program.",
+                    "description": "%generateOptionsSchema.args.0.description%",
                     "items": {
                       "type": "string"
                     },
@@ -3134,18 +3134,18 @@
                   },
                   {
                     "type": "string",
-                    "description": "Stringified version of command line arguments passed to the program.",
+                    "description": "%generateOptionsSchema.args.1.description%",
                     "default": ""
                   }
                 ]
               },
               "stopAtEntry": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.stopAtEntry%",
+                "markdownDescription": "%generateOptionsSchema.stopAtEntry.markdownDescription%",
                 "default": false
               },
               "launchBrowser": {
-                "description": "%csharp.debug.launchBrowser%",
+                "description": "%generateOptionsSchema.launchBrowser.description%",
                 "default": {
                   "enabled": true
                 },
@@ -3156,16 +3156,16 @@
                 "properties": {
                   "enabled": {
                     "type": "boolean",
-                    "description": "%csharp.debug.launchBrowser.enabled%",
+                    "description": "%generateOptionsSchema.launchBrowser.enabled.description%",
                     "default": true
                   },
                   "args": {
                     "type": "string",
-                    "description": "%csharp.debug.launchBrowser.args%",
+                    "description": "%generateOptionsSchema.launchBrowser.args.description%",
                     "default": "${auto-detect-url}"
                   },
                   "osx": {
-                    "description": "%csharp.debug.launchBrowser.osx%",
+                    "description": "%generateOptionsSchema.launchBrowser.osx.description%",
                     "default": {
                       "command": "open",
                       "args": "${auto-detect-url}"
@@ -3177,18 +3177,18 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.osx.command%",
+                        "description": "%generateOptionsSchema.launchBrowser.osx.command.description%",
                         "default": "open"
                       },
                       "args": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.osx.args%",
+                        "description": "%generateOptionsSchema.launchBrowser.osx.args.description%",
                         "default": "${auto-detect-url}"
                       }
                     }
                   },
                   "linux": {
-                    "description": "%csharp.debug.launchBrowser.linux%",
+                    "description": "%generateOptionsSchema.launchBrowser.linux.description%",
                     "default": {
                       "command": "xdg-open",
                       "args": "${auto-detect-url}"
@@ -3200,18 +3200,18 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.linux.command%",
+                        "description": "%generateOptionsSchema.launchBrowser.linux.command.description%",
                         "default": "xdg-open"
                       },
                       "args": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.linux.args%",
+                        "description": "%generateOptionsSchema.launchBrowser.linux.args.description%",
                         "default": "${auto-detect-url}"
                       }
                     }
                   },
                   "windows": {
-                    "description": "%csharp.debug.launchBrowser.windows%",
+                    "description": "%generateOptionsSchema.launchBrowser.windows.description%",
                     "default": {
                       "command": "cmd.exe",
                       "args": "/C start ${auto-detect-url}"
@@ -3223,12 +3223,12 @@
                     "properties": {
                       "command": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.windows.command%",
+                        "description": "%generateOptionsSchema.launchBrowser.windows.command.description%",
                         "default": "cmd.exe"
                       },
                       "args": {
                         "type": "string",
-                        "description": "%csharp.debug.launchBrowser.windows.args%",
+                        "description": "%generateOptionsSchema.launchBrowser.windows.args.description%",
                         "default": "/C start ${auto-detect-url}"
                       }
                     }
@@ -3240,12 +3240,12 @@
                 "additionalProperties": {
                   "type": "string"
                 },
-                "description": "%csharp.debug.env%",
+                "description": "%generateOptionsSchema.env.description%",
                 "default": {}
               },
               "envFile": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.envFile%",
+                "markdownDescription": "%generateOptionsSchema.envFile.markdownDescription%",
                 "default": "${workspaceFolder}/.env"
               },
               "console": {
@@ -3256,22 +3256,22 @@
                   "externalTerminal"
                 ],
                 "enumDescriptions": [
-                  "%csharp.debug.console.internalConsole%",
-                  "%csharp.debug.console.integratedTerminal%",
-                  "%csharp.debug.console.externalTerminal%"
+                  "%generateOptionsSchema.console.internalConsole.enumDescription%",
+                  "%generateOptionsSchema.console.integratedTerminal.enumDescription%",
+                  "%generateOptionsSchema.console.externalTerminal.enumDescription%"
                 ],
-                "markdownDescription": "%csharp.debug.console%",
-                "settingsDescription": "**Note:** _This option is only used for the 'dotnet' debug configuration type_.\n\nWhen launching console projects, indicates which console the target program should be launched into.",
+                "markdownDescription": "%generateOptionsSchema.console.markdownDescription%",
+                "settingsDescription": "%generateOptionsSchema.console.settingsDescription%",
                 "default": "internalConsole"
               },
               "externalConsole": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.externalConsole%",
+                "markdownDescription": "%generateOptionsSchema.externalConsole.markdownDescription%",
                 "default": false
               },
               "launchSettingsFilePath": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.launchSettingsFilePath%",
+                "markdownDescription": "%generateOptionsSchema.launchSettingsFilePath.markdownDescription%",
                 "default": "${workspaceFolder}/Properties/launchSettings.json"
               },
               "launchSettingsProfile": {
@@ -3283,12 +3283,12 @@
                     "type": "null"
                   }
                 ],
-                "description": "%csharp.debug.launchSettingsProfile%",
+                "description": "%generateOptionsSchema.launchSettingsProfile.description%",
                 "default": "<insert-profile-name>"
               },
               "sourceFileMap": {
                 "type": "object",
-                "markdownDescription": "%csharp.debug.sourceFileMap%",
+                "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
                 "additionalProperties": {
                   "type": "string"
                 },
@@ -3296,69 +3296,69 @@
               },
               "justMyCode": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.justMyCode%",
+                "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.requireExactSource%",
+                "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.enableStepFiltering%",
+                "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
                 "default": true
               },
               "logging": {
-                "description": "%csharp.debug.logging%",
+                "description": "%generateOptionsSchema.logging.description%",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.exceptions%",
+                    "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.moduleLoad%",
+                    "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.programOutput%",
+                    "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.engineLogging%",
+                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.browserStdOut%",
+                    "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.elapsedTiming%",
+                    "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.threadExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.processExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
                   }
                 }
               },
               "pipeTransport": {
-                "description": "%csharp.debug.pipeTransport%",
+                "description": "%generateOptionsSchema.pipeTransport.description%",
                 "type": "object",
                 "required": [
                   "debuggerPath"
@@ -3372,19 +3372,19 @@
                 "properties": {
                   "pipeCwd": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.pipeCwd%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeCwd.description%",
                     "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.pipeProgram%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeProgram.description%",
                     "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                   },
                   "pipeArgs": {
                     "anyOf": [
                       {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "%generateOptionsSchema.pipeTransport.pipeArgs.0.description%",
                         "items": {
                           "type": "string"
                         },
@@ -3392,7 +3392,7 @@
                       },
                       {
                         "type": "string",
-                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "%generateOptionsSchema.pipeTransport.pipeArgs.1.description%",
                         "default": ""
                       }
                     ],
@@ -3400,7 +3400,7 @@
                   },
                   "debuggerPath": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.debuggerPath%",
+                    "description": "%generateOptionsSchema.pipeTransport.debuggerPath.description%",
                     "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
                   },
                   "pipeEnv": {
@@ -3408,16 +3408,16 @@
                     "additionalProperties": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.pipeTransport.pipeEnv%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeEnv.description%",
                     "default": {}
                   },
                   "quoteArgs": {
                     "type": "boolean",
-                    "description": "%csharp.debug.pipeTransport.quoteArgs%",
+                    "description": "%generateOptionsSchema.pipeTransport.quoteArgs.description%",
                     "default": true
                   },
                   "windows": {
-                    "description": "%csharp.debug.pipeTransport.windows%",
+                    "description": "%generateOptionsSchema.pipeTransport.windows.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
@@ -3427,19 +3427,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.windows.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.windows.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.windows.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -3447,7 +3447,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.windows.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -3455,7 +3455,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.windows.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -3463,13 +3463,13 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.windows.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeEnv.description%",
                         "default": {}
                       }
                     }
                   },
                   "osx": {
-                    "description": "%csharp.debug.pipeTransport.osx%",
+                    "description": "%generateOptionsSchema.pipeTransport.osx.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -3479,19 +3479,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.osx.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.osx.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.osx.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -3499,7 +3499,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.osx.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -3507,7 +3507,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.osx.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -3515,13 +3515,13 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.osx.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeEnv.description%",
                         "default": {}
                       }
                     }
                   },
                   "linux": {
-                    "description": "%csharp.debug.pipeTransport.linux%",
+                    "description": "%generateOptionsSchema.pipeTransport.linux.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -3531,19 +3531,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.linux.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.linux.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.linux.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -3551,7 +3551,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.linux.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -3559,7 +3559,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.linux.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -3567,7 +3567,7 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.linux.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeEnv.description%",
                         "default": {}
                       }
                     }
@@ -3576,11 +3576,11 @@
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.suppressJITOptimizations%",
+                "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
               },
               "symbolOptions": {
-                "description": "%csharp.debug.symbolOptions%",
+                "description": "%generateOptionsSchema.symbolOptions.description%",
                 "default": {
                   "searchPaths": [],
                   "searchMicrosoftSymbolServer": false,
@@ -3593,26 +3593,26 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.symbolOptions.searchPaths%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchMicrosoftSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchNuGetOrgSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "%csharp.debug.symbolOptions.cachePath%",
+                    "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
                     "default": ""
                   },
                   "moduleFilter": {
-                    "description": "%csharp.debug.symbolOptions.moduleFilter%",
+                    "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
                     "default": {
                       "mode": "loadAllButExcluded",
                       "excludedModules": []
@@ -3629,10 +3629,10 @@
                           "loadOnlyIncluded"
                         ],
                         "enumDescriptions": [
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadAllButExcluded%",
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadOnlyIncluded%"
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
                         ],
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.mode%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
                         "default": "loadAllButExcluded"
                       },
                       "excludedModules": {
@@ -3640,7 +3640,7 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.excludedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
                         "default": []
                       },
                       "includedModules": {
@@ -3648,12 +3648,12 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
                         "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
                         "default": true
                       }
                     }
@@ -3661,7 +3661,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "markdownDescription": "%csharp.debug.sourceLinkOptions%",
+                "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
                 "default": {
                   "*": {
                     "enabled": true
@@ -3673,7 +3673,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
+                      "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
                       "default": "true"
                     }
                   }
@@ -3681,17 +3681,17 @@
               },
               "allowFastEvaluate": {
                 "type": "boolean",
-                "description": "%csharp.debug.allowFastEvaluate%",
+                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
                 "default": true
               },
               "targetOutputLogPath": {
                 "type": "string",
-                "description": "%csharp.debug.targetOutputLogPath%",
+                "description": "%generateOptionsSchema.targetOutputLogPath.description%",
                 "default": ""
               },
               "targetArchitecture": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.targetArchitecture%",
+                "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
                 "enum": [
                   "x86_64",
                   "arm64"
@@ -3699,7 +3699,7 @@
               },
               "checkForDevCert": {
                 "type": "boolean",
-                "description": "%csharp.debug.checkForDevCert%",
+                "description": "%generateOptionsSchema.checkForDevCert.description%",
                 "default": true
               }
             }
@@ -3711,94 +3711,94 @@
               "processName": {
                 "type": "string",
                 "default": "",
-                "markdownDescription": "%csharp.debug.processName%"
+                "markdownDescription": "%generateOptionsSchema.processName.markdownDescription%"
               },
               "processId": {
                 "anyOf": [
                   {
                     "type": "string",
-                    "markdownDescription": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
+                    "markdownDescription": "%generateOptionsSchema.processId.0.markdownDescription%",
                     "default": ""
                   },
                   {
                     "type": "integer",
-                    "markdownDescription": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
+                    "markdownDescription": "%generateOptionsSchema.processId.1.markdownDescription%",
                     "default": 0
                   }
                 ]
               },
               "sourceFileMap": {
                 "type": "object",
-                "markdownDescription": "%csharp.debug.sourceFileMap%",
+                "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
                 "additionalProperties": {
                   "type": "string"
                 }
               },
               "justMyCode": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.justMyCode%",
+                "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
                 "default": true
               },
               "requireExactSource": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.requireExactSource%",
+                "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
                 "default": true
               },
               "enableStepFiltering": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.enableStepFiltering%",
+                "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
                 "default": true
               },
               "logging": {
-                "description": "%csharp.debug.logging%",
+                "description": "%generateOptionsSchema.logging.description%",
                 "type": "object",
                 "required": [],
                 "default": {},
                 "properties": {
                   "exceptions": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.exceptions%",
+                    "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
                     "default": true
                   },
                   "moduleLoad": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.moduleLoad%",
+                    "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
                     "default": true
                   },
                   "programOutput": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.programOutput%",
+                    "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
                   "engineLogging": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.engineLogging%",
+                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
                     "default": false
                   },
                   "browserStdOut": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.browserStdOut%",
+                    "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
                     "default": true
                   },
                   "elapsedTiming": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.elapsedTiming%",
+                    "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
                     "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.threadExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
                     "default": false
                   },
                   "processExit": {
                     "type": "boolean",
-                    "markdownDescription": "%csharp.debug.logging.processExit%",
+                    "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
                   }
                 }
               },
               "pipeTransport": {
-                "description": "%csharp.debug.pipeTransport%",
+                "description": "%generateOptionsSchema.pipeTransport.description%",
                 "type": "object",
                 "required": [
                   "debuggerPath"
@@ -3812,19 +3812,19 @@
                 "properties": {
                   "pipeCwd": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.pipeCwd%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeCwd.description%",
                     "default": "${workspaceFolder}"
                   },
                   "pipeProgram": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.pipeProgram%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeProgram.description%",
                     "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                   },
                   "pipeArgs": {
                     "anyOf": [
                       {
                         "type": "array",
-                        "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "%generateOptionsSchema.pipeTransport.pipeArgs.0.description%",
                         "items": {
                           "type": "string"
                         },
@@ -3832,7 +3832,7 @@
                       },
                       {
                         "type": "string",
-                        "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                        "description": "%generateOptionsSchema.pipeTransport.pipeArgs.1.description%",
                         "default": ""
                       }
                     ],
@@ -3840,7 +3840,7 @@
                   },
                   "debuggerPath": {
                     "type": "string",
-                    "description": "%csharp.debug.pipeTransport.debuggerPath%",
+                    "description": "%generateOptionsSchema.pipeTransport.debuggerPath.description%",
                     "default": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
                   },
                   "pipeEnv": {
@@ -3848,16 +3848,16 @@
                     "additionalProperties": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.pipeTransport.pipeEnv%",
+                    "description": "%generateOptionsSchema.pipeTransport.pipeEnv.description%",
                     "default": {}
                   },
                   "quoteArgs": {
                     "type": "boolean",
-                    "description": "%csharp.debug.pipeTransport.quoteArgs%",
+                    "description": "%generateOptionsSchema.pipeTransport.quoteArgs.description%",
                     "default": true
                   },
                   "windows": {
-                    "description": "%csharp.debug.pipeTransport.windows%",
+                    "description": "%generateOptionsSchema.pipeTransport.windows.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example 'c:\\tools\\plink.exe'",
@@ -3867,19 +3867,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.windows.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.windows.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.windows.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -3887,7 +3887,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.windows.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -3895,7 +3895,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.windows.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -3903,13 +3903,13 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.windows.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.windows.pipeEnv.description%",
                         "default": {}
                       }
                     }
                   },
                   "osx": {
-                    "description": "%csharp.debug.pipeTransport.osx%",
+                    "description": "%generateOptionsSchema.pipeTransport.osx.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -3919,19 +3919,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.osx.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.osx.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.osx.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -3939,7 +3939,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.osx.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -3947,7 +3947,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.osx.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -3955,13 +3955,13 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.osx.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.osx.pipeEnv.description%",
                         "default": {}
                       }
                     }
                   },
                   "linux": {
-                    "description": "%csharp.debug.pipeTransport.linux%",
+                    "description": "%generateOptionsSchema.pipeTransport.linux.description%",
                     "default": {
                       "pipeCwd": "${workspaceFolder}",
                       "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
@@ -3971,19 +3971,19 @@
                     "properties": {
                       "pipeCwd": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.linux.pipeCwd%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeCwd.description%",
                         "default": "${workspaceFolder}"
                       },
                       "pipeProgram": {
                         "type": "string",
-                        "description": "%csharp.debug.pipeTransport.linux.pipeProgram%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeProgram.description%",
                         "default": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'"
                       },
                       "pipeArgs": {
                         "anyOf": [
                           {
                             "type": "array",
-                            "description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.linux.pipeArgs.0.description%",
                             "items": {
                               "type": "string"
                             },
@@ -3991,7 +3991,7 @@
                           },
                           {
                             "type": "string",
-                            "description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+                            "description": "%generateOptionsSchema.pipeTransport.linux.pipeArgs.1.description%",
                             "default": ""
                           }
                         ],
@@ -3999,7 +3999,7 @@
                       },
                       "quoteArgs": {
                         "type": "boolean",
-                        "description": "%csharp.debug.pipeTransport.linux.quoteArgs%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.quoteArgs.description%",
                         "default": true
                       },
                       "pipeEnv": {
@@ -4007,7 +4007,7 @@
                         "additionalProperties": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.pipeTransport.linux.pipeEnv%",
+                        "description": "%generateOptionsSchema.pipeTransport.linux.pipeEnv.description%",
                         "default": {}
                       }
                     }
@@ -4016,11 +4016,11 @@
               },
               "suppressJITOptimizations": {
                 "type": "boolean",
-                "markdownDescription": "%csharp.debug.suppressJITOptimizations%",
+                "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
                 "default": false
               },
               "symbolOptions": {
-                "description": "%csharp.debug.symbolOptions%",
+                "description": "%generateOptionsSchema.symbolOptions.description%",
                 "default": {
                   "searchPaths": [],
                   "searchMicrosoftSymbolServer": false,
@@ -4033,26 +4033,26 @@
                     "items": {
                       "type": "string"
                     },
-                    "description": "%csharp.debug.symbolOptions.searchPaths%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchMicrosoftSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-                    "description": "%csharp.debug.symbolOptions.searchNuGetOrgSymbolServer%",
+                    "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
                     "default": false
                   },
                   "cachePath": {
                     "type": "string",
-                    "description": "%csharp.debug.symbolOptions.cachePath%",
+                    "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
                     "default": ""
                   },
                   "moduleFilter": {
-                    "description": "%csharp.debug.symbolOptions.moduleFilter%",
+                    "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
                     "default": {
                       "mode": "loadAllButExcluded",
                       "excludedModules": []
@@ -4069,10 +4069,10 @@
                           "loadOnlyIncluded"
                         ],
                         "enumDescriptions": [
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadAllButExcluded%",
-                          "%csharp.debug.symbolOptions.moduleFilter.mode.loadOnlyIncluded%"
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
                         ],
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.mode%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
                         "default": "loadAllButExcluded"
                       },
                       "excludedModules": {
@@ -4080,7 +4080,7 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.excludedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
                         "default": []
                       },
                       "includedModules": {
@@ -4088,12 +4088,12 @@
                         "items": {
                           "type": "string"
                         },
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includedModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
                         "default": []
                       },
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
-                        "description": "%csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules%",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
                         "default": true
                       }
                     }
@@ -4101,7 +4101,7 @@
                 }
               },
               "sourceLinkOptions": {
-                "markdownDescription": "%csharp.debug.sourceLinkOptions%",
+                "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
                 "default": {
                   "*": {
                     "enabled": true
@@ -4113,7 +4113,7 @@
                   "properties": {
                     "enabled": {
                       "title": "boolean",
-                      "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
+                      "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
                       "default": "true"
                     }
                   }
@@ -4121,12 +4121,12 @@
               },
               "allowFastEvaluate": {
                 "type": "boolean",
-                "description": "%csharp.debug.allowFastEvaluate%",
+                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
                 "default": true
               },
               "targetArchitecture": {
                 "type": "string",
-                "markdownDescription": "%csharp.debug.targetArchitecture%",
+                "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
                 "enum": [
                   "x86_64",
                   "arm64"

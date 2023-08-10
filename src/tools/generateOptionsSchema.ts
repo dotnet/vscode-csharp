@@ -146,49 +146,113 @@ function createContributesSettingsForDebugOptions(
     }
 }
 
-function convertStringsToLocalizeKeys(
-    path: string,
-    options: any,
-    keyToLocString: any
-) {
+// Generates an array of comments for the localization team depending on whats included in the input (description) string.
+function generateCommentArrayForDescription(description: string): string[] {
+    const comments: string[] = [];
+
+    // If the description contains `, its most likely contains markdown that should not be translated.
+    if (description.includes('`')) {
+        comments.push(
+            'Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered.'
+        );
+    }
+
+    // If the description contains '\u200b', it is used to prevent vscode from rendering a URL.
+    if (description.includes('\u200b')) {
+        comments.push(
+            "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL."
+        );
+    }
+
+    return comments;
+}
+
+// This method will create a key in keyToLocString for the prop strings.
+function generateLocForProperty(key: string, prop: any, keyToLocString: any): void {
+    if (prop.description) {
+        const descriptionKey = `${key}.description`;
+        if (!keyToLocString[descriptionKey]) {
+            const comments: string[] = generateCommentArrayForDescription(prop.description);
+            if (comments.length > 0) {
+                keyToLocString[descriptionKey] = {
+                    message: prop.description,
+                    comments: comments,
+                };
+            } else {
+                keyToLocString[descriptionKey] = prop.description;
+            }
+        }
+        prop.description = `%${descriptionKey}%`;
+    }
+
+    if (prop.markdownDescription) {
+        const markdownDescriptionKey = `${key}.markdownDescription`;
+        if (!keyToLocString[markdownDescriptionKey]) {
+            const comments: string[] = generateCommentArrayForDescription(prop.markdownDescription);
+            if (comments.length > 0) {
+                keyToLocString[markdownDescriptionKey] = {
+                    message: prop.markdownDescription,
+                    comments: comments,
+                };
+            } else {
+                keyToLocString[markdownDescriptionKey] = prop.markdownDescription;
+            }
+        }
+        prop.markdownDescription = `%${markdownDescriptionKey}%`;
+    }
+
+    if (prop.settingsDescription) {
+        const settingsDescriptionKey = `${key}.settingsDescription`;
+        if (!keyToLocString[settingsDescriptionKey]) {
+            const comments: string[] = generateCommentArrayForDescription(prop.settingsDescription);
+            if (comments.length > 0) {
+                keyToLocString[settingsDescriptionKey] = {
+                    message: prop.settingsDescription,
+                    comments: comments,
+                };
+            } else {
+                keyToLocString[settingsDescriptionKey] = prop.settingsDescription;
+            }
+        }
+        prop.settingsDescription = `%${settingsDescriptionKey}%`;
+    }
+
+    if (prop.enum && prop.enumDescriptions) {
+        for (let i = 0; i < prop.enum.length; i++) {
+            const enumName = prop.enum[i];
+            const enumDescription = prop.enumDescriptions[i];
+            const newEnumKey = key + '.' + enumName + '.enumDescription';
+            if (!keyToLocString[newEnumKey]) {
+                keyToLocString[newEnumKey] = enumDescription;
+            }
+            prop.enumDescriptions[i] = `%${newEnumKey}%`;
+        }
+    }
+}
+
+function convertStringsToLocalizeKeys(path: string, options: any, keyToLocString: any) {
     const optionKeys = Object.keys(options);
     for (const key of optionKeys) {
         const newOptionKey = path + '.' + key;
         const currentProperty: any = options[key];
 
-        if (currentProperty.description) {
-            if (!keyToLocString[newOptionKey])
-            {
-                keyToLocString[newOptionKey] = currentProperty.description;
-            }
-            currentProperty.description = `%${newOptionKey}%`;
-        }
+        generateLocForProperty(newOptionKey, currentProperty, keyToLocString);
 
-        if (currentProperty.markdownDescription) {
-            if (!keyToLocString[newOptionKey])
-            {
-                keyToLocString[newOptionKey] = currentProperty.markdownDescription;
-            }
-            currentProperty.markdownDescription = `%${newOptionKey}%`;
-        }
-
-        if (currentProperty.enum && currentProperty.enumDescriptions) {
-            for (let i = 0; i < currentProperty.enum.length; i++) {
-                const enumName = currentProperty.enum[i];
-                const enumDescription = currentProperty.enumDescriptions[i];
-                const newEnumKey = newOptionKey + '.' + enumName;
-                if (!keyToLocString[newEnumKey])
-                {
-                    keyToLocString[newEnumKey] = enumDescription;
-                }
-                currentProperty.enumDescriptions[i] = `%${newEnumKey}%`;
-            }
-        }
-
+        // Recursively through object properties
         if (currentProperty.type == 'object' && currentProperty.properties) {
+            convertStringsToLocalizeKeys(newOptionKey, currentProperty.properties, keyToLocString);
+        }
+
+        if (currentProperty.anyOf) {
+            for (let i = 0; i < currentProperty.anyOf.length; i++) {
+                generateLocForProperty(`${newOptionKey}.${i}`, currentProperty.anyOf[i], keyToLocString);
+            }
+        }
+
+        if (currentProperty.additionalItems) {
             convertStringsToLocalizeKeys(
-                newOptionKey,
-                currentProperty.properties,
+                newOptionKey + '.additionalItems',
+                currentProperty.additionalItems.properties,
                 keyToLocString
             );
         }
@@ -217,10 +281,31 @@ export function GenerateOptionsSchema() {
 
     schemaJSON.definitions = ReplaceReferences(schemaJSON.definitions, schemaJSON.definitions);
 
+    // #region Generate package.nls.json keys/values
+
+    // Delete old generated loc keys
+    const originalLocKeys = Object.keys(packageNlsJSON).filter((x) => x.startsWith('generateOptionsSchema'));
+    for (const key of originalLocKeys) {
+        delete packageNlsJSON[key];
+    }
+
     // Generate keys for package.nls.json and its associated strings.
-    let keyToLocString: any = {};
-    convertStringsToLocalizeKeys('csharp.debug', schemaJSON.definitions.LaunchOptions.properties, keyToLocString);
-    convertStringsToLocalizeKeys('csharp.debug', schemaJSON.definitions.AttachOptions.properties, keyToLocString);
+    
+    const keyToLocString: any = {};
+    convertStringsToLocalizeKeys(
+        'generateOptionsSchema',
+        schemaJSON.definitions.LaunchOptions.properties,
+        keyToLocString
+    );
+    convertStringsToLocalizeKeys(
+        'generateOptionsSchema',
+        schemaJSON.definitions.AttachOptions.properties,
+        keyToLocString
+    );
+
+    writeToFile(packageNlsJSON, 'package.nls.json');
+
+    // #endregion
 
     // Override existing package.nls.json key/values with ones from OptionsSchema.
     Object.assign(packageNlsJSON, keyToLocString);
@@ -257,6 +342,8 @@ export function GenerateOptionsSchema() {
     packageJSON.contributes.configuration[0].properties['csharp.unitTestDebuggingOptions'].properties =
         unitTestDebuggingOptions;
 
+    // #region Generate package.json settings
+
     // Delete old debug options
     const originalContributeDebugKeys = Object.keys(packageJSON.contributes.configuration[1].properties).filter((x) =>
         x.startsWith('csharp.debug')
@@ -290,7 +377,8 @@ export function GenerateOptionsSchema() {
         packageJSON.contributes.configuration[1].properties
     );
 
+    // #endregion
+
     // Write package.json and package.nls.json to disk
     writeToFile(packageJSON, 'package.json');
-    writeToFile(packageNlsJSON, 'package.nls.json');
 }
