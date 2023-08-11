@@ -14,8 +14,10 @@ pr:
 - main
 
 variables:
-  - name: prereleaseFlag
-    value: ''
+  ${{ if eq(variables['Build.SourceBranchName'], 'release') }}:
+    prereleaseFlag: ''
+  ${{ else }}:
+    prereleaseFlag: '--prerelease'
 
 stages:
 - stage: Build
