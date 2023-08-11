@@ -27,7 +27,8 @@
     ".NET",
     "ASP.NET",
     ".NET Core",
-    "dotnet"
+    "dotnet",
+    "coreclr"
   ],
   "capabilities": {
     "virtualWorkspaces": false,
@@ -1257,11 +1258,6 @@
             "default": false,
             "description": "If true, MSBuild project system will only load projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. With this setting enabled OmniSharp may load fewer projects and may thus display incomplete reference lists for symbols."
           },
-          "omnisharp.enableRoslynAnalyzers": {
-            "type": "boolean",
-            "default": false,
-            "description": "Enables support for roslyn analyzers, code fixes and rulesets."
-          },
           "omnisharp.enableEditorConfigSupport": {
             "type": "boolean",
             "default": true,
@@ -1287,11 +1283,6 @@
             "type": "boolean",
             "default": false,
             "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results."
-          },
-          "omnisharp.analyzeOpenDocumentsOnly": {
-            "type": "boolean",
-            "default": false,
-            "description": "Only run analyzers against open files when 'enableRoslynAnalyzers' is true"
           },
           "omnisharp.testRunSettings": {
             "type": "string",
@@ -4745,44 +4736,8 @@
       {
         "language": "csharp",
         "scopes": {
-          "namespace": [
-            "entity.name.type.namespace.cs"
-          ],
-          "type": [
-            "entity.name.type"
-          ],
-          "class": [
-            "entity.name.type.class.cs"
-          ],
-          "enum": [
-            "entity.name.type.enum.cs"
-          ],
-          "interface": [
-            "entity.name.type.interface.cs"
-          ],
-          "struct": [
-            "entity.name.type.struct.cs"
-          ],
           "typeParameter": [
-            "entity.name.type.type-parameter.cs"
-          ],
-          "parameter": [
-            "entity.name.variable.parameter.cs"
-          ],
-          "variable": [
-            "entity.name.variable.local.cs"
-          ],
-          "property": [
-            "variable.other.property.cs"
-          ],
-          "enumMember": [
-            "variable.other.enummember.cs"
-          ],
-          "method": [
-            "entity.name.function.member.cs"
-          ],
-          "macro": [
-            "keyword.preprocessor.cs"
+            "entity.name.type.type-parameter"
           ],
           "keyword": [
             "keyword.cs"
@@ -4818,7 +4773,7 @@
             "entity.name.variable.field.cs"
           ],
           "constant": [
-            "variable.other.constant.cs"
+            "variable.other.constant"
           ],
           "extensionMethod": [
             "entity.name.function.extension.cs"
