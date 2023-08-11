@@ -1,16 +1,16 @@
 trigger: none
 pr: none
 
+resources:
+  pipelines:
+  - pipeline: officialBuildCI
+    source: dotnet-vscode-csharp
+    branch: main
+
 parameters:
   - name: test
     type: boolean
     default: true
-  - name: branch
-    type: string
-    default: prerelease
-    values:
-    - prerelease
-    - release
 
 resources:
   pipelines:
@@ -22,39 +22,44 @@ variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
 - group: vscode-csharp release secrets
 
-stages:
-- stage: 'PublishStage'
-  displayName: 'Publish artifacts to marketplace stage'
-  jobs:
-  - job: PublishToMarketplace
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - download: releaseCI
-    - pwsh: |
-        npm install --global vsce
-      displayName: 'Install vsce'
-    - pwsh: |
-        # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-        $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
-        if ($allArtifacts.Length -eq 0) {
-          throw "No Artifacts is downloaded."
-        }
+jobs:
+- job: PublishToMarketplace
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - task: DownloadPipelineArtifact@2
+    displayName: '📦 Download artifacts from build pipeline.'
+    inputs:
+      buildType: 'specific'
+      project: 'internal'
+      definition: 1264
+      buildVersionToDownload: 'specific'
+      buildId: '$(resources.pipeline.officialBuildCI.runID)'
+      branchName: '$(resources.pipeline.officialBuildCI.sourceBranch)'
+  - pwsh: |
+      npm install --global vsce
+    displayName: 'Install vsce'
+  - pwsh: |
+      # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
+      $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
+      if ($allArtifacts.Length -eq 0) {
+        throw "No Artifacts is downloaded."
+      }
 
         $publishArtifacts = $allArtifacts[0]
         Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
-        $additionalPublishArgs = , "publish"
-        # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-        If ("${{ parameters.branch }}" -eq "prerelease") {
-          $additionalPublishArgs += "--pre-release"
-          Write-Host "Publish to pre-release channel."
-        } ElseIf ("${{ parameters.branch }}" -eq "release") {
-          Write-Host "Publish to release channel."
-        } Else {
-          throw "Unexpected branch name: ${{ parameters.branch }}."
-        }
-        $additionalPublishArgs += '--packagePath'
+      $additionalPublishArgs = , "publish"
+      # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
+      If ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/main") {
+        $additionalPublishArgs += "--pre-release"
+        Write-Host "Publish to pre-release channel."
+      } ElseIf ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/release") {
+        Write-Host "Publish to release channel."
+      } Else {
+        throw "Unexpected branch name: $(resources.pipeline.officialBuildCI.sourceBranch)."
+      }
+      $additionalPublishArgs += '--packagePath'
 
         $platforms = "arm64", "x64", "ia32"
         $allVsixs = Get-ChildItem $publishArtifacts *.vsix
