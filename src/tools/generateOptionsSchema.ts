@@ -339,7 +339,7 @@ export function GenerateOptionsSchema() {
             'For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode',
         default: 4711,
     };
-    packageJSON.contributes.configuration[0].properties['csharp.unitTestDebuggingOptions'].properties =
+    packageJSON.contributes.configuration[1].properties['dotnet.unitTestDebuggingOptions'].properties =
         unitTestDebuggingOptions;
 
     // #region Generate package.json settings

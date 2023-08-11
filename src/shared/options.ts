@@ -92,6 +92,13 @@ export class Options {
             }
         }
 
+        const unitTestDebuggingOptions = Options.readOption<object>(
+            config,
+            'dotnet.unitTestDebuggingOptions',
+            {},
+            'csharp.unitTestDebuggingOptions'
+        );
+
         // Omnisharp Server Options
 
         const monoPath = Options.readOption<string>(config, 'omnisharp.monoPath', '');
@@ -305,6 +312,7 @@ export class Options {
                 useOmnisharpServer: useOmnisharpServer,
                 excludePaths: excludePaths,
                 defaultSolution: defaultSolution,
+                unitTestDebuggingOptions: unitTestDebuggingOptions,
             },
             {
                 useModernNet: useModernNet,
@@ -437,6 +445,7 @@ export interface CommonOptions {
 
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
     defaultSolution: string;
+    unitTestDebuggingOptions: object;
 }
 
 const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
