@@ -3,11 +3,12 @@ trigger:
     include:
     - main
     - prerelease
+    - release
 pr: none
 
 variables:
   - name: prereleaseFlag
-    value: '--prerelease'
+    value: ''
 
 stages:
 - stage: Build

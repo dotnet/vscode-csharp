@@ -6,14 +6,15 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import * as vscodeAdapter from './vscodeAdapter';
+import * as vscode from 'vscode';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { RazorLogger } from './razorLogger';
 import { Trace } from './trace';
-import * as vscode from './vscodeAdapter';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 export function resolveRazorLanguageServerOptions(
-    vscodeApi: vscode.api,
+    vscodeApi: vscodeAdapter.api,
     languageServerDir: string,
     trace: Trace,
     logger: RazorLogger
@@ -45,7 +46,9 @@ function findLanguageServerExecutable(withinDir: string) {
         const dllPath = path.join(withinDir, 'rzls.dll');
 
         if (!fs.existsSync(dllPath)) {
-            throw new Error(`Could not find Razor Language Server executable within directory '${withinDir}'`);
+            throw new Error(
+                vscode.l10n.t("Could not find Razor Language Server executable within directory '{0}'", withinDir)
+            );
         }
 
         fullPath = dllPath;

@@ -35,7 +35,7 @@ export class RazorRenameProvider extends RazorLanguageFeatureBase implements vsc
             // other servers from being able to return a response instead.
             // Null is the only return that allows us to handle renaming
             // from the Razor language server.
-            return null; // Promise.reject('Cannot rename this symbol.');
+            return null; // Promise.reject(l10n.t('Cannot rename this symbol.'));
         }
 
         const range = document.getWordRangeAtPosition(position);

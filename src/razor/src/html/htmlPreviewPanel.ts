@@ -25,7 +25,7 @@ export class HtmlPreviewPanel {
         } else {
             this.panel = vscode.window.createWebviewPanel(
                 HtmlPreviewPanel.viewType,
-                'Razor HTML Preview',
+                vscode.l10n.t('Razor HTML Preview'),
                 vscode.ViewColumn.Two,
                 {
                     enableScripts: true,
@@ -61,7 +61,7 @@ export class HtmlPreviewPanel {
 
     private attachToCurrentPanel() {
         if (!this.panel) {
-            vscode.window.showErrorMessage('Unexpected error when attaching to HTML preview window.');
+            vscode.window.showErrorMessage(vscode.l10n.t('Unexpected error when attaching to HTML preview window.'));
             return;
         }
 
@@ -73,7 +73,7 @@ export class HtmlPreviewPanel {
                     }
 
                     await vscode.env.clipboard.writeText(this.htmlContent);
-                    vscode.window.showInformationMessage('Razor HTML copied to clipboard');
+                    vscode.window.showInformationMessage(vscode.l10n.t('Razor HTML copied to clipboard'));
                     return;
             }
         });
@@ -100,13 +100,18 @@ export class HtmlPreviewPanel {
         let content = this.htmlContent ? this.htmlContent : '';
         content = content.replace(/</g, '&lt;').replace(/</g, '&gt;');
 
+        const title = vscode.l10n.t('Report a Razor issue');
+        const hostDocumentPathLabel = vscode.l10n.t('Host document file path');
+        const virtualDocumentPathLabel = vscode.l10n.t('Virtual document file path');
+        const copyHtmlLabel = vscode.l10n.t('Copy Html');
+
         this.panel.webview.html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report a Razor issue</title>
+    <title>${title}</title>
     <style>
         button {
             background-color: #eff3f6;
@@ -133,9 +138,9 @@ export class HtmlPreviewPanel {
     </script>
 </head>
 <body>
-    <p>Host document file path: <strong>${hostDocumentFilePath}</strong></p>
-    <p>Virtual document file path: <strong>${virtualDocumentFilePath}</strong></p>
-    <p><button onclick="copy()">Copy HTML</button></p>
+    <p>${hostDocumentPathLabel}: <strong>${hostDocumentFilePath}</strong></p>
+    <p>${virtualDocumentPathLabel}: <strong>${virtualDocumentFilePath}</strong></p>
+    <p><button onclick="copy()">${copyHtmlLabel}</button></p>
     <hr />
     <pre>${content}</pre>
 </body>
