@@ -4736,44 +4736,8 @@
       {
         "language": "csharp",
         "scopes": {
-          "namespace": [
-            "entity.name.type.namespace.cs"
-          ],
-          "type": [
-            "entity.name.type"
-          ],
-          "class": [
-            "entity.name.type.class.cs"
-          ],
-          "enum": [
-            "entity.name.type.enum.cs"
-          ],
-          "interface": [
-            "entity.name.type.interface.cs"
-          ],
-          "struct": [
-            "entity.name.type.struct.cs"
-          ],
           "typeParameter": [
-            "entity.name.type.type-parameter.cs"
-          ],
-          "parameter": [
-            "entity.name.variable.parameter.cs"
-          ],
-          "variable": [
-            "entity.name.variable.local.cs"
-          ],
-          "property": [
-            "variable.other.property.cs"
-          ],
-          "enumMember": [
-            "variable.other.enummember.cs"
-          ],
-          "method": [
-            "entity.name.function.member.cs"
-          ],
-          "macro": [
-            "keyword.preprocessor.cs"
+            "entity.name.type.type-parameter"
           ],
           "keyword": [
             "keyword.cs"
@@ -4809,7 +4773,7 @@
             "entity.name.variable.field.cs"
           ],
           "constant": [
-            "variable.other.constant.cs"
+            "variable.other.constant"
           ],
           "extensionMethod": [
             "entity.name.function.extension.cs"
