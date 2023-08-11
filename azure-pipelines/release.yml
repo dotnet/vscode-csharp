@@ -17,11 +17,6 @@ resources:
   - pipeline: releaseCI
     source: dotnet-vscode-csharp
     branch: '${{ parameters.branch }}'
-  repositories:
-  - repository: vscodeCsharpRepo
-    name: dotnet-vscode-csharp
-    ref: 'refs/heads/${{ parameters.branch }}'
-    type: git
 
 variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
@@ -29,7 +24,7 @@ variables:
 
 stages:
 - stage: 'PublishStage'
-  displayName: 'Publish artifacts to markeplace stage'
+  displayName: 'Publish artifacts to marketplace stage'
   jobs:
   - job: PublishToMarketplace
     pool:
@@ -96,7 +91,7 @@ stages:
         displayName: 'Install Node.js 16.x'
         inputs:
           versionSpec: '16.x'
-      - checkout: vscodeCsharpRepo
+      - checkout: self
         clean: true
         submodules: true
         fetchTags: false
@@ -106,8 +101,9 @@ stages:
           npm install
           npm install -g gulp
         displayName: 'Install tools'
-      - pwsh: npm run compile
-        displayName: 'Compile'
+      - pwsh: |
+          # Need these two files to find the roslyn commit for the given branch
+          git checkout ${{ parameters.branch }} -- package.json ./server/NuGet.config
       - pwsh: |
           gulp --tasks
           gulp tagRoslyn
