@@ -7,8 +7,15 @@ import * as gulp from 'gulp';
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';
 import axios from 'axios';
+import minimist = require('minimist');
+
+interface Options {
+    releaseVersion: string;
+}
 
 gulp.task('tagRoslyn', async (): Promise<number> => {
+    const vscodeCsharpVersion = minimist<Options>(process.argv.slice(2));
+    console.log(`Release version: ${vscodeCsharpVersion.releaseVersion}`);
     const packageJsonString = fs.readFileSync('./package.json').toString();
     const packageJson = JSON.parse(packageJsonString);
     const roslynVersion = packageJson['defaults']['roslyn'];
