@@ -55,8 +55,8 @@ gulp.task('tagRoslyn', async (): Promise<number> => {
     const nuspecFile = await xml2js.parseStringPromise(nuspecResponse.data);
     const repoUrl = nuspecFile.package.metadata[0].repository[0].$['url'];
     const commitNumber = nuspecFile.package.metadata[0].repository[0].$['commit'];
-    console.log(`repoUrl is ${repoUrl}.`);
-    console.log(`commitNumber is ${commitNumber}.`);
+    console.log(`repoUrl is ${repoUrl}`);
+    console.log(`commitNumber is ${commitNumber}`);
     return 0;
 });
 
