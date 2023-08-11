@@ -14,6 +14,7 @@ export function getEmptyOptions(): Options {
             useOmnisharpServer: true,
             excludePaths: [],
             defaultSolution: '',
+            unitTestDebuggingOptions: {},
         },
         {
             useModernNet: false,

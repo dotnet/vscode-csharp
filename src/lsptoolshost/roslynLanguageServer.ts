@@ -577,11 +577,7 @@ export class RoslynLanguageServer {
         client.onRequest<RoslynProtocol.DebugAttachParams, RoslynProtocol.DebugAttachResult, void>(
             RoslynProtocol.DebugAttachRequest.type,
             async (request) => {
-                let debugOptions: any = vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');
-                if (typeof debugOptions !== 'object') {
-                    debugOptions = {};
-                }
-
+                const debugOptions = this.optionProvider.GetLatestOptions().commonOptions.unitTestDebuggingOptions;
                 const debugConfiguration: vscode.DebugConfiguration = {
                     ...debugOptions,
                     name: '.NET Core Attach',
