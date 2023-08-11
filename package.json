@@ -37,9 +37,9 @@
     }
   },
   "defaults": {
-    "roslyn": "4.8.0-1.23407.9",
+    "roslyn": "4.8.0-1.23409.17",
     "omniSharp": "1.39.7",
-    "razor": "7.0.0-preview.23405.1",
+    "razor": "7.0.0-preview.23410.1",
     "razorOmnisharp": "7.0.0-preview.23363.1"
   },
   "main": "./dist/extension",
@@ -605,7 +605,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/a04e8be09ea48c4e9e75b8e8fd93cd82/razorlanguageserver-win-x64-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/7f4b0abb5c476c2f75470da3bc1cfa18/razorlanguageserver-win-x64-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -613,12 +613,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "A82B8CC0485F7D55B193B4FF2066E427E946C3607C21D140BFBC47C1D14F0DA4"
+      "integrity": "9ED0D053F7F255D7B653251315E33EBF882E87308FE1C7679EF2168B341E0869"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/15b67c9b4e30357c37f57069f1abca19/razorlanguageserver-win-x86-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/84ba02c1bd35eea749fc0b20966b6277/razorlanguageserver-win-x86-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -626,12 +626,12 @@
       "architectures": [
         "x86"
       ],
-      "integrity": "B42C5D2F24E2F62BF3DF959AF1B3CA0465EE129332CFE7D08D2644F03708F21F"
+      "integrity": "430E1D13F8121571B69C7F0898D8CC2EADB5326BFEAEC8E75ABA86B6225C6D06"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/6d8a1f682e858b3e13d3836cab18df37/razorlanguageserver-win-arm64-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/bd9ded633a917f9a1569fdced05a2a41/razorlanguageserver-win-arm64-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -639,12 +639,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "A92321DC94E54A1CF3224B7309830ED7FCC7CE1ED72B23F02085F841D196D482"
+      "integrity": "A9135AF15B5C1E0E11E5E0340A3D970B0F740D622FB24CBD5BA892033DB300E6"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/22c9d8ca5e32a811ae620d10b0f16600/razorlanguageserver-linux-x64-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/cf6ecf255d212e34675625aba35100bd/razorlanguageserver-linux-x64-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -655,12 +655,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "ACC83200D0B7AF654D2242167184B2921CD063837477C9B1B47034B883CEF205"
+      "integrity": "1874029B2C8FFC27847833ECEC73BF96DAC5EC0E4B7561E7B5A7DABE4D2DC01E"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/0b5b703dafc66d517ace9324e293f9aa/razorlanguageserver-linux-arm64-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/e50775c52db62b8b5aa204c16fcb8b3a/razorlanguageserver-linux-arm64-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -671,12 +671,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "CF731EDC6FD31D64AEA38F0EAC47D053D8E01F16435EAB5582964A638A19A095"
+      "integrity": "EF9D097EDDCC8BD1AC6B471DFDE95C9377027445409D034CE8C6D3B37850C142"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/90a1b16b52d8dd8b98830aa196d16b31/razorlanguageserver-linux-musl-x64-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/c3cf7f473fdf8a8f62a58139165456e9/razorlanguageserver-linux-musl-x64-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -687,12 +687,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "5219AE18BB0D56E7E2DE665CDDC3B35108AF17367CEB140115E4FA7C56AEAEDC"
+      "integrity": "1225EA0CFC76414F60B208A9730A1ABF9B849A68C8880D862CD816A6B7E00FF8"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/c1c045b721fdf40c190ee10368127a4a/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/498d6c80d6f2fc45d021cd39299923b5/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -703,12 +703,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "8C4E81511C6D4E2F5B4F0A7CA3EBC7F9554BD98007DBE62463BA1F6901887A93"
+      "integrity": "0FAA57861A3D33C73E13645446AFD2A0BE5DF68E79C53490D2EA457C40CCDB78"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/a0d3f3a01f1ebd902841b1540ef6c539/razorlanguageserver-osx-x64-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/4b14fec895969f491aae6a8552444b3f/razorlanguageserver-osx-x64-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -719,12 +719,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "456BB96B6C7234732DEEE73062426C4991932F61698E6D49B427B4870A6A9BEE"
+      "integrity": "2AF0B712FBDC4B700CA95C2681BC1521C17943A6887123C98E3583B59ADFF6B1"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/c3182341-48da-4baf-922d-b8a55ec705d4/f5ac44bbec4ca39f238492db24613411/razorlanguageserver-osx-arm64-7.0.0-preview.23405.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/6acb74118052cde1e738d7b8bb33bb83/razorlanguageserver-osx-arm64-7.0.0-preview.23410.1.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -735,7 +735,7 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "3E29F143169DF08B09E3A62FEE8C79535E21FA5B2D50F9AE15A142FD74DACE7F"
+      "integrity": "C1EFD24C435566C35A8748FCA61F6EE00E089BA411A98BD4D316C28DB48C21C2"
     },
     {
       "id": "RazorOmnisharp",
@@ -1262,11 +1262,6 @@
             "default": false,
             "description": "If true, MSBuild project system will only load projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. With this setting enabled OmniSharp may load fewer projects and may thus display incomplete reference lists for symbols."
           },
-          "omnisharp.enableRoslynAnalyzers": {
-            "type": "boolean",
-            "default": false,
-            "description": "Enables support for roslyn analyzers, code fixes and rulesets."
-          },
           "omnisharp.enableEditorConfigSupport": {
             "type": "boolean",
             "default": true,
@@ -1292,11 +1287,6 @@
             "type": "boolean",
             "default": false,
             "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results."
-          },
-          "omnisharp.analyzeOpenDocumentsOnly": {
-            "type": "boolean",
-            "default": false,
-            "description": "Only run analyzers against open files when 'enableRoslynAnalyzers' is true"
           },
           "omnisharp.testRunSettings": {
             "type": "string",
@@ -4750,44 +4740,8 @@
       {
         "language": "csharp",
         "scopes": {
-          "namespace": [
-            "entity.name.type.namespace.cs"
-          ],
-          "type": [
-            "entity.name.type"
-          ],
-          "class": [
-            "entity.name.type.class.cs"
-          ],
-          "enum": [
-            "entity.name.type.enum.cs"
-          ],
-          "interface": [
-            "entity.name.type.interface.cs"
-          ],
-          "struct": [
-            "entity.name.type.struct.cs"
-          ],
           "typeParameter": [
-            "entity.name.type.type-parameter.cs"
-          ],
-          "parameter": [
-            "entity.name.variable.parameter.cs"
-          ],
-          "variable": [
-            "entity.name.variable.local.cs"
-          ],
-          "property": [
-            "variable.other.property.cs"
-          ],
-          "enumMember": [
-            "variable.other.enummember.cs"
-          ],
-          "method": [
-            "entity.name.function.member.cs"
-          ],
-          "macro": [
-            "keyword.preprocessor.cs"
+            "entity.name.type.type-parameter"
           ],
           "keyword": [
             "keyword.cs"
@@ -4823,7 +4777,7 @@
             "entity.name.variable.field.cs"
           ],
           "constant": [
-            "variable.other.constant.cs"
+            "variable.other.constant"
           ],
           "extensionMethod": [
             "entity.name.function.extension.cs"

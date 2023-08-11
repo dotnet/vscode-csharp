@@ -1,0 +1,3 @@
+{
+  "configuration.dotnet.defaultSolution.description": "Ruta de acceso de la solución predeterminada que se va a abrir en el área de trabajo o que se establece en \"deshabilitar\" para omitirla."
+}

@@ -61,6 +61,8 @@ import { DotnetRuntimeExtensionResolver } from './dotnetRuntimeExtensionResolver
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
 import { registerUnitTestingCommands } from './unitTesting';
+import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
+import { TextEdit } from 'vscode-html-languageservice';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -76,6 +78,7 @@ export class RoslynLanguageServer {
     public static readonly resolveCodeActionCommand: string = 'roslyn.resolveCodeAction';
     public static readonly provideCompletionsCommand: string = 'roslyn.provideCompletions';
     public static readonly resolveCompletionsCommand: string = 'roslyn.resolveCompletion';
+    public static readonly roslynSimplifyMethodCommand: string = 'roslyn.simplifyMethod';
     public static readonly razorInitializeCommand: string = 'razor.initialize';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
@@ -733,7 +736,12 @@ export async function activateRoslynLanguageServer(
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     _traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
 
-    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(platformInfo, getServerPath);
+    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
+        platformInfo,
+        getServerPath,
+        outputChannel,
+        context.extensionPath
+    );
     const additionalExtensionPaths = scanExtensionPlugins();
     _languageServer = new RoslynLanguageServer(
         platformInfo,
@@ -888,6 +896,17 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
                     DocumentDiagnosticRequest.method
                 );
                 return await languageServer.sendRequest(diagnosticRequestType, request, CancellationToken.None);
+            }
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.roslynSimplifyMethodCommand,
+            async (request: SerializableSimplifyMethodParams) => {
+                const simplifyMethodRequestType = new RequestType<SerializableSimplifyMethodParams, TextEdit[], any>(
+                    'roslyn/simplifyMethod'
+                );
+                return await languageServer.sendRequest(simplifyMethodRequestType, request, CancellationToken.None);
             }
         )
     );

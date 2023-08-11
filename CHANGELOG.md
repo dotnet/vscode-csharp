@@ -9,6 +9,25 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Fix issue with Go to Definition giving a "unable to resolve reference" error (PR: [#69453](https://github.com/dotnet/roslyn/pull/69453))
+* Fix completion items not correctly adding using statements to the top of the file (PR: [#69454](https://github.com/dotnet/roslyn/pull/69454))
+* Improve de-duping of project load failure toasts (PR: [#69455](https://github.com/dotnet/roslyn/pull/69455))
+* Bring VS Code telemetry reporting in DevKit to match log level requirements of VS (PR: [#69444](https://github.com/dotnet/roslyn/pull/69444))
+* Update Razor to 7.0.0-preview.23410.1 (PR: [#6107](https://github.com/dotnet/vscode-csharp/pull/6107))
+
+## 2.0.346
+* Change how hint diagnostics are shown so they aren't shown as blue squiggles (PR: [#69403](https://github.com/dotnet/roslyn/pull/69403))
+* Load projects even if there is no solution file (PR: [#6062](https://github.com/dotnet/vscode-csharp/pull/6062))
+* Show toast when project loading fails (PR: [#6060](https://github.com/dotnet/vscode-csharp/pull/6060))
+* Fix misleading LSP server logs (PR: [#69378](https://github.com/dotnet/roslyn/pull/69378))
+* Add support for code lens enable/disable options to roslyn LSP (PR: [#6001](https://github.com/dotnet/vscode-csharp/pull/6001))
+* Onboard Localization pipeline (PR: [#5990](https://github.com/dotnet/vscode-csharp/pull/5990))
+* Enable loading translated strings from razor TS code (PR: [#5962](https://github.com/dotnet/vscode-csharp/pull/5962))
+* Update typescript and eslint plugin to remove build warning (PR: [6002](https://github.com/dotnet/vscode-csharp/pull/6002))
+* Report how the extension was activated (PR: [#6043](https://github.com/dotnet/vscode-csharp/pull/6043))
+* Update Razor to 7.0.0-preview.23410.1 (PR: [#6105](https://github.com/dotnet/vscode-csharp/pull/6105))
+
+## 2.0.328
 * Update Roslyn to 4.8.0-1.23403.6 (PR: [#6003](https://github.com/dotnet/vscode-csharp/pull/6003))
   * Fix issue where the ProcessFrameworkReferences task causes projects to fail to load (PR: [#69354](https://github.com/dotnet/roslyn/pull/69354))
   * Emulate suggestion mode in LSP completion by always soft-selecting (PR: [#69327](https://github.com/dotnet/roslyn/pull/69327))

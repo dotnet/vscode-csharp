@@ -1,0 +1,3 @@
+{
+  "configuration.dotnet.defaultSolution.description": "O caminho da solução padrão a ser aberto no workspace ou definido como 'desabilitar' para ignorá-lo."
+}

@@ -43,6 +43,7 @@ import { SemanticTokensRangeHandler } from './semantic/semanticTokensRangeHandle
 import { RazorSignatureHelpProvider } from './signatureHelp/razorSignatureHelpProvider';
 import { TelemetryReporter } from './telemetryReporter';
 import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
+import { RazorSimplifyMethodHandler } from './simplify/razorSimplifyMethodHandler';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -180,6 +181,13 @@ export async function activate(
                 documentManager,
                 logger
             );
+            const razorSimplifyMethodHandler = new RazorSimplifyMethodHandler(
+                documentSynchronizer,
+                languageServerClient,
+                languageServiceClient,
+                documentManager,
+                logger
+            );
 
             localRegistrations.push(
                 languageConfiguration.register(),
@@ -223,6 +231,7 @@ export async function activate(
                 semanticTokenHandler.register(),
                 razorDiagnosticHandler.register(),
                 codeActionsHandler.register(),
+                razorSimplifyMethodHandler.register(),
             ]);
         });
 
