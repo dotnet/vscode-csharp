@@ -4736,6 +4736,12 @@
       {
         "language": "csharp",
         "scopes": {
+          "typeParameter": [
+            "entity.name.type.type-parameter"
+          ],
+          "keyword": [
+            "keyword.cs"
+          ],
           "excludedCode": [
             "support.other.excluded.cs"
           ],
