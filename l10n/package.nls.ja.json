@@ -1,0 +1,3 @@
+{
+  "configuration.dotnet.defaultSolution.description": "ワークスペースで開く既定のソリューションのパス。スキップするには 'disable' に設定します。"
+}
