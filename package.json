@@ -70,7 +70,7 @@
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "updatePackageDependencies": "gulp updatePackageDependencies",
     "l10nDevGenerateXlf": "npx @vscode/l10n-dev generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile ./loc/vscode-csharp.xlf",
-    "l10nDevImportXlf": "npx @vscode/l10n-dev import-xlf ./loc/vscode-csharp.*.xlf --outDir ./l10n"
+    "l10nDevImportXlf": "npx @vscode/l10n-dev import-xlf ./loc/vscode-csharp.*.xlf --outDir ./l10n && move l10n\\package.nls.*.json ."
   },
   "extensionDependencies": [
     "ms-dotnettools.vscode-dotnet-runtime"
