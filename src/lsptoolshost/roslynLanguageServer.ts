@@ -712,6 +712,15 @@ export class RoslynLanguageServer {
                 throw new Error(`Invalid log level ${logLevel}`);
         }
     }
+
+    public async getBuildOnlyDiagnosticIds(token: vscode.CancellationToken): Promise<string[]> {
+        const response = await _languageServer.sendRequest0(RoslynProtocol.BuildOnlyDiagnosticIdsRequest.type, token);
+        if (response) {
+            return response.ids;
+        }
+
+        throw new Error('Unable to retrieve build-only diagnostic ids for current solution.');
+    }
 }
 
 /**
