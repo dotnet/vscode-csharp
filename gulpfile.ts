@@ -11,7 +11,7 @@ require('./tasks/testTasks');
 require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
 require('./tasks/localizationTasks');
-require('./tasks/tagRoslynTasks');
+require('./tasks/createTagsTasks');
 
 // Disable warning about wanting an async function
 // tslint:disable-next-line
