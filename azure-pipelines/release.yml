@@ -12,76 +12,74 @@ parameters:
     type: boolean
     default: true
 
-resources:
-  pipelines:
-  - pipeline: releaseCI
-    source: dotnet-vscode-csharp
-    branch: '${{ parameters.branch }}'
-
 variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
 - group: vscode-csharp release secrets
+# This is expected to provide pat to tag release.
+- group: DncEng-Partners-Tokens
 
-jobs:
-- job: PublishToMarketplace
-  pool:
-    vmImage: ubuntu-latest
-  steps:
-  - task: DownloadPipelineArtifact@2
-    displayName: '📦 Download artifacts from build pipeline.'
-    inputs:
-      buildType: 'specific'
-      project: 'internal'
-      definition: 1264
-      buildVersionToDownload: 'specific'
-      buildId: '$(resources.pipeline.officialBuildCI.runID)'
-      branchName: '$(resources.pipeline.officialBuildCI.sourceBranch)'
-  - pwsh: |
-      npm install --global vsce
-    displayName: 'Install vsce'
-  - pwsh: |
-      # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-      $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
-      if ($allArtifacts.Length -eq 0) {
-        throw "No Artifacts is downloaded."
-      }
+stages:
+- stage: PublishStage
+  jobs:
+  - job: PublishToMarketplace
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: DownloadPipelineArtifact@2
+      displayName: '📦 Download artifacts from build pipeline.'
+      inputs:
+        buildType: 'specific'
+        project: 'internal'
+        definition: 1264
+        buildVersionToDownload: 'specific'
+        buildId: '$(resources.pipeline.officialBuildCI.runID)'
+        branchName: '$(resources.pipeline.officialBuildCI.sourceBranch)'
+    - pwsh: |
+        npm install --global vsce
+      displayName: 'Install vsce'
+    - pwsh: |
+        # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
+        $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
+        if ($allArtifacts.Length -eq 0) {
+          throw "No Artifacts is downloaded."
+        }
 
-        $publishArtifacts = $allArtifacts[0]
-        Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+          $publishArtifacts = $allArtifacts[0]
+          Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
-      $additionalPublishArgs = , "publish"
-      # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-      If ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/main") {
-        $additionalPublishArgs += "--pre-release"
-        Write-Host "Publish to pre-release channel."
-      } ElseIf ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/release") {
-        Write-Host "Publish to release channel."
-      } Else {
-        throw "Unexpected branch name: $(resources.pipeline.officialBuildCI.sourceBranch)."
-      }
-      $additionalPublishArgs += '--packagePath'
+        $additionalPublishArgs = , "publish"
+        # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
+        If ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/main") {
+          $additionalPublishArgs += "--pre-release"
+          Write-Host "Publish to pre-release channel."
+        } ElseIf ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/release") {
+          Write-Host "Publish to release channel."
+        } Else {
+          throw "Unexpected branch name: $(resources.pipeline.officialBuildCI.sourceBranch)."
+        }
+        $additionalPublishArgs += '--packagePath'
 
-        $platforms = "arm64", "x64", "ia32"
-        $allVsixs = Get-ChildItem $publishArtifacts *.vsix
-        foreach ($vsix in $allVsixs) {
-          foreach ($plat in $platforms) {
-            if ($vsix.Name.Contains($plat)) {
-                $additionalPublishArgs += $vsix
+          $platforms = "arm64", "x64", "ia32"
+          $allVsixs = Get-ChildItem $publishArtifacts *.vsix
+          foreach ($vsix in $allVsixs) {
+            foreach ($plat in $platforms) {
+              if ($vsix.Name.Contains($plat)) {
+                  $additionalPublishArgs += $vsix
+              }
             }
           }
-        }
 
-        Write-Host "Command run is: vsce $($additionalPublishArgs)."
-        If ("${{ parameters.test }}") {
-          Write-Host "In test mode, command is printed instead of run."
-          Write-Host "🔒 Verify PAT."
-          vsce verify-pat ms-dotnettools
-        }
-        Else {
-          # vsce @additionalPublishArgs
-        }
+          Write-Host "Command run is: vsce $($additionalPublishArgs)."
+          If ("${{ parameters.test }}") {
+            Write-Host "In test mode, command is printed instead of run."
+            Write-Host "🔒 Verify PAT."
+            vsce verify-pat ms-dotnettools
+          }
+          Else {
+            # vsce @additionalPublishArgs
+          }
       displayName: 🚀 Publish to Marketplace
-      workingDirectory: $(Pipeline.Workspace)/releaseCI
+      workingDirectory: $(Pipeline.Workspace)
       env:
         VSCE_PAT: $(VSCodeMarketplacePAT)
 - stage: 'TagReleaseNumberToRoslyn'
@@ -92,25 +90,23 @@ jobs:
     pool:
       vmImage: ubuntu-latest
     steps:
-      - task: NodeTool@0
-        displayName: 'Install Node.js 16.x'
-        inputs:
-          versionSpec: '16.x'
-      - checkout: self
-        clean: true
-        submodules: true
-        fetchTags: false
-        fetchDepth: 0
-      - pwsh: |
-          npm ci
-          npm install
-          npm install -g gulp
-        displayName: 'Install tools'
-      - pwsh: |
-          # Need these two files to find the roslyn commit for the given branch
-          git checkout origin/${{ parameters.branch }} -- ./package.json ./server/NuGet.config
-        displayName: 'Checkout package.json and NuGetConfig from targeting branch'
-      - pwsh: |
-          # build number is generated by nerdbank git versioning and set to AzureDev
-          gulp createTags --releaseVersion $(resources.pipeline.releaseCI.runName) --releaseCommit $(resources.pipeline.releaseCI.runName)
-        displayName: 'Create Tags in repo'
+    - task: NodeTool@0
+      displayName: 'Install Node.js 16.x'
+      inputs:
+        versionSpec: '16.x'
+    - checkout: self
+      clean: true
+      submodules: true
+      fetchTags: false
+      fetchDepth: 0
+    - pwsh: |
+        # Need these two files to find the roslyn commit for the given branch
+        git checkout $(resources.pipeline.officialBuildCI.sourceCommit) -- ./package.json ./server/NuGet.config
+      displayName: 'Checkout package.json and NuGetConfig from targeting branch'
+    - pwsh: |
+        npm ci
+        npm install
+        npm install -g gulp
+        # build number is generated by nerdbank git versioning and set to AzureDev
+        gulp createTags --releaseVersion $(resources.pipeline.officialBuildCI.runName) --releaseCommit $(resources.pipeline.officialBuildCI.sourceCommit)
+      displayName: 'Create Tags in repo'
