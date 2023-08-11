@@ -103,7 +103,7 @@ stages:
         displayName: 'Install tools'
       - pwsh: |
           # Need these two files to find the roslyn commit for the given branch
-          git checkout ${{ parameters.branch }} -- package.json ./server/NuGet.config
+          git checkout origin/${{ parameters.branch }} -- ./package.json ./server/NuGet.config
       - pwsh: |
           gulp --tasks
           gulp tagRoslyn
