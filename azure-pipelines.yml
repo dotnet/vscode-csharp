@@ -3,13 +3,11 @@ trigger:
   branches:
     include:
     - feature/*
-    - prerelease
     - release
     - main
 
 pr:
 - feature/*
-- prerelease
 - release
 - main
 

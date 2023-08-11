@@ -1,16 +1,16 @@
 trigger: none
 pr: none
 
+resources:
+  pipelines:
+  - pipeline: officialBuildCI
+    source: dotnet-vscode-csharp
+    branch: main
+
 parameters:
   - name: test
     type: boolean
     default: true
-  - name: branch
-    type: string
-    default: prerelease
-    values:
-    - prerelease
-    - release
 
 variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
@@ -27,8 +27,9 @@ jobs:
       buildType: 'specific'
       project: 'internal'
       definition: 1264
-      buildVersionToDownload: 'latestFromBranch'
-      branchName: 'refs/heads/${{ parameters.branch }}'
+      buildVersionToDownload: 'specific'
+      buildId: '$(resources.pipeline.officialBuildCI.runID)'
+      branchName: '$(resources.pipeline.officialBuildCI.sourceBranch)'
   - pwsh: |
       npm install --global vsce
     displayName: 'Install vsce'
@@ -44,13 +45,13 @@ jobs:
 
       $additionalPublishArgs = , "publish"
       # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-      If ("${{ parameters.branch }}" -eq "prerelease") {
+      If ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/main") {
         $additionalPublishArgs += "--pre-release"
         Write-Host "Publish to pre-release channel."
-      } ElseIf ("${{ parameters.branch }}" -eq "release") {
+      } ElseIf ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/release") {
         Write-Host "Publish to release channel."
       } Else {
-        throw "Unexpected branch name: ${{ parameters.branch }}."
+        throw "Unexpected branch name: $(resources.pipeline.officialBuildCI.sourceBranch)."
       }
       $additionalPublishArgs += '--packagePath'
 
