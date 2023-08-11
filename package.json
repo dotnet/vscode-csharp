@@ -4349,12 +4349,12 @@
             "properties": {
               "projectPath": {
                 "type": "string",
-                "description": "Path to the .csproj file.",
+                "description": "%debuggers.dotnet.launch.projectPath.description%",
                 "default": "${workspaceFolder}/<insert-project-name-here>.csproj"
               },
               "launchConfigurationId": {
                 "type": "string",
-                "description": "The launch configuration id to use. Empty string will use the current active configuration."
+                "description": "%debuggers.dotnet.launch.launchConfigurationId.description%"
               }
             }
           }
@@ -4984,7 +4984,7 @@
     "viewsWelcome": [
       {
         "view": "debug",
-        "contents": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\n\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson).",
+        "contents": "%viewsWelcome.debug.contents%",
         "when": "debugStartLanguage == csharp && !dotnet.debug.serviceBrokerAvailable"
       }
     ]
