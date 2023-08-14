@@ -22,6 +22,6 @@ stages:
         prereleaseFlag: $(prereleaseFlag)
     pool:
       name: NetCore1ESPool-Internal
-      demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+      demands: ImageOverride -equals Build.Ubuntu.2204.Amd64
 
 # TODO: add compliance, signing.
