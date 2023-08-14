@@ -1691,11 +1691,11 @@
           },
           "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": {
             "type": "boolean",
-<<<<<<< HEAD
-            "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
             "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
+            "default": false
+          },
           "csharp.debug.symbolOptions.cachePath": {
+            "type": "string",
             "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
             "default": ""
           },
@@ -2433,29 +2433,17 @@
                     "items": {
                       "type": "string"
                     },
-<<<<<<< HEAD
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
->>>>>>> main
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-<<<<<<< HEAD
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
->>>>>>> main
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-<<<<<<< HEAD
-                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
->>>>>>> main
                     "default": false
                   },
                   "cachePath": {
@@ -2885,29 +2873,17 @@
                     "items": {
                       "type": "string"
                     },
-<<<<<<< HEAD
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
->>>>>>> main
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-<<<<<<< HEAD
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
->>>>>>> main
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-<<<<<<< HEAD
-                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
->>>>>>> main
                     "default": false
                   },
                   "cachePath": {
@@ -3611,29 +3587,17 @@
                     "items": {
                       "type": "string"
                     },
-<<<<<<< HEAD
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
->>>>>>> main
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-<<<<<<< HEAD
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
->>>>>>> main
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-<<<<<<< HEAD
-                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
->>>>>>> main
                     "default": false
                   },
                   "cachePath": {
@@ -4063,29 +4027,17 @@
                     "items": {
                       "type": "string"
                     },
-<<<<<<< HEAD
-                    "description": "Array of symbol server URLs (example: http​://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
->>>>>>> main
                     "default": []
                   },
                   "searchMicrosoftSymbolServer": {
                     "type": "boolean",
-<<<<<<< HEAD
-                    "description": "If 'true' the Microsoft Symbol server (https​://msdl.microsoft.com​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
->>>>>>> main
                     "default": false
                   },
                   "searchNuGetOrgSymbolServer": {
                     "type": "boolean",
-<<<<<<< HEAD
-                    "description": "If 'true' the NuGet.org symbol server (https​://symbols.nuget.org​/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
-=======
                     "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
->>>>>>> main
                     "default": false
                   },
                   "cachePath": {
