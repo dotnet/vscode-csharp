@@ -8,20 +8,24 @@ import * as xml2js from 'xml2js';
 import * as fs from 'fs';
 import axios, { AxiosResponse } from 'axios';
 import * as minimist from 'minimist';
+import { Octokit } from '@octokit/rest';
 
 interface Options {
     releaseVersion: string;
+    gitHubPat?: string;
 }
 
 gulp.task('createTags', async (): Promise<number> => {
-    const vscodeCsharpVersion = minimist<Options>(process.argv.slice(2));
-    console.log(`Release version: ${vscodeCsharpVersion.releaseVersion}`);
+    const options = minimist<Options>(process.argv.slice(2));
+    console.log(`Release version: ${options.releaseVersion}`);
 
     const roslynCommit = await findRoslynCommitAsync();
     if (!roslynCommit) {
         logError('Failed to find roslyn commit.');
         return 1;
     }
+
+    await tagRepoAsync(roslynCommit, options.gitHubPat);
 
     return 0;
 });
@@ -73,6 +77,27 @@ async function findRoslynCommitAsync(): Promise<string | null> {
     const commitNumber = nuspecFile.package.metadata[0].repository[0].$['commit'];
     console.log(`commitNumber is ${commitNumber}`);
     return commitNumber;
+}
+
+async function tagRepoAsync(commit: string, personalPat?: string): Promise<void> {
+    const pat = personalPat ?? process.env['GitHubPat'];
+    if (!pat) {
+        throw 'No GitHub Pat found.';
+    }
+
+    const octokit = new Octokit({ auth: pat });
+    const requestToGetExistingTags = await octokit.request(`GET /roslyn/cosifne/git/tag/${commit}`, {
+        onwer: 'Cosifne',
+        repo: 'roslyn',
+        tag_sha: commit,
+    });
+
+    if (requestToGetExistingTags.status !== 200) {
+        logError('Failed to get exist tags from commit');
+        return;
+    }
+
+    console.log(requestToGetExistingTags.data);
 }
 
 async function sendHttpsGetRequestAsync(url: string): Promise<AxiosResponse<any, any> | null> {
