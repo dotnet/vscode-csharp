@@ -861,9 +861,11 @@ async function applyAutoInsertEdit(
     token: vscode.CancellationToken
 ) {
     const change = e.contentChanges[0];
-
-    // Need to add 1 since the server expects the position to be where the caret is after the last token has been inserted.
-    const position = new vscode.Position(change.range.start.line, change.range.start.character + 1);
+    // Need to add a modifier since the server expects the position to be where the caret is after the last token has been inserted.
+    const position = new vscode.Position(
+        change.range.start.line,
+        change.range.start.character + (change.text.length - change.rangeLength)
+    );
     const uri = UriConverter.serialize(e.document.uri);
     const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();
