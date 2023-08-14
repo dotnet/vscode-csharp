@@ -6,7 +6,7 @@
 import * as gulp from 'gulp';
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as minimist from 'minimist';
 
 interface Options {
@@ -26,8 +26,7 @@ gulp.task('createTags', async (): Promise<number> => {
     return 0;
 });
 
-
-async function findRoslynCommitAsync(): Promise<string?> {
+async function findRoslynCommitAsync(): Promise<string | null> {
     const packageJsonString = fs.readFileSync('./package.json').toString();
     const packageJson = JSON.parse(packageJsonString);
     const roslynVersion = packageJson['defaults']['roslyn'];
@@ -50,9 +49,9 @@ async function findRoslynCommitAsync(): Promise<string?> {
     // 1. Ask the PackageBaseAddress from nuget server index.
     // 2. Download .nuspec file. See https://learn.microsoft.com/en-us/nuget/api/package-base-address-resource#download-package-manifest-nuspec
     // 3. Find the commit from .nuspec file
-    const indexResponse = await axios.get(nugetServerIndex);
-    if (indexResponse.status != 200) {
-        logError('Failed to get index file from nuget server');
+
+    const indexResponse = await sendHttpsGetRequestAsync(nugetServerIndex);
+    if (!indexResponse) {
         return null;
     }
 
@@ -65,9 +64,8 @@ async function findRoslynCommitAsync(): Promise<string?> {
     const lowerCaseLanguageServerPackageName = 'Microsoft.CodeAnalysis.LanguageServer'.toLocaleLowerCase();
     const nuspecGetUrl = `${id}${lowerCaseLanguageServerPackageName}/${roslynVersion}/${lowerCaseLanguageServerPackageName}.nuspec`;
     console.log(`Url to get nuspec file is ${nuspecGetUrl}`);
-    const nuspecResponse = await axios.get(nuspecGetUrl);
-    if (nuspecResponse.status != 200) {
-        logError('Failed to get nuspec file from nuget server');
+    const nuspecResponse = await sendHttpsGetRequestAsync(nuspecGetUrl);
+    if (!nuspecResponse) {
         return null;
     }
 
@@ -75,6 +73,21 @@ async function findRoslynCommitAsync(): Promise<string?> {
     const commitNumber = nuspecFile.package.metadata[0].repository[0].$['commit'];
     console.log(`commitNumber is ${commitNumber}`);
     return commitNumber;
+}
+
+async function sendHttpsGetRequestAsync(url: string): Promise<AxiosResponse<any, any> | null> {
+    try {
+        const nuspecResponse = await axios.get(url);
+        if (nuspecResponse.status != 200) {
+            logError('Failed to get nuspec file from nuget server');
+            return null;
+        }
+        return nuspecResponse;
+    } catch (err) {
+        logError(`Failed to get response for ${url}`);
+    }
+
+    return null;
 }
 
 function logError(message: string): void {
