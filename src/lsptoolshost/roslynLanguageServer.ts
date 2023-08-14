@@ -861,7 +861,8 @@ async function applyAutoInsertEdit(
     token: vscode.CancellationToken
 ) {
     const change = e.contentChanges[0];
-    // Need to add a modifier since the server expects the position to be where the caret is after the last token has been inserted.
+    // The server expects the request position to represent the caret position in the text after the change has already been applied.
+    // We need to calculate what that position would be after the change is applied and send that to the server.
     const position = new vscode.Position(
         change.range.start.line,
         change.range.start.character + (change.text.length - change.rangeLength)
