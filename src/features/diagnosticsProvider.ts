@@ -135,7 +135,18 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
     ) {
         super(server, languageMiddlewareFeature);
 
-        this._analyzersEnabled = vscode.workspace.getConfiguration('omnisharp').get('enableRoslynAnalyzers', false);
+        const analyzersEnabledLegacyOption = vscode.workspace
+            .getConfiguration('omnisharp')
+            .get('enableRoslynAnalyzers', false);
+        const useOmnisharpServer = vscode.workspace.getConfiguration('dotnet').get('server.useOmnisharp', false);
+        const analyzersEnabledNewOption =
+            vscode.workspace
+                .getConfiguration('dotnet')
+                .get<string>(
+                    'backgroundAnalysis.analyzerDiagnosticsScope',
+                    useOmnisharpServer ? 'none' : 'openFiles'
+                ) != 'none';
+        this._analyzersEnabled = analyzersEnabledLegacyOption || analyzersEnabledNewOption;
         this._validationAdvisor = validationAdvisor;
         this._diagnostics = vscode.languages.createDiagnosticCollection('csharp');
         this._suppressHiddenDiagnostics = vscode.workspace

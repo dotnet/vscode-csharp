@@ -32,12 +32,12 @@ suite('Options tests', () => {
         options.omnisharpOptions.minFindSymbolsFilterLength.should.equal(0);
         options.omnisharpOptions.maxFindSymbolsItems.should.equal(1000);
         options.omnisharpOptions.enableMsBuildLoadProjectsOnDemand.should.equal(false);
-        options.omnisharpOptions.enableRoslynAnalyzers.should.equal(false);
+        options.omnisharpOptions.enableRoslynAnalyzers.should.equal(true);
         options.omnisharpOptions.enableEditorConfigSupport.should.equal(true);
         options.omnisharpOptions.enableDecompilationSupport.should.equal(false);
         options.omnisharpOptions.enableImportCompletion.should.equal(false);
         options.omnisharpOptions.enableAsyncCompletion.should.equal(false);
-        options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(false);
+        options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(true);
         options.omnisharpOptions.testRunSettings.should.equal('');
     });
 
@@ -54,7 +54,7 @@ suite('Options tests', () => {
         updateConfig(vscode, undefined, 'files.exclude', { '**/node_modules': true, '**/assets': false });
 
         const excludedPaths = Options.getExcludedPaths(vscode);
-        expect(excludedPaths).to.equalTo(['**/node_modules']);
+        excludedPaths.should.deep.equal(['**/node_modules']);
     });
 
     test('Verify return no excluded paths when files.exclude and search.exclude empty', () => {
@@ -72,7 +72,7 @@ suite('Options tests', () => {
         updateConfig(vscode, undefined, 'search.exclude', { '**/node_modules': true, '**/assets': false });
 
         const excludedPaths = Options.getExcludedPaths(vscode, true);
-        expect(excludedPaths).to.be.equalTo(['/Library', '**/node_modules']);
+        excludedPaths.should.deep.equal(['/Library', '**/node_modules']);
     });
 
     test('BACK-COMPAT: "omnisharp.loggingLevel": "verbose" == "omnisharp.loggingLevel": "debug"', () => {

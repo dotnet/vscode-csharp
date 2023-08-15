@@ -21,14 +21,12 @@ type Options = {
 };
 
 const localizationLanguages = ['cs', 'de', 'es', 'fr', 'it', 'ja', 'ko', 'pl', 'pt-br', 'ru', 'tr', 'zh-cn', 'zh-tw'];
-const locFiles = ['bundle.l10n.%s.json', 'package.nls.%s.json'];
 
 function getAllPossibleLocalizationFiles(): string[] {
     const files = [];
     for (const lang of localizationLanguages) {
-        for (const file of locFiles) {
-            files.push('l10n' + path.sep + util.format(file, lang));
-        }
+        files.push('l10n' + path.sep + util.format('bundle.l10n.%s.json', lang));
+        files.push(util.format('package.nls.%s.json', lang));
     }
     // English
     files.push(`l10n${path.sep}bundle.l10n.json`);

@@ -9,6 +9,25 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn (PR: [#6131](https://github.com/dotnet/vscode-csharp/pull/6131))
+  * Only show toast for project load failures (PR: [#69494](https://github.com/dotnet/roslyn/pull/69494))
+* Fix enter inserting /// on the incorrect line in documentation comments  (PR: [#6130](https://github.com/dotnet/vscode-csharp/pull/6130))
+* Build extension with node 18 LTS (PR: [#6128](https://github.com/dotnet/vscode-csharp/pull/6128))
+* Update localized strings (PR: [#6129](https://github.com/dotnet/vscode-csharp/pull/6129))
+* Fix paths for package.nls.*.json (PR: [#6121](https://github.com/dotnet/vscode-csharp/pull/6121))
+* Add request to prepare for build diagnostic de-dupping (PR: [#6113](https://github.com/dotnet/vscode-csharp/pull/6113))
+* Support unit test debugging options in Roslyn LSP (PR: [#6110](https://github.com/dotnet/vscode-csharp/pull/6110))
+* Fix loading of package.nls.*.json (PR: [#6118](https://github.com/dotnet/vscode-csharp/pull/6118))
+* Add localization infrastructure to debugger package.json strings (PR: [#6088](https://github.com/dotnet/vscode-csharp/pull/6088))
+* Adjust C# semantic token scopes to better match 1.26 (PR: [#6094](https://github.com/dotnet/vscode-csharp/pull/6094))
+* Update Razor to 7.0.0-preview.23410.1 (PR: [#6105](https://github.com/dotnet/vscode-csharp/pull/6105))
+* Implement razor support for method simplification (PR: [#5982](https://github.com/dotnet/vscode-csharp/pull/5982))
+* Attempt to find a valid dotnet version from PATH before using runtime installer extension (PR: [#6074](https://github.com/dotnet/vscode-csharp/pull/6074))
+* Respect background analysis scope option in O# (PR: [#6058](https://github.com/dotnet/vscode-csharp/pull/6058))
+* Add localization infrastructure to debugger components (PR: [#6064](https://github.com/dotnet/vscode-csharp/pull/6064))
+* Add coreclr as a search keyword (PR: [#6071](https://github.com/dotnet/vscode-csharp/pull/6071))
+
+## 2.0.357
 * Fix issue with Go to Definition giving a "unable to resolve reference" error (PR: [#69453](https://github.com/dotnet/roslyn/pull/69453))
 * Fix completion items not correctly adding using statements to the top of the file (PR: [#69454](https://github.com/dotnet/roslyn/pull/69454))
 * Improve de-duping of project load failure toasts (PR: [#69455](https://github.com/dotnet/roslyn/pull/69455))
@@ -25,6 +44,7 @@
 * Enable loading translated strings from razor TS code (PR: [#5962](https://github.com/dotnet/vscode-csharp/pull/5962))
 * Update typescript and eslint plugin to remove build warning (PR: [6002](https://github.com/dotnet/vscode-csharp/pull/6002))
 * Report how the extension was activated (PR: [#6043](https://github.com/dotnet/vscode-csharp/pull/6043))
+* Update Razor to 7.0.0-preview.23410.1 (PR: [#6105](https://github.com/dotnet/vscode-csharp/pull/6105))
 
 ## 2.0.328
 * Update Roslyn to 4.8.0-1.23403.6 (PR: [#6003](https://github.com/dotnet/vscode-csharp/pull/6003))

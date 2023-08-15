@@ -393,7 +393,7 @@ export default class TestManager extends AbstractProvider {
         environmentVariables: Map<string, string>,
         debuggerEventsPipeName: string
     ) {
-        const debugOptions = vscode.workspace.getConfiguration('csharp').get('unitTestDebuggingOptions');
+        const debugOptions = this.optionProvider.GetLatestOptions().commonOptions.unitTestDebuggingOptions;
 
         // Get the initial set of options from the workspace setting
         let result: any;

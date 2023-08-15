@@ -18,7 +18,7 @@ import {
     ProjectConfiguration,
     TelemetryErrorEvent,
 } from '../../../src/omnisharp/loggingEvents';
-import { getNullTelemetryReporter } from '../testAssets/fakes';
+import { getNullTelemetryReporter } from '../../unitTests/testAssets/fakes';
 import { Package } from '../../../src/packageManager/package';
 import { PackageError } from '../../../src/packageManager/packageError';
 import { isNotNull } from '../../testUtil';

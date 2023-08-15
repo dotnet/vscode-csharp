@@ -4,8 +4,8 @@
 
 First install:
 
-* Node.js ([v16.16 LTS](https://nodejs.org/en/blog/release/v16.16.0) is recommended).
-* Npm (The version shipped with node is fine, for example for v16.16.0 it would be 8.19.2)
+* Node.js ([v18.17.0 LTS](https://nodejs.org/de/blog/release/v18.17.0) is recommended).
+* Npm (The version shipped with node is fine)
 * .NET 7.0 SDK (dotnet should be on your path)
 
 ### Build and run the extension
