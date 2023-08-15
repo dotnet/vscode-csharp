@@ -43,6 +43,7 @@
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.debuggers.dotnet.launch.projectPath.description": "Options to use with the debugger when launching for unit test debugging.",
+  "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
   "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
   "viewsWelcome.debug.contents": {
     "message": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\n\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson).",
