@@ -431,15 +431,24 @@ export class RoslynLanguageServer {
                             vscode.l10n.t(
                                 'Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.'
                             ),
-                            { title: vscode.l10n.t('Choose solution'), open: true },
-                            { title: vscode.l10n.t('Do not load solutions'), open: false }
+                            { title: vscode.l10n.t('Choose'), action: 'open' },
+                            { title: vscode.l10n.t('Choose and set default'), action: 'openAndSetDefault' },
+                            { title: vscode.l10n.t('Do not load any'), action: 'disable' }
                         );
 
                         if (chosen) {
-                            if (chosen.open) {
-                                vscode.commands.executeCommand('dotnet.openSolution');
-                            } else {
+                            if (chosen.action === 'disable') {
                                 vscode.workspace.getConfiguration().update('dotnet.defaultSolution', 'disable', false);
+                            } else {
+                                const chosenSolution: vscode.Uri | undefined = await vscode.commands.executeCommand(
+                                    'dotnet.openSolution'
+                                );
+                                if (chosen.action === 'openAndSetDefault' && chosenSolution) {
+                                    const relativePath = vscode.workspace.asRelativePath(chosenSolution);
+                                    vscode.workspace
+                                        .getConfiguration()
+                                        .update('dotnet.defaultSolution', relativePath, false);
+                                }
                             }
                         }
                     } else if (solutionUris.length === 0) {
