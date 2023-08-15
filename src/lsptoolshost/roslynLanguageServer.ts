@@ -425,6 +425,32 @@ export class RoslynLanguageServer {
                 if (solutionUris) {
                     if (solutionUris.length === 1) {
                         this.openSolution(solutionUris[0]);
+                    } else if (solutionUris.length > 1) {
+                        // We have more than one solution, so we'll prompt the user to use the picker.
+                        const chosen = await vscode.window.showInformationMessage(
+                            vscode.l10n.t(
+                                'Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.'
+                            ),
+                            { title: vscode.l10n.t('Choose'), action: 'open' },
+                            { title: vscode.l10n.t('Choose and set default'), action: 'openAndSetDefault' },
+                            { title: vscode.l10n.t('Do not load any'), action: 'disable' }
+                        );
+
+                        if (chosen) {
+                            if (chosen.action === 'disable') {
+                                vscode.workspace.getConfiguration().update('dotnet.defaultSolution', 'disable', false);
+                            } else {
+                                const chosenSolution: vscode.Uri | undefined = await vscode.commands.executeCommand(
+                                    'dotnet.openSolution'
+                                );
+                                if (chosen.action === 'openAndSetDefault' && chosenSolution) {
+                                    const relativePath = vscode.workspace.asRelativePath(chosenSolution);
+                                    vscode.workspace
+                                        .getConfiguration()
+                                        .update('dotnet.defaultSolution', relativePath, false);
+                                }
+                            }
+                        }
                     } else if (solutionUris.length === 0) {
                         // We have no solutions, so we'll enumerate what project files we have and just use those.
                         const projectUris = await vscode.workspace.findFiles(
