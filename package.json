@@ -1348,7 +1348,7 @@
           },
           "dotnet.unitTestDebuggingOptions": {
             "type": "object",
-            "description": "%configuration.debuggers.dotnet.launch.projectPath.description%",
+            "description": "%configuration.dotnet.unitTestDebuggingOptions%",
             "default": {},
             "properties": {
               "sourceFileMap": {

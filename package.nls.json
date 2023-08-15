@@ -41,8 +41,7 @@
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Enable navigation to decomplied sources.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Show remarks information when display symbol.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
-  "configuration.dotnet.unitTestDebuggingOptions": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
-  "configuration.debuggers.dotnet.launch.projectPath.description": "Options to use with the debugger when launching for unit test debugging.",
+  "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging.",
   "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
   "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
   "viewsWelcome.debug.contents": {
