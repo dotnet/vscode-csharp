@@ -10,7 +10,7 @@ import { vscode } from '../../../src/vscodeAdapter';
 import { Options } from '../../../src/shared/options';
 import { FakeMonoResolver, fakeMonoInfo } from '../fakes/fakeMonoResolver';
 import { FakeDotnetResolver } from '../fakes/fakeDotnetResolver';
-import { DotnetInfo } from '../../../src/shared/utils/getDotnetInfo';
+import { DotnetInfo } from '../../../src/shared/utils/dotnetInfo';
 import { getEmptyOptions } from '../fakes/fakeOptions';
 
 suite(`${reportIssue.name}`, () => {

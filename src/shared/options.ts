@@ -92,6 +92,13 @@ export class Options {
             }
         }
 
+        const unitTestDebuggingOptions = Options.readOption<object>(
+            config,
+            'dotnet.unitTestDebuggingOptions',
+            {},
+            'csharp.unitTestDebuggingOptions'
+        );
+
         // Omnisharp Server Options
 
         const monoPath = Options.readOption<string>(config, 'omnisharp.monoPath', '');
@@ -119,7 +126,18 @@ export class Options {
             'omnisharp.useEditorFormattingSettings',
             true
         );
-        const enableRoslynAnalyzers = Options.readOption<boolean>(config, 'omnisharp.enableRoslynAnalyzers', false);
+        const enableRoslynAnalyzersLegacyOption = Options.readOption<boolean>(
+            config,
+            'omnisharp.enableRoslynAnalyzers',
+            false
+        );
+        const diagnosticAnalysisScope = Options.readOption<string>(
+            config,
+            'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
+            useOmnisharpServer ? 'none' : 'openFiles'
+        );
+        const enableRoslynAnalyzersNewOption = diagnosticAnalysisScope != 'none';
+        const enableRoslynAnalyzers = enableRoslynAnalyzersLegacyOption || enableRoslynAnalyzersNewOption;
         const enableEditorConfigSupport = Options.readOption<boolean>(
             config,
             'omnisharp.enableEditorConfigSupport',
@@ -138,11 +156,13 @@ export class Options {
             'omnisharp.enableImportCompletion'
         );
         const enableAsyncCompletion = Options.readOption<boolean>(config, 'omnisharp.enableAsyncCompletion', false);
-        const analyzeOpenDocumentsOnly = Options.readOption<boolean>(
+        const analyzeOpenDocumentsOnlyLegacyOption = Options.readOption<boolean>(
             config,
             'omnisharp.analyzeOpenDocumentsOnly',
             false
         );
+        const analyzeOpenDocumentsOnlyNewOption = diagnosticAnalysisScope == 'openFiles';
+        const analyzeOpenDocumentsOnly = analyzeOpenDocumentsOnlyLegacyOption || analyzeOpenDocumentsOnlyNewOption;
         const organizeImportsOnFormat = Options.readOption<boolean>(config, 'omnisharp.organizeImportsOnFormat', false);
         const disableMSBuildDiagnosticWarning = Options.readOption<boolean>(
             config,
@@ -292,6 +312,7 @@ export class Options {
                 useOmnisharpServer: useOmnisharpServer,
                 excludePaths: excludePaths,
                 defaultSolution: defaultSolution,
+                unitTestDebuggingOptions: unitTestDebuggingOptions,
             },
             {
                 useModernNet: useModernNet,
@@ -424,6 +445,7 @@ export interface CommonOptions {
 
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
     defaultSolution: string;
+    unitTestDebuggingOptions: object;
 }
 
 const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [

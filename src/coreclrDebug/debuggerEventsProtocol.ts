@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
+
 // This contains the definition of messages that VsDbg-UI can send back to a listener which registers itself via the 'debuggerEventsPipeName'
 // property on a launch or attach request.
 //
@@ -28,7 +30,7 @@ export interface ProcessLaunchedEvent extends DebuggerEvent {
 export function decodePacket(packet: Buffer): DebuggerEvent {
     // Verify the message ends in a newline
     if (packet[packet.length - 1] != 10 /*\n*/) {
-        throw new Error('Unexpected message received from debugger.');
+        throw new Error(vscode.l10n.t('Unexpected message received from debugger.'));
     }
 
     const message = packet.toString('utf-8', 0, packet.length - 1);

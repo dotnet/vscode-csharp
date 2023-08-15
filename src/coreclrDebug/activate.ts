@@ -41,7 +41,9 @@ export async function activate(
         // a warning was already issued, so do nothing.
         if (isValidArchitecture) {
             eventStream.post(
-                new DebuggerPrerequisiteFailure('[ERROR]: C# Extension failed to install the debugger package.')
+                new DebuggerPrerequisiteFailure(
+                    vscode.l10n.t('[ERROR]: C# Extension failed to install the debugger package.')
+                )
             );
             showInstallErrorMessage(eventStream);
         }
@@ -60,7 +62,7 @@ export async function activate(
             const attachItem = await RemoteAttachPicker.ShowAttachEntries(args, platformInformation);
             return attachItem
                 ? attachItem.id
-                : Promise.reject<string>(new Error('Could not find a process id to attach.'));
+                : Promise.reject<string>(new Error(vscode.l10n.t('Could not find a process id to attach.')));
         })
     );
 
@@ -117,7 +119,9 @@ async function checkIsValidArchitecture(
             ) {
                 eventStream.post(
                     new DebuggerPrerequisiteFailure(
-                        '[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.'
+                        vscode.l10n.t(
+                            '[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.'
+                        )
                     )
                 );
                 return false;
@@ -128,7 +132,9 @@ async function checkIsValidArchitecture(
             if (platformInformation.architecture === 'x86') {
                 eventStream.post(
                     new DebuggerPrerequisiteWarning(
-                        `[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.`
+                        vscode.l10n.t(
+                            `[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.`
+                        )
                     )
                 );
                 return false;
@@ -140,7 +146,9 @@ async function checkIsValidArchitecture(
         }
     }
 
-    eventStream.post(new DebuggerPrerequisiteFailure('[ERROR] The debugger cannot be installed. Unknown platform.'));
+    eventStream.post(
+        new DebuggerPrerequisiteFailure(vscode.l10n.t('[ERROR] The debugger cannot be installed. Unknown platform.'))
+    );
     return false;
 }
 
@@ -156,7 +164,9 @@ async function completeDebuggerInstall(
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
             vscode.window.showErrorMessage(
-                'Failed to complete the installation of the C# extension. Please see the error in the output window below.'
+                vscode.l10n.t(
+                    'Failed to complete the installation of the C# extension. Please see the error in the output window below.'
+                )
             );
             return false;
         }
@@ -179,16 +189,18 @@ async function completeDebuggerInstall(
 function showInstallErrorMessage(eventStream: EventStream) {
     eventStream.post(new DebuggerNotInstalledFailure());
     vscode.window.showErrorMessage(
-        'An error occurred during installation of the .NET Debugger. The C# extension may need to be reinstalled.'
+        vscode.l10n.t(
+            'An error occurred during installation of the .NET Debugger. The C# extension may need to be reinstalled.'
+        )
     );
 }
 
 function showDotnetToolsWarning(message: string): void {
     const config = vscode.workspace.getConfiguration('csharp');
     if (!config.get('suppressDotnetInstallWarning', false)) {
-        const getDotNetMessage = 'Get the SDK';
-        const goToSettingsMessage = 'Disable message in settings';
-        const helpMessage = 'Help';
+        const getDotNetMessage = vscode.l10n.t('Get the SDK');
+        const goToSettingsMessage = vscode.l10n.t('Disable message in settings');
+        const helpMessage = vscode.l10n.t('Help');
         // Buttons are shown in right-to-left order, with a close button to the right of everything;
         // getDotNetMessage will be the first button, then goToSettingsMessage, then the close button.
         vscode.window.showErrorMessage(message, goToSettingsMessage, getDotNetMessage, helpMessage).then((value) => {
@@ -248,7 +260,9 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
             if (!installLock) {
                 this.eventStream.post(new DebuggerNotInstalledFailure());
                 throw new Error(
-                    'The C# extension is still downloading packages. Please see progress in the output window below.'
+                    vscode.l10n.t(
+                        'The C# extension is still downloading packages. Please see progress in the output window below.'
+                    )
                 );
             }
             // install.complete does not exist, check dotnetCLI to see if we can complete.
@@ -262,7 +276,9 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
                 if (!success) {
                     this.eventStream.post(new DebuggerNotInstalledFailure());
                     throw new Error(
-                        'Failed to complete the installation of the C# extension. Please see the error in the output window below.'
+                        vscode.l10n.t(
+                            'Failed to complete the installation of the C# extension. Please see the error in the output window below.'
+                        )
                     );
                 }
             }

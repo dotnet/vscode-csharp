@@ -61,6 +61,8 @@ import { DotnetRuntimeExtensionResolver } from './dotnetRuntimeExtensionResolver
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
 import { registerUnitTestingCommands } from './unitTesting';
+import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
+import { TextEdit } from 'vscode-html-languageservice';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -76,6 +78,7 @@ export class RoslynLanguageServer {
     public static readonly resolveCodeActionCommand: string = 'roslyn.resolveCodeAction';
     public static readonly provideCompletionsCommand: string = 'roslyn.provideCompletions';
     public static readonly resolveCompletionsCommand: string = 'roslyn.resolveCompletion';
+    public static readonly roslynSimplifyMethodCommand: string = 'roslyn.simplifyMethod';
     public static readonly razorInitializeCommand: string = 'razor.initialize';
 
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
@@ -574,7 +577,9 @@ export class RoslynLanguageServer {
         client.onRequest<RoslynProtocol.DebugAttachParams, RoslynProtocol.DebugAttachResult, void>(
             RoslynProtocol.DebugAttachRequest.type,
             async (request) => {
+                const debugOptions = this.optionProvider.GetLatestOptions().commonOptions.unitTestDebuggingOptions;
                 const debugConfiguration: vscode.DebugConfiguration = {
+                    ...debugOptions,
                     name: '.NET Core Attach',
                     type: 'coreclr',
                     request: 'attach',
@@ -709,6 +714,15 @@ export class RoslynLanguageServer {
                 throw new Error(`Invalid log level ${logLevel}`);
         }
     }
+
+    public async getBuildOnlyDiagnosticIds(token: vscode.CancellationToken): Promise<string[]> {
+        const response = await _languageServer.sendRequest0(RoslynProtocol.BuildOnlyDiagnosticIdsRequest.type, token);
+        if (response) {
+            return response.ids;
+        }
+
+        throw new Error('Unable to retrieve build-only diagnostic ids for current solution.');
+    }
 }
 
 /**
@@ -733,7 +747,12 @@ export async function activateRoslynLanguageServer(
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     _traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
 
-    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(platformInfo, getServerPath);
+    const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
+        platformInfo,
+        getServerPath,
+        outputChannel,
+        context.extensionPath
+    );
     const additionalExtensionPaths = scanExtensionPlugins();
     _languageServer = new RoslynLanguageServer(
         platformInfo,
@@ -891,6 +910,17 @@ function registerRazorCommands(context: vscode.ExtensionContext, languageServer:
             }
         )
     );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            RoslynLanguageServer.roslynSimplifyMethodCommand,
+            async (request: SerializableSimplifyMethodParams) => {
+                const simplifyMethodRequestType = new RequestType<SerializableSimplifyMethodParams, TextEdit[], any>(
+                    'roslyn/simplifyMethod'
+                );
+                return await languageServer.sendRequest(simplifyMethodRequestType, request, CancellationToken.None);
+            }
+        )
+    );
 
     // The VS Code API for code actions (and the vscode.CodeAction type) doesn't support everything that LSP supports,
     // namely the data property, which Razor needs to identify which code actions are on their allow list, so we need
@@ -942,9 +972,12 @@ async function applyAutoInsertEdit(
     token: vscode.CancellationToken
 ) {
     const change = e.contentChanges[0];
-
-    // Need to add 1 since the server expects the position to be where the caret is after the last token has been inserted.
-    const position = new vscode.Position(change.range.start.line, change.range.start.character + 1);
+    // The server expects the request position to represent the caret position in the text after the change has already been applied.
+    // We need to calculate what that position would be after the change is applied and send that to the server.
+    const position = new vscode.Position(
+        change.range.start.line,
+        change.range.start.character + (change.text.length - change.rangeLength)
+    );
     const uri = UriConverter.serialize(e.document.uri);
     const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();

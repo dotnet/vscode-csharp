@@ -3,13 +3,11 @@ trigger:
   branches:
     include:
     - feature/*
-    - prerelease
     - release
     - main
 
 pr:
 - feature/*
-- prerelease
 - release
 - main
 
@@ -30,7 +28,7 @@ stages:
         prereleaseFlag: $(prereleaseFlag)
     pool:
       name: NetCore-Public
-      demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+      demands: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
 
 - stage: Test
   displayName: Test
@@ -40,7 +38,7 @@ stages:
     strategy:
       matrix:
         linux:
-          demandsName: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+          demandsName: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
     pool:
       name: NetCore-Public
       demands: $(demandsName)
