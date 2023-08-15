@@ -425,6 +425,23 @@ export class RoslynLanguageServer {
                 if (solutionUris) {
                     if (solutionUris.length === 1) {
                         this.openSolution(solutionUris[0]);
+                    } else if (solutionUris.length > 1) {
+                        // We have more than one solution, so we'll prompt the user to use the picker.
+                        const chosen = await vscode.window.showInformationMessage(
+                            vscode.l10n.t(
+                                'Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.'
+                            ),
+                            { title: vscode.l10n.t('Choose solution'), open: true },
+                            { title: vscode.l10n.t('Do not load solutions'), open: false }
+                        );
+
+                        if (chosen) {
+                            if (chosen.open) {
+                                vscode.commands.executeCommand('dotnet.openSolution');
+                            } else {
+                                vscode.workspace.getConfiguration().update('dotnet.defaultSolution', 'disable', false);
+                            }
+                        }
                     } else if (solutionUris.length === 0) {
                         // We have no solutions, so we'll enumerate what project files we have and just use those.
                         const projectUris = await vscode.workspace.findFiles(
