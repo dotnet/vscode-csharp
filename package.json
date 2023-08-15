@@ -1116,18 +1116,18 @@
           "dotnet.dotnetPath": {
             "type": "string",
             "scope": "machine-overridable",
-            "description": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\"."
+            "description": "%configuration.dotnet.dotnetPath%"
           },
           "dotnet.server.path": {
             "type": "string",
             "scope": "machine-overridable",
-            "description": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used."
+            "description": "%configuration.dotnet.server.path%"
           },
           "dotnet.server.waitForDebugger": {
             "type": "boolean",
             "scope": "machine-overridable",
             "default": false,
-            "description": "Passes the --debug flag when launching the server to allow a debugger to be attached."
+            "description": "%configuration.dotnet.server.waitForDebugger%"
           },
           "dotnet.server.trace": {
             "scope": "window",
@@ -1142,7 +1142,7 @@
               "None"
             ],
             "default": "Information",
-            "description": "Sets the logging level for the language server"
+            "description": "%configuration.dotnet.server.trace%"
           },
           "dotnet.server.extensionPaths": {
             "scope": "machine-overridable",
@@ -1154,7 +1154,7 @@
               "type": "string"
             },
             "default": null,
-            "description": "Override for path to langauge server --extension arguments."
+            "description": "%configuration.dotnet.server.extensionPaths%"
           },
           "dotnet.implementType.insertionBehavior": {
             "type": "string",
@@ -1164,10 +1164,10 @@
             ],
             "default": "withOtherMembersOfTheSameKind",
             "enumDescriptions": [
-              "Place them with other members of the same kind.",
-              "Place them at the end."
+              "%configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind%",
+              "%configuration.dotnet.implementType.insertionBehavior.atTheEnd%"
             ],
-            "description": "The insertion location of properties, events, and methods When implement interface or abstract class.",
+            "description": "%configuration.dotnet.implementType.insertionBehavior%",
             "order": 10
           },
           "dotnet.implementType.propertyGenerationBehavior": {
@@ -1178,38 +1178,38 @@
             ],
             "default": "preferThrowingProperties",
             "enumDescriptions": [
-              "Prefer throwing properties.",
-              "Prefer auto properties."
+              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferThrowingProperties%",
+              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferAutoProperties%"
             ],
-            "description": "Generation behavior of properties when implement interface or abstract class.",
+            "description": "%configuration.dotnet.implementType.propertyGenerationBehavior%",
             "order": 10
           },
           "dotnet.codeLens.enableReferencesCodeLens": {
             "type": "boolean",
             "default": true,
-            "description": "Specifies whether the references CodeLens should be shown."
+            "description": "%configuration.dotnet.codeLens.enableReferencesCodeLens%"
           },
           "dotnet.codeLens.enableTestsCodeLens": {
             "type": "boolean",
             "default": true,
-            "description": "Specifies whether the run and debug test CodeLens should be shown."
+            "description": "%configuration.dotnet.codeLens.enableTestsCodeLens%"
           },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",
             "default": true,
-            "description": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file.",
+            "description": "%configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces%",
             "order": 20
           },
           "dotnet.completion.showNameCompletionSuggestions": {
             "type": "boolean",
             "default": "true",
-            "description": "Perform automatic object name completion for the members that you have recently selected.",
+            "description": "%configuration.dotnet.completion.showNameCompletionSuggestions%",
             "order": 20
           },
           "dotnet.completion.provideRegexCompletions": {
             "type": "boolean",
             "default": "true",
-            "description": "Show regular expressions in completion list.",
+            "description": "%configuration.dotnet.completion.provideRegexCompletions%",
             "order": 20
           },
           "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
@@ -1221,11 +1221,11 @@
             ],
             "default": "openFiles",
             "enumDescriptions": [
-              "Open documents",
-              "Entire solution",
-              "None"
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.openFiles%",
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution%",
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none%"
             ],
-            "description": "Run background code analysis for:",
+            "description": "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope%",
             "order": 30
           },
           "dotnet.backgroundAnalysis.compilerDiagnosticsScope": {
@@ -1237,118 +1237,118 @@
             ],
             "default": "openFiles",
             "enumDescriptions": [
-              "Open documents",
-              "Entire solution",
-              "None"
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.openFiles%",
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.fullSolution%",
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.none%"
             ],
-            "description": "Show compiler errors and warnings for:",
+            "description": "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope%",
             "order": 30
           },
           "dotnet.highlighting.highlightRelatedRegexComponents": {
             "type": "boolean",
             "default": "true",
-            "description": "Highlight related regular expression components under cursor.",
+            "description": "%configuration.dotnet.highlighting.highlightRelatedRegexComponents%",
             "order": 40
           },
           "dotnet.highlighting.highlightRelatedJsonComponents": {
             "type": "boolean",
             "default": "true",
-            "description": "Highlight related JSON components under cursor.",
+            "description": "%configuration.dotnet.highlighting.highlightRelatedJsonComponents%",
             "order": 40
           },
           "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for implicit object creation",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation%",
             "order": 50
           },
           "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for variables with inferred types",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes%",
             "order": 50
           },
           "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for lambda parameter types",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes%",
             "order": 50
           },
           "csharp.inlayHints.enableInlayHintsForTypes": {
             "type": "boolean",
             "default": false,
-            "description": "Display inline type hints",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForTypes%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForIndexerParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for indexers",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForLiteralParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for literals",
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for 'new' expressions",
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForObjectCreationParameters%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForOtherParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for everything else",
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForOtherParameters%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Display inline parameter name hints",
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForParameters%",
             "order": 50
           },
           "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress hints when parameter names differ only by suffix",
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix%",
             "order": 50
           },
           "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress hints when argument matches parameter name",
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName%",
             "order": 50
           },
           "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress hints when parameter name matches the method's intent",
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent%",
             "order": 50
           },
           "dotnet.navigation.navigateToDecompiledSources": {
             "type": "boolean",
             "default": "true",
-            "description": "Enable navigation to decomplied sources.",
+            "description": "%configuration.dotnet.navigation.navigateToDecompiledSources%",
             "order": 60
           },
           "dotnet.quickInfo.showRemarksInQuickInfo": {
             "type": "boolean",
             "default": "true",
-            "description": "Show remarks information when display symbol.",
+            "description": "%configuration.dotnet.quickInfo.showRemarksInQuickInfo%",
             "order": 70
           },
           "dotnet.symbolSearch.searchReferenceAssemblies": {
             "type": "boolean",
             "default": true,
-            "description": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
+            "description": "%configuration.dotnet.symbolSearch.searchReferenceAssemblies%",
             "order": 80
           },
           "dotnet.unitTestDebuggingOptions": {
             "type": "object",
-            "description": "Options to use with the debugger when launching for unit test debugging.",
+            "description": "%configuration.dotnet.unitTestDebuggingOptions%",
             "default": {},
             "properties": {
               "sourceFileMap": {
