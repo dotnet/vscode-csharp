@@ -32,8 +32,8 @@ If you don’t want to take advantage of the great Language Server features, you
 ## Found a Bug?
 To file a new issue:
 
-1. Go to Settings (UI) and search for "trace" in the search bar.
-2. Under "Dotnet > Server: Trace" select "Trace" from the drop down. This will provide more output information.
+1. Open the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Open Settings (UI)", and press Enter.
+2. Search for "trace" in the search bar. Under "Dotnet > Server: Trace" select "Trace" from the drop down. This will provide more output information.
 3. Reload the window by opening the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Reload Window", and press Enter.
 4. Next, check the C# logs in the Output Window by opening it with Ctrl+Shift+U (Cmd+Shift+U on macOS), and select C# from the dropdown.
 5. Select and copy all the text in the log, and then report the issue through VS Code.
