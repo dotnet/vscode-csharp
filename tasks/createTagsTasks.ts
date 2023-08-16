@@ -26,7 +26,13 @@ gulp.task('createTags', async (): Promise<void> => {
         return;
     }
 
-    const tagCreatedInRoslyn = await tagRepoAsync('dotnet', 'roslyn', roslynCommit, options.releaseVersion);
+    const tagCreatedInRoslyn = await tagRepoAsync(
+        'dotnet',
+        'roslyn',
+        roslynCommit,
+        `VSCode-CSharp-${options.releaseVersion}`,
+        `${options.releaseVersion} VSCode C# extension release`
+    );
 
     if (!tagCreatedInRoslyn) {
         logError('Failed to tag roslyn');
@@ -39,6 +45,7 @@ gulp.task('createTags', async (): Promise<void> => {
         'dotnet',
         'vscode-csharp',
         options.releaseCommit,
+        options.releaseVersion,
         options.releaseVersion
     );
 
@@ -98,19 +105,26 @@ async function findRoslynCommitAsync(): Promise<string | null> {
     return commitNumber;
 }
 
-async function tagRepoAsync(owner: string, repo: string, commit: string, releaseTag: string): Promise<boolean> {
-    const pat = process.env['GitHubPat'];
+async function tagRepoAsync(
+    owner: string,
+    repo: string,
+    commit: string,
+    releaseTag: string,
+    tagMessage: string
+): Promise<boolean> {
+    const pat = process.env['GitHubPAT'];
     if (!pat) {
         throw 'No GitHub Pat found.';
     }
 
+    console.log(`Start to tag ${owner}/${repo}. Commit: ${commit}, tag: ${releaseTag}, message: ${tagMessage}`);
     const octokit = new Octokit({ auth: pat });
     await octokit.auth();
     const createTagResponse = await octokit.request(`POST /repos/${owner}/${repo}/git/tags`, {
         owner: owner,
         repo: repo,
         tag: releaseTag,
-        message: releaseTag,
+        message: tagMessage,
         object: commit,
         type: 'commit',
     });
