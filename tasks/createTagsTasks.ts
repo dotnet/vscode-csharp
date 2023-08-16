@@ -27,6 +27,7 @@ gulp.task('createTags', async (): Promise<void> => {
 
     if (options.dryRun) {
         console.log('Tagging is skipped in dry run mode.');
+        return;
     } else {
         const tagCreatedInRoslyn = await tagRepoAsync(
             'dotnet',
