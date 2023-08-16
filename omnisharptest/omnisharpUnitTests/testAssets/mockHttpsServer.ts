@@ -44,8 +44,8 @@ export default class MockHttpsServer {
         const server = new ServerMock(null, {
             host: 'localhost',
             port: port,
-            key: await fs.readFile('test/unitTests/testAssets/private.pem'),
-            cert: await fs.readFile('test/unitTests/testAssets/public.pem'),
+            key: await fs.readFile('omnisharptest/omnisharpUnitTests/testAssets/private.pem'),
+            cert: await fs.readFile('omnisharptest/omnisharpUnitTests/testAssets/public.pem'),
         });
 
         return new MockHttpsServer(server, `https://localhost:${port}`);
