@@ -44,8 +44,8 @@ stages:
           throw "No Artifacts is downloaded."
         }
 
-          $publishArtifacts = $allArtifacts[0]
-          Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+        $publishArtifacts = $allArtifacts[0]
+        Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
         $additionalPublishArgs = , "publish"
         # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
@@ -59,25 +59,25 @@ stages:
         }
         $additionalPublishArgs += '--packagePath'
 
-          $platforms = "arm64", "x64", "ia32"
-          $allVsixs = Get-ChildItem $publishArtifacts *.vsix
-          foreach ($vsix in $allVsixs) {
-            foreach ($plat in $platforms) {
-              if ($vsix.Name.Contains($plat)) {
-                  $additionalPublishArgs += $vsix
-              }
+        $platforms = "arm64", "x64", "ia32"
+        $allVsixs = Get-ChildItem $publishArtifacts *.vsix
+        foreach ($vsix in $allVsixs) {
+          foreach ($plat in $platforms) {
+            if ($vsix.Name.Contains($plat)) {
+                $additionalPublishArgs += $vsix
             }
           }
+        }
 
-          Write-Host "Command run is: vsce $($additionalPublishArgs)."
-          If ("${{ parameters.test }}") {
-            Write-Host "In test mode, command is printed instead of run."
-            Write-Host "🔒 Verify PAT."
-            vsce verify-pat ms-dotnettools
-          }
-          Else {
-            vsce @additionalPublishArgs
-          }
+        Write-Host "Command run is: vsce $($additionalPublishArgs)."
+        If ("${{ parameters.test }}") {
+          Write-Host "In test mode, command is printed instead of run."
+          Write-Host "🔒 Verify PAT."
+          vsce verify-pat ms-dotnettools
+        }
+        Else {
+          vsce @additionalPublishArgs
+        }
       displayName: 🚀 Publish to Marketplace
       workingDirectory: $(Pipeline.Workspace)
       env:
