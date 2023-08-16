@@ -19,6 +19,6 @@
         "src",
         "tasks",
         "lsptoolshosttest",
-        "test",
+        "omnisharptest",
         "typings"   ]
 }

@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 import { should, assert } from 'chai';
-import testAssetWorkspace from '../../test/integrationTests/testAssets/testAssetWorkspace';
+import testAssetWorkspace from '../../omnisharptest/omnisharpIntegrationTests/testAssets/testAssetWorkspace';
 import * as path from 'path';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './lspToolsHostIntegrationHelpers';
 import { InlayHint, InlayHintKind, Position } from 'vscode-languageserver-protocol';
