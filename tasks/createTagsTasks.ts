@@ -67,40 +67,10 @@ async function findRoslynCommitAsync(): Promise<string | null> {
     }
 
     console.log(`Roslyn version is ${roslynVersion}`);
-    const nugetFileString = fs.readFileSync('./server/NuGet.config').toString();
-    const nugetConfig = await xml2js.parseStringPromise(nugetFileString);
-    const nugetServerIndex = nugetConfig.configuration.packageSources[0].add[0].$.value;
-    if (!nugetServerIndex) {
-        logError("Can't find nuget server index.");
-        return null;
-    }
-
-    console.log(`Nuget server index is ${nugetServerIndex}`);
-    // Find the matching commit from nuget server
-    // 1. Ask the PackageBaseAddress from nuget server index.
-    // 2. Download .nuspec file. See https://learn.microsoft.com/en-us/nuget/api/package-base-address-resource#download-package-manifest-nuspec
-    // 3. Find the commit from .nuspec file
-    const indexResponse = await sendHttpsGetRequestAsync(nugetServerIndex);
-    if (!indexResponse) {
-        return null;
-    }
-
-    const resources = indexResponse.data['resources'] as any[];
-    // This is required to be implemented in nuget server.
-    const packageBaseAddress = resources.find((res, _) => res['@type'] === 'PackageBaseAddress/3.0.0');
-    const id = packageBaseAddress['@id'];
-    console.log(`packageBaseAddress is: ${id}`);
-
-    const lowerCaseLanguageServerPackageName = 'Microsoft.CodeAnalysis.LanguageServer'.toLocaleLowerCase();
-    const nuspecGetUrl = `${id}${lowerCaseLanguageServerPackageName}/${roslynVersion}/${lowerCaseLanguageServerPackageName}.nuspec`;
-    console.log(`Url to get nuspec file is ${nuspecGetUrl}`);
-    const nuspecResponse = await sendHttpsGetRequestAsync(nuspecGetUrl);
-    if (!nuspecResponse) {
-        return null;
-    }
-
-    const nuspecFile = await xml2js.parseStringPromise(nuspecResponse.data);
-    const commitNumber = nuspecFile.package.metadata[0].repository[0].$['commit'];
+    // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
+    const nuspecFile = fs.readFileSync(`out/.nuget/microsoft.codeAnalysis.languageServer/${roslynVersion}`);
+    const nuspecFileXml = await xml2js.parseStringPromise(nuspecFile);
+    const commitNumber = nuspecFileXml.package.metadata[0].repository[0].$['commit'];
     console.log(`commitNumber is ${commitNumber}`);
     return commitNumber;
 }
