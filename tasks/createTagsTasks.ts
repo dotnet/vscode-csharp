@@ -11,6 +11,7 @@ import { Octokit } from '@octokit/rest';
 interface Options {
     releaseVersion: string;
     releaseCommit: string;
+    dryRun: boolean;
 }
 
 gulp.task('createTags', async (): Promise<void> => {
@@ -24,35 +25,39 @@ gulp.task('createTags', async (): Promise<void> => {
         return;
     }
 
-    const tagCreatedInRoslyn = await tagRepoAsync(
-        'dotnet',
-        'roslyn',
-        roslynCommit,
-        `VSCode-CSharp-${options.releaseVersion}`,
-        `${options.releaseVersion} VSCode C# extension release`
-    );
+    if (options.dryRun) {
+        console.log('Tagging is skipped in dry run mode.');
+    } else {
+        const tagCreatedInRoslyn = await tagRepoAsync(
+            'dotnet',
+            'roslyn',
+            roslynCommit,
+            `VSCode-CSharp-${options.releaseVersion}`,
+            `${options.releaseVersion} VSCode C# extension release`
+        );
 
-    if (!tagCreatedInRoslyn) {
-        logError('Failed to tag roslyn');
-        return;
+        if (!tagCreatedInRoslyn) {
+            logError('Failed to tag roslyn');
+            return;
+        }
+
+        console.log('tag created in roslyn');
+
+        const tagCreatedInVsCodeCsharp = await tagRepoAsync(
+            'dotnet',
+            'vscode-csharp',
+            options.releaseCommit,
+            options.releaseVersion,
+            options.releaseVersion
+        );
+
+        if (!tagCreatedInVsCodeCsharp) {
+            logError('Failed to tag vscode-csharp');
+            return;
+        }
+
+        console.log('tag created in vscode-csharp');
     }
-
-    console.log('tag created in roslyn');
-
-    const tagCreatedInVsCodeCsharp = await tagRepoAsync(
-        'dotnet',
-        'vscode-csharp',
-        options.releaseCommit,
-        options.releaseVersion,
-        options.releaseVersion
-    );
-
-    if (!tagCreatedInVsCodeCsharp) {
-        logError('Failed to tag vscode-csharp');
-        return;
-    }
-
-    console.log('tag created in vscode-csharp');
 });
 
 async function findRoslynCommitAsync(): Promise<string | null> {
