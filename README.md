@@ -32,14 +32,14 @@ If you don’t want to take advantage of the great Language Server features, you
 ## Found a Bug?
 To file a new issue:
 
-1. Go to “Settings” and search for Trace in the search bar.
-2. From the drop-down, set Dotnet > Server to Trace. This will provide more output information for the developer team to diagnose the issue.
-3. Reload the window by opening the Command Palette with Ctrl + Shift + P (Cmd + Shift + P on macOS), type "Reload Window," and press Enter.
-4. Next, check the C# logs in the Output Window by opening it with Ctrl + Shift + U and selecting C# from the dropdown.
+1. Go to Settings (UI) and search for "trace" in the search bar.
+2. Under "Dotnet > Server: Trace" select "Trace" from the drop down. This will provide more output information.
+3. Reload the window by opening the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Reload Window", and press Enter.
+4. Next, check the C# logs in the Output Window by opening it with Ctrl+Shift+U (Cmd+Shift+U on macOS), and select C# from the dropdown.
 5. Select and copy all the text in the log, and then report the issue through VS Code.
-6. Open the Command Palette with Ctrl + Shift + P (Cmd + Shift + P on macOS), type and select “CSharp: Report an issue”
+6. Open the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type “CSharp: Report an issue”, and press Enter.
 7. This will open a window with all the necessary information related to the C# extension, dotnet version, mono version, etc.
-8. Paste the previously copied log into the “Steps to Reproduce” field. Please also include a description of what you were doing/attempting to do at the time the problem occurred.
+8. Paste the previously copied C# log into the “Steps to Reproduce” field. Please also include a description of what you were doing/attempting to do at the time the problem occurred.
 9. Click the “Preview on GitHub” button, and then file the issue.
 
 Alternatively, you could visit https://github.com/dotnet/vscode-csharp/issues and file a new issue there.
