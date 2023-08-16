@@ -4,9 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as gulp from 'gulp';
-import * as xml2js from 'xml2js';
 import * as fs from 'fs';
-import axios, { AxiosResponse } from 'axios';
 import * as minimist from 'minimist';
 import { Octokit } from '@octokit/rest';
 
@@ -68,9 +66,23 @@ async function findRoslynCommitAsync(): Promise<string | null> {
 
     console.log(`Roslyn version is ${roslynVersion}`);
     // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
-    const nuspecFile = fs.readFileSync(`out/.nuget/microsoft.codeAnalysis.languageServer/${roslynVersion}`);
-    const nuspecFileXml = await xml2js.parseStringPromise(nuspecFile);
-    const commitNumber = nuspecFileXml.package.metadata[0].repository[0].$['commit'];
+    const nuspecFile = fs
+        .readFileSync(
+            `out/.nuget/microsoft.codeAnalysis.languageServer/${roslynVersion}/microsoft.codeAnalysis.languageServer.nuspec`
+        )
+        .toString();
+    const results = /commit="(.*)"/.exec(nuspecFile);
+    if (results == null || results.length == 0) {
+        logError('Failed to find commit number from nuspec file');
+        return null;
+    }
+
+    if (results.length != 2) {
+        logError('Unexpected regex match result from nuspec file.');
+        return null;
+    }
+
+    const commitNumber = results[1];
     console.log(`commitNumber is ${commitNumber}`);
     return commitNumber;
 }
@@ -117,21 +129,6 @@ async function tagRepoAsync(
 
     console.log(`Tag is created.`);
     return true;
-}
-
-async function sendHttpsGetRequestAsync(url: string): Promise<AxiosResponse<any, any> | null> {
-    try {
-        const nuspecResponse = await axios.get(url);
-        if (nuspecResponse.status != 200) {
-            logError('Failed to get nuspec file from nuget server');
-            return null;
-        }
-        return nuspecResponse;
-    } catch (err) {
-        logError(`Failed to get response for ${url}`);
-    }
-
-    return null;
 }
 
 function logError(message: string): void {
