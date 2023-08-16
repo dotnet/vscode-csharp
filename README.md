@@ -8,7 +8,7 @@ While it is possible to use the C# extension as a standalone extension, we highl
 2. Open a folder/workspace that contains a C# project (.csproj) and a C# solution (.sln) and the extension will activate.
 3. Whether you install C# Dev Kit or just the C# extension, the [.NET Runtime Installer Tool extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscode-dotnet-runtime) will be installed as a dependency.
 
-Note: If working on a solution that requires versions prior to .NET 6 or non-solution based projects, install a Full Framework runtime and [MSBuild tooling](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022).
+Note: If working on a solution that requires versions prior to .NET 6 or non-solution based projects, install a .NET Framework runtime and [MSBuild tooling](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022).
   * Set omnisharp.useModernNet to false and set dotnet.server.useOmnisharp to true
   * Uninstall or disable C# Dev Kit
   * Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
@@ -29,11 +29,20 @@ For more information you can:
 ## How to use OmniSharp?
 If you don’t want to take advantage of the great Language Server features, you can revert back to using OmniSharp by going to the Extension settings and setting `dotnet.server.useOmnisharp` to true. Next, uninstall or disable C# Dev Kit. Finally, restart VS Code for this to take effect.
 
-
 ## Found a Bug?
-To file a new issue to include all the related config information directly from vscode by entering the command pallette with Ctrl+Shift+P (Cmd+Shift+P on macOS) and running CSharp: Report an issue command. This will open a browser window with all the necessary information related to the installed extensions, dotnet version, mono version, etc. Enter all the remaining information and hit submit. 
-Alternatively you could visit https://github.com/dotnet/vscode-csharp/issues  and file a new one.
+To file a new issue:
 
+1. Open the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Open Settings (UI)", and press Enter.
+2. Search for "trace" in the search bar. Under "Dotnet > Server: Trace" select "Trace" from the drop down. This will provide more output information.
+3. Reload the window by opening the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Reload Window", and press Enter.
+4. Next, check the C# logs in the Output Window by opening it with Ctrl+Shift+U (Cmd+Shift+U on macOS), and select C# from the dropdown.
+5. Select and copy all the text in the log, and then report the issue through VS Code.
+6. Open the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type “CSharp: Report an issue”, and press Enter.
+7. This will open a window with all the necessary information related to the C# extension, dotnet version, mono version, etc.
+8. Paste the previously copied C# log into the “Steps to Reproduce” field. Please also include a description of what you were doing/attempting to do at the time the problem occurred.
+9. Click the “Preview on GitHub” button, and then file the issue.
+
+Alternatively, you could visit https://github.com/dotnet/vscode-csharp/issues and file a new issue there.
 
 ## Contributing
 
