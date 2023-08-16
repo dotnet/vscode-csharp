@@ -12,22 +12,42 @@ import { Octokit } from '@octokit/rest';
 
 interface Options {
     releaseVersion: string;
-    gitHubPat?: string;
+    releaseCommit: string;
 }
 
-gulp.task('createTags', async (): Promise<number> => {
+gulp.task('createTags', async (): Promise<void> => {
     const options = minimist<Options>(process.argv.slice(2));
-    console.log(`Release version: ${options.releaseVersion}`);
+    console.log(`releaseVersion: ${options.releaseVersion}`);
+    console.log(`releaseCommit: ${options.releaseCommit}`);
 
     const roslynCommit = await findRoslynCommitAsync();
     if (!roslynCommit) {
         logError('Failed to find roslyn commit.');
-        return 1;
+        return;
     }
 
-    await tagRepoAsync(roslynCommit, options.gitHubPat);
+    const tagCreatedInRoslyn = await tagRepoAsync('dotnet', 'roslyn', roslynCommit, options.releaseVersion);
 
-    return 0;
+    if (!tagCreatedInRoslyn) {
+        logError('Failed to tag roslyn');
+        return;
+    }
+
+    console.log('tag created in roslyn');
+
+    const tagCreatedInVsCodeCsharp = await tagRepoAsync(
+        'dotnet',
+        'vscode-csharp',
+        options.releaseCommit,
+        options.releaseVersion
+    );
+
+    if (!tagCreatedInVsCodeCsharp) {
+        logError('Failed to tag vscode-csharp');
+        return;
+    }
+
+    console.log('tag created in vscode-csharp');
 });
 
 async function findRoslynCommitAsync(): Promise<string | null> {
@@ -53,7 +73,6 @@ async function findRoslynCommitAsync(): Promise<string | null> {
     // 1. Ask the PackageBaseAddress from nuget server index.
     // 2. Download .nuspec file. See https://learn.microsoft.com/en-us/nuget/api/package-base-address-resource#download-package-manifest-nuspec
     // 3. Find the commit from .nuspec file
-
     const indexResponse = await sendHttpsGetRequestAsync(nugetServerIndex);
     if (!indexResponse) {
         return null;
@@ -79,25 +98,41 @@ async function findRoslynCommitAsync(): Promise<string | null> {
     return commitNumber;
 }
 
-async function tagRepoAsync(commit: string, personalPat?: string): Promise<void> {
-    const pat = personalPat ?? process.env['GitHubPat'];
+async function tagRepoAsync(owner: string, repo: string, commit: string, releaseTag: string): Promise<boolean> {
+    const pat = process.env['GitHubPat'];
     if (!pat) {
         throw 'No GitHub Pat found.';
     }
 
     const octokit = new Octokit({ auth: pat });
-    const requestToGetExistingTags = await octokit.request(`GET /roslyn/cosifne/git/tag/${commit}`, {
-        onwer: 'Cosifne',
-        repo: 'roslyn',
-        tag_sha: commit,
+    await octokit.auth();
+    const createTagResponse = await octokit.request(`POST /repos/${owner}/${repo}/git/tags`, {
+        owner: owner,
+        repo: repo,
+        tag: releaseTag,
+        message: releaseTag,
+        object: commit,
+        type: 'commit',
     });
 
-    if (requestToGetExistingTags.status !== 200) {
-        logError('Failed to get exist tags from commit');
-        return;
+    if (createTagResponse.status !== 201) {
+        logError(`Failed to create tag for ${commit} in ${owner}/${repo}.`);
+        return false;
+    }
+    const refCreationResponse = await octokit.request(`Post /repos/${owner}/${repo}/git/refs`, {
+        owner: owner,
+        repo: repo,
+        ref: `refs/tags/${releaseTag}`,
+        sha: commit,
+    });
+
+    if (refCreationResponse.status !== 201) {
+        logError(`Failed to create reference for ${commit} in ${owner}/${repo}.`);
+        return false;
     }
 
-    console.log(requestToGetExistingTags.data);
+    console.log(`Tag is created.`);
+    return true;
 }
 
 async function sendHttpsGetRequestAsync(url: string): Promise<AxiosResponse<any, any> | null> {

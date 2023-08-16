@@ -91,9 +91,9 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: NodeTool@0
-      displayName: 'Install Node.js 16.x'
+      displayName: 'Install Node.js 18.x'
       inputs:
-        versionSpec: '16.x'
+        versionSpec: '18.x'
     - checkout: self
       clean: true
       submodules: true
