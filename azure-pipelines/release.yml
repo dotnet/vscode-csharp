@@ -76,7 +76,7 @@ stages:
               }
 
               Write-Host "Command run is: vsce $($additionalPublishArgs)."
-              If ("${{ parameters.test }}" -eq "true") {
+              If ("${{ parameters.test }}") {
                 Write-Host "In test mode, command is printed instead of run."
                 Write-Host "🔒 Verify PAT."
                 vsce verify-pat ms-dotnettools
