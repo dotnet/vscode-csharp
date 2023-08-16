@@ -21,6 +21,6 @@ export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPat
 export const testRootPath = path.join(rootPath, 'out', 'omnisharptest');
 export const featureTestRunnerPath = path.join(testRootPath, 'runFeatureTests.js');
 export const integrationTestRunnerPath = path.join(testRootPath, 'runIntegrationTests.js');
-export const testAssetsRootPath = path.join(rootPath, 'omnisharptest', 'omnnisharpIntegrationTests', 'testAssets');
+export const testAssetsRootPath = path.join(rootPath, 'omnisharptest', 'omnisharpIntegrationTests', 'testAssets');
 
 export const nodePath = path.join(process.env.NVM_BIN ? `${process.env.NVM_BIN}${path.sep}` : '', 'node');
