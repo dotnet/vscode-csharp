@@ -303,12 +303,12 @@ export function GenerateOptionsSchema() {
         keyToLocString
     );
 
+    // Override existing package.nls.json key/values with ones from OptionsSchema.
+    Object.assign(packageNlsJSON, keyToLocString);
+
     writeToFile(packageNlsJSON, 'package.nls.json');
 
     // #endregion
-
-    // Override existing package.nls.json key/values with ones from OptionsSchema.
-    Object.assign(packageNlsJSON, keyToLocString);
 
     // Hard Code adding in configurationAttributes launch and attach.
     // .NET Core

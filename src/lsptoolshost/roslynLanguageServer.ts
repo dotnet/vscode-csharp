@@ -425,6 +425,32 @@ export class RoslynLanguageServer {
                 if (solutionUris) {
                     if (solutionUris.length === 1) {
                         this.openSolution(solutionUris[0]);
+                    } else if (solutionUris.length > 1) {
+                        // We have more than one solution, so we'll prompt the user to use the picker.
+                        const chosen = await vscode.window.showInformationMessage(
+                            vscode.l10n.t(
+                                'Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.'
+                            ),
+                            { title: vscode.l10n.t('Choose'), action: 'open' },
+                            { title: vscode.l10n.t('Choose and set default'), action: 'openAndSetDefault' },
+                            { title: vscode.l10n.t('Do not load any'), action: 'disable' }
+                        );
+
+                        if (chosen) {
+                            if (chosen.action === 'disable') {
+                                vscode.workspace.getConfiguration().update('dotnet.defaultSolution', 'disable', false);
+                            } else {
+                                const chosenSolution: vscode.Uri | undefined = await vscode.commands.executeCommand(
+                                    'dotnet.openSolution'
+                                );
+                                if (chosen.action === 'openAndSetDefault' && chosenSolution) {
+                                    const relativePath = vscode.workspace.asRelativePath(chosenSolution);
+                                    vscode.workspace
+                                        .getConfiguration()
+                                        .update('dotnet.defaultSolution', relativePath, false);
+                                }
+                            }
+                        }
                     } else if (solutionUris.length === 0) {
                         // We have no solutions, so we'll enumerate what project files we have and just use those.
                         const projectUris = await vscode.workspace.findFiles(
@@ -714,6 +740,15 @@ export class RoslynLanguageServer {
                 throw new Error(`Invalid log level ${logLevel}`);
         }
     }
+
+    public async getBuildOnlyDiagnosticIds(token: vscode.CancellationToken): Promise<string[]> {
+        const response = await _languageServer.sendRequest0(RoslynProtocol.BuildOnlyDiagnosticIdsRequest.type, token);
+        if (response) {
+            return response.ids;
+        }
+
+        throw new Error('Unable to retrieve build-only diagnostic ids for current solution.');
+    }
 }
 
 /**
@@ -963,9 +998,12 @@ async function applyAutoInsertEdit(
     token: vscode.CancellationToken
 ) {
     const change = e.contentChanges[0];
-
-    // Need to add 1 since the server expects the position to be where the caret is after the last token has been inserted.
-    const position = new vscode.Position(change.range.start.line, change.range.start.character + 1);
+    // The server expects the request position to represent the caret position in the text after the change has already been applied.
+    // We need to calculate what that position would be after the change is applied and send that to the server.
+    const position = new vscode.Position(
+        change.range.start.line,
+        change.range.start.character + (change.text.length - change.rangeLength)
+    );
     const uri = UriConverter.serialize(e.document.uri);
     const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();

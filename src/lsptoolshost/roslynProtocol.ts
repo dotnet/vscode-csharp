@@ -131,6 +131,10 @@ export interface ShowToastNotificationParams {
     commands: Command[];
 }
 
+export interface BuildOnlyDiagnosticIdsResult {
+    ids: string[];
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -191,4 +195,10 @@ export namespace OpenProjectNotification {
     export const method = 'project/open';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.NotificationType<OpenProjectParams>(method);
+}
+
+export namespace BuildOnlyDiagnosticIdsRequest {
+    export const method = 'workspace/buildOnlyDiagnosticIds';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType0<BuildOnlyDiagnosticIdsResult, void>(method);
 }
