@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { should, assert } from 'chai';
 import testAssetWorkspace from '../../omnisharptest/omnisharpIntegrationTests/testAssets/testAssetWorkspace';
 import * as path from 'path';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './lspToolsHostIntegrationHelpers';
+import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import { InlayHint, InlayHintKind, Position } from 'vscode-languageserver-protocol';
 
 suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {

@@ -18,7 +18,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Unit tests",
+            "name": "Omnisharp: Launch Unit tests",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
             "args": [
                 "-u",
@@ -36,7 +36,7 @@
             "preLaunchTask": "build"
         },
         {
-            "name": "Launch Feature Tests",
+            "name": "Omnisharp: Launch Feature Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -58,7 +58,7 @@
             "preLaunchTask": "build"
         },
         {
-            "name": "Launch singleCsproj Workspace Tests",
+            "name": "Omnisharp: Launch singleCsproj Workspace Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -82,7 +82,7 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "Launch razorcsproj Workspace Tests",
+            "name": "Omnisharp: Launch razorcsproj Workspace Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -100,7 +100,7 @@
             },
         },
         {
-            "name": "Launch slnWithCsproj Workspace Tests",
+            "name": "Omnisharp: Launch slnWithCsproj Workspace Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -134,7 +134,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/lsptoolshosttest/lspToolsHostIntegrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests",
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -143,12 +143,12 @@
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceRoot}/dist/*.js",
-                "${workspaceRoot}/out/bluetest/**/*.js"
+                "${workspaceRoot}/out/test/**/*.js"
             ],
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "Launch singleCsproj Workspace Tests [LSP]",
+            "name": "Omnisharp: Launch singleCsproj Workspace Tests [LSP]",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -172,7 +172,7 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "Launch razorcsproj Workspace Tests [LSP]",
+            "name": "Omnisharp: Launch razorcsproj Workspace Tests [LSP]",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -190,7 +190,7 @@
             },
         },
         {
-            "name": "Launch slnWithCsproj Workspace Tests [LSP]",
+            "name": "Omnisharp: Launch slnWithCsproj Workspace Tests [LSP]",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -214,7 +214,7 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "Launch slnFilterWithCsproj Workspace Tests",
+            "name": "Omnisharp: Launch slnFilterWithCsproj Workspace Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -238,7 +238,7 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "Launch slnWithGenerator Workspace Tests",
+            "name": "Omnisharp: Launch slnWithGenerator Workspace Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
