@@ -119,4 +119,4 @@ stages:
         gulp createTags --releaseVersion $(resources.pipeline.officialBuildCI.runName) --releaseCommit $(resources.pipeline.officialBuildCI.sourceCommit)
       env:
         GitHubPAT: $(BotAccount-dotnet-bot-content-rw-grained-pat)
-      displayName: 'Create Tags in repo'
+      displayName: 'Create release tags'
