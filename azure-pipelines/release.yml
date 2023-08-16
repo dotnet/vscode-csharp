@@ -91,6 +91,7 @@ stages:
 - stage: 'TagRelease'
   displayName: 'Tag release of vscode-csharp'
   dependsOn: 'PublishStage'
+  condition: succeeded('PublishStage')
   jobs:
   - job: 'Tag'
     pool:
