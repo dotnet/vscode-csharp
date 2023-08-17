@@ -91,7 +91,7 @@ stages:
 - stage: 'TagRelease'
   displayName: 'Tag release of vscode-csharp'
   dependsOn: 'PublishStage'
-  condition: succeeded('PublishStage')
+  condition: and(succeeded('PublishStage'), eq(variables['resources.pipeline.officialBuildCI.sourceBranch'], 'refs/heads/release'))
   jobs:
   - job: 'Tag'
     pool:
