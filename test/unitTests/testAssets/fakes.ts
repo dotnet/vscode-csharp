@@ -22,6 +22,7 @@ import {
     OmnisharpServerUnresolvedDependencies,
     WorkspaceInformationUpdated,
 } from '../../../src/omnisharp/loggingEvents';
+import { format } from 'util';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     const returnChannel: vscode.OutputChannel = {
@@ -220,6 +221,48 @@ export function getFakeVsCode(): vscode.vscode {
             openExternal: () => {
                 throw new Error('Not Implemented');
             },
+        },
+        l10n: {
+            t: (
+                options:
+                    | string
+                    | {
+                          message: string;
+                          args?: Array<string | number | boolean> | Record<string, any>;
+                          comment: string | string[];
+                      },
+                ...args: (string | number | boolean)[] | Record<string, any>[]
+            ) => {
+                let message = '';
+                let actualArgs:
+                    | (string | number | boolean)[]
+                    | Record<string, any>[]
+                    | Record<string, any>
+                    | undefined = args;
+                if (typeof options === 'string') {
+                    message = options;
+                } else {
+                    message = options.message;
+                    actualArgs = options.args;
+                }
+
+                if (!Array.isArray(actualArgs)) {
+                    throw new Error('Non-array l10n args not implemented');
+                }
+
+                const strArgs: string[] = [];
+                actualArgs.forEach((arg) => {
+                    if (typeof arg !== 'string') {
+                        throw new Error('Non-string l10n args not implemented');
+                    }
+
+                    strArgs.push(arg);
+                });
+
+                return format(message, ...strArgs);
+            },
+            bundle: undefined,
+            uri: undefined,
         },
     };
 }

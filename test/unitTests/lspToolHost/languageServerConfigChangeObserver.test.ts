@@ -66,6 +66,35 @@ suite('LanguageServerConfigChangeObserver', () => {
         });
     });
 
+    [{ config: 'dotnet', section: 'server.useOmnisharp', value: true }].forEach((elem) => {
+        suite(`When the ${elem.config} ${elem.section} changes`, () => {
+            setup(() => {
+                expect(infoMessage).to.be.undefined;
+                expect(invokedCommand).to.be.undefined;
+                updateConfig(vscode, elem.config, elem.section, elem.value);
+                optionObservable.next(Options.Read(vscode));
+            });
+
+            test(`The information message is shown`, async () => {
+                expect(infoMessage).to.be.equal(
+                    'dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change'
+                );
+            });
+
+            test('Given an information message if the user clicks cancel, the command is not executed', async () => {
+                doClickCancel();
+                await expect(observableFrom(commandDone!).pipe(timeout(1)).toPromise()).to.be.rejected;
+                expect(invokedCommand).to.be.undefined;
+            });
+
+            test('Given an information message if the user clicks Reload, the command is executed', async () => {
+                doClickOk();
+                await commandDone;
+                expect(invokedCommand).to.be.equal('workbench.action.reloadWindow');
+            });
+        });
+    });
+
     suite('Information Message is not shown if no change in value', () => {
         [
             { config: 'dotnet', section: 'server.documentSelector', value: ['csharp'] },

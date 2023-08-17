@@ -19,10 +19,26 @@ export function registerOmnisharpOptionChanges(vscode: vscode, optionObservable:
                 changedOmnisharpOptions: OmnisharpOptionsThatTriggerReload,
             };
         },
-        handleOptionChanges(_) {
-            const message =
-                'C# configuration has changed. Would you like to relaunch the Language Server with your changes?';
-            const title = 'Restart Language Server';
+        handleOptionChanges(changedOptions) {
+            if (changedOptions.changedCommonOptions.find((key) => key === 'useOmnisharpServer')) {
+                // If the user has changed the useOmnisharpServer flag we need to reload the window.
+                ShowInformationMessage(
+                    vscode,
+                    vscode.l10n.t(
+                        'dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change'
+                    ),
+                    {
+                        title: vscode.l10n.t('Reload Window'),
+                        command: 'workbench.action.reloadWindow',
+                    }
+                );
+                return;
+            }
+
+            const message = vscode.l10n.t(
+                'C# configuration has changed. Would you like to relaunch the Language Server with your changes?'
+            );
+            const title = vscode.l10n.t('Restart Language Server');
             const commandName = 'o.restart';
             ShowInformationMessage(vscode, message, { title: title, command: commandName });
         },
