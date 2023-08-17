@@ -8,8 +8,8 @@ import { updateConfig, getVSCodeWithConfig } from '../testAssets/fakes';
 import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
 import { vscode } from '../../../src/vscodeAdapter';
-import { ShowConfigChangePrompt } from '../../../src/shared/observers/optionChangeObserver';
 import { Options } from '../../../src/shared/options';
+import { registerLanguageServerOptionChanges } from '../../../src/lsptoolshost/optionChanges';
 
 suite('LanguageServerConfigChangeObserver', () => {
     suiteSetup(() => should());
@@ -26,12 +26,7 @@ suite('LanguageServerConfigChangeObserver', () => {
     setup(() => {
         vscode = getVSCode();
         optionObservable = new BehaviorSubject<Options>(Options.Read(vscode));
-        ShowConfigChangePrompt(
-            optionObservable,
-            'dotnet.restartServer',
-            Options.shouldLanguageServerOptionChangeTriggerReload,
-            vscode
-        );
+        registerLanguageServerOptionChanges(optionObservable, vscode);
         commandDone = new Promise<void>((resolve) => {
             signalCommandDone = () => {
                 resolve();
@@ -53,7 +48,7 @@ suite('LanguageServerConfigChangeObserver', () => {
 
             test(`The information message is shown`, async () => {
                 expect(infoMessage).to.be.equal(
-                    'C# configuration has changed. Would you like to relaunch the Language Server with your changes?'
+                    'C# configuration has changed. Would you like to reload the window to apply your changes?'
                 );
             });
 
@@ -63,10 +58,10 @@ suite('LanguageServerConfigChangeObserver', () => {
                 expect(invokedCommand).to.be.undefined;
             });
 
-            test('Given an information message if the user clicks Restore, the command is executed', async () => {
+            test('Given an information message if the user clicks Reload, the command is executed', async () => {
                 doClickOk();
                 await commandDone;
-                expect(invokedCommand).to.be.equal('dotnet.restartServer');
+                expect(invokedCommand).to.be.equal('workbench.action.reloadWindow');
             });
         });
     });

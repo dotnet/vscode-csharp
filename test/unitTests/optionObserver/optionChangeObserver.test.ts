@@ -8,8 +8,8 @@ import { updateConfig, getVSCodeWithConfig } from '../testAssets/fakes';
 import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
 import { vscode } from '../../../src/vscodeAdapter';
-import { ShowConfigChangePrompt } from '../../../src/shared/observers/optionChangeObserver';
 import { Options } from '../../../src/shared/options';
+import { registerOmnisharpOptionChanges } from '../../../src/omnisharp/omnisharpOptionChanges';
 
 suite('OmniSharpConfigChangeObserver', () => {
     suiteSetup(() => should());
@@ -26,7 +26,7 @@ suite('OmniSharpConfigChangeObserver', () => {
     setup(() => {
         vscode = getVSCode();
         optionObservable = new BehaviorSubject<Options>(Options.Read(vscode));
-        ShowConfigChangePrompt(optionObservable, 'o.restart', Options.shouldOmnisharpOptionChangeTriggerReload, vscode);
+        registerOmnisharpOptionChanges(vscode, optionObservable);
         commandDone = new Promise<void>((resolve) => {
             signalCommandDone = () => {
                 resolve();

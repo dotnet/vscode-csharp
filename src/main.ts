@@ -31,7 +31,6 @@ import { ErrorMessageObserver } from './observers/errorMessageObserver';
 import OptionProvider from './shared/observers/optionProvider';
 import DotNetTestChannelObserver from './observers/dotnetTestChannelObserver';
 import DotNetTestLoggerObserver from './observers/dotnetTestLoggerObserver';
-import { ShowConfigChangePrompt } from './shared/observers/optionChangeObserver';
 import createOptionStream from './shared/observables/createOptionStream';
 import { activateRazorExtension } from './razor/razor';
 import { RazorLoggerObserver } from './observers/razorLoggerObserver';
@@ -48,7 +47,6 @@ import {
     activateRoslynLanguageServer,
     waitForProjectInitialization,
 } from './lsptoolshost/roslynLanguageServer';
-import { Options } from './shared/options';
 import { MigrateOptions } from './shared/migrateOptions';
 import { getBrokeredServiceContainer } from './lsptoolshost/services/brokeredServicesHosting';
 import { CSharpDevKitExports } from './csharpDevKitExports';
@@ -59,6 +57,7 @@ import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKi
 import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
 import { RazorOmnisharpDownloader } from './razor/razorOmnisharpDownloader';
 import { RoslynLanguageServerExport } from './lsptoolshost/roslynLanguageServerExportChannel';
+import { registerOmnisharpOptionChanges } from './omnisharp/omnisharpOptionChanges';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -143,18 +142,11 @@ export async function activate(
         );
 
         context.subscriptions.push(optionProvider);
-        context.subscriptions.push(
-            ShowConfigChangePrompt(
-                optionStream,
-                'dotnet.restartServer',
-                Options.shouldLanguageServerOptionChangeTriggerReload,
-                vscode
-            )
-        );
         roslynLanguageServerPromise = activateRoslynLanguageServer(
             context,
             platformInfo,
             optionProvider,
+            optionStream,
             csharpChannel,
             dotnetTestChannel,
             reporter
@@ -256,9 +248,7 @@ export async function activate(
         );
 
         context.subscriptions.push(optionProvider);
-        context.subscriptions.push(
-            ShowConfigChangePrompt(optionStream, 'o.restart', Options.shouldOmnisharpOptionChangeTriggerReload, vscode)
-        );
+        context.subscriptions.push(registerOmnisharpOptionChanges(vscode, optionStream));
 
         // register JSON completion & hover providers for project.json
         context.subscriptions.push(addJSONProviders());
