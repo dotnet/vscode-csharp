@@ -42,8 +42,8 @@
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging.",
-  "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
-  "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
+  "debuggers.dotnet.launch.launchConfigurationId.description": "使用する起動構成 ID。空の場合は現在アクティブな構成が使用されます。",
+  "debuggers.dotnet.launch.projectPath.description": ".csproj ファイルへのパス。",
   "generateOptionsSchema.allowFastEvaluate.description": "true (既定の状態) の場合、デバッガーは単純なプロパティとメソッドの実行をシミュレーションすることで、より高速な評価を試みます。",
   "generateOptionsSchema.args.0.description": "プログラムに渡すコマンド ライン引数。",
   "generateOptionsSchema.args.1.description": "プログラムに渡されるコマンド ライン引数の文字列化バージョン。",
@@ -135,5 +135,5 @@
   "generateOptionsSchema.symbolOptions.searchPaths.description": ".pdb ファイルを検索するためのシンボル サーバー URL (例: http​://MyExampleSymbolServer) の配列またはディレクトリ (例: /build/symbols) の配列です。これらのディレクトリは、既定の場所 (すなわちモジュールと、 pdb が最初にドロップされたパスの横) に加えて、検索されます。",
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[ローカルの macOS デバッグのみでサポート]\r\n\r\nデバッグ対象のアーキテクチャ。このパラメーターを設定しない場合は、自動的に検出されます。可能な値は、 `x86_64` または `arm64`. です。",
   "generateOptionsSchema.targetOutputLogPath.description": "設定すると、ターゲット アプリケーションが StdOut および stderr (例: Console.WriteLine) に書き込むテキストが指定したファイルに保存されます。コンソールが internalConsole 以外に設定されている場合、このオプションは無視されます。例: '${workspaceFolder}/out.txt'",
-  "viewsWelcome.debug.contents": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\r\n\r\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson)."
+  "viewsWelcome.debug.contents": "[ビルドおよびデバッグ用の C# 資産の生成](command:dotnet.generateAssets)\r\n\r\nlaunch.json の詳細については、[C# デバッグ用の launch.json の構成](https://aka.ms/VSCode-CS-LaunchJson). を参照してください。"
 }

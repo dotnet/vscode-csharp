@@ -42,8 +42,8 @@
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging.",
-  "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
-  "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
+  "debuggers.dotnet.launch.launchConfigurationId.description": "Kullanılacak başlatma yapılandırma kimliği. Boş dize, geçerli etkin yapılandırmayı kullanır.",
+  "debuggers.dotnet.launch.projectPath.description": ".csproj dosyasının yolu.",
   "generateOptionsSchema.allowFastEvaluate.description": "True olduğunda (varsayılan durum), hata ayıklayıcısı basit özelliklerin ve yöntemlerin yürütülmesinin simülasyonunu yaparak daha hızlı değerlendirmeyi dener.",
   "generateOptionsSchema.args.0.description": "Programa geçirilen komut satırı bağımsız değişkenleri.",
   "generateOptionsSchema.args.1.description": "Programa geçirilen komut satırı bağımsız değişkenlerinin dizeleştirilmiş sürümü.",
@@ -135,5 +135,5 @@
   "generateOptionsSchema.symbolOptions.searchPaths.description": ".pdb dosyalarını aramak için sembol sunucusu URL’si (ör: http​://MyExampleSymbolServer) veya dizin (ör. /build/symbols) dizisi. Bu dizinler, modülün yanındaki varsayılan konumların yanı sıra, pdb'nin bırakıldığı yolda arama yapar.",
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[Yalnızca yerel macOS hata ayıklamasında desteklenir]\r\n\r\nHata ayıklanan mimarisi. Bu parametre ayarlanmazsa, bu değer otomatik olarak algılanır. İzin verilen değerler şunlardır: `x86_64` veya `arm64`.",
   "generateOptionsSchema.targetOutputLogPath.description": "Ayarlandığında hedef uygulamanın stdout ve stderr'a (ör. Console.WriteLine) yazdığı metin belirtilen dosyaya kaydedilir. Konsol, internalConsole dışında bir değere ayarlanmışsa bu seçenek yoksayılır. Ör. '${workspaceFolder}/out.txt'",
-  "viewsWelcome.debug.contents": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\r\n\r\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson)."
+  "viewsWelcome.debug.contents": "[Derleme ve Hata Ayıklama için C# Varlıkları Oluşturma](command:dotnet.generateAssets)\r\n\r\nlaunch.json hakkında daha fazla bilgi edinmek için bkz. [C# hata ayıklaması için launch.json yapılandırma](https://aka.ms/VSCode-CS-LaunchJson)."
 }
