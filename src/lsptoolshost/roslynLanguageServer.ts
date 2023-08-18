@@ -802,7 +802,7 @@ export async function activateRoslynLanguageServer(
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, _languageServer, platformInfo, optionProvider, _channel);
 
-    context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable, vscode));
+    context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
 
     const options = optionProvider.GetLatestOptions();
     let source = new vscode.CancellationTokenSource();

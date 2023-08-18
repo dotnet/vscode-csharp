@@ -5,15 +5,6 @@
 
 import * as vscode from '../../../src/vscodeAdapter';
 import * as protocol from '../../../src/omnisharp/protocol';
-import {
-    DocumentSelector,
-    MessageItem,
-    TextDocument,
-    Uri,
-    GlobPattern,
-    ConfigurationChangeEvent,
-    Disposable,
-} from '../../../src/vscodeAdapter';
 import { ITelemetryReporter } from '../../../src/observers/telemetryObserver';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import {
@@ -22,6 +13,7 @@ import {
     OmnisharpServerUnresolvedDependencies,
     WorkspaceInformationUpdated,
 } from '../../../src/omnisharp/loggingEvents';
+import * as vscodeAdapter from '../../../src/vscodeAdapter';
 import { format } from 'util';
 
 export const getNullChannel = (): vscode.OutputChannel => {
@@ -147,7 +139,7 @@ export function getUnresolvedDependenices(fileName: string): OmnisharpServerUnre
     });
 }
 
-export function getFakeVsCode(): vscode.vscode {
+export function getFakeVsCode(): vscodeAdapter.vscode {
     return {
         commands: {
             executeCommand: <_T>(_command: string, ..._rest: any[]) => {
@@ -155,16 +147,16 @@ export function getFakeVsCode(): vscode.vscode {
             },
         },
         languages: {
-            match: (_selector: DocumentSelector, _document: TextDocument) => {
+            match: (_selector: vscodeAdapter.DocumentSelector, _document: vscodeAdapter.TextDocument) => {
                 throw new Error('Not Implemented');
             },
         },
         window: {
             activeTextEditor: undefined,
-            showInformationMessage: <T extends MessageItem>(_message: string, ..._items: T[]) => {
+            showInformationMessage: <T extends vscodeAdapter.MessageItem>(_message: string, ..._items: T[]) => {
                 throw new Error('Not Implemented');
             },
-            showWarningMessage: <T extends MessageItem>(_message: string, ..._items: T[]) => {
+            showWarningMessage: <T extends vscodeAdapter.MessageItem>(_message: string, ..._items: T[]) => {
                 throw new Error('Not Implemented');
             },
             showErrorMessage: (_message: string, ..._items: string[]) => {
@@ -173,14 +165,14 @@ export function getFakeVsCode(): vscode.vscode {
         },
         workspace: {
             workspaceFolders: undefined,
-            getConfiguration: (_section?: string, _resource?: Uri) => {
+            getConfiguration: (_section?: string, _resource?: vscodeAdapter.Uri) => {
                 throw new Error('Not Implemented');
             },
-            asRelativePath: (_pathOrUri: string | Uri, _includeWorkspaceFolder?: boolean) => {
+            asRelativePath: (_pathOrUri: string | vscodeAdapter.Uri, _includeWorkspaceFolder?: boolean) => {
                 throw new Error('Not Implemented');
             },
             createFileSystemWatcher: (
-                _globPattern: GlobPattern,
+                _globPattern: vscodeAdapter.GlobPattern,
                 _ignoreCreateEvents?: boolean,
                 _ignoreChangeEvents?: boolean,
                 _ignoreDeleteEvents?: boolean
@@ -188,10 +180,10 @@ export function getFakeVsCode(): vscode.vscode {
                 throw new Error('Not Implemented');
             },
             onDidChangeConfiguration: (
-                _listener: (e: ConfigurationChangeEvent) => any,
+                _listener: (e: vscodeAdapter.ConfigurationChangeEvent) => any,
                 _thisArgs?: any,
-                _disposables?: Disposable[]
-            ): Disposable => {
+                _disposables?: vscodeAdapter.Disposable[]
+            ): vscodeAdapter.Disposable => {
                 throw new Error('Not Implemented');
             },
         },
@@ -285,9 +277,7 @@ export function getWorkspaceInformationUpdated(
     });
 }
 
-export function getVSCodeWithConfig() {
-    const vscode = getFakeVsCode();
-
+export function getVSCodeWithConfig(vscode: vscode.vscode = getFakeVsCode()) {
     const _vscodeConfig = getWorkspaceConfiguration();
 
     vscode.workspace.getConfiguration = (_section, _resource) => {

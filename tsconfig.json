@@ -20,5 +20,8 @@
         "tasks",
         "lsptoolshosttest",
         "test",
-        "typings"   ]
+        "typings",
+        "__mocks__",
+        "jest.config.ts",
+    ]
 }

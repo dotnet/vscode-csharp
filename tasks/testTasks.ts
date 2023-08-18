@@ -9,6 +9,7 @@ import {
     codeExtensionPath,
     featureTestRunnerPath,
     integrationTestRunnerPath,
+    jestPath,
     mochaPath,
     rootPath,
     testAssetsRootPath,
@@ -46,6 +47,17 @@ gulp.task('test:unit', async () => {
     return result;
 });
 
+gulp.task('jest:test:unit', async () => {
+    const result = await spawnNode([jestPath]);
+
+    if (result.code === null || result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
+});
+
 const projectNames = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'BasicRazorApp2_1'];
 
 for (const projectName of projectNames) {
@@ -67,7 +79,7 @@ gulp.task(
     gulp.series(projectNames.map((projectName) => `test:integration:${projectName}:lsp`))
 );
 // TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
-gulp.task('test', gulp.series('test:feature', 'test:unit', 'test:integration:stdio'));
+gulp.task('test', gulp.series('jest:test:unit', 'test:feature', 'test:unit', 'test:integration:stdio'));
 
 async function runIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const env = {

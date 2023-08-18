@@ -29,6 +29,8 @@ export function HandleOptionChanges(
             (key) => !isDeepStrictEqual(oldOptions.omnisharpOptions[key], newOptions.omnisharpOptions[key])
         );
 
+        oldOptions = newOptions;
+
         if (
             changedRelevantCommonOptions.length > 0 ||
             changedRelevantLanguageServerOptions.length > 0 ||

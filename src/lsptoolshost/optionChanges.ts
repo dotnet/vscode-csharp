@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import { Observable } from 'rxjs';
 import { CommonOptionsThatTriggerReload, LanguageServerOptionsThatTriggerReload, Options } from '../shared/options';
 import { HandleOptionChanges, OptionChangeObserver, OptionChanges } from '../shared/observers/optionChangeObserver';
 import ShowInformationMessage from '../shared/observers/utils/showInformationMessage';
 import Disposable from '../disposable';
-import { vscode } from '../vscodeAdapter';
 
-export function registerLanguageServerOptionChanges(optionObservable: Observable<Options>, vscode: vscode): Disposable {
+export function registerLanguageServerOptionChanges(optionObservable: Observable<Options>): Disposable {
     const optionChangeObserver: OptionChangeObserver = {
         getRelevantOptions: () => {
             return {
@@ -20,7 +20,7 @@ export function registerLanguageServerOptionChanges(optionObservable: Observable
             };
         },
         handleOptionChanges(optionChanges) {
-            handleLanguageServerOptionChanges(optionChanges, vscode);
+            handleLanguageServerOptionChanges(optionChanges);
         },
     };
 
@@ -28,7 +28,7 @@ export function registerLanguageServerOptionChanges(optionObservable: Observable
     return disposable;
 }
 
-function handleLanguageServerOptionChanges(changedOptions: OptionChanges, vscode: vscode): void {
+function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void {
     if (changedOptions.changedCommonOptions.length == 0 && changedOptions.changedLanguageServerOptions.length == 0) {
         // No changes to relevant options, do nothing.
         return;

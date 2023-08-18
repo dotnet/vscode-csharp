@@ -248,7 +248,7 @@ export async function activate(
         );
 
         context.subscriptions.push(optionProvider);
-        context.subscriptions.push(registerOmnisharpOptionChanges(vscode, optionStream));
+        context.subscriptions.push(registerOmnisharpOptionChanges(optionStream));
 
         // register JSON completion & hover providers for project.json
         context.subscriptions.push(addJSONProviders());
