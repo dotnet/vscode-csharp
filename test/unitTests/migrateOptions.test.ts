@@ -10,7 +10,8 @@ import * as jestLib from '@jest/globals';
 
 jestLib.describe('Migrate configuration should in package.json', () => {
     const packageJson = JSON.parse(readFileSync('package.json').toString());
-    const configurations = Object.keys(packageJson['contributes']['configuration']['properties']);
+    const properties = packageJson.contributes.configuration[1].properties;
+    const configurations = Object.keys(properties);
 
     migrateOptions.forEach((data) => {
         jestLib.test(`Should have ${data.roslynOption} in package.json`, () => {
