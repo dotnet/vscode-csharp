@@ -44,6 +44,7 @@ suite(`${reportIssue.name}`, () => {
         FullInfo: 'myDotnetInfo',
         Version: '1.0.x',
         RuntimeId: 'win10-x64',
+        Runtimes: {},
     };
 
     let fakeMonoResolver: FakeMonoResolver;

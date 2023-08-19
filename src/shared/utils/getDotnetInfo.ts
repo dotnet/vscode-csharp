@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as semver from 'semver';
 import { join } from 'path';
 import { execChildProcess } from '../../common';
 import { CoreClrDebugUtil } from '../../coreclrDebug/util';
@@ -19,7 +20,11 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
     const dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     try {
-        const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} --info`, process.cwd(), process.env);
+        const env = {
+            ...process.env,
+            DOTNET_CLI_UI_LANGUAGE: 'en-US',
+        };
+        const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} --info`, process.cwd(), env);
 
         const cliPath = dotnetExecutablePath;
         const fullInfo = data;
@@ -28,7 +33,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         let runtimeId: string | undefined;
         let architecture: string | undefined;
 
-        const lines = data.replace(/\r/gm, '').split('\n');
+        let lines = data.replace(/\r/gm, '').split('\n');
         for (const line of lines) {
             let match: RegExpMatchArray | null;
             if ((match = /^\s*Version:\s*([^\s].*)$/.exec(line))) {
@@ -40,6 +45,22 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
             }
         }
 
+        const runtimeVersions: { [runtime: string]: semver.SemVer[] } = {};
+        const listRuntimes = await execChildProcess('dotnet --list-runtimes', process.cwd(), process.env);
+        lines = listRuntimes.split(/\r?\n/);
+        for (const line of lines) {
+            let match: RegExpMatchArray | null;
+            if ((match = /^([\w.]+) ([^ ]+) \[([^\]]+)\]$/.exec(line))) {
+                const runtime = match[1];
+                const runtimeVersion = match[2];
+                if (runtime in runtimeVersions) {
+                    runtimeVersions[runtime].push(semver.parse(runtimeVersion)!);
+                } else {
+                    runtimeVersions[runtime] = [semver.parse(runtimeVersion)!];
+                }
+            }
+        }
+
         if (version !== undefined) {
             _dotnetInfo = {
                 CliPath: cliPath,
@@ -47,6 +68,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
                 Version: version,
                 RuntimeId: runtimeId,
                 Architecture: architecture,
+                Runtimes: runtimeVersions,
             };
             return _dotnetInfo;
         }
