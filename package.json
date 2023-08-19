@@ -59,6 +59,7 @@
     "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development && npm run l10nDevGenerateLocalizationBundle",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts omnisharptest/omnisharpUnitTests/**/*.test.ts*",
+    "test": "tsc -p ./ && gulp test",
     "omnisharptest": "tsc -p ./ && gulp omnisharptest",
     "omnisharptest:unit": "tsc -p ./ && gulp omnisharptest:unit",
     "omnisharptest:feature": "tsc -p ./ && gulp omnisharptest:feature",
