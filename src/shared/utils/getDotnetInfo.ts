@@ -9,14 +9,8 @@ import { execChildProcess } from '../../common';
 import { CoreClrDebugUtil } from '../../coreclrDebug/util';
 import { DotnetInfo } from './dotnetInfo';
 
-let _dotnetInfo: DotnetInfo | undefined;
-
 // This function calls `dotnet --info` and returns the result as a DotnetInfo object.
 export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInfo> {
-    if (_dotnetInfo !== undefined) {
-        return _dotnetInfo;
-    }
-
     const dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
     try {
@@ -62,7 +56,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         }
 
         if (version !== undefined) {
-            _dotnetInfo = {
+            const dotnetInfo: DotnetInfo = {
                 CliPath: cliPath,
                 FullInfo: fullInfo,
                 Version: version,
@@ -70,7 +64,7 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
                 Architecture: architecture,
                 Runtimes: runtimeVersions,
             };
-            return _dotnetInfo;
+            return dotnetInfo;
         }
 
         throw new Error('Failed to parse dotnet version information');
