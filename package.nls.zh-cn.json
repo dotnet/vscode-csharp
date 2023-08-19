@@ -18,7 +18,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Perform automatic object name completion for the members that you have recently selected.",
   "configuration.dotnet.defaultSolution.description": "要在工作区中打开的默认解决方案的路径，或设置为“禁用”以跳过它。",
-  "configuration.dotnet.dotnetPath": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
+  "configuration.dotnet.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Highlight related JSON components under cursor.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Highlight related regular expression components under cursor.",
   "configuration.dotnet.implementType.insertionBehavior": "The insertion location of properties, events, and methods When implement interface or abstract class.",
@@ -42,8 +42,8 @@
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging.",
-  "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
-  "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
+  "debuggers.dotnet.launch.launchConfigurationId.description": "要使用的启动配置 ID。空字符串将使用当前的活动配置。",
+  "debuggers.dotnet.launch.projectPath.description": ".csproj 文件的路径。",
   "generateOptionsSchema.allowFastEvaluate.description": "如果为 true (默认状态)，调试器将尝试模拟简单属性和方法的执行以加快评估速度。",
   "generateOptionsSchema.args.0.description": "传递给程序的命令行参数。",
   "generateOptionsSchema.args.1.description": "传递给程序的命令行参数的字符串化版本。",
@@ -135,5 +135,5 @@
   "generateOptionsSchema.symbolOptions.searchPaths.description": "在其中搜索 .pdb 文件的符号服务器 URL (例如 http​://MyExampleSymbolServer)或目录(例如 /build/symbols)的数组。除了默认位置，还将搜索这些目录 - 在模块以及 pdb 最初放置到的路径的旁边。",
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[仅在本地 macOS 调试中受支持]\r\n\r\n调试对象的体系结构。除非设置了此参数，否则将自动检测到此参数。允许的值为 \"x86_64\" 或 \"arm64\"。",
   "generateOptionsSchema.targetOutputLogPath.description": "设置后，目标应用程序写入 stdout 和 stderr (例如 Console.WriteLine) 的文本将保存到指定的文件。如果控制台设置为 internalConsole 以外的其他内容，则忽略此选项。例如 \"${workspaceFolder}/out.txt\"",
-  "viewsWelcome.debug.contents": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\r\n\r\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson)."
+  "viewsWelcome.debug.contents": "[为版本和调试生成 C# 资产](command:dotnet.generateAssets)\r\n\r\n若要了解有关 launch.json 的详细信息，请参阅 [为 C# 调试配置 launch.json](https://aka.ms/VSCode-CS-LaunchJson)。"
 }

@@ -1,6 +1,6 @@
 {
   "configuration.dotnet.defaultSolution.description": "The path of the default solution to be opened in the workspace, or set to 'disable' to skip it.",
-  "configuration.dotnet.dotnetPath": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
+  "configuration.dotnet.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.dotnet.server.path": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used.",
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached.",
   "configuration.dotnet.server.trace": "Sets the logging level for the language server",

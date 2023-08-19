@@ -15,72 +15,109 @@ parameters:
 variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
 - group: vscode-csharp release secrets
+# This is expected to provide pat to tag release.
+- group: DncEng-Partners-Tokens
 
-jobs:
-- deployment: PublishToMarketplace
-  displayName: PublishToMarketplace
-  environment: vscode-csharp-release-approvals
-  pool:
-    vmImage: ubuntu-latest
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - download: 'none'
-        - task: DownloadPipelineArtifact@2
-          displayName: '📦 Download artifacts from build pipeline.'
-          inputs:
-            buildType: 'specific'
-            project: 'internal'
-            definition: 1264
-            buildVersionToDownload: 'specific'
-            buildId: '$(resources.pipeline.officialBuildCI.runID)'
-            branchName: '$(resources.pipeline.officialBuildCI.sourceBranch)'
-        - pwsh: |
-            npm install --global vsce
-          displayName: 'Install vsce'
-        - pwsh: |
-            # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-            $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
-            if ($allArtifacts.Length -eq 0) {
-              throw "No Artifacts is downloaded."
-            }
+stages:
+- stage: PublishStage
+  jobs:
+  - deployment: PublishToMarketplace
+    displayName: PublishToMarketplace
+    environment: vscode-csharp-release-approvals
+    pool:
+      vmImage: ubuntu-latest
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: 'none'
+          - task: DownloadPipelineArtifact@2
+            displayName: '📦 Download artifacts from build pipeline.'
+            inputs:
+              buildType: 'specific'
+              project: 'internal'
+              definition: 1264
+              buildVersionToDownload: 'specific'
+              buildId: '$(resources.pipeline.officialBuildCI.runID)'
+              branchName: '$(resources.pipeline.officialBuildCI.sourceBranch)'
+          - pwsh: |
+              npm install --global vsce
+            displayName: 'Install vsce'
+          - pwsh: |
+              # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
+              $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
+              if ($allArtifacts.Length -eq 0) {
+                throw "No Artifacts is downloaded."
+              }
 
-            $publishArtifacts = $allArtifacts[0]
-            Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
+              $publishArtifacts = $allArtifacts[0]
+              Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
-            $additionalPublishArgs = , "publish"
-            # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-            If ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/main") {
-              $additionalPublishArgs += "--pre-release"
-              Write-Host "Publish to pre-release channel."
-            } ElseIf ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/release") {
-              Write-Host "Publish to release channel."
-            } Else {
-              throw "Unexpected branch name: $(resources.pipeline.officialBuildCI.sourceBranch)."
-            }
-            $additionalPublishArgs += '--packagePath'
+              $additionalPublishArgs = , "publish"
+              # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
+              If ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/main") {
+                $additionalPublishArgs += "--pre-release"
+                Write-Host "Publish to pre-release channel."
+              } ElseIf ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/release") {
+                Write-Host "Publish to release channel."
+              } Else {
+                throw "Unexpected branch name: $(resources.pipeline.officialBuildCI.sourceBranch)."
+              }
+              $additionalPublishArgs += '--packagePath'
 
-            $platforms = "arm64", "x64", "ia32"
-            $allVsixs = Get-ChildItem $publishArtifacts *.vsix
-            foreach ($vsix in $allVsixs) {
-              foreach ($plat in $platforms) {
-                if ($vsix.Name.Contains($plat)) {
-                    $additionalPublishArgs += $vsix
+              $platforms = "arm64", "x64", "ia32"
+              $allVsixs = Get-ChildItem $publishArtifacts *.vsix
+              foreach ($vsix in $allVsixs) {
+                foreach ($plat in $platforms) {
+                  if ($vsix.Name.Contains($plat)) {
+                      $additionalPublishArgs += $vsix
+                  }
                 }
               }
-            }
 
-            Write-Host "Command run is: vsce $($additionalPublishArgs)."
-            If ("${{ parameters.test }}" -eq "true") {
-              Write-Host "In test mode, command is printed instead of run."
-              Write-Host "🔒 Verify PAT."
-              vsce verify-pat ms-dotnettools
-            }
-            Else {
-              vsce @additionalPublishArgs
-            }
-          displayName: 🚀 Publish to Marketplace
-          workingDirectory: $(Pipeline.Workspace)
-          env:
-            VSCE_PAT: $(VSCodeMarketplacePAT)
+              Write-Host "Command run is: vsce $($additionalPublishArgs)."
+              If ("${{ parameters.test }}") {
+                Write-Host "In test mode, command is printed instead of run."
+                Write-Host "🔒 Verify PAT."
+                vsce verify-pat ms-dotnettools
+              }
+              Else {
+                vsce @additionalPublishArgs
+              }
+            displayName: 🚀 Publish to Marketplace
+            workingDirectory: $(Pipeline.Workspace)
+            env:
+              VSCE_PAT: $(VSCodeMarketplacePAT)
+- stage: 'TagRelease'
+  displayName: 'Tag release of vscode-csharp'
+  dependsOn: 'PublishStage'
+  condition: and(succeeded('PublishStage'), eq(variables['resources.pipeline.officialBuildCI.sourceBranch'], 'refs/heads/release'))
+  jobs:
+  - job: 'Tag'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: NodeTool@0
+      displayName: 'Install Node.js 18.x'
+      inputs:
+        versionSpec: '18.x'
+    - checkout: self
+      clean: true
+      submodules: true
+      fetchTags: false
+      fetchDepth: 0
+    - pwsh: |
+        git checkout $(resources.pipeline.officialBuildCI.sourceCommit)
+      displayName: 'Checkout to release branch'
+    - pwsh: |
+        npm ci
+        npm install
+        npm install -g gulp
+        gulp installDependencies
+      displayName: 'Install dependencies.'
+    - pwsh: |
+        # build number is generated by nerdbank git versioning and set to AzureDev
+        gulp createTags --releaseVersion $(resources.pipeline.officialBuildCI.runName) --releaseCommit $(resources.pipeline.officialBuildCI.sourceCommit) --dryRun ${{ parameters.test }}
+      env:
+        GitHubPAT: $(BotAccount-dotnet-bot-content-rw-grained-pat)
+      displayName: 'Create release tags'

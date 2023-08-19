@@ -18,7 +18,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Perform automatic object name completion for the members that you have recently selected.",
   "configuration.dotnet.defaultSolution.description": "Путь к решению по умолчанию, которое будет открыто в рабочей области. Или задайте значение \"Отключить\", чтобы пропустить его.",
-  "configuration.dotnet.dotnetPath": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
+  "configuration.dotnet.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Highlight related JSON components under cursor.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Highlight related regular expression components under cursor.",
   "configuration.dotnet.implementType.insertionBehavior": "The insertion location of properties, events, and methods When implement interface or abstract class.",
@@ -42,8 +42,8 @@
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging.",
-  "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
-  "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
+  "debuggers.dotnet.launch.launchConfigurationId.description": "Используемый идентификатор конфигурации запуска. Если оставить эту строку пустой, будет использоваться текущая активная конфигурация.",
+  "debuggers.dotnet.launch.projectPath.description": "Путь к файлу .csproj.",
   "generateOptionsSchema.allowFastEvaluate.description": "Если присвоено значение true (состояние по умолчанию), отладчик попытается ускорить оценку, имитируя выполнение простых свойств и методов.",
   "generateOptionsSchema.args.0.description": "Аргументы командной строки, переданные в программу.",
   "generateOptionsSchema.args.1.description": "Строковая версия аргументов командной строки, переданных в программу.",
@@ -135,5 +135,5 @@
   "generateOptionsSchema.symbolOptions.searchPaths.description": "Массив URL-адресов сервера символов (например, http​://MyExampleSymbolServer) или каталогов (например: /build/symbols) для поиска PDB-файлов. Поиск в этих каталогах осуществляется в дополнение к расположениям по умолчанию — рядом с модулем и путем первоначального удаления PDB-файла.",
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[Поддерживается только в локальной отладке macOS]\r\n\r\nАрхитектура отлаживаемого объекта. Будет определяться автоматически, если этот параметр не задан. Допустимые значения: \"x86_64\" или \"arm64\".",
   "generateOptionsSchema.targetOutputLogPath.description": "Если этот параметр настроен, текст, который целевое приложение записывает в stdout и stderr (например, Console.WriteLine), будет сохранен в указанном файле. Этот параметр игнорируется, если для консоли настроено значение, отличное от internalConsole. Например, \"${workspaceFolder}/out.txt\"",
-  "viewsWelcome.debug.contents": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\r\n\r\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson)."
+  "viewsWelcome.debug.contents": "[Создание ресурсов C# для сборки и отладки](command:dotnet.generateAssets)\r\n\r\nДополнительные сведения о launch.json см. в разделе [Настройка launch.json для отладки C#](https://aka.ms/VSCode-CS-LaunchJson)."
 }

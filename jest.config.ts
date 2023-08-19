@@ -14,7 +14,7 @@ const config: Config = {
      * We also have to include the __mocks__ folder.  That folder must be next to node_modules so we can't move it,
      * but if we specify roots, jest won't automatically pick it up.  So we have to specify it here.
      */
-    roots: ['<rootDir>/test/jestUnitTests', '<rootDir>/__mocks__'],
+    roots: ['<rootDir>/test/unitTests', '<rootDir>/omnisharptest/omnisharpJestTests', '<rootDir>/__mocks__'],
 };
 
 export default config;
