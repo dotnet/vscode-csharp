@@ -8,26 +8,55 @@ import { join } from 'path';
 import { execChildProcess } from '../../common';
 import { CoreClrDebugUtil } from '../../coreclrDebug/util';
 import { DotnetInfo } from './dotnetInfo';
+import { EOL } from 'os';
 
 // This function calls `dotnet --info` and returns the result as a DotnetInfo object.
 export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInfo> {
     const dotnetExecutablePath = getDotNetExecutablePath(dotNetCliPaths);
 
+    const data = await runDotnetInfo(dotnetExecutablePath);
+    const dotnetInfo = await parseDotnetInfo(data, dotnetExecutablePath);
+    return dotnetInfo;
+}
+
+export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined {
+    const dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
+    let dotnetExecutablePath: string | undefined;
+
+    for (const dotnetPath of dotNetCliPaths) {
+        const dotnetFullPath = join(dotnetPath, dotnetExeName);
+        if (CoreClrDebugUtil.existsSync(dotnetFullPath)) {
+            dotnetExecutablePath = dotnetFullPath;
+            break;
+        }
+    }
+    return dotnetExecutablePath;
+}
+
+async function runDotnetInfo(dotnetExecutablePath: string | undefined): Promise<string> {
     try {
         const env = {
             ...process.env,
             DOTNET_CLI_UI_LANGUAGE: 'en-US',
         };
         const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} --info`, process.cwd(), env);
+        return data;
+    } catch (error) {
+        const message = error instanceof Error ? error.message : `${error}`;
+        throw new Error(`Error running dotnet --info: ${message}`);
+    }
+}
 
+async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string | undefined): Promise<DotnetInfo> {
+    try {
         const cliPath = dotnetExecutablePath;
-        const fullInfo = data;
+        const fullInfo = dotnetInfo;
 
         let version: string | undefined;
         let runtimeId: string | undefined;
         let architecture: string | undefined;
 
-        let lines = data.replace(/\r/gm, '').split('\n');
+        let lines = dotnetInfo.replace(/\r/gm, '').split('\n');
         for (const line of lines) {
             let match: RegExpMatchArray | null;
             if ((match = /^\s*Version:\s*([^\s].*)$/.exec(line))) {
@@ -68,22 +97,8 @@ export async function getDotnetInfo(dotNetCliPaths: string[]): Promise<DotnetInf
         }
 
         throw new Error('Failed to parse dotnet version information');
-    } catch {
-        // something went wrong with spawning 'dotnet --info'
-        throw new Error('A valid dotnet installation could not be found');
+    } catch (error) {
+        const message = error instanceof Error ? error.message : `${error}`;
+        throw new Error(`Error parsing dotnet --info: ${message}, raw info was:${EOL}${dotnetInfo}`);
     }
-}
-
-export function getDotNetExecutablePath(dotNetCliPaths: string[]): string | undefined {
-    const dotnetExeName = `dotnet${CoreClrDebugUtil.getPlatformExeExtension()}`;
-    let dotnetExecutablePath: string | undefined;
-
-    for (const dotnetPath of dotNetCliPaths) {
-        const dotnetFullPath = join(dotnetPath, dotnetExeName);
-        if (CoreClrDebugUtil.existsSync(dotnetFullPath)) {
-            dotnetExecutablePath = dotnetFullPath;
-            break;
-        }
-    }
-    return dotnetExecutablePath;
 }
