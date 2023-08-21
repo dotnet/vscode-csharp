@@ -90,11 +90,28 @@ gulp.task(
 gulp.task('test:integration:slnWithCsproj', async () => runIntegrationTest('slnWithCsproj'));
 
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
+    let workspacePath: string;
+    if (engine === 'lsp') {
+        workspacePath = path.join(
+            omnisharpTestAssetsRootPath,
+            testAssetName,
+            '.vscode',
+            `omnisharp_${engine}_${testAssetName}.code-workspace`
+        );
+    } else {
+        workspacePath = path.join(
+            omnisharpTestAssetsRootPath,
+            testAssetName,
+            '.vscode',
+            `omnisharp_${testAssetName}.code-workspace`
+        );
+    }
+
     const env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(omnisharpTestRootPath, 'omnisharpIntegrationTests'),
         CODE_EXTENSIONS_PATH: codeExtensionPath,
-        CODE_TESTS_WORKSPACE: path.join(omnisharpTestAssetsRootPath, testAssetName),
+        CODE_TESTS_WORKSPACE: workspacePath,
         CODE_WORKSPACE_ROOT: rootPath,
         OMNISHARP_ENGINE: engine,
         OMNISHARP_LOCATION: process.env.OMNISHARP_LOCATION,
