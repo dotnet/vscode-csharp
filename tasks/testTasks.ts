@@ -132,11 +132,17 @@ async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio
 }
 
 async function runIntegrationTest(testAssetName: string) {
+    const workspacePath = path.join(
+        omnisharpTestAssetsRootPath,
+        testAssetName,
+        '.vscode',
+        `lsp_tools_host_${testAssetName}.code-workspace`
+    );
     const env = {
         OSVC_SUITE: testAssetName,
         CODE_TESTS_PATH: path.join(testRootPath, 'integrationTests'),
         CODE_EXTENSIONS_PATH: codeExtensionPath,
-        CODE_TESTS_WORKSPACE: path.join(omnisharpTestAssetsRootPath, testAssetName),
+        CODE_TESTS_WORKSPACE: workspacePath,
         CODE_WORKSPACE_ROOT: rootPath,
         CODE_DISABLE_EXTENSIONS: 'true',
     };

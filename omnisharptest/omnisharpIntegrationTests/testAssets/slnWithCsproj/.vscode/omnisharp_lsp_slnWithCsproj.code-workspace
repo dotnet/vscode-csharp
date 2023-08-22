@@ -10,5 +10,18 @@
         "dotnet.server.useOmnisharp": true,
         "omnisharp.enableLspDriver": true,
         "dotnet.defaultSolution": "b_SecondInOrder_SlnFile.sln",
+        "editor.inlayHints.enabled": true,
+        "dotnet.inlayHints.enableInlayHintsForParameters": true,
+        "dotnet.inlayHints.enableInlayHintsForLiteralParameters": true,
+        "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": true,
+        "dotnet.inlayHints.enableInlayHintsForIndexerParameters": true,
+        "dotnet.inlayHints.enableInlayHintsForOtherParameters": true,
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": true,
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": true,
+        "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": true,
+        "csharp.inlayHints.enableInlayHintsForTypes": true,
+        "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
+        "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
+        "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
     }
 }
