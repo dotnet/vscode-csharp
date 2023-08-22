@@ -18,7 +18,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Ermöglicht die Anzeige nicht importierter Typen und nicht importierter Erweiterungsmethoden in Vervollständigungslisten. Wenn ein Commit ausgeführt wird, wird die entsprechende using-Direktive am Anfang der aktuellen Datei hinzugefügt.",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Führen Sie die automatische Vervollständigung des Objektnamens für die Elemente aus, die Sie kürzlich ausgewählt haben.",
   "configuration.dotnet.defaultSolution.description": "Der Pfad der Standardlösung, die im Arbeitsbereich geöffnet werden soll, oder auf \"deaktivieren\" festlegen, um sie zu überspringen.",
-  "configuration.dotnet.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
+  "configuration.dotnet.dotnetPath": "Gibt den Pfad zu einem dotnet-Installationsverzeichnis an, das anstelle des Standardsystems verwendet werden soll. Dies wirkt sich nur auf die dotnet-Installation aus, die zum Hosten des Sprachservers selbst verwendet werden soll. Beispiel: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Zugehörige JSON-Komponenten unter dem Cursor markieren.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Zugehörige Komponenten regulärer Ausdrücke unter dem Cursor markieren.",
   "configuration.dotnet.implementType.insertionBehavior": "Die Einfügeposition von Eigenschaften, Ereignissen und Methoden beim Implementieren der Schnittstelle oder abstrakten Klasse.",
