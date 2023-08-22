@@ -9,6 +9,21 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn version (PR: [#6192](https://github.com/dotnet/vscode-csharp/pull/6192))
+  * Add support for compilation end diagnostics (PR: [#69541](https://github.com/dotnet/roslyn/pull/69541))
+  * Include CodeLens on remaining types and members (PR: [#69608](https://github.com/dotnet/roslyn/pull/69608))
+  * Reduce LOH allocations for SemanticToken classification in LSP (PR: [#69496](https://github.com/dotnet/roslyn/pull/69496))
+* Fix dotnet resolver returning incorrect runtime in certain scenarios (PR: [#6180](https://github.com/dotnet/vscode-csharp/pull/6180))
+* Fix issue resolving .net 7 runtimes from path (PR: [#6175](https://github.com/dotnet/vscode-csharp/pull/6175))
+* Fix URI issue when loading Razor files (PR: [#6168](https://github.com/dotnet/vscode-csharp/pull/6168))
+* Bump Razor to 7.0.0-preview.23417.3 (PR: [#6165](https://github.com/dotnet/vscode-csharp/pull/6165))
+  * Fix various textDocument/foldingRange issues (PR: [#9134](https://github.com/dotnet/razor/pull/9134)) 
+* Clarify dotnet path option description (PR: [#6164](https://github.com/dotnet/vscode-csharp/pull/6164))
+* Handle multiple dotnet on path and symlinks (PR: [#6152](https://github.com/dotnet/vscode-csharp/pull/6152))
+* Localize Roslyn options (PR: [#6136](https://github.com/dotnet/vscode-csharp/pull/6136))
+* Show a prompt if we have more than one solution file (PR: [#6132](https://github.com/dotnet/vscode-csharp/pull/6132))
+
+## 2.0.376
 * Update Roslyn (PR: [#6131](https://github.com/dotnet/vscode-csharp/pull/6131))
   * Only show toast for project load failures (PR: [#69494](https://github.com/dotnet/roslyn/pull/69494))
 * Fix enter inserting /// on the incorrect line in documentation comments  (PR: [#6130](https://github.com/dotnet/vscode-csharp/pull/6130))
