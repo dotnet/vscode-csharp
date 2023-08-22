@@ -15,7 +15,7 @@ import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { readFile } from 'fs/promises';
+import { readFile, readlink } from 'fs/promises';
 
 export const DotNetRuntimeVersion = '7.0';
 
@@ -27,7 +27,7 @@ interface IDotnetAcquireResult {
  * Resolves the dotnet runtime for a server executable from given options and the dotnet runtime VSCode extension.
  */
 export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
-    private readonly minimumDotnetVersion = '7.0.100';
+    private readonly minimumDotnetRuntimeVersion = '7.0';
     constructor(
         private platformInfo: PlatformInformation,
         /**
@@ -132,7 +132,6 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
     private async findDotnetFromPath(): Promise<string | undefined> {
         try {
             const dotnetInfo = await getDotnetInfo([]);
-            const dotnetVersionStr = dotnetInfo.Version;
 
             const extensionArchitecture = await this.getArchitectureFromTargetPlatform();
             const dotnetArchitecture = dotnetInfo.Architecture;
@@ -145,14 +144,25 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 );
             }
 
-            const dotnetVersion = semver.parse(dotnetVersionStr);
-            if (!dotnetVersion) {
-                throw new Error(`Unknown result output from 'dotnet --version'. Received ${dotnetVersionStr}`);
+            // Verify that the dotnet we found includes a runtime version that is compatible with our requirement.
+            const requiredRuntimeVersion = semver.parse(`${this.minimumDotnetRuntimeVersion}.0`);
+            if (!requiredRuntimeVersion) {
+                throw new Error(`Unable to parse minimum required version ${this.minimumDotnetRuntimeVersion}`);
             }
 
-            if (semver.lt(dotnetVersion, this.minimumDotnetVersion)) {
+            const coreRuntimeVersions = dotnetInfo.Runtimes['Microsoft.NETCore.App'];
+            let foundRuntimeVersion = false;
+            for (const version of coreRuntimeVersions) {
+                // We consider a match if the runtime is greater than or equal to the required version since we roll forward.
+                if (semver.gt(version, requiredRuntimeVersion)) {
+                    foundRuntimeVersion = true;
+                    break;
+                }
+            }
+
+            if (!foundRuntimeVersion) {
                 throw new Error(
-                    `Found dotnet version ${dotnetVersion}. Minimum required version is ${this.minimumDotnetVersion}.`
+                    `No compatible .NET runtime found. Minimum required version is ${this.minimumDotnetRuntimeVersion}.`
                 );
             }
 
@@ -163,13 +173,23 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 throw new Error(`Unable to find dotnet from ${command}.`);
             }
 
-            const path = whereOutput.stdout.trim();
+            // There could be multiple paths output from where.  Take the first since that is what we used to run dotnet --info.
+            const path = whereOutput.stdout.trim().replace(/\r/gm, '').split('\n')[0];
             if (!existsSync(path)) {
                 throw new Error(`dotnet path does not exist: ${path}`);
             }
 
             this.channel.appendLine(`Using dotnet configured on PATH`);
-            return path;
+
+            // If dotnet is just a symlink, resolve it to the actual executable so
+            // callers will be able to get the actual directory containing the exe.
+            try {
+                const targetPath = await readlink(path);
+                return targetPath;
+            } catch {
+                // Not a symlink.
+                return path;
+            }
         } catch (e) {
             this.channel.appendLine(
                 'Failed to find dotnet info from path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime'

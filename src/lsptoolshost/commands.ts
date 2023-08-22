@@ -146,9 +146,9 @@ async function completionComplexEdit(
     }
 }
 
-async function openSolution(languageServer: RoslynLanguageServer): Promise<void> {
+async function openSolution(languageServer: RoslynLanguageServer): Promise<vscode.Uri | undefined> {
     if (!vscode.workspace.workspaceFolders) {
-        return;
+        return undefined;
     }
 
     const solutionFiles = await vscode.workspace.findFiles('**/*.sln');
@@ -159,6 +159,8 @@ async function openSolution(languageServer: RoslynLanguageServer): Promise<void>
     });
 
     if (launchTarget) {
-        languageServer.openSolution(vscode.Uri.file(launchTarget.target));
+        const uri = vscode.Uri.file(launchTarget.target);
+        languageServer.openSolution(uri);
+        return uri;
     }
 }

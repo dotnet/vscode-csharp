@@ -6,10 +6,10 @@ module.exports = function(_wallaby) {
     files: [
       "src/**/*.ts*",
       "src/**/*.css",
-      "test/unitTests/**/*.ts*",
-      "!test/unitTests/**/*.test.ts*"
+      "omnisharptest/omnisharpUnitTests/**/*.ts*",
+      "!omnisharptest/omnisharpUnitTests/**/*.test.ts*"
     ],
-    tests: ["test/unitTests/**/*.test.ts*"],
+    tests: ["omnisharptest/omnisharpUnitTests/**/*.test.ts*"],
 
     debug: true,
 

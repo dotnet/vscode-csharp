@@ -37,9 +37,9 @@
     }
   },
   "defaults": {
-    "roslyn": "4.8.0-1.23414.6",
+    "roslyn": "4.8.0-1.23419.1",
     "omniSharp": "1.39.7",
-    "razor": "7.0.0-preview.23410.1",
+    "razor": "7.0.0-preview.23417.3",
     "razorOmnisharp": "7.0.0-preview.23363.1"
   },
   "main": "./dist/extension",
@@ -58,15 +58,15 @@
     "compile": "tsc -p ./ && npx eslint ./ && npm run l10nDevGenerateLocalizationBundle",
     "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development && npm run l10nDevGenerateLocalizationBundle",
     "watch": "tsc -watch -p ./",
-    "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts test/unitTests/**/*.test.ts*",
-    "test": "tsc -p ./ && gulp test",
-    "test:unit": "tsc -p ./ && gulp test:unit",
-    "test:feature": "tsc -p ./ && gulp test:feature",
-    "test:integration": "tsc -p ./ && gulp test:integration",
-    "test:integration:singleCsproj": "tsc -p ./ && gulp test:integration:singleCsproj",
-    "test:integration:slnWithCsproj": "tsc -p ./ && gulp test:integration:slnWithCsproj",
-    "test:integration:slnFilterWithCsproj": "tsc -p ./ && gulp test:integration:slnFilterWithCsproj",
-    "test:artifacts": "tsc -p ./ && mocha out/test/artifactTests/**/*.test.js",
+    "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts omnisharptest/omnisharpUnitTests/**/*.test.ts*",
+    "omnisharptest": "tsc -p ./ && gulp omnisharptest",
+    "omnisharptest:unit": "tsc -p ./ && gulp omnisharptest:unit",
+    "omnisharptest:feature": "tsc -p ./ && gulp omnisharptest:feature",
+    "omnisharptest:integration": "tsc -p ./ && gulp omnisharptest:integration",
+    "omnisharptest:integration:singleCsproj": "tsc -p ./ && gulp omnisharptest:integration:singleCsproj",
+    "omnisharptest:integration:slnWithCsproj": "tsc -p ./ && gulp omnisharptest:integration:slnWithCsproj",
+    "omnisharptest:integration:slnFilterWithCsproj": "tsc -p ./ && gulp omnisharptest:integration:slnFilterWithCsproj",
+    "omnisharptest:artifacts": "tsc -p ./ && mocha out/omnisharptest/omnisharpArtifactTests/**/*.test.js",
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "updatePackageDependencies": "gulp updatePackageDependencies",
     "l10nDevGenerateXlf": "npx @vscode/l10n-dev generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile ./loc/vscode-csharp.xlf",
@@ -601,7 +601,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/7f4b0abb5c476c2f75470da3bc1cfa18/razorlanguageserver-win-x64-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/a2990f27c6d80d21fd1b643f10f713da/razorlanguageserver-win-x64-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -609,12 +609,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "9ED0D053F7F255D7B653251315E33EBF882E87308FE1C7679EF2168B341E0869"
+      "integrity": "AB2E02AFBFB1676294A58EEB5C26588227D8E452CD7AC424064E0581E037FD48"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/84ba02c1bd35eea749fc0b20966b6277/razorlanguageserver-win-x86-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/105f6bc9d733d2face4b4be6d518385e/razorlanguageserver-win-x86-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -622,12 +622,12 @@
       "architectures": [
         "x86"
       ],
-      "integrity": "430E1D13F8121571B69C7F0898D8CC2EADB5326BFEAEC8E75ABA86B6225C6D06"
+      "integrity": "C3B18E0EA060C258FEB3239FCD9250C10D9FE9382CFB506226D59DF0E203879C"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/bd9ded633a917f9a1569fdced05a2a41/razorlanguageserver-win-arm64-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/f77c9a7fe37f6bb0513c2d07a312a40b/razorlanguageserver-win-arm64-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -635,12 +635,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "A9135AF15B5C1E0E11E5E0340A3D970B0F740D622FB24CBD5BA892033DB300E6"
+      "integrity": "F0C21DA91C5609C83E7B3719F53C2CDBCE77256D37B8E2C8981D4333896AA74B"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/cf6ecf255d212e34675625aba35100bd/razorlanguageserver-linux-x64-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/4712fdd6db13650f6ee0f11fc5257cb8/razorlanguageserver-linux-x64-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -651,12 +651,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "1874029B2C8FFC27847833ECEC73BF96DAC5EC0E4B7561E7B5A7DABE4D2DC01E"
+      "integrity": "2879171B81494B0BE084D1317A2A49AF131976E515262CD118BEB647738C1F5C"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/e50775c52db62b8b5aa204c16fcb8b3a/razorlanguageserver-linux-arm64-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/6af168a6bc5f391916eda953ecfffe03/razorlanguageserver-linux-arm64-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -667,12 +667,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "EF9D097EDDCC8BD1AC6B471DFDE95C9377027445409D034CE8C6D3B37850C142"
+      "integrity": "1AAA83609C4BC681D26BFF69A052E72D0992BCCCA3BD088FEEE341A81DBBC414"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/c3cf7f473fdf8a8f62a58139165456e9/razorlanguageserver-linux-musl-x64-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/8cc51022f22558dfcc797d90377d755b/razorlanguageserver-linux-musl-x64-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -683,12 +683,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "1225EA0CFC76414F60B208A9730A1ABF9B849A68C8880D862CD816A6B7E00FF8"
+      "integrity": "A3B7E5EE602E06455D6B8F8ABF2CB6A9384B0198AE03FD3BD96BDB5118850177"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/498d6c80d6f2fc45d021cd39299923b5/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/712bc293d3f23c38cb2eca7f70389f31/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -699,12 +699,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "0FAA57861A3D33C73E13645446AFD2A0BE5DF68E79C53490D2EA457C40CCDB78"
+      "integrity": "093D56478536E5800626BFD63BFB8BA65FD44883899EBFED95AC9DC043C3E4FC"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/4b14fec895969f491aae6a8552444b3f/razorlanguageserver-osx-x64-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/fd17eb523bbfae1d220df0d39fb920b3/razorlanguageserver-osx-x64-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -715,12 +715,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "2AF0B712FBDC4B700CA95C2681BC1521C17943A6887123C98E3583B59ADFF6B1"
+      "integrity": "EB7AEAB429A92746F7DF41CEF164F2A39E53083054926CBBB183D80ADB2BFB34"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/3ec8a224-29a3-45df-8f6a-76d2bc34b6e0/6acb74118052cde1e738d7b8bb33bb83/razorlanguageserver-osx-arm64-7.0.0-preview.23410.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/ee26f9c8-c001-4bf9-8f2d-28399d3f8681/c5f27010eea4f3a7cadd4f1b958cfa0b/razorlanguageserver-osx-arm64-7.0.0-preview.23417.3.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -731,7 +731,7 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "C1EFD24C435566C35A8748FCA61F6EE00E089BA411A98BD4D316C28DB48C21C2"
+      "integrity": "66FE43147B435AE384C64C5A65EA5A6599B1CAD66AADFA0B62BAB23C67F9DA8D"
     },
     {
       "id": "RazorOmnisharp",
@@ -1116,18 +1116,18 @@
           "dotnet.dotnetPath": {
             "type": "string",
             "scope": "machine-overridable",
-            "description": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\"."
+            "description": "%configuration.dotnet.dotnetPath%"
           },
           "dotnet.server.path": {
             "type": "string",
             "scope": "machine-overridable",
-            "description": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used."
+            "description": "%configuration.dotnet.server.path%"
           },
           "dotnet.server.waitForDebugger": {
             "type": "boolean",
             "scope": "machine-overridable",
             "default": false,
-            "description": "Passes the --debug flag when launching the server to allow a debugger to be attached."
+            "description": "%configuration.dotnet.server.waitForDebugger%"
           },
           "dotnet.server.trace": {
             "scope": "window",
@@ -1142,7 +1142,7 @@
               "None"
             ],
             "default": "Information",
-            "description": "Sets the logging level for the language server"
+            "description": "%configuration.dotnet.server.trace%"
           },
           "dotnet.server.extensionPaths": {
             "scope": "machine-overridable",
@@ -1154,7 +1154,7 @@
               "type": "string"
             },
             "default": null,
-            "description": "Override for path to langauge server --extension arguments."
+            "description": "%configuration.dotnet.server.extensionPaths%"
           },
           "dotnet.implementType.insertionBehavior": {
             "type": "string",
@@ -1164,10 +1164,10 @@
             ],
             "default": "withOtherMembersOfTheSameKind",
             "enumDescriptions": [
-              "Place them with other members of the same kind.",
-              "Place them at the end."
+              "%configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind%",
+              "%configuration.dotnet.implementType.insertionBehavior.atTheEnd%"
             ],
-            "description": "The insertion location of properties, events, and methods When implement interface or abstract class.",
+            "description": "%configuration.dotnet.implementType.insertionBehavior%",
             "order": 10
           },
           "dotnet.implementType.propertyGenerationBehavior": {
@@ -1178,38 +1178,38 @@
             ],
             "default": "preferThrowingProperties",
             "enumDescriptions": [
-              "Prefer throwing properties.",
-              "Prefer auto properties."
+              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferThrowingProperties%",
+              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferAutoProperties%"
             ],
-            "description": "Generation behavior of properties when implement interface or abstract class.",
+            "description": "%configuration.dotnet.implementType.propertyGenerationBehavior%",
             "order": 10
           },
           "dotnet.codeLens.enableReferencesCodeLens": {
             "type": "boolean",
             "default": true,
-            "description": "Specifies whether the references CodeLens should be shown."
+            "description": "%configuration.dotnet.codeLens.enableReferencesCodeLens%"
           },
           "dotnet.codeLens.enableTestsCodeLens": {
             "type": "boolean",
             "default": true,
-            "description": "Specifies whether the run and debug test CodeLens should be shown."
+            "description": "%configuration.dotnet.codeLens.enableTestsCodeLens%"
           },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",
             "default": true,
-            "description": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file.",
+            "description": "%configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces%",
             "order": 20
           },
           "dotnet.completion.showNameCompletionSuggestions": {
             "type": "boolean",
             "default": "true",
-            "description": "Perform automatic object name completion for the members that you have recently selected.",
+            "description": "%configuration.dotnet.completion.showNameCompletionSuggestions%",
             "order": 20
           },
           "dotnet.completion.provideRegexCompletions": {
             "type": "boolean",
             "default": "true",
-            "description": "Show regular expressions in completion list.",
+            "description": "%configuration.dotnet.completion.provideRegexCompletions%",
             "order": 20
           },
           "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
@@ -1221,11 +1221,11 @@
             ],
             "default": "openFiles",
             "enumDescriptions": [
-              "Open documents",
-              "Entire solution",
-              "None"
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.openFiles%",
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution%",
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none%"
             ],
-            "description": "Run background code analysis for:",
+            "description": "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope%",
             "order": 30
           },
           "dotnet.backgroundAnalysis.compilerDiagnosticsScope": {
@@ -1237,118 +1237,118 @@
             ],
             "default": "openFiles",
             "enumDescriptions": [
-              "Open documents",
-              "Entire solution",
-              "None"
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.openFiles%",
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.fullSolution%",
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.none%"
             ],
-            "description": "Show compiler errors and warnings for:",
+            "description": "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope%",
             "order": 30
           },
           "dotnet.highlighting.highlightRelatedRegexComponents": {
             "type": "boolean",
             "default": "true",
-            "description": "Highlight related regular expression components under cursor.",
+            "description": "%configuration.dotnet.highlighting.highlightRelatedRegexComponents%",
             "order": 40
           },
           "dotnet.highlighting.highlightRelatedJsonComponents": {
             "type": "boolean",
             "default": "true",
-            "description": "Highlight related JSON components under cursor.",
+            "description": "%configuration.dotnet.highlighting.highlightRelatedJsonComponents%",
             "order": 40
           },
           "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for implicit object creation",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation%",
             "order": 50
           },
           "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for variables with inferred types",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes%",
             "order": 50
           },
           "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for lambda parameter types",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes%",
             "order": 50
           },
           "csharp.inlayHints.enableInlayHintsForTypes": {
             "type": "boolean",
             "default": false,
-            "description": "Display inline type hints",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForTypes%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForIndexerParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for indexers",
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForLiteralParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for literals",
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for 'new' expressions",
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForObjectCreationParameters%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForOtherParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Show hints for everything else",
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForOtherParameters%",
             "order": 50
           },
           "dotnet.inlayHints.enableInlayHintsForParameters": {
             "type": "boolean",
             "default": false,
-            "description": "Display inline parameter name hints",
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForParameters%",
             "order": 50
           },
           "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress hints when parameter names differ only by suffix",
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix%",
             "order": 50
           },
           "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress hints when argument matches parameter name",
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName%",
             "order": 50
           },
           "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress hints when parameter name matches the method's intent",
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent%",
             "order": 50
           },
           "dotnet.navigation.navigateToDecompiledSources": {
             "type": "boolean",
             "default": "true",
-            "description": "Enable navigation to decomplied sources.",
+            "description": "%configuration.dotnet.navigation.navigateToDecompiledSources%",
             "order": 60
           },
           "dotnet.quickInfo.showRemarksInQuickInfo": {
             "type": "boolean",
             "default": "true",
-            "description": "Show remarks information when display symbol.",
+            "description": "%configuration.dotnet.quickInfo.showRemarksInQuickInfo%",
             "order": 70
           },
           "dotnet.symbolSearch.searchReferenceAssemblies": {
             "type": "boolean",
             "default": true,
-            "description": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
+            "description": "%configuration.dotnet.symbolSearch.searchReferenceAssemblies%",
             "order": 80
           },
           "dotnet.unitTestDebuggingOptions": {
             "type": "object",
-            "description": "Options to use with the debugger when launching for unit test debugging.",
+            "description": "%configuration.dotnet.unitTestDebuggingOptions%",
             "default": {},
             "properties": {
               "sourceFileMap": {
@@ -1558,14 +1558,14 @@
           "razor.languageServer.directory": {
             "type": "string",
             "scope": "machine-overridable",
-            "description": "Overrides the path to the Razor Language Server directory.",
+            "description": "%configuration.razor.languageServer.directory%",
             "order": 90
           },
           "razor.languageServer.debug": {
             "type": "boolean",
             "scope": "machine-overridable",
             "default": false,
-            "description": "Specifies whether to wait for debug attach when launching the language server.",
+            "description": "%configuration.razor.languageServer.debug%",
             "order": 90
           },
           "razor.trace": {
@@ -1577,11 +1577,11 @@
               "Verbose"
             ],
             "enumDescriptions": [
-              "Does not log messages from the Razor extension",
-              "Logs only some messages from the Razor extension",
-              "Logs all messages from the Razor extension"
+              "%configuration.razor.trace.off%",
+              "%configuration.razor.trace.messages%",
+              "%configuration.razor.trace.verbose%"
             ],
-            "description": "Specifies whether to output all messages [Verbose], some messages [Messages] or not at all [Off].",
+            "description": "%configuration.razor.trace%",
             "order": 90
           },
           "csharp.debug.stopAtEntry": {
