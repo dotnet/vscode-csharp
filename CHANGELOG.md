@@ -11,10 +11,10 @@
 ## Latest
 * Update Roslyn version (PR: [#6192](https://github.com/dotnet/vscode-csharp/pull/6192))
   * Add support for compilation end diagnostics (PR: [#69541](https://github.com/dotnet/roslyn/pull/69541))
-  * Include CodeLens on remaining types and members (PR: [#69608](https://github.com/dotnet/roslyn/pull/69608))
-  * Reduce LOH allocations for SemanticToken classification in LSP (PR: [#69496](https://github.com/dotnet/roslyn/pull/69496))
+  * Include CodeLens on more types and members (PR: [#69608](https://github.com/dotnet/roslyn/pull/69608))
+  * Improve performance when computing colorization (PR: [#69496](https://github.com/dotnet/roslyn/pull/69496))
 * Fix dotnet resolver returning incorrect runtime in certain scenarios (PR: [#6180](https://github.com/dotnet/vscode-csharp/pull/6180))
-* Fix issue resolving .net 7 runtimes from path (PR: [#6175](https://github.com/dotnet/vscode-csharp/pull/6175))
+* Fix issue resolving .NET 7 runtimes from path (PR: [#6175](https://github.com/dotnet/vscode-csharp/pull/6175))
 * Fix URI issue when loading Razor files (PR: [#6168](https://github.com/dotnet/vscode-csharp/pull/6168))
 * Bump Razor to 7.0.0-preview.23417.3 (PR: [#6165](https://github.com/dotnet/vscode-csharp/pull/6165))
   * Fix various textDocument/foldingRange issues (PR: [#9134](https://github.com/dotnet/razor/pull/9134)) 
