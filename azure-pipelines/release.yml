@@ -53,36 +53,37 @@ stages:
               $publishArtifacts = $allArtifacts[0]
               Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
-              $additionalPublishArgs = , "publish"
+              $basePublishArgs = , "publish"
               # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
               If ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/main") {
-                $additionalPublishArgs += "--pre-release"
+                $basePublishArgs += "--pre-release"
                 Write-Host "Publish to pre-release channel."
               } ElseIf ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/release") {
                 Write-Host "Publish to release channel."
               } Else {
                 throw "Unexpected branch name: $(resources.pipeline.officialBuildCI.sourceBranch)."
               }
-              $additionalPublishArgs += '--packagePath'
+              $basePublishArgs += '--packagePath'
 
-              $platforms = "arm64", "x64", "ia32"
-              $allVsixs = Get-ChildItem $publishArtifacts *.vsix
-              foreach ($vsix in $allVsixs) {
-                foreach ($plat in $platforms) {
-                  if ($vsix.Name.Contains($plat)) {
-                      $additionalPublishArgs += $vsix
-                  }
-                }
-              }
+              # Publish win32-ia32 last as recommended at https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
+              # Since validation is done asynchronously, we further take care to push the win32 variants in the first batch *first*,
+              # to give them the longest lead time possible before the second batch with just the win32-ia32 vsix is published.
+              $nonIA32PlatformArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix -Include *x64*, *arm64* | Sort-Object Name -Descending |% { $_ })
+              $ia32PlatformArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix -Include *ia32* | Sort-Object Name -Descending |% { $_ })
 
-              Write-Host "Command run is: vsce $($additionalPublishArgs)."
-              If ("${{ parameters.test }}") {
+              If ("${{ parameters.test }}" -eq "true") {
                 Write-Host "In test mode, command is printed instead of run."
+                Write-Host "##[command]vsce $nonIA32PlatformArgs"
+                Write-Host "##[command]vsce $ia32PlatformArgs"
+
                 Write-Host "🔒 Verify PAT."
                 vsce verify-pat ms-dotnettools
               }
               Else {
-                vsce @additionalPublishArgs
+                Write-Host "##[command]vsce $nonIA32PlatformArgs"
+                vsce @nonIA32PlatformArgs
+                Write-Host "##[command]vsce $ia32PlatformArgs"
+                vsce @ia32PlatformArgs
               }
             displayName: 🚀 Publish to Marketplace
             workingDirectory: $(Pipeline.Workspace)

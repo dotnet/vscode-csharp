@@ -5,7 +5,7 @@
 
 import { should, expect } from 'chai';
 import { DotNetChannelObserver } from '../../../src/observers/dotnetChannelObserver';
-import { getNullChannel } from '../testAssets/fakes';
+import { getNullChannel } from '../../../test/unitTests/fakes';
 import { CommandDotNetRestoreStart } from '../../../src/omnisharp/loggingEvents';
 
 suite('DotnetChannelObserver', () => {

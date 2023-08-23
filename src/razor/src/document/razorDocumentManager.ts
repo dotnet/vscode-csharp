@@ -302,7 +302,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // vscode.workspace.openTextDocument may send a textDocument/didOpen
         // request to the C# language server. We need to keep track of
         // this to make sure we don't send a duplicate request later on.
-        const razorUri = vscode.Uri.parse('file:' + document.path, true);
+        const razorUri = vscode.Uri.file(document.path);
         if (!this.isRazorDocumentOpenInCSharpWorkspace(razorUri)) {
             this.didOpenRazorCSharpDocument(razorUri);
 

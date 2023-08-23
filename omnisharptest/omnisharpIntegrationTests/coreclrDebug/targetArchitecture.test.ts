@@ -19,6 +19,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '5.0.0',
                 RuntimeId: 'win10-x64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
@@ -32,6 +33,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '6.0.0',
                 RuntimeId: 'win10-x64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
@@ -45,6 +47,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '6.0.0',
                 RuntimeId: 'win10-arm64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
@@ -60,6 +63,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '5.0.0',
                 RuntimeId: 'linux-x64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
@@ -75,6 +79,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '5.0.0',
                 RuntimeId: 'osx.11.0-x64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
@@ -88,6 +93,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '5.0.0',
                 RuntimeId: 'osx.11.0-x64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
@@ -101,6 +107,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '6.0.0',
                 RuntimeId: 'osx.11.0-arm64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
@@ -114,6 +121,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '6.0.0',
                 RuntimeId: 'osx.11.0-x64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
@@ -127,6 +135,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '6.0.0',
                 RuntimeId: 'osx.11.0-arm64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, 'arm64', dotnetInfo);
@@ -140,6 +149,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '6.0.0',
                 RuntimeId: 'osx.11.0-x86_64',
+                Runtimes: {},
             };
 
             const targetArchitecture = getTargetArchitecture(platformInfo, 'x86_64', dotnetInfo);
@@ -153,6 +163,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '6.0.0',
                 RuntimeId: 'osx.11.0-x86_64',
+                Runtimes: {},
             };
 
             const fn = function () {
@@ -170,6 +181,7 @@ suite('getTargetArchitecture Tests', () => {
                 FullInfo: 'Irrelevant',
                 Version: '6.0.0',
                 RuntimeId: 'osx.11.0-FUTURE_ISA',
+                Runtimes: {},
             };
 
             const fn = function () {

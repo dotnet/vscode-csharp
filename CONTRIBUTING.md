@@ -4,7 +4,7 @@
 
 First install:
 
-* Node.js ([v18.17.0 LTS](https://nodejs.org/de/blog/release/v18.17.0) is recommended).
+* Node.js ([v18.17.0 LTS](https://nodejs.org/en/blog/release/v18.17.0) is recommended).
 * Npm (The version shipped with node is fine)
 * .NET 7.0 SDK (dotnet should be on your path)
 

@@ -5,7 +5,7 @@
 
 import * as chai from 'chai';
 import * as chaiString from 'chai-string';
-import { getNullChannel } from '../testAssets/fakes';
+import { getNullChannel } from '../../../test/unitTests/fakes';
 import {
     EventWithMessage,
     DotNetTestDebugWarning,

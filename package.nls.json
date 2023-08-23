@@ -1,6 +1,6 @@
 {
   "configuration.dotnet.defaultSolution.description": "The path of the default solution to be opened in the workspace, or set to 'disable' to skip it.",
-  "configuration.dotnet.dotnetPath": "Specified the path to a dotnet installation to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
+  "configuration.dotnet.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.dotnet.server.path": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used.",
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached.",
   "configuration.dotnet.server.trace": "Sets the logging level for the language server",
@@ -42,6 +42,12 @@
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Show remarks information when display symbol.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging.",
+  "configuration.razor.languageServer.directory": "Overrides the path to the Razor Language Server directory.",
+  "configuration.razor.languageServer.debug": "Specifies whether to wait for debug attach when launching the language server.",
+  "configuration.razor.trace": "Specifies whether to output all messages [Verbose], some messages [Messages] or not at all [Off].",
+  "configuration.razor.trace.off": "Does not log messages from the Razor extension",
+  "configuration.razor.trace.messages": "Logs only some messages from the Razor extension",
+  "configuration.razor.trace.verbose": "Logs all messages from the Razor extension",
   "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
   "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
   "viewsWelcome.debug.contents": {
