@@ -31,7 +31,6 @@ async function main() {
 
         // The path to the extension test runner script
         // Passed to --extensionTestsPath
-        //const extensionTestsPath = path.resolve(__dirname, './integrationTests/index');
         const extensionTestsPath = process.env.EXTENSIONS_TESTS_PATH;
 
         if (!extensionTestsPath) {

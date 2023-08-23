@@ -102,14 +102,15 @@ gulp.task('test', gulp.series('test:unit'));
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
     const workspacePath = path.join(omnisharpTestAssetsRootPath, testAssetName, '.vscode', workspaceFile);
+    const codeTestsPath = path.join(omnisharpTestRootPath, 'omnisharpIntegrationTests');
 
     const env = {
         OSVC_SUITE: testAssetName,
-        CODE_TESTS_PATH: path.join(omnisharpTestRootPath, 'omnisharpIntegrationTests'),
+        CODE_TESTS_PATH: codeTestsPath,
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: workspacePath,
         CODE_WORKSPACE_ROOT: rootPath,
-        EXTENSIONS_TESTS_PATH: path.resolve(__dirname, './omnisharpIntegrationTests/index'),
+        EXTENSIONS_TESTS_PATH: path.join(codeTestsPath, 'index.js'),
         OMNISHARP_ENGINE: engine,
         OMNISHARP_LOCATION: process.env.OMNISHARP_LOCATION,
         CODE_DISABLE_EXTENSIONS: 'true',
@@ -135,13 +136,15 @@ async function runIntegrationTest(testAssetName: string) {
         '.vscode',
         `lsp_tools_host_${testAssetName}.code-workspace`
     );
+    const codeTestsPath = path.join(testRootPath, 'integrationTests');
+
     const env = {
         OSVC_SUITE: testAssetName,
-        CODE_TESTS_PATH: path.join(testRootPath, 'integrationTests'),
+        CODE_TESTS_PATH: codeTestsPath,
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: workspacePath,
         CODE_WORKSPACE_ROOT: rootPath,
-        EXTENSIONS_TESTS_PATH: path.resolve(__dirname, './integrationTests/index'),
+        EXTENSIONS_TESTS_PATH: path.join(codeTestsPath, 'index.js'),
         CODE_DISABLE_EXTENSIONS: 'true',
     };
 
