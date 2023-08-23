@@ -8,7 +8,6 @@ import * as path from 'path';
 import {
     codeExtensionPath,
     omnisharpFeatureTestRunnerPath,
-    omnisharpIntegrationTestRunnerPath,
     mochaPath,
     rootPath,
     omnisharpTestAssetsRootPath,
@@ -101,22 +100,8 @@ gulp.task('test:unit', async () => {
 gulp.task('test', gulp.series('test:unit'));
 
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
-    let workspacePath: string;
-    if (engine === 'lsp') {
-        workspacePath = path.join(
-            omnisharpTestAssetsRootPath,
-            testAssetName,
-            '.vscode',
-            `omnisharp_${engine}_${testAssetName}.code-workspace`
-        );
-    } else {
-        workspacePath = path.join(
-            omnisharpTestAssetsRootPath,
-            testAssetName,
-            '.vscode',
-            `omnisharp_${testAssetName}.code-workspace`
-        );
-    }
+    const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
+    const workspacePath = path.join(omnisharpTestAssetsRootPath, testAssetName, '.vscode', workspaceFile);
 
     const env = {
         OSVC_SUITE: testAssetName,
@@ -124,12 +109,13 @@ async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: workspacePath,
         CODE_WORKSPACE_ROOT: rootPath,
+        EXTENSIONS_TESTS_PATH: path.resolve(__dirname, './omnisharpIntegrationTests/index'),
         OMNISHARP_ENGINE: engine,
         OMNISHARP_LOCATION: process.env.OMNISHARP_LOCATION,
         CODE_DISABLE_EXTENSIONS: 'true',
     };
 
-    const result = await spawnNode([omnisharpIntegrationTestRunnerPath, '--enable-source-maps'], {
+    const result = await spawnNode([integrationTestRunnerPath, '--enable-source-maps'], {
         env,
         cwd: rootPath,
     });
@@ -155,6 +141,7 @@ async function runIntegrationTest(testAssetName: string) {
         CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: workspacePath,
         CODE_WORKSPACE_ROOT: rootPath,
+        EXTENSIONS_TESTS_PATH: path.resolve(__dirname, './integrationTests/index'),
         CODE_DISABLE_EXTENSIONS: 'true',
     };
 

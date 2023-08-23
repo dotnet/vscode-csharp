@@ -21,7 +21,7 @@ export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPat
 
 export const omnisharpTestRootPath = path.join(rootPath, 'out', 'omnisharptest');
 export const omnisharpFeatureTestRunnerPath = path.join(omnisharpTestRootPath, 'runFeatureTests.js');
-export const omnisharpIntegrationTestRunnerPath = path.join(omnisharpTestRootPath, 'runIntegrationTests.js');
+//export const omnisharpIntegrationTestRunnerPath = path.join(omnisharpTestRootPath, 'runIntegrationTests.js');
 export const omnisharpTestAssetsRootPath = path.join(
     rootPath,
     'omnisharptest',
