@@ -10,7 +10,7 @@ import {
     getMSBuildDiagnosticsMessage,
     getOmnisharpMSBuildProjectDiagnosticsEvent,
     getOmnisharpServerOnErrorEvent,
-} from '../testAssets/fakes';
+} from '../../../test/unitTests/fakes';
 import { vscode } from '../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing';
 import { from as observableFrom, Subject } from 'rxjs';

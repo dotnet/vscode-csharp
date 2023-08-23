@@ -5,7 +5,7 @@
 
 import { should } from 'chai';
 import { ConfigurationChangeEvent, vscode } from '../../src/vscodeAdapter';
-import { getVSCodeWithConfig, updateConfig } from './testAssets/fakes';
+import { getVSCodeWithConfig, updateConfig } from '../../test/unitTests/fakes';
 import Disposable from '../../src/disposable';
 import { Observable, Subscription } from 'rxjs';
 import { Options } from '../../src/shared/options';

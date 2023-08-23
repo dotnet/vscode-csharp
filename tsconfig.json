@@ -20,5 +20,8 @@
         "tasks",
         "test",
         "omnisharptest",
-        "typings"   ]
+        "typings",
+        "__mocks__",
+        "jest.config.ts",
+    ]
 }

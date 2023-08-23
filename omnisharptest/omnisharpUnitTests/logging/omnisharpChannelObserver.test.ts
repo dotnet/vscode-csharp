@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { expect } from 'chai';
 import { vscode } from '../../../src/vscodeAdapter';
-import { getNullChannel, updateConfig, getVSCodeWithConfig } from '../testAssets/fakes';
+import { getNullChannel, updateConfig, getVSCodeWithConfig } from '../../../test/unitTests/fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/omnisharpChannelObserver';
 import {
     OmnisharpFailure,

@@ -9,6 +9,7 @@ import {
     codeExtensionPath,
     featureTestRunnerPath,
     integrationTestRunnerPath,
+    jestPath,
     mochaPath,
     rootPath,
     testAssetsRootPath,
@@ -52,6 +53,10 @@ gulp.task('omnisharptest:unit', async () => {
     return result;
 });
 
+gulp.task('omnisharp:jest:test', async () => {
+    runJestTest(/.*omnisharpJestTests.*/);
+});
+
 const projectNames = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'BasicRazorApp2_1'];
 
 for (const projectName of projectNames) {
@@ -78,8 +83,14 @@ gulp.task(
 // TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
 gulp.task(
     'omnisharptest',
-    gulp.series('omnisharptest:feature', 'omnisharptest:unit', 'omnisharptest:integration:stdio')
+    gulp.series('omnisharp:jest:test', 'omnisharptest:feature', 'omnisharptest:unit', 'omnisharptest:integration:stdio')
 );
+
+gulp.task('test:unit', async () => {
+    runJestTest(/unitTests.*\.ts/);
+});
+
+gulp.task('test', gulp.series('test:unit'));
 
 async function runIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const env = {
@@ -94,6 +105,17 @@ async function runIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp'
     };
 
     const result = await spawnNode([integrationTestRunnerPath, '--enable-source-maps'], { env, cwd: rootPath });
+
+    if (result.code === null || result.code > 0) {
+        // Ensure that gulp fails when tests fail
+        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    }
+
+    return result;
+}
+
+async function runJestTest(testFilterRegex: RegExp) {
+    const result = await spawnNode([jestPath, testFilterRegex.source]);
 
     if (result.code === null || result.code > 0) {
         // Ensure that gulp fails when tests fail

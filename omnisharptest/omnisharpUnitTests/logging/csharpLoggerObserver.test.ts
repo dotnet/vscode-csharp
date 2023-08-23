@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { getNullChannel } from '../testAssets/fakes';
+import { getNullChannel } from '../../../test/unitTests/fakes';
 import { CsharpLoggerObserver } from '../../../src/shared/observers/csharpLoggerObserver';
 import { PlatformInformation } from '../../../src/shared/platform';
 import * as Event from '../../../src/omnisharp/loggingEvents';

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { use, should, expect } from 'chai';
 import * as chaiString from 'chai-string';
-import { getNullChannel } from '../testAssets/fakes';
+import { getNullChannel } from '../../../test/unitTests/fakes';
 import {
     OmnisharpServerVerboseMessage,
     EventWithMessage,
