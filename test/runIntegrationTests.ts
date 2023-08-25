@@ -31,7 +31,12 @@ async function main() {
 
         // The path to the extension test runner script
         // Passed to --extensionTestsPath
-        const extensionTestsPath = path.resolve(__dirname, './omnisharpIntegrationTests/index');
+        const extensionTestsPath = process.env.EXTENSIONS_TESTS_PATH;
+
+        if (!extensionTestsPath) {
+            console.error('Empty extension tests path');
+            process.exit(-1);
+        }
 
         // The integration tests expect that the workspace to run the
         // tests against is set in an environment variable.

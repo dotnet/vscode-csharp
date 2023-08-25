@@ -68,6 +68,7 @@
     "omnisharptest:integration:slnWithCsproj": "tsc -p ./ && gulp omnisharptest:integration:slnWithCsproj",
     "omnisharptest:integration:slnFilterWithCsproj": "tsc -p ./ && gulp omnisharptest:integration:slnFilterWithCsproj",
     "omnisharptest:artifacts": "tsc -p ./ && mocha out/omnisharptest/omnisharpArtifactTests/**/*.test.js",
+    "test:integration:slnWithCsproj": "tsc -p ./ && gulp test:integration:slnWithCsproj",
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "updatePackageDependencies": "gulp updatePackageDependencies",
     "l10nDevGenerateXlf": "npx @vscode/l10n-dev generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile ./loc/vscode-csharp.xlf",
