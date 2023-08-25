@@ -9,7 +9,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Fix URIFormatException during dotnet SDK resolution when symlinks are involved (PR: [#6230](https://github.com/dotnet/vscode-csharp/pull/6230))
+* Fix UriFormatException during dotnet SDK resolution when symlinks are involved (PR: [#6230](https://github.com/dotnet/vscode-csharp/pull/6230))
 
 ## 2.0.413
 * Update Roslyn version (PR: [#6192](https://github.com/dotnet/vscode-csharp/pull/6192))
