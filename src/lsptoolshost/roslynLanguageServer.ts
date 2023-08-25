@@ -527,7 +527,7 @@ export class RoslynLanguageServer {
         }
 
         for (const extensionPath of this.additionalExtensionPaths) {
-            args.push('--extension', `"${extensionPath}"`);
+            args.push('--extension', `${extensionPath}`);
         }
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -581,9 +581,18 @@ export class RoslynLanguageServer {
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
             const argsWithPath = [serverPath].concat(args);
+
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${argsWithPath.join(' ')}`);
+            }
+
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${args.join(' ')}`);
+            }
+
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
