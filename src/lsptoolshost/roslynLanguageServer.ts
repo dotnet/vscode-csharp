@@ -63,6 +63,8 @@ import { RoslynLanguageClient } from './roslynLanguageClient';
 import { registerUnitTestingCommands } from './unitTesting';
 import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
+import { reportProjectConfigurationEvent } from '../shared/projectConfiguration';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -133,7 +135,7 @@ export class RoslynLanguageServer {
      * Resolves server options and starts the dotnet language server process. The process is started asynchronously and this method will not wait until
      * the process is launched.
      */
-    public start(): void {
+    public async start(): Promise<void> {
         const options = this.optionProvider.GetLatestOptions();
         const logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
@@ -201,6 +203,19 @@ export class RoslynLanguageServer {
             this._eventBus.emit(
                 RoslynLanguageServer.serverStateChangeEvent,
                 ServerStateChange.ProjectInitializationComplete
+            );
+        });
+
+        // Retrieve the dotnet info outside of the notification so we're not running dotnet --info every time the project changes.
+        const dotnetInfo = await getDotnetInfo([]);
+        this._languageClient.onNotification(RoslynProtocol.ProjectConfigurationNotification.type, (params) => {
+            reportProjectConfigurationEvent(
+                this.telemetryReporter,
+                params,
+                this.platformInfo,
+                dotnetInfo,
+                this._solutionFile?.fsPath,
+                true
             );
         });
 
@@ -280,7 +295,7 @@ export class RoslynLanguageServer {
      */
     public async restart(): Promise<void> {
         await this.stop();
-        this.start();
+        await this.start();
     }
 
     /**
@@ -833,7 +848,7 @@ export async function activateRoslynLanguageServer(
     });
 
     // Start the language server.
-    _languageServer.start();
+    await _languageServer.start();
 
     return _languageServer;
 

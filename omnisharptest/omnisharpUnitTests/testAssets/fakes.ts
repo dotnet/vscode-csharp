@@ -14,7 +14,7 @@ import {
     ConfigurationChangeEvent,
     Disposable,
 } from '../../../src/vscodeAdapter';
-import { ITelemetryReporter } from '../../../src/observers/telemetryObserver';
+import { ITelemetryReporter } from '../../../src/shared/telemetryReporter';
 import { MSBuildDiagnosticsMessage } from '../../../src/omnisharp/protocol';
 import {
     OmnisharpServerMsBuildProjectDiagnostics,

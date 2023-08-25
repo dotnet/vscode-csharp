@@ -5,6 +5,7 @@
 
 import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface WorkspaceDebugConfigurationParams {
     /**
@@ -159,6 +160,12 @@ export namespace ProjectInitializationCompleteNotification {
     export const method = 'workspace/projectInitializationComplete';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.NotificationType(method);
+}
+
+export namespace ProjectConfigurationNotification {
+    export const method = 'workspace/projectConfiguration';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.NotificationType<ProjectConfigurationMessage>(method);
 }
 
 export namespace ShowToastNotification {
