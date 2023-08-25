@@ -527,7 +527,7 @@ export class RoslynLanguageServer {
         }
 
         for (const extensionPath of this.additionalExtensionPaths) {
-            args.push('--extension', `${extensionPath}`);
+            args.push('--extension', extensionPath);
         }
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
