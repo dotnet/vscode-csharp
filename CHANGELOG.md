@@ -9,6 +9,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Fix URIFormatException during dotnet SDK resolution when symlinks are involved (PR: [#6230](https://github.com/dotnet/vscode-csharp/pull/6230))
+
+## 2.0.413
 * Update Roslyn (PR: [#6131](https://github.com/dotnet/vscode-csharp/pull/6131))
   * Only show toast for project load failures (PR: [#69494](https://github.com/dotnet/roslyn/pull/69494))
 * Fix enter inserting /// on the incorrect line in documentation comments  (PR: [#6130](https://github.com/dotnet/vscode-csharp/pull/6130))

@@ -15,7 +15,7 @@ import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { readFile, readlink } from 'fs/promises';
+import { readFile, realpath } from 'fs/promises';
 
 export const DotNetRuntimeVersion = '7.0';
 
@@ -183,13 +183,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
 
             // If dotnet is just a symlink, resolve it to the actual executable so
             // callers will be able to get the actual directory containing the exe.
-            try {
-                const targetPath = await readlink(path);
-                return targetPath;
-            } catch {
-                // Not a symlink.
-                return path;
-            }
+            return await realpath(path);
         } catch (e) {
             this.channel.appendLine(
                 'Failed to find dotnet info from path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime'
