@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { should, expect } from 'chai';
-import { getNullChannel } from '../testAssets/fakes';
+import { getNullChannel } from '../../../test/unitTests/fakes';
 import { OmnisharpLoggerObserver } from '../../../src/observers/omnisharpLoggerObserver';
 import {
     OmnisharpServerMsBuildProjectDiagnostics,

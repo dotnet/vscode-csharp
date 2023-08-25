@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { getNullChannel } from '../testAssets/fakes';
+import { getNullChannel } from '../../../test/unitTests/fakes';
 import { CsharpChannelObserver } from '../../../src/shared/observers/csharpChannelObserver';
 import {
     InstallationFailure,

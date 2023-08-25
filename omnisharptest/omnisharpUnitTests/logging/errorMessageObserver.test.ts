@@ -5,7 +5,6 @@
 
 import { expect, should } from 'chai';
 import { vscode } from '../../../src/vscodeAdapter';
-import { getFakeVsCode } from '../testAssets/fakes';
 
 import { ErrorMessageObserver } from '../../../src/observers/errorMessageObserver';
 import {
@@ -15,6 +14,7 @@ import {
     EventWithMessage,
     IntegrityCheckFailure,
 } from '../../../src/omnisharp/loggingEvents';
+import { getFakeVsCode } from '../../../test/unitTests/fakes';
 
 suite('ErrorMessageObserver', () => {
     suiteSetup(() => should());

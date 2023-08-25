@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { isDeepStrictEqual } from 'util';
 import { DocumentSelector } from 'vscode-languageserver-protocol';
 import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 import * as path from 'path';
@@ -377,26 +376,6 @@ export class Options {
         );
     }
 
-    public static shouldOmnisharpOptionChangeTriggerReload(oldOptions: Options, newOptions: Options): boolean {
-        const commonOptionsChanged = CommonOptionsThatTriggerReload.some(
-            (key) => !isDeepStrictEqual(oldOptions.commonOptions[key], newOptions.commonOptions[key])
-        );
-        const omnisharpOptionsChanged = OmnisharpOptionsThatTriggerReload.some(
-            (key) => !isDeepStrictEqual(oldOptions.omnisharpOptions[key], newOptions.omnisharpOptions[key])
-        );
-        return commonOptionsChanged || omnisharpOptionsChanged;
-    }
-
-    public static shouldLanguageServerOptionChangeTriggerReload(oldOptions: Options, newOptions: Options): boolean {
-        const commonOptionsChanged = CommonOptionsThatTriggerReload.some(
-            (key) => !isDeepStrictEqual(oldOptions.commonOptions[key], newOptions.commonOptions[key])
-        );
-        const languageServerOptionsChanged = LanguageServerOptionsThatTriggerReload.some(
-            (key) => !isDeepStrictEqual(oldOptions.languageServerOptions[key], newOptions.languageServerOptions[key])
-        );
-        return commonOptionsChanged || languageServerOptionsChanged;
-    }
-
     public static getExcludedPaths(vscode: vscode, includeSearchExcludes = false): string[] {
         const workspaceConfig = vscode.workspace.getConfiguration();
 
@@ -448,7 +427,7 @@ export interface CommonOptions {
     unitTestDebuggingOptions: object;
 }
 
-const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
+export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
     'dotnetPath',
     'waitForDebugger',
     'serverPath',
@@ -504,7 +483,7 @@ export interface OmnisharpServerOptions {
     enableLspDriver?: boolean | null;
 }
 
-const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOptions> = [
+export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOptions> = [
     'enableMsBuildLoadProjectsOnDemand',
     'loggingLevel',
     'enableEditorConfigSupport',
@@ -544,7 +523,7 @@ export interface LanguageServerOptions {
     extensionsPaths: string[] | null;
 }
 
-const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
+export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
     'logLevel',
     'documentSelector',
 ];

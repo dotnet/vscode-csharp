@@ -4,14 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { readFileSync } from 'fs';
-import { migrateOptions } from '../../../src/shared/migrateOptions';
 import { assert } from 'chai';
+import { migrateOptions } from '../../src/shared/migrateOptions';
+import * as jestLib from '@jest/globals';
 
-suite('Migrate configuration should in package.json', () => {
+jestLib.describe('Migrate configuration should in package.json', () => {
     const packageJson = JSON.parse(readFileSync('package.json').toString());
-    const configurations = Object.keys(packageJson['contributes']['configuration']['properties']);
+    const properties = packageJson.contributes.configuration[1].properties;
+    const configurations = Object.keys(properties);
 
     migrateOptions.forEach((data) => {
-        assert.include(configurations, data.roslynOption);
+        jestLib.test(`Should have ${data.roslynOption} in package.json`, () => {
+            assert.include(configurations, data.roslynOption);
+        });
     });
 });

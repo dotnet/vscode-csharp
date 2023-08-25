@@ -5,7 +5,7 @@
 
 import { should, expect } from 'chai';
 import { Options } from '../../src/shared/options';
-import { getVSCodeWithConfig, updateConfig } from './testAssets/fakes';
+import { getVSCodeWithConfig, updateConfig } from '../../test/unitTests/fakes';
 import { URI } from 'vscode-uri';
 import * as path from 'path';
 

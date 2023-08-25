@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { assert, expect } from 'chai';
-import { convertServerOptionNameToClientConfigurationName } from '../../../src/lsptoolshost/optionNameConverter';
 import { readFileSync } from 'fs';
+import { convertServerOptionNameToClientConfigurationName } from '../../src/lsptoolshost/optionNameConverter';
+import * as jestLib from '@jest/globals';
 
 const testData = [
     {
@@ -231,15 +232,20 @@ const testData = [
     },
 ];
 
-suite('Server option name to vscode configuration name test', () => {
+jestLib.describe('Server option name to vscode configuration name test', () => {
     const packageJson = JSON.parse(readFileSync('package.json').toString());
     const configurations = Object.keys(packageJson['contributes']['configuration'][1]['properties']);
 
     testData.forEach((data) => {
-        const actualName = convertServerOptionNameToClientConfigurationName(data.serverOption);
-        expect(actualName).to.equal(data.vsCodeConfiguration);
-        if (data.declareInPackageJson) {
-            assert.include(configurations, data.vsCodeConfiguration);
-        }
+        jestLib.test(
+            `Server option name ${data.serverOption} should be converted to ${data.vsCodeConfiguration}`,
+            () => {
+                const actualName = convertServerOptionNameToClientConfigurationName(data.serverOption);
+                expect(actualName).to.equal(data.vsCodeConfiguration);
+                if (data.declareInPackageJson) {
+                    assert.include(configurations, data.vsCodeConfiguration);
+                }
+            }
+        );
     });
 });

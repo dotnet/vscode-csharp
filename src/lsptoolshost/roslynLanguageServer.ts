@@ -65,6 +65,8 @@ import SerializableSimplifyMethodParams from '../razor/src/simplify/serializable
 import { TextEdit } from 'vscode-html-languageservice';
 import { reportProjectConfigurationEvent } from '../shared/projectConfiguration';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
+import { registerLanguageServerOptionChanges } from './optionChanges';
+import { Observable } from 'rxjs';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -779,6 +781,7 @@ export async function activateRoslynLanguageServer(
     context: vscode.ExtensionContext,
     platformInfo: PlatformInformation,
     optionProvider: OptionProvider,
+    optionObservable: Observable<Options>,
     outputChannel: vscode.OutputChannel,
     dotnetTestChannel: vscode.OutputChannel,
     reporter: TelemetryReporter
@@ -813,6 +816,8 @@ export async function activateRoslynLanguageServer(
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, _languageServer, platformInfo, optionProvider, _channel);
+
+    context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
 
     const options = optionProvider.GetLatestOptions();
     let source = new vscode.CancellationTokenSource();

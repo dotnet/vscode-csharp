@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { should, expect } from 'chai';
-import { getVSCodeWithConfig, updateConfig } from '../testAssets/fakes';
+import { getVSCodeWithConfig, updateConfig } from '../../../test/unitTests/fakes';
 import { vscode } from '../../../src/vscodeAdapter';
 import OptionProvider from '../../../src/shared/observers/optionProvider';
 import { Subject } from 'rxjs';
