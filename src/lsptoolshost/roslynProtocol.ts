@@ -163,7 +163,7 @@ export namespace ProjectInitializationCompleteNotification {
 }
 
 export namespace ProjectConfigurationNotification {
-    export const method = 'workspace/projectConfiguration';
+    export const method = 'workspace/projectConfigurationTelemetry';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.NotificationType<ProjectConfigurationMessage>(method);
 }

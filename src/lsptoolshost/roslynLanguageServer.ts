@@ -67,6 +67,7 @@ import { reportProjectConfigurationEvent } from '../shared/projectConfiguration'
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { registerLanguageServerOptionChanges } from './optionChanges';
 import { Observable } from 'rxjs';
+import { DotnetInfo } from '../shared/utils/dotnetInfo';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -209,8 +210,11 @@ export class RoslynLanguageServer {
         });
 
         // Retrieve the dotnet info outside of the notification so we're not running dotnet --info every time the project changes.
-        const dotnetInfo = await getDotnetInfo([]);
-        this._languageClient.onNotification(RoslynProtocol.ProjectConfigurationNotification.type, (params) => {
+        let dotnetInfo: DotnetInfo | undefined = undefined;
+        this._languageClient.onNotification(RoslynProtocol.ProjectConfigurationNotification.type, async (params) => {
+            if (!dotnetInfo) {
+                dotnetInfo = await getDotnetInfo([]);
+            }
             reportProjectConfigurationEvent(
                 this.telemetryReporter,
                 params,
