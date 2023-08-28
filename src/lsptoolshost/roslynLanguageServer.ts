@@ -209,7 +209,7 @@ export class RoslynLanguageServer {
             );
         });
 
-        // Retrieve the dotnet info outside of the notification so we're not running dotnet --info every time the project changes.
+        // Store the dotnet info outside of the notification so we're not running dotnet --info every time the project changes.
         let dotnetInfo: DotnetInfo | undefined = undefined;
         this._languageClient.onNotification(RoslynProtocol.ProjectConfigurationNotification.type, async (params) => {
             if (!dotnetInfo) {
