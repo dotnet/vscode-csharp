@@ -29,6 +29,6 @@ export const omnisharpTestAssetsRootPath = path.join(
 );
 
 export const testRootPath = path.join(rootPath, 'out', 'test');
-export const integrationTestRunnerPath = path.join(testRootPath, 'runIntegrationTests.js');
+export const integrationTestRunnerPath = path.join(testRootPath, 'integrationTests', 'runIntegrationTests.js');
 
 export const nodePath = path.join(process.env.NVM_BIN ? `${process.env.NVM_BIN}${path.sep}` : '', 'node');

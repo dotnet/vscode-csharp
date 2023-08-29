@@ -12,7 +12,7 @@ import * as jestLib from '@jest/globals';
 import * as vscode from 'vscode';
 import { getVSCodeWithConfig, updateConfig } from './fakes';
 
-jestLib.describe('OmniSharpConfigChangeObserver', () => {
+jestLib.describe('Option changes observer', () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
