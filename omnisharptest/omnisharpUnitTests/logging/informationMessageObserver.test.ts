@@ -6,7 +6,7 @@
 import { InformationMessageObserver } from '../../../src/observers/informationMessageObserver';
 import OptionProvider from '../../../src/shared/observers/optionProvider';
 import { expect, should } from 'chai';
-import { getUnresolvedDependenices, updateConfig, getVSCodeWithConfig } from '../testAssets/fakes';
+import { getUnresolvedDependenices, updateConfig, getVSCodeWithConfig } from '../../../test/unitTests/fakes';
 import { Subject, from as observableFrom } from 'rxjs';
 import { timeout } from 'rxjs/operators';
 import { Options } from '../../../src/shared/options';

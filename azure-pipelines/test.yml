@@ -15,7 +15,7 @@ steps:
       Write-Host "Now running tests"
     }
 
-    npm run omnisharptest
+    npm run test
   displayName: 🧪 Run unit and integration tests
 
 - task: PublishPipelineArtifact@1

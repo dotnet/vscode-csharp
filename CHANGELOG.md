@@ -9,11 +9,27 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn version (PR: [#6245](https://github.com/dotnet/vscode-csharp/pull/6245))
+  * Fix import completion (PR: [#69691](https://github.com/dotnet/roslyn/pull/69691))
+  * Reduce overhead on semantic token refresh requests (PR: [#69690](https://github.com/dotnet/roslyn/pull/69690))
+* Localization additions (PR: [#6233](https://github.com/dotnet/vscode-csharp/pull/6233), [#6233](https://github.com/dotnet/vscode-csharp/pull/6233), [#6206](https://github.com/dotnet/vscode-csharp/pull/6206), [#6196](https://github.com/dotnet/vscode-csharp/pull/6196))
+* Fix specific case where razor formatting no longer worked (PR: [#6195](https://github.com/dotnet/vscode-csharp/pull/6236))
+* Fix quoting bug in extension paths (PR: [#6228](https://github.com/dotnet/vscode-csharp/pull/6228))
+* Fix Razor mapping errors in the log (PR: [#6209](https://github.com/dotnet/vscode-csharp/pull/6209))
+* Add the configuration option for creating binlogs (PR: [#6155](https://github.com/dotnet/vscode-csharp/pull/6155))
+* Update option changes toast to reload window (PR: [#6174](https://github.com/dotnet/vscode-csharp/pull/6174))
+* Update Roslyn version (PR: [#6205](https://github.com/dotnet/vscode-csharp/pull/6205))
+  * Add option to capture binlogs for design time builds (PR: [#69572](https://github.com/dotnet/roslyn/pull/69572))
+  * Enable decompilation support (PR: [#69501](https://github.com/dotnet/roslyn/pull/69501))
+  * Fix move type adding to the root folder (PR: [#68995](https://github.com/dotnet/roslyn/pull/68995))
+  * Add support for compilation end diagnostics (PR: [#69541](https://github.com/dotnet/roslyn/pull/69541))
+* Bump Razor to 7.0.0-preview.23421.4 (PR: [#6195](https://github.com/dotnet/vscode-csharp/pull/6195))
+
+## 2.0.416
 * Fix UriFormatException during dotnet SDK resolution when symlinks are involved (PR: [#6230](https://github.com/dotnet/vscode-csharp/pull/6230))
 
 ## 2.0.413
 * Update Roslyn version (PR: [#6192](https://github.com/dotnet/vscode-csharp/pull/6192))
-  * Add support for compilation end diagnostics (PR: [#69541](https://github.com/dotnet/roslyn/pull/69541))
   * Include CodeLens on more types and members (PR: [#69608](https://github.com/dotnet/roslyn/pull/69608))
   * Improve performance when computing colorization (PR: [#69496](https://github.com/dotnet/roslyn/pull/69496))
 * Fix dotnet resolver returning incorrect runtime in certain scenarios (PR: [#6180](https://github.com/dotnet/vscode-csharp/pull/6180))

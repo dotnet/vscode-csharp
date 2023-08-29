@@ -1,0 +1,26 @@
+steps:
+- checkout: self
+  clean: true
+  submodules: true
+  fetchTags: false
+  fetchDepth: 1
+
+- template: prereqs.yml
+
+- pwsh: |
+    if ($IsLinux) {
+      Write-Host "Activating screen emulation"
+      /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+      $env:DISPLAY=':99.0'
+      Write-Host "Now running tests"
+    }
+
+    npm run omnisharptest
+  displayName: 🧪 Run unit and integration tests
+
+- task: PublishPipelineArtifact@1
+  condition: failed()
+  displayName: 'Upload integration test logs'
+  inputs:
+    targetPath: '$(Build.SourcesDirectory)/.vscode-test/user-data/logs'
+    artifactName: 'VSCode Test Logs ($(Agent.JobName)-$(System.JobAttempt))'

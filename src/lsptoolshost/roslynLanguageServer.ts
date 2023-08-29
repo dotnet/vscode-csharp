@@ -63,6 +63,8 @@ import { RoslynLanguageClient } from './roslynLanguageClient';
 import { registerUnitTestingCommands } from './unitTesting';
 import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
+import { registerLanguageServerOptionChanges } from './optionChanges';
+import { Observable } from 'rxjs';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -525,7 +527,7 @@ export class RoslynLanguageServer {
         }
 
         for (const extensionPath of this.additionalExtensionPaths) {
-            args.push('--extension', `"${extensionPath}"`);
+            args.push('--extension', extensionPath);
         }
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -579,9 +581,18 @@ export class RoslynLanguageServer {
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
             const argsWithPath = [serverPath].concat(args);
+
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${argsWithPath.join(' ')}`);
+            }
+
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${args.join(' ')}`);
+            }
+
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
@@ -764,6 +775,7 @@ export async function activateRoslynLanguageServer(
     context: vscode.ExtensionContext,
     platformInfo: PlatformInformation,
     optionProvider: OptionProvider,
+    optionObservable: Observable<Options>,
     outputChannel: vscode.OutputChannel,
     dotnetTestChannel: vscode.OutputChannel,
     reporter: TelemetryReporter
@@ -798,6 +810,8 @@ export async function activateRoslynLanguageServer(
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, _languageServer, platformInfo, optionProvider, _channel);
+
+    context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
 
     const options = optionProvider.GetLatestOptions();
     let source = new vscode.CancellationTokenSource();

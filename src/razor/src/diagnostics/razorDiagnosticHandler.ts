@@ -4,26 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import {
-    DocumentDiagnosticReport,
-    DocumentDiagnosticParams,
-    RequestType,
-    FullDocumentDiagnosticReport,
-    Range,
-    Diagnostic,
-} from 'vscode-languageclient';
+import { DocumentDiagnosticReport, DocumentDiagnosticParams, RequestType } from 'vscode-languageclient';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
-import { LanguageKind } from '../rpc/languageKind';
 import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
 
 export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
-    private static readonly razorPullDiagnosticsCommand = 'razor/pullDiagnostics';
+    private static readonly razorPullDiagnosticsCommand = 'razor/csharpPullDiagnostics';
     private diagnosticRequestType: RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any> =
         new RequestType(RazorDiagnosticHandler.razorPullDiagnosticsCommand);
 
@@ -63,28 +55,6 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
             RoslynLanguageServer.roslynPullDiagnosticCommand,
             request
         );
-        if (response.kind === 'full') {
-            const changedDiagnostics: FullDocumentDiagnosticReport = response as FullDocumentDiagnosticReport;
-            const remappedDiagnostics = new Array<Diagnostic>();
-            for (const diagnostic of changedDiagnostics.items) {
-                const convertedRange = new vscode.Range(
-                    diagnostic.range.start.line,
-                    diagnostic.range.start.character,
-                    diagnostic.range.end.line,
-                    diagnostic.range.end.character
-                );
-                const remappedResponse = await this.serviceClient.mapToDocumentRanges(
-                    LanguageKind.CSharp,
-                    [convertedRange],
-                    razorDocument.uri
-                );
-                if (remappedResponse.ranges.length != 0) {
-                    diagnostic.range = Range.create(remappedResponse.ranges[0].start, remappedResponse.ranges[0].end);
-                    remappedDiagnostics.push(diagnostic);
-                }
-            }
-            changedDiagnostics.items = remappedDiagnostics;
-        }
 
         return response;
     }

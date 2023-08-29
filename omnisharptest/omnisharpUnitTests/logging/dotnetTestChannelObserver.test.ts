@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { expect } from 'chai';
-import { getNullChannel } from '../testAssets/fakes';
+import { getNullChannel } from '../../../test/unitTests/fakes';
 import {
     BaseEvent,
     DotNetTestsInClassDebugStart,
