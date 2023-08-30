@@ -11,13 +11,16 @@ import { Octokit } from '@octokit/rest';
 interface Options {
     releaseVersion: string;
     releaseCommit: string;
-    dryRun: boolean;
+    // Even it is specified as boolean, it would still be parsed as string in compiled js.
+    dryRun: string;
 }
 
 gulp.task('createTags', async (): Promise<void> => {
     const options = minimist<Options>(process.argv.slice(2));
     console.log(`releaseVersion: ${options.releaseVersion}`);
     console.log(`releaseCommit: ${options.releaseCommit}`);
+    const dryRun = options.dryRun.toLocaleLowerCase() === 'true';
+    console.log(`dry run: ${dryRun}`);
 
     const roslynCommit = await findRoslynCommitAsync();
     if (!roslynCommit) {
@@ -25,7 +28,8 @@ gulp.task('createTags', async (): Promise<void> => {
         return;
     }
 
-    if (options.dryRun) {
+    // The compiled option value in js type is 'any' type.
+    if (dryRun) {
         console.log('Tagging is skipped in dry run mode.');
         return;
     } else {
