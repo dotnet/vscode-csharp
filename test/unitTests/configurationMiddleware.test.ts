@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { assert, expect } from 'chai';
 import { readFileSync } from 'fs';
 import { convertServerOptionNameToClientConfigurationName } from '../../src/lsptoolshost/optionNameConverter';
 import * as jestLib from '@jest/globals';
@@ -241,9 +240,9 @@ jestLib.describe('Server option name to vscode configuration name test', () => {
             `Server option name ${data.serverOption} should be converted to ${data.vsCodeConfiguration}`,
             () => {
                 const actualName = convertServerOptionNameToClientConfigurationName(data.serverOption);
-                expect(actualName).to.equal(data.vsCodeConfiguration);
+                jestLib.expect(actualName).toBe(data.vsCodeConfiguration);
                 if (data.declareInPackageJson) {
-                    assert.include(configurations, data.vsCodeConfiguration);
+                    jestLib.expect(configurations).toContain(data.vsCodeConfiguration);
                 }
             }
         );
