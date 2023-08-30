@@ -5,7 +5,7 @@
 
 import * as vscode from '../../src/vscodeAdapter';
 import * as protocol from '../../src/omnisharp/protocol';
-import { ITelemetryReporter } from '../../src/observers/telemetryObserver';
+import { ITelemetryReporter } from '../../src/shared/telemetryReporter';
 import { MSBuildDiagnosticsMessage } from '../../src/omnisharp/protocol';
 import {
     OmnisharpServerMsBuildProjectDiagnostics,

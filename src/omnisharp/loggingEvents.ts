@@ -8,6 +8,7 @@ import { Request } from './requestQueue';
 import * as protocol from './protocol';
 import { LaunchTarget } from '../shared/launchTarget';
 import { EventType } from './eventType';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface BaseEvent {
     type: EventType;
@@ -165,7 +166,7 @@ export class OmnisharpOnMultipleLaunchTargets implements BaseEvent {
 
 export class ProjectConfiguration implements BaseEvent {
     type = EventType.ProjectConfigurationReceived;
-    constructor(public projectConfiguration: protocol.ProjectConfigurationMessage) {}
+    constructor(public projectConfiguration: ProjectConfigurationMessage) {}
 }
 
 export class WorkspaceInformationUpdated implements BaseEvent {
