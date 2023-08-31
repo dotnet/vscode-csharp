@@ -76,7 +76,6 @@ gulp.task('installDependencies', async () => {
 // Install Tasks
 async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformation) {
     const roslynVersion = packageJSON.defaults.roslyn;
-    const packagePath = await acquireNugetPackage('Microsoft.CodeAnalysis.LanguageServer', roslynVersion);
 
     // Find the matching server RID for the current platform.
     let serverPlatform: string;
@@ -89,6 +88,11 @@ async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformatio
                 p.platformInfo.architecture === platformInfo.architecture
         )!.rid;
     }
+
+    const packagePath = await acquireNugetPackage(
+        `Microsoft.CodeAnalysis.LanguageServer.${serverPlatform}`,
+        roslynVersion
+    );
 
     // Get the directory containing the server executable for the current platform.
     const serverExecutableDirectory = path.join(packagePath, 'content', 'LanguageServer', serverPlatform);
@@ -150,7 +154,8 @@ async function acquireNugetPackage(packageName: string, packageVersion: string):
     const dotnetArgs = [
         'restore',
         path.join(rootPath, 'server'),
-        `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}`,
+        `/p:PackageName=${packageName}`,
+        `/p:PackageVersion=${packageVersion}`,
     ];
     if (argv.interactive) {
         dotnetArgs.push('--interactive');
