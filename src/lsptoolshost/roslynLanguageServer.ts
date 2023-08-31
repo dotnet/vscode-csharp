@@ -168,6 +168,33 @@ export class RoslynLanguageServer {
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },
+                resolveCodeAction: async (codeAction, token, next) => {
+                    const lspCodeAction = <CodeAction>codeAction;
+                    const data = lspCodeAction.data;
+                    if (data.FixAllFlavors) {
+                        const result = await vscode.window.showQuickPick(data.FixAllFlavors, {
+                            placeHolder: 'Pick a fix all scope',
+                        });
+
+                        if (result) {
+                            const fixAllCodeAction: RoslynProtocol.RoslynFixAllCodeAction = {
+                                title: lspCodeAction.title,
+                                edit: lspCodeAction.edit,
+                                data: data,
+                                scope: result,
+                            };
+
+                            const response = await _languageServer.sendRequest(
+                                RoslynProtocol.CodeActionFixAllResolveRequest.type,
+                                fixAllCodeAction,
+                                token
+                            );
+                            console.log(response);
+                        }
+                    } else {
+                        return await next(codeAction, token);
+                    }
+                },
             },
         };
 
