@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
+import net = require('net');
 import { registerCommands } from './commands';
 import { registerDebugger } from './debugger';
 import { UriConverter } from './uriConverter';
@@ -40,6 +41,15 @@ import {
     PartialResultParams,
     ProtocolRequestType,
     MessageType,
+    Executable,
+    TransportKind,
+    ExecutableOptions,
+    MessageReader,
+    MessageWriter,
+    PipeTransport,
+    SocketMessageReader,
+    SocketMessageWriter,
+    StreamInfo,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -143,8 +153,12 @@ export class RoslynLanguageServer {
         const logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
 
+        const vsCodeMakesPipeline = true;
+        // Just for testing. Executable is passed to VS code and it makes the pipeline.
+        const serverOptionsPipe = await this.startServerExecutable(logLevel);
+        // Start the pipeline ourselves
         const serverOptions: ServerOptions = async () => {
-            return await this.startServer(logLevel);
+            return await this.startServerPipe(logLevel);
         };
 
         const documentSelector = options.languageServerOptions.documentSelector;
@@ -178,7 +192,7 @@ export class RoslynLanguageServer {
         const client = new RoslynLanguageClient(
             'microsoft-codeanalysis-languageserver',
             'Microsoft.CodeAnalysis.LanguageServer',
-            serverOptions,
+            vsCodeMakesPipeline ? serverOptionsPipe : serverOptions,
             clientOptions
         );
 
@@ -517,7 +531,7 @@ export class RoslynLanguageServer {
         return capabilities;
     }
 
-    private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
+    public async startServerExecutable(logLevel: string | undefined): Promise<Executable> {
         const options = this.optionProvider.GetLatestOptions();
         const serverPath = getServerPath(options, this.platformInfo);
 
@@ -590,11 +604,10 @@ export class RoslynLanguageServer {
 
         args.push('--extensionLogDirectory', this.context.logUri.fsPath);
 
-        let childProcess: cp.ChildProcessWithoutNullStreams;
-        const cpOptions: cp.SpawnOptionsWithoutStdio = {
+        const cpOptions: ExecutableOptions = {
             detached: true,
-            windowsHide: true,
             env: env,
+            shell: false,
         };
 
         if (serverPath.endsWith('.dll')) {
@@ -606,6 +619,15 @@ export class RoslynLanguageServer {
             }
 
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
+
+            const execOptions: Executable = {
+                command: dotnetExecutablePath,
+                transport: TransportKind.pipe,
+                args: argsWithPath,
+                options: cpOptions,
+            };
+
+            return execOptions;
         } else {
             // Otherwise assume we were given a path to an executable.
             if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
@@ -613,18 +635,130 @@ export class RoslynLanguageServer {
             }
 
             childProcess = cp.spawn(serverPath, args, cpOptions);
+            const execOptions: Executable = {
+                command: serverPath,
+                transport: TransportKind.pipe,
+                args: args,
+                options: cpOptions,
+            };
+
+            return execOptions;
+        }
+    }
+
+    public async startServerPipe(logLevel: string | undefined): Promise<StreamInfo> {
+        const options = this.optionProvider.GetLatestOptions();
+        const serverPath = getServerPath(options, this.platformInfo);
+
+        const dotnetInfo = await this.hostExecutableResolver.getHostExecutableInfo(options);
+        const dotnetRuntimePath = path.dirname(dotnetInfo.path);
+        const dotnetExecutablePath = dotnetInfo.path;
+
+        _channel.appendLine('Dotnet path: ' + dotnetExecutablePath);
+
+        // Take care to always run .NET processes on the runtime that we intend.
+        // The dotnet.exe we point to should not go looking for other runtimes.
+        const env: NodeJS.ProcessEnv = { ...process.env };
+        env.DOTNET_ROOT = dotnetRuntimePath;
+        env.DOTNET_MULTILEVEL_LOOKUP = '0';
+        // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
+        env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
+
+        let args: string[] = [];
+
+        if (options.commonOptions.waitForDebugger) {
+            args.push('--debug');
         }
 
-        return childProcess;
+        if (logLevel) {
+            args.push('--logLevel', logLevel);
+        }
+
+        // Get the brokered service pipe name from C# Dev Kit (if installed).
+        // We explicitly call this in the LSP server start action instead of awaiting it
+        // in our activation because C# Dev Kit depends on C# activation completing.
+        const csharpDevkitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
+        if (csharpDevkitExtension) {
+            this._wasActivatedWithCSharpDevkit = true;
+
+            // Get the starred suggestion dll location from C# Dev Kit IntelliCode (if both C# Dev Kit and C# Dev Kit IntelliCode are installed).
+            const csharpDevkitIntelliCodeExtension = vscode.extensions.getExtension<CSharpIntelliCodeExports>(
+                csharpDevkitIntelliCodeExtensionId
+            );
+            if (csharpDevkitIntelliCodeExtension) {
+                _channel.appendLine('Activating C# + C# Dev Kit + C# IntelliCode...');
+                const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(
+                    csharpDevkitIntelliCodeExtension
+                );
+                args = args.concat(csharpDevkitIntelliCodeArgs);
+            } else {
+                _channel.appendLine('Activating C# + C# Dev Kit...');
+            }
+
+            const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension, options);
+            args = args.concat(csharpDevkitArgs);
+
+            await this.setupDevKitEnvironment(env, csharpDevkitExtension);
+        } else {
+            // C# Dev Kit is not installed - continue C#-only activation.
+            _channel.appendLine('Activating C# standalone...');
+            vscode.commands.executeCommand('setContext', 'dotnet.server.activatedStandalone', true);
+            this._wasActivatedWithCSharpDevkit = false;
+        }
+
+        if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+            _channel.appendLine(`Starting server at ${serverPath}`);
+        }
+
+        // shouldn't this arg only be set if it's running with CSDevKit?
+        args.push('--telemetryLevel', this.telemetryReporter.telemetryLevel);
+
+        args.push('--extensionLogDirectory', this.context.logUri.fsPath);
+
+        const pipeName = createNewPipeName(); // Pipe name must match the server
+        await createClientPipeTransport(pipeName).then(async (transport) => {
+            args.push('--pipe', pipeName);
+
+            let childProcess: cp.ChildProcessWithoutNullStreams;
+            const cpOptions: cp.SpawnOptionsWithoutStdio = {
+                detached: true,
+                windowsHide: true,
+                env: env,
+            };
+
+            if (serverPath.endsWith('.dll')) {
+                // If we were given a path to a dll, launch that via dotnet.
+                const argsWithPath = [serverPath].concat(args);
+                childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
+            } else {
+                // Otherwise assume we were given a path to an executable.
+                childProcess = cp.spawn(serverPath, args, cpOptions);
+            }
+
+            //TODO: Is this channel output correct?
+            childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) =>
+                _channel.append(isString(data) ? data : data.toString('utf8'))
+            );
+            childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) =>
+                _channel.append(isString(data) ? data : data.toString('utf8'))
+            );
+
+            return transport.onConnected().then((protocol) => {
+                return { reader: protocol[0], writer: protocol[1] };
+            });
+        });
+
+        // TODO: Actually handle error case appripritely
+        throw new Error('Failed to start server');
     }
 
     private registerDynamicFileInfo(client: RoslynLanguageClient) {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
-        client.onRequest(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName, async (request) =>
+        client.onRequest(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName, async (request: any) =>
             vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
         );
-        client.onNotification(RoslynLanguageServer.removeRazorDynamicFileInfoMethodName, async (notification) =>
+        client.onNotification(RoslynLanguageServer.removeRazorDynamicFileInfoMethodName, async (notification: any) =>
             vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification)
         );
     }
@@ -1091,4 +1225,38 @@ function getSessionId(): string {
     }
 
     return sessionId;
+}
+
+function createNewPipeName() {
+    const WINDOWS_PIPE_NAME_PREFIX = '\\\\.\\pipe';
+    const NIX_PIPE_NAME_PREFIX = '/tmp';
+    const pipeName = path.join(process.platform === 'win32' ? WINDOWS_PIPE_NAME_PREFIX : NIX_PIPE_NAME_PREFIX, uuid());
+    return pipeName;
+}
+
+async function createClientPipeTransport(pipeName: string): Promise<PipeTransport> {
+    const encoding = 'utf-8';
+    let connectResolve: (value: [MessageReader, MessageWriter]) => void;
+    const connected = new Promise<[MessageReader, MessageWriter]>((resolve, _reject) => {
+        connectResolve = resolve;
+    });
+    return new Promise<PipeTransport>((resolve, reject) => {
+        const server: net.Server = net.createServer((socket: net.Socket) => {
+            server.close();
+            connectResolve([new SocketMessageReader(socket, encoding), new SocketMessageWriter(socket, encoding)]);
+        });
+        server.on('error', reject);
+        server.listen(pipeName, () => {
+            server.removeListener('error', reject);
+            resolve({
+                onConnected: async () => {
+                    return connected;
+                },
+            });
+        });
+    });
+}
+
+export function isString(value: any): value is string {
+    return typeof value === 'string' || value instanceof String;
 }
