@@ -97,6 +97,12 @@ export class Options {
             {},
             'csharp.unitTestDebuggingOptions'
         );
+        const runSettingsPath = Options.readOption<string>(
+            config,
+            'dotnet.unitTests.runSettingsPath',
+            '',
+            'omnisharp.testRunSettings'
+        );
 
         // Omnisharp Server Options
 
@@ -179,7 +185,6 @@ export class Options {
             'omnisharp.enableMsBuildLoadProjectsOnDemand',
             false
         );
-        const testRunSettings = Options.readOption<string>(config, 'omnisharp.testRunSettings', '');
         const dotNetCliPaths = Options.readOption<string[]>(config, 'omnisharp.dotNetCliPaths', []);
 
         const useFormatting = Options.readOption<boolean>(config, 'csharp.format.enable', true);
@@ -312,6 +317,7 @@ export class Options {
                 excludePaths: excludePaths,
                 defaultSolution: defaultSolution,
                 unitTestDebuggingOptions: unitTestDebuggingOptions,
+                runSettingsPath: runSettingsPath,
             },
             {
                 useModernNet: useModernNet,
@@ -337,7 +343,6 @@ export class Options {
                 sdkPath: sdkPath,
                 sdkVersion: sdkVersion,
                 sdkIncludePrereleases: sdkIncludePrereleases,
-                testRunSettings: testRunSettings,
                 dotNetCliPaths: dotNetCliPaths,
                 useFormatting: useFormatting,
                 showReferencesCodeLens: showReferencesCodeLens,
@@ -425,6 +430,7 @@ export interface CommonOptions {
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
     defaultSolution: string;
     unitTestDebuggingOptions: object;
+    runSettingsPath: string;
 }
 
 export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
@@ -458,7 +464,6 @@ export interface OmnisharpServerOptions {
     sdkPath: string;
     sdkVersion: string;
     sdkIncludePrereleases: boolean;
-    testRunSettings: string;
     dotNetCliPaths: string[];
     useFormatting: boolean;
     showReferencesCodeLens: boolean;

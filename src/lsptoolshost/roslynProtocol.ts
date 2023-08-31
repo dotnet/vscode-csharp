@@ -83,6 +83,11 @@ export interface RunTestsParams extends lsp.WorkDoneProgressParams, lsp.PartialR
      * Whether the request should attempt to call back to the client to attach a debugger before running the tests.
      */
     attachDebugger: boolean;
+
+    /**
+     * The absolute path to a .runsettings file to configure the test run.
+     */
+    runSettingsPath?: string;
 }
 
 export interface TestProgress {
