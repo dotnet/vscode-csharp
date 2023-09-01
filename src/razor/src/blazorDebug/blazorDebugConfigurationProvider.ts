@@ -7,7 +7,7 @@ import { promises, readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
-import { ChromeBrowserFinder, EdgeBrowserFinder } from 'vscode-js-debug-browsers';
+import { ChromeBrowserFinder, EdgeBrowserFinder } from '@vscode/js-debug-browsers';
 import { RazorLogger } from '../razorLogger';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
 import { onDidTerminateDebugSession } from './terminateDebugHandler';
@@ -182,26 +182,44 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         // There was no browser specified by the user, so we will do some auto-detection to find a browser,
         // favoring chrome if multiple valid options are installed.
         const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises, null);
-        const chromeInstallations = await chromeBrowserFinder.findAll();
-        if (chromeInstallations.length > 0) {
+        let didFindBrowser = false;
+        try {
+            const chromeInstallations = await chromeBrowserFinder.findAll();
+            didFindBrowser = chromeInstallations.length > 0;
+        } catch (error) {
+            // chromeBrowserFinder.findAll() can throw if Chrome is not installed.
+        }
+
+        if (didFindBrowser) {
             showInformationMessage(
                 vscode,
                 BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Chrome'`)
             );
+
             return BlazorDebugConfigurationProvider.chromeBrowserType;
         }
 
         const edgeBrowserFinder = new EdgeBrowserFinder(process.env, promises, null);
-        const edgeInstallations = await edgeBrowserFinder.findAll();
-        if (edgeInstallations.length > 0) {
+        try {
+            const edgeInstallations = await edgeBrowserFinder.findAll();
+            didFindBrowser = edgeInstallations.length > 0;
+        } catch (error) {
+            // edgeBrowserFinder.findAll() can throw if Edge is not installed.
+        }
+
+        if (didFindBrowser) {
             showInformationMessage(
                 vscode,
                 BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Edge'`)
             );
+
             return BlazorDebugConfigurationProvider.edgeBrowserType;
         }
 
-        showErrorMessage(vscode, vscode.l10n.t('Run and Debug: A valid browser is not installed'));
+        showErrorMessage(
+            vscode,
+            vscode.l10n.t('Run and Debug: A valid browser is not installed. Please install Edge or Chrome.')
+        );
         return undefined;
     }
 }
