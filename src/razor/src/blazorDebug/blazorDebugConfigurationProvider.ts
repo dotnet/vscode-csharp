@@ -7,7 +7,7 @@ import { promises, readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
-import { ChromeBrowserFinder, EdgeBrowserFinder } from '@vscode/js-debug-browsers';
+import { ChromeBrowserFinder, EdgeBrowserFinder, FirefoxBrowserFinder } from '@vscode/js-debug-browsers';
 import { RazorLogger } from '../razorLogger';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
 import { onDidTerminateDebugSession } from './terminateDebugHandler';
@@ -20,6 +20,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
     );
     private static readonly edgeBrowserType: string = 'msedge';
     private static readonly chromeBrowserType: string = 'chrome';
+    private static readonly firefoxBrowserType: string = 'firefox';
 
     constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) {}
 
@@ -130,6 +131,8 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
                 ? BlazorDebugConfigurationProvider.edgeBrowserType
                 : configBrowser === 'chrome'
                 ? BlazorDebugConfigurationProvider.chromeBrowserType
+                : configBrowser === 'firefox'
+                ? BlazorDebugConfigurationProvider.firefoxBrowserType
                 : await BlazorDebugConfigurationProvider.determineBrowserType();
         if (!browserType) {
             return;
@@ -214,6 +217,23 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             );
 
             return BlazorDebugConfigurationProvider.edgeBrowserType;
+        }
+
+        const firefoxBrowserFinder = new FirefoxBrowserFinder(process.env, promises, null);
+        try {
+            const firefoxInstallations = await firefoxBrowserFinder.findAll();
+            didFindBrowser = firefoxInstallations.length > 0;
+        } catch (error) {
+            // firefoxBrowserFinder.findAll() can throw if Firefox is not installed.
+        }
+
+        if (didFindBrowser) {
+            showInformationMessage(
+                vscode,
+                BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Firefox'`)
+            );
+
+            return BlazorDebugConfigurationProvider.firefoxBrowserType;
         }
 
         showErrorMessage(
