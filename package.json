@@ -1356,7 +1356,7 @@
           },
           "dotnet.unitTests.runSettingsPath": {
             "type": "string",
-            "description": "Path to the .runsettings file which should be used when running unit tests."
+            "description": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)"
           },
           "dotnet.unitTestDebuggingOptions": {
             "type": "object",
