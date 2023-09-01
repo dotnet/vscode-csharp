@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { expect, should } from 'chai';
 import * as path from 'path';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
 
 import { Advisor } from '../../src/features/diagnosticsProvider';
 

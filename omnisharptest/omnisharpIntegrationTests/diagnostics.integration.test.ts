@@ -13,7 +13,7 @@ import {
     isSlnWithGenerator,
     restartOmniSharpServer,
 } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
 import { poll, assertWithPoll, pollDoesNotHappen } from './poll';
 import { isNotNull } from '../testUtil';
 

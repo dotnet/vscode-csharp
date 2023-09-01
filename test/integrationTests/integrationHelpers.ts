@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { CSharpExtensionExports } from '../../src/csharpExtensionExports';
+import { existsSync } from 'fs';
 
 export async function activateCSharpExtension(): Promise<void> {
     // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
@@ -14,7 +15,7 @@ export async function activateCSharpExtension(): Promise<void> {
         vscode.extensions.getExtension<CSharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
     if (!dotnetRuntimeExtension) {
         await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId);
-        await vscode.commands.executeCommand('workbench.action.reloadWindow');
+        await reloadWindow();
     }
 
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
@@ -27,6 +28,20 @@ export async function activateCSharpExtension(): Promise<void> {
 
     await csharpExtension.exports.initializationFinished();
     console.log('ms-dotnettools.csharp activated');
+}
+
+export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<void> {
+    const root = vscode.workspace.workspaceFolders![0].uri.fsPath;
+    const filePath = path.join(root, relativeFilePath);
+    if (!existsSync(filePath)) {
+        throw new Error(`File ${filePath} does not exist`);
+    }
+
+    await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath));
+}
+
+export async function reloadWindow(): Promise<void> {
+    await vscode.commands.executeCommand('workbench.action.reloadWindow');
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {

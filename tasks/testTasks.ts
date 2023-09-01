@@ -10,7 +10,7 @@ import {
     omnisharpFeatureTestRunnerPath,
     mochaPath,
     rootPath,
-    omnisharpTestAssetsRootPath,
+    integrationTestAssetsRootPath,
     omnisharpTestRootPath,
     testRootPath,
     integrationTestRunnerPath,
@@ -112,7 +112,7 @@ gulp.task('test', gulp.series('test:unit', 'test:integration'));
 
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
-    const workspacePath = path.join(omnisharpTestAssetsRootPath, testAssetName, '.vscode', workspaceFile);
+    const workspacePath = path.join(integrationTestAssetsRootPath, testAssetName, '.vscode', workspaceFile);
     const codeTestsPath = path.join(omnisharpTestRootPath, 'omnisharpIntegrationTests');
 
     const env = {
@@ -142,7 +142,7 @@ async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio
 
 async function runIntegrationTest(testAssetName: string) {
     const workspacePath = path.join(
-        omnisharpTestAssetsRootPath,
+        integrationTestAssetsRootPath,
         testAssetName,
         '.vscode',
         `lsp_tools_host_${testAssetName}.code-workspace`

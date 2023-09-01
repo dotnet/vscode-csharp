@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 
 import { expect, should } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
 
 suite(`WorkspaceSymbolProvider: ${testAssetWorkspace.description}`, function () {
     suiteSetup(async function () {

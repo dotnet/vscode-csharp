@@ -8,7 +8,7 @@ import * as path from 'path';
 
 import { should, expect } from 'chai';
 import * as integrationHelpers from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
 
 suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;

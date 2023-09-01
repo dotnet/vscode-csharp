@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 
 import { should, expect } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
 import * as path from 'path';
 import { assertWithPoll } from './poll';
 import { isNotNull } from '../testUtil';
