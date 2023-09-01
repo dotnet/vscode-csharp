@@ -153,7 +153,7 @@ export class RoslynLanguageServer {
         const logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
 
-        const vsCodeMakesPipeline = true;
+        const vsCodeMakesPipeline = false;
         // Just for testing. Executable is passed to VS code and it makes the pipeline.
         const serverOptionsPipe = await this.startServerExecutable(logLevel);
         // Start the pipeline ourselves
@@ -610,40 +610,29 @@ export class RoslynLanguageServer {
             shell: false,
         };
 
+        let command;
+
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
-            const argsWithPath = [serverPath].concat(args);
-
-            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
-                _channel.appendLine(`Server arguments ${argsWithPath.join(' ')}`);
-            }
-
-            childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
-
-            const execOptions: Executable = {
-                command: dotnetExecutablePath,
-                transport: TransportKind.pipe,
-                args: argsWithPath,
-                options: cpOptions,
-            };
-
-            return execOptions;
+            args = [serverPath].concat(args);
+            command = dotnetExecutablePath;
         } else {
             // Otherwise assume we were given a path to an executable.
-            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
-                _channel.appendLine(`Server arguments ${args.join(' ')}`);
-            }
-
-            childProcess = cp.spawn(serverPath, args, cpOptions);
-            const execOptions: Executable = {
-                command: serverPath,
-                transport: TransportKind.pipe,
-                args: args,
-                options: cpOptions,
-            };
-
-            return execOptions;
+            command = serverPath;
         }
+
+        if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+            _channel.appendLine(`Server arguments ${args.join(' ')}`);
+        }
+
+        const execOptions: Executable = {
+            command: command,
+            transport: TransportKind.pipe,
+            args: args,
+            options: cpOptions,
+        };
+
+        return execOptions;
     }
 
     public async startServerPipe(logLevel: string | undefined): Promise<StreamInfo> {
@@ -716,7 +705,8 @@ export class RoslynLanguageServer {
         args.push('--extensionLogDirectory', this.context.logUri.fsPath);
 
         const pipeName = createNewPipeName(); // Pipe name must match the server
-        await createClientPipeTransport(pipeName).then(async (transport) => {
+
+        await TryConnect(pipeName).then(async (transport) => {
             args.push('--pipe', pipeName);
 
             let childProcess: cp.ChildProcessWithoutNullStreams;
@@ -1230,11 +1220,14 @@ function getSessionId(): string {
 function createNewPipeName() {
     const WINDOWS_PIPE_NAME_PREFIX = '\\\\.\\pipe';
     const NIX_PIPE_NAME_PREFIX = '/tmp';
-    const pipeName = path.join(process.platform === 'win32' ? WINDOWS_PIPE_NAME_PREFIX : NIX_PIPE_NAME_PREFIX, uuid());
+    const pipeName = path.join(
+        process.platform === 'win32' ? WINDOWS_PIPE_NAME_PREFIX : NIX_PIPE_NAME_PREFIX,
+        randomUUID()
+    );
     return pipeName;
 }
 
-async function createClientPipeTransport(pipeName: string): Promise<PipeTransport> {
+export async function createClientPipeTransport(pipeName: string): Promise<PipeTransport> {
     const encoding = 'utf-8';
     let connectResolve: (value: [MessageReader, MessageWriter]) => void;
     const connected = new Promise<[MessageReader, MessageWriter]>((resolve, _reject) => {
@@ -1253,6 +1246,41 @@ async function createClientPipeTransport(pipeName: string): Promise<PipeTranspor
                     return connected;
                 },
             });
+        });
+    });
+}
+
+async function TryConnect(pipeName: string): Promise<PipeTransport> {
+    return new Promise<PipeTransport>((resolve, reject) => {
+        const client = net.connect(pipeName, () => {
+            console.log('Connected to server via named pipe');
+
+            // Handle data received from the server
+            client.on('data', (data) => {
+                console.log('Received from server:', data.toString());
+
+                // Send a response back to the server
+                client.write('Hello from JavaScript client!');
+                const transport: [MessageReader, MessageWriter] = [
+                    new SocketMessageReader(client, 'utf-8'),
+                    new SocketMessageWriter(client, 'utf-8'),
+                ];
+                resolve({
+                    onConnected: async () => {
+                        return transport;
+                    },
+                });
+            });
+
+            // Handle the end event (server closes the connection)
+            client.on('end', () => {
+                console.log('Connection closed by server');
+            });
+        });
+
+        client.on('error', (error) => {
+            console.error('Error:', error.message);
+            reject(error);
         });
     });
 }
