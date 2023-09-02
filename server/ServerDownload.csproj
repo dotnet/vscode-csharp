@@ -20,7 +20,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageDownload Include="Microsoft.CodeAnalysis.LanguageServer" version="[$(MicrosoftCodeAnalysisLanguageServerVersion)]" />
+        <PackageDownload Include="$(PackageName)" version="[$(PackageVersion)]" />
     </ItemGroup>
 
 </Project>
