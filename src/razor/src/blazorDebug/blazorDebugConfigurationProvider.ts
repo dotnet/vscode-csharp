@@ -206,7 +206,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
 
         showErrorMessage(
             vscode,
-            vscode.l10n.t('Run and Debug: A valid browser is not installed. Please install Edge, Chrome, or Firefox.')
+            vscode.l10n.t('Run and Debug: A valid browser is not installed. Please install Edge or Chrome.')
         );
         return undefined;
     }
