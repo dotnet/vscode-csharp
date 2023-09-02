@@ -12,7 +12,7 @@
         "vsix/": true
     },
     "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "csharp.suppressDotnetRestoreNotification": true,
     "typescript.tsdk": "./node_modules/typescript/lib",
