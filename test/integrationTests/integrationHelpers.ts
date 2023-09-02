@@ -7,6 +7,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { CSharpExtensionExports } from '../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
+import { ServerStateChange } from '../../src/lsptoolshost/serverStateChange';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 export async function activateCSharpExtension(): Promise<void> {
     // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
@@ -15,7 +17,7 @@ export async function activateCSharpExtension(): Promise<void> {
         vscode.extensions.getExtension<CSharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
     if (!dotnetRuntimeExtension) {
         await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId);
-        await reloadWindow();
+        await vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
 
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
@@ -23,11 +25,33 @@ export async function activateCSharpExtension(): Promise<void> {
         throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
+    // Run a restore manually to make sure the project is up to date since we don't have automatic restore.
+    await testAssetWorkspace.restoreLspToolsHostAsync();
+
+    // If the extension is already active, we need to restart it to ensure we start with a clean server state.
+    // For example, a previous test may have changed configs, deleted restored packages or made other changes that would put it in an invalid state.
+    let shouldRestart = false;
+    if (csharpExtension.isActive) {
+        shouldRestart = true;
+    }
+
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
     await csharpExtension.activate();
-
     await csharpExtension.exports.initializationFinished();
     console.log('ms-dotnettools.csharp activated');
+
+    if (shouldRestart) {
+        // Register to wait for initialization events and restart the server.
+        const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
+            csharpExtension.exports.experimental.languageServerEvents.onServerStateChange(async (state) => {
+                if (state === ServerStateChange.ProjectInitializationComplete) {
+                    resolve();
+                }
+            });
+        });
+        await vscode.commands.executeCommand('dotnet.restartServer');
+        await waitForInitialProjectLoad;
+    }
 }
 
 export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<void> {
@@ -38,10 +62,6 @@ export async function openFileInWorkspaceAsync(relativeFilePath: string): Promis
     }
 
     await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath));
-}
-
-export async function reloadWindow(): Promise<void> {
-    await vscode.commands.executeCommand('workbench.action.reloadWindow');
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {

@@ -12,11 +12,10 @@ import { TestProgress } from '../../src/lsptoolshost/roslynProtocol';
 
 jestLib.describe(`Unit Testing ${testAssetWorkspace.description}`, function () {
     jestLib.beforeAll(async function () {
-        await testAssetWorkspace.restoreLspToolsHostAsync();
+        await activateCSharpExtension();
     });
 
     jestLib.beforeEach(async function () {
-        await activateCSharpExtension();
         const fileName = path.join('test', 'UnitTest1.cs');
         await openFileInWorkspaceAsync(fileName);
     });
