@@ -117,7 +117,7 @@
   "There was an unexpected error while launching your debugging session. Check the console for helpful logs and visit the debugging docs for more info.": "There was an unexpected error while launching your debugging session. Check the console for helpful logs and visit the debugging docs for more info.",
   "View Debug Docs": "View Debug Docs",
   "Ignore": "Ignore",
-  "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.",
+  "Run and Debug: A valid browser is not installed. Please install Edge, Chrome, or Firefox.": "Run and Debug: A valid browser is not installed. Please install Edge, Chrome, or Firefox.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change",
   "Reload Window": "Reload Window",
   "C# configuration has changed. Would you like to relaunch the Language Server with your changes?": "C# configuration has changed. Would you like to relaunch the Language Server with your changes?",

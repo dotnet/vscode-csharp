@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import execa = require('execa');
 import { promises, readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
@@ -183,34 +184,10 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
 
     public static async determineBrowserType(): Promise<string | undefined> {
         // There was no browser specified by the user, so we will do some auto-detection to find a browser,
-        // favoring chrome if multiple valid options are installed.
-        const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises, null);
-        let didFindBrowser = false;
-        try {
-            const chromeInstallations = await chromeBrowserFinder.findAll();
-            didFindBrowser = chromeInstallations.length > 0;
-        } catch (error) {
-            // chromeBrowserFinder.findAll() can throw if Chrome is not installed.
-        }
-
-        if (didFindBrowser) {
-            showInformationMessage(
-                vscode,
-                BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Chrome'`)
-            );
-
-            return BlazorDebugConfigurationProvider.chromeBrowserType;
-        }
-
-        const edgeBrowserFinder = new EdgeBrowserFinder(process.env, promises, null);
-        try {
-            const edgeInstallations = await edgeBrowserFinder.findAll();
-            didFindBrowser = edgeInstallations.length > 0;
-        } catch (error) {
-            // edgeBrowserFinder.findAll() can throw if Edge is not installed.
-        }
-
-        if (didFindBrowser) {
+        // favoring Edge if multiple valid options are installed.
+        const edgeBrowserFinder = new EdgeBrowserFinder(process.env, promises, execa);
+        const edgeInstallations = await edgeBrowserFinder.findAll();
+        if (edgeInstallations.length > 0) {
             showInformationMessage(
                 vscode,
                 BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Edge'`)
@@ -219,15 +196,20 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             return BlazorDebugConfigurationProvider.edgeBrowserType;
         }
 
-        const firefoxBrowserFinder = new FirefoxBrowserFinder(process.env, promises, null);
-        try {
-            const firefoxInstallations = await firefoxBrowserFinder.findAll();
-            didFindBrowser = firefoxInstallations.length > 0;
-        } catch (error) {
-            // firefoxBrowserFinder.findAll() can throw if Firefox is not installed.
+        const chromeBrowserFinder = new ChromeBrowserFinder(process.env, promises, execa);
+        const chromeInstallations = await chromeBrowserFinder.findAll();
+        if (chromeInstallations.length > 0) {
+            showInformationMessage(
+                vscode,
+                BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Chrome'`)
+            );
+
+            return BlazorDebugConfigurationProvider.chromeBrowserType;
         }
 
-        if (didFindBrowser) {
+        const firefoxBrowserFinder = new FirefoxBrowserFinder(process.env, promises, execa);
+        const firefoxInstallations = await firefoxBrowserFinder.findAll();
+        if (firefoxInstallations.length > 0) {
             showInformationMessage(
                 vscode,
                 BlazorDebugConfigurationProvider.autoDetectUserNotice.replace('{0}', `'Firefox'`)
@@ -238,7 +220,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
 
         showErrorMessage(
             vscode,
-            vscode.l10n.t('Run and Debug: A valid browser is not installed. Please install Edge or Chrome.')
+            vscode.l10n.t('Run and Debug: A valid browser is not installed. Please install Edge, Chrome, or Firefox.')
         );
         return undefined;
     }

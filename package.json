@@ -86,6 +86,7 @@
     "@vscode/js-debug-browsers": "^1.1.0",
     "async-file": "2.0.2",
     "cross-spawn": "6.0.5",
+    "execa": "4.0.0",
     "fs-extra": "9.1.0",
     "http-proxy-agent": "4.0.1",
     "https-proxy-agent": "5.0.0",
