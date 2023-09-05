@@ -136,9 +136,9 @@
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.description": "控制模組篩選作業在兩個基本作業模式中的哪一個。",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription": "載入所有模組的符號，除非模組位於 'excludedModules' 陣列中。",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription": "請勿嘗試載入任何模組的符號，除非其位於 'includedModules' 陣列中，或包含在 'includeSymbolsNextToModules' 設定中。",
-  "generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description": "如果是 'true'，則會將 Microsoft 符號伺服器 (https​://msdl.microsoft.com​/download/symbols) 新增至符號搜尋路徑。若未指定，這個選項會預設為 'false'。",
-  "generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description": "如果是 'true'，則會將 NuGet.org 符號伺服器 (https​://symbols.nuget.org​/download/symbols) 新增至符號搜尋路徑。若未指定，這個選項會預設為 'false'。",
-  "generateOptionsSchema.symbolOptions.searchPaths.description": "符號陣列伺服器 URL (範例: http​://MyExampleSymbolServer) 或目錄 (範例: /build/symbols) 搜尋 .pdb 檔案。除了預設位置 (位於模組旁和 pdb 原先放置的路徑)，也會搜尋這些目錄。",
+  "generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description": "如果是 'true'，則會將 Microsoft 符號伺服器 (https\u200b://msdl.microsoft.com\u200b/download/symbols) 新增至符號搜尋路徑。若未指定，這個選項會預設為 'false'。",
+  "generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description": "如果是 'true'，則會將 NuGet.org 符號伺服器 (https\u200b://symbols.nuget.org\u200b/download/symbols) 新增至符號搜尋路徑。若未指定，這個選項會預設為 'false'。",
+  "generateOptionsSchema.symbolOptions.searchPaths.description": "符號陣列伺服器 URL (範例: http\u200b://MyExampleSymbolServer) 或目錄 (範例: /build/symbols) 搜尋 .pdb 檔案。除了預設位置 (位於模組旁和 pdb 原先放置的路徑)，也會搜尋這些目錄。",
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[僅支援在局部 macOS 偵錯]\r\n\r\n偵錯程式的架構。除非設定此參數，否則會自動偵測到此情況。允許的值為 'x86_64' 或 'arm64'。",
   "generateOptionsSchema.targetOutputLogPath.description": "設定時，目標應用程式寫入 stdout 和 stderr 的文字 (例如: Console.WriteLine) 將會儲存到指定的檔案。如果主控台設定為 internalConsole 以外的項目，則會略過此選項。例如 '${workspaceFolder}/out.txt'",
   "viewsWelcome.debug.contents": "[為組建和偵錯產生 C# 資產](command:dotnet.generateAssets)\r\n\r\n若要深入了解 launch.json，請參閱[為 C# 偵錯設定 launch.json](https://aka.ms/VSCode-CS-LaunchJson)(英文)。"
