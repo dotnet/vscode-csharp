@@ -99,7 +99,7 @@
   "Required assets to build and debug are missing from '{0}'. Add them?": "빌드 및 디버그에 필요한 자산이 '{0}'에서 누락되었습니다. 추가하시겠습니까?",
   "Restart": "다시 시작",
   "Restart Language Server": "언어 서버 다시 시작",
-  "Run and Debug: A valid browser is not installed": "실행 및 디버그: 올바른 브라우저가 설치되어 있지 않습니다",
+  "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.",
   "Run and Debug: auto-detection found {0} for a launch browser": "실행 및 디버그: 자동 검색에서 시작 브라우저에 대한 {0} 발견",
   "See {0} output": "{0} 출력 보기",
   "Select the process to attach to": "연결할 프로세스 선택",
