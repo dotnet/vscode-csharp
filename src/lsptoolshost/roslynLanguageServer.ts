@@ -47,6 +47,7 @@ import {
     SocketMessageReader,
     SocketMessageWriter,
     MessageTransports,
+    RAL,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -132,6 +133,9 @@ export class RoslynLanguageServer {
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
+    /** Encoding used for communication */
+    private _encoding: RAL.MessageBufferEncoding = 'utf-8';
+
     constructor(
         private platformInfo: PlatformInformation,
         private hostExecutableResolver: IHostExecutableResolver,
@@ -150,9 +154,8 @@ export class RoslynLanguageServer {
         const logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
 
-        // Start the pipeline
         const serverOptions: ServerOptions = async () => {
-            return await this.startServerPipe(logLevel);
+            return await this.startServer(logLevel);
         };
 
         const documentSelector = options.languageServerOptions.documentSelector;
@@ -525,7 +528,7 @@ export class RoslynLanguageServer {
         return capabilities;
     }
 
-    public async startServerPipe(logLevel: string | undefined): Promise<MessageTransports> {
+    public async startServer(logLevel: string | undefined): Promise<MessageTransports> {
         const options = this.optionProvider.GetLatestOptions();
         const serverPath = getServerPath(options, this.platformInfo);
 
@@ -600,7 +603,7 @@ export class RoslynLanguageServer {
 
         // Use a named pipe for communication between client and server.
         const pipeName = randomUUID();
-        const transport = await createClientPipeTransport(pipeName);
+        const transport = await createClientPipeTransport(pipeName, this._encoding);
 
         args.push('--pipe', pipeName);
         let childProcess: cp.ChildProcessWithoutNullStreams;
@@ -613,18 +616,27 @@ export class RoslynLanguageServer {
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
             const argsWithPath = [serverPath].concat(args);
+
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${argsWithPath.join(' ')}`);
+            }
+
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${args.join(' ')}`);
+            }
+
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
-        //TODO: Is this channel output correct?
+        //Log any stderr/stdout messages in our output channel.
         childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) =>
-            _channel.append(isString(data) ? data : data.toString('utf8'))
+            _channel.append(isString(data) ? data : data.toString(this._encoding))
         );
         childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) =>
-            _channel.append(isString(data) ? data : data.toString('utf8'))
+            _channel.append(isString(data) ? data : data.toString(this._encoding))
         );
 
         const protocol = await transport.onConnected();
@@ -634,10 +646,10 @@ export class RoslynLanguageServer {
     private registerDynamicFileInfo(client: RoslynLanguageClient) {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
-        client.onRequest(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName, async (request: any) =>
+        client.onRequest(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName, async (request) =>
             vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
         );
-        client.onNotification(RoslynLanguageServer.removeRazorDynamicFileInfoMethodName, async (notification: any) =>
+        client.onNotification(RoslynLanguageServer.removeRazorDynamicFileInfoMethodName, async (notification) =>
             vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification)
         );
     }
@@ -1106,8 +1118,10 @@ function getSessionId(): string {
     return sessionId;
 }
 
-export async function createClientPipeTransport(pipeName: string): Promise<PipeTransport> {
-    const encoding = 'utf-8';
+async function createClientPipeTransport(
+    pipeName: string,
+    encoding: RAL.MessageBufferEncoding = 'utf-8'
+): Promise<PipeTransport> {
     const PIPE_PATH = '\\\\.\\pipe\\';
 
     const connected = new Promise<[MessageReader, MessageWriter]>((resolve, reject) => {
@@ -1135,34 +1149,6 @@ export async function createClientPipeTransport(pipeName: string): Promise<PipeT
         },
     };
 }
-
-/*
-export async function createClientPipeTransport(pipeName: string): Promise<PipeTransport> {
-    const encoding = 'utf-8';
-    const PIPE_PATH = '\\\\.\\pipe\\';
-    let connectResolve: (value: [MessageReader, MessageWriter]) => void;
-    const connected = new Promise<[MessageReader, MessageWriter]>((resolve, _reject) => {
-        connectResolve = resolve;
-    });
-    return new Promise<PipeTransport>((resolve, reject) => {
-        const server: net.Server = net.createServer((socket: net.Socket) => {
-            server.close();
-            connectResolve([new SocketMessageReader(socket, encoding), new SocketMessageWriter(socket, encoding)]);
-        });
-        server.on('error', reject);
-
-        const pipeConnectionString = PIPE_PATH + pipeName;
-        server.listen(pipeConnectionString, () => {
-            server.removeListener('error', reject);
-            resolve({
-                onConnected: async () => {
-                    return connected;
-                },
-            });
-        });
-    });
-}
-*/
 
 export function isString(value: any): value is string {
     return typeof value === 'string' || value instanceof String;
