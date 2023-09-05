@@ -46,7 +46,7 @@ import {
     PipeTransport,
     SocketMessageReader,
     SocketMessageWriter,
-    StreamInfo,
+    MessageTransports,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -525,7 +525,7 @@ export class RoslynLanguageServer {
         return capabilities;
     }
 
-    public async startServerPipe(logLevel: string | undefined): Promise<StreamInfo> {
+    public async startServerPipe(logLevel: string | undefined): Promise<MessageTransports> {
         const options = this.optionProvider.GetLatestOptions();
         const serverPath = getServerPath(options, this.platformInfo);
 
@@ -598,43 +598,37 @@ export class RoslynLanguageServer {
 
         args.push('--extensionLogDirectory', this.context.logUri.fsPath);
 
-        const pipeName = createNewPipeName(); // Pipe name must match the server
+        // Use a named pipe for communication between client and server.
+        const pipeName = randomUUID();
+        const transport = await createClientPipeTransport(pipeName);
 
-        await createClientPipeTransport(pipeName).then(async (transport) => {
-            args.push('--pipe', pipeName);
+        args.push('--pipe', pipeName);
+        let childProcess: cp.ChildProcessWithoutNullStreams;
+        const cpOptions: cp.SpawnOptionsWithoutStdio = {
+            detached: true,
+            windowsHide: true,
+            env: env,
+        };
 
-            let childProcess: cp.ChildProcessWithoutNullStreams;
-            const cpOptions: cp.SpawnOptionsWithoutStdio = {
-                detached: true,
-                windowsHide: true,
-                env: env,
-            };
+        if (serverPath.endsWith('.dll')) {
+            // If we were given a path to a dll, launch that via dotnet.
+            const argsWithPath = [serverPath].concat(args);
+            childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
+        } else {
+            // Otherwise assume we were given a path to an executable.
+            childProcess = cp.spawn(serverPath, args, cpOptions);
+        }
 
-            if (serverPath.endsWith('.dll')) {
-                // If we were given a path to a dll, launch that via dotnet.
-                const argsWithPath = [serverPath].concat(args);
-                childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
-            } else {
-                // Otherwise assume we were given a path to an executable.
-                childProcess = cp.spawn(serverPath, args, cpOptions);
-            }
+        //TODO: Is this channel output correct?
+        childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) =>
+            _channel.append(isString(data) ? data : data.toString('utf8'))
+        );
+        childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) =>
+            _channel.append(isString(data) ? data : data.toString('utf8'))
+        );
 
-            //TODO: Is this channel output correct?
-            childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) =>
-                _channel.append(isString(data) ? data : data.toString('utf8'))
-            );
-            childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) =>
-                _channel.append(isString(data) ? data : data.toString('utf8'))
-            );
-
-            return transport.onConnected().then((protocol) => {
-                // PROBLEM: This onConnected is never hit
-                return { reader: protocol[0], writer: protocol[1] };
-            });
-        });
-
-        // TODO: Actually handle error case appropriately
-        throw new Error('Failed to start server');
+        const protocol = await transport.onConnected();
+        return { reader: protocol[0], writer: protocol[1] };
     }
 
     private registerDynamicFileInfo(client: RoslynLanguageClient) {
@@ -1112,18 +1106,40 @@ function getSessionId(): string {
     return sessionId;
 }
 
-function createNewPipeName() {
-    const WINDOWS_PIPE_NAME_PREFIX = '\\\\.\\pipe';
-    const NIX_PIPE_NAME_PREFIX = '/tmp';
-    const pipeName = path.join(
-        process.platform === 'win32' ? WINDOWS_PIPE_NAME_PREFIX : NIX_PIPE_NAME_PREFIX,
-        randomUUID()
-    );
-    return pipeName;
-}
-
 export async function createClientPipeTransport(pipeName: string): Promise<PipeTransport> {
     const encoding = 'utf-8';
+    const PIPE_PATH = '\\\\.\\pipe\\';
+
+    const connected = new Promise<[MessageReader, MessageWriter]>((resolve, reject) => {
+        const server: net.Server = net.createServer((socket: net.Socket) => {
+            server.close();
+            resolve([new SocketMessageReader(socket, encoding), new SocketMessageWriter(socket, encoding)]);
+        });
+
+        server.on('error', (error) => {
+            reject(error);
+        });
+
+        // Start the server listening on the pipe name.
+        const pipeConnectionString = PIPE_PATH + pipeName;
+        server.listen(pipeConnectionString, () => {
+            server.removeListener('error', (error) => {
+                reject(error);
+            });
+        });
+    });
+
+    return {
+        onConnected: async () => {
+            return await connected;
+        },
+    };
+}
+
+/*
+export async function createClientPipeTransport(pipeName: string): Promise<PipeTransport> {
+    const encoding = 'utf-8';
+    const PIPE_PATH = '\\\\.\\pipe\\';
     let connectResolve: (value: [MessageReader, MessageWriter]) => void;
     const connected = new Promise<[MessageReader, MessageWriter]>((resolve, _reject) => {
         connectResolve = resolve;
@@ -1131,11 +1147,12 @@ export async function createClientPipeTransport(pipeName: string): Promise<PipeT
     return new Promise<PipeTransport>((resolve, reject) => {
         const server: net.Server = net.createServer((socket: net.Socket) => {
             server.close();
-            // PROBLEM: This connection listener is never hit
             connectResolve([new SocketMessageReader(socket, encoding), new SocketMessageWriter(socket, encoding)]);
         });
         server.on('error', reject);
-        server.listen(pipeName, () => {
+
+        const pipeConnectionString = PIPE_PATH + pipeName;
+        server.listen(pipeConnectionString, () => {
             server.removeListener('error', reject);
             resolve({
                 onConnected: async () => {
@@ -1145,6 +1162,7 @@ export async function createClientPipeTransport(pipeName: string): Promise<PipeT
         });
     });
 }
+*/
 
 export function isString(value: any): value is string {
     return typeof value === 'string' || value instanceof String;
