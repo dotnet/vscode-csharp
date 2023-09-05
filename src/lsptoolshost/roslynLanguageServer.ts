@@ -63,8 +63,11 @@ import { RoslynLanguageClient } from './roslynLanguageClient';
 import { registerUnitTestingCommands } from './unitTesting';
 import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
+import { reportProjectConfigurationEvent } from '../shared/projectConfiguration';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { registerLanguageServerOptionChanges } from './optionChanges';
 import { Observable } from 'rxjs';
+import { DotnetInfo } from '../shared/utils/dotnetInfo';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -135,7 +138,7 @@ export class RoslynLanguageServer {
      * Resolves server options and starts the dotnet language server process. The process is started asynchronously and this method will not wait until
      * the process is launched.
      */
-    public start(): void {
+    public async start(): Promise<void> {
         const options = this.optionProvider.GetLatestOptions();
         const logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
@@ -233,6 +236,22 @@ export class RoslynLanguageServer {
             );
         });
 
+        // Store the dotnet info outside of the notification so we're not running dotnet --info every time the project changes.
+        let dotnetInfo: DotnetInfo | undefined = undefined;
+        this._languageClient.onNotification(RoslynProtocol.ProjectConfigurationNotification.type, async (params) => {
+            if (!dotnetInfo) {
+                dotnetInfo = await getDotnetInfo([]);
+            }
+            reportProjectConfigurationEvent(
+                this.telemetryReporter,
+                params,
+                this.platformInfo,
+                dotnetInfo,
+                this._solutionFile?.fsPath,
+                true
+            );
+        });
+
         this._languageClient.onNotification(RoslynProtocol.ShowToastNotification.type, async (notification) => {
             const messageOptions: vscode.MessageOptions = {
                 modal: false,
@@ -309,7 +328,7 @@ export class RoslynLanguageServer {
      */
     public async restart(): Promise<void> {
         await this.stop();
-        this.start();
+        await this.start();
     }
 
     /**
@@ -554,7 +573,7 @@ export class RoslynLanguageServer {
         }
 
         for (const extensionPath of this.additionalExtensionPaths) {
-            args.push('--extension', `"${extensionPath}"`);
+            args.push('--extension', extensionPath);
         }
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -608,9 +627,18 @@ export class RoslynLanguageServer {
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
             const argsWithPath = [serverPath].concat(args);
+
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${argsWithPath.join(' ')}`);
+            }
+
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${args.join(' ')}`);
+            }
+
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
@@ -865,7 +893,7 @@ export async function activateRoslynLanguageServer(
     });
 
     // Start the language server.
-    _languageServer.start();
+    await _languageServer.start();
 
     return _languageServer;
 

@@ -8,6 +8,7 @@
         ],
         "sourceMap": true,
         "moduleResolution": "node",
+        "moduleDetection": "force",
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
@@ -23,5 +24,6 @@
         "typings",
         "__mocks__",
         "jest.config.ts",
+        "baseJestConfig.ts",
     ]
 }

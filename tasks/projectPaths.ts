@@ -19,9 +19,16 @@ export const languageServerDirectory = path.join(rootPath, '.roslyn');
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 
-export const testRootPath = path.join(rootPath, 'out', 'omnisharptest');
-export const featureTestRunnerPath = path.join(testRootPath, 'runFeatureTests.js');
-export const integrationTestRunnerPath = path.join(testRootPath, 'runIntegrationTests.js');
-export const testAssetsRootPath = path.join(rootPath, 'omnisharptest', 'omnisharpIntegrationTests', 'testAssets');
+export const omnisharpTestRootPath = path.join(rootPath, 'out', 'omnisharptest');
+export const omnisharpFeatureTestRunnerPath = path.join(omnisharpTestRootPath, 'runFeatureTests.js');
+export const omnisharpTestAssetsRootPath = path.join(
+    rootPath,
+    'omnisharptest',
+    'omnisharpIntegrationTests',
+    'testAssets'
+);
+
+export const testRootPath = path.join(rootPath, 'out', 'test');
+export const integrationTestRunnerPath = path.join(testRootPath, 'integrationTests', 'runIntegrationTests.js');
 
 export const nodePath = path.join(process.env.NVM_BIN ? `${process.env.NVM_BIN}${path.sep}` : '', 'node');

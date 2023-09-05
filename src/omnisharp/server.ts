@@ -33,6 +33,7 @@ import { validateRequirements } from './requirementCheck';
 import { Advisor } from '../features/diagnosticsProvider';
 import TestManager from '../features/dotnetTest';
 import { findLaunchTargets } from './launcher';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 enum ServerState {
     Starting,
@@ -397,7 +398,7 @@ export class OmniSharpServer {
         );
 
         disposables.add(
-            this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
+            this.onProjectConfigurationReceived((message: ProjectConfigurationMessage) => {
                 this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
             })
         );
@@ -611,7 +612,7 @@ export class OmniSharpServer {
         );
     }
 
-    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void) {
+    private onProjectConfigurationReceived(listener: (e: ProjectConfigurationMessage) => void) {
         return this._addListener(Events.ProjectConfiguration, listener);
     }
 

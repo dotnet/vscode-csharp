@@ -73,22 +73,25 @@ gulp.task('installDependencies', async () => {
     }
 });
 
+gulp.task(
+    'updateRoslynVersion',
+    // Run the fetch of all packages, and then also installDependencies after
+    gulp.series(async () => {
+        const packageJSON = getPackageJSON();
+
+        // Fetch the neutral package that we don't otherwise have in our platform list
+        await acquireRoslyn(packageJSON, undefined, true);
+
+        // And now fetch each platform specific
+        for (const p of platformSpecificPackages) {
+            await acquireRoslyn(packageJSON, p.platformInfo, true);
+        }
+    }, 'installDependencies')
+);
+
 // Install Tasks
 async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformation) {
-    const roslynVersion = packageJSON.defaults.roslyn;
-    const packagePath = await acquireNugetPackage('Microsoft.CodeAnalysis.LanguageServer', roslynVersion);
-
-    // Find the matching server RID for the current platform.
-    let serverPlatform: string;
-    if (platformInfo === undefined) {
-        serverPlatform = 'neutral';
-    } else {
-        serverPlatform = platformSpecificPackages.find(
-            (p) =>
-                p.platformInfo.platform === platformInfo.platform &&
-                p.platformInfo.architecture === platformInfo.architecture
-        )!.rid;
-    }
+    const { packagePath, serverPlatform } = await acquireRoslyn(packageJSON, platformInfo, false);
 
     // Get the directory containing the server executable for the current platform.
     const serverExecutableDirectory = path.join(packagePath, 'content', 'LanguageServer', serverPlatform);
@@ -105,6 +108,33 @@ async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformatio
     if (!fs.existsSync(languageServerDll)) {
         throw new Error(`Failed to copy server executable`);
     }
+}
+
+async function acquireRoslyn(
+    packageJSON: any,
+    platformInfo: PlatformInformation | undefined,
+    interactive: boolean
+): Promise<{ packagePath: string; serverPlatform: string }> {
+    const roslynVersion = packageJSON.defaults.roslyn;
+
+    // Find the matching server RID for the current platform.
+    let serverPlatform: string;
+    if (platformInfo === undefined) {
+        serverPlatform = 'neutral';
+    } else {
+        serverPlatform = platformSpecificPackages.find(
+            (p) =>
+                p.platformInfo.platform === platformInfo.platform &&
+                p.platformInfo.architecture === platformInfo.architecture
+        )!.rid;
+    }
+
+    const packagePath = await acquireNugetPackage(
+        `Microsoft.CodeAnalysis.LanguageServer.${serverPlatform}`,
+        roslynVersion,
+        interactive
+    );
+    return { packagePath, serverPlatform };
 }
 
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
@@ -138,7 +168,7 @@ async function installPackageJsonDependency(
     }
 }
 
-async function acquireNugetPackage(packageName: string, packageVersion: string): Promise<string> {
+async function acquireNugetPackage(packageName: string, packageVersion: string, interactive: boolean): Promise<string> {
     packageName = packageName.toLocaleLowerCase();
     const packageOutputPath = path.join(nugetTempPath, packageName, packageVersion);
     if (fs.existsSync(packageOutputPath)) {
@@ -150,9 +180,11 @@ async function acquireNugetPackage(packageName: string, packageVersion: string):
     const dotnetArgs = [
         'restore',
         path.join(rootPath, 'server'),
-        `/p:MicrosoftCodeAnalysisLanguageServerVersion=${packageVersion}`,
+        `/p:PackageName=${packageName}`,
+        `/p:PackageVersion=${packageVersion}`,
     ];
-    if (argv.interactive) {
+
+    if (interactive) {
         dotnetArgs.push('--interactive');
     }
 

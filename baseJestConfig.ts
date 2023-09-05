@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import type { Config } from 'jest';
 
-const config: Config = {
-    projects: [
-        '<rootDir>/test/unitTests/jest.config.ts',
-        '<rootDir>/test/integrationTests/jest.config.ts',
-        '<rootDir>/omnisharptest/omnisharpJestTests/jest.config.ts',
-    ],
+/**
+ * Defines a base project config that we can re-use across the project specific jest configs.
+ * We do this because jest generally does not inherit project configuration settings.
+ */
+export const baseProjectConfig: Config = {
+    preset: 'ts-jest',
+    testEnvironment: 'node',
+    transformIgnorePatterns: ['/dist/.+\\.js'],
 };
-
-export default config;

@@ -5,22 +5,18 @@
 
 import * as vscode from 'vscode';
 
-import { should, assert } from 'chai';
+import * as jestLib from '@jest/globals';
 import testAssetWorkspace from '../../omnisharptest/omnisharpIntegrationTests/testAssets/testAssetWorkspace';
 import * as path from 'path';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import { InlayHint, InlayHintKind, Position } from 'vscode-languageserver-protocol';
 
-suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
+const describeif = (condition: boolean) => (condition ? jestLib.describe : jestLib.describe.skip);
+const skip = !isRazorWorkspace(vscode.workspace) && !isSlnWithGenerator(vscode.workspace);
+
+describeif(skip)(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
-
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    jestLib.beforeEach(async function () {
         const editorConfig = vscode.workspace.getConfiguration('editor');
         await editorConfig.update('inlayHints.enabled', true);
         const dotnetConfig = vscode.workspace.getConfiguration('dotnet');
@@ -48,11 +44,11 @@ suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
         await activateCSharpExtension();
     });
 
-    suiteTeardown(async () => {
+    jestLib.afterEach(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test('Hints retrieved for region', async () => {
+    jestLib.test('Hints retrieved for region', async () => {
         const range = new vscode.Range(new vscode.Position(4, 8), new vscode.Position(15, 85));
         const hints: vscode.InlayHint[] = await vscode.commands.executeCommand(
             'vscode.executeInlayHintProvider',
@@ -60,7 +56,7 @@ suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
             range
         );
 
-        assert.lengthOf(hints, 5);
+        jestLib.expect(hints).toHaveLength(5);
 
         assertInlayHintEqual(hints[0], InlayHint.create(Position.create(6, 12), 'InlayHints', InlayHintKind.Type));
         assertInlayHintEqual(hints[1], InlayHint.create(Position.create(7, 27), 'InlayHints', InlayHintKind.Type));
@@ -70,10 +66,10 @@ suite(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
 
         function assertInlayHintEqual(actual: vscode.InlayHint, expected: InlayHint) {
             const actualLabel = actual.label as string;
-            assert.equal(actualLabel, expected.label);
-            assert.equal(actual.position.line, expected.position.line);
-            assert.equal(actual.position.character, expected.position.character);
-            assert.equal(actual.kind, expected.kind);
+            jestLib.expect(actualLabel).toBe(expected.label);
+            jestLib.expect(actual.position.line).toBe(expected.position.line);
+            jestLib.expect(actual.position.character).toBe(expected.position.character);
+            jestLib.expect(actual.kind).toBe(expected.kind);
         }
     });
 });

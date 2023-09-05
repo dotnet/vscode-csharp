@@ -11,13 +11,16 @@ import { Octokit } from '@octokit/rest';
 interface Options {
     releaseVersion: string;
     releaseCommit: string;
-    dryRun: boolean;
+    // Even it is specified as boolean, it would still be parsed as string in compiled js.
+    dryRun: string;
 }
 
 gulp.task('createTags', async (): Promise<void> => {
     const options = minimist<Options>(process.argv.slice(2));
     console.log(`releaseVersion: ${options.releaseVersion}`);
     console.log(`releaseCommit: ${options.releaseCommit}`);
+    const dryRun = options.dryRun.toLocaleLowerCase() === 'true';
+    console.log(`dry run: ${dryRun}`);
 
     const roslynCommit = await findRoslynCommitAsync();
     if (!roslynCommit) {
@@ -25,7 +28,8 @@ gulp.task('createTags', async (): Promise<void> => {
         return;
     }
 
-    if (options.dryRun) {
+    // The compiled option value in js type is 'any' type.
+    if (dryRun) {
         console.log('Tagging is skipped in dry run mode.');
         return;
     } else {
@@ -74,7 +78,7 @@ async function findRoslynCommitAsync(): Promise<string | null> {
     // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
     const nuspecFile = fs
         .readFileSync(
-            `out/.nuget/microsoft.codeAnalysis.languageServer/${roslynVersion}/microsoft.codeAnalysis.languageServer.nuspec`
+            `out/.nuget/microsoft.codeanalysis.languageserver/${roslynVersion}/microsoft.codeanalysis.languageserver.nuspec`
         )
         .toString();
     const results = /commit="(.*)"/.exec(nuspecFile);

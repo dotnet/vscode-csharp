@@ -5,10 +5,10 @@
         }
     ],
     "settings": {
+        "omnisharp.defaultLaunchSolution": "SolutionFilter.slnf",
         "omnisharp.path": "latest",
         "omnisharp.enableRoslynAnalyzers": true,
         "dotnet.server.useOmnisharp": true,
-        "omnisharp.enableLspDriver": true,
-        "dotnet.defaultSolution": "b_SecondInOrder_SlnFile.sln"
+        "omnisharp.enableLspDriver": false
     }
 }

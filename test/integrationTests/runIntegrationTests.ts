@@ -6,7 +6,7 @@
 import * as cp from 'child_process';
 import * as path from 'path';
 import { downloadAndUnzipVSCode, resolveCliArgsFromVSCodeExecutablePath, runTests } from '@vscode/test-electron';
-import { execChildProcess } from '../src/common';
+import { execChildProcess } from '../../src/common';
 
 function getSln(workspacePath: string): string | undefined {
     if (workspacePath.endsWith('slnWithGenerator')) {
@@ -20,18 +20,31 @@ async function main() {
         const vscodeExecutablePath = await downloadAndUnzipVSCode('stable');
         const [cli, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
-        cp.spawnSync(cli, [...args, '--install-extension', 'ms-dotnettools.vscode-dotnet-runtime'], {
+        console.log('Display: ' + process.env.DISPLAY);
+
+        const result = cp.spawnSync(cli, [...args, '--install-extension', 'ms-dotnettools.vscode-dotnet-runtime'], {
             encoding: 'utf-8',
             stdio: 'inherit',
         });
+        if (result.error) {
+            throw new Error(`Failed to install the runtime extension: ${result.error}`);
+        }
 
         // The folder containing the Extension Manifest package.json
         // Passed to `--extensionDevelopmentPath`
-        const extensionDevelopmentPath = path.resolve(__dirname, '../../');
+        const extensionDevelopmentPath = process.env.CODE_EXTENSIONS_PATH;
+        if (!extensionDevelopmentPath) {
+            throw new Error('Environment variable CODE_EXTENSIONS_PATH is empty');
+        }
 
         // The path to the extension test runner script
         // Passed to --extensionTestsPath
-        const extensionTestsPath = path.resolve(__dirname, './omnisharpIntegrationTests/index');
+        const extensionTestsPath = process.env.EXTENSIONS_TESTS_PATH;
+
+        if (!extensionTestsPath) {
+            console.error('Empty extension tests path');
+            process.exit(-1);
+        }
 
         // The integration tests expect that the workspace to run the
         // tests against is set in an environment variable.
@@ -59,7 +72,8 @@ async function main() {
         const exitCode = await runTests({
             extensionDevelopmentPath,
             extensionTestsPath,
-            launchArgs: [workspacePath, '-n', '--verbose'],
+            // Launch with info logging as anything else is way too verbose and will hide test results.
+            launchArgs: [workspacePath, '-n', '--log', 'info'],
             extensionTestsEnv: process.env,
         });
 
