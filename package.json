@@ -1407,21 +1407,6 @@
                     "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
-                  "engineLogging": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
-                    "default": false
-                  },
-                  "browserStdOut": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
-                    "default": true
-                  },
-                  "elapsedTiming": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
-                    "default": false
-                  },
                   "threadExit": {
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",

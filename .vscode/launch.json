@@ -290,6 +290,17 @@
               "NEW_DEPS_ID": "Razor"
           },
           "cwd": "${workspaceFolder}"
-      }
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Generate debugger options schema",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+        "args": [
+            "generateOptionsSchema"
+        ],
+        "cwd": "${workspaceFolder}"
+    }
     ]
 }
