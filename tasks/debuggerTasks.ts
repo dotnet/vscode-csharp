@@ -42,7 +42,10 @@ gulp.task('fixLocURLs', async (): Promise<void> => {
                 // Look for instances of http[s] with our without the hidden zero-width symbol and add it.
                 packageNLSJson[key] = packageNLSJson[key].replace(/http(s?)\u200b?:\/\//, `http$1:\u200b://`);
                 // Find the instances of /download/symbols and inject a hidden zero-width symbol.
-                packageNLSJson[key] = packageNLSJson[key].replace(/\u200b?\/download\/symbols/, `\u200b/download/symbols`);
+                packageNLSJson[key] = packageNLSJson[key].replace(
+                    /\u200b?\/download\/symbols/,
+                    `\u200b/download/symbols`
+                );
             }
         }
 
