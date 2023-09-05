@@ -1124,23 +1124,15 @@ async function createClientPipeTransport(
 ): Promise<PipeTransport> {
     const PIPE_PATH = '\\\\.\\pipe\\';
 
-    const connected = new Promise<[MessageReader, MessageWriter]>((resolve, reject) => {
+    const connected = new Promise<[MessageReader, MessageWriter]>((resolve) => {
         const server: net.Server = net.createServer((socket: net.Socket) => {
             server.close();
             resolve([new SocketMessageReader(socket, encoding), new SocketMessageWriter(socket, encoding)]);
         });
 
-        server.on('error', (error) => {
-            reject(error);
-        });
-
         // Start the server listening on the pipe name.
         const pipeConnectionString = PIPE_PATH + pipeName;
-        server.listen(pipeConnectionString, () => {
-            server.removeListener('error', (error) => {
-                reject(error);
-            });
-        });
+        server.listen(pipeConnectionString);
     });
 
     return {
