@@ -9,6 +9,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Add 1.x setting names to migrated settings descriptions (PR: [#6266](https://github.com/dotnet/vscode-csharp/pull/6266))
+
+## 2.0.436
 * Update Roslyn version (PR: [#6245](https://github.com/dotnet/vscode-csharp/pull/6245))
   * Fix import completion (PR: [#69691](https://github.com/dotnet/roslyn/pull/69691))
   * Reduce overhead on semantic token refresh requests (PR: [#69690](https://github.com/dotnet/roslyn/pull/69690))
