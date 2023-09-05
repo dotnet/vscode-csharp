@@ -4,11 +4,16 @@
 - [O# Parity] FixAll support for code fixes and refactorings [#5735](https://github.com/dotnet/vscode-csharp/issues/5735)
 - [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
 - [O# Parity] Support loading projects/files without a solution file [#5722](https://github.com/dotnet/vscode-csharp/issues/5722)
-- [O# Parity] Some csproj projects will not correctly load [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
+- [O# Parity] Projects running on Mono may not load correctly [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
 - [O# Parity] Run and debug tests in context [#5719](https://github.com/dotnet/vscode-csharp/issues/5719)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn version (PR: [#6285](https://github.com/dotnet/vscode-csharp/pull/6285))
+  * Includes better support for .NET 8 and .NET Framework-targeting projects (PR: [#69616](https://github.com/dotnet/roslyn/pull/69616))
+    * This should fix a number of reports where projects don't have full IntelliSense. .NET Framework projects on Windows should load without errors. .NET Framework targeting projects on Mac and Linux which would use Mono are still processed as if they are .NET Core projects and may not load correctly; support for Mono is coming in a future update.
+
+## 2.0.448
 * Update Roslyn version (PR: [#6264](https://github.com/dotnet/vscode-csharp/pull/6264))
   * Upgrade MSBuildLocator to fix homebrew dotnet resolution (PR: [#69769](https://github.com/dotnet/roslyn/pull/69769))
   * Fix reported ExeName / ExeVersion (PR: [#69771](https://github.com/dotnet/roslyn/pull/69771))
