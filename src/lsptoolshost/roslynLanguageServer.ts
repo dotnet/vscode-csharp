@@ -48,6 +48,7 @@ import { DotnetInfo } from '../shared/utils/dotnetInfo';
 import { RoslynLanguageServerEvents } from './languageServerEvents';
 import { registerShowToastNotification } from './showToastNotification';
 import { registerRazorCommands } from './razorCommands';
+import { registerOnAutoInsert } from './onAutoInsert';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -751,6 +752,8 @@ export async function activateRoslynLanguageServer(
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, optionProvider, _channel);
+
+    registerOnAutoInsert(optionProvider, languageServer);
 
     context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
 
