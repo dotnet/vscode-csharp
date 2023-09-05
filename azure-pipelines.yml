@@ -38,26 +38,28 @@ stages:
     strategy:
       matrix:
         linux:
-          demandsName: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
+          demandsName: 1es-ubuntu-2004-open
         windows:
-          demandsName: ImageOverride -equals 1es-windows-2022-open
+          demandsName: 1es-windows-2022-open
     pool:
       name: NetCore-Public
-      demands: $(demandsName)
+      demands: ImageOverride -equals $(demandsName)
     steps:
     - template: azure-pipelines/test.yml
 
-- stage: Test_Omnisharp
-  displayName: Test Omnisharp
+- stage: Test_OmniSharp
+  displayName: Test OmniSharp
   dependsOn: []
   jobs:
   - job: Test
     strategy:
       matrix:
         linux:
-          demandsName: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
+          demandsName: 1es-ubuntu-2004-open
+        windows:
+          demandsName: 1es-windows-2022-open
     pool:
       name: NetCore-Public
-      demands: $(demandsName)
+      demands: ImageOverride -equals $(demandsName)
     steps:
     - template: azure-pipelines/test-omnisharp.yml

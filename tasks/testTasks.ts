@@ -14,9 +14,12 @@ import {
     omnisharpTestRootPath,
     testRootPath,
     integrationTestRunnerPath,
-    jestPath,
 } from './projectPaths';
 import spawnNode from './spawnNode';
+import * as jest from 'jest';
+import { Config } from '@jest/types';
+import { jestOmniSharpUnitTestProjectName } from '../omnisharptest/omnisharpJestTests/jest.config';
+import { jestUnitTestProjectName } from '../test/unitTests/jest.config';
 
 gulp.task('omnisharptest:feature', async () => {
     const env = {
@@ -55,12 +58,12 @@ gulp.task('omnisharptest:unit', async () => {
 });
 
 gulp.task('omnisharp:jest:test', async () => {
-    runJestTest(/.*omnisharpJestTests.*/);
+    runJestTest(jestOmniSharpUnitTestProjectName);
 });
 
-const projectNames = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'BasicRazorApp2_1'];
+const omnisharpIntegrationTestProjects = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'BasicRazorApp2_1'];
 
-for (const projectName of projectNames) {
+for (const projectName of omnisharpIntegrationTestProjects) {
     gulp.task(`omnisharptest:integration:${projectName}:stdio`, async () =>
         runOmnisharpIntegrationTest(projectName, 'stdio')
     );
@@ -75,15 +78,15 @@ for (const projectName of projectNames) {
 
 gulp.task(
     'omnisharptest:integration',
-    gulp.series(projectNames.map((projectName) => `omnisharptest:integration:${projectName}`))
+    gulp.series(omnisharpIntegrationTestProjects.map((projectName) => `omnisharptest:integration:${projectName}`))
 );
 gulp.task(
     'omnisharptest:integration:stdio',
-    gulp.series(projectNames.map((projectName) => `omnisharptest:integration:${projectName}:stdio`))
+    gulp.series(omnisharpIntegrationTestProjects.map((projectName) => `omnisharptest:integration:${projectName}:stdio`))
 );
 gulp.task(
     'omnisharptest:integration:lsp',
-    gulp.series(projectNames.map((projectName) => `omnisharptest:integration:${projectName}:lsp`))
+    gulp.series(omnisharpIntegrationTestProjects.map((projectName) => `omnisharptest:integration:${projectName}:lsp`))
 );
 // TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
 gulp.task(
@@ -91,13 +94,21 @@ gulp.task(
     gulp.series('omnisharp:jest:test', 'omnisharptest:feature', 'omnisharptest:unit', 'omnisharptest:integration:stdio')
 );
 
-gulp.task('test:integration:slnWithCsproj', async () => runIntegrationTest('slnWithCsproj'));
-
 gulp.task('test:unit', async () => {
-    runJestTest(/unitTests.*\.ts/);
+    await runJestTest(jestUnitTestProjectName);
 });
 
-gulp.task('test', gulp.series('test:unit'));
+const integrationTestProjects = ['slnWithCsproj'];
+for (const projectName of integrationTestProjects) {
+    gulp.task(`test:integration:${projectName}`, async () => runIntegrationTest(projectName));
+}
+
+gulp.task(
+    'test:integration',
+    gulp.series(integrationTestProjects.map((projectName) => `test:integration:${projectName}`))
+);
+
+gulp.task('test', gulp.series('test:unit', 'test:integration'));
 
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
@@ -139,13 +150,9 @@ async function runIntegrationTest(testAssetName: string) {
     const codeTestsPath = path.join(testRootPath, 'integrationTests');
 
     const env = {
-        OSVC_SUITE: testAssetName,
-        CODE_TESTS_PATH: codeTestsPath,
-        CODE_EXTENSIONS_PATH: codeExtensionPath,
         CODE_TESTS_WORKSPACE: workspacePath,
-        CODE_WORKSPACE_ROOT: rootPath,
+        CODE_EXTENSIONS_PATH: rootPath,
         EXTENSIONS_TESTS_PATH: path.join(codeTestsPath, 'index.js'),
-        CODE_DISABLE_EXTENSIONS: 'true',
     };
 
     const result = await spawnNode([integrationTestRunnerPath, '--enable-source-maps'], { env, cwd: rootPath });
@@ -158,13 +165,18 @@ async function runIntegrationTest(testAssetName: string) {
     return result;
 }
 
-async function runJestTest(testFilterRegex: RegExp) {
-    const result = await spawnNode([jestPath, testFilterRegex.source]);
+async function runJestTest(project: string) {
+    const configPath = path.join(rootPath, 'jest.config.ts');
+    const { results } = await jest.runCLI(
+        {
+            config: configPath,
+            selectProjects: [project],
+            verbose: true,
+        } as Config.Argv,
+        [project]
+    );
 
-    if (result.code === null || result.code > 0) {
-        // Ensure that gulp fails when tests fail
-        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
+    if (!results.success) {
+        throw new Error('Tests failed.');
     }
-
-    return result;
 }

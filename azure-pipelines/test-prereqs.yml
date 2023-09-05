@@ -1,0 +1,9 @@
+steps:
+
+# We need to download the roslyn language server for the current platform to run integration tests against it.
+- script: gulp installDependencies
+  displayName: 'Install Roslyn Language Server'
+
+- script: /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+  displayName: 'Activate screen emulation'
+  condition: eq(variables['Agent.OS'], 'Linux')
