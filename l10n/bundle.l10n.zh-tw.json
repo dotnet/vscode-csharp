@@ -99,7 +99,7 @@
   "Required assets to build and debug are missing from '{0}'. Add them?": "'{0}' 缺少建置和偵錯所需的資產。要新增嗎?",
   "Restart": "重新啟動",
   "Restart Language Server": "重新啟動語言伺服器",
-  "Run and Debug: A valid browser is not installed": "執行並偵錯: 未安裝有效的瀏覽器",
+  "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.",
   "Run and Debug: auto-detection found {0} for a launch browser": "執行並偵錯: 針對啟動瀏覽器找到 {0} 自動偵測",
   "See {0} output": "查看 {0} 輸出",
   "Select the process to attach to": "選取要附加至的目標處理序",
