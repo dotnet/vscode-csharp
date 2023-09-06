@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
+import * as os from 'os';
 import net = require('net');
 import { registerCommands } from './commands';
 import { registerDebugger } from './debugger';
@@ -633,10 +634,10 @@ export class RoslynLanguageServer {
 
         //Log any stderr/stdout messages in our output channel.
         childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) =>
-            _channel.append(isString(data) ? data : data.toString(this._encoding))
+            _channel.append('[stderr]' + (isString(data) ? data : data.toString(this._encoding)))
         );
         childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) =>
-            _channel.append(isString(data) ? data : data.toString(this._encoding))
+            _channel.append('[stdout]' + (isString(data) ? data : data.toString(this._encoding)))
         );
 
         const protocol = await transport.onConnected();
@@ -1122,24 +1123,36 @@ async function createClientPipeTransport(
     pipeName: string,
     encoding: RAL.MessageBufferEncoding = 'utf-8'
 ): Promise<PipeTransport> {
-    const PIPE_PATH = '\\\\.\\pipe\\';
-
     const connected = new Promise<[MessageReader, MessageWriter]>((resolve) => {
         const server: net.Server = net.createServer((socket: net.Socket) => {
+            // Sever has connected
             server.close();
             resolve([new SocketMessageReader(socket, encoding), new SocketMessageWriter(socket, encoding)]);
         });
 
         // Start the server listening on the pipe name.
-        const pipeConnectionString = PIPE_PATH + pipeName;
+        const pipeConnectionString = getClientPipeName(pipeName);
         server.listen(pipeConnectionString);
     });
 
+    // Provide onConnected so that calling method can spin up the pipe client
     return {
         onConnected: async () => {
             return await connected;
         },
     };
+}
+
+function getClientPipeName(pipeName: string): string {
+    const isWindows = os.platform() === 'win32';
+
+    if (isWindows) {
+        // Windows pipes are named using the following format
+        return '\\\\.\\pipe\\' + pipeName;
+    } else {
+        // Unix-type pipes are are actually writing to a file
+        return '/tmp/' + pipeName + '.sock';
+    }
 }
 
 export function isString(value: any): value is string {
