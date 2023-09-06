@@ -20,15 +20,15 @@ npm run test:razor
 
 - `./tests`:
   - Contains test suites for the various language structures.
-- `./tests/__snapshots__/GrammarTests.test.ts.snap`:
+- `./tests/__snapshots__/grammarTests.test.ts.snap`:
   - Is the `.snap` file which preserves the tokenized and parsed snapshot. Make sure to commit this file with your changes as it saves the expected state of the grammar.
-- `./tests/GrammarTests.test.ts`:
+- `./tests/grammarTests.test.ts`:
   - Is the main test wrapper. Once a new test suite is added, this wrapper must be updated to call the test suite.
 
 ### Adding a Test Suite
 
 1. Add new test suite file in `./tests` (you can copy an existing test suite as a template).
-2. Update `./tests/GrammarTests.test.ts` with the new test suite.
+2. Update `./tests/grammarTests.test.ts` with the new test suite.
 3. In `testTasks.ts`, modify `runJestTest`'s call to `jest.runCLI` function to include `updateSnapshot: true`. Afterwards, run `npm run test:razor`.
 
 ### Adding / Updating a Test in an Existing Test Suite
@@ -43,4 +43,4 @@ npm run test:razor
    ```
 
 1. Follow step 3 of the previous section to serialize the tokensized and parsed representation of the test string. This frozen state will be treated as the "source of truth" for future executions of the test suite, in order to identify regressions.
-1. Ensure the `./tests/__snapshots__/GrammarTests.test.ts.snap` file is commited with your changes.
+1. Ensure the `./tests/__snapshots__/grammarTests.test.ts.snap` file is commited with your changes.
