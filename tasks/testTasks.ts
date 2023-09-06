@@ -96,12 +96,7 @@ gulp.task(
 // TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
 gulp.task(
     'omnisharptest',
-    gulp.series(
-        'omnisharp:jest:test',
-        'omnisharptest:feature',
-        'omnisharptest:unit',
-        'omnisharptest:integration:stdio'
-    )
+    gulp.series('omnisharp:jest:test', 'omnisharptest:feature', 'omnisharptest:unit', 'omnisharptest:integration:stdio')
 );
 
 gulp.task('test:unit', async () => {
