@@ -8,5 +8,5 @@ import { SerializableTextDocumentIdentifier } from '../rpc/serializableTextDocum
 
 export interface SerializableSemanticTokensParams {
     textDocument: SerializableTextDocumentIdentifier;
-    range: SerializableRange;
+    ranges: SerializableRange[];
 }

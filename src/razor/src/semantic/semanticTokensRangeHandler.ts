@@ -18,7 +18,7 @@ export class SemanticTokensRangeHandler {
         any
     > = new RequestType(SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint);
     private emptySemanticTokensResponse: ProvideSemanticTokensResponse = new ProvideSemanticTokensResponse(
-        new SemanticTokensResponse(new Array<number>(), ''),
+        new SemanticTokensResponse(new Array<Array<number>>(), ''),
         null
     );
 

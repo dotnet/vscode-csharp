@@ -4,5 +4,5 @@
  *--------------------------------------------------------------------------------------------*/
 
 export class SemanticTokensResponse {
-    constructor(public readonly data: Array<number>, public readonly resultId?: string) {}
+    constructor(public readonly data: Array<Array<number>>, public readonly resultId?: string) {}
 }
