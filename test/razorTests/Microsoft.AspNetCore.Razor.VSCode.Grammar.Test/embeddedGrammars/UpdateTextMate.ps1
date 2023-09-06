@@ -25,7 +25,7 @@ function DownloadTmLanguageJson {
     $content = Invoke-WebRequest -Uri $url
 
     # Copy to grammar tests
-    $content.content | Out-File -FilePath "../test/razorTests/Microsoft.AspNetCore.Razor.VSCode.Grammar.Test/embeddedGrammars/$fileName" -Encoding ascii
+    $content.content | Out-File -FilePath "$fileName" -Encoding ascii
 }
 
 # Find the current main branch SHA to download from
