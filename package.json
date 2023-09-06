@@ -62,7 +62,7 @@
     "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts omnisharptest/omnisharpUnitTests/**/*.test.ts*",
     "test": "tsc -p ./ && gulp test",
     "test:integration": "tsc -p ./ && gulp test:integration",
-    "test:razor": "tsc -p ./ && gulp test:razor",
+    "test:razor": "tsc -p ./ && npm run compile:razorTextMate && gulp test:razor",
     "omnisharptest": "tsc -p ./ && gulp omnisharptest",
     "omnisharptest:unit": "tsc -p ./ && gulp omnisharptest:unit",
     "omnisharptest:feature": "tsc -p ./ && gulp omnisharptest:feature",
