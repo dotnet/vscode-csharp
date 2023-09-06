@@ -42,7 +42,7 @@
   "Extension": "Erweiterung",
   "Extensions": "Erweiterungen",
   "Failed to complete the installation of the C# extension. Please see the error in the output window below.": "Fehler beim Abschließen der Installation der C#-Erweiterung. Den Fehler finden Sie unten im Ausgabefenster.",
-  "Failed to parse tasks.json file": "Fehler beim Analysieren der Datei \"tasks.json\".",
+  "Failed to parse tasks.json file: {0}": "Failed to parse tasks.json file: {0}",
   "Failed to set debugadpter directory": "Fehler beim Festlegen des Debugadapterverzeichnisses",
   "Failed to set extension directory": "Fehler beim Festlegen des Erweiterungsverzeichnisses",
   "Failed to set install complete file path": "Fehler beim Festlegen des Vollständigen Installationsdateipfads.",

@@ -42,7 +42,7 @@
   "Extension": "扩展",
   "Extensions": "扩展",
   "Failed to complete the installation of the C# extension. Please see the error in the output window below.": "无法完成 C# 扩展的安装。请在下面的输出窗口中查看错误。",
-  "Failed to parse tasks.json file": "未能分析 tasks.json 文件",
+  "Failed to parse tasks.json file: {0}": "Failed to parse tasks.json file: {0}",
   "Failed to set debugadpter directory": "未能设置调试程序目录",
   "Failed to set extension directory": "无法设置扩展目录",
   "Failed to set install complete file path": "无法设置安装完成文件路径",

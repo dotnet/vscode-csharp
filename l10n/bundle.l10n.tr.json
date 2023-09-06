@@ -42,7 +42,7 @@
   "Extension": "Uzantı",
   "Extensions": "Uzantılar",
   "Failed to complete the installation of the C# extension. Please see the error in the output window below.": "C# uzantısının yüklenmesi tamamlanamadı. Lütfen aşağıdaki çıkış penceresindeki hataya bakın.",
-  "Failed to parse tasks.json file": "tasks.json dosyası ayrıştırılamadı",
+  "Failed to parse tasks.json file: {0}": "Failed to parse tasks.json file: {0}",
   "Failed to set debugadpter directory": "Hata ayıklayıcı dizini ayarlanamadı",
   "Failed to set extension directory": "Uzantı dizini ayarlanamadı",
   "Failed to set install complete file path": "Tam dosya yolu yüklemesi ayarlanamadı",
