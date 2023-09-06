@@ -29,7 +29,7 @@ npm run test:razor
 
 1. Add new test suite file in `./tests` (you can copy an existing test suite as a template).
 2. Update `./tests/GrammarTests.test.ts` with the new test suite.
-3. In `testTasks.ts`, modify the `runJestTest`'s call to `jest.runCLI` function to include `updateSnapshot: true`. Afterwards, run `npm run test:razor`.
+3. In `testTasks.ts`, modify `runJestTest`'s call to `jest.runCLI` function to include `updateSnapshot: true`. Afterwards, run `npm run test:razor`.
 
 ### Adding / Updating a Test in an Existing Test Suite
 
