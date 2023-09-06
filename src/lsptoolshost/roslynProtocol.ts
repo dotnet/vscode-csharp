@@ -5,6 +5,7 @@
 
 import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface WorkspaceDebugConfigurationParams {
     /**
@@ -131,6 +132,10 @@ export interface ShowToastNotificationParams {
     commands: Command[];
 }
 
+export interface BuildOnlyDiagnosticIdsResult {
+    ids: string[];
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -155,6 +160,12 @@ export namespace ProjectInitializationCompleteNotification {
     export const method = 'workspace/projectInitializationComplete';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.NotificationType(method);
+}
+
+export namespace ProjectConfigurationNotification {
+    export const method = 'workspace/projectConfigurationTelemetry';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.NotificationType<ProjectConfigurationMessage>(method);
 }
 
 export namespace ShowToastNotification {
@@ -191,4 +202,10 @@ export namespace OpenProjectNotification {
     export const method = 'project/open';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.NotificationType<OpenProjectParams>(method);
+}
+
+export namespace BuildOnlyDiagnosticIdsRequest {
+    export const method = 'workspace/buildOnlyDiagnosticIds';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType0<BuildOnlyDiagnosticIdsResult, void>(method);
 }

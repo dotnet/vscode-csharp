@@ -4,14 +4,14 @@ steps:
 - task: NuGetAuthenticate@1
 
 - task: NodeTool@0
-  displayName: 'Install Node.js 16.x'
+  displayName: 'Install Node.js 18.x'
   inputs:
-    versionSpec: '16.x'
+    versionSpec: '18.x'
 
 - task: UseDotNet@2
   displayName: 'Install .NET Core SDKs'
   inputs:
-    version: '7.0.100'
+    version: '7.x'
 
 # Set the CI build number to the VSIX version we're creating from this build.
 - script: |

@@ -2,12 +2,6 @@
 
 [Jest](https://jestjs.io/en) is used for VS Code TextMate Grammar unit tests.
 
-## Setup
-
-```bash
-yarn install
-```
-
 **Note:** There are [known issues](https://github.com/nodejs/node-gyp/blob/master/macOS_Catalina.md) with MacOS Catalina for certain dependencies. Windows works well.
 
 ## Snapshot Tests
@@ -16,8 +10,10 @@ yarn install
 
 ### Running Snapshot Tests
 
+Run the following from the root of the repo:
+
 ```bash
-yarn test
+npm run test:razor
 ```
 
 ### Directory Structure
@@ -33,7 +29,7 @@ yarn test
 
 1. Add new test suite file in `./tests` (you can copy an existing test suite as a template).
 2. Update `./tests/GrammarTests.test.ts` with the new test suite.
-3. Run `yarn test --updateSnapshot`
+3. In `testTasks.ts`, modify the `runJestTest`'s call to `jest.runCLI` function to include `updateSnapshot: true`. Afterwards, run `npm run test:razor`.
 
 ### Adding / Updating a Test in an Existing Test Suite
 
@@ -46,5 +42,5 @@ yarn test
    });
    ```
 
-1. Run `yarn test --updateSnapshot` to serialize the tokensized and parsed representation of the test string. This frozen state will be treated as the "source of truth" for future executions of the test suite, in order to identify regressions.
+1. Follow step 3 of the previous section to serialize the tokensized and parsed representation of the test string. This frozen state will be treated as the "source of truth" for future executions of the test suite, in order to identify regressions.
 1. Ensure the `./tests/__snapshots__/GrammarTests.test.ts.snap` file is commited with your changes.

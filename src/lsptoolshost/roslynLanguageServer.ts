@@ -63,6 +63,11 @@ import { RoslynLanguageClient } from './roslynLanguageClient';
 import { registerUnitTestingCommands } from './unitTesting';
 import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
+import { reportProjectConfigurationEvent } from '../shared/projectConfiguration';
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
+import { registerLanguageServerOptionChanges } from './optionChanges';
+import { Observable } from 'rxjs';
+import { DotnetInfo } from '../shared/utils/dotnetInfo';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -133,7 +138,7 @@ export class RoslynLanguageServer {
      * Resolves server options and starts the dotnet language server process. The process is started asynchronously and this method will not wait until
      * the process is launched.
      */
-    public start(): void {
+    public async start(): Promise<void> {
         const options = this.optionProvider.GetLatestOptions();
         const logLevel = options.languageServerOptions.logLevel;
         const languageClientTraceLevel = this.GetTraceLevel(logLevel);
@@ -201,6 +206,22 @@ export class RoslynLanguageServer {
             this._eventBus.emit(
                 RoslynLanguageServer.serverStateChangeEvent,
                 ServerStateChange.ProjectInitializationComplete
+            );
+        });
+
+        // Store the dotnet info outside of the notification so we're not running dotnet --info every time the project changes.
+        let dotnetInfo: DotnetInfo | undefined = undefined;
+        this._languageClient.onNotification(RoslynProtocol.ProjectConfigurationNotification.type, async (params) => {
+            if (!dotnetInfo) {
+                dotnetInfo = await getDotnetInfo([]);
+            }
+            reportProjectConfigurationEvent(
+                this.telemetryReporter,
+                params,
+                this.platformInfo,
+                dotnetInfo,
+                this._solutionFile?.fsPath,
+                true
             );
         });
 
@@ -280,7 +301,7 @@ export class RoslynLanguageServer {
      */
     public async restart(): Promise<void> {
         await this.stop();
-        this.start();
+        await this.start();
     }
 
     /**
@@ -425,6 +446,32 @@ export class RoslynLanguageServer {
                 if (solutionUris) {
                     if (solutionUris.length === 1) {
                         this.openSolution(solutionUris[0]);
+                    } else if (solutionUris.length > 1) {
+                        // We have more than one solution, so we'll prompt the user to use the picker.
+                        const chosen = await vscode.window.showInformationMessage(
+                            vscode.l10n.t(
+                                'Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.'
+                            ),
+                            { title: vscode.l10n.t('Choose'), action: 'open' },
+                            { title: vscode.l10n.t('Choose and set default'), action: 'openAndSetDefault' },
+                            { title: vscode.l10n.t('Do not load any'), action: 'disable' }
+                        );
+
+                        if (chosen) {
+                            if (chosen.action === 'disable') {
+                                vscode.workspace.getConfiguration().update('dotnet.defaultSolution', 'disable', false);
+                            } else {
+                                const chosenSolution: vscode.Uri | undefined = await vscode.commands.executeCommand(
+                                    'dotnet.openSolution'
+                                );
+                                if (chosen.action === 'openAndSetDefault' && chosenSolution) {
+                                    const relativePath = vscode.workspace.asRelativePath(chosenSolution);
+                                    vscode.workspace
+                                        .getConfiguration()
+                                        .update('dotnet.defaultSolution', relativePath, false);
+                                }
+                            }
+                        }
                     } else if (solutionUris.length === 0) {
                         // We have no solutions, so we'll enumerate what project files we have and just use those.
                         const projectUris = await vscode.workspace.findFiles(
@@ -499,7 +546,7 @@ export class RoslynLanguageServer {
         }
 
         for (const extensionPath of this.additionalExtensionPaths) {
-            args.push('--extension', `"${extensionPath}"`);
+            args.push('--extension', extensionPath);
         }
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -553,9 +600,18 @@ export class RoslynLanguageServer {
         if (serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
             const argsWithPath = [serverPath].concat(args);
+
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${argsWithPath.join(' ')}`);
+            }
+
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
+            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+                _channel.appendLine(`Server arguments ${args.join(' ')}`);
+            }
+
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
@@ -577,7 +633,9 @@ export class RoslynLanguageServer {
         client.onRequest<RoslynProtocol.DebugAttachParams, RoslynProtocol.DebugAttachResult, void>(
             RoslynProtocol.DebugAttachRequest.type,
             async (request) => {
+                const debugOptions = this.optionProvider.GetLatestOptions().commonOptions.unitTestDebuggingOptions;
                 const debugConfiguration: vscode.DebugConfiguration = {
+                    ...debugOptions,
                     name: '.NET Core Attach',
                     type: 'coreclr',
                     request: 'attach',
@@ -712,6 +770,15 @@ export class RoslynLanguageServer {
                 throw new Error(`Invalid log level ${logLevel}`);
         }
     }
+
+    public async getBuildOnlyDiagnosticIds(token: vscode.CancellationToken): Promise<string[]> {
+        const response = await _languageServer.sendRequest0(RoslynProtocol.BuildOnlyDiagnosticIdsRequest.type, token);
+        if (response) {
+            return response.ids;
+        }
+
+        throw new Error('Unable to retrieve build-only diagnostic ids for current solution.');
+    }
 }
 
 /**
@@ -727,6 +794,7 @@ export async function activateRoslynLanguageServer(
     context: vscode.ExtensionContext,
     platformInfo: PlatformInformation,
     optionProvider: OptionProvider,
+    optionObservable: Observable<Options>,
     outputChannel: vscode.OutputChannel,
     dotnetTestChannel: vscode.OutputChannel,
     reporter: TelemetryReporter
@@ -762,6 +830,8 @@ export async function activateRoslynLanguageServer(
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, _languageServer, platformInfo, optionProvider, _channel);
 
+    context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
+
     const options = optionProvider.GetLatestOptions();
     let source = new vscode.CancellationTokenSource();
     vscode.workspace.onDidChangeTextDocument(async (e) => {
@@ -796,7 +866,7 @@ export async function activateRoslynLanguageServer(
     });
 
     // Start the language server.
-    _languageServer.start();
+    await _languageServer.start();
 
     return _languageServer;
 
@@ -961,9 +1031,12 @@ async function applyAutoInsertEdit(
     token: vscode.CancellationToken
 ) {
     const change = e.contentChanges[0];
-
-    // Need to add 1 since the server expects the position to be where the caret is after the last token has been inserted.
-    const position = new vscode.Position(change.range.start.line, change.range.start.character + 1);
+    // The server expects the request position to represent the caret position in the text after the change has already been applied.
+    // We need to calculate what that position would be after the change is applied and send that to the server.
+    const position = new vscode.Position(
+        change.range.start.line,
+        change.range.start.character + (change.text.length - change.rangeLength)
+    );
     const uri = UriConverter.serialize(e.document.uri);
     const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();

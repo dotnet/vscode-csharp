@@ -3,38 +3,57 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from '../../vscodeAdapter';
-import { Options } from '../options';
-import ShowInformationMessage from './utils/showInformationMessage';
+import { CommonOptions, LanguageServerOptions, OmnisharpServerOptions, Options } from '../options';
 import { Observable } from 'rxjs';
 import Disposable from '../../disposable';
-import { filter } from 'rxjs/operators';
+import { isDeepStrictEqual } from 'util';
 
-function OptionChangeObservable(
+export function HandleOptionChanges(
     optionObservable: Observable<Options>,
-    shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean
-): Observable<Options> {
-    let options: Options;
-    return optionObservable.pipe(
-        filter((newOptions) => {
-            const changed = options && shouldOptionChangeTriggerReload(options, newOptions);
-            options = newOptions;
-            return changed;
-        })
-    );
-}
-
-export function ShowConfigChangePrompt(
-    optionObservable: Observable<Options>,
-    commandName: string,
-    shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean,
-    vscode: vscode
+    optionChangeObserver: OptionChangeObserver
 ): Disposable {
-    const subscription = OptionChangeObservable(optionObservable, shouldOptionChangeTriggerReload).subscribe((_) => {
-        const message =
-            'C# configuration has changed. Would you like to relaunch the Language Server with your changes?';
-        ShowInformationMessage(vscode, message, { title: 'Restart Language Server', command: commandName });
+    let oldOptions: Options;
+    const subscription = optionObservable.pipe().subscribe((newOptions) => {
+        if (!oldOptions) {
+            oldOptions = newOptions;
+            return;
+        }
+        const relevantOptions = optionChangeObserver.getRelevantOptions();
+        const changedRelevantCommonOptions = relevantOptions.changedCommonOptions.filter(
+            (key) => !isDeepStrictEqual(oldOptions.commonOptions[key], newOptions.commonOptions[key])
+        );
+        const changedRelevantLanguageServerOptions = relevantOptions.changedLanguageServerOptions.filter(
+            (key) => !isDeepStrictEqual(oldOptions.languageServerOptions[key], newOptions.languageServerOptions[key])
+        );
+        const changedRelevantOmnisharpOptions = relevantOptions.changedOmnisharpOptions.filter(
+            (key) => !isDeepStrictEqual(oldOptions.omnisharpOptions[key], newOptions.omnisharpOptions[key])
+        );
+
+        oldOptions = newOptions;
+
+        if (
+            changedRelevantCommonOptions.length > 0 ||
+            changedRelevantLanguageServerOptions.length > 0 ||
+            changedRelevantOmnisharpOptions.length > 0
+        ) {
+            optionChangeObserver.handleOptionChanges({
+                changedCommonOptions: changedRelevantCommonOptions,
+                changedLanguageServerOptions: changedRelevantLanguageServerOptions,
+                changedOmnisharpOptions: changedRelevantOmnisharpOptions,
+            });
+        }
     });
 
     return new Disposable(subscription);
+}
+
+export interface OptionChangeObserver {
+    getRelevantOptions: () => OptionChanges;
+    handleOptionChanges: (optionChanges: OptionChanges) => void;
+}
+
+export interface OptionChanges {
+    changedCommonOptions: ReadonlyArray<keyof CommonOptions>;
+    changedLanguageServerOptions: ReadonlyArray<keyof LanguageServerOptions>;
+    changedOmnisharpOptions: ReadonlyArray<keyof OmnisharpServerOptions>;
 }

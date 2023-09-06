@@ -40,13 +40,13 @@ export class DynamicFileInfoHandler {
         const uris = request.razorFiles;
         const virtualUris = new Array<DocumentUri | null>();
         try {
-            for (const razorDocumentUri of uris) {
-                const vscodeUri = vscode.Uri.parse('file:' + razorDocumentUri, true);
+            for (const razorDocumentPath of uris) {
+                const vscodeUri = vscode.Uri.file(razorDocumentPath);
                 const razorDocument = await this.documentManager.getDocument(vscodeUri);
                 if (razorDocument === undefined) {
                     virtualUris.push(null);
                     this.logger.logWarning(
-                        `Could not find Razor document ${razorDocumentUri}; adding null as a placeholder in URI array.`
+                        `Could not find Razor document ${razorDocumentPath}; adding null as a placeholder in URI array.`
                     );
                 } else {
                     // Retrieve generated doc URIs for each Razor URI we are given
@@ -70,8 +70,8 @@ export class DynamicFileInfoHandler {
     private async removeDynamicFileInfo(request: RemoveDynamicFileParams) {
         try {
             const uris = request.razorFiles;
-            for (const razorDocumentUri of uris) {
-                const vscodeUri = vscode.Uri.parse('file:' + razorDocumentUri, true);
+            for (const razorDocumentPath of uris) {
+                const vscodeUri = vscode.Uri.file(razorDocumentPath);
                 if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
                     this.documentManager.didCloseRazorCSharpDocument(vscodeUri);
                 }
