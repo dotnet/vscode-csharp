@@ -1151,7 +1151,7 @@ function getClientPipeName(pipeName: string): string {
         return '\\\\.\\pipe\\' + pipeName;
     } else {
         // Unix-type pipes are are actually writing to a file
-        return '/tmp/' + pipeName + '.sock';
+        return path.join(os.tmpdir(), pipeName + '.sock');
     }
 }
 
