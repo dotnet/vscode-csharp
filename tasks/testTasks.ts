@@ -20,6 +20,7 @@ import * as jest from 'jest';
 import { Config } from '@jest/types';
 import { jestOmniSharpUnitTestProjectName } from '../omnisharptest/omnisharpJestTests/jest.config';
 import { jestUnitTestProjectName } from '../test/unitTests/jest.config';
+import { razorTestProjectName } from '../test/razorTests/jest.config';
 
 gulp.task('omnisharptest:feature', async () => {
     const env = {
@@ -38,6 +39,10 @@ gulp.task('omnisharptest:feature', async () => {
     }
 
     return result;
+});
+
+gulp.task('test:razor', async () => {
+    runJestTest(razorTestProjectName);
 });
 
 gulp.task('omnisharptest:unit', async () => {
@@ -108,7 +113,7 @@ gulp.task(
     gulp.series(integrationTestProjects.map((projectName) => `test:integration:${projectName}`))
 );
 
-gulp.task('test', gulp.series('test:unit', 'test:integration'));
+gulp.task('test', gulp.series('test:unit', 'test:integration', 'test:razor'));
 
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
