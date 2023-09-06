@@ -7472,7 +7472,7 @@ exports[`Grammar tests Razor templates @<p>....</p> Nested template 1`] = `
  - token from 32 to 33 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, source.cs
  - token from 33 to 39 (Action) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, source.cs, variable.other.readwrite.cs
  - token from 39 to 40 (<) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, source.cs, keyword.operator.relational.cs
- - token from 40 to 46 (object) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, source.cs, variable.other.readwrite.cs
+ - token from 40 to 46 (object) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, source.cs, keyword.type.cs
  - token from 46 to 47 (>) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, source.cs, keyword.operator.relational.cs
  - token from 47 to 48 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, source.cs
  - token from 48 to 51 (def) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, source.cs, variable.other.readwrite.cs
