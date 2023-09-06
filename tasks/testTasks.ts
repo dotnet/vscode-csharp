@@ -97,7 +97,6 @@ gulp.task(
 gulp.task(
     'omnisharptest',
     gulp.series(
-        'test:razor',
         'omnisharp:jest:test',
         'omnisharptest:feature',
         'omnisharptest:unit',
@@ -119,7 +118,7 @@ gulp.task(
     gulp.series(integrationTestProjects.map((projectName) => `test:integration:${projectName}`))
 );
 
-gulp.task('test', gulp.series('test:unit', 'test:integration'));
+gulp.task('test', gulp.series('test:unit', 'test:integration', 'test:razor'));
 
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
@@ -183,9 +182,8 @@ async function runJestTest(project: string) {
             config: configPath,
             selectProjects: [project],
             verbose: true,
-            updateSnapshot: true,
         } as Config.Argv,
-        [project],
+        [project]
     );
 
     if (!results.success) {

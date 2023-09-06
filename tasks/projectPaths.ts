@@ -11,6 +11,7 @@ export const rootPath = path.resolve(__dirname, '..');
 const nodeModulesPath = path.join(rootPath, 'node_modules');
 export const vscePath = path.join(nodeModulesPath, 'vsce', 'vsce');
 export const mochaPath = path.join(nodeModulesPath, 'mocha', 'bin', 'mocha');
+export const jestPath = path.join(nodeModulesPath, 'jest', 'bin', 'jest');
 
 export const packedVsixOutputRoot = commandLineOptions.outputFolder || path.join(rootPath, 'vsix');
 export const nugetTempPath = path.join(rootPath, 'out', '.nuget');
