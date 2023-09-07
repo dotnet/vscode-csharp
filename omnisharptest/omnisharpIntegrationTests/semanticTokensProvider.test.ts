@@ -8,7 +8,7 @@ import * as path from 'path';
 
 import { should, assert } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
 interface ExpectedToken {
     startLine: number;

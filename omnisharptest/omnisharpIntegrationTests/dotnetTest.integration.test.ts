@@ -8,7 +8,7 @@ import * as path from 'path';
 
 import { should, expect } from 'chai';
 import { activateCSharpExtension, isSlnWithCsproj } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { EventStream } from '../../src/eventStream';
 import { EventType } from '../../src/omnisharp/eventType';
 import { OmnisharpRequestMessage } from '../../src/omnisharp/loggingEvents';
