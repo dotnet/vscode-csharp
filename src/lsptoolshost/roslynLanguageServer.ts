@@ -68,6 +68,7 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { registerLanguageServerOptionChanges } from './optionChanges';
 import { Observable } from 'rxjs';
 import { DotnetInfo } from '../shared/utils/dotnetInfo';
+import { URIConverter, createConverter } from 'vscode-languageclient/lib/common/protocolConverter';
 
 let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
@@ -192,6 +193,19 @@ export class RoslynLanguageServer {
                                 fixAllCodeAction,
                                 token
                             );
+
+                            if (response.edit) {
+                                const uriConverter: URIConverter = (value: string): vscode.Uri =>
+                                    UriConverter.deserialize(value);
+                                const protocolConverter = createConverter(uriConverter, true, true);
+                                const result = await protocolConverter.asWorkspaceEdit(response.edit);
+
+                                if (!(await vscode.workspace.applyEdit(result))) {
+                                    throw new Error(
+                                        'Tried to insert multiple code action edits, but an error occurred.'
+                                    );
+                                }
+                            }
                             console.log(response);
                         }
                     } else {
