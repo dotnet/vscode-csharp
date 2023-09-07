@@ -8,7 +8,7 @@ import * as path from 'path';
 
 import { should, expect } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { poll, assertWithPoll } from './poll';
 import { EventStream } from '../../src/eventStream';
 import { EventType } from '../../src/omnisharp/eventType';

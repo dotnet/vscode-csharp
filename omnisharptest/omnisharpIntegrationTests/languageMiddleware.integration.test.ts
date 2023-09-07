@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { expect, should } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 import { LanguageMiddleware, LanguageMiddlewareFeature } from '../../src/omnisharp/languageMiddlewareFeature';

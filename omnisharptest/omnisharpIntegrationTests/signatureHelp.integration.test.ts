@@ -8,7 +8,7 @@ import * as path from 'path';
 
 import { expect, should } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
 suite(`SignatureHelp: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;

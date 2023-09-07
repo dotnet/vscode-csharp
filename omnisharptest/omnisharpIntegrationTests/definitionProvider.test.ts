@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import OmniSharpDefinitionProvider from '../../src/features/definitionProvider';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { expect, should } from 'chai';
 import {
     activateCSharpExtension,

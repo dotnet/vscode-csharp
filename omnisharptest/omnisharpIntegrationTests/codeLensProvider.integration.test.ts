@@ -8,7 +8,7 @@ import * as path from 'path';
 
 import { should, expect } from 'chai';
 import { activateCSharpExtension, isSlnWithCsproj, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/omnisharpTestAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { isNotNull } from '../testUtil';
 
 suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
