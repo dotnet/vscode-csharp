@@ -44,7 +44,6 @@ import {
     MessageType,
     MessageReader,
     MessageWriter,
-    PipeTransport,
     SocketMessageReader,
     SocketMessageWriter,
     MessageTransports,
@@ -603,10 +602,10 @@ export class RoslynLanguageServer {
         args.push('--extensionLogDirectory', this.context.logUri.fsPath);
 
         // Use a named pipe for communication between client and server.
-        const pipeName = randomUUID();
-        const transport = await createClientPipeTransport(pipeName, this._encoding);
+        const [clientPipeName, serverPipeName] = createNewPipeNames();
+        const messageReaderPromise = createClientPipeTransport(clientPipeName, this._encoding);
 
-        args.push('--pipe', pipeName);
+        args.push('--pipe', serverPipeName);
         let childProcess: cp.ChildProcessWithoutNullStreams;
         const cpOptions: cp.SpawnOptionsWithoutStdio = {
             detached: true,
@@ -640,7 +639,7 @@ export class RoslynLanguageServer {
             _channel.append('[stdout]' + (isString(data) ? data : data.toString(this._encoding)))
         );
 
-        const protocol = await transport.onConnected();
+        const protocol = await messageReaderPromise;
         return { reader: protocol[0], writer: protocol[1] };
     }
 
@@ -1122,8 +1121,8 @@ function getSessionId(): string {
 async function createClientPipeTransport(
     pipeName: string,
     encoding: RAL.MessageBufferEncoding = 'utf-8'
-): Promise<PipeTransport> {
-    const connected = new Promise<[MessageReader, MessageWriter]>((resolve) => {
+): Promise<[MessageReader, MessageWriter]> {
+    const messageReaderPromise = new Promise<[MessageReader, MessageWriter]>((resolve) => {
         const server: net.Server = net.createServer((socket: net.Socket) => {
             // Sever has connected
             server.close();
@@ -1131,28 +1130,26 @@ async function createClientPipeTransport(
         });
 
         // Start the server listening on the pipe name.
-        const pipeConnectionString = getClientPipeName(pipeName);
-        server.listen(pipeConnectionString);
+        server.listen(pipeName);
     });
 
-    // Provide onConnected so that calling method can spin up the pipe client
-    return {
-        onConnected: async () => {
-            return await connected;
-        },
-    };
+    return messageReaderPromise;
 }
 
-function getClientPipeName(pipeName: string): string {
-    const isWindows = os.platform() === 'win32';
+function createNewPipeNames(): [clientPipe: string, serverPipe: string] {
+    // The connection string format for Nodejs and .NET are different.
+    const WINDOWS_NODJS_PREFIX = '\\\\.\\pipe\\';
+    const WINDOWS_DOTNET_PREFIX = '\\\\.\\';
+    const pipeName = randomUUID();
 
-    if (isWindows) {
-        // Windows pipes are named using the following format
-        return '\\\\.\\pipe\\' + pipeName;
-    } else {
-        // Unix-type pipes are are actually writing to a file
-        return path.join(os.tmpdir(), pipeName + '.sock');
-    }
+    return os.platform() === 'win32'
+        ? [WINDOWS_NODJS_PREFIX + pipeName, WINDOWS_DOTNET_PREFIX + pipeName]
+        : [getUnixTypePipeName(pipeName), getUnixTypePipeName(pipeName)];
+}
+
+function getUnixTypePipeName(pipeName: string): string {
+    // Unix-type pipes are are actually writing to a file
+    return path.join(os.tmpdir(), pipeName + '.sock');
 }
 
 export function isString(value: any): value is string {
