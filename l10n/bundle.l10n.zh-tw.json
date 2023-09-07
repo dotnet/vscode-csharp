@@ -42,7 +42,7 @@
   "Extension": "延伸模組",
   "Extensions": "延伸模組",
   "Failed to complete the installation of the C# extension. Please see the error in the output window below.": "無法完成 C# 延伸模組的安裝。請參閱下列輸出視窗中的錯誤。",
-  "Failed to parse tasks.json file": "無法剖析 tasks.json 檔案",
+  "Failed to parse tasks.json file: {0}": "Failed to parse tasks.json file: {0}",
   "Failed to set debugadpter directory": "無法設定 debugadpter 目錄",
   "Failed to set extension directory": "無法設定延伸模組目錄",
   "Failed to set install complete file path": "無法設定安裝完整檔案路徑",
