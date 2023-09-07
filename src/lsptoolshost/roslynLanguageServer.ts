@@ -23,7 +23,6 @@ import {
     RequestType0,
     PartialResultParams,
     ProtocolRequestType,
-    MessageType,
     MessageReader,
     MessageWriter,
     SocketMessageReader,
@@ -85,9 +84,6 @@ export class RoslynLanguageServer {
 
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
-
-    /** Encoding used for communication */
-    private _encoding: RAL.MessageBufferEncoding = 'utf-8';
 
     constructor(
         private _languageClient: RoslynLanguageClient,
@@ -527,7 +523,8 @@ export class RoslynLanguageServer {
 
         // Use a named pipe for communication between client and server.
         const [clientPipeName, serverPipeName] = createNewPipeNames();
-        const messageReaderPromise = createClientPipeTransport(clientPipeName, this._encoding);
+        const encoding: RAL.MessageBufferEncoding = 'utf-8';
+        const messageReaderPromise = createClientPipeTransport(clientPipeName, encoding);
 
         args.push('--pipe', serverPipeName);
         let childProcess: cp.ChildProcessWithoutNullStreams;
@@ -557,10 +554,10 @@ export class RoslynLanguageServer {
 
         //Log any stderr/stdout messages in our output channel.
         childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) =>
-            _channel.append('[stderr]' + (isString(data) ? data : data.toString(this._encoding)))
+            _channel.append('[stderr]' + (isString(data) ? data : data.toString(encoding)))
         );
         childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) =>
-            _channel.append('[stdout]' + (isString(data) ? data : data.toString(this._encoding)))
+            _channel.append('[stdout]' + (isString(data) ? data : data.toString(encoding)))
         );
 
         const protocol = await messageReaderPromise;
