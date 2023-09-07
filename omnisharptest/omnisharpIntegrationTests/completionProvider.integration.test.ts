@@ -5,7 +5,7 @@
 
 import OmniSharpCompletionProvider from '../../src/features/completionProvider';
 import * as vscode from 'vscode';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import * as path from 'path';
 import { use, expect, should } from 'chai';
 import * as chaiArray from 'chai-arrays';

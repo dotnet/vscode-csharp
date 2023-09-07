@@ -9,6 +9,7 @@ import { EventStream } from './eventStream';
 import TestManager from './features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { RequestType } from 'vscode-languageclient/node';
+import { LanguageServerEvents } from './lsptoolshost/languageServerEvents';
 
 export interface OmnisharpExtensionExports {
     initializationFinished: () => Promise<void>;
@@ -32,4 +33,5 @@ export interface CSharpExtensionExperimentalExports {
         params: Params,
         token: vscode.CancellationToken
     ) => Promise<Response>;
+    languageServerEvents: LanguageServerEvents;
 }

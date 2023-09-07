@@ -16,6 +16,34 @@
             "preLaunchTask": "buildDev"
         },
         {
+            "name": "Launch Current File slnWithCsproj Integration Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests",
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
+            ],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Omnisharp: Launch Unit tests",
@@ -66,7 +94,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/singleCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj/.vscode/omnisharp_singleCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -90,7 +118,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/BasicRazorApp2_1",
+                "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -108,7 +136,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_slnWithCsproj.code-workspace",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -124,29 +152,6 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "LSP Tools Host: Launch slnWithCsproj Workspace Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                // Create a temp profile that has no extensions / user settings.
-                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
-                "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests",
-            ],
-            "env": {
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-            },
-            "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/dist/*.js",
-                "${workspaceRoot}/out/test/**/*.js"
-            ],
-            "preLaunchTask": "buildDev"
-        },
-        {
             "name": "Omnisharp: Launch singleCsproj Workspace Tests [LSP]",
             "type": "extensionHost",
             "request": "launch",
@@ -155,7 +160,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
+                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj/.vscode/omnisharp_lsp_singleCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -179,7 +184,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/BasicRazorApp2_1",
+                "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -197,7 +202,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -221,7 +226,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnFilterWithCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -245,7 +250,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithGenerator",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],

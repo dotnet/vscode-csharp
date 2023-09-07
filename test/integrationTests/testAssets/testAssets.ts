@@ -6,12 +6,8 @@
 import * as fs from 'async-file';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { EventStream } from '../../../src/eventStream';
-import { EventType } from '../../../src/omnisharp/eventType';
-import { BaseEvent } from '../../../src/omnisharp/loggingEvents';
-import { ActivationResult } from '../integrationHelpers';
-import { poll } from '../poll';
-import spawnGit from './spawnGit';
+import spawnGit from '../../../test/integrationTests/testAssets/spawnGit';
+import { execChildProcess } from '../../../src/common';
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {
@@ -37,71 +33,6 @@ export class TestAssetWorkspace {
         this.projects = workspace.projects.map((w) => new TestAssetProject(w));
 
         this.description = workspace.description;
-    }
-
-    async restore(): Promise<void> {
-        await vscode.commands.executeCommand('dotnet.restore.all');
-    }
-
-    async restoreAndWait(activation: ActivationResult): Promise<void> {
-        await this.restore();
-
-        // Wait for activity to settle before proceeding
-        await this.waitForIdle(activation.eventStream);
-    }
-
-    async waitForEvent<T extends BaseEvent>(
-        stream: EventStream,
-        captureType: EventType,
-        stopCondition: (e: T) => boolean = (_) => true,
-        timeout: number = 25 * 1000
-    ): Promise<T | undefined> {
-        let event: T | undefined = undefined;
-
-        const subscription = stream.subscribe((e: BaseEvent) => {
-            if (e.type === captureType) {
-                const tEvent = <T>e;
-
-                if (stopCondition(tEvent)) {
-                    event = tEvent;
-                    subscription.unsubscribe();
-                }
-            }
-        });
-
-        await poll(
-            () => event,
-            timeout,
-            500,
-            (e) => !!e
-        );
-
-        return event;
-    }
-
-    async waitForIdle(stream: EventStream, timeout: number = 25 * 1000): Promise<void> {
-        let event: BaseEvent | undefined = { type: 0 };
-
-        const subscription = stream.subscribe(
-            (e: BaseEvent) => e.type !== EventType.BackgroundDiagnosticStatus && (event = e)
-        );
-        await poll(
-            () => event,
-            timeout,
-            500,
-            (e) => {
-                if (e) {
-                    // We're still getting real events, set the event to undefined so we can check if it changed in the next poll.
-                    event = undefined;
-                    return false;
-                } else {
-                    // The event is still undefined (set by the last poll) which means we haven't recieved any new events - we can exit here.
-                    return true;
-                }
-            }
-        );
-
-        subscription.unsubscribe();
     }
 
     get vsCodeDirectoryPath(): string {
@@ -133,6 +64,16 @@ export class TestAssetWorkspace {
             await sleep();
             await cleanUpRoutine();
         }
+    }
+
+    /**
+     * Temporary workaround for lack of restore support in the roslyn server.
+     * Replace when https://github.com/dotnet/vscode-csharp/issues/5725 is fixed.
+     */
+    async restoreLspToolsHostAsync(): Promise<void> {
+        const root = vscode.workspace.workspaceFolders![0].uri.fsPath;
+        const output = await execChildProcess(`dotnet restore ${root}`, process.cwd(), process.env);
+        console.log(output);
     }
 
     description: string;

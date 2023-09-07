@@ -12,7 +12,7 @@ import {
     isSlnWithGenerator,
     restartOmniSharpServer,
 } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import * as path from 'path';
 import { InlayHint, LinePositionSpanTextChange } from '../../src/omnisharp/protocol';
 import { isNotNull } from '../testUtil';
