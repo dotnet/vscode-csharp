@@ -554,10 +554,10 @@ export class RoslynLanguageServer {
 
         //Log any stderr/stdout messages in our output channel.
         childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) =>
-            _channel.append('[stderr]' + (isString(data) ? data : data.toString(encoding)))
+            _channel.append('[stderr] ' + (isString(data) ? data : data.toString(encoding)))
         );
         childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) =>
-            _channel.append('[stdout]' + (isString(data) ? data : data.toString(encoding)))
+            _channel.append('[stdout] ' + (isString(data) ? data : data.toString(encoding)))
         );
 
         const protocol = await messageReaderPromise;
@@ -856,7 +856,7 @@ function getSessionId(): string {
 
 async function createClientPipeTransport(
     pipeName: string,
-    encoding: RAL.MessageBufferEncoding = 'utf-8'
+    encoding: RAL.MessageBufferEncoding
 ): Promise<[MessageReader, MessageWriter]> {
     const messageReaderPromise = new Promise<[MessageReader, MessageWriter]>((resolve) => {
         const server: net.Server = net.createServer((socket: net.Socket) => {
