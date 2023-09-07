@@ -8,7 +8,7 @@ import * as chaiArray from 'chai-arrays';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
 use(chaiArray);
 

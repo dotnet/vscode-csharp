@@ -13,9 +13,9 @@ import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
 import { SerializableDelegatedSimplifyMethodParams } from './serializableDelegatedSimplifyMethodParams';
-import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
 import SerializableSimplifyMethodParams from './serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
+import { roslynSimplifyMethodCommand } from '../../../lsptoolshost/razorCommands';
 
 export class RazorSimplifyMethodHandler extends RazorLanguageFeatureBase {
     private static readonly razorSimplifyMethodCommand = 'razor/simplifyMethod';
@@ -62,7 +62,7 @@ export class RazorSimplifyMethodHandler extends RazorLanguageFeatureBase {
 
         const params = new SerializableSimplifyMethodParams(identifier, request.textEdit);
         const response: TextEdit[] | undefined = await vscode.commands.executeCommand(
-            RoslynLanguageServer.roslynSimplifyMethodCommand,
+            roslynSimplifyMethodCommand,
             params
         );
 

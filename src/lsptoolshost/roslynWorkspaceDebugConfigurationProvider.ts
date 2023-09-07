@@ -11,11 +11,15 @@ import {
 } from '../shared/IWorkspaceDebugInformationProvider';
 import { isBlazorWebAssemblyHosted, isBlazorWebAssemblyProject, isWebProject } from '../shared/utils';
 import { RoslynLanguageServer } from './roslynLanguageServer';
-import { WorkspaceDebugConfigurationParams, WorkspaceDebugConfigurationRequest } from './roslynProtocol';
+import {
+    ProjectDebugConfiguration,
+    WorkspaceDebugConfigurationParams,
+    WorkspaceDebugConfigurationRequest,
+} from './roslynProtocol';
 import { UriConverter } from './uriConverter';
 
 export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugInformationProvider {
-    constructor(private server: RoslynLanguageServer) {}
+    constructor(private server: RoslynLanguageServer, private outputChannel: vscode.OutputChannel) {}
 
     public async getWorkspaceDebugInformation(
         workspaceFolder: vscode.Uri
@@ -28,11 +32,20 @@ export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugI
             workspacePath: UriConverter.serialize(workspaceFolder),
         };
 
-        const response = await this.server.sendRequest(
-            WorkspaceDebugConfigurationRequest.type,
-            params,
-            new vscode.CancellationTokenSource().token
-        );
+        let response: ProjectDebugConfiguration[];
+        try {
+            response = await this.server.sendRequest(
+                WorkspaceDebugConfigurationRequest.type,
+                params,
+                new vscode.CancellationTokenSource().token
+            );
+        } catch (e) {
+            // Server errors are already logged by the language client, but its totally possible
+            // that we fail because the server is restarting or a process got killed, etc.
+            // Catch the error and log to the correct output (instead of going to the extension host output).
+            this.outputChannel.appendLine(`Failed to get debug configuration: ${e}`);
+            return;
+        }
 
         // LSP serializes and deserializes URIs as (URI formatted) strings not actual types.  So convert to the actual type here.
         const projects: ProjectDebugInformation[] | undefined = await mapAsync(response, async (p) => {

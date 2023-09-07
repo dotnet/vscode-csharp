@@ -16,6 +16,34 @@
             "preLaunchTask": "buildDev"
         },
         {
+            "name": "Launch Current File slnWithCsproj Integration Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests",
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
+            ],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Omnisharp: Launch Unit tests",
@@ -66,7 +94,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/singleCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj/.vscode/omnisharp_singleCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -90,7 +118,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/BasicRazorApp2_1",
+                "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -108,7 +136,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_slnWithCsproj.code-workspace",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -124,29 +152,6 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "LSP Tools Host: Launch slnWithCsproj Workspace Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                // Create a temp profile that has no extensions / user settings.
-                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
-                "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests",
-            ],
-            "env": {
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-            },
-            "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/dist/*.js",
-                "${workspaceRoot}/out/test/**/*.js"
-            ],
-            "preLaunchTask": "buildDev"
-        },
-        {
             "name": "Omnisharp: Launch singleCsproj Workspace Tests [LSP]",
             "type": "extensionHost",
             "request": "launch",
@@ -155,7 +160,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
+                "${workspaceRoot}/test/integrationTests/testAssets/singleCsproj/.vscode/omnisharp_lsp_singleCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -179,7 +184,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/BasicRazorApp2_1",
+                "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -197,7 +202,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/omnisharp_lsp_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -221,7 +226,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnFilterWithCsproj",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnFilterWithCsproj",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -245,7 +250,7 @@
                 // Create a temp profile that has no extensions / user settings.
                 // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
                 "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/slnWithGenerator",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithGenerator",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
@@ -285,11 +290,22 @@
               "updatePackageDependencies"
           ],
           "env": {
-              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/4aca138f5c6299422e240dcc50689a67/razorlanguageserver-linux-arm64-7.0.0-preview.23423.3.zip,https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/eee386c129c18ba1705fe411cb981a20/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23423.3.zip,https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/7d1e4e0bf72de43dc272d22de2486633/razorlanguageserver-linux-musl-x64-7.0.0-preview.23423.3.zip,https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/b9653cb6c40f965986266f70ae7dab25/razorlanguageserver-linux-x64-7.0.0-preview.23423.3.zip,https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/679c6fe63c016298914264c33326f2ea/razorlanguageserver-osx-arm64-7.0.0-preview.23423.3.zip,https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/74f8a06bc496f54b37466c382c6744ee/razorlanguageserver-osx-x64-7.0.0-preview.23423.3.zip,https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/695b332017bfa81af74787904979fde8/razorlanguageserver-win-arm64-7.0.0-preview.23423.3.zip,https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/a48c3e83b44a34ddb295099c55e31e7e/razorlanguageserver-win-x64-7.0.0-preview.23423.3.zip,https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/e188fa3cbd9a5601701d0f8de0705496/razorlanguageserver-win-x86-7.0.0-preview.23423.3.zip",
-              "NEW_DEPS_VERSION": "7.0.0-preview.23423.3",
+              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/5320a329751f981f4c994adcbbaf1831/razorlanguageserver-linux-arm64-7.0.0-preview.23455.5.zip,https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/ad506dfb1de131553eeb5dffdd83f44d/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23455.5.zip,https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/1fe6ed4de9370a8fff70df1133db7889/razorlanguageserver-linux-musl-x64-7.0.0-preview.23455.5.zip,https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/8f59b89a029f07d4e5c20b9c2af4ca21/razorlanguageserver-linux-x64-7.0.0-preview.23455.5.zip,https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/350f666a3a714c2c77d0e79e92238ad7/razorlanguageserver-osx-arm64-7.0.0-preview.23455.5.zip,https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/0b9c653ee9c2815280877865013ab2e4/razorlanguageserver-osx-x64-7.0.0-preview.23455.5.zip,https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/f9ab8a6e654818635e0cd9e3115b59fc/razorlanguageserver-win-arm64-7.0.0-preview.23455.5.zip,https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/43a6adc38859d6cf4d524239b9c3ccf9/razorlanguageserver-win-x64-7.0.0-preview.23455.5.zip,https://download.visualstudio.microsoft.com/download/pr/1f4eb4b9-e8b7-494b-81eb-29e9ffff39de/b3a60e667dc67edd38d2a7dd1d6ee139/razorlanguageserver-win-x86-7.0.0-preview.23455.5.zip",
+              "NEW_DEPS_VERSION": "7.0.0-preview.23455.5",
               "NEW_DEPS_ID": "Razor"
           },
           "cwd": "${workspaceFolder}"
-      }
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Generate debugger options schema",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+        "args": [
+            "generateOptionsSchema"
+        ],
+        "cwd": "${workspaceFolder}"
+    }
     ]
 }
