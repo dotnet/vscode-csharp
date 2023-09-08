@@ -78,7 +78,7 @@ async function findRoslynCommitAsync(): Promise<string | null> {
     // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
     const nuspecFile = fs
         .readFileSync(
-            `out/.nuget/microsoft.codeanalysis.languageserver/${roslynVersion}/microsoft.codeanalysis.languageserver.nuspec`
+            `out/.nuget/microsoft.codeanalysis.languageserver.linux-x64/${roslynVersion}/microsoft.codeanalysis.languageserver.linux-x64.nuspec`
         )
         .toString();
     const results = /commit="(.*)"/.exec(nuspecFile);
