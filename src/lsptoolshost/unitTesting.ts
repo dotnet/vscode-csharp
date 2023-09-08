@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as languageClient from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from './roslynLanguageServer';
-import { RunTestsParams, RunTestsPartialResult, RunTestsRequest } from './roslynProtocol';
+import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } from './roslynProtocol';
 import OptionProvider from '../shared/observers/optionProvider';
 
 export function registerUnitTestingCommands(
@@ -18,44 +18,48 @@ export function registerUnitTestingCommands(
     optionProvider: OptionProvider
 ) {
     context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.test.run', async (request) =>
-            runTests(request, languageServer, dotnetTestChannel, optionProvider)
+        vscode.commands.registerCommand(
+            'dotnet.test.run',
+            async (request): Promise<TestProgress | undefined> =>
+                runTests(request, languageServer, dotnetTestChannel, optionProvider)
         )
     );
     context.subscriptions.push(
-        vscode.commands.registerTextEditorCommand(
+        // We don't use registerTextEditorCommand because it is required to run synchronously and is not awaitable.
+        // See https://github.com/microsoft/vscode/issues/16814 for more info.
+        vscode.commands.registerCommand(
             'dotnet.test.runTestsInContext',
-            async (textEditor: vscode.TextEditor) => {
-                return runTestsInContext(false, textEditor, languageServer, dotnetTestChannel, optionProvider);
-            }
+            async (): Promise<TestProgress | undefined> =>
+                runTestsInContext(false, languageServer, dotnetTestChannel, optionProvider)
         )
     );
 
     context.subscriptions.push(
-        vscode.commands.registerTextEditorCommand(
+        vscode.commands.registerCommand(
             'dotnet.test.debugTestsInContext',
-            async (textEditor: vscode.TextEditor) => {
-                return runTestsInContext(true, textEditor, languageServer, dotnetTestChannel, optionProvider);
-            }
+            async (): Promise<TestProgress | undefined> =>
+                runTestsInContext(true, languageServer, dotnetTestChannel, optionProvider)
         )
     );
 }
 
 async function runTestsInContext(
     debug: boolean,
-    textEditor: vscode.TextEditor,
     languageServer: RoslynLanguageServer,
     dotnetTestChannel: vscode.OutputChannel,
     optionProvider: OptionProvider
-) {
-    const contextRange: languageClient.Range = { start: textEditor.selection.active, end: textEditor.selection.active };
-    const textDocument: languageClient.TextDocumentIdentifier = { uri: textEditor.document.fileName };
-    const request: RunTestsParams = {
-        textDocument: textDocument,
-        range: contextRange,
-        attachDebugger: debug,
+): Promise<TestProgress | undefined> {
+    const activeEditor = vscode.window.activeTextEditor;
+    if (!activeEditor) {
+        throw new Error('No active editor');
+    }
+    const contextRange: languageClient.Range = {
+        start: activeEditor.selection.active,
+        end: activeEditor.selection.active,
     };
-    await runTests(request, languageServer, dotnetTestChannel, optionProvider);
+    const textDocument: languageClient.TextDocumentIdentifier = { uri: activeEditor.document.fileName };
+    const request: RunTestsParams = { textDocument: textDocument, range: contextRange, attachDebugger: debug };
+    return runTests(request, languageServer, dotnetTestChannel, optionProvider);
 }
 
 let _testRunInProgress = false;
@@ -65,18 +69,19 @@ async function runTests(
     languageServer: RoslynLanguageServer,
     dotnetTestChannel: vscode.OutputChannel,
     optionProvider: OptionProvider
-) {
-    request.runSettingsPath = getRunSettings(request.textDocument.uri, optionProvider, dotnetTestChannel);
-
+): Promise<TestProgress | undefined> {
     if (_testRunInProgress) {
         vscode.window.showErrorMessage('Test run already in progress');
         return;
     }
 
+    request.runSettingsPath = getRunSettings(request.textDocument.uri, optionProvider, dotnetTestChannel);
+
     _testRunInProgress = true;
 
     dotnetTestChannel.show(true);
-    vscode.window
+    let lastProgress: TestProgress | undefined = undefined;
+    await vscode.window
         .withProgress(
             {
                 location: vscode.ProgressLocation.Notification,
@@ -99,6 +104,7 @@ async function runTests(
                         const reportIncrement = ((completed - totalReportedComplete) / totalTests) * 100;
                         progress.report({ message: output.stage, increment: reportIncrement });
                         totalReportedComplete = completed;
+                        lastProgress = output.progress;
                     } else {
                         progress.report({ message: output.stage });
                     }
@@ -133,9 +139,15 @@ async function runTests(
             }
         )
         .then(
-            () => (_testRunInProgress = false),
-            () => (_testRunInProgress = false)
+            () => {
+                _testRunInProgress = false;
+            },
+            () => {
+                _testRunInProgress = false;
+            }
         );
+
+    return lastProgress;
 }
 
 function getRunSettings(

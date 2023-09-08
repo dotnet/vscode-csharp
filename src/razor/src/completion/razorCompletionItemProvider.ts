@@ -12,7 +12,6 @@ import { RazorLogger } from '../razorLogger';
 import { getUriPath } from '../uriPaths';
 import { ProvisionalCompletionOrchestrator } from './provisionalCompletionOrchestrator';
 import { LanguageKind } from '../rpc/languageKind';
-import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
 import {
     CompletionItem,
     CompletionList,
@@ -23,6 +22,7 @@ import {
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import * as RazorConventions from '../razorConventions';
 import { MappingHelpers } from '../mapping/mappingHelpers';
+import { provideCompletionsCommand, resolveCompletionsCommand } from '../../../lsptoolshost/razorCommands';
 
 export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implements vscode.CompletionItemProvider {
     public static async getCompletions(
@@ -59,7 +59,7 @@ export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implem
                 // that field because it doesn't exist in the declared vs code
                 // CompletionItem type.
                 completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
-                    RoslynLanguageServer.provideCompletionsCommand,
+                    provideCompletionsCommand,
                     params
                 );
             } else {
@@ -236,7 +236,7 @@ export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implem
         // equivalent vscode command to generically do that.
         if ((<CompletionItem>item).data) {
             const newItem = await vscode.commands.executeCommand<vscode.CompletionItem>(
-                RoslynLanguageServer.resolveCompletionsCommand,
+                resolveCompletionsCommand,
                 item
             );
 

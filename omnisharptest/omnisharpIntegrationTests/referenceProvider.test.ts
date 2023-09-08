@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import OmniSharpReferenceProvider from '../../src/features/referenceProvider';
 import * as path from 'path';
-import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { expect, should } from 'chai';
 import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
 
