@@ -18,7 +18,7 @@ export class SemanticTokensRangeHandler {
     > = new RequestType(SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint);
     private emptySemanticTokensResponse: ProvideSemanticTokensResponse = new ProvideSemanticTokensResponse(
         new Array<Array<number>>(),
-        1
+        -1
     );
 
     constructor(private readonly serverClient: RazorLanguageServerClient) {}
