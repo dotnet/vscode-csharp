@@ -782,10 +782,16 @@ export async function activateRoslynLanguageServer(
 }
 
 function getServerPath(options: Options, platformInfo: PlatformInformation) {
-    let serverPath = options.commonOptions.serverPath;
-    if (!serverPath) {
-        // Option not set, use the path from the extension.
-        serverPath = getInstalledServerPath(platformInfo);
+    let serverPath = process.env.DOTNET_ROSLYN_SERVER_PATH;
+
+    if (serverPath) {
+        _channel.appendLine(`Using server path override from DOTNET_ROSLYN_SERVER_PATH: ${serverPath}`);
+    } else {
+        serverPath = options.commonOptions.serverPath;
+        if (!serverPath) {
+            // Option not set, use the path from the extension.
+            serverPath = getInstalledServerPath(platformInfo);
+        }
     }
 
     if (!fs.existsSync(serverPath)) {
