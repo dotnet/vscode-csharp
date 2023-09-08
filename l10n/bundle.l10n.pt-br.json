@@ -99,7 +99,7 @@
   "Required assets to build and debug are missing from '{0}'. Add them?": "Os ativos necessários para compilar e depurar estão ausentes de \"{0}\". Deseja adicioná-los?",
   "Restart": "Reiniciar",
   "Restart Language Server": "Reiniciar o Servidor de Linguagem",
-  "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.",
+  "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Executar e depurar: um navegador válido não está instalado. Instale o Edge ou o Chrome.",
   "Run and Debug: auto-detection found {0} for a launch browser": "Executar e depurar: detecção automática encontrada {0} para um navegador de inicialização",
   "See {0} output": "Ver a saída de {0}",
   "Select the process to attach to": "Selecione o processo ao qual anexar",
