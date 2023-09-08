@@ -787,7 +787,11 @@ function getServerPath(options: Options, platformInfo: PlatformInformation) {
     if (serverPath) {
         _channel.appendLine(`Using server path override from DOTNET_ROSLYN_SERVER_PATH: ${serverPath}`);
     } else {
-        serverPath = options.commonOptions.serverPath ?? getInstalledServerPath(platformInfo);
+        serverPath = options.commonOptions.serverPath;
+        if (!serverPath) {
+            // Option not set, use the path from the extension.
+            serverPath = getInstalledServerPath(platformInfo);
+        }
     }
 
     if (!fs.existsSync(serverPath)) {
