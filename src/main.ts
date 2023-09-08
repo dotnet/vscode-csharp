@@ -41,12 +41,7 @@ import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { BackgroundWorkStatusBarObserver } from './observers/backgroundWorkStatusBarObserver';
 import { getDotnetPackApi } from './dotnetPack';
-import {
-    RoslynLanguageServer,
-    SolutionSnapshotProvider,
-    activateRoslynLanguageServer,
-    waitForProjectInitialization,
-} from './lsptoolshost/roslynLanguageServer';
+import { RoslynLanguageServer, activateRoslynLanguageServer } from './lsptoolshost/roslynLanguageServer';
 import { MigrateOptions } from './shared/migrateOptions';
 import { getBrokeredServiceContainer } from './lsptoolshost/services/brokeredServicesHosting';
 import { CSharpDevKitExports } from './csharpDevKitExports';
@@ -58,6 +53,9 @@ import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazor
 import { RazorOmnisharpDownloader } from './razor/razorOmnisharpDownloader';
 import { RoslynLanguageServerExport } from './lsptoolshost/roslynLanguageServerExportChannel';
 import { registerOmnisharpOptionChanges } from './omnisharp/omnisharpOptionChanges';
+import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents';
+import { ServerStateChange } from './lsptoolshost/serverStateChange';
+import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -122,7 +120,9 @@ export async function activate(
 
     let omnisharpLangServicePromise: Promise<OmniSharp.ActivationResult> | undefined = undefined;
     let omnisharpRazorPromise: Promise<void> | undefined = undefined;
-    let roslynLanguageServerPromise: Promise<RoslynLanguageServer> | undefined = undefined;
+    const roslynLanguageServerEvents = new RoslynLanguageServerEvents();
+    context.subscriptions.push(roslynLanguageServerEvents);
+    let roslynLanguageServerStartedPromise: Promise<RoslynLanguageServer> | undefined = undefined;
     let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer) {
@@ -142,16 +142,27 @@ export async function activate(
         );
 
         context.subscriptions.push(optionProvider);
-        roslynLanguageServerPromise = activateRoslynLanguageServer(
+
+        // Setup a listener for project initialization complete before we start the server.
+        projectInitializationCompletePromise = new Promise((resolve, _) => {
+            roslynLanguageServerEvents.onServerStateChange(async (state) => {
+                if (state === ServerStateChange.ProjectInitializationComplete) {
+                    resolve();
+                }
+            });
+        });
+
+        // Start the server, but do not await the completion to avoid blocking activation.
+        roslynLanguageServerStartedPromise = activateRoslynLanguageServer(
             context,
             platformInfo,
             optionProvider,
             optionStream,
             csharpChannel,
             dotnetTestChannel,
-            reporter
+            reporter,
+            roslynLanguageServerEvents
         );
-        projectInitializationCompletePromise = waitForProjectInitialization();
     } else {
         const dotnetChannel = vscode.window.createOutputChannel('.NET');
         const dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
@@ -312,18 +323,24 @@ export async function activate(
     if (!useOmnisharpServer) {
         tryGetCSharpDevKitExtensionExports(csharpLogObserver);
 
-        const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerPromise!);
+        // If we got here, the server should definitely have been created.
+        util.isNotNull(roslynLanguageServerStartedPromise);
+        util.isNotNull(projectInitializationCompletePromise);
+
+        const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerStartedPromise);
         return {
             initializationFinished: async () => {
                 await coreClrDebugPromise;
-                await roslynLanguageServerPromise;
+                await roslynLanguageServerStartedPromise;
                 await projectInitializationCompletePromise;
             },
-            profferBrokeredServices: (container) => profferBrokeredServices(context, container),
+            profferBrokeredServices: (container) =>
+                profferBrokeredServices(context, container, roslynLanguageServerStartedPromise!),
             logDirectory: context.logUri.fsPath,
             determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
             experimental: {
                 sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
+                languageServerEvents: roslynLanguageServerEvents,
             },
         };
     } else {
@@ -386,11 +403,15 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
     );
 }
 
-function profferBrokeredServices(context: vscode.ExtensionContext, serviceContainer: GlobalBrokeredServiceContainer) {
+function profferBrokeredServices(
+    context: vscode.ExtensionContext,
+    serviceContainer: GlobalBrokeredServiceContainer,
+    languageServerPromise: Promise<RoslynLanguageServer>
+) {
     context.subscriptions.push(
         serviceContainer.profferServiceFactory(
             Descriptors.solutionSnapshotProviderRegistration,
-            (_mk, _op, _sb) => new SolutionSnapshotProvider()
+            (_mk, _op, _sb) => new SolutionSnapshotProvider(languageServerPromise)
         )
     );
 }
