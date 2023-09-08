@@ -7,7 +7,6 @@ import * as vscode from 'vscode';
 import { RequestType } from 'vscode-languageclient';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { ProvideSemanticTokensResponse } from './provideSemanticTokensResponse';
-import { SemanticTokensResponse } from './semanticTokensResponse';
 import { SerializableSemanticTokensParams } from './serializableSemanticTokensParams';
 
 export class SemanticTokensRangeHandler {
@@ -18,7 +17,7 @@ export class SemanticTokensRangeHandler {
         any
     > = new RequestType(SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint);
     private emptySemanticTokensResponse: ProvideSemanticTokensResponse = new ProvideSemanticTokensResponse(
-        new SemanticTokensResponse(new Array<Array<number>>(), ''),
+        new Array<Array<number>>(),
         null
     );
 
