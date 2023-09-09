@@ -150,10 +150,11 @@ async function completionComplexEdit(
 
     if (!success) {
         const componentName = '[roslyn.client.completionComplexEdit]';
+        const errorMessage = 'Failed to make a complex text edit for completion.';
+        outputChannel.show();
+        outputChannel.appendLine(`${componentName} ${errorMessage}`);
 
         if (editor === undefined) {
-            outputChannel.show();
-            outputChannel.appendLine(`${componentName} Failed to make a complex text edit for completion.`);
             outputChannel.appendLine(
                 `${componentName} Can't find visible document with uri.fsPath: '${uri.fsPath}' and uri.path: '${uri.path}'`
             );
@@ -170,7 +171,7 @@ async function completionComplexEdit(
             );
         }
 
-        throw new Error('Failed to make a complex text edit for completion.');
+        throw new Error(`${componentName} ${errorMessage}`);
     }
 }
 
