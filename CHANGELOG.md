@@ -43,7 +43,6 @@
 * Fix specific case where razor formatting no longer worked (PR: [#6195](https://github.com/dotnet/vscode-csharp/pull/6236))
 * Fix quoting bug in extension paths (PR: [#6228](https://github.com/dotnet/vscode-csharp/pull/6228))
 * Fix Razor mapping errors in the log (PR: [#6209](https://github.com/dotnet/vscode-csharp/pull/6209))
-
 * Add the configuration option for creating binlogs (PR: [#6155](https://github.com/dotnet/vscode-csharp/pull/6155))
 * Update option changes toast to reload window (PR: [#6174](https://github.com/dotnet/vscode-csharp/pull/6174))
 * Update Roslyn version (PR: [#6205](https://github.com/dotnet/vscode-csharp/pull/6205))
