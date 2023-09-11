@@ -99,7 +99,13 @@ export async function activate(
                 languageServiceClient,
                 logger
             );
-            const semanticTokenHandler = new SemanticTokensRangeHandler(languageServerClient);
+            const semanticTokenHandler = new SemanticTokensRangeHandler(
+                documentSynchronizer,
+                languageServerClient,
+                languageServiceClient,
+                documentManager,
+                logger
+            );
             const colorPresentationHandler = new ColorPresentationHandler(
                 documentManager,
                 languageServerClient,
