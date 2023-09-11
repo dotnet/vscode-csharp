@@ -16,6 +16,9 @@ jestLib.describe(`Unit Testing ${testAssetWorkspace.description}`, function () {
     });
 
     jestLib.beforeEach(async function () {
+        vscode.workspace
+            .getConfiguration()
+            .update('dotnet.unitTests.runSettingsPath', undefined, vscode.ConfigurationTarget.Workspace);
         const fileName = path.join('test', 'UnitTest1.cs');
         await openFileInWorkspaceAsync(fileName);
     });
@@ -26,9 +29,10 @@ jestLib.describe(`Unit Testing ${testAssetWorkspace.description}`, function () {
 
     jestLib.test('Unit test code lens items are displayed', async () => {
         const codeLenses = await getCodeLensesAsync();
-        jestLib.expect(codeLenses).toHaveLength(6);
+        jestLib.expect(codeLenses).toHaveLength(9);
 
         const classRange = new vscode.Range(new vscode.Position(5, 17), new vscode.Position(5, 26));
+
         // Class level debug all tests
         jestLib.expect(codeLenses[1].command?.command).toBe('dotnet.test.run');
         jestLib.expect(codeLenses[1].command?.title).toBe('Debug All Tests');
@@ -41,23 +45,31 @@ jestLib.describe(`Unit Testing ${testAssetWorkspace.description}`, function () {
         jestLib.expect(codeLenses[2].command?.arguments![0].attachDebugger).toBe(false);
         jestLib.expect(codeLenses[2].range).toStrictEqual(classRange);
 
-        const methodRange = new vscode.Range(new vscode.Position(8, 20), new vscode.Position(8, 25));
-        // Method level debug test
+        let methodRange = new vscode.Range(new vscode.Position(8, 20), new vscode.Position(8, 25));
+        // Method level run and debug test
         jestLib.expect(codeLenses[4].command?.command).toBe('dotnet.test.run');
         jestLib.expect(codeLenses[4].command?.title).toBe('Debug Test');
         jestLib.expect(codeLenses[4].command?.arguments![0].attachDebugger).toBe(true);
         jestLib.expect(codeLenses[4].range).toStrictEqual(methodRange);
-
-        // Method level run test
         jestLib.expect(codeLenses[5].command?.command).toBe('dotnet.test.run');
         jestLib.expect(codeLenses[5].command?.title).toBe('Run Test');
         jestLib.expect(codeLenses[5].command?.arguments![0].attachDebugger).toBe(false);
         jestLib.expect(codeLenses[5].range).toStrictEqual(methodRange);
+
+        methodRange = new vscode.Range(new vscode.Position(15, 20), new vscode.Position(15, 25));
+        jestLib.expect(codeLenses[7].command?.command).toBe('dotnet.test.run');
+        jestLib.expect(codeLenses[7].command?.title).toBe('Debug Test');
+        jestLib.expect(codeLenses[7].command?.arguments![0].attachDebugger).toBe(true);
+        jestLib.expect(codeLenses[7].range).toStrictEqual(methodRange);
+        jestLib.expect(codeLenses[8].command?.command).toBe('dotnet.test.run');
+        jestLib.expect(codeLenses[8].command?.title).toBe('Run Test');
+        jestLib.expect(codeLenses[8].command?.arguments![0].attachDebugger).toBe(false);
+        jestLib.expect(codeLenses[8].range).toStrictEqual(methodRange);
     });
 
     jestLib.test('Code lens command executes tests', async () => {
         const codeLenses = await getCodeLensesAsync();
-        jestLib.expect(codeLenses).toHaveLength(6);
+        jestLib.expect(codeLenses).toHaveLength(9);
 
         const runAllTestsCommand = codeLenses[2].command!;
         jestLib.expect(runAllTestsCommand.title).toBe('Run All Tests');
@@ -67,8 +79,8 @@ jestLib.describe(`Unit Testing ${testAssetWorkspace.description}`, function () {
             runAllTestsCommand.arguments![0]
         );
         jestLib.expect(testResults).toBeDefined();
-        jestLib.expect(testResults?.totalTests).toEqual(1);
-        jestLib.expect(testResults?.testsPassed).toEqual(1);
+        jestLib.expect(testResults?.totalTests).toEqual(2);
+        jestLib.expect(testResults?.testsPassed).toEqual(2);
         jestLib.expect(testResults?.testsFailed).toEqual(0);
         jestLib.expect(testResults?.testsSkipped).toEqual(0);
     });
@@ -84,6 +96,26 @@ jestLib.describe(`Unit Testing ${testAssetWorkspace.description}`, function () {
         const testResults = await vscode.commands.executeCommand<TestProgress | undefined>(
             'dotnet.test.runTestsInContext',
             activeEditor
+        );
+        jestLib.expect(testResults).toBeDefined();
+        jestLib.expect(testResults?.totalTests).toEqual(1);
+        jestLib.expect(testResults?.testsPassed).toEqual(1);
+        jestLib.expect(testResults?.testsFailed).toEqual(0);
+        jestLib.expect(testResults?.testsSkipped).toEqual(0);
+    });
+
+    jestLib.test('Run tests uses .runsettings', async () => {
+        await setConfigurationAndWaitForObserver('dotnet.unitTests.runSettingsPath', '.runsettings');
+
+        const codeLenses = await getCodeLensesAsync();
+        jestLib.expect(codeLenses).toHaveLength(9);
+
+        const runAllTestsCommand = codeLenses[2].command!;
+        jestLib.expect(runAllTestsCommand.title).toBe('Run All Tests');
+
+        const testResults = await vscode.commands.executeCommand<TestProgress | undefined>(
+            runAllTestsCommand.command,
+            runAllTestsCommand.arguments![0]
         );
         jestLib.expect(testResults).toBeDefined();
         jestLib.expect(testResults?.totalTests).toEqual(1);
@@ -117,4 +149,16 @@ async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
 
         return a.command!.title.localeCompare(b.command!.command);
     });
+}
+
+async function setConfigurationAndWaitForObserver<T>(configuration: string, value: T): Promise<void> {
+    const changed = new Promise<void>((resolve, _) => {
+        vscode.workspace.onDidChangeConfiguration((e) => {
+            if (e.affectsConfiguration(configuration)) {
+                resolve();
+            }
+        });
+    });
+    vscode.workspace.getConfiguration().update(configuration, value);
+    await changed;
 }

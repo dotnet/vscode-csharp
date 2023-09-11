@@ -117,7 +117,7 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
         await csharpConfig.update('codeLens.enableTestsCodeLens', false);
 
         const codeLenses = await GetCodeLenses(fileUri, 100);
-        expect(codeLenses.length).to.equal(2);
+        expect(codeLenses.length).to.equal(3);
 
         for (const codeLens of codeLenses) {
             expect(codeLens.isResolved).to.be.true;
