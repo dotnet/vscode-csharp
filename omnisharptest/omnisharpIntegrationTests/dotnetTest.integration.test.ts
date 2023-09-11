@@ -47,8 +47,8 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
     });
 
     test('Undefined runsettings path is unchanged', async function () {
-        const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
-        await omnisharpConfig.update('testRunSettings', undefined);
+        const omnisharpConfig = vscode.workspace.getConfiguration('dotnet');
+        await omnisharpConfig.update('unitTests.runSettingsPath', undefined);
 
         const eventWaiter = testAssetWorkspace.waitForEvent<OmnisharpRequestMessage>(
             eventStream,
@@ -69,8 +69,8 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const relativeRunSettingsPath = `.\\settings\\TestSettings.runsettings`.replace('\\', path.sep);
         const absoluteRunSettingsPath = path.join(process.cwd(), relativeRunSettingsPath);
 
-        const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
-        await omnisharpConfig.update('testRunSettings', absoluteRunSettingsPath);
+        const omnisharpConfig = vscode.workspace.getConfiguration('dotnet');
+        await omnisharpConfig.update('unitTests.runSettingsPath', absoluteRunSettingsPath);
 
         const eventWaiter = testAssetWorkspace.waitForEvent<OmnisharpRequestMessage>(
             eventStream,
@@ -91,8 +91,8 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const endingPath = 'settings\\TestSettings.runsettings'.replace('\\', path.sep);
         const relativeRunSettingPath = `.\\${endingPath}`.replace('\\', path.sep);
 
-        const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
-        await omnisharpConfig.update('testRunSettings', relativeRunSettingPath);
+        const omnisharpConfig = vscode.workspace.getConfiguration('dotnet');
+        await omnisharpConfig.update('unitTests.runSettingsPath', relativeRunSettingPath);
 
         const eventWaiter = testAssetWorkspace.waitForEvent<OmnisharpRequestMessage>(
             eventStream,

@@ -103,7 +103,7 @@ async function completionComplexEdit(
 ): Promise<void> {
     let success = false;
     const uri = UriConverter.deserialize(uriStr);
-    const editor = vscode.window.visibleTextEditors.find((editor) => editor.document.uri.path === uri.path);
+    const editor = vscode.window.visibleTextEditors.find((editor) => editor.document.uri.fsPath === uri.fsPath);
 
     if (editor !== undefined) {
         const newRange = editor.document.validateRange(

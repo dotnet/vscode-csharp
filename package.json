@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.8.0-3.23455.11",
+    "roslyn": "4.8.0-3.23458.4",
     "omniSharp": "1.39.7",
     "razor": "7.0.0-preview.23456.2",
     "razorOmnisharp": "7.0.0-preview.23363.1"
@@ -1087,10 +1087,6 @@
             "default": false,
             "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results."
           },
-          "omnisharp.testRunSettings": {
-            "type": "string",
-            "description": "Path to the .runsettings file which should be used when running unit tests."
-          },
           "omnisharp.dotNetCliPaths": {
             "type": "array",
             "items": {
@@ -1363,6 +1359,10 @@
             "default": true,
             "description": "%configuration.dotnet.symbolSearch.searchReferenceAssemblies%",
             "order": 80
+          },
+          "dotnet.unitTests.runSettingsPath": {
+            "type": "string",
+            "description": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)"
           },
           "dotnet.unitTestDebuggingOptions": {
             "type": "object",
