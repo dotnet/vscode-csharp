@@ -748,7 +748,7 @@ export async function activateRoslynLanguageServer(
 
     registerRazorCommands(context, languageServer);
 
-    registerUnitTestingCommands(context, languageServer, dotnetTestChannel);
+    registerUnitTestingCommands(context, languageServer, dotnetTestChannel, optionProvider);
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, optionProvider, _channel);
