@@ -78,7 +78,7 @@ suite('Asset generation: csproj', () => {
         // We do not check the watch task since this parameter can break hot reload scenarios.
         tasksJson.tasks
             .filter((task) => task.label !== 'watch')
-            .forEach((task) => task.args!.should.contain('/consoleloggerparameters:NoSummary'));
+            .forEach((task) => task.args!.should.contain('/consoleloggerparameters:NoSummary;ForceNoAlign'));
     });
 
     test("Generated 'watch' task does not have the property GenerateFullPaths set to true ", () => {
@@ -111,7 +111,7 @@ suite('Asset generation: csproj', () => {
 
         const watchTask = tasksJson.tasks!.find((task) => task.label === 'watch');
         isNotNull(watchTask?.args);
-        watchTask.args.should.not.contain('/consoleloggerparameters:NoSummary');
+        watchTask.args.should.not.contain('/consoleloggerparameters:NoSummary;ForceNoAlign');
     });
 
     test('Create tasks.json for nested project opened in workspace', () => {
