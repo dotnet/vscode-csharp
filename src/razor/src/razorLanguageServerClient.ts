@@ -248,8 +248,6 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('project.razor.vscode.json');
             args.push('--DelegateToCSharpOnDiagnosticPublish');
             args.push('true');
-            args.push('--SupportsDelegatedCodeActions');
-            args.push('true');
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');
         }

@@ -233,7 +233,7 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _getRunSettings(filename: string): string | undefined {
-        const testSettingsPath = this.optionProvider.GetLatestOptions().omnisharpOptions.testRunSettings;
+        const testSettingsPath = this.optionProvider.GetLatestOptions().commonOptions.runSettingsPath;
         if (testSettingsPath.length === 0) {
             return undefined;
         }

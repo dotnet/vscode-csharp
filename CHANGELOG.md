@@ -1,14 +1,41 @@
 ## Known Issues
- 
+
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - [O# Parity] FixAll support for code fixes and refactorings [#5735](https://github.com/dotnet/vscode-csharp/issues/5735)
 - [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
-- [O# Parity] Support loading projects/files without a solution file [#5722](https://github.com/dotnet/vscode-csharp/issues/5722)
-- [O# Parity] Some csproj projects will not correctly load [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
+- [O# Parity] Projects running on Mono may not load correctly [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
 - [O# Parity] Run and debug tests in context [#5719](https://github.com/dotnet/vscode-csharp/issues/5719)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Razor version to 7.0.0-preview.23456.2 (PR: [#6304](https://github.com/dotnet/vscode-csharp/pull/6304))
+  * Fixes regression where semantic colors for razor components appear as red
+* Add support for specifying a .runsettings file when using Roslyn LSP (PR: [#6265](https://github.com/dotnet/vscode-csharp/pull/6265))
+* Update Roslyn version (PR: [#6265](https://github.com/dotnet/vscode-csharp/pull/6265))
+  * Add server support for .runsettings in unit tests (PR: [#69792](https://github.com/dotnet/roslyn/pull/69792))
+  * Log more information when we're unable to parse a URI (PR: [#69840](https://github.com/dotnet/roslyn/pull/69840))
+  * Bump ICSharpCode.Decompiler to 8.1.0.745 (PR: [#69772](https://github.com/dotnet/roslyn/pull/69772))
+  * Fix override completion erroring when framework assemblies are not found (PR: [#69795](https://github.com/dotnet/roslyn/pull/69795))
+* Fix override completion when drive letter casing does not match (PR: [#6315](https://github.com/dotnet/vscode-csharp/pull/6315))
+* Allow the server path to be specified by the `DOTNET_ROSLYN_SERVER_PATH` environment variable (PR: [#6316](https://github.com/dotnet/vscode-csharp/pull/6316))
+
+## 2.1.10
+* Update Roslyn version
+  * Includes better support for .NET 8 and .NET Framework-targeting projects (PR: [#69616](https://github.com/dotnet/roslyn/pull/69616))
+    * This should fix a number of reports where projects don't have full IntelliSense. .NET Framework projects on Windows should load without errors. .NET Framework targeting projects on Mac and Linux which would use Mono are still processed as if they are .NET Core projects and may not load correctly; support for Mono is coming in a future update.
+  * Fix issues where some projects fail to load being unable to find NuGet.Frameworks (PR: [#69824](https://github.com/dotnet/roslyn/pull/69824))
+* Update Razor to 7.0.0-preview.23455.5 (PR: [#6291](https://github.com/dotnet/vscode-csharp/pull/6291))
+  * Fixes issue reading razor.format.enable and other options (PR: [dotnet/razor#9240](https://github.com/dotnet/razor/issues/9240))
+* Fix parsing of tasks.json with comments in certain locations (PR: [#6288](https://github.com/dotnet/vscode-csharp/pull/6288))
+* Fix Razor browser discovery issues on Mac and Linux `DOTNET_ROSLYN_SERVER_PATH` environment variable (PR: [#6269](https://github.com/dotnet/vscode-csharp/pull/6269))
+
+## 2.0.448
+* Update Roslyn version (PR: [#6264](https://github.com/dotnet/vscode-csharp/pull/6264))
+  * Upgrade MSBuildLocator to fix homebrew dotnet resolution (PR: [#69769](https://github.com/dotnet/roslyn/pull/69769))
+  * Fix reported ExeName / ExeVersion (PR: [#69771](https://github.com/dotnet/roslyn/pull/69771))
+* Add 1.x setting names to migrated settings descriptions (PR: [#6266](https://github.com/dotnet/vscode-csharp/pull/6266))
+
+## 2.0.436
 * Update Roslyn version (PR: [#6245](https://github.com/dotnet/vscode-csharp/pull/6245))
   * Fix import completion (PR: [#69691](https://github.com/dotnet/roslyn/pull/69691))
   * Reduce overhead on semantic token refresh requests (PR: [#69690](https://github.com/dotnet/roslyn/pull/69690))
@@ -36,7 +63,7 @@
 * Fix issue resolving .NET 7 runtimes from path (PR: [#6175](https://github.com/dotnet/vscode-csharp/pull/6175))
 * Fix URI issue when loading Razor files (PR: [#6168](https://github.com/dotnet/vscode-csharp/pull/6168))
 * Bump Razor to 7.0.0-preview.23417.3 (PR: [#6165](https://github.com/dotnet/vscode-csharp/pull/6165))
-  * Fix various textDocument/foldingRange issues (PR: [#9134](https://github.com/dotnet/razor/pull/9134)) 
+  * Fix various textDocument/foldingRange issues (PR: [#9134](https://github.com/dotnet/razor/pull/9134))
 * Clarify dotnet path option description (PR: [#6164](https://github.com/dotnet/vscode-csharp/pull/6164))
 * Handle multiple dotnet on path and symlinks (PR: [#6152](https://github.com/dotnet/vscode-csharp/pull/6152))
 * Localize Roslyn options (PR: [#6136](https://github.com/dotnet/vscode-csharp/pull/6136))

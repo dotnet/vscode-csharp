@@ -31,7 +31,11 @@ export function registerCommands(
     // so we don't accidentally pass them directly into vscode APIs.
     context.subscriptions.push(vscode.commands.registerCommand('roslyn.client.peekReferences', peekReferencesCallback));
     context.subscriptions.push(
-        vscode.commands.registerCommand('roslyn.client.completionComplexEdit', completionComplexEdit)
+        vscode.commands.registerCommand(
+            'roslyn.client.completionComplexEdit',
+            async (uriStr, textEdit, isSnippetString, newOffset) =>
+                completionComplexEdit(uriStr, textEdit, isSnippetString, newOffset, outputChannel)
+        )
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restartServer', async () => restartServer(languageServer))
@@ -99,11 +103,14 @@ async function completionComplexEdit(
     uriStr: string,
     textEdit: vscode.TextEdit,
     isSnippetString: boolean,
-    newOffset: number
+    newOffset: number,
+    outputChannel: vscode.OutputChannel
 ): Promise<void> {
     let success = false;
     const uri = UriConverter.deserialize(uriStr);
-    const editor = vscode.window.visibleTextEditors.find((editor) => editor.document.uri.path === uri.path);
+    const editor = vscode.window.visibleTextEditors.find(
+        (editor) => editor.document.uri.path === uri.path || editor.document.uri.fsPath === uri.fsPath
+    );
 
     if (editor !== undefined) {
         const newRange = editor.document.validateRange(
@@ -142,7 +149,29 @@ async function completionComplexEdit(
     }
 
     if (!success) {
-        throw new Error('Failed to make a complex text edit for completion.');
+        const componentName = '[roslyn.client.completionComplexEdit]';
+        const errorMessage = 'Failed to make a complex text edit for completion.';
+        outputChannel.show();
+        outputChannel.appendLine(`${componentName} ${errorMessage}`);
+
+        if (editor === undefined) {
+            outputChannel.appendLine(
+                `${componentName} Can't find visible document with uri.fsPath: '${uri.fsPath}' and uri.path: '${uri.path}'`
+            );
+
+            outputChannel.appendLine(`${componentName} URIs of all visible documents:`);
+            for (const visibleEditor of vscode.window.visibleTextEditors) {
+                outputChannel.appendLine(
+                    `${componentName} - uri.fsPath: '${visibleEditor.document.uri.fsPath}' and uri.path: '${visibleEditor.document.uri.path}'`
+                );
+            }
+        } else {
+            outputChannel.appendLine(
+                `${componentName} ${isSnippetString ? 'TextEditor.insertSnippet' : 'workspace.applyEdit'} failed.`
+            );
+        }
+
+        throw new Error(`${componentName} ${errorMessage}`);
     }
 }
 

@@ -9,11 +9,11 @@ import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';
 import { SerializableDelegatedCodeActionParams } from './serializableDelegatedCodeActionParams';
-import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
 import { LanguageKind } from '../rpc/languageKind';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import { SerializableRazorResolveCodeActionParams } from './serializableRazorResolveCodeActionParams';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
+import { provideCodeActionsCommand, resolveCodeActionCommand } from '../../../lsptoolshost/razorCommands';
 
 export class CodeActionsHandler {
     private static readonly provideCodeActionsEndpoint = 'razor/provideCodeActions';
@@ -84,9 +84,7 @@ export class CodeActionsHandler {
             const virtualCSharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
             codeActionParams.textDocument = TextDocumentIdentifier.create(virtualCSharpUri);
 
-            return <CodeAction[]>(
-                await vscode.commands.executeCommand(RoslynLanguageServer.provideCodeActionsCommand, codeActionParams)
-            );
+            return <CodeAction[]>await vscode.commands.executeCommand(provideCodeActionsCommand, codeActionParams);
         } catch (error) {
             this.logger.logWarning(`${CodeActionsHandler.provideCodeActionsEndpoint} failed with ${error}`);
         }
@@ -124,9 +122,7 @@ export class CodeActionsHandler {
 
             // Call Roslyn. Since this code action came from Roslyn, we don't even have to point it
             // to the virtual C# document.
-            return <CodeAction>(
-                await vscode.commands.executeCommand(RoslynLanguageServer.resolveCodeActionCommand, codeAction)
-            );
+            return <CodeAction>await vscode.commands.executeCommand(resolveCodeActionCommand, codeAction);
         } catch (error) {
             this.logger.logWarning(`${CodeActionsHandler.resolveCodeActionsEndpoint} failed with ${error}`);
         }

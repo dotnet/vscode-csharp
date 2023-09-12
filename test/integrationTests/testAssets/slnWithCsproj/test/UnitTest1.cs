@@ -10,5 +10,12 @@ namespace test
         {
 
         }
+
+        [Fact]
+        [Trait("TestCategory", "include")]
+        public void Test2()
+        {
+
+        }
     }
 }

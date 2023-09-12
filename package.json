@@ -37,9 +37,9 @@
     }
   },
   "defaults": {
-    "roslyn": "4.8.0-2.23428.2",
+    "roslyn": "4.8.0-3.23458.4",
     "omniSharp": "1.39.7",
-    "razor": "7.0.0-preview.23423.3",
+    "razor": "7.0.0-preview.23456.2",
     "razorOmnisharp": "7.0.0-preview.23363.1"
   },
   "main": "./dist/extension",
@@ -55,12 +55,14 @@
   "scripts": {
     "vscode:prepublish": "tsc -p ./ && webpack --mode production",
     "l10nDevGenerateLocalizationBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
-    "compile": "tsc -p ./ && npx eslint ./ && npm run l10nDevGenerateLocalizationBundle",
+    "compile": "tsc -p ./ && npx eslint ./ && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
+    "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
     "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development && npm run l10nDevGenerateLocalizationBundle",
     "watch": "tsc -watch -p ./",
     "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts omnisharptest/omnisharpUnitTests/**/*.test.ts*",
     "test": "tsc -p ./ && gulp test",
     "test:integration": "tsc -p ./ && gulp test:integration",
+    "test:razor": "tsc -p ./ && npm run compile:razorTextMate && gulp test:razor",
     "omnisharptest": "tsc -p ./ && gulp omnisharptest",
     "omnisharptest:unit": "tsc -p ./ && gulp omnisharptest:unit",
     "omnisharptest:feature": "tsc -p ./ && gulp omnisharptest:feature",
@@ -83,8 +85,10 @@
     "@types/cross-spawn": "6.0.2",
     "@vscode/debugprotocol": "1.56.0",
     "@vscode/extension-telemetry": "0.6.2",
+    "@vscode/js-debug-browsers": "^1.1.0",
     "async-file": "2.0.2",
     "cross-spawn": "6.0.5",
+    "execa": "4.0.0",
     "fs-extra": "9.1.0",
     "http-proxy-agent": "4.0.1",
     "https-proxy-agent": "5.0.0",
@@ -102,7 +106,6 @@
     "tmp": "0.0.33",
     "uuid": "^9.0.0",
     "vscode-html-languageservice": "^5.0.1",
-    "vscode-js-debug-browsers": "^1.0.5",
     "vscode-jsonrpc": "8.2.0-next.0",
     "vscode-languageclient": "8.2.0-next.1",
     "vscode-languageserver-protocol": "3.17.4-next.1",
@@ -120,6 +123,7 @@
     "@types/del": "3.0.1",
     "@types/fs-extra": "5.0.4",
     "@types/gulp": "4.0.5",
+    "@types/jest": "^24.0.25",
     "@types/minimist": "1.2.1",
     "@types/mocha": "5.2.5",
     "@types/node": "16.11.38",
@@ -169,6 +173,8 @@
     "typescript": "^5.1.6",
     "unzipper": "0.10.11",
     "vsce": "2.9.2",
+    "vscode-oniguruma": "^1.6.1",
+    "vscode-textmate": "^6.0.0",
     "vscode-uri": "^3.0.7",
     "webpack": "5.76.0",
     "webpack-cli": "4.6.0"
@@ -607,7 +613,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/a48c3e83b44a34ddb295099c55e31e7e/razorlanguageserver-win-x64-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/258d3df59cb903ca4bcb9d42b854e28b/razorlanguageserver-win-x64-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -615,12 +621,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "A7815AE5A9BEFE7EB5C0006343341A38D0F7A662865DAD21F0842E064322C186"
+      "integrity": "2776B6967DE613C03B2EFEA9490D8B82BDF23E435FE7C6167D6A3ED58EC706ED"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/e188fa3cbd9a5601701d0f8de0705496/razorlanguageserver-win-x86-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/d2ffb8978958712807d88ebf38914f47/razorlanguageserver-win-x86-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -628,12 +634,12 @@
       "architectures": [
         "x86"
       ],
-      "integrity": "D543C2E513F93F91AEDD95AE2A410747D71D3E7CF4D32E0FA31F8B7691109F6F"
+      "integrity": "E2040016EF17B2D181BFD5FD8D03FC2959AF8E909ADD17FABFC87370BBA42802"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/695b332017bfa81af74787904979fde8/razorlanguageserver-win-arm64-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/d279c139e3d914fec96dfab50f05f438/razorlanguageserver-win-arm64-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -641,12 +647,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "DF2E2F442BE365DE390F7402CE69E5514D91D379A4A755133B696CC2972CFE53"
+      "integrity": "FA3FD214F14C61D9E810F36060C09ED7E245697B34371EC705D275BF825E76C4"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/b9653cb6c40f965986266f70ae7dab25/razorlanguageserver-linux-x64-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/86a165500517ca828227bfd0f28f7a02/razorlanguageserver-linux-x64-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -657,12 +663,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "87D1357F1BCDCBA9D775677B5ADFFE22D87B013155B3ADBDA69F9CEA0F5C0FCF"
+      "integrity": "1B5F1A6A74FA0ADA04B7061C243FA4CA72591A1973B992A4C25E94A0137FD3DF"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/4aca138f5c6299422e240dcc50689a67/razorlanguageserver-linux-arm64-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/af4c33cdb53e85a7de39fb07195e05b2/razorlanguageserver-linux-arm64-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -673,12 +679,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "9E8C75DBEA512D7FCE5D96D240D57E6C12161EDFE7482A8F68F99BD5019F3EC1"
+      "integrity": "37EC155920952719CD76F7E8BFD65EA3D0A2738A675670B5614D23D9542D5DE8"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/7d1e4e0bf72de43dc272d22de2486633/razorlanguageserver-linux-musl-x64-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/e5e12ac99072e02499bef77c2c5034a2/razorlanguageserver-linux-musl-x64-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -689,12 +695,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "AD36EAA27AC75EF161E4642454B995FFE71751ED7B89C6B4233D1D577CB763A6"
+      "integrity": "F4399BCEE6192BF3DBA1A6E93DE801075DF1433DF772143B7612FBD60B078361"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/eee386c129c18ba1705fe411cb981a20/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/24783517c9a4729efbd7dfd2a97fe5cc/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -705,12 +711,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "EC8279752254F33AECC5D59E7D02DC93BB37EF2740CC63ACFF0DB78725BF169C"
+      "integrity": "E471B4F4FB70BB22EB689A759BCAD22B12908EC7446BB98EA69EED974E28E9C7"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/74f8a06bc496f54b37466c382c6744ee/razorlanguageserver-osx-x64-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/b9ee27ddd84b0f4faf82e88589c8584f/razorlanguageserver-osx-x64-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -721,12 +727,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "FE3356F653A786A5442E99AA6FE19DD9215962F9B926AD2E723596A5B6E3C135"
+      "integrity": "B0C40624FE418E3C47DCDC44DDF0643C7F980A254FEEEB49BAED21A010102EB8"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/0b0d800b-570c-446a-8e29-4130bd68c63b/679c6fe63c016298914264c33326f2ea/razorlanguageserver-osx-arm64-7.0.0-preview.23423.3.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/d61e51f223e6bfeceae821b1cce36bfc/razorlanguageserver-osx-arm64-7.0.0-preview.23456.2.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -737,7 +743,7 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "594EAE393087FD002829041B261D6777CBA17E612783C548E1B9B2D20BE97E54"
+      "integrity": "C0C325C057E9392845E19F1918F9DEA56500A4188FC619B5529B2785EB2A1D65"
     },
     {
       "id": "RazorOmnisharp",
@@ -1081,10 +1087,6 @@
             "default": false,
             "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results."
           },
-          "omnisharp.testRunSettings": {
-            "type": "string",
-            "description": "Path to the .runsettings file which should be used when running unit tests."
-          },
           "omnisharp.dotNetCliPaths": {
             "type": "array",
             "items": {
@@ -1358,6 +1360,10 @@
             "description": "%configuration.dotnet.symbolSearch.searchReferenceAssemblies%",
             "order": 80
           },
+          "dotnet.unitTests.runSettingsPath": {
+            "type": "string",
+            "description": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)"
+          },
           "dotnet.unitTestDebuggingOptions": {
             "type": "object",
             "description": "%configuration.dotnet.unitTestDebuggingOptions%",
@@ -1405,21 +1411,6 @@
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
-                  },
-                  "engineLogging": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
-                    "default": false
-                  },
-                  "browserStdOut": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
-                    "default": true
-                  },
-                  "elapsedTiming": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
-                    "default": false
                   },
                   "threadExit": {
                     "type": "boolean",
