@@ -7,7 +7,6 @@ import * as vscode from 'vscode';
 import { RequestType } from 'vscode-languageclient';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { ProvideSemanticTokensResponse } from './provideSemanticTokensResponse';
-import { SemanticTokensResponse } from './semanticTokensResponse';
 import { SerializableSemanticTokensParams } from './serializableSemanticTokensParams';
 
 export class SemanticTokensRangeHandler {
@@ -17,10 +16,7 @@ export class SemanticTokensRangeHandler {
         ProvideSemanticTokensResponse,
         any
     > = new RequestType(SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint);
-    private emptySemanticTokensResponse: ProvideSemanticTokensResponse = new ProvideSemanticTokensResponse(
-        new SemanticTokensResponse(new Array<number>(), ''),
-        null
-    );
+    private emptyTokensInResponse: Array<Array<number>> = new Array<Array<number>>();
 
     constructor(private readonly serverClient: RazorLanguageServerClient) {}
 
@@ -44,6 +40,9 @@ export class SemanticTokensRangeHandler {
         // (2) there seems to be an issue with the semantic tokens execute command - possibly either O# not
         // returning tokens, or an issue with the command itself:
         // https://github.com/dotnet/razor/issues/6922
-        return this.emptySemanticTokensResponse;
+        return new ProvideSemanticTokensResponse(
+            this.emptyTokensInResponse,
+            _semanticTokensParams.requiredHostDocumentVersion
+        );
     }
 }

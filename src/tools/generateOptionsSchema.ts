@@ -217,6 +217,22 @@ function generateLocForProperty(key: string, prop: any, keyToLocString: any): vo
         prop.settingsDescription = `%${settingsDescriptionKey}%`;
     }
 
+    if (prop.deprecationMessage) {
+        const descriptionKey = `${key}.deprecationMessage`;
+        if (!keyToLocString[descriptionKey]) {
+            const comments: string[] = generateCommentArrayForDescription(prop.deprecationMessage);
+            if (comments.length > 0) {
+                keyToLocString[descriptionKey] = {
+                    message: prop.deprecationMessage,
+                    comments: comments,
+                };
+            } else {
+                keyToLocString[descriptionKey] = prop.deprecationMessage;
+            }
+        }
+        prop.deprecationMessage = `%${descriptionKey}%`;
+    }
+
     if (prop.enum && prop.enumDescriptions) {
         for (let i = 0; i < prop.enum.length; i++) {
             const enumName = prop.enum[i];
@@ -325,6 +341,19 @@ export function GenerateOptionsSchema() {
     delete unitTestDebuggingOptions.processName;
     delete unitTestDebuggingOptions.processId;
     delete unitTestDebuggingOptions.pipeTransport;
+
+    // Remove diagnostic log logging options -- these should be set using the global option
+    const allowedLoggingOptions = ['exceptions', 'moduleLoad', 'programOutput', 'threadExit', 'processExit'];
+    const diagnosticLogOptions = Object.keys(unitTestDebuggingOptions.logging.properties).filter((x) => {
+        if (allowedLoggingOptions.indexOf(x) >= 0) {
+            return false;
+        }
+        return true;
+    });
+    for (const key of diagnosticLogOptions) {
+        delete unitTestDebuggingOptions.logging.properties[key];
+    }
+
     // Add the additional options we do want
     unitTestDebuggingOptions['type'] = {
         type: 'string',

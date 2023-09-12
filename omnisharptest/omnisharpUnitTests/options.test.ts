@@ -38,7 +38,7 @@ suite('Options tests', () => {
         options.omnisharpOptions.enableImportCompletion.should.equal(false);
         options.omnisharpOptions.enableAsyncCompletion.should.equal(false);
         options.omnisharpOptions.analyzeOpenDocumentsOnly.should.equal(true);
-        options.omnisharpOptions.testRunSettings.should.equal('');
+        options.commonOptions.runSettingsPath.should.equal('');
     });
 
     test('Verify return no excluded paths when files.exclude empty', () => {
@@ -128,8 +128,6 @@ suite('Options tests', () => {
 
         const options = Options.Read(vscode);
 
-        options.omnisharpOptions.testRunSettings.should.equal(
-            'some_valid_path\\some_valid_runsettings_files.runsettings'
-        );
+        options.commonOptions.runSettingsPath.should.equal('some_valid_path\\some_valid_runsettings_files.runsettings');
     });
 });

@@ -15,6 +15,7 @@ export function getEmptyOptions(): Options {
             excludePaths: [],
             defaultSolution: '',
             unitTestDebuggingOptions: {},
+            runSettingsPath: '',
         },
         {
             useModernNet: false,
@@ -40,7 +41,6 @@ export function getEmptyOptions(): Options {
             sdkPath: '',
             sdkVersion: '',
             sdkIncludePrereleases: false,
-            testRunSettings: '',
             dotNetCliPaths: [],
             useFormatting: false,
             showReferencesCodeLens: false,

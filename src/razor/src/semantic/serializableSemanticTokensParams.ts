@@ -7,6 +7,8 @@ import { SerializableRange } from '../rpc/serializableRange';
 import { SerializableTextDocumentIdentifier } from '../rpc/serializableTextDocumentIdentifier';
 
 export interface SerializableSemanticTokensParams {
+    correlationId: string;
     textDocument: SerializableTextDocumentIdentifier;
-    range: SerializableRange;
+    ranges: SerializableRange[];
+    requiredHostDocumentVersion: number;
 }

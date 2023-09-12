@@ -15,6 +15,11 @@ server/**
 src/**
 tasks/**
 test/**
+omnisharptest/**
+__mocks__/**
+jest.config.ts
+baseJestConfig.ts
+.prettierignore
 typings/**
 vsix/**
 node_modules

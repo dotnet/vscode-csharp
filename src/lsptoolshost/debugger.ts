@@ -14,18 +14,20 @@ import OptionProvider from '../shared/observers/optionProvider';
 import { ServerStateChange } from './serverStateChange';
 import { DotnetConfigurationResolver } from '../shared/dotnetConfigurationProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { RoslynLanguageServerEvents } from './languageServerEvents';
 
 export function registerDebugger(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
+    languageServerEvents: RoslynLanguageServerEvents,
     platformInfo: PlatformInformation,
     optionProvider: OptionProvider,
     csharpOutputChannel: vscode.OutputChannel
 ) {
     const workspaceInformationProvider: IWorkspaceDebugInformationProvider =
-        new RoslynWorkspaceDebugInformationProvider(languageServer);
+        new RoslynWorkspaceDebugInformationProvider(languageServer, csharpOutputChannel);
 
-    const disposable = languageServer.registerStateChangeEvent(async (state) => {
+    const disposable = languageServerEvents.onServerStateChange(async (state) => {
         if (state === ServerStateChange.ProjectInitializationComplete) {
             const csharpDevkitExtension = getCSharpDevKit();
             if (!csharpDevkitExtension) {

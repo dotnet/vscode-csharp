@@ -39,7 +39,8 @@ async function runDotnetInfo(dotnetExecutablePath: string | undefined): Promise<
             ...process.env,
             DOTNET_CLI_UI_LANGUAGE: 'en-US',
         };
-        const data = await execChildProcess(`${dotnetExecutablePath ?? 'dotnet'} --info`, process.cwd(), env);
+        const command = dotnetExecutablePath ? `"${dotnetExecutablePath}"` : 'dotnet';
+        const data = await execChildProcess(`${command} --info`, process.cwd(), env);
         return data;
     } catch (error) {
         const message = error instanceof Error ? error.message : `${error}`;
