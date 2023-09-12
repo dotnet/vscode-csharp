@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
+import * as net from 'net';
 import { registerCommands } from './commands';
 import { registerDebugger } from './debugger';
 import { UriConverter } from './uriConverter';
@@ -40,6 +41,10 @@ import {
     PartialResultParams,
     ProtocolRequestType,
     MessageType,
+    SocketMessageWriter,
+    SocketMessageReader,
+    MessageTransports,
+    RAL,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -73,6 +78,11 @@ let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
+interface TransmittedInformation {
+    Key: string;
+    Value: string;
+}
+
 export class RoslynLanguageServer {
     // These are commands that are invoked by the Razor extension, and are used to send LSP requests to the Roslyn LSP server
     public static readonly roslynDidOpenCommand: string = 'roslyn.openRazorCSharp';
@@ -94,6 +104,16 @@ export class RoslynLanguageServer {
      * Event name used to fire events to the _eventBus when the server state changes.
      */
     private static readonly serverStateChangeEvent: string = 'serverStateChange';
+
+    /**
+     * The encoding to use when writing to and from the stream.
+     */
+    private static readonly encoding: RAL.MessageBufferEncoding = 'utf-8';
+
+    /**
+     * The regular expression used to find the named pipe key in the LSP server's stdout stream.
+     */
+    private static readonly namedPipeKeyRegex = /{"Key":"NamedPipeInformation","Value":"[^"]+"}/;
 
     /**
      * The timeout for stopping the language server (in ms).
@@ -517,7 +537,7 @@ export class RoslynLanguageServer {
         return capabilities;
     }
 
-    private async startServer(logLevel: string | undefined): Promise<cp.ChildProcess> {
+    private async startServer(logLevel: string | undefined): Promise<MessageTransports> {
         const options = this.optionProvider.GetLatestOptions();
         const serverPath = getServerPath(options, this.platformInfo);
 
@@ -615,7 +635,40 @@ export class RoslynLanguageServer {
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
-        return childProcess;
+        // The server process will create the named pipe used for communcation. Wait for it to be created,
+        // and listen for the server to pass back the connection information via stdout.
+        const namedPipeConnectionPromise = new Promise<TransmittedInformation>((resolve) => {
+            childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
+                const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
+                _channel.append('[stdout] ' + result);
+
+                // Use the regular expression to find all JSON lines
+                const jsonLines = result.match(RoslynLanguageServer.namedPipeKeyRegex);
+                if (jsonLines) {
+                    const transmittedPipeNameInfo: TransmittedInformation = JSON.parse(jsonLines[0]);
+                    _channel.appendLine('received named pipe information from server');
+                    resolve(transmittedPipeNameInfo);
+                }
+            });
+        });
+
+        // Wait for the server to send back the name of the pipe to connect to.
+        _channel.appendLine('waiting for named pipe information from server...');
+        const pipeConnectionInfo = await namedPipeConnectionPromise;
+
+        const socketPromise = new Promise<net.Socket>((resolve) => {
+            _channel.appendLine('attempting to connect client to server...');
+            const socket = net.createConnection(pipeConnectionInfo.Value, () => {
+                _channel.appendLine('client has connected to server');
+                resolve(socket);
+            });
+        });
+
+        const socket = await socketPromise;
+        return {
+            reader: new SocketMessageReader(socket, RoslynLanguageServer.encoding),
+            writer: new SocketMessageWriter(socket, RoslynLanguageServer.encoding),
+        };
     }
 
     private registerDynamicFileInfo(client: RoslynLanguageClient) {
@@ -1091,4 +1144,8 @@ function getSessionId(): string {
     }
 
     return sessionId;
+}
+
+export function isString(value: any): value is string {
+    return typeof value === 'string' || value instanceof String;
 }
