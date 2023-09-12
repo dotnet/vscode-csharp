@@ -22,11 +22,10 @@ import {
     RequestType0,
     PartialResultParams,
     ProtocolRequestType,
-    MessageType,
     SocketMessageWriter,
     SocketMessageReader,
     MessageTransports,
-    RAL
+    RAL,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -59,6 +58,10 @@ import { registerOnAutoInsert } from './onAutoInsert';
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
+// Flag indicating if C# Devkit was installed the last time we activated.
+// Used to determine if we need to restart the server on extension changes.
+let _wasActivatedWithCSharpDevkit: boolean | undefined;
+
 interface TransmittedInformation {
     Key: string;
     Value: string;
@@ -68,7 +71,7 @@ export class RoslynLanguageServer {
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
     private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
     private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
-  
+
     /**
      * The encoding to use when writing to and from the stream.
      */
