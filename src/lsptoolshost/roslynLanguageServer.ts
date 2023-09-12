@@ -54,6 +54,7 @@ import { RoslynLanguageServerEvents } from './languageServerEvents';
 import { registerShowToastNotification } from './showToastNotification';
 import { registerRazorCommands } from './razorCommands';
 import { registerOnAutoInsert } from './onAutoInsert';
+import { NamedPipeInformation } from './roslynProtocol';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -61,11 +62,6 @@ let _traceChannel: vscode.OutputChannel;
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
 let _wasActivatedWithCSharpDevkit: boolean | undefined;
-
-interface TransmittedInformation {
-    Key: string;
-    Value: string;
-}
 
 export class RoslynLanguageServer {
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
@@ -80,7 +76,7 @@ export class RoslynLanguageServer {
     /**
      * The regular expression used to find the named pipe key in the LSP server's stdout stream.
      */
-    private static readonly namedPipeKeyRegex = /{"Key":"NamedPipeInformation","Value":"[^"]+"}/;
+    private static readonly namedPipeKeyRegex = /{"pipeName":"[^"]+"}/;
 
     /**
      * The timeout for stopping the language server (in ms).
@@ -560,7 +556,7 @@ export class RoslynLanguageServer {
 
         // The server process will create the named pipe used for communcation. Wait for it to be created,
         // and listen for the server to pass back the connection information via stdout.
-        const namedPipeConnectionPromise = new Promise<TransmittedInformation>((resolve) => {
+        const namedPipeConnectionPromise = new Promise<NamedPipeInformation>((resolve) => {
             childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
                 const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
                 _channel.append('[stdout] ' + result);
@@ -568,7 +564,7 @@ export class RoslynLanguageServer {
                 // Use the regular expression to find all JSON lines
                 const jsonLines = result.match(RoslynLanguageServer.namedPipeKeyRegex);
                 if (jsonLines) {
-                    const transmittedPipeNameInfo: TransmittedInformation = JSON.parse(jsonLines[0]);
+                    const transmittedPipeNameInfo: NamedPipeInformation = JSON.parse(jsonLines[0]);
                     _channel.appendLine('received named pipe information from server');
                     resolve(transmittedPipeNameInfo);
                 }
@@ -581,7 +577,7 @@ export class RoslynLanguageServer {
 
         const socketPromise = new Promise<net.Socket>((resolve) => {
             _channel.appendLine('attempting to connect client to server...');
-            const socket = net.createConnection(pipeConnectionInfo.Value, () => {
+            const socket = net.createConnection(pipeConnectionInfo.pipeName, () => {
                 _channel.appendLine('client has connected to server');
                 resolve(socket);
             });
