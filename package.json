@@ -40,7 +40,8 @@
     "roslyn": "4.8.0-3.23458.4",
     "omniSharp": "1.39.7",
     "razor": "7.0.0-preview.23456.2",
-    "razorOmnisharp": "7.0.0-preview.23363.1"
+    "razorOmnisharp": "7.0.0-preview.23363.1",
+    "razorTelemetry": "test"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -870,6 +871,19 @@
       "binaries": [
         "./rzls"
       ]
+    },
+    {
+      "id": "RazorTelemetry",
+      "description": "Razor Language Server Telemetry (Windows / x64)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/03693d2c-3eed-4801-8de8-c71e3ecb3418/e7c8bc1e2881be443f282f19f656ad94/devkittelemetry-win-x64.zip",
+      "installPath": ".razor/telemetry",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "integrity": "2776B6967DE613C03B2EFEA9490D8B82BDF23E435FE7C6167D6A3ED58EC706ED"
     }
   ],
   "engines": {

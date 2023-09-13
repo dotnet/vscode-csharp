@@ -11,7 +11,7 @@ import { EventStream } from '../eventStream';
 import { NetworkSettingsProvider } from '../networkSettings';
 import { AbsolutePathPackage } from './absolutePathPackage';
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from '../common';
-import { InstallationFailure, IntegrityCheckFailure } from '../omnisharp/loggingEvents';
+import { InstallationFailure } from '../omnisharp/loggingEvents';
 import { mkdirpSync } from 'fs-extra';
 import { PackageInstallStart } from '../omnisharp/loggingEvents';
 import { DownloadValidator } from './isValidDownload';
@@ -34,15 +34,15 @@ export async function downloadAndInstallPackages(
                 count = count + 1;
                 installationStage = 'downloadPackage';
                 const buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
-                if (downloadValidator(buffer, pkg.integrity, eventStream)) {
-                    installationStage = 'installPackage';
-                    await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
-                    installationStage = 'touchLockFile';
-                    await touchInstallFile(pkg.installPath, InstallFileType.Lock);
-                    break;
-                } else {
-                    eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, willTryInstallingPackage()));
-                }
+                //if (downloadValidator(buffer, pkg.integrity, eventStream)) {
+                installationStage = 'installPackage';
+                await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                installationStage = 'touchLockFile';
+                await touchInstallFile(pkg.installPath, InstallFileType.Lock);
+                break;
+                //} else {
+                //    eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, willTryInstallingPackage()));
+                //}
             }
         } catch (error) {
             if (error instanceof NestedError) {

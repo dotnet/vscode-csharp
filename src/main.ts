@@ -56,6 +56,7 @@ import { registerOmnisharpOptionChanges } from './omnisharp/omnisharpOptionChang
 import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents';
 import { ServerStateChange } from './lsptoolshost/serverStateChange';
 import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
+import { RazorTelemetryDownloader } from './razor/razorTelemetryDownloader';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -126,6 +127,21 @@ export async function activate(
     let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer) {
+        // Download Razor server telemetry bits if DevKit is installed.
+        if (csharpDevkitExtension) {
+            const razorTelemetryDownloader = new RazorTelemetryDownloader(
+                networkSettingsProvider,
+                eventStream,
+                context.extension.packageJSON,
+                platformInfo,
+                context.extension.extensionPath
+            );
+
+            await razorTelemetryDownloader.DownloadAndInstallRazorTelemetry(
+                context.extension.packageJSON.defaults.razorTelemetry
+            );
+        }
+
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
         // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
         //
@@ -138,6 +154,7 @@ export async function activate(
             context,
             context.extension.extensionPath,
             eventStream,
+            reporter,
             /* useOmnisharpServer */ false
         );
 
@@ -274,6 +291,7 @@ export async function activate(
                 context,
                 context.extension.extensionPath,
                 eventStream,
+                reporter,
                 /* useOmnisharpServer */ true
             );
         }

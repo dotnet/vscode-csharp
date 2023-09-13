@@ -41,9 +41,10 @@ import { RazorReferenceProvider } from './reference/razorReferenceProvider';
 import { RazorRenameProvider } from './rename/razorRenameProvider';
 import { SemanticTokensRangeHandler } from './semantic/semanticTokensRangeHandler';
 import { RazorSignatureHelpProvider } from './signatureHelp/razorSignatureHelpProvider';
-import { TelemetryReporter } from './telemetryReporter';
+import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
 import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
 import { RazorSimplifyMethodHandler } from './simplify/razorSimplifyMethodHandler';
+import TelemetryReporter from '@vscode/extension-telemetry';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -52,9 +53,10 @@ export async function activate(
     context: ExtensionContext,
     languageServerDir: string,
     eventStream: HostEventStream,
+    vscodeTelemetryReporter: TelemetryReporter,
     enableProposedApis = false
 ) {
-    const telemetryReporter = new TelemetryReporter(eventStream);
+    const razorTelemetryReporter = new RazorTelemetryReporter(eventStream);
     const eventEmitterFactory: IEventEmitterFactory = {
         create: <T>() => new vscode.EventEmitter<T>(),
     };
@@ -66,14 +68,15 @@ export async function activate(
         const languageServerClient = new RazorLanguageServerClient(
             vscodeType,
             languageServerDir,
-            telemetryReporter,
+            razorTelemetryReporter,
+            vscodeTelemetryReporter,
             logger
         );
         const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
 
         const documentManager = new RazorDocumentManager(languageServerClient, logger);
         const documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
-        reportTelemetryForDocuments(documentManager, telemetryReporter);
+        reportTelemetryForDocuments(documentManager, razorTelemetryReporter);
         const languageConfiguration = new RazorLanguageConfiguration();
         const csharpFeature = new RazorCSharpFeature(documentManager, eventEmitterFactory, logger);
         const htmlFeature = new RazorHtmlFeature(documentManager, languageServiceClient, eventEmitterFactory, logger);
@@ -252,7 +255,7 @@ export async function activate(
         context.subscriptions.push(languageServerClient, onStopRegistration, logger);
     } catch (error) {
         logger.logError('Failed when activating Razor VSCode.', error as Error);
-        telemetryReporter.reportErrorOnActivation(error as Error);
+        razorTelemetryReporter.reportErrorOnActivation(error as Error);
     }
 }
 

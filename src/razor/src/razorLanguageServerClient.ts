@@ -13,7 +13,9 @@ import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
 import { resolveRazorLanguageServerTrace } from './razorLanguageServerTraceResolver';
 import { RazorLogger } from './razorLogger';
-import { TelemetryReporter } from './telemetryReporter';
+import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import { randomUUID } from 'crypto';
 
 const events = {
     ServerStop: 'ServerStop',
@@ -33,7 +35,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     constructor(
         private readonly vscodeType: typeof vscode,
         private readonly languageServerDir: string,
-        private readonly telemetryReporter: TelemetryReporter,
+        private readonly razorTelemetryReporter: RazorTelemetryReporter,
+        private readonly vscodeTelemetryReporter: TelemetryReporter,
         private readonly logger: RazorLogger
     ) {
         this.isStarted = false;
@@ -128,7 +131,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
                 )
             );
 
-            this.telemetryReporter.reportErrorOnServerStart(error as Error);
+            this.razorTelemetryReporter.reportErrorOnServerStart(error as Error);
             reject(error);
         }
 
@@ -233,10 +236,10 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         args.push('--trace');
         args.push(options.trace.toString());
-        this.telemetryReporter.reportTraceLevel(options.trace);
+        this.razorTelemetryReporter.reportTraceLevel(options.trace);
 
         if (options.debug) {
-            this.telemetryReporter.reportDebugLanguageServer();
+            this.razorTelemetryReporter.reportDebugLanguageServer();
 
             this.logger.logMessage('Debug flag set for Razor Language Server.');
             args.push('--debug');
@@ -250,6 +253,17 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('true');
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');
+
+            args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
+            args.push('--sessionId', getSessionId());
+            args.push(
+                '--extension',
+                'C:/Users/allichou/razor/artifacts/bin/Microsoft.VisualStudio.DevKit.Razor/Debug/net7.0/Microsoft.VisualStudio.DevKit.Razor.dll'
+            );
+            args.push(
+                '--sharedDependencies',
+                'C:/Users/allichou/razor/artifacts/bin/Microsoft.VisualStudio.DevKit.Razor/Debug/net7.0/'
+            );
         }
 
         this.serverOptions = { command, args };
@@ -260,4 +274,17 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             this.clientOptions
         );
     }
+}
+
+// VS code will have a default session id when running under tests. Since we may still
+// report telemetry, we need to give a unique session id instead of the default value.
+function getSessionId(): string {
+    const sessionId = vscode.env.sessionId;
+
+    // 'somevalue.sessionid' is the test session id provided by vs code
+    if (sessionId.toLowerCase() === 'somevalue.sessionid') {
+        return randomUUID();
+    }
+
+    return sessionId;
 }
