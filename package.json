@@ -3085,7 +3085,8 @@
       },
       {
         "type": "clr",
-        "label": ".NET Framework 4.x (Windows only)",
+        "when": "workspacePlatform == windows",
+        "label": ".NET Framework 4.x",
         "languages": [
           "csharp",
           "razor",
