@@ -554,9 +554,15 @@ export class RoslynLanguageServer {
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
+        // Timeout promise used to time out the connection process if it takes too long.
+        const timeout = new Promise<undefined>((resolve) => {
+            RAL().timer.setTimeout(resolve, 10000);
+        });
+
         // The server process will create the named pipe used for communcation. Wait for it to be created,
         // and listen for the server to pass back the connection information via stdout.
         const namedPipeConnectionPromise = new Promise<NamedPipeInformation>((resolve) => {
+            _channel.appendLine('waiting for named pipe information from server...');
             childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
                 const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
                 _channel.append('[stdout] ' + result);
@@ -572,8 +578,11 @@ export class RoslynLanguageServer {
         });
 
         // Wait for the server to send back the name of the pipe to connect to.
-        _channel.appendLine('waiting for named pipe information from server...');
-        const pipeConnectionInfo = await namedPipeConnectionPromise;
+        // If it takes too long it will timeout and throw an error.
+        const pipeConnectionInfo = await Promise.race([namedPipeConnectionPromise, timeout]);
+        if (pipeConnectionInfo === undefined) {
+            throw new Error('Timeout. Named pipe information not received from server.');
+        }
 
         const socketPromise = new Promise<net.Socket>((resolve) => {
             _channel.appendLine('attempting to connect client to server...');
@@ -583,7 +592,15 @@ export class RoslynLanguageServer {
             });
         });
 
-        const socket = await socketPromise;
+        // Wait for the client to connect to the named pipe.
+        // If it takes too long it will timeout and throw an error.
+        const socket = await Promise.race([socketPromise, timeout]);
+        if (socket === undefined) {
+            throw new Error(
+                'Timeout. Client cound not connect to server via named pipe: ' + pipeConnectionInfo.pipeName
+            );
+        }
+
         return {
             reader: new SocketMessageReader(socket, RoslynLanguageServer.encoding),
             writer: new SocketMessageWriter(socket, RoslynLanguageServer.encoding),
