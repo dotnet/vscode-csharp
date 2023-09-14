@@ -4336,7 +4336,7 @@
       },
       {
         "type": "dotnet",
-        "label": "C#",
+        "label": ".NET",
         "languages": [
           "csharp",
           "razor",
