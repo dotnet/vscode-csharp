@@ -290,13 +290,29 @@
               "updatePackageDependencies"
           ],
           "env": {
-              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/af4c33cdb53e85a7de39fb07195e05b2/razorlanguageserver-linux-arm64-7.0.0-preview.23456.2.zip,https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/24783517c9a4729efbd7dfd2a97fe5cc/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23456.2.zip,https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/e5e12ac99072e02499bef77c2c5034a2/razorlanguageserver-linux-musl-x64-7.0.0-preview.23456.2.zip,https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/86a165500517ca828227bfd0f28f7a02/razorlanguageserver-linux-x64-7.0.0-preview.23456.2.zip,https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/d61e51f223e6bfeceae821b1cce36bfc/razorlanguageserver-osx-arm64-7.0.0-preview.23456.2.zip,https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/b9ee27ddd84b0f4faf82e88589c8584f/razorlanguageserver-osx-x64-7.0.0-preview.23456.2.zip,https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/d279c139e3d914fec96dfab50f05f438/razorlanguageserver-win-arm64-7.0.0-preview.23456.2.zip,https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/258d3df59cb903ca4bcb9d42b854e28b/razorlanguageserver-win-x64-7.0.0-preview.23456.2.zip,https://download.visualstudio.microsoft.com/download/pr/e5617c98-d08e-43f2-a9bf-a36fec5306b7/d2ffb8978958712807d88ebf38914f47/razorlanguageserver-win-x86-7.0.0-preview.23456.2.zip",
-              "NEW_DEPS_VERSION": "7.0.0-preview.23456.2",
+              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/7a4d697a06da6cb992c591b44fccfb11/razorlanguageserver-linux-arm64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/1fa089d63cde8d21ec9ca873b1948bb0/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/a8d0a6bc9b1c4e6f1e8ed349e302e9fd/razorlanguageserver-linux-musl-x64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/67c53310d6c7b4e729880fd94ccce9ab/razorlanguageserver-linux-x64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/a158413d1af07f98d7f753775848978a/razorlanguageserver-osx-arm64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/cfb24346501d78bc55d0b7521c7e62cb/razorlanguageserver-osx-x64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/24717a2d1651eb44995e788cad626864/razorlanguageserver-win-arm64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/fa09591c372229aedafd03203799c783/razorlanguageserver-win-x64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/ed87299705f127a3dbde56397318860d/razorlanguageserver-win-x86-7.0.0-preview.23464.2.zip",
+              "NEW_DEPS_VERSION": "7.0.0-preview.23464.2",
               "NEW_DEPS_ID": "Razor"
           },
           "cwd": "${workspaceFolder}"
       },
       {
+        "type": "node",
+        "request": "launch",
+        "name": "Update razor telemetry package dependencies",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+        "args": [
+            "updatePackageDependencies"
+        ],
+        "env": {
+            "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/b1d886489eaa8a1cd78be5a02e8007b8/devkittelemetry-linux-arm64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/3eeff69503341ad4323ed465b89294e2/devkittelemetry-linux-musl-arm64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/7a7629d7eafaf5a2cdd94030ddf667a7/devkittelemetry-linux-musl-x64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/d772b9c8e10eccd8ed178872e2338d38/devkittelemetry-linux-x64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/4714f6220baeedddd128b9fc592c1df6/devkittelemetry-osx-arm64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/7b62db776508e8a386fdf6106dac6af7/devkittelemetry-osx-x64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/cfe334cfe2f27d3b7d3aec2f8c30b258/devkittelemetry-win-arm64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/9b063176e8add94d576242062a3a40ab/devkittelemetry-win-x64-7.0.0-preview.23464.2.zip,https://download.visualstudio.microsoft.com/download/pr/d65d9f27-9718-4708-888e-caf62d6f0b72/32cc73606809486f3901840b48d3ce1a/devkittelemetry-win-x86-7.0.0-preview.23464.2.zip",
+            "NEW_DEPS_VERSION": "7.0.0-preview.23464.2",
+            "NEW_DEPS_ID": "RazorTelemetry"
+        },
+        "cwd": "${workspaceFolder}"
+    },
+    {
         "type": "node",
         "request": "launch",
         "name": "Generate debugger options schema",

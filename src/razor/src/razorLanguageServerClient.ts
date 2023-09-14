@@ -256,14 +256,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
             args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
             args.push('--sessionId', getSessionId());
-            args.push(
-                '--extension',
-                'C:/Users/allichou/razor/artifacts/bin/Microsoft.VisualStudio.DevKit.Razor/Debug/net7.0/Microsoft.VisualStudio.DevKit.Razor.dll'
-            );
-            args.push(
-                '--sharedDependencies',
-                'C:/Users/allichou/razor/artifacts/bin/Microsoft.VisualStudio.DevKit.Razor/Debug/net7.0/'
-            );
+            args.push('--extension', '../.razortelemetry/Microsoft.VisualStudio.DevKit.Razor.dll');
         }
 
         this.serverOptions = { command, args };
