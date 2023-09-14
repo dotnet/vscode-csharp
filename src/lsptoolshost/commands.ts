@@ -44,7 +44,6 @@ export function registerCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
-                vscode,
                 context.extension.packageJSON.version,
                 getDotnetInfo,
                 /*shouldIncludeMonoInfo:*/ false,

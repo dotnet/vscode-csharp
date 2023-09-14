@@ -460,15 +460,10 @@ export const razorOptions: RazorOptionsDefinition = {
     },
 };
 
-function getExcludedPaths(vscode: vscode, includeSearchExcludes = false): string[] {
+function getExcludedPaths(vscode: vscode): string[] {
     const workspaceConfig = vscode.workspace.getConfiguration();
 
-    let excludePaths = getExcludes(workspaceConfig, 'files.exclude');
-
-    if (includeSearchExcludes) {
-        excludePaths = excludePaths.concat(getExcludes(workspaceConfig, 'search.exclude'));
-    }
-
+    const excludePaths = getExcludes(workspaceConfig, 'files.exclude');
     return excludePaths;
 
     function getExcludes(config: WorkspaceConfiguration, option: string): string[] {

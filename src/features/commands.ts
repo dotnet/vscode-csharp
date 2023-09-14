@@ -69,7 +69,6 @@ export default function registerCommands(
     disposable.add(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
-                vscode,
                 context.extension.packageJSON.version,
                 getDotnetInfo,
                 platformInfo.isValidPlatformForMono(),

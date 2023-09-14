@@ -2,9 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { expect } from 'chai';
-import { vscode } from '../../../src/vscodeAdapter';
-import { getNullChannel, updateConfig, getVSCodeWithConfig } from '../../../test/unitTests/fakes';
+
+import * as vscode from 'vscode';
+import { jest, describe, test, expect, beforeEach } from '@jest/globals';
+import { getNullChannel, getWorkspaceConfiguration } from '../../../test/unitTests/fakes';
 import { OmnisharpChannelObserver } from '../../../src/observers/omnisharpChannelObserver';
 import {
     OmnisharpFailure,
@@ -15,19 +16,17 @@ import {
 } from '../../../src/omnisharp/loggingEvents';
 import { Subject } from 'rxjs';
 
-suite('OmnisharpChannelObserver', () => {
+describe('OmnisharpChannelObserver', () => {
     let hasShown: boolean;
     let hasCleared: boolean;
     let preserveFocus: boolean | undefined;
-    let vscode: vscode;
     const optionObservable = new Subject<void>();
     let observer: OmnisharpChannelObserver;
 
-    setup(() => {
+    beforeEach(() => {
         hasShown = false;
         hasCleared = false;
         preserveFocus = false;
-        vscode = getVSCodeWithConfig();
         observer = new OmnisharpChannelObserver({
             ...getNullChannel(),
             show: (preserve) => {
@@ -39,7 +38,9 @@ suite('OmnisharpChannelObserver', () => {
             },
         });
 
-        updateConfig(vscode, 'csharp', 'showOmnisharpLogOnError', true);
+        jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue(getWorkspaceConfiguration());
+
+        vscode.workspace.getConfiguration().update('csharp.showOmnisharpLogOnError', true);
         optionObservable.next();
     });
 
@@ -49,28 +50,28 @@ suite('OmnisharpChannelObserver', () => {
         new OmnisharpServerOnStdErr('std err'),
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is shown and preserveFocus is set to true`, () => {
-            expect(hasShown).to.be.false;
+            expect(hasShown).toEqual(false);
             observer.post(event);
-            expect(hasShown).to.be.true;
-            expect(preserveFocus).to.be.true;
+            expect(hasShown).toEqual(true);
+            expect(preserveFocus).toEqual(true);
         });
     });
 
     test(`OmnisharpServerOnStdErr: Channel is not shown when disabled in configuration`, () => {
-        updateConfig(vscode, 'csharp', 'showOmnisharpLogOnError', false);
+        vscode.workspace.getConfiguration().update('csharp.showOmnisharpLogOnError', false);
         optionObservable.next();
 
-        expect(hasShown).to.be.false;
+        expect(hasShown).toEqual(false);
         observer.post(new OmnisharpServerOnStdErr('std err'));
-        expect(hasShown).to.be.false;
-        expect(preserveFocus).to.be.false;
+        expect(hasShown).toEqual(false);
+        expect(preserveFocus).toEqual(false);
     });
 
     [new OmnisharpRestart()].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is cleared`, () => {
-            expect(hasCleared).to.be.false;
+            expect(hasCleared).toEqual(false);
             observer.post(event);
-            expect(hasCleared).to.be.true;
+            expect(hasCleared).toEqual(true);
         });
     });
 });

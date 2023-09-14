@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Extension, vscode } from '../vscodeAdapter';
+import * as vscode from 'vscode';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { basename, dirname } from 'path';
 import { DotnetInfo } from './utils/dotnetInfo';
@@ -11,7 +11,6 @@ import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { commonOptions } from './options';
 
 export default async function reportIssue(
-    vscode: vscode,
     csharpExtVersion: string,
     getDotnetInfo: (dotNetCliPaths: string[]) => Promise<DotnetInfo>,
     shouldIncludeMonoInfo: boolean,
@@ -34,7 +33,7 @@ export default async function reportIssue(
         monoInfo = await getMonoIfPlatformValid(monoResolver);
     }
 
-    const extensions = getInstalledExtensions(vscode);
+    const extensions = getInstalledExtensions();
 
     const useOmnisharp = commonOptions.useOmnisharpServer.getValue(vscode);
     const logInfo = getLogInfo(useOmnisharp);
@@ -70,7 +69,7 @@ ${generateExtensionTable(extensions)}
     });
 }
 
-function sortExtensions(a: Extension<any>, b: Extension<any>): number {
+function sortExtensions(a: vscode.Extension<any>, b: vscode.Extension<any>): number {
     if (a.packageJSON.name.toLowerCase() < b.packageJSON.name.toLowerCase()) {
         return -1;
     }
@@ -80,7 +79,7 @@ function sortExtensions(a: Extension<any>, b: Extension<any>): number {
     return 0;
 }
 
-function generateExtensionTable(extensions: Extension<any>[]) {
+function generateExtensionTable(extensions: vscode.Extension<any>[]) {
     if (extensions.length <= 0) {
         return 'none';
     }
@@ -137,7 +136,7 @@ Additionally, if you can reproduce the issue reliably, set the value of the \`do
     }
 }
 
-function getInstalledExtensions(vscode: vscode) {
+function getInstalledExtensions() {
     const extensions = vscode.extensions.all.filter((extension) => extension.packageJSON.isBuiltin === false);
 
     return extensions.sort(sortExtensions);

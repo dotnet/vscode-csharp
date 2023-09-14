@@ -22,6 +22,10 @@ export default function createOptionStream(vscode: vscode): Observable<void> {
 
         return () => disposable.dispose();
     })
-        .pipe(publishBehavior)
+        .pipe(
+            publishBehavior(() => {
+                return;
+            })
+        )
         .refCount();
 }
