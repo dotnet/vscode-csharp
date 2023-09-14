@@ -556,7 +556,7 @@ export class RoslynLanguageServer {
 
         // Timeout promise used to time out the connection process if it takes too long.
         const timeout = new Promise<undefined>((resolve) => {
-            RAL().timer.setTimeout(resolve, 10000);
+            RAL().timer.setTimeout(resolve, 30000);
         });
 
         // The server process will create the named pipe used for communcation. Wait for it to be created,
