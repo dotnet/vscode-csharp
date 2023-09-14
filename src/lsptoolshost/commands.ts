@@ -10,13 +10,11 @@ import { RoslynLanguageServer } from './roslynLanguageServer';
 import { createLaunchTargetForSolution } from '../shared/launchTarget';
 import reportIssue from '../shared/reportIssue';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import OptionProvider from '../shared/observers/optionProvider';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
-    optionProvider: OptionProvider,
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: vscode.OutputChannel
 ) {
@@ -50,7 +48,6 @@ export function registerCommands(
                 context.extension.packageJSON.version,
                 getDotnetInfo,
                 /*shouldIncludeMonoInfo:*/ false,
-                optionProvider.GetLatestOptions(),
                 hostExecutableResolver
             )
         )

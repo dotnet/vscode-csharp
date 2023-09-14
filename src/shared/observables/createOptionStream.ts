@@ -3,13 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Options } from '../options';
 import { vscode } from '../../vscodeAdapter';
 import { Observable, Observer } from 'rxjs';
 import { publishBehavior } from 'rxjs/operators';
 
-export default function createOptionStream(vscode: vscode): Observable<Options> {
-    return Observable.create((observer: Observer<Options>) => {
+export default function createOptionStream(vscode: vscode): Observable<void> {
+    return Observable.create((observer: Observer<void>) => {
         const disposable = vscode.workspace.onDidChangeConfiguration((e) => {
             //if the omnisharp or csharp configuration are affected only then read the options
             if (
@@ -17,12 +16,12 @@ export default function createOptionStream(vscode: vscode): Observable<Options> 
                 e.affectsConfiguration('omnisharp') ||
                 e.affectsConfiguration('csharp')
             ) {
-                observer.next(Options.Read(vscode));
+                observer.next();
             }
         });
 
         return () => disposable.dispose();
     })
-        .pipe(publishBehavior(Options.Read(vscode)))
+        .pipe(publishBehavior)
         .refCount();
 }

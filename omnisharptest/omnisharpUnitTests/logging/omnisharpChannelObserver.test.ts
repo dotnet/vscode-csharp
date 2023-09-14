@@ -13,17 +13,14 @@ import {
     OmnisharpRestart,
     OmnisharpServerOnStdErr,
 } from '../../../src/omnisharp/loggingEvents';
-import OptionProvider from '../../../src/shared/observers/optionProvider';
 import { Subject } from 'rxjs';
-import { Options } from '../../../src/shared/options';
 
 suite('OmnisharpChannelObserver', () => {
     let hasShown: boolean;
     let hasCleared: boolean;
     let preserveFocus: boolean | undefined;
     let vscode: vscode;
-    const optionObservable = new Subject<Options>();
-    const optionProvider = new OptionProvider(optionObservable);
+    const optionObservable = new Subject<void>();
     let observer: OmnisharpChannelObserver;
 
     setup(() => {
@@ -31,22 +28,19 @@ suite('OmnisharpChannelObserver', () => {
         hasCleared = false;
         preserveFocus = false;
         vscode = getVSCodeWithConfig();
-        observer = new OmnisharpChannelObserver(
-            {
-                ...getNullChannel(),
-                show: (preserve) => {
-                    hasShown = true;
-                    preserveFocus = preserve;
-                },
-                clear: () => {
-                    hasCleared = true;
-                },
+        observer = new OmnisharpChannelObserver({
+            ...getNullChannel(),
+            show: (preserve) => {
+                hasShown = true;
+                preserveFocus = preserve;
             },
-            optionProvider
-        );
+            clear: () => {
+                hasCleared = true;
+            },
+        });
 
         updateConfig(vscode, 'csharp', 'showOmnisharpLogOnError', true);
-        optionObservable.next(Options.Read(vscode));
+        optionObservable.next();
     });
 
     [
@@ -64,7 +58,7 @@ suite('OmnisharpChannelObserver', () => {
 
     test(`OmnisharpServerOnStdErr: Channel is not shown when disabled in configuration`, () => {
         updateConfig(vscode, 'csharp', 'showOmnisharpLogOnError', false);
-        optionObservable.next(Options.Read(vscode));
+        optionObservable.next();
 
         expect(hasShown).to.be.false;
         observer.post(new OmnisharpServerOnStdErr('std err'));

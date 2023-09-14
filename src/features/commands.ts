@@ -23,7 +23,6 @@ import {
 import { EventStream } from '../eventStream';
 import { PlatformInformation } from '../shared/platform';
 import CompositeDisposable from '../compositeDisposable';
-import OptionProvider from '../shared/observers/optionProvider';
 import reportIssue from '../shared/reportIssue';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
@@ -35,20 +34,13 @@ export default function registerCommands(
     server: OmniSharpServer,
     platformInfo: PlatformInformation,
     eventStream: EventStream,
-    optionProvider: OptionProvider,
     monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver,
     workspaceInformationProvider: IWorkspaceDebugInformationProvider
 ): CompositeDisposable {
     const disposable = new CompositeDisposable();
-    disposable.add(
-        vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server, optionProvider))
-    );
-    disposable.add(
-        vscode.commands.registerCommand('o.pickProjectAndStart', async () =>
-            pickProjectAndStart(server, optionProvider)
-        )
-    );
+    disposable.add(vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server)));
+    disposable.add(vscode.commands.registerCommand('o.pickProjectAndStart', async () => pickProjectAndStart(server)));
     disposable.add(vscode.commands.registerCommand('o.showOutput', () => eventStream.post(new ShowOmniSharpChannel())));
 
     disposable.add(
@@ -81,7 +73,6 @@ export default function registerCommands(
                 context.extension.packageJSON.version,
                 getDotnetInfo,
                 platformInfo.isValidPlatformForMono(),
-                optionProvider.GetLatestOptions(),
                 dotnetResolver,
                 monoResolver
             )
@@ -90,31 +81,23 @@ export default function registerCommands(
 
     disposable.add(
         vscode.commands.registerCommand('csharp.showDecompilationTerms', async () =>
-            showDecompilationTerms(context, server, optionProvider)
+            showDecompilationTerms(context, server)
         )
     );
 
     return new CompositeDisposable(disposable);
 }
 
-async function showDecompilationTerms(
-    context: vscode.ExtensionContext,
-    server: OmniSharpServer,
-    optionProvider: OptionProvider
-) {
+async function showDecompilationTerms(context: vscode.ExtensionContext, server: OmniSharpServer) {
     // Reset the decompilation authorization so the user will be prompted on restart.
     resetDecompilationAuthorization(context);
 
-    await restartOmniSharp(context, server, optionProvider);
+    await restartOmniSharp(context, server);
 }
 
-async function restartOmniSharp(
-    context: vscode.ExtensionContext,
-    server: OmniSharpServer,
-    optionProvider: OptionProvider
-) {
+async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSharpServer) {
     // Update decompilation authorization.
-    server.decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
+    server.decompilationAuthorized = await getDecompilationAuthorization(context);
 
     if (server.isRunning()) {
         server.restart();
@@ -123,9 +106,8 @@ async function restartOmniSharp(
     }
 }
 
-async function pickProjectAndStart(server: OmniSharpServer, optionProvider: OptionProvider): Promise<void> {
-    const options = optionProvider.GetLatestOptions();
-    return findLaunchTargets(options).then(async (targets) => {
+async function pickProjectAndStart(server: OmniSharpServer): Promise<void> {
+    return findLaunchTargets().then(async (targets) => {
         const currentPath = server.getSolutionPathOrFolder();
         if (currentPath) {
             for (const target of targets) {

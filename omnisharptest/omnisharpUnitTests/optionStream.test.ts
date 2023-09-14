@@ -5,11 +5,9 @@
 
 import { should } from 'chai';
 import { ConfigurationChangeEvent, vscode } from '../../src/vscodeAdapter';
-import { getVSCodeWithConfig, updateConfig } from '../../test/unitTests/fakes';
+import { getVSCodeWithConfig } from '../../test/unitTests/fakes';
 import Disposable from '../../src/disposable';
-import { Observable, Subscription } from 'rxjs';
-import { Options } from '../../src/shared/options';
-import { GetConfigChangeEvent } from './testAssets/getConfigChangeEvent';
+import { Observable } from 'rxjs';
 import createOptionStream from '../../src/shared/observables/createOptionStream';
 
 suite('OptionStream', () => {
@@ -17,7 +15,7 @@ suite('OptionStream', () => {
 
     let listenerFunction: Array<(e: ConfigurationChangeEvent) => any>;
     let vscode: vscode;
-    let optionStream: Observable<Options>;
+    let optionStream: Observable<void>;
     let disposeCalled: boolean;
 
     setup(() => {
@@ -25,38 +23,6 @@ suite('OptionStream', () => {
         vscode = getVSCode(listenerFunction);
         optionStream = createOptionStream(vscode);
         disposeCalled = false;
-    });
-
-    suite('Returns the recent options to the subscriber', () => {
-        let subscription: Subscription;
-        let options: Options;
-
-        setup(() => {
-            subscription = optionStream.subscribe((newOptions) => (options = newOptions));
-        });
-
-        test('Gives the changed option when the omnisharp config changes', () => {
-            options.commonOptions.serverPath.should.equal('');
-            const changingConfig = 'omnisharp';
-            updateConfig(vscode, changingConfig, 'path', 'somePath');
-            listenerFunction.forEach((listener) => listener(GetConfigChangeEvent(changingConfig)));
-            options.commonOptions.serverPath.should.equal('somePath');
-        });
-
-        test('Gives the changed option when the csharp config changes', () => {
-            options.omnisharpOptions.disableCodeActions.should.equal(false);
-            const changingConfig = 'csharp';
-            updateConfig(vscode, changingConfig, 'disableCodeActions', true);
-            listenerFunction.forEach((listener) => listener(GetConfigChangeEvent(changingConfig)));
-            options.omnisharpOptions.disableCodeActions.should.equal(true);
-        });
-
-        teardown(() => {
-            options = undefined!;
-            listenerFunction = undefined!;
-            subscription.unsubscribe();
-            subscription = undefined!;
-        });
     });
 
     test('Dispose is called when the last subscriber unsubscribes', () => {

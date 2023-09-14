@@ -13,11 +13,11 @@ import CompositeDisposable from '../compositeDisposable';
 import { IDisposable } from '../disposable';
 import { isVirtualCSharpDocument } from './virtualDocumentTracker';
 import { TextDocument } from '../vscodeAdapter';
-import OptionProvider from '../shared/observers/optionProvider';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { BackgroundDiagnosticStatus } from '../omnisharp/protocol';
 import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
+import { omnisharpOptions } from '../shared/options';
 
 export class Advisor {
     private _disposable: CompositeDisposable;
@@ -25,7 +25,7 @@ export class Advisor {
     private _packageRestoreCounter = 0;
     private _projectSourceFileCounts: { [path: string]: number } = Object.create(null);
 
-    constructor(server: OmniSharpServer, private optionProvider: OptionProvider) {
+    constructor(server: OmniSharpServer) {
         this._server = server;
 
         const d1 = server.onProjectChange(this._onProjectChange, this);
@@ -93,8 +93,7 @@ export class Advisor {
     }
 
     private _isOverFileLimit(): boolean {
-        const opts = this.optionProvider.GetLatestOptions();
-        const fileLimit = opts.omnisharpOptions.maxProjectFileCountForDiagnosticAnalysis;
+        const fileLimit = omnisharpOptions.maxProjectFileCountForDiagnosticAnalysis.getValue(vscode);
         if (fileLimit > 0) {
             let sourceFileCount = 0;
             for (const key in this._projectSourceFileCounts) {
@@ -111,10 +110,9 @@ export class Advisor {
 export default function reportDiagnostics(
     server: OmniSharpServer,
     advisor: Advisor,
-    languageMiddlewareFeature: LanguageMiddlewareFeature,
-    options: OptionProvider
+    languageMiddlewareFeature: LanguageMiddlewareFeature
 ): IDisposable {
-    return new OmniSharpDiagnosticsProvider(server, advisor, languageMiddlewareFeature, options);
+    return new OmniSharpDiagnosticsProvider(server, advisor, languageMiddlewareFeature);
 }
 
 class OmniSharpDiagnosticsProvider extends AbstractSupport {
@@ -130,8 +128,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
     constructor(
         server: OmniSharpServer,
         validationAdvisor: Advisor,
-        languageMiddlewareFeature: LanguageMiddlewareFeature,
-        options: OptionProvider
+        languageMiddlewareFeature: LanguageMiddlewareFeature
     ) {
         super(server, languageMiddlewareFeature);
 
@@ -153,7 +150,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
             .getConfiguration('csharp')
             .get('suppressHiddenDiagnostics', true);
 
-        if (!options.GetLatestOptions().omnisharpOptions.enableLspDriver) {
+        if (!omnisharpOptions.enableLspDriver.getValue(vscode)) {
             this._subscriptions.push(
                 this._validateCurrentDocumentPipe
                     .pipe(debounceTime(750))

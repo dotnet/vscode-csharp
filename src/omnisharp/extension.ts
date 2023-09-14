@@ -17,7 +17,6 @@ import { EventStream } from '../eventStream';
 import { NetworkSettingsProvider } from '../networkSettings';
 import CompositeDisposable from '../compositeDisposable';
 import Disposable from '../disposable';
-import OptionProvider from '../shared/observers/optionProvider';
 import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
@@ -25,6 +24,7 @@ import { getDecompilationAuthorization } from './decompilationPrompt';
 import { DotnetResolver } from './dotnetResolver';
 import { Advisor } from '../features/diagnosticsProvider';
 import { OmnisharpWorkspaceDebugInformationProvider } from '../omnisharpWorkspaceDebugInformationProvider';
+import { omnisharpOptions, razorOptions } from '../shared/options';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -38,13 +38,11 @@ export async function activate(
     platformInfo: PlatformInformation,
     provider: NetworkSettingsProvider,
     eventStream: EventStream,
-    optionProvider: OptionProvider,
     extensionPath: string,
     outputChannel: vscode.OutputChannel
 ) {
     const disposables = new CompositeDisposable();
 
-    const options = optionProvider.GetLatestOptions();
     const omnisharpMonoResolver = new OmniSharpMonoResolver(getMonoVersion);
     const omnisharpDotnetResolver = new DotnetResolver(platformInfo);
 
@@ -52,7 +50,7 @@ export async function activate(
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
 
-    const decompilationAuthorized = await getDecompilationAuthorization(context, optionProvider);
+    const decompilationAuthorized = await getDecompilationAuthorization(context);
 
     const server = new OmniSharpServer(
         vscode,
@@ -60,7 +58,6 @@ export async function activate(
         packageJSON,
         platformInfo,
         eventStream,
-        optionProvider,
         extensionPath,
         omnisharpMonoResolver,
         omnisharpDotnetResolver,
@@ -69,8 +66,8 @@ export async function activate(
         outputChannel,
         languageMiddlewareFeature
     );
-    const advisor = new Advisor(server, optionProvider); // create before server is started
-    const testManager = new TestManager(optionProvider, server, eventStream, languageMiddlewareFeature);
+    const advisor = new Advisor(server); // create before server is started
+    const testManager = new TestManager(server, eventStream, languageMiddlewareFeature);
     const workspaceInformationProvider = new OmnisharpWorkspaceDebugInformationProvider(server);
 
     let registrations: Disposable | undefined;
@@ -94,7 +91,6 @@ export async function activate(
             server,
             platformInfo,
             eventStream,
-            optionProvider,
             omnisharpMonoResolver,
             omnisharpDotnetResolver,
             workspaceInformationProvider
@@ -163,7 +159,7 @@ export async function activate(
 
     disposables.add(
         server.onBeforeServerStart((path) => {
-            if (options.razorOptions.razorDevMode) {
+            if (razorOptions.razorDevMode.getValue(vscode)) {
                 eventStream.post(new RazorDevModeActive());
             }
 
@@ -172,7 +168,7 @@ export async function activate(
         })
     );
 
-    if (options.omnisharpOptions.autoStart) {
+    if (omnisharpOptions.autoStart.getValue(vscode)) {
         server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
     }
 
@@ -189,12 +185,7 @@ export async function activate(
     disposables.add(
         vscode.debug.registerDebugConfigurationProvider(
             'coreclr',
-            new DotnetWorkspaceConfigurationProvider(
-                workspaceInformationProvider,
-                platformInfo,
-                optionProvider,
-                outputChannel
-            )
+            new DotnetWorkspaceConfigurationProvider(workspaceInformationProvider, platformInfo, outputChannel)
         )
     );
 

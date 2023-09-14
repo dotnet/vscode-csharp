@@ -9,7 +9,7 @@ import { ChildProcessWithoutNullStreams } from 'child_process';
 import { PlatformInformation } from '../shared/platform';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { Options } from '../shared/options';
+import { commonOptions, omnisharpOptions } from '../shared/options';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { LaunchTarget, LaunchTargetKind, createLaunchTargetForSolution } from '../shared/launchTarget';
 
@@ -35,14 +35,14 @@ export const disabledSchemes = new Set([vsls]);
  * (if it doesn't contain a `project.json` file, but `project.json` files exist). In addition, the root folder
  * is included if there are any `*.csproj` files present, but a `*.sln` or `*.slnf` file is not found.
  */
-export async function findLaunchTargets(options: Options): Promise<LaunchTarget[]> {
+export async function findLaunchTargets(): Promise<LaunchTarget[]> {
     if (!vscode.workspace.workspaceFolders) {
         return Promise.resolve([]);
     }
 
     const projectFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-        /*exclude*/ `{${options.omnisharpOptions.projectFilesExcludePattern}}`
+        /*exclude*/ `{${omnisharpOptions.projectFilesExcludePattern.getValue(vscode)}}`
     );
 
     const csFiles = await vscode.workspace.findFiles(
@@ -54,7 +54,7 @@ export async function findLaunchTargets(options: Options): Promise<LaunchTarget[
     return resourcesToLaunchTargets(
         projectFiles.concat(csFiles),
         vscode.workspace.workspaceFolders,
-        options.omnisharpOptions.maxProjectResults
+        omnisharpOptions.maxProjectResults.getValue(vscode)
     );
 }
 
@@ -298,12 +298,11 @@ export async function launchOmniSharp(
     args: string[],
     launchPath: string,
     platformInfo: PlatformInformation,
-    options: Options,
     monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver
 ): Promise<LaunchResult> {
     return new Promise((resolve, reject) => {
-        launch(cwd, args, launchPath, platformInfo, options, monoResolver, dotnetResolver)
+        launch(cwd, args, launchPath, platformInfo, monoResolver, dotnetResolver)
             .then((result) => {
                 // async error - when target not not ENEOT
                 result.process.on('error', (err) => {
@@ -323,11 +322,10 @@ export async function configure(
     args: string[],
     launchPath: string,
     platformInfo: PlatformInformation,
-    options: Options,
     monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver
 ): Promise<LaunchConfiguration> {
-    if (options.omnisharpOptions.useEditorFormattingSettings) {
+    if (omnisharpOptions.useEditorFormattingSettings.getValue(vscode)) {
         const globalConfig = vscode.workspace.getConfiguration('', null);
         const csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
 
@@ -352,7 +350,7 @@ export async function configure(
         );
     }
 
-    if (options.omnisharpOptions.useModernNet) {
+    if (omnisharpOptions.useModernNet.getValue(vscode)) {
         const argsCopy = args.slice(0);
 
         let command: string;
@@ -364,7 +362,7 @@ export async function configure(
             argsCopy.unshift(launchPath);
         }
 
-        const dotnetInfo = await dotnetResolver.getHostExecutableInfo(options);
+        const dotnetInfo = await dotnetResolver.getHostExecutableInfo();
 
         return {
             hostKind: '.NET',
@@ -391,13 +389,13 @@ export async function configure(
         };
     }
 
-    const monoInfo = await monoResolver.getHostExecutableInfo(options);
+    const monoInfo = await monoResolver.getHostExecutableInfo();
     if (monoInfo !== undefined) {
         const argsCopy = args.slice(0); // create copy of details args
         argsCopy.unshift(launchPath);
         argsCopy.unshift('--assembly-loader=strict');
 
-        if (options.commonOptions.waitForDebugger) {
+        if (commonOptions.waitForDebugger.getValue(vscode)) {
             argsCopy.unshift('--debug');
             argsCopy.unshift('--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555');
         }
@@ -422,19 +420,10 @@ async function launch(
     args: string[],
     launchPath: string,
     platformInfo: PlatformInformation,
-    options: Options,
     monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver
 ): Promise<IntermediateLaunchResult> {
-    const configureResults = await configure(
-        cwd,
-        args,
-        launchPath,
-        platformInfo,
-        options,
-        monoResolver,
-        dotnetResolver
-    );
+    const configureResults = await configure(cwd, args, launchPath, platformInfo, monoResolver, dotnetResolver);
     return coreLaunch(platformInfo, configureResults);
 }
 

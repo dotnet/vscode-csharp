@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import OptionProvider from '../shared/observers/optionProvider';
+import { omnisharpOptions } from '../shared/options';
 
 const DecompilationAuthorizedOption = 'csharp.decompilationAuthorized';
 
@@ -12,10 +12,9 @@ export async function resetDecompilationAuthorization(context: vscode.ExtensionC
     context.globalState.update(DecompilationAuthorizedOption, undefined);
 }
 
-export async function getDecompilationAuthorization(context: vscode.ExtensionContext, optionProvider: OptionProvider) {
+export async function getDecompilationAuthorization(context: vscode.ExtensionContext) {
     // If decompilation is disabled, then return false
-    const options = optionProvider.GetLatestOptions();
-    if (options.omnisharpOptions.enableDecompilationSupport === false) {
+    if (omnisharpOptions.enableDecompilationSupport.getValue(vscode) === false) {
         return false;
     }
 

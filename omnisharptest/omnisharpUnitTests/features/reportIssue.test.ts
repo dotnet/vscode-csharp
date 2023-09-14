@@ -6,11 +6,9 @@
 import reportIssue from '../../../src/shared/reportIssue';
 import { expect } from 'chai';
 import { vscode } from '../../../src/vscodeAdapter';
-import { Options } from '../../../src/shared/options';
 import { FakeMonoResolver, fakeMonoInfo } from '../fakes/fakeMonoResolver';
 import { FakeDotnetResolver } from '../fakes/fakeDotnetResolver';
 import { DotnetInfo } from '../../../src/shared/utils/dotnetInfo';
-import { getEmptyOptions } from '../fakes/fakeOptions';
 import { getFakeVsCode } from '../../../test/unitTests/fakes';
 
 suite(`${reportIssue.name}`, () => {
@@ -50,7 +48,6 @@ suite(`${reportIssue.name}`, () => {
     let fakeMonoResolver: FakeMonoResolver;
     let fakeDotnetResolver: FakeDotnetResolver;
     const getDotnetInfo = async () => Promise.resolve(fakeDotnetInfo);
-    let options: Options;
     let issueBody: string;
 
     setup(() => {
@@ -64,7 +61,6 @@ suite(`${reportIssue.name}`, () => {
         vscode.extensions.all = [extension1, extension2];
         fakeMonoResolver = new FakeMonoResolver();
         fakeDotnetResolver = new FakeDotnetResolver();
-        options = getEmptyOptions();
     });
 
     suite('The body is passed to the vscode clipboard and', () => {
@@ -74,7 +70,6 @@ suite(`${reportIssue.name}`, () => {
                 csharpExtVersion,
                 getDotnetInfo,
                 isValidForMono,
-                options,
                 fakeDotnetResolver,
                 fakeMonoResolver
             );
@@ -87,7 +82,6 @@ suite(`${reportIssue.name}`, () => {
                 csharpExtVersion,
                 getDotnetInfo,
                 isValidForMono,
-                options,
                 fakeDotnetResolver,
                 fakeMonoResolver
             );
@@ -100,7 +94,6 @@ suite(`${reportIssue.name}`, () => {
                 csharpExtVersion,
                 getDotnetInfo,
                 isValidForMono,
-                options,
                 fakeDotnetResolver,
                 fakeMonoResolver
             );
@@ -113,7 +106,6 @@ suite(`${reportIssue.name}`, () => {
                 csharpExtVersion,
                 getDotnetInfo,
                 isValidForMono,
-                options,
                 fakeDotnetResolver,
                 fakeMonoResolver
             );
@@ -126,7 +118,6 @@ suite(`${reportIssue.name}`, () => {
                 csharpExtVersion,
                 getDotnetInfo,
                 isValidForMono,
-                options,
                 fakeDotnetResolver,
                 fakeMonoResolver
             );
@@ -135,15 +126,7 @@ suite(`${reportIssue.name}`, () => {
         });
 
         test('mono information is not obtained when it is not a valid mono platform', async () => {
-            await reportIssue(
-                vscode,
-                csharpExtVersion,
-                getDotnetInfo,
-                false,
-                options,
-                fakeDotnetResolver,
-                fakeMonoResolver
-            );
+            await reportIssue(vscode, csharpExtVersion, getDotnetInfo, false, fakeDotnetResolver, fakeMonoResolver);
             expect(fakeMonoResolver.getMonoCalled).to.be.equal(false);
         });
 
@@ -153,7 +136,6 @@ suite(`${reportIssue.name}`, () => {
                 csharpExtVersion,
                 getDotnetInfo,
                 isValidForMono,
-                options,
                 fakeDotnetResolver,
                 fakeMonoResolver
             );

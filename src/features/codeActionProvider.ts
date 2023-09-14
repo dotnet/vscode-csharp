@@ -9,9 +9,9 @@ import AbstractProvider from './abstractProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import CompositeDisposable from '../compositeDisposable';
-import OptionProvider from '../shared/observers/optionProvider';
 import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import { buildEditForResponse } from '../omnisharp/fileOperationsResponseEditBuilder';
+import { omnisharpOptions } from '../shared/options';
 
 export default class OmniSharpCodeActionProvider
     extends AbstractProvider
@@ -19,11 +19,7 @@ export default class OmniSharpCodeActionProvider
 {
     private _commandId: string;
 
-    constructor(
-        server: OmniSharpServer,
-        private optionProvider: OptionProvider,
-        languageMiddlewareFeature: LanguageMiddlewareFeature
-    ) {
+    constructor(server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
         this._commandId = 'omnisharp.runCodeAction';
         const registerCommandDisposable = vscode.commands.registerCommand(this._commandId, this._runCodeAction, this);
@@ -36,8 +32,7 @@ export default class OmniSharpCodeActionProvider
         context: vscode.CodeActionContext,
         token: vscode.CancellationToken
     ): Promise<vscode.CodeAction[] | undefined> {
-        const options = this.optionProvider.GetLatestOptions();
-        if (options.omnisharpOptions.disableCodeActions) {
+        if (omnisharpOptions.disableCodeActions.getValue(vscode)) {
             return;
         }
 

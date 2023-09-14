@@ -18,7 +18,6 @@ import { parse } from 'jsonc-parser';
 import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider';
 import { PlatformInformation } from './platform';
 import { BaseVsDbgConfigurationProvider } from './configurationProvider';
-import OptionProvider from './observers/optionProvider';
 
 /**
  * This class will be used for providing debug configurations given workspace information.
@@ -27,10 +26,9 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
     public constructor(
         private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider,
         platformInformation: PlatformInformation,
-        optionProvider: OptionProvider,
         csharpOutputChannel: vscode.OutputChannel
     ) {
-        super(platformInformation, optionProvider, csharpOutputChannel);
+        super(platformInformation, csharpOutputChannel);
     }
 
     /**
