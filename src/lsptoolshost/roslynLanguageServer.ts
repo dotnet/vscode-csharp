@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
+import * as net from 'net';
 import { registerCommands } from './commands';
 import { registerDebugger } from './debugger';
 import { UriConverter } from './uriConverter';
@@ -21,6 +22,10 @@ import {
     RequestType0,
     PartialResultParams,
     ProtocolRequestType,
+    SocketMessageWriter,
+    SocketMessageReader,
+    MessageTransports,
+    RAL,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -48,6 +53,7 @@ import { registerShowToastNotification } from './showToastNotification';
 import { registerRazorCommands } from './razorCommands';
 import { registerOnAutoInsert } from './onAutoInsert';
 import { commonOptions, languageServerOptions, omnisharpOptions } from '../shared/options';
+import { NamedPipeInformation } from './roslynProtocol';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -60,6 +66,16 @@ export class RoslynLanguageServer {
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
     private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
     private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
+
+    /**
+     * The encoding to use when writing to and from the stream.
+     */
+    private static readonly encoding: RAL.MessageBufferEncoding = 'utf-8';
+
+    /**
+     * The regular expression used to find the named pipe key in the LSP server's stdout stream.
+     */
+    private static readonly namedPipeKeyRegex = /{"pipeName":"[^"]+"}/;
 
     /**
      * The timeout for stopping the language server (in ms).
@@ -418,7 +434,7 @@ export class RoslynLanguageServer {
         context: vscode.ExtensionContext,
         telemetryReporter: TelemetryReporter,
         additionalExtensionPaths: string[]
-    ): Promise<cp.ChildProcess> {
+    ): Promise<MessageTransports> {
         const serverPath = getServerPath(platformInfo);
 
         const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();
@@ -516,7 +532,57 @@ export class RoslynLanguageServer {
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
-        return childProcess;
+        // Timeout promise used to time out the connection process if it takes too long.
+        const timeout = new Promise<undefined>((resolve) => {
+            RAL().timer.setTimeout(resolve, 30000);
+        });
+
+        // The server process will create the named pipe used for communcation. Wait for it to be created,
+        // and listen for the server to pass back the connection information via stdout.
+        const namedPipeConnectionPromise = new Promise<NamedPipeInformation>((resolve) => {
+            _channel.appendLine('waiting for named pipe information from server...');
+            childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
+                const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
+                _channel.append('[stdout] ' + result);
+
+                // Use the regular expression to find all JSON lines
+                const jsonLines = result.match(RoslynLanguageServer.namedPipeKeyRegex);
+                if (jsonLines) {
+                    const transmittedPipeNameInfo: NamedPipeInformation = JSON.parse(jsonLines[0]);
+                    _channel.appendLine('received named pipe information from server');
+                    resolve(transmittedPipeNameInfo);
+                }
+            });
+        });
+
+        // Wait for the server to send back the name of the pipe to connect to.
+        // If it takes too long it will timeout and throw an error.
+        const pipeConnectionInfo = await Promise.race([namedPipeConnectionPromise, timeout]);
+        if (pipeConnectionInfo === undefined) {
+            throw new Error('Timeout. Named pipe information not received from server.');
+        }
+
+        const socketPromise = new Promise<net.Socket>((resolve) => {
+            _channel.appendLine('attempting to connect client to server...');
+            const socket = net.createConnection(pipeConnectionInfo.pipeName, () => {
+                _channel.appendLine('client has connected to server');
+                resolve(socket);
+            });
+        });
+
+        // Wait for the client to connect to the named pipe.
+        // If it takes too long it will timeout and throw an error.
+        const socket = await Promise.race([socketPromise, timeout]);
+        if (socket === undefined) {
+            throw new Error(
+                'Timeout. Client cound not connect to server via named pipe: ' + pipeConnectionInfo.pipeName
+            );
+        }
+
+        return {
+            reader: new SocketMessageReader(socket, RoslynLanguageServer.encoding),
+            writer: new SocketMessageWriter(socket, RoslynLanguageServer.encoding),
+        };
     }
 
     private registerDynamicFileInfo() {
@@ -810,4 +876,8 @@ function getSessionId(): string {
     }
 
     return sessionId;
+}
+
+export function isString(value: any): value is string {
+    return typeof value === 'string' || value instanceof String;
 }

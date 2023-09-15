@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.8.0-3.23458.4",
+    "roslyn": "4.8.0-3.23463.5",
     "omniSharp": "1.39.7",
     "razor": "7.0.0-preview.23456.2",
     "razorOmnisharp": "7.0.0-preview.23363.1"
@@ -3084,7 +3084,8 @@
       },
       {
         "type": "clr",
-        "label": ".NET Framework 4.x (Windows only)",
+        "when": "workspacePlatform == windows",
+        "label": ".NET Framework 4.x",
         "languages": [
           "csharp",
           "razor",
