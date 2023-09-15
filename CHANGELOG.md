@@ -8,6 +8,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Razor version to 7.0.0-preview.23464.2 (PR: )
+  * Add Razor language server telemetry when DevKit is installed (PR: )
 * Update Razor version to 7.0.0-preview.23456.2 (PR: [#6304](https://github.com/dotnet/vscode-csharp/pull/6304))
   * Fixes regression where semantic colors for razor components appear as red
 * Add support for specifying a .runsettings file when using Roslyn LSP (PR: [#6265](https://github.com/dotnet/vscode-csharp/pull/6265))

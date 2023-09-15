@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { EventEmitter } from 'events';
+import * as util from '../../common';
 import * as vscode from 'vscode';
 import { RequestHandler, RequestType } from 'vscode-jsonrpc';
 import { GenericNotificationHandler, InitializeResult, LanguageClientOptions, State } from 'vscode-languageclient';
@@ -37,6 +38,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         private readonly languageServerDir: string,
         private readonly razorTelemetryReporter: RazorTelemetryReporter,
         private readonly vscodeTelemetryReporter: TelemetryReporter,
+        private readonly isCSharpDevKitInstalled: boolean,
         private readonly logger: RazorLogger
     ) {
         this.isStarted = false;
@@ -254,9 +256,14 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');
 
-            args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
-            args.push('--sessionId', getSessionId());
-            args.push('--extension', '../.razortelemetry/Microsoft.VisualStudio.DevKit.Razor.dll');
+            if (this.isCSharpDevKitInstalled) {
+                args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
+                args.push('--sessionId', getSessionId());
+                args.push(
+                    '--extension',
+                    util.getExtensionPath() + '\\.razortelemetry\\Microsoft.VisualStudio.DevKit.Razor.dll'
+                );
+            }
         }
 
         this.serverOptions = { command, args };

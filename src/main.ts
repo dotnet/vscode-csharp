@@ -155,6 +155,7 @@ export async function activate(
             context.extension.extensionPath,
             eventStream,
             reporter,
+            csharpDevkitExtension !== undefined,
             /* useOmnisharpServer */ false
         );
 
@@ -292,6 +293,7 @@ export async function activate(
                 context.extension.extensionPath,
                 eventStream,
                 reporter,
+                false,
                 /* useOmnisharpServer */ true
             );
         }

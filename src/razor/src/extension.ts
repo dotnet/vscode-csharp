@@ -54,6 +54,7 @@ export async function activate(
     languageServerDir: string,
     eventStream: HostEventStream,
     vscodeTelemetryReporter: TelemetryReporter,
+    isCSharpDevKitInstalled: boolean,
     enableProposedApis = false
 ) {
     const razorTelemetryReporter = new RazorTelemetryReporter(eventStream);
@@ -70,6 +71,7 @@ export async function activate(
             languageServerDir,
             razorTelemetryReporter,
             vscodeTelemetryReporter,
+            isCSharpDevKitInstalled,
             logger
         );
         const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);

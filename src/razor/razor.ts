@@ -16,6 +16,7 @@ export async function activateRazorExtension(
     extensionPath: string,
     eventStream: EventStream,
     vscodeTelemetryReporter: TelemetryReporter,
+    isCSharpDevKitInstalled: boolean,
     useOmnisharpServer: boolean
 ) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
@@ -43,6 +44,7 @@ export async function activateRazorExtension(
                 languageServerDir,
                 eventStream,
                 vscodeTelemetryReporter,
+                isCSharpDevKitInstalled,
                 /* enableProposedApis: */ false
             );
         }
