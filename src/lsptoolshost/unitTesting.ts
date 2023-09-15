@@ -145,7 +145,7 @@ async function runTests(
 }
 
 function getRunSettings(documentUri: string, dotnetTestChannel: vscode.OutputChannel): string | undefined {
-    const runSettingsPathOption = commonOptions.runSettingsPath.getValue(vscode);
+    const runSettingsPathOption = commonOptions.runSettingsPath;
     if (runSettingsPathOption.length === 0) {
         return undefined;
     }

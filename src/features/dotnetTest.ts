@@ -232,7 +232,7 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _getRunSettings(filename: string): string | undefined {
-        const testSettingsPath = commonOptions.runSettingsPath.getValue(vscode);
+        const testSettingsPath = commonOptions.runSettingsPath;
         if (testSettingsPath.length === 0) {
             return undefined;
         }
@@ -392,7 +392,7 @@ export default class TestManager extends AbstractProvider {
         environmentVariables: Map<string, string>,
         debuggerEventsPipeName: string
     ) {
-        const debugOptions = commonOptions.unitTestDebuggingOptions.getValue(vscode);
+        const debugOptions = commonOptions.unitTestDebuggingOptions;
 
         // Get the initial set of options from the workspace setting
         let result: any;

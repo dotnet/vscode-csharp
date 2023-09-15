@@ -159,7 +159,7 @@ export async function activate(
 
     disposables.add(
         server.onBeforeServerStart((path) => {
-            if (razorOptions.razorDevMode.getValue(vscode)) {
+            if (razorOptions.razorDevMode) {
                 eventStream.post(new RazorDevModeActive());
             }
 
@@ -168,7 +168,7 @@ export async function activate(
         })
     );
 
-    if (omnisharpOptions.autoStart.getValue(vscode)) {
+    if (omnisharpOptions.autoStart) {
         server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
     }
 

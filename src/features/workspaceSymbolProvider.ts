@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import AbstractSupport from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
 import * as protocol from '../omnisharp/protocol';
@@ -24,8 +23,8 @@ export default class OmniSharpWorkspaceSymbolProvider extends AbstractSupport im
     }
 
     public async provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
-        const minFindSymbolsFilterLength = omnisharpOptions.minFindSymbolsFilterLength.getValue(vscode);
-        const maxFindSymbolsItems = omnisharpOptions.maxFindSymbolsItems.getValue(vscode);
+        const minFindSymbolsFilterLength = omnisharpOptions.minFindSymbolsFilterLength;
+        const maxFindSymbolsItems = omnisharpOptions.maxFindSymbolsItems;
         const minFilterLength = minFindSymbolsFilterLength > 0 ? minFindSymbolsFilterLength : undefined;
         const maxItemsToReturn = maxFindSymbolsItems > 0 ? maxFindSymbolsItems : undefined;
 

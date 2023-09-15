@@ -93,7 +93,7 @@ export class Advisor {
     }
 
     private _isOverFileLimit(): boolean {
-        const fileLimit = omnisharpOptions.maxProjectFileCountForDiagnosticAnalysis.getValue(vscode);
+        const fileLimit = omnisharpOptions.maxProjectFileCountForDiagnosticAnalysis;
         if (fileLimit > 0) {
             let sourceFileCount = 0;
             for (const key in this._projectSourceFileCounts) {
@@ -150,7 +150,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
             .getConfiguration('csharp')
             .get('suppressHiddenDiagnostics', true);
 
-        if (!omnisharpOptions.enableLspDriver.getValue(vscode)) {
+        if (!omnisharpOptions.enableLspDriver) {
             this._subscriptions.push(
                 this._validateCurrentDocumentPipe
                     .pipe(debounceTime(750))

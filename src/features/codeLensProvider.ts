@@ -87,10 +87,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         document: vscode.TextDocument,
         token: vscode.CancellationToken
     ): Promise<vscode.CodeLens[]> {
-        if (
-            !omnisharpOptions.showReferencesCodeLens.getValue(vscode) &&
-            !omnisharpOptions.showTestsCodeLens.getValue(vscode)
-        ) {
+        if (!omnisharpOptions.showReferencesCodeLens && !omnisharpOptions.showTestsCodeLens) {
             return [];
         }
 
@@ -222,14 +219,14 @@ function createCodeLenses(elements: Structure.CodeElement[], fileName: string): 
 function createCodeLensesForElement(element: Structure.CodeElement, fileName: string): vscode.CodeLens[] {
     const results: vscode.CodeLens[] = [];
 
-    if (omnisharpOptions.showReferencesCodeLens.getValue(vscode) && isValidElementForReferencesCodeLens(element)) {
+    if (omnisharpOptions.showReferencesCodeLens && isValidElementForReferencesCodeLens(element)) {
         const range = element.Ranges[SymbolRangeNames.Name];
         if (range) {
             results.push(new ReferencesCodeLens(range, fileName));
         }
     }
 
-    if (omnisharpOptions.showTestsCodeLens.getValue(vscode)) {
+    if (omnisharpOptions.showTestsCodeLens) {
         if (element.Kind === SymbolKinds.Method) {
             const test = getTest(element);
             if (test !== undefined) {
@@ -317,7 +314,7 @@ function isValidElementForReferencesCodeLens(element: Structure.CodeElement): bo
         return false;
     }
 
-    if (omnisharpOptions.filteredSymbolsCodeLens.getValue(vscode).includes(element.Name)) {
+    if (omnisharpOptions.filteredSymbolsCodeLens.includes(element.Name)) {
         return false;
     }
 

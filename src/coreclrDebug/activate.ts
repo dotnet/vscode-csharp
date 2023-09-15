@@ -154,7 +154,7 @@ async function completeDebuggerInstall(
     eventStream: EventStream
 ): Promise<boolean> {
     try {
-        await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths.getValue(vscode));
+        await debugUtil.checkDotNetCli(omnisharpOptions.dotNetCliPaths);
         const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
@@ -277,7 +277,7 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
 
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
-            const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths.getValue(vscode));
+            const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
             const targetArchitecture = getTargetArchitecture(
                 this.platformInfo,
                 _session.configuration.targetArchitecture,

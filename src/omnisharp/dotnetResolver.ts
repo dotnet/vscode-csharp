@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import { exec } from 'child_process';
 import * as path from 'path';
 import * as semver from 'semver';
@@ -22,7 +21,7 @@ export class DotnetResolver implements IHostExecutableResolver {
         const dotnet = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const env = { ...process.env };
 
-        const dotnetPathOption = commonOptions.dotnetPath.getValue(vscode);
+        const dotnetPathOption = commonOptions.dotnetPath;
         if (dotnetPathOption.length > 0) {
             env['PATH'] = dotnetPathOption + path.delimiter + env['PATH'];
         }

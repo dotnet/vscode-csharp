@@ -90,7 +90,7 @@ export async function activate(
     requiredPackageIds.push('Razor');
 
     const csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
-    const useOmnisharpServer = !csharpDevkitExtension && commonOptions.useOmnisharpServer.getValue(vscode);
+    const useOmnisharpServer = !csharpDevkitExtension && commonOptions.useOmnisharpServer;
     if (useOmnisharpServer) {
         requiredPackageIds.push('OmniSharp');
     }
@@ -98,7 +98,7 @@ export async function activate(
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
     await initializeDotnetPath();
 
-    const useModernNetOption = omnisharpOptions.useModernNet.getValue(vscode);
+    const useModernNetOption = omnisharpOptions.useModernNet;
     const telemetryObserver = new TelemetryObserver(platformInfo, () => reporter, useModernNetOption);
     eventStream.subscribe(telemetryObserver.post);
 
@@ -177,7 +177,7 @@ export async function activate(
 
         const warningMessageObserver = new WarningMessageObserver(
             vscode,
-            () => omnisharpOptions.disableMSBuildDiagnosticWarning.getValue(vscode) || false
+            () => omnisharpOptions.disableMSBuildDiagnosticWarning || false
         );
         eventStream.subscribe(warningMessageObserver.post);
 
@@ -225,7 +225,7 @@ export async function activate(
         const razorObserver = new RazorLoggerObserver(csharpChannel);
         eventStream.subscribe(razorObserver.post);
 
-        if (!razorOptions.razorDevMode.getValue(vscode)) {
+        if (!razorOptions.razorDevMode) {
             // Download Razor O# server
             const razorOmnisharpDownloader = new RazorOmnisharpDownloader(
                 networkSettingsProvider,

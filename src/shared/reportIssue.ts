@@ -35,7 +35,7 @@ export default async function reportIssue(
 
     const extensions = getInstalledExtensions();
 
-    const useOmnisharp = commonOptions.useOmnisharpServer.getValue(vscode);
+    const useOmnisharp = commonOptions.useOmnisharpServer;
     const logInfo = getLogInfo(useOmnisharp);
 
     const body = `## Issue Description ##

@@ -103,9 +103,7 @@ export class RoslynLanguageServer {
         // setTrace only works after the client is already running.
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
-                const languageClientTraceLevel = RoslynLanguageServer.GetTraceLevel(
-                    languageServerOptions.logLevel.getValue(vscode)
-                );
+                const languageClientTraceLevel = RoslynLanguageServer.GetTraceLevel(languageServerOptions.logLevel);
 
                 await this._languageClient.setTrace(languageClientTraceLevel);
             }
@@ -172,7 +170,7 @@ export class RoslynLanguageServer {
             );
         };
 
-        const documentSelector = languageServerOptions.documentSelector.getValue(vscode);
+        const documentSelector = languageServerOptions.documentSelector;
 
         // Options to control the language client
         const clientOptions: LanguageClientOptions = {
@@ -337,7 +335,7 @@ export class RoslynLanguageServer {
     private async openDefaultSolutionOrProjects(): Promise<void> {
         // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
         // disabled it.
-        const defaultSolution = commonOptions.defaultSolution.getValue(vscode);
+        const defaultSolution = commonOptions.defaultSolution;
         if (!_wasActivatedWithCSharpDevkit && defaultSolution !== 'disable' && this._solutionFile === undefined) {
             if (defaultSolution !== '') {
                 this.openSolution(vscode.Uri.file(defaultSolution));
@@ -378,7 +376,7 @@ export class RoslynLanguageServer {
                         const projectUris = await vscode.workspace.findFiles(
                             '**/*.csproj',
                             '**/node_modules/**',
-                            omnisharpOptions.maxProjectResults.getValue(vscode)
+                            omnisharpOptions.maxProjectResults
                         );
 
                         this.openProjects(projectUris);
@@ -439,11 +437,11 @@ export class RoslynLanguageServer {
 
         let args: string[] = [];
 
-        if (commonOptions.waitForDebugger.getValue(vscode)) {
+        if (commonOptions.waitForDebugger) {
             args.push('--debug');
         }
 
-        const logLevel = languageServerOptions.logLevel.getValue(vscode);
+        const logLevel = languageServerOptions.logLevel;
         if (logLevel) {
             args.push('--logLevel', logLevel);
         }
@@ -538,7 +536,7 @@ export class RoslynLanguageServer {
         this._languageClient.onRequest<RoslynProtocol.DebugAttachParams, RoslynProtocol.DebugAttachResult, void>(
             RoslynProtocol.DebugAttachRequest.type,
             async (request) => {
-                const debugOptions = commonOptions.unitTestDebuggingOptions.getValue(vscode);
+                const debugOptions = commonOptions.unitTestDebuggingOptions;
                 const debugConfiguration: vscode.DebugConfiguration = {
                     ...debugOptions,
                     name: '.NET Core Attach',
@@ -600,7 +598,7 @@ export class RoslynLanguageServer {
     ): Promise<string[]> {
         const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
 
-        const extensionPaths = languageServerOptions.extensionsPaths.getValue(vscode) || [
+        const extensionPaths = languageServerOptions.extensionsPaths || [
             this.getLanguageServicesDevKitComponentPath(exports),
         ];
 
@@ -764,7 +762,7 @@ function getServerPath(platformInfo: PlatformInformation) {
     if (serverPath) {
         _channel.appendLine(`Using server path override from DOTNET_ROSLYN_SERVER_PATH: ${serverPath}`);
     } else {
-        serverPath = commonOptions.serverPath.getValue(vscode);
+        serverPath = commonOptions.serverPath;
         if (!serverPath) {
             // Option not set, use the path from the extension.
             serverPath = getInstalledServerPath(platformInfo);

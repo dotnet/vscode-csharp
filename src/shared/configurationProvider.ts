@@ -140,7 +140,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             }
 
             if (debugConfiguration.checkForDevCert) {
-                this.checkForDevCerts(commonOptions.dotnetPath.getValue(vscode));
+                this.checkForDevCerts(commonOptions.dotnetPath);
             }
         }
 

@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import * as semver from 'semver';
 import * as path from 'path';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
@@ -19,7 +18,7 @@ export class OmniSharpMonoResolver implements IHostExecutableResolver {
     public async getHostExecutableInfo(): Promise<HostExecutableInformation> {
         const env = { ...process.env };
 
-        const monoPath = omnisharpOptions.monoPath.getValue(vscode);
+        const monoPath = omnisharpOptions.monoPath;
         if (monoPath.length > 0) {
             env['PATH'] = path.join(monoPath, 'bin') + path.delimiter + env['PATH'];
             env['MONO_GAC_PREFIX'] = monoPath;

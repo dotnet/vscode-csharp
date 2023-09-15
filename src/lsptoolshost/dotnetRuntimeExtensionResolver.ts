@@ -41,7 +41,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
     private hostInfo: HostExecutableInformation | undefined;
 
     async getHostExecutableInfo(): Promise<HostExecutableInformation> {
-        let dotnetRuntimePath = commonOptions.dotnetPath.getValue(vscode);
+        let dotnetRuntimePath = commonOptions.dotnetPath;
         const serverPath = this.getServerPath(this.platformInfo);
 
         // Check if we can find a valid dotnet from dotnet --version on the PATH.

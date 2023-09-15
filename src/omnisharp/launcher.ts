@@ -42,7 +42,7 @@ export async function findLaunchTargets(): Promise<LaunchTarget[]> {
 
     const projectFiles = await vscode.workspace.findFiles(
         /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
-        /*exclude*/ `{${omnisharpOptions.projectFilesExcludePattern.getValue(vscode)}}`
+        /*exclude*/ `{${omnisharpOptions.projectFilesExcludePattern}}`
     );
 
     const csFiles = await vscode.workspace.findFiles(
@@ -54,7 +54,7 @@ export async function findLaunchTargets(): Promise<LaunchTarget[]> {
     return resourcesToLaunchTargets(
         projectFiles.concat(csFiles),
         vscode.workspace.workspaceFolders,
-        omnisharpOptions.maxProjectResults.getValue(vscode)
+        omnisharpOptions.maxProjectResults
     );
 }
 
@@ -325,7 +325,7 @@ export async function configure(
     monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver
 ): Promise<LaunchConfiguration> {
-    if (omnisharpOptions.useEditorFormattingSettings.getValue(vscode)) {
+    if (omnisharpOptions.useEditorFormattingSettings) {
         const globalConfig = vscode.workspace.getConfiguration('', null);
         const csharpConfig = vscode.workspace.getConfiguration('[csharp]', null);
 
@@ -350,7 +350,7 @@ export async function configure(
         );
     }
 
-    if (omnisharpOptions.useModernNet.getValue(vscode)) {
+    if (omnisharpOptions.useModernNet) {
         const argsCopy = args.slice(0);
 
         let command: string;
@@ -395,7 +395,7 @@ export async function configure(
         argsCopy.unshift(launchPath);
         argsCopy.unshift('--assembly-loader=strict');
 
-        if (commonOptions.waitForDebugger.getValue(vscode)) {
+        if (commonOptions.waitForDebugger) {
             argsCopy.unshift('--debug');
             argsCopy.unshift('--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:55555');
         }

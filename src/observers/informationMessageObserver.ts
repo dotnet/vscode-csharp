@@ -22,7 +22,7 @@ export class InformationMessageObserver {
 
     private async handleOmnisharpServerUnresolvedDependencies() {
         //to do: determine if we need the unresolved dependencies message
-        if (!omnisharpOptions.suppressDotnetRestoreNotification.getValue(this.vscode)) {
+        if (!omnisharpOptions.suppressDotnetRestoreNotification) {
             const message = `There are unresolved dependencies. Please execute the restore command to continue.`;
             return showInformationMessage(this.vscode, message, { title: 'Restore', command: 'dotnet.restore.all' });
         }

@@ -14,7 +14,7 @@ export async function resetDecompilationAuthorization(context: vscode.ExtensionC
 
 export async function getDecompilationAuthorization(context: vscode.ExtensionContext) {
     // If decompilation is disabled, then return false
-    if (omnisharpOptions.enableDecompilationSupport.getValue(vscode) === false) {
+    if (omnisharpOptions.enableDecompilationSupport === false) {
         return false;
     }
 

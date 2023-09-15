@@ -14,7 +14,7 @@ import { languageServerOptions } from '../shared/options';
 export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
     let source = new vscode.CancellationTokenSource();
     vscode.workspace.onDidChangeTextDocument(async (e) => {
-        if (!languageServerOptions.documentSelector.getValue(vscode).includes(e.document.languageId)) {
+        if (!languageServerOptions.documentSelector.includes(e.document.languageId)) {
             return;
         }
 

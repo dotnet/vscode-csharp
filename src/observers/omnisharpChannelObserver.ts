@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import { BaseChannelObserver } from './baseChannelObserver';
 import { OutputChannel } from '../vscodeAdapter';
 import { BaseEvent } from '../omnisharp/loggingEvents';
@@ -31,7 +30,7 @@ export class OmnisharpChannelObserver extends BaseChannelObserver {
     };
 
     private async handleOmnisharpServerOnStdErr() {
-        if (omnisharpOptions.showOmnisharpLogOnError.getValue(vscode)) {
+        if (omnisharpOptions.showOmnisharpLogOnError) {
             this.showChannel(true);
         }
     }

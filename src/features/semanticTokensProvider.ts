@@ -205,7 +205,7 @@ export default class OmniSharpSemanticTokensProvider
             return null;
         }
 
-        if (!omnisharpOptions.useSemanticHighlighting.getValue(vscode)) {
+        if (!omnisharpOptions.useSemanticHighlighting) {
             return null;
         }
 

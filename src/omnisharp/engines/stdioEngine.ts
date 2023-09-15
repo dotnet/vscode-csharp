@@ -123,7 +123,7 @@ export class StdioEngine implements IEngine {
                 new OmniSharpRenameProvider(server, languageMiddlewareFeature)
             )
         );
-        if (omnisharpOptions.useFormatting.getValue(vscode)) {
+        if (omnisharpOptions.useFormatting) {
             localDisposables.add(
                 vscode.languages.registerDocumentRangeFormattingEditProvider(
                     documentSelector,
@@ -347,7 +347,7 @@ export class StdioEngine implements IEngine {
             let listener: Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = omnisharpOptions.projectLoadTimeout.getValue(vscode) * 1000;
+            const timeoutDuration = omnisharpOptions.projectLoadTimeout * 1000;
 
             // timeout logic
             const handle = setTimeout(() => {

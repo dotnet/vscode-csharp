@@ -3,23 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
 import { Observable } from 'rxjs';
 import Disposable from '../../disposable';
 import { isDeepStrictEqual } from 'util';
 import {
-    CommonOptionsDefinition,
-    LanguageServerOptionsDefinition,
-    OmnisharpServerOptionsDefinition,
+    CommonOptions,
+    LanguageServerOptions,
+    OmnisharpServerOptions,
     commonOptions,
     languageServerOptions,
     omnisharpOptions,
 } from '../options';
 
 type RelevantOptionValues = {
-    commonOptions: Map<keyof CommonOptionsDefinition, any>;
-    omnisharpOptions: Map<keyof OmnisharpServerOptionsDefinition, any>;
-    languageServerOptions: Map<keyof LanguageServerOptionsDefinition, any>;
+    commonOptions: Map<keyof CommonOptions, any>;
+    omnisharpOptions: Map<keyof OmnisharpServerOptions, any>;
+    languageServerOptions: Map<keyof LanguageServerOptions, any>;
 };
 
 export function HandleOptionChanges(
@@ -69,21 +68,17 @@ export interface OptionChangeObserver {
 }
 
 export interface OptionChanges {
-    changedCommonOptions: ReadonlyArray<keyof CommonOptionsDefinition>;
-    changedLanguageServerOptions: ReadonlyArray<keyof LanguageServerOptionsDefinition>;
-    changedOmnisharpOptions: ReadonlyArray<keyof OmnisharpServerOptionsDefinition>;
+    changedCommonOptions: ReadonlyArray<keyof CommonOptions>;
+    changedLanguageServerOptions: ReadonlyArray<keyof LanguageServerOptions>;
+    changedOmnisharpOptions: ReadonlyArray<keyof OmnisharpServerOptions>;
 }
 
 function getLatestRelevantOptions(changedKeys: OptionChanges): RelevantOptionValues {
     return {
-        commonOptions: new Map(
-            changedKeys.changedCommonOptions.map((key) => [key, commonOptions[key].getValue(vscode)])
-        ),
-        omnisharpOptions: new Map(
-            changedKeys.changedOmnisharpOptions.map((key) => [key, omnisharpOptions[key].getValue(vscode)])
-        ),
+        commonOptions: new Map(changedKeys.changedCommonOptions.map((key) => [key, commonOptions[key]])),
+        omnisharpOptions: new Map(changedKeys.changedOmnisharpOptions.map((key) => [key, omnisharpOptions[key]])),
         languageServerOptions: new Map(
-            changedKeys.changedLanguageServerOptions.map((key) => [key, languageServerOptions[key].getValue(vscode)])
+            changedKeys.changedLanguageServerOptions.map((key) => [key, languageServerOptions[key]])
         ),
     };
 }

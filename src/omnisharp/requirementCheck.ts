@@ -52,8 +52,8 @@ export async function validateRequirements(): Promise<boolean> {
 }
 
 async function checkRequirements(): Promise<RequirementResult> {
-    if (omnisharpOptions.useModernNet.getValue(vscode)) {
-        const dotnetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths.getValue(vscode));
+    if (omnisharpOptions.useModernNet) {
+        const dotnetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
         const needsDotNetSdk = dotnetInfo.Version === undefined || semver.lt(dotnetInfo.Version, '6.0.0');
         return {
             needsDotNetSdk,

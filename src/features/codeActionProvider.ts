@@ -32,7 +32,7 @@ export default class OmniSharpCodeActionProvider
         context: vscode.CodeActionContext,
         token: vscode.CancellationToken
     ): Promise<vscode.CodeAction[] | undefined> {
-        if (omnisharpOptions.disableCodeActions.getValue(vscode)) {
+        if (omnisharpOptions.disableCodeActions) {
             return;
         }
 

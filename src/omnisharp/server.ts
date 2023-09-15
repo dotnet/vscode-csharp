@@ -310,7 +310,7 @@ export class OmniSharpServer {
         const disposables = new CompositeDisposable();
 
         let engine: IEngine | undefined;
-        if (omnisharpOptions.enableLspDriver.getValue(this.vscode)) {
+        if (omnisharpOptions.enableLspDriver) {
             engine = new LspEngine(
                 this._eventBus,
                 this.eventStream,
@@ -420,10 +420,10 @@ export class OmniSharpServer {
             process.pid.toString(),
             'DotNet:enablePackageRestore=false',
             '--loglevel',
-            omnisharpOptions.loggingLevel.getValue(this.vscode),
+            omnisharpOptions.loggingLevel,
         ];
 
-        const razorPluginPathOption = razorOptions.razorPluginPath.getValue(this.vscode);
+        const razorPluginPathOption = razorOptions.razorPluginPath;
         // Razor support only exists for certain platforms, so only load the plugin if present
         const razorPluginPath =
             razorPluginPathOption.length > 0
@@ -438,52 +438,49 @@ export class OmniSharpServer {
             args.push('--plugin', razorPluginPath);
         }
 
-        if (commonOptions.waitForDebugger.getValue(this.vscode) === true) {
+        if (commonOptions.waitForDebugger === true) {
             args.push('--debug');
         }
 
-        const excludePath = commonOptions.excludePaths.getValue(this.vscode);
+        const excludePath = commonOptions.excludePaths;
         for (let i = 0; i < excludePath.length; i++) {
             args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${excludePath[i]}`);
         }
 
-        if (omnisharpOptions.enableMsBuildLoadProjectsOnDemand.getValue(this.vscode) === true) {
+        if (omnisharpOptions.enableMsBuildLoadProjectsOnDemand === true) {
             args.push('MsBuild:LoadProjectsOnDemand=true');
         }
 
-        if (omnisharpOptions.enableRoslynAnalyzers.getValue(this.vscode) === true) {
+        if (omnisharpOptions.enableRoslynAnalyzers === true) {
             args.push('RoslynExtensionsOptions:EnableAnalyzersSupport=true');
         }
 
-        if (omnisharpOptions.enableEditorConfigSupport.getValue(this.vscode) === true) {
+        if (omnisharpOptions.enableEditorConfigSupport === true) {
             args.push('FormattingOptions:EnableEditorConfigSupport=true');
         }
 
-        if (omnisharpOptions.organizeImportsOnFormat.getValue(this.vscode) === true) {
+        if (omnisharpOptions.organizeImportsOnFormat === true) {
             args.push('FormattingOptions:OrganizeImports=true');
         }
 
-        if (
-            this.decompilationAuthorized &&
-            omnisharpOptions.enableDecompilationSupport.getValue(this.vscode) === true
-        ) {
+        if (this.decompilationAuthorized && omnisharpOptions.enableDecompilationSupport === true) {
             args.push('RoslynExtensionsOptions:EnableDecompilationSupport=true');
         }
 
-        if (omnisharpOptions.enableImportCompletion.getValue(this.vscode) === true) {
+        if (omnisharpOptions.enableImportCompletion === true) {
             args.push('RoslynExtensionsOptions:EnableImportCompletion=true');
         }
 
-        if (omnisharpOptions.enableAsyncCompletion.getValue(this.vscode) === true) {
+        if (omnisharpOptions.enableAsyncCompletion === true) {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
-        const sdkPath = omnisharpOptions.sdkPath.getValue(this.vscode);
+        const sdkPath = omnisharpOptions.sdkPath;
         if (sdkPath.length > 0) {
             args.push(`Sdk:Path=${sdkPath}`);
         }
 
-        const sdkVersion = omnisharpOptions.sdkVersion.getValue(this.vscode);
+        const sdkVersion = omnisharpOptions.sdkVersion;
         if (sdkVersion.length > 0) {
             args.push(`Sdk:Version=${sdkVersion}`);
         }
@@ -492,75 +489,55 @@ export class OmniSharpServer {
             args.push(`Sdk:IncludePrereleases=true`);
         }
 
-        const enableInlayHintsForParameters = omnisharpOptions.inlayHintsEnableForParameters.getValue(this.vscode);
+        const enableInlayHintsForParameters = omnisharpOptions.inlayHintsEnableForParameters;
         if (enableInlayHintsForParameters === true) {
             args.push(
                 `RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${enableInlayHintsForParameters.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${omnisharpOptions.inlayHintsForLiteralParameters
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${omnisharpOptions.inlayHintsForLiteralParameters.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${omnisharpOptions.inlayHintsForIndexerParameters
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${omnisharpOptions.inlayHintsForIndexerParameters.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${omnisharpOptions.inlayHintsForObjectCreationParameters
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${omnisharpOptions.inlayHintsForObjectCreationParameters.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${omnisharpOptions.inlayHintsForOtherParameters
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${omnisharpOptions.inlayHintsForOtherParameters.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${omnisharpOptions.inlayHintsSuppressForParametersThatDifferOnlyBySuffix
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${omnisharpOptions.inlayHintsSuppressForParametersThatDifferOnlyBySuffix.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${omnisharpOptions.inlayHintsSuppressForParametersThatMatchMethodIntent
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${omnisharpOptions.inlayHintsSuppressForParametersThatMatchMethodIntent.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${omnisharpOptions.inlayHintsSuppressForParametersThatMatchArgumentName
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${omnisharpOptions.inlayHintsSuppressForParametersThatMatchArgumentName.toString()}`
             );
         }
 
-        const enableInlayHintsForTypes = omnisharpOptions.inlayHintsEnableForTypes.getValue(this.vscode);
+        const enableInlayHintsForTypes = omnisharpOptions.inlayHintsEnableForTypes;
         if (enableInlayHintsForTypes === true) {
             args.push(
                 `RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${enableInlayHintsForTypes.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${omnisharpOptions.inlayHintsForImplicitVariableTypes
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${omnisharpOptions.inlayHintsForImplicitVariableTypes.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${omnisharpOptions.inlayHintsForLambdaParameterTypes
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${omnisharpOptions.inlayHintsForLambdaParameterTypes.toString()}`
             );
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${omnisharpOptions.inlayHintsForImplicitObjectCreation
-                    .getValue(this.vscode)
-                    .toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${omnisharpOptions.inlayHintsForImplicitObjectCreation.toString()}`
             );
         }
 
-        if (omnisharpOptions.analyzeOpenDocumentsOnly.getValue(this.vscode) === true) {
+        if (omnisharpOptions.analyzeOpenDocumentsOnly === true) {
             args.push('RoslynExtensionsOptions:AnalyzeOpenDocumentsOnly=true');
         }
 
-        const dotnetCliPaths = omnisharpOptions.dotNetCliPaths.getValue(this.vscode);
+        const dotnetCliPaths = omnisharpOptions.dotNetCliPaths;
         for (let i = 0; i < dotnetCliPaths.length; i++) {
             args.push(`DotNetCliOptions:LocationPaths:${i}=${dotnetCliPaths[i]}`);
         }
@@ -569,7 +546,7 @@ export class OmniSharpServer {
         try {
             launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(
                 this.packageJSON.defaults.omniSharp,
-                commonOptions.serverPath.getValue(this.vscode),
+                commonOptions.serverPath,
                 /* useFramework */ !omnisharpOptions.useModernNet,
                 this.extensionPath
             );
@@ -722,7 +699,7 @@ export class OmniSharpServer {
         }
 
         // First, try to launch against something that matches the user's preferred target
-        const defaultLaunchSolutionConfigValue = commonOptions.defaultSolution.getValue(this.vscode);
+        const defaultLaunchSolutionConfigValue = commonOptions.defaultSolution;
         const defaultLaunchSolutionTarget = launchTargets.find(
             (a) => path.basename(a.target) === defaultLaunchSolutionConfigValue
         );

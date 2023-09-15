@@ -3,470 +3,403 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import { DocumentSelector } from 'vscode-languageserver-protocol';
-import { vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 import * as path from 'path';
 
-export interface Option<T> {
-    getValue(vscode: vscode): T;
-}
-
-export interface CommonOptionsDefinition {
-    dotnetPath: Option<string>;
-    waitForDebugger: Option<boolean>;
-    serverPath: Option<string>;
-    useOmnisharpServer: Option<boolean>;
-    excludePaths: Option<string[]>;
+export interface CommonOptions {
+    readonly dotnetPath: string;
+    readonly waitForDebugger: boolean;
+    readonly serverPath: string;
+    readonly useOmnisharpServer: boolean;
+    readonly excludePaths: string[];
 
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
-    defaultSolution: Option<string>;
-    unitTestDebuggingOptions: Option<object>;
-    runSettingsPath: Option<string>;
+    readonly defaultSolution: string;
+    readonly unitTestDebuggingOptions: object;
+    readonly runSettingsPath: string;
 }
 
-export interface OmnisharpServerOptionsDefinition {
-    useModernNet: Option<boolean>;
-    monoPath: Option<string>;
-    loggingLevel: Option<string>;
-    autoStart: Option<boolean>;
-    projectFilesExcludePattern: Option<string>;
-    projectLoadTimeout: Option<number>;
-    maxProjectResults: Option<number>;
-    useEditorFormattingSettings: Option<boolean>;
-    enableRoslynAnalyzers: Option<boolean>;
-    enableEditorConfigSupport: Option<boolean>;
-    enableDecompilationSupport: Option<boolean>;
-    enableImportCompletion: Option<boolean>;
-    enableAsyncCompletion: Option<boolean>;
-    analyzeOpenDocumentsOnly: Option<boolean>;
-    organizeImportsOnFormat: Option<boolean>;
-    disableMSBuildDiagnosticWarning: Option<boolean>;
-    showOmnisharpLogOnError: Option<boolean>;
-    minFindSymbolsFilterLength: Option<number>;
-    maxFindSymbolsItems: Option<number>;
-    enableMsBuildLoadProjectsOnDemand: Option<boolean>;
-    sdkPath: Option<string>;
-    sdkVersion: Option<string>;
-    sdkIncludePrereleases: Option<boolean>;
-    dotNetCliPaths: Option<string[]>;
-    useFormatting: Option<boolean>;
-    showReferencesCodeLens: Option<boolean>;
-    showTestsCodeLens: Option<boolean>;
-    filteredSymbolsCodeLens: Option<string[]>;
-    disableCodeActions: Option<boolean>;
-    useSemanticHighlighting: Option<boolean>;
-    inlayHintsEnableForParameters: Option<boolean>;
-    inlayHintsForLiteralParameters: Option<boolean>;
-    inlayHintsForObjectCreationParameters: Option<boolean>;
-    inlayHintsForIndexerParameters: Option<boolean>;
-    inlayHintsForOtherParameters: Option<boolean>;
-    inlayHintsSuppressForParametersThatDifferOnlyBySuffix: Option<boolean>;
-    inlayHintsSuppressForParametersThatMatchMethodIntent: Option<boolean>;
-    inlayHintsSuppressForParametersThatMatchArgumentName: Option<boolean>;
-    inlayHintsEnableForTypes: Option<boolean>;
-    inlayHintsForImplicitVariableTypes: Option<boolean>;
-    inlayHintsForLambdaParameterTypes: Option<boolean>;
-    inlayHintsForImplicitObjectCreation: Option<boolean>;
-    maxProjectFileCountForDiagnosticAnalysis: Option<number>;
-    suppressDotnetRestoreNotification: Option<boolean>;
-    enableLspDriver: Option<boolean | null>;
+export interface OmnisharpServerOptions {
+    readonly useModernNet: boolean;
+    readonly monoPath: string;
+    readonly loggingLevel: string;
+    readonly autoStart: boolean;
+    readonly projectFilesExcludePattern: string;
+    readonly projectLoadTimeout: number;
+    readonly maxProjectResults: number;
+    readonly useEditorFormattingSettings: boolean;
+    readonly enableRoslynAnalyzers: boolean;
+    readonly enableEditorConfigSupport: boolean;
+    readonly enableDecompilationSupport: boolean;
+    readonly enableImportCompletion: boolean;
+    readonly enableAsyncCompletion: boolean;
+    readonly analyzeOpenDocumentsOnly: boolean;
+    readonly organizeImportsOnFormat: boolean;
+    readonly disableMSBuildDiagnosticWarning: boolean;
+    readonly showOmnisharpLogOnError: boolean;
+    readonly minFindSymbolsFilterLength: number;
+    readonly maxFindSymbolsItems: number;
+    readonly enableMsBuildLoadProjectsOnDemand: boolean;
+    readonly sdkPath: string;
+    readonly sdkVersion: string;
+    readonly sdkIncludePrereleases: boolean;
+    readonly dotNetCliPaths: string[];
+    readonly useFormatting: boolean;
+    readonly showReferencesCodeLens: boolean;
+    readonly showTestsCodeLens: boolean;
+    readonly filteredSymbolsCodeLens: string[];
+    readonly disableCodeActions: boolean;
+    readonly useSemanticHighlighting: boolean;
+    readonly inlayHintsEnableForParameters: boolean;
+    readonly inlayHintsForLiteralParameters: boolean;
+    readonly inlayHintsForObjectCreationParameters: boolean;
+    readonly inlayHintsForIndexerParameters: boolean;
+    readonly inlayHintsForOtherParameters: boolean;
+    readonly inlayHintsSuppressForParametersThatDifferOnlyBySuffix: boolean;
+    readonly inlayHintsSuppressForParametersThatMatchMethodIntent: boolean;
+    readonly inlayHintsSuppressForParametersThatMatchArgumentName: boolean;
+    readonly inlayHintsEnableForTypes: boolean;
+    readonly inlayHintsForImplicitVariableTypes: boolean;
+    readonly inlayHintsForLambdaParameterTypes: boolean;
+    readonly inlayHintsForImplicitObjectCreation: boolean;
+    readonly maxProjectFileCountForDiagnosticAnalysis: number;
+    readonly suppressDotnetRestoreNotification: boolean;
+    readonly enableLspDriver?: boolean | null;
 }
 
-export interface LanguageServerOptionsDefinition {
-    logLevel: Option<string>;
-    documentSelector: Option<DocumentSelector>;
-    extensionsPaths: Option<string[] | null>;
+export interface LanguageServerOptions {
+    readonly logLevel: string;
+    readonly documentSelector: DocumentSelector;
+    readonly extensionsPaths: string[] | null;
 }
 
-export interface RazorOptionsDefinition {
-    razorDevMode: Option<boolean>;
-    razorPluginPath: Option<string>;
+export interface RazorOptions {
+    readonly razorDevMode: boolean;
+    readonly razorPluginPath: string;
 }
 
-export const commonOptions: CommonOptionsDefinition = {
-    dotnetPath: {
-        getValue: (vscode: vscode) =>
-            // VS Code coerces unset string settings to the empty string.
-            // Thus, to avoid dealing with the empty string AND undefined,
-            // explicitly pass in the empty string as the fallback if the setting
-            // isn't defined in package.json (which should never happen).
-            readOption<string>(vscode, 'dotnet.dotnetPath', '', 'omnisharp.dotnetPath'),
-    },
-    waitForDebugger: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(vscode, 'dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger'),
-    },
-    serverPath: {
-        getValue: (vscode: vscode) =>
-            readOption<string>(vscode, 'dotnet.server.path', '', 'omnisharp.path', 'csharp.omnisharp'),
-    },
-    useOmnisharpServer: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'dotnet.server.useOmnisharp', false),
-    },
-    excludePaths: {
-        getValue: (vscode: vscode) => getExcludedPaths(vscode),
-    },
+class CommonOptionsImpl implements CommonOptions {
+    public get dotnetPath() {
+        return readOption<string>('dotnet.dotnetPath', '', 'omnisharp.dotnetPath');
+    }
+    public get waitForDebugger() {
+        return readOption<boolean>('dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger');
+    }
+    public get serverPath() {
+        return readOption<string>('dotnet.server.path', '', 'omnisharp.path', 'csharp.omnisharp');
+    }
+    public get useOmnisharpServer() {
+        return readOption<boolean>('dotnet.server.useOmnisharp', false);
+    }
+    public get excludePaths() {
+        return getExcludedPaths();
+    }
 
     /** The default solution; this has been normalized to a full file path from the workspace folder it was configured in, or the string "disable" if that has been disabled */
-    defaultSolution: {
-        getValue: (vscode: vscode) => {
-            let defaultSolution = '';
+    public get defaultSolution() {
+        let defaultSolution = '';
+        const defaultSolutionFromWorkspace = readOption<string>(
+            'dotnet.defaultSolution',
+            '',
+            'omnisharp.defaultLaunchSolution'
+        );
 
-            const defaultSolutionFromWorkspace = readOption<string>(
-                vscode,
-                'dotnet.defaultSolution',
-                '',
-                'omnisharp.defaultLaunchSolution'
-            );
-
-            // If the workspace has defaultSolution disabled, just be done
-            if (defaultSolutionFromWorkspace === 'disable') {
-                defaultSolution = 'disable';
-            } else {
-                if (vscode.workspace.workspaceFolders !== undefined) {
-                    // If this is multi-folder, then check to see if we have a fully qualified path set directly in the workspace settings; this will let the user directly specify in their
-                    // workspace settings which one is active in the case of a multi-folder workspace. This has to be absolute because in this case, there's no clear folder to resolve a relative
-                    // path against.
-                    if (vscode.workspace.workspaceFolders.length > 1) {
-                        if (path.isAbsolute(defaultSolutionFromWorkspace)) {
-                            defaultSolution = defaultSolutionFromWorkspace;
-                        }
+        // If the workspace has defaultSolution disabled, just be done
+        if (defaultSolutionFromWorkspace === 'disable') {
+            defaultSolution = 'disable';
+        } else {
+            if (vscode.workspace.workspaceFolders !== undefined) {
+                // If this is multi-folder, then check to see if we have a fully qualified path set directly in the workspace settings; this will let the user directly specify in their
+                // workspace settings which one is active in the case of a multi-folder workspace. This has to be absolute because in this case, there's no clear folder to resolve a relative
+                // path against.
+                if (vscode.workspace.workspaceFolders.length > 1) {
+                    if (path.isAbsolute(defaultSolutionFromWorkspace)) {
+                        defaultSolution = defaultSolutionFromWorkspace;
                     }
+                }
 
-                    // If we didn't have an absolute workspace setting, then check each workspace folder and resolve any relative paths against it
-                    if (defaultSolution == '') {
-                        for (const workspaceFolder of vscode.workspace.workspaceFolders) {
-                            const workspaceFolderConfig = vscode.workspace.getConfiguration(
-                                undefined,
-                                workspaceFolder.uri
-                            );
-                            const defaultSolutionFromWorkspaceFolder = readOptionFromConfig<string>(
-                                vscode,
-                                workspaceFolderConfig,
-                                'dotnet.defaultSolution',
-                                '',
-                                'omnisharp.defaultLaunchSolution'
-                            );
-                            if (
-                                defaultSolutionFromWorkspaceFolder !== '' &&
-                                defaultSolutionFromWorkspaceFolder !== 'disable'
-                            ) {
-                                defaultSolution = path.join(
-                                    workspaceFolder.uri.fsPath,
-                                    defaultSolutionFromWorkspaceFolder
-                                );
-                                break;
-                            }
+                // If we didn't have an absolute workspace setting, then check each workspace folder and resolve any relative paths against it
+                if (defaultSolution == '') {
+                    for (const workspaceFolder of vscode.workspace.workspaceFolders) {
+                        const workspaceFolderConfig = vscode.workspace.getConfiguration(undefined, workspaceFolder.uri);
+                        const defaultSolutionFromWorkspaceFolder = readOptionFromConfig<string>(
+                            workspaceFolderConfig,
+                            'dotnet.defaultSolution',
+                            '',
+                            'omnisharp.defaultLaunchSolution'
+                        );
+                        if (
+                            defaultSolutionFromWorkspaceFolder !== '' &&
+                            defaultSolutionFromWorkspaceFolder !== 'disable'
+                        ) {
+                            defaultSolution = path.join(workspaceFolder.uri.fsPath, defaultSolutionFromWorkspaceFolder);
+                            break;
                         }
                     }
                 }
             }
+        }
 
-            return defaultSolution;
-        },
-    },
-    unitTestDebuggingOptions: {
-        getValue: (vscode: vscode) =>
-            readOption<object>(vscode, 'dotnet.unitTestDebuggingOptions', {}, 'csharp.unitTestDebuggingOptions'),
-    },
-    runSettingsPath: {
-        getValue: (vscode: vscode) =>
-            readOption<string>(vscode, 'dotnet.unitTests.runSettingsPath', '', 'omnisharp.testRunSettings'),
-    },
-};
+        return defaultSolution;
+    }
 
-export const omnisharpOptions: OmnisharpServerOptionsDefinition = {
-    useModernNet: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.useModernNet', true),
-    },
-    monoPath: {
-        getValue: (vscode: vscode) => readOption<string>(vscode, 'omnisharp.monoPath', ''),
-    },
-    loggingLevel: {
-        getValue: (vscode: vscode) => {
-            let loggingLevel = readOption<string>(vscode, 'omnisharp.loggingLevel', 'information');
-            if (loggingLevel && loggingLevel.toLowerCase() === 'verbose') {
-                loggingLevel = 'debug';
-            }
-            return loggingLevel;
-        },
-    },
-    autoStart: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.autoStart', true),
-    },
-    projectFilesExcludePattern: {
-        getValue: (vscode: vscode) =>
-            readOption<string>(
-                vscode,
-                'omnisharp.projectFilesExcludePattern',
-                '**/node_modules/**,**/.git/**,**/bower_components/**'
-            ),
-    },
-    projectLoadTimeout: {
-        getValue: (vscode: vscode) => readOption<number>(vscode, 'omnisharp.projectLoadTimeout', 60),
-    },
-    maxProjectResults: {
-        getValue: (vscode: vscode) => readOption<number>(vscode, 'omnisharp.maxProjectResults', 250),
-    },
-    useEditorFormattingSettings: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.useEditorFormattingSettings', true),
-    },
-    enableRoslynAnalyzers: {
-        getValue: (vscode: vscode) => {
-            const enableRoslynAnalyzersLegacyOption = readOption<boolean>(
-                vscode,
-                'omnisharp.enableRoslynAnalyzers',
-                false
-            );
+    public get unitTestDebuggingOptions() {
+        return readOption<object>('dotnet.unitTestDebuggingOptions', {}, 'csharp.unitTestDebuggingOptions');
+    }
+    public get runSettingsPath() {
+        return readOption<string>('dotnet.unitTests.runSettingsPath', '', 'omnisharp.testRunSettings');
+    }
+}
 
-            const diagnosticAnalysisScope = readOption<string>(
-                vscode,
-                'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
-                commonOptions.useOmnisharpServer.getValue(vscode) ? 'none' : 'openFiles'
-            );
-            const enableRoslynAnalyzersNewOption = diagnosticAnalysisScope != 'none';
-            return enableRoslynAnalyzersLegacyOption || enableRoslynAnalyzersNewOption;
-        },
-    },
-    enableEditorConfigSupport: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.enableEditorConfigSupport', true),
-    },
-    enableDecompilationSupport: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.enableDecompilationSupport', false),
-    },
-    enableImportCompletion: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.completion.showCompletionItemsFromUnimportedNamespaces',
-                false,
-                'omnisharp.enableImportCompletion'
-            ),
-    },
-    enableAsyncCompletion: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.enableAsyncCompletion', false),
-    },
-    analyzeOpenDocumentsOnly: {
-        getValue: (vscode: vscode) => {
-            const analyzeOpenDocumentsOnlyLegacyOption = readOption<boolean>(
-                vscode,
-                'omnisharp.analyzeOpenDocumentsOnly',
-                false
-            );
+class OmnisharpOptionsImpl implements OmnisharpServerOptions {
+    public get useModernNet() {
+        return readOption<boolean>('omnisharp.useModernNet', true);
+    }
+    public get monoPath() {
+        return readOption<string>('omnisharp.monoPath', '');
+    }
+    public get loggingLevel() {
+        let loggingLevel = readOption<string>('omnisharp.loggingLevel', 'information');
+        if (loggingLevel && loggingLevel.toLowerCase() === 'verbose') {
+            loggingLevel = 'debug';
+        }
+        return loggingLevel;
+    }
+    public get autoStart() {
+        return readOption<boolean>('omnisharp.autoStart', true);
+    }
+    public get projectFilesExcludePattern() {
+        return readOption<string>(
+            'omnisharp.projectFilesExcludePattern',
+            '**/node_modules/**,**/.git/**,**/bower_components/**'
+        );
+    }
+    public get projectLoadTimeout() {
+        return readOption<number>('omnisharp.projectLoadTimeout', 60);
+    }
+    public get maxProjectResults() {
+        return readOption<number>('omnisharp.maxProjectResults', 250);
+    }
+    public get useEditorFormattingSettings() {
+        return readOption<boolean>('omnisharp.useEditorFormattingSettings', true);
+    }
+    public get enableRoslynAnalyzers() {
+        const enableRoslynAnalyzersLegacyOption = readOption<boolean>('omnisharp.enableRoslynAnalyzers', false);
 
-            const diagnosticAnalysisScope = readOption<string>(
-                vscode,
-                'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
-                commonOptions.useOmnisharpServer.getValue(vscode) ? 'none' : 'openFiles'
-            );
-            const analyzeOpenDocumentsOnlyNewOption = diagnosticAnalysisScope == 'openFiles';
-            return analyzeOpenDocumentsOnlyLegacyOption || analyzeOpenDocumentsOnlyNewOption;
-        },
-    },
-    organizeImportsOnFormat: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.organizeImportsOnFormat', false),
-    },
-    disableMSBuildDiagnosticWarning: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.disableMSBuildDiagnosticWarning', false),
-    },
-    showOmnisharpLogOnError: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'csharp.showOmnisharpLogOnError', true),
-    },
-    minFindSymbolsFilterLength: {
-        getValue: (vscode: vscode) => readOption<number>(vscode, 'omnisharp.minFindSymbolsFilterLength', 0),
-    },
-    maxFindSymbolsItems: {
-        getValue: (vscode: vscode) => readOption<number>(vscode, 'omnisharp.maxFindSymbolsItems', 1000),
-    },
-    enableMsBuildLoadProjectsOnDemand: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.enableMsBuildLoadProjectsOnDemand', false),
-    },
-    sdkPath: {
-        getValue: (vscode: vscode) => readOption<string>(vscode, 'omnisharp.sdkPath', ''),
-    },
-    sdkVersion: {
-        getValue: (vscode: vscode) => readOption<string>(vscode, 'omnisharp.sdkVersion', ''),
-    },
-    sdkIncludePrereleases: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.sdkIncludePrereleases', true),
-    },
-    dotNetCliPaths: {
-        getValue: (vscode: vscode) => readOption<string[]>(vscode, 'omnisharp.dotNetCliPaths', []),
-    },
-    useFormatting: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'csharp.format.enable', true),
-    },
-    showReferencesCodeLens: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.codeLens.enableReferencesCodeLens',
-                true,
-                'csharp.referencesCodeLens.enabled'
-            ),
-    },
-    showTestsCodeLens: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(vscode, 'dotnet.codeLens.enableTestsCodeLens', true, 'csharp.testsCodeLens.enabled'),
-    },
-    filteredSymbolsCodeLens: {
-        getValue: (vscode: vscode) => readOption<string[]>(vscode, 'csharp.referencesCodeLens.filteredSymbols', []),
-    },
-    disableCodeActions: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'csharp.disableCodeActions', false),
-    },
-    useSemanticHighlighting: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'csharp.semanticHighlighting.enabled', true),
-    },
-    inlayHintsEnableForParameters: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.inlayHints.enableInlayHintsForParameters',
-                false,
-                'csharp.inlayHints.parameters.enabled'
-            ),
-    },
-    inlayHintsForLiteralParameters: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.inlayHints.enableInlayHintsForLiteralParameters',
-                false,
-                'csharp.inlayHints.parameters.forLiteralParameters'
-            ),
-    },
-    inlayHintsForObjectCreationParameters: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.inlayHints.enableInlayHintsForObjectCreationParameters',
-                false,
-                'csharp.inlayHints.parameters.forObjectCreationParameters'
-            ),
-    },
-    inlayHintsForIndexerParameters: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.inlayHints.enableInlayHintsForIndexerParameters',
-                false,
-                'csharp.inlayHints.parameters.forIndexerParameters'
-            ),
-    },
-    inlayHintsForOtherParameters: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.inlayHints.enableInlayHintsForOtherParameters',
-                false,
-                'csharp.inlayHints.parameters.forOtherParameters'
-            ),
-    },
-    inlayHintsSuppressForParametersThatDifferOnlyBySuffix: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix',
-                false,
-                'csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix'
-            ),
-    },
-    inlayHintsSuppressForParametersThatMatchMethodIntent: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent',
-                false,
-                'csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent'
-            ),
-    },
-    inlayHintsSuppressForParametersThatMatchArgumentName: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName',
-                false,
-                'csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName'
-            ),
-    },
-    inlayHintsEnableForTypes: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'csharp.inlayHints.enableInlayHintsForTypes',
-                false,
-                'csharp.inlayHints.types.enabled'
-            ),
-    },
-    inlayHintsForImplicitVariableTypes: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'csharp.inlayHints.enableInlayHintsForImplicitVariableTypes',
-                false,
-                'csharp.inlayHints.types.forImplicitVariableTypes'
-            ),
-    },
-    inlayHintsForLambdaParameterTypes: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'csharp.inlayHints.enableInlayHintsForLambdaParameterTypes',
-                false,
-                'csharp.inlayHints.types.forLambdaParameterTypes'
-            ),
-    },
-    inlayHintsForImplicitObjectCreation: {
-        getValue: (vscode: vscode) =>
-            readOption<boolean>(
-                vscode,
-                'csharp.inlayHints.enableInlayHintsForImplicitObjectCreation',
-                false,
-                'csharp.inlayHints.types.forImplicitObjectCreation'
-            ),
-    },
-    maxProjectFileCountForDiagnosticAnalysis: {
-        getValue: (vscode: vscode) =>
-            readOption<number>(vscode, 'csharp.maxProjectFileCountForDiagnosticAnalysis', 1000),
-    },
-    suppressDotnetRestoreNotification: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'csharp.suppressDotnetRestoreNotification', false),
-    },
-    enableLspDriver: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'omnisharp.enableLspDriver', false),
-    },
-};
+        const diagnosticAnalysisScope = readOption<string>(
+            'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
+            commonOptions.useOmnisharpServer ? 'none' : 'openFiles'
+        );
+        const enableRoslynAnalyzersNewOption = diagnosticAnalysisScope != 'none';
+        return enableRoslynAnalyzersLegacyOption || enableRoslynAnalyzersNewOption;
+    }
+    public get enableEditorConfigSupport() {
+        return readOption<boolean>('omnisharp.enableEditorConfigSupport', true);
+    }
+    public get enableDecompilationSupport() {
+        return readOption<boolean>('omnisharp.enableDecompilationSupport', false);
+    }
+    public get enableImportCompletion() {
+        return readOption<boolean>(
+            'dotnet.completion.showCompletionItemsFromUnimportedNamespaces',
+            false,
+            'omnisharp.enableImportCompletion'
+        );
+    }
+    public get enableAsyncCompletion() {
+        return readOption<boolean>('omnisharp.enableAsyncCompletion', false);
+    }
+    public get analyzeOpenDocumentsOnly() {
+        const analyzeOpenDocumentsOnlyLegacyOption = readOption<boolean>('omnisharp.analyzeOpenDocumentsOnly', false);
 
-export const languageServerOptions: LanguageServerOptionsDefinition = {
-    logLevel: {
-        getValue: (vscode: vscode) => readOption<string>(vscode, 'dotnet.server.trace', 'Information'),
-    },
-    documentSelector: {
-        getValue: (vscode: vscode) =>
-            readOption<DocumentSelector>(vscode, 'dotnet.server.documentSelector', ['csharp']),
-    },
-    extensionsPaths: {
-        getValue: (vscode: vscode) => readOption<string[] | null>(vscode, 'dotnet.server.extensionPaths', null),
-    },
-};
+        const diagnosticAnalysisScope = readOption<string>(
+            'dotnet.backgroundAnalysis.analyzerDiagnosticsScope',
+            commonOptions.useOmnisharpServer ? 'none' : 'openFiles'
+        );
+        const analyzeOpenDocumentsOnlyNewOption = diagnosticAnalysisScope == 'openFiles';
+        return analyzeOpenDocumentsOnlyLegacyOption || analyzeOpenDocumentsOnlyNewOption;
+    }
+    public get organizeImportsOnFormat() {
+        return readOption<boolean>('omnisharp.organizeImportsOnFormat', false);
+    }
+    public get disableMSBuildDiagnosticWarning() {
+        return readOption<boolean>('omnisharp.disableMSBuildDiagnosticWarning', false);
+    }
+    public get showOmnisharpLogOnError() {
+        return readOption<boolean>('csharp.showOmnisharpLogOnError', true);
+    }
+    public get minFindSymbolsFilterLength() {
+        return readOption<number>('omnisharp.minFindSymbolsFilterLength', 0);
+    }
+    public get maxFindSymbolsItems() {
+        return readOption<number>('omnisharp.maxFindSymbolsItems', 1000);
+    }
+    public get enableMsBuildLoadProjectsOnDemand() {
+        return readOption<boolean>('omnisharp.enableMsBuildLoadProjectsOnDemand', false);
+    }
+    public get sdkPath() {
+        return readOption<string>('omnisharp.sdkPath', '');
+    }
+    public get sdkVersion() {
+        return readOption<string>('omnisharp.sdkVersion', '');
+    }
+    public get sdkIncludePrereleases() {
+        return readOption<boolean>('omnisharp.sdkIncludePrereleases', true);
+    }
+    public get dotNetCliPaths() {
+        return readOption<string[]>('omnisharp.dotNetCliPaths', []);
+    }
+    public get useFormatting() {
+        return readOption<boolean>('csharp.format.enable', true);
+    }
+    public get showReferencesCodeLens() {
+        return readOption<boolean>(
+            'dotnet.codeLens.enableReferencesCodeLens',
+            true,
+            'csharp.referencesCodeLens.enabled'
+        );
+    }
+    public get showTestsCodeLens() {
+        return readOption<boolean>('dotnet.codeLens.enableTestsCodeLens', true, 'csharp.testsCodeLens.enabled');
+    }
+    public get filteredSymbolsCodeLens() {
+        return readOption<string[]>('csharp.referencesCodeLens.filteredSymbols', []);
+    }
+    public get disableCodeActions() {
+        return readOption<boolean>('csharp.disableCodeActions', false);
+    }
+    public get useSemanticHighlighting() {
+        return readOption<boolean>('csharp.semanticHighlighting.enabled', true);
+    }
+    public get inlayHintsEnableForParameters() {
+        return readOption<boolean>(
+            'dotnet.inlayHints.enableInlayHintsForParameters',
+            false,
+            'csharp.inlayHints.parameters.enabled'
+        );
+    }
+    public get inlayHintsForLiteralParameters() {
+        return readOption<boolean>(
+            'dotnet.inlayHints.enableInlayHintsForLiteralParameters',
+            false,
+            'csharp.inlayHints.parameters.forLiteralParameters'
+        );
+    }
+    public get inlayHintsForObjectCreationParameters() {
+        return readOption<boolean>(
+            'dotnet.inlayHints.enableInlayHintsForObjectCreationParameters',
+            false,
+            'csharp.inlayHints.parameters.forObjectCreationParameters'
+        );
+    }
+    public get inlayHintsForIndexerParameters() {
+        return readOption<boolean>(
+            'dotnet.inlayHints.enableInlayHintsForIndexerParameters',
+            false,
+            'csharp.inlayHints.parameters.forIndexerParameters'
+        );
+    }
+    public get inlayHintsForOtherParameters() {
+        return readOption<boolean>(
+            'dotnet.inlayHints.enableInlayHintsForOtherParameters',
+            false,
+            'csharp.inlayHints.parameters.forOtherParameters'
+        );
+    }
+    public get inlayHintsSuppressForParametersThatDifferOnlyBySuffix() {
+        return readOption<boolean>(
+            'dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix',
+            false,
+            'csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix'
+        );
+    }
+    public get inlayHintsSuppressForParametersThatMatchMethodIntent() {
+        return readOption<boolean>(
+            'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent',
+            false,
+            'csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent'
+        );
+    }
+    public get inlayHintsSuppressForParametersThatMatchArgumentName() {
+        return readOption<boolean>(
+            'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName',
+            false,
+            'csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName'
+        );
+    }
+    public get inlayHintsEnableForTypes() {
+        return readOption<boolean>(
+            'csharp.inlayHints.enableInlayHintsForTypes',
+            false,
+            'csharp.inlayHints.types.enabled'
+        );
+    }
+    public get inlayHintsForImplicitVariableTypes() {
+        return readOption<boolean>(
+            'csharp.inlayHints.enableInlayHintsForImplicitVariableTypes',
+            false,
+            'csharp.inlayHints.types.forImplicitVariableTypes'
+        );
+    }
+    public get inlayHintsForLambdaParameterTypes() {
+        return readOption<boolean>(
+            'csharp.inlayHints.enableInlayHintsForLambdaParameterTypes',
+            false,
+            'csharp.inlayHints.types.forLambdaParameterTypes'
+        );
+    }
+    public get inlayHintsForImplicitObjectCreation() {
+        return readOption<boolean>(
+            'csharp.inlayHints.enableInlayHintsForImplicitObjectCreation',
+            false,
+            'csharp.inlayHints.types.forImplicitObjectCreation'
+        );
+    }
+    public get maxProjectFileCountForDiagnosticAnalysis() {
+        return readOption<number>('csharp.maxProjectFileCountForDiagnosticAnalysis', 1000);
+    }
+    public get suppressDotnetRestoreNotification() {
+        return readOption<boolean>('csharp.suppressDotnetRestoreNotification', false);
+    }
+    public get enableLspDriver() {
+        return readOption<boolean>('omnisharp.enableLspDriver', false);
+    }
+}
 
-export const razorOptions: RazorOptionsDefinition = {
-    razorDevMode: {
-        getValue: (vscode: vscode) => readOption<boolean>(vscode, 'razor.devmode', false),
-    },
-    razorPluginPath: {
-        getValue: (vscode: vscode) => readOption<string>(vscode, 'razor.plugin.path', ''),
-    },
-};
+class LanguageServerOptionsImpl implements LanguageServerOptions {
+    public get logLevel() {
+        return readOption<string>('dotnet.server.trace', 'Information');
+    }
+    public get documentSelector() {
+        return readOption<DocumentSelector>('dotnet.server.documentSelector', ['csharp']);
+    }
+    public get extensionsPaths() {
+        return readOption<string[] | null>('dotnet.server.extensionPaths', null);
+    }
+}
 
-function getExcludedPaths(vscode: vscode): string[] {
+class RazorOptionsImpl implements RazorOptions {
+    public get razorDevMode() {
+        return readOption<boolean>('razor.devmode', false);
+    }
+    public get razorPluginPath() {
+        return readOption<string>('razor.plugin.path', '');
+    }
+}
+
+export const commonOptions: CommonOptions = new CommonOptionsImpl();
+export const omnisharpOptions: OmnisharpServerOptions = new OmnisharpOptionsImpl();
+export const languageServerOptions: LanguageServerOptions = new LanguageServerOptionsImpl();
+export const razorOptions: RazorOptions = new RazorOptionsImpl();
+
+function getExcludedPaths(): string[] {
     const workspaceConfig = vscode.workspace.getConfiguration();
 
     const excludePaths = getExcludes(workspaceConfig, 'files.exclude');
     return excludePaths;
 
-    function getExcludes(config: WorkspaceConfiguration, option: string): string[] {
+    function getExcludes(config: vscode.WorkspaceConfiguration, option: string): string[] {
         const optionValue = config.get<{ [i: string]: boolean }>(option, {});
         return Object.entries(optionValue)
             .filter(([_, value]) => value)
@@ -478,8 +411,7 @@ function getExcludedPaths(vscode: vscode): string[] {
  * Reads an option from the vscode config with an optional back compat parameter.
  */
 function readOptionFromConfig<T>(
-    vscode: vscode,
-    config: WorkspaceConfiguration,
+    config: vscode.WorkspaceConfiguration,
     option: string,
     defaultValue: T,
     ...backCompatOptionNames: string[]
@@ -494,24 +426,18 @@ function readOptionFromConfig<T>(
     return value ?? defaultValue;
 }
 
-function readOption<T>(vscode: vscode, option: string, defaultValue: T, ...backCompatOptionNames: string[]): T {
-    return readOptionFromConfig(
-        vscode,
-        vscode.workspace.getConfiguration(),
-        option,
-        defaultValue,
-        ...backCompatOptionNames
-    );
+function readOption<T>(option: string, defaultValue: T, ...backCompatOptionNames: string[]): T {
+    return readOptionFromConfig(vscode.workspace.getConfiguration(), option, defaultValue, ...backCompatOptionNames);
 }
 
-export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptionsDefinition> = [
+export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
     'dotnetPath',
     'waitForDebugger',
     'serverPath',
     'useOmnisharpServer',
 ];
 
-export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOptionsDefinition> = [
+export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOptions> = [
     'enableMsBuildLoadProjectsOnDemand',
     'loggingLevel',
     'enableEditorConfigSupport',
@@ -540,7 +466,7 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
     'inlayHintsForImplicitObjectCreation',
 ];
 
-export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptionsDefinition> = [
+export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
     'logLevel',
     'documentSelector',
 ];
