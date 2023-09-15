@@ -136,9 +136,9 @@
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.description": "두 가지 기본 운영 모드 중 모듈 필터가 작동하는 모드를 제어합니다.",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription": "모듈이 'excludedModules' 배열에 있지 않으면 모든 모듈에 대한 기호를 로드합니다.",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription": "'includedModules' 배열에 있거나 'includeSymbolsNextToModules' 설정을 통해 포함되는 경우가 아니면 모듈에 대한 기호를 로드하지 않도록 합니다.",
-  "generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description": "'true'인 경우 Microsoft 기호 서버(https\u200b://msdl.microsoft.com\u200b/download/symbols)가 기호 검색 경로에 추가됩니다. 지정하지 않으면 이 옵션의 기본값은 'false'입니다.",
-  "generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description": "'true'이면 NuGet.org 기호 서버(https\u200b://symbols.nuget.org\u200b/download/symbols)가 기호 검색 경로에 추가됩니다. 지정하지 않으면 이 옵션의 기본값은 'false'입니다.",
-  "generateOptionsSchema.symbolOptions.searchPaths.description": ".pdb 파일을 검색하는 기호 서버 URL(예: http\u200b://MyExampleSymbolServer) 또는 디렉터리(예: /build/symbols)의 배열입니다. 이러한 디렉터리가 모듈 및 pdb가 원래 삭제된 경로 옆에 있는 기본 위치 외에 검색됩니다.",
+  "generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description": "'true'인 경우 Microsoft 기호 서버(https​://msdl.microsoft.com​/download/symbols)가 기호 검색 경로에 추가됩니다. 지정하지 않으면 이 옵션의 기본값은 'false'입니다.",
+  "generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description": "'true'이면 NuGet.org 기호 서버(https://symbols.nuget.org/download/symbols)가 기호 검색 경로에 추가됩니다. 지정하지 않으면 이 옵션의 기본값은 'false'입니다.",
+  "generateOptionsSchema.symbolOptions.searchPaths.description": ".pdb 파일을 검색하는 기호 서버 URL(예: http​://MyExampleSymbolServer) 또는 디렉터리(예: /build/symbols)의 배열입니다. 이러한 디렉터리가 모듈 및 pdb가 원래 삭제된 경로 옆에 있는 기본 위치 외에 검색됩니다.",
   "generateOptionsSchema.targetArchitecture.markdownDescription": "[로컬 macOS 디버깅에서만 지원됨]\r\n\r\n디버기의 아키텍처. 이 매개 변수를 설정하지 않으면 자동으로 검색됩니다. 허용되는 값은 `x86_64` 또는 `arm64`입니다.",
   "generateOptionsSchema.targetOutputLogPath.description": "설정하면 대상 애플리케이션이 stdout 및 stderr(예: Console.WriteLine)에 쓰는 텍스트가 지정된 파일에 저장됩니다. 콘솔이 internalConsole 이외의 것으로 설정된 경우 이 옵션은 무시됩니다(예: '${workspaceFolder}/out.txt')",
   "viewsWelcome.debug.contents": "[빌드와 디버그를 위한 C# 자산 생성](command:dotnet.generateAssets)\r\n\r\nlaunch.json에 관해 자세히 알아보려면 [C# 디버깅을 위한 launch.json 구성](https://aka.ms/VSCode-CS-LaunchJson)을 참조하세요."
