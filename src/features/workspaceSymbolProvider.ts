@@ -5,18 +5,17 @@
 
 import AbstractSupport from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
-import OptionProvider from '../shared/observers/optionProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConversion';
 import { CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind, Location } from 'vscode';
 import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
+import { omnisharpOptions } from '../shared/options';
 
 export default class OmniSharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
     constructor(
         server: OmniSharpServer,
-        private optionProvider: OptionProvider,
         languageMiddlewareFeature: LanguageMiddlewareFeature,
         private sourceGeneratedDocumentProvider: SourceGeneratedDocumentProvider
     ) {
@@ -24,9 +23,10 @@ export default class OmniSharpWorkspaceSymbolProvider extends AbstractSupport im
     }
 
     public async provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
-        const options = this.optionProvider.GetLatestOptions().omnisharpOptions;
-        const minFilterLength = options.minFindSymbolsFilterLength > 0 ? options.minFindSymbolsFilterLength : undefined;
-        const maxItemsToReturn = options.maxFindSymbolsItems > 0 ? options.maxFindSymbolsItems : undefined;
+        const minFindSymbolsFilterLength = omnisharpOptions.minFindSymbolsFilterLength;
+        const maxFindSymbolsItems = omnisharpOptions.maxFindSymbolsItems;
+        const minFilterLength = minFindSymbolsFilterLength > 0 ? minFindSymbolsFilterLength : undefined;
+        const maxItemsToReturn = maxFindSymbolsItems > 0 ? maxFindSymbolsItems : undefined;
 
         if (minFilterLength !== undefined && search.length < minFilterLength) {
             return [];

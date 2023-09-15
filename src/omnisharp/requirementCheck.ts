@@ -6,10 +6,10 @@
 import * as vscode from 'vscode';
 import * as semver from 'semver';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { Options } from '../shared/options';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
 import { getMSBuildVersion } from '../utils/getMsBuildInfo';
+import { omnisharpOptions } from '../shared/options';
 
 export interface RequirementResult {
     needsDotNetSdk: boolean;
@@ -17,8 +17,8 @@ export interface RequirementResult {
     needsMSBuildTools: boolean;
 }
 
-export async function validateRequirements(options: Options): Promise<boolean> {
-    const result = await checkRequirements(options);
+export async function validateRequirements(): Promise<boolean> {
+    const result = await checkRequirements();
 
     if (result.needsDotNetSdk) {
         const downloadSdk = await promptToDownloadDotNetSDK();
@@ -51,9 +51,9 @@ export async function validateRequirements(options: Options): Promise<boolean> {
     return true;
 }
 
-async function checkRequirements(options: Options): Promise<RequirementResult> {
-    if (options.omnisharpOptions.useModernNet) {
-        const dotnetInfo = await getDotnetInfo(options.omnisharpOptions.dotNetCliPaths);
+async function checkRequirements(): Promise<RequirementResult> {
+    if (omnisharpOptions.useModernNet) {
+        const dotnetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
         const needsDotNetSdk = dotnetInfo.Version === undefined || semver.lt(dotnetInfo.Version, '6.0.0');
         return {
             needsDotNetSdk,
@@ -73,7 +73,7 @@ async function checkRequirements(options: Options): Promise<RequirementResult> {
         const monoResolver = new OmniSharpMonoResolver(getMonoVersion);
         let monoError = false;
         try {
-            await monoResolver.getHostExecutableInfo(options);
+            await monoResolver.getHostExecutableInfo();
         } catch (e) {
             monoError = true;
         }

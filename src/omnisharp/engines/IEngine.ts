@@ -5,21 +5,18 @@
 
 import { CancellationToken } from '../../vscodeAdapter';
 import { LaunchTarget } from '../../shared/launchTarget';
-import { Options } from '../../shared/options';
 import Disposable from '../../disposable';
 import { OmniSharpServer } from '../server';
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import OptionProvider from '../../shared/observers/optionProvider';
 import { Advisor } from '../../features/diagnosticsProvider';
 import TestManager from '../../features/dotnetTest';
 import { EventStream } from '../../eventStream';
 
 export interface IEngine {
-    start(cwd: string, args: string[], launchTarget: LaunchTarget, launchPath: string, options: Options): Promise<void>;
+    start(cwd: string, args: string[], launchTarget: LaunchTarget, launchPath: string): Promise<void>;
     stop(): Promise<void>;
     registerProviders(
         server: OmniSharpServer,
-        optionProvider: OptionProvider,
         languageMiddlewareFeature: LanguageMiddlewareFeature,
         eventStream: EventStream,
         advisor: Advisor,

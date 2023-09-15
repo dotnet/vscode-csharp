@@ -10,7 +10,6 @@ import { IWorkspaceDebugInformationProvider } from '../shared/IWorkspaceDebugInf
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { RoslynWorkspaceDebugInformationProvider } from './roslynWorkspaceDebugConfigurationProvider';
 import { PlatformInformation } from '../shared/platform';
-import OptionProvider from '../shared/observers/optionProvider';
 import { ServerStateChange } from './serverStateChange';
 import { DotnetConfigurationResolver } from '../shared/dotnetConfigurationProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
@@ -21,7 +20,6 @@ export function registerDebugger(
     languageServer: RoslynLanguageServer,
     languageServerEvents: RoslynLanguageServerEvents,
     platformInfo: PlatformInformation,
-    optionProvider: OptionProvider,
     csharpOutputChannel: vscode.OutputChannel
 ) {
     const workspaceInformationProvider: IWorkspaceDebugInformationProvider =
@@ -41,7 +39,6 @@ export function registerDebugger(
     const dotnetWorkspaceConfigurationProvider = new DotnetWorkspaceConfigurationProvider(
         workspaceInformationProvider,
         platformInfo,
-        optionProvider,
         csharpOutputChannel
     );
 
