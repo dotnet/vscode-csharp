@@ -8,6 +8,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn version (PR: [#6389](https://github.com/dotnet/vscode-csharp/pull/6389))
+  * Remove diagnostic source name (PR: [#69939](https://github.com/dotnet/roslyn/pull/69939))
+  * Fix fold all regions (PR: [#69817](https://github.com/dotnet/roslyn/pull/69817))
+  * Fix escaping and wrapping in hover (PR: [#69893](https://github.com/dotnet/roslyn/pull/69893))
+  * Fix error in override completion when containing type does not exist (PR: [#69855](https://github.com/dotnet/roslyn/pull/69855))
+* Fix issues generating assets in O# (PR: [#6380](https://github.com/dotnet/vscode-csharp/pull/6380))
+* Allow Razor to format new documents via Roslyn (PR: [#6329](https://github.com/dotnet/vscode-csharp/pull/6329))
+* Switch to named pipes for client <-> server communication (PR: [#6351](https://github.com/dotnet/vscode-csharp/pull/6351))
+* Only show clr debugger if on Windows (PR: [#6359](https://github.com/dotnet/vscode-csharp/pull/6359))
 * Update Razor version to 7.0.0-preview.23456.2 (PR: [#6304](https://github.com/dotnet/vscode-csharp/pull/6304))
   * Fixes regression where semantic colors for razor components appear as red
 * Make completion complex text edits more robust (PR: [#6325](https://github.com/dotnet/vscode-csharp/pull/6325))
