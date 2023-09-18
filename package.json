@@ -1169,6 +1169,12 @@
             "default": null,
             "description": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors."
           },
+          "dotnet.preferCSharpExtension": {
+            "scope": "resource",
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.preferCSharpExtension%"
+          },
           "dotnet.implementType.insertionBehavior": {
             "type": "string",
             "enum": [
