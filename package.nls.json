@@ -5,7 +5,7 @@
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached. (Previously `omnisharp.waitForDebugger`)",
   "configuration.dotnet.server.trace": "Sets the logging level for the language server",
   "configuration.dotnet.server.extensionPaths": "Override for path to language server --extension arguments",
-  "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by the C# Dev Kit. (Requires window reload)",
+  "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.implementType.insertionBehavior": "The insertion location of properties, events, and methods When implement interface or abstract class.",
   "configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind": "Place them with other members of the same kind.",
   "configuration.dotnet.implementType.insertionBehavior.atTheEnd": "Place them at the end.",
