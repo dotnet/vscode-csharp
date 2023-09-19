@@ -1130,6 +1130,12 @@
             "scope": "machine-overridable",
             "description": "%configuration.dotnet.server.path%"
           },
+          "dotnet.server.startTimeout": {
+            "type": "number",
+            "scope": "machine-overridable",
+            "default": 30000,
+            "description": "%configuration.dotnet.server.startTimeout%"
+          },
           "dotnet.server.waitForDebugger": {
             "type": "boolean",
             "scope": "machine-overridable",
