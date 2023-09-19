@@ -72,6 +72,7 @@ export interface LanguageServerOptions {
     readonly logLevel: string;
     readonly documentSelector: DocumentSelector;
     readonly extensionsPaths: string[] | null;
+    readonly preferCSharpExtension: boolean;
 }
 
 export interface RazorOptions {
@@ -377,6 +378,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get extensionsPaths() {
         return readOption<string[] | null>('dotnet.server.extensionPaths', null);
     }
+    public get preferCSharpExtension() {
+        return readOption<boolean>('dotnet.preferCSharpExtension', false);
+    }
 }
 
 class RazorOptionsImpl implements RazorOptions {
@@ -469,4 +473,5 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
 export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
     'logLevel',
     'documentSelector',
+    'preferCSharpExtension',
 ];

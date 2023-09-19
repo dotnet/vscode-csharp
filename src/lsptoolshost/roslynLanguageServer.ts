@@ -403,7 +403,7 @@ export class RoslynLanguageServer {
     }
 
     private async sendOrSubscribeForServiceBrokerConnection(): Promise<void> {
-        const csharpDevKitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
+        const csharpDevKitExtension = getCSharpDevKit();
         if (csharpDevKitExtension) {
             const exports = await csharpDevKitExtension.activate();
 
@@ -469,7 +469,7 @@ export class RoslynLanguageServer {
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
         // in our activation because C# Dev Kit depends on C# activation completing.
-        const csharpDevkitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
+        const csharpDevkitExtension = getCSharpDevKit();
         if (csharpDevkitExtension) {
             _wasActivatedWithCSharpDevkit = true;
 
