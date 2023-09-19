@@ -21,7 +21,6 @@ import {
     RequestType0,
     PartialResultParams,
     ProtocolRequestType,
-    CodeAction,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -46,13 +45,12 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { registerLanguageServerOptionChanges } from './optionChanges';
 import { Observable } from 'rxjs';
 import { DotnetInfo } from '../shared/utils/dotnetInfo';
-import { URIConverter, createConverter } from 'vscode-languageclient/lib/common/protocolConverter';
 import { RoslynLanguageServerEvents } from './languageServerEvents';
 import { registerShowToastNotification } from './showToastNotification';
 import { registerRazorCommands } from './razorCommands';
 import { registerOnAutoInsert } from './onAutoInsert';
+import { registerCodeActionFixAllCommands } from './fixAllCodeAction';
 
-let _languageServer: RoslynLanguageServer;
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
@@ -205,46 +203,46 @@ export class RoslynLanguageServer {
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },
-                resolveCodeAction: async (codeAction, token, next) => {
-                    const lspCodeAction = <CodeAction>codeAction;
-                    const data = lspCodeAction.data;
-                    if (data.FixAllFlavors) {
-                        const result = await vscode.window.showQuickPick(data.FixAllFlavors, {
-                            placeHolder: 'Pick a fix all scope',
-                        });
+                // resolveCodeAction: async (codeAction, token, next) => {
+                //     const lspCodeAction = <CodeAction>codeAction;
+                //     const data = lspCodeAction.data;
+                //     if (data.FixAllFlavors) {
+                //         const result = await vscode.window.showQuickPick(data.FixAllFlavors, {
+                //             placeHolder: 'Pick a fix all scope',
+                //         });
 
-                        if (result) {
-                            const fixAllCodeAction: RoslynProtocol.RoslynFixAllCodeAction = {
-                                title: lspCodeAction.title,
-                                edit: lspCodeAction.edit,
-                                data: data,
-                                scope: result,
-                            };
+                //         if (result) {
+                //             const fixAllCodeAction: RoslynProtocol.RoslynFixAllCodeAction = {
+                //                 title: lspCodeAction.title,
+                //                 edit: lspCodeAction.edit,
+                //                 data: data,
+                //                 scope: result,
+                //             };
 
-                            const response = await _languageServer.sendRequest(
-                                RoslynProtocol.CodeActionFixAllResolveRequest.type,
-                                fixAllCodeAction,
-                                token
-                            );
+                //             const response = await _languageServer.sendRequest(
+                //                 RoslynProtocol.CodeActionFixAllResolveRequest.type,
+                //                 fixAllCodeAction,
+                //                 token
+                //             );
 
-                            if (response.edit) {
-                                const uriConverter: URIConverter = (value: string): vscode.Uri =>
-                                    UriConverter.deserialize(value);
-                                const protocolConverter = createConverter(uriConverter, true, true);
-                                const result = await protocolConverter.asWorkspaceEdit(response.edit);
+                //             if (response.edit) {
+                //                 const uriConverter: URIConverter = (value: string): vscode.Uri =>
+                //                     UriConverter.deserialize(value);
+                //                 const protocolConverter = createConverter(uriConverter, true, true);
+                //                 const result = await protocolConverter.asWorkspaceEdit(response.edit);
 
-                                if (!(await vscode.workspace.applyEdit(result))) {
-                                    throw new Error(
-                                        'Tried to insert multiple code action edits, but an error occurred.'
-                                    );
-                                }
-                            }
-                            console.log(response);
-                        }
-                    } else {
-                        return await next(codeAction, token);
-                    }
-                },
+                //                 if (!(await vscode.workspace.applyEdit(result))) {
+                //                     throw new Error(
+                //                         'Tried to insert multiple code action edits, but an error occurred.'
+                //                     );
+                //                 }
+                //             }
+                //             console.log(response);
+                //         }
+                //     } else {
+                //         return await next(codeAction, token);
+                //     }
+                // },
             },
         };
 
@@ -267,7 +265,6 @@ export class RoslynLanguageServer {
             languageServerEvents
         );
 
-        _languageServer = server;
         // Start the client. This will also launch the server process.
         await client.start();
         return server;
@@ -789,7 +786,7 @@ export async function activateRoslynLanguageServer(
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, optionProvider, hostExecutableResolver, _channel);
-
+    registerCodeActionFixAllCommands(context, languageServer);
     registerRazorCommands(context, languageServer);
 
     registerUnitTestingCommands(context, languageServer, dotnetTestChannel);
