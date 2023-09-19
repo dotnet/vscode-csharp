@@ -105,7 +105,7 @@ jestLib.describe(`Unit Testing ${testAssetWorkspace.description}`, function () {
     });
 
     jestLib.test('Run tests uses .runsettings', async () => {
-        await setConfigurationAndWaitForObserver('dotnet.unitTests.runSettingsPath', '.runsettings');
+        await vscode.workspace.getConfiguration().update('dotnet.unitTests.runSettingsPath', '.runsettings');
 
         const codeLenses = await getCodeLensesAsync();
         jestLib.expect(codeLenses).toHaveLength(9);
@@ -149,16 +149,4 @@ async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
 
         return a.command!.title.localeCompare(b.command!.command);
     });
-}
-
-async function setConfigurationAndWaitForObserver<T>(configuration: string, value: T): Promise<void> {
-    const changed = new Promise<void>((resolve, _) => {
-        vscode.workspace.onDidChangeConfiguration((e) => {
-            if (e.affectsConfiguration(configuration)) {
-                resolve();
-            }
-        });
-    });
-    vscode.workspace.getConfiguration().update(configuration, value);
-    await changed;
 }

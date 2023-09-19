@@ -5,7 +5,6 @@
 
 import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
-import { Options } from '../../src/shared/options';
 import { registerLanguageServerOptionChanges } from '../../src/lsptoolshost/optionChanges';
 
 import * as jestLib from '@jest/globals';
@@ -19,11 +18,11 @@ jestLib.describe('Option changes observer', () => {
     let commandDone: Promise<void> | undefined;
     let infoMessage: string | undefined;
     let invokedCommand: string | undefined;
-    let optionObservable: Subject<Options>;
+    let optionObservable: Subject<void>;
 
     jestLib.beforeEach(() => {
         resetMocks();
-        optionObservable = new BehaviorSubject<Options>(Options.Read(vscode));
+        optionObservable = new BehaviorSubject<void>(undefined);
         infoMessage = undefined;
         invokedCommand = undefined;
         commandDone = new Promise<void>((resolve) => {
@@ -43,7 +42,7 @@ jestLib.describe('Option changes observer', () => {
                 jestLib.expect(infoMessage).toBe(undefined);
                 jestLib.expect(invokedCommand).toBe(undefined);
                 updateConfig(vscode, elem.config, elem.section, elem.value);
-                optionObservable.next(Options.Read(vscode));
+                optionObservable.next();
             });
 
             jestLib.test(`The information message is shown`, async () => {
@@ -82,7 +81,7 @@ jestLib.describe('Option changes observer', () => {
                 jestLib.expect(infoMessage).toBe(undefined);
                 jestLib.expect(invokedCommand).toBe(undefined);
                 updateConfig(vscode, elem.config, elem.section, elem.value);
-                optionObservable.next(Options.Read(vscode));
+                optionObservable.next();
             });
 
             jestLib.test(`The information message is shown`, async () => {
@@ -125,7 +124,7 @@ jestLib.describe('Option changes observer', () => {
                 jestLib.expect(infoMessage).toBe(undefined);
                 jestLib.expect(invokedCommand).toBe(undefined);
                 updateConfig(vscode, elem.config, elem.section, elem.value);
-                optionObservable.next(Options.Read(vscode));
+                optionObservable.next();
                 jestLib.expect(infoMessage).toBe(undefined);
             }
         );
@@ -141,7 +140,7 @@ jestLib.describe('Option changes observer', () => {
             jestLib.expect(infoMessage).toBe(undefined);
             jestLib.expect(invokedCommand).toBe(undefined);
             updateConfig(vscode, elem.config, elem.section, elem.value);
-            optionObservable.next(Options.Read(vscode));
+            optionObservable.next();
             jestLib.expect(infoMessage).toBe(undefined);
         });
     });

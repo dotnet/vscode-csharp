@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.8.0-3.23458.4",
+    "roslyn": "4.8.0-3.23468.1",
     "omniSharp": "1.39.7",
     "razor": "7.0.0-preview.23456.2",
     "razorOmnisharp": "7.0.0-preview.23363.1"
@@ -123,7 +123,6 @@
     "@types/del": "3.0.1",
     "@types/fs-extra": "5.0.4",
     "@types/gulp": "4.0.5",
-    "@types/jest": "^24.0.25",
     "@types/minimist": "1.2.1",
     "@types/mocha": "5.2.5",
     "@types/node": "16.11.38",
@@ -3085,7 +3084,8 @@
       },
       {
         "type": "clr",
-        "label": ".NET Framework 4.x (Windows only)",
+        "when": "workspacePlatform == windows",
+        "label": ".NET Framework 4.x",
         "languages": [
           "csharp",
           "razor",

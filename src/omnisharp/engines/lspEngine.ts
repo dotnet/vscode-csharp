@@ -8,7 +8,6 @@ import { CancellationToken } from '../../vscodeAdapter';
 import { configure } from '../launcher';
 import { LaunchTarget } from '../../shared/launchTarget';
 import { EventEmitter } from 'events';
-import { Options } from '../../shared/options';
 import { setTimeout } from 'timers';
 import * as ObservableEvents from '../loggingEvents';
 import { EventStream } from '../../eventStream';
@@ -42,7 +41,6 @@ import { TypeHierarchyFeature } from 'vscode-languageclient/lib/common/typeHiera
 import { CallHierarchyFeature } from 'vscode-languageclient/lib/common/callHierarchy';
 import { Advisor } from '../../features/diagnosticsProvider';
 import dotnetTest from '../../features/dotnetTest';
-import OptionProvider from '../../shared/observers/optionProvider';
 
 export class LspEngine implements IEngine {
     client: LanguageClient | undefined;
@@ -60,19 +58,12 @@ export class LspEngine implements IEngine {
 
     private _initializeTask: Promise<void> | undefined;
 
-    public async start(
-        cwd: string,
-        args: string[],
-        launchTarget: LaunchTarget,
-        launchPath: string,
-        options: Options
-    ): Promise<void> {
+    public async start(cwd: string, args: string[], launchTarget: LaunchTarget, launchPath: string): Promise<void> {
         const configuration = await configure(
             cwd,
             ['-lsp', '--encoding', 'ascii'].concat(args),
             launchPath,
             this.platformInfo,
-            options,
             this.monoResolver,
             this.dotnetResolver
         );
@@ -316,7 +307,6 @@ export class LspEngine implements IEngine {
 
     async registerProviders(
         _server: OmniSharpServer,
-        _optionProvider: OptionProvider,
         _languageMiddlewareFeature: LanguageMiddlewareFeature,
         _eventStream: EventStream,
         _advisor: Advisor,

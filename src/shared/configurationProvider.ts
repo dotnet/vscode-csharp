@@ -16,8 +16,8 @@ import {
     AttachPicker,
 } from '../features/processPicker';
 import { PlatformInformation } from './platform';
-import OptionProvider from './observers/optionProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { commonOptions } from './options';
 
 /**
  * Class used for debug configurations that will be sent to the debugger registered by {@link DebugAdapterExecutableFactory}
@@ -30,7 +30,6 @@ import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 export class BaseVsDbgConfigurationProvider implements vscode.DebugConfigurationProvider {
     public constructor(
         protected platformInformation: PlatformInformation,
-        private optionProvider: OptionProvider,
         private csharpOutputChannel: vscode.OutputChannel
     ) {}
 
@@ -141,7 +140,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             }
 
             if (debugConfiguration.checkForDevCert) {
-                this.checkForDevCerts(this.optionProvider.GetLatestOptions().commonOptions.dotnetPath);
+                this.checkForDevCerts(commonOptions.dotnetPath);
             }
         }
 
