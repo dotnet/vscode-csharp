@@ -33,7 +33,7 @@ async function registerFixAllResolveCodeAction(languageServer: RoslynLanguageSer
         await vscode.window.withProgress(
             {
                 location: vscode.ProgressLocation.Notification,
-                title: 'Fix All Code Action',
+                title: vscode.l10n.t('Fix All Code Action'),
                 cancellable: true,
             },
             async (_, token) => {

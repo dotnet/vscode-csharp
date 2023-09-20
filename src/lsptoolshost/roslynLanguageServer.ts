@@ -203,46 +203,6 @@ export class RoslynLanguageServer {
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },
-                // resolveCodeAction: async (codeAction, token, next) => {
-                //     const lspCodeAction = <CodeAction>codeAction;
-                //     const data = lspCodeAction.data;
-                //     if (data.FixAllFlavors) {
-                //         const result = await vscode.window.showQuickPick(data.FixAllFlavors, {
-                //             placeHolder: 'Pick a fix all scope',
-                //         });
-
-                //         if (result) {
-                //             const fixAllCodeAction: RoslynProtocol.RoslynFixAllCodeAction = {
-                //                 title: lspCodeAction.title,
-                //                 edit: lspCodeAction.edit,
-                //                 data: data,
-                //                 scope: result,
-                //             };
-
-                //             const response = await _languageServer.sendRequest(
-                //                 RoslynProtocol.CodeActionFixAllResolveRequest.type,
-                //                 fixAllCodeAction,
-                //                 token
-                //             );
-
-                //             if (response.edit) {
-                //                 const uriConverter: URIConverter = (value: string): vscode.Uri =>
-                //                     UriConverter.deserialize(value);
-                //                 const protocolConverter = createConverter(uriConverter, true, true);
-                //                 const result = await protocolConverter.asWorkspaceEdit(response.edit);
-
-                //                 if (!(await vscode.workspace.applyEdit(result))) {
-                //                     throw new Error(
-                //                         'Tried to insert multiple code action edits, but an error occurred.'
-                //                     );
-                //                 }
-                //             }
-                //             console.log(response);
-                //         }
-                //     } else {
-                //         return await next(codeAction, token);
-                //     }
-                // },
             },
         };
 
