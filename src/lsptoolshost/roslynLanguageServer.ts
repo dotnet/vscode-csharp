@@ -805,7 +805,7 @@ export async function activateRoslynLanguageServer(
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, hostExecutableResolver, _channel);
 
-    registerCodeActionFixAllCommands(context, languageServer);
+    registerCodeActionFixAllCommands(context, languageServer, _channel);
 
     registerRazorCommands(context, languageServer);
 

@@ -12,17 +12,22 @@ import { UriConverter } from './uriConverter';
 
 export function registerCodeActionFixAllCommands(
     context: vscode.ExtensionContext,
-    languageServer: RoslynLanguageServer
+    languageServer: RoslynLanguageServer,
+    outputChannel: vscode.OutputChannel
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             'roslyn.client.fixAllCodeAction',
-            async (request): Promise<void> => registerFixAllResolveCodeAction(languageServer, request)
+            async (request): Promise<void> => registerFixAllResolveCodeAction(languageServer, request, outputChannel)
         )
     );
 }
 
-async function registerFixAllResolveCodeAction(languageServer: RoslynLanguageServer, codeActionData: any) {
+async function registerFixAllResolveCodeAction(
+    languageServer: RoslynLanguageServer,
+    codeActionData: any,
+    outputChannel: vscode.OutputChannel
+) {
     if (codeActionData) {
         const data = <LSPAny>codeActionData;
         const result = await vscode.window.showQuickPick(data.FixAllFlavors, {
@@ -55,6 +60,10 @@ async function registerFixAllResolveCodeAction(languageServer: RoslynLanguageSer
                         const protocolConverter = createConverter(uriConverter, true, true);
                         const fixAllEdit = await protocolConverter.asWorkspaceEdit(response.edit);
                         if (!(await vscode.workspace.applyEdit(fixAllEdit))) {
+                            const componentName = '[roslyn.client.fixAllCodeAction]';
+                            const errorMessage = 'Failed to make a fix all edit for completion.';
+                            outputChannel.show();
+                            outputChannel.appendLine(`${componentName} ${errorMessage}`);
                             throw new Error('Tried to insert multiple code action edits, but an error occurred.');
                         }
                     }

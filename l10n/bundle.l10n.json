@@ -128,6 +128,7 @@
   "Do not load any": "Do not load any",
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
   "Pick a fix all scope": "Pick a fix all scope",
+  "Fix All Code Action": "Fix All Code Action",
   "pipeArgs must be a string or a string array type": "pipeArgs must be a string or a string array type",
   "Name not defined in current configuration.": "Name not defined in current configuration.",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.",
