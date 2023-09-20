@@ -73,6 +73,7 @@ export interface LanguageServerOptions {
     readonly documentSelector: DocumentSelector;
     readonly extensionsPaths: string[] | null;
     readonly preferCSharpExtension: boolean;
+    readonly startTimeout: number;
 }
 
 export interface RazorOptions {
@@ -380,6 +381,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get preferCSharpExtension() {
         return readOption<boolean>('dotnet.preferCSharpExtension', false);
+    }
+    public get startTimeout() {
+        return readOption<number>('dotnet.server.startTimeout', 30000);
     }
 }
 
