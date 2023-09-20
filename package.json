@@ -872,7 +872,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.73.0"
+    "vscode": "^1.83.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -1937,6 +1937,7 @@
       {
         "type": "coreclr",
         "label": ".NET 5+ and .NET Core",
+        "hiddenWhen": "dotnet.debug.serviceBrokerAvailable",
         "languages": [
           "csharp",
           "razor",
@@ -3091,6 +3092,7 @@
       {
         "type": "clr",
         "when": "workspacePlatform == windows",
+        "hiddenWhen": "dotnet.debug.serviceBrokerAvailable",
         "label": ".NET Framework 4.x",
         "languages": [
           "csharp",
@@ -4138,6 +4140,7 @@
       {
         "type": "blazorwasm",
         "label": "Blazor WebAssembly Debug",
+        "hiddenWhen": "dotnet.debug.serviceBrokerAvailable",
         "initialConfigurations": [
           {
             "type": "blazorwasm",
