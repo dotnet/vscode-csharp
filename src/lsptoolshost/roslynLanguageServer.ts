@@ -532,9 +532,28 @@ export class RoslynLanguageServer {
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
+        // Record the stdout and stderr streams from the server process.
+        childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
+            const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
+            _channel.append('[stdout] ' + result);
+        });
+        childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) => {
+            const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
+            _channel.append('[stderr] ' + result);
+        });
+
         // Timeout promise used to time out the connection process if it takes too long.
-        const timeout = new Promise<undefined>((resolve) => {
-            RAL().timer.setTimeout(resolve, 30000);
+        const timeout = new Promise<undefined>((resolve, reject) => {
+            RAL().timer.setTimeout(resolve, languageServerOptions.startTimeout);
+
+            // If the child process exited unexpectedly, reject the promise early.
+            // Error information will be captured from the stdout/stderr streams above.
+            childProcess.on('exit', (code) => {
+                if (code && code !== 0) {
+                    _channel.appendLine(`Language server process exited with ${code}`);
+                    reject();
+                }
+            });
         });
 
         // The server process will create the named pipe used for communcation. Wait for it to be created,
@@ -543,8 +562,6 @@ export class RoslynLanguageServer {
             _channel.appendLine('waiting for named pipe information from server...');
             childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
                 const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
-                _channel.append('[stdout] ' + result);
-
                 // Use the regular expression to find all JSON lines
                 const jsonLines = result.match(RoslynLanguageServer.namedPipeKeyRegex);
                 if (jsonLines) {
