@@ -29,7 +29,6 @@ async function registerFixAllResolveCodeAction(languageServer: RoslynLanguageSer
             placeHolder: vscode.l10n.t('Pick a fix all scope'),
         });
 
-        let fixAllEdit = new vscode.WorkspaceEdit();
         await vscode.window.withProgress(
             {
                 location: vscode.ProgressLocation.Notification,
@@ -54,14 +53,13 @@ async function registerFixAllResolveCodeAction(languageServer: RoslynLanguageSer
                         const uriConverter: URIConverter = (value: string): vscode.Uri =>
                             UriConverter.deserialize(value);
                         const protocolConverter = createConverter(uriConverter, true, true);
-                        fixAllEdit = await protocolConverter.asWorkspaceEdit(response.edit);
+                        const fixAllEdit = await protocolConverter.asWorkspaceEdit(response.edit);
+                        if (!(await vscode.workspace.applyEdit(fixAllEdit))) {
+                            throw new Error('Tried to insert multiple code action edits, but an error occurred.');
+                        }
                     }
                 }
             }
         );
-
-        if (!(await vscode.workspace.applyEdit(fixAllEdit))) {
-            throw new Error('Tried to insert multiple code action edits, but an error occurred.');
-        }
     }
 }
