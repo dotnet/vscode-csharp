@@ -92,7 +92,7 @@ stages:
 - stage: 'TagRelease'
   displayName: 'Tag release of vscode-csharp'
   dependsOn: 'PublishStage'
-  condition: and(succeeded('PublishStage'), eq(variables['resources.pipeline.officialBuildCI.sourceBranch'], 'refs/heads/release'))
+  condition: succeeded('PublishStage')
   jobs:
   - job: 'Tag'
     pool:
@@ -109,7 +109,7 @@ stages:
       fetchDepth: 0
     - pwsh: |
         git checkout $(resources.pipeline.officialBuildCI.sourceCommit)
-      displayName: 'Checkout to release branch'
+      displayName: 'Checkout build source branch'
     - pwsh: |
         npm ci
         npm install

@@ -176,7 +176,7 @@ function generateLocForProperty(key: string, prop: any, keyToLocString: any): vo
             if (comments.length > 0) {
                 keyToLocString[descriptionKey] = {
                     message: prop.description,
-                    comments: comments,
+                    comment: comments,
                 };
             } else {
                 keyToLocString[descriptionKey] = prop.description;
@@ -192,7 +192,7 @@ function generateLocForProperty(key: string, prop: any, keyToLocString: any): vo
             if (comments.length > 0) {
                 keyToLocString[markdownDescriptionKey] = {
                     message: prop.markdownDescription,
-                    comments: comments,
+                    comment: comments,
                 };
             } else {
                 keyToLocString[markdownDescriptionKey] = prop.markdownDescription;
@@ -208,7 +208,7 @@ function generateLocForProperty(key: string, prop: any, keyToLocString: any): vo
             if (comments.length > 0) {
                 keyToLocString[settingsDescriptionKey] = {
                     message: prop.settingsDescription,
-                    comments: comments,
+                    comment: comments,
                 };
             } else {
                 keyToLocString[settingsDescriptionKey] = prop.settingsDescription;
@@ -224,7 +224,7 @@ function generateLocForProperty(key: string, prop: any, keyToLocString: any): vo
             if (comments.length > 0) {
                 keyToLocString[descriptionKey] = {
                     message: prop.deprecationMessage,
-                    comments: comments,
+                    comment: comments,
                 };
             } else {
                 keyToLocString[descriptionKey] = prop.deprecationMessage;

@@ -9,7 +9,7 @@ import * as semver from 'semver';
 import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { PlatformInformation } from '../shared/platform';
-import { Options } from '../shared/options';
+import { commonOptions } from '../shared/options';
 import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { promisify } from 'util';
@@ -33,16 +33,16 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         /**
          * This is a function instead of a string because the server path can change while the extension is active (when the option changes).
          */
-        private getServerPath: (options: Options, platform: PlatformInformation) => string,
+        private getServerPath: (platform: PlatformInformation) => string,
         private channel: vscode.OutputChannel,
         private extensionPath: string
     ) {}
 
     private hostInfo: HostExecutableInformation | undefined;
 
-    async getHostExecutableInfo(options: Options): Promise<HostExecutableInformation> {
-        let dotnetRuntimePath = options.commonOptions.dotnetPath;
-        const serverPath = this.getServerPath(options, this.platformInfo);
+    async getHostExecutableInfo(): Promise<HostExecutableInformation> {
+        let dotnetRuntimePath = commonOptions.dotnetPath;
+        const serverPath = this.getServerPath(this.platformInfo);
 
         // Check if we can find a valid dotnet from dotnet --version on the PATH.
         if (!dotnetRuntimePath) {

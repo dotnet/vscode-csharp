@@ -11,7 +11,7 @@ import { LaunchTarget } from '../../shared/launchTarget';
 import { ReadLine, createInterface } from 'readline';
 import { Request, RequestQueueCollection } from '../requestQueue';
 import { EventEmitter } from 'events';
-import { Options } from '../../shared/options';
+import { omnisharpOptions } from '../../shared/options';
 import { PlatformInformation } from '../../shared/platform';
 import { launchOmniSharp } from '../launcher';
 import { setTimeout } from 'timers';
@@ -46,7 +46,6 @@ import OmniSharpCodeActionProvider from '../../features/codeActionProvider';
 import forwardChanges from '../../features/changeForwarding';
 import OmniSharpDefinitionProvider from '../../features/definitionProvider';
 import reportDiagnostics, { Advisor } from '../../features/diagnosticsProvider';
-import OptionProvider from '../../shared/observers/optionProvider';
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
 import TestManager from '../../features/dotnetTest';
 import { OmniSharpStructureProvider } from '../../features/structureProvider';
@@ -74,7 +73,6 @@ export class StdioEngine implements IEngine {
 
     async registerProviders(
         server: OmniSharpServer,
-        optionProvider: OptionProvider,
         languageMiddlewareFeature: LanguageMiddlewareFeature,
         eventStream: EventStream,
         advisor: Advisor,
@@ -83,8 +81,6 @@ export class StdioEngine implements IEngine {
         const documentSelector: vscode.DocumentSelector = {
             language: 'csharp',
         };
-
-        const options = optionProvider.GetLatestOptions();
 
         // register language feature provider on start
         const localDisposables = new CompositeDisposable();
@@ -100,7 +96,7 @@ export class StdioEngine implements IEngine {
         localDisposables.add(
             vscode.languages.registerCodeLensProvider(
                 documentSelector,
-                new OmniSharpCodeLensProvider(server, testManager, optionProvider, languageMiddlewareFeature)
+                new OmniSharpCodeLensProvider(server, testManager, languageMiddlewareFeature)
             )
         );
         localDisposables.add(
@@ -127,7 +123,7 @@ export class StdioEngine implements IEngine {
                 new OmniSharpRenameProvider(server, languageMiddlewareFeature)
             )
         );
-        if (options.omnisharpOptions.useFormatting) {
+        if (omnisharpOptions.useFormatting) {
             localDisposables.add(
                 vscode.languages.registerDocumentRangeFormattingEditProvider(
                     documentSelector,
@@ -156,12 +152,7 @@ export class StdioEngine implements IEngine {
         );
         localDisposables.add(
             vscode.languages.registerWorkspaceSymbolProvider(
-                new OmniSharpWorkspaceSymbolProvider(
-                    server,
-                    optionProvider,
-                    languageMiddlewareFeature,
-                    sourceGeneratedDocumentProvider
-                )
+                new OmniSharpWorkspaceSymbolProvider(server, languageMiddlewareFeature, sourceGeneratedDocumentProvider)
             )
         );
         localDisposables.add(
@@ -183,7 +174,7 @@ export class StdioEngine implements IEngine {
                 OmniSharpFixAllProvider.metadata
             )
         );
-        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature, optionProvider));
+        localDisposables.add(reportDiagnostics(server, advisor, languageMiddlewareFeature));
 
         const definitionProvider = new OmniSharpDefinitionProvider(
             server,
@@ -221,7 +212,7 @@ export class StdioEngine implements IEngine {
         localDisposables.add(forwardChanges(server));
         // Since the CodeActionProvider registers its own commands, we must instantiate it and add it to the localDisposables
         // so that it will be cleaned up if OmniSharp is restarted.
-        const codeActionProvider = new OmniSharpCodeActionProvider(server, optionProvider, languageMiddlewareFeature);
+        const codeActionProvider = new OmniSharpCodeActionProvider(server, languageMiddlewareFeature);
         localDisposables.add(codeActionProvider);
         localDisposables.add(vscode.languages.registerCodeActionsProvider(documentSelector, codeActionProvider));
 
@@ -234,11 +225,7 @@ export class StdioEngine implements IEngine {
         );
         localDisposables.add(fileOpenClose(server));
 
-        const semanticTokensProvider = new OmniSharpSemanticTokensProvider(
-            server,
-            optionProvider,
-            languageMiddlewareFeature
-        );
+        const semanticTokensProvider = new OmniSharpSemanticTokensProvider(server, languageMiddlewareFeature);
         localDisposables.add(
             vscode.languages.registerDocumentSemanticTokensProvider(
                 documentSelector,
@@ -317,19 +304,12 @@ export class StdioEngine implements IEngine {
         return new Disposable(() => this._eventBus.removeListener(event, listener));
     }
 
-    public async start(
-        cwd: string,
-        args: string[],
-        launchTarget: LaunchTarget,
-        launchPath: string,
-        options: Options
-    ): Promise<void> {
+    public async start(cwd: string, args: string[], launchTarget: LaunchTarget, launchPath: string): Promise<void> {
         const launchResult = await launchOmniSharp(
             cwd,
             args.concat('--encoding', 'utf-8'),
             launchPath,
             this.platformInfo,
-            options,
             this.monoResolver,
             this.dotnetResolver
         );
@@ -367,7 +347,7 @@ export class StdioEngine implements IEngine {
             let listener: Disposable;
 
             // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = options.omnisharpOptions.projectLoadTimeout * 1000;
+            const timeoutDuration = omnisharpOptions.projectLoadTimeout * 1000;
 
             // timeout logic
             const handle = setTimeout(() => {

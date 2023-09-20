@@ -7,15 +7,14 @@ import * as vscode from 'vscode';
 import { UriConverter } from './uriConverter';
 
 import { FormattingOptions, TextDocumentIdentifier } from 'vscode-languageclient/node';
-import OptionProvider from '../shared/observers/optionProvider';
 import * as RoslynProtocol from './roslynProtocol';
 import { RoslynLanguageServer } from './roslynLanguageServer';
+import { languageServerOptions } from '../shared/options';
 
-export function registerOnAutoInsert(optionsProvider: OptionProvider, languageServer: RoslynLanguageServer) {
+export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
     let source = new vscode.CancellationTokenSource();
     vscode.workspace.onDidChangeTextDocument(async (e) => {
-        const options = optionsProvider.GetLatestOptions();
-        if (!options.languageServerOptions.documentSelector.includes(e.document.languageId)) {
+        if (!languageServerOptions.documentSelector.includes(e.document.languageId)) {
             return;
         }
 

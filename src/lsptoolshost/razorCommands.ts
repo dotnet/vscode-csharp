@@ -26,6 +26,7 @@ import {
 } from 'vscode-languageclient/node';
 import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
+import { SerializableFormatNewFileParams } from '../razor/src/formatNewFile/serializableFormatNewFileParams';
 
 // These are commands that are invoked by the Razor extension, and are used to send LSP requests to the Roslyn LSP server
 export const roslynDidChangeCommand = 'roslyn.changeRazorCSharp';
@@ -36,6 +37,7 @@ export const resolveCodeActionCommand = 'roslyn.resolveCodeAction';
 export const provideCompletionsCommand = 'roslyn.provideCompletions';
 export const resolveCompletionsCommand = 'roslyn.resolveCompletion';
 export const roslynSimplifyMethodCommand = 'roslyn.simplifyMethod';
+export const roslynFormatNewFileCommand = 'roslyn.formatNewFile';
 export const razorInitializeCommand = 'razor.initialize';
 
 export function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
@@ -67,6 +69,19 @@ export function registerRazorCommands(context: vscode.ExtensionContext, language
                     'roslyn/simplifyMethod'
                 );
                 return await languageServer.sendRequest(simplifyMethodRequestType, request, CancellationToken.None);
+            }
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            roslynFormatNewFileCommand,
+            async (request: SerializableFormatNewFileParams) => {
+                const formatNewFileRequestType = new RequestType<
+                    SerializableFormatNewFileParams,
+                    string | undefined,
+                    any
+                >('roslyn/formatNewFile');
+                return await languageServer.sendRequest(formatNewFileRequestType, request, CancellationToken.None);
             }
         )
     );
