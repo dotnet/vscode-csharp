@@ -34,7 +34,7 @@ export async function activateRazorExtension(
 
     if (fs.existsSync(languageServerDir)) {
         if (useOmnisharpServer) {
-            return await RazorOmniSharp.activate(
+            await RazorOmniSharp.activate(
                 vscode,
                 context,
                 languageServerDir,
@@ -42,7 +42,7 @@ export async function activateRazorExtension(
                 /* enableProposedApis: */ false
             );
         } else {
-            return await Razor.activate(
+            await Razor.activate(
                 vscode,
                 context,
                 languageServerDir,
