@@ -159,9 +159,31 @@ function generateCommentArrayForDescription(description: string): string[] {
 
     // If the description contains '\u200b', it is used to prevent vscode from rendering a URL.
     if (description.includes('\u200b')) {
+        const urlRegEx = new RegExp('https?\\u200b:[\\w/\\.\u200b]+', 'g');
+        let result = urlRegEx.exec(description);
+        if (!result) {
+            throw `Found zero-with unicode space outside of expected URL in '${description}'`;
+        }
+
         comments.push(
             "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL."
         );
+        while (result !== null) {
+            let foundText = result[0];
+
+            // check if the match is surrounded by `()`, and if so, include them
+            if (
+                result.index > 0 &&
+                result.index + foundText.length < description.length &&
+                description[result.index - 1] === '(' &&
+                description[result.index + foundText.length] === ')'
+            ) {
+                foundText = `(${foundText})`;
+            }
+
+            comments.push(`{Locked='${foundText}'}`);
+            result = urlRegEx.exec(description);
+        }
     }
 
     return comments;
