@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as cp from 'child_process';
 import { EventEmitter } from 'events';
 import * as util from '../../common';
 import * as vscode from 'vscode';
@@ -39,6 +40,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         private readonly razorTelemetryReporter: RazorTelemetryReporter,
         private readonly vscodeTelemetryReporter: TelemetryReporter,
         private readonly isCSharpDevKitInstalled: boolean,
+        private readonly env: NodeJS.ProcessEnv,
+        private readonly dotnetExecutablePath: string,
         private readonly logger: RazorLogger
     ) {
         this.isStarted = false;
@@ -216,23 +219,12 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             languageServerTrace,
             this.logger
         );
-
         this.clientOptions = {
             outputChannel: options.outputChannel,
             documentSelector: [{ language: RazorLanguage.id, pattern: RazorLanguage.globbingPattern }],
         };
 
         const args: string[] = [];
-        let command = options.serverPath;
-        if (options.serverPath.endsWith('.dll')) {
-            this.logger.logMessage(
-                'Razor Language Server path is an assembly. ' +
-                    "Using 'dotnet' from the current path to start the server."
-            );
-
-            command = 'dotnet';
-            args.push(options.serverPath);
-        }
 
         this.logger.logMessage(`Razor language server path: ${options.serverPath}`);
 
@@ -260,13 +252,34 @@ export class RazorLanguageServerClient implements vscode.Disposable {
                 args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
                 args.push('--sessionId', getSessionId());
                 args.push(
-                    '--extension',
+                    '--telemetryExtensionPath',
                     util.getExtensionPath() + '\\.razortelemetry\\Microsoft.VisualStudio.DevKit.Razor.dll'
                 );
             }
         }
 
-        this.serverOptions = { command, args };
+        let childProcess: () => Promise<cp.ChildProcessWithoutNullStreams>;
+        const cpOptions: cp.SpawnOptionsWithoutStdio = {
+            detached: true,
+            windowsHide: true,
+            env: this.env,
+        };
+
+        if (options.serverPath.endsWith('.dll')) {
+            // If we were given a path to a dll, launch that via dotnet.
+            const argsWithPath = [options.serverPath].concat(args);
+            this.logger.logMessage(`Server arguments ${argsWithPath.join(' ')}`);
+
+            childProcess = async () => cp.spawn(this.dotnetExecutablePath, argsWithPath, cpOptions);
+        } else {
+            // Otherwise assume we were given a path to an executable.
+            this.logger.logMessage(`Server arguments ${args.join(' ')}`);
+
+            childProcess = async () => cp.spawn(options.serverPath, args, cpOptions);
+        }
+
+        this.serverOptions = childProcess;
+
         this.client = new LanguageClient(
             'razorLanguageServer',
             'Razor Language Server',

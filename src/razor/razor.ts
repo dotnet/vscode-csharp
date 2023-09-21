@@ -10,13 +10,17 @@ import * as vscode from 'vscode';
 import * as Razor from '../../src/razor/src/extension';
 import { EventStream } from '../eventStream';
 import TelemetryReporter from '@vscode/extension-telemetry';
+import OptionProvider from '../shared/observers/optionProvider';
+import { PlatformInformation } from '../shared/platform';
 
 export async function activateRazorExtension(
     context: vscode.ExtensionContext,
     extensionPath: string,
     eventStream: EventStream,
     vscodeTelemetryReporter: TelemetryReporter,
-    isCSharpDevKitInstalled: boolean,
+    csharpDevkitExtension: vscode.Extension<any> | undefined,
+    optionProvider: OptionProvider,
+    platformInfo: PlatformInformation,
     useOmnisharpServer: boolean
 ) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
@@ -30,7 +34,7 @@ export async function activateRazorExtension(
 
     if (fs.existsSync(languageServerDir)) {
         if (useOmnisharpServer) {
-            await RazorOmniSharp.activate(
+            return await RazorOmniSharp.activate(
                 vscode,
                 context,
                 languageServerDir,
@@ -38,13 +42,15 @@ export async function activateRazorExtension(
                 /* enableProposedApis: */ false
             );
         } else {
-            await Razor.activate(
+            return await Razor.activate(
                 vscode,
                 context,
                 languageServerDir,
                 eventStream,
                 vscodeTelemetryReporter,
-                isCSharpDevKitInstalled,
+                csharpDevkitExtension,
+                optionProvider,
+                platformInfo,
                 /* enableProposedApis: */ false
             );
         }

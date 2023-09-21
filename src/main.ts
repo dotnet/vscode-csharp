@@ -92,7 +92,7 @@ export async function activate(
     const razorOptions = optionProvider.GetLatestOptions().razorOptions;
     requiredPackageIds.push('Razor');
 
-    const csharpDevkitExtension = vscode.extensions.getExtension(csharpDevkitExtensionId);
+    const csharpDevkitExtension = vscode.extensions.getExtension<CSharpDevKitExports>(csharpDevkitExtensionId);
     const useOmnisharpServer =
         !csharpDevkitExtension && optionProvider.GetLatestOptions().commonOptions.useOmnisharpServer;
     if (useOmnisharpServer) {
@@ -124,6 +124,7 @@ export async function activate(
     const roslynLanguageServerEvents = new RoslynLanguageServerEvents();
     context.subscriptions.push(roslynLanguageServerEvents);
     let roslynLanguageServerStartedPromise: Promise<RoslynLanguageServer> | undefined = undefined;
+    let razorLanguageServerStartedPromise: Promise<void> | undefined = undefined;
     let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer) {
@@ -150,12 +151,14 @@ export async function activate(
         // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
         //     for dynamic file info once project system is ready ->
         // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-        await activateRazorExtension(
+        razorLanguageServerStartedPromise = activateRazorExtension(
             context,
             context.extension.extensionPath,
             eventStream,
             reporter,
-            csharpDevkitExtension !== undefined,
+            csharpDevkitExtension,
+            optionProvider,
+            platformInfo,
             /* useOmnisharpServer */ false
         );
 
@@ -293,7 +296,9 @@ export async function activate(
                 context.extension.extensionPath,
                 eventStream,
                 reporter,
-                false,
+                undefined,
+                optionProvider,
+                platformInfo,
                 /* useOmnisharpServer */ true
             );
         }
@@ -351,6 +356,7 @@ export async function activate(
         return {
             initializationFinished: async () => {
                 await coreClrDebugPromise;
+                await razorLanguageServerStartedPromise;
                 await roslynLanguageServerStartedPromise;
                 await projectInitializationCompletePromise;
             },
