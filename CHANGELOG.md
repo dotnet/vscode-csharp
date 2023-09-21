@@ -10,8 +10,7 @@
 ## Latest
 * Update Roslyn version to 4.8.0-3.23470.7 (PR: [#6408](https://github.com/dotnet/vscode-csharp/pull/6408))
   * Update NuGet version to fix issues loading projects with .NET 8 RC2 (PR: [#70023](https://github.com/dotnet/roslyn/pull/70023))
-  * Update MSBuildLocator version to fix issues loading projects when only .NET6 is installed (PR: [#70038](https://github.com/dotnet/roslyn/pull/70038))
-* Update Roslyn version (PR: [#6389](https://github.com/dotnet/vscode-csharp/pull/6389))
+  * Update MSBuildLocator version to fix issues loading projects when only .NET 6 is installed (PR: [#70038](https://github.com/dotnet/roslyn/pull/70038))
   * Remove diagnostic source name (PR: [#69939](https://github.com/dotnet/roslyn/pull/69939))
   * Fix fold all regions (PR: [#69817](https://github.com/dotnet/roslyn/pull/69817))
   * Fix escaping and wrapping in hover (PR: [#69893](https://github.com/dotnet/roslyn/pull/69893))
