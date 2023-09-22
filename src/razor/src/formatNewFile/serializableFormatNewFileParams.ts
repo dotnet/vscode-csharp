@@ -3,8 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { HostExecutableInformation } from './hostExecutableInformation';
+import { SerializableTextDocumentIdentifier } from '../rpc/serializableTextDocumentIdentifier';
 
-export interface IHostExecutableResolver {
-    getHostExecutableInfo(): Promise<HostExecutableInformation>;
+export interface SerializableFormatNewFileParams {
+    project: SerializableTextDocumentIdentifier;
+    document: SerializableTextDocumentIdentifier;
+    contents: string;
 }

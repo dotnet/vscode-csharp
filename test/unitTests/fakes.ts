@@ -195,7 +195,7 @@ export function getFakeVsCode(): vscodeAdapter.vscode {
                 throw new Error('Not Implemented');
             },
         },
-        version: '',
+        version: 'myVersion',
         env: {
             appName: '',
             appRoot: '',
