@@ -243,7 +243,7 @@
     "message": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
     "comment": [
       "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL.",
-      "{Locked='(example: http\u200b://MyExampleSymbolServer)'}"
+      "{Locked='http\u200b://MyExampleSymbolServer'}"
     ]
   },
   "generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description": {
