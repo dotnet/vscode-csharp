@@ -339,15 +339,15 @@ async function setupDevKitEnvironment(
     logger: RazorLogger
 ): Promise<void> {
     try {
-        const exports = csharpDevkitExtension.activate();
+        const exports = await csharpDevkitExtension.activate();
 
         // setupTelemetryEnvironmentAsync was a later addition to devkit (not in preview 1)
         // so it may not exist in whatever version of devkit the user has installed
-        if (!(await exports).setupTelemetryEnvironmentAsync) {
+        if (!exports.setupTelemetryEnvironmentAsync) {
             return;
         }
 
-        (await exports).setupTelemetryEnvironmentAsync(env);
+        await exports.setupTelemetryEnvironmentAsync(env);
     } catch (error) {
         logger.logError('Failed to setup DevKit environment for telemetry.', error as Error);
     }
