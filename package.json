@@ -50,6 +50,12 @@
         "name": "Microsoft.CodeAnalysis.LanguageClient.SolutionSnapshotProvider",
         "version": "0.1"
       }
+    },
+    {
+      "moniker": {
+        "name": "Microsoft.VisualStudioCode.CSharp.BuildResultService",
+        "version": "0.1"
+      }
     }
   ],
   "scripts": {

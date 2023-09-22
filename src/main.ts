@@ -56,6 +56,7 @@ import { registerOmnisharpOptionChanges } from './omnisharp/omnisharpOptionChang
 import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents';
 import { ServerStateChange } from './lsptoolshost/serverStateChange';
 import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
+import { BuildResultDiagnostics } from './lsptoolshost/services/buildResultReporterService';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -412,6 +413,10 @@ function profferBrokeredServices(
         serviceContainer.profferServiceFactory(
             Descriptors.solutionSnapshotProviderRegistration,
             (_mk, _op, _sb) => new SolutionSnapshotProvider(languageServerPromise)
+        ),
+        serviceContainer.profferServiceFactory(
+            Descriptors.csharpExtensionBuildResultService,
+            (_mk, _op, _sb) => new BuildResultDiagnostics()
         )
     );
 }
