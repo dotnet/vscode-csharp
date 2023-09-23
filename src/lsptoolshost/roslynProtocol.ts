@@ -141,6 +141,10 @@ export interface BuildOnlyDiagnosticIdsResult {
     ids: string[];
 }
 
+export interface NamedPipeInformation {
+    pipeName: string;
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;

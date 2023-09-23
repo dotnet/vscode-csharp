@@ -9,19 +9,17 @@ import * as vscode from 'vscode';
 import * as languageClient from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } from './roslynProtocol';
-import OptionProvider from '../shared/observers/optionProvider';
+import { commonOptions } from '../shared/options';
 
 export function registerUnitTestingCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
-    dotnetTestChannel: vscode.OutputChannel,
-    optionProvider: OptionProvider
+    dotnetTestChannel: vscode.OutputChannel
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             'dotnet.test.run',
-            async (request): Promise<TestProgress | undefined> =>
-                runTests(request, languageServer, dotnetTestChannel, optionProvider)
+            async (request): Promise<TestProgress | undefined> => runTests(request, languageServer, dotnetTestChannel)
         )
     );
     context.subscriptions.push(
@@ -29,16 +27,14 @@ export function registerUnitTestingCommands(
         // See https://github.com/microsoft/vscode/issues/16814 for more info.
         vscode.commands.registerCommand(
             'dotnet.test.runTestsInContext',
-            async (): Promise<TestProgress | undefined> =>
-                runTestsInContext(false, languageServer, dotnetTestChannel, optionProvider)
+            async (): Promise<TestProgress | undefined> => runTestsInContext(false, languageServer, dotnetTestChannel)
         )
     );
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
             'dotnet.test.debugTestsInContext',
-            async (): Promise<TestProgress | undefined> =>
-                runTestsInContext(true, languageServer, dotnetTestChannel, optionProvider)
+            async (): Promise<TestProgress | undefined> => runTestsInContext(true, languageServer, dotnetTestChannel)
         )
     );
 }
@@ -46,8 +42,7 @@ export function registerUnitTestingCommands(
 async function runTestsInContext(
     debug: boolean,
     languageServer: RoslynLanguageServer,
-    dotnetTestChannel: vscode.OutputChannel,
-    optionProvider: OptionProvider
+    dotnetTestChannel: vscode.OutputChannel
 ): Promise<TestProgress | undefined> {
     const activeEditor = vscode.window.activeTextEditor;
     if (!activeEditor) {
@@ -59,7 +54,7 @@ async function runTestsInContext(
     };
     const textDocument: languageClient.TextDocumentIdentifier = { uri: activeEditor.document.fileName };
     const request: RunTestsParams = { textDocument: textDocument, range: contextRange, attachDebugger: debug };
-    return runTests(request, languageServer, dotnetTestChannel, optionProvider);
+    return runTests(request, languageServer, dotnetTestChannel);
 }
 
 let _testRunInProgress = false;
@@ -67,15 +62,14 @@ let _testRunInProgress = false;
 async function runTests(
     request: RunTestsParams,
     languageServer: RoslynLanguageServer,
-    dotnetTestChannel: vscode.OutputChannel,
-    optionProvider: OptionProvider
+    dotnetTestChannel: vscode.OutputChannel
 ): Promise<TestProgress | undefined> {
     if (_testRunInProgress) {
         vscode.window.showErrorMessage('Test run already in progress');
         return;
     }
 
-    request.runSettingsPath = getRunSettings(request.textDocument.uri, optionProvider, dotnetTestChannel);
+    request.runSettingsPath = getRunSettings(request.textDocument.uri, dotnetTestChannel);
 
     _testRunInProgress = true;
 
@@ -150,12 +144,8 @@ async function runTests(
     return lastProgress;
 }
 
-function getRunSettings(
-    documentUri: string,
-    optionProvider: OptionProvider,
-    dotnetTestChannel: vscode.OutputChannel
-): string | undefined {
-    const runSettingsPathOption = optionProvider.GetLatestOptions().commonOptions.runSettingsPath;
+function getRunSettings(documentUri: string, dotnetTestChannel: vscode.OutputChannel): string | undefined {
+    const runSettingsPathOption = commonOptions.runSettingsPath;
     if (runSettingsPathOption.length === 0) {
         return undefined;
     }

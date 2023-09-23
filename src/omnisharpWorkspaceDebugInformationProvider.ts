@@ -44,11 +44,12 @@ export class OmnisharpWorkspaceDebugInformationProvider implements IWorkspaceDeb
          * Note: serverUtils.requestWorkspaceInformation only retrieves one folder for multi-root workspaces. Therefore, generator will be incorrect for all folders
          * except the first in a workspace. Currently, this only works if the requested folder is the same as the server's solution path or folder.
          */
-        return projects?.filter((p) => {
+        const projectsInWorkspace = projects?.filter((p) => {
             // Get absolute paths of current folder and server folder.
             const workspaceFolder = path.resolve(workspacePath.fsPath);
             const projectFolder = path.dirname(p.projectPath);
             return isSubfolderOf(projectFolder, workspaceFolder);
         });
+        return projectsInWorkspace;
     }
 }

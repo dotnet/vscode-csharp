@@ -47,7 +47,6 @@ import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
 import { RazorSimplifyMethodHandler } from './simplify/razorSimplifyMethodHandler';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { CSharpDevKitExports } from '../../csharpDevKitExports';
-import OptionProvider from '../../shared/observers/optionProvider';
 import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntimeExtensionResolver';
 import { PlatformInformation } from '../../shared/platform';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
@@ -62,7 +61,6 @@ export async function activate(
     eventStream: HostEventStream,
     vscodeTelemetryReporter: TelemetryReporter,
     csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
-    optionProvider: OptionProvider,
     platformInfo: PlatformInformation,
     enableProposedApis = false
 ) {
@@ -89,8 +87,7 @@ export async function activate(
             context.extensionPath
         );
 
-        const options = optionProvider.GetLatestOptions();
-        const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo(options);
+        const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();
         const dotnetRuntimePath = path.dirname(dotnetInfo.path);
 
         // Take care to always run .NET processes on the runtime that we intend.

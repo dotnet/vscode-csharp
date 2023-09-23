@@ -10,8 +10,8 @@ import * as serverUtils from '../omnisharp/utils';
 import { createRequest, toRange2 } from '../omnisharp/typeConversion';
 import AbstractProvider from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
-import OptionProvider from '../shared/observers/optionProvider';
 import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
+import { omnisharpOptions } from '../shared/options';
 
 // The default TokenTypes defined by VS Code https://github.com/microsoft/vscode/blob/master/src/vs/platform/theme/common/tokenClassificationRegistry.ts#L393
 enum DefaultTokenType {
@@ -162,11 +162,7 @@ export default class OmniSharpSemanticTokensProvider
     extends AbstractProvider
     implements vscode.DocumentSemanticTokensProvider, vscode.DocumentRangeSemanticTokensProvider
 {
-    constructor(
-        server: OmniSharpServer,
-        private optionProvider: OptionProvider,
-        languageMiddlewareFeature: LanguageMiddlewareFeature
-    ) {
+    constructor(server: OmniSharpServer, languageMiddlewareFeature: LanguageMiddlewareFeature) {
         super(server, languageMiddlewareFeature);
     }
 
@@ -209,8 +205,7 @@ export default class OmniSharpSemanticTokensProvider
             return null;
         }
 
-        const options = this.optionProvider.GetLatestOptions();
-        if (!options.omnisharpOptions.useSemanticHighlighting) {
+        if (!omnisharpOptions.useSemanticHighlighting) {
             return null;
         }
 

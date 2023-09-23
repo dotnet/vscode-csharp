@@ -9,20 +9,21 @@ import * as semver from 'semver';
 import { promisify } from 'util';
 import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
-import { Options } from '../shared/options';
 import { PlatformInformation } from '../shared/platform';
+import { commonOptions } from '../shared/options';
 
 export class DotnetResolver implements IHostExecutableResolver {
     private readonly minimumDotnetVersion = '6.0.100';
 
     constructor(private platformInfo: PlatformInformation) {}
 
-    public async getHostExecutableInfo(options: Options): Promise<HostExecutableInformation> {
+    public async getHostExecutableInfo(): Promise<HostExecutableInformation> {
         const dotnet = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const env = { ...process.env };
 
-        if (options.commonOptions.dotnetPath.length > 0) {
-            env['PATH'] = options.commonOptions.dotnetPath + path.delimiter + env['PATH'];
+        const dotnetPathOption = commonOptions.dotnetPath;
+        if (dotnetPathOption.length > 0) {
+            env['PATH'] = dotnetPathOption + path.delimiter + env['PATH'];
         }
 
         // Test the dotnet exe for version
@@ -45,7 +46,7 @@ export class DotnetResolver implements IHostExecutableResolver {
 
         return {
             version: result.stdout,
-            path: options.commonOptions.dotnetPath,
+            path: dotnetPathOption,
             env,
         };
     }

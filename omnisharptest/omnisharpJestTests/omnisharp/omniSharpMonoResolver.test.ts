@@ -3,16 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
+import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 import { OmniSharpMonoResolver } from '../../../src/omnisharp/omniSharpMonoResolver';
 
-import { Options } from '../../../src/shared/options';
-import { expect } from 'chai';
 import { join } from 'path';
-import { getEmptyOptions } from '../fakes/fakeOptions';
+import { getWorkspaceConfiguration } from '../../../test/unitTests/fakes';
 
-suite(`${OmniSharpMonoResolver.name}`, () => {
+describe(`${OmniSharpMonoResolver.name}`, () => {
     let getMonoCalled: boolean;
-    let options: Options;
 
     const monoPath = 'monoPath';
 
@@ -25,42 +24,32 @@ suite(`${OmniSharpMonoResolver.name}`, () => {
         return Promise.resolve(version);
     };
 
-    setup(() => {
+    beforeEach(() => {
         getMonoCalled = false;
-        options = getEmptyOptions();
+        jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue(getWorkspaceConfiguration());
+        vscode.workspace.getConfiguration().update('omnisharp.monoPath', monoPath);
     });
 
     test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion}`, async () => {
         const monoResolver = new OmniSharpMonoResolver(getMono(higherMonoVersion));
-        const monoInfo = await monoResolver.getHostExecutableInfo({
-            ...options,
-            omnisharpOptions: { ...options.omnisharpOptions, monoPath: monoPath },
-        });
+        const monoInfo = await monoResolver.getHostExecutableInfo();
 
-        expect(monoInfo.version).to.be.equal(higherMonoVersion);
-        expect(monoInfo.path).to.be.equal(monoPath);
+        expect(monoInfo.version).toEqual(higherMonoVersion);
+        expect(monoInfo.path).toEqual(monoPath);
     });
 
     test(`it throws exception if version is less than ${requiredMonoVersion}`, async () => {
         const monoResolver = new OmniSharpMonoResolver(getMono(lowerMonoVersion));
 
-        await expect(
-            monoResolver.getHostExecutableInfo({
-                ...options,
-                omnisharpOptions: { ...options.omnisharpOptions, monoPath: monoPath },
-            })
-        ).to.be.rejected;
+        await expect(monoResolver.getHostExecutableInfo()).rejects.toThrow();
     });
 
     test('sets the environment with the monoPath', async () => {
         const monoResolver = new OmniSharpMonoResolver(getMono(requiredMonoVersion));
-        const monoInfo = await monoResolver.getHostExecutableInfo({
-            ...options,
-            omnisharpOptions: { ...options.omnisharpOptions, monoPath: monoPath },
-        });
+        const monoInfo = await monoResolver.getHostExecutableInfo();
 
-        expect(getMonoCalled).to.be.equal(true);
-        expect(monoInfo.env['PATH']).to.contain(join(monoPath, 'bin'));
-        expect(monoInfo.env['MONO_GAC_PREFIX']).to.be.equal(monoPath);
+        expect(getMonoCalled).toEqual(true);
+        expect(monoInfo.env['PATH']).toContain(join(monoPath, 'bin'));
+        expect(monoInfo.env['MONO_GAC_PREFIX']).toEqual(monoPath);
     });
 });

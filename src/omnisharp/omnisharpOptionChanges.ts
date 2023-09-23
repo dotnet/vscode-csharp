@@ -5,12 +5,12 @@
 
 import * as vscode from 'vscode';
 import { HandleOptionChanges, OptionChangeObserver } from '../shared/observers/optionChangeObserver';
-import { CommonOptionsThatTriggerReload, OmnisharpOptionsThatTriggerReload, Options } from '../shared/options';
+import { CommonOptionsThatTriggerReload, OmnisharpOptionsThatTriggerReload } from '../shared/options';
 import ShowInformationMessage from '../shared/observers/utils/showInformationMessage';
 import { Observable } from 'rxjs';
 import Disposable from '../disposable';
 
-export function registerOmnisharpOptionChanges(optionObservable: Observable<Options>): Disposable {
+export function registerOmnisharpOptionChanges(optionObservable: Observable<void>): Disposable {
     const optionChangeObserver: OptionChangeObserver = {
         getRelevantOptions: () => {
             return {
