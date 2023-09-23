@@ -39,7 +39,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         private readonly languageServerDir: string,
         private readonly razorTelemetryReporter: RazorTelemetryReporter,
         private readonly vscodeTelemetryReporter: TelemetryReporter,
-        private readonly isCSharpDevKitInstalled: boolean,
+        private readonly isCSharpDevKitActivated: boolean,
         private readonly env: NodeJS.ProcessEnv,
         private readonly dotnetExecutablePath: string,
         private readonly logger: RazorLogger
@@ -248,7 +248,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');
 
-            if (this.isCSharpDevKitInstalled) {
+            if (this.isCSharpDevKitActivated) {
                 args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
                 args.push('--sessionId', getSessionId());
                 args.push(
