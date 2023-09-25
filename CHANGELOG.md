@@ -8,7 +8,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Update Roslyn version to 4.8.0-3.23472.2 and Razor version to 8.0.0-preview.23465.2 (PR: [#6423](https://github.com/dotnet/vscode-csharp/pull/6423))
+* Update Roslyn version to 4.8.0-3.23475.7 (PR: [#6423](https://github.com/dotnet/vscode-csharp/pull/6423))
+  * Fix crash when navigating to .net framework reference assemblies (PR: [#69936](https://github.com/dotnet/roslyn/pull/69936))
+  * Fix error when only the invariant culture is available (PR: [#70096](https://github.com/dotnet/roslyn/pull/70096))
+* Update Razor version to 8.0.0-preview.23465.2 (PR: [#6423](https://github.com/dotnet/vscode-csharp/pull/6423))
   *  Use message pack for project.razor.* configuration file (PR: [#9270](https://github.com/dotnet/razor/pull/9270))
 
 ## 2.3.27
