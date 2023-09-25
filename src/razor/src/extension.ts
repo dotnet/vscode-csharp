@@ -189,7 +189,7 @@ export async function activate(
                 documentManager,
                 logger
             );
-            const formatNewFileHandler = new RazorFormatNewFileHandler(
+            const razorFormatNewFileHandler = new RazorFormatNewFileHandler(
                 documentSynchronizer,
                 languageServerClient,
                 languageServiceClient,
@@ -240,7 +240,7 @@ export async function activate(
                 razorDiagnosticHandler.register(),
                 codeActionsHandler.register(),
                 razorSimplifyMethodHandler.register(),
-                formatNewFileHandler.register(),
+                razorFormatNewFileHandler.register(),
             ]);
         });
 
