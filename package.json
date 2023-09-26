@@ -1837,135 +1837,135 @@
     "commands": [
       {
         "command": "o.restart",
-        "title": "Restart OmniSharp",
+        "title": "%command.o.restart%",
         "category": "OmniSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.pickProjectAndStart",
-        "title": "Select Project",
+        "title": "%command.o.pickProjectAndStart%",
         "category": "OmniSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "dotnet.openSolution",
-        "title": "Open Solution",
+        "title": "%command.dotnet.openSolution%",
         "category": ".NET",
         "enablement": "!config.dotnet.server.useOmnisharp && dotnet.server.activatedStandalone"
       },
       {
         "command": "o.fixAll.solution",
-        "title": "Fix all occurrences of a code issue within solution",
+        "title": "%command.o.fixAll.solution%",
         "category": "OmniSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.fixAll.project",
-        "title": "Fix all occurrences of a code issue within project",
+        "title": "%command.o.fixAll.project%",
         "category": "OmniSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.fixAll.document",
-        "title": "Fix all occurrences of a code issue within document",
+        "title": "%command.o.fixAll.document%",
         "category": "OmniSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.reanalyze.allProjects",
-        "title": "Analyze all projects",
+        "title": "%command.o.reanalyze.allProjects%",
         "category": "OmniSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "o.reanalyze.currentProject",
-        "title": "Analyze current project",
+        "title": "%command.o.reanalyze.currentProject%",
         "category": "OmniSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "dotnet.generateAssets",
-        "title": "Generate Assets for Build and Debug",
+        "title": "%command.dotnet.generateAssets.currentProject%",
         "category": ".NET"
       },
       {
         "command": "dotnet.restore.project",
-        "title": "Restore Project",
+        "title": "%command.dotnet.restore.project%",
         "category": ".NET",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "dotnet.restore.all",
-        "title": "Restore All Projects",
+        "title": "%command.dotnet.restore.all%",
         "category": ".NET",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "csharp.downloadDebugger",
-        "title": "Download .NET Core Debugger",
+        "title": "%command.csharp.downloadDebugger%",
         "category": "Debug"
       },
       {
         "command": "csharp.listProcess",
-        "title": "List process for attach",
+        "title": "%command.csharp.listProcess%",
         "category": "CSharp"
       },
       {
         "command": "csharp.listRemoteProcess",
-        "title": "List processes on remote connection for attach",
+        "title": "%command.csharp.listRemoteProcess%",
         "category": "CSharp"
       },
       {
         "command": "csharp.listRemoteDockerProcess",
-        "title": "List processes on Docker connection",
+        "title": "%command.csharp.listRemoteDockerProcess%",
         "category": "CSharp"
       },
       {
         "command": "csharp.attachToProcess",
-        "title": "Attach to a .NET 5+ or .NET Core process",
+        "title": "%command.csharp.attachToProcess%",
         "category": "Debug"
       },
       {
         "command": "csharp.reportIssue",
-        "title": "Report an issue",
+        "title": "%command.csharp.reportIssue%",
         "category": "CSharp"
       },
       {
         "command": "csharp.showDecompilationTerms",
-        "title": "Show the decompiler terms agreement",
+        "title": "%command.csharp.showDecompilationTerms%",
         "category": "CSharp",
         "enablement": "config.dotnet.server.useOmnisharp"
       },
       {
         "command": "extension.showRazorCSharpWindow",
-        "title": "Show Razor CSharp",
+        "title": "%command.extension.showRazorCSharpWindow%",
         "category": "Razor"
       },
       {
         "command": "extension.showRazorHtmlWindow",
-        "title": "Show Razor Html",
+        "title": "%command.extension.showRazorHtmlWindow%",
         "category": "Razor"
       },
       {
         "command": "razor.reportIssue",
-        "title": "Report a Razor issue",
+        "title": "%command.razor.reportIssue%",
         "category": "Razor"
       },
       {
         "command": "dotnet.test.runTestsInContext",
-        "title": "Run Tests in Context",
+        "title": "%command.dotnet.test.runTestsInContext%",
         "category": ".NET",
         "enablement": "dotnet.server.activatedStandalone"
       },
       {
         "command": "dotnet.test.debugTestsInContext",
-        "title": "Debug Tests in Context",
+        "title": "%command.dotnet.test.debugTestsInContext%",
         "category": ".NET",
         "enablement": "dotnet.server.activatedStandalone"
       },
       {
         "command": "dotnet.restartServer",
-        "title": "Restart Language Server",
+        "title": "%command.dotnet.restartServer%",
         "category": ".NET",
         "enablement": "!config.dotnet.server.useOmnisharp"
       }
