@@ -1656,11 +1656,6 @@
             "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
             "default": true
           },
-          "csharp.debug.logging.engineLogging": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
-            "default": false
-          },
           "csharp.debug.logging.browserStdOut": {
             "type": "boolean",
             "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
@@ -1680,6 +1675,63 @@
             "type": "boolean",
             "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
             "default": true
+          },
+          "csharp.debug.logging.engineLogging": {
+            "type": "boolean",
+            "deprecationMessage": "%generateOptionsSchema.logging.engineLogging.deprecationMessage%",
+            "default": false
+          },
+          "csharp.debug.logging.diagnosticsLog.protocolMessages": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.diagnosticsLog.dispatcherMessages": {
+            "type": "string",
+            "enum": [
+              "none",
+              "error",
+              "important",
+              "normal"
+            ],
+            "enumDescriptions": [
+              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription%"
+            ],
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription%",
+            "default": "none"
+          },
+          "csharp.debug.logging.diagnosticsLog.debugEngineAPITracing": {
+            "type": "string",
+            "enum": [
+              "none",
+              "error",
+              "all"
+            ],
+            "enumDescriptions": [
+              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription%"
+            ],
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription%",
+            "default": "none"
+          },
+          "csharp.debug.logging.diagnosticsLog.debugRuntimeEventTracing": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.diagnosticsLog.expressionEvaluationTracing": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.diagnosticsLog.startDebuggingTracing": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription%",
+            "default": false
           },
           "csharp.debug.suppressJITOptimizations": {
             "type": "boolean",
@@ -2181,11 +2233,6 @@
                     "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
-                  "engineLogging": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
-                    "default": false
-                  },
                   "browserStdOut": {
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
@@ -2205,6 +2252,71 @@
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
+                  },
+                  "engineLogging": {
+                    "type": "boolean",
+                    "deprecationMessage": "%generateOptionsSchema.logging.engineLogging.deprecationMessage%",
+                    "default": false
+                  },
+                  "diagnosticsLog": {
+                    "description": "%generateOptionsSchema.logging.diagnosticsLog.description%",
+                    "type": "object",
+                    "required": [],
+                    "default": {},
+                    "properties": {
+                      "protocolMessages": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription%",
+                        "default": false
+                      },
+                      "dispatcherMessages": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "error",
+                          "important",
+                          "normal"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription%"
+                        ],
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription%",
+                        "default": "none"
+                      },
+                      "debugEngineAPITracing": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "error",
+                          "all"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription%"
+                        ],
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription%",
+                        "default": "none"
+                      },
+                      "debugRuntimeEventTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription%",
+                        "default": false
+                      },
+                      "expressionEvaluationTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription%",
+                        "default": false
+                      },
+                      "startDebuggingTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription%",
+                        "default": false
+                      }
+                    }
                   }
                 }
               },
@@ -2621,11 +2733,6 @@
                     "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
-                  "engineLogging": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
-                    "default": false
-                  },
                   "browserStdOut": {
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
@@ -2645,6 +2752,71 @@
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
+                  },
+                  "engineLogging": {
+                    "type": "boolean",
+                    "deprecationMessage": "%generateOptionsSchema.logging.engineLogging.deprecationMessage%",
+                    "default": false
+                  },
+                  "diagnosticsLog": {
+                    "description": "%generateOptionsSchema.logging.diagnosticsLog.description%",
+                    "type": "object",
+                    "required": [],
+                    "default": {},
+                    "properties": {
+                      "protocolMessages": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription%",
+                        "default": false
+                      },
+                      "dispatcherMessages": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "error",
+                          "important",
+                          "normal"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription%"
+                        ],
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription%",
+                        "default": "none"
+                      },
+                      "debugEngineAPITracing": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "error",
+                          "all"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription%"
+                        ],
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription%",
+                        "default": "none"
+                      },
+                      "debugRuntimeEventTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription%",
+                        "default": false
+                      },
+                      "expressionEvaluationTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription%",
+                        "default": false
+                      },
+                      "startDebuggingTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription%",
+                        "default": false
+                      }
+                    }
                   }
                 }
               },
@@ -3337,11 +3509,6 @@
                     "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
-                  "engineLogging": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
-                    "default": false
-                  },
                   "browserStdOut": {
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
@@ -3361,6 +3528,71 @@
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
+                  },
+                  "engineLogging": {
+                    "type": "boolean",
+                    "deprecationMessage": "%generateOptionsSchema.logging.engineLogging.deprecationMessage%",
+                    "default": false
+                  },
+                  "diagnosticsLog": {
+                    "description": "%generateOptionsSchema.logging.diagnosticsLog.description%",
+                    "type": "object",
+                    "required": [],
+                    "default": {},
+                    "properties": {
+                      "protocolMessages": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription%",
+                        "default": false
+                      },
+                      "dispatcherMessages": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "error",
+                          "important",
+                          "normal"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription%"
+                        ],
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription%",
+                        "default": "none"
+                      },
+                      "debugEngineAPITracing": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "error",
+                          "all"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription%"
+                        ],
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription%",
+                        "default": "none"
+                      },
+                      "debugRuntimeEventTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription%",
+                        "default": false
+                      },
+                      "expressionEvaluationTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription%",
+                        "default": false
+                      },
+                      "startDebuggingTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription%",
+                        "default": false
+                      }
+                    }
                   }
                 }
               },
@@ -3777,11 +4009,6 @@
                     "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
                     "default": true
                   },
-                  "engineLogging": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.engineLogging.markdownDescription%",
-                    "default": false
-                  },
                   "browserStdOut": {
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
@@ -3801,6 +4028,71 @@
                     "type": "boolean",
                     "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
                     "default": true
+                  },
+                  "engineLogging": {
+                    "type": "boolean",
+                    "deprecationMessage": "%generateOptionsSchema.logging.engineLogging.deprecationMessage%",
+                    "default": false
+                  },
+                  "diagnosticsLog": {
+                    "description": "%generateOptionsSchema.logging.diagnosticsLog.description%",
+                    "type": "object",
+                    "required": [],
+                    "default": {},
+                    "properties": {
+                      "protocolMessages": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription%",
+                        "default": false
+                      },
+                      "dispatcherMessages": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "error",
+                          "important",
+                          "normal"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription%"
+                        ],
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription%",
+                        "default": "none"
+                      },
+                      "debugEngineAPITracing": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "error",
+                          "all"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription%",
+                          "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription%"
+                        ],
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription%",
+                        "default": "none"
+                      },
+                      "debugRuntimeEventTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription%",
+                        "default": false
+                      },
+                      "expressionEvaluationTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription%",
+                        "default": false
+                      },
+                      "startDebuggingTracing": {
+                        "type": "boolean",
+                        "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription%",
+                        "default": false
+                      }
+                    }
                   }
                 }
               },
