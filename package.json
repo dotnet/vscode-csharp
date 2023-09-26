@@ -1169,6 +1169,12 @@
             "default": null,
             "description": "%configuration.dotnet.server.extensionPaths%"
           },
+          "dotnet.server.crashDumpPath": {
+            "scope": "machine-overridable",
+            "type": "string",
+            "default": null,
+            "description": "%configuration.dotnet.server.crashDumpPath%"
+          },
           "dotnet.projects.binaryLogPath": {
             "scope": "machine-overridable",
             "type": "string",
