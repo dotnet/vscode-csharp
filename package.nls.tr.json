@@ -37,6 +37,7 @@
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Derlenmiş kaynaklarda gezinmeyi etkinleştir.",
   "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Simge görüntülendiğinde açıklama bilgilerini göster.",
+  "configuration.dotnet.server.crashDumpPath": "Sets a folder path where crash dumps are written to if the language server crashes.  Must be writeable by the user.",
   "configuration.dotnet.server.extensionPaths": "Dil sunucusu --extension bağımsız değişkenleri yolunu geçersiz kıl",
   "configuration.dotnet.server.path": "Sunucunun (LSP veya O#) yürütülebilir dosyasının mutlak yolunu belirtir. Boş bırakıldığında C# Uzantısına sabitlenen sürüm kullanılır. (Önceden 'omnisharp.path')",
   "configuration.dotnet.server.startTimeout": "Specifies a timeout (in ms) for the client to successfully start and connect to the language server.",

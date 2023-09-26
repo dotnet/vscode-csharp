@@ -37,6 +37,7 @@
   "configuration.dotnet.navigation.navigateToDecompiledSources": "디컴파일된 원본 탐색을 사용하도록 설정합니다.",
   "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "기호를 표시할 때 설명 정보를 표시합니다.",
+  "configuration.dotnet.server.crashDumpPath": "Sets a folder path where crash dumps are written to if the language server crashes.  Must be writeable by the user.",
   "configuration.dotnet.server.extensionPaths": "언어 서버 --extension 인수 경로에 대한 재정의",
   "configuration.dotnet.server.path": "서버(LSP 또는 O#) 실행 파일의 절대 경로를 지정합니다. 비어 있으면 C# 확장에 고정된 버전이 사용됩니다(이전 `omnisharp.path`).",
   "configuration.dotnet.server.startTimeout": "Specifies a timeout (in ms) for the client to successfully start and connect to the language server.",

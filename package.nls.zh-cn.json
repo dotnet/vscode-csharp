@@ -37,6 +37,7 @@
   "configuration.dotnet.navigation.navigateToDecompiledSources": "启用对分解源的导航。",
   "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "显示符号时显示备注信息。",
+  "configuration.dotnet.server.crashDumpPath": "Sets a folder path where crash dumps are written to if the language server crashes.  Must be writeable by the user.",
   "configuration.dotnet.server.extensionPaths": "替代语言服务器 --extension 参数的路径",
   "configuration.dotnet.server.path": "指定服务器(LSP 或 O#)可执行文件的绝对路径。如果留空，会使用固定到 C# 扩展的版本。(之前为 \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "Specifies a timeout (in ms) for the client to successfully start and connect to the language server.",
