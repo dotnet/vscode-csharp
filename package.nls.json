@@ -6,6 +6,7 @@
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached. (Previously `omnisharp.waitForDebugger`)",
   "configuration.dotnet.server.trace": "Sets the logging level for the language server",
   "configuration.dotnet.server.extensionPaths": "Override for path to language server --extension arguments",
+  "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.implementType.insertionBehavior": "The insertion location of properties, events, and methods When implement interface or abstract class.",
   "configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind": "Place them with other members of the same kind.",
   "configuration.dotnet.implementType.insertionBehavior.atTheEnd": "Place them at the end.",
@@ -242,7 +243,7 @@
     "message": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
     "comment": [
       "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL.",
-      "{Locked='(example: http\u200b://MyExampleSymbolServer)'}"
+      "{Locked='http\u200b://MyExampleSymbolServer'}"
     ]
   },
   "generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description": {

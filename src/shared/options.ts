@@ -72,6 +72,7 @@ export interface LanguageServerOptions {
     readonly logLevel: string;
     readonly documentSelector: DocumentSelector;
     readonly extensionsPaths: string[] | null;
+    readonly preferCSharpExtension: boolean;
     readonly startTimeout: number;
 }
 
@@ -378,6 +379,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get extensionsPaths() {
         return readOption<string[] | null>('dotnet.server.extensionPaths', null);
     }
+    public get preferCSharpExtension() {
+        return readOption<boolean>('dotnet.preferCSharpExtension', false);
+    }
     public get startTimeout() {
         return readOption<number>('dotnet.server.startTimeout', 30000);
     }
@@ -473,4 +477,5 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
 export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
     'logLevel',
     'documentSelector',
+    'preferCSharpExtension',
 ];
