@@ -70,6 +70,10 @@ export const migrateOptions = [
         omnisharpOption: 'csharp.unitTestDebuggingOptions',
         roslynOption: 'dotnet.unitTestDebuggingOptions',
     },
+    {
+        omnisharpOption: 'omnisharp.testRunSettings',
+        roslynOption: 'dotnet.unitTests.runSettingsPath',
+    },
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {

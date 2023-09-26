@@ -1,26 +1,44 @@
-steps:
-- checkout: self
-  clean: true
-  submodules: true
-  fetchTags: false
-  fetchDepth: 1
+parameters:
+  - name: jobName
+    type: string
+  - name: poolName
+    type: string
+  - name: demandsName
+    type: string
+    default: ''
+  - name: vmImageName
+    type: string
+    default: ''
 
-- template: prereqs.yml
+jobs:
+- job: Test_${{ parameters.jobName }}
+  displayName: 'Test ${{ parameters.jobName }}'
+  pool:
+    ${{ if ne(parameters.poolName, '') }}:
+      name: ${{ parameters.poolName }}
+    ${{ if ne(parameters.demandsName, '') }}:
+      demands: ImageOverride -equals ${{ parameters.demandsName }}
+    ${{ if ne(parameters.vmImageName, '') }}:
+      vmImage: ${{ parameters.vmImageName }}
+  steps:
+  - checkout: self
+    clean: true
+    submodules: true
+    fetchTags: false
+    fetchDepth: 1
 
-- pwsh: |
-    if ($IsLinux) {
-      Write-Host "Activating screen emulation"
-      /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-      $env:DISPLAY=':99.0'
-      Write-Host "Now running tests"
-    }
+  - template: prereqs.yml
 
-    npm run test
-  displayName: 🧪 Run unit and integration tests
+  - template: test-prereqs.yml
 
-- task: PublishPipelineArtifact@1
-  condition: failed()
-  displayName: 'Upload integration test logs'
-  inputs:
-    targetPath: '$(Build.SourcesDirectory)/.vscode-test/user-data/logs'
-    artifactName: 'VSCode Test Logs ($(Agent.JobName)-$(System.JobAttempt))'
+  - script: npm run test
+    displayName: 🧪 Run unit and integration tests
+    env:
+      DISPLAY: :99.0
+
+  - task: PublishPipelineArtifact@1
+    condition: failed()
+    displayName: 'Upload integration test logs'
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/.vscode-test/user-data/logs'
+      artifactName: 'VSCode Test Logs ($(Agent.JobName)-$(System.JobAttempt))'

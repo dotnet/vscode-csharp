@@ -999,4 +999,16 @@ export interface vscode {
         sessionId: string;
         openExternal(target: Uri): Thenable<boolean>;
     };
+
+    l10n: {
+        t(message: string, ...args: Array<string | number | boolean>): string;
+        t(message: string, args: Record<string, any>): string;
+        t(options: {
+            message: string;
+            args?: Array<string | number | boolean> | Record<string, any>;
+            comment: string | string[];
+        }): string;
+        bundle: { [key: string]: string } | undefined;
+        uri: Uri | undefined;
+    };
 }

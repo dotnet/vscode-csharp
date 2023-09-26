@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RoslynLanguageServer } from '../../../lsptoolshost/roslynLanguageServer';
 import { CSharpProjectedDocument } from '../csharp/csharpProjectedDocument';
 import { HtmlProjectedDocument } from '../html/htmlProjectedDocument';
 import { RazorLanguage } from '../razorLanguage';
@@ -17,6 +16,7 @@ import { IRazorDocumentChangeEvent } from './IRazorDocumentChangeEvent';
 import { IRazorDocumentManager } from './IRazorDocumentManager';
 import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
+import { razorInitializeCommand } from '../../../lsptoolshost/razorCommands';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -172,7 +172,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // don't work, which is a poor experience. This is the compromise.
         if (this.roslynActivated && !this.razorDocumentGenerationInitialized && this.anyRazorDocumentOpen) {
             this.razorDocumentGenerationInitialized = true;
-            vscode.commands.executeCommand(RoslynLanguageServer.razorInitializeCommand);
+            vscode.commands.executeCommand(razorInitializeCommand);
             for (const document of this.documents) {
                 await this.ensureDocumentAndProjectedDocumentsOpen(document);
             }
@@ -302,7 +302,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // vscode.workspace.openTextDocument may send a textDocument/didOpen
         // request to the C# language server. We need to keep track of
         // this to make sure we don't send a duplicate request later on.
-        const razorUri = vscode.Uri.parse('file:' + document.path, true);
+        const razorUri = vscode.Uri.file(document.path);
         if (!this.isRazorDocumentOpenInCSharpWorkspace(razorUri)) {
             this.didOpenRazorCSharpDocument(razorUri);
 

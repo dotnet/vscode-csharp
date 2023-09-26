@@ -246,9 +246,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         if (!options.usingOmniSharp) {
             args.push('--projectConfigurationFileName');
             args.push('project.razor.vscode.json');
-            args.push('--SupportsDelegatedDiagnostics');
-            args.push('true');
-            args.push('--SupportsDelegatedCodeActions');
+            args.push('--DelegateToCSharpOnDiagnosticPublish');
             args.push('true');
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');

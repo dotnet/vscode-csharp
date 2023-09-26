@@ -4,7 +4,7 @@
 
 First install:
 
-* Node.js ([v18.17.0 LTS](https://nodejs.org/de/blog/release/v18.17.0) is recommended).
+* Node.js ([v18.17.0 LTS](https://nodejs.org/en/blog/release/v18.17.0) is recommended).
 * Npm (The version shipped with node is fine)
 * .NET 7.0 SDK (dotnet should be on your path)
 
@@ -49,7 +49,7 @@ VSIXs can be created using the gulp command `gulp vsix:release:package`.  This w
 
 To update the version of the roslyn server used by the extension do the following:
 1.  Find the the Roslyn signed build you want from [here](https://dnceng.visualstudio.com/internal/_build?definitionId=327&_a=summary).  Typically the latest successful build of main is fine.
-2.  In the official build stage, look for the `Publish Assets` step.  In there you will see it publishing the `Microsoft.CodeAnalysis.LanguageServer` package with some version, e.g. `4.6.0-3.23158.4`.  Take note of that version number.
+2.  In the official build stage, look for the `Publish Assets` step.  In there you will see it publishing the `Microsoft.CodeAnalysis.LanguageServer.neutral` package with some version, e.g. `4.6.0-3.23158.4`.  Take note of that version number.
 3.  In the [package.json](package.json) inside the `defaults` section update the `roslyn` key to point to the version number you found above in step 2.
-4.  Build and test the change (make sure to run `gulp installDependencies` to get the new version!).  If everything looks good, submit a PR.
-    * Adding new package versions might require authentication, run with the `--interactive` flag to login.  You may need to install [azure artifacts nuget credential provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
+4.  Ensure that version of the package is in the proper feeds by running `gulp updateRoslynVersion`. Note: you may need to install the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
+5.  Build and test the change. If everything looks good, submit a PR.

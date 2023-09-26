@@ -293,7 +293,7 @@ export class AssetGenerator {
         }
 
         commandArgs.push('/property:GenerateFullPaths=true');
-        commandArgs.push('/consoleloggerparameters:NoSummary');
+        commandArgs.push('/consoleloggerparameters:NoSummary;ForceNoAlign');
     }
 
     private getBuildProjectPath(): string | null {
@@ -571,7 +571,8 @@ export async function getBuildOperations(generator: AssetGenerator): Promise<Ass
                     try {
                         tasksConfiguration = tolerantParse(text);
                     } catch (error) {
-                        vscode.window.showErrorMessage(vscode.l10n.t('Failed to parse tasks.json file'));
+                        const message = error instanceof Error ? error.message : `${error}`;
+                        vscode.window.showErrorMessage(vscode.l10n.t('Failed to parse tasks.json file: {0}', message));
                         return resolve({ updateTasksJson: false });
                     }
 

@@ -34,7 +34,7 @@ import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../disposable';
 import CompositeDisposable from '../compositeDisposable';
 import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
-import OptionProvider from '../shared/observers/optionProvider';
+import { commonOptions } from '../shared/options';
 
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
@@ -45,7 +45,6 @@ export default class TestManager extends AbstractProvider {
     private _eventStream: EventStream;
 
     constructor(
-        private optionProvider: OptionProvider,
         server: OmniSharpServer,
         eventStream: EventStream,
         languageMiddlewareFeature: LanguageMiddlewareFeature
@@ -233,7 +232,7 @@ export default class TestManager extends AbstractProvider {
     }
 
     private _getRunSettings(filename: string): string | undefined {
-        const testSettingsPath = this.optionProvider.GetLatestOptions().omnisharpOptions.testRunSettings;
+        const testSettingsPath = commonOptions.runSettingsPath;
         if (testSettingsPath.length === 0) {
             return undefined;
         }
@@ -393,7 +392,7 @@ export default class TestManager extends AbstractProvider {
         environmentVariables: Map<string, string>,
         debuggerEventsPipeName: string
     ) {
-        const debugOptions = this.optionProvider.GetLatestOptions().commonOptions.unitTestDebuggingOptions;
+        const debugOptions = commonOptions.unitTestDebuggingOptions;
 
         // Get the initial set of options from the workspace setting
         let result: any;

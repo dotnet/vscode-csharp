@@ -3,38 +3,82 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { vscode } from '../../vscodeAdapter';
-import { Options } from '../options';
-import ShowInformationMessage from './utils/showInformationMessage';
 import { Observable } from 'rxjs';
 import Disposable from '../../disposable';
-import { filter } from 'rxjs/operators';
+import { isDeepStrictEqual } from 'util';
+import {
+    CommonOptions,
+    LanguageServerOptions,
+    OmnisharpServerOptions,
+    commonOptions,
+    languageServerOptions,
+    omnisharpOptions,
+} from '../options';
 
-function OptionChangeObservable(
-    optionObservable: Observable<Options>,
-    shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean
-): Observable<Options> {
-    let options: Options;
-    return optionObservable.pipe(
-        filter((newOptions) => {
-            const changed = options && shouldOptionChangeTriggerReload(options, newOptions);
-            options = newOptions;
-            return changed;
-        })
-    );
-}
+type RelevantOptionValues = {
+    commonOptions: Map<keyof CommonOptions, any>;
+    omnisharpOptions: Map<keyof OmnisharpServerOptions, any>;
+    languageServerOptions: Map<keyof LanguageServerOptions, any>;
+};
 
-export function ShowConfigChangePrompt(
-    optionObservable: Observable<Options>,
-    commandName: string,
-    shouldOptionChangeTriggerReload: (oldOptions: Options, newOptions: Options) => boolean,
-    vscode: vscode
+export function HandleOptionChanges(
+    optionObservable: Observable<void>,
+    optionChangeObserver: OptionChangeObserver
 ): Disposable {
-    const subscription = OptionChangeObservable(optionObservable, shouldOptionChangeTriggerReload).subscribe((_) => {
-        const message =
-            'C# configuration has changed. Would you like to relaunch the Language Server with your changes?';
-        ShowInformationMessage(vscode, message, { title: 'Restart Language Server', command: commandName });
+    let oldOptions: RelevantOptionValues;
+    const subscription = optionObservable.pipe().subscribe(() => {
+        const changedKeys = optionChangeObserver.getRelevantOptions();
+        const newOptions = getLatestRelevantOptions(changedKeys);
+        if (!oldOptions) {
+            oldOptions = newOptions;
+        }
+
+        const changedRelevantCommonOptions = changedKeys.changedCommonOptions.filter(
+            (key) => !isDeepStrictEqual(oldOptions.commonOptions.get(key), newOptions.commonOptions.get(key))
+        );
+        const changedRelevantLanguageServerOptions = changedKeys.changedLanguageServerOptions.filter(
+            (key) =>
+                !isDeepStrictEqual(oldOptions.languageServerOptions.get(key), newOptions.languageServerOptions.get(key))
+        );
+        const changedRelevantOmnisharpOptions = changedKeys.changedOmnisharpOptions.filter(
+            (key) => !isDeepStrictEqual(oldOptions.omnisharpOptions.get(key), newOptions.omnisharpOptions.get(key))
+        );
+
+        oldOptions = newOptions;
+
+        if (
+            changedRelevantCommonOptions.length > 0 ||
+            changedRelevantLanguageServerOptions.length > 0 ||
+            changedRelevantOmnisharpOptions.length > 0
+        ) {
+            optionChangeObserver.handleOptionChanges({
+                changedCommonOptions: changedRelevantCommonOptions,
+                changedLanguageServerOptions: changedRelevantLanguageServerOptions,
+                changedOmnisharpOptions: changedRelevantOmnisharpOptions,
+            });
+        }
     });
 
     return new Disposable(subscription);
+}
+
+export interface OptionChangeObserver {
+    getRelevantOptions: () => OptionChanges;
+    handleOptionChanges: (optionChanges: OptionChanges) => void;
+}
+
+export interface OptionChanges {
+    changedCommonOptions: ReadonlyArray<keyof CommonOptions>;
+    changedLanguageServerOptions: ReadonlyArray<keyof LanguageServerOptions>;
+    changedOmnisharpOptions: ReadonlyArray<keyof OmnisharpServerOptions>;
+}
+
+function getLatestRelevantOptions(changedKeys: OptionChanges): RelevantOptionValues {
+    return {
+        commonOptions: new Map(changedKeys.changedCommonOptions.map((key) => [key, commonOptions[key]])),
+        omnisharpOptions: new Map(changedKeys.changedOmnisharpOptions.map((key) => [key, omnisharpOptions[key]])),
+        languageServerOptions: new Map(
+            changedKeys.changedLanguageServerOptions.map((key) => [key, languageServerOptions[key]])
+        ),
+    };
 }

@@ -44,6 +44,7 @@ import { RazorSignatureHelpProvider } from './signatureHelp/razorSignatureHelpPr
 import { TelemetryReporter } from './telemetryReporter';
 import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
 import { RazorSimplifyMethodHandler } from './simplify/razorSimplifyMethodHandler';
+import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHandler';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -188,6 +189,13 @@ export async function activate(
                 documentManager,
                 logger
             );
+            const razorFormatNewFileHandler = new RazorFormatNewFileHandler(
+                documentSynchronizer,
+                languageServerClient,
+                languageServiceClient,
+                documentManager,
+                logger
+            );
 
             localRegistrations.push(
                 languageConfiguration.register(),
@@ -232,6 +240,7 @@ export async function activate(
                 razorDiagnosticHandler.register(),
                 codeActionsHandler.register(),
                 razorSimplifyMethodHandler.register(),
+                razorFormatNewFileHandler.register(),
             ]);
         });
 

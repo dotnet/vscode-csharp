@@ -139,8 +139,19 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
         }
         if (debugConfigArray.length == 1) {
             return debugConfigArray[0];
-        } else if (debugConfigArray.length > 1) {
-            throw new InternalServiceError('Multiple launch targets is not yet supported.');
+        } else if (debugConfigArray.length === 2) {
+            // This creates a onDidStartDebugSession event listener that will dispose of itself when it detects
+            // the debugConfiguration that is return from this method has started.
+            const startDebugEvent = vscode.debug.onDidStartDebugSession((debugSession: vscode.DebugSession) => {
+                if (debugSession.name === debugConfigArray[0].name) {
+                    startDebugEvent.dispose();
+                    vscode.debug.startDebugging(debugSession.workspaceFolder, debugConfigArray[1], debugSession);
+                }
+            });
+
+            return debugConfigArray[0];
+        } else if (debugConfigArray.length > 2) {
+            throw new InternalServiceError('Multiple launch targets (>2) is not yet supported.');
         } else {
             throw new InternalServiceError(
                 'Unexpected configuration array from IDotnetDebugConfigurationServiceResult.'

@@ -5,6 +5,7 @@
 
 import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface WorkspaceDebugConfigurationParams {
     /**
@@ -82,6 +83,11 @@ export interface RunTestsParams extends lsp.WorkDoneProgressParams, lsp.PartialR
      * Whether the request should attempt to call back to the client to attach a debugger before running the tests.
      */
     attachDebugger: boolean;
+
+    /**
+     * The absolute path to a .runsettings file to configure the test run.
+     */
+    runSettingsPath?: string;
 }
 
 export interface TestProgress {
@@ -135,6 +141,10 @@ export interface BuildOnlyDiagnosticIdsResult {
     ids: string[];
 }
 
+export interface NamedPipeInformation {
+    pipeName: string;
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -159,6 +169,12 @@ export namespace ProjectInitializationCompleteNotification {
     export const method = 'workspace/projectInitializationComplete';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.NotificationType(method);
+}
+
+export namespace ProjectConfigurationNotification {
+    export const method = 'workspace/projectConfigurationTelemetry';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.NotificationType<ProjectConfigurationMessage>(method);
 }
 
 export namespace ShowToastNotification {

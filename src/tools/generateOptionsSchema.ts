@@ -159,9 +159,31 @@ function generateCommentArrayForDescription(description: string): string[] {
 
     // If the description contains '\u200b', it is used to prevent vscode from rendering a URL.
     if (description.includes('\u200b')) {
+        const urlRegEx = new RegExp('https?\\u200b:[\\w/\\.\u200b]+', 'g');
+        let result = urlRegEx.exec(description);
+        if (!result) {
+            throw `Found zero-with unicode space outside of expected URL in '${description}'`;
+        }
+
         comments.push(
             "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL."
         );
+        while (result !== null) {
+            let foundText = result[0];
+
+            // check if the match is surrounded by `()`, and if so, include them
+            if (
+                result.index > 0 &&
+                result.index + foundText.length < description.length &&
+                description[result.index - 1] === '(' &&
+                description[result.index + foundText.length] === ')'
+            ) {
+                foundText = `(${foundText})`;
+            }
+
+            comments.push(`{Locked='${foundText}'}`);
+            result = urlRegEx.exec(description);
+        }
     }
 
     return comments;
@@ -176,7 +198,7 @@ function generateLocForProperty(key: string, prop: any, keyToLocString: any): vo
             if (comments.length > 0) {
                 keyToLocString[descriptionKey] = {
                     message: prop.description,
-                    comments: comments,
+                    comment: comments,
                 };
             } else {
                 keyToLocString[descriptionKey] = prop.description;
@@ -192,7 +214,7 @@ function generateLocForProperty(key: string, prop: any, keyToLocString: any): vo
             if (comments.length > 0) {
                 keyToLocString[markdownDescriptionKey] = {
                     message: prop.markdownDescription,
-                    comments: comments,
+                    comment: comments,
                 };
             } else {
                 keyToLocString[markdownDescriptionKey] = prop.markdownDescription;
@@ -208,13 +230,29 @@ function generateLocForProperty(key: string, prop: any, keyToLocString: any): vo
             if (comments.length > 0) {
                 keyToLocString[settingsDescriptionKey] = {
                     message: prop.settingsDescription,
-                    comments: comments,
+                    comment: comments,
                 };
             } else {
                 keyToLocString[settingsDescriptionKey] = prop.settingsDescription;
             }
         }
         prop.settingsDescription = `%${settingsDescriptionKey}%`;
+    }
+
+    if (prop.deprecationMessage) {
+        const descriptionKey = `${key}.deprecationMessage`;
+        if (!keyToLocString[descriptionKey]) {
+            const comments: string[] = generateCommentArrayForDescription(prop.deprecationMessage);
+            if (comments.length > 0) {
+                keyToLocString[descriptionKey] = {
+                    message: prop.deprecationMessage,
+                    comment: comments,
+                };
+            } else {
+                keyToLocString[descriptionKey] = prop.deprecationMessage;
+            }
+        }
+        prop.deprecationMessage = `%${descriptionKey}%`;
     }
 
     if (prop.enum && prop.enumDescriptions) {
@@ -325,6 +363,19 @@ export function GenerateOptionsSchema() {
     delete unitTestDebuggingOptions.processName;
     delete unitTestDebuggingOptions.processId;
     delete unitTestDebuggingOptions.pipeTransport;
+
+    // Remove diagnostic log logging options -- these should be set using the global option
+    const allowedLoggingOptions = ['exceptions', 'moduleLoad', 'programOutput', 'threadExit', 'processExit'];
+    const diagnosticLogOptions = Object.keys(unitTestDebuggingOptions.logging.properties).filter((x) => {
+        if (allowedLoggingOptions.indexOf(x) >= 0) {
+            return false;
+        }
+        return true;
+    });
+    for (const key of diagnosticLogOptions) {
+        delete unitTestDebuggingOptions.logging.properties[key];
+    }
+
     // Add the additional options we do want
     unitTestDebuggingOptions['type'] = {
         type: 'string',
