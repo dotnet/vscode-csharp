@@ -51,6 +51,7 @@ import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntime
 import { PlatformInformation } from '../../shared/platform';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
+import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHandler';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -233,6 +234,13 @@ export async function activate(
                 documentManager,
                 logger
             );
+            const razorFormatNewFileHandler = new RazorFormatNewFileHandler(
+                documentSynchronizer,
+                languageServerClient,
+                languageServiceClient,
+                documentManager,
+                logger
+            );
 
             localRegistrations.push(
                 languageConfiguration.register(),
@@ -277,6 +285,7 @@ export async function activate(
                 razorDiagnosticHandler.register(),
                 codeActionsHandler.register(),
                 razorSimplifyMethodHandler.register(),
+                razorFormatNewFileHandler.register(),
             ]);
         });
 

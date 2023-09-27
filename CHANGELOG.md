@@ -10,8 +10,16 @@
 ## Latest
 * Update Razor version to 7.0.0-preview.23472.3 (PR: [#6371](https://github.com/dotnet/vscode-csharp/pull/6371))
   * Add Razor language server telemetry when DevKit is installed (PR: [#9283](https://github.com/dotnet/razor/pull/9283))
-* Update Roslyn version to 4.8.0-3.23472.2 and Razor version to 8.0.0-preview.23465.2 (PR: [#6423](https://github.com/dotnet/vscode-csharp/pull/6423))
+* Update Roslyn version to 4.8.0-3.23475.7 (PR: [#6431](https://github.com/dotnet/vscode-csharp/pull/6431))
+  * Fix crash when navigating to .NET Framework reference assemblies (PR: [#69936](https://github.com/dotnet/roslyn/pull/69936))
+  * Fix error when only the invariant culture is available (PR: [#70096](https://github.com/dotnet/roslyn/pull/70096))
+* Fix issue in razor new file formatting (PR: [#6429](https://github.com/dotnet/vscode-csharp/pull/6429))
+* Update Razor version to 8.0.0-preview.23465.2 (PR: [#6423](https://github.com/dotnet/vscode-csharp/pull/6423))
   *  Use message pack for project.razor.* configuration file (PR: [#9270](https://github.com/dotnet/razor/pull/9270))
+* Fix issue in debug tests where tests would complete before the debugger attached (PR: [#6415](https://github.com/dotnet/vscode-csharp/pull/6415))
+* Hide certain debugger launch configurations when devkit is installed (PR: [#6405](https://github.com/dotnet/vscode-csharp/pull/6405))
+* Fix issue where build errors were not parsed correctly in the problems list (PR: [#6340](https://github.com/dotnet/vscode-csharp/pull/6340))
+* Update debugger packages to 2.0.3 (PR: [#6401](https://github.com/dotnet/vscode-csharp/pull/6401))
 
 ## 2.3.27
 * Update Roslyn version to 4.8.0-3.23470.7 (PR: [#6408](https://github.com/dotnet/vscode-csharp/pull/6408))
