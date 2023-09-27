@@ -150,6 +150,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[ОШИБКА]: расширению C# не удалось установить пакет отладчика.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Параметр dotnet.server.useOmnisharp изменен. Перезагрузите окно, чтобы применить изменение",
   "pipeArgs must be a string or a string array type": "pipeArgs должен быть строкой или строковым массивом",
+  "{0} Keyword": "{0} Keyword",
   "{0} references": "Ссылок: {0}",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, вставьте описание проблемы в соответствующее поле. Не забудьте указать все необходимые сведения."
 }
