@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
 import * as cp from 'child_process';
 import { EventEmitter } from 'events';
 import * as util from '../../common';
@@ -253,7 +254,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
                 args.push('--sessionId', getSessionId());
                 args.push(
                     '--telemetryExtensionPath',
-                    util.getExtensionPath() + '\\.razortelemetry\\Microsoft.VisualStudio.DevKit.Razor.dll'
+                    path.join(util.getExtensionPath(), '.razortelemetry', 'Microsoft.VisualStudio.DevKit.Razor.dll')
                 );
             }
         }
