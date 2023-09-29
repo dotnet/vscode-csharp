@@ -8,7 +8,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Update Roslyn to 4.9.0-1.23478.7 (PR: [#6449](https://github.com/dotnet/vscode-csharp/pull/6449))
+* Update Roslyn version to 4.9.0-1.23478.7 (PR: [#6449](https://github.com/dotnet/vscode-csharp/pull/6449))
   * Fix exception thrown by outdated version of ExternalAccess.RazorCompiler.dll (PR: [#70716](https://github.com/dotnet/roslyn/pull/70176))
   * Fix crash when navigating to .NET Framework reference assemblies (PR: [#69936](https://github.com/dotnet/roslyn/pull/69936))
   * Fix error when only the invariant culture is available (PR: [#70096](https://github.com/dotnet/roslyn/pull/70096))
