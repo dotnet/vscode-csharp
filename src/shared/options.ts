@@ -72,8 +72,9 @@ export interface LanguageServerOptions {
     readonly logLevel: string;
     readonly documentSelector: DocumentSelector;
     readonly extensionsPaths: string[] | null;
-    readonly startTimeout: number;
     readonly preferCSharpExtension: boolean;
+    readonly startTimeout: number;
+    readonly crashDumpPath: string | undefined;
 }
 
 export interface RazorOptions {
@@ -379,11 +380,14 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get extensionsPaths() {
         return readOption<string[] | null>('dotnet.server.extensionPaths', null);
     }
+    public get preferCSharpExtension() {
+        return readOption<boolean>('dotnet.preferCSharpExtension', false);
+    }
     public get startTimeout() {
         return readOption<number>('dotnet.server.startTimeout', 30000);
     }
-    public get preferCSharpExtension() {
-        return readOption<boolean>('dotnet.preferCSharpExtension', false);
+    public get crashDumpPath() {
+        return readOption<string | undefined>('dotnet.server.crashDumpPath', undefined);
     }
 }
 

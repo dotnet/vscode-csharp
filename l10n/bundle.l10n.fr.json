@@ -150,6 +150,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERREUR] : l’extension C# n’a pas pu installer le package du débogueur.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "l’option dotnet.server.useOmnzurp a changé. Rechargez la fenêtre pour appliquer la modification",
   "pipeArgs must be a string or a string array type": "pipeArgs doit être une chaîne ou un type de tableau de chaînes",
+  "{0} Keyword": "Mot clé {0}",
   "{0} references": "{0} références",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, collez le contenu de votre problème en tant que corps du problème. N’oubliez pas de remplir tous les détails qui n’ont pas été remplis."
 }

@@ -150,6 +150,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[오류]: C# 확장이 디버거 패키지를 설치하지 못했습니다.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp 옵션이 변경되었습니다. 변경 내용을 적용하려면 창을 다시 로드하세요.",
   "pipeArgs must be a string or a string array type": "pipeArgs는 문자열 또는 문자열 배열 유형이어야 합니다.",
+  "{0} Keyword": "{0} 키워드",
   "{0} references": "참조 {0}개",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, 문제 내용을 문제의 본문으로 붙여넣습니다. 작성하지 않은 세부 정보를 잊지 말고 입력합니다."
 }

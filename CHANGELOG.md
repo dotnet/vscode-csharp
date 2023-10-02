@@ -8,6 +8,25 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Add code action fix all support (PR: [#6310](https://github.com/dotnet/vscode-csharp/pull/6310))
+* Update Roslyn version to 4.9.0-1.23502.2 (PR: [#6463](https://github.com/dotnet/vscode-csharp/pull/6463))
+  * Fix issue loading projects on .NET 8 RC2 (PR: [#70196](https://github.com/dotnet/roslyn/pull/70196))
+  * Fix exception thrown by outdated version of ExternalAccess.RazorCompiler.dll (PR: [#70716](https://github.com/dotnet/roslyn/pull/70176))
+  * Fix crash when navigating to .NET Framework reference assemblies (PR: [#69936](https://github.com/dotnet/roslyn/pull/69936))
+  * Fix error when only the invariant culture is available (PR: [#70096](https://github.com/dotnet/roslyn/pull/70096))
+* Update Razor version to 7.0.0-preview.23475.5 (PR: [#6449](https://github.com/dotnet/vscode-csharp/pull/6449))
+  * Add Razor language server telemetry when DevKit is installed (PR: [#9283](https://github.com/dotnet/razor/pull/9283))
+  * Use message pack for project.razor.* configuration file (PR: [#9270](https://github.com/dotnet/razor/pull/9270))
+* Fix issues with Razor completion (PR: [#6441](https://github.com/dotnet/vscode-csharp/pull/6441))
+* Add option to collect crash dumps on language server crash (PR: [#6438](https://github.com/dotnet/vscode-csharp/pull/6438))
+* Add support for multilaunch for Blazorwasm (PR: [#6432](https://github.com/dotnet/vscode-csharp/pull/6432))
+* Fix issue in Razor new file formatting (PR: [#6429](https://github.com/dotnet/vscode-csharp/pull/6429))
+* Fix issue in debug tests where tests would complete before the debugger attached (PR: [#6415](https://github.com/dotnet/vscode-csharp/pull/6415))
+* Hide certain debugger launch configurations when devkit is installed (PR: [#6405](https://github.com/dotnet/vscode-csharp/pull/6405))
+* Fix issue where build errors were not parsed correctly in the problems list (PR: [#6340](https://github.com/dotnet/vscode-csharp/pull/6340))
+* Update debugger packages to 2.0.3 (PR: [#6401](https://github.com/dotnet/vscode-csharp/pull/6401))
+
+## 2.4.4
 * Respect `dotnet.preferCSharpExtension` option (PR: [#6390](https://github.com/dotnet/vscode-csharp/pull/6390))
 
 ## 2.3.27

@@ -150,6 +150,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[错误]: C# 扩展无法安装调试器包。",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp 选项已更改。请重新加载窗口以应用更改",
   "pipeArgs must be a string or a string array type": "pipeArgs 必须是字符串或字符串数组类型",
+  "{0} Keyword": "{0} 关键字",
   "{0} references": "{0} 个引用",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}，将问题内容粘贴为问题的正文。请记得填写任何未填充的详细信息。"
 }
