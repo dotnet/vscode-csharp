@@ -22,6 +22,9 @@
 * Fix issue where build errors were not parsed correctly in the problems list (PR: [#6340](https://github.com/dotnet/vscode-csharp/pull/6340))
 * Update debugger packages to 2.0.3 (PR: [#6401](https://github.com/dotnet/vscode-csharp/pull/6401))
 
+## 2.4.4
+* Respect `dotnet.preferCSharpExtension` option (PR: [#6390](https://github.com/dotnet/vscode-csharp/pull/6390))
+
 ## 2.3.27
 * Update Roslyn version to 4.8.0-3.23470.7 (PR: [#6408](https://github.com/dotnet/vscode-csharp/pull/6408))
   * Update NuGet version to fix issues loading projects with .NET 8 RC2 (PR: [#70023](https://github.com/dotnet/roslyn/pull/70023))
