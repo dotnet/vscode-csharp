@@ -135,7 +135,7 @@
 * Fix misleading LSP server logs (PR: [#69378](https://github.com/dotnet/roslyn/pull/69378))
 * Add support for code lens enable/disable options to roslyn LSP (PR: [#6001](https://github.com/dotnet/vscode-csharp/pull/6001))
 * Onboard Localization pipeline (PR: [#5990](https://github.com/dotnet/vscode-csharp/pull/5990))
-* Enable loading translated strings from razor TS code (PR: [#5962](https://github.com/dotnet/vscode-csharp/pull/5962))
+* Enable loading translated strings from Razor TS code (PR: [#5962](https://github.com/dotnet/vscode-csharp/pull/5962))
 * Update typescript and eslint plugin to remove build warning (PR: [6002](https://github.com/dotnet/vscode-csharp/pull/6002))
 * Report how the extension was activated (PR: [#6043](https://github.com/dotnet/vscode-csharp/pull/6043))
 * Update Razor to 7.0.0-preview.23410.1 (PR: [#6105](https://github.com/dotnet/vscode-csharp/pull/6105))
