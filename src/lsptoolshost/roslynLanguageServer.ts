@@ -54,6 +54,7 @@ import { registerRazorCommands } from './razorCommands';
 import { registerOnAutoInsert } from './onAutoInsert';
 import { commonOptions, languageServerOptions, omnisharpOptions } from '../shared/options';
 import { NamedPipeInformation } from './roslynProtocol';
+import { IDisposable } from '../disposable';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -451,6 +452,17 @@ export class RoslynLanguageServer {
         // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
         env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
 
+        if (languageServerOptions.crashDumpPath) {
+            // Enable dump collection
+            env.DOTNET_DbgEnableMiniDump = '1';
+            // Collect heap dump
+            env.DOTNET_DbgMiniDumpType = '2';
+            // Collect crashreport.json with additional thread and stack frame information.
+            env.DOTNET_EnableCrashReport = '1';
+            // The dump file name format is <executable>.<pid>.dmp
+            env.DOTNET_DbgMiniDumpName = path.join(languageServerOptions.crashDumpPath, '%e.%p.dmp');
+        }
+
         let args: string[] = [];
 
         if (commonOptions.waitForDebugger) {
@@ -615,6 +627,46 @@ export class RoslynLanguageServer {
         );
     }
 
+    // eslint-disable-next-line @typescript-eslint/promise-function-async
+    private WaitForAttachCompleteAsync(attachRequestId: string): Promise<boolean> {
+        return new Promise<boolean>((resolve) => {
+            let didTerminateRegistation: IDisposable | null = null;
+            let customEventReg: IDisposable | null = null;
+            let isComplete = false;
+
+            const fire = (result: boolean) => {
+                if (isComplete === false) {
+                    isComplete = true;
+                    didTerminateRegistation?.dispose();
+                    customEventReg?.dispose();
+                    resolve(result);
+                }
+            };
+
+            didTerminateRegistation = vscode.debug.onDidTerminateDebugSession((session: vscode.DebugSession) => {
+                if (session.configuration.attachRequestId !== attachRequestId) {
+                    return;
+                }
+
+                fire(false);
+            });
+
+            customEventReg = vscode.debug.onDidReceiveDebugSessionCustomEvent(
+                (event: vscode.DebugSessionCustomEvent) => {
+                    if (event.session.configuration.attachRequestId !== attachRequestId) {
+                        return;
+                    }
+
+                    if (event.event !== 'attachComplete') {
+                        return;
+                    }
+
+                    fire(true);
+                }
+            );
+        });
+    }
+
     private registerDebuggerAttach() {
         this._languageClient.onRequest<RoslynProtocol.DebugAttachParams, RoslynProtocol.DebugAttachResult, void>(
             RoslynProtocol.DebugAttachRequest.type,
@@ -622,16 +674,22 @@ export class RoslynLanguageServer {
                 const debugOptions = commonOptions.unitTestDebuggingOptions;
                 const debugConfiguration: vscode.DebugConfiguration = {
                     ...debugOptions,
-                    name: '.NET Core Attach',
+                    name: '.NET Debug Unit test',
                     type: 'coreclr',
                     request: 'attach',
                     processId: request.processId,
+                    attachRequestId: randomUUID(),
                 };
 
-                const result = await vscode.debug.startDebugging(undefined, debugConfiguration, undefined);
-                return {
-                    didAttach: result,
-                };
+                const waitCompletePromise = this.WaitForAttachCompleteAsync(debugConfiguration.attachRequestId);
+
+                let success = await vscode.debug.startDebugging(undefined, debugConfiguration, undefined);
+                if (!success) {
+                    return { didAttach: false };
+                }
+
+                success = await waitCompletePromise;
+                return { didAttach: success };
             }
         );
     }

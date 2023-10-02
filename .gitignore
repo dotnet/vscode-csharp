@@ -9,6 +9,7 @@ out
 .debugger/
 .razor/
 .razoromnisharp/
+.razortelemetry/
 .vscode-test/
 dist/
 *.razor.json
