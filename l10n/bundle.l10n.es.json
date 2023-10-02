@@ -150,6 +150,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERROR]: la extensión de C# no pudo instalar el paquete del depurador.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "La opción dotnet.server.useOmnrp ha cambiado. Vuelva a cargar la ventana para aplicar el cambio.",
   "pipeArgs must be a string or a string array type": "pipeArgs debe ser una cadena o un tipo de matriz de cadena",
+  "{0} Keyword": "{0} Keyword",
   "{0} references": "{0} referencias",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, pegue el contenido del problema como el cuerpo del problema. No olvide rellenar los detalles que no se han rellenado."
 }

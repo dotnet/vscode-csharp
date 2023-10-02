@@ -5,6 +5,7 @@
 !.omnisharp/**
 !.razor/**
 !.razoromnisharp/**
+!.razortelemetry/**
 .rpt2_cache/**
 .github/**
 .vscode/**

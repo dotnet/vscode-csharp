@@ -8,7 +8,24 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Update Roslyn version (PR: [#6389](https://github.com/dotnet/vscode-csharp/pull/6389))
+* Update Roslyn version to 4.9.0-1.23478.7 (PR: [#6449](https://github.com/dotnet/vscode-csharp/pull/6449))
+  * Fix exception thrown by outdated version of ExternalAccess.RazorCompiler.dll (PR: [#70716](https://github.com/dotnet/roslyn/pull/70176))
+  * Fix crash when navigating to .NET Framework reference assemblies (PR: [#69936](https://github.com/dotnet/roslyn/pull/69936))
+  * Fix error when only the invariant culture is available (PR: [#70096](https://github.com/dotnet/roslyn/pull/70096))
+* Update Razor version to 7.0.0-preview.23475.5 (PR: [#6449](https://github.com/dotnet/vscode-csharp/pull/6449))
+  * Add Razor language server telemetry when DevKit is installed (PR: [#9283](https://github.com/dotnet/razor/pull/9283))
+  * Use message pack for project.razor.* configuration file (PR: [#9270](https://github.com/dotnet/razor/pull/9270))
+* Fix issues with Razor completion (PR: [#6441](https://github.com/dotnet/vscode-csharp/pull/6441))
+* Fix issue in Razor new file formatting (PR: [#6429](https://github.com/dotnet/vscode-csharp/pull/6429))
+* Fix issue in debug tests where tests would complete before the debugger attached (PR: [#6415](https://github.com/dotnet/vscode-csharp/pull/6415))
+* Hide certain debugger launch configurations when devkit is installed (PR: [#6405](https://github.com/dotnet/vscode-csharp/pull/6405))
+* Fix issue where build errors were not parsed correctly in the problems list (PR: [#6340](https://github.com/dotnet/vscode-csharp/pull/6340))
+* Update debugger packages to 2.0.3 (PR: [#6401](https://github.com/dotnet/vscode-csharp/pull/6401))
+
+## 2.3.27
+* Update Roslyn version to 4.8.0-3.23470.7 (PR: [#6408](https://github.com/dotnet/vscode-csharp/pull/6408))
+  * Update NuGet version to fix issues loading projects with .NET 8 RC2 (PR: [#70023](https://github.com/dotnet/roslyn/pull/70023))
+  * Update MSBuildLocator version to fix issues loading projects when only .NET 6 is installed (PR: [#70038](https://github.com/dotnet/roslyn/pull/70038))
   * Remove diagnostic source name (PR: [#69939](https://github.com/dotnet/roslyn/pull/69939))
   * Fix fold all regions (PR: [#69817](https://github.com/dotnet/roslyn/pull/69817))
   * Fix escaping and wrapping in hover (PR: [#69893](https://github.com/dotnet/roslyn/pull/69893))

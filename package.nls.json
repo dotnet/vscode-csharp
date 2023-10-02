@@ -1,4 +1,28 @@
 {
+  "command.o.restart": "Restart OmniSharp",
+  "command.o.pickProjectAndStart": "Select Project",
+  "command.dotnet.openSolution": "Open Solution",
+  "command.o.fixAll.solution": "Fix all occurrences of a code issue within solution",
+  "command.o.fixAll.project": "Fix all occurrences of a code issue within project",
+  "command.o.fixAll.document": "Fix all occurrences of a code issue within document",
+  "command.o.reanalyze.allProjects": "Analyze all projects",
+  "command.o.reanalyze.currentProject": "Analyze current project",
+  "command.dotnet.generateAssets.currentProject": "Generate Assets for Build and Debug",
+  "command.dotnet.restore.project": "Restore Project",
+  "command.dotnet.restore.all": "Restore All Projects",
+  "command.csharp.downloadDebugger": "Download .NET Core Debugger",
+  "command.csharp.listProcess": "List process for attach",
+  "command.csharp.listRemoteProcess": "List processes on remote connection for attach",
+  "command.csharp.listRemoteDockerProcess": "List processes on Docker connection",
+  "command.csharp.attachToProcess": "Attach to a .NET 5+ or .NET Core process",
+  "command.csharp.reportIssue": "Report an issue",
+  "command.csharp.showDecompilationTerms": "Show the decompiler terms agreement",
+  "command.extension.showRazorCSharpWindow": "Show Razor CSharp",
+  "command.extension.showRazorHtmlWindow": "Show Razor Html",
+  "command.razor.reportIssue": "Report a Razor issue",
+  "command.dotnet.test.runTestsInContext": "Run Tests in Context",
+  "command.dotnet.test.debugTestsInContext": "Debug Tests in Context",
+  "command.dotnet.restartServer": "Restart Language Server",
   "configuration.dotnet.defaultSolution.description": "The path of the default solution to be opened in the workspace, or set to 'disable' to skip it. (Previously `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the language server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.dotnet.server.path": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used. (Previously `omnisharp.path`)",
@@ -6,6 +30,7 @@
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached. (Previously `omnisharp.waitForDebugger`)",
   "configuration.dotnet.server.trace": "Sets the logging level for the language server",
   "configuration.dotnet.server.extensionPaths": "Override for path to language server --extension arguments",
+  "configuration.dotnet.server.crashDumpPath": "Sets a folder path where crash dumps are written to if the language server crashes.  Must be writeable by the user.",
   "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.implementType.insertionBehavior": "The insertion location of properties, events, and methods When implement interface or abstract class.",
   "configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind": "Place them with other members of the same kind.",
@@ -178,12 +203,6 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.logging.engineLogging.markdownDescription": {
-    "message": "Flag to determine whether diagnostic engine logs should be logged to the output window. This option defaults to `false`.",
-    "comment": [
-      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
-    ]
-  },
   "generateOptionsSchema.logging.browserStdOut.markdownDescription": {
     "message": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
     "comment": [
@@ -191,7 +210,7 @@
     ]
   },
   "generateOptionsSchema.logging.elapsedTiming.markdownDescription": {
-    "message": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
+    "message": "If true, protocol message logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
@@ -204,6 +223,51 @@
   },
   "generateOptionsSchema.logging.processExit.markdownDescription": {
     "message": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.engineLogging.deprecationMessage": "The setting 'logging.engineLogging' has been deprecated in favor of 'logging.diagnosticsLog.protocolMessages'.",
+  "generateOptionsSchema.logging.diagnosticsLog.description": "Settings to control which messages are printed to the output window from the debugger's diagnostics log. This log is meant to help troubleshoot problems with the debugger.",
+  "generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription": {
+    "message": "Flag to determine whether DAP protocol messages exchanged between the C# debugger and the UI should be logged to the output window. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription": {
+    "message": "Controls which messages are printed to the output window from the debugger's dispatcher. If not specified, this will default to `none` unless one of the verbose log settings are enabled (`debugEngineAPITracing`, `debugRuntimeEventTracing`, `expressionEvaluationTracing` or `startDebuggingTracing`), in which case the default changes to `normal`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription": "Do not print additional diagnostic messages.",
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription": "Print error-level diagnostic messages.",
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription": "Print important diagnostic messages.",
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription": "Print all non-verbose diagnostic messages.",
+  "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription": {
+    "message": "Controls if API calls to Microsoft.VisualStudio.Debugger.Engine/vsdebugeng.h should be printed to the output window. This option defaults to `none`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription": "Disable tracing API calls",
+  "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription": "Print failures from debugger API calls.",
+  "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription": "Print all debugger API calls. This is very verbose.",
+  "generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription": {
+    "message": "Flag to determine whether verbose tracing for events raised by the underlying runtime should be enabled. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription": {
+    "message": "Flag to determine whether verbose tracing for expression evaluation should be enabled. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription": {
+    "message": "Flag to determine whether verbose tracing for start debugging should be enabled. This option defaults to `false`.",
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
@@ -243,7 +307,7 @@
     "message": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
     "comment": [
       "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL.",
-      "{Locked='(example: http\u200b://MyExampleSymbolServer)'}"
+      "{Locked='http\u200b://MyExampleSymbolServer'}"
     ]
   },
   "generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description": {

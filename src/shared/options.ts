@@ -74,6 +74,7 @@ export interface LanguageServerOptions {
     readonly extensionsPaths: string[] | null;
     readonly preferCSharpExtension: boolean;
     readonly startTimeout: number;
+    readonly crashDumpPath: string | undefined;
 }
 
 export interface RazorOptions {
@@ -384,6 +385,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get startTimeout() {
         return readOption<number>('dotnet.server.startTimeout', 30000);
+    }
+    public get crashDumpPath() {
+        return readOption<string | undefined>('dotnet.server.crashDumpPath', undefined);
     }
 }
 

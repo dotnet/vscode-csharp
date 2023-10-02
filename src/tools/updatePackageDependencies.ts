@@ -258,7 +258,7 @@ function getLowercaseFileNameFromUrl(url: string): string {
     } else if (fileName.startsWith('coreclr-debug')) {
         // Debugger versions are not contained in the file name.
         return fileName;
-    } else if (fileName.startsWith('razorlanguageserver')) {
+    } else if (fileName.startsWith('razorlanguageserver') || fileName.startsWith('devkittelemetry')) {
         // Razor versions are everything after the second to last dash.
         // e.g. we want razorlanguageserver-win-x64 from razorlanguageserver-win-x64-7.0.0-preview.23067.5.zip
         const secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
