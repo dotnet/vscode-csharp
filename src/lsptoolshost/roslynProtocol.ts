@@ -5,6 +5,7 @@
 
 import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
+import { CodeAction } from 'vscode-languageserver-protocol';
 import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface WorkspaceDebugConfigurationParams {
@@ -141,6 +142,10 @@ export interface BuildOnlyDiagnosticIdsResult {
     ids: string[];
 }
 
+export interface RoslynFixAllCodeAction extends CodeAction {
+    scope: string;
+}
+
 export interface NamedPipeInformation {
     pipeName: string;
 }
@@ -217,4 +222,10 @@ export namespace BuildOnlyDiagnosticIdsRequest {
     export const method = 'workspace/buildOnlyDiagnosticIds';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.RequestType0<BuildOnlyDiagnosticIdsResult, void>(method);
+}
+
+export namespace CodeActionFixAllResolveRequest {
+    export const method = 'codeAction/resolveFixAll';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType<RoslynFixAllCodeAction, RoslynFixAllCodeAction, void>(method);
 }
