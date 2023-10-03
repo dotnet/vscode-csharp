@@ -452,6 +452,17 @@ export class RoslynLanguageServer {
         // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
         env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
 
+        if (languageServerOptions.crashDumpPath) {
+            // Enable dump collection
+            env.DOTNET_DbgEnableMiniDump = '1';
+            // Collect heap dump
+            env.DOTNET_DbgMiniDumpType = '2';
+            // Collect crashreport.json with additional thread and stack frame information.
+            env.DOTNET_EnableCrashReport = '1';
+            // The dump file name format is <executable>.<pid>.dmp
+            env.DOTNET_DbgMiniDumpName = path.join(languageServerOptions.crashDumpPath, '%e.%p.dmp');
+        }
+
         let args: string[] = [];
 
         if (commonOptions.waitForDebugger) {

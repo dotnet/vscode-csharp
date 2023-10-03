@@ -3,7 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
+import * as cp from 'child_process';
 import { EventEmitter } from 'events';
+import * as util from '../../common';
 import * as vscode from 'vscode';
 import { RequestHandler, RequestType } from 'vscode-jsonrpc';
 import { GenericNotificationHandler, InitializeResult, LanguageClientOptions, State } from 'vscode-languageclient';
@@ -13,7 +16,9 @@ import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
 import { resolveRazorLanguageServerTrace } from './razorLanguageServerTraceResolver';
 import { RazorLogger } from './razorLogger';
-import { TelemetryReporter } from './telemetryReporter';
+import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import { randomUUID } from 'crypto';
 
 const events = {
     ServerStop: 'ServerStop',
@@ -33,7 +38,11 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     constructor(
         private readonly vscodeType: typeof vscode,
         private readonly languageServerDir: string,
-        private readonly telemetryReporter: TelemetryReporter,
+        private readonly razorTelemetryReporter: RazorTelemetryReporter,
+        private readonly vscodeTelemetryReporter: TelemetryReporter,
+        private readonly isCSharpDevKitActivated: boolean,
+        private readonly env: NodeJS.ProcessEnv,
+        private readonly dotnetExecutablePath: string,
         private readonly logger: RazorLogger
     ) {
         this.isStarted = false;
@@ -128,7 +137,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
                 )
             );
 
-            this.telemetryReporter.reportErrorOnServerStart(error as Error);
+            this.razorTelemetryReporter.reportErrorOnServerStart(error as Error);
             reject(error);
         }
 
@@ -211,32 +220,21 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             languageServerTrace,
             this.logger
         );
-
         this.clientOptions = {
             outputChannel: options.outputChannel,
             documentSelector: [{ language: RazorLanguage.id, pattern: RazorLanguage.globbingPattern }],
         };
 
         const args: string[] = [];
-        let command = options.serverPath;
-        if (options.serverPath.endsWith('.dll')) {
-            this.logger.logMessage(
-                'Razor Language Server path is an assembly. ' +
-                    "Using 'dotnet' from the current path to start the server."
-            );
-
-            command = 'dotnet';
-            args.push(options.serverPath);
-        }
 
         this.logger.logMessage(`Razor language server path: ${options.serverPath}`);
 
         args.push('--trace');
         args.push(options.trace.toString());
-        this.telemetryReporter.reportTraceLevel(options.trace);
+        this.razorTelemetryReporter.reportTraceLevel(options.trace);
 
         if (options.debug) {
-            this.telemetryReporter.reportDebugLanguageServer();
+            this.razorTelemetryReporter.reportDebugLanguageServer();
 
             this.logger.logMessage('Debug flag set for Razor Language Server.');
             args.push('--debug');
@@ -250,9 +248,39 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('true');
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');
+
+            if (this.isCSharpDevKitActivated) {
+                args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
+                args.push('--sessionId', getSessionId());
+                args.push(
+                    '--telemetryExtensionPath',
+                    path.join(util.getExtensionPath(), '.razortelemetry', 'Microsoft.VisualStudio.DevKit.Razor.dll')
+                );
+            }
         }
 
-        this.serverOptions = { command, args };
+        let childProcess: () => Promise<cp.ChildProcessWithoutNullStreams>;
+        const cpOptions: cp.SpawnOptionsWithoutStdio = {
+            detached: true,
+            windowsHide: true,
+            env: this.env,
+        };
+
+        if (options.serverPath.endsWith('.dll')) {
+            // If we were given a path to a dll, launch that via dotnet.
+            const argsWithPath = [options.serverPath].concat(args);
+            this.logger.logMessage(`Server arguments ${argsWithPath.join(' ')}`);
+
+            childProcess = async () => cp.spawn(this.dotnetExecutablePath, argsWithPath, cpOptions);
+        } else {
+            // Otherwise assume we were given a path to an executable.
+            this.logger.logMessage(`Server arguments ${args.join(' ')}`);
+
+            childProcess = async () => cp.spawn(options.serverPath, args, cpOptions);
+        }
+
+        this.serverOptions = childProcess;
+
         this.client = new LanguageClient(
             'razorLanguageServer',
             'Razor Language Server',
@@ -260,4 +288,17 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             this.clientOptions
         );
     }
+}
+
+// VS code will have a default session id when running under tests. Since we may still
+// report telemetry, we need to give a unique session id instead of the default value.
+function getSessionId(): string {
+    const sessionId = vscode.env.sessionId;
+
+    // 'somevalue.sessionid' is the test session id provided by vs code
+    if (sessionId.toLowerCase() === 'somevalue.sessionid') {
+        return randomUUID();
+    }
+
+    return sessionId;
 }

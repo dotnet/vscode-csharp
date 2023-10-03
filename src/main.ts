@@ -55,6 +55,7 @@ import { registerOmnisharpOptionChanges } from './omnisharp/omnisharpOptionChang
 import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents';
 import { ServerStateChange } from './lsptoolshost/serverStateChange';
 import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
+import { RazorTelemetryDownloader } from './razor/razorTelemetryDownloader';
 import { commonOptions, omnisharpOptions, razorOptions } from './shared/options';
 import { BuildResultDiagnostics } from './lsptoolshost/services/buildResultReporterService';
 
@@ -121,9 +122,25 @@ export async function activate(
     const roslynLanguageServerEvents = new RoslynLanguageServerEvents();
     context.subscriptions.push(roslynLanguageServerEvents);
     let roslynLanguageServerStartedPromise: Promise<RoslynLanguageServer> | undefined = undefined;
+    let razorLanguageServerStartedPromise: Promise<void> | undefined = undefined;
     let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer) {
+        // Download Razor server telemetry bits if DevKit is installed.
+        if (csharpDevkitExtension) {
+            const razorTelemetryDownloader = new RazorTelemetryDownloader(
+                networkSettingsProvider,
+                eventStream,
+                context.extension.packageJSON,
+                platformInfo,
+                context.extension.extensionPath
+            );
+
+            await razorTelemetryDownloader.DownloadAndInstallRazorTelemetry(
+                context.extension.packageJSON.defaults.razorTelemetry
+            );
+        }
+
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
         // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
         //
@@ -132,10 +149,13 @@ export async function activate(
         // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
         //     for dynamic file info once project system is ready ->
         // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-        await activateRazorExtension(
+        razorLanguageServerStartedPromise = activateRazorExtension(
             context,
             context.extension.extensionPath,
             eventStream,
+            reporter,
+            csharpDevkitExtension,
+            platformInfo,
             /* useOmnisharpServer */ false
         );
 
@@ -267,6 +287,9 @@ export async function activate(
                 context,
                 context.extension.extensionPath,
                 eventStream,
+                reporter,
+                undefined,
+                platformInfo,
                 /* useOmnisharpServer */ true
             );
         }
@@ -323,6 +346,7 @@ export async function activate(
         return {
             initializationFinished: async () => {
                 await coreClrDebugPromise;
+                await razorLanguageServerStartedPromise;
                 await roslynLanguageServerStartedPromise;
                 await projectInitializationCompletePromise;
             },

@@ -150,6 +150,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[CHYBA]: Rozšíření jazyka C# se nepodařilo nainstalovat balíček ladicího programu.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Možnost dotnet.server.useOmharharp se změnila. Pokud chcete změnu použít, načtěte prosím znovu okno.",
   "pipeArgs must be a string or a string array type": "pipeArgs musí být řetězec nebo typ pole řetězců",
+  "{0} Keyword": "{0} Keyword",
   "{0} references": "Počet odkazů: {0}",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, vložte obsah problému jako text problému. Nezapomeňte vyplnit všechny podrobnosti, které ještě vyplněné nejsou."
 }

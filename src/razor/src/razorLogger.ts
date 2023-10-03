@@ -15,21 +15,17 @@ export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly verbositySetting = 'razor.trace';
     public verboseEnabled!: boolean;
     public messageEnabled!: boolean;
-    public readonly outputChannel: vscodeAdapter.OutputChannel;
+    public readonly outputChannel: vscode.OutputChannel;
 
     private readonly onLogEmitter: vscodeAdapter.EventEmitter<string>;
     private readonly onTraceLevelChangeEmitter: vscodeAdapter.EventEmitter<Trace>;
 
-    constructor(
-        private readonly vscodeApi: vscodeAdapter.api,
-        eventEmitterFactory: IEventEmitterFactory,
-        public trace: Trace
-    ) {
+    constructor(eventEmitterFactory: IEventEmitterFactory, public trace: Trace) {
         this.processTraceLevel();
         this.onLogEmitter = eventEmitterFactory.create<string>();
         this.onTraceLevelChangeEmitter = eventEmitterFactory.create<Trace>();
 
-        this.outputChannel = this.vscodeApi.window.createOutputChannel(RazorLogger.logName);
+        this.outputChannel = vscode.window.createOutputChannel(RazorLogger.logName);
 
         this.logRazorInformation();
         this.setupToStringOverrides();
