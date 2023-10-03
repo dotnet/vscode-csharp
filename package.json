@@ -3283,8 +3283,8 @@
         },
         "configurationSnippets": [
           {
-            "label": ".NET: Launch .NET Core Console App",
-            "description": "Launch a .NET Core Console App with a debugger.",
+            "label": "%debuggers.coreclr.configurationSnippets.label.console-local%",
+            "description": "%debuggers.coreclr.configurationSnippets.description.console-local%",
             "body": {
               "name": ".NET Core Launch (console)",
               "type": "coreclr",
@@ -3298,8 +3298,8 @@
             }
           },
           {
-            "label": ".NET: Attach to local .NET Core Console App",
-            "description": "Attach a debugger to a .NET Core Console App.",
+            "label": "%debuggers.coreclr.configurationSnippets.label.attach-local%",
+            "description": "%debuggers.coreclr.configurationSnippets.description.attach%",
             "body": {
               "name": ".NET Core Attach",
               "type": "coreclr",
@@ -3307,8 +3307,8 @@
             }
           },
           {
-            "label": ".NET: Launch a local .NET Core Web App",
-            "description": "Launch a .NET Core Web App with both a browser and a debugger.",
+            "label": "%debuggers.coreclr.configurationSnippets.label.web-local%",
+            "description": "%debuggers.coreclr.configurationSnippets.description.web-local%",
             "body": {
               "name": ".NET Core Launch (web)",
               "type": "coreclr",
@@ -3331,8 +3331,8 @@
             }
           },
           {
-            "label": ".NET: Launch a remote .NET Core Console App",
-            "description": "Launch a .NET Core Console App on a remote machine.",
+            "label": "%debuggers.coreclr.configurationSnippets.label.console-remote%",
+            "description": "%debuggers.coreclr.configurationSnippets.description.remote%",
             "body": {
               "name": ".NET Core Launch (console)",
               "type": "coreclr",
@@ -3352,8 +3352,8 @@
             }
           },
           {
-            "label": ".NET: Attach to remote .NET Core Console App",
-            "description": "Attach a debugger to a .NET Core Console App on a remote machine.",
+            "label": "%debuggers.coreclr.configurationSnippets.label.attach-remote%",
+            "description": "%debuggers.coreclr.configurationSnippets.description.remote%",
             "body": {
               "name": ".NET Core Attach",
               "type": "coreclr",
@@ -3367,8 +3367,8 @@
             }
           },
           {
-            "label": ".NET: Launch and Debug Hosted Blazor WebAssembly App",
-            "description": "Launches a Hosted Blazor WebAssembly App with a debugger",
+            "label": "%debuggers.coreclr.configurationSnippets.label.blazor-hosted%",
+            "description": "%debuggers.coreclr.configurationSnippets.description.blazor-hosted%",
             "body": {
               "name": "Launch and Debug Hosted Blazor WebAssembly App",
               "type": "blazorwasm",
@@ -3379,8 +3379,8 @@
             }
           },
           {
-            "label": ".NET: Launch and Debug Standalone Blazor WebAssembly App",
-            "description": "Launches Standalone Blazor WebAssembly App with a debugger",
+            "label": "%debuggers.coreclr.configurationSnippets.label.blazor-standalone%",
+            "description": "%debuggers.coreclr.configurationSnippets.description.blazor-standalone%",
             "body": {
               "name": "Launch and Debug Standalone Blazor WebAssembly App",
               "type": "blazorwasm",
@@ -3393,7 +3393,7 @@
       {
         "type": "clr",
         "when": "workspacePlatform == windows",
-        "hiddenWhen": "dotnet.debug.serviceBrokerAvailable",
+        "hiddenWhen": "true",
         "label": ".NET Framework 4.x",
         "languages": [
           "csharp",
@@ -4766,6 +4766,7 @@
       {
         "type": "dotnet",
         "label": "C#",
+        "hiddenWhen": "!dotnet.debug.serviceBrokerAvailable",
         "languages": [
           "csharp",
           "razor",
@@ -4792,7 +4793,18 @@
             }
           }
         },
-        "configurationSnippets": []
+        "configurationSnippets": [
+          {
+            "label": "%debuggers.dotnet.configurationSnippets.label%",
+            "description": "%debuggers.dotnet.configurationSnippets.description%",
+            "body": {
+              "name": "C#: ${1:<project-name>} Debug",
+              "type": "dotnet",
+              "request": "launch",
+              "projectPath": "^\"\\${workspaceFolder}/${2:<relative-path-to-project-folder>}${1:<project-name>}.csproj\""
+            }
+          }
+        ]
       }
     ],
     "semanticTokenTypes": [
