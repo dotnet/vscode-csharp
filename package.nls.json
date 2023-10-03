@@ -75,8 +75,53 @@
   "configuration.razor.trace.off": "Does not log messages from the Razor extension",
   "configuration.razor.trace.messages": "Logs only some messages from the Razor extension",
   "configuration.razor.trace.verbose": "Logs all messages from the Razor extension",
+  "debuggers.coreclr.configurationSnippets.label.console-local": ".NET: Launch Executable file (Console)",
+  "debuggers.coreclr.configurationSnippets.label.web-local": ".NET: Launch Executable file (Web)",
+  "debuggers.coreclr.configurationSnippets.label.attach-local": ".NET: Attach to a .NET process",
+  "debuggers.coreclr.configurationSnippets.label.console-remote": ".NET: Remote debugging - Launch Executable file (Console)",
+  "debuggers.coreclr.configurationSnippets.label.attach-remote": ".NET: Remote debugging - Attach to a .NET process",
+  "debuggers.coreclr.configurationSnippets.label.blazor-hosted": ".NET: Web Assembly - Launch hosted Blazor project",
+  "debuggers.coreclr.configurationSnippets.label.blazor-standalone": ".NET: Web Assembly - Launch standalone Blazor project",
+  "debuggers.coreclr.configurationSnippets.description.console-local": {
+    "message" : "This snippet is used to launch a new process under the .NET debugger (coreclr), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice. This snippet is useful when the project was built outside this VS Code instance or you want to host your .NET Code in a custom executable, such as a specific version of 'dotnet.exe'/'dotnet' or the .NET Code is hosted by a native application. This snippet is for console applications.",
+    "comment": [
+      "'coreclr' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(coreclr)'}"
+    ]
+  },
+  "debuggers.coreclr.configurationSnippets.description.web-local": {
+    "message": "This snippet is used to launch a new process under the .NET debugger (coreclr), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice. This snippet is useful when the project was built outside this VS Code instance or you want to host your .NET Code in a custom executable, such as a specific version of 'dotnet.exe'/'dotnet' or the .NET Code is hosted by a native application. This snippet is for web (ASP.NET Core) applications.",
+    "comment": [
+      "'coreclr' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(coreclr)'}"
+    ]
+  },
+  "debuggers.coreclr.configurationSnippets.description.attach": {
+    "message": "Attach the .NET debugger (coreclr) to a running process. This can also be done using the 'Attach to a .NET 5+ or .NET Core process' command.",
+    "comment": [
+      "'coreclr' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(coreclr)'}"
+    ]
+  },
+  "debuggers.coreclr.configurationSnippets.description.remote": "This snippet shows how to remote debug .NET Code **without** using VS Code remoting. It should be used in cases where you want to build your project locally but run it on another computer.",
+  "debuggers.coreclr.configurationSnippets.description.blazor-hosted": {
+    "message": "This snippet is used to launch a new process under the Blazor WebAssembly debugger (blazorwasm), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice, but this snippet can be used to have full control over all launch options. This snippet is for hosted Blazor projects, which is a project that has a backend ASP.NET Core app to serve its files.",
+    "comment": [
+      "'blazorwasm' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(blazorwasm)'}"
+    ]
+  },
+  "debuggers.coreclr.configurationSnippets.description.blazor-standalone": {
+    "message": "This snippet is used to launch a new process under the Blazor WebAssembly debugger (blazorwasm). In most cases, the \".NET: Launch C# project\" snippet is a better choice, but this snippet can be used to have full control over all launch options. This snippet is for standalone Blazor projects, which is a project that does not have a backend ASP.NET Core app to serve its files.",
+    "comment": [
+      "'blazorwasm' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(blazorwasm)'}"
+    ]
+  },
   "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
   "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
+  "debuggers.dotnet.configurationSnippets.label": ".NET: Launch C# project",
+  "debuggers.dotnet.configurationSnippets.description": "This snippet configures VS Code to debug a C# project. Debug options (example: arguments to the executable) can be configured through the '<project-directory>/Properties/launchSettings.json' file.",
   "viewsWelcome.debug.contents": {
     "message": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\n\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson).",
     "comment": [
