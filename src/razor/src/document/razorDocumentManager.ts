@@ -27,7 +27,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     private readonly onRazorInitializedEmitter = new vscode.EventEmitter<void>();
 
     public razorDocumentGenerationInitialized = false;
-    private anyRazorDocumentOpen = false;
 
     constructor(private readonly serverClient: RazorLanguageServerClient, private readonly logger: RazorLogger) {}
 
@@ -156,7 +155,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private async openDocument(uri: vscode.Uri) {
-        this.anyRazorDocumentOpen = true;
         await this.ensureRazorInitialized();
 
         const document = this._getDocument(uri);
@@ -165,12 +163,11 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     public async ensureRazorInitialized() {
-        // On first open of a Razor document, we kick off the generation of all razor documents so that
-        // components are discovered correctly. If we do this early, when we initialize everything, we
-        // just spend a lot of time generating documents and json files that might not be needed.
-        // If we wait for each individual document to be opened by the user, then locally defined components
-        // don't work, which is a poor experience. This is the compromise.
-        if (this.roslynActivated && !this.razorDocumentGenerationInitialized && this.anyRazorDocumentOpen) {
+        // Kick off the generation of all Razor documents so that components are
+        // discovered correctly. We need to do this even if a Razor file isn't
+        // open yet to handle the scenario where the user opens a C# file before
+        // a Razor file.
+        if (this.roslynActivated && !this.razorDocumentGenerationInitialized) {
             this.razorDocumentGenerationInitialized = true;
             vscode.commands.executeCommand(razorInitializeCommand);
             for (const document of this.documents) {
