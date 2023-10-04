@@ -4,10 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType } from 'vscode-languageclient';
+import { RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { ProvideSemanticTokensResponse } from './provideSemanticTokensResponse';
 import { SerializableSemanticTokensParams } from './serializableSemanticTokensParams';
+import { RazorDocumentManager } from '../document/razorDocumentManager';
+import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
+import { RazorLogger } from '../razorLogger';
+import { provideSemanticTokensRangesCommand as provideSemanticTokensRangesCommand } from '../../../lsptoolshost/razorCommands';
+import { UriConverter } from '../../../lsptoolshost/uriConverter';
 
 export class SemanticTokensRangeHandler {
     private static readonly getSemanticTokensRangeEndpoint = 'razor/provideSemanticTokensRange';
@@ -16,9 +21,14 @@ export class SemanticTokensRangeHandler {
         ProvideSemanticTokensResponse,
         any
     > = new RequestType(SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint);
-    private emptyTokensInResponse: Array<Array<number>> = new Array<Array<number>>();
+    private emptyTokensResponse: Uint32Array = new Uint32Array();
 
-    constructor(private readonly serverClient: RazorLanguageServerClient) {}
+    constructor(
+        private readonly documentManager: RazorDocumentManager,
+        private readonly documentSynchronizer: RazorDocumentSynchronizer,
+        private readonly serverClient: RazorLanguageServerClient,
+        private readonly logger: RazorLogger
+    ) {}
 
     public async register() {
         await this.serverClient.onRequestWithParams<
@@ -33,16 +43,53 @@ export class SemanticTokensRangeHandler {
     }
 
     private async getSemanticTokens(
-        _semanticTokensParams: SerializableSemanticTokensParams,
-        _cancellationToken: vscode.CancellationToken
+        semanticTokensParams: SerializableSemanticTokensParams,
+        cancellationToken: vscode.CancellationToken
     ): Promise<ProvideSemanticTokensResponse> {
-        // This is currently a no-op since (1) the default C# semantic tokens experience is already powerful and
-        // (2) there seems to be an issue with the semantic tokens execute command - possibly either O# not
-        // returning tokens, or an issue with the command itself:
-        // https://github.com/dotnet/razor/issues/6922
+        try {
+            const razorDocumentUri = vscode.Uri.parse(semanticTokensParams.textDocument.uri, true);
+            const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
+            if (razorDocument === undefined) {
+                this.logger.logWarning(
+                    `Could not find Razor document ${razorDocumentUri}; returning semantic tokens information.`
+                );
+
+                return new ProvideSemanticTokensResponse(
+                    this.emptyTokensResponse,
+                    semanticTokensParams.requiredHostDocumentVersion
+                );
+            }
+
+            const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
+            const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
+                textDocument,
+                razorDocument.csharpDocument,
+                semanticTokensParams.requiredHostDocumentVersion,
+                cancellationToken
+            );
+
+            if (!synchronized) {
+                return new ProvideSemanticTokensResponse(
+                    this.emptyTokensResponse,
+                    semanticTokensParams.requiredHostDocumentVersion
+                );
+            }
+
+            // Point this request to the virtual C# document, and call Roslyn
+            const virtualCSharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
+            semanticTokensParams.textDocument = TextDocumentIdentifier.create(virtualCSharpUri);
+            const tokens = <vscode.SemanticTokens>(
+                await vscode.commands.executeCommand(provideSemanticTokensRangesCommand, semanticTokensParams)
+            );
+
+            return new ProvideSemanticTokensResponse(tokens.data, semanticTokensParams.requiredHostDocumentVersion);
+        } catch (error) {
+            this.logger.logWarning(`${SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint} failed with ${error}`);
+        }
+
         return new ProvideSemanticTokensResponse(
-            this.emptyTokensInResponse,
-            _semanticTokensParams.requiredHostDocumentVersion
+            this.emptyTokensResponse,
+            semanticTokensParams.requiredHostDocumentVersion
         );
     }
 }

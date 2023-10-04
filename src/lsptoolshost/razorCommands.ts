@@ -27,6 +27,7 @@ import {
 import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
 import { SerializableFormatNewFileParams } from '../razor/src/formatNewFile/serializableFormatNewFileParams';
+import { SerializableSemanticTokensParams } from '../razor/src/semantic/serializableSemanticTokensParams';
 
 // These are commands that are invoked by the Razor extension, and are used to send LSP requests to the Roslyn LSP server
 export const roslynDidChangeCommand = 'roslyn.changeRazorCSharp';
@@ -36,6 +37,7 @@ export const provideCodeActionsCommand = 'roslyn.provideCodeActions';
 export const resolveCodeActionCommand = 'roslyn.resolveCodeAction';
 export const provideCompletionsCommand = 'roslyn.provideCompletions';
 export const resolveCompletionsCommand = 'roslyn.resolveCompletion';
+export const provideSemanticTokensRangesCommand = 'roslyn.provideSemanticTokensRanges';
 export const roslynSimplifyMethodCommand = 'roslyn.simplifyMethod';
 export const roslynFormatNewFileCommand = 'roslyn.formatNewFile';
 export const razorInitializeCommand = 'razor.initialize';
@@ -72,15 +74,14 @@ export function registerRazorCommands(context: vscode.ExtensionContext, language
             }
         )
     );
+
+    const formatNewFileRequestType = new RequestType<SerializableFormatNewFileParams, string | undefined, any>(
+        'roslyn/formatNewFile'
+    );
     context.subscriptions.push(
         vscode.commands.registerCommand(
             roslynFormatNewFileCommand,
             async (request: SerializableFormatNewFileParams) => {
-                const formatNewFileRequestType = new RequestType<
-                    SerializableFormatNewFileParams,
-                    string | undefined,
-                    any
-                >('roslyn/formatNewFile');
                 return await languageServer.sendRequest(formatNewFileRequestType, request, CancellationToken.None);
             }
         )
@@ -109,6 +110,24 @@ export function registerRazorCommands(context: vscode.ExtensionContext, language
         vscode.commands.registerCommand(resolveCompletionsCommand, async (request: CompletionItem) => {
             return await languageServer.sendRequest(CompletionResolveRequest.type, request, CancellationToken.None);
         })
+    );
+
+    const semanticTokensRangesRequestType = new RequestType<
+        SerializableSemanticTokensParams,
+        vscode.SemanticTokens,
+        any
+    >('roslyn/semanticTokenRanges');
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            provideSemanticTokensRangesCommand,
+            async (request: SerializableSemanticTokensParams) => {
+                return await languageServer.sendRequest(
+                    semanticTokensRangesRequestType,
+                    request,
+                    CancellationToken.None
+                );
+            }
+        )
     );
 
     // Roslyn is responsible for producing a json file containing information for Razor, that comes from the compilation for

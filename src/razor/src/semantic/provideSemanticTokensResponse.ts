@@ -5,5 +5,5 @@
 
 export class ProvideSemanticTokensResponse {
     // tslint:disable-next-line: variable-name
-    constructor(public Tokens: Array<Array<number>>, public HostDocumentSyncVersion: number) {}
+    constructor(public Tokens: Uint32Array, public HostDocumentSyncVersion: number) {}
 }

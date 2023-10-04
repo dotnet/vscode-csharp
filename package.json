@@ -5175,6 +5175,168 @@
           "markupCommentPunctuation": [
             "punctuation.definition.comment.html",
             "comment.block.html"
+          ],
+          "keyword": [
+            "keyword.cs"
+          ],
+          "excludedCode": [
+            "support.other.excluded.cs"
+          ],
+          "controlKeyword": [
+            "keyword.control.cs"
+          ],
+          "operatorOverloaded": [
+            "entity.name.function.member.overload.cs"
+          ],
+          "preprocessorText": [
+            "meta.preprocessor.string.cs"
+          ],
+          "punctuation": [
+            "punctuation.cs"
+          ],
+          "stringVerbatim": [
+            "string.verbatim.cs"
+          ],
+          "stringEscapeCharacter": [
+            "constant.character.escape.cs"
+          ],
+          "delegate": [
+            "entity.name.type.delegate.cs"
+          ],
+          "module": [
+            "entity.name.type.module.cs"
+          ],
+          "field": [
+            "entity.name.variable.field.cs"
+          ],
+          "constant": [
+            "variable.other.constant"
+          ],
+          "extensionMethod": [
+            "entity.name.function.extension.cs"
+          ],
+          "xmlDocCommentAttributeName": [
+            "comment.documentation.attribute.name.cs"
+          ],
+          "xmlDocCommentAttributeQuotes": [
+            "comment.documentation.attribute.quotes.cs"
+          ],
+          "xmlDocCommentAttributeValue": [
+            "comment.documentation.attribute.value.cs"
+          ],
+          "xmlDocCommentCDataSection": [
+            "comment.documentation.cdata.cs"
+          ],
+          "xmlDocCommentComment": [
+            "comment.documentation.comment.cs"
+          ],
+          "xmlDocCommentDelimiter": [
+            "comment.documentation.delimiter.cs"
+          ],
+          "xmlDocCommentEntityReference": [
+            "comment.documentation.entityReference.cs"
+          ],
+          "xmlDocCommentName": [
+            "comment.documentation.name.cs"
+          ],
+          "xmlDocCommentProcessingInstruction": [
+            "comment.documentation.processingInstruction.cs"
+          ],
+          "xmlDocCommentText": [
+            "comment.documentation.cs"
+          ],
+          "xmlLiteralAttributeName": [
+            "entity.other.attribute-name.localname.xml"
+          ],
+          "xmlLiteralAttributeQuotes": [
+            "string.quoted.double.xml"
+          ],
+          "xmlLiteralAttributeValue": [
+            "meta.tag.xml"
+          ],
+          "xmlLiteralCDataSection": [
+            "string.quoted.double.xml"
+          ],
+          "xmlLiteralComment": [
+            "comment.block.xml"
+          ],
+          "xmlLiteralDelimiter": [
+            "text.xml"
+          ],
+          "xmlLiteralEmbeddedExpression": [
+            "meta.tag.xml"
+          ],
+          "xmlLiteralEntityReference": [
+            "meta.tag.xml"
+          ],
+          "xmlLiteralName": [
+            "entity.name.tag.localname.xml"
+          ],
+          "xmlLiteralProcessingInstruction": [
+            "meta.tag.xml"
+          ],
+          "xmlLiteralText": [
+            "text.xml"
+          ],
+          "regexComment": [
+            "string.regexp.comment.cs"
+          ],
+          "regexCharacterClass": [
+            "constant.character.character-class.regexp.cs"
+          ],
+          "regexAnchor": [
+            "keyword.control.anchor.regexp.cs"
+          ],
+          "regexQuantifier": [
+            "keyword.operator.quantifier.regexp.cs"
+          ],
+          "regexGrouping": [
+            "punctuation.definition.group.regexp.cs"
+          ],
+          "regexAlternation": [
+            "keyword.operator.or.regexp.cs"
+          ],
+          "regexText": [
+            "string.regexp"
+          ],
+          "regexSelfEscapedCharacter": [
+            "string.regexp.self-escaped-character.cs"
+          ],
+          "regexOtherEscape": [
+            "string.regexp.other-escape.cs"
+          ],
+          "jsonComment": [
+            "comment.line.double-slash.js"
+          ],
+          "jsonNumber": [
+            "constant.numeric.json"
+          ],
+          "jsonString": [
+            "string.quoted.double.json"
+          ],
+          "jsonKeyword": [
+            "constant.language.json"
+          ],
+          "jsonText": [
+            "string.quoted.double.json"
+          ],
+          "jsonOperator": [
+            "string.quoted.double.json"
+          ],
+          "jsonPunctuation": [
+            "punctuation.separator.dictionary.key-value.json"
+          ],
+          "jsonArray": [
+            "punctuation.definition.array.begin.json"
+          ],
+          "jsonObject": [
+            "punctuation.definition.dictionary.begin.json"
+          ],
+          "jsonPropertyName": [
+            "support.type.property-name.json"
+          ],
+          "jsonConstructorName": [
+            "support.type.property-name.json"
           ]
         }
       },
@@ -5369,7 +5531,10 @@
       {
         "language": "aspnetcorerazor",
         "scopeName": "text.aspnetcorerazor",
-        "path": "./src/razor/syntaxes/aspnetcorerazor.tmLanguage.json"
+        "path": "./src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
+        "unbalancedBracketScopes": [
+          "keyword.operator.arrow.cs"
+        ]
       }
     ],
     "menus": {
