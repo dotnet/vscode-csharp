@@ -3,7 +3,8 @@
 	"version": "2.6",
 	"publicReleaseRefSpec": [
 		"^refs/heads/release$",
-		"^refs/heads/main$"
+		"^refs/heads/main$",
+		"^refs/heads/patch/.*$"
 	],
 	"cloudBuild": {
 		"buildNumber": {
