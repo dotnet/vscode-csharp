@@ -89,9 +89,9 @@ stages:
               }
               Else {
                 Write-Host "##[command]vsce $nonIA32PlatformArgs"
-                # vsce @nonIA32PlatformArgs
+                vsce @nonIA32PlatformArgs
                 Write-Host "##[command]vsce $ia32PlatformArgs"
-                # vsce @ia32PlatformArgs
+                vsce @ia32PlatformArgs
               }
             displayName: 🚀 Publish to Marketplace
             workingDirectory: $(Pipeline.Workspace)
