@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "2.0.0-placeholder",
+  "version": "42.42.42-placeholder",
   "description": "Base language support for C#",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.9.0-1.23502.2",
+    "roslyn": "4.9.0-1.23502.8",
     "omniSharp": "1.39.7",
     "razor": "7.0.0-preview.23475.5",
     "razorOmnisharp": "7.0.0-preview.23363.1"
