@@ -11,7 +11,7 @@ import { SerializableSemanticTokensParams } from './serializableSemanticTokensPa
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
-import { provideSemanticTokensRangesCommand as provideSemanticTokensRangesCommand } from '../../../lsptoolshost/razorCommands';
+import { provideSemanticTokensRangesCommand } from '../../../lsptoolshost/razorCommands';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
 
 export class SemanticTokensRangeHandler {
