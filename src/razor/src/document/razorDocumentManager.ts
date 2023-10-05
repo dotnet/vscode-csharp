@@ -245,7 +245,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             const csharpProjectedDocument = projectedDocument as CSharpProjectedDocument;
 
             // If the language server is telling us that the previous document was empty, then we should clear
-            // ours out. Hopefully outs would have been empty too, but there are cases where things get out of
+            // ours out. Hopefully ours would have been empty too, but there are cases where things get out of
             // sync
             if (updateBufferRequest.previousWasEmpty && projectedDocument.length !== 0) {
                 this.telemetryReporter.reportBuffersOutOfSync();
@@ -288,7 +288,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             const htmlProjectedDocument = projectedDocument as HtmlProjectedDocument;
 
             // If the language server is telling us that the previous document was empty, then we should clear
-            // ours out. Hopefully outs would have been empty too, but there are cases where things get out of
+            // ours out. Hopefully ours would have been empty too, but there are cases where things get out of
             // sync
             if (updateBufferRequest.previousWasEmpty && projectedDocument.length !== 0) {
                 this.telemetryReporter.reportBuffersOutOfSync();
