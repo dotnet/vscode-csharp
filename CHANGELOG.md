@@ -10,6 +10,19 @@
 ## Latest
 * Update Roslyn version to 4.9.0-1.23502.8 (PR: [#6447](https://github.com/dotnet/vscode-csharp/pull/6447))
   * Update Razor project configuration file name (PR: [#70156](https://github.com/dotnet/roslyn/pull/70156))
+* Update OmniSharp to 1.39.10 (PR: [#6491](https://github.com/dotnet/vscode-csharp/pull/6491))
+  * Add RazorComplier EA to support razor generators (PR: [omnisharp-roslyn#2572](https://github.com/OmniSharp/omnisharp-roslyn/pull/2572))
+  * Add Kind parameter to InlayHint (PR: [omnisharp-roslyn#2570](https://github.dev/OmniSharp/omnisharp-roslyn/pull/2570))
+  * Do not include commit characters if the typed span is empty (PR: [omnisharp-roslyn#2569](https://github.com/OmniSharp/omnisharp-roslyn/pull/2569))
+  * Update Roslyn to version 4.9.0-1.23504.3 (PR: [omnisharp-roslyn#2567](https://github.com/OmniSharp/omnisharp-roslyn/pull/2567))
+  * Async diagnostics analyzer work queue (PR: [omnisharp-roslyn#2351](https://github.com/OmniSharp/omnisharp-roslyn/pull/2351))
+  * Add InlayHint implementation to OmniSharp.LSP (PR: [omnisharp-roslyn#2566](https://github.com/OmniSharp/omnisharp-roslyn/pull/2566))
+  * Include the project file name when invoking `dotnet build` (PR: [omnisharp-roslyn#2565](https://github.com/OmniSharp/omnisharp-roslyn/pull/2565))
+  * feat: ignore diagnostics for generated code (PR: [omnisharp-roslyn#2509](https://github.com/OmniSharp/omnisharp-roslyn/pull/2509))
+  * Update documentation to reflect --stdio flag deprecation (#2439) (PR: [omnisharp-roslyn#2554](https://github.com/OmniSharp/omnisharp-roslyn/pull/2554))
+  * Update Roslyn to version 4.8.0-1.23374.10 (PR: [omnisharp-roslyn#2555](https://github.com/OmniSharp/omnisharp-roslyn/pull/2555))
+  * Use double quote when quoting un script path (PR: [omnisharp-roslyn#2553](https://github.com/OmniSharp/omnisharp-roslyn/pull/2553))
+  * Use core LSP TokenTypes where possible and validate token names (PR: [omnisharp-roslyn#2548](https://github.com/OmniSharp/omnisharp-roslyn/pull/2548))
 
 ## 2.5.?
 * Update Roslyn version to 4.9.0-1.23502.2 (PR: [#6463](https://github.com/dotnet/vscode-csharp/pull/6463))
@@ -160,9 +173,9 @@ We are switching to the new Roslyn language server as the default. We recognize 
 
 ## 1.26.0
 * Update OmniSharp to 1.39.7 (PR: [#5840](https://github.com/OmniSharp/omnisharp-vscode/pull/5840))
-  * Respond to breaking change in VSCode 1.79.2 in completion (PR:[#2542](https://github.com/OmniSharp/omnisharp-roslyn/pull/2542))
-  * Use dotnet-cake for build (PR:[#2537](https://github.com/OmniSharp/omnisharp-roslyn/pull/2537))
-  * Implement LSP CodeAction resolve (PR:[#2467](https://github.com/OmniSharp/omnisharp-roslyn/pull/2467))
+  * Respond to breaking change in VSCode 1.79.2 in completion (PR:[omnisharp-roslyn#2542](https://github.com/OmniSharp/omnisharp-roslyn/pull/2542))
+  * Use dotnet-cake for build (PR:[omnisharp-roslyn#2537](https://github.com/OmniSharp/omnisharp-roslyn/pull/2537))
+  * Implement LSP CodeAction resolve (PR:[omnisharp-roslyn#2467](https://github.com/OmniSharp/omnisharp-roslyn/pull/2467))
 * Update debugger to 1.25.8 (PR: [#5706](https://github.com/OmniSharp/omnisharp-vscode/pull/5706))
 * Updates to README, default branch and repo link (PR: [#5709](https://github.com/OmniSharp/omnisharp-vscode/pull/5709))
 
@@ -189,25 +202,26 @@ We are switching to the new Roslyn language server as the default. We recognize 
   * Add C#/HTML folding range support ([razor#8309](https://github.com/dotnet/razor/pull/8309))
   * Formatting fixes ([razor#8318](https://github.com/dotnet/razor/pull/8318))
 * Update OmniSharp to 1.39.6 (PR: [#5625](https://github.com/OmniSharp/omnisharp-vscode/pull/5625))
-  * Use new VS threading version to match with Razor (PR:[#2518](https://github.com/OmniSharp/omnisharp-roslyn/pull/2518))
+  * Use new VS threading version to match with Razor (PR:[omnisharp-roslyn#2518](https://github.com/OmniSharp/omnisharp-roslyn/pull/2518))
 * Update OmniSharp to 1.39.5 (PR: [#5618](https://github.com/OmniSharp/omnisharp-vscode/pull/5618))
-  * Update to Roslyn `4.6.0-3.23153.5` (PR:[#2511](https://github.com/OmniSharp/omnisharp-roslyn/pull/2511))
-  * Report to the client if the project being loaded is sdk style (PR:[#2502](https://github.com/OmniSharp/omnisharp-roslyn/pull/2502))
+  * Update to Roslyn `4.6.0-3.23153.5` (PR:[omnisharp-roslyn#2511](https://github.com/OmniSharp/omnisharp-roslyn/pull/2511))
+  * Report to the client if the project being loaded is sdk style (PR:[omnisharp-roslyn#2502](https://github.com/OmniSharp/omnisharp-roslyn/pull/2502))
 * Automatically trust ASP.NET Core HTTPS development certificate (PR: [#5589](https://github.com/OmniSharp/omnisharp-vscode/pull/5589))
 * Improve outline to be less verbose (PR: [#5536](https://github.com/OmniSharp/omnisharp-vscode/pull/5536))
 * Update Razor TextMate grammar (PR: [#5570](https://github.com/OmniSharp/omnisharp-vscode/pull/5570))
 
 ## 1.25.4
 * Update OmniSharp to 1.39.4 (PR: [#5544](https://github.com/OmniSharp/omnisharp-vscode/pull/5544))
-  * Disable snippets in sync completion (PR: [#2497](https://github.com/OmniSharp/omnisharp-roslyn/pull/2497))
+  * Disable snippets in sync completion (PR: [omnisharp-roslyn#2497](https://github.com/OmniSharp/omnisharp-roslyn/pull/2497))
 
 ## 1.25.3
 * Update Razor to 7.0.0-preview.23067.5 (PR: [#5543](https://github.com/OmniSharp/omnisharp-vscode/pull/5543))
   * Enables support for arm64
   * Adds document color and color presentation features
-* Update Roslyn to 4.5.0-2.22527.10 (PR: [#2486](https://github.com/OmniSharp/omnisharp-roslyn/pull/2486))
-* Update dotnet-script dependencies to 1.4.0 (PR: [#2477](https://github.com/OmniSharp/omnisharp-roslyn/pull/2477))
-* Register the LanguageServerLogger only once (PR: [#2473](https://github.com/OmniSharp/omnisharp-roslyn/pull/2473))
+* Update OmniSharp to 1.39.3 (PR: [#5520](https://github.com/OmniSharp/omnisharp-vscode/pull/5520))
+  * Update Roslyn to 4.5.0-2.22527.10 (PR: [omnisharp-roslyn#2486](https://github.com/OmniSharp/omnisharp-roslyn/pull/2486))
+  * Update dotnet-script dependencies to 1.4.0 (PR: [omnisharp-roslyn#2477](https://github.com/OmniSharp/omnisharp-roslyn/pull/2477))
+  * Register the LanguageServerLogger only once (PR: [omnisharp-roslyn#2473](https://github.com/OmniSharp/omnisharp-roslyn/pull/2473))
 * Fix extension not finding mono. ([#5454](https://github.com/OmniSharp/omnisharp-vscode/issues/5454), PR: [#5484](https://github.com/OmniSharp/omnisharp-vscode/pull/5484))
 * Update debugger to 1.25.3. ([#5460](https://github.com/OmniSharp/omnisharp-vscode/issues/5460), PR: [#5489](https://github.com/OmniSharp/omnisharp-vscode/pull/5489))
 * Fix missing fix all commands. ([#5474](https://github.com/OmniSharp/omnisharp-vscode/issues/5474), PR: [#5475](https://github.com/OmniSharp/omnisharp-vscode/pull/5475))
