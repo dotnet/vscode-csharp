@@ -5533,7 +5533,9 @@
         "scopeName": "text.aspnetcorerazor",
         "path": "./src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
         "unbalancedBracketScopes": [
-          "keyword.operator.arrow.cs"
+          "keyword.operator.arrow.cs",
+          "keyword.operator.bitwise.shift.cs",
+          "keyword.operator.relational.cs"
         ]
       }
     ],

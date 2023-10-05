@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
+import { RequestType, TextDocumentIdentifier, SemanticTokens } from 'vscode-languageclient';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { ProvideSemanticTokensResponse } from './provideSemanticTokensResponse';
 import { SerializableSemanticTokensParams } from './serializableSemanticTokensParams';
@@ -21,7 +21,7 @@ export class SemanticTokensRangeHandler {
         ProvideSemanticTokensResponse,
         any
     > = new RequestType(SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint);
-    private emptyTokensResponse: Uint32Array = new Uint32Array();
+    private emptyTokensResponse: number[] = new Array<number>();
 
     constructor(
         private readonly documentManager: RazorDocumentManager,
@@ -78,7 +78,7 @@ export class SemanticTokensRangeHandler {
             // Point this request to the virtual C# document, and call Roslyn
             const virtualCSharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
             semanticTokensParams.textDocument = TextDocumentIdentifier.create(virtualCSharpUri);
-            const tokens = <vscode.SemanticTokens>(
+            const tokens = <SemanticTokens>(
                 await vscode.commands.executeCommand(provideSemanticTokensRangesCommand, semanticTokensParams)
             );
 
