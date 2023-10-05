@@ -4794,7 +4794,18 @@
             }
           }
         },
-        "configurationSnippets": []
+        "configurationSnippets": [
+          {
+            "label": "%debuggers.dotnet.configurationSnippets.label%",
+            "description": "%debuggers.dotnet.configurationSnippets.description%",
+            "body": {
+              "name": "C#: ${1:<project-name>} Debug",
+              "type": "dotnet",
+              "request": "launch",
+              "projectPath": "^\"\\${workspaceFolder}/${2:<relative-path-to-project-folder>}${1:<project-name>}.csproj\""
+            }
+          }
+        ]
       },
       {
         "type": "mono",
