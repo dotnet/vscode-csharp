@@ -92,6 +92,12 @@ export async function activate(
             new BaseVsDbgConfigurationProvider(platformInformation, csharpOutputChannel)
         )
     );
+    context.subscriptions.push(
+        vscode.debug.registerDebugConfigurationProvider(
+            'mono',
+            new BaseVsDbgConfigurationProvider(platformInformation, csharpOutputChannel)
+        )
+    );
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
 
