@@ -4,15 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType, TextDocumentIdentifier, SemanticTokens } from 'vscode-languageclient';
+import { RequestType } from 'vscode-languageclient';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { ProvideSemanticTokensResponse } from './provideSemanticTokensResponse';
 import { SerializableSemanticTokensParams } from './serializableSemanticTokensParams';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
-import { provideSemanticTokensRangesCommand } from '../../../lsptoolshost/razorCommands';
-import { UriConverter } from '../../../lsptoolshost/uriConverter';
 
 export class SemanticTokensRangeHandler {
     private static readonly getSemanticTokensRangeEndpoint = 'razor/provideSemanticTokensRange';
@@ -75,14 +73,16 @@ export class SemanticTokensRangeHandler {
                 );
             }
 
-            // Point this request to the virtual C# document, and call Roslyn
-            const virtualCSharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
-            semanticTokensParams.textDocument = TextDocumentIdentifier.create(virtualCSharpUri);
-            const tokens = <SemanticTokens>(
-                await vscode.commands.executeCommand(provideSemanticTokensRangesCommand, semanticTokensParams)
+            const tokens = await vscode.commands.executeCommand<vscode.SemanticTokens>(
+                'vscode.provideDocumentRangeSemanticTokens',
+                razorDocument.csharpDocument.uri,
+                semanticTokensParams.ranges[0]
             );
 
-            return new ProvideSemanticTokensResponse(tokens.data, semanticTokensParams.requiredHostDocumentVersion);
+            return new ProvideSemanticTokensResponse(
+                Array.from(tokens.data),
+                semanticTokensParams.requiredHostDocumentVersion
+            );
         } catch (error) {
             this.logger.logWarning(`${SemanticTokensRangeHandler.getSemanticTokensRangeEndpoint} failed with ${error}`);
         }
