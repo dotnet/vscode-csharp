@@ -117,7 +117,7 @@ export async function activate(
 
         const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
 
-        const documentManager = new RazorDocumentManager(languageServerClient, logger);
+        const documentManager = new RazorDocumentManager(languageServerClient, logger, razorTelemetryReporter);
         const documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
         reportTelemetryForDocuments(documentManager, razorTelemetryReporter);
         const languageConfiguration = new RazorLanguageConfiguration();
