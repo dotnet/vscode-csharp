@@ -24,7 +24,7 @@
   * Use double quote when quoting un script path (PR: [omnisharp-roslyn#2553](https://github.com/OmniSharp/omnisharp-roslyn/pull/2553))
   * Use core LSP TokenTypes where possible and validate token names (PR: [omnisharp-roslyn#2548](https://github.com/OmniSharp/omnisharp-roslyn/pull/2548))
 
-## 2.5.?
+## 2.5.30
 * Update Roslyn version to 4.9.0-1.23502.2 (PR: [#6463](https://github.com/dotnet/vscode-csharp/pull/6463))
   * Fix issue loading projects on .NET 8 RC2 (PR: [#70196](https://github.com/dotnet/roslyn/pull/70196))
   * Fix exception thrown by outdated version of ExternalAccess.RazorCompiler.dll (PR: [#70716](https://github.com/dotnet/roslyn/pull/70176))
