@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { ParsedEnvironmentFile } from '../coreclrDebug/parsedEnvironmentFile';
-import { debuggerSessionTracker } from '../coreclrDebug/provisionalDebugSessionTracker';
+import { debugSessionTracker } from '../coreclrDebug/provisionalDebugSessionTracker';
 
 import { MessageItem } from '../vscodeAdapter';
 import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/dotnetDevCertsHttps';
@@ -66,7 +66,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             return null;
         }
 
-        const brokeredServicePipeName = debuggerSessionTracker.getBrokeredServicePipeName();
+        const brokeredServicePipeName = debugSessionTracker.getBrokeredServicePipeName();
         if (brokeredServicePipeName !== undefined) {
             debugConfiguration.brokeredServicePipeName = brokeredServicePipeName;
         }

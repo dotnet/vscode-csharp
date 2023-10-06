@@ -14,21 +14,17 @@ import * as vscode from 'vscode';
  * this sends a custom request to the engine with the brokered service pipe name in order to initialize it.
  */
 export class ProvisionalDebugSessionTracker {
-    private _session: vscode.DebugSession | undefined;
+    private _sessions: Set<vscode.DebugSession> | undefined = new Set<vscode.DebugSession>();
 
     private _onDidStartDebugSession: vscode.Disposable | undefined;
     private _onDidTerminateDebugSession: vscode.Disposable | undefined;
 
     private _brokeredServicePipeName: string | undefined;
 
-    DebuggerSessionTracker() {
-        this._session = undefined;
-    }
-
     /**
      * Initializes the debug session handlers.
      */
-    async initializeDebugSessionHandlers(context: vscode.ExtensionContext): Promise<void> {
+    initializeDebugSessionHandlers(context: vscode.ExtensionContext): void {
         this._onDidStartDebugSession = vscode.debug.onDidStartDebugSession(this.onDidStartDebugSession.bind(this));
 
         this._onDidTerminateDebugSession = vscode.debug.onDidTerminateDebugSession(
@@ -43,15 +39,19 @@ export class ProvisionalDebugSessionTracker {
      * Tracks a debug session until it is terminated.
      * @param session Debug session.
      */
-    async onDidStartDebugSession(session: vscode.DebugSession): Promise<void> {
-        this._session = session;
+    onDidStartDebugSession(session: vscode.DebugSession): void {
+        if (session.type !== 'coreclr') {
+            return;
+        }
+
+        this._sessions?.add(session);
     }
 
     /**
      * Notifies that a debug session has been terminated.
      */
-    async onDidTerminateDebugSession(): Promise<void> {
-        this._session = undefined;
+    onDidTerminateDebugSession(): void {
+        this._sessions?.clear();
     }
 
     /**
@@ -59,12 +59,13 @@ export class ProvisionalDebugSessionTracker {
      * @param csDevKitPipeName Brokered service pipe name activated by {@link CSharpDevKitExports}.
      */
     async onCsDevKitInitialized(csDevKitPipeName: string): Promise<void> {
-        if (this._session != undefined) {
-            // Debugging session already started, send a custom DAP request to the engine.
-            await this._session.customRequest('initializeBrokeredServicePipeName', csDevKitPipeName);
-        }
-
         this._brokeredServicePipeName = csDevKitPipeName;
+
+        const sessions = this._sessions;
+        if (sessions != undefined) {
+            // Debugging session already started, send a custom DAP request to the engine.
+            sessions.forEach((s) => s.customRequest('initializeBrokeredServicePipeName', csDevKitPipeName));
+        }
 
         // Since C# dev kit was initialized, we no longer need to track debugging sessions.
         this.cleanup();
@@ -81,11 +82,12 @@ export class ProvisionalDebugSessionTracker {
      * No longer tracks any debugging session going forward.
      */
     cleanup(): void {
-        this._session = undefined;
+        this._sessions?.clear();
+        this._sessions = undefined;
 
         this._onDidStartDebugSession?.dispose();
         this._onDidTerminateDebugSession?.dispose();
     }
 }
 
-export const debuggerSessionTracker = new ProvisionalDebugSessionTracker();
+export const debugSessionTracker = new ProvisionalDebugSessionTracker();
