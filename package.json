@@ -4813,7 +4813,7 @@
         "description": "A Razor component element"
       },
       {
-        "id": "razorComponentAttribute",
+        "id": "RazorComponentAttribute",
         "description": "A Razor component attribute"
       },
       {
@@ -4863,6 +4863,10 @@
       {
         "id": "markupAttribute",
         "description": "The name of a Markup attribute."
+      },
+      {
+        "id": "markupAttributeQuote",
+        "description": "A token that represents an attribute quote in a Markup attribute."
       },
       {
         "id": "markupComment",
@@ -5119,7 +5123,7 @@
           "razorComponentElement": [
             "entity.name.class.element.component"
           ],
-          "razorComponentAttribute": [
+          "RazorComponentAttribute": [
             "entity.name.class.attribute.component"
           ],
           "razorTagHelperElement": [
@@ -5169,12 +5173,18 @@
           "markupAttribute": [
             "entity.other.attribute-name.html"
           ],
+          "markupAttributeQuote": [
+            "punctuation.definition.string.html"
+          ],
           "markupComment": [
             "comment.block.html"
           ],
           "markupCommentPunctuation": [
             "punctuation.definition.comment.html",
             "comment.block.html"
+          ],
+          "markupTagDelimiter": [
+            "punctuation.definition.tag.html"
           ],
           "keyword": [
             "keyword.cs"
