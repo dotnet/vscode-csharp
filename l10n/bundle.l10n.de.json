@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "Fehler beim Festlegen des Debugadapterverzeichnisses",
   "Failed to set extension directory": "Fehler beim Festlegen des Erweiterungsverzeichnisses",
   "Failed to set install complete file path": "Fehler beim Festlegen des Vollständigen Installationsdateipfads.",
+  "Fix All Code Action": "Korrigieren der gesamten Codeaktion",
   "For further information visit {0}": "Weitere Informationen finden Sie unter {0}",
   "For further information visit {0}.": "Weitere Informationen finden Sie unter {0}.",
   "For more information about the 'console' field, see {0}": "Weitere Informationen zum Feld \"Konsole\" finden Sie unter {0}",
@@ -72,6 +73,7 @@
   "Open envFile": "envFile öffnen",
   "Operating system \"{0}\" not supported.": "Das Betriebssystem \"{0}\" wird nicht unterstützt.",
   "Perform the actions (or no action) that resulted in your Razor issue": "Führen Sie die Aktionen (oder keine Aktion) aus, die zu Ihrem Razor-Problem geführt haben.",
+  "Pick a fix all scope": "Wählen Sie eine Korrektur für den gesamten Bereich aus",
   "Pipe transport failed to get OS and processes.": "Der Pipetransport konnte das Betriebssystem und die Prozesse nicht abrufen.",
   "Please fill in this section": "Füllen Sie diesen Abschnitt aus.",
   "Press {0}": "Drücken Sie {0}",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[FEHLER]: Fehler beim Installieren des Debuggerpakets durch die C#-Erweiterung.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Die Option \"dotnet.server.useOmnisharp\" wurde geändert. Laden Sie das Fenster neu, um die Änderung anzuwenden.",
   "pipeArgs must be a string or a string array type": "pipeArgs muss eine Zeichenfolge oder ein Zeichenfolgenarraytyp sein.",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "{0}-Schlüsselwort",
   "{0} references": "{0} Verweise",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, fügen Sie den Inhalt des Problems als Textkörper des Problems ein. Vergessen Sie nicht, alle nicht ausgefüllten Details auszufüllen."
 }

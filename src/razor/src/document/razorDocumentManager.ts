@@ -9,6 +9,7 @@ import { HtmlProjectedDocument } from '../html/htmlProjectedDocument';
 import { RazorLanguage } from '../razorLanguage';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';
+import { TelemetryReporter } from '../telemetryReporter';
 import { UpdateBufferRequest } from '../rpc/updateBufferRequest';
 import { getUriPath } from '../uriPaths';
 import { IRazorDocument } from './IRazorDocument';
@@ -28,7 +29,11 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     public razorDocumentGenerationInitialized = false;
 
-    constructor(private readonly serverClient: RazorLanguageServerClient, private readonly logger: RazorLogger) {}
+    constructor(
+        private readonly serverClient: RazorLanguageServerClient,
+        private readonly logger: RazorLogger,
+        private readonly telemetryReporter: TelemetryReporter
+    ) {}
 
     public get onChange() {
         return this.onChangeEmitter.event;
@@ -227,6 +232,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const projectedDocument = document.csharpDocument;
 
         if (
+            updateBufferRequest.previousWasEmpty ||
             !projectedDocument.hostDocumentSyncVersion ||
             projectedDocument.hostDocumentSyncVersion <= updateBufferRequest.hostDocumentVersion
         ) {
@@ -237,6 +243,15 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(document.csharpDocument.uri);
 
             const csharpProjectedDocument = projectedDocument as CSharpProjectedDocument;
+
+            // If the language server is telling us that the previous document was empty, then we should clear
+            // ours out. Hopefully ours would have been empty too, but there are cases where things get out of
+            // sync
+            if (updateBufferRequest.previousWasEmpty && projectedDocument.length !== 0) {
+                this.telemetryReporter.reportBuffersOutOfSync();
+                csharpProjectedDocument.clear();
+            }
+
             csharpProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
@@ -260,6 +275,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const projectedDocument = document.htmlDocument;
 
         if (
+            updateBufferRequest.previousWasEmpty ||
             !projectedDocument.hostDocumentSyncVersion ||
             projectedDocument.hostDocumentSyncVersion <= updateBufferRequest.hostDocumentVersion
         ) {
@@ -270,6 +286,15 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(document.htmlDocument.uri);
 
             const htmlProjectedDocument = projectedDocument as HtmlProjectedDocument;
+
+            // If the language server is telling us that the previous document was empty, then we should clear
+            // ours out. Hopefully ours would have been empty too, but there are cases where things get out of
+            // sync
+            if (updateBufferRequest.previousWasEmpty && projectedDocument.length !== 0) {
+                this.telemetryReporter.reportBuffersOutOfSync();
+                htmlProjectedDocument.clear();
+            }
+
             htmlProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.htmlChanged);

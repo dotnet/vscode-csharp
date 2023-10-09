@@ -36,6 +36,7 @@ export const provideCodeActionsCommand = 'roslyn.provideCodeActions';
 export const resolveCodeActionCommand = 'roslyn.resolveCodeAction';
 export const provideCompletionsCommand = 'roslyn.provideCompletions';
 export const resolveCompletionsCommand = 'roslyn.resolveCompletion';
+export const provideSemanticTokensRangeCommand = 'roslyn.provideSemanticTokensRange';
 export const roslynSimplifyMethodCommand = 'roslyn.simplifyMethod';
 export const roslynFormatNewFileCommand = 'roslyn.formatNewFile';
 export const razorInitializeCommand = 'razor.initialize';
@@ -72,15 +73,14 @@ export function registerRazorCommands(context: vscode.ExtensionContext, language
             }
         )
     );
+
+    const formatNewFileRequestType = new RequestType<SerializableFormatNewFileParams, string | undefined, any>(
+        'roslyn/formatNewFile'
+    );
     context.subscriptions.push(
         vscode.commands.registerCommand(
             roslynFormatNewFileCommand,
             async (request: SerializableFormatNewFileParams) => {
-                const formatNewFileRequestType = new RequestType<
-                    SerializableFormatNewFileParams,
-                    string | undefined,
-                    any
-                >('roslyn/formatNewFile');
                 return await languageServer.sendRequest(formatNewFileRequestType, request, CancellationToken.None);
             }
         )

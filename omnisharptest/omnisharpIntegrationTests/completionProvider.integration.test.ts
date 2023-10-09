@@ -93,7 +93,7 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
                 sawAdditionalTextEdits = true;
                 expect(i.additionalTextEdits).to.be.array();
                 expect(i.additionalTextEdits.length).to.equal(1);
-                expect(i.additionalTextEdits[0].newText).to.equal('using singleCsproj2;\n');
+                expect(normalizeNewlines(i.additionalTextEdits[0].newText)).to.equal('using singleCsproj2;\n');
                 expect(i.additionalTextEdits[0].range.start.line).to.equal(1);
                 expect(i.additionalTextEdits[0].range.start.character).to.equal(0);
                 expect(i.additionalTextEdits[0].range.end.line).to.equal(1);
@@ -107,4 +107,10 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         expect(sawAdditionalTextEdits).to.be.true;
         expect(sawEmptyAdditionalTextEdits).to.be.true;
     });
+
+    function normalizeNewlines(text: string) {
+        // using directives are now added with the line ending used by other
+        // using directives in the file instead of the formatting option end_of_line.
+        return text.replaceAll('\r\n', '\n');
+    }
 });
