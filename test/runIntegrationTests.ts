@@ -24,14 +24,10 @@ export async function main() {
 
         console.log('Display: ' + process.env.DISPLAY);
 
-        const result = cp.spawnSync(
-            cli,
-            [...args, '--verbose', 'true', '--install-extension', 'ms-dotnettools.vscode-dotnet-runtime'],
-            {
-                encoding: 'utf-8',
-                stdio: 'inherit',
-            }
-        );
+        const result = cp.spawnSync(cli, [...args, '--install-extension', 'ms-dotnettools.vscode-dotnet-runtime'], {
+            encoding: 'utf-8',
+            stdio: 'inherit',
+        });
         if (result.error) {
             throw new Error(`Failed to install the runtime extension: ${result.error}`);
         }
@@ -79,7 +75,7 @@ export async function main() {
             extensionDevelopmentPath,
             extensionTestsPath,
             // Launch with info logging as anything else is way too verbose and will hide test results.
-            launchArgs: [workspacePath, '-n', '--log', 'verbose', '--verbose', 'true'],
+            launchArgs: [workspacePath, '-n', '--log', 'info'],
             extensionTestsEnv: process.env,
         });
 
