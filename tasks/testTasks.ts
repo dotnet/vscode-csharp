@@ -14,6 +14,8 @@ import {
     omnisharpTestRootPath,
     testRootPath,
     integrationTestRunnerPath,
+    razorIntegrationTestAssetsRootPath,
+    razorIntegrationTestRunnerPath,
 } from './projectPaths';
 import spawnNode from './spawnNode';
 import * as jest from 'jest';
@@ -44,6 +46,16 @@ gulp.task('omnisharptest:feature', async () => {
 gulp.task('test:razor', async () => {
     runJestTest(razorTestProjectName);
 });
+
+const razorIntegrationTestProjects = ['BasicRazorApp2_1'];
+for (const projectName of razorIntegrationTestProjects) {
+    gulp.task(`test:razorintegration:${projectName}`, async () => runIntegrationTest(projectName, /* razor */ true));
+}
+
+gulp.task(
+    'test:razorintegration',
+    gulp.series(razorIntegrationTestProjects.map((projectName) => `test:razorintegration:${projectName}`))
+);
 
 gulp.task('omnisharptest:unit', async () => {
     const result = await spawnNode([
@@ -113,7 +125,7 @@ gulp.task(
     gulp.series(integrationTestProjects.map((projectName) => `test:integration:${projectName}`))
 );
 
-gulp.task('test', gulp.series('test:unit', 'test:integration', 'test:razor'));
+gulp.task('test', gulp.series('test:unit', 'test:integration', 'test:razor', 'test:razorintegration'));
 
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
@@ -145,14 +157,14 @@ async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio
     return result;
 }
 
-async function runIntegrationTest(testAssetName: string) {
+async function runIntegrationTest(testAssetName: string, razor = false) {
     const workspacePath = path.join(
-        integrationTestAssetsRootPath,
+        razor ? razorIntegrationTestAssetsRootPath : integrationTestAssetsRootPath,
         testAssetName,
         '.vscode',
         `lsp_tools_host_${testAssetName}.code-workspace`
     );
-    const codeTestsPath = path.join(testRootPath, 'integrationTests');
+    const codeTestsPath = path.join(testRootPath, razor ? 'razorIntegrationTests' : 'integrationTests');
 
     const env = {
         CODE_TESTS_WORKSPACE: workspacePath,
@@ -160,7 +172,8 @@ async function runIntegrationTest(testAssetName: string) {
         EXTENSIONS_TESTS_PATH: path.join(codeTestsPath, 'index.js'),
     };
 
-    const result = await spawnNode([integrationTestRunnerPath, '--enable-source-maps'], { env, cwd: rootPath });
+    const runnerPath = razor ? razorIntegrationTestRunnerPath : integrationTestRunnerPath;
+    const result = await spawnNode([runnerPath, '--enable-source-maps'], { env, cwd: rootPath });
 
     if (result.code === null || result.code > 0) {
         // Ensure that gulp fails when tests fail

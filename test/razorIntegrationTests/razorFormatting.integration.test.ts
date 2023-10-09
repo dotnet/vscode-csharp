@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as jestLib from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import * as integrationHelpers from './integrationHelpers';
+import * as integrationHelpers from '../integrationTests/integrationHelpers';
 
 jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function () {
     jestLib.beforeAll(async function () {

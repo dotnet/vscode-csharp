@@ -44,34 +44,6 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "Launch Current File BasicRazorApp Integration Tests",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                // Create a temp profile that has no extensions / user settings.
-                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
-                "--profile-temp",
-                "${workspaceRoot}/test/integrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
-                "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests",
-            ],
-            "env": {
-                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
-                "TEST_FILE_FILTER": "${file}"
-            },
-            "sourceMaps": true,
-            "outFiles": [
-              "${workspaceRoot}/dist/*.js",
-              "${workspaceRoot}/out/test/**/*.js"
-            ],
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ],
-            "preLaunchTask": "buildDev"
-        },
-        {
             "type": "node",
             "request": "launch",
             "name": "Omnisharp: Launch Unit tests",
@@ -349,6 +321,17 @@
         "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
         "args": [
             "generateOptionsSchema"
+        ],
+        "cwd": "${workspaceFolder}"
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "Razor integration tests",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+        "args": [
+            "test:razorintegration"
         ],
         "cwd": "${workspaceFolder}"
     }

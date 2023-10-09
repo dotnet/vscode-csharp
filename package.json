@@ -63,6 +63,7 @@
     "test": "tsc -p ./ && gulp test",
     "test:integration": "tsc -p ./ && gulp test:integration",
     "test:razor": "tsc -p ./ && npm run compile:razorTextMate && gulp test:razor",
+    "test:razorintegration": "tsc -p ./ && gulp test:razorintegration",
     "omnisharptest": "tsc -p ./ && gulp omnisharptest",
     "omnisharptest:unit": "tsc -p ./ && gulp omnisharptest:unit",
     "omnisharptest:feature": "tsc -p ./ && gulp omnisharptest:feature",
