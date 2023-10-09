@@ -14,8 +14,8 @@ const integrationTestConfig: Config = {
     ...baseProjectConfig,
     displayName: jestIntegrationTestProjectName,
     roots: ['<rootDir>'],
-    testEnvironment: '<rootDir>/jestSetup/vsCodeEnvironment.ts',
-    setupFilesAfterEnv: ['<rootDir>/jestSetup/vsCodeFramework.ts'],
+    testEnvironment: '<rootDir>/../integrationTests/jestSetup/vsCodeEnvironment.ts',
+    setupFilesAfterEnv: ['<rootDir>/../integrationTests/jestSetup/vsCodeFramework.ts'],
 };
 
 export default integrationTestConfig;
