@@ -996,6 +996,7 @@
     "onDebugResolve:blazorwasm",
     "onDebugResolve:coreclr",
     "onDebugResolve:clr",
+    "onDebugResolve:mono",
     "onDebugResolve:dotnet",
     "onLanguage:csharp",
     "onLanguage:aspnetcorerazor",
@@ -4858,94 +4859,36 @@
                 "markdownDescription": "%generateOptionsSchema.stopAtEntry.markdownDescription%",
                 "default": false
               },
-              "launchBrowser": {
-                "description": "%generateOptionsSchema.launchBrowser.description%",
-                "default": {
-                  "enabled": true
-                },
+              "monoDebuggerOptions": {
                 "type": "object",
                 "required": [
-                  "enabled"
+                  "ip",
+                  "port",
+                  "platform",
+                  "isServer",
+                  "assetsPath"
                 ],
+                "description": "When present, this tells the debugger to connect to a mono runtime using a TCP/IP connection.",
                 "properties": {
-                  "enabled": {
-                    "type": "boolean",
-                    "description": "%generateOptionsSchema.launchBrowser.enabled.description%",
-                    "default": true
-                  },
-                  "args": {
+                  "ip": {
                     "type": "string",
-                    "description": "%generateOptionsSchema.launchBrowser.args.description%",
-                    "default": "${auto-detect-url}"
+                    "description": "IP to listen/connect where mono runtime will be waiting for."
                   },
-                  "osx": {
-                    "description": "%generateOptionsSchema.launchBrowser.osx.description%",
-                    "default": {
-                      "command": "open",
-                      "args": "${auto-detect-url}"
-                    },
-                    "type": "object",
-                    "required": [
-                      "command"
-                    ],
-                    "properties": {
-                      "command": {
-                        "type": "string",
-                        "description": "%generateOptionsSchema.launchBrowser.osx.command.description%",
-                        "default": "open"
-                      },
-                      "args": {
-                        "type": "string",
-                        "description": "%generateOptionsSchema.launchBrowser.osx.args.description%",
-                        "default": "${auto-detect-url}"
-                      }
-                    }
+                  "port": {
+                    "type": "number",
+                    "description": "Port number to listen/connect where mono runtime will be waiting for."
                   },
-                  "linux": {
-                    "description": "%generateOptionsSchema.launchBrowser.linux.description%",
-                    "default": {
-                      "command": "xdg-open",
-                      "args": "${auto-detect-url}"
-                    },
-                    "type": "object",
-                    "required": [
-                      "command"
-                    ],
-                    "properties": {
-                      "command": {
-                        "type": "string",
-                        "description": "%generateOptionsSchema.launchBrowser.linux.command.description%",
-                        "default": "xdg-open"
-                      },
-                      "args": {
-                        "type": "string",
-                        "description": "%generateOptionsSchema.launchBrowser.linux.args.description%",
-                        "default": "${auto-detect-url}"
-                      }
-                    }
+                  "platform": {
+                    "type": "string",
+                    "description": "Platform where the app is running (ex: android, ios, maccatalyst)."
                   },
-                  "windows": {
-                    "description": "%generateOptionsSchema.launchBrowser.windows.description%",
-                    "default": {
-                      "command": "cmd.exe",
-                      "args": "/C start ${auto-detect-url}"
-                    },
-                    "type": "object",
-                    "required": [
-                      "command"
-                    ],
-                    "properties": {
-                      "command": {
-                        "type": "string",
-                        "description": "%generateOptionsSchema.launchBrowser.windows.command.description%",
-                        "default": "cmd.exe"
-                      },
-                      "args": {
-                        "type": "string",
-                        "description": "%generateOptionsSchema.launchBrowser.windows.args.description%",
-                        "default": "/C start ${auto-detect-url}"
-                      }
-                    }
+                  "isServer": {
+                    "type": "boolean",
+                    "description": "Is DBI the server or not for debugger connection?"
+                  },
+                  "assetsPath": {
+                    "type": "string",
+                    "description": "Whether the DBI is the server for the debugger connection."
                   }
                 }
               },

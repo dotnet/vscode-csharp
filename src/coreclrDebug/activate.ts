@@ -100,6 +100,7 @@ export async function activate(
     );
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('mono', factory));
 
     context.subscriptions.push(disposables);
 }
