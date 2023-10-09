@@ -11,6 +11,10 @@ import * as integrationHelpers from './integrationHelpers';
 
 jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function () {
     jestLib.beforeAll(async function () {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
         const editorConfig = vscode.workspace.getConfiguration('razor');
         await editorConfig.update('format.enable', true);
 
