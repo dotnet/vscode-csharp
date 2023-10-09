@@ -15,11 +15,13 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
             return;
         }
 
-        const editorConfig = vscode.workspace.getConfiguration('razor');
-        await editorConfig.update('format.enable', true);
+        const razorConfig = vscode.workspace.getConfiguration('razor');
+        await razorConfig.update('format.enable', true);
+        const htmlConfig = vscode.workspace.getConfiguration('html');
+        await htmlConfig.update('format.enable', true);
 
-        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'BadlyFormatted.razor'));
         await integrationHelpers.activateCSharpExtension();
+        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'BadlyFormatted.razor'));
     });
 
     jestLib.afterAll(async () => {
@@ -35,11 +37,35 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
         if (!activeDocument) {
             throw new Error('No active document');
         }
-        const edits: vscode.TextEdit[] = await vscode.commands.executeCommand(
+
+        const edits = <vscode.TextEdit[]>await vscode.commands.executeCommand(
             'vscode.executeFormatDocumentProvider',
-            activeDocument
+            activeDocument,
+            {
+                insertSpaces: true,
+                tabSize: 4,
+            }
         );
 
-        jestLib.expect(edits).toHaveLength(6);
+        jestLib.expect(edits).toBeDefined();
+
+        // It's much easier to verify the expected state of the document, than a bunch of edits
+        const formatEdit = new vscode.WorkspaceEdit();
+        formatEdit.set(activeDocument, edits);
+        await vscode.workspace.applyEdit(formatEdit);
+
+        const contents = vscode.window.activeTextEditor?.document.getText();
+        jestLib.expect(contents).toEqual(`@page "/bad"
+
+<div>
+    <p>
+        Hello
+    </p>
+</div>
+
+@code {
+    private string _x = "";
+}
+        `);
     });
 });
