@@ -57,15 +57,14 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
         const contents = vscode.window.activeTextEditor?.document.getText();
         jestLib.expect(contents).toEqual(`@page "/bad"
 
-<div>
-    <p>
-        Hello
-    </p>
-</div>
-
 @code {
     private string _x = "";
+
+    private void M()
+    {
+        // hi there
+    }
 }
-        `);
+`);
     });
 });
