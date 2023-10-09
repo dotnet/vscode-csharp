@@ -9,6 +9,18 @@ import * as jestLib from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../integrationTests/integrationHelpers';
 
+function normalizeNewlines(original: string | undefined): string | undefined {
+    if (!original) {
+        return original;
+    }
+
+    while (original.indexOf('\r\n') != -1) {
+        original = original.replace('\r\n', '\n');
+    }
+
+    return original;
+}
+
 jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function () {
     jestLib.beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
@@ -54,8 +66,9 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
         formatEdit.set(activeDocument, edits);
         await vscode.workspace.applyEdit(formatEdit);
 
-        const contents = vscode.window.activeTextEditor?.document.getText();
-        jestLib.expect(contents).toEqual(`@page "/bad"
+        const contents = normalizeNewlines(vscode.window.activeTextEditor?.document.getText());
+        jestLib.expect(contents).toBe(
+            normalizeNewlines(`@page "/bad"
 
 @code {
     private string _x = "";
@@ -65,6 +78,7 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
         // hi there
     }
 }
-`);
+`)
+        );
     });
 });
