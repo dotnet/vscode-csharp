@@ -4869,6 +4869,10 @@
         "description": "A token that represents an attribute quote in a Markup attribute."
       },
       {
+        "id": "markupAttributeValue",
+        "description": "The value of a Markup attribute."
+      },
+      {
         "id": "markupComment",
         "description": "The contents of a Markup comment."
       },
@@ -5174,7 +5178,10 @@
             "entity.other.attribute-name.html"
           ],
           "markupAttributeQuote": [
-            "punctuation.definition.string.html"
+            "punctuation.definition.tag.html"
+          ],
+          "markupAttributeValue": [
+            "punctuation.definition.entity.html"
           ],
           "markupComment": [
             "comment.block.html"
@@ -5543,9 +5550,7 @@
         "scopeName": "text.aspnetcorerazor",
         "path": "./src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
         "unbalancedBracketScopes": [
-          "keyword.operator.arrow.cs",
-          "keyword.operator.bitwise.shift.cs",
-          "keyword.operator.relational.cs"
+          "text.aspnetcorerazor"
         ]
       }
     ],
