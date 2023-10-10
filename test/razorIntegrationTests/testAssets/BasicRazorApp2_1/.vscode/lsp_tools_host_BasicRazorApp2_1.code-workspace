@@ -1,0 +1,14 @@
+{
+    "folders": [
+        {
+            "path": ".."
+        }
+    ],
+    "settings": {
+        "dotnet.defaultSolution": "BasicRazorApp2_1.sln",
+        "dotnet.server.trace": "Trace",
+        "dotnet.server.useOmnisharp": false,
+        "omnisharp.enableLspDriver": false,
+        "razor.trace": "Verbose"
+    }
+}

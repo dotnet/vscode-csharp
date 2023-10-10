@@ -23,7 +23,7 @@ import {
     Command,
     DynamicFeature,
     LanguageClientOptions,
-    RequestType0,
+    RequestType,
     StaticFeature,
     Trace,
 } from 'vscode-languageclient';
@@ -33,7 +33,6 @@ import { ColorProviderFeature } from 'vscode-languageclient/lib/common/colorProv
 import { WorkspaceFoldersFeature } from 'vscode-languageclient/lib/common/workspaceFolder';
 import { DeclarationFeature } from 'vscode-languageclient/lib/common/declaration';
 import { DocumentLinkFeature } from 'vscode-languageclient/lib/common/documentLink';
-import { InlayHintsFeature } from 'vscode-languageclient/lib/common/inlayHint';
 import { InlineValueFeature } from 'vscode-languageclient/lib/common/inlineValue';
 import { DiagnosticFeature } from 'vscode-languageclient/lib/common/diagnostic';
 import { NotebookDocumentSyncFeature } from 'vscode-languageclient/lib/common/notebook';
@@ -240,6 +239,10 @@ export class LspEngine implements IEngine {
                     const result = await next(document, position, token);
                     return result;
                 },
+                async provideInlayHints(document, range, token, next) {
+                    const result = await next(document, range, token);
+                    return result;
+                },
             },
         };
 
@@ -273,7 +276,7 @@ export class LspEngine implements IEngine {
         //disableFeature(FoldingRangeFeature);
         //disableFeature(HoverFeature); // This feature does not always seem to be working. Wonder if requests are coming in too early.
         //disableFeature(ImplementationFeature); // Needs metadata document/source generated document support
-        disableFeature(InlayHintsFeature); // The csharp-language-server-protocol library needs to update with 3.17 changes
+        //disableFeature(InlayHintsFeature); // The csharp-language-server-protocol library needs to update with 3.17 changes
         disableFeature(InlineValueFeature); // Not implemented in O#
         disableFeature(NotebookDocumentSyncFeature); // Not implemented in O#
         //disableFeature(ReferencesFeature); // Needs metadata document/source generated document support
@@ -332,8 +335,8 @@ export class LspEngine implements IEngine {
         return this._initializeTask;
 
         async function waitForReady(client: LanguageClient) {
-            const statusRequest = new RequestType0<boolean, void>('o#/checkreadystatus');
-            while (!(await client.sendRequest(statusRequest))) {
+            const statusRequest = new RequestType<object, boolean, void>('o#/checkreadystatus');
+            while (!(await client.sendRequest(statusRequest, {}))) {
                 await new Promise((r) => setTimeout(r, 100));
             }
         }

@@ -3,11 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { runIntegrationTests } from '../runIntegrationTests';
-import { jestIntegrationTestProjectName } from './jest.config';
+import { ITestAssetWorkspace } from '../../integrationTests/testAssets/testAssets';
 
-export async function run() {
-    process.env.RUNNING_INTEGRATION_TESTS = 'true';
+const workspace: ITestAssetWorkspace = {
+    description: 'Basic Razor app',
+    projects: [
+        {
+            relativeFilePath: 'BasicRazorApp2_1.csproj',
+        },
+    ],
+};
 
-    await runIntegrationTests(jestIntegrationTestProjectName);
-}
+export default workspace;
