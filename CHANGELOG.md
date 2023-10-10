@@ -8,6 +8,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Razor version to 7.0.0-preview.23475.5 (PR: [#6506](https://github.com/dotnet/vscode-csharp/pull/6506))
+  * Add setting for whether to complete components with space (PR: [razor#9379](https://github.com/dotnet/razor/pull/9379))
 * Update Roslyn version to 4.9.0-1.23502.8 (PR: [#6447](https://github.com/dotnet/vscode-csharp/pull/6447))
   * Update Razor project configuration file name (PR: [#70156](https://github.com/dotnet/roslyn/pull/70156))
 * Update OmniSharp to 1.39.10 (PR: [#6491](https://github.com/dotnet/vscode-csharp/pull/6491))
