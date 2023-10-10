@@ -10,8 +10,10 @@
 ## Latest
 * Update Razor version to 7.0.0-preview.23475.5 (PR: [#6506](https://github.com/dotnet/vscode-csharp/pull/6506))
   * Add setting for whether to complete components with space (PR: [razor#9379](https://github.com/dotnet/razor/pull/9379))
-* Update Roslyn version to 4.9.0-1.23502.8 (PR: [#6447](https://github.com/dotnet/vscode-csharp/pull/6447))
-  * Update Razor project configuration file name (PR: [#70156](https://github.com/dotnet/roslyn/pull/70156))
+* Update Roslyn version to 4.9.0-1.23506.7 (PR: [#6447](https://github.com/dotnet/vscode-csharp/pull/6447))
+  * Fix various issues with project loading and allow fallbacks to .NET framework msbuild (PR: [#70240](https://github.com/dotnet/roslyn/pull/70240))
+* Fix some Razor colorization issues (PR: [#6502](https://github.com/dotnet/vscode-csharp/pull/6502))
+* Fire telemetry if Razor buffers get out of sync, and recover from same (PR: [#6494](https://github.com/dotnet/vscode-csharp/pull/6494))
 * Update OmniSharp to 1.39.10 (PR: [#6491](https://github.com/dotnet/vscode-csharp/pull/6491))
   * Add RazorComplier EA to support razor generators (PR: [omnisharp-roslyn#2572](https://github.com/OmniSharp/omnisharp-roslyn/pull/2572))
   * Add Kind parameter to InlayHint (PR: [omnisharp-roslyn#2570](https://github.dev/OmniSharp/omnisharp-roslyn/pull/2570))
@@ -25,6 +27,11 @@
   * Update Roslyn to version 4.8.0-1.23374.10 (PR: [omnisharp-roslyn#2555](https://github.com/OmniSharp/omnisharp-roslyn/pull/2555))
   * Use double quote when quoting un script path (PR: [omnisharp-roslyn#2553](https://github.com/OmniSharp/omnisharp-roslyn/pull/2553))
   * Use core LSP TokenTypes where possible and validate token names (PR: [omnisharp-roslyn#2548](https://github.com/OmniSharp/omnisharp-roslyn/pull/2548))
+* Add Razor C# semantic tokens support in VS Code (PR: [#6489](https://github.com/dotnet/vscode-csharp/pull/6489))
+* Update Roslyn version to 4.9.0-1.23502.8 (PR: [#6447](https://github.com/dotnet/vscode-csharp/pull/6447))
+  * Update Razor project configuration file name (PR: [#70156](https://github.com/dotnet/roslyn/pull/70156))* added support.md file (PR: [#6478](https://github.com/dotnet/vscode-csharp/pull/6478))
+* Debugger: Improve the display of various debug configurations and snippets (PR: [#6456](https://github.com/dotnet/vscode-csharp/pull/6456))
+* Initialize Razor even if Razor doc isn't opened yet (PR: [#6473](https://github.com/dotnet/vscode-csharp/pull/6473))
 
 ## 2.5.30
 * Update Roslyn version to 4.9.0-1.23502.2 (PR: [#6463](https://github.com/dotnet/vscode-csharp/pull/6463))

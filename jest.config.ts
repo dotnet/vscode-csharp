@@ -8,6 +8,7 @@ const config: Config = {
     projects: [
         '<rootDir>/test/unitTests/jest.config.ts',
         '<rootDir>/test/integrationTests/jest.config.ts',
+        '<rootDir>/test/razorIntegrationTests/jest.config.ts',
         '<rootDir>/test/razorTests/jest.config.ts',
         '<rootDir>/omnisharptest/omnisharpJestTests/jest.config.ts',
     ],

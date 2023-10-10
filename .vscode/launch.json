@@ -323,6 +323,17 @@
             "generateOptionsSchema"
         ],
         "cwd": "${workspaceFolder}"
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "Razor integration tests",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+        "args": [
+            "test:razorintegration"
+        ],
+        "cwd": "${workspaceFolder}"
     }
     ]
 }

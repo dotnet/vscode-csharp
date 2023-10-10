@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.9.0-1.23502.8",
+    "roslyn": "4.9.0-1.23506.7",
     "omniSharp": "1.39.10",
     "razor": "7.0.0-preview.23509.2",
     "razorOmnisharp": "7.0.0-preview.23363.1"
@@ -63,6 +63,7 @@
     "test": "tsc -p ./ && gulp test",
     "test:integration": "tsc -p ./ && gulp test:integration",
     "test:razor": "tsc -p ./ && npm run compile:razorTextMate && gulp test:razor",
+    "test:razorintegration": "tsc -p ./ && gulp test:razorintegration",
     "omnisharptest": "tsc -p ./ && gulp omnisharptest",
     "omnisharptest:unit": "tsc -p ./ && gulp omnisharptest:unit",
     "omnisharptest:feature": "tsc -p ./ && gulp omnisharptest:feature",
