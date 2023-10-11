@@ -57,6 +57,7 @@ import { ServerStateChange } from './lsptoolshost/serverStateChange';
 import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
 import { RazorTelemetryDownloader } from './razor/razorTelemetryDownloader';
 import { commonOptions, omnisharpOptions, razorOptions } from './shared/options';
+import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -335,6 +336,8 @@ export async function activate(
     reporter.sendTelemetryEvent('CSharpActivated', activationProperties);
 
     if (!useOmnisharpServer) {
+        debugSessionTracker.initializeDebugSessionHandlers(context);
+
         tryGetCSharpDevKitExtensionExports(csharpLogObserver);
 
         // If we got here, the server should definitely have been created.
@@ -401,9 +404,9 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
                 ]);
 
                 // Notify the vsdbg configuration provider that C# dev kit has been loaded.
-                exports.serverProcessLoaded(async () =>
-                    coreclrdebug.initializeBrokeredServicePipeName(await exports.getBrokeredServiceServerPipeName())
-                );
+                exports.serverProcessLoaded(async () => {
+                    debugSessionTracker.onCsDevKitInitialized(await exports.getBrokeredServiceServerPipeName());
+                });
 
                 vscode.commands.executeCommand('setContext', 'dotnet.debug.serviceBrokerAvailable', true);
             } else {
