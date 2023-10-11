@@ -8,7 +8,6 @@ import * as path from 'path';
 import {
     codeExtensionPath,
     omnisharpFeatureTestRunnerPath,
-    mochaPath,
     rootPath,
     integrationTestAssetsRootPath,
     omnisharpTestRootPath,
@@ -20,7 +19,7 @@ import {
 import spawnNode from './spawnNode';
 import * as jest from 'jest';
 import { Config } from '@jest/types';
-import { jestOmniSharpUnitTestProjectName } from '../omnisharptest/omnisharpJestTests/jest.config';
+import { jestOmniSharpUnitTestProjectName } from '../omnisharptest/omnisharpUnitTests/jest.config';
 import { jestUnitTestProjectName } from '../test/unitTests/jest.config';
 import { razorTestProjectName } from '../test/razorTests/jest.config';
 
@@ -58,23 +57,6 @@ gulp.task(
 );
 
 gulp.task('omnisharptest:unit', async () => {
-    const result = await spawnNode([
-        mochaPath,
-        '--ui',
-        'tdd',
-        '-c',
-        'out/omnisharptest/omnisharpUnitTests/**/*.test.js',
-    ]);
-
-    if (result.code === null || result.code > 0) {
-        // Ensure that gulp fails when tests fail
-        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
-    }
-
-    return result;
-});
-
-gulp.task('omnisharp:jest:test', async () => {
     runJestTest(jestOmniSharpUnitTestProjectName);
 });
 
@@ -108,7 +90,7 @@ gulp.task(
 // TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
 gulp.task(
     'omnisharptest',
-    gulp.series('omnisharp:jest:test', 'omnisharptest:feature', 'omnisharptest:unit', 'omnisharptest:integration:stdio')
+    gulp.series('omnisharptest:unit', 'omnisharptest:feature', 'omnisharptest:integration:stdio')
 );
 
 gulp.task('test:unit', async () => {

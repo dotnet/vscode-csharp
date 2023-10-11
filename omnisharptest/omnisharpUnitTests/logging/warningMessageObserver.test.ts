@@ -2,9 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { WarningMessageObserver } from '../../../src/observers/warningMessageObserver';
-import { assert, expect, should } from 'chai';
 import {
     getFakeVsCode,
     getMSBuildDiagnosticsMessage,
@@ -16,9 +15,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { from as observableFrom, Subject } from 'rxjs';
 import { timeout, map } from 'rxjs/operators';
 
-suite('WarningMessageObserver', () => {
-    suiteSetup(() => should());
-
+describe('WarningMessageObserver', () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
@@ -55,9 +52,11 @@ suite('WarningMessageObserver', () => {
         return undefined;
     };
 
-    setup(() => {
+    beforeEach(() => {
         assertionObservable = new Subject<string>();
-        scheduler = new TestScheduler(assert.deepEqual);
+        scheduler = new TestScheduler((actual, expected) => {
+            expect(actual).toStrictEqual(expected);
+        });
         scheduler.maxFrames = 9000;
         observer = new WarningMessageObserver(vscode, () => false, scheduler);
         warningMessages = [];
@@ -80,8 +79,8 @@ suite('WarningMessageObserver', () => {
         const eventList = scheduler.createHotObservable(marble, marble_event_map);
         eventList.subscribe((e) => observer.post(e));
         scheduler.flush();
-        expect(warningMessages).to.be.empty;
-        expect(invokedCommand).to.be.undefined;
+        expect(warningMessages).toHaveLength(0);
+        expect(invokedCommand).toBe(undefined);
     });
 
     test('OmnisharpServerMsBuildProjectDiagnostics: No event is posted if warning is disabled', () => {
@@ -96,8 +95,8 @@ suite('WarningMessageObserver', () => {
         const eventList = scheduler.createHotObservable(marble, marble_event_map);
         eventList.subscribe((e) => newObserver.post(e));
         scheduler.flush();
-        expect(warningMessages).to.be.empty;
-        expect(invokedCommand).to.be.undefined;
+        expect(warningMessages).toHaveLength(0);
+        expect(invokedCommand).toBe(undefined);
     });
 
     [
@@ -134,7 +133,7 @@ suite('WarningMessageObserver', () => {
             command: 'o.showOutput',
         },
     ].forEach((elem) => {
-        suite(`${elem.eventA.constructor.name}`, () => {
+        describe(`${elem.eventA.constructor.name}`, () => {
             test(`When the event is fired then a warning message is displayed`, () => {
                 const marble = `${timeToMarble(1500)}a`;
                 const marble_event_map = { a: elem.eventA };
@@ -142,8 +141,8 @@ suite('WarningMessageObserver', () => {
                 eventList.subscribe((e) => observer.post(e));
                 scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3000)}a`, { a: elem.assertion1 });
                 scheduler.flush();
-                expect(warningMessages.length).to.be.equal(1);
-                expect(warningMessages[0]).to.be.equal(elem.expected);
+                expect(warningMessages.length).toEqual(1);
+                expect(warningMessages[0]).toEqual(elem.expected);
             });
 
             test(`When events are fired rapidly, then they are debounced by 1500 ms`, () => {
@@ -154,8 +153,8 @@ suite('WarningMessageObserver', () => {
                 scheduler.expectObservable(assertionObservable).toBe(`${timeToMarble(3520)}a`, { a: elem.assertion1 });
                 scheduler.flush();
 
-                expect(warningMessages.length).to.be.equal(1);
-                expect(warningMessages[0]).to.be.equal(elem.expected);
+                expect(warningMessages.length).toEqual(1);
+                expect(warningMessages[0]).toEqual(elem.expected);
             });
 
             test(`When events are 1500 ms apart, then they are not debounced`, () => {
@@ -168,8 +167,8 @@ suite('WarningMessageObserver', () => {
                     b: elem.assertion2,
                 });
                 scheduler.flush();
-                expect(warningMessages.length).to.be.equal(2);
-                expect(warningMessages[0]).to.be.equal(elem.expected);
+                expect(warningMessages.length).toEqual(2);
+                expect(warningMessages[0]).toEqual(elem.expected);
             });
 
             test(`Given a warning message, when the user clicks ok the command is executed`, async () => {
@@ -179,7 +178,7 @@ suite('WarningMessageObserver', () => {
                 scheduler.flush();
                 doClickOk();
                 await commandDone;
-                expect(invokedCommand).to.be.equal(elem.command);
+                expect(invokedCommand).toEqual(elem.command);
             });
 
             test(`Given a warning message, when the user clicks cancel the command is not executed`, async () => {
@@ -188,8 +187,8 @@ suite('WarningMessageObserver', () => {
                 scheduler.expectObservable(eventList.pipe(map((e) => observer.post(e))));
                 scheduler.flush();
                 doClickCancel();
-                await expect(observableFrom(commandDone).pipe(timeout(1)).toPromise()).to.be.rejected;
-                expect(invokedCommand).to.be.undefined;
+                await expect(observableFrom(commandDone).pipe(timeout(1)).toPromise()).rejects.toThrow();
+                expect(invokedCommand).toBe(undefined);
             });
         });
     });

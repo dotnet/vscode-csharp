@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should, expect } from 'chai';
+import { describe, test, expect } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import { CsharpChannelObserver } from '../../../src/shared/observers/csharpChannelObserver';
 import {
@@ -16,8 +16,7 @@ import {
     IntegrityCheckFailure,
 } from '../../../src/omnisharp/loggingEvents';
 
-suite('CsharpChannelObserver', () => {
-    suiteSetup(() => should());
+describe('CsharpChannelObserver', () => {
     [
         new InstallationFailure('someStage', 'someError'),
         new DebuggerNotInstalledFailure(),
@@ -38,8 +37,8 @@ suite('CsharpChannelObserver', () => {
             });
 
             observer.post(event);
-            expect(hasShown).to.be.true;
-            expect(preserveFocus).to.be.true;
+            expect(hasShown).toBe(true);
+            expect(preserveFocus).toBe(true);
         });
     });
 });

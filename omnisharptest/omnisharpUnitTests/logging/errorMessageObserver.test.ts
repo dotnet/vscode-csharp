@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect, should } from 'chai';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { vscode } from '../../../src/vscodeAdapter';
 
 import { ErrorMessageObserver } from '../../../src/observers/errorMessageObserver';
@@ -16,9 +16,7 @@ import {
 } from '../../../src/omnisharp/loggingEvents';
 import { getFakeVsCode } from '../../../test/unitTests/fakes';
 
-suite('ErrorMessageObserver', () => {
-    suiteSetup(() => should());
-
+describe('ErrorMessageObserver', () => {
     const vscode: vscode = getFakeVsCode();
     let errorMessage: string | undefined;
     const observer = new ErrorMessageObserver(vscode);
@@ -28,7 +26,7 @@ suite('ErrorMessageObserver', () => {
         return Promise.resolve<string>('Done');
     };
 
-    setup(() => {
+    beforeEach(() => {
         errorMessage = undefined;
     });
 
@@ -39,18 +37,18 @@ suite('ErrorMessageObserver', () => {
     ].forEach((event: EventWithMessage) => {
         test(`${event.constructor.name}: Error message is shown`, () => {
             observer.post(event);
-            expect(errorMessage).to.be.contain(event.message);
+            expect(errorMessage).toContain(event.message);
         });
     });
 
-    suite(`${IntegrityCheckFailure.name}`, () => {
+    describe(`${IntegrityCheckFailure.name}`, () => {
         test('Package Description and url are logged when we are not retrying', () => {
             const description = 'someDescription';
             const url = 'someUrl';
             const event = new IntegrityCheckFailure(description, url, false);
             observer.post(event);
-            expect(errorMessage).to.contain(description);
-            expect(errorMessage).to.contain(url);
+            expect(errorMessage).toContain(description);
+            expect(errorMessage).toContain(url);
         });
 
         test('Nothing is shown if we are retrying', () => {
@@ -58,7 +56,7 @@ suite('ErrorMessageObserver', () => {
             const url = 'someUrl';
             const event = new IntegrityCheckFailure(description, url, true);
             observer.post(event);
-            expect(errorMessage).to.be.undefined;
+            expect(errorMessage).toBe(undefined);
         });
     });
 });
