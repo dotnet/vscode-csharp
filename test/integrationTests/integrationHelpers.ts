@@ -39,6 +39,7 @@ export async function activateCSharpExtension(): Promise<void> {
     await csharpExtension.activate();
     await csharpExtension.exports.initializationFinished();
     console.log('ms-dotnettools.csharp activated');
+    console.log(`Extension Log Directory: ${csharpExtension.exports.logDirectory}`);
 
     if (shouldRestart) {
         // Register to wait for initialization events and restart the server.
