@@ -27,9 +27,9 @@ export class ProvisionalDebugSessionTracker {
     initializeDebugSessionHandlers(context: vscode.ExtensionContext): void {
         this._onDidStartDebugSession = vscode.debug.onDidStartDebugSession(this.onDidStartDebugSession.bind(this));
 
-        this._onDidTerminateDebugSession = vscode.debug.onDidTerminateDebugSession(
-            this.onDidTerminateDebugSession.bind(this)
-        );
+        this._onDidTerminateDebugSession = vscode.debug.onDidTerminateDebugSession((session: vscode.DebugSession) => {
+            this.onDidTerminateDebugSession(session);
+        });
 
         context.subscriptions.push(this._onDidStartDebugSession);
         context.subscriptions.push(this._onDidTerminateDebugSession);
@@ -50,8 +50,8 @@ export class ProvisionalDebugSessionTracker {
     /**
      * Notifies that a debug session has been terminated.
      */
-    onDidTerminateDebugSession(): void {
-        this._sessions?.clear();
+    onDidTerminateDebugSession(session: vscode.DebugSession): void {
+        this._sessions?.delete(session);
     }
 
     /**
