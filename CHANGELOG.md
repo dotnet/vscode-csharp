@@ -8,6 +8,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Razor version to 7.0.0-preview.23475.5 (PR: [#6506](https://github.com/dotnet/vscode-csharp/pull/6506))
+  * Add setting for whether to complete components with space (PR: [razor#9379](https://github.com/dotnet/razor/pull/9379))
 * Update Roslyn version to 4.9.0-1.23506.7 (PR: [#6447](https://github.com/dotnet/vscode-csharp/pull/6447))
   * Fix various issues with project loading and allow fallbacks to .NET framework msbuild (PR: [#70240](https://github.com/dotnet/roslyn/pull/70240))
 * Fix some Razor colorization issues (PR: [#6502](https://github.com/dotnet/vscode-csharp/pull/6502))
