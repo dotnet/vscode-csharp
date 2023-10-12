@@ -431,7 +431,7 @@ function profferBrokeredServices(
         ),
         serviceContainer.profferServiceFactory(
             Descriptors.csharpExtensionBuildResultService,
-            (_mk, _op, _sb) => new BuildResultDiagnostics()
+            (_mk, _op, _sb) => new BuildResultDiagnostics(languageServerPromise)
         )
     );
 }

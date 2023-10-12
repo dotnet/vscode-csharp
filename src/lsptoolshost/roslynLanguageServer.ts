@@ -26,6 +26,7 @@ import {
     SocketMessageReader,
     MessageTransports,
     RAL,
+    CancellationToken,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -93,6 +94,13 @@ export class RoslynLanguageServer {
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
+    /** The diagnostic results from build displayed by VS Code. When live diagnostics are available for a file, these are errors that only build knows about.
+     * When live diagnostics aren't loaded for a file, then these are all of the diagnostics reported by the build.*/
+    private _diagnosticsReportedByBuild: vscode.DiagnosticCollection;
+
+    /** All the build results sent by the DevKit extension. */
+    private _allBuildDiagnostics: Array<[vscode.Uri, vscode.Diagnostic[]]> = [];
+
     constructor(
         private _languageClient: RoslynLanguageClient,
         private _platformInfo: PlatformInformation,
@@ -106,6 +114,9 @@ export class RoslynLanguageServer {
         this.registerReportProjectConfiguration();
         this.registerExtensionsChanged();
         this.registerTelemetryChanged();
+
+        this._diagnosticsReportedByBuild = vscode.languages.createDiagnosticCollection('csharp-build');
+        this.addDiagnostics();
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo();
@@ -568,7 +579,7 @@ export class RoslynLanguageServer {
             });
         });
 
-        // The server process will create the named pipe used for communcation. Wait for it to be created,
+        // The server process will create the named pipe used for communication. Wait for it to be created,
         // and listen for the server to pass back the connection information via stdout.
         const namedPipeConnectionPromise = new Promise<NamedPipeInformation>((resolve) => {
             _channel.appendLine('waiting for named pipe information from server...');
@@ -692,6 +703,70 @@ export class RoslynLanguageServer {
                 return { didAttach: success };
             }
         );
+    }
+
+    private addDiagnostics() {
+        this._languageClient.addDisposable(
+            vscode.workspace.onDidOpenTextDocument(async (event) => this._onFileOpened(event))
+        );
+    }
+
+    public clearDiagnostics() {
+        this._diagnosticsReportedByBuild.clear();
+    }
+
+    public async setBuildDiagnostics(buildDiagnostics: Array<[vscode.Uri, vscode.Diagnostic[]]>) {
+        this._allBuildDiagnostics = buildDiagnostics;
+        const buildOnlyIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
+        const displayedBuildDiagnostics = new Array<[vscode.Uri, vscode.Diagnostic[]]>();
+
+        this._allBuildDiagnostics.forEach((fileDiagnostics) => {
+            const uri = fileDiagnostics[0];
+            const diagnosticList = fileDiagnostics[1];
+
+            // Check if we have live diagnostics shown for this document
+            const liveDiagnostics = vscode.languages.getDiagnostics(uri);
+            if (liveDiagnostics && liveDiagnostics.length > 0) {
+                // Show the build-only diagnostics
+                displayedBuildDiagnostics.push([uri, this._getBuildOnlyDiagnostics(diagnosticList, buildOnlyIds)]);
+            } else {
+                // Document isn't shown in live diagnostics, so display everything reported by the build
+                displayedBuildDiagnostics.push(fileDiagnostics);
+            }
+        });
+
+        this._diagnosticsReportedByBuild.set(displayedBuildDiagnostics);
+    }
+
+    private compareUri(a: vscode.Uri, b: vscode.Uri): boolean {
+        return a.path.localeCompare(b.path, undefined, { sensitivity: 'accent' }) === 0;
+    }
+
+    private async _onFileOpened(document: vscode.TextDocument) {
+        const uri = document.uri;
+        const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
+        const currentFileBuildDiagnostics = this._allBuildDiagnostics.find(([u]) => this.compareUri(u, uri));
+
+        // The document is now open in the editor and live diagnostics are being shown. Filter diagnostics
+        // reported by the build to show build-only problems.
+        if (currentFileBuildDiagnostics) {
+            const buildDiagnostics = this._getBuildOnlyDiagnostics(currentFileBuildDiagnostics[1], buildIds);
+            this._diagnosticsReportedByBuild.set(uri, buildDiagnostics);
+        }
+    }
+
+    private _getBuildOnlyDiagnostics(diagnosticList: vscode.Diagnostic[], buildOnlyIds: string[]): vscode.Diagnostic[] {
+        const buildOnlyDiagnostics: vscode.Diagnostic[] = [];
+        diagnosticList.forEach((d) => {
+            if (d.code) {
+                // Include diagnostic in the list if it is build
+                if (buildOnlyIds.find((b_id) => b_id === d.code)) {
+                    buildOnlyDiagnostics.push(d);
+                }
+            }
+        });
+
+        return buildOnlyDiagnostics;
     }
 
     private registerExtensionsChanged() {
