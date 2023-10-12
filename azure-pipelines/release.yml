@@ -64,7 +64,6 @@ stages:
               Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
               $basePublishArgs = , "publish"
-              # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
               If ("${{ parameters.uploadPrerelease }}" -eq "true") {
                 $basePublishArgs += "--pre-release"
                 Write-Host "Publish to pre-release channel."

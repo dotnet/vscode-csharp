@@ -211,10 +211,13 @@ async function doPackageOffline() {
     console.log(versionInfo.npmPackageVersion);
     await nbgv.setPackageVersion();
 
-    let prerelease = false;
+    let prerelease: boolean;
     if (argv.prerelease) {
         console.log('Packaging prerelease version.');
         prerelease = true;
+    } else {
+        console.log('Packaging release version.');
+        prerelease = false;
     }
 
     try {
