@@ -11,6 +11,9 @@ parameters:
   - name: test
     type: boolean
     default: true
+  - name: uploadPrerelease
+    type: boolean
+    default: true
 
 variables:
 # This is expected to provide VisualStudioMarketplacePAT to the release (https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token)
@@ -44,8 +47,15 @@ stages:
               npm install --global vsce
             displayName: 'Install vsce'
           - pwsh: |
+              $artifactFolderPrefix = "VSIX_Release_"
+              if ("${{ parameters.uploadPrerelease }}" -eq "true") {
+                $artifactFolderPrefix = "VSIX_Prerelease_"
+              }
+
+              Write-Host "Using artifacts from $artifactFolderPrefix"
+
               # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-              $allArtifacts = Get-ChildItem -Path "VSIXs - Attempt*" | Sort-Object -Descending
+              $allArtifacts = Get-ChildItem -Path "$artifactFolderPrefix*" | Sort-Object -Descending
               if ($allArtifacts.Length -eq 0) {
                 throw "No Artifacts is downloaded."
               }
@@ -54,14 +64,11 @@ stages:
               Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
               $basePublishArgs = , "publish"
-              # Artifacts are published to either pre-release or release based on the build branch, https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
-              If ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/main") {
+              If ("${{ parameters.uploadPrerelease }}" -eq "true") {
                 $basePublishArgs += "--pre-release"
                 Write-Host "Publish to pre-release channel."
-              } ElseIf ("$(resources.pipeline.officialBuildCI.sourceBranch)" -eq "refs/heads/release") {
-                Write-Host "Publish to release channel."
               } Else {
-                throw "Unexpected branch name: $(resources.pipeline.officialBuildCI.sourceBranch)."
+                Write-Host "Publish to release channel."
               }
               $basePublishArgs += '--packagePath'
 
