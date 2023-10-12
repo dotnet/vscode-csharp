@@ -116,7 +116,7 @@ export class RoslynLanguageServer {
         this.registerTelemetryChanged();
 
         this._diagnosticsReportedByBuild = vscode.languages.createDiagnosticCollection('csharp-build');
-        this.addDiagnostics();
+        this.registerDocumentOpenForDiagnostics();
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo();
@@ -705,7 +705,8 @@ export class RoslynLanguageServer {
         );
     }
 
-    private addDiagnostics() {
+    private registerDocumentOpenForDiagnostics() {
+        // When a file is opened process any build diagnostics that may be shown
         this._languageClient.addDisposable(
             vscode.workspace.onDidOpenTextDocument(async (event) => this._onFileOpened(event))
         );
@@ -744,12 +745,12 @@ export class RoslynLanguageServer {
 
     private async _onFileOpened(document: vscode.TextDocument) {
         const uri = document.uri;
-        const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
-        const currentFileBuildDiagnostics = this._allBuildDiagnostics.find(([u]) => this.compareUri(u, uri));
+        const currentFileBuildDiagnostics = this._allBuildDiagnostics?.find(([u]) => this.compareUri(u, uri));
 
         // The document is now open in the editor and live diagnostics are being shown. Filter diagnostics
         // reported by the build to show build-only problems.
         if (currentFileBuildDiagnostics) {
+            const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
             const buildDiagnostics = this._getBuildOnlyDiagnostics(currentFileBuildDiagnostics[1], buildIds);
             this._diagnosticsReportedByBuild.set(uri, buildDiagnostics);
         }

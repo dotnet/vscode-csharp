@@ -17,14 +17,11 @@ export class BuildResultDiagnostics implements IBuildResultDiagnostics {
     constructor(private _languageServerPromise: Promise<RoslynLanguageServer>) {}
 
     public async buildStarted(): Promise<void> {
-        console.log('build started');
         const langServer = await this._languageServerPromise;
         langServer.clearDiagnostics();
     }
 
     public async reportBuildResult(buildDiagnostics: Array<[Uri, Diagnostic[]]>): Promise<void> {
-        console.log('received ' + buildDiagnostics.length + ' diagnostics');
-
         const langServer = await this._languageServerPromise;
         langServer.setBuildDiagnostics(buildDiagnostics);
     }
