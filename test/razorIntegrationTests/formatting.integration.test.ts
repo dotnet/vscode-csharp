@@ -32,8 +32,8 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
         const htmlConfig = vscode.workspace.getConfiguration('html');
         await htmlConfig.update('format.enable', true);
 
-        await integrationHelpers.activateCSharpExtension();
         await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'BadlyFormatted.razor'));
+        await integrationHelpers.activateCSharpExtension();
     });
 
     jestLib.afterAll(async () => {
@@ -61,12 +61,20 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
 
         jestLib.expect(edits).toBeDefined();
 
+        console.log(`Got ${edits.length} edits`);
+
         // It's much easier to verify the expected state of the document, than a bunch of edits
         const formatEdit = new vscode.WorkspaceEdit();
         formatEdit.set(activeDocument, edits);
+
+        console.log(`Applying edit ${formatEdit}`);
+
         await vscode.workspace.applyEdit(formatEdit);
 
         const contents = normalizeNewlines(vscode.window.activeTextEditor?.document.getText());
+
+        console.log(`Checking document contents...`);
+
         jestLib.expect(contents).toBe(
             normalizeNewlines(`@page "/bad"
 
