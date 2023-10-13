@@ -3,23 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import OmniSharpReferenceProvider from '../../src/features/referenceProvider';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { expect, should } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 
-suite(`${OmniSharpReferenceProvider.name}: ${testAssetWorkspace.description}`, () => {
+describeIfNotRazorOrGenerator(`${OmniSharpReferenceProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
@@ -31,7 +25,7 @@ suite(`${OmniSharpReferenceProvider.name}: ${testAssetWorkspace.description}`, (
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -39,7 +33,7 @@ suite(`${OmniSharpReferenceProvider.name}: ${testAssetWorkspace.description}`, (
         const referenceList = <vscode.Location[]>(
             await vscode.commands.executeCommand('vscode.executeReferenceProvider', fileUri, new vscode.Position(6, 22))
         );
-        expect(referenceList.length).to.be.equal(1);
-        expect(referenceList[0].range.start.line).to.be.equal(13);
+        expect(referenceList.length).toEqual(1);
+        expect(referenceList[0].range.start.line).toEqual(13);
     });
 });

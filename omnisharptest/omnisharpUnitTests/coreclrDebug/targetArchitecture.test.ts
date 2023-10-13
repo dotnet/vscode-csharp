@@ -3,16 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect } from '@jest/globals';
 import { getTargetArchitecture } from '../../../src/coreclrDebug/util';
 import { PlatformInformation } from '../../../src/shared/platform';
-
-import { expect, should, assert } from 'chai';
 import { DotnetInfo } from '../../../src/shared/utils/dotnetInfo';
 
-suite('getTargetArchitecture Tests', () => {
-    suiteSetup(() => should());
-
-    suite('Windows', () => {
+describe('getTargetArchitecture Tests', () => {
+    describe('Windows', () => {
         test('Windows x86_64', () => {
             const platformInfo = new PlatformInformation('win32', 'x86_64');
             const dotnetInfo: DotnetInfo = {
@@ -24,7 +21,7 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, 'x86_64');
+            expect(targetArchitecture).toEqual('x86_64');
         });
 
         test('Windows: X64 SDK on ARM64', () => {
@@ -38,7 +35,7 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, 'x86_64');
+            expect(targetArchitecture).toEqual('x86_64');
         });
 
         test('Windows: ARM64 SDK on ARM64', () => {
@@ -52,11 +49,11 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, 'arm64');
+            expect(targetArchitecture).toEqual('arm64');
         });
     });
 
-    suite('Linux', () => {
+    describe('Linux', () => {
         test('getTargetArchitecture on Linux', () => {
             const platformInfo = new PlatformInformation('linux', 'x86_64');
             const dotnetInfo: DotnetInfo = {
@@ -68,11 +65,11 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, '');
+            expect(targetArchitecture).toEqual('');
         });
     });
 
-    suite('macOS', () => {
+    describe('macOS', () => {
         test('Apple x86_64', () => {
             const platformInfo = new PlatformInformation('darwin', 'x86_64');
             const dotnetInfo: DotnetInfo = {
@@ -84,7 +81,7 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, 'x86_64');
+            expect(targetArchitecture).toEqual('x86_64');
         });
 
         test('Apple ARM64 on .NET 5', () => {
@@ -98,7 +95,7 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, 'x86_64');
+            expect(targetArchitecture).toEqual('x86_64');
         });
 
         test('Apple ARM64 on .NET 6 osx-arm64', () => {
@@ -112,7 +109,7 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, 'arm64');
+            expect(targetArchitecture).toEqual('arm64');
         });
 
         test('Apple ARM64 on .NET 6 osx-x64', () => {
@@ -126,7 +123,7 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, undefined, dotnetInfo);
 
-            assert.equal(targetArchitecture, 'x86_64');
+            expect(targetArchitecture).toEqual('x86_64');
         });
 
         test("Apple ARM64 on .NET 6 osx-arm64 with targetArchitecture: 'arm64'", () => {
@@ -140,7 +137,7 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, 'arm64', dotnetInfo);
 
-            assert.equal(targetArchitecture, 'arm64');
+            expect(targetArchitecture).toEqual('arm64');
         });
 
         test("Apple ARM64 on .NET 6 osx-arm64 with targetArchitecture: 'x86_64'", () => {
@@ -154,7 +151,7 @@ suite('getTargetArchitecture Tests', () => {
 
             const targetArchitecture = getTargetArchitecture(platformInfo, 'x86_64', dotnetInfo);
 
-            assert.equal(targetArchitecture, 'x86_64');
+            expect(targetArchitecture).toEqual('x86_64');
         });
 
         test('Apple ARM64 on .NET 6 osx-arm64 with invalid targetArchitecture', () => {
@@ -170,7 +167,7 @@ suite('getTargetArchitecture Tests', () => {
                 getTargetArchitecture(platformInfo, 'x64', dotnetInfo);
             };
 
-            expect(fn).to.throw(
+            expect(fn).toThrow(
                 "The value 'x64' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'."
             );
         });
@@ -188,7 +185,7 @@ suite('getTargetArchitecture Tests', () => {
                 getTargetArchitecture(platformInfo, undefined, dotnetInfo);
             };
 
-            expect(fn).to.throw(`Unexpected RuntimeId 'osx.11.0-FUTURE_ISA'.`);
+            expect(fn).toThrow(`Unexpected RuntimeId 'osx.11.0-FUTURE_ISA'.`);
         });
     });
 });

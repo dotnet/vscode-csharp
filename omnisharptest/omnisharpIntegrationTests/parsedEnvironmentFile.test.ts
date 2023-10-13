@@ -3,37 +3,32 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect } from '@jest/globals';
 import { ParsedEnvironmentFile } from '../../src/coreclrDebug/parsedEnvironmentFile';
-import { use, should, expect } from 'chai';
-import * as chaiString from 'chai-string';
 
-use(chaiString);
-
-suite('ParsedEnvironmentFile', () => {
-    suiteSetup(() => should());
-
+describe('ParsedEnvironmentFile', () => {
     test('Add single variable', () => {
         const content = `MyName=VALUE`;
         const result = ParsedEnvironmentFile.CreateFromContent(content, 'TestEnvFileName', undefined);
 
-        expect(result.Warning).to.be.undefined;
-        result.Env['MyName'].should.equal('VALUE');
+        expect(result.Warning).toBe(undefined);
+        expect(result.Env['MyName']).toEqual('VALUE');
     });
 
     test('Handle quoted values', () => {
         const content = `MyName="VALUE"`;
         const result = ParsedEnvironmentFile.CreateFromContent(content, 'TestEnvFileName', undefined);
 
-        expect(result.Warning).to.be.undefined;
-        result.Env['MyName'].should.equal('VALUE');
+        expect(result.Warning).toBe(undefined);
+        expect(result.Env['MyName']).toEqual('VALUE');
     });
 
     test('Handle BOM', () => {
         const content = '\uFEFFMyName=VALUE';
         const result = ParsedEnvironmentFile.CreateFromContent(content, 'TestEnvFileName', undefined);
 
-        expect(result.Warning).to.be.undefined;
-        result.Env['MyName'].should.equal('VALUE');
+        expect(result.Warning).toBe(undefined);
+        expect(result.Env['MyName']).toEqual('VALUE');
     });
 
     test('Add multiple variables', () => {
@@ -44,9 +39,9 @@ MyName2=Value2
 `;
         const result = ParsedEnvironmentFile.CreateFromContent(content, 'TestEnvFileName', undefined);
 
-        expect(result.Warning).to.be.undefined;
-        result.Env['MyName1'].should.equal('Value1');
-        result.Env['MyName2'].should.equal('Value2');
+        expect(result.Warning).toBe(undefined);
+        expect(result.Env['MyName1']).toEqual('Value1');
+        expect(result.Env['MyName2']).toEqual('Value2');
     });
 
     test('Not override variables', () => {
@@ -61,10 +56,10 @@ MyName2=Value2
         };
         const result = ParsedEnvironmentFile.CreateFromContent(content, 'TestEnvFileName', initialEnv);
 
-        expect(result.Warning).to.be.undefined;
-        result.Env['CommonKey'].should.equal('InitialValue');
-        result.Env['MyName2'].should.equal('Value2');
-        result.Env['ThisShouldNotChange'].should.equal('StillHere');
+        expect(result.Warning).toBe(undefined);
+        expect(result.Env['CommonKey']).toEqual('InitialValue');
+        expect(result.Env['MyName2']).toEqual('Value2');
+        expect(result.Env['ThisShouldNotChange']).toEqual('StillHere');
     });
 
     test('Take last value', () => {
@@ -74,8 +69,8 @@ Key=SecondValue
 `;
         const result = ParsedEnvironmentFile.CreateFromContent(content, 'TestEnvFileName', undefined);
 
-        expect(result.Warning).to.be.undefined;
-        result.Env['Key'].should.equal('SecondValue');
+        expect(result.Warning).toBe(undefined);
+        expect(result.Env['Key']).toEqual('SecondValue');
     });
 
     test('Handle comments', () => {
@@ -86,9 +81,9 @@ MyName2=Value2
 `;
         const result = ParsedEnvironmentFile.CreateFromContent(content, 'TestEnvFileName', undefined);
 
-        expect(result.Warning).to.be.undefined;
-        result.Env['MyName1'].should.equal('Value1');
-        result.Env['MyName2'].should.equal('Value2');
+        expect(result.Warning).toBe(undefined);
+        expect(result.Env['MyName1']).toEqual('Value1');
+        expect(result.Env['MyName2']).toEqual('Value2');
     });
 
     test('Handle invalid lines', () => {
@@ -100,9 +95,9 @@ MyName2=Value2
 `;
         const result = ParsedEnvironmentFile.CreateFromContent(content, 'TestEnvFileName', undefined);
 
-        expect(result.Warning).not.to.be.undefined;
-        result.Warning!.should.startWith('Ignoring non-parseable lines in envFile TestEnvFileName');
-        result.Env['MyName1'].should.equal('Value1');
-        result.Env['MyName2'].should.equal('Value2');
+        expect(result.Warning).not.toBe(undefined);
+        expect(result.Warning!.startsWith('Ignoring non-parseable lines in envFile TestEnvFileName')).toBe(true);
+        expect(result.Env['MyName1']).toEqual('Value1');
+        expect(result.Env['MyName2']).toEqual('Value2');
     });
 });

@@ -31,7 +31,7 @@ stages:
         targetPath: '$(Build.SourcesDirectory)/vsix'
         artifactName: 'VSIX_Prerelease_$(System.JobAttempt)'
 
-    - script: npm run omnisharptest:artifacts
+    - script: npm run test:artifacts
       displayName: 'Run artifacts tests'
 
   - job:
@@ -58,6 +58,6 @@ stages:
         targetPath: '$(Build.SourcesDirectory)/vsix'
         artifactName: 'VSIX_Release_$(System.JobAttempt)'
 
-    - script: npm run omnisharptest:artifacts
+    - script: npm run test:artifacts
       displayName: 'Run artifacts tests'
   

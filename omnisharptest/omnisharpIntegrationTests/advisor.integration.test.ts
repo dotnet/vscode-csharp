@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-
-import { expect, should } from 'chai';
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as path from 'path';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import * as vscode from 'vscode';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
 import { Advisor } from '../../src/features/diagnosticsProvider';
@@ -17,16 +16,10 @@ function setLimit(to: number | null) {
     return csharpConfig.update('maxProjectFileCountForDiagnosticAnalysis', to);
 }
 
-suite(`Advisor ${testAssetWorkspace.description}`, function () {
+describeIfNotRazorOrGenerator(`Advisor ${testAssetWorkspace.description}`, function () {
     let advisor: Advisor;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
@@ -40,43 +33,43 @@ suite(`Advisor ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
     test('Advisor.shouldValidateAll returns true when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
         await setLimit(1000);
 
-        expect(advisor.shouldValidateAll()).to.be.true;
+        expect(advisor.shouldValidateAll()).toBe(true);
     });
 
     test('Advisor.shouldValidateFiles returns true when maxProjectFileCountForDiagnosticAnalysis is higher than the file count', async () => {
         await setLimit(1000);
 
-        expect(advisor.shouldValidateFiles()).to.be.true;
+        expect(advisor.shouldValidateFiles()).toBe(true);
     });
 
     test('Advisor.shouldValidateAll returns false when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
         await setLimit(1);
 
-        expect(advisor.shouldValidateAll()).to.be.false;
+        expect(advisor.shouldValidateAll()).toBe(false);
     });
 
     test('Advisor.shouldValidateFiles returns true when maxProjectFileCountForDiagnosticAnalysis is lower than the file count', async () => {
         await setLimit(1);
 
-        expect(advisor.shouldValidateFiles()).to.be.true;
+        expect(advisor.shouldValidateFiles()).toBe(true);
     });
 
     test('Advisor.shouldValidateAll returns true when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
         await setLimit(null);
 
-        expect(advisor.shouldValidateAll()).to.be.true;
+        expect(advisor.shouldValidateAll()).toBe(true);
     });
 
     test('Advisor.shouldValidateFiles returns true when maxProjectFileCountForDiagnosticAnalysis is null', async () => {
         await setLimit(null);
 
-        expect(advisor.shouldValidateFiles()).to.be.true;
+        expect(advisor.shouldValidateFiles()).toBe(true);
     });
 });
