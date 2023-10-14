@@ -34,6 +34,7 @@
 * Initialize Razor even if Razor doc isn't opened yet (PR: [#6473](https://github.com/dotnet/vscode-csharp/pull/6473))
 
 ## 2.5.30
+* Add code action fix all support (PR: [#6310](https://github.com/dotnet/vscode-csharp/pull/6310))
 * Update Roslyn version to 4.9.0-1.23502.2 (PR: [#6463](https://github.com/dotnet/vscode-csharp/pull/6463))
   * Fix issue loading projects on .NET 8 RC2 (PR: [#70196](https://github.com/dotnet/roslyn/pull/70196))
   * Fix exception thrown by outdated version of ExternalAccess.RazorCompiler.dll (PR: [#70716](https://github.com/dotnet/roslyn/pull/70176))
@@ -43,6 +44,8 @@
   * Add Razor language server telemetry when DevKit is installed (PR: [#9283](https://github.com/dotnet/razor/pull/9283))
   * Use message pack for project.razor.* configuration file (PR: [#9270](https://github.com/dotnet/razor/pull/9270))
 * Fix issues with Razor completion (PR: [#6441](https://github.com/dotnet/vscode-csharp/pull/6441))
+* Add option to collect crash dumps on language server crash (PR: [#6438](https://github.com/dotnet/vscode-csharp/pull/6438))
+* Add support for multilaunch for Blazorwasm (PR: [#6432](https://github.com/dotnet/vscode-csharp/pull/6432))
 * Fix issue in Razor new file formatting (PR: [#6429](https://github.com/dotnet/vscode-csharp/pull/6429))
 * Fix issue in debug tests where tests would complete before the debugger attached (PR: [#6415](https://github.com/dotnet/vscode-csharp/pull/6415))
 * Hide certain debugger launch configurations when devkit is installed (PR: [#6405](https://github.com/dotnet/vscode-csharp/pull/6405))
