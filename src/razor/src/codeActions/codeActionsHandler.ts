@@ -98,7 +98,7 @@ export class CodeActionsHandler {
     ) {
         try {
             const codeAction = resolveCodeActionParams.codeAction;
-            const razorDocumentUri = vscode.Uri.parse(resolveCodeActionParams.uri, true);
+            const razorDocumentUri = vscode.Uri.parse(resolveCodeActionParams.identifier.uri, true);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
             if (razorDocument === undefined) {
                 return this.emptyCodeAction;
