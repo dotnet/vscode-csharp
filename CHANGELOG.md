@@ -1,13 +1,27 @@
 ## Known Issues
 
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
-- [O# Parity] FixAll support for code fixes and refactorings [#5735](https://github.com/dotnet/vscode-csharp/issues/5735)
+- [O# Parity] Nested code code action support for code fixes and refactorings [#5735](https://github.com/dotnet/vscode-csharp/issues/5735)
 - [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
-- [O# Parity] Projects running on Mono may not load correctly [#5721](https://github.com/dotnet/vscode-csharp/issues/5721)
-- [O# Parity] Run and debug tests in context [#5719](https://github.com/dotnet/vscode-csharp/issues/5719)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Razor to 7.0.0-preview.23513.5 (PR: [#6551](https://github.com/dotnet/vscode-csharp/pull/6551))
+  * Reduce noisy errors when viewing git diff (PR: [razor#9407](https://github.com/dotnet/razor/pull/9407))
+* Update Roslyn to 4.9.0-1.23513.7 (PR: [#6548](https://github.com/dotnet/vscode-csharp/pull/6548))
+  * Fix extraneous error when connecting to devkit (PR: [#70298](https://github.com/dotnet/roslyn/pull/70298))
+  * Add support for using Mono to load .NET Framework projects (PR: [#70263](https://github.com/dotnet/roslyn/pull/70263))
+  * Fix analyzer references (PR: [#70331](https://github.com/dotnet/roslyn/pull/70331))
+* Hide debug console when using `"console": "integratedTerminal"` (PR: [#6523](https://github.com/dotnet/vscode-csharp/pull/6523))
+* Fix dotnet path resolution when using snap installed packages (PR: [#6515](https://github.com/dotnet/vscode-csharp/pull/6515))
+* Track debugging sessions until csdevkit is initialized (PR: [#6480](https://github.com/dotnet/vscode-csharp/pull/6480))
+* Update vsdbg and vsdbg-ui to 2.0.4 (PR: [#6517](https://github.com/dotnet/vscode-csharp/pull/6517))
+* Add setting to control Razor component commit behaviour (PR: [#6506](https://github.com/dotnet/vscode-csharp/pull/6506))
+* Razor textmate colorization fixes (PR: [#6514](https://github.com/dotnet/vscode-csharp/pull/6514))
+
+## 2.6.24
+* Update Razor version to 7.0.0-preview.23475.5 (PR: [#6506](https://github.com/dotnet/vscode-csharp/pull/6506))
+  * Add setting for whether to complete components with space (PR: [razor#9379](https://github.com/dotnet/razor/pull/9379))
 * Update Roslyn version to 4.9.0-1.23506.7 (PR: [#6447](https://github.com/dotnet/vscode-csharp/pull/6447))
   * Fix various issues with project loading and allow fallbacks to .NET framework msbuild (PR: [#70240](https://github.com/dotnet/roslyn/pull/70240))
 * Fix some Razor colorization issues (PR: [#6502](https://github.com/dotnet/vscode-csharp/pull/6502))
@@ -30,6 +44,7 @@
   * Update Razor project configuration file name (PR: [#70156](https://github.com/dotnet/roslyn/pull/70156))* added support.md file (PR: [#6478](https://github.com/dotnet/vscode-csharp/pull/6478))
 * Debugger: Improve the display of various debug configurations and snippets (PR: [#6456](https://github.com/dotnet/vscode-csharp/pull/6456))
 * Initialize Razor even if Razor doc isn't opened yet (PR: [#6473](https://github.com/dotnet/vscode-csharp/pull/6473))
+* Debugger: better handle long strings ([#6496](https://github.com/dotnet/vscode-csharp/issues/6496)). Strings are truncated if they are longer than 1024 UTF-16 characters, but the full value  up to 5,242,880 characters or 10 megabytes, is available using 'Copy Value' in the watch or variables window. Truncated strings will end with '...'.
 
 ## 2.5.30
 * Add code action fix all support (PR: [#6310](https://github.com/dotnet/vscode-csharp/pull/6310))

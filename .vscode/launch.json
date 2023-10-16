@@ -291,8 +291,8 @@
               "updatePackageDependencies"
           ],
           "env": {
-              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/f0e050f69a2afb6758a1bccfbf00bb9a/razorlanguageserver-linux-arm64-7.0.0-preview.23475.5.zip,https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/e3d3993005c037451c715c26ec43328b/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23475.5.zip,https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/c3fd7144ecc6abea28e905504a60d65b/razorlanguageserver-linux-musl-x64-7.0.0-preview.23475.5.zip,https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/98abba355a15ad90c59eb5653326baeb/razorlanguageserver-linux-x64-7.0.0-preview.23475.5.zip,https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/68cd5916dbff0936c04ae0a152268d0f/razorlanguageserver-osx-arm64-7.0.0-preview.23475.5.zip,https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/f13124670d3c1f52ecbeb79538d763cb/razorlanguageserver-osx-x64-7.0.0-preview.23475.5.zip,https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/d50e57f6a69f75a65496f32b107532e8/razorlanguageserver-win-arm64-7.0.0-preview.23475.5.zip,https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/70a917c8a17f4052a3a6b3862200f9f5/razorlanguageserver-win-x64-7.0.0-preview.23475.5.zip,https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/ee48f10fa72517ce132fad30d458680a/razorlanguageserver-win-x86-7.0.0-preview.23475.5.zip",
-              "NEW_DEPS_VERSION": "7.0.0-preview.23475.5",
+              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/bb7cd0c44e45bd21cd1341a4a6e87f1c/razorlanguageserver-linux-arm64-7.0.0-preview.23513.5.zip,https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/159a171a7cc1ceb96604d148d5c75574/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23513.5.zip,https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/fb08013aad8cfbb2bc2c3f5f4d276a0d/razorlanguageserver-linux-musl-x64-7.0.0-preview.23513.5.zip,https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/5ece63dde175c03ce79a8ec91005537b/razorlanguageserver-linux-x64-7.0.0-preview.23513.5.zip,https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/89a58de8daaea554d00105dc435dfc98/razorlanguageserver-osx-arm64-7.0.0-preview.23513.5.zip,https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/8a13539f57d6e59b32e767d3684c6c84/razorlanguageserver-osx-x64-7.0.0-preview.23513.5.zip,https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/efe8ebdcd7f4162a537acb9325234f02/razorlanguageserver-win-arm64-7.0.0-preview.23513.5.zip,https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/e0d9dc729905a672edb6bb44239fceb0/razorlanguageserver-win-x64-7.0.0-preview.23513.5.zip,https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/c7f08527fbb3809f6dc8e4bf2dc81571/razorlanguageserver-win-x86-7.0.0-preview.23513.5.zip",
+              "NEW_DEPS_VERSION": "7.0.0-preview.23513.5",
               "NEW_DEPS_ID": "Razor"
           },
           "cwd": "${workspaceFolder}"
@@ -321,6 +321,17 @@
         "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
         "args": [
             "generateOptionsSchema"
+        ],
+        "cwd": "${workspaceFolder}"
+    },
+    {
+        "type": "node",
+        "request": "launch",
+        "name": "Razor integration tests",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+        "args": [
+            "test:razorintegration"
         ],
         "cwd": "${workspaceFolder}"
     }

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as chai from 'chai';
+import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { EventStream } from '../../../src/eventStream';
 import { DownloadFile } from '../../../src/packageManager/fileDownloader';
 import NetworkSettings from '../../../src/networkSettings';
@@ -15,12 +15,10 @@ import {
     DownloadFallBack,
     DownloadFailure,
 } from '../../../src/omnisharp/loggingEvents';
-import MockHttpsServer from '../testAssets/mockHttpsServer';
-import TestEventBus from '../testAssets/testEventBus';
+import MockHttpsServer from '../../omnisharpUnitTests/testAssets/mockHttpsServer';
+import TestEventBus from '../../omnisharpUnitTests/testAssets/testEventBus';
 
-const expect = chai.expect;
-
-suite('FileDownloader', () => {
+describe('FileDownloader', () => {
     const fileDescription = 'Test file';
     const correctUrlPath = `/resource`;
     const redirectUrlPath = '/redirectResource';
@@ -50,7 +48,7 @@ suite('FileDownloader', () => {
 
     let server: MockHttpsServer;
 
-    setup(async () => {
+    beforeEach(async () => {
         server = await MockHttpsServer.CreateMockHttpsServer();
         await server.start();
         eventBus = new TestEventBus(eventStream);
@@ -59,7 +57,7 @@ suite('FileDownloader', () => {
         server.addRequestHandler('GET', redirectUrlPath, 301, { location: `${server.baseUrl}${correctUrlPath}` });
     });
 
-    suite('If the response status Code is 200, the download succeeds', () => {
+    describe('If the response status Code is 200, the download succeeds', () => {
         [
             {
                 description: 'Primary url',
@@ -74,7 +72,7 @@ suite('FileDownloader', () => {
                 getEventSequence: getFallBackURLEvents,
             },
         ].forEach((elem) => {
-            suite(elem.description, () => {
+            describe(elem.description, () => {
                 test('File is downloaded', async () => {
                     const buffer = await DownloadFile(
                         fileDescription,
@@ -84,7 +82,7 @@ suite('FileDownloader', () => {
                         getURL(elem.fallBackUrlPath)
                     );
                     const text = buffer.toString('utf8');
-                    expect(text).to.be.equal('Test content');
+                    expect(text).toEqual('Test content');
                 });
 
                 test('Events are created in the correct order', async () => {
@@ -95,13 +93,13 @@ suite('FileDownloader', () => {
                         getURL(elem.urlPath),
                         getURL(elem.fallBackUrlPath)
                     );
-                    expect(eventBus.getEvents()).to.be.deep.equal(elem.getEventSequence());
+                    expect(eventBus.getEvents()).toStrictEqual(elem.getEventSequence());
                 });
             });
         });
     });
 
-    suite('If the response status Code is 301, redirect occurs and the download succeeds', () => {
+    describe('If the response status Code is 301, redirect occurs and the download succeeds', () => {
         test('File is downloaded from the redirect url', async () => {
             const buffer = await DownloadFile(
                 fileDescription,
@@ -110,11 +108,11 @@ suite('FileDownloader', () => {
                 getURL(redirectUrlPath)
             );
             const text = buffer.toString('utf8');
-            expect(text).to.be.equal('Test content');
+            expect(text).toEqual('Test content');
         });
     });
 
-    suite('If the response status code is not 301, 302 or 200 then the download fails', () => {
+    describe('If the response status code is not 301, 302 or 200 then the download fails', () => {
         test('Error is thrown', async () => {
             const downloadPromise = DownloadFile(
                 fileDescription,
@@ -127,7 +125,7 @@ suite('FileDownloader', () => {
             } catch {
                 /* empty */
             }
-            expect(downloadPromise).be.rejected;
+            expect(downloadPromise).rejects.toThrow();
         });
 
         test('Download Start and Download Failure events are created', async () => {
@@ -138,12 +136,12 @@ suite('FileDownloader', () => {
             try {
                 await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath));
             } catch (error) {
-                expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
+                expect(eventBus.getEvents()).toStrictEqual(eventsSequence);
             }
         });
     });
 
-    teardown(async () => {
+    afterEach(async () => {
         await server.stop();
         eventBus.dispose();
     });

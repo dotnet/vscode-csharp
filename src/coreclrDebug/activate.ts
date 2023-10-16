@@ -310,21 +310,3 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         return executable;
     }
 }
-
-let _brokeredServicePipeName: string | undefined;
-
-/**
- * Initialize brokered service pipe name from C# dev kit, if available.
- *
- * @param csDevKitPipeName Activated brokered service pipe name activated by {@link CSharpDevKitExports}.
- */
-export function initializeBrokeredServicePipeName(csDevKitPipeName: string) {
-    _brokeredServicePipeName = csDevKitPipeName;
-}
-
-/**
- * Fetch the brokered service pipe name from C# dev kit, if available.
- */
-export function getBrokeredServicePipeName(): string | undefined {
-    return _brokeredServicePipeName;
-}

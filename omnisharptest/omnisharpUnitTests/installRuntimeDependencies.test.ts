@@ -3,19 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { installRuntimeDependencies } from '../../src/installRuntimeDependencies';
 import IInstallDependencies from '../../src/packageManager/IInstallDependencies';
 import { EventStream } from '../../src/eventStream';
 import { PlatformInformation } from '../../src/shared/platform';
-import * as chai from 'chai';
-import TestEventBus from './testAssets/testEventBus';
+import TestEventBus from '../omnisharpUnitTests/testAssets/testEventBus';
 import { AbsolutePathPackage } from '../../src/packageManager/absolutePathPackage';
 import { Package } from '../../src/packageManager/package';
 import { isNotNull } from '../testUtil';
 
-const expect = chai.expect;
-
-suite(`${installRuntimeDependencies.name}`, () => {
+describe(`${installRuntimeDependencies.name}`, () => {
     let packageJSON = {
         runtimeDependencies: [] as Package[],
     };
@@ -27,14 +25,14 @@ suite(`${installRuntimeDependencies.name}`, () => {
     const platformInfo = new PlatformInformation('linux', 'architecture1');
     const useFramework = true;
 
-    setup(() => {
+    beforeEach(() => {
         eventStream = new EventStream();
         eventBus = new TestEventBus(eventStream);
         installDependencies = async () => Promise.resolve(true);
     });
 
-    suite('When all the dependencies already exist', () => {
-        suiteSetup(() => {
+    describe('When all the dependencies already exist', () => {
+        beforeEach(() => {
             packageJSON = {
                 runtimeDependencies: [],
             };
@@ -50,7 +48,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
                 useFramework,
                 ['Debugger', 'Omnisharp', 'Razor']
             );
-            expect(installed).to.be.true;
+            expect(installed).toBe(true);
         });
 
         test("Doesn't log anything to the eventStream", async () => {
@@ -67,11 +65,11 @@ suite(`${installRuntimeDependencies.name}`, () => {
                 useFramework,
                 ['Debugger', 'Omnisharp', 'Razor']
             );
-            expect(eventBus.getEvents()).to.be.empty;
+            expect(eventBus.getEvents()).toHaveLength(0);
         });
     });
 
-    suite('When there is a dependency to install', () => {
+    describe('When there is a dependency to install', () => {
         const packageToInstall: Package = {
             id: 'myPackage',
             description: 'somePackage',
@@ -82,7 +80,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
             architectures: [platformInfo.architecture],
         };
 
-        setup(() => {
+        beforeEach(() => {
             packageJSON = {
                 runtimeDependencies: [packageToInstall],
             };
@@ -104,10 +102,10 @@ suite(`${installRuntimeDependencies.name}`, () => {
                 useFramework,
                 ['myPackage']
             );
-            expect(installed).to.be.true;
+            expect(installed).toBe(true);
             isNotNull(inputPackage!);
-            expect(inputPackage).to.have.length(1);
-            expect(inputPackage[0]).to.be.deep.equal(
+            expect(inputPackage).toHaveLength(1);
+            expect(inputPackage[0]).toStrictEqual(
                 AbsolutePathPackage.getAbsolutePathPackage(packageToInstall, extensionPath)
             );
         });
@@ -123,7 +121,7 @@ suite(`${installRuntimeDependencies.name}`, () => {
                 useFramework,
                 ['myPackage']
             );
-            expect(installed).to.be.false;
+            expect(installed).toBe(false);
         });
     });
 });

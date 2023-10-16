@@ -23,8 +23,14 @@ export const omnisharpTestRootPath = path.join(rootPath, 'out', 'omnisharptest')
 export const omnisharpFeatureTestRunnerPath = path.join(omnisharpTestRootPath, 'runFeatureTests.js');
 
 export const integrationTestAssetsRootPath = path.join(rootPath, 'test', 'integrationTests', 'testAssets');
+export const razorIntegrationTestAssetsRootPath = path.join(rootPath, 'test', 'razorIntegrationTests', 'testAssets');
 
 export const testRootPath = path.join(rootPath, 'out', 'test');
 export const integrationTestRunnerPath = path.join(testRootPath, 'integrationTests', 'runIntegrationTests.js');
+export const razorIntegrationTestRunnerPath = path.join(
+    testRootPath,
+    'razorIntegrationTests',
+    'runIntegrationTests.js'
+);
 
 export const nodePath = path.join(process.env.NVM_BIN ? `${process.env.NVM_BIN}${path.sep}` : '', 'node');

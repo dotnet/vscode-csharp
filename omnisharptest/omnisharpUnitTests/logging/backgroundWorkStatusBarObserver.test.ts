@@ -3,15 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect, should } from 'chai';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { StatusBarItem } from '../../../src/vscodeAdapter';
 import { OmnisharpBackgroundDiagnosticStatus } from '../../../src/omnisharp/loggingEvents';
 import { BackgroundWorkStatusBarObserver } from '../../../src/observers/backgroundWorkStatusBarObserver';
 import { BackgroundDiagnosticStatus } from '../../../src/omnisharp/protocol';
 
-suite('BackgroundWorkStatusBarObserver', () => {
-    suiteSetup(() => should());
-
+describe('BackgroundWorkStatusBarObserver', () => {
     let showCalled: boolean;
     let hideCalled: boolean;
     const statusBarItem = <StatusBarItem>{
@@ -24,7 +22,7 @@ suite('BackgroundWorkStatusBarObserver', () => {
     };
     const observer = new BackgroundWorkStatusBarObserver(statusBarItem);
 
-    setup(() => {
+    beforeEach(() => {
         showCalled = false;
         hideCalled = false;
     });
@@ -37,9 +35,9 @@ suite('BackgroundWorkStatusBarObserver', () => {
             NumberProjects: 0,
         });
         observer.post(event);
-        expect(hideCalled).to.be.false;
-        expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.contain('Analyzing');
+        expect(hideCalled).toBe(false);
+        expect(showCalled).toBe(true);
+        expect(statusBarItem.text).toContain('Analyzing');
     });
 
     test('OmnisharpBackgroundDiagnosticStatus.Ready: Hide processing message', () => {
@@ -50,8 +48,8 @@ suite('BackgroundWorkStatusBarObserver', () => {
             NumberProjects: 0,
         });
         observer.post(event);
-        expect(hideCalled).to.be.true;
-        expect(showCalled).to.be.false;
-        expect(statusBarItem.text).to.be.equal('');
+        expect(hideCalled).toBe(true);
+        expect(showCalled).toBe(false);
+        expect(statusBarItem.text).toEqual('');
     });
 });

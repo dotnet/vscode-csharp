@@ -8,17 +8,18 @@ import * as path from 'path';
 import {
     codeExtensionPath,
     omnisharpFeatureTestRunnerPath,
-    mochaPath,
     rootPath,
     integrationTestAssetsRootPath,
     omnisharpTestRootPath,
     testRootPath,
     integrationTestRunnerPath,
+    razorIntegrationTestAssetsRootPath,
+    razorIntegrationTestRunnerPath,
 } from './projectPaths';
 import spawnNode from './spawnNode';
 import * as jest from 'jest';
 import { Config } from '@jest/types';
-import { jestOmniSharpUnitTestProjectName } from '../omnisharptest/omnisharpJestTests/jest.config';
+import { jestOmniSharpUnitTestProjectName } from '../omnisharptest/omnisharpUnitTests/jest.config';
 import { jestUnitTestProjectName } from '../test/unitTests/jest.config';
 import { razorTestProjectName } from '../test/razorTests/jest.config';
 
@@ -45,24 +46,17 @@ gulp.task('test:razor', async () => {
     runJestTest(razorTestProjectName);
 });
 
+const razorIntegrationTestProjects = ['BasicRazorApp2_1'];
+for (const projectName of razorIntegrationTestProjects) {
+    gulp.task(`test:razorintegration:${projectName}`, async () => runIntegrationTest(projectName, /* razor */ true));
+}
+
+gulp.task(
+    'test:razorintegration',
+    gulp.series(razorIntegrationTestProjects.map((projectName) => `test:razorintegration:${projectName}`))
+);
+
 gulp.task('omnisharptest:unit', async () => {
-    const result = await spawnNode([
-        mochaPath,
-        '--ui',
-        'tdd',
-        '-c',
-        'out/omnisharptest/omnisharpUnitTests/**/*.test.js',
-    ]);
-
-    if (result.code === null || result.code > 0) {
-        // Ensure that gulp fails when tests fail
-        throw new Error(`Exit code: ${result.code}  Signal: ${result.signal}`);
-    }
-
-    return result;
-});
-
-gulp.task('omnisharp:jest:test', async () => {
     runJestTest(jestOmniSharpUnitTestProjectName);
 });
 
@@ -96,7 +90,7 @@ gulp.task(
 // TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
 gulp.task(
     'omnisharptest',
-    gulp.series('omnisharp:jest:test', 'omnisharptest:feature', 'omnisharptest:unit', 'omnisharptest:integration:stdio')
+    gulp.series('omnisharptest:unit', 'omnisharptest:feature', 'omnisharptest:integration:stdio')
 );
 
 gulp.task('test:unit', async () => {
@@ -113,7 +107,7 @@ gulp.task(
     gulp.series(integrationTestProjects.map((projectName) => `test:integration:${projectName}`))
 );
 
-gulp.task('test', gulp.series('test:unit', 'test:integration', 'test:razor'));
+gulp.task('test', gulp.series('test:unit', 'test:integration', 'test:razor', 'test:razorintegration'));
 
 async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
@@ -145,14 +139,14 @@ async function runOmnisharpIntegrationTest(testAssetName: string, engine: 'stdio
     return result;
 }
 
-async function runIntegrationTest(testAssetName: string) {
+async function runIntegrationTest(testAssetName: string, razor = false) {
     const workspacePath = path.join(
-        integrationTestAssetsRootPath,
+        razor ? razorIntegrationTestAssetsRootPath : integrationTestAssetsRootPath,
         testAssetName,
         '.vscode',
         `lsp_tools_host_${testAssetName}.code-workspace`
     );
-    const codeTestsPath = path.join(testRootPath, 'integrationTests');
+    const codeTestsPath = path.join(testRootPath, razor ? 'razorIntegrationTests' : 'integrationTests');
 
     const env = {
         CODE_TESTS_WORKSPACE: workspacePath,
@@ -160,7 +154,8 @@ async function runIntegrationTest(testAssetName: string) {
         EXTENSIONS_TESTS_PATH: path.join(codeTestsPath, 'index.js'),
     };
 
-    const result = await spawnNode([integrationTestRunnerPath, '--enable-source-maps'], { env, cwd: rootPath });
+    const runnerPath = razor ? razorIntegrationTestRunnerPath : integrationTestRunnerPath;
+    const result = await spawnNode([runnerPath, '--enable-source-maps'], { env, cwd: rootPath });
 
     if (result.code === null || result.code > 0) {
         // Ensure that gulp fails when tests fail
