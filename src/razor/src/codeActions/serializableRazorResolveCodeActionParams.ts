@@ -5,10 +5,11 @@
 
 import { LanguageKind } from '../rpc/languageKind';
 import { CodeAction } from 'vscode-languageserver-protocol';
+import { SerializableTextDocumentIdentifier } from '../rpc/serializableTextDocumentIdentifier';
 
 export interface SerializableRazorResolveCodeActionParams {
     hostDocumentVersion: number;
-    uri: string;
+    identifier: SerializableTextDocumentIdentifier;
     languageKind: LanguageKind;
     codeAction: CodeAction;
 }
