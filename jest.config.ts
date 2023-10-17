@@ -10,7 +10,9 @@ const config: Config = {
         '<rootDir>/test/integrationTests/jest.config.ts',
         '<rootDir>/test/razorIntegrationTests/jest.config.ts',
         '<rootDir>/test/razorTests/jest.config.ts',
+        '<rootDir>/test/artifactTests/jest.config.ts',
         '<rootDir>/omnisharptest/omnisharpUnitTests/jest.config.ts',
+        '<rootDir>/omnisharptest/omnisharpIntegrationTests/jest.config.ts',
     ],
 };
 

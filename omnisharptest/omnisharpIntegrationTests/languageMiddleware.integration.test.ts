@@ -3,24 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { expect, should } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 import { LanguageMiddleware, LanguageMiddlewareFeature } from '../../src/omnisharp/languageMiddlewareFeature';
 
-suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, () => {
+describeIfNotRazorOrGenerator(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
     let remappedFileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await registerLanguageMiddleware();
         await testAssetWorkspace.restore();
@@ -35,7 +29,7 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -53,16 +47,16 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
         );
 
         const entries = workspaceEdit!.entries();
-        expect(entries.length).to.be.equal(1);
-        expect(entries[0][0].path).to.be.equal(remappedFileUri.path);
+        expect(entries.length).toEqual(1);
+        expect(entries[0][0].path).toEqual(remappedFileUri.path);
     });
 
     test('Returns the remapped references', async () => {
         const references = <vscode.Location[]>(
             await vscode.commands.executeCommand('vscode.executeReferenceProvider', fileUri, new vscode.Position(4, 30))
         );
-        expect(references.length).to.be.equal(1);
-        expect(references[0].uri.path).to.be.equal(remappedFileUri.path);
+        expect(references.length).toEqual(1);
+        expect(references[0].uri.path).toEqual(remappedFileUri.path);
     });
 
     test('Returns the remapped definition', async () => {
@@ -73,8 +67,8 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
                 new vscode.Position(4, 30)
             )
         );
-        expect(definitions.length).to.be.equal(1);
-        expect(definitions[0].uri.path).to.be.equal(remappedFileUri.path);
+        expect(definitions.length).toEqual(1);
+        expect(definitions[0].uri.path).toEqual(remappedFileUri.path);
     });
 
     test('Returns the remapped implementations', async () => {
@@ -85,8 +79,8 @@ suite(`${LanguageMiddlewareFeature.name}: ${testAssetWorkspace.description}`, ()
                 new vscode.Position(4, 30)
             )
         );
-        expect(implementations.length).to.be.equal(1);
-        expect(implementations[0].uri.path).to.be.equal(remappedFileUri.path);
+        expect(implementations.length).toEqual(1);
+        expect(implementations[0].uri.path).toEqual(remappedFileUri.path);
     });
 });
 

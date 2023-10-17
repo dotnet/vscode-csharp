@@ -3,25 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
-
-import { expect, should } from 'chai';
-import { activateCSharpExtension, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotGenerator, isSlnWithGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { IDisposable } from '../../src/disposable';
 
-suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function () {
+describeIfNotGenerator(`Virtual Document Tracking ${testAssetWorkspace.description}`, function () {
     const virtualScheme = 'virtual';
     let virtualDocumentRegistration: IDisposable;
     let virtualUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);
 
@@ -35,7 +28,7 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
         );
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         if (isSlnWithGenerator(vscode.workspace)) {
             return;
         }
@@ -52,7 +45,7 @@ suite(`Virtual Document Tracking ${testAssetWorkspace.description}`, function ()
             await vscode.commands.executeCommand('vscode.executeCompletionItemProvider', virtualUri, position)
         );
 
-        expect(completionList.items).to.not.be.empty;
+        expect(completionList.items.length).toBeGreaterThan(0);
     });
 });
 
