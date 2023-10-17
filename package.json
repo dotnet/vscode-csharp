@@ -40,7 +40,8 @@
     "roslyn": "4.9.0-1.23513.7",
     "omniSharp": "1.39.10",
     "razor": "7.0.0-preview.23516.2",
-    "razorOmnisharp": "7.0.0-preview.23363.1"
+    "razorOmnisharp": "7.0.0-preview.23363.1",
+    "razorTelemetry": "7.0.0-preview.23475.5"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
