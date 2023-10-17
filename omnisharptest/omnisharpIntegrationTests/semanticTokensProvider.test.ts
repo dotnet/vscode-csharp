@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-import { should, assert } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
 interface ExpectedToken {
@@ -17,7 +16,7 @@ interface ExpectedToken {
     tokenClassifiction: string;
 }
 
-async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | null, message?: string): Promise<void> {
+async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | null): Promise<void> {
     const legend = <vscode.SemanticTokensLegend>(
         await vscode.commands.executeCommand('vscode.provideDocumentSemanticTokensLegend', fileUri)
     );
@@ -26,7 +25,7 @@ async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | nul
     );
 
     if (!actual) {
-        assert.isNull(expected, message);
+        expect(expected).toBeNull();
         return;
     }
 
@@ -49,19 +48,13 @@ async function assertTokens(fileUri: vscode.Uri, expected: ExpectedToken[] | nul
         lastLine = line;
         lastCharacter = character;
     }
-    assert.deepEqual(expected, actualRanges, message);
+    expect(actualRanges).toStrictEqual(expected);
 }
 
-suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
+describeIfNotRazorOrGenerator(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
 
         const fileName = 'semantictokens.cs';
@@ -71,6 +64,10 @@ suite(`SemanticTokensProvider: ${testAssetWorkspace.description}`, function () {
         await vscode.commands.executeCommand('vscode.open', fileUri);
 
         await testAssetWorkspace.waitForIdle(activation.eventStream);
+    });
+
+    afterAll(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
     });
 
     test('Semantic Highlighting returns null when disabled', async () => {

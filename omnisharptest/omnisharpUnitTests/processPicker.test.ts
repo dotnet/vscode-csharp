@@ -3,27 +3,26 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect } from '@jest/globals';
 import { RemoteAttachPicker, Process, CimProcessParser } from '../../src/features/processPicker';
-import { should } from 'chai';
 
-suite('Remote Process Picker: Validate quoting arguments.', () => {
-    suiteSetup(() => should());
+describe('Remote Process Picker: Validate quoting arguments.', () => {
     test('Argument with no spaces', () => {
         const nonQuotedArg = RemoteAttachPicker.quoteArg('C:\\Users\\nospace\\program.exe');
 
-        nonQuotedArg.should.deep.equal('C:\\Users\\nospace\\program.exe');
+        expect(nonQuotedArg).toStrictEqual('C:\\Users\\nospace\\program.exe');
     });
 
     test('Argument with spaces', () => {
         const nonQuotedArg = RemoteAttachPicker.quoteArg('C:\\Users\\s p a c e\\program.exe');
 
-        nonQuotedArg.should.deep.equal('"C:\\Users\\s p a c e\\program.exe"');
+        expect(nonQuotedArg).toStrictEqual('"C:\\Users\\s p a c e\\program.exe"');
     });
 
     test('Argument with spaces with no quotes', () => {
         const nonQuotedArg = RemoteAttachPicker.quoteArg('C:\\Users\\s p a c e\\program.exe', false);
 
-        nonQuotedArg.should.deep.equal('C:\\Users\\s p a c e\\program.exe');
+        expect(nonQuotedArg).toStrictEqual('C:\\Users\\s p a c e\\program.exe');
     });
 
     test('WSL with array arguments and quote args', () => {
@@ -35,7 +34,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             true
         );
 
-        pipeCmd.should.deep.equal('C:\\System32\\bash.exe -c "' + RemoteAttachPicker.scriptShellCmd + '"');
+        expect(pipeCmd).toStrictEqual('C:\\System32\\bash.exe -c "' + RemoteAttachPicker.scriptShellCmd + '"');
     });
 
     test('WSL with array arguments and no quote args', () => {
@@ -47,7 +46,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             false
         );
 
-        pipeCmd.should.deep.equal('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd);
+        expect(pipeCmd).toStrictEqual('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd);
     });
 
     test('WSL with array arguments + debugger command and quote args', () => {
@@ -59,7 +58,9 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             true
         );
 
-        pipeCmd.should.deep.equal('C:\\System32\\bash.exe -c "' + RemoteAttachPicker.scriptShellCmd + '" -- ignored');
+        expect(pipeCmd).toStrictEqual(
+            'C:\\System32\\bash.exe -c "' + RemoteAttachPicker.scriptShellCmd + '" -- ignored'
+        );
     });
 
     test('WSL with array arguments + debugger command and no quote args', () => {
@@ -71,7 +72,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             false
         );
 
-        pipeCmd.should.deep.equal('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd + ' -- ignored');
+        expect(pipeCmd).toStrictEqual('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd + ' -- ignored');
     });
 
     test('WSL with string arguments and quote args', () => {
@@ -83,7 +84,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             true
         );
 
-        pipeCmd.should.deep.equal('C:\\System32\\bash.exe -c "' + RemoteAttachPicker.scriptShellCmd + '"');
+        expect(pipeCmd).toStrictEqual('C:\\System32\\bash.exe -c "' + RemoteAttachPicker.scriptShellCmd + '"');
     });
 
     test('WSL with string arguments and no quote args', () => {
@@ -95,7 +96,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             false
         );
 
-        pipeCmd.should.deep.equal('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd);
+        expect(pipeCmd).toStrictEqual('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd);
     });
 
     test('WSL with string arguments + debugger command and quote args', () => {
@@ -107,7 +108,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             true
         );
 
-        pipeCmd.should.deep.equal('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd + ' -- ignored');
+        expect(pipeCmd).toStrictEqual('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd + ' -- ignored');
     });
 
     test('WSL with string arguments + debugger command and no quote args', () => {
@@ -119,7 +120,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             false
         );
 
-        pipeCmd.should.deep.equal('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd + ' -- ignored');
+        expect(pipeCmd).toStrictEqual('C:\\System32\\bash.exe -c ' + RemoteAttachPicker.scriptShellCmd + ' -- ignored');
     });
 
     test('Windows Docker with string args, debuggerCommand', () => {
@@ -132,7 +133,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             pipeTransport.quoteArgs
         );
 
-        pipeCmd.should.deep.equal('docker -i exec 1234567 ' + RemoteAttachPicker.scriptShellCmd);
+        expect(pipeCmd).toStrictEqual('docker -i exec 1234567 ' + RemoteAttachPicker.scriptShellCmd);
     });
 
     test('Windows Docker with array args', () => {
@@ -144,7 +145,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             pipeTransport.quoteArgs
         );
 
-        pipeCmd.should.deep.equal('docker -i exec 1234567 ' + RemoteAttachPicker.scriptShellCmd);
+        expect(pipeCmd).toStrictEqual('docker -i exec 1234567 ' + RemoteAttachPicker.scriptShellCmd);
     });
 
     test('Windows Docker with array args with quotes', () => {
@@ -156,7 +157,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             true
         );
 
-        pipeCmd.should.deep.equal('docker -i exec 1234567 "' + RemoteAttachPicker.scriptShellCmd + '"');
+        expect(pipeCmd).toStrictEqual('docker -i exec 1234567 "' + RemoteAttachPicker.scriptShellCmd + '"');
     });
 
     test('Linux dotnet with array args and spaces', () => {
@@ -168,7 +169,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             true
         );
 
-        pipeCmd.should.deep.equal(
+        expect(pipeCmd).toStrictEqual(
             `/usr/bin/shared/dotnet bin/framework/myprogram.dll "argument with spaces" "${RemoteAttachPicker.scriptShellCmd}"`
         );
     });
@@ -186,7 +187,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             true
         );
 
-        pipeCmd.should.deep.equal(
+        expect(pipeCmd).toStrictEqual(
             'program.exe ' +
                 RemoteAttachPicker.scriptShellCmd +
                 ' ' +
@@ -207,7 +208,7 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
             true
         );
 
-        pipeCmd.should.deep.equal(
+        expect(pipeCmd).toStrictEqual(
             'program.exe "' +
                 RemoteAttachPicker.scriptShellCmd +
                 '" "' +
@@ -223,19 +224,19 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
 
         let pipeTransport = RemoteAttachPicker.getPipeTransportOptions(launch, 'win32');
 
-        pipeTransport.pipeProgram.should.deep.equal('Windows pipeProgram');
-        pipeTransport.pipeArgs.should.deep.equal('windows');
+        expect(pipeTransport.pipeProgram).toStrictEqual('Windows pipeProgram');
+        expect(pipeTransport.pipeArgs).toStrictEqual('windows');
 
         pipeTransport = RemoteAttachPicker.getPipeTransportOptions(launch, 'darwin');
 
-        pipeTransport.pipeProgram.should.deep.equal('OSX pipeProgram');
-        pipeTransport.pipeArgs.should.deep.equal(['osx']);
+        expect(pipeTransport.pipeProgram).toStrictEqual('OSX pipeProgram');
+        expect(pipeTransport.pipeArgs).toStrictEqual(['osx']);
 
         pipeTransport = RemoteAttachPicker.getPipeTransportOptions(launch, 'linux');
 
-        pipeTransport.pipeProgram.should.deep.equal('Linux pipeProgram');
+        expect(pipeTransport.pipeProgram).toStrictEqual('Linux pipeProgram');
         // Linux pipeTransport does not have args defined, should use the one defined in pipeTransport.
-        pipeTransport.pipeArgs.should.deep.equal([]);
+        expect(pipeTransport.pipeArgs).toStrictEqual([]);
     });
 
     test('Parse valid CIM output', () => {
@@ -265,32 +266,32 @@ suite('Remote Process Picker: Validate quoting arguments.', () => {
 
         const parsedOutput: Process[] = CimProcessParser.ParseProcessFromCim(cimOutput);
 
-        parsedOutput.length.should.equal(4);
+        expect(parsedOutput.length).toEqual(4);
 
         const process1: Process = parsedOutput[0];
         const process2: Process = parsedOutput[1];
         const process3: Process = parsedOutput[2];
         const process4: Process = parsedOutput[3];
 
-        should().not.exist(process1.commandLine);
-        process1.name.should.equal('System Idle Process');
-        process1.pid.should.equal('0');
+        expect(process1.commandLine).not.toBeDefined();
+        expect(process1.name).toEqual('System Idle Process');
+        expect(process1.pid).toEqual('0');
 
-        process2.commandLine!.should.equal(
+        expect(process2.commandLine!).toEqual(
             '"C:\\Program Files\\WindowsApps\\Microsoft.WindowsTerminalPreview_1.12.2931.0_x64__8wekyb3d8bbwe\\WindowsTerminal.exe"'
         );
-        process2.name.should.equal('WindowsTerminal.exe');
-        process2.pid.should.equal('5112');
+        expect(process2.name).toEqual('WindowsTerminal.exe');
+        expect(process2.pid).toEqual('5112');
 
-        process3.commandLine!.should.equal(
+        expect(process3.commandLine!).toEqual(
             'C:\\WINDOWS\\system32\\conhost.exe --headless --width 80 --height 30 --signal 0x8e0 --server 0x824'
         );
-        process3.name.should.equal('conhost.exe');
-        process3.pid.should.equal('34560');
+        expect(process3.name).toEqual('conhost.exe');
+        expect(process3.pid).toEqual('34560');
 
-        process4.commandLine!.should.equal('C:\\WINDOWS\\system32\\conhost.exe 0x4');
-        process4.name.should.equal('conhost.exe');
-        process4.pid.should.equal('33732');
+        expect(process4.commandLine!).toEqual('C:\\WINDOWS\\system32\\conhost.exe 0x4');
+        expect(process4.name).toEqual('conhost.exe');
+        expect(process4.pid).toEqual('33732');
     });
 });
 
