@@ -20,6 +20,7 @@ import { RemoteAttachPicker } from '../features/processPicker';
 import CompositeDisposable from '../compositeDisposable';
 import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
 import { omnisharpOptions } from '../shared/options';
+import { DotnetRuntimeExtensionResolver } from '../lsptoolshost/dotnetRuntimeExtensionResolver';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -83,7 +84,8 @@ export async function activate(
         platformInformation,
         eventStream,
         thisExtension.packageJSON,
-        thisExtension.extensionPath
+        thisExtension.extensionPath,
+        csharpOutputChannel
     );
     /** 'clr' type does not have a intial configuration provider, but we need to register it to support the common debugger features listed in {@link BaseVsDbgConfigurationProvider} */
     context.subscriptions.push(
@@ -221,7 +223,8 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         private readonly platformInfo: PlatformInformation,
         private readonly eventStream: EventStream,
         private readonly packageJSON: any,
-        private readonly extensionPath: string
+        private readonly extensionPath: string,
+        private readonly csharpOutputChannel: vscode.OutputChannel
     ) {}
 
     async createDebugAdapterDescriptor(
@@ -278,6 +281,14 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
         // use the executable specified in the package.json if it exists or determine it based on some other information (e.g. the session)
         if (!executable) {
             const dotNetInfo = await getDotnetInfo(omnisharpOptions.dotNetCliPaths);
+            const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
+                this.platformInfo,
+                () => _session?.configuration?.executable,
+                this.csharpOutputChannel,
+                this.extensionPath
+            );
+
+            const hostExecutableInfo = await hostExecutableResolver.getHostExecutableInfo();
             const targetArchitecture = getTargetArchitecture(
                 this.platformInfo,
                 _session.configuration.targetArchitecture,
@@ -290,9 +301,17 @@ export class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescrip
                 'vsdbg-ui' + CoreClrDebugUtil.getPlatformExeExtension()
             );
 
-            // Look to see if DOTNET_ROOT is set, then use dotnet cli path
-            const dotnetRoot: string =
-                process.env.DOTNET_ROOT ?? (dotNetInfo.CliPath ? path.dirname(dotNetInfo.CliPath) : '');
+            // Look to see if DOTNET_ROOT is set, then use dotnet cli path for omnisharp, then hostExecutableInfo
+            let dotnetRoot: string | undefined = process.env.DOTNET_ROOT;
+            if (!dotnetRoot) {
+                if (dotNetInfo.CliPath) {
+                    dotnetRoot = path.dirname(dotNetInfo.CliPath);
+                } else if (hostExecutableInfo.path) {
+                    dotnetRoot = path.dirname(hostExecutableInfo.path);
+                } else {
+                    dotnetRoot = '';
+                }
+            }
 
             let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;
             if (dotnetRoot) {
