@@ -2,8 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { CancellationToken, Diagnostic, Uri } from 'vscode';
+import { Diagnostic, Uri } from 'vscode';
 import { RoslynLanguageServer } from '../roslynLanguageServer';
+import { CancellationToken } from 'vscode-jsonrpc';
 
 interface IBuildResultDiagnostics {
     buildStarted(cancellationToken?: CancellationToken): Promise<void>;
@@ -18,11 +19,12 @@ export class BuildResultDiagnostics implements IBuildResultDiagnostics {
 
     public async buildStarted(): Promise<void> {
         const langServer = await this._languageServerPromise;
-        langServer.clearDiagnostics();
+        langServer._buildDiagnosticService.clearDiagnostics();
     }
 
     public async reportBuildResult(buildDiagnostics: Array<[Uri, Diagnostic[]]>): Promise<void> {
         const langServer = await this._languageServerPromise;
-        langServer.setBuildDiagnostics(buildDiagnostics);
+        const buildOnlyIds = await langServer.getBuildOnlyDiagnosticIds(CancellationToken.None);
+        langServer._buildDiagnosticService.setBuildDiagnostics(buildDiagnostics, buildOnlyIds);
     }
 }
