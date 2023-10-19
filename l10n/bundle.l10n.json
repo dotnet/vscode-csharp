@@ -128,6 +128,8 @@
   "Choose and set default": "Choose and set default",
   "Do not load any": "Do not load any",
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
+  "Pick a nested action": "Pick a nested action",
+  "Nested Code Action": "Nested Code Action",
   "Pick a fix all scope": "Pick a fix all scope",
   "Fix All Code Action": "Fix All Code Action",
   "pipeArgs must be a string or a string array type": "pipeArgs must be a string or a string array type",
