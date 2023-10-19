@@ -130,6 +130,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
      */
     private async findDotnetFromPath(): Promise<string | undefined> {
         try {
+            this.channel.appendLine(`Path: ${process.env.PATH}`);
             const dotnetInfo = await getDotnetInfo([]);
 
             const extensionArchitecture = await this.getArchitectureFromTargetPlatform();
