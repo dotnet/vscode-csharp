@@ -241,6 +241,11 @@
         "diagnosticsLog": {
           "$ref": "#/definitions/DiagnosticsLog",
           "description": "Settings to control which messages are printed to the output window from the debugger's diagnostics log. This log is meant to help troubleshoot problems with the debugger."
+        },
+        "consoleUsageMessage": {
+          "type": "boolean",
+          "description": "Controls if a message is logged when the target process calls a 'Console.Read*' API and stdin is redirected to the console.",
+          "default": true
         }
       }
     },

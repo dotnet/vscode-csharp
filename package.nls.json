@@ -83,7 +83,7 @@
   "debuggers.coreclr.configurationSnippets.label.blazor-hosted": ".NET: Web Assembly - Launch hosted Blazor project",
   "debuggers.coreclr.configurationSnippets.label.blazor-standalone": ".NET: Web Assembly - Launch standalone Blazor project",
   "debuggers.coreclr.configurationSnippets.description.console-local": {
-    "message" : "This snippet is used to launch a new process under the .NET debugger (coreclr), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice. This snippet is useful when the project was built outside this VS Code instance or you want to host your .NET Code in a custom executable, such as a specific version of 'dotnet.exe'/'dotnet' or the .NET Code is hosted by a native application. This snippet is for console applications.",
+    "message": "This snippet is used to launch a new process under the .NET debugger (coreclr), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice. This snippet is useful when the project was built outside this VS Code instance or you want to host your .NET Code in a custom executable, such as a specific version of 'dotnet.exe'/'dotnet' or the .NET Code is hosted by a native application. This snippet is for console applications.",
     "comment": [
       "'coreclr' is the name of the debugger 'type', and should not be localized",
       "{Locked='(coreclr)'}"
@@ -317,6 +317,7 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
+  "generateOptionsSchema.logging.consoleUsageMessage.description": "Controls if a message is logged when the target process calls a 'Console.Read*' API and stdin is redirected to the console.",
   "generateOptionsSchema.pipeTransport.description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
   "generateOptionsSchema.pipeTransport.pipeCwd.description": "The fully qualified path to the working directory for the pipe program.",
   "generateOptionsSchema.pipeTransport.pipeProgram.description": "The fully qualified pipe command to execute.",
