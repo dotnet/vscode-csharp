@@ -14,8 +14,8 @@
   * Reduce noisy errors when viewing git diff (PR: [razor#9407](https://github.com/dotnet/razor/pull/9407))
 * Update Roslyn to 4.9.0-1.23513.7 (PR: [#6548](https://github.com/dotnet/vscode-csharp/pull/6548))
   * Fix extraneous error when connecting to devkit (PR: [#70298](https://github.com/dotnet/roslyn/pull/70298))
-  * Add support for using Mono to load .NET Framework projects (PR: [#70263](https://github.com/dotnet/roslyn/pull/70263))
-  * Fix analyzer references (PR: [#70331](https://github.com/dotnet/roslyn/pull/70331))
+  * Add support for using Mono to load .NET Framework projects on macOS and Linux (PR: [#70263](https://github.com/dotnet/roslyn/pull/70263))
+  * Fix source generator and analyzer output not being recognized if you didn't have C# Dev Kit installed (PR: [#70331](https://github.com/dotnet/roslyn/pull/70331))
 * Hide debug console when using `"console": "integratedTerminal"` (PR: [#6523](https://github.com/dotnet/vscode-csharp/pull/6523))
 * Fix dotnet path resolution when using snap installed packages (PR: [#6515](https://github.com/dotnet/vscode-csharp/pull/6515))
 * Track debugging sessions until csdevkit is initialized (PR: [#6480](https://github.com/dotnet/vscode-csharp/pull/6480))
@@ -23,10 +23,10 @@
 * Debugger: better handle long strings ([#6496](https://github.com/dotnet/vscode-csharp/issues/6496)). Strings are truncated if they are longer than 1024 UTF-16 characters, but the full value  up to 5,242,880 characters or 10 megabytes, is available using 'Copy Value' in the watch or variables window. Truncated strings will end with '...'.
 * Add setting to control Razor component commit behaviour (PR: [#6506](https://github.com/dotnet/vscode-csharp/pull/6506))
 * Razor textmate colorization fixes (PR: [#6514](https://github.com/dotnet/vscode-csharp/pull/6514))
-
-## 2.6.24
 * Update Razor version to 7.0.0-preview.23475.5 (PR: [#6506](https://github.com/dotnet/vscode-csharp/pull/6506))
   * Add setting for whether to complete components with space (PR: [razor#9379](https://github.com/dotnet/razor/pull/9379))
+
+## 2.6.24
 * Update Roslyn version to 4.9.0-1.23506.7 (PR: [#6447](https://github.com/dotnet/vscode-csharp/pull/6447))
   * Fix various issues with project loading and allow fallbacks to .NET framework msbuild (PR: [#70240](https://github.com/dotnet/roslyn/pull/70240))
 * Fix some Razor colorization issues (PR: [#6502](https://github.com/dotnet/vscode-csharp/pull/6502))
