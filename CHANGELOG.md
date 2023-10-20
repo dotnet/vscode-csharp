@@ -6,6 +6,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn to 4.9.0-1.23519.13 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
+  * Filter completion list only with text before cursor (PR: [#70448](https://github.com/dotnet/roslyn/pull/70448))
+  * Bump MSBuild.StructuredLogger package version (PR: [#70157](https://github.com/dotnet/roslyn/pull/70157))
+  * Fix issues launching the server when a .NET 7 preview 7 runtime is installed (PR: [#70446](https://github.com/dotnet/roslyn/pull/70446))
+  * Ensure LSP didChange processing matches specification. (PR: [#70407](https://github.com/dotnet/roslyn/pull/70407))  
 * Update Razor to 7.0.0-preview.23516.2 (PR: [#6550](https://github.com/dotnet/vscode-csharp/pull/6550))
   * Make sure correct info is passed in code action resolve (PR: [razor#9420](https://github.com/dotnet/razor/pull/9420))
 
