@@ -55,14 +55,16 @@ export async function activateCSharpExtension(): Promise<void> {
     }
 }
 
-export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<void> {
+export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<vscode.Uri> {
     const root = vscode.workspace.workspaceFolders![0].uri.fsPath;
     const filePath = path.join(root, relativeFilePath);
     if (!existsSync(filePath)) {
         throw new Error(`File ${filePath} does not exist`);
     }
 
-    await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath));
+    const uri = vscode.Uri.file(filePath);
+    await vscode.commands.executeCommand('vscode.open', uri);
+    return uri;
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {
