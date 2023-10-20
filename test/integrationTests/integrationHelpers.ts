@@ -42,16 +42,7 @@ export async function activateCSharpExtension(): Promise<void> {
     console.log(`Extension Log Directory: ${csharpExtension.exports.logDirectory}`);
 
     if (shouldRestart) {
-        // Register to wait for initialization events and restart the server.
-        const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
-            csharpExtension.exports.experimental.languageServerEvents.onServerStateChange(async (state) => {
-                if (state === ServerStateChange.ProjectInitializationComplete) {
-                    resolve();
-                }
-            });
-        });
-        await vscode.commands.executeCommand('dotnet.restartServer');
-        await waitForInitialProjectLoad;
+        await restartLanguageServer();
     }
 }
 
@@ -65,6 +56,20 @@ export async function openFileInWorkspaceAsync(relativeFilePath: string): Promis
     const uri = vscode.Uri.file(filePath);
     await vscode.commands.executeCommand('vscode.open', uri);
     return uri;
+}
+
+export async function restartLanguageServer(): Promise<void> {
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
+    // Register to wait for initialization events and restart the server.
+    const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
+        csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange(async (state) => {
+            if (state === ServerStateChange.ProjectInitializationComplete) {
+                resolve();
+            }
+        });
+    });
+    await vscode.commands.executeCommand('dotnet.restartServer');
+    await waitForInitialProjectLoad;
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {
