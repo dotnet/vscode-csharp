@@ -101,7 +101,7 @@ async function registerNestedResolveCodeAction(
                                                 );
                                             } else {
                                                 const componentName = '[roslyn.client.nestedCodeAction]';
-                                                const errorMessage = 'Failed to make a edit for completion.';
+                                                const errorMessage = 'Failed to make am edit for completion.';
                                                 outputChannel.show();
                                                 outputChannel.appendLine(`${componentName} ${errorMessage}`);
                                                 throw new Error(
@@ -117,48 +117,4 @@ async function registerNestedResolveCodeAction(
                 });
         }
     }
-    // if (codeActionData) {
-    //     const data = <LSPAny>codeActionData;
-
-    //     const result = await vscode.window.showQuickPick(data.NestedCodeAction, {
-    //         placeHolder: vscode.l10n.t('Pick a nested action'),
-    //     });
-
-    //     await vscode.window.withProgress(
-    //         {
-    //             location: vscode.ProgressLocation.Notification,
-    //             title: vscode.l10n.t('Nested Code Action'),
-    //             cancellable: true,
-    //         },
-    //         async (_, token) => {
-    //             if (result) {
-    //                 const fixAllCodeAction: RoslynProtocol.RoslynFixAllCodeAction = {
-    //                     title: data.UniqueIdentifier,
-    //                     data: data,
-    //                     scope: result,
-    //                 };
-
-    //                 const response = await languageServer.sendRequest(
-    //                     RoslynProtocol.CodeActionFixAllResolveRequest.type,
-    //                     fixAllCodeAction,
-    //                     token
-    //                 );
-
-    //                 if (response.edit) {
-    //                     const uriConverter: URIConverter = (value: string): vscode.Uri =>
-    //                         UriConverter.deserialize(value);
-    //                     const protocolConverter = createConverter(uriConverter, true, true);
-    //                     const fixAllEdit = await protocolConverter.asWorkspaceEdit(response.edit);
-    //                     if (!(await vscode.workspace.applyEdit(fixAllEdit))) {
-    //                         const componentName = '[roslyn.client.fixAllCodeAction]';
-    //                         const errorMessage = 'Failed to make a fix all edit for completion.';
-    //                         outputChannel.show();
-    //                         outputChannel.appendLine(`${componentName} ${errorMessage}`);
-    //                         throw new Error('Tried to insert multiple code action edits, but an error occurred.');
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     );
-    // }
 }
