@@ -34,7 +34,7 @@ export default class Descriptors {
     );
 
     static readonly csharpExtensionBuildResultService: ServiceRpcDescriptor = new ServiceJsonRpcDescriptor(
-        ServiceMoniker.create('Microsoft.VisualStudioCode.CSharp.BuildResultService', '0.1'),
+        ServiceMoniker.create('Microsoft.VisualStudio.CSharpExtension.BuildResultService', '0.1'),
         Formatters.MessagePack,
         MessageDelimiters.BigEndianInt32LengthHeader,
         {

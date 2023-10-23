@@ -53,7 +53,7 @@
     },
     {
       "moniker": {
-        "name": "Microsoft.VisualStudioCode.CSharp.BuildResultService",
+        "name": "Microsoft.VisualStudio.CSharpExtension.BuildResultService",
         "version": "0.1"
       }
     }
