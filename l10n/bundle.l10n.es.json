@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "No se pudo establecer el directorio debugadpter",
   "Failed to set extension directory": "No se pudo establecer el directorio de la extensión",
   "Failed to set install complete file path": "No se pudo establecer la ruta de acceso completa del archivo de instalación",
+  "Fix All Code Action": "Corregir toda la acción de código",
   "For further information visit {0}": "Para obtener más información, visite {0}",
   "For further information visit {0}.": "Para obtener más información, visite {0}.",
   "For more information about the 'console' field, see {0}": "Para obtener más información sobre el campo \"consola\", consulte {0}",
@@ -72,6 +73,7 @@
   "Open envFile": "Abrir envFile",
   "Operating system \"{0}\" not supported.": "No se admite el sistema operativo \"{0}\".",
   "Perform the actions (or no action) that resulted in your Razor issue": "Realizar las acciones (o ninguna acción) que provocaron el problema de Razor",
+  "Pick a fix all scope": "Seleccionar una corrección de todo el ámbito",
   "Pipe transport failed to get OS and processes.": "El transporte de canalización no pudo obtener el sistema operativo y los procesos.",
   "Please fill in this section": "Rellene esta sección",
   "Press {0}": "Presionar {0}",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERROR]: la extensión de C# no pudo instalar el paquete del depurador.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "La opción dotnet.server.useOmnrp ha cambiado. Vuelva a cargar la ventana para aplicar el cambio.",
   "pipeArgs must be a string or a string array type": "pipeArgs debe ser una cadena o un tipo de matriz de cadena",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "{0} Palabra clave",
   "{0} references": "{0} referencias",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, pegue el contenido del problema como el cuerpo del problema. No olvide rellenar los detalles que no se han rellenado."
 }

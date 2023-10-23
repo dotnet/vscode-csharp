@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "未能设置调试程序目录",
   "Failed to set extension directory": "无法设置扩展目录",
   "Failed to set install complete file path": "无法设置安装完成文件路径",
+  "Fix All Code Action": "修复所有代码操作",
   "For further information visit {0}": "有关详细信息，请访问 {0}",
   "For further information visit {0}.": "有关详细信息，请访问 {0}。",
   "For more information about the 'console' field, see {0}": "有关“控制台”字段的详细信息，请参阅 {0}",
@@ -72,6 +73,7 @@
   "Open envFile": "打开 envFile",
   "Operating system \"{0}\" not supported.": "不支持操作系统“{0}”。",
   "Perform the actions (or no action) that resulted in your Razor issue": "执行导致出现 Razor 问题的操作(或不执行任何操作)",
+  "Pick a fix all scope": "选取所有范围的修补程序",
   "Pipe transport failed to get OS and processes.": "管道传输未能获取 OS 和进程。",
   "Please fill in this section": "请填写此部分",
   "Press {0}": "按 {0}",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[错误]: C# 扩展无法安装调试器包。",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp 选项已更改。请重新加载窗口以应用更改",
   "pipeArgs must be a string or a string array type": "pipeArgs 必须是字符串或字符串数组类型",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "{0} 关键字",
   "{0} references": "{0} 个引用",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}，将问题内容粘贴为问题的正文。请记得填写任何未填充的详细信息。"
 }

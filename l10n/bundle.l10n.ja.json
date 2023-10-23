@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "debugadpter ディレクトリを設定できませんでした",
   "Failed to set extension directory": "拡張機能ディレクトリを設定できませんでした",
   "Failed to set install complete file path": "インストール完了ファイル パスを設定できませんでした",
+  "Fix All Code Action": "すべてのコードアクションを修正する",
   "For further information visit {0}": "詳細については、{0} を参照してください",
   "For further information visit {0}.": "詳細については、{0} を参照してください。",
   "For more information about the 'console' field, see {0}": "'console' フィールドの詳細については、{0} を参照してください",
@@ -72,6 +73,7 @@
   "Open envFile": "envFile を開く",
   "Operating system \"{0}\" not supported.": "オペレーティング システム \"{0}\" はサポートされていません。",
   "Perform the actions (or no action) that resulted in your Razor issue": "Razor の問題の原因となったアクションを実行します (またはアクションを実行しません)",
+  "Pick a fix all scope": "すべてのスコープの修正を選択する",
   "Pipe transport failed to get OS and processes.": "パイプ トランスポートで OS とプロセスを取得できませんでした。",
   "Please fill in this section": "このセクションに入力してください",
   "Press {0}": "{0} を押す",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[エラー]: C# 拡張機能でデバッガー パッケージをインストールできませんでした。",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp オプションが変更されました。変更を適用するために、ウィンドウを再読み込みしてください",
   "pipeArgs must be a string or a string array type": "pipeArgs は文字列型または文字列配列型である必要があります",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "{0} キーワード",
   "{0} references": "{0} 個の参照",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}、問題の内容を問題の本文として貼り付けます。未記入の詳細があれば忘れずに記入してください。"
 }

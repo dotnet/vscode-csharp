@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import * as path from 'path';
-import * as chaiAsPromised from 'chai-as-promised';
-import * as chai from 'chai';
 import * as util from '../../../src/common';
 import { CreateTmpDir, TmpAsset } from '../../../src/createTmpAsset';
-import TestZip from '../testAssets/testZip';
+import TestZip from '../../omnisharpUnitTests/testAssets/testZip';
 import { downloadAndInstallPackages } from '../../../src/packageManager/downloadAndInstallPackages';
 import NetworkSettings from '../../../src/networkSettings';
 import { EventStream } from '../../../src/eventStream';
@@ -23,17 +22,14 @@ import {
     DownloadFailure,
     InstallationFailure,
 } from '../../../src/omnisharp/loggingEvents';
-import MockHttpsServer from '../testAssets/mockHttpsServer';
-import { createTestFile } from '../testAssets/testFile';
-import TestEventBus from '../testAssets/testEventBus';
+import MockHttpsServer from '../../omnisharpUnitTests/testAssets/mockHttpsServer';
+import { createTestFile } from '../../omnisharpUnitTests/testAssets/testFile';
+import TestEventBus from '../../omnisharpUnitTests/testAssets/testEventBus';
 import { AbsolutePathPackage } from '../../../src/packageManager/absolutePathPackage';
 import { AbsolutePath } from '../../../src/packageManager/absolutePath';
 import { DownloadValidator } from '../../../src/packageManager/isValidDownload';
 
-chai.use(chaiAsPromised);
-const expect = chai.expect;
-
-suite(`${downloadAndInstallPackages.name}`, () => {
+describe(`${downloadAndInstallPackages.name}`, () => {
     let tmpInstallDir: TmpAsset;
     let server: MockHttpsServer;
     let testZip: TestZip;
@@ -47,7 +43,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
     const packageDescription = 'Test Package';
     const networkSettingsProvider = () => new NetworkSettings('', false);
 
-    setup(async () => {
+    beforeEach(async () => {
         eventStream = new EventStream();
         server = await MockHttpsServer.CreateMockHttpsServer();
         eventBus = new TestEventBus(eventStream);
@@ -85,7 +81,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
         server.addRequestHandler('GET', '/notDownloadablePackage', 404);
     });
 
-    suite('If the download and install succeeds', () => {
+    describe('If the download and install succeeds', () => {
         test('The expected files are installed at the specified path', async () => {
             await downloadAndInstallPackages(
                 downloadablePackage,
@@ -95,7 +91,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
             );
             for (const elem of testZip.files) {
                 const filePath = path.join(tmpDirPath, elem.path);
-                expect(await util.fileExists(filePath)).to.be.true;
+                expect(await util.fileExists(filePath)).toBe(true);
             }
         });
 
@@ -106,7 +102,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 eventStream,
                 downloadValidator
             );
-            expect(await util.fileExists(path.join(tmpDirPath, 'install.Lock'))).to.be.true;
+            expect(await util.fileExists(path.join(tmpDirPath, 'install.Lock'))).toBe(true);
         });
 
         test('Events are created in the correct order', async () => {
@@ -125,7 +121,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 eventStream,
                 downloadValidator
             );
-            expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
+            expect(eventBus.getEvents()).toStrictEqual(eventsSequence);
         });
 
         test('If the download validation fails for the first time and passed second time, the correct events are logged', async () => {
@@ -159,11 +155,11 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 eventStream,
                 downloadValidator
             );
-            expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
+            expect(eventBus.getEvents()).toStrictEqual(eventsSequence);
         });
     });
 
-    suite('If the download and install fails', () => {
+    describe('If the download and install fails', () => {
         test('If the download succeeds but the validation fails, events are logged', async () => {
             const downloadValidator = () => false;
             const eventsSequence = [
@@ -186,7 +182,7 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 eventStream,
                 downloadValidator
             );
-            expect(eventBus.getEvents()).to.be.deep.equal(eventsSequence);
+            expect(eventBus.getEvents()).toStrictEqual(eventsSequence);
         });
 
         test('Returns false when the download fails', async () => {
@@ -203,12 +199,12 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 downloadValidator
             );
             const obtainedEvents = eventBus.getEvents();
-            expect(obtainedEvents[0]).to.be.deep.equal(eventsSequence[0]);
-            expect(obtainedEvents[1]).to.be.deep.equal(eventsSequence[1]);
-            expect(obtainedEvents[2]).to.be.deep.equal(eventsSequence[2]);
+            expect(obtainedEvents[0]).toStrictEqual(eventsSequence[0]);
+            expect(obtainedEvents[1]).toStrictEqual(eventsSequence[1]);
+            expect(obtainedEvents[2]).toStrictEqual(eventsSequence[2]);
             const installationFailureEvent = <InstallationFailure>obtainedEvents[3];
-            expect(installationFailureEvent.stage).to.be.equal('downloadPackage');
-            expect(installationFailureEvent.error).to.not.be.null;
+            expect(installationFailureEvent.stage).toEqual('downloadPackage');
+            expect(installationFailureEvent.error).not.toBe(null);
         });
 
         test('install.Lock is not present when the download fails', async () => {
@@ -218,11 +214,11 @@ suite(`${downloadAndInstallPackages.name}`, () => {
                 eventStream,
                 downloadValidator
             );
-            expect(await util.fileExists(path.join(tmpDirPath, 'install.Lock'))).to.be.false;
+            expect(await util.fileExists(path.join(tmpDirPath, 'install.Lock'))).toBe(false);
         });
     });
 
-    teardown(async () => {
+    afterEach(async () => {
         if (tmpInstallDir) {
             tmpInstallDir.dispose();
         }

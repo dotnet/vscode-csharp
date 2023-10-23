@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "Falha ao definir o diretório de depuração",
   "Failed to set extension directory": "Falha ao configurar o diretório da extensão",
   "Failed to set install complete file path": "Falha ao configurar o caminho do arquivo para concluir a instalação",
+  "Fix All Code Action": "Corrigir Todas as Ações de Código",
   "For further information visit {0}": "Para obter mais informações, acesse {0}",
   "For further information visit {0}.": "Para obter mais informações, visite {0}.",
   "For more information about the 'console' field, see {0}": "Para obter mais informações sobre o campo \"console\", confira {0}",
@@ -72,6 +73,7 @@
   "Open envFile": "Abrir o envFile",
   "Operating system \"{0}\" not supported.": "Não há suporte para o sistema operacional \"{0}\".",
   "Perform the actions (or no action) that resulted in your Razor issue": "Execute as ações (ou nenhuma ação) que resultaram no problema do seu Razor",
+  "Pick a fix all scope": "Escolher uma correção para todo o escopo",
   "Pipe transport failed to get OS and processes.": "O transporte de pipe falhou ao obter o SO e os processos.",
   "Please fill in this section": "Preencha esta seção",
   "Press {0}": "Pressione {0}",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERRO]: a extensão C# falhou ao instalar o pacote do depurador.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "A opção dotnet.server.useOmnisharp foi alterada. Atualize a janela para aplicar a alteração",
   "pipeArgs must be a string or a string array type": "pipeArgs deve ser uma cadeia de caracteres ou um tipo de matriz de cadeia de caracteres",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "{0} Palavra-chave",
   "{0} references": "{0} referências",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, cole o conteúdo do problema como o corpo do problema. Não se esqueça de preencher todos os detalhes que não foram preenchidos."
 }

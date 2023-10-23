@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should, expect } from 'chai';
+import { describe, test, expect } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import { DotnetLoggerObserver } from '../../../src/observers/dotnetLoggerObserver';
 import {
@@ -13,9 +13,7 @@ import {
     EventWithMessage,
 } from '../../../src/omnisharp/loggingEvents';
 
-suite('DotnetLoggerObserver', () => {
-    suiteSetup(() => should());
-
+describe('DotnetLoggerObserver', () => {
     [
         new CommandDotNetRestoreProgress('Some message'),
         new CommandDotNetRestoreSucceeded('Some message'),
@@ -31,7 +29,7 @@ suite('DotnetLoggerObserver', () => {
             });
 
             observer.post(event);
-            expect(appendedMessage).to.contain(event.message);
+            expect(appendedMessage).toContain(event.message);
         });
     });
 });

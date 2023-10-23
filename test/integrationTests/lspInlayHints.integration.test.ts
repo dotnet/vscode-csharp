@@ -10,7 +10,7 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from './integrationHelpers';
 import { InlayHint, InlayHintKind, Position } from 'vscode-languageserver-protocol';
 
-jestLib.describe(`LSP Inlay Hints ${testAssetWorkspace.description}`, function () {
+jestLib.describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, function () {
     jestLib.beforeAll(async function () {
         const editorConfig = vscode.workspace.getConfiguration('editor');
         await editorConfig.update('inlayHints.enabled', true);

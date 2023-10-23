@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { should, expect } from 'chai';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import { RazorLoggerObserver } from '../../../src/observers/razorLoggerObserver';
 import {
@@ -11,8 +11,7 @@ import {
     RazorDevModeActive,
 } from '../../../src/omnisharp/loggingEvents';
 
-suite('RazorLoggerObserver', () => {
-    suiteSetup(() => should());
+describe('RazorLoggerObserver', () => {
     let logOutput = '';
     const observer = new RazorLoggerObserver({
         ...getNullChannel(),
@@ -21,25 +20,25 @@ suite('RazorLoggerObserver', () => {
         },
     });
 
-    setup(() => {
+    beforeEach(() => {
         logOutput = '';
     });
 
     test(`RazorPluginPathSpecified: Path is logged`, () => {
         const event = new RazorPluginPathSpecified('somePath');
         observer.post(event);
-        expect(logOutput).to.contain(event.path);
+        expect(logOutput).toContain(event.path);
     });
 
     test(`RazorPluginPathDoesNotExist: Path is logged`, () => {
         const event = new RazorPluginPathDoesNotExist('somePath');
         observer.post(event);
-        expect(logOutput).to.contain(event.path);
+        expect(logOutput).toContain(event.path);
     });
 
     test(`RazorDevModeActive: Logs dev mode active`, () => {
         const event = new RazorDevModeActive();
         observer.post(event);
-        expect(logOutput).to.contain('Razor dev mode active');
+        expect(logOutput).toContain('Razor dev mode active');
     });
 });

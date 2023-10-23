@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "Не удалось установить каталог отладчика",
   "Failed to set extension directory": "Не удалось установить каталог расширений",
   "Failed to set install complete file path": "Не удалось установить полный путь к файлу установки",
+  "Fix All Code Action": "Исправить все действия с кодом",
   "For further information visit {0}": "Для получения дополнительных сведений посетите {0}",
   "For further information visit {0}.": "Для получения дополнительных сведений посетите {0}.",
   "For more information about the 'console' field, see {0}": "Дополнительные сведения о поле \"console\" см. в {0}",
@@ -72,6 +73,7 @@
   "Open envFile": "Открыть envFile",
   "Operating system \"{0}\" not supported.": "Операционная система \"{0}\" не поддерживается.",
   "Perform the actions (or no action) that resulted in your Razor issue": "Выполните действия (или воспроизведите условия), которые вызвали проблему Razor",
+  "Pick a fix all scope": "Выбрать исправление для всей области",
   "Pipe transport failed to get OS and processes.": "Транспорту канала не удалось получить ОС и процессы.",
   "Please fill in this section": "Заполните этот раздел",
   "Press {0}": "Нажмите {0}",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[ОШИБКА]: расширению C# не удалось установить пакет отладчика.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Параметр dotnet.server.useOmnisharp изменен. Перезагрузите окно, чтобы применить изменение",
   "pipeArgs must be a string or a string array type": "pipeArgs должен быть строкой или строковым массивом",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "Ключевое слово: {0}",
   "{0} references": "Ссылок: {0}",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, вставьте описание проблемы в соответствующее поле. Не забудьте указать все необходимые сведения."
 }

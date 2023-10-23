@@ -9,6 +9,7 @@ import { Advisor } from '../../src/features/diagnosticsProvider';
 import { EventStream } from '../../src/eventStream';
 import { EventType } from '../../src/omnisharp/eventType';
 import { OmnisharpExtensionExports } from '../../src/csharpExtensionExports';
+import { describe } from '@jest/globals';
 
 export interface ActivationResult {
     readonly advisor: Advisor;
@@ -101,4 +102,20 @@ function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName:
     const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
 
     return projectFileName === expectedProjectFileName;
+}
+
+export const describeIfNotRazorOrGenerator = describeIf(
+    !isRazorWorkspace(vscode.workspace) && !isSlnWithGenerator(vscode.workspace)
+);
+
+export const describeIfNotGenerator = describeIf(!isSlnWithGenerator(vscode.workspace));
+
+export const describeIfGenerator = describeIf(isSlnWithGenerator(vscode.workspace));
+
+export const describeIfSlnWithCsProj = describeIf(isSlnWithCsproj(vscode.workspace));
+
+export const describeIfRazor = describeIf(isRazorWorkspace(vscode.workspace));
+
+function describeIf(condition: boolean) {
+    return condition ? describe : describe.skip;
 }

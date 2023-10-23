@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "Échec de la définition du répertoire debugadpter",
   "Failed to set extension directory": "Échec de la définition du répertoire d’extensions",
   "Failed to set install complete file path": "Échec de la définition du chemin d’accès complet à l’installation",
+  "Fix All Code Action": "Corriger toutes les actions de code",
   "For further information visit {0}": "Pour plus d’informations, consultez {0}",
   "For further information visit {0}.": "Pour plus d’informations, consultez {0}.",
   "For more information about the 'console' field, see {0}": "Pour plus d’informations sur le champ « console », consultez {0}",
@@ -72,6 +73,7 @@
   "Open envFile": "Ouvrir envFile",
   "Operating system \"{0}\" not supported.": "Système d'exploitation \"{0}\" non pris en charge.",
   "Perform the actions (or no action) that resulted in your Razor issue": "Effectuez les actions (ou aucune action) ayant entraîné votre problème Razor",
+  "Pick a fix all scope": "Choisir un correctif pour toutes les étendues",
   "Pipe transport failed to get OS and processes.": "Le transport de canal n'a pas pu obtenir le système d'exploitation et les processus.",
   "Please fill in this section": "Veuillez remplir cette section",
   "Press {0}": "Appuyez sur {0}",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERREUR] : l’extension C# n’a pas pu installer le package du débogueur.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "l’option dotnet.server.useOmnzurp a changé. Rechargez la fenêtre pour appliquer la modification",
   "pipeArgs must be a string or a string array type": "pipeArgs doit être une chaîne ou un type de tableau de chaînes",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "Mot clé {0}",
   "{0} references": "{0} références",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, collez le contenu de votre problème en tant que corps du problème. N’oubliez pas de remplir tous les détails qui n’ont pas été remplis."
 }

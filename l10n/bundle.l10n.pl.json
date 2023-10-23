@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "Nie można ustawić katalogu debugadpter",
   "Failed to set extension directory": "Nie można ustawić katalogu rozszerzenia",
   "Failed to set install complete file path": "Nie można ustawić pełnej ścieżki pliku instalacji",
+  "Fix All Code Action": "Napraw całą akcję kodu",
   "For further information visit {0}": "Aby uzyskać więcej informacji, odwiedź witrynę {0}",
   "For further information visit {0}.": "Aby uzyskać więcej informacji, odwiedź witrynę {0}.",
   "For more information about the 'console' field, see {0}": "Aby uzyskać więcej informacji o polu „console”, zobacz {0}",
@@ -72,6 +73,7 @@
   "Open envFile": "Otwórz plik envFile",
   "Operating system \"{0}\" not supported.": "System operacyjny „{0}” nie jest obsługiwany.",
   "Perform the actions (or no action) that resulted in your Razor issue": "Wykonaj akcje (lub brak akcji), które spowodowały problem z aparatem Razor",
+  "Pick a fix all scope": "Wybierz poprawkę dla całego zakresu",
   "Pipe transport failed to get OS and processes.": "Transport potokowy nie może pobrać systemu operacyjnego i procesów.",
   "Please fill in this section": "Wypełnij tę sekcję",
   "Press {0}": "Naciśnij {0}",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[BŁĄD]: Rozszerzenie języka C# nie może zainstalować pakietu debugera.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Opcja dotnet.server.useOmnisharp została zmieniona. Załaduj ponownie okno, aby zastosować zmianę",
   "pipeArgs must be a string or a string array type": "Argument pipeArgs musi być ciągiem lub typem tablicy ciągów",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "Słowo kluczowe {0}",
   "{0} references": "Odwołania: {0}",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, wklej zawartość problemu jako treść problemu. Nie zapomnij wypełnić wszystkich szczegółów, które pozostały niewypełnione."
 }

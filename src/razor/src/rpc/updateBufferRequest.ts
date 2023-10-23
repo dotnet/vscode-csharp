@@ -9,6 +9,7 @@ export class UpdateBufferRequest {
     constructor(
         public readonly hostDocumentVersion: number,
         public readonly hostDocumentFilePath: string,
-        public readonly changes: ServerTextChange[]
+        public readonly changes: ServerTextChange[],
+        public readonly previousWasEmpty: boolean
     ) {}
 }

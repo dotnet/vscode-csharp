@@ -3,26 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import OmniSharpCompletionProvider from '../../src/features/completionProvider';
 import * as vscode from 'vscode';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import * as path from 'path';
-import { use, expect, should } from 'chai';
-import * as chaiArray from 'chai-arrays';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 
-use(chaiArray);
-
-suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () => {
+describeIfNotRazorOrGenerator(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () => {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
@@ -39,7 +30,7 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -52,7 +43,7 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
                 ' '
             )
         );
-        expect(completionList.items).to.not.be.empty;
+        expect(completionList.items.length).toBeGreaterThan(0);
     });
 
     test('Resolve adds documentation', async () => {
@@ -68,7 +59,7 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         // At least some of the first 10 fully-resolved elements should have documentation attached. If this ever ends up not being
         // true, adjust the cutoff appropriately.
         const documentation = completionList.items.slice(0, 9).filter((item) => item.documentation);
-        expect(documentation).to.not.be.empty;
+        expect(documentation.length).toBeGreaterThan(0);
     });
 
     test('Override completion has additional edits sync', async () => {
@@ -87,24 +78,30 @@ suite(`${OmniSharpCompletionProvider.name}: Returns the completion items`, () =>
         let sawEmptyAdditionalTextEdits = false;
 
         for (const i of nonSnippets) {
-            expect((<vscode.SnippetString>i.insertText).value).is.not.undefined;
-            expect((<vscode.SnippetString>i.insertText).value).contains('$0');
+            expect((<vscode.SnippetString>i.insertText).value).not.toBe(undefined);
+            expect((<vscode.SnippetString>i.insertText).value).toContain('$0');
             if (i.additionalTextEdits) {
                 sawAdditionalTextEdits = true;
-                expect(i.additionalTextEdits).to.be.array();
-                expect(i.additionalTextEdits.length).to.equal(1);
-                expect(i.additionalTextEdits[0].newText).to.equal('using singleCsproj2;\n');
-                expect(i.additionalTextEdits[0].range.start.line).to.equal(1);
-                expect(i.additionalTextEdits[0].range.start.character).to.equal(0);
-                expect(i.additionalTextEdits[0].range.end.line).to.equal(1);
+                expect(i.additionalTextEdits.length).toEqual(1);
+                expect(normalizeNewlines(i.additionalTextEdits[0].newText)).toEqual('using singleCsproj2;\n');
+                expect(i.additionalTextEdits[0].range.start.line).toEqual(1);
+                expect(i.additionalTextEdits[0].range.start.character).toEqual(0);
+                expect(i.additionalTextEdits[0].range.end.line).toEqual(1);
                 // Can be either 0 or 1, depending on the platform this test is run on
-                expect(i.additionalTextEdits[0].range.end.character).to.be.lessThanOrEqual(1).and.greaterThanOrEqual(0);
+                expect(i.additionalTextEdits[0].range.end.character).toBeLessThanOrEqual(1);
+                expect(i.additionalTextEdits[0].range.end.character).toBeGreaterThanOrEqual(0);
             } else {
                 sawEmptyAdditionalTextEdits = true;
             }
         }
 
-        expect(sawAdditionalTextEdits).to.be.true;
-        expect(sawEmptyAdditionalTextEdits).to.be.true;
+        expect(sawAdditionalTextEdits).toBe(true);
+        expect(sawEmptyAdditionalTextEdits).toBe(true);
     });
+
+    function normalizeNewlines(text: string) {
+        // using directives are now added with the line ending used by other
+        // using directives in the file instead of the formatting option end_of_line.
+        return text.replaceAll('\r\n', '\n');
+    }
 });

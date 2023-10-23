@@ -10,7 +10,7 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { activateCSharpExtension, openFileInWorkspaceAsync } from './integrationHelpers';
 import { TestProgress } from '../../src/lsptoolshost/roslynProtocol';
 
-jestLib.describe(`Unit Testing ${testAssetWorkspace.description}`, function () {
+jestLib.describe(`[${testAssetWorkspace.description}] Test Unit Testing`, function () {
     jestLib.beforeAll(async function () {
         await activateCSharpExtension();
     });

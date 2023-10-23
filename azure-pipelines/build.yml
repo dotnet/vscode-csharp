@@ -1,26 +1,63 @@
 parameters:
-- name: prereleaseFlag
+- name: versionNumberOverride
   type: string
+  default: 'default'
 
-steps:
-- checkout: self
-  clean: true
-  submodules: true
-  fetchTags: false
-  fetchDepth: 0
-
-- template: prereqs.yml
-
-- script: gulp 'vsix:release:package' ${{ parameters.prereleaseFlag }}
+stages:
+- stage: Build
   displayName: 'Build VSIXs'
+  jobs:
+  - job:
+    displayName: 'Build Prerelease VSIXs'
+    steps:
+    - checkout: self
+      clean: true
+      submodules: true
+      fetchTags: false
+      fetchDepth: 0
 
-- task: PublishPipelineArtifact@1
-  # Run the publish step so we have vsix's even if the tests fail.
-  condition: succeededOrFailed()
-  displayName: 'Publish VSIXs'
-  inputs:
-    targetPath: '$(Build.SourcesDirectory)/vsix'
-    artifactName: 'VSIXs - Attempt $(System.JobAttempt)'
+    - template: prereqs.yml
+      parameters:
+        versionNumberOverride: ${{ parameters.versionNumberOverride }}
 
-- script: npm run omnisharptest:artifacts
-  displayName: 'Run artifacts tests'
+    - script: gulp 'vsix:release:package' --prerelease
+      displayName: 'Build VSIXs'
+
+    - task: PublishPipelineArtifact@1
+      # Run the publish step so we have vsix's even if the tests fail.
+      condition: succeededOrFailed()
+      displayName: 'Publish VSIXs'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/vsix'
+        artifactName: 'VSIX_Prerelease_$(System.JobAttempt)'
+
+    - script: npm run test:artifacts
+      displayName: 'Run artifacts tests'
+
+  - job:
+    displayName: 'Build Release VSIXs'
+    steps:
+    - checkout: self
+      clean: true
+      submodules: true
+      fetchTags: false
+      fetchDepth: 0
+
+    - template: prereqs.yml
+      parameters:
+        versionNumberOverride: ${{ parameters.versionNumberOverride }}
+
+    - script: gulp 'vsix:release:package'
+      displayName: 'Build VSIXs'
+
+    - task: PublishPipelineArtifact@1
+      # Run the publish step so we have vsix's even if the tests fail.
+      condition: succeededOrFailed()
+      displayName: 'Publish VSIXs'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)/vsix'
+        artifactName: 'VSIX_Release_$(System.JobAttempt)'
+
+    - script: npm run test:artifacts
+      displayName: 'Run artifacts tests'
+  

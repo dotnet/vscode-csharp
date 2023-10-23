@@ -2,8 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { use, should, expect } from 'chai';
-import * as chaiString from 'chai-string';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import {
     OmnisharpServerVerboseMessage,
@@ -18,10 +17,7 @@ import {
 } from '../../../src/omnisharp/loggingEvents';
 import { OmnisharpDebugModeLoggerObserver } from '../../../src/observers/omnisharpDebugModeLoggerObserver';
 
-use(chaiString);
-
-suite('OmnisharpDebugModeLoggerObserver', () => {
-    suiteSetup(() => should());
+describe('OmnisharpDebugModeLoggerObserver', () => {
     let logOutput = '';
     const observer = new OmnisharpDebugModeLoggerObserver({
         ...getNullChannel(),
@@ -30,45 +26,45 @@ suite('OmnisharpDebugModeLoggerObserver', () => {
         },
     });
 
-    setup(() => {
+    beforeEach(() => {
         logOutput = '';
     });
 
     [new OmnisharpServerVerboseMessage('server verbose message')].forEach((event: EventWithMessage) => {
         test(`${event.constructor.name}: Message is logged`, () => {
             observer.post(event);
-            expect(logOutput).to.contain(event.message);
+            expect(logOutput).toContain(event.message);
         });
     });
 
     test(`OmnisharpServerEnqueueRequest: Name and Command is logged`, () => {
         const event = new OmnisharpServerEnqueueRequest('foo', 'someCommand');
         observer.post(event);
-        expect(logOutput).to.contain(event.queueName);
-        expect(logOutput).to.contain(event.command);
+        expect(logOutput).toContain(event.queueName);
+        expect(logOutput).toContain(event.command);
     });
 
     test(`OmnisharpServerDequeueRequest: QueueName, QueueStatus, Command and Id is logged`, () => {
         const event = new OmnisharpServerDequeueRequest('foo', 'pending', 'someCommand', 1);
         observer.post(event);
-        expect(logOutput).to.contain(event.queueName);
-        expect(logOutput).to.contain(event.queueStatus);
-        expect(logOutput).to.contain(event.command);
-        expect(logOutput).to.contain(event.id);
+        expect(logOutput).toContain(event.queueName);
+        expect(logOutput).toContain(event.queueStatus);
+        expect(logOutput).toContain(event.command);
+        expect(logOutput).toContain(event.id?.toString());
     });
 
     test(`OmnisharpProcessRequestStart: Name and slots is logged`, () => {
         const event = new OmnisharpServerProcessRequestStart('foobar', 2);
         observer.post(event);
-        expect(logOutput).to.contain(event.name);
-        expect(logOutput).to.contain(event.availableRequestSlots);
+        expect(logOutput).toContain(event.name);
+        expect(logOutput).toContain(event.availableRequestSlots.toString());
     });
 
     test(`OmnisharpServerRequestCancelled: Name and Id is logged`, () => {
         const event = new OmnisharpServerRequestCancelled('foobar', 23);
         observer.post(event);
-        expect(logOutput).to.contain(event.command);
-        expect(logOutput).to.contain(event.id);
+        expect(logOutput).toContain(event.command);
+        expect(logOutput).toContain(event.id?.toString());
     });
 
     test(`OmnisharpServer messages increase and decrease indent`, () => {
@@ -78,12 +74,12 @@ suite('OmnisharpDebugModeLoggerObserver', () => {
         observer.post(new OmnisharpServerProcessRequestComplete());
         observer.post(new OmnisharpServerVerboseMessage('!indented_2'));
 
-        expect(logOutput).to.startWith('    !indented_1');
-        expect(logOutput).to.contain('\n        indented');
-        expect(logOutput).to.contain('\n    !indented_2');
+        expect(logOutput.startsWith('    !indented_1')).toBe(true);
+        expect(logOutput).toContain('\n        indented');
+        expect(logOutput).toContain('\n    !indented_2');
     });
 
-    suite('OmnisharpEventPacketReceived', () => {
+    describe('OmnisharpEventPacketReceived', () => {
         test(`Information messages with name OmniSharp.Middleware.LoggingMiddleware and follow pattern /^/[/w]+: 200 d+ms/ are logged`, () => {
             const event = new OmnisharpEventPacketReceived(
                 'INFORMATION',
@@ -91,8 +87,8 @@ suite('OmnisharpDebugModeLoggerObserver', () => {
                 '/codecheck: 200 339ms'
             );
             observer.post(event);
-            expect(logOutput).to.contain(event.message);
-            expect(logOutput).to.contain(event.name);
+            expect(logOutput).toContain(event.message);
+            expect(logOutput).toContain(event.name);
         });
 
         [
@@ -105,12 +101,12 @@ suite('OmnisharpDebugModeLoggerObserver', () => {
         ].forEach((event: OmnisharpEventPacketReceived) => {
             test(`${event.logLevel} messages are not logged`, () => {
                 observer.post(event);
-                expect(logOutput).to.be.empty;
+                expect(logOutput).toBeFalsy();
             });
         });
     });
 
-    suite('OmnisharpRequestMessage', () => {
+    describe('OmnisharpRequestMessage', () => {
         test(`Request Command and Id is logged`, () => {
             const event = new OmnisharpRequestMessage(
                 {
@@ -125,8 +121,8 @@ suite('OmnisharpDebugModeLoggerObserver', () => {
                 1
             );
             observer.post(event);
-            expect(logOutput).to.contain(event.id);
-            expect(logOutput).to.contain(event.request.command);
+            expect(logOutput).toContain(event.id?.toString());
+            expect(logOutput).toContain(event.request.command);
         });
 
         test(`Request Data is logged when it is not empty`, () => {
@@ -144,7 +140,7 @@ suite('OmnisharpDebugModeLoggerObserver', () => {
                 1
             );
             observer.post(event);
-            expect(logOutput).to.contain(event.request.data);
+            expect(logOutput).toContain(event.request.data);
         });
     });
 });

@@ -9,6 +9,7 @@ import { HtmlProjectedDocument } from '../html/htmlProjectedDocument';
 import { RazorLanguage } from '../razorLanguage';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';
+import { TelemetryReporter } from '../telemetryReporter';
 import { UpdateBufferRequest } from '../rpc/updateBufferRequest';
 import { getUriPath } from '../uriPaths';
 import { IRazorDocument } from './IRazorDocument';
@@ -27,9 +28,12 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     private readonly onRazorInitializedEmitter = new vscode.EventEmitter<void>();
 
     public razorDocumentGenerationInitialized = false;
-    private anyRazorDocumentOpen = false;
 
-    constructor(private readonly serverClient: RazorLanguageServerClient, private readonly logger: RazorLogger) {}
+    constructor(
+        private readonly serverClient: RazorLanguageServerClient,
+        private readonly logger: RazorLogger,
+        private readonly telemetryReporter: TelemetryReporter
+    ) {}
 
     public get onChange() {
         return this.onChangeEmitter.event;
@@ -156,7 +160,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private async openDocument(uri: vscode.Uri) {
-        this.anyRazorDocumentOpen = true;
         await this.ensureRazorInitialized();
 
         const document = this._getDocument(uri);
@@ -165,12 +168,11 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     public async ensureRazorInitialized() {
-        // On first open of a Razor document, we kick off the generation of all razor documents so that
-        // components are discovered correctly. If we do this early, when we initialize everything, we
-        // just spend a lot of time generating documents and json files that might not be needed.
-        // If we wait for each individual document to be opened by the user, then locally defined components
-        // don't work, which is a poor experience. This is the compromise.
-        if (this.roslynActivated && !this.razorDocumentGenerationInitialized && this.anyRazorDocumentOpen) {
+        // Kick off the generation of all Razor documents so that components are
+        // discovered correctly. We need to do this even if a Razor file isn't
+        // open yet to handle the scenario where the user opens a C# file before
+        // a Razor file.
+        if (this.roslynActivated && !this.razorDocumentGenerationInitialized) {
             this.razorDocumentGenerationInitialized = true;
             vscode.commands.executeCommand(razorInitializeCommand);
             for (const document of this.documents) {
@@ -230,6 +232,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const projectedDocument = document.csharpDocument;
 
         if (
+            updateBufferRequest.previousWasEmpty ||
             !projectedDocument.hostDocumentSyncVersion ||
             projectedDocument.hostDocumentSyncVersion <= updateBufferRequest.hostDocumentVersion
         ) {
@@ -240,6 +243,15 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(document.csharpDocument.uri);
 
             const csharpProjectedDocument = projectedDocument as CSharpProjectedDocument;
+
+            // If the language server is telling us that the previous document was empty, then we should clear
+            // ours out. Hopefully ours would have been empty too, but there are cases where things get out of
+            // sync
+            if (updateBufferRequest.previousWasEmpty && projectedDocument.length !== 0) {
+                this.telemetryReporter.reportBuffersOutOfSync();
+                csharpProjectedDocument.clear();
+            }
+
             csharpProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
@@ -263,6 +275,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const projectedDocument = document.htmlDocument;
 
         if (
+            updateBufferRequest.previousWasEmpty ||
             !projectedDocument.hostDocumentSyncVersion ||
             projectedDocument.hostDocumentSyncVersion <= updateBufferRequest.hostDocumentVersion
         ) {
@@ -273,6 +286,15 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(document.htmlDocument.uri);
 
             const htmlProjectedDocument = projectedDocument as HtmlProjectedDocument;
+
+            // If the language server is telling us that the previous document was empty, then we should clear
+            // ours out. Hopefully ours would have been empty too, but there are cases where things get out of
+            // sync
+            if (updateBufferRequest.previousWasEmpty && projectedDocument.length !== 0) {
+                this.telemetryReporter.reportBuffersOutOfSync();
+                htmlProjectedDocument.clear();
+            }
+
             htmlProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.htmlChanged);

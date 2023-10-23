@@ -7,7 +7,7 @@ import * as semver from 'semver';
 import { join } from 'path';
 import { execChildProcess } from '../../common';
 import { CoreClrDebugUtil } from '../../coreclrDebug/util';
-import { DotnetInfo } from './dotnetInfo';
+import { DotnetInfo, RuntimeInfo } from './dotnetInfo';
 import { EOL } from 'os';
 
 // This function calls `dotnet --info` and returns the result as a DotnetInfo object.
@@ -69,8 +69,9 @@ async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string 
             }
         }
 
-        const runtimeVersions: { [runtime: string]: semver.SemVer[] } = {};
-        const listRuntimes = await execChildProcess('dotnet --list-runtimes', process.cwd(), process.env);
+        const runtimeVersions: { [runtime: string]: RuntimeInfo[] } = {};
+        const command = dotnetExecutablePath ? `"${dotnetExecutablePath}"` : 'dotnet';
+        const listRuntimes = await execChildProcess(`${command} --list-runtimes`, process.cwd(), process.env);
         lines = listRuntimes.split(/\r?\n/);
         for (const line of lines) {
             let match: RegExpMatchArray | null;
@@ -78,9 +79,17 @@ async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string 
                 const runtime = match[1];
                 const runtimeVersion = match[2];
                 if (runtime in runtimeVersions) {
-                    runtimeVersions[runtime].push(semver.parse(runtimeVersion)!);
+                    runtimeVersions[runtime].push({
+                        Version: semver.parse(runtimeVersion)!,
+                        Path: match[3],
+                    });
                 } else {
-                    runtimeVersions[runtime] = [semver.parse(runtimeVersion)!];
+                    runtimeVersions[runtime] = [
+                        {
+                            Version: semver.parse(runtimeVersion)!,
+                            Path: match[3],
+                        },
+                    ];
                 }
             }
         }

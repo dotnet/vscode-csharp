@@ -3,28 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import OmniSharpDefinitionProvider from '../../src/features/definitionProvider';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { expect, should } from 'chai';
-import {
-    activateCSharpExtension,
-    isRazorWorkspace,
-    isSlnWithGenerator,
-    restartOmniSharpServer,
-} from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator, restartOmniSharpServer } from './integrationHelpers';
 
-suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
+describeIfNotRazorOrGenerator(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
@@ -36,7 +25,7 @@ suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, 
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -48,9 +37,9 @@ suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, 
                 new vscode.Position(9, 18)
             )
         );
-        expect(definitionList.length).to.be.equal(1);
-        expect(definitionList[0]).to.exist;
-        expect(definitionList[0].uri.path).to.contain('typeDefinition.cs');
+        expect(definitionList.length).toEqual(1);
+        expect(definitionList[0]).toBeDefined();
+        expect(definitionList[0].uri.path).toContain('typeDefinition.cs');
     });
 
     test('Returns the definition from Metadata', async () => {
@@ -65,9 +54,9 @@ suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, 
                 new vscode.Position(10, 18)
             )
         );
-        expect(definitionList.length).to.be.equal(1);
-        expect(definitionList[0]).to.exist;
-        expect(definitionList[0].uri.path).to.contain('[metadata] String.cs');
+        expect(definitionList.length).toEqual(1);
+        expect(definitionList[0]).toBeDefined();
+        expect(definitionList[0].uri.path).toContain('[metadata] String.cs');
     });
 
     test('Returns multiple definitions for partial types', async () => {
@@ -78,14 +67,14 @@ suite(`${OmniSharpDefinitionProvider.name}: ${testAssetWorkspace.description}`, 
                 new vscode.Position(11, 18)
             )
         );
-        expect(definitionList.length).eq(2);
-        expect(definitionList[0]).to.exist;
-        expect(definitionList[0].uri.path).to.contain('typeDefinition.cs');
-        expect(definitionList[1]).to.exist;
-        expect(definitionList[1].uri.path).to.contain('typeDefinition.cs');
+        expect(definitionList.length).toEqual(2);
+        expect(definitionList[0]).toBeDefined;
+        expect(definitionList[0].uri.path).toContain('typeDefinition.cs');
+        expect(definitionList[1]).toBeDefined;
+        expect(definitionList[1].uri.path).toContain('typeDefinition.cs');
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 });

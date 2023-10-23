@@ -3,31 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as fs from 'async-file';
 import * as vscode from 'vscode';
-
-import { should, expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { poll } from './poll';
 import { isNotNull } from '../testUtil';
 
-suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
-    suiteSetup(async function () {
-        should();
-
-        // Consistently failing in CI: https://github.com/OmniSharp/omnisharp-vscode/issues/4646
-        this.skip();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+// Consistently failing in CI: https://github.com/OmniSharp/omnisharp-vscode/issues/4646
+describe.skip(`Tasks generation: ${testAssetWorkspace.description}`, function () {
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -38,14 +29,14 @@ suite(`Tasks generation: ${testAssetWorkspace.description}`, function () {
         const onChangeSubscription = vscode.debug.onDidChangeActiveDebugSession((_) => {
             onChangeSubscription.dispose();
             isNotNull(vscode.debug.activeDebugSession);
-            expect(vscode.debug.activeDebugSession.type).to.equal('coreclr');
+            expect(vscode.debug.activeDebugSession.type).toEqual('coreclr');
         });
 
         const result = await vscode.debug.startDebugging(
             vscode.workspace.workspaceFolders![0],
             '.NET Core Launch (console)'
         );
-        expect(result, 'Debugger could not be started.');
+        expect(result).toEqual('Debugger could not be started.');
 
         const debugSessionTerminated = new Promise<void>((resolve) => {
             const onTerminateSubscription = vscode.debug.onDidTerminateDebugSession((_) => {

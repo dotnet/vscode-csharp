@@ -206,14 +206,18 @@ async function acquireNugetPackage(packageName: string, packageVersion: string, 
 }
 
 async function doPackageOffline() {
-    // Set the package version using git versioning.
+    // Set the package.json version based on the value in version.json.
     const versionInfo = await nbgv.getVersion();
     console.log(versionInfo.npmPackageVersion);
     await nbgv.setPackageVersion();
 
-    let prerelease = false;
+    let prerelease: boolean;
     if (argv.prerelease) {
+        console.log('Packaging prerelease version.');
         prerelease = true;
+    } else {
+        console.log('Packaging release version.');
+        prerelease = false;
     }
 
     try {

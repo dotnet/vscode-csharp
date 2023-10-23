@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-import { should, expect } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { poll, assertWithPoll } from './poll';
 import { EventStream } from '../../src/eventStream';
@@ -27,18 +26,12 @@ function listenEvents<T extends BaseEvent>(stream: EventStream, type: EventType)
     return results;
 }
 
-suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
+describeIfNotRazorOrGenerator(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
     let interfaceUri: vscode.Uri;
     let interfaceImplUri: vscode.Uri;
     let eventStream: EventStream;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
@@ -54,7 +47,7 @@ suite(`ReAnalyze: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 

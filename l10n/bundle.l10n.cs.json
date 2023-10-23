@@ -46,6 +46,7 @@
   "Failed to set debugadpter directory": "Nepovedlo se nastavit adresář debugadpter.",
   "Failed to set extension directory": "Nepovedlo se nastavit adresář rozšíření.",
   "Failed to set install complete file path": "Nepovedlo se nastavit úplnou cestu k souboru instalace",
+  "Fix All Code Action": "Opravit všechny akce kódu",
   "For further information visit {0}": "Další informace najdete na {0}",
   "For further information visit {0}.": "Další informace najdete na {0}.",
   "For more information about the 'console' field, see {0}": "Další informace o poli „console“ najdete v tématu {0}",
@@ -72,6 +73,7 @@
   "Open envFile": "Otevřít soubor envFile",
   "Operating system \"{0}\" not supported.": "Operační systém {0} se nepodporuje.",
   "Perform the actions (or no action) that resulted in your Razor issue": "Proveďte činnost (nebo zopakujte nečinnost), která vedla k problémům s Razorem.",
+  "Pick a fix all scope": "Výběr opravy všech oborů",
   "Pipe transport failed to get OS and processes.": "Operaci přenosu přes kanál se nepovedlo získat operační systém a procesy.",
   "Please fill in this section": "Vyplňte prosím tento oddíl.",
   "Press {0}": "Stiskněte {0}.",
@@ -150,7 +152,7 @@
   "[ERROR]: C# Extension failed to install the debugger package.": "[CHYBA]: Rozšíření jazyka C# se nepodařilo nainstalovat balíček ladicího programu.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Možnost dotnet.server.useOmharharp se změnila. Pokud chcete změnu použít, načtěte prosím znovu okno.",
   "pipeArgs must be a string or a string array type": "pipeArgs musí být řetězec nebo typ pole řetězců",
-  "{0} Keyword": "{0} Keyword",
+  "{0} Keyword": "Klíčové slovo {0}",
   "{0} references": "Počet odkazů: {0}",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, vložte obsah problému jako text problému. Nezapomeňte vyplnit všechny podrobnosti, které ještě vyplněné nejsou."
 }

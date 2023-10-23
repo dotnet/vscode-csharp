@@ -12,10 +12,9 @@ import { PlatformInformation } from '../shared/platform';
 import { commonOptions } from '../shared/options';
 import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
-import { promisify } from 'util';
-import { exec } from 'child_process';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { readFile, realpath } from 'fs/promises';
+import { readFile } from 'fs/promises';
+import { RuntimeInfo } from '../shared/utils/dotnetInfo';
 
 export const DotNetRuntimeVersion = '7.0';
 
@@ -62,7 +61,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             dotnetRuntimePath = path.dirname(dotnetInfo.path);
         }
 
-        const dotnetExecutableName = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
+        const dotnetExecutableName = this.getDotnetExecutableName();
         const dotnetExecutablePath = path.join(dotnetRuntimePath, dotnetExecutableName);
         if (!existsSync(dotnetExecutablePath)) {
             throw new Error(`Cannot find dotnet path '${dotnetExecutablePath}'`);
@@ -151,39 +150,40 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             }
 
             const coreRuntimeVersions = dotnetInfo.Runtimes['Microsoft.NETCore.App'];
-            let foundRuntimeVersion = false;
-            for (const version of coreRuntimeVersions) {
+            let matchingRuntime: RuntimeInfo | undefined = undefined;
+            for (const runtime of coreRuntimeVersions) {
                 // We consider a match if the runtime is greater than or equal to the required version since we roll forward.
-                if (semver.gt(version, requiredRuntimeVersion)) {
-                    foundRuntimeVersion = true;
+                if (semver.gt(runtime.Version, requiredRuntimeVersion)) {
+                    matchingRuntime = runtime;
                     break;
                 }
             }
 
-            if (!foundRuntimeVersion) {
+            if (!matchingRuntime) {
                 throw new Error(
                     `No compatible .NET runtime found. Minimum required version is ${this.minimumDotnetRuntimeVersion}.`
                 );
             }
 
-            // Find the location of the dotnet on path.
-            const command = this.platformInfo.isWindows() ? 'where' : 'which';
-            const whereOutput = await promisify(exec)(`${command} dotnet`);
-            if (!whereOutput.stdout) {
-                throw new Error(`Unable to find dotnet from ${command}.`);
-            }
-
-            // There could be multiple paths output from where.  Take the first since that is what we used to run dotnet --info.
-            const path = whereOutput.stdout.trim().replace(/\r/gm, '').split('\n')[0];
-            if (!existsSync(path)) {
-                throw new Error(`dotnet path does not exist: ${path}`);
+            // The .NET install layout is a well known structure on all platforms.
+            // See https://github.com/dotnet/designs/blob/main/accepted/2020/install-locations.md#net-core-install-layout
+            //
+            // Therefore we know that the runtime path is always in <install root>/shared/<runtime name>
+            // and the dotnet executable is always at <install root>/dotnet(.exe).
+            //
+            // Since dotnet --list-runtimes will always use the real assembly path to output the runtime folder (no symlinks!)
+            // we know the dotnet executable will be two folders up in the install root.
+            const runtimeFolderPath = matchingRuntime.Path;
+            const installFolder = path.dirname(path.dirname(runtimeFolderPath));
+            const dotnetExecutablePath = path.join(installFolder, this.getDotnetExecutableName());
+            if (!existsSync(dotnetExecutablePath)) {
+                throw new Error(
+                    `dotnet executable path does not exist: ${dotnetExecutablePath}, dotnet installation may be corrupt.`
+                );
             }
 
             this.channel.appendLine(`Using dotnet configured on PATH`);
-
-            // If dotnet is just a symlink, resolve it to the actual executable so
-            // callers will be able to get the actual directory containing the exe.
-            return await realpath(path);
+            return dotnetExecutablePath;
         } catch (e) {
             this.channel.appendLine(
                 'Failed to find dotnet info from path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime'
@@ -235,5 +235,9 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             default:
                 throw new Error(`Unknown extension target platform: ${targetPlatform}`);
         }
+    }
+
+    private getDotnetExecutableName(): string {
+        return this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
     }
 }

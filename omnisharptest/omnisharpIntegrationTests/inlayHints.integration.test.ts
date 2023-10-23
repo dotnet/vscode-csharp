@@ -3,30 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
-
-import { should, assert } from 'chai';
-import {
-    activateCSharpExtension,
-    isRazorWorkspace,
-    isSlnWithGenerator,
-    restartOmniSharpServer,
-} from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator, restartOmniSharpServer } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import * as path from 'path';
 import { InlayHint, LinePositionSpanTextChange } from '../../src/omnisharp/protocol';
 import { isNotNull } from '../testUtil';
 
-suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
+describeIfNotRazorOrGenerator(`Inlay Hints ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const editorConfig = vscode.workspace.getConfiguration('editor');
         await editorConfig.update('inlayHints.enabled', true);
 
@@ -59,7 +47,7 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -71,7 +59,7 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
             range
         );
 
-        assert.lengthOf(hints, 6);
+        expect(hints).toHaveLength(6);
 
         assertInlayHintEqual(hints[0], {
             Label: 'InlayHints ',
@@ -111,17 +99,17 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         });
 
         function assertInlayHintEqual(actual: vscode.InlayHint, expected: InlayHint) {
-            assert.equal(actual.label, expected.Label);
-            assert.equal(actual.position.line, expected.Position.Line);
-            assert.equal(actual.position.character, expected.Position.Column);
+            expect(actual.label).toEqual(expected.Label);
+            expect(actual.position.line).toEqual(expected.Position.Line);
+            expect(actual.position.character).toEqual(expected.Position.Column);
 
             if (!actual.textEdits) {
-                assert.isUndefined(expected.TextEdits);
+                expect(expected.TextEdits).toBeUndefined();
                 return;
             }
 
             isNotNull(expected.TextEdits);
-            assert.equal(actual.textEdits.length, expected.TextEdits.length);
+            expect(actual.textEdits.length).toEqual(expected.TextEdits.length);
             for (let i = 0; i < actual.textEdits.length; i++) {
                 const actualTextEdit = actual.textEdits[i];
                 const expectedTextEdit = expected.TextEdits[i];
@@ -131,11 +119,11 @@ suite(`Inlay Hints ${testAssetWorkspace.description}`, function () {
         }
 
         function assertTextEditEqual(actual: vscode.TextEdit, expected: LinePositionSpanTextChange) {
-            assert.equal(actual.range.start.line, expected.StartLine);
-            assert.equal(actual.range.start.character, expected.StartColumn);
-            assert.equal(actual.range.end.line, expected.EndLine);
-            assert.equal(actual.range.end.character, expected.EndColumn);
-            assert.equal(actual.newText, expected.NewText);
+            expect(actual.range.start.line).toEqual(expected.StartLine);
+            expect(actual.range.start.character).toEqual(expected.StartColumn);
+            expect(actual.range.end.line).toEqual(expected.EndLine);
+            expect(actual.range.end.character).toEqual(expected.EndColumn);
+            expect(actual.newText).toEqual(expected.NewText);
         }
     });
 });

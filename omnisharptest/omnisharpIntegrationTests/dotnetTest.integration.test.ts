@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-import { should, expect } from 'chai';
-import { activateCSharpExtension, isSlnWithCsproj } from './integrationHelpers';
+import { activateCSharpExtension, describeIfSlnWithCsProj } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { EventStream } from '../../src/eventStream';
 import { EventType } from '../../src/omnisharp/eventType';
@@ -15,34 +14,28 @@ import { OmnisharpRequestMessage } from '../../src/omnisharp/loggingEvents';
 import { V2 } from '../../src/omnisharp/protocol';
 import { isNotNull } from '../testUtil';
 
-suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
+// These tests only run on the slnWithCsproj solution
+describeIfSlnWithCsProj(`DotnetTest: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
     let eventStream: EventStream;
 
-    suiteSetup(async function () {
-        should();
+    beforeAll(async function () {
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
-        // These tests only run on the slnWithCsproj solution
-        if (!isSlnWithCsproj(vscode.workspace)) {
-            this.skip();
-        } else {
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+        eventStream = activation.eventStream;
 
-            eventStream = activation.eventStream;
+        const fileName = 'UnitTest1.cs';
+        const projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
+        const filePath = path.join(projectDirectory, fileName);
+        fileUri = vscode.Uri.file(filePath);
 
-            const fileName = 'UnitTest1.cs';
-            const projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
-            const filePath = path.join(projectDirectory, fileName);
-            fileUri = vscode.Uri.file(filePath);
+        await vscode.commands.executeCommand('vscode.open', fileUri);
 
-            await vscode.commands.executeCommand('vscode.open', fileUri);
-
-            await testAssetWorkspace.waitForIdle(activation.eventStream);
-        }
+        await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -62,7 +55,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const event = await eventWaiter;
         const runTestsRequest = <V2.RunTestsInContextRequest>event!.request.data;
 
-        expect(runTestsRequest.RunSettings).to.be.undefined;
+        expect(runTestsRequest.RunSettings).toBe(undefined);
     });
 
     test('Absolute runsettings path is unchanged', async function () {
@@ -84,7 +77,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const event = await eventWaiter;
         const runTestsRequest = <V2.RunTestsInContextRequest>event!.request.data;
 
-        expect(runTestsRequest.RunSettings).to.be.equal(absoluteRunSettingsPath);
+        expect(runTestsRequest.RunSettings).toEqual(absoluteRunSettingsPath);
     });
 
     test('Relative runsettings path is made absolute', async function () {
@@ -107,7 +100,7 @@ suite(`DotnetTest: ${testAssetWorkspace.description}`, function () {
         const runTestsRequest = <V2.RunTestsInContextRequest>event!.request.data;
 
         isNotNull(runTestsRequest.RunSettings);
-        expect(runTestsRequest.RunSettings!.endsWith(endingPath), 'Path includes relative path').to.be.true;
-        expect(path.isAbsolute(runTestsRequest.RunSettings!), 'Path is absolute').to.be.true;
+        expect(runTestsRequest.RunSettings!.endsWith(endingPath)).toBe(true);
+        expect(path.isAbsolute(runTestsRequest.RunSettings!)).toBe(true);
     });
 });
