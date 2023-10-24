@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect } from '@jest/globals';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as jsonc from 'jsonc-parser';
@@ -15,17 +16,11 @@ import {
     updateJsonWithComments,
 } from '../../src/shared/assets';
 import { parse } from 'jsonc-parser';
-import { use, should } from 'chai';
-import * as chaiString from 'chai-string';
 import { ProjectDebugInformation } from '../../src/shared/IWorkspaceDebugInformationProvider';
 import { findNetCoreTargetFramework } from '../../src/shared/utils';
 import { isNotNull } from '../testUtil';
 
-use(chaiString);
-
-suite('Asset generation: csproj', () => {
-    suiteSetup(() => should());
-
+describe('Asset generation: csproj', () => {
     test('Create tasks.json for project opened in workspace', () => {
         const rootPath = path.resolve('testRoot');
         const info = createMSBuildWorkspaceInformation(
@@ -42,7 +37,7 @@ suite('Asset generation: csproj', () => {
 
         // ${workspaceFolder}/project.json
         const segments = buildPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'testApp.csproj']);
+        expect(segments).toStrictEqual(['${workspaceFolder}', 'testApp.csproj']);
     });
 
     test("Generated 'build' and 'publish' tasks have the property GenerateFullPaths set to true ", () => {
@@ -60,7 +55,7 @@ suite('Asset generation: csproj', () => {
         // We do not check the watch task since this parameter can break hot reload scenarios.
         tasksJson.tasks
             .filter((task) => task.label !== 'watch')
-            .forEach((task) => task.args!.should.contain('/property:GenerateFullPaths=true'));
+            .forEach((task) => expect(task.args!).toContain('/property:GenerateFullPaths=true'));
     });
 
     test("Generated 'build' and 'publish' tasks have the consoleloggerparameters argument set to NoSummary", () => {
@@ -78,7 +73,7 @@ suite('Asset generation: csproj', () => {
         // We do not check the watch task since this parameter can break hot reload scenarios.
         tasksJson.tasks
             .filter((task) => task.label !== 'watch')
-            .forEach((task) => task.args!.should.contain('/consoleloggerparameters:NoSummary;ForceNoAlign'));
+            .forEach((task) => expect(task.args!).toContain('/consoleloggerparameters:NoSummary;ForceNoAlign'));
     });
 
     test("Generated 'watch' task does not have the property GenerateFullPaths set to true ", () => {
@@ -95,7 +90,7 @@ suite('Asset generation: csproj', () => {
 
         const watchTask = tasksJson.tasks.find((task) => task.label === 'watch');
         isNotNull(watchTask?.args);
-        watchTask.args.should.not.contain('/property:GenerateFullPaths=true');
+        expect(watchTask.args).not.toContain('/property:GenerateFullPaths=true');
     });
 
     test("Generated 'watch' task does not have the consoleloggerparameters argument set to NoSummary", () => {
@@ -111,7 +106,7 @@ suite('Asset generation: csproj', () => {
 
         const watchTask = tasksJson.tasks!.find((task) => task.label === 'watch');
         isNotNull(watchTask?.args);
-        watchTask.args.should.not.contain('/consoleloggerparameters:NoSummary;ForceNoAlign');
+        expect(watchTask.args).not.toContain('/consoleloggerparameters:NoSummary;ForceNoAlign');
     });
 
     test('Create tasks.json for nested project opened in workspace', () => {
@@ -130,7 +125,7 @@ suite('Asset generation: csproj', () => {
 
         // ${workspaceFolder}/nested/project.json
         const segments = buildPath.split(path.posix.sep);
-        segments.should.deep.equal(['${workspaceFolder}', 'nested', 'testApp.csproj']);
+        expect(segments).toStrictEqual(['${workspaceFolder}', 'nested', 'testApp.csproj']);
     });
 
     test('Create launch.json for project opened in workspace', () => {
@@ -190,11 +185,8 @@ suite('Asset generation: csproj', () => {
         checkProgramPath(rootPath, programPath, info[0].outputPath);
     });
 
-    test('Create launch.json for project opened in workspace with non-relative output path', function () {
-        if (process.platform !== 'win32') {
-            this.skip();
-        }
-
+    const skipIfNotWindows = process.platform !== 'win32' ? test.skip : test;
+    skipIfNotWindows('Create launch.json for project opened in workspace with non-relative output path', function () {
         const rootPath = path.resolve('testRoot');
         const differentDrive = rootPath.startsWith('C:') ? 'D:' : 'C:';
         const info = createMSBuildWorkspaceInformation(
@@ -234,7 +226,7 @@ suite('Asset generation: csproj', () => {
         const blazorLaunchConfig = launchJson[0];
         const type = blazorLaunchConfig.type;
 
-        type.should.equal('blazorwasm');
+        expect(type).toEqual('blazorwasm');
     });
 
     test('Create launch.json for nested Blazor web assembly standalone project opened in workspace', () => {
@@ -258,7 +250,7 @@ suite('Asset generation: csproj', () => {
         const blazorLaunchConfig = launchJson[0];
         const cwd = blazorLaunchConfig.cwd;
 
-        cwd.should.equal('${workspaceFolder}/nested');
+        expect(cwd).toEqual('${workspaceFolder}/nested');
     });
 
     test('Create launch.json for Blazor web assembly hosted project opened in workspace', () => {
@@ -287,8 +279,8 @@ suite('Asset generation: csproj', () => {
 
         checkProgramPath(rootPath, programPath, info[0].outputPath);
 
-        cwd.should.equal('${workspaceFolder}');
-        hosted.should.equal(true);
+        expect(cwd).toEqual('${workspaceFolder}');
+        expect(hosted).toEqual(true);
     });
 
     test('Create launch.json for nested Blazor web assembly hosted project opened in workspace', () => {
@@ -317,8 +309,8 @@ suite('Asset generation: csproj', () => {
 
         checkProgramPath(rootPath, programPath, info[0].outputPath);
 
-        cwd.should.equal('${workspaceFolder}/nested');
-        hosted.should.equal(true);
+        expect(cwd).toEqual('${workspaceFolder}/nested');
+        expect(hosted).toEqual(true);
     });
 
     test('Create launch.json for web project opened in workspace', () => {
@@ -379,7 +371,7 @@ suite('Asset generation: csproj', () => {
         const configurations = parsed.configurations;
 
         const expected = [existingItem, newItem];
-        configurations.should.deep.equal(expected);
+        expect(configurations).toStrictEqual(expected);
     });
 
     test('Update item in JSON', () => {
@@ -405,7 +397,7 @@ suite('Asset generation: csproj', () => {
         const configurations = parsed.configurations;
 
         const expected = [updatedItem, existingItem];
-        configurations.should.deep.equal(expected);
+        expect(configurations).toStrictEqual(expected);
     });
 
     test('Update JSON and preserve all comments', () => {
@@ -433,8 +425,8 @@ suite('Asset generation: csproj', () => {
         );
         const lines = updated.trim().split('\n');
 
-        lines[0].trim().should.equal('// user comment in file');
-        lines[5].trim().should.equal('// user comment in their configuration');
+        expect(lines[0].trim()).toEqual('// user comment in file');
+        expect(lines[5].trim()).toEqual('// user comment in their configuration');
     });
 
     test('Replace items named OS-COMMENTxxx with JSON comment syntax', () => {
@@ -453,8 +445,8 @@ suite('Asset generation: csproj', () => {
         const updated = replaceCommentPropertiesWithComments(original);
         const lines = updated.trim().split('\n');
 
-        lines[4].trim().should.equal('// This is a dotnet build command');
-        lines[5].trim().should.equal('// this is the default command.');
+        expect(lines[4].trim()).toEqual('// This is a dotnet build command');
+        expect(lines[5].trim()).toEqual('// this is the default command.');
     });
 
     test('createLaunchJsonConfigurationsArray removes comments', () => {
@@ -474,26 +466,26 @@ suite('Asset generation: csproj', () => {
             false
         );
 
-        launchConfigurations.should.have.lengthOf(2);
+        expect(launchConfigurations).toHaveLength(2);
 
-        launchConfigurations[0].type.should.equal('coreclr');
-        launchConfigurations[0].request.should.equal('launch');
+        expect(launchConfigurations[0].type).toEqual('coreclr');
+        expect(launchConfigurations[0].request).toEqual('launch');
 
-        launchConfigurations[1].type.should.equal('coreclr');
-        launchConfigurations[1].request.should.equal('attach');
+        expect(launchConfigurations[1].type).toEqual('coreclr');
+        expect(launchConfigurations[1].request).toEqual('attach');
 
-        JSON.stringify(launchConfigurations).indexOf('OS-COMMENT').should.lessThan(0);
+        expect(JSON.stringify(launchConfigurations).indexOf('OS-COMMENT')).toBeLessThan(0);
     });
 });
 
 function checkProgramPath(rootPath: string, programPath: string, targetPath: string): void {
     if (path.relative(rootPath, targetPath) !== targetPath) {
-        programPath.should.startWith('${workspaceFolder}/');
-        programPath.should.equal(
+        expect(programPath.startsWith('${workspaceFolder}/')).toBe(true);
+        expect(programPath).toEqual(
             targetPath.replace(rootPath, '${workspaceFolder}').replaceAll(path.win32.sep, path.posix.sep)
         );
     } else {
-        programPath.should.equal(targetPath.replaceAll(path.win32.sep, path.posix.sep));
+        expect(programPath).toEqual(targetPath.replaceAll(path.win32.sep, path.posix.sep));
     }
 }
 

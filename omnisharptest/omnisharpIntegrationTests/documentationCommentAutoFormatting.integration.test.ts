@@ -3,14 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { use, expect, should } from 'chai';
-import * as chaiArray from 'chai-arrays';
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { describeIfNotRazorOrGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-
-use(chaiArray);
 
 const onTypeFormatProviderCommand = 'vscode.executeFormatOnTypeProvider';
 
@@ -22,17 +19,10 @@ function normalizeNewlines(original: string): string {
     return original;
 }
 
-suite(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`, function () {
+describeIfNotRazorOrGenerator(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            // The format-on-type provider does not run for razor files.
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;
         const filePath = path.join(projectDirectory, 'DocComments.cs');
         fileUri = vscode.Uri.file(filePath);
@@ -40,7 +30,7 @@ suite(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`
         await vscode.commands.executeCommand('vscode.open', fileUri);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -49,14 +39,14 @@ suite(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`
         const formatEdits = <vscode.TextEdit[]>(
             await vscode.commands.executeCommand(onTypeFormatProviderCommand, fileUri, commentPosition, '/')
         );
-        expect(formatEdits).ofSize(1);
-        expect(normalizeNewlines(formatEdits[0].newText)).eq(
+        expect(formatEdits).toHaveLength(1);
+        expect(normalizeNewlines(formatEdits[0].newText)).toEqual(
             ' <summary>\n    /// \n    /// </summary>\n    /// <param name="param1"></param>\n    /// <param name="param2"></param>\n    /// <returns></returns>'
         );
-        expect(formatEdits[0].range.start.line).eq(commentPosition.line);
-        expect(formatEdits[0].range.start.character).eq(commentPosition.character);
-        expect(formatEdits[0].range.end.line).eq(commentPosition.line);
-        expect(formatEdits[0].range.end.character).eq(commentPosition.character);
+        expect(formatEdits[0].range.start.line).toEqual(commentPosition.line);
+        expect(formatEdits[0].range.start.character).toEqual(commentPosition.character);
+        expect(formatEdits[0].range.end.line).toEqual(commentPosition.line);
+        expect(formatEdits[0].range.end.character).toEqual(commentPosition.character);
     });
 
     test('Enter in comment inserts triple-slashes preceding', async () => {
@@ -64,11 +54,11 @@ suite(`Documentation Comment Auto Formatting: ${testAssetWorkspace.description}`
         const formatEdits = <vscode.TextEdit[]>(
             await vscode.commands.executeCommand(onTypeFormatProviderCommand, fileUri, commentPosition, '\n')
         );
-        expect(formatEdits).ofSize(1);
-        expect(formatEdits[0].newText).eq('    /// ');
-        expect(formatEdits[0].range.start.line).eq(commentPosition.line);
-        expect(formatEdits[0].range.start.character).eq(commentPosition.character);
-        expect(formatEdits[0].range.end.line).eq(commentPosition.line);
-        expect(formatEdits[0].range.end.character).eq(commentPosition.character);
+        expect(formatEdits).toHaveLength(1);
+        expect(formatEdits[0].newText).toEqual('    /// ');
+        expect(formatEdits[0].range.start.line).toEqual(commentPosition.line);
+        expect(formatEdits[0].range.start.character).toEqual(commentPosition.character);
+        expect(formatEdits[0].range.end.line).toEqual(commentPosition.line);
+        expect(formatEdits[0].range.end.character).toEqual(commentPosition.character);
     });
 });

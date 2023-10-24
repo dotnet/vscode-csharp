@@ -73,6 +73,19 @@ export class SemanticTokensRangeHandler {
                 );
             }
 
+            if (semanticTokensParams.requiredHostDocumentVersion == 1) {
+                // HACK: Workaround for https://github.com/dotnet/razor/issues/9197 to stop errors from being thrown.
+                // Sometimes we get asked for semantic tokens on v1, and we have sent a v1 to Roslyn, but its the wrong v1.
+                // To prevent Roslyn throwing, lets validate the range we're asking about with the generated document they
+                // would have seen.
+                const endLine = semanticTokensParams.ranges[0].end.line;
+                const lineCount = this.countLines(razorDocument.csharpDocument.getContent());
+
+                if (lineCount < endLine) {
+                    return new ProvideSemanticTokensResponse(this.emptyTokensResponse, -1);
+                }
+            }
+
             const tokens = await vscode.commands.executeCommand<vscode.SemanticTokens>(
                 'vscode.provideDocumentRangeSemanticTokens',
                 razorDocument.csharpDocument.uri,
@@ -91,5 +104,16 @@ export class SemanticTokensRangeHandler {
             this.emptyTokensResponse,
             semanticTokensParams.requiredHostDocumentVersion
         );
+    }
+
+    private countLines(text: string) {
+        let lineCount = 0;
+        for (const i of text) {
+            if (i === '\n') {
+                lineCount++;
+            }
+        }
+
+        return lineCount;
     }
 }

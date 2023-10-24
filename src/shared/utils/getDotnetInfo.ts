@@ -70,7 +70,8 @@ async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string 
         }
 
         const runtimeVersions: { [runtime: string]: RuntimeInfo[] } = {};
-        const listRuntimes = await execChildProcess('dotnet --list-runtimes', process.cwd(), process.env);
+        const command = dotnetExecutablePath ? `"${dotnetExecutablePath}"` : 'dotnet';
+        const listRuntimes = await execChildProcess(`${command} --list-runtimes`, process.cwd(), process.env);
         lines = listRuntimes.split(/\r?\n/);
         for (const line of lines) {
             let match: RegExpMatchArray | null;

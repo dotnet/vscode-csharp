@@ -14,7 +14,6 @@ import {
     WorkspaceInformationUpdated,
 } from '../../src/omnisharp/loggingEvents';
 import * as vscodeAdapter from '../../src/vscodeAdapter';
-import { format } from 'util';
 
 export const getNullChannel = (): vscode.OutputChannel => {
     const returnChannel: vscode.OutputChannel = {
@@ -194,6 +193,12 @@ export function getFakeVsCode(): vscodeAdapter.vscode {
             parse: () => {
                 throw new Error('Not Implemented');
             },
+            file: (f: string): vscodeAdapter.Uri => {
+                return {
+                    path: f,
+                    fsPath: f,
+                } as unknown as vscodeAdapter.Uri;
+            },
         },
         version: 'myVersion',
         env: {
@@ -251,7 +256,10 @@ export function getFakeVsCode(): vscodeAdapter.vscode {
                     strArgs.push(arg);
                 });
 
-                return format(message, ...strArgs);
+                const formatted = message.replace(/{(\d+)}/g, function (match, number) {
+                    return typeof args[number] != 'undefined' ? strArgs[number] : match;
+                });
+                return formatted;
             },
             bundle: undefined,
             uri: undefined,

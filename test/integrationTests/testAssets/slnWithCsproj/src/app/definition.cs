@@ -12,5 +12,8 @@ namespace Test
         }
     }
 
-    public partial class Definition { }
+    public partial class Definition
+    {
+        public Foo.FooBar Bar;
+    }
 }
