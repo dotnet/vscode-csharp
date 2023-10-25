@@ -6,6 +6,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn to 4.9.0-1.23525.5 (PR: [#6595](https://github.com/dotnet/vscode-csharp/pull/6595))
+  * Fix some project loading issues caused by evaluation failures (PR: [#70496](https://github.com/dotnet/roslyn/pull/70496))
+  * Ensure evaluation diagnostics are logged during project load (PR: [#70467](https://github.com/dotnet/roslyn/pull/70467))
+  * Include evaluation results in binlogs (PR: [#70472](https://github.com/dotnet/roslyn/pull/70472))
+  * Fix failure to start language server when pipe name is too long (PR: [#70492](https://github.com/dotnet/roslyn/pull/70492))
+
+## 2.8.23
 * Fix various failed requests in razor documents (PR: [#6580](https://github.com/dotnet/vscode-csharp/pull/6580))
 * Update Roslyn to 4.9.0-1.23519.13 (PR: [#6573](https://github.com/dotnet/vscode-csharp/pull/6573))
   * Filter completion list only with text before cursor (PR: [#70448](https://github.com/dotnet/roslyn/pull/70448))
