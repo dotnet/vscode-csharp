@@ -150,6 +150,19 @@ export interface NamedPipeInformation {
     pipeName: string;
 }
 
+export interface RestoreParams extends lsp.WorkDoneProgressParams, lsp.PartialResultParams {
+    /**
+     * An optional file path to restore.
+     * If none is specified, the solution (or all loaded projects) are restored.
+     */
+    projectFilePath?: string;
+}
+
+export interface RestorePartialResult {
+    stage: string;
+    message: string;
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -228,4 +241,22 @@ export namespace CodeActionFixAllResolveRequest {
     export const method = 'codeAction/resolveFixAll';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.RequestType<RoslynFixAllCodeAction, RoslynFixAllCodeAction, void>(method);
+}
+
+export namespace RestoreRequest {
+    export const method = 'workspace/restore';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.ProtocolRequestType<
+        RestoreParams,
+        RestorePartialResult[],
+        RestorePartialResult,
+        void,
+        void
+    >(method);
+}
+
+export namespace RestorableProjects {
+    export const method = 'workspace/restorableProjects';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType0<string[], void>(method);
 }

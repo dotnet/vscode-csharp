@@ -2008,13 +2008,13 @@
         "command": "dotnet.restore.project",
         "title": "%command.dotnet.restore.project%",
         "category": ".NET",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activatedStandalone"
       },
       {
         "command": "dotnet.restore.all",
         "title": "%command.dotnet.restore.all%",
         "category": ".NET",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activatedStandalone"
       },
       {
         "command": "csharp.downloadDebugger",
