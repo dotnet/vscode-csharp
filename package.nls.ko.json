@@ -122,7 +122,7 @@
   "generateOptionsSchema.launchSettingsFilePath.markdownDescription": "launchSettings.json 파일의 경로입니다. 이것이 설정되지 않은 경우 디버거는 `{cwd}/Properties/launchSettings.json`에서 검색합니다.",
   "generateOptionsSchema.launchSettingsProfile.description": "지정된 경우 사용할 launchSettings.json의 프로필 이름을 나타냅니다. launchSettings.json이 없으면 무시됩니다. launchSettings.json은 'launchSettingsFilePath' 속성 또는 {cwd}/Properties/launchSettings.json이 설정되지 않은 경우 지정된 경로에서 읽혀집니다. 이 항목이 null 또는 빈 문자열로 설정되면 launchSettings.json이 무시됩니다. 이 값을 지정하지 않으면 첫 번째 '프로젝트' 프로필이 사용됩니다.",
   "generateOptionsSchema.logging.browserStdOut.markdownDescription": "웹 브라우저 실행의 stdout 텍스트를 출력 창에 기록해야 하는지 여부를 결정하는 플래그입니다. 이 옵션의 기본값은 `true`입니다.",
-  "generateOptionsSchema.logging.consoleUsageMessage.description": "Controls if a message is logged when the target process calls a 'Console.Read*' API and stdin is redirected to the console.",
+  "generateOptionsSchema.logging.consoleUsageMessage.description": "대상 프로세스가 'Console.Read*' API를 호출하고 stdin이 콘솔로 리디렉션될 때 메시지가 기록되는지 여부를 제어합니다.",
   "generateOptionsSchema.logging.description": "출력 창에 기록해야 하는 메시지 유형을 결정하는 플래그입니다.",
   "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription": "모든 디버거 API 호출을 인쇄합니다. 매우 자세한 활동입니다.",
   "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription": "디버거 API 호출에서 오류를 인쇄합니다.",
