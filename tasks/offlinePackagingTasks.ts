@@ -140,7 +140,7 @@ async function acquireRoslyn(
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
     if (!(await installPackageJsonDependency('Razor', packageJSON, platformInfo))) {
         // Try downloading platform neutral package instead
-        const platformNeutral = new PlatformInformation('netural', 'neutral');
+        const platformNeutral = new PlatformInformation('neutral', 'neutral');
         if (!(await installPackageJsonDependency('Razor', packageJSON, platformNeutral))) {
             throw Error('Failed to download package.');
         }

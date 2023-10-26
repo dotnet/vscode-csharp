@@ -31,7 +31,7 @@ export class RazorTelemetryDownloader {
         );
 
         if (packagesToInstall.length == 0) {
-            const platformNeutral = new PlatformInformation('netural', 'neutral');
+            const platformNeutral = new PlatformInformation('neutral', 'neutral');
             packagesToInstall = await getAbsolutePathPackagesToInstall(
                 razorPackages,
                 platformNeutral,
