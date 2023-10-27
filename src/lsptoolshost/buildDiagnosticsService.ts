@@ -53,7 +53,7 @@ export class BuildDiagnosticsService {
     }
 
     private compareUri(a: vscode.Uri, b: vscode.Uri): boolean {
-        return a.path.localeCompare(b.path, undefined, { sensitivity: 'accent' }) === 0;
+        return a.fsPath.localeCompare(b.fsPath) === 0;
     }
 
     public async _onFileOpened(document: vscode.TextDocument, buildOnlyIds: string[]) {
