@@ -244,7 +244,7 @@ export namespace CodeActionFixAllResolveRequest {
 }
 
 export namespace RestoreRequest {
-    export const method = 'workspace/restore';
+    export const method = 'workspace/_roslyn_restore';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.ProtocolRequestType<
         RestoreParams,
@@ -256,7 +256,7 @@ export namespace RestoreRequest {
 }
 
 export namespace RestorableProjects {
-    export const method = 'workspace/restorableProjects';
+    export const method = 'workspace/_roslyn_restorableProjects';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.RequestType0<string[], void>(method);
 }
