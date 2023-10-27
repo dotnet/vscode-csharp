@@ -94,9 +94,14 @@ export class BuildDiagnosticsService {
         const buildOnlyDiagnostics: vscode.Diagnostic[] = [];
         diagnosticList.forEach((d) => {
             if (d.code) {
-                // If it is a "build-only"diagnostics (e.g. it can only be found by building)
-                // the diagnostic will always be included
-                if (buildOnlyIds.find((b_id) => b_id === d.code)) {
+                // If it is a project system diagnostic (e.g. "Target framework out of support")
+                // then always show it. It cannot be reported by live.
+                if (this.isProjectSystemDiagnostic(d)) {
+                    buildOnlyDiagnostics.push(d);
+                }
+                // If it is a "build-only"diagnostics (i.e. it can only be found by building)
+                // then always show it. It cannot be reported by live.
+                else if (buildOnlyIds.find((b_id) => b_id === d.code)) {
                     buildOnlyDiagnostics.push(d);
                 } else {
                     const isAnalyzerDiagnostic = BuildDiagnosticsService.isAnalyzerDiagnostic(d);
@@ -133,5 +138,9 @@ export class BuildDiagnosticsService {
 
     private static isAnalyzerDiagnostic(d: vscode.Diagnostic): boolean {
         return d.code ? !d.code.toString().startsWith('CS') : false;
+    }
+
+    private static isProjectSystemDiagnostic(d: vscode.Diagnostic): boolean {
+        return d.code ? d.code.toString().startsWith('NETSDK') : false;
     }
 }

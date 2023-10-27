@@ -119,6 +119,24 @@ describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, 
         expect(displayedBuildResults.length).toEqual(2);
         expect(displayedBuildResults).toContain(diagnostics[0]);
     });
+
+    test('Project system diagnostics', async () => {
+        await setBackgroundAnalysisSetting(
+            /*analyzer*/ AnalysisSetting.OpenFiles,
+            /*compiler*/ AnalysisSetting.OpenFiles
+        );
+
+        const buildOnlyIds = ['CS1001'];
+        const diagnostics = [getTestDiagnostic('NETSDK3001')];
+
+        const displayedBuildResults = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+            diagnostics,
+            buildOnlyIds,
+            true
+        );
+
+        expect(displayedBuildResults.length).toEqual(1);
+    });
 });
 
 function getTestDiagnostic(code: string): vscode.Diagnostic {
