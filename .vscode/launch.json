@@ -44,6 +44,34 @@
             "preLaunchTask": "buildDev"
         },
         {
+            "name": "Launch Current File BasicRazorApp2_1 Integration Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/razorIntegrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/razorIntegrationTests",
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/*.js",
+                "${workspaceRoot}/out/test/**/*.js"
+            ],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "preLaunchTask": "buildDev"
+        },
+        {
             "name": "Omnisharp: Launch Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",
