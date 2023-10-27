@@ -138,6 +138,11 @@ async function acquireRoslyn(
 }
 
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
+    if (platformInfo === undefined) {
+        const platformNeutral = new PlatformInformation('neutral', 'neutral');
+        return await installPackageJsonDependency('Razor', packageJSON, platformNeutral);
+    }
+
     return await installPackageJsonDependency('Razor', packageJSON, platformInfo);
 }
 

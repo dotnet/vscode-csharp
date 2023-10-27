@@ -24,11 +24,20 @@ export class RazorTelemetryDownloader {
     public async DownloadAndInstallRazorTelemetry(version: string): Promise<boolean> {
         const runtimeDependencies = getRuntimeDependenciesPackages(this.packageJSON);
         const razorPackages = runtimeDependencies.filter((inputPackage) => inputPackage.id === 'RazorTelemetry');
-        const packagesToInstall = await getAbsolutePathPackagesToInstall(
+        let packagesToInstall = await getAbsolutePathPackagesToInstall(
             razorPackages,
             this.platformInfo,
             this.extensionPath
         );
+
+        if (packagesToInstall.length == 0) {
+            const platformNeutral = new PlatformInformation('neutral', 'neutral');
+            packagesToInstall = await getAbsolutePathPackagesToInstall(
+                razorPackages,
+                platformNeutral,
+                this.extensionPath
+            );
+        }
 
         if (packagesToInstall.length > 0) {
             this.eventStream.post(new PackageInstallation(`Razor Telemetry Version = ${version}`));

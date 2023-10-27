@@ -733,6 +733,22 @@
       "integrity": "AB4D44465EA5135912737F8D943DB8DB7ADF1CC213F433188401FEE36B78A319"
     },
     {
+      "id": "Razor",
+      "description": "Razor Language Server (Platform Agnostic)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/e456a753103b84b87bf5f000499ce3d7/razorlanguageserver-platformagnostic-7.0.0-preview.23513.5.zip",
+      "installPath": ".razor",
+      "platforms": [
+        "neutral"
+      ],
+      "architectures": [
+        "neutral"
+      ],
+      "binaries": [
+        "./rzls"
+      ],
+      "integrity": "0CDC371C58614CBD5BAE83A0AEDF9896115A637E3AF007B7E399F5414CA66451"
+    },
+    {
       "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Windows / x64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/8d42e62ea4051381c219b3e31bc4eced/razorlanguageserver-win-x64-7.0.0-preview.23363.1.zip",
@@ -974,6 +990,19 @@
         "arm64"
       ],
       "integrity": "65B17BBB7BA66987F74ED0B9261FC495BBB40C8C1C4FC4F8981BA5824B300A00"
+    },
+    {
+      "id": "RazorTelemetry",
+      "description": "Razor Language Server Telemetry (Platform Agnostic)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/f8b5b74b-3df3-47cc-83b1-cd1d93d1771d/1affdce6b3431a5ed16d545a325a8474/devkittelemetry-platformagnostic-7.0.0-preview.23513.5.zip",
+      "installPath": ".razortelemetry",
+      "platforms": [
+        "netural"
+      ],
+      "architectures": [
+        "neutral"
+      ],
+      "integrity": "5410885094C69A494D847755CC974F41850AC21C613D140B4A775DE7E531880E"
     }
   ],
   "engines": {
