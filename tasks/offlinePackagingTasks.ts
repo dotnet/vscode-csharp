@@ -138,26 +138,23 @@ async function acquireRoslyn(
 }
 
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
-    if (!(await installPackageJsonDependency('Razor', packageJSON, platformInfo))) {
-        // Try downloading platform neutral package instead
+    if (platformInfo === undefined) {
         const platformNeutral = new PlatformInformation('neutral', 'neutral');
-        if (!(await installPackageJsonDependency('Razor', packageJSON, platformNeutral))) {
-            throw Error('Failed to download package.');
-        }
+        return await installPackageJsonDependency('Razor', packageJSON, platformNeutral);
     }
+
+    return await installPackageJsonDependency('Razor', packageJSON, platformInfo);
 }
 
 async function installDebugger(packageJSON: any, platformInfo: PlatformInformation) {
-    if (!(await installPackageJsonDependency('Debugger', packageJSON, platformInfo))) {
-        throw Error('Failed to download package.');
-    }
+    return await installPackageJsonDependency('Debugger', packageJSON, platformInfo);
 }
 
 async function installPackageJsonDependency(
     dependencyName: string,
     packageJSON: any,
     platformInfo: PlatformInformation
-): Promise<boolean> {
+) {
     const eventStream = new EventStream();
     const logger = new Logger((message) => process.stdout.write(message));
     const stdoutObserver = new CsharpLoggerObserver(logger);
@@ -172,10 +169,8 @@ async function installPackageJsonDependency(
     );
     const provider = () => new NetworkSettings('', true);
     if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
-        return false;
+        throw Error('Failed to download package.');
     }
-
-    return true;
 }
 
 async function acquireNugetPackage(packageName: string, packageVersion: string, interactive: boolean): Promise<string> {
