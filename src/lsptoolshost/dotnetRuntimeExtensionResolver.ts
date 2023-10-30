@@ -153,7 +153,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             let matchingRuntime: RuntimeInfo | undefined = undefined;
             for (const runtime of coreRuntimeVersions) {
                 // We consider a match if the runtime is greater than or equal to the required version since we roll forward.
-                if (semver.gt(runtime.Version, requiredRuntimeVersion)) {
+                if (semver.gte(runtime.Version, requiredRuntimeVersion)) {
                     matchingRuntime = runtime;
                     break;
                 }

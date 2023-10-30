@@ -122,7 +122,7 @@
   "generateOptionsSchema.launchSettingsFilePath.markdownDescription": "launchSettings.json 文件的路径。如果未设置此项，调试器将在 \"{cwd}/Properties/launchSettings.json\" 中搜索。",
   "generateOptionsSchema.launchSettingsProfile.description": "如果指定，则指示要使用的 launchSettings.json 中配置文件的名称。如果找不到 launchSettings.json，则忽略此项。将从指定的路径中读取 launchSettings.json，该路径应为 \"launchSettingsFilePath\" 属性或 {cwd}/Properties/launchSettings.json (如果未设置)。如果此项设置为 null 或空字符串，则忽略 launchSettings.json。如果未指定此值，将使用第一个“项目”配置文件。",
   "generateOptionsSchema.logging.browserStdOut.markdownDescription": "用于确定是否应将启动 Web 浏览器中的 stdout 文本记录到输出窗口的标志。此选项默认为 \"true\"。",
-  "generateOptionsSchema.logging.consoleUsageMessage.description": "Controls if a message is logged when the target process calls a 'Console.Read*' API and stdin is redirected to the console.",
+  "generateOptionsSchema.logging.consoleUsageMessage.description": "控制在目标进程调用 \"Console.Read*\" API 且 stdin 重定向到控制台时是否记录消息。",
   "generateOptionsSchema.logging.description": "用于确定应将哪些类型的消息记录到输出窗口的标志。",
   "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription": "打印所有调试程序 API 调用。需要非常详细。",
   "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription": "打印调试程序 API 调用中的失败。",
