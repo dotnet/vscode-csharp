@@ -33,11 +33,12 @@ async function registerNestedResolveCodeAction(
         const action = data.NestedCodeAction;
 
         if (action && action.nestedActions && action.nestedActions.length > 0) {
-            vscode.window
+            await vscode.window
                 .showQuickPick(
                     action.nestedActions?.map((child: { title: string }) => child.title),
                     {
                         placeHolder: vscode.l10n.t('Pick a nested action'),
+                        ignoreFocusOut: true,
                     }
                 )
                 .then(async (selectedValue) => {
@@ -55,15 +56,16 @@ async function registerNestedResolveCodeAction(
                                 async (_, token) => {
                                     let result: string | undefined;
                                     if (selectedAction.data.FixAllFlavors) {
-                                        result = await vscode.window.showQuickPick(data.FixAllFlavors, {
+                                        result = await vscode.window.showQuickPick(selectedAction.data.FixAllFlavors, {
                                             placeHolder: vscode.l10n.t('Pick a fix all scope'),
+                                            ignoreFocusOut: true,
                                         });
                                     }
                                     let response: CodeAction;
                                     if (result) {
                                         const fixAllCodeAction: RoslynProtocol.RoslynFixAllCodeAction = {
-                                            title: data.UniqueIdentifier,
-                                            data: data,
+                                            title: selectedAction.data.UniqueIdentifier,
+                                            data: selectedAction.data,
                                             scope: result,
                                         };
 
