@@ -28,13 +28,13 @@ describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, 
         const buildOnlyIds = ['CS1001'];
         const diagnostics = [getTestDiagnostic('CS1001'), getTestDiagnostic('CS1002')];
 
-        const displayedBuildResultsClosedFile = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+        const displayedBuildResultsClosedFile = BuildDiagnosticsService.filterDiagnosticsFromBuild(
             diagnostics,
             buildOnlyIds,
             false
         );
 
-        const displayedBuildResultsOpenFile = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+        const displayedBuildResultsOpenFile = BuildDiagnosticsService.filterDiagnosticsFromBuild(
             diagnostics,
             buildOnlyIds,
             true
@@ -50,13 +50,13 @@ describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, 
         const buildOnlyIds = ['CS1001'];
         const diagnostics = [getTestDiagnostic('CS1001'), getTestDiagnostic('CS2001'), getTestDiagnostic('SA3001')];
 
-        const displayedBuildResultsOpenFile = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+        const displayedBuildResultsOpenFile = BuildDiagnosticsService.filterDiagnosticsFromBuild(
             diagnostics,
             buildOnlyIds,
             true
         );
 
-        const displayedBuildResultsClosedFile = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+        const displayedBuildResultsClosedFile = BuildDiagnosticsService.filterDiagnosticsFromBuild(
             diagnostics,
             buildOnlyIds,
             false
@@ -76,7 +76,7 @@ describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, 
         const buildOnlyIds = ['CS1001'];
         const diagnostics = [getTestDiagnostic('CS1001'), getTestDiagnostic('CS2001'), getTestDiagnostic('SA3001')];
 
-        const displayedBuildResults = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+        const displayedBuildResults = BuildDiagnosticsService.filterDiagnosticsFromBuild(
             diagnostics,
             buildOnlyIds,
             false
@@ -93,7 +93,7 @@ describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, 
         const buildOnlyIds = ['CS1001'];
         const diagnostics = [getTestDiagnostic('CS1001'), getTestDiagnostic('CS2001'), getTestDiagnostic('SA3001')];
 
-        const displayedBuildResults = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+        const displayedBuildResults = BuildDiagnosticsService.filterDiagnosticsFromBuild(
             diagnostics,
             buildOnlyIds,
             false
@@ -110,7 +110,7 @@ describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, 
         const buildOnlyIds = ['CS1001'];
         const diagnostics = [getTestDiagnostic('CS1001'), getTestDiagnostic('CS2001'), getTestDiagnostic('SA3001')];
 
-        const displayedBuildResults = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+        const displayedBuildResults = BuildDiagnosticsService.filterDiagnosticsFromBuild(
             diagnostics,
             buildOnlyIds,
             false
@@ -129,7 +129,7 @@ describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, 
         const buildOnlyIds = ['CS1001'];
         const diagnostics = [getTestDiagnostic('NETSDK3001')];
 
-        const displayedBuildResults = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+        const displayedBuildResults = BuildDiagnosticsService.filterDiagnosticsFromBuild(
             diagnostics,
             buildOnlyIds,
             true

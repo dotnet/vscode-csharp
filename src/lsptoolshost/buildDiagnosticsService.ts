@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
+import { commonOptions } from '../shared/options';
 
 export enum AnalysisSetting {
     FullSolution = 'fullSolution',
@@ -45,7 +46,7 @@ export class BuildDiagnosticsService {
             // Show the build-only diagnostics
             displayedBuildDiagnostics.push([
                 uri,
-                BuildDiagnosticsService.filerDiagnosticsFromBuild(diagnosticList, buildOnlyIds, isDocumentOpen),
+                BuildDiagnosticsService.filterDiagnosticsFromBuild(diagnosticList, buildOnlyIds, isDocumentOpen),
             ]);
         });
 
@@ -63,7 +64,7 @@ export class BuildDiagnosticsService {
         // The document is now open in the editor and live diagnostics are being shown. Filter diagnostics
         // reported by the build to show build-only problems.
         if (currentFileBuildDiagnostics) {
-            const buildDiagnostics = BuildDiagnosticsService.filerDiagnosticsFromBuild(
+            const buildDiagnostics = BuildDiagnosticsService.filterDiagnosticsFromBuild(
                 currentFileBuildDiagnostics[1],
                 buildOnlyIds,
                 true
@@ -72,18 +73,13 @@ export class BuildDiagnosticsService {
         }
     }
 
-    public static filerDiagnosticsFromBuild(
+    public static filterDiagnosticsFromBuild(
         diagnosticList: vscode.Diagnostic[],
         buildOnlyIds: string[],
         isDocumentOpen: boolean
     ): vscode.Diagnostic[] {
-        const configuration = vscode.workspace.getConfiguration();
-        const analyzerDiagnosticScope = configuration.get(
-            'dotnet.backgroundAnalysis.analyzerDiagnosticsScope'
-        ) as AnalysisSetting;
-        const compilerDiagnosticScope = configuration.get(
-            'dotnet.backgroundAnalysis.compilerDiagnosticsScope'
-        ) as AnalysisSetting;
+        const analyzerDiagnosticScope = commonOptions.analyzerDiagnosticScope as AnalysisSetting;
+        const compilerDiagnosticScope = commonOptions.compilerDiagnosticScope as AnalysisSetting;
 
         // If compiler and analyzer diagnostics are set to "none", show everything reported by the build
         if (analyzerDiagnosticScope === AnalysisSetting.None && compilerDiagnosticScope === AnalysisSetting.None) {
@@ -91,45 +87,55 @@ export class BuildDiagnosticsService {
         }
 
         // Filter the diagnostics reported by the build. Some may already be shown by live diagnostics.
-        const buildOnlyDiagnostics: vscode.Diagnostic[] = [];
-        diagnosticList.forEach((d) => {
-            if (d.code) {
-                // If it is a project system diagnostic (e.g. "Target framework out of support")
-                // then always show it. It cannot be reported by live.
-                if (this.isProjectSystemDiagnostic(d)) {
-                    buildOnlyDiagnostics.push(d);
-                }
-                // If it is a "build-only"diagnostics (i.e. it can only be found by building)
-                // then always show it. It cannot be reported by live.
-                else if (buildOnlyIds.find((b_id) => b_id === d.code)) {
-                    buildOnlyDiagnostics.push(d);
-                } else {
-                    const isAnalyzerDiagnostic = BuildDiagnosticsService.isAnalyzerDiagnostic(d);
-                    const isCompilerDiagnostic = BuildDiagnosticsService.isCompilerDiagnostic(d);
+        const buildDiagnosticsToDisplay: vscode.Diagnostic[] = [];
 
-                    if (
-                        (isAnalyzerDiagnostic && analyzerDiagnosticScope === AnalysisSetting.None) ||
-                        (isCompilerDiagnostic && compilerDiagnosticScope === AnalysisSetting.None)
-                    ) {
-                        // If live diagnostics are completely turned off for this type, then show the build diagnostic
-                        buildOnlyDiagnostics.push(d);
-                    } else if (isDocumentOpen) {
-                        // no-op. The document is open and live diagnostis are on. This diagnostic is already being shown.
-                    } else if (
-                        (isAnalyzerDiagnostic && analyzerDiagnosticScope === AnalysisSetting.FullSolution) ||
-                        (isCompilerDiagnostic && compilerDiagnosticScope === AnalysisSetting.FullSolution)
-                    ) {
-                        // no-op. Full solution analysis is on for this diagnostic type. All diagnostics are already being shown.
-                    } else {
-                        // The document is closed, and the analysis setting is to only show for open files.
-                        // Show the diagnostic reported by build.
-                        buildOnlyDiagnostics.push(d);
-                    }
-                }
-            }
-        });
+        // If it is a project system diagnostic (e.g. "Target framework out of support")
+        // then always show it. It cannot be reported by live.
+        const projectSystemDiagnostics = diagnosticList.filter((d) =>
+            BuildDiagnosticsService.isProjectSystemDiagnostic(d)
+        );
+        buildDiagnosticsToDisplay.push(...projectSystemDiagnostics);
 
-        return buildOnlyDiagnostics;
+        // If it is a "build-only"diagnostics (i.e. it can only be found by building)
+        // then always show it. It cannot be reported by live.
+        const buildOnlyDiagnostics = diagnosticList.filter((d) =>
+            BuildDiagnosticsService.isBuildOnlyDiagnostic(buildOnlyIds, d)
+        );
+        buildDiagnosticsToDisplay.push(...buildOnlyDiagnostics);
+
+        // Check the analyzer diagnostic setting. If the setting is "none" or if the file is closed,
+        // then no live analyzers are being shown and bulid analyzers should be added.
+        // If FSA is on, then this is a no-op as FSA will report all analyzer diagnostics
+        if (
+            analyzerDiagnosticScope === AnalysisSetting.None ||
+            (analyzerDiagnosticScope === AnalysisSetting.OpenFiles && !isDocumentOpen)
+        ) {
+            const analyzerDiagnostics = diagnosticList.filter(
+                // Needs to be analyzer diagnostics and not already reported as "build only"
+                (d) => BuildDiagnosticsService.isAnalyzerDiagnostic(d) && !this.isBuildOnlyDiagnostic(buildOnlyIds, d)
+            );
+            buildDiagnosticsToDisplay.push(...analyzerDiagnostics);
+        }
+
+        // Check the compiler diagnostic setting. If the setting is "none" or if the file is closed,
+        // then no live compiler diagnostics are being shown and bulid compiler diagnostics should be added.
+        // If FSA is on, then this is a no-op as FSA will report all compiler diagnostics
+        if (
+            compilerDiagnosticScope === AnalysisSetting.None ||
+            (compilerDiagnosticScope === AnalysisSetting.OpenFiles && !isDocumentOpen)
+        ) {
+            const compilerDiagnostics = diagnosticList.filter(
+                // Needs to be analyzer diagnostics and not already reported as "build only"
+                (d) => BuildDiagnosticsService.isCompilerDiagnostic(d) && !this.isBuildOnlyDiagnostic(buildOnlyIds, d)
+            );
+            buildDiagnosticsToDisplay.push(...compilerDiagnostics);
+        }
+
+        return buildDiagnosticsToDisplay;
+    }
+
+    private static isBuildOnlyDiagnostic(buildOnlyIds: string[], d: vscode.Diagnostic): boolean {
+        return buildOnlyIds.find((b_id) => b_id === d.code) !== undefined;
     }
 
     private static isCompilerDiagnostic(d: vscode.Diagnostic): boolean {

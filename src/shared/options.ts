@@ -18,6 +18,8 @@ export interface CommonOptions {
     readonly defaultSolution: string;
     readonly unitTestDebuggingOptions: object;
     readonly runSettingsPath: string;
+    readonly analyzerDiagnosticScope: string;
+    readonly compilerDiagnosticScope: string;
 }
 
 export interface OmnisharpServerOptions {
@@ -152,6 +154,12 @@ class CommonOptionsImpl implements CommonOptions {
     }
     public get runSettingsPath() {
         return readOption<string>('dotnet.unitTests.runSettingsPath', '', 'omnisharp.testRunSettings');
+    }
+    public get analyzerDiagnosticScope() {
+        return readOption<string>('dotnet.backgroundAnalysis.analyzerDiagnosticsScope', 'openFiles');
+    }
+    public get compilerDiagnosticScope() {
+        return readOption<string>('dotnet.backgroundAnalysis.compilerDiagnosticsScope', 'openFiles');
     }
 }
 
