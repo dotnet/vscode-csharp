@@ -122,6 +122,7 @@
   "generateOptionsSchema.launchSettingsFilePath.markdownDescription": "launchSettings.json ファイルへのパス。これが設定されていない場合、デバッガーは `{cwd}/Properties/launchSettings.json` を検索します。",
   "generateOptionsSchema.launchSettingsProfile.description": "指定した場合、使用する launchSettings.json 内のプロファイルの名前を示します。launchSettings.json が見つからない場合、これは無視されます。launchSettings.json は、'launchSettingsFilePath' プロパティで指定されたパスから読み取られ、それが設定されていない場合は {cwd}/Properties/launchSettings.json から読み込まれます。これが null または空の文字列に設定されている場合、launchSettings.json は無視されます。この値が指定されていない場合は、最初の 'Project' プロファイルが使用されます。",
   "generateOptionsSchema.logging.browserStdOut.markdownDescription": "Web ブラウザーを起動してから StdOut テキストを出力ウィンドウに記録するかどうかを決定するフラグです。このオプションの既定値は `true` です。",
+  "generateOptionsSchema.logging.consoleUsageMessage.description": "ターゲット プロセスが 'Console.Read*' API を呼び出し、stdin がコンソールにリダイレクトされたときにメッセージがログに記録されるかどうかを制御します。",
   "generateOptionsSchema.logging.description": "どの種類のメッセージを出力ウィンドウに記録する必要があるかを決定するフラグです。",
   "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription": "すべてのデバッガー API 呼出しを出力します。これは、非常に詳細です。",
   "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription": "デバッガー API 呼び出しからのエラーを出力します。",
