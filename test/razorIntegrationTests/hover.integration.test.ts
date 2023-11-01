@@ -5,12 +5,12 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as jestLib from '@jest/globals';
+import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../integrationTests/integrationHelpers';
 
-jestLib.describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
-    jestLib.beforeAll(async function () {
+describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
+    beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }
@@ -19,11 +19,11 @@ jestLib.describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
         await integrationHelpers.activateCSharpExtension();
     });
 
-    jestLib.afterAll(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    jestLib.test('Tag Helper Hover', async () => {
+    test('Tag Helper Hover', async () => {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }
@@ -42,12 +42,12 @@ jestLib.describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
             }
         );
 
-        jestLib.expect(hover).toBeDefined();
+        expect(hover).toBeDefined();
 
-        jestLib.expect(hover.length).toBe(1);
+        expect(hover.length).toBe(1);
         const first = hover[0];
         const answer =
             'The input element represents a typed data field, usually with a form control to allow the user to edit the data.';
-        jestLib.expect((<{ language: string; value: string }>first.contents[0]).value).toContain(answer);
+        expect((<{ language: string; value: string }>first.contents[0]).value).toContain(answer);
     });
 });
