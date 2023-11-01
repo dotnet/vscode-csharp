@@ -13,7 +13,7 @@ export enum AnalysisSetting {
 
 export class BuildDiagnosticsService {
     /** All the build results sent by the DevKit extension. */
-    private _allBuildDiagnostics: Array<[vscode.Uri, vscode.Diagnostic[]]> = [];
+    private _allBuildDiagnostics: { [uri: string]: vscode.Diagnostic[] } = {};
 
     /** The diagnostic results from build displayed by VS Code. When live diagnostics are available for a file, these are errors that only build knows about.
      * When live diagnostics aren't loaded for a file, then these are all of the diagnostics reported by the build.*/
@@ -27,19 +27,14 @@ export class BuildDiagnosticsService {
         this._diagnosticsReportedByBuild.clear();
     }
 
-    public async setBuildDiagnostics(
-        buildDiagnostics: Array<[vscode.Uri, vscode.Diagnostic[]]>,
-        buildOnlyIds: string[]
-    ) {
+    public async setBuildDiagnostics(buildDiagnostics: { [uri: string]: vscode.Diagnostic[] }, buildOnlyIds: string[]) {
         this._allBuildDiagnostics = buildDiagnostics;
         const displayedBuildDiagnostics = new Array<[vscode.Uri, vscode.Diagnostic[]]>();
         const allDocuments = vscode.workspace.textDocuments;
 
-        this._allBuildDiagnostics.forEach((fileDiagnostics) => {
-            const uri = fileDiagnostics[0];
-            const diagnosticList = fileDiagnostics[1];
-
+        for (const [uriPath, diagnosticList] of Object.entries(this._allBuildDiagnostics)) {
             // Check if the document is open
+            const uri = vscode.Uri.file(uriPath);
             const document = allDocuments.find((d) => this.compareUri(d.uri, uri));
             const isDocumentOpen = document !== undefined ? !document.isClosed : false;
 
@@ -48,7 +43,7 @@ export class BuildDiagnosticsService {
                 uri,
                 BuildDiagnosticsService.filterDiagnosticsFromBuild(diagnosticList, buildOnlyIds, isDocumentOpen),
             ]);
-        });
+        }
 
         this._diagnosticsReportedByBuild.set(displayedBuildDiagnostics);
     }
@@ -59,13 +54,13 @@ export class BuildDiagnosticsService {
 
     public async _onFileOpened(document: vscode.TextDocument, buildOnlyIds: string[]) {
         const uri = document.uri;
-        const currentFileBuildDiagnostics = this._allBuildDiagnostics?.find(([u]) => this.compareUri(u, uri));
+        const currentFileBuildDiagnostics = this._allBuildDiagnostics[uri.fsPath];
 
         // The document is now open in the editor and live diagnostics are being shown. Filter diagnostics
         // reported by the build to show build-only problems.
         if (currentFileBuildDiagnostics) {
             const buildDiagnostics = BuildDiagnosticsService.filterDiagnosticsFromBuild(
-                currentFileBuildDiagnostics[1],
+                currentFileBuildDiagnostics,
                 buildOnlyIds,
                 true
             );
