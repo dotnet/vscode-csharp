@@ -37,8 +37,8 @@ jestLib.describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
             'vscode.executeHoverProvider',
             activeDocument,
             {
-                line: 7,
-                character: 16,
+                line: 8,
+                character: 2,
             }
         );
 
@@ -46,6 +46,6 @@ jestLib.describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
 
         jestLib.expect(hover.length).toBe(1);
         const first = hover[0];
-        jestLib.expect(first.contents).toContain('The h1 element represents a section heading.');
+        jestLib.expect(first.contents).toContain('input');
     });
 });
