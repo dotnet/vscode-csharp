@@ -18,8 +18,6 @@ export interface CommonOptions {
     readonly defaultSolution: string;
     readonly unitTestDebuggingOptions: object;
     readonly runSettingsPath: string;
-    readonly analyzerDiagnosticScope: string;
-    readonly compilerDiagnosticScope: string;
 }
 
 export interface OmnisharpServerOptions {
@@ -77,6 +75,8 @@ export interface LanguageServerOptions {
     readonly preferCSharpExtension: boolean;
     readonly startTimeout: number;
     readonly crashDumpPath: string | undefined;
+    readonly analyzerDiagnosticScope: string;
+    readonly compilerDiagnosticScope: string;
 }
 
 export interface RazorOptions {
@@ -154,12 +154,6 @@ class CommonOptionsImpl implements CommonOptions {
     }
     public get runSettingsPath() {
         return readOption<string>('dotnet.unitTests.runSettingsPath', '', 'omnisharp.testRunSettings');
-    }
-    public get analyzerDiagnosticScope() {
-        return readOption<string>('dotnet.backgroundAnalysis.analyzerDiagnosticsScope', 'openFiles');
-    }
-    public get compilerDiagnosticScope() {
-        return readOption<string>('dotnet.backgroundAnalysis.compilerDiagnosticsScope', 'openFiles');
     }
 }
 
@@ -396,6 +390,12 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get crashDumpPath() {
         return readOption<string | undefined>('dotnet.server.crashDumpPath', undefined);
+    }
+    public get analyzerDiagnosticScope() {
+        return readOption<string>('dotnet.backgroundAnalysis.analyzerDiagnosticsScope', 'openFiles');
+    }
+    public get compilerDiagnosticScope() {
+        return readOption<string>('dotnet.backgroundAnalysis.compilerDiagnosticsScope', 'openFiles');
     }
 }
 

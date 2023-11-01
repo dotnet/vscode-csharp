@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
-import { commonOptions } from '../shared/options';
+import { languageServerOptions } from '../shared/options';
 
 export enum AnalysisSetting {
     FullSolution = 'fullSolution',
@@ -78,8 +78,8 @@ export class BuildDiagnosticsService {
         buildOnlyIds: string[],
         isDocumentOpen: boolean
     ): vscode.Diagnostic[] {
-        const analyzerDiagnosticScope = commonOptions.analyzerDiagnosticScope as AnalysisSetting;
-        const compilerDiagnosticScope = commonOptions.compilerDiagnosticScope as AnalysisSetting;
+        const analyzerDiagnosticScope = languageServerOptions.analyzerDiagnosticScope as AnalysisSetting;
+        const compilerDiagnosticScope = languageServerOptions.compilerDiagnosticScope as AnalysisSetting;
 
         // If compiler and analyzer diagnostics are set to "none", show everything reported by the build
         if (analyzerDiagnosticScope === AnalysisSetting.None && compilerDiagnosticScope === AnalysisSetting.None) {
@@ -139,11 +139,13 @@ export class BuildDiagnosticsService {
     }
 
     private static isCompilerDiagnostic(d: vscode.Diagnostic): boolean {
-        return d.code ? d.code.toString().startsWith('CS') : false;
+        // eslint-disable-next-line prettier/prettier
+        const regex = "[cC][sS][0-9]{4}";
+        return d.code ? d.code.toString().match(regex) !== null : false;
     }
 
     private static isAnalyzerDiagnostic(d: vscode.Diagnostic): boolean {
-        return d.code ? !d.code.toString().startsWith('CS') : false;
+        return d.code ? !this.isCompilerDiagnostic(d) : false;
     }
 
     private static isProjectSystemDiagnostic(d: vscode.Diagnostic): boolean {
