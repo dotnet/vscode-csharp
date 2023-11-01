@@ -37,7 +37,7 @@ jestLib.describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
             'vscode.executeHoverProvider',
             activeDocument,
             {
-                line: 8,
+                line: 7,
                 character: 2,
             }
         );
@@ -46,6 +46,8 @@ jestLib.describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
 
         jestLib.expect(hover.length).toBe(1);
         const first = hover[0];
-        jestLib.expect(first.contents).toContain('input');
+        const answer =
+            'The input element represents a typed data field, usually with a form control to allow the user to edit the data.';
+        jestLib.expect((<{ language: string; value: string }>first.contents[0]).value).toContain(answer);
     });
 });
