@@ -24,19 +24,18 @@ export async function runIntegrationTests(projectName: string) {
         verbose: true,
     } as Config.Argv;
 
-    let filter: string;
     if (process.env.TEST_FILE_FILTER) {
-        // If we have just a file, run that with runTestsByPath.
-        jestConfig.runTestsByPath = true;
+        // If we have just a file, run that with an explicit match.
         jestConfig.testMatch = [process.env.TEST_FILE_FILTER];
-        filter = process.env.TEST_FILE_FILTER;
-    } else {
-        filter = projectName;
     }
 
-    const { results } = await jest.runCLI(jestConfig, [filter]);
+    const { results } = await jest.runCLI(jestConfig, [projectName]);
 
     if (!results.success) {
-        throw new Error('Tests failed.');
+        console.log('Tests failed.');
     }
+
+    // Explicitly exit the process - VSCode likes to write a bunch of cancellation errors to the console after this
+    // which make it look like the tests always fail.  We're done with the tests at this point, so just exit.
+    process.exit(results.success ? 0 : 1);
 }
