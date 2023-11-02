@@ -36,6 +36,16 @@ jobs:
     env:
       DISPLAY: :99.0
 
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    displayName: 'Publish Test Results'
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '*junit.xml'
+      searchFolder: '$(Build.SourcesDirectory)/out'
+      mergeTestResults: true
+      publishRunAttachments: true
+
   - task: PublishPipelineArtifact@1
     condition: failed()
     displayName: 'Upload integration test logs'
