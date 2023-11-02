@@ -14,6 +14,10 @@ const config: Config = {
         '<rootDir>/omnisharptest/omnisharpUnitTests/jest.config.ts',
         '<rootDir>/omnisharptest/omnisharpIntegrationTests/jest.config.ts',
     ],
+    // Reporters are a global jest configuration property and cannot be set in the project jest config.
+    // This configuration will create a 'junit.xml' file in the output directory, no matter which test project is running.
+    // In order to not overwrite test results in CI, we configure a unique output file name in the gulp testTasks.
+    reporters: ['default', ['jest-junit', { outputDirectory: '<rootDir>/out/' }]],
 };
 
 export default config;
