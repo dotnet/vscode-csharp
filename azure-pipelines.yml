@@ -12,7 +12,7 @@ pr:
 - main
 
 stages:
-- template: azure-pipelines/build.yml
+- template: azure-pipelines/build-all.yml
 
 - stage: Test
   displayName: Test

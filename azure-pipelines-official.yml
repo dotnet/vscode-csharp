@@ -13,7 +13,7 @@ parameters:
     default: 'default'
 
 stages:
-- template: azure-pipelines/build.yml
+- template: azure-pipelines/build-all.yml
   parameters:
     versionNumberOverride: ${{ parameters.versionNumberOverride }}
 
