@@ -6,6 +6,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update debugger to 2.9.0 (PR: [#6623](https://github.com/dotnet/vscode-csharp/pull/6623))
+  * Flush `Console.Write` buffer more often (Fixes: [#6598](https://github.com/dotnet/vscode-csharp/issues/6598))
+  * Fix logpoint freezing on start (Fixes: [#6585](https://github.com/dotnet/vscode-csharp/issues/6585))
+  * Fix logpoints when using variables after breakpoint breaks (Fixes: [#583](https://github.com/microsoft/vscode-dotnettools/issues/583))
+
+## 2.9.20
 * Bump Roslyn to 4.9.0-1.23526.14 (PR: [#6608](https://github.com/dotnet/vscode-csharp/pull/6608))
   * Fix some project loading issues caused by evaluation failures (PR: [#70496](https://github.com/dotnet/roslyn/pull/70496))
   * Ensure evaluation diagnostics are logged during project load (PR: [#70467](https://github.com/dotnet/roslyn/pull/70467))
