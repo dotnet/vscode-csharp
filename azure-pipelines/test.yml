@@ -43,8 +43,9 @@ jobs:
       testResultsFormat: 'JUnit'
       testResultsFiles: '*junit.xml'
       searchFolder: '$(Build.SourcesDirectory)/out'
-      mergeTestResults: true
       publishRunAttachments: true
+      mergeTestResults: true
+      testRunTitle: $(Agent.JobName) (Attempt $(System.JobAttempt))
 
   - task: PublishPipelineArtifact@1
     condition: failed()
