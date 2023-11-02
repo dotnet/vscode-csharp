@@ -6,6 +6,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as vscodeapi from 'vscode';
+import * as util from '../../common';
 import { ExtensionContext } from 'vscode';
 import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
 import { CodeActionsHandler } from './codeActions/codeActionsHandler';
@@ -99,9 +100,19 @@ export async function activate(
         // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
         env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
 
+        let telemetryExtensionDllPath = '';
         // Set up DevKit environment for telemetry
         if (csharpDevkitExtension) {
             await setupDevKitEnvironment(env, csharpDevkitExtension, logger);
+
+            const telemetryExtensionPath = path.join(
+                util.getExtensionPath(),
+                '.razortelemetry',
+                'Microsoft.VisualStudio.DevKit.Razor.dll'
+            );
+            if (await util.fileExists(telemetryExtensionPath)) {
+                telemetryExtensionDllPath = telemetryExtensionPath;
+            }
         }
 
         const languageServerClient = new RazorLanguageServerClient(
@@ -109,7 +120,7 @@ export async function activate(
             languageServerDir,
             razorTelemetryReporter,
             vscodeTelemetryReporter,
-            csharpDevkitExtension !== undefined,
+            telemetryExtensionDllPath,
             env,
             dotnetInfo.path,
             logger

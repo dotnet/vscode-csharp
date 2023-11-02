@@ -66,6 +66,7 @@ async function downloadFile(
         agent: getProxyAgent(url, proxy, strictSSL),
         port: url.port,
         rejectUnauthorized: strictSSL,
+        timeout: 5 * 60 * 1000, // timeout is in milliseconds
     };
 
     const buffers: any[] = [];
@@ -127,6 +128,10 @@ async function downloadFile(
                     )
                 );
             });
+        });
+
+        request.on('timeout', () => {
+            request.destroy(new Error(`Timed out trying to download ${urlString}.`));
         });
 
         request.on('error', (err) => {
