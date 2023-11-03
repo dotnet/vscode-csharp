@@ -134,6 +134,17 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Debug gulp task",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": [
+                "${input:gulpTaskName}"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Update package dependencies",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
@@ -214,7 +225,11 @@
                 "slnFilterWithCsproj",
                 "slnWithGenerator"
             ]
-            // type specific configuration attributes
+        },
+        {
+            "id": "gulpTaskName",
+            "description": "The name of the gulp task to debug",
+            "type": "promptString",
         }
     ]
 }

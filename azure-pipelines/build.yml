@@ -2,62 +2,70 @@ parameters:
 - name: versionNumberOverride
   type: string
   default: 'default'
+- name: vmImageName
+  type: string
+  default: ''
+- name: platform
+  type: string
 
-stages:
-- stage: Build
-  displayName: 'Build VSIXs'
-  jobs:
-  - job:
-    displayName: 'Build Prerelease VSIXs'
-    steps:
-    - checkout: self
-      clean: true
-      submodules: true
-      fetchTags: false
-      fetchDepth: 0
+jobs:
+- job:
+  displayName: 'Build ${{ parameters.platform }} prerelease vsixs'
+  pool:
+    name: Azure Pipelines
+    vmImage: ${{ parameters.vmImageName }}
+  steps:
+  - checkout: self
+    clean: true
+    submodules: true
+    fetchTags: false
+    fetchDepth: 0
 
-    - template: prereqs.yml
-      parameters:
-        versionNumberOverride: ${{ parameters.versionNumberOverride }}
+  - template: prereqs.yml
+    parameters:
+      versionNumberOverride: ${{ parameters.versionNumberOverride }}
 
-    - script: gulp 'vsix:release:package' --prerelease
-      displayName: 'Build VSIXs'
+  - script: gulp vsix:release:package:${{ parameters.platform }} --prerelease
+    displayName: 'Build VSIXs'
 
-    - task: PublishPipelineArtifact@1
-      # Run the publish step so we have vsix's even if the tests fail.
-      condition: succeededOrFailed()
-      displayName: 'Publish VSIXs'
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)/vsix'
-        artifactName: 'VSIX_Prerelease_$(System.JobAttempt)'
+  - task: PublishBuildArtifacts@1
+    # Run the publish step so we have vsix's even if the tests fail.
+    condition: succeededOrFailed()
+    displayName: 'Publish VSIXs'
+    inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)/vsix'
+      ArtifactName: 'VSIX_Prerelease_$(System.JobAttempt)'
 
-    - script: npm run test:artifacts
-      displayName: 'Run artifacts tests'
+  - script: npm run test:artifacts
+    displayName: 'Run artifacts tests'
 
-  - job:
-    displayName: 'Build Release VSIXs'
-    steps:
-    - checkout: self
-      clean: true
-      submodules: true
-      fetchTags: false
-      fetchDepth: 0
+- job:
+  displayName: 'Build ${{ parameters.platform }} release vsixs'
+  pool:
+    name: Azure Pipelines
+    vmImage: ${{ parameters.vmImageName }}
+  steps:
+  - checkout: self
+    clean: true
+    submodules: true
+    fetchTags: false
+    fetchDepth: 0
 
-    - template: prereqs.yml
-      parameters:
-        versionNumberOverride: ${{ parameters.versionNumberOverride }}
+  - template: prereqs.yml
+    parameters:
+      versionNumberOverride: ${{ parameters.versionNumberOverride }}
 
-    - script: gulp 'vsix:release:package'
-      displayName: 'Build VSIXs'
+  - script: gulp vsix:release:package:${{ parameters.platform }}
+    displayName: 'Build VSIXs'
 
-    - task: PublishPipelineArtifact@1
-      # Run the publish step so we have vsix's even if the tests fail.
-      condition: succeededOrFailed()
-      displayName: 'Publish VSIXs'
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)/vsix'
-        artifactName: 'VSIX_Release_$(System.JobAttempt)'
+  - task: PublishBuildArtifacts@1
+    # Run the publish step so we have vsix's even if the tests fail.
+    condition: succeededOrFailed()
+    displayName: 'Publish VSIXs'
+    inputs:
+      PathtoPublish: '$(Build.SourcesDirectory)/vsix'
+      ArtifactName: 'VSIX_Release_$(System.JobAttempt)'
 
-    - script: npm run test:artifacts
-      displayName: 'Run artifacts tests'
+  - script: npm run test:artifacts
+    displayName: 'Run artifacts tests'
   
