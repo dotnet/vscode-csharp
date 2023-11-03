@@ -5,17 +5,24 @@
 - [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-## Next (Replace once current release version is generated)
+## Latest
 * Update Roslyn to 4.9.0-1.23530.4 (PR: [#6603](https://github.com/dotnet/vscode-csharp/pull/6603))
   * Enable NuGet restore commands `dotnet.restore.all` and `dotnet.restore.project` (PR: [#70588](https://github.com/dotnet/roslyn/pull/70588))
   * Fix issue where server did not reload projects after NuGet restore (PR: [#70602](https://github.com/dotnet/roslyn/pull/70602))
+* Update debugger to 2.9.0 (PR: [#6623](https://github.com/dotnet/vscode-csharp/pull/6623))
+  * Flush `Console.Write` buffer more often (Fixes: [#6598](https://github.com/dotnet/vscode-csharp/issues/6598))
+  * Fix logpoint freezing on start (Fixes: [#6585](https://github.com/dotnet/vscode-csharp/issues/6585))
+  * Fix logpoints when using variables after breakpoint breaks (Fixes: [#583](https://github.com/microsoft/vscode-dotnettools/issues/583))
 
-## Latest
-* Update Roslyn to 4.9.0-1.23525.5 (PR: [#6595](https://github.com/dotnet/vscode-csharp/pull/6595))
+## 2.9.20
+* Bump Roslyn to 4.9.0-1.23526.14 (PR: [#6608](https://github.com/dotnet/vscode-csharp/pull/6608))
   * Fix some project loading issues caused by evaluation failures (PR: [#70496](https://github.com/dotnet/roslyn/pull/70496))
   * Ensure evaluation diagnostics are logged during project load (PR: [#70467](https://github.com/dotnet/roslyn/pull/70467))
   * Include evaluation results in binlogs (PR: [#70472](https://github.com/dotnet/roslyn/pull/70472))
   * Fix failure to start language server when pipe name is too long (PR: [#70492](https://github.com/dotnet/roslyn/pull/70492))
+* Update Razor to 7.0.0-preview.23528.1 (PR: [#6607](https://github.com/dotnet/vscode-csharp/pull/6607))
+* Support platform agnostic Razor language server & telemetry (PR: [#6600](https://github.com/dotnet/vscode-csharp/pull/6600))
+* Fix issue where runtime from PATH was not found when only 7.0.100 SDK was installed (PR: [#6601](https://github.com/dotnet/vscode-csharp/pull/6601))
 
 ## 2.8.23
 * Fix various failed requests in razor documents (PR: [#6580](https://github.com/dotnet/vscode-csharp/pull/6580))

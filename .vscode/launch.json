@@ -41,7 +41,8 @@
                 "${workspaceFolder}/**",
                 "!**/node_modules/**"
             ],
-            "preLaunchTask": "buildDev"
+            "preLaunchTask": "buildDev",
+            "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "name": "Launch Current File BasicRazorApp2_1 Integration Tests",
@@ -69,7 +70,8 @@
                 "${workspaceFolder}/**",
                 "!**/node_modules/**"
             ],
-            "preLaunchTask": "buildDev"
+            "preLaunchTask": "buildDev",
+            "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "name": "Omnisharp: Launch Current File Integration Tests",
