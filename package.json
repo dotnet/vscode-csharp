@@ -129,6 +129,7 @@
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
+    "@vscode/l10n-dev": "^0.0.30",
     "@vscode/test-electron": "2.3.4",
     "@vscode/vsce": "2.21.0",
     "archiver": "5.3.0",
