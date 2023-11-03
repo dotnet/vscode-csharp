@@ -56,6 +56,7 @@ import { registerCodeActionFixAllCommands } from './fixAllCodeAction';
 import { commonOptions, languageServerOptions, omnisharpOptions } from '../shared/options';
 import { NamedPipeInformation } from './roslynProtocol';
 import { IDisposable } from '../disposable';
+import { registerRestoreCommands } from './restore';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -835,6 +836,7 @@ export async function activateRoslynLanguageServer(
     optionObservable: Observable<void>,
     outputChannel: vscode.OutputChannel,
     dotnetTestChannel: vscode.OutputChannel,
+    dotnetChannel: vscode.OutputChannel,
     reporter: TelemetryReporter,
     languageServerEvents: RoslynLanguageServerEvents
 ): Promise<RoslynLanguageServer> {
@@ -871,6 +873,8 @@ export async function activateRoslynLanguageServer(
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
+
+    registerRestoreCommands(context, languageServer, dotnetChannel);
 
     registerOnAutoInsert(languageServer);
 
