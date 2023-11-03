@@ -27,7 +27,7 @@ const config: Config = {
                 // Azure DevOps does not display test suites (it ignores them entirely).
                 // So we have to put all the info in the test case name so the UI shows anything relatively useful.
                 // See https://github.com/microsoft/azure-pipelines-tasks/issues/7659
-                titleTemplate: '{filename} / {suitename} / {title}',
+                titleTemplate: '{filepath} / {suitename} / {title}',
             },
         ],
     ],
