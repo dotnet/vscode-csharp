@@ -835,6 +835,11 @@ export class RoslynLanguageServer {
     }
 
     public async getBuildOnlyDiagnosticIds(token: vscode.CancellationToken): Promise<string[]> {
+        // If the server isn't running, no build diagnostics to get
+        if (!this.isRunning()) {
+            return [];
+        }
+
         const response = await this.sendRequest0(RoslynProtocol.BuildOnlyDiagnosticIdsRequest.type, token);
         if (response) {
             return response.ids;
