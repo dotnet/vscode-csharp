@@ -82,7 +82,7 @@ export async function activate(
 
     const csharpChannel = vscode.window.createOutputChannel('C#');
     const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
-    const dotnetChannel = vscode.window.createOutputChannel('.NET');
+    const dotnetChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
     const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     const csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
     eventStream.subscribe(csharpchannelObserver.post);

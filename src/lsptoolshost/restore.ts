@@ -17,7 +17,7 @@ export function registerRestoreCommands(
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
-            return chooseProjectToRestore(languageServer, restoreChannel);
+            return chooseProjectAndRestore(languageServer, restoreChannel);
         })
     );
     context.subscriptions.push(
@@ -26,7 +26,7 @@ export function registerRestoreCommands(
         })
     );
 }
-async function chooseProjectToRestore(
+async function chooseProjectAndRestore(
     languageServer: RoslynLanguageServer,
     restoreChannel: vscode.OutputChannel
 ): Promise<void> {
