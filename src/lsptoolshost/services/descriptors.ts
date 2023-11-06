@@ -32,4 +32,13 @@ export default class Descriptors {
             protocolMajorVersion: 3,
         }
     );
+
+    static readonly csharpExtensionBuildResultService: ServiceRpcDescriptor = new ServiceJsonRpcDescriptor(
+        ServiceMoniker.create('Microsoft.VisualStudio.CSharpExtension.BuildResultService', '0.1'),
+        Formatters.MessagePack,
+        MessageDelimiters.BigEndianInt32LengthHeader,
+        {
+            protocolMajorVersion: 3,
+        }
+    );
 }
