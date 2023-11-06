@@ -134,8 +134,7 @@ export class BuildDiagnosticsService {
     }
 
     private static isCompilerDiagnostic(d: vscode.Diagnostic): boolean {
-        // eslint-disable-next-line prettier/prettier
-        const regex = "[cC][sS][0-9]{4}";
+        const regex = '[cC][sS][0-9]{4}';
         return d.code ? d.code.toString().match(regex) !== null : false;
     }
 
