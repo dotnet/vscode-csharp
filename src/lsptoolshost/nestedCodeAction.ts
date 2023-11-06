@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import * as RoslynProtocol from './roslynProtocol';
 import { CodeAction, CodeActionResolveRequest, LSPAny } from 'vscode-languageserver-protocol';
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { URIConverter, createConverter } from 'vscode-languageclient/lib/common/protocolConverter';
@@ -37,7 +36,7 @@ async function registerNestedResolveCodeAction(
             const selectedValue = await vscode.window.showQuickPick(
                 action.nestedActions?.map((child: { title: string }) => child.title),
                 {
-                    placeHolder: vscode.l10n.t('Pick a nested action'),
+                    placeHolder: vscode.l10n.t(action.title),
                     ignoreFocusOut: true,
                 }
             );
@@ -51,7 +50,7 @@ async function registerNestedResolveCodeAction(
                 }
 
                 if (selectedAction.data.FixAllFlavors) {
-                    await getFixAllResponse(selectedAction.data, languageServer, outputChannel);
+                    await getFixAllResponse(selectedAction.data, languageServer, outputChannel, data.UniqueIdentifier);
                     return;
                 }
 
@@ -63,7 +62,7 @@ async function registerNestedResolveCodeAction(
                     },
                     async (_, token) => {
                         const nestedCodeActionResolve: CodeAction = {
-                            title: selectedAction.data.UniqueIdentifier,
+                            title: data.UniqueIdentifier + '|' + selectedAction.data.UniqueIdentifier,
                             data: selectedAction.data,
                         };
 
