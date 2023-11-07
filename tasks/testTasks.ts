@@ -21,7 +21,9 @@ gulp.task('test:razor', async () => {
 
 const razorIntegrationTestProjects = ['BasicRazorApp2_1'];
 for (const projectName of razorIntegrationTestProjects) {
-    gulp.task(`test:razorintegration:${projectName}`, async () => runIntegrationTest(projectName, /* razor */ true));
+    gulp.task(`test:razorintegration:${projectName}`, async () =>
+        runIntegrationTest(projectName, 'razorIntegrationTests', `Razor Test Integration ${projectName}`)
+    );
 }
 
 gulp.task(
@@ -41,10 +43,10 @@ const omnisharpIntegrationTestProjects = ['singleCsproj', 'slnWithCsproj', 'slnF
 
 for (const projectName of omnisharpIntegrationTestProjects) {
     gulp.task(`omnisharptest:integration:${projectName}:stdio`, async () =>
-        runOmnisharpJestIntegrationTest(projectName, 'stdio')
+        runOmnisharpJestIntegrationTest(projectName, 'stdio', `OmniSharp Test Integration ${projectName} STDIO}`)
     );
     gulp.task(`omnisharptest:integration:${projectName}:lsp`, async () =>
-        runOmnisharpJestIntegrationTest(projectName, 'lsp')
+        runOmnisharpJestIntegrationTest(projectName, 'lsp', `OmniSharp Test Integration ${projectName} LSP}`)
     );
     gulp.task(
         `omnisharptest:integration:${projectName}`,
@@ -73,7 +75,9 @@ gulp.task('test:unit', async () => {
 
 const integrationTestProjects = ['slnWithCsproj'];
 for (const projectName of integrationTestProjects) {
-    gulp.task(`test:integration:${projectName}`, async () => runIntegrationTest(projectName));
+    gulp.task(`test:integration:${projectName}`, async () =>
+        runIntegrationTest(projectName, 'integrationTests', `Test Integration ${projectName}`)
+    );
 }
 
 gulp.task(
@@ -83,7 +87,7 @@ gulp.task(
 
 gulp.task('test', gulp.series('test:unit', 'test:integration', 'test:razor', 'test:razorintegration'));
 
-async function runOmnisharpJestIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp') {
+async function runOmnisharpJestIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp', suiteName: string) {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
     const testFolder = path.join('omnisharptest', 'omnisharpIntegrationTests');
 
@@ -96,13 +100,13 @@ async function runOmnisharpJestIntegrationTest(testAssetName: string, engine: 's
         CODE_DISABLE_EXTENSIONS: 'true',
     };
 
-    await runJestIntegrationTest(testAssetName, testFolder, workspaceFile, env);
+    await runJestIntegrationTest(testAssetName, testFolder, workspaceFile, suiteName, env);
 }
 
-async function runIntegrationTest(testAssetName: string, razor = false) {
+async function runIntegrationTest(testAssetName: string, testFolderName: string, suiteName: string) {
     const vscodeWorkspaceFileName = `lsp_tools_host_${testAssetName}.code-workspace`;
-    const testFolder = path.join('test', razor ? 'razorIntegrationTests' : 'integrationTests');
-    return await runJestIntegrationTest(testAssetName, testFolder, vscodeWorkspaceFileName);
+    const testFolder = path.join('test', testFolderName);
+    return await runJestIntegrationTest(testAssetName, testFolder, vscodeWorkspaceFileName, suiteName);
 }
 
 /**
@@ -110,12 +114,14 @@ async function runIntegrationTest(testAssetName: string, razor = false) {
  * @param testAssetName the name of the test asset
  * @param testFolderName the relative path (from workspace root)
  * @param workspaceFileName the name of the vscode workspace file to use.
+ * @param suiteName a unique name for the test suite being run.
  * @param env any environment variables needed.
  */
 async function runJestIntegrationTest(
     testAssetName: string,
     testFolderName: string,
     workspaceFileName: string,
+    suiteName: string,
     env: NodeJS.ProcessEnv = {}
 ) {
     // Test assets are always in a testAssets folder inside the integration test folder.
@@ -143,6 +149,10 @@ async function runJestIntegrationTest(
     env.CODE_EXTENSIONS_PATH = rootPath;
     env.EXTENSIONS_TESTS_PATH = vscodeRunnerPath;
 
+    // Configure the file and suite name in CI to avoid having multiple test runs stomp on each other.
+    env.JEST_JUNIT_OUTPUT_NAME = getJUnitFileName(suiteName);
+    env.JEST_SUITE_NAME = suiteName;
+
     const result = await spawnNode([launcherPath, '--enable-source-maps'], { env, cwd: rootPath });
 
     if (result.code === null || result.code > 0) {
@@ -154,6 +164,8 @@ async function runJestIntegrationTest(
 }
 
 async function runJestTest(project: string) {
+    process.env.JEST_JUNIT_OUTPUT_NAME = getJUnitFileName(project);
+    process.env.JEST_SUITE_NAME = project;
     const configPath = path.join(rootPath, 'jest.config.ts');
     const { results } = await jest.runCLI(
         {
@@ -167,4 +179,8 @@ async function runJestTest(project: string) {
     if (!results.success) {
         throw new Error('Tests failed.');
     }
+}
+
+function getJUnitFileName(suiteName: string) {
+    return `${suiteName.replaceAll(' ', '_')}_junit.xml`;
 }

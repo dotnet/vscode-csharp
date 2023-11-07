@@ -1,0 +1,25 @@
+parameters:
+- name: versionNumberOverride
+  type: string
+  default: 'default'
+
+stages:
+- stage: Build
+  displayName: 'Build VSIXs'
+  dependsOn: []
+  jobs:
+  - template: build.yml
+    parameters:
+      versionNumberOverride: ${{ parameters.versionNumberOverride }}
+      vmImageName: ubuntu-latest
+      platform: linux
+  - template: build.yml
+    parameters:
+      versionNumberOverride: ${{ parameters.versionNumberOverride }}
+      vmImageName: windows-latest
+      platform: windows
+  - template: build.yml
+    parameters:
+      versionNumberOverride: ${{ parameters.versionNumberOverride }}
+      vmImageName: macOS-latest
+      platform: darwin

@@ -45,7 +45,6 @@ stages:
       fetchDepth: 0
     - pwsh: | 
         npm install
-        npm install -g @vscode/l10n-dev
         npm install -g gulp
       displayName: 'Install tools'
     - pwsh: npm run compile

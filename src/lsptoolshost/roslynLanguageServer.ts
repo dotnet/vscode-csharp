@@ -26,6 +26,7 @@ import {
     SocketMessageReader,
     MessageTransports,
     RAL,
+    CancellationToken,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -56,6 +57,8 @@ import { registerCodeActionFixAllCommands } from './fixAllCodeAction';
 import { commonOptions, languageServerOptions, omnisharpOptions } from '../shared/options';
 import { NamedPipeInformation } from './roslynProtocol';
 import { IDisposable } from '../disposable';
+import { registerRestoreCommands } from './restore';
+import { BuildDiagnosticsService } from './buildDiagnosticsService';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -94,6 +97,8 @@ export class RoslynLanguageServer {
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
+    public _buildDiagnosticService: BuildDiagnosticsService;
+
     constructor(
         private _languageClient: RoslynLanguageClient,
         private _platformInfo: PlatformInformation,
@@ -107,6 +112,10 @@ export class RoslynLanguageServer {
         this.registerReportProjectConfiguration();
         this.registerExtensionsChanged();
         this.registerTelemetryChanged();
+
+        const diagnosticsReportedByBuild = vscode.languages.createDiagnosticCollection('csharp-build');
+        this._buildDiagnosticService = new BuildDiagnosticsService(diagnosticsReportedByBuild);
+        this.registerDocumentOpenForDiagnostics();
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo();
@@ -569,7 +578,7 @@ export class RoslynLanguageServer {
             });
         });
 
-        // The server process will create the named pipe used for communcation. Wait for it to be created,
+        // The server process will create the named pipe used for communication. Wait for it to be created,
         // and listen for the server to pass back the connection information via stdout.
         const namedPipeConnectionPromise = new Promise<NamedPipeInformation>((resolve) => {
             _channel.appendLine('waiting for named pipe information from server...');
@@ -695,6 +704,16 @@ export class RoslynLanguageServer {
         );
     }
 
+    private registerDocumentOpenForDiagnostics() {
+        // When a file is opened process any build diagnostics that may be shown
+        this._languageClient.addDisposable(
+            vscode.workspace.onDidOpenTextDocument(async (event) => {
+                const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
+                this._buildDiagnosticService._onFileOpened(event, buildIds);
+            })
+        );
+    }
+
     private registerExtensionsChanged() {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
         this._languageClient.addDisposable(
@@ -816,6 +835,11 @@ export class RoslynLanguageServer {
     }
 
     public async getBuildOnlyDiagnosticIds(token: vscode.CancellationToken): Promise<string[]> {
+        // If the server isn't running, no build diagnostics to get
+        if (!this.isRunning()) {
+            return [];
+        }
+
         const response = await this.sendRequest0(RoslynProtocol.BuildOnlyDiagnosticIdsRequest.type, token);
         if (response) {
             return response.ids;
@@ -835,6 +859,7 @@ export async function activateRoslynLanguageServer(
     optionObservable: Observable<void>,
     outputChannel: vscode.OutputChannel,
     dotnetTestChannel: vscode.OutputChannel,
+    dotnetChannel: vscode.OutputChannel,
     reporter: TelemetryReporter,
     languageServerEvents: RoslynLanguageServerEvents
 ): Promise<RoslynLanguageServer> {
@@ -871,6 +896,8 @@ export async function activateRoslynLanguageServer(
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
+
+    registerRestoreCommands(context, languageServer, dotnetChannel);
 
     registerOnAutoInsert(languageServer);
 
