@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Url, parse as parseUrl } from 'url';
+import { Url } from 'url';
 import HttpProxyAgent = require('http-proxy-agent');
 import HttpsProxyAgent = require('https-proxy-agent');
 import { Agent } from 'http';
@@ -25,7 +25,7 @@ export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean
         return undefined;
     }
 
-    const proxyEndpoint = parseUrl(proxyURL);
+    const proxyEndpoint = new URL(proxyURL);
     if (proxyEndpoint.protocol === null) {
         return undefined;
     }
@@ -34,12 +34,11 @@ export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean
         return undefined;
     }
 
-    const opts: HttpProxyAgent.HttpProxyAgentOptions & HttpsProxyAgent.HttpsProxyAgentOptions = {
-        host: proxyEndpoint.hostname,
-        port: proxyEndpoint.port,
-        auth: proxyEndpoint.auth,
+    const opts: HttpProxyAgent.HttpProxyAgentOptions<string> & HttpsProxyAgent.HttpsProxyAgentOptions<string> = {
         rejectUnauthorized: strictSSL,
     };
 
-    return requestURL.protocol === 'http:' ? HttpProxyAgent(opts) : HttpsProxyAgent(opts);
+    return requestURL.protocol === 'http:'
+        ? new HttpProxyAgent.HttpProxyAgent(proxyEndpoint, opts)
+        : new HttpsProxyAgent.HttpsProxyAgent(proxyEndpoint, opts);
 }
