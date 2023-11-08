@@ -47,15 +47,15 @@ stages:
               npm install --global vsce
             displayName: 'Install vsce'
           - pwsh: |
-              $artifactFolderPrefix = "VSIX_Release_"
+              $artifactFolder = "VSIX_Release"
               if ("${{ parameters.uploadPrerelease }}" -eq "true") {
-                $artifactFolderPrefix = "VSIX_Prerelease_"
+                $artifactFolder = "VSIX_Prerelease"
               }
 
-              Write-Host "Using artifacts from $artifactFolderPrefix"
+              Write-Host "Using artifacts from $artifactFolder"
 
               # Our build pipeline would generated build based on attempt number. Publishing the latest attempt.
-              $allArtifacts = Get-ChildItem -Path "$artifactFolderPrefix*" | Sort-Object -Descending
+              $allArtifacts = Get-ChildItem -Path "$artifactFolder*" | Sort-Object -Descending
               if ($allArtifacts.Length -eq 0) {
                 throw "No Artifacts is downloaded."
               }
