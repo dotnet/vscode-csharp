@@ -1459,205 +1459,205 @@
             "type": "boolean",
             "description": "%generateOptionsSchema.allowFastEvaluate.description%",
             "default": true
-          }
-        },
-        "dotnet.unitTestDebuggingOptions": {
-          "type": "object",
-          "description": "%configuration.dotnet.unitTestDebuggingOptions%",
-          "default": {},
-          "properties": {
-            "sourceFileMap": {
-              "type": "object",
-              "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
-              "additionalProperties": {
-                "type": "string"
-              }
-            },
-            "justMyCode": {
-              "type": "boolean",
-              "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
-              "default": true
-            },
-            "requireExactSource": {
-              "type": "boolean",
-              "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
-              "default": true
-            },
-            "enableStepFiltering": {
-              "type": "boolean",
-              "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
-              "default": true
-            },
-            "logging": {
-              "description": "%generateOptionsSchema.logging.description%",
-              "type": "object",
-              "required": [],
-              "default": {},
-              "properties": {
-                "exceptions": {
-                  "type": "boolean",
-                  "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
-                  "default": true
-                },
-                "moduleLoad": {
-                  "type": "boolean",
-                  "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
-                  "default": true
-                },
-                "programOutput": {
-                  "type": "boolean",
-                  "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
-                  "default": true
-                },
-                "threadExit": {
-                  "type": "boolean",
-                  "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
-                  "default": false
-                },
-                "processExit": {
-                  "type": "boolean",
-                  "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
-                  "default": true
+          },
+          "dotnet.unitTestDebuggingOptions": {
+            "type": "object",
+            "description": "%configuration.dotnet.unitTestDebuggingOptions%",
+            "default": {},
+            "properties": {
+              "sourceFileMap": {
+                "type": "object",
+                "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
+                "additionalProperties": {
+                  "type": "string"
                 }
-              }
-            },
-            "suppressJITOptimizations": {
-              "type": "boolean",
-              "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
-              "default": false
-            },
-            "symbolOptions": {
-              "description": "%generateOptionsSchema.symbolOptions.description%",
-              "default": {
-                "searchPaths": [],
-                "searchMicrosoftSymbolServer": false,
-                "searchNuGetOrgSymbolServer": false
               },
-              "type": "object",
-              "properties": {
-                "searchPaths": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+              "justMyCode": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
+                "default": true
+              },
+              "requireExactSource": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
+                "default": true
+              },
+              "enableStepFiltering": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
+                "default": true
+              },
+              "logging": {
+                "description": "%generateOptionsSchema.logging.description%",
+                "type": "object",
+                "required": [],
+                "default": {},
+                "properties": {
+                  "exceptions": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
+                    "default": true
                   },
-                  "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
-                  "default": []
-                },
-                "searchMicrosoftSymbolServer": {
-                  "type": "boolean",
-                  "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
-                  "default": false
-                },
-                "searchNuGetOrgSymbolServer": {
-                  "type": "boolean",
-                  "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
-                  "default": false
-                },
-                "cachePath": {
-                  "type": "string",
-                  "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
-                  "default": ""
-                },
-                "moduleFilter": {
-                  "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
-                  "default": {
-                    "mode": "loadAllButExcluded",
-                    "excludedModules": []
+                  "moduleLoad": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
+                    "default": true
                   },
-                  "type": "object",
-                  "required": [
-                    "mode"
-                  ],
-                  "properties": {
-                    "mode": {
-                      "type": "string",
-                      "enum": [
-                        "loadAllButExcluded",
-                        "loadOnlyIncluded"
-                      ],
-                      "enumDescriptions": [
-                        "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
-                        "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
-                      ],
-                      "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
-                      "default": "loadAllButExcluded"
+                  "programOutput": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
+                    "default": true
+                  },
+                  "threadExit": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
+                    "default": false
+                  },
+                  "processExit": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
+                    "default": true
+                  }
+                }
+              },
+              "suppressJITOptimizations": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
+                "default": false
+              },
+              "symbolOptions": {
+                "description": "%generateOptionsSchema.symbolOptions.description%",
+                "default": {
+                  "searchPaths": [],
+                  "searchMicrosoftSymbolServer": false,
+                  "searchNuGetOrgSymbolServer": false
+                },
+                "type": "object",
+                "properties": {
+                  "searchPaths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     },
-                    "excludedModules": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
+                    "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
+                    "default": []
+                  },
+                  "searchMicrosoftSymbolServer": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
+                    "default": false
+                  },
+                  "searchNuGetOrgSymbolServer": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
+                    "default": false
+                  },
+                  "cachePath": {
+                    "type": "string",
+                    "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
+                    "default": ""
+                  },
+                  "moduleFilter": {
+                    "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
+                    "default": {
+                      "mode": "loadAllButExcluded",
+                      "excludedModules": []
+                    },
+                    "type": "object",
+                    "required": [
+                      "mode"
+                    ],
+                    "properties": {
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "loadAllButExcluded",
+                          "loadOnlyIncluded"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
+                        ],
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
+                        "default": "loadAllButExcluded"
                       },
-                      "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
-                      "default": []
-                    },
-                    "includedModules": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
+                      "excludedModules": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
+                        "default": []
                       },
-                      "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
-                      "default": []
-                    },
-                    "includeSymbolsNextToModules": {
-                      "type": "boolean",
-                      "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
-                      "default": true
+                      "includedModules": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
+                        "default": []
+                      },
+                      "includeSymbolsNextToModules": {
+                        "type": "boolean",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
+                        "default": true
+                      }
                     }
                   }
                 }
-              }
-            },
-            "sourceLinkOptions": {
-              "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
-              "default": {
-                "*": {
-                  "enabled": true
-                }
               },
-              "type": "object",
-              "additionalItems": {
+              "sourceLinkOptions": {
+                "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
+                "default": {
+                  "*": {
+                    "enabled": true
+                  }
+                },
                 "type": "object",
-                "properties": {
-                  "enabled": {
-                    "title": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                    "default": "true"
+                "additionalItems": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "title": "boolean",
+                      "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
+                      "default": "true"
+                    }
                   }
                 }
+              },
+              "allowFastEvaluate": {
+                "type": "boolean",
+                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
+                "default": true
+              },
+              "targetArchitecture": {
+                "type": "string",
+                "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "coreclr",
+                  "clr"
+                ],
+                "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+                "default": "coreclr"
+              },
+              "debugServer": {
+                "type": "number",
+                "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+                "default": 4711
               }
-            },
-            "allowFastEvaluate": {
-              "type": "boolean",
-              "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-              "default": true
-            },
-            "targetArchitecture": {
-              "type": "string",
-              "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
-              "enum": [
-                "x86_64",
-                "arm64"
-              ]
-            },
-            "type": {
-              "type": "string",
-              "enum": [
-                "coreclr",
-                "clr"
-              ],
-              "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
-              "default": "coreclr"
-            },
-            "debugServer": {
-              "type": "number",
-              "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
-              "default": 4711
             }
+          },
+          "dotnet.unitTests.runSettingsPath": {
+            "type": "string",
+            "description": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)"
           }
-        },
-        "dotnet.unitTests.runSettingsPath": {
-          "type": "string",
-          "description": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)"
         }
       },
       {
@@ -1735,36 +1735,36 @@
             "type": "string",
             "default": null,
             "description": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors."
+          },
+          "razor.languageServer.directory": {
+            "type": "string",
+            "scope": "machine-overridable",
+            "description": "%configuration.razor.languageServer.directory%",
+            "order": 90
+          },
+          "razor.languageServer.debug": {
+            "type": "boolean",
+            "scope": "machine-overridable",
+            "default": false,
+            "description": "%configuration.razor.languageServer.debug%",
+            "order": 90
+          },
+          "razor.trace": {
+            "type": "string",
+            "default": "Off",
+            "enum": [
+              "Off",
+              "Messages",
+              "Verbose"
+            ],
+            "enumDescriptions": [
+              "%configuration.razor.trace.off%",
+              "%configuration.razor.trace.messages%",
+              "%configuration.razor.trace.verbose%"
+            ],
+            "description": "%configuration.razor.trace%",
+            "order": 90
           }
-        },
-        "razor.languageServer.directory": {
-          "type": "string",
-          "scope": "machine-overridable",
-          "description": "%configuration.razor.languageServer.directory%",
-          "order": 90
-        },
-        "razor.languageServer.debug": {
-          "type": "boolean",
-          "scope": "machine-overridable",
-          "default": false,
-          "description": "%configuration.razor.languageServer.debug%",
-          "order": 90
-        },
-        "razor.trace": {
-          "type": "string",
-          "default": "Off",
-          "enum": [
-            "Off",
-            "Messages",
-            "Verbose"
-          ],
-          "enumDescriptions": [
-            "%configuration.razor.trace.off%",
-            "%configuration.razor.trace.messages%",
-            "%configuration.razor.trace.verbose%"
-          ],
-          "description": "%configuration.razor.trace%",
-          "order": 90
         }
       },
       {
