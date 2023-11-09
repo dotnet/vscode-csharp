@@ -29,12 +29,11 @@ jobs:
     displayName: 'Build VSIXs'
 
   - task: PublishBuildArtifacts@1
-    # Run the publish step so we have vsix's even if the tests fail.
-    condition: succeededOrFailed()
+    condition: succeeded()
     displayName: 'Publish VSIXs'
     inputs:
       PathtoPublish: '$(Build.SourcesDirectory)/vsix'
-      ArtifactName: 'VSIX_Prerelease_$(System.JobAttempt)'
+      ArtifactName: 'VSIX_Prerelease'
 
   - script: npm run test:artifacts
     displayName: 'Run artifacts tests'
@@ -59,12 +58,11 @@ jobs:
     displayName: 'Build VSIXs'
 
   - task: PublishBuildArtifacts@1
-    # Run the publish step so we have vsix's even if the tests fail.
-    condition: succeededOrFailed()
+    condition: succeeded()
     displayName: 'Publish VSIXs'
     inputs:
       PathtoPublish: '$(Build.SourcesDirectory)/vsix'
-      ArtifactName: 'VSIX_Release_$(System.JobAttempt)'
+      ArtifactName: 'VSIX_Release'
 
   - script: npm run test:artifacts
     displayName: 'Run artifacts tests'
