@@ -1054,7 +1054,18 @@
     ],
     "configuration": [
       {
-        "title": "Editor Behavior",
+        "title": "Project",
+        "order": 0,
+        "properties": {
+          "dotnet.defaultSolution": {
+            "type": "string",
+            "description": "%configuration.dotnet.defaultSolution.description%",
+            "order": 0
+          }
+        }
+      },
+      {
+        "title": "Text Editor",
         "order": 1,
         "properties": {
           "dotnet.implementType.insertionBehavior": {
@@ -1664,11 +1675,6 @@
         "title": "LSP Server",
         "order": 9,
         "properties": {
-          "dotnet.defaultSolution": {
-            "type": "string",
-            "description": "%configuration.dotnet.defaultSolution.description%",
-            "order": 0
-          },
           "dotnet.preferCSharpExtension": {
             "scope": "resource",
             "type": "boolean",

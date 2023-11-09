@@ -7,7 +7,7 @@ import { readFileSync } from 'fs';
 import { convertServerOptionNameToClientConfigurationName } from '../../src/lsptoolshost/optionNameConverter';
 import * as jestLib from '@jest/globals';
 
-const editorBehaviorSection = 0;
+const editorBehaviorSection = 1;
 const testData = [
     {
         serverOption: 'csharp|symbol_search.dotnet_search_reference_assemblies',
@@ -266,7 +266,7 @@ const testData = [
 jestLib.describe('Server option name to vscode configuration name test', () => {
     const packageJson = JSON.parse(readFileSync('package.json').toString());
     const configurations = <any[]>packageJson['contributes']['configuration'];
-    const numConfigurations = 4;
+    const numConfigurations = 5;
     jestLib.test('Max server sections are expected', () => {
         jestLib.expect(configurations.length).toBe(numConfigurations);
     });
