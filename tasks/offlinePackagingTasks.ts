@@ -29,6 +29,7 @@ import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 import path = require('path');
+import { CancellationToken } from 'vscode';
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const argv = require('yargs').argv;
@@ -153,7 +154,8 @@ async function installDebugger(packageJSON: any, platformInfo: PlatformInformati
 async function installPackageJsonDependency(
     dependencyName: string,
     packageJSON: any,
-    platformInfo: PlatformInformation
+    platformInfo: PlatformInformation,
+    token?: CancellationToken
 ) {
     const eventStream = new EventStream();
     const logger = new Logger((message) => process.stdout.write(message));
@@ -168,7 +170,7 @@ async function installPackageJsonDependency(
         codeExtensionPath
     );
     const provider = () => new NetworkSettings('', true);
-    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
+    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, token))) {
         throw Error('Failed to download package.');
     }
 }

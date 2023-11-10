@@ -15,12 +15,14 @@ import { InstallationFailure, IntegrityCheckFailure } from '../omnisharp/logging
 import { mkdirpSync } from 'fs-extra';
 import { PackageInstallStart } from '../omnisharp/loggingEvents';
 import { DownloadValidator } from './isValidDownload';
+import { CancellationToken } from 'vscode';
 
 export async function downloadAndInstallPackages(
     packages: AbsolutePathPackage[],
     provider: NetworkSettingsProvider,
     eventStream: EventStream,
-    downloadValidator: DownloadValidator
+    downloadValidator: DownloadValidator,
+    token?: CancellationToken
 ): Promise<boolean> {
     eventStream.post(new PackageInstallStart());
     for (const pkg of packages) {
@@ -33,7 +35,14 @@ export async function downloadAndInstallPackages(
             while (willTryInstallingPackage()) {
                 count = count + 1;
                 installationStage = 'downloadPackage';
-                const buffer = await DownloadFile(pkg.description, eventStream, provider, pkg.url, pkg.fallbackUrl);
+                const buffer = await DownloadFile(
+                    pkg.description,
+                    eventStream,
+                    provider,
+                    pkg.url,
+                    pkg.fallbackUrl,
+                    token
+                );
                 if (downloadValidator(buffer, pkg.integrity, eventStream)) {
                     installationStage = 'installPackage';
                     await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);

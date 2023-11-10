@@ -17,18 +17,20 @@ import { NestedError } from '../nestedError';
 import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
 import { NetworkSettingsProvider } from '../networkSettings';
+import { CancellationToken } from 'vscode';
 
 export async function DownloadFile(
     description: string,
     eventStream: EventStream,
     networkSettingsProvider: NetworkSettingsProvider,
     url: string,
-    fallbackUrl?: string
+    fallbackUrl?: string,
+    token?: CancellationToken
 ): Promise<Buffer> {
     eventStream.post(new DownloadStart(description));
 
     try {
-        const buffer = await downloadFile(description, url, eventStream, networkSettingsProvider);
+        const buffer = await downloadFile(description, url, eventStream, networkSettingsProvider, token);
         eventStream.post(new DownloadSuccess(` Done!`));
         return buffer;
     } catch (primaryUrlError) {
@@ -54,7 +56,8 @@ async function downloadFile(
     description: string,
     urlString: string,
     eventStream: EventStream,
-    networkSettingsProvider: NetworkSettingsProvider
+    networkSettingsProvider: NetworkSettingsProvider,
+    token?: CancellationToken
 ): Promise<Buffer> {
     const url = parseUrl(urlString);
     const networkSettings = networkSettingsProvider();
@@ -66,12 +69,15 @@ async function downloadFile(
         agent: getProxyAgent(url, proxy, strictSSL),
         port: url.port,
         rejectUnauthorized: strictSSL,
-        timeout: 5 * 60 * 1000, // timeout is in milliseconds
     };
 
     const buffers: any[] = [];
 
     return new Promise<Buffer>((resolve, reject) => {
+        token?.onCancellationRequested(() => {
+            return reject(new NestedError(`Cancelled downloading ${urlString}.`));
+        });
+
         const request = https.request(options, (response) => {
             if (response.statusCode === 301 || response.statusCode === 302) {
                 // Redirect - download from new location
@@ -82,7 +88,7 @@ async function downloadFile(
                     return reject(new NestedError('Missing location'));
                 }
                 return resolve(
-                    downloadFile(description, response.headers.location, eventStream, networkSettingsProvider)
+                    downloadFile(description, response.headers.location, eventStream, networkSettingsProvider, token)
                 );
             } else if (response.statusCode !== 200) {
                 // Download failed - print error message
@@ -128,10 +134,6 @@ async function downloadFile(
                     )
                 );
             });
-        });
-
-        request.on('timeout', () => {
-            request.destroy(new Error(`Timed out trying to download ${urlString}.`));
         });
 
         request.on('error', (err) => {
