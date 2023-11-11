@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import { PlatformInformation } from '../shared/platform';
 import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from '../omnisharp/loggingEvents';
 import { EventStream } from '../eventStream';
@@ -42,17 +43,27 @@ export class RazorTelemetryDownloader {
         if (packagesToInstall.length > 0) {
             this.eventStream.post(new PackageInstallation(`Razor Telemetry Version = ${version}`));
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            if (
-                await downloadAndInstallPackages(
-                    packagesToInstall,
-                    this.networkSettingsProvider,
-                    this.eventStream,
-                    isValidDownload
-                )
-            ) {
-                this.eventStream.post(new InstallationSuccess());
-                return true;
-            }
+            await vscode.window.withProgress(
+                {
+                    location: vscode.ProgressLocation.Notification,
+                    title: vscode.l10n.t('Downloading Razor Telemetry Package'),
+                    cancellable: true,
+                },
+                async (_, token) => {
+                    if (
+                        await downloadAndInstallPackages(
+                            packagesToInstall,
+                            this.networkSettingsProvider,
+                            this.eventStream,
+                            isValidDownload,
+                            token
+                        )
+                    ) {
+                        this.eventStream.post(new InstallationSuccess());
+                        return true;
+                    }
+                }
+            );
         }
 
         return false;
