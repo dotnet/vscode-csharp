@@ -5,9 +5,9 @@
 
 import { readFileSync } from 'fs';
 import { migrateOptions } from '../../src/shared/migrateOptions';
-import * as jestLib from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 
-jestLib.describe('Migrate configuration should in package.json', () => {
+describe('Migrate configuration should in package.json', () => {
     const packageJson = JSON.parse(readFileSync('package.json').toString());
     const configuration = packageJson.contributes.configuration;
     // Read the "Project", "Text Editor", "Debugger", "LSP Server" sections of the package.json
@@ -19,8 +19,8 @@ jestLib.describe('Migrate configuration should in package.json', () => {
     ];
 
     migrateOptions.forEach((data) => {
-        jestLib.test(`Should have ${data.roslynOption} in package.json`, () => {
-            jestLib.expect(configurations).toContain(data.roslynOption);
+        test(`Should have ${data.roslynOption} in package.json`, () => {
+            expect(configurations).toContain(data.roslynOption);
         });
     });
 });
