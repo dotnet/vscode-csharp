@@ -26,8 +26,7 @@ export function registerCodeActionFixAllCommands(
 export async function getFixAllResponse(
     data: LSPAny,
     languageServer: RoslynLanguageServer,
-    outputChannel: vscode.OutputChannel,
-    originalCodeActionTitle: string | null
+    outputChannel: vscode.OutputChannel
 ) {
     const result = await vscode.window.showQuickPick(data.FixAllFlavors, {
         placeHolder: vscode.l10n.t('Pick a fix all scope'),
@@ -41,13 +40,8 @@ export async function getFixAllResponse(
         },
         async (_, token) => {
             if (result) {
-                let title: string = data.UniqueIdentifier;
-                if (originalCodeActionTitle) {
-                    title = 'Fix All: ' + originalCodeActionTitle + '|' + title.replace('Fix All: ', '');
-                }
-
                 const fixAllCodeAction: RoslynProtocol.RoslynFixAllCodeAction = {
-                    title: title,
+                    title: data.title,
                     data: data,
                     scope: result,
                 };
@@ -82,6 +76,6 @@ async function registerFixAllResolveCodeAction(
 ) {
     if (codeActionData) {
         const data = <LSPAny>codeActionData;
-        await getFixAllResponse(data, languageServer, outputChannel, null);
+        await getFixAllResponse(data, languageServer, outputChannel);
     }
 }

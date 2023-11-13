@@ -33,24 +33,20 @@ async function registerNestedResolveCodeAction(
         const action = data.NestedCodeAction;
 
         if (action?.nestedActions?.length > 0) {
-            const selectedValue = await vscode.window.showQuickPick(
-                action.nestedActions?.map((child: { title: string }) => child.title),
-                {
-                    placeHolder: vscode.l10n.t(action.title),
-                    ignoreFocusOut: true,
-                }
-            );
+            const codeActionTitles: string[] = getCodeActionTitles(action.nestedActions);
+            const selectedValue = await vscode.window.showQuickPick(codeActionTitles, {
+                placeHolder: vscode.l10n.t(action.title),
+                ignoreFocusOut: true,
+            });
             if (selectedValue) {
-                const selectedAction = action.nestedActions?.find(
-                    (child: { title: string }) => child.title === selectedValue
-                );
+                const selectedAction = retrieveSelectedAction(selectedValue, action.nestedActions);
 
                 if (!selectedAction) {
                     return;
                 }
 
                 if (selectedAction.data.FixAllFlavors) {
-                    await getFixAllResponse(selectedAction.data, languageServer, outputChannel, data.UniqueIdentifier);
+                    await getFixAllResponse(selectedAction.data, languageServer, outputChannel);
                     return;
                 }
 
@@ -62,7 +58,7 @@ async function registerNestedResolveCodeAction(
                     },
                     async (_, token) => {
                         const nestedCodeActionResolve: CodeAction = {
-                            title: data.UniqueIdentifier + '|' + selectedAction.data.UniqueIdentifier,
+                            title: selectedAction.title,
                             data: selectedAction.data,
                         };
 
@@ -94,4 +90,42 @@ async function registerNestedResolveCodeAction(
             }
         }
     }
+}
+
+function getCodeActionTitles(nestedActions: any): string[] {
+    // Flatten the array of strings and concatenate with " ->"
+    return nestedActions.flatMap(
+        (nestedAction: {
+            data: {
+                FixAllFlavors: string[] | null;
+                CodeActionPath: string[];
+            };
+        }) => {
+            const codeActionPath = nestedAction.data.CodeActionPath;
+            const fixAllFlavors = nestedAction.data.FixAllFlavors;
+            // If there's only one string, return it directly
+            if (codeActionPath.length === 1) {
+                return codeActionPath;
+            }
+
+            // Concatenate multiple strings with " ->"
+            const concatenatedString = codeActionPath.slice(1).join(' -> ');
+            const fixAllString = vscode.l10n.t('Fix All: ');
+            return fixAllFlavors ? [`${fixAllString}${concatenatedString}`] : concatenatedString;
+        }
+    );
+}
+
+function retrieveSelectedAction(selectedValue: string, nestedActions: any): any {
+    return nestedActions.find(
+        (nestedAction: { data: { CodeActionPath: string[]; FixAllFlavors: string[] | null } }) => {
+            const codeActionPath = nestedAction.data.CodeActionPath;
+            const fixAllFlavors = nestedAction.data.FixAllFlavors;
+            const fixAllString = vscode.l10n.t('Fix All: ');
+            const concatenatedString = codeActionPath.slice(1).join(' -> ');
+            return fixAllFlavors
+                ? `${fixAllString}${concatenatedString}` === selectedValue
+                : concatenatedString === selectedValue;
+        }
+    );
 }
