@@ -5,7 +5,7 @@
 
 import { readFileSync } from 'fs';
 import { convertServerOptionNameToClientConfigurationName } from '../../src/lsptoolshost/optionNameConverter';
-import * as jestLib from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 
 const editorBehaviorSection = 1;
 const testData = [
@@ -263,25 +263,22 @@ const testData = [
     },
 ];
 
-jestLib.describe('Server option name to vscode configuration name test', () => {
+describe('Server option name to vscode configuration name test', () => {
     const packageJson = JSON.parse(readFileSync('package.json').toString());
     const configurations = <any[]>packageJson['contributes']['configuration'];
     const numConfigurations = 5;
-    jestLib.test('Max server sections are expected', () => {
-        jestLib.expect(configurations.length).toBe(numConfigurations);
+    test('Max server sections are expected', () => {
+        expect(configurations.length).toBe(numConfigurations);
     });
 
     testData.forEach((data) => {
-        jestLib.test(
-            `Server option name ${data.serverOption} should be converted to ${data.vsCodeConfiguration}`,
-            () => {
-                const actualName = convertServerOptionNameToClientConfigurationName(data.serverOption);
-                jestLib.expect(actualName).toBe(data.vsCodeConfiguration);
-                if (data.declareInPackageJson) {
-                    const section = Object.keys(configurations[data.section!]['properties']);
-                    jestLib.expect(section).toContain(data.vsCodeConfiguration);
-                }
+        test(`Server option name ${data.serverOption} should be converted to ${data.vsCodeConfiguration}`, () => {
+            const actualName = convertServerOptionNameToClientConfigurationName(data.serverOption);
+            expect(actualName).toBe(data.vsCodeConfiguration);
+            if (data.declareInPackageJson) {
+                const section = Object.keys(configurations[data.section!]['properties']);
+                expect(section).toContain(data.vsCodeConfiguration);
             }
-        );
+        });
     });
 });
