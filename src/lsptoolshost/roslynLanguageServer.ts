@@ -572,8 +572,9 @@ export class RoslynLanguageServer {
             // Error information will be captured from the stdout/stderr streams above.
             childProcess.on('exit', (code) => {
                 if (code && code !== 0) {
-                    _channel.appendLine(`Language server process exited with ${code}`);
-                    reject();
+                    const message = `Language server process exited with ${code}`;
+                    _channel.appendLine(message);
+                    reject(new Error(message));
                 }
             });
         });
