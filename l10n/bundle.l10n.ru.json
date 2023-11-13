@@ -37,6 +37,7 @@
   "Do not load any": "Не загружать",
   "Does not contain .NET Core projects.": "Не содержит проектов .NET Core.",
   "Don't Ask Again": "Больше не спрашивать",
+  "Downloading Razor Telemetry Package": "Скачивание пакета телеметрии Razor",
   "Enable launching a web browser when ASP.NET Core starts. For more information: {0}": "Включите запуск веб-браузера при запуске ASP.NET Core. Для получения дополнительных сведений: {0}",
   "Error Message: ": "Сообщение об ошибке: ",
   "Expand": "Развернуть",
