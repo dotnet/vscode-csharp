@@ -37,6 +37,7 @@
   "Do not load any": "로드 안 함",
   "Does not contain .NET Core projects.": ".NET Core 프로젝트가 포함되어 있지 않습니다.",
   "Don't Ask Again": "다시 묻지 않음",
+  "Downloading Razor Telemetry Package": "Downloading Razor Telemetry Package",
   "Enable launching a web browser when ASP.NET Core starts. For more information: {0}": "ASP.NET Core가 시작될 때 웹 브라우저 실행을 활성화합니다. 자세한 내용: {0}",
   "Error Message: ": "오류 메시지: ",
   "Expand": "확장",

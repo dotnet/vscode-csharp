@@ -741,7 +741,7 @@ export class OmniSharpServer {
 
     public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
         if (this._state.status !== ServerState.Started) {
-            return Promise.reject<TResponse>(new Error('OmniSharp server is not running.'));
+            throw new Error('OmniSharp server is not running.');
         }
 
         const { engine } = this._state;
