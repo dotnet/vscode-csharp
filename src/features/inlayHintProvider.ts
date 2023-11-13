@@ -67,14 +67,14 @@ export default class OmniSharpInlayHintProvider extends AbstractProvider impleme
                 return mappedHint;
             });
         } catch (error) {
-            return Promise.reject(`Problem invoking 'GetInlayHints' on OmniSharpServer: ${error}`);
+            return Promise.reject(new Error(`Problem invoking 'GetInlayHints' on OmniSharpServer: ${error}`));
         }
     }
 
     async resolveInlayHint?(hint: vscode.InlayHint, token: vscode.CancellationToken): Promise<vscode.InlayHint> {
         const inlayHint = this._hintsMap.get(hint);
         if (inlayHint === undefined) {
-            return Promise.reject(`Outdated inlay hint was requested to be resolved, aborting.`);
+            return Promise.reject(new Error(`Outdated inlay hint was requested to be resolved, aborting.`));
         }
 
         const request: InlayHintResolveRequest = { Hint: inlayHint };
@@ -83,7 +83,7 @@ export default class OmniSharpInlayHintProvider extends AbstractProvider impleme
             const result = await serverUtils.resolveInlayHints(this._server, request, token);
             return this.toVSCodeHint(result);
         } catch (error) {
-            return Promise.reject(`Problem invoking 'ResolveInlayHints' on OmniSharpServer: ${error}`);
+            return Promise.reject(new Error(`Problem invoking 'ResolveInlayHints' on OmniSharpServer: ${error}`));
         }
     }
 
