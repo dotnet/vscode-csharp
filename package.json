@@ -37,10 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.9.0-1.23506.7",
+    "roslyn": "4.9.0-2.23563.2",
     "omniSharp": "1.39.10",
-    "razor": "7.0.0-preview.23475.5",
-    "razorOmnisharp": "7.0.0-preview.23363.1"
+    "razor": "7.0.0-preview.23528.1",
+    "razorOmnisharp": "7.0.0-preview.23363.1",
+    "razorTelemetry": "7.0.0-preview.23528.1"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -48,6 +49,12 @@
     {
       "moniker": {
         "name": "Microsoft.CodeAnalysis.LanguageClient.SolutionSnapshotProvider",
+        "version": "0.1"
+      }
+    },
+    {
+      "moniker": {
+        "name": "Microsoft.VisualStudio.CSharpExtension.BuildResultService",
         "version": "0.1"
       }
     }
@@ -59,19 +66,17 @@
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
     "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development && npm run l10nDevGenerateLocalizationBundle",
     "watch": "tsc -watch -p ./",
-    "tdd": "mocha --config ./.mocharc.jsonc --watch --watch-extensions ts omnisharptest/omnisharpUnitTests/**/*.test.ts*",
     "test": "tsc -p ./ && gulp test",
     "test:integration": "tsc -p ./ && gulp test:integration",
     "test:razor": "tsc -p ./ && npm run compile:razorTextMate && gulp test:razor",
     "test:razorintegration": "tsc -p ./ && gulp test:razorintegration",
+    "test:artifacts": "tsc -p ./ && gulp test:artifacts",
     "omnisharptest": "tsc -p ./ && gulp omnisharptest",
     "omnisharptest:unit": "tsc -p ./ && gulp omnisharptest:unit",
-    "omnisharptest:feature": "tsc -p ./ && gulp omnisharptest:feature",
     "omnisharptest:integration": "tsc -p ./ && gulp omnisharptest:integration",
     "omnisharptest:integration:singleCsproj": "tsc -p ./ && gulp omnisharptest:integration:singleCsproj",
     "omnisharptest:integration:slnWithCsproj": "tsc -p ./ && gulp omnisharptest:integration:slnWithCsproj",
     "omnisharptest:integration:slnFilterWithCsproj": "tsc -p ./ && gulp omnisharptest:integration:slnFilterWithCsproj",
-    "omnisharptest:artifacts": "tsc -p ./ && mocha out/omnisharptest/omnisharpArtifactTests/**/*.test.js",
     "unpackage:vsix": "gulp vsix:release:unpackage",
     "updatePackageDependencies": "gulp updatePackageDependencies",
     "l10nDevGenerateXlf": "npx @vscode/l10n-dev generate-xlf ./package.nls.json ./l10n/bundle.l10n.json --outFile ./loc/vscode-csharp.xlf",
@@ -85,20 +90,20 @@
     "@octokit/rest": "^20.0.1",
     "@types/cross-spawn": "6.0.2",
     "@vscode/debugprotocol": "1.56.0",
-    "@vscode/extension-telemetry": "0.6.2",
+    "@vscode/extension-telemetry": "^0.9.0",
     "@vscode/js-debug-browsers": "^1.1.0",
     "async-file": "2.0.2",
     "cross-spawn": "6.0.5",
     "execa": "4.0.0",
     "fs-extra": "9.1.0",
-    "http-proxy-agent": "4.0.1",
-    "https-proxy-agent": "5.0.0",
+    "http-proxy-agent": "7.0.0",
+    "https-proxy-agent": "7.0.2",
     "jsonc-parser": "3.0.0",
     "microsoft.aspnetcore.razor.vscode": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/0af42abab690d5de903a4a814d6aedc1/microsoft.aspnetcore.razor.vscode-7.0.0-preview.23363.1.tgz",
     "nerdbank-gitversioning": "^3.6.79-alpha",
     "node-machine-id": "1.1.12",
     "ps-list": "7.2.0",
-    "request-light": "0.4.0",
+    "request-light": "0.7.0",
     "rxjs": "6.6.7",
     "semver": "7.5.4",
     "stream": "0.0.2",
@@ -117,15 +122,10 @@
   "devDependencies": {
     "@jest/globals": "^29.6.2",
     "@types/archiver": "5.1.0",
-    "@types/chai": "4.2.16",
-    "@types/chai-arrays": "2.0.0",
-    "@types/chai-as-promised": "7.1.3",
-    "@types/chai-string": "1.4.2",
     "@types/del": "3.0.1",
     "@types/fs-extra": "5.0.4",
     "@types/gulp": "4.0.5",
     "@types/minimist": "1.2.1",
-    "@types/mocha": "5.2.5",
     "@types/node": "16.11.38",
     "@types/semver": "7.3.13",
     "@types/tmp": "0.0.33",
@@ -135,13 +135,10 @@
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
+    "@vscode/l10n-dev": "^0.0.30",
     "@vscode/test-electron": "2.3.4",
+    "@vscode/vsce": "2.21.0",
     "archiver": "5.3.0",
-    "chai": "4.3.4",
-    "chai-arrays": "2.2.0",
-    "chai-as-promised": "7.1.1",
-    "chai-fs": "2.0.0",
-    "chai-string": "1.5.0",
     "del": "3.0.0",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
@@ -158,10 +155,9 @@
     "gulp": "4.0.2",
     "jest": "^29.6.2",
     "jest-cli": "^29.6.4",
+    "jest-junit": "^16.0.0",
     "js-yaml": ">=3.13.1",
     "minimatch": "3.0.5",
-    "mocha": "10.0.0",
-    "mock-fs": "^4.13.0",
     "mock-http-server": "1.4.2",
     "octokit": "^3.1.0",
     "prettier": "2.8.8",
@@ -172,7 +168,6 @@
     "ts-node": "9.1.1",
     "typescript": "^5.1.6",
     "unzipper": "0.10.11",
-    "@vscode/vsce": "2.21.0",
     "vscode-oniguruma": "^1.6.1",
     "vscode-textmate": "^6.0.0",
     "vscode-uri": "^3.0.7",
@@ -457,7 +452,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -467,12 +462,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "AE5C61B9A8648444EF2423D7C9A11333DEFA37CA900C34DFC3CDD33B8FAB420A"
+      "integrity": "413A1FE80F781788D1CE108464C1BDA00E65D8F800D5CF1868C36B410BF93453"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -481,12 +476,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "60D495AA4C35D2D7699C042D134BD0EB980EF1CFFD6B8FF7484FBE56F1DDE936"
+      "integrity": "C8AFCE6223DCD180865E25069145D68FD70959DB477370EAD876C24B58383D14"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -500,12 +495,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "F3943369E95EBABE1484D2CFE51F840579A5F1785524346EFD697DFD40A31015"
+      "integrity": "61CF0221226E30BD2809A643899329E80573CB395B515301A85FB6D2370D54F9"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -518,12 +513,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "33E5AFE1EE25D2EB0328279DA02F25F18DFAAF47A2A52CB3C0158FC783E7275C"
+      "integrity": "220466464DE9002E6F781A00665E87A98B899195E65CB2A2543E31172B919621"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -536,12 +531,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "C675CBAA21815CF3735F491952FB9A54C059644F09D64349193E5725C655684D"
+      "integrity": "356232C01B8E1404378463CB3FC27C29427101C611391364921ECB53DE7AF93F"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -554,12 +549,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "6924B4006361E9ADB1375CD33294C6EABE7DB483F9042CF56876F718DDD77F11"
+      "integrity": "8259720283E62582B027E9285F2F65D0F65C7177CAD969F6470A39350E391860"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-linux-musl-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -572,12 +567,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "124303EE658308C77CE07A5F08891A9B573EC3CA98C392E6F4DAD962723557CD"
+      "integrity": "CC6235947B701E4DD4BC252384C4AF481370280FD1A99EA77B9859FC113DFD66"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-linux-musl-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-linux-musl-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -590,12 +585,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "E4406A69ED08032563BFDD75CA2A0028FF236121F6EE3EC3BC66FA874B0119FC"
+      "integrity": "A67EACE7A6F73C0DD54EA44B5D31BFBC085FDB4640723FA69704A2379F5CDDC2"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-0-3/coreclr-debug-linux-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-9-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -608,12 +603,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "74CEB64B33AAFF265AECD9C30DDE517CE02DBC7DE3644534AD7686C2E97E4A65"
+      "integrity": "9B906C74F56DD65F0F9A4B82B53D6083D5FD229DBF941DB5F3CB86E29094EEE6"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/70a917c8a17f4052a3a6b3862200f9f5/razorlanguageserver-win-x64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/ed71f389320d0f59a12b66cf6e95c359/razorlanguageserver-win-x64-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -621,12 +616,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "87462BD5F2760D81B91EDE400B4AF7392795D03E5F22608536A671B8D8566541"
+      "integrity": "7845A7A07DE82DF9C0A9F8B90771EBD428F6D36C5AC97192DED447BBB3A3149E"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/ee48f10fa72517ce132fad30d458680a/razorlanguageserver-win-x86-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/b150b23785cb7c3c71114decf380e333/razorlanguageserver-win-x86-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -634,12 +629,12 @@
       "architectures": [
         "x86"
       ],
-      "integrity": "ED27D0C1F65D3BF70E330E5A6AC63587D7CED2F86A48948B9E9E46392FCF4DEA"
+      "integrity": "CABD9F62FE3362C8FDC2B00C80301DC9BAFC7047327FE158B3FDF505ED416356"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/d50e57f6a69f75a65496f32b107532e8/razorlanguageserver-win-arm64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/da9092ec75455980387263797d99b7c5/razorlanguageserver-win-arm64-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -647,12 +642,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "A3C97A3E858027C4D1FB957A10833894E1ACC59C8B40D667C1D9E18D59EB9D58"
+      "integrity": "7F7A9D8F0CE46B37935A6DCE341DE69075AE7D7649E4E86998C4D7E5F7938E58"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/98abba355a15ad90c59eb5653326baeb/razorlanguageserver-linux-x64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/760785c241dc29d7ef7d302d0f4cb3ff/razorlanguageserver-linux-x64-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -663,12 +658,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "16550C753B1525EFF21F7F20DA4714084D240AFE6717ABB7B60C5CECF4C824C3"
+      "integrity": "B24DEE5A2392E914E3D34B6F8C9EDB45E6477E24D11399F288099EDC66FE3A8E"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/f0e050f69a2afb6758a1bccfbf00bb9a/razorlanguageserver-linux-arm64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/9f8414527411c020d02468b80fff0bcb/razorlanguageserver-linux-arm64-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -679,12 +674,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "1F170B3D0AC9DEE88E8C6E0B0F9BAF402F71658A18F8B39C1520F187F983F8E6"
+      "integrity": "64022CE18D8B84C0C8D94C2D9C736A7DE5412E09855497E749971D94A0583881"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/c3fd7144ecc6abea28e905504a60d65b/razorlanguageserver-linux-musl-x64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/b64dda5342f5204e530c7d5023b6f58c/razorlanguageserver-linux-musl-x64-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -695,12 +690,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "1982C06D5BECF68024B52A38F6DF30AA3C3D72CFF29FA7268A7970F2F94F0C67"
+      "integrity": "4F5882B23289D03EC08AF04C66B931D13F958AE7443AFE2B4C4AED4B8B7889B6"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/e3d3993005c037451c715c26ec43328b/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/5a42eb01d3f32093f2d6375afee05413/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -711,12 +706,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "9EB3962F1186D1C48DE94A7A8DA5209162C29E020C08EF85AC1E2C4905580272"
+      "integrity": "2A79681A26838FC5FD62C40D7575548161813E4DB28769FA2D5CC69CA8C60436"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/f13124670d3c1f52ecbeb79538d763cb/razorlanguageserver-osx-x64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/4e58ddfbf33d25b211ed4ba91d44eb8f/razorlanguageserver-osx-x64-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -727,12 +722,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "816C709BBE8B165531793EBC6DF581C42A423856E3D070433254B3C939FA7524"
+      "integrity": "CB13DB96B8A07B66279D0E249F4CE65A74ED038AFC68643074FEEF03468B3249"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/68cd5916dbff0936c04ae0a152268d0f/razorlanguageserver-osx-arm64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/16cf46982673c8d73d31fbf7eb296537/razorlanguageserver-osx-arm64-7.0.0-preview.23528.1.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -743,7 +738,23 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "B06500D30A34CB45D8BC12EE2D54B09D2B0BA9F2AE87A25AD41D0C2AFD55F96D"
+      "integrity": "3FDA10D5E2FB9D7277DB01FD1C948F722D8FC0875D1DA4078813893F8FBC2F7B"
+    },
+    {
+      "id": "Razor",
+      "description": "Razor Language Server (Platform Agnostic)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/114b672bebae3a3c491cef86fdab7ef4/razorlanguageserver-platformagnostic-7.0.0-preview.23528.1.zip",
+      "installPath": ".razor",
+      "platforms": [
+        "neutral"
+      ],
+      "architectures": [
+        "neutral"
+      ],
+      "binaries": [
+        "./rzls"
+      ],
+      "integrity": "B01E893D107D54EFFF2EE8AA5ECCC9F37BCFD428B860A8C07D1D64F276384FAE"
     },
     {
       "id": "RazorOmnisharp",
@@ -874,7 +885,7 @@
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/187a09b50228410a03d7e264181e2503/devkittelemetry-win-x64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/e2447a82a7190f5756a31322565f0a2e/devkittelemetry-win-x64-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "win32"
@@ -882,12 +893,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "DC77D3832B852161DB89DC71337CCFE82A7090DE3B2A866A921A616C45BA5DC3"
+      "integrity": "B92F684ABBB74CC99DC3BCBC34429228DC00CFDEF402523213C1528AA9651D27"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/bd39a95d100683454ee49cfce0a498b9/devkittelemetry-win-x86-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/9d55070fb7ae293f74ded5f18c7a9953/devkittelemetry-win-x86-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "win32"
@@ -895,12 +906,12 @@
       "architectures": [
         "x86"
       ],
-      "integrity": "77C4C237B175A82E0292F986A540FAA48093ADCF52F5576C15988CBA7A1CA1C9"
+      "integrity": "E3C2DD6DB70E688BE690F3F0352C11F65B65A5D39A8A85D570DAEA8D663943E6"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/6f665a1dfe1d43fded3df2ddd0928236/devkittelemetry-win-arm64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/e58f7d176e80e16dfcecfb84034844b0/devkittelemetry-win-arm64-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "win32"
@@ -908,12 +919,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "708AAC1B10582EBC4D4BB4CAA9BDA39EFB3BF70BFB7B7EC98DA1089C98D18A20"
+      "integrity": "73E50E9874FEE5D70F16B1FC8AFAA18ECB924DB673426C42915CEB1FA9A17764"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/b4f2fb72ed2acda7263fc597fbd20882/devkittelemetry-linux-x64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/2068bef8944968089f5972883cc87da2/devkittelemetry-linux-x64-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "linux"
@@ -921,12 +932,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "0603A8ECCD219D167301827F40D9ECE7C65835075A4B8BD065EEC0E82C7B3BD5"
+      "integrity": "EC8A4E89352D8AA064E098C6E9830B2A499AA2A892CEDB3A713AC40E26802382"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/0b23b6f3f7cf31d231ba6205284521e9/devkittelemetry-linux-arm64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/95ff1c975183590a39324be2da3dc7de/devkittelemetry-linux-arm64-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "linux"
@@ -934,12 +945,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "74B638854444A9AF91D5AEE6E05AB0A47E00020BE04EFC8EF29B7E3C00F2ADB0"
+      "integrity": "0E3E8A10A9A9899E21353C752BD26FAC821AF814E6BD7990DF387E2F97E6DFFC"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/d6e1c30239e8980a395c4c01cb6b867b/devkittelemetry-linux-musl-x64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/bca6fc6bd3a79153178f072795921f87/devkittelemetry-linux-musl-x64-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "linux-musl"
@@ -947,12 +958,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "ACDC41DDEBF127A23858B7355B9821E1726A9C525FA0EDAEBEF8599C60F88F66"
+      "integrity": "E2A367170B8152452A9813E03B115A01F61F879E8D4CCE959BF476B38007ECC7"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/50b2adf5ee4be81c408b5abb88ab9742/devkittelemetry-linux-musl-arm64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/0aa52c01416252184ee429facac46105/devkittelemetry-linux-musl-arm64-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "linux-musl"
@@ -960,12 +971,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "87C5DA20408C2903FF77ECB5FCC2D54FF474906784FC1A6FAFEC4E9AEAC36C46"
+      "integrity": "F193A9A1B41B05465150FC9F647EF38A0B35BDF9984D9CD3EE7F5AC952735261"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/3c1a78bd8fd33577f8691e122872e63e/devkittelemetry-osx-x64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/7c2c6b57522154608cf4b1959f0363ee/devkittelemetry-osx-x64-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "darwin"
@@ -973,12 +984,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "2527CE7DC2CF5FE1AFA488F1CD7328F32FAC4582FACC0065377E81DBB3812AD9"
+      "integrity": "6140DA282F9235F7E5F1406996A27F0E99D6260C3F34A3A68CE0F7E00E794D07"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/baaea3c9-bcff-4331-9fd2-fee91ddbfccb/c1bda24c3a3a8ec6bbe3a7e28636d0b1/devkittelemetry-osx-arm64-7.0.0-preview.23475.5.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/8b24b4572e8a4108a649669740bcc44a/devkittelemetry-osx-arm64-7.0.0-preview.23528.1.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "darwin"
@@ -986,7 +997,20 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "65B17BBB7BA66987F74ED0B9261FC495BBB40C8C1C4FC4F8981BA5824B300A00"
+      "integrity": "D4183D8A0ECC2981D43AA4C4A62DD6076A47266A03DE2FE65769C577614C1400"
+    },
+    {
+      "id": "RazorTelemetry",
+      "description": "Razor Language Server Telemetry (Platform Agnostic)",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/4e49d092100bf8167139bd1523f077ae/devkittelemetry-platformagnostic-7.0.0-preview.23528.1.zip",
+      "installPath": ".razortelemetry",
+      "platforms": [
+        "netural"
+      ],
+      "architectures": [
+        "neutral"
+      ],
+      "integrity": "25713B3DFBAB0861CD4238FF5DC8A24E6E90CDD3841EE01DE97996C60BD86A14"
     }
   ],
   "engines": {
@@ -1030,7 +1054,728 @@
     ],
     "configuration": [
       {
+        "title": "Project",
+        "order": 0,
+        "properties": {
+          "dotnet.defaultSolution": {
+            "type": "string",
+            "description": "%configuration.dotnet.defaultSolution.description%",
+            "order": 0
+          }
+        }
+      },
+      {
+        "title": "Text Editor",
+        "order": 1,
+        "properties": {
+          "dotnet.implementType.insertionBehavior": {
+            "type": "string",
+            "enum": [
+              "withOtherMembersOfTheSameKind",
+              "atTheEnd"
+            ],
+            "default": "withOtherMembersOfTheSameKind",
+            "enumDescriptions": [
+              "%configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind%",
+              "%configuration.dotnet.implementType.insertionBehavior.atTheEnd%"
+            ],
+            "description": "%configuration.dotnet.implementType.insertionBehavior%",
+            "order": 10
+          },
+          "dotnet.implementType.propertyGenerationBehavior": {
+            "type": "string",
+            "enum": [
+              "preferThrowingProperties",
+              "preferAutoProperties"
+            ],
+            "default": "preferThrowingProperties",
+            "enumDescriptions": [
+              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferThrowingProperties%",
+              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferAutoProperties%"
+            ],
+            "description": "%configuration.dotnet.implementType.propertyGenerationBehavior%",
+            "order": 10
+          },
+          "dotnet.codeLens.enableReferencesCodeLens": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.codeLens.enableReferencesCodeLens%"
+          },
+          "dotnet.codeLens.enableTestsCodeLens": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.codeLens.enableTestsCodeLens%"
+          },
+          "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces%",
+            "order": 20
+          },
+          "dotnet.completion.showNameCompletionSuggestions": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.completion.showNameCompletionSuggestions%",
+            "order": 20
+          },
+          "dotnet.completion.provideRegexCompletions": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.completion.provideRegexCompletions%",
+            "order": 20
+          },
+          "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
+            "type": "string",
+            "enum": [
+              "openFiles",
+              "fullSolution",
+              "none"
+            ],
+            "default": "openFiles",
+            "enumDescriptions": [
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.openFiles%",
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution%",
+              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none%"
+            ],
+            "description": "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope%",
+            "order": 30
+          },
+          "dotnet.backgroundAnalysis.compilerDiagnosticsScope": {
+            "type": "string",
+            "enum": [
+              "openFiles",
+              "fullSolution",
+              "none"
+            ],
+            "default": "openFiles",
+            "enumDescriptions": [
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.openFiles%",
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.fullSolution%",
+              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.none%"
+            ],
+            "description": "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope%",
+            "order": 30
+          },
+          "dotnet.highlighting.highlightRelatedRegexComponents": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.highlighting.highlightRelatedRegexComponents%",
+            "order": 40
+          },
+          "dotnet.highlighting.highlightRelatedJsonComponents": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.highlighting.highlightRelatedJsonComponents%",
+            "order": 40
+          },
+          "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation%",
+            "order": 50
+          },
+          "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes%",
+            "order": 50
+          },
+          "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes%",
+            "order": 50
+          },
+          "csharp.inlayHints.enableInlayHintsForTypes": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForTypes%",
+            "order": 50
+          },
+          "dotnet.inlayHints.enableInlayHintsForIndexerParameters": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters%",
+            "order": 50
+          },
+          "dotnet.inlayHints.enableInlayHintsForLiteralParameters": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters%",
+            "order": 50
+          },
+          "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForObjectCreationParameters%",
+            "order": 50
+          },
+          "dotnet.inlayHints.enableInlayHintsForOtherParameters": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForOtherParameters%",
+            "order": 50
+          },
+          "dotnet.inlayHints.enableInlayHintsForParameters": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForParameters%",
+            "order": 50
+          },
+          "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix%",
+            "order": 50
+          },
+          "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName%",
+            "order": 50
+          },
+          "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent%",
+            "order": 50
+          },
+          "dotnet.navigation.navigateToDecompiledSources": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.navigation.navigateToDecompiledSources%",
+            "order": 60
+          },
+          "dotnet.quickInfo.showRemarksInQuickInfo": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.quickInfo.showRemarksInQuickInfo%",
+            "order": 70
+          },
+          "dotnet.symbolSearch.searchReferenceAssemblies": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.symbolSearch.searchReferenceAssemblies%",
+            "order": 80
+          }
+        }
+      },
+      {
+        "title": "Debugger",
+        "order": 8,
+        "properties": {
+          "csharp.debug.stopAtEntry": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.stopAtEntry.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.console": {
+            "type": "string",
+            "enum": [
+              "internalConsole",
+              "integratedTerminal",
+              "externalTerminal"
+            ],
+            "enumDescriptions": [
+              "%generateOptionsSchema.console.internalConsole.enumDescription%",
+              "%generateOptionsSchema.console.integratedTerminal.enumDescription%",
+              "%generateOptionsSchema.console.externalTerminal.enumDescription%"
+            ],
+            "markdownDescription": "%generateOptionsSchema.console.settingsDescription%",
+            "default": "internalConsole"
+          },
+          "csharp.debug.sourceFileMap": {
+            "type": "object",
+            "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {}
+          },
+          "csharp.debug.justMyCode": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.requireExactSource": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.enableStepFiltering": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.logging.exceptions": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.logging.moduleLoad": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.logging.programOutput": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.logging.browserStdOut": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.logging.elapsedTiming": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.threadExit": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.processExit": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.logging.engineLogging": {
+            "type": "boolean",
+            "deprecationMessage": "%generateOptionsSchema.logging.engineLogging.deprecationMessage%",
+            "default": false
+          },
+          "csharp.debug.logging.diagnosticsLog.protocolMessages": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.diagnosticsLog.dispatcherMessages": {
+            "type": "string",
+            "enum": [
+              "none",
+              "error",
+              "important",
+              "normal"
+            ],
+            "enumDescriptions": [
+              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription%"
+            ],
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription%",
+            "default": "none"
+          },
+          "csharp.debug.logging.diagnosticsLog.debugEngineAPITracing": {
+            "type": "string",
+            "enum": [
+              "none",
+              "error",
+              "all"
+            ],
+            "enumDescriptions": [
+              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription%",
+              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription%"
+            ],
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription%",
+            "default": "none"
+          },
+          "csharp.debug.logging.diagnosticsLog.debugRuntimeEventTracing": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.diagnosticsLog.expressionEvaluationTracing": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.diagnosticsLog.startDebuggingTracing": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.logging.consoleUsageMessage": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.logging.consoleUsageMessage.description%",
+            "default": true
+          },
+          "csharp.debug.suppressJITOptimizations": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
+            "default": false
+          },
+          "csharp.debug.symbolOptions.searchPaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
+            "default": []
+          },
+          "csharp.debug.symbolOptions.searchMicrosoftSymbolServer": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
+            "default": false
+          },
+          "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
+            "default": false
+          },
+          "csharp.debug.symbolOptions.cachePath": {
+            "type": "string",
+            "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
+            "default": ""
+          },
+          "csharp.debug.symbolOptions.moduleFilter.mode": {
+            "type": "string",
+            "enum": [
+              "loadAllButExcluded",
+              "loadOnlyIncluded"
+            ],
+            "enumDescriptions": [
+              "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+              "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
+            ],
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
+            "default": "loadAllButExcluded"
+          },
+          "csharp.debug.symbolOptions.moduleFilter.excludedModules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
+            "default": []
+          },
+          "csharp.debug.symbolOptions.moduleFilter.includedModules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
+            "default": []
+          },
+          "csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
+            "default": true
+          },
+          "csharp.debug.allowFastEvaluate": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.allowFastEvaluate.description%",
+            "default": true
+          },
+          "dotnet.unitTestDebuggingOptions": {
+            "type": "object",
+            "description": "%configuration.dotnet.unitTestDebuggingOptions%",
+            "default": {},
+            "properties": {
+              "sourceFileMap": {
+                "type": "object",
+                "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "justMyCode": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
+                "default": true
+              },
+              "requireExactSource": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
+                "default": true
+              },
+              "enableStepFiltering": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
+                "default": true
+              },
+              "logging": {
+                "description": "%generateOptionsSchema.logging.description%",
+                "type": "object",
+                "required": [],
+                "default": {},
+                "properties": {
+                  "exceptions": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
+                    "default": true
+                  },
+                  "moduleLoad": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
+                    "default": true
+                  },
+                  "programOutput": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
+                    "default": true
+                  },
+                  "threadExit": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
+                    "default": false
+                  },
+                  "processExit": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
+                    "default": true
+                  }
+                }
+              },
+              "suppressJITOptimizations": {
+                "type": "boolean",
+                "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
+                "default": false
+              },
+              "symbolOptions": {
+                "description": "%generateOptionsSchema.symbolOptions.description%",
+                "default": {
+                  "searchPaths": [],
+                  "searchMicrosoftSymbolServer": false,
+                  "searchNuGetOrgSymbolServer": false
+                },
+                "type": "object",
+                "properties": {
+                  "searchPaths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
+                    "default": []
+                  },
+                  "searchMicrosoftSymbolServer": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
+                    "default": false
+                  },
+                  "searchNuGetOrgSymbolServer": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
+                    "default": false
+                  },
+                  "cachePath": {
+                    "type": "string",
+                    "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
+                    "default": ""
+                  },
+                  "moduleFilter": {
+                    "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
+                    "default": {
+                      "mode": "loadAllButExcluded",
+                      "excludedModules": []
+                    },
+                    "type": "object",
+                    "required": [
+                      "mode"
+                    ],
+                    "properties": {
+                      "mode": {
+                        "type": "string",
+                        "enum": [
+                          "loadAllButExcluded",
+                          "loadOnlyIncluded"
+                        ],
+                        "enumDescriptions": [
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
+                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
+                        ],
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
+                        "default": "loadAllButExcluded"
+                      },
+                      "excludedModules": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
+                        "default": []
+                      },
+                      "includedModules": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
+                        "default": []
+                      },
+                      "includeSymbolsNextToModules": {
+                        "type": "boolean",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
+                        "default": true
+                      }
+                    }
+                  }
+                }
+              },
+              "sourceLinkOptions": {
+                "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
+                "default": {
+                  "*": {
+                    "enabled": true
+                  }
+                },
+                "type": "object",
+                "additionalItems": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "title": "boolean",
+                      "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
+                      "default": "true"
+                    }
+                  }
+                }
+              },
+              "allowFastEvaluate": {
+                "type": "boolean",
+                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
+                "default": true
+              },
+              "targetArchitecture": {
+                "type": "string",
+                "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
+                "enum": [
+                  "x86_64",
+                  "arm64"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "coreclr",
+                  "clr"
+                ],
+                "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+                "default": "coreclr"
+              },
+              "debugServer": {
+                "type": "number",
+                "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+                "default": 4711
+              }
+            }
+          },
+          "dotnet.unitTests.runSettingsPath": {
+            "type": "string",
+            "description": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)"
+          }
+        }
+      },
+      {
+        "title": "LSP Server",
+        "order": 9,
+        "properties": {
+          "dotnet.preferCSharpExtension": {
+            "scope": "resource",
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.preferCSharpExtension%"
+          },
+          "dotnet.dotnetPath": {
+            "type": "string",
+            "scope": "machine-overridable",
+            "description": "%configuration.dotnet.dotnetPath%"
+          },
+          "dotnet.server.path": {
+            "type": "string",
+            "scope": "machine-overridable",
+            "description": "%configuration.dotnet.server.path%"
+          },
+          "dotnet.server.startTimeout": {
+            "type": "number",
+            "scope": "machine-overridable",
+            "default": 30000,
+            "description": "%configuration.dotnet.server.startTimeout%"
+          },
+          "dotnet.server.waitForDebugger": {
+            "type": "boolean",
+            "scope": "machine-overridable",
+            "default": false,
+            "description": "%configuration.dotnet.server.waitForDebugger%"
+          },
+          "dotnet.server.trace": {
+            "scope": "window",
+            "type": "string",
+            "enum": [
+              "Trace",
+              "Debug",
+              "Information",
+              "Warning",
+              "Error",
+              "Critical",
+              "None"
+            ],
+            "default": "Information",
+            "description": "%configuration.dotnet.server.trace%"
+          },
+          "dotnet.server.extensionPaths": {
+            "scope": "machine-overridable",
+            "type": [
+              "array",
+              null
+            ],
+            "items": {
+              "type": "string"
+            },
+            "default": null,
+            "description": "%configuration.dotnet.server.extensionPaths%"
+          },
+          "dotnet.server.crashDumpPath": {
+            "scope": "machine-overridable",
+            "type": "string",
+            "default": null,
+            "description": "%configuration.dotnet.server.crashDumpPath%"
+          },
+          "dotnet.projects.binaryLogPath": {
+            "scope": "machine-overridable",
+            "type": "string",
+            "default": null,
+            "description": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors."
+          },
+          "razor.languageServer.directory": {
+            "type": "string",
+            "scope": "machine-overridable",
+            "description": "%configuration.razor.languageServer.directory%",
+            "order": 90
+          },
+          "razor.languageServer.debug": {
+            "type": "boolean",
+            "scope": "machine-overridable",
+            "default": false,
+            "description": "%configuration.razor.languageServer.debug%",
+            "order": 90
+          },
+          "razor.trace": {
+            "type": "string",
+            "default": "Off",
+            "enum": [
+              "Off",
+              "Messages",
+              "Verbose"
+            ],
+            "enumDescriptions": [
+              "%configuration.razor.trace.off%",
+              "%configuration.razor.trace.messages%",
+              "%configuration.razor.trace.verbose%"
+            ],
+            "description": "%configuration.razor.trace%",
+            "order": 90
+          }
+        }
+      },
+      {
         "title": "OmniSharp",
+        "order": 10,
         "properties": {
           "dotnet.server.useOmnisharp": {
             "type": "boolean",
@@ -1227,702 +1972,12 @@
             "scope": "window",
             "default": true,
             "description": "Enable/disable default Razor formatter."
-          }
-        }
-      },
-      {
-        "title": "C#",
-        "properties": {
-          "dotnet.defaultSolution": {
-            "type": "string",
-            "description": "%configuration.dotnet.defaultSolution.description%",
-            "order": 0
           },
-          "dotnet.dotnetPath": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.dotnet.dotnetPath%"
-          },
-          "dotnet.server.path": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.dotnet.server.path%"
-          },
-          "dotnet.server.startTimeout": {
-            "type": "number",
-            "scope": "machine-overridable",
-            "default": 30000,
-            "description": "%configuration.dotnet.server.startTimeout%"
-          },
-          "dotnet.server.waitForDebugger": {
+          "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
-            "scope": "machine-overridable",
-            "default": false,
-            "description": "%configuration.dotnet.server.waitForDebugger%"
-          },
-          "dotnet.server.trace": {
             "scope": "window",
-            "type": "string",
-            "enum": [
-              "Trace",
-              "Debug",
-              "Information",
-              "Warning",
-              "Error",
-              "Critical",
-              "None"
-            ],
-            "default": "Information",
-            "description": "%configuration.dotnet.server.trace%"
-          },
-          "dotnet.server.extensionPaths": {
-            "scope": "machine-overridable",
-            "type": [
-              "array",
-              null
-            ],
-            "items": {
-              "type": "string"
-            },
-            "default": null,
-            "description": "%configuration.dotnet.server.extensionPaths%"
-          },
-          "dotnet.server.crashDumpPath": {
-            "scope": "machine-overridable",
-            "type": "string",
-            "default": null,
-            "description": "%configuration.dotnet.server.crashDumpPath%"
-          },
-          "dotnet.projects.binaryLogPath": {
-            "scope": "machine-overridable",
-            "type": "string",
-            "default": null,
-            "description": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors."
-          },
-          "dotnet.preferCSharpExtension": {
-            "scope": "resource",
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.preferCSharpExtension%"
-          },
-          "dotnet.implementType.insertionBehavior": {
-            "type": "string",
-            "enum": [
-              "withOtherMembersOfTheSameKind",
-              "atTheEnd"
-            ],
-            "default": "withOtherMembersOfTheSameKind",
-            "enumDescriptions": [
-              "%configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind%",
-              "%configuration.dotnet.implementType.insertionBehavior.atTheEnd%"
-            ],
-            "description": "%configuration.dotnet.implementType.insertionBehavior%",
-            "order": 10
-          },
-          "dotnet.implementType.propertyGenerationBehavior": {
-            "type": "string",
-            "enum": [
-              "preferThrowingProperties",
-              "preferAutoProperties"
-            ],
-            "default": "preferThrowingProperties",
-            "enumDescriptions": [
-              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferThrowingProperties%",
-              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferAutoProperties%"
-            ],
-            "description": "%configuration.dotnet.implementType.propertyGenerationBehavior%",
-            "order": 10
-          },
-          "dotnet.codeLens.enableReferencesCodeLens": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.dotnet.codeLens.enableReferencesCodeLens%"
-          },
-          "dotnet.codeLens.enableTestsCodeLens": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.dotnet.codeLens.enableTestsCodeLens%"
-          },
-          "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces%",
-            "order": 20
-          },
-          "dotnet.completion.showNameCompletionSuggestions": {
-            "type": "boolean",
-            "default": "true",
-            "description": "%configuration.dotnet.completion.showNameCompletionSuggestions%",
-            "order": 20
-          },
-          "dotnet.completion.provideRegexCompletions": {
-            "type": "boolean",
-            "default": "true",
-            "description": "%configuration.dotnet.completion.provideRegexCompletions%",
-            "order": 20
-          },
-          "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
-            "type": "string",
-            "enum": [
-              "openFiles",
-              "fullSolution",
-              "none"
-            ],
-            "default": "openFiles",
-            "enumDescriptions": [
-              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.openFiles%",
-              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution%",
-              "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none%"
-            ],
-            "description": "%configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope%",
-            "order": 30
-          },
-          "dotnet.backgroundAnalysis.compilerDiagnosticsScope": {
-            "type": "string",
-            "enum": [
-              "openFiles",
-              "fullSolution",
-              "none"
-            ],
-            "default": "openFiles",
-            "enumDescriptions": [
-              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.openFiles%",
-              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.fullSolution%",
-              "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.none%"
-            ],
-            "description": "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope%",
-            "order": 30
-          },
-          "dotnet.highlighting.highlightRelatedRegexComponents": {
-            "type": "boolean",
-            "default": "true",
-            "description": "%configuration.dotnet.highlighting.highlightRelatedRegexComponents%",
-            "order": 40
-          },
-          "dotnet.highlighting.highlightRelatedJsonComponents": {
-            "type": "boolean",
-            "default": "true",
-            "description": "%configuration.dotnet.highlighting.highlightRelatedJsonComponents%",
-            "order": 40
-          },
-          "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation%",
-            "order": 50
-          },
-          "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes%",
-            "order": 50
-          },
-          "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes%",
-            "order": 50
-          },
-          "csharp.inlayHints.enableInlayHintsForTypes": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.csharp.inlayHints.enableInlayHintsForTypes%",
-            "order": 50
-          },
-          "dotnet.inlayHints.enableInlayHintsForIndexerParameters": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters%",
-            "order": 50
-          },
-          "dotnet.inlayHints.enableInlayHintsForLiteralParameters": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters%",
-            "order": 50
-          },
-          "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForObjectCreationParameters%",
-            "order": 50
-          },
-          "dotnet.inlayHints.enableInlayHintsForOtherParameters": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForOtherParameters%",
-            "order": 50
-          },
-          "dotnet.inlayHints.enableInlayHintsForParameters": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.inlayHints.enableInlayHintsForParameters%",
-            "order": 50
-          },
-          "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix%",
-            "order": 50
-          },
-          "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName%",
-            "order": 50
-          },
-          "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent%",
-            "order": 50
-          },
-          "dotnet.navigation.navigateToDecompiledSources": {
-            "type": "boolean",
-            "default": "true",
-            "description": "%configuration.dotnet.navigation.navigateToDecompiledSources%",
-            "order": 60
-          },
-          "dotnet.quickInfo.showRemarksInQuickInfo": {
-            "type": "boolean",
-            "default": "true",
-            "description": "%configuration.dotnet.quickInfo.showRemarksInQuickInfo%",
-            "order": 70
-          },
-          "dotnet.symbolSearch.searchReferenceAssemblies": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.dotnet.symbolSearch.searchReferenceAssemblies%",
-            "order": 80
-          },
-          "dotnet.unitTests.runSettingsPath": {
-            "type": "string",
-            "description": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)"
-          },
-          "dotnet.unitTestDebuggingOptions": {
-            "type": "object",
-            "description": "%configuration.dotnet.unitTestDebuggingOptions%",
-            "default": {},
-            "properties": {
-              "sourceFileMap": {
-                "type": "object",
-                "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
-                "additionalProperties": {
-                  "type": "string"
-                }
-              },
-              "justMyCode": {
-                "type": "boolean",
-                "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
-                "default": true
-              },
-              "requireExactSource": {
-                "type": "boolean",
-                "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
-                "default": true
-              },
-              "enableStepFiltering": {
-                "type": "boolean",
-                "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
-                "default": true
-              },
-              "logging": {
-                "description": "%generateOptionsSchema.logging.description%",
-                "type": "object",
-                "required": [],
-                "default": {},
-                "properties": {
-                  "exceptions": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
-                    "default": true
-                  },
-                  "moduleLoad": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
-                    "default": true
-                  },
-                  "programOutput": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
-                    "default": true
-                  },
-                  "threadExit": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
-                    "default": false
-                  },
-                  "processExit": {
-                    "type": "boolean",
-                    "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
-                    "default": true
-                  }
-                }
-              },
-              "suppressJITOptimizations": {
-                "type": "boolean",
-                "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
-                "default": false
-              },
-              "symbolOptions": {
-                "description": "%generateOptionsSchema.symbolOptions.description%",
-                "default": {
-                  "searchPaths": [],
-                  "searchMicrosoftSymbolServer": false,
-                  "searchNuGetOrgSymbolServer": false
-                },
-                "type": "object",
-                "properties": {
-                  "searchPaths": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
-                    "default": []
-                  },
-                  "searchMicrosoftSymbolServer": {
-                    "type": "boolean",
-                    "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
-                    "default": false
-                  },
-                  "searchNuGetOrgSymbolServer": {
-                    "type": "boolean",
-                    "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
-                    "default": false
-                  },
-                  "cachePath": {
-                    "type": "string",
-                    "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
-                    "default": ""
-                  },
-                  "moduleFilter": {
-                    "description": "%generateOptionsSchema.symbolOptions.moduleFilter.description%",
-                    "default": {
-                      "mode": "loadAllButExcluded",
-                      "excludedModules": []
-                    },
-                    "type": "object",
-                    "required": [
-                      "mode"
-                    ],
-                    "properties": {
-                      "mode": {
-                        "type": "string",
-                        "enum": [
-                          "loadAllButExcluded",
-                          "loadOnlyIncluded"
-                        ],
-                        "enumDescriptions": [
-                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
-                          "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
-                        ],
-                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
-                        "default": "loadAllButExcluded"
-                      },
-                      "excludedModules": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
-                        "default": []
-                      },
-                      "includedModules": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
-                        "default": []
-                      },
-                      "includeSymbolsNextToModules": {
-                        "type": "boolean",
-                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
-                        "default": true
-                      }
-                    }
-                  }
-                }
-              },
-              "sourceLinkOptions": {
-                "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.markdownDescription%",
-                "default": {
-                  "*": {
-                    "enabled": true
-                  }
-                },
-                "type": "object",
-                "additionalItems": {
-                  "type": "object",
-                  "properties": {
-                    "enabled": {
-                      "title": "boolean",
-                      "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
-                    }
-                  }
-                }
-              },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
-              },
-              "targetArchitecture": {
-                "type": "string",
-                "markdownDescription": "%generateOptionsSchema.targetArchitecture.markdownDescription%",
-                "enum": [
-                  "x86_64",
-                  "arm64"
-                ]
-              },
-              "type": {
-                "type": "string",
-                "enum": [
-                  "coreclr",
-                  "clr"
-                ],
-                "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
-                "default": "coreclr"
-              },
-              "debugServer": {
-                "type": "number",
-                "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
-                "default": 4711
-              }
-            }
-          },
-          "razor.languageServer.directory": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.razor.languageServer.directory%",
-            "order": 90
-          },
-          "razor.languageServer.debug": {
-            "type": "boolean",
-            "scope": "machine-overridable",
-            "default": false,
-            "description": "%configuration.razor.languageServer.debug%",
-            "order": 90
-          },
-          "razor.trace": {
-            "type": "string",
-            "default": "Off",
-            "enum": [
-              "Off",
-              "Messages",
-              "Verbose"
-            ],
-            "enumDescriptions": [
-              "%configuration.razor.trace.off%",
-              "%configuration.razor.trace.messages%",
-              "%configuration.razor.trace.verbose%"
-            ],
-            "description": "%configuration.razor.trace%",
-            "order": 90
-          },
-          "csharp.debug.stopAtEntry": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.stopAtEntry.markdownDescription%",
-            "default": false
-          },
-          "csharp.debug.console": {
-            "type": "string",
-            "enum": [
-              "internalConsole",
-              "integratedTerminal",
-              "externalTerminal"
-            ],
-            "enumDescriptions": [
-              "%generateOptionsSchema.console.internalConsole.enumDescription%",
-              "%generateOptionsSchema.console.integratedTerminal.enumDescription%",
-              "%generateOptionsSchema.console.externalTerminal.enumDescription%"
-            ],
-            "markdownDescription": "%generateOptionsSchema.console.settingsDescription%",
-            "default": "internalConsole"
-          },
-          "csharp.debug.sourceFileMap": {
-            "type": "object",
-            "markdownDescription": "%generateOptionsSchema.sourceFileMap.markdownDescription%",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "default": {}
-          },
-          "csharp.debug.justMyCode": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.justMyCode.markdownDescription%",
-            "default": true
-          },
-          "csharp.debug.requireExactSource": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.requireExactSource.markdownDescription%",
-            "default": true
-          },
-          "csharp.debug.enableStepFiltering": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.enableStepFiltering.markdownDescription%",
-            "default": true
-          },
-          "csharp.debug.logging.exceptions": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.exceptions.markdownDescription%",
-            "default": true
-          },
-          "csharp.debug.logging.moduleLoad": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.moduleLoad.markdownDescription%",
-            "default": true
-          },
-          "csharp.debug.logging.programOutput": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.programOutput.markdownDescription%",
-            "default": true
-          },
-          "csharp.debug.logging.browserStdOut": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.browserStdOut.markdownDescription%",
-            "default": true
-          },
-          "csharp.debug.logging.elapsedTiming": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.elapsedTiming.markdownDescription%",
-            "default": false
-          },
-          "csharp.debug.logging.threadExit": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.threadExit.markdownDescription%",
-            "default": false
-          },
-          "csharp.debug.logging.processExit": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.processExit.markdownDescription%",
-            "default": true
-          },
-          "csharp.debug.logging.engineLogging": {
-            "type": "boolean",
-            "deprecationMessage": "%generateOptionsSchema.logging.engineLogging.deprecationMessage%",
-            "default": false
-          },
-          "csharp.debug.logging.diagnosticsLog.protocolMessages": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription%",
-            "default": false
-          },
-          "csharp.debug.logging.diagnosticsLog.dispatcherMessages": {
-            "type": "string",
-            "enum": [
-              "none",
-              "error",
-              "important",
-              "normal"
-            ],
-            "enumDescriptions": [
-              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription%",
-              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription%",
-              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription%",
-              "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription%"
-            ],
-            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription%",
-            "default": "none"
-          },
-          "csharp.debug.logging.diagnosticsLog.debugEngineAPITracing": {
-            "type": "string",
-            "enum": [
-              "none",
-              "error",
-              "all"
-            ],
-            "enumDescriptions": [
-              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription%",
-              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription%",
-              "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription%"
-            ],
-            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription%",
-            "default": "none"
-          },
-          "csharp.debug.logging.diagnosticsLog.debugRuntimeEventTracing": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription%",
-            "default": false
-          },
-          "csharp.debug.logging.diagnosticsLog.expressionEvaluationTracing": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription%",
-            "default": false
-          },
-          "csharp.debug.logging.diagnosticsLog.startDebuggingTracing": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription%",
-            "default": false
-          },
-          "csharp.debug.suppressJITOptimizations": {
-            "type": "boolean",
-            "markdownDescription": "%generateOptionsSchema.suppressJITOptimizations.markdownDescription%",
-            "default": false
-          },
-          "csharp.debug.symbolOptions.searchPaths": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "%generateOptionsSchema.symbolOptions.searchPaths.description%",
-            "default": []
-          },
-          "csharp.debug.symbolOptions.searchMicrosoftSymbolServer": {
-            "type": "boolean",
-            "description": "%generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description%",
-            "default": false
-          },
-          "csharp.debug.symbolOptions.searchNuGetOrgSymbolServer": {
-            "type": "boolean",
-            "description": "%generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description%",
-            "default": false
-          },
-          "csharp.debug.symbolOptions.cachePath": {
-            "type": "string",
-            "description": "%generateOptionsSchema.symbolOptions.cachePath.description%",
-            "default": ""
-          },
-          "csharp.debug.symbolOptions.moduleFilter.mode": {
-            "type": "string",
-            "enum": [
-              "loadAllButExcluded",
-              "loadOnlyIncluded"
-            ],
-            "enumDescriptions": [
-              "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription%",
-              "%generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription%"
-            ],
-            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.mode.description%",
-            "default": "loadAllButExcluded"
-          },
-          "csharp.debug.symbolOptions.moduleFilter.excludedModules": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description%",
-            "default": []
-          },
-          "csharp.debug.symbolOptions.moduleFilter.includedModules": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description%",
-            "default": []
-          },
-          "csharp.debug.symbolOptions.moduleFilter.includeSymbolsNextToModules": {
-            "type": "boolean",
-            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
-            "default": true
-          },
-          "csharp.debug.allowFastEvaluate": {
-            "type": "boolean",
-            "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-            "default": true
+            "default": "false",
+            "description": "Specifies whether to commit tag helper and component elements with a space."
           }
         }
       }
@@ -2010,13 +2065,13 @@
         "command": "dotnet.restore.project",
         "title": "%command.dotnet.restore.project%",
         "category": ".NET",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activatedStandalone"
       },
       {
         "command": "dotnet.restore.all",
         "title": "%command.dotnet.restore.all%",
         "category": ".NET",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activatedStandalone"
       },
       {
         "command": "csharp.downloadDebugger",
@@ -2131,7 +2186,7 @@
           "pickRemoteProcess": "csharp.listRemoteProcess",
           "pickRemoteDockerProcess": "csharp.listRemoteDockerProcess"
         },
-        "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+        "aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
         "configurationAttributes": {
           "launch": {
             "type": "object",
@@ -2441,6 +2496,11 @@
                         "default": false
                       }
                     }
+                  },
+                  "consoleUsageMessage": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.logging.consoleUsageMessage.description%",
+                    "default": true
                   }
                 }
               },
@@ -2941,6 +3001,11 @@
                         "default": false
                       }
                     }
+                  },
+                  "consoleUsageMessage": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.logging.consoleUsageMessage.description%",
+                    "default": true
                   }
                 }
               },
@@ -3407,7 +3472,7 @@
           "pickRemoteProcess": "csharp.listRemoteProcess",
           "pickRemoteDockerProcess": "csharp.listRemoteDockerProcess"
         },
-        "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+        "aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
         "configurationAttributes": {
           "launch": {
             "type": "object",
@@ -3717,6 +3782,11 @@
                         "default": false
                       }
                     }
+                  },
+                  "consoleUsageMessage": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.logging.consoleUsageMessage.description%",
+                    "default": true
                   }
                 }
               },
@@ -4217,6 +4287,11 @@
                         "default": false
                       }
                     }
+                  },
+                  "consoleUsageMessage": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.logging.consoleUsageMessage.description%",
+                    "default": true
                   }
                 }
               },
@@ -4774,7 +4849,7 @@
           "aspnetcorerazor"
         ],
         "variables": {},
-        "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+        "aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255",
         "configurationAttributes": {
           "launch": {
             "type": "object",
@@ -4868,6 +4943,10 @@
       {
         "id": "markupAttributeQuote",
         "description": "A token that represents an attribute quote in a Markup attribute."
+      },
+      {
+        "id": "markupAttributeValue",
+        "description": "The value of a Markup attribute."
       },
       {
         "id": "markupComment",
@@ -5175,7 +5254,10 @@
             "entity.other.attribute-name.html"
           ],
           "markupAttributeQuote": [
-            "punctuation.definition.string.html"
+            "punctuation.definition.tag.html"
+          ],
+          "markupAttributeValue": [
+            "punctuation.definition.entity.html"
           ],
           "markupComment": [
             "comment.block.html"
@@ -5544,9 +5626,7 @@
         "scopeName": "text.aspnetcorerazor",
         "path": "./src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
         "unbalancedBracketScopes": [
-          "keyword.operator.arrow.cs",
-          "keyword.operator.bitwise.shift.cs",
-          "keyword.operator.relational.cs"
+          "text.aspnetcorerazor"
         ]
       }
     ],

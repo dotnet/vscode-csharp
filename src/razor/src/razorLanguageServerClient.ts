@@ -3,10 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
 import * as cp from 'child_process';
 import { EventEmitter } from 'events';
-import * as util from '../../common';
 import * as vscode from 'vscode';
 import { RequestHandler, RequestType } from 'vscode-jsonrpc';
 import { GenericNotificationHandler, InitializeResult, LanguageClientOptions, State } from 'vscode-languageclient';
@@ -40,7 +38,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         private readonly languageServerDir: string,
         private readonly razorTelemetryReporter: RazorTelemetryReporter,
         private readonly vscodeTelemetryReporter: TelemetryReporter,
-        private readonly isCSharpDevKitActivated: boolean,
+        private readonly telemetryExtensionDllPath: string,
         private readonly env: NodeJS.ProcessEnv,
         private readonly dotnetExecutablePath: string,
         private readonly logger: RazorLogger
@@ -249,13 +247,10 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');
 
-            if (this.isCSharpDevKitActivated) {
+            if (this.telemetryExtensionDllPath.length > 0) {
                 args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
                 args.push('--sessionId', getSessionId());
-                args.push(
-                    '--telemetryExtensionPath',
-                    path.join(util.getExtensionPath(), '.razortelemetry', 'Microsoft.VisualStudio.DevKit.Razor.dll')
-                );
+                args.push('--telemetryExtensionPath', this.telemetryExtensionDllPath);
             }
         }
 

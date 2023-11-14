@@ -3,22 +3,22 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { OmnisharpManager } from '../../src/omnisharp/omnisharpManager';
-import MockHttpsServer from './testAssets/mockHttpsServer';
-import TestZip from './testAssets/testZip';
-import { createTestFile } from './testAssets/testFile';
+import MockHttpsServer from '../omnisharpUnitTests/testAssets/mockHttpsServer';
+import TestZip from '../omnisharpUnitTests/testAssets/testZip';
+import { createTestFile } from '../omnisharpUnitTests/testAssets/testFile';
 import { PlatformInformation } from '../../src/shared/platform';
 import { OmnisharpDownloader } from '../../src/omnisharp/omnisharpDownloader';
 import NetworkSettings from '../../src/networkSettings';
 import { EventStream } from '../../src/eventStream';
-import { testPackageJSON } from './testAssets/testAssets';
+import { testPackageJSON } from '../omnisharpUnitTests/testAssets/testAssets';
 import { TmpAsset, CreateTmpDir, CreateTmpFile } from '../../src/createTmpAsset';
-import { expect } from 'chai';
 import * as path from 'path';
 import * as util from '../../src/common';
 import { modernNetVersion } from '../../src/omnisharp/omnisharpPackageCreator';
 
-suite(OmnisharpManager.name, () => {
+describe(OmnisharpManager.name, () => {
     let server: MockHttpsServer;
     const eventStream = new EventStream();
     let manager: OmnisharpManager;
@@ -85,8 +85,8 @@ suite(OmnisharpManager.name, () => {
             useFramework: true,
         },
     ].forEach((elem) => {
-        suite(elem.platformInfo.toString(), () => {
-            setup(async () => {
+        describe(`${elem.platformInfo.toString()},${elem.platformId},framework:${elem.useFramework},`, () => {
+            beforeEach(async () => {
                 server = await MockHttpsServer.CreateMockHttpsServer();
                 await server.start();
                 tmpInstallDir = await CreateTmpDir(true);
@@ -131,13 +131,13 @@ suite(OmnisharpManager.name, () => {
             test('Throws error if the path is neither an absolute path nor a valid semver, nor the string "latest"', async () => {
                 expect(
                     manager.GetOmniSharpLaunchPath(defaultVersion, 'Some incorrect path', useFramework, extensionPath)
-                ).to.be.rejectedWith(Error);
+                ).rejects.toThrowError(Error);
             });
 
             test('Throws error when the specified path is an invalid semver', async () => {
                 expect(
                     manager.GetOmniSharpLaunchPath(defaultVersion, 'a.b.c', useFramework, extensionPath)
-                ).to.be.rejectedWith(Error);
+                ).rejects.toThrowError(Error);
             });
 
             test('Returns the same path if absolute path to an existing file is passed', async () => {
@@ -148,7 +148,7 @@ suite(OmnisharpManager.name, () => {
                     useFramework,
                     extensionPath
                 );
-                expect(launchPath).to.be.equal(tmpFile.name);
+                expect(launchPath).toEqual(tmpFile.name);
             });
 
             test('Returns the default path if the omnisharp path is empty', async () => {
@@ -160,16 +160,16 @@ suite(OmnisharpManager.name, () => {
                 );
                 if (useFramework) {
                     if (elem.platformInfo.isWindows()) {
-                        expect(launchPath).to.be.equal(
+                        expect(launchPath).toEqual(
                             path.join(extensionPath, '.omnisharp', defaultVersion + suffix, 'OmniSharp.exe')
                         );
                     } else {
-                        expect(launchPath).to.be.equal(
+                        expect(launchPath).toEqual(
                             path.join(extensionPath, '.omnisharp', defaultVersion, 'omnisharp', 'OmniSharp.exe')
                         );
                     }
                 } else {
-                    expect(launchPath).to.be.equal(
+                    expect(launchPath).toEqual(
                         path.join(extensionPath, '.omnisharp', defaultVersion + suffix, 'OmniSharp.dll')
                     );
                 }
@@ -184,16 +184,16 @@ suite(OmnisharpManager.name, () => {
                 );
                 if (useFramework) {
                     if (elem.platformInfo.isWindows()) {
-                        expect(launchPath).to.be.equal(
+                        expect(launchPath).toEqual(
                             path.join(extensionPath, installPath, latestVersion + suffix, 'OmniSharp.exe')
                         );
                     } else {
-                        expect(launchPath).to.be.equal(
+                        expect(launchPath).toEqual(
                             path.join(extensionPath, installPath, latestVersion, 'omnisharp', 'OmniSharp.exe')
                         );
                     }
                 } else {
-                    expect(launchPath).to.be.equal(
+                    expect(launchPath).toEqual(
                         path.join(extensionPath, installPath, latestVersion + suffix, 'OmniSharp.dll')
                     );
                 }
@@ -208,16 +208,16 @@ suite(OmnisharpManager.name, () => {
                 );
                 if (useFramework) {
                     if (elem.platformInfo.isWindows()) {
-                        expect(launchPath).to.be.equal(
+                        expect(launchPath).toEqual(
                             path.join(extensionPath, installPath, testVersion + suffix, 'OmniSharp.exe')
                         );
                     } else {
-                        expect(launchPath).to.be.equal(
+                        expect(launchPath).toEqual(
                             path.join(extensionPath, installPath, testVersion, 'omnisharp', 'OmniSharp.exe')
                         );
                     }
                 } else {
-                    expect(launchPath).to.be.equal(
+                    expect(launchPath).toEqual(
                         path.join(extensionPath, installPath, testVersion + suffix, 'OmniSharp.dll')
                     );
                 }
@@ -227,13 +227,13 @@ suite(OmnisharpManager.name, () => {
                 await manager.GetOmniSharpLaunchPath(defaultVersion, testVersion, useFramework, extensionPath);
                 for (const elem of testZip.files) {
                     const filePath = path.join(extensionPath, installPath, testVersion + suffix, elem.path);
-                    expect(await util.fileExists(filePath)).to.be.true;
+                    expect(await util.fileExists(filePath)).toBe(true);
                 }
             });
         });
     });
 
-    teardown(async () => {
+    afterEach(async () => {
         await server.stop();
         if (tmpFile) {
             tmpFile.dispose();

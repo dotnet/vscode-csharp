@@ -3,13 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should, expect } from 'chai';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { DotNetChannelObserver } from '../../../src/observers/dotnetChannelObserver';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import { CommandDotNetRestoreStart } from '../../../src/omnisharp/loggingEvents';
 
-suite('DotnetChannelObserver', () => {
-    suiteSetup(() => should());
+describe('DotnetChannelObserver', () => {
     let hasShown: boolean;
     let hasCleared: boolean;
 
@@ -23,7 +22,7 @@ suite('DotnetChannelObserver', () => {
         },
     });
 
-    setup(() => {
+    beforeEach(() => {
         hasShown = false;
         hasCleared = false;
     });
@@ -31,7 +30,7 @@ suite('DotnetChannelObserver', () => {
     test(`CommandDotNetRestoreStart : Clears and shows the channel`, () => {
         const event = new CommandDotNetRestoreStart();
         observer.post(event);
-        expect(hasCleared).to.be.true;
-        expect(hasShown).to.be.true;
+        expect(hasCleared).toBe(true);
+        expect(hasShown).toBe(true);
     });
 });

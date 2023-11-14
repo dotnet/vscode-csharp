@@ -198,13 +198,13 @@ async function dotnetRestoreAllProjects(server: OmniSharpServer, eventStream: Ev
 
 async function getProjectDescriptors(server: OmniSharpServer): Promise<protocol.ProjectDescriptor[]> {
     if (!server.isRunning()) {
-        return Promise.reject('OmniSharp server is not running.');
+        throw new Error('OmniSharp server is not running.');
     }
 
     const info = await serverUtils.requestWorkspaceInformation(server);
     const descriptors = protocol.getDotNetCoreProjectDescriptors(info);
     if (descriptors.length === 0) {
-        return Promise.reject('No .NET Core projects found');
+        throw new Error('No .NET Core projects found');
     }
 
     return descriptors;

@@ -7,11 +7,11 @@ import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
 import { registerOmnisharpOptionChanges } from '../../src/omnisharp/omnisharpOptionChanges';
 
-import * as jestLib from '@jest/globals';
+import { describe, beforeEach, test, expect } from '@jest/globals';
 import * as vscode from 'vscode';
 import { getVSCodeWithConfig, updateConfig } from '../../test/unitTests/fakes';
 
-jestLib.describe('OmniSharpConfigChangeObserver', () => {
+describe('OmniSharpConfigChangeObserver', () => {
     let doClickOk: () => void;
     let doClickCancel: () => void;
     let signalCommandDone: () => void;
@@ -20,7 +20,7 @@ jestLib.describe('OmniSharpConfigChangeObserver', () => {
     let invokedCommand: string | undefined;
     let optionObservable: Subject<void>;
 
-    jestLib.beforeEach(() => {
+    beforeEach(() => {
         resetMocks();
         optionObservable = new BehaviorSubject<void>(undefined);
         infoMessage = undefined;
@@ -40,80 +40,64 @@ jestLib.describe('OmniSharpConfigChangeObserver', () => {
         { config: 'omnisharp', section: 'useModernNet', value: false },
         { config: 'omnisharp', section: 'loggingLevel', value: 'verbose' },
     ].forEach((elem) => {
-        jestLib.describe(`When the ${elem.config} ${elem.section} changes`, () => {
-            jestLib.beforeEach(() => {
-                jestLib.expect(infoMessage).toBe(undefined);
-                jestLib.expect(invokedCommand).toBe(undefined);
+        describe(`When the ${elem.config} ${elem.section} changes`, () => {
+            beforeEach(() => {
+                expect(infoMessage).toBe(undefined);
+                expect(invokedCommand).toBe(undefined);
                 updateConfig(vscode, elem.config, elem.section, elem.value);
                 optionObservable.next();
             });
 
-            jestLib.test(`The information message is shown`, async () => {
-                jestLib
-                    .expect(infoMessage)
-                    .toEqual(
-                        'C# configuration has changed. Would you like to relaunch the Language Server with your changes?'
-                    );
+            test(`The information message is shown`, async () => {
+                expect(infoMessage).toEqual(
+                    'C# configuration has changed. Would you like to relaunch the Language Server with your changes?'
+                );
             });
 
-            jestLib.test(
-                'Given an information message if the user clicks cancel, the command is not executed',
-                async () => {
-                    doClickCancel();
-                    const from = observableFrom(commandDone!).pipe(timeout(1));
-                    const fromPromise = from.toPromise();
-                    await jestLib.expect(fromPromise).rejects.toThrow();
-                    jestLib.expect(invokedCommand).toBe(undefined);
-                }
-            );
+            test('Given an information message if the user clicks cancel, the command is not executed', async () => {
+                doClickCancel();
+                const from = observableFrom(commandDone!).pipe(timeout(1));
+                const fromPromise = from.toPromise();
+                await expect(fromPromise).rejects.toThrow();
+                expect(invokedCommand).toBe(undefined);
+            });
 
-            jestLib.test(
-                'Given an information message if the user clicks Reload, the command is executed',
-                async () => {
-                    doClickOk();
-                    await commandDone;
-                    jestLib.expect(invokedCommand).toEqual('o.restart');
-                }
-            );
+            test('Given an information message if the user clicks Reload, the command is executed', async () => {
+                doClickOk();
+                await commandDone;
+                expect(invokedCommand).toEqual('o.restart');
+            });
         });
     });
 
     [{ config: 'dotnet', section: 'server.useOmnisharp', value: true }].forEach((elem) => {
-        jestLib.describe(`When the ${elem.config} ${elem.section} changes`, () => {
-            jestLib.beforeEach(() => {
-                jestLib.expect(infoMessage).toBe(undefined);
-                jestLib.expect(invokedCommand).toBe(undefined);
+        describe(`When the ${elem.config} ${elem.section} changes`, () => {
+            beforeEach(() => {
+                expect(infoMessage).toBe(undefined);
+                expect(invokedCommand).toBe(undefined);
                 updateConfig(vscode, elem.config, elem.section, elem.value);
                 optionObservable.next();
             });
 
-            jestLib.test(`The information message is shown`, async () => {
-                jestLib
-                    .expect(infoMessage)
-                    .toEqual(
-                        'dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change'
-                    );
+            test(`The information message is shown`, async () => {
+                expect(infoMessage).toEqual(
+                    'dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change'
+                );
             });
 
-            jestLib.test(
-                'Given an information message if the user clicks cancel, the command is not executed',
-                async () => {
-                    doClickCancel();
-                    const from = observableFrom(commandDone!).pipe(timeout(1));
-                    const fromPromise = from.toPromise();
-                    await jestLib.expect(fromPromise).rejects.toThrow();
-                    jestLib.expect(invokedCommand).toBe(undefined);
-                }
-            );
+            test('Given an information message if the user clicks cancel, the command is not executed', async () => {
+                doClickCancel();
+                const from = observableFrom(commandDone!).pipe(timeout(1));
+                const fromPromise = from.toPromise();
+                await expect(fromPromise).rejects.toThrow();
+                expect(invokedCommand).toBe(undefined);
+            });
 
-            jestLib.test(
-                'Given an information message if the user clicks Reload, the command is executed',
-                async () => {
-                    doClickOk();
-                    await commandDone;
-                    jestLib.expect(invokedCommand).toEqual('workbench.action.reloadWindow');
-                }
-            );
+            test('Given an information message if the user clicks Reload, the command is executed', async () => {
+                doClickOk();
+                await commandDone;
+                expect(invokedCommand).toEqual('workbench.action.reloadWindow');
+            });
         });
     });
 
@@ -127,12 +111,12 @@ jestLib.describe('OmniSharpConfigChangeObserver', () => {
         { config: 'omnisharp', section: 'projectLoadTimeout', value: 1000 },
         { config: 'omnisharp', section: 'autoStart', value: false },
     ].forEach((elem) => {
-        jestLib.test(`Information Message is not shown on change in ${elem.config}.${elem.section}`, () => {
-            jestLib.expect(infoMessage).toBe(undefined);
-            jestLib.expect(invokedCommand).toBe(undefined);
+        test(`Information Message is not shown on change in ${elem.config}.${elem.section}`, () => {
+            expect(infoMessage).toBe(undefined);
+            expect(invokedCommand).toBe(undefined);
             updateConfig(vscode, elem.config, elem.section, elem.value);
             optionObservable.next();
-            jestLib.expect(infoMessage).toBe(undefined);
+            expect(infoMessage).toBe(undefined);
         });
     });
 

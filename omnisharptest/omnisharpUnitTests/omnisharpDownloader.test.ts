@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { OmnisharpDownloader } from '../../src/omnisharp/omnisharpDownloader';
 import NetworkSettings from '../../src/networkSettings';
 import { EventStream } from '../../src/eventStream';
@@ -10,10 +11,9 @@ import { PlatformInformation } from '../../src/shared/platform';
 import { CreateTmpDir, TmpAsset } from '../../src/createTmpAsset';
 import * as util from '../../src/common';
 import * as path from 'path';
-import MockHttpsServer from './testAssets/mockHttpsServer';
-import { expect } from 'chai';
-import TestZip from './testAssets/testZip';
-import { createTestFile } from './testAssets/testFile';
+import MockHttpsServer from '../omnisharpUnitTests/testAssets/mockHttpsServer';
+import TestZip from '../omnisharpUnitTests/testAssets/testZip';
+import { createTestFile } from '../omnisharpUnitTests/testAssets/testFile';
 import {
     PackageInstallation,
     LogPlatformInfo,
@@ -25,12 +25,12 @@ import {
     InstallationSuccess,
     PackageInstallStart,
 } from '../../src/omnisharp/loggingEvents';
-import TestEventBus from './testAssets/testEventBus';
-import { testPackageJSON } from './testAssets/testAssets';
+import TestEventBus from '../omnisharpUnitTests/testAssets/testEventBus';
+import { testPackageJSON } from '../omnisharpUnitTests/testAssets/testAssets';
 import { modernNetVersion } from '../../src/omnisharp/omnisharpPackageCreator';
 
 [true, false].forEach((useFramework) => {
-    suite(`OmnisharpDownloader (useFramework: ${useFramework})`, () => {
+    describe(`OmnisharpDownloader (useFramework: ${useFramework})`, () => {
         const networkSettingsProvider = () => new NetworkSettings('', false);
         let eventStream: EventStream;
         const installPath = 'somePath';
@@ -44,7 +44,7 @@ import { modernNetVersion } from '../../src/omnisharp/omnisharpPackageCreator';
         let eventBus: TestEventBus;
         const suffix = useFramework ? '' : `-net${modernNetVersion}`;
 
-        setup(async () => {
+        beforeEach(async () => {
             eventStream = new EventStream();
             eventBus = new TestEventBus(eventStream);
             tmpDir = await CreateTmpDir(true);
@@ -79,14 +79,14 @@ import { modernNetVersion } from '../../src/omnisharp/omnisharpPackageCreator';
                     server.baseUrl,
                     installPath
                 )
-            ).to.be.false;
+            ).toBe(false);
         });
 
         test('Packages are downloaded and installed', async () => {
             await downloader.DownloadAndInstallOmnisharp(version, useFramework, server.baseUrl, installPath);
             for (const elem of testZip.files) {
                 const filePath = path.join(extensionPath, installPath, version + suffix, elem.path);
-                expect(await util.fileExists(filePath)).to.be.true;
+                expect(await util.fileExists(filePath)).toBe(true);
             }
         });
 
@@ -110,12 +110,12 @@ import { modernNetVersion } from '../../src/omnisharp/omnisharpPackageCreator';
                 new InstallationSuccess(),
             ];
 
-            expect(eventBus.getEvents()).to.be.empty;
+            expect(eventBus.getEvents()).toHaveLength(0);
             await downloader.DownloadAndInstallOmnisharp(version, useFramework, server.baseUrl, installPath);
-            expect(eventBus.getEvents()).to.be.deep.equal(expectedSequence);
+            expect(eventBus.getEvents()).toStrictEqual(expectedSequence);
         });
 
-        teardown(async () => {
+        afterEach(async () => {
             tmpDir.dispose();
             await server.stop();
             eventBus.dispose();

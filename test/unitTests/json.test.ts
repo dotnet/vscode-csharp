@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { tolerantParse } from '../../src/json';
-import * as jestLib from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 
-jestLib.describe('JSON', () => {
-    jestLib.test('no comments', () => {
+describe('JSON', () => {
+    test('no comments', () => {
         const text = `{
     "hello": "world"
 }`;
@@ -15,10 +15,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(text);
+        expect(result).toEqual(text);
     });
 
-    jestLib.test('no comments (minified)', () => {
+    test('no comments (minified)', () => {
         const text = `{"hello":"world","from":"json"}`;
 
         const expected = `{
@@ -29,10 +29,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('single-line comment before JSON', () => {
+    test('single-line comment before JSON', () => {
         const text = `// comment
 {
     "hello": "world\\"" // comment
@@ -45,10 +45,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('single-line comment on separate line', () => {
+    test('single-line comment on separate line', () => {
         const text = `{
     // comment
     "hello": "world"
@@ -61,10 +61,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('single-line comment at end of line', () => {
+    test('single-line comment at end of line', () => {
         const text = `{
     "hello": "world" // comment
 }`;
@@ -76,10 +76,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('single-line comment at end of text', () => {
+    test('single-line comment at end of text', () => {
         const text = `{
     "hello": "world"
 } // comment`;
@@ -91,10 +91,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('ignore single-line comment inside string', () => {
+    test('ignore single-line comment inside string', () => {
         const text = `{
     "hello": "world // comment"
 }`;
@@ -102,10 +102,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(text);
+        expect(result).toEqual(text);
     });
 
-    jestLib.test('single-line comment after string with escaped double quote', () => {
+    test('single-line comment after string with escaped double quote', () => {
         const text = `{
     "hello": "world\\"" // comment
 }`;
@@ -117,10 +117,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('multi-line comment at start of text', () => {
+    test('multi-line comment at start of text', () => {
         const text = `/**/{
     "hello": "world"
 }`;
@@ -132,10 +132,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('comment out key/value pair', () => {
+    test('comment out key/value pair', () => {
         const text = `{
     /*"hello": "world"*/
     "from": "json"
@@ -148,10 +148,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('multi-line comment at end of text', () => {
+    test('multi-line comment at end of text', () => {
         const text = `{
     "hello": "world"
 }/**/`;
@@ -163,10 +163,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('ignore multi-line comment inside string', () => {
+    test('ignore multi-line comment inside string', () => {
         const text = `{
     "hello": "wo/**/rld"
 }`;
@@ -178,10 +178,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('ignore BOM', () => {
+    test('ignore BOM', () => {
         const text = `\uFEFF{
     "hello": "world"
 }`;
@@ -193,10 +193,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('ignore trailing comma in object member list', () => {
+    test('ignore trailing comma in object member list', () => {
         const text = `{
     "obj": {
         "hello": "world",
@@ -214,10 +214,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('ignore trailing comma in array element list', () => {
+    test('ignore trailing comma in array element list', () => {
         const text = `{
     "array": [
         "element1",
@@ -235,10 +235,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('ignore trailing comma in object member list with leading and trailing whitespace', () => {
+    test('ignore trailing comma in object member list with leading and trailing whitespace', () => {
         const text = `{
     "obj": { "a" : 1 , }
 }`;
@@ -252,10 +252,10 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 
-    jestLib.test('single-line comments in multiple locations', () => {
+    test('single-line comments in multiple locations', () => {
         const text = `
 // This comment should be allowed.
 {
@@ -287,6 +287,6 @@ jestLib.describe('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        jestLib.expect(result).toEqual(expected);
+        expect(result).toEqual(expected);
     });
 });

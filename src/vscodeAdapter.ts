@@ -985,6 +985,7 @@ export interface vscode {
         all: ReadonlyArray<Extension<any>>;
     };
     Uri: {
+        file(f: string): Uri;
         parse(value: string): Uri;
     };
 

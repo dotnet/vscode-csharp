@@ -11,24 +11,8 @@ pr:
 - release
 - main
 
-variables:
-  ${{ if eq(variables['Build.SourceBranchName'], 'release') }}:
-    prereleaseFlag: ''
-  ${{ else }}:
-    prereleaseFlag: '--prerelease'
-
 stages:
-- stage: Build
-  dependsOn: []
-  jobs:
-  - job: Build
-    steps:
-    - template: azure-pipelines/build.yml
-      parameters:
-        prereleaseFlag: $(prereleaseFlag)
-    pool:
-      name: NetCore-Public
-      demands: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
+- template: azure-pipelines/build-all.yml
 
 - stage: Test
   displayName: Test

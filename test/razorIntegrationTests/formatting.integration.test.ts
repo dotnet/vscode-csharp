@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as jestLib from '@jest/globals';
+import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../integrationTests/integrationHelpers';
 
@@ -21,8 +21,8 @@ function normalizeNewlines(original: string | undefined): string | undefined {
     return original;
 }
 
-jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function () {
-    jestLib.beforeAll(async function () {
+describe(`Razor Formatting ${testAssetWorkspace.description}`, function () {
+    beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }
@@ -32,15 +32,15 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
         const htmlConfig = vscode.workspace.getConfiguration('html');
         await htmlConfig.update('format.enable', true);
 
-        await integrationHelpers.activateCSharpExtension();
         await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'BadlyFormatted.razor'));
+        await integrationHelpers.activateCSharpExtension();
     });
 
-    jestLib.afterAll(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    jestLib.test('Document formatted correctly', async () => {
+    test('Document formatted correctly', async () => {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }
@@ -59,15 +59,23 @@ jestLib.describe(`Razor Formatting ${testAssetWorkspace.description}`, function 
             }
         );
 
-        jestLib.expect(edits).toBeDefined();
+        expect(edits).toBeDefined();
+
+        console.log(`Got ${edits.length} edits`);
 
         // It's much easier to verify the expected state of the document, than a bunch of edits
         const formatEdit = new vscode.WorkspaceEdit();
         formatEdit.set(activeDocument, edits);
+
+        console.log(`Applying edit ${formatEdit}`);
+
         await vscode.workspace.applyEdit(formatEdit);
 
         const contents = normalizeNewlines(vscode.window.activeTextEditor?.document.getText());
-        jestLib.expect(contents).toBe(
+
+        console.log(`Checking document contents...`);
+
+        expect(contents).toBe(
             normalizeNewlines(`@page "/bad"
 
 @code {

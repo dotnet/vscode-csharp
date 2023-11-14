@@ -5,7 +5,7 @@
 
 import * as semver from 'semver';
 
-type RuntimeVersionMap = { [runtime: string]: semver.SemVer[] };
+type RuntimeVersionMap = { [runtime: string]: RuntimeInfo[] };
 export interface DotnetInfo {
     CliPath?: string;
     FullInfo: string;
@@ -14,4 +14,9 @@ export interface DotnetInfo {
     RuntimeId?: string;
     Architecture?: string;
     Runtimes: RuntimeVersionMap;
+}
+
+export interface RuntimeInfo {
+    Version: semver.SemVer;
+    Path: string;
 }

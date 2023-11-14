@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should, expect } from 'chai';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import { CsharpLoggerObserver } from '../../../src/shared/observers/csharpLoggerObserver';
 import { PlatformInformation } from '../../../src/shared/platform';
@@ -11,9 +11,7 @@ import * as Event from '../../../src/omnisharp/loggingEvents';
 import { PackageError } from '../../../src/packageManager/packageError';
 import { Package } from '../../../src/packageManager/package';
 
-suite('CsharpLoggerObserver', () => {
-    suiteSetup(() => should());
-
+describe('CsharpLoggerObserver', () => {
     let logOutput = '';
     const observer = new CsharpLoggerObserver({
         ...getNullChannel(),
@@ -29,30 +27,30 @@ suite('CsharpLoggerObserver', () => {
         architectures: [],
     };
 
-    setup(() => {
+    beforeEach(() => {
         logOutput = '';
     });
 
     test('PlatformInfo: Logs contain the Platform and Architecture', () => {
         const event = new Event.LogPlatformInfo(new PlatformInformation('linux', 'MyArchitecture'));
         observer.post(event);
-        expect(logOutput).to.contain('linux');
-        expect(logOutput).to.contain('MyArchitecture');
+        expect(logOutput).toContain('linux');
+        expect(logOutput).toContain('MyArchitecture');
     });
 
-    suite('InstallationFailure', () => {
+    describe('InstallationFailure', () => {
         test('Stage and Error is logged if not a PackageError', () => {
             const event = new Event.InstallationFailure('someStage', new Error('someError'));
             observer.post(event);
-            expect(logOutput).to.contain(event.stage);
-            expect(logOutput).to.contain(event.error.toString());
+            expect(logOutput).toContain(event.stage);
+            expect(logOutput).toContain(event.error.toString());
         });
 
         test('Stage and Error is logged if a PackageError without inner error', () => {
             const event = new Event.InstallationFailure('someStage', new PackageError('someError', pkg, undefined));
             observer.post(event);
-            expect(logOutput).to.contain(event.stage);
-            expect(logOutput).to.contain(event.error.message);
+            expect(logOutput).toContain(event.stage);
+            expect(logOutput).toContain(event.error.message);
         });
 
         test('Stage and Inner error is logged if a PackageError without inner error', () => {
@@ -61,12 +59,12 @@ suite('CsharpLoggerObserver', () => {
                 new PackageError('someError', pkg, new Error('innerError'))
             );
             observer.post(event);
-            expect(logOutput).to.contain(event.stage);
-            expect(logOutput).to.contain(event.error.innerError.toString());
+            expect(logOutput).toContain(event.stage);
+            expect(logOutput).toContain(event.error.innerError.toString());
         });
     });
 
-    suite('Download', () => {
+    describe('Download', () => {
         const packageName = 'somePackage';
         [
             {
@@ -155,7 +153,7 @@ suite('CsharpLoggerObserver', () => {
                 });
 
                 element.events.forEach((message: Event.BaseEvent) => observer.post(message));
-                expect(logOutput).to.be.equal(element.expected);
+                expect(logOutput).toEqual(element.expected);
             });
         });
     });
@@ -172,44 +170,44 @@ suite('CsharpLoggerObserver', () => {
     ].forEach((element) =>
         test(`${element.message.constructor.name} is shown`, () => {
             observer.post(element.message);
-            expect(logOutput).to.contain(element.expected);
+            expect(logOutput).toContain(element.expected);
         })
     );
 
     test(`ActivationFailure: Some message is logged`, () => {
         const event = new Event.ActivationFailure();
         observer.post(event);
-        expect(logOutput).to.not.be.empty;
+        expect(logOutput).toBeTruthy();
     });
 
     test(`ProjectJsonDeprecatedWarning: Some message is logged`, () => {
         const event = new Event.ProjectJsonDeprecatedWarning();
         observer.post(event);
-        expect(logOutput).to.not.be.empty;
+        expect(logOutput).toBeTruthy();
     });
 
     test(`InstallationSuccess: Some message is logged`, () => {
         const event = new Event.InstallationSuccess();
         observer.post(event);
-        expect(logOutput).to.not.be.empty;
+        expect(logOutput).toBeTruthy();
     });
 
     test(`InstallationProgress: Progress message is logged`, () => {
         const event = new Event.InstallationStart('somPackage');
         observer.post(event);
-        expect(logOutput).to.contain(event.packageDescription);
+        expect(logOutput).toContain(event.packageDescription);
     });
 
     test('PackageInstallation: Package name is logged', () => {
         const event = new Event.PackageInstallation('somePackage');
         observer.post(event);
-        expect(logOutput).to.contain(event.packageInfo);
+        expect(logOutput).toContain(event.packageInfo);
     });
 
     test('DownloadFallBack: The fallbackurl is logged', () => {
         const event = new Event.DownloadFallBack('somrurl');
         observer.post(event);
-        expect(logOutput).to.contain(event.fallbackUrl);
+        expect(logOutput).toContain(event.fallbackUrl);
     });
 
     test(`${Event.IntegrityCheckFailure.name}: Package Description is logged when we are retrying`, () => {
@@ -217,7 +215,7 @@ suite('CsharpLoggerObserver', () => {
         const url = 'someUrl';
         const event = new Event.IntegrityCheckFailure(description, url, true);
         observer.post(event);
-        expect(logOutput).to.contain(description);
+        expect(logOutput).toContain(description);
     });
 
     test(`${Event.IntegrityCheckFailure.name}: Package Description and url are logged when we are not retrying`, () => {
@@ -225,13 +223,13 @@ suite('CsharpLoggerObserver', () => {
         const url = 'someUrl';
         const event = new Event.IntegrityCheckFailure(description, url, false);
         observer.post(event);
-        expect(logOutput).to.contain(description);
-        expect(logOutput).to.contain(url);
+        expect(logOutput).toContain(description);
+        expect(logOutput).toContain(url);
     });
 
     test(`${Event.IntegrityCheckSuccess.name}: Some message is logged`, () => {
         const event = new Event.IntegrityCheckSuccess();
         observer.post(event);
-        expect(logOutput).to.not.be.empty;
+        expect(logOutput).toBeTruthy();
     });
 });
