@@ -30,12 +30,12 @@ async function registerNestedResolveCodeAction(
 ): Promise<void> {
     if (codeActionData) {
         const data = <LSPAny>codeActionData;
-        const action = data.NestedCodeAction;
+        const actions = data.NestedCodeActions;
 
-        if (action?.nestedActions?.length > 0) {
-            const codeActionTitles = getCodeActionTitles(action.nestedActions);
+        if (actions.length > 0) {
+            const codeActionTitles = getCodeActionTitles(actions);
             const selectedValue = await vscode.window.showQuickPick(codeActionTitles, {
-                placeHolder: vscode.l10n.t(action.title),
+                placeHolder: vscode.l10n.t(data.UniqueIdentifier),
                 ignoreFocusOut: true,
             });
             if (selectedValue) {
