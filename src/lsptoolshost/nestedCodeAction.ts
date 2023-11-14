@@ -33,14 +33,13 @@ async function registerNestedResolveCodeAction(
         const action = data.NestedCodeAction;
 
         if (action?.nestedActions?.length > 0) {
-            const codeActionTitles: string[] = getCodeActionTitles(action.nestedActions);
+            const codeActionTitles = getCodeActionTitles(action.nestedActions);
             const selectedValue = await vscode.window.showQuickPick(codeActionTitles, {
                 placeHolder: vscode.l10n.t(action.title),
                 ignoreFocusOut: true,
             });
             if (selectedValue) {
-                const selectedAction = retrieveSelectedAction(selectedValue, action.nestedActions);
-
+                const selectedAction = selectedValue.codeAction;
                 if (!selectedAction) {
                     return;
                 }
@@ -71,7 +70,7 @@ async function registerNestedResolveCodeAction(
                         if (!response.edit) {
                             outputChannel.show();
                             outputChannel.appendLine(`Failed to make an edit for completion.`);
-                            return;
+                            throw new Error('Tried to retrieve a code action edit, but an error occurred.');
                         }
 
                         const uriConverter: URIConverter = (value: string): vscode.Uri =>
@@ -92,40 +91,21 @@ async function registerNestedResolveCodeAction(
     }
 }
 
-function getCodeActionTitles(nestedActions: any): string[] {
-    // Flatten the array of strings and concatenate with " ->"
-    return nestedActions.flatMap(
-        (nestedAction: {
-            data: {
-                FixAllFlavors: string[] | null;
-                CodeActionPath: string[];
-            };
-        }) => {
-            const codeActionPath = nestedAction.data.CodeActionPath;
-            const fixAllFlavors = nestedAction.data.FixAllFlavors;
-            // If there's only one string, return it directly
-            if (codeActionPath.length === 1) {
-                return codeActionPath;
-            }
-
-            // Concatenate multiple strings with " ->"
-            const concatenatedString = codeActionPath.slice(1).join(' -> ');
-            const fixAllString = vscode.l10n.t('Fix All: ');
-            return fixAllFlavors ? [`${fixAllString}${concatenatedString}`] : concatenatedString;
+function getCodeActionTitles(nestedActions: any): any[] {
+    return nestedActions.map((nestedAction: { data: { CodeActionPath: any; FixAllFlavors: any } }) => {
+        const codeActionPath = nestedAction.data.CodeActionPath;
+        const fixAllFlavors = nestedAction.data.FixAllFlavors;
+        // If there's only one string, return it directly
+        if (codeActionPath.length === 1) {
+            return codeActionPath;
         }
-    );
-}
 
-function retrieveSelectedAction(selectedValue: string, nestedActions: any): any {
-    return nestedActions.find(
-        (nestedAction: { data: { CodeActionPath: string[]; FixAllFlavors: string[] | null } }) => {
-            const codeActionPath = nestedAction.data.CodeActionPath;
-            const fixAllFlavors = nestedAction.data.FixAllFlavors;
-            const fixAllString = vscode.l10n.t('Fix All: ');
-            const concatenatedString = codeActionPath.slice(1).join(' -> ');
-            return fixAllFlavors
-                ? `${fixAllString}${concatenatedString}` === selectedValue
-                : concatenatedString === selectedValue;
-        }
-    );
+        // Concatenate multiple strings with " ->"
+        const concatenatedString = codeActionPath.slice(1).join(' -> ');
+        const fixAllString = vscode.l10n.t('Fix All: ');
+        return {
+            label: fixAllFlavors ? `${fixAllString}${concatenatedString}` : concatenatedString,
+            codeAction: nestedAction,
+        };
+    });
 }
