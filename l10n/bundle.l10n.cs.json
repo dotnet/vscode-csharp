@@ -37,6 +37,7 @@
   "Do not load any": "Nic nenačítat",
   "Does not contain .NET Core projects.": "Neobsahuje projekty .NET Core.",
   "Don't Ask Again": "Příště už se neptat",
+  "Downloading Razor Telemetry Package": "Stahuje se balíček telemetrie Razor.",
   "Enable launching a web browser when ASP.NET Core starts. For more information: {0}": "Povolit spuštění webového prohlížeče při spuštění ASP.NET Core. Další informace: {0}",
   "Error Message: ": "Chybová zpráva: ",
   "Expand": "Rozbalit",

@@ -5,13 +5,13 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as jestLib from '@jest/globals';
+import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from './integrationHelpers';
 import { InlayHint, InlayHintKind, Position } from 'vscode-languageserver-protocol';
 
-jestLib.describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, function () {
-    jestLib.beforeAll(async function () {
+describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, function () {
+    beforeAll(async function () {
         const editorConfig = vscode.workspace.getConfiguration('editor');
         await editorConfig.update('inlayHints.enabled', true);
         const dotnetConfig = vscode.workspace.getConfiguration('dotnet');
@@ -34,11 +34,11 @@ jestLib.describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, fu
         await integrationHelpers.activateCSharpExtension();
     });
 
-    jestLib.afterAll(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    jestLib.test('Hints retrieved for region', async () => {
+    test('Hints retrieved for region', async () => {
         const range = new vscode.Range(new vscode.Position(4, 8), new vscode.Position(15, 85));
         const activeDocument = vscode.window.activeTextEditor?.document.uri;
         if (!activeDocument) {
@@ -50,7 +50,7 @@ jestLib.describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, fu
             range
         );
 
-        jestLib.expect(hints).toHaveLength(6);
+        expect(hints).toHaveLength(6);
 
         assertInlayHintEqual(hints[0], InlayHint.create(Position.create(6, 12), 'InlayHints', InlayHintKind.Type));
         assertInlayHintEqual(hints[1], InlayHint.create(Position.create(7, 27), 'InlayHints', InlayHintKind.Type));
@@ -61,10 +61,10 @@ jestLib.describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, fu
 
         function assertInlayHintEqual(actual: vscode.InlayHint, expected: InlayHint) {
             const actualLabel = actual.label as string;
-            jestLib.expect(actualLabel).toBe(expected.label);
-            jestLib.expect(actual.position.line).toBe(expected.position.line);
-            jestLib.expect(actual.position.character).toBe(expected.position.character);
-            jestLib.expect(actual.kind).toBe(expected.kind);
+            expect(actualLabel).toBe(expected.label);
+            expect(actual.position.line).toBe(expected.position.line);
+            expect(actual.position.character).toBe(expected.position.character);
+            expect(actual.kind).toBe(expected.kind);
         }
     });
 });

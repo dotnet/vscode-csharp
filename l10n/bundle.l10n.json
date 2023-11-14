@@ -39,6 +39,7 @@
   "Replace existing build and debug assets?": "Replace existing build and debug assets?",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "Could not locate .NET Core project in '{0}'. Assets were not generated.",
   "Unable to generate assets to build and debug. {0}.": "Unable to generate assets to build and debug. {0}.",
+  "Downloading Razor Telemetry Package": "Downloading Razor Telemetry Package",
   "Cannot load Razor language server because the directory was not found: '{0}'": "Cannot load Razor language server because the directory was not found: '{0}'",
   "Could not find '{0}' in or above '{1}'.": "Could not find '{0}' in or above '{1}'.",
   "Invalid trace setting for Razor language server. Defaulting to '{0}'": "Invalid trace setting for Razor language server. Defaulting to '{0}'",

@@ -7,6 +7,7 @@ import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import {
+    ActivationResult,
     activateCSharpExtension,
     describeIfNotGenerator,
     describeIfNotRazorOrGenerator,
@@ -39,8 +40,10 @@ describeIfNotGenerator(`DiagnosticProvider: ${testAssetWorkspace.description}`, 
     let razorFileUri: vscode.Uri;
     let virtualRazorFileUri: vscode.Uri;
 
+    let activation: ActivationResult;
+
     beforeAll(async function () {
-        const activation = await activateCSharpExtension();
+        activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);
 
         const fileName = 'diagnostics.cs';
@@ -53,10 +56,12 @@ describeIfNotGenerator(`DiagnosticProvider: ${testAssetWorkspace.description}`, 
         virtualRazorFileUri = vscode.Uri.file(razorFileUri.fsPath + '__virtual.cs');
     });
 
+    afterAll(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });
+
     describeIfRazor('razor workspace', () => {
         beforeAll(async function () {
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restore();
             await vscode.commands.executeCommand('vscode.open', razorFileUri);
             await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
@@ -82,18 +87,11 @@ describeIfNotGenerator(`DiagnosticProvider: ${testAssetWorkspace.description}`, 
                 }
             );
         });
-
-        afterAll(async () => {
-            await testAssetWorkspace.cleanupWorkspace();
-        });
     });
 
     describeIfNotRazorOrGenerator('small workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)', () => {
         beforeAll(async function () {
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restore();
             await vscode.commands.executeCommand('vscode.open', fileUri);
-
             await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
@@ -162,10 +160,6 @@ describeIfNotGenerator(`DiagnosticProvider: ${testAssetWorkspace.description}`, 
                 (res) => expect(res.length).toBeGreaterThan(0)
             );
         });
-
-        afterAll(async () => {
-            await testAssetWorkspace.cleanupWorkspace();
-        });
     });
 
     const describeCondition =
@@ -179,8 +173,6 @@ describeIfNotGenerator(`DiagnosticProvider: ${testAssetWorkspace.description}`, 
     describeCondition('large workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)', () => {
         beforeAll(async function () {
             await setDiagnosticWorkspaceLimit(1);
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restore();
             await restartOmniSharpServer();
             await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
@@ -207,10 +199,6 @@ describeIfNotGenerator(`DiagnosticProvider: ${testAssetWorkspace.description}`, 
                 500,
                 (secondaryDiag) => expect(secondaryDiag.length).toEqual(0)
             );
-        });
-
-        afterAll(async () => {
-            await testAssetWorkspace.cleanupWorkspace();
         });
     });
 });

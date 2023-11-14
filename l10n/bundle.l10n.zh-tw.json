@@ -37,6 +37,7 @@
   "Do not load any": "不要載入",
   "Does not contain .NET Core projects.": "不包含 .NET Core 專案。",
   "Don't Ask Again": "不要再詢問",
+  "Downloading Razor Telemetry Package": "下載 Razor 遙測套件",
   "Enable launching a web browser when ASP.NET Core starts. For more information: {0}": "啟用在 ASP.NET Core 開始時啟動網頁瀏覽器。如需詳細資訊: {0}",
   "Error Message: ": "錯誤訊息: ",
   "Expand": "展開",

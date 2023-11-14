@@ -6,6 +6,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn to 4.9.0-2.23563.2 (PR: [#6664](https://github.com/dotnet/vscode-csharp/pull/6664))
+  * Implement textDocument/prepareRename to show error in invalid rename locations (PR: [#70724](https://github.com/dotnet/roslyn/pull/70724))
+  * Improve Hover markdown on 'await' keyword (PR: [#70629](https://github.com/dotnet/roslyn/pull/70629))
+* Direct debugger setting documentation to code.visualstudio.com (PR: [#6659](https://github.com/dotnet/vscode-csharp/pull/6659))
+* Add a timeout for downloading razor telemetry (PR: [#6622](https://github.com/dotnet/vscode-csharp/pull/6622))
+* Rearrange settings sections into actual categories (PR: [#6652](https://github.com/dotnet/vscode-csharp/pull/6652))
+
+## 2.10.28
 * Fix C# Debugger telemetry (PR: [#6627](https://github.com/dotnet/vscode-csharp/pull/6627))
 * Add support for deduping build diagnostics from C# Devkit (PR: [#6543](https://github.com/dotnet/vscode-csharp/pull/6543))
 * Update Roslyn to 4.9.0-1.23530.4 (PR: [#6603](https://github.com/dotnet/vscode-csharp/pull/6603))

@@ -411,7 +411,7 @@
         },
         "justMyCode": {
           "type": "boolean",
-          "markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson#just-my-code)",
+          "markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson-JustMyCode)",
           "default": true
         },
         "requireExactSource": {
@@ -434,7 +434,7 @@
         },
         "suppressJITOptimizations": {
           "type": "boolean",
-          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
+          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
           "default": false
         },
         "symbolOptions": {
@@ -448,7 +448,7 @@
         },
         "sourceLinkOptions": {
           "$ref": "#/definitions/SourceLinkOptions",
-          "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
+          "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-DotNet-SourceLink)",
           "default": {
             "*": { "enabled": true }
           }
@@ -530,7 +530,7 @@
         },
         "suppressJITOptimizations": {
           "type": "boolean",
-          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
+          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
           "default": false
         },
         "symbolOptions": {
@@ -544,7 +544,7 @@
         },
         "sourceLinkOptions": {
           "$ref": "#/definitions/SourceLinkOptions",
-          "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
+          "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-DotNet-SourceLink)",
           "default": {
             "*": { "enabled": true }
           }
@@ -563,7 +563,7 @@
     },
     "SourceLinkOptions": {
       "type": "object",
-      "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
+      "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-DotNet-SourceLink)",
       "additionalItems": {
         "type": "object",
         "properties": {
