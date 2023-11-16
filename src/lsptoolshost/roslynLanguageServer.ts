@@ -27,6 +27,7 @@ import {
     MessageTransports,
     RAL,
     CancellationToken,
+    RequestHandler,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -317,6 +318,13 @@ export class RoslynLanguageServer {
 
         const response = await this._languageClient.sendNotification(method, params);
         return response;
+    }
+
+    public registerOnRequest<Params, Result, Error>(
+        type: RequestType<Params, Result, Error>,
+        handler: RequestHandler<Params, Result, Error>
+    ) {
+        this._languageClient.addDisposable(this._languageClient.onRequest(type, handler));
     }
 
     public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {

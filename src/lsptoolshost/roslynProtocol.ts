@@ -152,15 +152,22 @@ export interface NamedPipeInformation {
 
 export interface RestoreParams extends lsp.WorkDoneProgressParams, lsp.PartialResultParams {
     /**
-     * An optional file path to restore.
-     * If none is specified, the solution (or all loaded projects) are restored.
+     * The set of projects to restore.
+     * If none are specified, the solution (or all loaded projects) are restored.
      */
-    projectFilePath?: string;
+    projectFilePaths: string[];
 }
 
 export interface RestorePartialResult {
     stage: string;
     message: string;
+}
+
+export interface UnresolvedProjectDependenciesParams {
+    /**
+     * The set of projects that have unresolved dependencies and require a restore.
+     */
+    projectFilePaths: string[];
 }
 
 export namespace WorkspaceDebugConfigurationRequest {
@@ -259,4 +266,10 @@ export namespace RestorableProjects {
     export const method = 'workspace/_roslyn_restorableProjects';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.RequestType0<string[], void>(method);
+}
+
+export namespace UnresolvedProjectDependenciesNotification {
+    export const method = 'workspace/_roslyn_unresolvedProjectDependencies';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.RequestType<UnresolvedProjectDependenciesParams, void, void>(method);
 }

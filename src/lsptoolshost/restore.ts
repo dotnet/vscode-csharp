@@ -5,7 +5,13 @@
 
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from './roslynLanguageServer';
-import { RestorableProjects, RestoreParams, RestorePartialResult, RestoreRequest } from './roslynProtocol';
+import {
+    RestorableProjects,
+    RestoreParams,
+    RestorePartialResult,
+    RestoreRequest,
+    UnresolvedProjectDependenciesNotification,
+} from './roslynProtocol';
 import path = require('path');
 
 let _restoreInProgress = false;
@@ -22,10 +28,15 @@ export function registerRestoreCommands(
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
-            return restore(languageServer, restoreChannel);
+            return restore(languageServer, restoreChannel, [], true);
         })
     );
+
+    languageServer.registerOnRequest(UnresolvedProjectDependenciesNotification.type, async (params) => {
+        await restore(languageServer, restoreChannel, params.projectFilePaths, false);
+    });
 }
+
 async function chooseProjectAndRestore(
     languageServer: RoslynLanguageServer,
     restoreChannel: vscode.OutputChannel
@@ -49,22 +60,25 @@ async function chooseProjectAndRestore(
         return;
     }
 
-    await restore(languageServer, restoreChannel, pickedItem.description);
+    await restore(languageServer, restoreChannel, [pickedItem.description!], true);
 }
 
-async function restore(
+export async function restore(
     languageServer: RoslynLanguageServer,
     restoreChannel: vscode.OutputChannel,
-    projectFile?: string
+    projectFiles: string[],
+    showOutput: boolean
 ): Promise<void> {
     if (_restoreInProgress) {
         vscode.window.showErrorMessage(vscode.l10n.t('Restore already in progress'));
         return;
     }
     _restoreInProgress = true;
-    restoreChannel.show(true);
+    if (showOutput) {
+        restoreChannel.show(true);
+    }
 
-    const request: RestoreParams = { projectFilePath: projectFile };
+    const request: RestoreParams = { projectFilePaths: projectFiles };
     await vscode.window
         .withProgress(
             {

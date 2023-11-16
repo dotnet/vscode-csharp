@@ -1742,6 +1742,11 @@
             "default": null,
             "description": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors."
           },
+          "dotnet.projects.enableAutomaticRestore": {
+            "type": "boolean",
+            "default": true,
+            "description": "Sets whether or not automatic nuget restore is enabled if the project system detects assets are missing."
+          },
           "razor.languageServer.directory": {
             "type": "string",
             "scope": "machine-overridable",
