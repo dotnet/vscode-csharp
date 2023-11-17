@@ -136,6 +136,8 @@
   "Restore": "Restore",
   "Sending request": "Sending request",
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
+  "Nested Code Action": "Nested Code Action",
+  "Fix All: ": "Fix All: ",
   "Pick a fix all scope": "Pick a fix all scope",
   "Fix All Code Action": "Fix All Code Action",
   "pipeArgs must be a string or a string array type": "pipeArgs must be a string or a string array type",
