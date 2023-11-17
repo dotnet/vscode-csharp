@@ -2,6 +2,7 @@
 .logs/**
 .nyc_output/**
 !.roslyn/**
+!.roslynDevkit/**
 !.omnisharp/**
 !.razor/**
 !.razoromnisharp/**
