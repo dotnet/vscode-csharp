@@ -12,6 +12,7 @@
 * Direct debugger setting documentation to code.visualstudio.com (PR: [#6659](https://github.com/dotnet/vscode-csharp/pull/6659))
 * Add a timeout for downloading razor telemetry (PR: [#6622](https://github.com/dotnet/vscode-csharp/pull/6622))
 * Rearrange settings sections into actual categories (PR: [#6652](https://github.com/dotnet/vscode-csharp/pull/6652))
+* Use case-insensitive path lookups for Razor files on Windows and Mac (PR: [#6683](https://github.com/dotnet/vscode-csharp/pull/6683))
 
 ## 2.10.28
 * Fix C# Debugger telemetry (PR: [#6627](https://github.com/dotnet/vscode-csharp/pull/6627))
