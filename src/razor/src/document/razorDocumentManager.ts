@@ -230,15 +230,9 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             return this.razorDocuments[path];
         }
 
-        const lowerCasePath = path.toLowerCase();
-        const key = Object.keys(this.razorDocuments).find(
-            (documentPath) => documentPath.toLowerCase() === lowerCasePath
+        return Object.values(this.razorDocuments).find(
+            (document) => document.path.localeCompare(path, undefined, { sensitivity: 'base' }) === 0
         );
-        if (key) {
-            return this.razorDocuments[key];
-        }
-
-        return undefined;
     }
 
     private async updateCSharpBuffer(updateBufferRequest: UpdateBufferRequest) {
