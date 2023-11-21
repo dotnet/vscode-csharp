@@ -60,6 +60,11 @@ export class DynamicFileInfoHandler {
             // Normally we start receiving dynamic info after Razor is initialized, but if the user had a .razor file open
             // when they started VS Code, the order is the other way around. This no-ops if Razor is already initialized.
             await this.documentManager.ensureRazorInitialized();
+
+            await this.documentManager.monitorProjectConfigurationFile(
+                request.projectId,
+                request.projectIntermediateOutputPath
+            );
         } catch (error) {
             this.logger.logWarning(`${DynamicFileInfoHandler.provideDynamicFileInfoCommand} failed with ${error}`);
         }

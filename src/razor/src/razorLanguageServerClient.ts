@@ -33,6 +33,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     private startHandle: Promise<void> | undefined;
     private stopHandle: Promise<void> | undefined;
 
+    public readonly projectConfigurationFileName = 'project.razor.vscode.bin';
+
     constructor(
         private readonly vscodeType: typeof vscode,
         private readonly languageServerDir: string,
@@ -241,7 +243,9 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         // TODO: When all of this code is on GitHub, should we just pass `--omnisharp` as a flag to rzls, and let it decide?
         if (!options.usingOmniSharp) {
             args.push('--projectConfigurationFileName');
-            args.push('project.razor.vscode.bin');
+            args.push(this.projectConfigurationFileName);
+            args.push('--MonitorWorkspaceFolderForConfigurationFiles');
+            args.push('false');
             args.push('--DelegateToCSharpOnDiagnosticPublish');
             args.push('true');
             args.push('--UpdateBuffersForClosedDocuments');
