@@ -169,7 +169,6 @@ export async function requestProjectInformation(server: OmniSharpServer, request
 export async function requestWorkspaceInformation(server: OmniSharpServer) {
     const response = await server.makeRequest<protocol.WorkspaceInformationResponse>(protocol.Requests.Projects);
     if (response.MsBuild && response.MsBuild.Projects) {
-
         for (const project of response.MsBuild.Projects) {
             project.IsWebProject = isWebProject(project.Path);
 
@@ -185,9 +184,7 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
             );
 
             project.IsBlazorWebAssemblyHosted = isProjectBlazorWebAssemblyHosted;
-            project.IsBlazorWebAssemblyStandalone =
-                isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
-
+            project.IsBlazorWebAssemblyStandalone = isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
         }
     }
 
