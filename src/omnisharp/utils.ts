@@ -184,7 +184,8 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
             );
 
             project.IsBlazorWebAssemblyHosted = isProjectBlazorWebAssemblyHosted;
-            project.IsBlazorWebAssemblyStandalone = isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
+            project.IsBlazorWebAssemblyStandalone =
+                isProjectBlazorWebAssemblyProject && !project.IsBlazorWebAssemblyHosted;
         }
     }
 
