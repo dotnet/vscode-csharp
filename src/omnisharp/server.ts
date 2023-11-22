@@ -1,59 +1,62 @@
-
 /*---------------------------------------------------------------------------------------------
-*  Copyright (c) Microsoft Corporation. All rights reserved.
-*  Licensed under the MIT License. See License.txt in the project root for license information.
-*--------------------------------------------------------------------------------------------*/
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from './protocol';
-import * as utils from '../common';
 import * as serverUtils from '../omnisharp/utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
-import { exec } from 'child_process';
-import { LaunchTarget, findLaunchTargets, LaunchTargetKind, SpawnedChildProcess } from './launcher';
-import { createInterface } from 'readline';
-import { Request, RequestQueueCollection } from './requestQueue';
+import { LaunchTarget, LaunchTargetKind } from '../shared/launchTarget';
 import { DelayTracker } from './delayTracker';
 import { EventEmitter } from 'events';
-import { OmnisharpManager } from './OmnisharpManager';
-import { Options } from './options';
-import { PlatformInformation } from '../platform';
-import { launchOmniSharp } from './launcher';
-import { setTimeout } from 'timers';
-import { OmnisharpDownloader } from './OmnisharpDownloader';
+import { OmnisharpManager } from './omnisharpManager';
+import { PlatformInformation } from '../shared/platform';
+import { OmnisharpDownloader } from './omnisharpDownloader';
 import * as ObservableEvents from './loggingEvents';
-import { EventStream } from '../EventStream';
-import { NetworkSettingsProvider } from '../NetworkSettings';
+import { EventStream } from '../eventStream';
+import { NetworkSettingsProvider } from '../networkSettings';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import CompositeDisposable from '../CompositeDisposable';
-import Disposable from '../Disposable';
-import OptionProvider from '../observers/OptionProvider';
-import { IHostExecutableResolver } from '../constants/IHostExecutableResolver';
+import CompositeDisposable from '../compositeDisposable';
+import Disposable from '../disposable';
+import { ExtensionContext, OutputChannel } from 'vscode';
+import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
+import { LspEngine } from './engines/lspEngine';
+import { IEngine } from './engines/IEngine';
+import { StdioEngine } from './engines/stdioEngine';
+import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { showProjectSelector } from '../features/commands';
-import { removeBOMFromBuffer, removeBOMFromString } from '../utils/removeBOM';
 import { validateRequirements } from './requirementCheck';
+import { Advisor } from '../features/diagnosticsProvider';
+import TestManager from '../features/dotnetTest';
+import { findLaunchTargets } from './launcher';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
+import { commonOptions, omnisharpOptions, razorOptions } from '../shared/options';
 
 enum ServerState {
     Starting,
     Started,
-    Stopped
+    Stopped,
 }
 
-type State = {
-    status: ServerState.Stopped,
-} | {
-    status: ServerState.Starting,
-    disposables: CompositeDisposable,
-} | {
-    status: ServerState.Started,
-    disposables: CompositeDisposable,
-    serverProcess: SpawnedChildProcess,
-    telemetryIntervalId: NodeJS.Timeout,
-};
+type State =
+    | {
+          status: ServerState.Stopped;
+      }
+    | {
+          status: ServerState.Starting;
+          disposables: CompositeDisposable;
+      }
+    | {
+          status: ServerState.Started;
+          disposables: CompositeDisposable;
+          engine: IEngine;
+          telemetryIntervalId: NodeJS.Timeout;
+      };
 
-module Events {
+export namespace Events {
     export const StateChanged = 'stateChanged';
 
     export const StdOut = 'stdout';
@@ -91,15 +94,12 @@ module Events {
 const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 
 export class OmniSharpServer {
-
-    private static _nextId = 1;
-
     private _delayTrackers: { [requestName: string]: DelayTracker } = {};
 
     private _eventBus = new EventEmitter();
     private _state: State = { status: ServerState.Stopped };
     private _launchTarget: LaunchTarget | undefined;
-    private _requestQueue: RequestQueueCollection;
+
     private _sessionProperties: { [key: string]: any } = {};
 
     private _omnisharpManager: OmnisharpManager;
@@ -112,15 +112,25 @@ export class OmniSharpServer {
         private packageJSON: any,
         private platformInfo: PlatformInformation,
         private eventStream: EventStream,
-        private optionProvider: OptionProvider,
         private extensionPath: string,
         private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver,
-        public decompilationAuthorized: boolean) {
-        this._requestQueue = new RequestQueueCollection(this.eventStream, 8, request => this._makeRequest(request));
-        let downloader = new OmnisharpDownloader(networkSettingsProvider, this.eventStream, this.packageJSON, platformInfo, extensionPath);
+        public decompilationAuthorized: boolean,
+        private context: ExtensionContext,
+        private outputChannel: OutputChannel,
+        private languageMiddlewareFeature: LanguageMiddlewareFeature
+    ) {
+        const downloader = new OmnisharpDownloader(
+            networkSettingsProvider,
+            this.eventStream,
+            this.packageJSON,
+            platformInfo,
+            extensionPath
+        );
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
-        this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe((event) => { this.updateProjectInfo(); });
+        this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe((_) => {
+            this.updateProjectInfo();
+        });
         this.firstUpdateProject = true;
     }
 
@@ -132,11 +142,13 @@ export class OmniSharpServer {
         return this._state.status === ServerState.Started;
     }
 
-    public async waitForEmptyEventQueue(): Promise<void> {
-        while (!this._requestQueue.isEmpty()) {
-            let p = new Promise((resolve) => setTimeout(resolve, 100));
-            await p;
+    public async waitForInitialize(): Promise<void> {
+        if (this._state.status !== ServerState.Started) {
+            throw new Error('OmniSharp server is not running.');
         }
+
+        const { engine } = this._state;
+        await engine.waitForInitialize();
     }
 
     private _setState(state: State): void {
@@ -216,7 +228,10 @@ export class OmniSharpServer {
         return this._addListener(Events.ProjectRemoved, listener, thisArg);
     }
 
-    public onBackgroundDiagnosticStatus(listener: (e: protocol.BackgroundDiagnosticStatusMessage) => any, thisArg?: any) {
+    public onBackgroundDiagnosticStatus(
+        listener: (e: protocol.BackgroundDiagnosticStatusMessage) => any,
+        thisArg?: any
+    ) {
         return this._addListener(Events.BackgroundDiagnosticStatus, listener, thisArg);
     }
 
@@ -264,73 +279,125 @@ export class OmniSharpServer {
 
     // --- start, stop, and connect
 
-    private async _start(launchTarget: LaunchTarget): Promise<void> {
+    public async start(launchTarget: LaunchTarget): Promise<void> {
         if (this._state.status !== ServerState.Stopped) {
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to start OmniSharp server failed because another server instance is running."));
+            this.eventStream.post(
+                new ObservableEvents.OmnisharpServerOnServerError(
+                    'Attempt to start OmniSharp server failed because another server instance is running.'
+                )
+            );
             return;
         }
 
         if (launchTarget.workspaceKind === LaunchTargetKind.LiveShare) {
-            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("During Live Share sessions language services are provided by the Live Share server."));
+            this.eventStream.post(
+                new ObservableEvents.OmnisharpServerMessage(
+                    'During Live Share sessions language services are provided by the Live Share server.'
+                )
+            );
             return;
         }
 
-        const options = this.optionProvider.GetLatestOptions();
-
-        if (!await validateRequirements(options)) {
-            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage("OmniSharp failed to start because of missing requirements."));
+        if (!(await validateRequirements())) {
+            this.eventStream.post(
+                new ObservableEvents.OmnisharpServerMessage(
+                    'OmniSharp failed to start because of missing requirements.'
+                )
+            );
             return;
         }
 
         const disposables = new CompositeDisposable();
 
-        disposables.add(this.onServerError(err =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err))
-        ));
+        let engine: IEngine | undefined;
+        if (omnisharpOptions.enableLspDriver) {
+            engine = new LspEngine(
+                this._eventBus,
+                this.eventStream,
+                this.context,
+                this.outputChannel,
+                disposables,
+                this.languageMiddlewareFeature,
+                this.platformInfo,
+                this.monoResolver,
+                this.dotnetResolver
+            );
+        } else {
+            engine = new StdioEngine(
+                this._eventBus,
+                this.eventStream,
+                this.platformInfo,
+                this.monoResolver,
+                this.dotnetResolver,
+                disposables
+            );
+        }
 
-        disposables.add(this.onError((message: protocol.ErrorMessage) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnError(message))
-        ));
+        disposables.add(
+            this.onServerError((err) => this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError(err)))
+        );
 
-        disposables.add(this.onMsBuildProjectDiagnostics((message: protocol.MSBuildProjectDiagnostics) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
-        ));
+        disposables.add(
+            this.onError((message: protocol.ErrorMessage) =>
+                this.eventStream.post(new ObservableEvents.OmnisharpServerOnError(message))
+            )
+        );
 
-        disposables.add(this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message))
-        ));
+        disposables.add(
+            this.onMsBuildProjectDiagnostics((message: protocol.MSBuildProjectDiagnostics) =>
+                this.eventStream.post(new ObservableEvents.OmnisharpServerMsBuildProjectDiagnostics(message))
+            )
+        );
 
-        disposables.add(this.onStderr((message: string) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStdErr(message))
-        ));
+        disposables.add(
+            this.onUnresolvedDependencies((message: protocol.UnresolvedDependenciesMessage) =>
+                this.eventStream.post(new ObservableEvents.OmnisharpServerUnresolvedDependencies(message))
+            )
+        );
 
-        disposables.add(this.onMultipleLaunchTargets((targets: LaunchTarget[]) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpOnMultipleLaunchTargets(targets))
-        ));
+        disposables.add(
+            this.onStderr((message: string) =>
+                this.eventStream.post(new ObservableEvents.OmnisharpServerOnStdErr(message))
+            )
+        );
 
-        disposables.add(this.onBeforeServerInstall(() =>
-            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerInstall())
-        ));
+        disposables.add(
+            this.onMultipleLaunchTargets((targets: LaunchTarget[]) =>
+                this.eventStream.post(new ObservableEvents.OmnisharpOnMultipleLaunchTargets(targets))
+            )
+        );
 
-        disposables.add(this.onBeforeServerStart(() => {
-            this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart());
-        }));
+        disposables.add(
+            this.onBeforeServerInstall(() =>
+                this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerInstall())
+            )
+        );
 
-        disposables.add(this.onServerStop(() =>
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStop())
-        ));
+        disposables.add(
+            this.onBeforeServerStart(() => {
+                this.eventStream.post(new ObservableEvents.OmnisharpOnBeforeServerStart());
+            })
+        );
 
-        disposables.add(this.onServerStart(() => {
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
-        }));
+        disposables.add(this.onServerStop(() => this.eventStream.post(new ObservableEvents.OmnisharpServerOnStop())));
 
-        disposables.add(this.onBackgroundDiagnosticStatus((message: protocol.BackgroundDiagnosticStatusMessage) =>
-            this.eventStream.post(new ObservableEvents.OmnisharpBackgroundDiagnosticStatus(message))
-        ));
+        disposables.add(
+            this.onServerStart(() => {
+                this.eventStream.post(new ObservableEvents.OmnisharpServerOnStart());
+            })
+        );
 
-        disposables.add(this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
-            this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
-        }));
+        disposables.add(
+            this.onBackgroundDiagnosticStatus((message: protocol.BackgroundDiagnosticStatusMessage) =>
+                this.eventStream.post(new ObservableEvents.OmnisharpBackgroundDiagnosticStatus(message))
+            )
+        );
+
+        disposables.add(
+            this.onProjectConfigurationReceived((message: ProjectConfigurationMessage) => {
+                this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
+            })
+        );
 
         disposables.add(this.onProjectAdded(this.debounceUpdateProjectWithLeadingTrue));
         disposables.add(this.onProjectChange(this.debounceUpdateProjectWithLeadingTrue));
@@ -345,146 +412,200 @@ export class OmniSharpServer {
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
 
-        const args = [
+        const args: string[] = [
             '-z',
-            '-s', solutionPath,
-            '--hostPID', process.pid.toString(),
+            '-s',
+            solutionPath,
+            '--hostPID',
+            process.pid.toString(),
             'DotNet:enablePackageRestore=false',
-            '--encoding', 'utf-8',
-            '--loglevel', options.loggingLevel
+            '--loglevel',
+            omnisharpOptions.loggingLevel,
         ];
 
-        if (!options.razorDisabled) {
-            // Razor support only exists for certain platforms, so only load the plugin if present
-            const razorPluginPath = options.razorPluginPath.length > 0 ? options.razorPluginPath : path.join(
-                this.extensionPath,
-                '.razor',
-                'OmniSharpPlugin',
-                'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll');
-            if (fs.existsSync(razorPluginPath)) {
-                args.push('--plugin', razorPluginPath);
-            }
+        const razorPluginPathOption = razorOptions.razorPluginPath;
+        // Razor support only exists for certain platforms, so only load the plugin if present
+        const razorPluginPath =
+            razorPluginPathOption.length > 0
+                ? razorPluginPathOption
+                : path.join(
+                      this.extensionPath,
+                      '.razoromnisharp',
+                      'OmniSharpPlugin',
+                      'Microsoft.AspNetCore.Razor.OmniSharpPlugin.dll'
+                  );
+        if (fs.existsSync(razorPluginPath)) {
+            args.push('--plugin', razorPluginPath);
         }
 
-        if (options.waitForDebugger === true) {
+        if (commonOptions.waitForDebugger === true) {
             args.push('--debug');
         }
 
-        for (let i = 0; i < options.excludePaths.length; i++) {
-            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.excludePaths[i]}`);
+        const excludePath = commonOptions.excludePaths;
+        for (let i = 0; i < excludePath.length; i++) {
+            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${excludePath[i]}`);
         }
 
-        if (options.enableMsBuildLoadProjectsOnDemand === true) {
+        if (omnisharpOptions.enableMsBuildLoadProjectsOnDemand === true) {
             args.push('MsBuild:LoadProjectsOnDemand=true');
         }
 
-        if (options.enableRoslynAnalyzers === true) {
+        if (omnisharpOptions.enableRoslynAnalyzers === true) {
             args.push('RoslynExtensionsOptions:EnableAnalyzersSupport=true');
         }
 
-        if (options.enableEditorConfigSupport === true) {
+        if (omnisharpOptions.enableEditorConfigSupport === true) {
             args.push('FormattingOptions:EnableEditorConfigSupport=true');
         }
 
-        if (options.organizeImportsOnFormat === true) {
+        if (omnisharpOptions.organizeImportsOnFormat === true) {
             args.push('FormattingOptions:OrganizeImports=true');
         }
 
-        if (this.decompilationAuthorized && options.enableDecompilationSupport === true) {
+        if (this.decompilationAuthorized && omnisharpOptions.enableDecompilationSupport === true) {
             args.push('RoslynExtensionsOptions:EnableDecompilationSupport=true');
         }
 
-        if (options.enableImportCompletion === true) {
+        if (omnisharpOptions.enableImportCompletion === true) {
             args.push('RoslynExtensionsOptions:EnableImportCompletion=true');
         }
 
-        if (options.enableAsyncCompletion === true) {
+        if (omnisharpOptions.enableAsyncCompletion === true) {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
-        if (options.sdkPath.length > 0) {
-            args.push(`Sdk:Path=${options.sdkPath}`);
+        const sdkPath = omnisharpOptions.sdkPath;
+        if (sdkPath.length > 0) {
+            args.push(`Sdk:Path=${sdkPath}`);
         }
 
-        if (options.sdkVersion.length > 0) {
-            args.push(`Sdk:Version=${options.sdkVersion}`);
+        const sdkVersion = omnisharpOptions.sdkVersion;
+        if (sdkVersion.length > 0) {
+            args.push(`Sdk:Version=${sdkVersion}`);
         }
 
-        if (options.sdkIncludePrereleases) {
+        if (omnisharpOptions.sdkIncludePrereleases) {
             args.push(`Sdk:IncludePrereleases=true`);
         }
 
-        if (options.inlayHintsEnableForParameters === true) {
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${options.inlayHintsEnableForParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${options.inlayHintsForLiteralParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${options.inlayHintsForIndexerParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${options.inlayHintsForObjectCreationParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${options.inlayHintsForOtherParameters.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${options.inlayHintsSuppressForParametersThatDifferOnlyBySuffix.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${options.inlayHintsSuppressForParametersThatMatchMethodIntent.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${options.inlayHintsSuppressForParametersThatMatchArgumentName.toString()}`);
+        const enableInlayHintsForParameters = omnisharpOptions.inlayHintsEnableForParameters;
+        if (enableInlayHintsForParameters === true) {
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${enableInlayHintsForParameters.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${omnisharpOptions.inlayHintsForLiteralParameters.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:ForIndexerParameters=${omnisharpOptions.inlayHintsForIndexerParameters.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:ForObjectCreationParameters=${omnisharpOptions.inlayHintsForObjectCreationParameters.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:ForOtherParameters=${omnisharpOptions.inlayHintsForOtherParameters.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatDifferOnlyBySuffix=${omnisharpOptions.inlayHintsSuppressForParametersThatDifferOnlyBySuffix.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchMethodIntent=${omnisharpOptions.inlayHintsSuppressForParametersThatMatchMethodIntent.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:SuppressForParametersThatMatchArgumentName=${omnisharpOptions.inlayHintsSuppressForParametersThatMatchArgumentName.toString()}`
+            );
         }
 
-        if (options.inlayHintsEnableForTypes === true) {
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${options.inlayHintsEnableForTypes.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${options.inlayHintsForImplicitVariableTypes.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${options.inlayHintsForLambdaParameterTypes.toString()}`);
-            args.push(`RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${options.inlayHintsForImplicitObjectCreation.toString()}`);
+        const enableInlayHintsForTypes = omnisharpOptions.inlayHintsEnableForTypes;
+        if (enableInlayHintsForTypes === true) {
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${enableInlayHintsForTypes.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${omnisharpOptions.inlayHintsForImplicitVariableTypes.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:ForLambdaParameterTypes=${omnisharpOptions.inlayHintsForLambdaParameterTypes.toString()}`
+            );
+            args.push(
+                `RoslynExtensionsOptions:InlayHintsOptions:ForImplicitObjectCreation=${omnisharpOptions.inlayHintsForImplicitObjectCreation.toString()}`
+            );
         }
 
-        if (options.analyzeOpenDocumentsOnly === true) {
+        if (omnisharpOptions.analyzeOpenDocumentsOnly === true) {
             args.push('RoslynExtensionsOptions:AnalyzeOpenDocumentsOnly=true');
         }
 
-        for (let i = 0; i < options.dotNetCliPaths.length; i++) {
-            args.push(`DotNetCliOptions:LocationPaths:${i}=${options.dotNetCliPaths[i]}`);
+        const dotnetCliPaths = omnisharpOptions.dotNetCliPaths;
+        for (let i = 0; i < dotnetCliPaths.length; i++) {
+            args.push(`DotNetCliOptions:LocationPaths:${i}=${dotnetCliPaths[i]}`);
         }
 
         let launchPath: string;
         try {
-            launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(this.packageJSON.defaults.omniSharp, options.path, /* useFramework */ !options.useModernNet, this.extensionPath);
-        }
-        catch (e) {
+            launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(
+                this.packageJSON.defaults.omniSharp,
+                commonOptions.serverPath,
+                /* useFramework */ !omnisharpOptions.useModernNet,
+                this.extensionPath
+            );
+        } catch (e) {
             const error = e as Error; // Unsafe TypeScript hack to recognize the catch type as Error.
-            this.eventStream.post(new ObservableEvents.OmnisharpFailure(`Error occurred in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`, error));
+            this.eventStream.post(
+                new ObservableEvents.OmnisharpFailure(
+                    `Error occurred in loading omnisharp from omnisharp.path\nCould not start the server due to ${error.toString()}`,
+                    error
+                )
+            );
             return;
         }
 
-        this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(options.dotNetCliPaths, new Date(), solutionPath));
+        this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(dotnetCliPaths, new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            const launchResult = await launchOmniSharp(cwd, args, launchPath, this.platformInfo, options, this.monoResolver, this.dotnetResolver);
-            this.eventStream.post(new ObservableEvents.OmnisharpLaunch(launchResult.hostVersion, launchResult.hostPath, launchResult.hostIsMono, launchResult.command, launchResult.process.pid));
+            await engine.start(cwd, args, launchTarget, launchPath);
 
-            if (!options.razorDisabled && options.razorPluginPath.length > 0) {
-                if (fs.existsSync(options.razorPluginPath)) {
-                    this.eventStream.post(new ObservableEvents.RazorPluginPathSpecified(options.razorPluginPath));
-                } else {
-                    this.eventStream.post(new ObservableEvents.RazorPluginPathDoesNotExist(options.razorPluginPath));
-                }
-            }
-
-            this._delayTrackers = {};
-
-            await this._doConnect(disposables, launchResult.process, options);
             this._setState({
                 status: ServerState.Started,
                 disposables,
-                serverProcess: launchResult.process,
+                engine,
                 telemetryIntervalId: setInterval(() => this._reportTelemetry(), TelemetryReportingDelay),
             });
-            this._fireEvent(Events.ServerStart, solutionPath);
 
-            this._requestQueue.drain();
-        }
-        catch (err) {
+            this._delayTrackers = {};
+
+            if (razorPluginPath !== undefined && razorOptions.razorPluginPath) {
+                if (fs.existsSync(razorPluginPath)) {
+                    this.eventStream.post(new ObservableEvents.RazorPluginPathSpecified(razorPluginPath));
+                } else {
+                    this.eventStream.post(new ObservableEvents.RazorPluginPathDoesNotExist(razorPluginPath));
+                }
+            }
+
+            this._fireEvent(Events.ServerStart, solutionPath);
+        } catch (err) {
             this._fireEvent(Events.ServerError, err);
             return this.stop();
         }
     }
 
-    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void) {
+    public async registerProviders(eventStream: EventStream, advisor: Advisor, testManager: TestManager) {
+        if (this._state.status !== ServerState.Started) {
+            this.eventStream.post(
+                new ObservableEvents.OmnisharpServerOnServerError(
+                    'Attempt to register providers failed because no server instance is running.'
+                )
+            );
+            return;
+        }
+
+        const { engine } = this._state;
+        return await engine.registerProviders(this, this.languageMiddlewareFeature, eventStream, advisor, testManager);
+    }
+
+    private onProjectConfigurationReceived(listener: (e: ProjectConfigurationMessage) => void) {
         return this._addListener(Events.ProjectConfiguration, listener);
     }
 
@@ -494,18 +615,17 @@ export class OmniSharpServer {
 
         if (this.firstUpdateProject) {
             this.updateProjectInfo();
-        }
-        else {
+        } else {
             this.updateProjectDebouncer.next(new ObservableEvents.ProjectModified());
         }
-    }
+    };
 
     private updateProjectInfo = async () => {
         this.firstUpdateProject = false;
-        let info = await serverUtils.requestWorkspaceInformation(this);
+        const info = await serverUtils.requestWorkspaceInformation(this);
         //once we get the info, push the event into the event stream
         this.eventStream.post(new ObservableEvents.WorkspaceInformationUpdated(info));
-    }
+    };
 
     public async stop(): Promise<void> {
         // We're already stopped, nothing to do :).
@@ -513,78 +633,59 @@ export class OmniSharpServer {
             return;
         }
 
-        // Clear the session properties when the session ends.
-        this._sessionProperties = {};
-
         if (this._state.status === ServerState.Started) {
-            const { serverProcess, telemetryIntervalId } = this._state;
+            const { disposables, engine, telemetryIntervalId } = this._state;
 
+            await engine.stop();
+            engine.dispose();
+
+            // Clear the session properties when the session ends.
+            this._sessionProperties = {};
+            this._setState({ status: ServerState.Stopped });
+            this._fireEvent(Events.ServerStop, this);
+
+            // Dispose of the disposables only _after_ we've fired the last server event.
+            disposables.dispose();
+
+            // Clear and report telemetry
             clearInterval(telemetryIntervalId);
             this._reportTelemetry();
-
-            if (process.platform === 'win32') {
-                // when killing a process in windows its child
-                // processes are *not* killed but become root
-                // processes. Therefore we use TASKKILL.EXE
-                await new Promise<void>((resolve, reject) => {
-                    const killer = exec(`taskkill /F /T /PID ${serverProcess.pid}`, (err, stdout, stderr) => {
-                        if (err) {
-                            return reject(err);
-                        }
-                    });
-
-                    killer.on('exit', resolve);
-                    killer.on('error', reject);
-                });
-            }
-            else {
-                // Kill Unix process and children
-                const children = await utils.getUnixChildProcessIds(serverProcess.pid);
-                for (const child of children) {
-                    process.kill(child, 'SIGTERM');
-                }
-
-                serverProcess.kill('SIGTERM');
-            }
         }
-
-        const { disposables } = this._state;
-
-        this._setState({ status: ServerState.Stopped });
-        this._fireEvent(Events.ServerStop, this);
-
-        // Dispose of the disposables only _after_ we've fired the last server event.
-        disposables.dispose();
     }
 
     public async restart(launchTarget: LaunchTarget | undefined = this._launchTarget): Promise<void> {
         if (this._state.status === ServerState.Starting) {
-            this.eventStream.post(new ObservableEvents.OmnisharpServerOnServerError("Attempt to restart OmniSharp server failed because another server instance is starting."));
+            this.eventStream.post(
+                new ObservableEvents.OmnisharpServerOnServerError(
+                    'Attempt to restart OmniSharp server failed because another server instance is starting.'
+                )
+            );
             return;
         }
 
         if (launchTarget !== undefined) {
             await this.stop();
             this.eventStream.post(new ObservableEvents.OmnisharpRestart());
-            await this._start(launchTarget);
+            await this.start(launchTarget);
         }
     }
 
     public async autoStart(preferredPath: string): Promise<void> {
-        const options = this.optionProvider.GetLatestOptions();
-        const launchTargets = await findLaunchTargets(options);
+        const launchTargets = await findLaunchTargets();
 
         // If there aren't any potential launch targets, we create file watcher and try to
         // start the server again once a *.sln, *.slnf, *.csproj, project.json, CSX or Cake file is created.
         if (launchTargets.length === 0) {
-            await new Promise<void>((resolve, reject) => {
+            await new Promise<void>((resolve) => {
                 // 1st watch for files
-                const watcher = this.vscode.workspace.createFileSystemWatcher('{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+                const watcher = this.vscode.workspace.createFileSystemWatcher(
+                    '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
                     /*ignoreCreateEvents*/ false,
                     /*ignoreChangeEvents*/ true,
-                    /*ignoreDeleteEvents*/ true);
+                    /*ignoreDeleteEvents*/ true
+                );
 
-                watcher.onDidCreate(uri => {
+                watcher.onDidCreate((_) => {
                     watcher.dispose();
                     resolve();
                 });
@@ -592,17 +693,18 @@ export class OmniSharpServer {
 
             // 2nd try again
             return this.autoStart(preferredPath);
-        }
-        else if (launchTargets.length === 1) {
+        } else if (launchTargets.length === 1) {
             // If there's only one target, just start
-            return this._start(launchTargets[0]);
+            return this.start(launchTargets[0]);
         }
 
         // First, try to launch against something that matches the user's preferred target
-        const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().defaultLaunchSolution;
-        const defaultLaunchSolutionTarget = launchTargets.find((a) => (path.basename(a.target) === defaultLaunchSolutionConfigValue));
+        const defaultLaunchSolutionConfigValue = commonOptions.defaultSolution;
+        const defaultLaunchSolutionTarget = launchTargets.find(
+            (a) => path.basename(a.target) === defaultLaunchSolutionConfigValue
+        );
         if (defaultLaunchSolutionTarget) {
-            return this._start(defaultLaunchSolutionTarget);
+            return this.start(defaultLaunchSolutionTarget);
         }
 
         // If there's more than one launch target, we start the server if one of the targets
@@ -610,21 +712,23 @@ export class OmniSharpServer {
         if (preferredPath.length > 0) {
             const preferredLaunchTarget = launchTargets.find((a_1) => a_1.target === preferredPath);
             if (preferredLaunchTarget) {
-                return this._start(preferredLaunchTarget);
+                return this.start(preferredLaunchTarget);
             }
         }
 
         // To maintain previous behavior when there are mulitple targets available,
         // launch with first Solution or Folder target.
-        const firstFolderOrSolutionTarget = launchTargets
-            .find(target => target.workspaceKind == LaunchTargetKind.Folder || target.workspaceKind == LaunchTargetKind.Solution);
+        const firstFolderOrSolutionTarget = launchTargets.find(
+            (target) =>
+                target.workspaceKind == LaunchTargetKind.Folder || target.workspaceKind == LaunchTargetKind.Solution
+        );
         if (firstFolderOrSolutionTarget) {
-            return this._start(firstFolderOrSolutionTarget);
+            return this.start(firstFolderOrSolutionTarget);
         }
 
         // When running integration tests, open the first launch target.
-        if (process.env.RUNNING_INTEGRATION_TESTS === "true") {
-            return this._start(launchTargets[0]);
+        if (process.env.RUNNING_INTEGRATION_TESTS === 'true') {
+            return this.start(launchTargets[0]);
         }
 
         // Otherwise, we fire the "MultipleLaunchTargets" event,
@@ -636,181 +740,23 @@ export class OmniSharpServer {
     // --- requests et al
 
     public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
-        if (!this.isRunning()) {
-            return Promise.reject<TResponse>('OmniSharp server is not running.');
-        }
-
-        let startTime: number;
-        let request: Request;
-
-        const promise = new Promise<TResponse>((resolve, reject) => {
-            startTime = Date.now();
-
-            request = {
-                command,
-                data,
-                onSuccess: value => resolve(value),
-                onError: err => reject(err)
-            };
-
-            this._requestQueue.enqueue(request);
-        });
-
-        if (token !== undefined) {
-            token.onCancellationRequested(() => {
-                this.eventStream.post(new ObservableEvents.OmnisharpServerRequestCancelled(request.command, request.id));
-                this._requestQueue.cancelRequest(request);
-                // Note: This calls reject() on the promise returned by OmniSharpServer.makeRequest
-                request.onError(new Error(`Request ${request.command} cancelled, id: ${request.id}`));
-            });
-        }
-
-        return promise.then(response => {
-            let endTime = Date.now();
-            let elapsedTime = endTime - startTime;
-            this._recordRequestDelay(command, elapsedTime);
-
-            return response;
-        });
-    }
-
-    private async _doConnect(
-        disposables: CompositeDisposable,
-        serverProcess: SpawnedChildProcess,
-        options: Options): Promise<void> {
-        serverProcess.stderr.on('data', (data: Buffer) => {
-            let trimData = removeBOMFromBuffer(data);
-            if (trimData.length > 0) {
-                this._fireEvent(Events.StdErr, trimData.toString());
-            }
-        });
-
-        const readLine = createInterface({
-            input: serverProcess.stdout,
-            output: serverProcess.stdin,
-            terminal: false
-        });
-
-        const promise = new Promise<void>((resolve, reject) => {
-            let listener: Disposable;
-
-            // Convert the timeout from the seconds to milliseconds, which is required by setTimeout().
-            const timeoutDuration = options.projectLoadTimeout * 1000;
-
-            // timeout logic
-            const handle = setTimeout(() => {
-                if (listener) {
-                    listener.dispose();
-                }
-
-                reject(new Error("OmniSharp server load timed out. Use the 'omnisharp.projectLoadTimeout' setting to override the default delay (one minute)."));
-            }, timeoutDuration);
-
-            // handle started-event
-            listener = this.onOmnisharpStart(() => {
-                if (listener) {
-                    listener.dispose();
-                }
-
-                clearTimeout(handle);
-                resolve();
-            });
-        });
-
-        const lineReceived = this._onLineReceived.bind(this);
-
-        readLine.addListener('line', lineReceived);
-
-        disposables.add(new Disposable(() => {
-            readLine.removeListener('line', lineReceived);
-        }));
-
-        return promise;
-    }
-
-    private _onLineReceived(line: string) {
-        line = removeBOMFromString(line);
-
-        if (line[0] !== '{') {
-            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(line));
-            return;
-        }
-
-        let packet: protocol.WireProtocol.Packet;
-        try {
-            packet = JSON.parse(line);
-        }
-        catch (err) {
-            // This isn't JSON
-            return;
-        }
-
-        if (!packet.Type) {
-            // Bogus packet
-            return;
-        }
-
-        switch (packet.Type) {
-            case 'response':
-                this._handleResponsePacket(<protocol.WireProtocol.ResponsePacket>packet);
-                break;
-            case 'event':
-                this._handleEventPacket(<protocol.WireProtocol.EventPacket>packet);
-                break;
-            default:
-                this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(`Unknown packet type: ${packet.Type}`));
-                break;
-        }
-    }
-
-    private _handleResponsePacket(packet: protocol.WireProtocol.ResponsePacket) {
-        const request = this._requestQueue.dequeue(packet.Command, packet.Request_seq);
-
-        if (!request) {
-            this.eventStream.post(new ObservableEvents.OmnisharpServerMessage(`Received response for ${packet.Command} but could not find request.`));
-            return;
-        }
-
-        this.eventStream.post(new ObservableEvents.OmnisharpServerVerboseMessage(`handleResponse: ${packet.Command} (${packet.Request_seq})`));
-
-        if (packet.Success) {
-            request.onSuccess(packet.Body);
-        }
-        else {
-            request.onError(packet.Message || packet.Body);
-        }
-
-        this._requestQueue.drain();
-    }
-
-    private _handleEventPacket(packet: protocol.WireProtocol.EventPacket): void {
-        if (packet.Event === 'log') {
-            const entry = <{ LogLevel: string; Name: string; Message: string; }>packet.Body;
-            this.eventStream.post(new ObservableEvents.OmnisharpEventPacketReceived(entry.LogLevel, entry.Name, entry.Message));
-        }
-        else {
-            // fwd all other events
-            this._fireEvent(packet.Event, packet.Body);
-        }
-    }
-
-    private _makeRequest(request: Request): number {
         if (this._state.status !== ServerState.Started) {
-            throw new Error("Tried to make a request when the OmniSharp server wasn't running");
+            throw new Error('OmniSharp server is not running.');
         }
 
-        const id = OmniSharpServer._nextId++;
-        request.id = id;
+        const { engine } = this._state;
 
-        const requestPacket: protocol.WireProtocol.RequestPacket = {
-            Type: 'request',
-            Seq: id,
-            Command: request.command,
-            Arguments: request.data
-        };
+        const startTime = Date.now();
+        const response = await engine.makeRequest<TResponse>(command, data, token);
 
-        this.eventStream.post(new ObservableEvents.OmnisharpRequestMessage(request, id));
-        this._state.serverProcess.stdin.write(JSON.stringify(requestPacket) + '\n');
-        return id;
+        const endTime = Date.now();
+        const elapsedTime = endTime - startTime;
+        this._recordRequestDelay(command, elapsedTime);
+
+        return response;
+    }
+
+    public async makeRequest0(command: string, data?: any, token?: CancellationToken): Promise<void> {
+        await this.makeRequest<Record<string, never>>(command, data, token);
     }
 }

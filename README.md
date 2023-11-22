@@ -1,184 +1,87 @@
-## C# for Visual Studio Code (powered by OmniSharp)
+## C# for Visual Studio Code
+A [Visual Studio Code](https://code.visualstudio.com/) [extension](https://marketplace.visualstudio.com/VSCode) that provides rich language support for C# and is shipped along with [C# Dev Kit][csdevkitextension]. Powered by a Language Server Protocol (LSP) server, this extension integrates with open source components like [Roslyn](https://github.com/dotnet/roslyn) and [Razor](https://github.com/dotnet/razor) to provide rich type information and a faster, more reliable C# experience.
 
-Welcome to the C# extension for Visual Studio Code! This extension provides the following features inside VS Code:
+## Recommended Install
+While it is possible to use the C# extension as a standalone extension, we highly recommend using [C# Dev Kit][csdevkitextension].
 
-* Lightweight development tools for [.NET Core](https://dotnet.github.io).
-* Great C# editing support, including Syntax Highlighting, IntelliSense, Go to Definition, Find All References, etc.
-* Debugging support for .NET Core (CoreCLR). NOTE: Mono debugging is not supported. Desktop CLR debugging has [limited support](https://github.com/OmniSharp/omnisharp-vscode/wiki/Desktop-.NET-Framework).
-* Support for project.json and csproj projects on Windows, macOS and Linux.
+1. Installing [C# Dev Kit][csdevkitextension] will automatically install this extension as a required dependency.
+2. Open a folder/workspace that contains a C# project (.csproj) and a C# solution (.sln) and the extension will activate.
+3. Whether you install C# Dev Kit or just the C# extension, the [.NET Install Tool](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscode-dotnet-runtime) will be installed as a dependency.
 
-The C# extension is powered by [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn).
+Note: If working on a solution that requires versions prior to .NET 6 or non-solution based projects, install a .NET Framework runtime and [MSBuild tooling](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022).
+  * Set omnisharp.useModernNet to false and set dotnet.server.useOmnisharp to true
+  * Uninstall or disable C# Dev Kit
+  * Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+  * MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/preview/)
 
-### Requirements
+## Features
+Learn more about the rich features of the C# extension:
+  * [Refactoring](https://code.visualstudio.com/docs/csharp/refactoring): Edit your code with code fixes and refactorings
+  * [Navigation](https://code.visualstudio.com/docs/csharp/navigate-edit): Explore and navigate your code with features like Go To Definition and Find All References
+  * [IntelliSense](https://code.visualstudio.com/docs/csharp/navigate-edit): Write code with auto-completion
+  * [Formatting and Linting](https://code.visualstudio.com/docs/csharp/formatting-linting): Format and lint your code
 
-- [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) or newer when `omnisharp.useModernNet` is set to `true` (the default value).
-- A Full Framework runtime and MSBuild tooling when `omnisharp.useModernNet` is set to `false`.
-  - Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
-  - MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/preview/)
+For more information you can:
 
-### Get Started Writing C# in VS Code
+- [Follow our C# tutorial](https://code.visualstudio.com/docs/csharp/get-started) with step-by-step instructions for building a simple app.
+- Check out the [C# documentation](https://code.visualstudio.com/docs/languages/csharp) on the VS Code site for general information about using the extension.
 
-* [Documentation](https://code.visualstudio.com/docs/languages/csharp)
-* [Video Tutorial compiling with .NET Core](https://channel9.msdn.com/Blogs/dotnet/Get-started-VSCode-Csharp-NET-Core-Windows)
+## How to use OmniSharp?
+If you don’t want to take advantage of the great Language Server features, you can revert back to using OmniSharp by going to the Extension settings and setting `dotnet.server.useOmnisharp` to true. Next, uninstall or disable C# Dev Kit. Finally, restart VS Code for this to take effect.
 
-## Announcements
+## Found a Bug?
+To file a new issue:
 
-### The C# extension no longer ships with an included Mono & MSBuild Tools
+1. Open the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Open Settings (UI)", and press Enter.
+2. Search for "trace" in the search bar. Under "Dotnet > Server: Trace" select "Trace" from the drop down. This will provide more output information.
+3. Reload the window by opening the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Reload Window", and press Enter.
+4. Next, check the C# logs in the Output Window by opening it with Ctrl+Shift+U (Cmd+Shift+U on macOS), and select C# from the dropdown.
+5. Select and copy all the text in the log, and then report the issue through VS Code.
+6. Open the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type “CSharp: Report an issue”, and press Enter.
+7. This will open a window with all the necessary information related to the C# extension, dotnet version, mono version, etc.
+8. Paste the previously copied C# log into the “Steps to Reproduce” field. Please also include a description of what you were doing/attempting to do at the time the problem occurred.
+9. Click the “Preview on GitHub” button, and then file the issue.
 
-.NET Framework builds of OmniSharp no longer ship with Mono or the MSBuild tooling (See announcement [omnisharp-roslyn#2339](https://github.com/OmniSharp/omnisharp-roslyn/issues/2339)). To ensure that the C# extension remains usable out of the box for .NET SDK projects, we have changed the default value of `omnisharp.useModernNet` to `true`.
+Alternatively, you could visit https://github.com/dotnet/vscode-csharp/issues and file a new issue there.
 
-If you still need Unity or .NET Framework support, you can set `omnisharp.useModernNet` to `false` in your VS Code settings and restart OmniSharp. Please see the [Requirements](https://github.com/OmniSharp/omnisharp-vscode#requirements) section above to ensure necessary tooling is installed.
-
-See issue [#5120](https://github.com/OmniSharp/omnisharp-vscode/issues/5120) for more details.
-
-## What's new in 1.25.5
-* Update Razor to 7.0.0-preview.23124.2 (PR: [#5604](https://github.com/OmniSharp/omnisharp-vscode/pull/5604))
-  * Fix colorization when nullable operators are present ([#5570](https://github.com/OmniSharp/omnisharp-vscode/pull/5570))
-  * Add C#/HTML folding range support ([razor#8309](https://github.com/dotnet/razor/pull/8309))
-  * Formatting fixes ([razor#8318](https://github.com/dotnet/razor/pull/8318))
-* Update OmniSharp to 1.39.6 (PR: [#5625](https://github.com/OmniSharp/omnisharp-vscode/pull/5625))
-  * Use new VS threading version to match with Razor (PR:[#2518](https://github.com/OmniSharp/omnisharp-roslyn/pull/2518))
-* Update OmniSharp to 1.39.5 (PR: [#5618](https://github.com/OmniSharp/omnisharp-vscode/pull/5618))
-  * Update to Roslyn `4.6.0-3.23153.5` (PR:[#2511](https://github.com/OmniSharp/omnisharp-roslyn/pull/2511))
-  * Report to the client if the project being loaded is sdk style (PR:[#2502](https://github.com/OmniSharp/omnisharp-roslyn/pull/2502))
-* Automatically trust ASP.NET Core HTTPS development certificate (PR: [#5589](https://github.com/OmniSharp/omnisharp-vscode/pull/5589))
-* Improve outline to be less verbose (PR: [#5536](https://github.com/OmniSharp/omnisharp-vscode/pull/5536))
-* Update Razor TextMate grammar (PR: [#5570](https://github.com/OmniSharp/omnisharp-vscode/pull/5570))
-
-## What's new in 1.25.4
-* Update OmniSharp to 1.39.4 (PR: [#5544](https://github.com/OmniSharp/omnisharp-vscode/pull/5544))
-  * Disable snippets in sync completion (PR: [#2497](https://github.com/OmniSharp/omnisharp-roslyn/pull/2497))
-
-## What's new in 1.25.3
-* Update Razor to 7.0.0-preview.23067.5 (PR: [#5543](https://github.com/OmniSharp/omnisharp-vscode/pull/5543))
-  * Enables support for arm64
-  * Adds document color and color presentation features
-* Update Roslyn to 4.5.0-2.22527.10 (PR: [#2486](https://github.com/OmniSharp/omnisharp-roslyn/pull/2486))
-* Update dotnet-script dependencies to 1.4.0 (PR: [#2477](https://github.com/OmniSharp/omnisharp-roslyn/pull/2477))
-* Register the LanguageServerLogger only once (PR: [#2473](https://github.com/OmniSharp/omnisharp-roslyn/pull/2473))
-* Fix extension not finding mono. ([#5454](https://github.com/OmniSharp/omnisharp-vscode/issues/5454), PR: [#5484](https://github.com/OmniSharp/omnisharp-vscode/pull/5484))
-* Update debugger to 1.25.3. ([#5460](https://github.com/OmniSharp/omnisharp-vscode/issues/5460), PR: [#5489](https://github.com/OmniSharp/omnisharp-vscode/pull/5489))
-* Fix missing fix all commands. ([#5474](https://github.com/OmniSharp/omnisharp-vscode/issues/5474), PR: [#5475](https://github.com/OmniSharp/omnisharp-vscode/pull/5475))
-* Fix failure to parse sdk version and sdk path. ([#2412](https://github.com/OmniSharp/omnisharp-vscode/issues/2412), PR: [#5459](https://github.com/OmniSharp/omnisharp-vscode/pull/5459))
-* Handle custom OmniSharp launch paths. ([#5449](https://github.com/OmniSharp/omnisharp-vscode/issues/5449), PR: [#5456](https://github.com/OmniSharp/omnisharp-vscode/pull/5456))
-
-## What's new in 1.25.2
-* Fix the MSBuild version check on Unix and Linux platforms. ([#5443](https://github.com/OmniSharp/omnisharp-vscode/issues/5443), PR: [#5444](https://github.com/OmniSharp/omnisharp-vscode/pull/5444))
-
-## What's new in 1.25.1
-* When `.editorconfig` support is enabled (on by default), it is given higher priority over the legacy `omnisharp.json` code formatting options. If you would like to have the `omnisharp.json` code formatting options respected, disable `.editorconfig` support by setting `"omnisharp.enableEditorConfigSupport": false`
-* Fix csharp.unitTestDebuggingOptions description ([#5309](https://github.com/OmniSharp/omnisharp-vscode/issues/5309), PR: [#5315](https://github.com/OmniSharp/omnisharp-vscode/pull/5315))
-* Removed quoted examples from omnisharp.sdkVersion and omnisharp.sdkPath ([omnisharp-roslyn#2412](https://github.com/OmniSharp/omnisharp-roslyn/issues/2412), PR: [#5301](https://github.com/OmniSharp/omnisharp-vscode/pull/5301))
-* Added an example on how to launch swagger ui (PR: [#5283](https://github.com/OmniSharp/omnisharp-vscode/pull/5283))
-* Package manager nullability fixes (PR: [#5255](https://github.com/OmniSharp/omnisharp-vscode/pull/5255))
-* Return all launch targets when `maxProjectResults` is set to 0 ([#5227](https://github.com/OmniSharp/omnisharp-vscode/issues/5227), PR: [#5241](https://github.com/OmniSharp/omnisharp-vscode/pull/5241))
-* Clear nullability warnings (PR: [#5236](https://github.com/OmniSharp/omnisharp-vscode/pull/5236))
-*  Provide actionable error messages for .NET SDK issues ([#5223](https://github.com/OmniSharp/omnisharp-vscode/issues/5223), PR: [#5225](https://github.com/OmniSharp/omnisharp-vscode/pull/5225))
-* Clear all strict mode violations in src & enforce strict mode (PR: [#5407](https://github.com/OmniSharp/omnisharp-vscode/pull/5407))
-* Update debugger to 1.25.1  (PR: [#5415](https://github.com/OmniSharp/omnisharp-vscode/pull/5415))
-* Add github action to merge master to feature branches (PR: [#5414](https://github.com/OmniSharp/omnisharp-vscode/pull/5414)
-* coreclr-debug nullability (PR: [#5405](https://github.com/OmniSharp/omnisharp-vscode/pull/5405))
-* Feature nullability (PR: [#5400](https://github.com/OmniSharp/omnisharp-vscode/pull/5400))
-* Add prerequisite check for running OmniSharp. (PR: [#5397](https://github.com/OmniSharp/omnisharp-vscode/pull/5397))
-* Add projectFilesIncludePattern & projectFilesExcludePattern options. (PR: [#5382)](https://github.com/OmniSharp/omnisharp-vscode/pull/5382))
-* Replaced the deprecated ProjectDiagnosticStatus event with the newer BackgroundDiagnosticStatus. (PR: [#5372](https://github.com/OmniSharp/omnisharp-vscode/pull/5372))
-* Implement the "dotNetCliPaths" option to support custom .NET SDK locations (PR: [#4738](https://github.com/OmniSharp/omnisharp-vscode/pull/4738))
-* Make the sourceGeneratedDocumentProvider always lazy (PR: [#5340](https://github.com/OmniSharp/omnisharp-vscode/pull/5340))
-* Reintroduce typing version bumps (PR: [#5350](https://github.com/OmniSharp/omnisharp-vscode/pull/5350))
-* Observer nullability fixes (PR: [#5349](https://github.com/OmniSharp/omnisharp-vscode/pull/5349))
-* Support generated files in referenceProvider (PR: [#5339](https://github.com/OmniSharp/omnisharp-vscode/pull/5339))
-* Provide source generated file info for workspace symbols (PR: [#5338](https://github.com/OmniSharp/omnisharp-vscode/pull/5338))
-* Provide CodeActionKind for code actions (PR: [#5337](https://github.com/OmniSharp/omnisharp-vscode/pull/5337))
-* Fix alpine support (PR: [#5322](https://github.com/OmniSharp/omnisharp-vscode/pull/5322))
-* Update OmniSharp to 1.39.2 (PR: [#5319](<TODO>))
-  * Update Roslyn to 4.4.0 1.22369.1 (PR: [omnisharp-roslyn#2420](https://github.com/OmniSharp/omnisharp-roslyn/pull/2420))
-  * Simplify some code (PR: [omnisharp-roslyn#2370](https://github.com/OmniSharp/omnisharp-roslyn/pull/2370))
-  * Return meaningful error when pinned SDK version is not found. ([#5128](https://github.com/OmniSharp/omnisharp-vscode/issues/5128), PR: [omnisharp-roslyn#2403](https://github.com/OmniSharp/omnisharp-roslyn/pull/2403))
-  * Added support for `<WarningsAsErrors>nullable</WarningsAsErrors>` ([omnisharp-roslyn#2292](https://github.com/OmniSharp/omnisharp-roslyn/issues/2292), PR: [omnisharp-roslyn#2406](https://github.com/OmniSharp/omnisharp-roslyn/pull/2406))
-  * Removed nuget versioning reference from OmniSharp.Abstractions ([omnisharp-roslyn#2410](https://github.com/OmniSharp/omnisharp-roslyn/issues/2410), PR: [omnisharp-roslyn#2414](https://github.com/OmniSharp/omnisharp-roslyn/pull/2414))
-  * Bump Newtonsoft.Json to 13.0.1 (PR: [omnisharp-roslyn#2415](https://github.com/OmniSharp/omnisharp-roslyn/pull/2415))
-  * Add missing LSP Handlers (PR: [omnisharp-roslyn#2463](https://github.com/OmniSharp/omnisharp-roslyn/pull/2463))
-  * Add the TypeDefinitionHandler to the LSP (PR: [omnisharp-roslyn#2461](https://github.com/OmniSharp/omnisharp-roslyn/pull/2461))
-  * Update .NET SDK and Roslyn (PR: [omnisharp-roslyn#2458](https://github.com/OmniSharp/omnisharp-roslyn/pull/2458))
-  * Don't remap line mappings in Razor files (PR: [omnisharp-roslyn#2460](https://github.com/OmniSharp/omnisharp-roslyn/pull/2460))
-  * Adds missing /open endpoint to Cake (PR: [omnisharp-roslyn#2457](https://github.com/OmniSharp/omnisharp-roslyn/pull/2457))
-  * Adds V2 Highlight support to Cake (PR: [omnisharp-roslyn#2456](https://github.com/OmniSharp/omnisharp-roslyn/pull/2456))
-  * Include Cake bits in .NET 6 builds (PR: [omnisharp-roslyn#2455](https://github.com/OmniSharp/omnisharp-roslyn/pull/2455))
-  * Host dependency cleanup (PR: [omnisharp-roslyn#2436](https://github.com/OmniSharp/omnisharp-roslyn/pull/2436))
-  * Upgrade http driver to latest ASP.NET Core version when running in .NET 6 (PR: [omnisharp-roslyn#2446](https://github.com/OmniSharp/omnisharp-roslyn/pull/2446))
-  * updated IL Spy to 7.2.1.6856 (PR: [omnisharp-roslyn#2447](https://github.com/OmniSharp/omnisharp-roslyn/pull/2447))
-  * Add comment to app.config explaining System.Memory versioning (PR: [omnisharp-roslyn#2444](https://github.com/OmniSharp/omnisharp-roslyn/pull/2444))
-  * Add explicit System.Memory dependency to Hosts (PR: [omnisharp-roslyn#2443](https://github.com/OmniSharp/omnisharp-roslyn/pull/2443))
-  * Return generated file info for find references (PR: [omnisharp-roslyn#2434](https://github.com/OmniSharp/omnisharp-roslyn/pull/2434))
-  * Support NUnit TheoryAttribute (PR: [omnisharp-roslyn#2435](https://github.com/OmniSharp/omnisharp-roslyn/pull/2435))
-  * Provide SourceGeneratedFileInfo for workspace symbolls requests (PR: [omnisharp-roslyn#2431](https://github.com/OmniSharp/omnisharp-roslyn/pull/2431))
-  * Take the first dotnet cli we find instead of the last one we find (match the comment) (PR: [omnisharp-roslyn#2427](https://github.com/OmniSharp/omnisharp-roslyn/pull/2427)]
-  * Record whether a CodeAction is a fix or not (PR: [omnisharp-roslyn#2430](https://github.com/OmniSharp/omnisharp-roslyn/pull/2430))
-  * Update VMs used in build CI. (PR: [omnisharp-roslyn#2425](https://github.com/OmniSharp/omnisharp-roslyn/pull/2425))
-  * Only get first document's highlights (PR: [omnisharp-roslyn#2424](https://github.com/OmniSharp/omnisharp-roslyn/pull/2424))
-
-### Emmet support in Razor files
-
-To enable emmet support, add the following to your settings.json:
-
-```json
-"emmet.includeLanguages": {
-    "aspnetcorerazor": "html"
-}
-```
-
-### Supported Operating Systems for Debugging
-
-Currently, the C# debugger officially supports the following operating systems:
-
-* X64 operating systems:
-    * Windows 7 SP1 and newer
-    * macOS 10.12 (Sierra) and newer
-    * Linux: see [.NET Core documentation](https://github.com/dotnet/core/blob/master/release-notes/2.2/2.2-supported-os.md#linux) for the list of supported distributions. Note that other Linux distributions will likely work as well as long as they include glibc and OpenSSL.
-* ARM operating systems:
-    * Linux is supported as a remote debugging target
-
-### Found a Bug?
-
-To file a new issue to include all the related config information directly from vscode by entering the command pallette with <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>
-(<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on macOS) and running `CSharp: Report an issue` command. This will open a browser window with all the necessary information related to the installed extensions, dotnet version, mono version, etc. Enter all the remaining information and hit submit. More information can be found on the [wiki](https://github.com/OmniSharp/omnisharp-vscode/wiki/Reporting-Issues).
-
-Alternatively you could visit https://github.com/OmniSharp/omnisharp-vscode/issues and file a new one.
-
-### Development
-
-First install:
-
-* Node.js (8.11.1 or later)
-* Npm (5.6.0 or later)
-
-To **run and develop** do the following:
-
-* Run `npm ci`
-* Run `npm run compile`
-* Open in Visual Studio Code (`code .`)
-* _Optional:_ run `npm run watch`, make code changes
-* Press <kbd>F5</kbd> to debug
-
-To **test** do the following: `npm run test` or <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration.
+## Contributing
 
 ### License
 
 Copyright © .NET Foundation, and contributors.
 
 The Microsoft C# extension is subject to [these license terms](RuntimeLicenses/license.txt).
-The source code to this extension is available on [https://github.com/OmniSharp/omnisharp-vscode](https://github.com/OmniSharp/omnisharp-vscode) and licensed under the [MIT license](LICENSE.txt).
+The source code to this extension is available on [https://github.com/dotnet/vscode-csharp](https://github.com/dotnet/vscode-csharp) and licensed under the [MIT license](LICENSE.txt).
 
-## Code of Conduct
+### Code of Conduct
 
 This project has adopted the code of conduct defined by the [Contributor Covenant](http://contributor-covenant.org/)
 to clarify expected behavior in our community.
 For more information see the [.NET Foundation Code of Conduct](http://www.dotnetfoundation.org/code-of-conduct).
 
-## Contribution License Agreement
+### Contribution License Agreement
 
-By signing the [CLA](https://cla.dotnetfoundation.org/OmniSharp/omnisharp-roslyn), the community is free to use your contribution to [.NET Foundation](http://www.dotnetfoundation.org) projects.
+By signing the [CLA](https://cla.dotnetfoundation.org/), the community is free to use your contribution to [.NET Foundation](http://www.dotnetfoundation.org) projects.
 
-## .NET Foundation
+### .NET Foundation
 
 This project is supported by the [.NET Foundation](http://www.dotnetfoundation.org).
+
+## Feedback
+
+<!-- 
+[FAQs]
+Check out the FAQs before filing a question. 
+-->
+
+[Provide feedback](https://github.com/dotnet/vscode-csharp/issues)
+File questions, issues, or feature requests for the extension.
+
+[Known issues](https://github.com/dotnet/vscode-csharp/issues)
+If someone has already filed an issue that encompasses your feedback, please leave a 👍 or 👎 reaction on the issue to upvote or downvote it to help us prioritize the issue.
+
+[Quick survey](https://www.research.net/r/8KGJ9V8?o=[o_value]&v=[v_value]&m=[m_value])
+Let us know what you think of the extension by taking the quick survey.
+
+
+[csdevkitextension]: https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit

@@ -2,11 +2,14 @@ bin
 obj
 node_modules
 out
+.roslyn/
 .omnisharp/
 .omnisharp-*/
 .vs/
 .debugger/
 .razor/
+.razoromnisharp/
+.razortelemetry/
 .vscode-test/
 dist/
 *.razor.json
@@ -26,5 +29,3 @@ coverage/
 
 \.DS_Store
 vsix/
-
-\.vscodeignore

@@ -1,158 +1,330 @@
-
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as cp from 'child_process';
 import * as del from 'del';
 import * as fs from 'fs';
+import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
-import * as path from 'path';
-import * as util from '../src/common';
-import spawnNode from '../tasks/spawnNode';
-import { codeExtensionPath, offlineVscodeignorePath, vscodeignorePath, vscePath, packedVsixOutputRoot } from '../tasks/projectPaths';
-import { CsharpLoggerObserver } from '../src/observers/CsharpLoggerObserver';
-import { EventStream } from '../src/EventStream';
-import { getPackageJSON } from '../tasks/packageJson';
+import * as nbgv from 'nerdbank-gitversioning';
 import { Logger } from '../src/logger';
-import { PlatformInformation } from '../src/platform';
+import { PlatformInformation } from '../src/shared/platform';
+import { CsharpLoggerObserver } from '../src/shared/observers/csharpLoggerObserver';
+import { EventStream } from '../src/eventStream';
+import NetworkSettings from '../src/networkSettings';
 import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
-import NetworkSettings from '../src/NetworkSettings';
-import { commandLineOptions } from '../tasks/commandLineArguments';
-import { getRuntimeDependenciesPackages } from '../src/tools/RuntimeDependencyPackageUtils';
+import { getRuntimeDependenciesPackages } from '../src/tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
+import {
+    codeExtensionPath,
+    packedVsixOutputRoot,
+    languageServerDirectory,
+    nugetTempPath,
+    rootPath,
+} from '../tasks/projectPaths';
+import { getPackageJSON } from '../tasks/packageJson';
+import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
+import path = require('path');
+import { CancellationToken } from 'vscode';
+// There are no typings for this library.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const argv = require('yargs').argv;
 
-const includeFrameworkOmniSharp = false;
-
-export const offlinePackages = [
-    { platformInfo: new PlatformInformation('win32', 'x86_64'), id: "win32-x64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('win32', 'x86'), id: "win32-ia32", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('win32', 'arm64'), id: "win32-arm64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('linux', 'x86_64'), id: "linux-x64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('linux', 'arm64'), id: "linux-arm64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('linux-musl', 'x86_64'), id: "alpine-x64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('linux-musl', 'arm64'), id: "alpine-arm64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('darwin', 'x86_64'), id: "darwin-x64", isFramework: includeFrameworkOmniSharp },
-    { platformInfo: new PlatformInformation('darwin', 'arm64'), id: "darwin-arm64", isFramework: includeFrameworkOmniSharp },
-];
-
-export function getPackageName(packageJSON: any, vscodePlatformId: string) {
-    const name = packageJSON.name;
-    const version = packageJSON.version;
-    return `${name}-${version}-${vscodePlatformId}.vsix`;
+interface VSIXPlatformInfo {
+    vsceTarget: string;
+    rid: string;
+    platformInfo: PlatformInformation;
 }
 
-gulp.task('vsix:release:package:platform-specific', async () => {
+// Mapping of vsce vsix packaging target to the RID used to build the server executable
+export const platformSpecificPackages: VSIXPlatformInfo[] = [
+    { vsceTarget: 'win32-x64', rid: 'win-x64', platformInfo: new PlatformInformation('win32', 'x86_64') },
+    { vsceTarget: 'win32-ia32', rid: 'win-x86', platformInfo: new PlatformInformation('win32', 'x86') },
+    { vsceTarget: 'win32-arm64', rid: 'win-arm64', platformInfo: new PlatformInformation('win32', 'arm64') },
+    { vsceTarget: 'linux-x64', rid: 'linux-x64', platformInfo: new PlatformInformation('linux', 'x86_64') },
+    { vsceTarget: 'linux-arm64', rid: 'linux-arm64', platformInfo: new PlatformInformation('linux', 'arm64') },
+    { vsceTarget: 'alpine-x64', rid: 'alpine-x64', platformInfo: new PlatformInformation('linux-musl', 'x86_64') },
+    { vsceTarget: 'alpine-arm64', rid: 'alpine-arm64', platformInfo: new PlatformInformation('linux-musl', 'arm64') },
+    { vsceTarget: 'darwin-x64', rid: 'osx-x64', platformInfo: new PlatformInformation('darwin', 'x86_64') },
+    { vsceTarget: 'darwin-arm64', rid: 'osx-arm64', platformInfo: new PlatformInformation('darwin', 'arm64') },
+];
 
-    if (process.platform === 'win32') {
-        throw new Error('Do not build offline packages on windows. Runtime executables will not be marked executable in *nix packages.');
+const vsixTasks: string[] = [];
+for (const p of platformSpecificPackages) {
+    let platformName: string;
+    if (p.platformInfo.isWindows()) {
+        platformName = 'windows';
+    } else if (p.platformInfo.isLinux()) {
+        platformName = 'linux';
+    } else if (p.platformInfo.isMacOS()) {
+        platformName = 'darwin';
+    } else {
+        throw new Error(`Unexpected platform ${p.platformInfo.platform}`);
     }
 
-    //if user does not want to clean up the existing vsix packages
-    await cleanAsync(/* deleteVsix: */ !commandLineOptions.retainVsix);
+    const taskName = `vsix:release:package:${platformName}:${p.vsceTarget}`;
+    vsixTasks.push(taskName);
+    gulp.task(taskName, async () => {
+        await doPackageOffline(p);
+    });
+}
 
-    del.sync(vscodeignorePath);
-
-    fs.copyFileSync(offlineVscodeignorePath, vscodeignorePath);
-
-    try {
-        await doPackageOffline();
-    }
-    finally {
-        del(vscodeignorePath);
-    }
+gulp.task('vsix:release:package:windows', gulp.series(...vsixTasks.filter((t) => t.includes('windows'))));
+gulp.task('vsix:release:package:linux', gulp.series(...vsixTasks.filter((t) => t.includes('linux'))));
+gulp.task('vsix:release:package:darwin', gulp.series(...vsixTasks.filter((t) => t.includes('darwin'))));
+gulp.task('vsix:release:package:neutral', async () => {
+    await doPackageOffline(undefined);
 });
 
-async function doPackageOffline() {
+gulp.task(
+    'vsix:release:package',
+    gulp.series(
+        'vsix:release:package:windows',
+        'vsix:release:package:linux',
+        'vsix:release:package:darwin',
+        'vsix:release:package:neutral'
+    )
+);
+
+// Downloads dependencies for local development.
+gulp.task('installDependencies', async () => {
+    await cleanAsync();
 
     const packageJSON = getPackageJSON();
 
-    for (let p of offlinePackages) {
-        try {
-            await doOfflinePackage(p.platformInfo, p.id, p.isFramework, packageJSON, packedVsixOutputRoot);
-        }
-        catch (err) {
-            const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
-            // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
-            // stack trace of this line. So that seperates the two stack traces.
-            throw Error(`Failed to create package ${p.id}. ${message}\n---`);
-        }
+    const platform = await PlatformInformation.GetCurrent();
+
+    try {
+        await installRoslyn(packageJSON, platform);
+        await installDebugger(packageJSON, platform);
+        await installRazor(packageJSON, platform);
+    } catch (err) {
+        const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
+        // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
+        // stack trace of this line. So that seperates the two stack traces.
+        throw Error(`Failed to install packages for ${platform}. ${message}\n---`);
     }
-}
+});
 
-async function cleanAsync(deleteVsix: boolean) {
-    await del(['install.*', '.omnisharp*', '.debugger', '.razor']);
+gulp.task(
+    'updateRoslynVersion',
+    // Run the fetch of all packages, and then also installDependencies after
+    gulp.series(async () => {
+        const packageJSON = getPackageJSON();
 
-    if (deleteVsix) {
-        await del('*.vsix');
-    }
-}
+        // Fetch the neutral package that we don't otherwise have in our platform list
+        await acquireRoslyn(packageJSON, undefined, true);
 
-async function doOfflinePackage(platformInfo: PlatformInformation, vscodePlatformId: string, isFramework: boolean, packageJSON: any, outputFolder: string) {
-    await cleanAsync(false);
-    const packageFileName = getPackageName(packageJSON, vscodePlatformId);
-    await install(platformInfo, packageJSON, isFramework);
-    await createPackageAsync(packageFileName, outputFolder, vscodePlatformId);
-}
+        // And now fetch each platform specific
+        for (const p of platformSpecificPackages) {
+            await acquireRoslyn(packageJSON, p.platformInfo, true);
+        }
+    }, 'installDependencies')
+);
 
 // Install Tasks
-async function install(platformInfo: PlatformInformation, packageJSON: any, isFramework: boolean) {
-    let eventStream = new EventStream();
-    const logger = new Logger(message => process.stdout.write(message));
-    let stdoutObserver = new CsharpLoggerObserver(logger);
-    eventStream.subscribe(stdoutObserver.post);
-    let runTimeDependencies = getRuntimeDependenciesPackages(packageJSON)
-        .filter(dep => dep.isFramework === undefined || dep.isFramework === isFramework);
-    let packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, codeExtensionPath);
-    let provider = () => new NetworkSettings('', true);
-    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, isFramework))) {
-        throw Error("Failed to download package.");
+async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformation) {
+    const { packagePath, serverPlatform } = await acquireRoslyn(packageJSON, platformInfo, false);
+
+    // Get the directory containing the server executable for the current platform.
+    const serverExecutableDirectory = path.join(packagePath, 'content', 'LanguageServer', serverPlatform);
+    if (!fs.existsSync(serverExecutableDirectory)) {
+        throw new Error(`Failed to find server executable directory at ${serverExecutableDirectory}`);
     }
 
-    // The VSIX Format doesn't allow files that differ only by case. The Linux OmniSharp package had a lowercase version of these files ('.targets') targets from mono,
-    // and an upper case ('.Targets') from Microsoft.Build.Runtime. Remove the lowercase versions.
-    await del(['.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.targets', '.omnisharp/*/omnisharp/.msbuild/Current/Bin/Workflow.VisualBasic.targets']);
+    console.log(`Extracting Roslyn executables from ${serverExecutableDirectory}`);
+
+    // Copy the files to the language server directory.
+    fs.mkdirSync(languageServerDirectory);
+    fsextra.copySync(serverExecutableDirectory, languageServerDirectory);
+    const languageServerDll = path.join(languageServerDirectory, 'Microsoft.CodeAnalysis.LanguageServer.dll');
+    if (!fs.existsSync(languageServerDll)) {
+        throw new Error(`Failed to copy server executable`);
+    }
 }
 
-/// Packaging (VSIX) Tasks
-async function createPackageAsync(packageName: string, outputFolder: string, vscodePlatformId: string) {
+async function acquireRoslyn(
+    packageJSON: any,
+    platformInfo: PlatformInformation | undefined,
+    interactive: boolean
+): Promise<{ packagePath: string; serverPlatform: string }> {
+    const roslynVersion = packageJSON.defaults.roslyn;
 
-    let vsceArgs = [];
-    let packagePath = undefined;
-
-    if (!(await util.fileExists(vscePath))) {
-        throw new Error(`vsce does not exist at expected location: '${vscePath}'`);
+    // Find the matching server RID for the current platform.
+    let serverPlatform: string;
+    if (platformInfo === undefined) {
+        serverPlatform = 'neutral';
+    } else {
+        serverPlatform = platformSpecificPackages.find(
+            (p) =>
+                p.platformInfo.platform === platformInfo.platform &&
+                p.platformInfo.architecture === platformInfo.architecture
+        )!.rid;
     }
 
-    vsceArgs.push(vscePath);
-    vsceArgs.push('package'); // package command
+    const packagePath = await acquireNugetPackage(
+        `Microsoft.CodeAnalysis.LanguageServer.${serverPlatform}`,
+        roslynVersion,
+        interactive
+    );
+    return { packagePath, serverPlatform };
+}
 
-    if (packageName !== undefined) {
-        vsceArgs.push('-o');
-        if (outputFolder) {
-            //if we have specified an output folder then put the files in that output folder
-            packagePath = path.join(outputFolder, packageName);
-            vsceArgs.push(packagePath);
-        }
-        else {
-            vsceArgs.push(packageName);
-        }
-
-        if (vscodePlatformId !== undefined) {
-            vsceArgs.push("--target");
-            vsceArgs.push(vscodePlatformId);
-        }
+async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
+    if (platformInfo === undefined) {
+        const platformNeutral = new PlatformInformation('neutral', 'neutral');
+        return await installPackageJsonDependency('Razor', packageJSON, platformNeutral);
     }
 
-    const spawnResult = await spawnNode(vsceArgs);
-    if (spawnResult.code != 0) {
-        throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
+    return await installPackageJsonDependency('Razor', packageJSON, platformInfo);
+}
+
+async function installDebugger(packageJSON: any, platformInfo: PlatformInformation) {
+    return await installPackageJsonDependency('Debugger', packageJSON, platformInfo);
+}
+
+async function installPackageJsonDependency(
+    dependencyName: string,
+    packageJSON: any,
+    platformInfo: PlatformInformation,
+    token?: CancellationToken
+) {
+    const eventStream = new EventStream();
+    const logger = new Logger((message) => process.stdout.write(message));
+    const stdoutObserver = new CsharpLoggerObserver(logger);
+    eventStream.subscribe(stdoutObserver.post);
+    const runTimeDependencies = getRuntimeDependenciesPackages(packageJSON).filter(
+        (dep) => (dep.isFramework === undefined || !dep.isFramework) && dep.id === dependencyName
+    );
+    const packagesToInstall = await getAbsolutePathPackagesToInstall(
+        runTimeDependencies,
+        platformInfo,
+        codeExtensionPath
+    );
+    const provider = () => new NetworkSettings('', true);
+    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, token))) {
+        throw Error('Failed to download package.');
+    }
+}
+
+async function acquireNugetPackage(packageName: string, packageVersion: string, interactive: boolean): Promise<string> {
+    packageName = packageName.toLocaleLowerCase();
+    const packageOutputPath = path.join(nugetTempPath, packageName, packageVersion);
+    if (fs.existsSync(packageOutputPath)) {
+        // Package is already downloaded, no need to download again.
+        console.log(`Reusing existing download of ${packageName}.${packageVersion}`);
+        return packageOutputPath;
     }
 
-    if (packagePath) {
-        if (!(await util.fileExists(packagePath))) {
-            throw new Error(`vsce failed to create: '${packagePath}'`);
+    const dotnetArgs = [
+        'restore',
+        path.join(rootPath, 'server'),
+        `/p:PackageName=${packageName}`,
+        `/p:PackageVersion=${packageVersion}`,
+    ];
+
+    if (interactive) {
+        dotnetArgs.push('--interactive');
+    }
+
+    const process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
+    await new Promise((resolve) => {
+        process.on('exit', (exitCode, _) => {
+            if (exitCode !== 0) {
+                throw new Error(`Failed to download nuget package ${packageName}.${packageVersion}`);
+            }
+            resolve(undefined);
+        });
+    });
+
+    if (!fs.existsSync(packageOutputPath)) {
+        throw new Error(`Failed to find downloaded package at ${packageOutputPath}`);
+    }
+
+    return packageOutputPath;
+}
+
+async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
+    await cleanAsync();
+    // Set the package.json version based on the value in version.json.
+    const versionInfo = await nbgv.getVersion();
+    console.log(versionInfo.npmPackageVersion);
+    await nbgv.setPackageVersion();
+
+    let prerelease: boolean;
+    if (argv.prerelease) {
+        console.log('Packaging prerelease version.');
+        prerelease = true;
+    } else {
+        console.log('Packaging release version.');
+        prerelease = false;
+    }
+
+    try {
+        // Now that we've updated the version, get the package.json.
+        const packageJSON = getPackageJSON();
+
+        if (process.platform === 'win32' && !vsixPlatform?.rid.startsWith('win')) {
+            console.warn(
+                `Skipping packaging for ${vsixPlatform?.rid} on Windows since runtime executables will not be marked executable in *nix packages.`
+            );
+            return;
         }
+
+        if (vsixPlatform === undefined) {
+            await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
+        } else {
+            await buildVsix(
+                packageJSON,
+                packedVsixOutputRoot,
+                prerelease,
+                vsixPlatform.vsceTarget,
+                vsixPlatform.platformInfo
+            );
+        }
+    } catch (err) {
+        const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
+        // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
+        // stack trace of this line. So that seperates the two stack traces.
+        throw Error(`Failed to create package ${vsixPlatform?.vsceTarget ?? 'neutral'}. ${message}\n---`);
+    } finally {
+        // Reset package version to the placeholder value.
+        await nbgv.resetPackageVersionPlaceholder();
+    }
+}
+
+async function cleanAsync() {
+    await del(['install.*', '.omnisharp*', '.debugger', '.razor', languageServerDirectory]);
+}
+
+async function buildVsix(
+    packageJSON: any,
+    outputFolder: string,
+    prerelease: boolean,
+    vsceTarget?: string,
+    platformInfo?: PlatformInformation
+) {
+    await installRoslyn(packageJSON, platformInfo);
+
+    if (platformInfo != null) {
+        await installRazor(packageJSON, platformInfo);
+        await installDebugger(packageJSON, platformInfo);
+    }
+
+    const packageFileName = getPackageName(packageJSON, vsceTarget);
+    await createPackageAsync(outputFolder, prerelease, packageFileName, vsceTarget);
+}
+
+function getPackageName(packageJSON: any, vscodePlatformId?: string) {
+    const name = packageJSON.name;
+    const version = packageJSON.version;
+
+    if (vscodePlatformId) {
+        return `${name}-${vscodePlatformId}-${version}.vsix`;
+    } else {
+        return `${name}-${version}.vsix`;
     }
 }

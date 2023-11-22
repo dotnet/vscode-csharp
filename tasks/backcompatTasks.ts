@@ -5,5 +5,5 @@
 
 import * as gulp from 'gulp';
 
-gulp.task('package:offline', gulp.series('vsix:release:package:platform-specific'));
-gulp.task('vsix:offline:package', gulp.series('vsix:release:package:platform-specific'));
+gulp.task('package:offline', gulp.series('vsix:release:package'));
+gulp.task('vsix:offline:package', gulp.series('vsix:release:package'));

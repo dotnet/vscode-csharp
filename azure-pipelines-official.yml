@@ -1,0 +1,20 @@
+trigger:
+  branches:
+    include:
+    - main
+    - release
+pr: none
+
+parameters:
+  # Allows the version number to be set manually for a specific build.
+  # Useful when we need to create an updated extension version with no changes (for example to fix a bad partial release).
+  - name: versionNumberOverride
+    type: string
+    default: 'default'
+
+stages:
+- template: azure-pipelines/build-all.yml
+  parameters:
+    versionNumberOverride: ${{ parameters.versionNumberOverride }}
+
+# TODO: add compliance, signing.

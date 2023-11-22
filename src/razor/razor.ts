@@ -4,22 +4,59 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
+import * as RazorOmniSharp from 'microsoft.aspnetcore.razor.vscode';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as Razor from 'microsoft.aspnetcore.razor.vscode';
-import { EventStream } from '../EventStream';
+import * as Razor from '../../src/razor/src/extension';
+import { EventStream } from '../eventStream';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import { PlatformInformation } from '../shared/platform';
 
-export async function activateRazorExtension(context: vscode.ExtensionContext, extensionPath: string, eventStream: EventStream) {
+export async function activateRazorExtension(
+    context: vscode.ExtensionContext,
+    extensionPath: string,
+    eventStream: EventStream,
+    vscodeTelemetryReporter: TelemetryReporter,
+    csharpDevkitExtension: vscode.Extension<any> | undefined,
+    platformInfo: PlatformInformation,
+    useOmnisharpServer: boolean
+) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
     const configuredLanguageServerDir = razorConfig.get<string>('languageServer.directory', '');
-    const languageServerDir = configuredLanguageServerDir.length > 0 ? configuredLanguageServerDir : path.join(extensionPath, '.razor');
+    const languageServerDir =
+        configuredLanguageServerDir.length > 0
+            ? configuredLanguageServerDir
+            : useOmnisharpServer
+            ? path.join(extensionPath, '.razoromnisharp')
+            : path.join(extensionPath, '.razor');
 
     if (fs.existsSync(languageServerDir)) {
-        await Razor.activate(vscode, context, languageServerDir, eventStream, /* enableProposedApis: */ false);
-    } else if (configuredLanguageServerDir.length > 0) {
-        // It's only an error if the nonexistent dir was explicitly configured
-        // If it's the default dir, this is expected for unsupported platforms
-        vscode.window.showErrorMessage(
-            `Cannot load Razor language server because the configured directory was not found: '${languageServerDir}'`);
+        if (useOmnisharpServer) {
+            await RazorOmniSharp.activate(
+                vscode,
+                context,
+                languageServerDir,
+                eventStream,
+                /* enableProposedApis: */ false
+            );
+        } else {
+            await Razor.activate(
+                vscode,
+                context,
+                languageServerDir,
+                eventStream,
+                vscodeTelemetryReporter,
+                csharpDevkitExtension,
+                platformInfo,
+                /* enableProposedApis: */ false
+            );
+        }
+    } else {
+        vscode.window.showWarningMessage(
+            vscode.l10n.t(
+                "Cannot load Razor language server because the directory was not found: '{0}'",
+                languageServerDir
+            )
+        );
     }
 }

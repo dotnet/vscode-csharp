@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from "../platform";
-import { Request } from "./requestQueue";
+import { PlatformInformation } from '../shared/platform';
+import { Request } from './requestQueue';
 import * as protocol from './protocol';
-import { LaunchTarget } from "./launcher";
-import { EventType } from "./EventType";
+import { LaunchTarget } from '../shared/launchTarget';
+import { EventType } from './eventType';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface BaseEvent {
     type: EventType;
@@ -15,20 +16,26 @@ export interface BaseEvent {
 
 export class TelemetryEvent implements BaseEvent {
     type = EventType.TelemetryEvent;
-    constructor(public eventName: string, public properties?: { [key: string]: string }, public measures?: { [key: string]: number }) {
-    }
+    constructor(
+        public eventName: string,
+        public properties?: { [key: string]: string },
+        public measures?: { [key: string]: number }
+    ) {}
 }
 
 export class TelemetryErrorEvent implements BaseEvent {
     type = EventType.TelemetryErrorEvent;
-    constructor(public eventName: string, public properties?: { [key: string]: string }, public measures?: { [key: string]: number }, public errorProps?: string[]) {
-    }
+    constructor(
+        public eventName: string,
+        public properties?: { [key: string]: string },
+        public measures?: { [key: string]: number },
+        public errorProps?: string[]
+    ) {}
 }
 
 export class TelemetryEventWithMeasures implements BaseEvent {
     type = EventType.TelemetryEvent;
-    constructor(public eventName: string, public measures: { [key: string]: number }) {
-    }
+    constructor(public eventName: string, public measures: { [key: string]: number }) {}
 }
 
 export class OmnisharpDelayTrackerEventMeasures extends TelemetryEventWithMeasures {
@@ -41,12 +48,18 @@ export class OmnisharpStart extends TelemetryEventWithMeasures {
 
 export class OmnisharpInitialisation implements BaseEvent {
     type = EventType.OmnisharpInitialisation;
-    constructor(public dotNetCliPaths: string[], public timeStamp: Date, public solutionPath: string) { }
+    constructor(public dotNetCliPaths: string[], public timeStamp: Date, public solutionPath: string) {}
 }
 
 export class OmnisharpLaunch implements BaseEvent {
     type = EventType.OmnisharpLaunch;
-    constructor(public hostVersion: string | undefined, public hostPath: string | undefined, public hostIsMono: boolean, public command: string, public pid: number) { }
+    constructor(
+        public hostVersion: string | undefined,
+        public hostPath: string | undefined,
+        public hostIsMono: boolean,
+        public command: string,
+        public pid: number
+    ) {}
 }
 
 export class PackageInstallStart implements BaseEvent {
@@ -55,202 +68,199 @@ export class PackageInstallStart implements BaseEvent {
 
 export class PackageInstallation implements BaseEvent {
     type = EventType.PackageInstallation;
-    constructor(public packageInfo: string) { }
+    constructor(public packageInfo: string) {}
 }
 
 export class LogPlatformInfo implements BaseEvent {
     type = EventType.LogPlatformInfo;
-    constructor(public info: PlatformInformation) { }
+    constructor(public info: PlatformInformation) {}
 }
 
 export class InstallationStart implements BaseEvent {
     type = EventType.InstallationStart;
-    constructor(public packageDescription: string) { }
+    constructor(public packageDescription: string) {}
 }
 
 export class InstallationFailure implements BaseEvent {
     type = EventType.InstallationFailure;
-    constructor(public stage: string, public error: any) { }
+    constructor(public stage: string, public error: any) {}
 }
 
 export class DownloadProgress implements BaseEvent {
     type = EventType.DownloadProgress;
-    constructor(public downloadPercentage: number, public packageDescription: string) { }
+    constructor(public downloadPercentage: number, public packageDescription: string) {}
 }
 
 export class OmnisharpFailure implements BaseEvent {
     type = EventType.OmnisharpFailure;
-    constructor(public message: string, public error: Error) { }
+    constructor(public message: string, public error: Error) {}
 }
 
 export class OmnisharpRequestMessage implements BaseEvent {
     type = EventType.OmnisharpRequestMessage;
-    constructor(public request: Request, public id: number) { }
+    constructor(public request: Request, public id: number) {}
 }
 
 export class TestExecutionCountReport implements BaseEvent {
     type = EventType.TestExecutionCountReport;
-    constructor(public debugCounts: { [testFrameworkName: string]: number } | undefined, public runCounts: { [testFrameworkName: string]: number } | undefined) { }
+    constructor(
+        public debugCounts: { [testFrameworkName: string]: number } | undefined,
+        public runCounts: { [testFrameworkName: string]: number } | undefined
+    ) {}
 }
 
 export class OmnisharpServerOnError implements BaseEvent {
     type = EventType.OmnisharpServerOnError;
-    constructor(public errorMessage: protocol.ErrorMessage) { }
+    constructor(public errorMessage: protocol.ErrorMessage) {}
 }
 
 export class OmnisharpBackgroundDiagnosticStatus implements BaseEvent {
     type = EventType.BackgroundDiagnosticStatus;
-    constructor(public message: protocol.BackgroundDiagnosticStatusMessage) { }
+    constructor(public message: protocol.BackgroundDiagnosticStatusMessage) {}
 }
 
 export class OmnisharpServerMsBuildProjectDiagnostics implements BaseEvent {
     type = EventType.OmnisharpServerMsBuildProjectDiagnostics;
-    constructor(public diagnostics: protocol.MSBuildProjectDiagnostics) { }
+    constructor(public diagnostics: protocol.MSBuildProjectDiagnostics) {}
 }
 
 export class OmnisharpServerUnresolvedDependencies implements BaseEvent {
     type = EventType.OmnisharpServerUnresolvedDependencies;
-    constructor(public unresolvedDependencies: protocol.UnresolvedDependenciesMessage) { }
+    constructor(public unresolvedDependencies: protocol.UnresolvedDependenciesMessage) {}
 }
 
 export class OmnisharpServerEnqueueRequest implements BaseEvent {
     type = EventType.OmnisharpServerEnqueueRequest;
-    constructor(public queueName: string, public command: string) { }
+    constructor(public queueName: string, public command: string) {}
 }
 
 export class OmnisharpServerDequeueRequest implements BaseEvent {
     type = EventType.OmnisharpServerDequeueRequest;
-    constructor(public queueName: string, public queueStatus: string, public command: string, public id?: number) { }
+    constructor(public queueName: string, public queueStatus: string, public command: string, public id?: number) {}
 }
 
 export class OmnisharpServerRequestCancelled implements BaseEvent {
     type = EventType.OmnisharpServerRequestCancelled;
-    constructor(public command: string, public id: number | undefined) { }
+    constructor(public command: string, public id: number | undefined) {}
 }
 
 export class OmnisharpServerProcessRequestStart implements BaseEvent {
     type = EventType.OmnisharpServerProcessRequestStart;
-    constructor(public name: string, public availableRequestSlots: number) { }
+    constructor(public name: string, public availableRequestSlots: number) {}
 }
 
 export class OmnisharpEventPacketReceived implements BaseEvent {
     type = EventType.OmnisharpEventPacketReceived;
-    constructor(public logLevel: string, public name: string, public message: string) { }
+    constructor(public logLevel: string, public name: string, public message: string) {}
 }
 
 export class OmnisharpServerOnServerError implements BaseEvent {
     type = EventType.OmnisharpServerOnServerError;
-    constructor(public err: any) { }
+    constructor(public err: any) {}
 }
 
 export class OmnisharpOnMultipleLaunchTargets implements BaseEvent {
     type = EventType.OmnisharpOnMultipleLaunchTargets;
-    constructor(public targets: LaunchTarget[]) { }
+    constructor(public targets: LaunchTarget[]) {}
 }
 
 export class ProjectConfiguration implements BaseEvent {
     type = EventType.ProjectConfigurationReceived;
-    constructor(public projectConfiguration: protocol.ProjectConfigurationMessage) { }
+    constructor(public projectConfiguration: ProjectConfigurationMessage) {}
 }
 
 export class WorkspaceInformationUpdated implements BaseEvent {
     type = EventType.WorkspaceInformationUpdated;
-    constructor(public info: protocol.WorkspaceInformationResponse) { }
+    constructor(public info: protocol.WorkspaceInformationResponse) {}
 }
 
 export class EventWithMessage implements BaseEvent {
     type = EventType.EventWithMessage;
-    constructor(public message: string) { }
+    constructor(public message: string) {}
 }
 
 export class DownloadStart implements BaseEvent {
     type = EventType.DownloadStart;
-    constructor(public packageDescription: string) { }
+    constructor(public packageDescription: string) {}
 }
 
 export class DownloadFallBack implements BaseEvent {
     type = EventType.DownloadFallBack;
-    constructor(public fallbackUrl: string) { }
+    constructor(public fallbackUrl: string) {}
 }
 
 export class DownloadSizeObtained implements BaseEvent {
     type = EventType.DownloadSizeObtained;
-    constructor(public packageSize: number) { }
+    constructor(public packageSize: number) {}
 }
 
 export class ZipError implements BaseEvent {
     type = EventType.ZipError;
-    constructor(public message: string) { }
+    constructor(public message: string) {}
 }
 
 export class ReportDotNetTestResults implements BaseEvent {
     type = EventType.ReportDotNetTestResults;
-    constructor(public results: protocol.V2.DotNetTestResult[] | undefined) { }
+    constructor(public results: protocol.V2.DotNetTestResult[] | undefined) {}
 }
 
 export class DotNetTestRunStart implements BaseEvent {
     type = EventType.DotNetTestRunStart;
-    constructor(public testMethod: string) { }
+    constructor(public testMethod: string) {}
 }
 
 export class DotNetTestDebugStart implements BaseEvent {
     type = EventType.DotNetTestDebugStart;
-    constructor(public testMethod: string) { }
+    constructor(public testMethod: string) {}
 }
 
 export class DotNetTestDebugProcessStart implements BaseEvent {
     type = EventType.DotNetTestDebugProcessStart;
-    constructor(public targetProcessId: number) { }
+    constructor(public targetProcessId: number) {}
 }
 
 export class DotNetTestsInClassRunStart implements BaseEvent {
     type = EventType.DotNetTestsInClassRunStart;
-    constructor(public className: string) { }
+    constructor(public className: string) {}
 }
 
 export class DotNetTestsInClassDebugStart implements BaseEvent {
     type = EventType.DotNetTestsInClassDebugStart;
-    constructor(public className: string) { }
+    constructor(public className: string) {}
 }
 
 export class DotNetTestRunInContextStart implements BaseEvent {
     type = EventType.DotNetTestRunInContextStart;
-    constructor(public fileName: string, public line: number, public column: number) { }
+    constructor(public fileName: string, public line: number, public column: number) {}
 }
 
 export class DotNetTestDebugInContextStart implements BaseEvent {
     type = EventType.DotNetTestDebugInContextStart;
-    constructor(public fileName: string, public line: number, public column: number) { }
+    constructor(public fileName: string, public line: number, public column: number) {}
 }
 
 export class DocumentSynchronizationFailure implements BaseEvent {
     type = EventType.DocumentSynchronizationFailure;
-    constructor(public documentPath: string, public errorMessage: string) { }
-}
-
-export class OpenURL {
-    type = EventType.OpenURL;
-    constructor(public url: string) { }
+    constructor(public documentPath: string, public errorMessage: string) {}
 }
 
 export class IntegrityCheckFailure {
     type = EventType.IntegrityCheckFailure;
-    constructor(public packageDescription: string, public url: string, public retry: boolean) { }
+    constructor(public packageDescription: string, public url: string, public retry: boolean) {}
 }
 
 export class IntegrityCheckSuccess {
     type = EventType.IntegrityCheckSuccess;
-    constructor() { }
 }
 
 export class RazorPluginPathSpecified implements BaseEvent {
     type = EventType.RazorPluginPathSpecified;
-    constructor(public path: string) { }
+    constructor(public path: string) {}
 }
 
 export class RazorPluginPathDoesNotExist implements BaseEvent {
     type = EventType.RazorPluginPathDoesNotExist;
-    constructor(public path: string) { }
+    constructor(public path: string) {}
 }
 
 export class DebuggerPrerequisiteFailure extends EventWithMessage {
@@ -349,10 +359,6 @@ export class DotNetTestDebugComplete implements BaseEvent {
 }
 export class DownloadValidation implements BaseEvent {
     type = EventType.DownloadValidation;
-}
-export class DevCertCreationFailure implements BaseEvent {
-    type = EventType.DevCertCreationFailure;
-    constructor(public errorMessage: string) { }
 }
 export class ShowChannel implements BaseEvent {
     type = EventType.ShowChannel;

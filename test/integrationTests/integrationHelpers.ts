@@ -3,78 +3,85 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
 import * as vscode from 'vscode';
-import CSharpExtensionExports from '../../src/CSharpExtensionExports';
-import { Advisor } from '../../src/features/diagnosticsProvider';
-import { EventStream } from '../../src/EventStream';
-import { EventType } from '../../src/omnisharp/EventType';
+import * as path from 'path';
+import { CSharpExtensionExports } from '../../src/csharpExtensionExports';
+import { existsSync } from 'fs';
+import { ServerStateChange } from '../../src/lsptoolshost/serverStateChange';
+import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
-export interface ActivationResult {
-    readonly advisor: Advisor;
-    readonly eventStream: EventStream;
+export async function activateCSharpExtension(): Promise<void> {
+    // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
+    const vscodeDotnetRuntimeExtensionId = 'ms-dotnettools.vscode-dotnet-runtime';
+    const dotnetRuntimeExtension =
+        vscode.extensions.getExtension<CSharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
+    if (!dotnetRuntimeExtension) {
+        await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId);
+        await vscode.commands.executeCommand('workbench.action.reloadWindow');
+    }
+
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
+    if (!csharpExtension) {
+        throw new Error('Failed to find installation of ms-dotnettools.csharp');
+    }
+
+    // Run a restore manually to make sure the project is up to date since we don't have automatic restore.
+    await testAssetWorkspace.restoreLspToolsHostAsync();
+
+    // If the extension is already active, we need to restart it to ensure we start with a clean server state.
+    // For example, a previous test may have changed configs, deleted restored packages or made other changes that would put it in an invalid state.
+    let shouldRestart = false;
+    if (csharpExtension.isActive) {
+        shouldRestart = true;
+    }
+
+    // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
+    await csharpExtension.activate();
+    await csharpExtension.exports.initializationFinished();
+    console.log('ms-dotnettools.csharp activated');
+    console.log(`Extension Log Directory: ${csharpExtension.exports.logDirectory}`);
+
+    if (shouldRestart) {
+        await restartLanguageServer();
+    }
 }
 
-export async function activateCSharpExtension(): Promise<ActivationResult | undefined> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
-
-    if (!csharpExtension.isActive) {
-        await csharpExtension.activate();
+export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<vscode.Uri> {
+    const root = vscode.workspace.workspaceFolders![0].uri.fsPath;
+    const filePath = path.join(root, relativeFilePath);
+    if (!existsSync(filePath)) {
+        throw new Error(`File ${filePath} does not exist`);
     }
 
-    try {
-        await csharpExtension.exports.initializationFinished();
-        console.log("ms-dotnettools.csharp activated");
-        return {
-            advisor: await csharpExtension.exports.getAdvisor(),
-            eventStream: csharpExtension.exports.eventStream
-        };
-    }
-    catch (err) {
-        console.log(JSON.stringify(err));
-        return undefined;
-    }
+    const uri = vscode.Uri.file(filePath);
+    await vscode.commands.executeCommand('vscode.open', uri);
+    return uri;
 }
 
-export async function restartOmniSharpServer(): Promise<void> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>("ms-dotnettools.csharp");
-
-    if (!csharpExtension.isActive) {
-        await activateCSharpExtension();
-    }
-
-    try {
-        await new Promise<void>(resolve => {
-            const hook = csharpExtension.exports.eventStream.subscribe(event => {
-                if (event.type == EventType.OmnisharpStart) {
-                    hook.unsubscribe();
-                    resolve();
-                }
-            });
-            vscode.commands.executeCommand("o.restart");
+export async function restartLanguageServer(): Promise<void> {
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
+    // Register to wait for initialization events and restart the server.
+    const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
+        csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange(async (state) => {
+            if (state === ServerStateChange.ProjectInitializationComplete) {
+                resolve();
+            }
         });
-        console.log("OmniSharp restarted");
-    }
-    catch (err) {
-        console.log(JSON.stringify(err));
-        return;
-    }
+    });
+    await vscode.commands.executeCommand('dotnet.restartServer');
+    await waitForInitialProjectLoad;
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {
     return isGivenSln(workspace, 'BasicRazorApp2_1');
 }
 
-export function isSlnWithCsproj(workspace: typeof vscode.workspace) {
-    return isGivenSln(workspace, 'slnWithCsproj');
-}
-
 export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
-    return isGivenSln(workspace,  'slnWithGenerator');
+    return isGivenSln(workspace, 'slnWithGenerator');
 }
 
 function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {
-    const primeWorkspace = workspace.workspaceFolders[0];
+    const primeWorkspace = workspace.workspaceFolders![0];
     const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
 
     return projectFileName === expectedProjectFileName;

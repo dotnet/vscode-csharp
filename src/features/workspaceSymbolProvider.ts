@@ -5,42 +5,45 @@
 
 import AbstractSupport from './abstractProvider';
 import { OmniSharpServer } from '../omnisharp/server';
-import OptionProvider from '../observers/OptionProvider';
 import * as protocol from '../omnisharp/protocol';
 import * as serverUtils from '../omnisharp/utils';
 import { toRange } from '../omnisharp/typeConversion';
 import { CancellationToken, Uri, WorkspaceSymbolProvider, SymbolInformation, SymbolKind, Location } from 'vscode';
-import { LanguageMiddlewareFeature } from '../omnisharp/LanguageMiddlewareFeature';
+import { LanguageMiddlewareFeature } from '../omnisharp/languageMiddlewareFeature';
 import SourceGeneratedDocumentProvider from './sourceGeneratedDocumentProvider';
+import { omnisharpOptions } from '../shared/options';
 
-
-export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
-
+export default class OmniSharpWorkspaceSymbolProvider extends AbstractSupport implements WorkspaceSymbolProvider {
     constructor(
         server: OmniSharpServer,
-        private optionProvider: OptionProvider,
         languageMiddlewareFeature: LanguageMiddlewareFeature,
-        private sourceGeneratedDocumentProvider: SourceGeneratedDocumentProvider) {
+        private sourceGeneratedDocumentProvider: SourceGeneratedDocumentProvider
+    ) {
         super(server, languageMiddlewareFeature);
     }
 
     public async provideWorkspaceSymbols(search: string, token: CancellationToken): Promise<SymbolInformation[]> {
-
-        const options = this.optionProvider.GetLatestOptions();
-        const minFilterLength = options.minFindSymbolsFilterLength > 0 ? options.minFindSymbolsFilterLength : undefined;
-        const maxItemsToReturn = options.maxFindSymbolsItems > 0 ? options.maxFindSymbolsItems : undefined;
+        const minFindSymbolsFilterLength = omnisharpOptions.minFindSymbolsFilterLength;
+        const maxFindSymbolsItems = omnisharpOptions.maxFindSymbolsItems;
+        const minFilterLength = minFindSymbolsFilterLength > 0 ? minFindSymbolsFilterLength : undefined;
+        const maxItemsToReturn = maxFindSymbolsItems > 0 ? maxFindSymbolsItems : undefined;
 
         if (minFilterLength !== undefined && search.length < minFilterLength) {
             return [];
         }
 
         try {
-            const res = await serverUtils.findSymbols(this._server, { Filter: search, MaxItemsToReturn: maxItemsToReturn }, token);
+            const res = await serverUtils.findSymbols(
+                this._server,
+                { Filter: search, MaxItemsToReturn: maxItemsToReturn },
+                token
+            );
             if (Array.isArray(res?.QuickFixes)) {
-                return res.QuickFixes.map(symbol => this._asSymbolInformation(symbol));
+                return res.QuickFixes.map((symbol) => this._asSymbolInformation(symbol));
             }
+        } catch {
+            /* empty */
         }
-        catch {}
 
         return [];
     }
@@ -48,9 +51,11 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
     private _asSymbolInformation(symbolInfo: protocol.SymbolLocation): SymbolInformation {
         let uri: Uri;
         if (symbolInfo.GeneratedFileInfo) {
-            uri = this.sourceGeneratedDocumentProvider.addSourceGeneratedFileWithoutInitialContent(symbolInfo.GeneratedFileInfo, symbolInfo.FileName);
-        }
-        else {
+            uri = this.sourceGeneratedDocumentProvider.addSourceGeneratedFileWithoutInitialContent(
+                symbolInfo.GeneratedFileInfo,
+                symbolInfo.FileName
+            );
+        } else {
             uri = Uri.file(symbolInfo.FileName);
         }
 
@@ -58,9 +63,10 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
 
         return new SymbolInformation(
             symbolInfo.Text,
-            OmnisharpWorkspaceSymbolProvider._toKind(symbolInfo),
-            symbolInfo.ContainingSymbolName ?? "",
-            location);
+            OmniSharpWorkspaceSymbolProvider._toKind(symbolInfo),
+            symbolInfo.ContainingSymbolName ?? '',
+            location
+        );
     }
 
     private static _toKind(symbolInfo: protocol.SymbolLocation): SymbolKind {
@@ -85,7 +91,6 @@ export default class OmnisharpWorkspaceSymbolProvider extends AbstractSupport im
                 return SymbolKind.Class;
             default:
                 return SymbolKind.Class;
-
         }
     }
 }
