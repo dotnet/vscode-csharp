@@ -510,8 +510,8 @@ export class RoslynLanguageServer {
                 _channel.appendLine('Activating C# + C# Dev Kit...');
             }
 
-            const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension);
-            args = args.concat(csharpDevkitArgs);
+            const csharpDevKitArgs = this.getCSharpDevKitExportArgs();
+            args = args.concat(csharpDevKitArgs);
 
             await this.setupDevKitEnvironment(env, csharpDevkitExtension);
         } else {
@@ -756,24 +756,17 @@ export class RoslynLanguageServer {
         );
     }
 
-    private static async getCSharpDevkitExportArgs(
-        csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>
-    ): Promise<string[]> {
-        const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
-
-        const extensionPaths = languageServerOptions.extensionsPaths || [
-            this.getLanguageServicesDevKitComponentPath(exports),
-        ];
-
+    private static getCSharpDevKitExportArgs(): string[] {
         const args: string[] = [];
 
-        args.push('--sharedDependencies');
-        args.push(exports.components['@microsoft/visualstudio-server-shared']);
-
-        for (const extensionPath of extensionPaths) {
-            args.push('--extension');
-            args.push(extensionPath);
-        }
+        const clientRoot = __dirname;
+        const devKitDepsPath = path.join(
+            clientRoot,
+            '..',
+            '.roslynDevKit',
+            'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
+        );
+        args.push('--extension', devKitDepsPath);
 
         args.push('--sessionId', getSessionId());
         return args;
@@ -803,13 +796,6 @@ export class RoslynLanguageServer {
         }
 
         await exports.setupTelemetryEnvironmentAsync(env);
-    }
-
-    private static getLanguageServicesDevKitComponentPath(csharpDevKitExports: CSharpDevKitExports): string {
-        return path.join(
-            csharpDevKitExports.components['@microsoft/visualstudio-languageservices-devkit'],
-            'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
-        );
     }
 
     private static GetTraceLevel(logLevel: string): Trace {

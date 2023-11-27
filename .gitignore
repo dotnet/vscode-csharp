@@ -3,6 +3,7 @@ obj
 node_modules
 out
 .roslyn/
+.roslynDevKit/
 .omnisharp/
 .omnisharp-*/
 .vs/
