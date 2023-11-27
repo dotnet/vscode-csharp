@@ -15,7 +15,7 @@ export const jestPath = path.join(nodeModulesPath, 'jest', 'bin', 'jest');
 export const packedVsixOutputRoot = commandLineOptions.outputFolder || path.join(rootPath, 'vsix');
 export const nugetTempPath = path.join(rootPath, 'out', '.nuget');
 export const languageServerDirectory = path.join(rootPath, '.roslyn');
-export const devkitDependenciesDirectory = path.join(rootPath, '.roslynDevkit');
+export const devKitDependenciesDirectory = path.join(rootPath, '.roslynDevKit');
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 

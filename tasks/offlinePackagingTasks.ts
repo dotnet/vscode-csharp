@@ -23,7 +23,7 @@ import {
     languageServerDirectory,
     nugetTempPath,
     rootPath,
-    devkitDependenciesDirectory,
+    devKitDependenciesDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
@@ -124,8 +124,8 @@ gulp.task(
             await acquireRoslyn(packageJSON, p.platformInfo, true);
         }
 
-        // Also pull in the Roslyn devkit dependencies nuget package.
-        await acquireRoslynDevkit(packageJSON, true);
+        // Also pull in the Roslyn DevKit dependencies nuget package.
+        await acquireRoslynDevKit(packageJSON, true);
     }, 'installDependencies')
 );
 
@@ -139,9 +139,9 @@ async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformatio
         languageServerDirectory
     );
 
-    // Install Roslyn Devkit dependencies.
-    const roslynDevkitPackagePath = await acquireRoslynDevkit(packageJSON, false);
-    await installNuGetPackage(roslynDevkitPackagePath, 'content', devkitDependenciesDirectory);
+    // Install Roslyn DevKit dependencies.
+    const roslynDevKitPackagePath = await acquireRoslynDevKit(packageJSON, false);
+    await installNuGetPackage(roslynDevKitPackagePath, 'content', devKitDependenciesDirectory);
 }
 
 async function installNuGetPackage(pathToPackage: string, contentPath: string, outputPath: string) {
@@ -193,10 +193,10 @@ async function acquireRoslyn(
     return { packagePath, serverPlatform };
 }
 
-async function acquireRoslynDevkit(packageJSON: any, interactive: boolean): Promise<string> {
+async function acquireRoslynDevKit(packageJSON: any, interactive: boolean): Promise<string> {
     const roslynVersion = packageJSON.defaults.roslyn;
     const packagePath = await acquireNugetPackage(
-        `Microsoft.VisualStudio.LanguageServices.Devkit`,
+        `Microsoft.VisualStudio.LanguageServices.DevKit`,
         roslynVersion,
         interactive
     );
@@ -333,7 +333,7 @@ async function cleanAsync() {
         '.debugger',
         '.razor',
         languageServerDirectory,
-        devkitDependenciesDirectory,
+        devKitDependenciesDirectory,
     ]);
 }
 

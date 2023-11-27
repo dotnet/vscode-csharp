@@ -510,8 +510,8 @@ export class RoslynLanguageServer {
                 _channel.appendLine('Activating C# + C# Dev Kit...');
             }
 
-            const csharpDevkitArgs = this.getCSharpDevkitExportArgs();
-            args = args.concat(csharpDevkitArgs);
+            const csharpDevKitArgs = this.getCSharpDevKitExportArgs();
+            args = args.concat(csharpDevKitArgs);
 
             await this.setupDevKitEnvironment(env, csharpDevkitExtension);
         } else {
@@ -756,17 +756,17 @@ export class RoslynLanguageServer {
         );
     }
 
-    private static getCSharpDevkitExportArgs(): string[] {
+    private static getCSharpDevKitExportArgs(): string[] {
         const args: string[] = [];
 
         const clientRoot = __dirname;
-        const devkitDepsPath = path.join(
+        const devKitDepsPath = path.join(
             clientRoot,
             '..',
-            '.roslynDevkit',
+            '.roslynDevKit',
             'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
         );
-        args.push('--extension', devkitDepsPath);
+        args.push('--extension', devKitDepsPath);
 
         args.push('--sessionId', getSessionId());
         return args;
