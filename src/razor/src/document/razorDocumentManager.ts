@@ -18,6 +18,7 @@ import { IRazorDocumentManager } from './IRazorDocumentManager';
 import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
 import { razorInitializeCommand } from '../../../lsptoolshost/razorCommands';
+import { PlatformInformation } from '../../../shared/platform';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -32,7 +33,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     constructor(
         private readonly serverClient: RazorLanguageServerClient,
         private readonly logger: RazorLogger,
-        private readonly telemetryReporter: TelemetryReporter
+        private readonly telemetryReporter: TelemetryReporter,
+        private readonly platformInfo: PlatformInformation
     ) {}
 
     public get onChange() {
@@ -146,7 +148,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     private _getDocument(uri: vscode.Uri) {
         const path = getUriPath(uri);
-        let document = this.razorDocuments[path];
+        let document = this.findDocument(path);
 
         // This might happen in the case that a file is opened outside the workspace
         if (!document) {
@@ -198,7 +200,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     private addDocument(uri: vscode.Uri) {
         const path = getUriPath(uri);
-        let document = this.razorDocuments[path];
+        let document = this.findDocument(path);
         if (document) {
             this.logger.logMessage(`Skipping document creation for '${path}' because it already exists.`);
             return document;
@@ -217,6 +219,20 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         delete this.razorDocuments[document.path];
 
         this.notifyDocumentChange(document, RazorDocumentChangeKind.removed);
+    }
+
+    private findDocument(path: string) {
+        // This method ultimately gets called from VS Code, using file system paths, or from DevKit, which
+        // can use paths as specified in the sln file. When these don't agree, on case-insensitive operating
+        // systems, we have to be careful to match things up correctly.
+
+        if (this.platformInfo.isLinux()) {
+            return this.razorDocuments[path];
+        }
+
+        return Object.values(this.razorDocuments).find(
+            (document) => document.path.localeCompare(path, undefined, { sensitivity: 'base' }) === 0
+        );
     }
 
     private async updateCSharpBuffer(updateBufferRequest: UpdateBufferRequest) {

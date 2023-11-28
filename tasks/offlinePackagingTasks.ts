@@ -23,6 +23,7 @@ import {
     languageServerDirectory,
     nugetTempPath,
     rootPath,
+    devKitDependenciesDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
@@ -122,27 +123,46 @@ gulp.task(
         for (const p of platformSpecificPackages) {
             await acquireRoslyn(packageJSON, p.platformInfo, true);
         }
+
+        // Also pull in the Roslyn DevKit dependencies nuget package.
+        await acquireRoslynDevKit(packageJSON, true);
     }, 'installDependencies')
 );
 
 // Install Tasks
 async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformation) {
+    // Install the Roslyn language server bits.
     const { packagePath, serverPlatform } = await acquireRoslyn(packageJSON, platformInfo, false);
+    await installNuGetPackage(
+        packagePath,
+        path.join('content', 'LanguageServer', serverPlatform),
+        languageServerDirectory
+    );
 
-    // Get the directory containing the server executable for the current platform.
-    const serverExecutableDirectory = path.join(packagePath, 'content', 'LanguageServer', serverPlatform);
-    if (!fs.existsSync(serverExecutableDirectory)) {
-        throw new Error(`Failed to find server executable directory at ${serverExecutableDirectory}`);
+    // Install Roslyn DevKit dependencies.
+    const roslynDevKitPackagePath = await acquireRoslynDevKit(packageJSON, false);
+    await installNuGetPackage(roslynDevKitPackagePath, 'content', devKitDependenciesDirectory);
+}
+
+async function installNuGetPackage(pathToPackage: string, contentPath: string, outputPath: string) {
+    // Get the directory containing the content.
+    const contentDirectory = path.join(pathToPackage, contentPath);
+    if (!fs.existsSync(contentDirectory)) {
+        throw new Error(`Failed to find NuGet package content at ${contentDirectory}`);
     }
 
-    console.log(`Extracting Roslyn executables from ${serverExecutableDirectory}`);
+    const numFilesToCopy = fs.readdirSync(contentDirectory).length;
+
+    console.log(`Extracting content from ${contentDirectory}`);
 
     // Copy the files to the language server directory.
-    fs.mkdirSync(languageServerDirectory);
-    fsextra.copySync(serverExecutableDirectory, languageServerDirectory);
-    const languageServerDll = path.join(languageServerDirectory, 'Microsoft.CodeAnalysis.LanguageServer.dll');
-    if (!fs.existsSync(languageServerDll)) {
-        throw new Error(`Failed to copy server executable`);
+    fs.mkdirSync(outputPath);
+    fsextra.copySync(contentDirectory, outputPath);
+    const numCopiedFiles = fs.readdirSync(outputPath).length;
+
+    // Not expected to ever happen, just a simple sanity check.
+    if (numFilesToCopy !== numCopiedFiles) {
+        throw new Error('Failed to copy all files from NuGet package');
     }
 }
 
@@ -171,6 +191,16 @@ async function acquireRoslyn(
         interactive
     );
     return { packagePath, serverPlatform };
+}
+
+async function acquireRoslynDevKit(packageJSON: any, interactive: boolean): Promise<string> {
+    const roslynVersion = packageJSON.defaults.roslyn;
+    const packagePath = await acquireNugetPackage(
+        `Microsoft.VisualStudio.LanguageServices.DevKit`,
+        roslynVersion,
+        interactive
+    );
+    return packagePath;
 }
 
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
@@ -297,7 +327,14 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
 }
 
 async function cleanAsync() {
-    await del(['install.*', '.omnisharp*', '.debugger', '.razor', languageServerDirectory]);
+    await del([
+        'install.*',
+        '.omnisharp*',
+        '.debugger',
+        '.razor',
+        languageServerDirectory,
+        devKitDependenciesDirectory,
+    ]);
 }
 
 async function buildVsix(
