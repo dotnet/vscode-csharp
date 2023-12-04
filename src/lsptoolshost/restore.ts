@@ -10,7 +10,7 @@ import {
     RestoreParams,
     RestorePartialResult,
     RestoreRequest,
-    ProjectHasUnresolvedDependenciesNotification,
+    ProjectHasUnresolvedDependenciesRequest,
 } from './roslynProtocol';
 import path = require('path');
 
@@ -32,7 +32,7 @@ export function registerRestoreCommands(
         })
     );
 
-    languageServer.registerOnRequest(ProjectHasUnresolvedDependenciesNotification.type, async (params) => {
+    languageServer.registerOnRequest(ProjectHasUnresolvedDependenciesRequest.type, async (params) => {
         await restore(languageServer, restoreChannel, params.projectFilePaths, false);
     });
 }

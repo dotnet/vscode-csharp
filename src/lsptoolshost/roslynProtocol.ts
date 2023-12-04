@@ -268,7 +268,7 @@ export namespace RestorableProjects {
     export const type = new lsp.RequestType0<string[], void>(method);
 }
 
-export namespace ProjectHasUnresolvedDependenciesNotification {
+export namespace ProjectHasUnresolvedDependenciesRequest {
     export const method = 'workspace/_roslyn_projectHasUnresolvedDependencies';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.RequestType<UnresolvedProjectDependenciesParams, void, void>(method);
