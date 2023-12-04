@@ -1745,7 +1745,7 @@
           "dotnet.projects.enableAutomaticRestore": {
             "type": "boolean",
             "default": true,
-            "description": "Sets whether or not automatic nuget restore is enabled if the project system detects assets are missing."
+            "description": "%configuration.dotnet.projects.enableAutomaticRestore%"
           },
           "razor.languageServer.directory": {
             "type": "string",
