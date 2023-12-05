@@ -60,6 +60,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Supprimer les indicateurs quand le nom de paramètre correspond à l'intention de la méthode",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Activez la navigation vers les sources décompliées.",
   "configuration.dotnet.preferCSharpExtension": "Force le chargement des projets avec l'extension C# uniquement.  Cela peut être utile lors de l’utilisation de types de projets hérités qui ne sont pas pris en charge par C# Dev Kit. (Nécessite le rechargement de la fenêtre)",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Afficher les informations sur les remarques lors de l’affichage du symbole.",
   "configuration.dotnet.server.crashDumpPath": "Définit un chemin de dossier dans lequel les vidages sur incident sont écrits en cas de panne du serveur de langue.  Doit être accessible en écriture par l'utilisateur.",
   "configuration.dotnet.server.extensionPaths": "Remplacer le chemin d’accès au serveur de langage --extension arguments",

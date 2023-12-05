@@ -60,6 +60,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "當參數名稱符合方法的意圖時，不出現提示",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "啟用到反向組譯來源的瀏覽。",
   "configuration.dotnet.preferCSharpExtension": "強制專案僅以 C# 延伸模組載入。使用 C# 開發人員套件不支援的舊版專案類型時，這會很有用。(需要重新載入視窗)",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "顯示符號時顯示備註資訊。",
   "configuration.dotnet.server.crashDumpPath": "設定當語言伺服器當機時要寫入當機傾印的資料夾路徑。必須可由使用者寫入。",
   "configuration.dotnet.server.extensionPaths": "覆寫語言伺服器 --extension 引數的路徑",
