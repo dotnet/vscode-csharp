@@ -5,7 +5,7 @@
 - [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-## 2.12.19
+## Latest
 * Update Roslyn to 4.9.0-3.23604.10 (PR: [#6676](https://github.com/dotnet/vscode-csharp/pull/6676))
   * Pass through folders for additional files (PR: [#71061](https://github.com/dotnet/roslyn/pull/71061))
   * Automatically detect missing NuGet packages and restore (PR: [#70851](https://github.com/dotnet/roslyn/pull/70851))
@@ -15,13 +15,16 @@
 * Update debugger docs to point to official documentation (PR: [#6674](https://github.com/dotnet/vscode-csharp/pull/6674))
 
 ## 2.12.19
-* Update Roslyn to 4.9.0-2.23563.2 (PR: [#6664](https://github.com/dotnet/vscode-csharp/pull/6664))
+* Update Roslyn to 4.9.0-2.23571.2 (PR: [#6681](https://github.com/dotnet/vscode-csharp/pull/6681))
+  * Workaround vscode bug with returning defaultBehavior from prepareRename (PR: [#70840](https://github.com/dotnet/roslyn/pull/70840))
   * Implement textDocument/prepareRename to show error in invalid rename locations (PR: [#70724](https://github.com/dotnet/roslyn/pull/70724))
   * Improve Hover markdown on 'await' keyword (PR: [#70629](https://github.com/dotnet/roslyn/pull/70629))
+* Remove blazor debugging extension (PR: [#5579](https://github.com/dotnet/vscode-csharp/pull/5579))
+* Fix issue with mismatch in casing in solution file (PR: [#6683](https://github.com/dotnet/vscode-csharp/pull/6683))
+* Add nested code actions to csharp extension (PR: [#6572](https://github.com/dotnet/vscode-csharp/pull/6572))
 * Direct debugger setting documentation to code.visualstudio.com (PR: [#6659](https://github.com/dotnet/vscode-csharp/pull/6659))
 * Add a timeout for downloading razor telemetry (PR: [#6622](https://github.com/dotnet/vscode-csharp/pull/6622))
 * Rearrange settings sections into actual categories (PR: [#6652](https://github.com/dotnet/vscode-csharp/pull/6652))
-* Use case-insensitive path lookups for Razor files on Windows and Mac (PR: [#6683](https://github.com/dotnet/vscode-csharp/pull/6683))
 
 ## 2.10.28
 * Fix C# Debugger telemetry (PR: [#6627](https://github.com/dotnet/vscode-csharp/pull/6627))
