@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.9.0-2.23571.2",
+    "roslyn": "4.9.0-3.23604.10",
     "omniSharp": "1.39.10",
     "razor": "7.0.0-preview.23528.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -1730,6 +1730,11 @@
             "type": "string",
             "default": null,
             "description": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors."
+          },
+          "dotnet.projects.enableAutomaticRestore": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.projects.enableAutomaticRestore%"
           },
           "razor.languageServer.directory": {
             "type": "string",
