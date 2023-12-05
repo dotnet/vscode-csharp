@@ -60,6 +60,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Potlačit nápovědy, když název parametru odpovídá záměru metody",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Povolit navigaci na dekompilované zdroje.",
   "configuration.dotnet.preferCSharpExtension": "Vynutí načtení projektů pouze s rozšířením jazyka C#.  To může být užitečné při použití starších typů projektů, které jazyk C# Dev Kit nepodporuje. (Vyžaduje opětovné načtení okna)",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Zobrazit informace o poznámkách při zobrazení symbolu.",
   "configuration.dotnet.server.crashDumpPath": "Nastaví cestu ke složce, do které se zapisují výpisy stavu systému, pokud dojde k chybovému ukončení jazykového serveru.  Musí být zapisovatelný uživatelem.",
   "configuration.dotnet.server.extensionPaths": "Přepsat pro cestu k jazykovému serveru -- argumenty rozšíření",

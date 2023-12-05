@@ -60,6 +60,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "当参数名称与方法的意图匹配时禁止显示提示",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "启用对分解源的导航。",
   "configuration.dotnet.preferCSharpExtension": "仅强制使用 C# 扩展加载项目。使用 C# Dev Kit 不支持的旧项目类型时，这可能很有用。(需要重新加载窗口)",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "显示符号时显示备注信息。",
   "configuration.dotnet.server.crashDumpPath": "设置在语言服务器崩溃时在其中写入故障转储的文件夹路径。用户必须可以写入。",
   "configuration.dotnet.server.extensionPaths": "替代语言服务器 --extension 参数的路径",
