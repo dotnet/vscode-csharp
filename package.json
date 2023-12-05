@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.9.0-2.23571.2",
+    "roslyn": "4.9.0-3.23604.10",
     "omniSharp": "1.39.10",
     "razor": "7.0.0-preview.23528.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -1014,7 +1014,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.73.0"
+    "vscode": "^1.75.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -1023,18 +1023,7 @@
     "onDebugResolve:clr",
     "onDebugResolve:dotnet",
     "onLanguage:csharp",
-    "onLanguage:aspnetcorerazor",
-    "onCommand:o.restart",
-    "onCommand:o.pickProjectAndStart",
     "onCommand:o.showOutput",
-    "onCommand:dotnet.restore.project",
-    "onCommand:dotnet.restore.all",
-    "onCommand:dotnet.generateAssets",
-    "onCommand:dotnet.openSolution",
-    "onCommand:csharp.downloadDebugger",
-    "onCommand:csharp.listProcess",
-    "onCommand:csharp.listRemoteProcess",
-    "onCommand:csharp.listRemoteDockerProcess",
     "onCommand:omnisharp.registerLanguageMiddleware",
     "workspaceContains:project.json",
     "workspaceContains:**/*.{csproj,sln,slnf,csx,cake}"
@@ -1741,6 +1730,11 @@
             "type": "string",
             "default": null,
             "description": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors."
+          },
+          "dotnet.projects.enableAutomaticRestore": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.projects.enableAutomaticRestore%"
           },
           "razor.languageServer.directory": {
             "type": "string",

@@ -6,6 +6,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn to 4.9.0-3.23604.10 (PR: [#6676](https://github.com/dotnet/vscode-csharp/pull/6676))
+  * Pass through folders for additional files (PR: [#71061](https://github.com/dotnet/roslyn/pull/71061))
+  * Automatically detect missing NuGet packages and restore (PR: [#70851](https://github.com/dotnet/roslyn/pull/70851))
+  * Enable route embedded language features in vscode (PR: [#70927](https://github.com/dotnet/roslyn/pull/70927))
+* Add automatic nuget restore support to C# standalone (PR: [#6676](https://github.com/dotnet/vscode-csharp/pull/6676))
+* Update required VSCode version to 1.75.0 (PR: [#6711](https://github.com/dotnet/vscode-csharp/pull/6711))
+* Update debugger docs to point to official documentation (PR: [#6674](https://github.com/dotnet/vscode-csharp/pull/6674))
+
+## 2.12.19
 * Update Roslyn to 4.9.0-2.23571.2 (PR: [#6681](https://github.com/dotnet/vscode-csharp/pull/6681))
   * Workaround vscode bug with returning defaultBehavior from prepareRename (PR: [#70840](https://github.com/dotnet/roslyn/pull/70840))
   * Implement textDocument/prepareRename to show error in invalid rename locations (PR: [#70724](https://github.com/dotnet/roslyn/pull/70724))
