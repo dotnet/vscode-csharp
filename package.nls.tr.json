@@ -60,6 +60,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Parametre adı metodun hedefi ile eşleştiğinde ipuçlarını gizle",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Derlenmiş kaynaklarda gezinmeyi etkinleştir.",
   "configuration.dotnet.preferCSharpExtension": "Projeleri yalnızca C# uzantısıyla yüklenmeye zorlar.  Bu, C# Dev Kit tarafından desteklenmeyen eski proje türlerini kullanırken yararlı olabilir. (Pencerenin yeniden yüklenmesi gerekir)",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Simge görüntülendiğinde açıklama bilgilerini göster.",
   "configuration.dotnet.server.crashDumpPath": "Dil sunucusunun çökmesi durumunda kilitlenme dökümlerinin yazılacağı klasör yolunu ayarlar.  Kullanıcı tarafından yazılabilir olmalıdır.",
   "configuration.dotnet.server.extensionPaths": "Dil sunucusu --extension bağımsız değişkenleri yolunu geçersiz kıl",

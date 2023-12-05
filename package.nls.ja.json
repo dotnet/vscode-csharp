@@ -60,6 +60,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "パラメーター名がメソッドの意図と一致する場合にヒントを非表示にする",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "逆コンパイルされたソースへのナビゲーションを有効にします。",
   "configuration.dotnet.preferCSharpExtension": "C# 拡張機能のみを使用してプロジェクトを強制的に読み込みます。 これは、C# Dev Kit でサポートされていないレガシ プロジェクトの種類を使用する場合に役立ちます。(ウィンドウの再読み込みが必要)",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "シンボルを表示するときに注釈情報を表示します。",
   "configuration.dotnet.server.crashDumpPath": "言語サーバーがクラッシュした場合にクラッシュ ダンプの書き込み先フォルダー パスを設定します。ユーザーによる書き込みが可能であることが必要です。",
   "configuration.dotnet.server.extensionPaths": "言語サーバーへのパスのオーバーライド --拡張引数",
