@@ -163,7 +163,7 @@ export interface RestorePartialResult {
     message: string;
 }
 
-export interface UnresolvedProjectDependenciesParams {
+export interface ProjectNeedsRestoreName {
     /**
      * The set of projects that have unresolved dependencies and require a restore.
      */
@@ -268,8 +268,8 @@ export namespace RestorableProjects {
     export const type = new lsp.RequestType0<string[], void>(method);
 }
 
-export namespace ProjectHasUnresolvedDependenciesRequest {
-    export const method = 'workspace/_roslyn_projectHasUnresolvedDependencies';
+export namespace ProjectNeedsRestoreRequest {
+    export const method = 'workspace/_roslyn_projectNeedsRestore';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
-    export const type = new lsp.RequestType<UnresolvedProjectDependenciesParams, void, void>(method);
+    export const type = new lsp.RequestType<ProjectNeedsRestoreName, void, void>(method);
 }
