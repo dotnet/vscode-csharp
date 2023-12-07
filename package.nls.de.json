@@ -60,6 +60,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Hinweise unterdrücken, wenn der Parametername mit der Methodenabsicht übereinstimmt",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Aktivieren der Navigation zu dekompilierten Quellen.",
   "configuration.dotnet.preferCSharpExtension": "Erzwingt, dass Projekte nur mit der C#-Erweiterung geladen werden.  Dies kann nützlich sein, wenn Legacy-Projekttypen verwendet werden, die vom C# Dev Kit nicht unterstützt werden. (Erfordert erneutes Laden des Fensters)",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Beschreibungsinformationen beim Anzeigen des Symbols anzeigen.",
   "configuration.dotnet.server.crashDumpPath": "Legt einen Ordnerpfad fest, in den Absturzabbilder geschrieben werden, wenn der Sprachserver abstürzt.  Muss vom Benutzer beschreibbar sein.",
   "configuration.dotnet.server.extensionPaths": "Außerkraftsetzung für Pfad zu Sprachserver --extension-Argumenten",

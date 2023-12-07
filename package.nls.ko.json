@@ -60,6 +60,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "매개 변수 이름이 메서드의 의도와 일치하는 경우 힌트 표시 안 함",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "디컴파일된 원본 탐색을 사용하도록 설정합니다.",
   "configuration.dotnet.preferCSharpExtension": "프로젝트가 C# 확장으로만 로드되도록 합니다.  C# 개발 키트에서 지원되지 않는 레거시 프로젝트 형식을 사용할 때 유용할 수 있습니다(창 다시 로드 필요).",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "기호를 표시할 때 설명 정보를 표시합니다.",
   "configuration.dotnet.server.crashDumpPath": "언어 서버가 충돌하는 경우 크래시 덤프가 기록되는 폴더 경로를 설정합니다.  사용자가 쓸 수 있어야 합니다.",
   "configuration.dotnet.server.extensionPaths": "언어 서버 --extension 인수 경로에 대한 재정의",
