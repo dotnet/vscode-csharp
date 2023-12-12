@@ -6,6 +6,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn to 4.9.0-3.23611.3 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
+* Fix Remote Process Listing from Windows (PR: [#6730](https://github.com/dotnet/vscode-csharp/pull/6730))
+* Fix description of debugger `console` setting (PR: [#6726](https://github.com/dotnet/vscode-csharp/pull/6726))
+* Read extension paths option (PR: [#6724](https://github.com/dotnet/vscode-csharp/pull/6724))
+
+## 2.13.10
 * Update Roslyn to 4.9.0-3.23604.10 (PR: [#6676](https://github.com/dotnet/vscode-csharp/pull/6676))
   * Pass through folders for additional files (PR: [#71061](https://github.com/dotnet/roslyn/pull/71061))
   * Automatically detect missing NuGet packages and restore (PR: [#70851](https://github.com/dotnet/roslyn/pull/70851))
