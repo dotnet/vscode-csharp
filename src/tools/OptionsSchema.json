@@ -371,12 +371,12 @@
           "type": "string",
           "enum": [ "internalConsole", "integratedTerminal", "externalTerminal" ],
           "enumDescriptions": [
-            "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine).",
-            "VS Code's integrated terminal.",
-            "External terminal that can be configured via user settings."
+            "The target process's console input (stdin) and output (stdout/stderr) are routed through the VS Code Debug Console.",
+            "The target process will run inside VS Code's integrated terminal.",
+            "The target process will run inside its own external terminal. When using this mode, you will need to switch focus between Visual Studio Code and the external terminal window."
           ],
-          "markdownDescription": "When launching console projects, indicates which console the target program should be launched into.",
-          "settingsDescription": "**Note:** _This option is only used for the `dotnet` debug configuration type_.\n\nWhen launching console projects, indicates which console the target program should be launched into.",
+          "markdownDescription": "Indicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
+          "settingsDescription": "**Note:** _This option is only used for console projects launched with the `dotnet` debug configuration type_.\n\nIndicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
           "default": "internalConsole"
         },
         "externalConsole": {

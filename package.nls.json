@@ -188,16 +188,16 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.console.markdownDescription": "When launching console projects, indicates which console the target program should be launched into.",
+  "generateOptionsSchema.console.markdownDescription": "Indicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
   "generateOptionsSchema.console.settingsDescription": {
-    "message": "**Note:** _This option is only used for the `dotnet` debug configuration type_.\n\nWhen launching console projects, indicates which console the target program should be launched into.",
+    "message": "**Note:** _This option is only used for console projects launched with the `dotnet` debug configuration type_.\n\nIndicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.console.internalConsole.enumDescription": "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine).",
-  "generateOptionsSchema.console.integratedTerminal.enumDescription": "VS Code's integrated terminal.",
-  "generateOptionsSchema.console.externalTerminal.enumDescription": "External terminal that can be configured via user settings.",
+  "generateOptionsSchema.console.internalConsole.enumDescription": "The target process's console input (stdin) and output (stdout/stderr) are routed through the VS Code Debug Console.",
+  "generateOptionsSchema.console.integratedTerminal.enumDescription": "The target process will run inside VS Code's integrated terminal.",
+  "generateOptionsSchema.console.externalTerminal.enumDescription": "The target process will run inside its own external terminal. When using this mode, you will need to switch focus between Visual Studio Code and the external terminal window.",
   "generateOptionsSchema.externalConsole.markdownDescription": {
     "message": "Attribute `externalConsole` is deprecated, use `console` instead. This option defaults to `false`.",
     "comment": [
