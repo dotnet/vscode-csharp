@@ -17,7 +17,7 @@ function getSln(workspacePath: string): string | undefined {
 
 async function main() {
     try {
-        const vscodeExecutablePath = await downloadAndUnzipVSCode('stable');
+        const vscodeExecutablePath = await downloadAndUnzipVSCode('1.84.2');
         const [cli, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
         console.log('Display: ' + process.env.DISPLAY);
@@ -70,8 +70,9 @@ async function main() {
 
         // Download VS Code, unzip it and run the integration test
         const exitCode = await runTests({
-            extensionDevelopmentPath,
-            extensionTestsPath,
+            vscodeExecutablePath: vscodeExecutablePath,
+            extensionDevelopmentPath: extensionDevelopmentPath,
+            extensionTestsPath: extensionTestsPath,
             // Launch with info logging as anything else is way too verbose and will hide test results.
             launchArgs: [workspacePath, '-n', '--log', 'info'],
             extensionTestsEnv: process.env,
