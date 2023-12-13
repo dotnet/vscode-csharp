@@ -3,6 +3,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.",
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.",
   "Does not contain .NET Core projects.": "Does not contain .NET Core projects.",
+  "No launchable target found.": "No launchable target found.",
   "No launchable target found for '{0}'": "No launchable target found for '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.",
   "Unable to determine a configuration for '{0}'. Please generate C# debug assets instead.": "Unable to determine a configuration for '{0}'. Please generate C# debug assets instead.",

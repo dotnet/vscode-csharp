@@ -76,9 +76,11 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
             throw new Error(`'${debugConfiguration.request}' is unsupported.`);
         }
 
-        let projectPath: string = debugConfiguration.projectPath;
-        if (folder && projectPath) {
-            projectPath = resolveWorkspaceFolderToken(projectPath, folder.uri.fsPath);
+        let projectPath: string | undefined = debugConfiguration.projectPath;
+        if (folder) {
+            if (projectPath) {
+                projectPath = resolveWorkspaceFolderToken(projectPath, folder.uri.fsPath);
+            }
 
             const dotnetDebugServiceProxy = await getServiceBroker()?.getProxy<IDotnetDebugConfigurationService>(
                 Descriptors.dotnetDebugConfigurationService
@@ -96,6 +98,9 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                     throw new UnavaliableLaunchServiceError();
                 }
             } catch (e) {
+                if (!projectPath) {
+                    throw new LaunchServiceError("'projectPath' was not provided in the debug configuration.");
+                }
                 if (e instanceof UnavaliableLaunchServiceError) {
                     return await this.resolveDebugConfigurationWithWorkspaceDebugInformationProvider(
                         folder,
@@ -117,7 +122,7 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
     //#endregion
 
     private resolveDotnetDebugConfigurationServiceResult(
-        projectPath: string,
+        projectPath: string | undefined,
         result: IDotnetDebugConfigurationServiceResult
     ): vscode.DebugConfiguration {
         if (result.error) {
@@ -135,7 +140,11 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
 
         const debugConfigArray = result.configurations;
         if (debugConfigArray.length == 0) {
-            throw new LaunchServiceError(vscode.l10n.t("No launchable target found for '{0}'", projectPath));
+            if (!projectPath) {
+                throw new LaunchServiceError(vscode.l10n.t('No launchable target found.'));
+            } else {
+                throw new LaunchServiceError(vscode.l10n.t("No launchable target found for '{0}'", projectPath));
+            }
         }
         if (debugConfigArray.length == 1) {
             return debugConfigArray[0];
