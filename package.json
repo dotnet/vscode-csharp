@@ -39,9 +39,9 @@
   "defaults": {
     "roslyn": "4.9.0-3.23611.3",
     "omniSharp": "1.39.10",
-    "razor": "7.0.0-preview.23528.1",
+    "razor": "7.0.0-preview.23611.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "razorTelemetry": "7.0.0-preview.23528.1"
+    "razorTelemetry": "7.0.0-preview.23611.2"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -608,7 +608,7 @@
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/ed71f389320d0f59a12b66cf6e95c359/razorlanguageserver-win-x64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/50352dafd482a09e3f7ebb0b67346459/razorlanguageserver-win-x64-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -616,12 +616,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "7845A7A07DE82DF9C0A9F8B90771EBD428F6D36C5AC97192DED447BBB3A3149E"
+      "integrity": "A33421C03D58780A785508FD38A5E1188276B37AE21D19E784508CF9AFF66312"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/b150b23785cb7c3c71114decf380e333/razorlanguageserver-win-x86-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/12ebd9174d0b62a837da0109a5ed7e60/razorlanguageserver-win-x86-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -629,12 +629,12 @@
       "architectures": [
         "x86"
       ],
-      "integrity": "CABD9F62FE3362C8FDC2B00C80301DC9BAFC7047327FE158B3FDF505ED416356"
+      "integrity": "59451726080E34CB111916FB32E53D28A23AC9B1FE60E34D8026A5B042DB6653"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/da9092ec75455980387263797d99b7c5/razorlanguageserver-win-arm64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/b4819f7f31e1001bfdd217bd6a91253b/razorlanguageserver-win-arm64-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "win32"
@@ -642,12 +642,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "7F7A9D8F0CE46B37935A6DCE341DE69075AE7D7649E4E86998C4D7E5F7938E58"
+      "integrity": "54624954C5ECB5ABB6CB6201381572234B239F29F24FDCE51077CDE74B93EBEB"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/760785c241dc29d7ef7d302d0f4cb3ff/razorlanguageserver-linux-x64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/768c5dde8e54c2072e8db38a00336155/razorlanguageserver-linux-x64-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -658,12 +658,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "B24DEE5A2392E914E3D34B6F8C9EDB45E6477E24D11399F288099EDC66FE3A8E"
+      "integrity": "33806A355869861B9DE8D1310B56B99EECE485E4FFD8E288EF215ED04686423B"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/9f8414527411c020d02468b80fff0bcb/razorlanguageserver-linux-arm64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/e0f801bdafd01c3f43da737947281f81/razorlanguageserver-linux-arm64-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux"
@@ -674,12 +674,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "64022CE18D8B84C0C8D94C2D9C736A7DE5412E09855497E749971D94A0583881"
+      "integrity": "DF3C14D2D6D956CEA7364071D97D0876C4165DD04A56359D914C406643F29594"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/b64dda5342f5204e530c7d5023b6f58c/razorlanguageserver-linux-musl-x64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/c8a0653ea1e819861e8c5a95aec6e910/razorlanguageserver-linux-musl-x64-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -690,12 +690,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "4F5882B23289D03EC08AF04C66B931D13F958AE7443AFE2B4C4AED4B8B7889B6"
+      "integrity": "25B3D8CFA85B337D5A3371D3E346CBBA0997C35A7390A5DC3CAE76121802E462"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/5a42eb01d3f32093f2d6375afee05413/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/527a542a3ba900550caefea6846ced7d/razorlanguageserver-linux-musl-arm64-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "linux-musl"
@@ -706,12 +706,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "2A79681A26838FC5FD62C40D7575548161813E4DB28769FA2D5CC69CA8C60436"
+      "integrity": "D763CAF2B3438552A02EFD381C84CC17DAA8CC378627647C90008DEAFEDE1E68"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/4e58ddfbf33d25b211ed4ba91d44eb8f/razorlanguageserver-osx-x64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/3be409a63d071b7f146cd0add8e969a8/razorlanguageserver-osx-x64-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -722,12 +722,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "CB13DB96B8A07B66279D0E249F4CE65A74ED038AFC68643074FEEF03468B3249"
+      "integrity": "90C31B386EF6E08BD7FADC5E07F99BF132DDAC7B39CE3372649666C5FA070F21"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/16cf46982673c8d73d31fbf7eb296537/razorlanguageserver-osx-arm64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/df06d231751e0027d7fca3ca68177a8a/razorlanguageserver-osx-arm64-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "darwin"
@@ -738,12 +738,12 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "3FDA10D5E2FB9D7277DB01FD1C948F722D8FC0875D1DA4078813893F8FBC2F7B"
+      "integrity": "8669DC7F4A7603B46F297B14AADDAB2F5BB8A7ECB8BCA17B745FA69EC522ADE5"
     },
     {
       "id": "Razor",
       "description": "Razor Language Server (Platform Agnostic)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/114b672bebae3a3c491cef86fdab7ef4/razorlanguageserver-platformagnostic-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/52819418a9dc741619b81118f6c319be/razorlanguageserver-platformagnostic-7.0.0-preview.23611.2.zip",
       "installPath": ".razor",
       "platforms": [
         "neutral"
@@ -754,7 +754,7 @@
       "binaries": [
         "./rzls"
       ],
-      "integrity": "B01E893D107D54EFFF2EE8AA5ECCC9F37BCFD428B860A8C07D1D64F276384FAE"
+      "integrity": "9B4689314C7306A235959BED28FD10CF4F84DF5D7BA931CA0C2E49EFD927604E"
     },
     {
       "id": "RazorOmnisharp",
@@ -885,7 +885,7 @@
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/e2447a82a7190f5756a31322565f0a2e/devkittelemetry-win-x64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/bded259717edabe1af8e703e0a8b825d/devkittelemetry-win-x64-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "win32"
@@ -893,12 +893,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "B92F684ABBB74CC99DC3BCBC34429228DC00CFDEF402523213C1528AA9651D27"
+      "integrity": "295C19FEEEB32AD74CF147F7248D90B65B24EB2F21A99FDD83B24CCCACD46964"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/9d55070fb7ae293f74ded5f18c7a9953/devkittelemetry-win-x86-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/fa215cdb51b645b9848daafd65198281/devkittelemetry-win-x86-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "win32"
@@ -906,12 +906,12 @@
       "architectures": [
         "x86"
       ],
-      "integrity": "E3C2DD6DB70E688BE690F3F0352C11F65B65A5D39A8A85D570DAEA8D663943E6"
+      "integrity": "5BEEF2EFEB690ACBEA880595B0A8984EDAEFA27092BF891ABA8DDB084A7F8C6C"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/e58f7d176e80e16dfcecfb84034844b0/devkittelemetry-win-arm64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/2625dff1e7d78fdb88282a709195e00c/devkittelemetry-win-arm64-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "win32"
@@ -919,12 +919,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "73E50E9874FEE5D70F16B1FC8AFAA18ECB924DB673426C42915CEB1FA9A17764"
+      "integrity": "9E0F4981F7AB6F8018A9C39232BEBBBE3DEB7858218051BDDB2A8B1E8BA2D585"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/2068bef8944968089f5972883cc87da2/devkittelemetry-linux-x64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/8c006ed01d9901a824f1986a9f8867cc/devkittelemetry-linux-x64-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "linux"
@@ -932,12 +932,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "EC8A4E89352D8AA064E098C6E9830B2A499AA2A892CEDB3A713AC40E26802382"
+      "integrity": "C1F65BC70C24122E9A7BE0018DF4E202D6B4D7EF12523D3C079A946F76590160"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/95ff1c975183590a39324be2da3dc7de/devkittelemetry-linux-arm64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/239d3947eac895453bd1145d5e0b8b3d/devkittelemetry-linux-arm64-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "linux"
@@ -945,12 +945,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "0E3E8A10A9A9899E21353C752BD26FAC821AF814E6BD7990DF387E2F97E6DFFC"
+      "integrity": "8993BD2B08A280FD981D98B922DD482273BF1C1ED1E6BA2B266D5DF1E5CF124D"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/bca6fc6bd3a79153178f072795921f87/devkittelemetry-linux-musl-x64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/efb6b7891e87bdffd43dd20bb58715cf/devkittelemetry-linux-musl-x64-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "linux-musl"
@@ -958,12 +958,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "E2A367170B8152452A9813E03B115A01F61F879E8D4CCE959BF476B38007ECC7"
+      "integrity": "7782B57EED68E28F967C9FF3732B3B13C33A1B2CDE78CD9759C2EE8336311185"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/0aa52c01416252184ee429facac46105/devkittelemetry-linux-musl-arm64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/bf770a7f0b7a374e64a21c335958d77b/devkittelemetry-linux-musl-arm64-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "linux-musl"
@@ -971,12 +971,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "F193A9A1B41B05465150FC9F647EF38A0B35BDF9984D9CD3EE7F5AC952735261"
+      "integrity": "183211BB9417FE9EFDD7BFD4E146D42D828C055CDBDB42B4DBF0E7E01EB17305"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/7c2c6b57522154608cf4b1959f0363ee/devkittelemetry-osx-x64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/2966a3d87b6a914cf3e22bbbb571c016/devkittelemetry-osx-x64-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "darwin"
@@ -984,12 +984,12 @@
       "architectures": [
         "x86_64"
       ],
-      "integrity": "6140DA282F9235F7E5F1406996A27F0E99D6260C3F34A3A68CE0F7E00E794D07"
+      "integrity": "C1EB8179D559662124D608714CC1133B8A154511D350DFE223C11F83EEE0DBE9"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/8b24b4572e8a4108a649669740bcc44a/devkittelemetry-osx-arm64-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/13ed152d6d94d9135f705151846ce026/devkittelemetry-osx-arm64-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "darwin"
@@ -997,12 +997,12 @@
       "architectures": [
         "arm64"
       ],
-      "integrity": "D4183D8A0ECC2981D43AA4C4A62DD6076A47266A03DE2FE65769C577614C1400"
+      "integrity": "FE23F23044F313900B80673697B80697935A7D271CDF3B84D42179EB5CBF6240"
     },
     {
       "id": "RazorTelemetry",
       "description": "Razor Language Server Telemetry (Platform Agnostic)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/9843ff9e-63b3-4772-8e73-1977fcd1acbc/4e49d092100bf8167139bd1523f077ae/devkittelemetry-platformagnostic-7.0.0-preview.23528.1.zip",
+      "url": "https://download.visualstudio.microsoft.com/download/pr/59ebeea0-c017-4758-9f32-402950d93b6c/52129618a1908d39137a27bd71c98e5f/devkittelemetry-platformagnostic-7.0.0-preview.23611.2.zip",
       "installPath": ".razortelemetry",
       "platforms": [
         "netural"
@@ -1010,7 +1010,7 @@
       "architectures": [
         "neutral"
       ],
-      "integrity": "25713B3DFBAB0861CD4238FF5DC8A24E6E90CDD3841EE01DE97996C60BD86A14"
+      "integrity": "A6D0371DCC8959D3E666D161B105E4FEDA0B76270E2DBF5186C03557A4A7350C"
     }
   ],
   "engines": {
