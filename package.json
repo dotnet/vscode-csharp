@@ -4879,7 +4879,7 @@
         ]
       },
       {
-        "type": "mono",
+        "type": "monovsdbg",
         "label": ".NET Core using Mono Runtime",
         "hiddenWhen": "dotnet.debug.serviceBrokerAvailable",
         "languages": [
