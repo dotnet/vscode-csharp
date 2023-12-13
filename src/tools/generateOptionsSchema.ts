@@ -390,18 +390,24 @@ export function GenerateOptionsSchema() {
             'For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode',
         default: 4711,
     };
-    packageJSON.contributes.configuration[1].properties['dotnet.unitTestDebuggingOptions'].properties =
-        unitTestDebuggingOptions;
+
+    let debuggerConfiguration = null;
+    for (const configuration of packageJSON.contributes.configuration) {
+        if (configuration.title === 'Debugger') {
+            debuggerConfiguration = configuration;
+            break;
+        }
+    }
+
+    if (!debuggerConfiguration) {
+        throw Error("Unable to find the 'Debugger' configuration in package.json");
+    }
 
     // #region Generate package.json settings
 
-    // Delete old debug options
-    const originalContributeDebugKeys = Object.keys(packageJSON.contributes.configuration[1].properties).filter((x) =>
-        x.startsWith('csharp.debug')
-    );
-    for (const key of originalContributeDebugKeys) {
-        delete packageJSON.contributes.configuration[1].properties[key];
-    }
+    // Clear out all the old properties
+    const originalProperties = debuggerConfiguration.properties;
+    debuggerConfiguration.properties = {};
 
     // Remove the options that should not be shown in the settings editor.
     const ignoreOptions: Set<string> = new Set<string>([
@@ -425,9 +431,18 @@ export function GenerateOptionsSchema() {
         'csharp.debug',
         schemaJSON.definitions.LaunchOptions.properties,
         ignoreOptions,
-        packageJSON.contributes.configuration[1].properties
+        debuggerConfiguration.properties
     );
 
+    // Put back the non-debug options (currently the unit test options)
+    for (const key in originalProperties) {
+        if (key.startsWith('csharp.debug') === false) {
+            debuggerConfiguration.properties[key] = originalProperties[key];
+        }
+    }
+
+    // Replace the unit test debugging properties
+    debuggerConfiguration.properties['dotnet.unitTestDebuggingOptions'].properties = unitTestDebuggingOptions;
     // #endregion
 
     // Write package.json and package.nls.json to disk

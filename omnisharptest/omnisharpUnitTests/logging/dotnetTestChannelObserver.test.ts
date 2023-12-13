@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect } from 'chai';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import {
     BaseEvent,
@@ -15,7 +15,7 @@ import {
 } from '../../../src/omnisharp/loggingEvents';
 import DotnetTestChannelObserver from '../../../src/observers/dotnetTestChannelObserver';
 
-suite('DotnetTestChannelObserver', () => {
+describe('DotnetTestChannelObserver', () => {
     let hasShown: boolean;
     let preserveFocus: boolean;
 
@@ -27,7 +27,7 @@ suite('DotnetTestChannelObserver', () => {
         },
     });
 
-    setup(() => {
+    beforeEach(() => {
         hasShown = false;
     });
 
@@ -39,10 +39,10 @@ suite('DotnetTestChannelObserver', () => {
         new DotNetTestsInClassDebugStart('someclass'),
     ].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Channel is shown and preserve focus is set to true`, () => {
-            expect(hasShown).to.be.false;
+            expect(hasShown).toBe(false);
             observer.post(event);
-            expect(hasShown).to.be.true;
-            expect(preserveFocus).to.be.true;
+            expect(hasShown).toBe(true);
+            expect(preserveFocus).toBe(true);
         });
     });
 });

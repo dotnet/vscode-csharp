@@ -3,27 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-import { should, expect } from 'chai';
-import * as integrationHelpers from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 
-suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
+describeIfNotRazorOrGenerator(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (
-            integrationHelpers.isRazorWorkspace(vscode.workspace) ||
-            integrationHelpers.isSlnWithGenerator(vscode.workspace)
-        ) {
-            this.skip();
-        }
-
-        const activation = await integrationHelpers.activateCSharpExtension();
+    beforeAll(async function () {
+        const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
         const fileName = 'documentSymbols.cs';
@@ -36,7 +26,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -49,7 +39,7 @@ suite(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
         // used to assert
         // For now, just assert any symbols came back so that this passes locally and in CI
         // (where we always use the latest build)
-        expect(symbols.length).to.be.greaterThan(0);
+        expect(symbols.length).toBeGreaterThan(0);
     });
 });
 

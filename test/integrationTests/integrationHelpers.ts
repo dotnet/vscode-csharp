@@ -39,29 +39,37 @@ export async function activateCSharpExtension(): Promise<void> {
     await csharpExtension.activate();
     await csharpExtension.exports.initializationFinished();
     console.log('ms-dotnettools.csharp activated');
+    console.log(`Extension Log Directory: ${csharpExtension.exports.logDirectory}`);
 
     if (shouldRestart) {
-        // Register to wait for initialization events and restart the server.
-        const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
-            csharpExtension.exports.experimental.languageServerEvents.onServerStateChange(async (state) => {
-                if (state === ServerStateChange.ProjectInitializationComplete) {
-                    resolve();
-                }
-            });
-        });
-        await vscode.commands.executeCommand('dotnet.restartServer');
-        await waitForInitialProjectLoad;
+        await restartLanguageServer();
     }
 }
 
-export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<void> {
+export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<vscode.Uri> {
     const root = vscode.workspace.workspaceFolders![0].uri.fsPath;
     const filePath = path.join(root, relativeFilePath);
     if (!existsSync(filePath)) {
         throw new Error(`File ${filePath} does not exist`);
     }
 
-    await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(filePath));
+    const uri = vscode.Uri.file(filePath);
+    await vscode.commands.executeCommand('vscode.open', uri);
+    return uri;
+}
+
+export async function restartLanguageServer(): Promise<void> {
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
+    // Register to wait for initialization events and restart the server.
+    const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
+        csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange(async (state) => {
+            if (state === ServerStateChange.ProjectInitializationComplete) {
+                resolve();
+            }
+        });
+    });
+    await vscode.commands.executeCommand('dotnet.restartServer');
+    await waitForInitialProjectLoad;
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {

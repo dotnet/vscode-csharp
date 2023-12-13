@@ -26,6 +26,8 @@ import {
     SocketMessageReader,
     MessageTransports,
     RAL,
+    CancellationToken,
+    RequestHandler,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -56,6 +58,9 @@ import { registerCodeActionFixAllCommands } from './fixAllCodeAction';
 import { commonOptions, languageServerOptions, omnisharpOptions } from '../shared/options';
 import { NamedPipeInformation } from './roslynProtocol';
 import { IDisposable } from '../disposable';
+import { registerNestedCodeActionCommands } from './nestedCodeAction';
+import { registerRestoreCommands } from './restore';
+import { BuildDiagnosticsService } from './buildDiagnosticsService';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -94,6 +99,8 @@ export class RoslynLanguageServer {
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
+    public _buildDiagnosticService: BuildDiagnosticsService;
+
     constructor(
         private _languageClient: RoslynLanguageClient,
         private _platformInfo: PlatformInformation,
@@ -107,6 +114,10 @@ export class RoslynLanguageServer {
         this.registerReportProjectConfiguration();
         this.registerExtensionsChanged();
         this.registerTelemetryChanged();
+
+        const diagnosticsReportedByBuild = vscode.languages.createDiagnosticCollection('csharp-build');
+        this._buildDiagnosticService = new BuildDiagnosticsService(diagnosticsReportedByBuild);
+        this.registerDocumentOpenForDiagnostics();
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo();
@@ -309,6 +320,13 @@ export class RoslynLanguageServer {
         return response;
     }
 
+    public registerOnRequest<Params, Result, Error>(
+        type: RequestType<Params, Result, Error>,
+        handler: RequestHandler<Params, Result, Error>
+    ) {
+        this._languageClient.addDisposable(this._languageClient.onRequest(type, handler));
+    }
+
     public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {
         const response = await this.sendRequest0(RoslynProtocol.RegisterSolutionSnapshotRequest.type, token);
         if (response) {
@@ -500,8 +518,8 @@ export class RoslynLanguageServer {
                 _channel.appendLine('Activating C# + C# Dev Kit...');
             }
 
-            const csharpDevkitArgs = await this.getCSharpDevkitExportArgs(csharpDevkitExtension);
-            args = args.concat(csharpDevkitArgs);
+            const csharpDevKitArgs = this.getCSharpDevKitExportArgs();
+            args = args.concat(csharpDevKitArgs);
 
             await this.setupDevKitEnvironment(env, csharpDevkitExtension);
         } else {
@@ -563,13 +581,14 @@ export class RoslynLanguageServer {
             // Error information will be captured from the stdout/stderr streams above.
             childProcess.on('exit', (code) => {
                 if (code && code !== 0) {
-                    _channel.appendLine(`Language server process exited with ${code}`);
-                    reject();
+                    const message = `Language server process exited with ${code}`;
+                    _channel.appendLine(message);
+                    reject(new Error(message));
                 }
             });
         });
 
-        // The server process will create the named pipe used for communcation. Wait for it to be created,
+        // The server process will create the named pipe used for communication. Wait for it to be created,
         // and listen for the server to pass back the connection information via stdout.
         const namedPipeConnectionPromise = new Promise<NamedPipeInformation>((resolve) => {
             _channel.appendLine('waiting for named pipe information from server...');
@@ -695,6 +714,16 @@ export class RoslynLanguageServer {
         );
     }
 
+    private registerDocumentOpenForDiagnostics() {
+        // When a file is opened process any build diagnostics that may be shown
+        this._languageClient.addDisposable(
+            vscode.workspace.onDidOpenTextDocument(async (event) => {
+                const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
+                this._buildDiagnosticService._onFileOpened(event, buildIds);
+            })
+        );
+    }
+
     private registerExtensionsChanged() {
         // subscribe to extension change events so that we can get notified if C# Dev Kit is added/removed later.
         this._languageClient.addDisposable(
@@ -735,24 +764,17 @@ export class RoslynLanguageServer {
         );
     }
 
-    private static async getCSharpDevkitExportArgs(
-        csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>
-    ): Promise<string[]> {
-        const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
-
-        const extensionPaths = languageServerOptions.extensionsPaths || [
-            this.getLanguageServicesDevKitComponentPath(exports),
-        ];
-
+    private static getCSharpDevKitExportArgs(): string[] {
         const args: string[] = [];
 
-        args.push('--sharedDependencies');
-        args.push(exports.components['@microsoft/visualstudio-server-shared']);
-
-        for (const extensionPath of extensionPaths) {
-            args.push('--extension');
-            args.push(extensionPath);
-        }
+        const clientRoot = __dirname;
+        const devKitDepsPath = path.join(
+            clientRoot,
+            '..',
+            '.roslynDevKit',
+            'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
+        );
+        args.push('--extension', devKitDepsPath);
 
         args.push('--sessionId', getSessionId());
         return args;
@@ -784,13 +806,6 @@ export class RoslynLanguageServer {
         await exports.setupTelemetryEnvironmentAsync(env);
     }
 
-    private static getLanguageServicesDevKitComponentPath(csharpDevKitExports: CSharpDevKitExports): string {
-        return path.join(
-            csharpDevKitExports.components['@microsoft/visualstudio-languageservices-devkit'],
-            'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
-        );
-    }
-
     private static GetTraceLevel(logLevel: string): Trace {
         switch (logLevel) {
             case 'Trace':
@@ -816,6 +831,11 @@ export class RoslynLanguageServer {
     }
 
     public async getBuildOnlyDiagnosticIds(token: vscode.CancellationToken): Promise<string[]> {
+        // If the server isn't running, no build diagnostics to get
+        if (!this.isRunning()) {
+            return [];
+        }
+
         const response = await this.sendRequest0(RoslynProtocol.BuildOnlyDiagnosticIdsRequest.type, token);
         if (response) {
             return response.ids;
@@ -835,6 +855,7 @@ export async function activateRoslynLanguageServer(
     optionObservable: Observable<void>,
     outputChannel: vscode.OutputChannel,
     dotnetTestChannel: vscode.OutputChannel,
+    dotnetChannel: vscode.OutputChannel,
     reporter: TelemetryReporter,
     languageServerEvents: RoslynLanguageServerEvents
 ): Promise<RoslynLanguageServer> {
@@ -862,7 +883,7 @@ export async function activateRoslynLanguageServer(
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, hostExecutableResolver, _channel);
-
+    registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
     registerRazorCommands(context, languageServer);
@@ -872,6 +893,8 @@ export async function activateRoslynLanguageServer(
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
 
+    registerRestoreCommands(context, languageServer, dotnetChannel);
+
     registerOnAutoInsert(languageServer);
 
     context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
@@ -879,7 +902,7 @@ export async function activateRoslynLanguageServer(
     return languageServer;
 
     function scanExtensionPlugins(): string[] {
-        return vscode.extensions.all.flatMap((extension) => {
+        const extensionsFromPackageJson = vscode.extensions.all.flatMap((extension) => {
             let loadPaths = extension.packageJSON.contributes?.['csharpExtensionLoadPaths'];
             if (loadPaths === undefined || loadPaths === null) {
                 _traceChannel.appendLine(`Extension ${extension.id} does not contribute csharpExtensionLoadPaths`);
@@ -897,6 +920,8 @@ export async function activateRoslynLanguageServer(
             _traceChannel.appendLine(`Extension ${extension.id} contributes csharpExtensionLoadPaths: ${loadPaths}`);
             return loadPaths;
         });
+        const extensionsFromOptions = languageServerOptions.extensionsPaths ?? [];
+        return extensionsFromPackageJson.concat(extensionsFromOptions);
     }
 }
 

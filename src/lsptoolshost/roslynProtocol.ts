@@ -150,6 +150,26 @@ export interface NamedPipeInformation {
     pipeName: string;
 }
 
+export interface RestoreParams extends lsp.WorkDoneProgressParams, lsp.PartialResultParams {
+    /**
+     * The set of projects to restore.
+     * If none are specified, the solution (or all loaded projects) are restored.
+     */
+    projectFilePaths: string[];
+}
+
+export interface RestorePartialResult {
+    stage: string;
+    message: string;
+}
+
+export interface UnresolvedProjectDependenciesParams {
+    /**
+     * The set of projects that have unresolved dependencies and require a restore.
+     */
+    projectFilePaths: string[];
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -228,4 +248,28 @@ export namespace CodeActionFixAllResolveRequest {
     export const method = 'codeAction/resolveFixAll';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.RequestType<RoslynFixAllCodeAction, RoslynFixAllCodeAction, void>(method);
+}
+
+export namespace RestoreRequest {
+    export const method = 'workspace/_roslyn_restore';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.ProtocolRequestType<
+        RestoreParams,
+        RestorePartialResult[],
+        RestorePartialResult,
+        void,
+        void
+    >(method);
+}
+
+export namespace RestorableProjects {
+    export const method = 'workspace/_roslyn_restorableProjects';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType0<string[], void>(method);
+}
+
+export namespace ProjectHasUnresolvedDependenciesRequest {
+    export const method = 'workspace/_roslyn_projectHasUnresolvedDependencies';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.RequestType<UnresolvedProjectDependenciesParams, void, void>(method);
 }

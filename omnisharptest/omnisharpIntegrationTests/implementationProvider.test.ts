@@ -3,23 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import OmniSharpImplementationProvider from '../../src/features/implementationProvider';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
-import { expect, should } from 'chai';
-import { activateCSharpExtension, isRazorWorkspace, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 
-suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description}`, () => {
+describeIfNotRazorOrGenerator(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
-
-        if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
@@ -31,7 +25,7 @@ suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -43,6 +37,6 @@ suite(`${OmniSharpImplementationProvider.name}: ${testAssetWorkspace.description
                 new vscode.Position(4, 22)
             )
         );
-        expect(implementationList.length).to.be.equal(2);
+        expect(implementationList.length).toEqual(2);
     });
 });

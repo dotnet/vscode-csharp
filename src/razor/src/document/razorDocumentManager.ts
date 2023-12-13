@@ -9,6 +9,7 @@ import { HtmlProjectedDocument } from '../html/htmlProjectedDocument';
 import { RazorLanguage } from '../razorLanguage';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';
+import { TelemetryReporter } from '../telemetryReporter';
 import { UpdateBufferRequest } from '../rpc/updateBufferRequest';
 import { getUriPath } from '../uriPaths';
 import { IRazorDocument } from './IRazorDocument';
@@ -17,6 +18,7 @@ import { IRazorDocumentManager } from './IRazorDocumentManager';
 import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
 import { razorInitializeCommand } from '../../../lsptoolshost/razorCommands';
+import { PlatformInformation } from '../../../shared/platform';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -28,7 +30,12 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     public razorDocumentGenerationInitialized = false;
 
-    constructor(private readonly serverClient: RazorLanguageServerClient, private readonly logger: RazorLogger) {}
+    constructor(
+        private readonly serverClient: RazorLanguageServerClient,
+        private readonly logger: RazorLogger,
+        private readonly telemetryReporter: TelemetryReporter,
+        private readonly platformInfo: PlatformInformation
+    ) {}
 
     public get onChange() {
         return this.onChangeEmitter.event;
@@ -141,7 +148,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     private _getDocument(uri: vscode.Uri) {
         const path = getUriPath(uri);
-        let document = this.razorDocuments[path];
+        let document = this.findDocument(path);
 
         // This might happen in the case that a file is opened outside the workspace
         if (!document) {
@@ -193,7 +200,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
     private addDocument(uri: vscode.Uri) {
         const path = getUriPath(uri);
-        let document = this.razorDocuments[path];
+        let document = this.findDocument(path);
         if (document) {
             this.logger.logMessage(`Skipping document creation for '${path}' because it already exists.`);
             return document;
@@ -214,6 +221,20 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         this.notifyDocumentChange(document, RazorDocumentChangeKind.removed);
     }
 
+    private findDocument(path: string) {
+        // This method ultimately gets called from VS Code, using file system paths, or from DevKit, which
+        // can use paths as specified in the sln file. When these don't agree, on case-insensitive operating
+        // systems, we have to be careful to match things up correctly.
+
+        if (this.platformInfo.isLinux()) {
+            return this.razorDocuments[path];
+        }
+
+        return Object.values(this.razorDocuments).find(
+            (document) => document.path.localeCompare(path, undefined, { sensitivity: 'base' }) === 0
+        );
+    }
+
     private async updateCSharpBuffer(updateBufferRequest: UpdateBufferRequest) {
         if (this.logger.verboseEnabled) {
             this.logger.logVerbose(
@@ -227,6 +248,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const projectedDocument = document.csharpDocument;
 
         if (
+            updateBufferRequest.previousWasEmpty ||
             !projectedDocument.hostDocumentSyncVersion ||
             projectedDocument.hostDocumentSyncVersion <= updateBufferRequest.hostDocumentVersion
         ) {
@@ -237,6 +259,15 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(document.csharpDocument.uri);
 
             const csharpProjectedDocument = projectedDocument as CSharpProjectedDocument;
+
+            // If the language server is telling us that the previous document was empty, then we should clear
+            // ours out. Hopefully ours would have been empty too, but there are cases where things get out of
+            // sync
+            if (updateBufferRequest.previousWasEmpty && projectedDocument.length !== 0) {
+                this.telemetryReporter.reportBuffersOutOfSync();
+                csharpProjectedDocument.clear();
+            }
+
             csharpProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
@@ -260,6 +291,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const projectedDocument = document.htmlDocument;
 
         if (
+            updateBufferRequest.previousWasEmpty ||
             !projectedDocument.hostDocumentSyncVersion ||
             projectedDocument.hostDocumentSyncVersion <= updateBufferRequest.hostDocumentVersion
         ) {
@@ -270,6 +302,15 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             await vscode.workspace.openTextDocument(document.htmlDocument.uri);
 
             const htmlProjectedDocument = projectedDocument as HtmlProjectedDocument;
+
+            // If the language server is telling us that the previous document was empty, then we should clear
+            // ours out. Hopefully ours would have been empty too, but there are cases where things get out of
+            // sync
+            if (updateBufferRequest.previousWasEmpty && projectedDocument.length !== 0) {
+                this.telemetryReporter.reportBuffersOutOfSync();
+                htmlProjectedDocument.clear();
+            }
+
             htmlProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.htmlChanged);

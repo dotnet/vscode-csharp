@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { ParsedEnvironmentFile } from '../coreclrDebug/parsedEnvironmentFile';
-import { getBrokeredServicePipeName } from '../coreclrDebug/activate';
+import { debugSessionTracker } from '../coreclrDebug/provisionalDebugSessionTracker';
 
 import { MessageItem } from '../vscodeAdapter';
 import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/dotnetDevCertsHttps';
@@ -66,7 +66,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             return null;
         }
 
-        const brokeredServicePipeName = getBrokeredServicePipeName();
+        const brokeredServicePipeName = debugSessionTracker.getBrokeredServicePipeName();
         if (brokeredServicePipeName !== undefined) {
             debugConfiguration.brokeredServicePipeName = brokeredServicePipeName;
         }
@@ -76,7 +76,12 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                 debugConfiguration.cwd = folder?.uri.fsPath; // Workspace folder
             }
 
-            debugConfiguration.internalConsoleOptions ??= 'openOnSessionStart';
+            if (!debugConfiguration.internalConsoleOptions) {
+                // If the target app is NOT using integratedTerminal, use 'openOnSessionStart' so that the debug console can be seen
+                // If the target app is using integratedTerminal, use 'neverOpen' so that the integrated terminal doesn't get hidden
+                debugConfiguration.internalConsoleOptions =
+                    debugConfiguration.console === 'integratedTerminal' ? 'neverOpen' : 'openOnSessionStart';
+            }
 
             // read from envFile and set config.env
             if (debugConfiguration.envFile !== undefined && debugConfiguration.envFile.length > 0) {

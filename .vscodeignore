@@ -2,6 +2,7 @@
 .logs/**
 .nyc_output/**
 !.roslyn/**
+!.roslynDevKit/**
 !.omnisharp/**
 !.razor/**
 !.razoromnisharp/**
@@ -35,7 +36,6 @@ CODEOWNERS
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
-.mocharc.jsonc
 !README.md
 !CHANGELOG.md
 *.md

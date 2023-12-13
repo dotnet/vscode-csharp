@@ -31,6 +31,7 @@
   "configuration.dotnet.server.trace": "Sets the logging level for the language server",
   "configuration.dotnet.server.extensionPaths": "Override for path to language server --extension arguments",
   "configuration.dotnet.server.crashDumpPath": "Sets a folder path where crash dumps are written to if the language server crashes.  Must be writeable by the user.",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.implementType.insertionBehavior": "The insertion location of properties, events, and methods When implement interface or abstract class.",
   "configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind": "Place them with other members of the same kind.",
@@ -83,7 +84,7 @@
   "debuggers.coreclr.configurationSnippets.label.blazor-hosted": ".NET: Web Assembly - Launch hosted Blazor project",
   "debuggers.coreclr.configurationSnippets.label.blazor-standalone": ".NET: Web Assembly - Launch standalone Blazor project",
   "debuggers.coreclr.configurationSnippets.description.console-local": {
-    "message" : "This snippet is used to launch a new process under the .NET debugger (coreclr), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice. This snippet is useful when the project was built outside this VS Code instance or you want to host your .NET Code in a custom executable, such as a specific version of 'dotnet.exe'/'dotnet' or the .NET Code is hosted by a native application. This snippet is for console applications.",
+    "message": "This snippet is used to launch a new process under the .NET debugger (coreclr), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice. This snippet is useful when the project was built outside this VS Code instance or you want to host your .NET Code in a custom executable, such as a specific version of 'dotnet.exe'/'dotnet' or the .NET Code is hosted by a native application. This snippet is for console applications.",
     "comment": [
       "'coreclr' is the name of the debugger 'type', and should not be localized",
       "{Locked='(coreclr)'}"
@@ -187,16 +188,16 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.console.markdownDescription": "When launching console projects, indicates which console the target program should be launched into.",
+  "generateOptionsSchema.console.markdownDescription": "Indicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
   "generateOptionsSchema.console.settingsDescription": {
-    "message": "**Note:** _This option is only used for the `dotnet` debug configuration type_.\n\nWhen launching console projects, indicates which console the target program should be launched into.",
+    "message": "**Note:** _This option is only used for console projects launched with the `dotnet` debug configuration type_.\n\nIndicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.console.internalConsole.enumDescription": "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine).",
-  "generateOptionsSchema.console.integratedTerminal.enumDescription": "VS Code's integrated terminal.",
-  "generateOptionsSchema.console.externalTerminal.enumDescription": "External terminal that can be configured via user settings.",
+  "generateOptionsSchema.console.internalConsole.enumDescription": "The target process's console input (stdin) and output (stdout/stderr) are routed through the VS Code Debug Console.",
+  "generateOptionsSchema.console.integratedTerminal.enumDescription": "The target process will run inside VS Code's integrated terminal.",
+  "generateOptionsSchema.console.externalTerminal.enumDescription": "The target process will run inside its own external terminal. When using this mode, you will need to switch focus between Visual Studio Code and the external terminal window.",
   "generateOptionsSchema.externalConsole.markdownDescription": {
     "message": "Attribute `externalConsole` is deprecated, use `console` instead. This option defaults to `false`.",
     "comment": [
@@ -216,7 +217,7 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.justMyCode.markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson#just-my-code)",
+  "generateOptionsSchema.justMyCode.markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson-JustMyCode)",
   "generateOptionsSchema.requireExactSource.markdownDescription": {
     "message": "Flag to require current source code to match the pdb. This option defaults to `true`.",
     "comment": [
@@ -317,6 +318,7 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
+  "generateOptionsSchema.logging.consoleUsageMessage.description": "Controls if a message is logged when the target process calls a 'Console.Read*' API and stdin is redirected to the console.",
   "generateOptionsSchema.pipeTransport.description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
   "generateOptionsSchema.pipeTransport.pipeCwd.description": "The fully qualified path to the working directory for the pipe program.",
   "generateOptionsSchema.pipeTransport.pipeProgram.description": "The fully qualified pipe command to execute.",
@@ -346,7 +348,7 @@
   "generateOptionsSchema.pipeTransport.linux.pipeArgs.1.description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
   "generateOptionsSchema.pipeTransport.linux.quoteArgs.description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
   "generateOptionsSchema.pipeTransport.linux.pipeEnv.description": "Environment variables passed to the pipe program.",
-  "generateOptionsSchema.suppressJITOptimizations.markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
+  "generateOptionsSchema.suppressJITOptimizations.markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
   "generateOptionsSchema.symbolOptions.description": "Options to control how symbols (.pdb files) are found and loaded.",
   "generateOptionsSchema.symbolOptions.searchPaths.description": {
     "message": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
@@ -377,7 +379,7 @@
   "generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description": "Array of modules that the debugger should NOT load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadAllButExcluded'.",
   "generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
   "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description": "If true, for any module NOT in the 'includedModules' array, the debugger will still check next to the module itself and the launching executable, but it will not check paths on the symbol search list. This option defaults to 'true'.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
-  "generateOptionsSchema.sourceLinkOptions.markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
+  "generateOptionsSchema.sourceLinkOptions.markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-DotNet-SourceLink)",
   "generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription": {
     "message": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
     "comment": [

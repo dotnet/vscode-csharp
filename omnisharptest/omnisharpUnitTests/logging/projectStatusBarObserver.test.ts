@@ -3,15 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect, should } from 'chai';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from '../../../test/unitTests/fakes';
 import { StatusBarItem } from '../../../src/vscodeAdapter';
 import { ProjectStatusBarObserver } from '../../../src/observers/projectStatusBarObserver';
 import { OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnStop } from '../../../src/omnisharp/loggingEvents';
 
-suite('ProjectStatusBarObserver', () => {
-    suiteSetup(() => should());
-
+describe('ProjectStatusBarObserver', () => {
     let showCalled: boolean;
     let hideCalled: boolean;
     const statusBarItem = <StatusBarItem>{
@@ -24,7 +22,7 @@ suite('ProjectStatusBarObserver', () => {
     };
     const observer = new ProjectStatusBarObserver(statusBarItem);
 
-    setup(() => {
+    beforeEach(() => {
         showCalled = false;
         hideCalled = false;
     });
@@ -32,35 +30,35 @@ suite('ProjectStatusBarObserver', () => {
     test('OnServerStop: Status bar is hidden and the attributes are set to undefined', () => {
         const event = new OmnisharpServerOnStop();
         observer.post(event);
-        expect(hideCalled).to.be.true;
-        expect(statusBarItem.text).to.be.equal('');
-        expect(statusBarItem.command).to.be.undefined;
-        expect(statusBarItem.color).to.be.undefined;
+        expect(hideCalled).toBe(true);
+        expect(statusBarItem.text).toEqual('');
+        expect(statusBarItem.command).toBe(undefined);
+        expect(statusBarItem.color).toBe(undefined);
     });
 
     test('OnMultipleLaunchTargets: Status bar is shown with the select project option and the comand to pick a project', () => {
         const event = new OmnisharpOnMultipleLaunchTargets([]);
         observer.post(event);
-        expect(showCalled).to.be.true;
-        expect(statusBarItem.text).to.contain('Select project');
-        expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
+        expect(showCalled).toBe(true);
+        expect(statusBarItem.text).toContain('Select project');
+        expect(statusBarItem.command).toEqual('o.pickProjectAndStart');
     });
 
-    suite('WorkspaceInformationUpdated', () => {
+    describe('WorkspaceInformationUpdated', () => {
         test('Project status is hidden if there is no MSBuild Object', () => {
             const event = getWorkspaceInformationUpdated(undefined);
             observer.post(event);
-            expect(hideCalled).to.be.true;
-            expect(statusBarItem.text).to.be.equal('');
-            expect(statusBarItem.command).to.be.undefined;
+            expect(hideCalled).toBe(true);
+            expect(statusBarItem.text).toEqual('');
+            expect(statusBarItem.command).toBe(undefined);
         });
 
         test('Project status is shown if there is an MSBuild object', () => {
             const event = getWorkspaceInformationUpdated(getMSBuildWorkspaceInformation('somePath', []));
             observer.post(event);
-            expect(showCalled).to.be.true;
-            expect(statusBarItem.text).to.contain(event.info.MsBuild?.SolutionPath);
-            expect(statusBarItem.command).to.equal('o.pickProjectAndStart');
+            expect(showCalled).toBe(true);
+            expect(statusBarItem.text).toContain(event.info.MsBuild?.SolutionPath);
+            expect(statusBarItem.command).toEqual('o.pickProjectAndStart');
         });
     });
 });

@@ -78,7 +78,7 @@ export default class OmniSharpCodeActionProvider
                 };
             });
         } catch (error) {
-            return Promise.reject(`Problem invoking 'GetCodeActions' on OmniSharp server: ${error}`);
+            return Promise.reject(new Error(`Problem invoking 'GetCodeActions' on OmniSharp server: ${error}`));
         }
     }
 
@@ -107,7 +107,7 @@ export default class OmniSharpCodeActionProvider
                 return buildEditForResponse(response.Changes, this._languageMiddlewareFeature, token);
             }
         } catch (error) {
-            return Promise.reject(`Problem invoking 'RunCodeAction' on OmniSharp server: ${error}`);
+            return Promise.reject(new Error(`Problem invoking 'RunCodeAction' on OmniSharp server: ${error}`));
         }
 
         return undefined;

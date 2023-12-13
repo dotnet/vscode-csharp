@@ -17,24 +17,31 @@ import NetworkSettings from '../src/networkSettings';
 import { downloadAndInstallPackages } from '../src/packageManager/downloadAndInstallPackages';
 import { getRuntimeDependenciesPackages } from '../src/tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../src/packageManager/getAbsolutePathPackagesToInstall';
-import { commandLineOptions } from '../tasks/commandLineArguments';
 import {
     codeExtensionPath,
     packedVsixOutputRoot,
     languageServerDirectory,
     nugetTempPath,
     rootPath,
+    devKitDependenciesDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
 import path = require('path');
+import { CancellationToken } from 'vscode';
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const argv = require('yargs').argv;
 
+interface VSIXPlatformInfo {
+    vsceTarget: string;
+    rid: string;
+    platformInfo: PlatformInformation;
+}
+
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
-export const platformSpecificPackages = [
+export const platformSpecificPackages: VSIXPlatformInfo[] = [
     { vsceTarget: 'win32-x64', rid: 'win-x64', platformInfo: new PlatformInformation('win32', 'x86_64') },
     { vsceTarget: 'win32-ia32', rid: 'win-x86', platformInfo: new PlatformInformation('win32', 'x86') },
     { vsceTarget: 'win32-arm64', rid: 'win-arm64', platformInfo: new PlatformInformation('win32', 'arm64') },
@@ -46,16 +53,46 @@ export const platformSpecificPackages = [
     { vsceTarget: 'darwin-arm64', rid: 'osx-arm64', platformInfo: new PlatformInformation('darwin', 'arm64') },
 ];
 
-gulp.task('vsix:release:package', async () => {
-    //if user does not want to clean up the existing vsix packages
-    await cleanAsync(/* deleteVsix: */ !commandLineOptions.retainVsix);
+const vsixTasks: string[] = [];
+for (const p of platformSpecificPackages) {
+    let platformName: string;
+    if (p.platformInfo.isWindows()) {
+        platformName = 'windows';
+    } else if (p.platformInfo.isLinux()) {
+        platformName = 'linux';
+    } else if (p.platformInfo.isMacOS()) {
+        platformName = 'darwin';
+    } else {
+        throw new Error(`Unexpected platform ${p.platformInfo.platform}`);
+    }
 
-    await doPackageOffline();
+    const taskName = `vsix:release:package:${platformName}:${p.vsceTarget}`;
+    vsixTasks.push(taskName);
+    gulp.task(taskName, async () => {
+        await doPackageOffline(p);
+    });
+}
+
+gulp.task('vsix:release:package:windows', gulp.series(...vsixTasks.filter((t) => t.includes('windows'))));
+gulp.task('vsix:release:package:linux', gulp.series(...vsixTasks.filter((t) => t.includes('linux'))));
+gulp.task('vsix:release:package:darwin', gulp.series(...vsixTasks.filter((t) => t.includes('darwin'))));
+gulp.task('vsix:release:package:neutral', async () => {
+    await doPackageOffline(undefined);
 });
+
+gulp.task(
+    'vsix:release:package',
+    gulp.series(
+        'vsix:release:package:windows',
+        'vsix:release:package:linux',
+        'vsix:release:package:darwin',
+        'vsix:release:package:neutral'
+    )
+);
 
 // Downloads dependencies for local development.
 gulp.task('installDependencies', async () => {
-    await cleanAsync(/* deleteVsix: */ false);
+    await cleanAsync();
 
     const packageJSON = getPackageJSON();
 
@@ -86,27 +123,46 @@ gulp.task(
         for (const p of platformSpecificPackages) {
             await acquireRoslyn(packageJSON, p.platformInfo, true);
         }
+
+        // Also pull in the Roslyn DevKit dependencies nuget package.
+        await acquireRoslynDevKit(packageJSON, true);
     }, 'installDependencies')
 );
 
 // Install Tasks
 async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformation) {
+    // Install the Roslyn language server bits.
     const { packagePath, serverPlatform } = await acquireRoslyn(packageJSON, platformInfo, false);
+    await installNuGetPackage(
+        packagePath,
+        path.join('content', 'LanguageServer', serverPlatform),
+        languageServerDirectory
+    );
 
-    // Get the directory containing the server executable for the current platform.
-    const serverExecutableDirectory = path.join(packagePath, 'content', 'LanguageServer', serverPlatform);
-    if (!fs.existsSync(serverExecutableDirectory)) {
-        throw new Error(`Failed to find server executable directory at ${serverExecutableDirectory}`);
+    // Install Roslyn DevKit dependencies.
+    const roslynDevKitPackagePath = await acquireRoslynDevKit(packageJSON, false);
+    await installNuGetPackage(roslynDevKitPackagePath, 'content', devKitDependenciesDirectory);
+}
+
+async function installNuGetPackage(pathToPackage: string, contentPath: string, outputPath: string) {
+    // Get the directory containing the content.
+    const contentDirectory = path.join(pathToPackage, contentPath);
+    if (!fs.existsSync(contentDirectory)) {
+        throw new Error(`Failed to find NuGet package content at ${contentDirectory}`);
     }
 
-    console.log(`Extracting Roslyn executables from ${serverExecutableDirectory}`);
+    const numFilesToCopy = fs.readdirSync(contentDirectory).length;
+
+    console.log(`Extracting content from ${contentDirectory}`);
 
     // Copy the files to the language server directory.
-    fs.mkdirSync(languageServerDirectory);
-    fsextra.copySync(serverExecutableDirectory, languageServerDirectory);
-    const languageServerDll = path.join(languageServerDirectory, 'Microsoft.CodeAnalysis.LanguageServer.dll');
-    if (!fs.existsSync(languageServerDll)) {
-        throw new Error(`Failed to copy server executable`);
+    fs.mkdirSync(outputPath);
+    fsextra.copySync(contentDirectory, outputPath);
+    const numCopiedFiles = fs.readdirSync(outputPath).length;
+
+    // Not expected to ever happen, just a simple sanity check.
+    if (numFilesToCopy !== numCopiedFiles) {
+        throw new Error('Failed to copy all files from NuGet package');
     }
 }
 
@@ -137,7 +193,22 @@ async function acquireRoslyn(
     return { packagePath, serverPlatform };
 }
 
+async function acquireRoslynDevKit(packageJSON: any, interactive: boolean): Promise<string> {
+    const roslynVersion = packageJSON.defaults.roslyn;
+    const packagePath = await acquireNugetPackage(
+        `Microsoft.VisualStudio.LanguageServices.DevKit`,
+        roslynVersion,
+        interactive
+    );
+    return packagePath;
+}
+
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
+    if (platformInfo === undefined) {
+        const platformNeutral = new PlatformInformation('neutral', 'neutral');
+        return await installPackageJsonDependency('Razor', packageJSON, platformNeutral);
+    }
+
     return await installPackageJsonDependency('Razor', packageJSON, platformInfo);
 }
 
@@ -148,7 +219,8 @@ async function installDebugger(packageJSON: any, platformInfo: PlatformInformati
 async function installPackageJsonDependency(
     dependencyName: string,
     packageJSON: any,
-    platformInfo: PlatformInformation
+    platformInfo: PlatformInformation,
+    token?: CancellationToken
 ) {
     const eventStream = new EventStream();
     const logger = new Logger((message) => process.stdout.write(message));
@@ -163,7 +235,7 @@ async function installPackageJsonDependency(
         codeExtensionPath
     );
     const provider = () => new NetworkSettings('', true);
-    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload))) {
+    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, token))) {
         throw Error('Failed to download package.');
     }
 }
@@ -205,53 +277,64 @@ async function acquireNugetPackage(packageName: string, packageVersion: string, 
     return packageOutputPath;
 }
 
-async function doPackageOffline() {
-    // Set the package version using git versioning.
+async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
+    await cleanAsync();
+    // Set the package.json version based on the value in version.json.
     const versionInfo = await nbgv.getVersion();
     console.log(versionInfo.npmPackageVersion);
     await nbgv.setPackageVersion();
 
-    let prerelease = false;
+    let prerelease: boolean;
     if (argv.prerelease) {
+        console.log('Packaging prerelease version.');
         prerelease = true;
+    } else {
+        console.log('Packaging release version.');
+        prerelease = false;
     }
 
     try {
         // Now that we've updated the version, get the package.json.
         const packageJSON = getPackageJSON();
 
-        for (const p of platformSpecificPackages) {
-            try {
-                if (process.platform === 'win32' && !p.rid.startsWith('win')) {
-                    console.warn(
-                        `Skipping packaging for ${p.rid} on Windows since runtime executables will not be marked executable in *nix packages.`
-                    );
-                    continue;
-                }
-
-                await buildVsix(packageJSON, packedVsixOutputRoot, prerelease, p.vsceTarget, p.platformInfo);
-            } catch (err) {
-                const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
-                // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
-                // stack trace of this line. So that seperates the two stack traces.
-                throw Error(`Failed to create package ${p.vsceTarget}. ${message}\n---`);
-            }
+        if (process.platform === 'win32' && !vsixPlatform?.rid.startsWith('win')) {
+            console.warn(
+                `Skipping packaging for ${vsixPlatform?.rid} on Windows since runtime executables will not be marked executable in *nix packages.`
+            );
+            return;
         }
 
-        // Also output the platform neutral VSIX using the platform neutral server bits we created before.
-        await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
+        if (vsixPlatform === undefined) {
+            await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
+        } else {
+            await buildVsix(
+                packageJSON,
+                packedVsixOutputRoot,
+                prerelease,
+                vsixPlatform.vsceTarget,
+                vsixPlatform.platformInfo
+            );
+        }
+    } catch (err) {
+        const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
+        // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
+        // stack trace of this line. So that seperates the two stack traces.
+        throw Error(`Failed to create package ${vsixPlatform?.vsceTarget ?? 'neutral'}. ${message}\n---`);
     } finally {
         // Reset package version to the placeholder value.
         await nbgv.resetPackageVersionPlaceholder();
     }
 }
 
-async function cleanAsync(deleteVsix: boolean) {
-    await del(['install.*', '.omnisharp*', '.debugger', '.razor', languageServerDirectory]);
-
-    if (deleteVsix) {
-        await del('*.vsix');
-    }
+async function cleanAsync() {
+    await del([
+        'install.*',
+        '.omnisharp*',
+        '.debugger',
+        '.razor',
+        languageServerDirectory,
+        devKitDependenciesDirectory,
+    ]);
 }
 
 async function buildVsix(
@@ -261,8 +344,6 @@ async function buildVsix(
     vsceTarget?: string,
     platformInfo?: PlatformInformation
 ) {
-    await cleanAsync(false);
-
     await installRoslyn(packageJSON, platformInfo);
 
     if (platformInfo != null) {

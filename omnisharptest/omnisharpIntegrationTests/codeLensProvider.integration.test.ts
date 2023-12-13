@@ -3,23 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-import { should, expect } from 'chai';
-import { activateCSharpExtension, isSlnWithCsproj, isSlnWithGenerator } from './integrationHelpers';
+import { activateCSharpExtension, describeIfSlnWithCsProj, describeIfNotGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { isNotNull } from '../testUtil';
 
-suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
+describeIfNotGenerator(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        if (isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
-        should();
+    beforeAll(async function () {
         const activation = await activateCSharpExtension();
         await testAssetWorkspace.restore();
 
@@ -37,55 +31,49 @@ suite(`CodeLensProvider: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.waitForIdle(activation.eventStream);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
     test('Returns all code lenses', async function () {
         const codeLenses = await GetCodeLenses(fileUri);
-        expect(codeLenses.length).to.equal(2);
+        expect(codeLenses.length).toEqual(2);
 
         for (const codeLens of codeLenses) {
-            expect(codeLens.isResolved).to.be.false;
-            expect(codeLens.command).to.be.undefined;
+            expect(codeLens.isResolved).toBe(false);
+            expect(codeLens.command).toBe(undefined);
         }
     });
 
     test('Returns all resolved code lenses', async function () {
         const codeLenses = await GetCodeLenses(fileUri, 100);
-        expect(codeLenses.length).to.equal(2);
+        expect(codeLenses.length).toEqual(2);
 
         for (const codeLens of codeLenses) {
-            expect(codeLens.isResolved).to.be.true;
+            expect(codeLens.isResolved).toBe(true);
             isNotNull(codeLens.command);
-            expect(codeLens.command.title).to.equal('0 references');
+            expect(codeLens.command.title).toEqual('0 references');
         }
     });
 });
 
-suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function () {
+// These tests only run on the slnWithCsproj solution
+describeIfSlnWithCsProj(`CodeLensProvider options: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
+    beforeAll(async function () {
+        const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restoreAndWait(activation);
 
-        // These tests only run on the slnWithCsproj solution
-        if (!isSlnWithCsproj(vscode.workspace)) {
-            this.skip();
-        } else {
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restoreAndWait(activation);
+        const fileName = 'UnitTest1.cs';
+        const projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
+        const filePath = path.join(projectDirectory, fileName);
+        fileUri = vscode.Uri.file(filePath);
 
-            const fileName = 'UnitTest1.cs';
-            const projectDirectory = testAssetWorkspace.projects[2].projectDirectoryPath;
-            const filePath = path.join(projectDirectory, fileName);
-            fileUri = vscode.Uri.file(filePath);
-
-            await vscode.commands.executeCommand('vscode.open', fileUri);
-        }
+        await vscode.commands.executeCommand('vscode.open', fileUri);
     });
 
-    suiteTeardown(async () => {
+    afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
@@ -96,18 +84,18 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
         await csharpConfig.update('codeLens.enableTestsCodeLens', true);
 
         const codeLenses = await GetCodeLenses(fileUri, 100);
-        expect(codeLenses.length).to.equal(4);
+        expect(codeLenses.length).toEqual(4);
 
         for (const codeLens of codeLenses) {
-            expect(codeLens.isResolved).to.be.true;
+            expect(codeLens.isResolved).toBe(true);
             isNotNull(codeLens.command);
-            expect(codeLens.command.command).to.be.oneOf([
+            expect([
                 'dotnet.test.run',
                 'dotnet.classTests.run',
                 'dotnet.test.debug',
                 'dotnet.classTests.debug',
-            ]);
-            expect(codeLens.command.title).to.be.oneOf(['Run Test', 'Run All Tests', 'Debug Test', 'Debug All Tests']);
+            ]).toContain(codeLens.command.command);
+            expect(['Run Test', 'Run All Tests', 'Debug Test', 'Debug All Tests']).toContain(codeLens.command.title);
         }
     });
 
@@ -117,13 +105,13 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
         await csharpConfig.update('codeLens.enableTestsCodeLens', false);
 
         const codeLenses = await GetCodeLenses(fileUri, 100);
-        expect(codeLenses.length).to.equal(3);
+        expect(codeLenses.length).toEqual(3);
 
         for (const codeLens of codeLenses) {
-            expect(codeLens.isResolved).to.be.true;
+            expect(codeLens.isResolved).toBe(true);
             isNotNull(codeLens.command);
-            expect(codeLens.command.command).to.be.equal('editor.action.showReferences');
-            expect(codeLens.command.title).to.equal('0 references');
+            expect(codeLens.command.command).toEqual('editor.action.showReferences');
+            expect(codeLens.command.title).toEqual('0 references');
         }
     });
 
@@ -133,7 +121,7 @@ suite(`CodeLensProvider options: ${testAssetWorkspace.description}`, function ()
         await csharpConfig.update('codeLens.enableTestsCodeLens', false);
 
         const codeLenses = await GetCodeLenses(fileUri, 100);
-        expect(codeLenses.length).to.equal(0);
+        expect(codeLenses.length).toEqual(0);
     });
 });
 

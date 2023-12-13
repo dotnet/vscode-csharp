@@ -3,12 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-import { should, expect } from 'chai';
 import {
+    ActivationResult,
     activateCSharpExtension,
+    describeIfNotGenerator,
+    describeIfNotRazorOrGenerator,
+    describeIfRazor,
     isRazorWorkspace,
     isSlnWithGenerator,
     restartOmniSharpServer,
@@ -31,20 +34,16 @@ async function setDiagnosticWorkspaceLimit(to: number | null) {
     );
 }
 
-suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
+describeIfNotGenerator(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
     let fileUri: vscode.Uri;
     let secondaryFileUri: vscode.Uri;
     let razorFileUri: vscode.Uri;
     let virtualRazorFileUri: vscode.Uri;
 
-    suiteSetup(async function () {
-        should();
+    let activation: ActivationResult;
 
-        if (isSlnWithGenerator(vscode.workspace)) {
-            this.skip();
-        }
-
-        const activation = await activateCSharpExtension();
+    beforeAll(async function () {
+        activation = await activateCSharpExtension();
         await testAssetWorkspace.restoreAndWait(activation);
 
         const fileName = 'diagnostics.cs';
@@ -57,16 +56,12 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
         virtualRazorFileUri = vscode.Uri.file(razorFileUri.fsPath + '__virtual.cs');
     });
 
-    suite('razor workspace', () => {
-        suiteSetup(async function () {
-            should();
+    afterAll(async () => {
+        await testAssetWorkspace.cleanupWorkspace();
+    });
 
-            if (!isRazorWorkspace(vscode.workspace)) {
-                this.skip();
-            }
-
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+    describeIfRazor('razor workspace', () => {
+        beforeAll(async function () {
             await vscode.commands.executeCommand('vscode.open', razorFileUri);
             await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
@@ -92,25 +87,11 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 }
             );
         });
-
-        suiteTeardown(async () => {
-            await testAssetWorkspace.cleanupWorkspace();
-        });
     });
 
-    suite('small workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)', () => {
-        suiteSetup(async function () {
-            should();
-
-            // These tests don't run on the BasicRazorApp2_1 solution
-            if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-                this.skip();
-            }
-
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restore();
+    describeIfNotRazorOrGenerator('small workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)', () => {
+        beforeAll(async function () {
             await vscode.commands.executeCommand('vscode.open', fileUri);
-
             await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
 
@@ -119,7 +100,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 () => vscode.languages.getDiagnostics(fileUri),
                 /*duration*/ 30 * 1000,
                 /*step*/ 500,
-                (res) => expect(res.length).to.be.greaterThan(0)
+                (res) => expect(res.length).toBeGreaterThan(0)
             );
         });
 
@@ -135,7 +116,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             isNotNull(cs0219);
             if (cs0219.tags) {
                 // not currently making it through lsp 100% of the time
-                expect(cs0219.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+                expect(cs0219.tags).toContain(vscode.DiagnosticTag.Unnecessary);
             }
         });
 
@@ -151,7 +132,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             isNotNull(cs8019);
             if (cs8019.tags) {
                 // not currently making it through lsp 100% of the time
-                expect(cs8019.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+                expect(cs8019.tags).toContain(vscode.DiagnosticTag.Unnecessary);
             }
         });
 
@@ -167,7 +148,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
             isNotNull(ide0059);
             if (ide0059.tags) {
                 // not currently making it through lsp 100% of the time
-                expect(ide0059.tags).to.include(vscode.DiagnosticTag.Unnecessary);
+                expect(ide0059.tags).toContain(vscode.DiagnosticTag.Unnecessary);
             }
         });
 
@@ -176,32 +157,22 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 () => vscode.languages.getDiagnostics(secondaryFileUri),
                 15 * 1000,
                 500,
-                (res) => expect(res.length).to.be.greaterThan(0)
+                (res) => expect(res.length).toBeGreaterThan(0)
             );
-        });
-
-        suiteTeardown(async () => {
-            await testAssetWorkspace.cleanupWorkspace();
         });
     });
 
-    suite('large workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)', () => {
-        suiteSetup(async function () {
-            if (process.env.OMNISHARP_DRIVER === 'lsp') {
-                // lsp does pull-based diagnostics. If you ask for a file specifically, you'll get it.
-                this.skip();
-            }
+    const describeCondition =
+        !isRazorWorkspace(vscode.workspace) &&
+        !isSlnWithGenerator(vscode.workspace) &&
+        // lsp does pull-based diagnostics. If you ask for a file specifically, you'll get it.
+        process.env.OMNISHARP_DRIVER !== 'lsp'
+            ? describe
+            : describe.skip;
 
-            should();
-
-            // These tests don't run on the BasicRazorApp2_1 solution
-            if (isRazorWorkspace(vscode.workspace) || isSlnWithGenerator(vscode.workspace)) {
-                this.skip();
-            }
-
+    describeCondition('large workspace (based on maxProjectFileCountForDiagnosticAnalysis setting)', () => {
+        beforeAll(async function () {
             await setDiagnosticWorkspaceLimit(1);
-            const activation = await activateCSharpExtension();
-            await testAssetWorkspace.restore();
             await restartOmniSharpServer();
             await testAssetWorkspace.waitForIdle(activation.eventStream);
         });
@@ -214,7 +185,7 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 () => vscode.languages.getDiagnostics(fileUri),
                 10 * 1000,
                 500,
-                (openFileDiag) => expect(openFileDiag.length).to.be.greaterThan(0)
+                (openFileDiag) => expect(openFileDiag.length).toBeGreaterThan(0)
             );
 
             // Ensure that the document is closed for the test.
@@ -226,12 +197,8 @@ suite(`DiagnosticProvider: ${testAssetWorkspace.description}`, function () {
                 () => vscode.languages.getDiagnostics(secondaryFileUri),
                 10 * 1000,
                 500,
-                (secondaryDiag) => expect(secondaryDiag.length).to.be.eq(0)
+                (secondaryDiag) => expect(secondaryDiag.length).toEqual(0)
             );
-        });
-
-        suiteTeardown(async () => {
-            await testAssetWorkspace.cleanupWorkspace();
         });
     });
 });

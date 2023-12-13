@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as chai from 'chai';
-import * as chaiString from 'chai-string';
+import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import {
     EventWithMessage,
@@ -24,10 +23,7 @@ import {
 import DotNetTestLoggerObserver from '../../../src/observers/dotnetTestLoggerObserver';
 import * as protocol from '../../../src/omnisharp/protocol';
 
-const expect = chai.expect;
-chai.use(chaiString);
-
-suite(`${DotNetTestLoggerObserver.name}`, () => {
+describe(`${DotNetTestLoggerObserver.name}`, () => {
     let appendedMessage: string;
     const observer = new DotNetTestLoggerObserver({
         ...getNullChannel(),
@@ -36,7 +32,7 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
         },
     });
 
-    setup(() => {
+    beforeEach(() => {
         appendedMessage = '';
     });
 
@@ -44,33 +40,35 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
         (event: EventWithMessage) => {
             test(`${event.constructor.name}: Message is logged`, () => {
                 observer.post(event);
-                expect(appendedMessage).to.contain(event.message);
+                expect(appendedMessage).toContain(event.message);
             });
         }
     );
 
     [new DotNetTestDebugStart('foo'), new DotNetTestRunStart('foo')].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Test method is logged`, () => {
-            expect(appendedMessage).to.be.empty;
+            expect(appendedMessage).toBeFalsy();
             observer.post(event);
-            expect(appendedMessage).to.contain('foo');
+            expect(appendedMessage).toContain('foo');
         });
     });
 
     [new DotNetTestsInClassDebugStart('foo'), new DotNetTestsInClassRunStart('foo')].forEach((event: BaseEvent) => {
         test(`${event.constructor.name}: Class name is logged`, () => {
-            expect(appendedMessage).to.be.empty;
+            expect(appendedMessage).toBeFalsy();
             observer.post(event);
-            expect(appendedMessage).to.contain('foo');
+            expect(appendedMessage).toContain('foo');
         });
     });
 
     [new DotNetTestRunInContextStart('foo', 1, 2), new DotNetTestDebugInContextStart('foo', 1, 2)].forEach(
         (event: BaseEvent) => {
             test(`${event.constructor.name}: File name and line/column are logged`, () => {
-                expect(appendedMessage).to.be.empty;
+                expect(appendedMessage).toBeFalsy;
                 observer.post(event);
-                expect(appendedMessage).to.contain('foo').and.contain('2').and.contain('3');
+                expect(appendedMessage).toContain('foo');
+                expect(appendedMessage).toContain('2');
+                expect(appendedMessage).toContain('3');
             });
         }
     );
@@ -78,16 +76,16 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
     test(`${DotNetTestDebugProcessStart.name}: Target process id is logged`, () => {
         const event = new DotNetTestDebugProcessStart(111);
         observer.post(event);
-        expect(appendedMessage).to.contain(event.targetProcessId);
+        expect(appendedMessage).toContain(event.targetProcessId.toString());
     });
 
     test(`${DotNetTestDebugComplete.name}: Message is logged`, () => {
         const event = new DotNetTestDebugComplete();
         observer.post(event);
-        expect(appendedMessage).to.not.be.empty;
+        expect(appendedMessage).toBeTruthy();
     });
 
-    suite(`${ReportDotNetTestResults.name}`, () => {
+    describe(`${ReportDotNetTestResults.name}`, () => {
         const event = new ReportDotNetTestResults([
             getDotNetTestResults(
                 'foo',
@@ -105,21 +103,23 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
         test(`Displays the outcome of each test`, () => {
             observer.post(event);
             event.results!.forEach((result) => {
-                expect(appendedMessage).to.containIgnoreCase(`${result.MethodName}:\n    Outcome: ${result.Outcome}`);
+                expect(appendedMessage.toUpperCase()).toContain(
+                    `${result.MethodName}:\n    Outcome: ${result.Outcome}`.toUpperCase()
+                );
             });
         });
 
         test(`Displays the total outcome`, () => {
             observer.post(event);
-            expect(appendedMessage).to.contain(`Total tests: 4. Passed: 1. Failed: 2. Skipped: 1`);
+            expect(appendedMessage).toContain(`Total tests: 4. Passed: 1. Failed: 2. Skipped: 1`);
         });
 
         test('Displays the error message and error stack trace if any is present', () => {
             observer.post(event);
-            expect(appendedMessage).to.contain(
+            expect(appendedMessage).toContain(
                 'foo:\n    Outcome: Failed\n    Error Message:\n    assertion failed\n    Stack Trace:\n    stacktrace1'
             );
-            expect(appendedMessage).to.contain(
+            expect(appendedMessage).toContain(
                 'failinator:\n    Outcome: Failed\n    Error Message:\n    error occurred\n    Stack Trace:\n    stacktrace2'
             );
         });
@@ -127,20 +127,20 @@ suite(`${DotNetTestLoggerObserver.name}`, () => {
         test(`Displays the standard output messages if any`, () => {
             observer.post(event);
             event.results!.forEach((result) => {
-                result.StandardOutput.forEach((message) => expect(appendedMessage).to.contain(message));
+                result.StandardOutput.forEach((message) => expect(appendedMessage).toContain(message));
             });
         });
 
         test(`Displays the standard error messages if any`, () => {
             observer.post(event);
             event.results!.forEach((result) => {
-                result.StandardError.forEach((message) => expect(appendedMessage).to.contain(message));
+                result.StandardError.forEach((message) => expect(appendedMessage).toContain(message));
             });
         });
 
         test(`Can handle malformed results`, () => {
             observer.post(new ReportDotNetTestResults([]));
-            expect(appendedMessage).to.contain(
+            expect(appendedMessage).toContain(
                 '----- Test Execution Summary -----\n\nTotal tests: 0. Passed: 0. Failed: 0. Skipped: 0'
             );
         });

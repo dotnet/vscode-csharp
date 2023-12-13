@@ -75,6 +75,8 @@ export interface LanguageServerOptions {
     readonly preferCSharpExtension: boolean;
     readonly startTimeout: number;
     readonly crashDumpPath: string | undefined;
+    readonly analyzerDiagnosticScope: string;
+    readonly compilerDiagnosticScope: string;
 }
 
 export interface RazorOptions {
@@ -388,6 +390,12 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get crashDumpPath() {
         return readOption<string | undefined>('dotnet.server.crashDumpPath', undefined);
+    }
+    public get analyzerDiagnosticScope() {
+        return readOption<string>('dotnet.backgroundAnalysis.analyzerDiagnosticsScope', 'openFiles');
+    }
+    public get compilerDiagnosticScope() {
+        return readOption<string>('dotnet.backgroundAnalysis.compilerDiagnosticsScope', 'openFiles');
     }
 }
 

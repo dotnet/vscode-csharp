@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { describe, test, expect } from '@jest/globals';
 import * as vscode from 'vscode';
-import { assert } from 'chai';
 import {
     resourcesAndFolderMapToLaunchTargets,
     resourcesToLaunchTargets,
@@ -13,7 +13,7 @@ import {
 } from '../../src/omnisharp/launcher';
 import { LaunchTargetKind } from '../../src/shared/launchTarget';
 
-suite(`launcher:`, () => {
+describe(`launcher:`, () => {
     const workspaceFolders: vscode.WorkspaceFolder[] = [{ uri: vscode.Uri.parse('/'), name: 'root', index: 0 }];
     const maxProjectResults = 250;
 
@@ -27,7 +27,7 @@ suite(`launcher:`, () => {
         const launchTargets = resourcesToLaunchTargets(testResources, workspaceFolders, maxProjectResults);
 
         const liveShareTarget = launchTargets.find((target) => target === vslsTarget);
-        assert.exists(liveShareTarget, 'Launch targets was not the Visual Studio Live Share target.');
+        expect(liveShareTarget).toBeDefined();
     });
 
     test(`Does not return the LiveShare launch target when processing local resources`, () => {
@@ -46,7 +46,7 @@ suite(`launcher:`, () => {
         );
 
         const liveShareTarget = launchTargets.find((target) => target === vslsTarget);
-        assert.notExists(liveShareTarget, 'Launch targets contained the Visual Studio Live Share target.');
+        expect(liveShareTarget).not.toBeDefined();
     });
 
     test(`Returns a Solution and Project target`, () => {
@@ -67,11 +67,11 @@ suite(`launcher:`, () => {
         const solutionTarget = launchTargets.find(
             (target) => target.workspaceKind === LaunchTargetKind.Solution && target.label === 'test.sln'
         );
-        assert.exists(solutionTarget, 'Launch targets did not include `/test.sln`');
+        expect(solutionTarget).toBeDefined();
 
         const projectTarget = launchTargets.find(
             (target) => target.workspaceKind === LaunchTargetKind.Project && target.label === 'test.csproj'
         );
-        assert.exists(projectTarget, 'Launch targets did not include `/test/test.csproj`');
+        expect(projectTarget).toBeDefined();
     });
 });
