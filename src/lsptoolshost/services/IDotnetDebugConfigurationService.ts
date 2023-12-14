@@ -23,7 +23,7 @@ export interface IDotnetDebugConfigurationServiceResult {
 
 export interface IDotnetDebugConfigurationService {
     resolveDebugConfigurationWithLaunchConfigurationService(
-        projectPath: string,
+        projectPath: string | undefined,
         debugConfiguration: vscode.DebugConfiguration,
         token?: vscode.CancellationToken
     ): Promise<IDotnetDebugConfigurationServiceResult>;
