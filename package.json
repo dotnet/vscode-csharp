@@ -4885,11 +4885,6 @@
         "languages": [
           "csharp"
         ],
-        "variables": {
-          "pickProcess": "csharp.listProcess",
-          "pickRemoteProcess": "csharp.listRemoteProcess",
-          "pickRemoteDockerProcess": "csharp.listRemoteDockerProcess"
-        },
         "configurationAttributes": {
           "launch": {
             "type": "object",

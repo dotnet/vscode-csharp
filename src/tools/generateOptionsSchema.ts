@@ -357,6 +357,9 @@ export function GenerateOptionsSchema() {
     packageJSON.contributes.debuggers[1].configurationAttributes.launch = schemaJSON.definitions.LaunchOptions;
     packageJSON.contributes.debuggers[1].configurationAttributes.attach = schemaJSON.definitions.AttachOptions;
 
+    // Mono
+    packageJSON.contributes.debuggers[2].configurationAttributes.launch = schemaJSON.definitions.LaunchOptions;
+
     // Make a copy of the options for unit test debugging
     const unitTestDebuggingOptions = JSON.parse(JSON.stringify(schemaJSON.definitions.AttachOptions.properties));
     // Remove the options we don't want
