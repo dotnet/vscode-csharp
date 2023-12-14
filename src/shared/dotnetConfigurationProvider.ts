@@ -55,6 +55,8 @@ function resolveWorkspaceFolderToken(projectPath: string, folderPath: string): s
 }
 
 export class DotnetConfigurationResolver implements vscode.DebugConfigurationProvider {
+    static dotnetType = 'dotnet';
+
     constructor(
         private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider,
         private dotnetWorkspaceConfigurationProvider: DotnetWorkspaceConfigurationProvider
@@ -73,7 +75,17 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
         }
 
         if (debugConfiguration.request !== 'launch') {
-            throw new Error(`'${debugConfiguration.request}' is unsupported.`);
+            if (!debugConfiguration.request) {
+                throw new Error(vscode.l10n.t("'{0}' was not set in the debug configuration.", 'request'));
+            } else {
+                throw new Error(
+                    vscode.l10n.t(
+                        "'{0}' request is not supported for the '{1}' configuration.",
+                        debugConfiguration.request,
+                        DotnetConfigurationResolver.dotnetType
+                    )
+                );
+            }
         }
 
         let projectPath: string | undefined = debugConfiguration.projectPath;
@@ -99,7 +111,9 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                 }
             } catch (e) {
                 if (!projectPath) {
-                    throw new LaunchServiceError("'projectPath' was not provided in the debug configuration.");
+                    throw new LaunchServiceError(
+                        vscode.l10n.t("'{0}' was not provided in the debug configuration.", 'projectPath')
+                    );
                 }
                 if (e instanceof UnavaliableLaunchServiceError) {
                     return await this.resolveDebugConfigurationWithWorkspaceDebugInformationProvider(
@@ -114,9 +128,14 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
             } finally {
                 dotnetDebugServiceProxy?.dispose();
             }
+        } else {
+            throw new Error(
+                vscode.l10n.t(
+                    "Can not find an opened workspace folder. Please open a folder before starting to debug with a '{0}' configuration'.",
+                    DotnetConfigurationResolver.dotnetType
+                )
+            );
         }
-
-        return debugConfiguration;
     }
 
     //#endregion
