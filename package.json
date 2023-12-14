@@ -4881,7 +4881,7 @@
       {
         "type": "monovsdbg",
         "label": ".NET Core using Mono Runtime",
-        "hiddenWhen": "dotnet.debug.serviceBrokerAvailable",
+        "hiddenWhen": "true",
         "languages": [
           "csharp"
         ],
