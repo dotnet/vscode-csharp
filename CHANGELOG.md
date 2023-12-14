@@ -7,9 +7,9 @@
 
 ## Latest
 * Update Razor to 7.0.0-preview.23611.2 (PR: [#6741](https://github.com/dotnet/vscode-csharp/pull/6741)
-
-## 2.14.?
 * Update Roslyn to 4.9.0-3.23611.3 (PR: [#6736](https://github.com/dotnet/vscode-csharp/pull/6736))
+
+## 2.14.8
 * Fix Remote Process Listing from Windows (PR: [#6730](https://github.com/dotnet/vscode-csharp/pull/6730))
 * Fix description of debugger `console` setting (PR: [#6726](https://github.com/dotnet/vscode-csharp/pull/6726))
 * Read extension paths option (PR: [#6724](https://github.com/dotnet/vscode-csharp/pull/6724))
