@@ -6,7 +6,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Update Razor to 7.0.0-preview.23611.2 (PR: [#6741](https://github.com/dotnet/vscode-csharp/pull/6741)
+* Update Razor to 7.0.0-preview.23616.1 (PR: [#6760](https://github.com/dotnet/vscode-csharp/pull/6760)
 * Update Roslyn to 4.9.0-3.23611.3 (PR: [#6736](https://github.com/dotnet/vscode-csharp/pull/6736))
 
 ## 2.14.8
