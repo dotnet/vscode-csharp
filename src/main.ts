@@ -425,17 +425,11 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
     );
 }
 
-let registered = false;
-
 function profferBrokeredServices(
     context: vscode.ExtensionContext,
     serviceContainer: GlobalBrokeredServiceContainer,
     languageServerPromise: Promise<RoslynLanguageServer>
 ) {
-    if (registered) {
-        return;
-    }
-    registered = true;
     context.subscriptions.push(
         serviceContainer.profferServiceFactory(
             Descriptors.solutionSnapshotProviderRegistration,
