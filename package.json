@@ -1021,6 +1021,7 @@
     "onDebugResolve:blazorwasm",
     "onDebugResolve:coreclr",
     "onDebugResolve:clr",
+    "onDebugResolve:monovsdbg",
     "onDebugResolve:dotnet",
     "onLanguage:csharp",
     "onCommand:o.showOutput",
@@ -1642,7 +1643,8 @@
                 "type": "string",
                 "enum": [
                   "coreclr",
-                  "clr"
+                  "clr",
+                  "monovsdbg"
                 ],
                 "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
                 "default": "coreclr"
@@ -4874,6 +4876,14 @@
               "projectPath": "^\"\\${workspaceFolder}/${2:<relative-path-to-project-folder>}${1:<project-name>}.csproj\""
             }
           }
+        ]
+      },
+      {
+        "type": "monovsdbg",
+        "label": ".NET Core using Mono Runtime",
+        "hiddenWhen": "true",
+        "languages": [
+          "csharp"
         ]
       }
     ],
