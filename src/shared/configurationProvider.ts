@@ -271,7 +271,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                     }
                 }
                 if (result?.title === labelMoreInfo) {
-                    const launchjsonDescriptionURL = 'https://aka.ms/VSCode-CS-LaunchJson#check-for-devcert';
+                    const launchjsonDescriptionURL = 'https://aka.ms/VSCode-CS-CheckForDevCert';
                     vscode.env.openExternal(vscode.Uri.parse(launchjsonDescriptionURL));
                     this.checkForDevCerts(dotnetPath);
                 }
