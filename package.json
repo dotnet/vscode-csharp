@@ -1751,21 +1751,20 @@
             "description": "%configuration.razor.languageServer.debug%",
             "order": 90
           },
-          "razor.trace": {
+          "razor.server.trace": {
+            "scope": "window",
             "type": "string",
-            "default": "Off",
             "enum": [
-              "Off",
-              "Messages",
-              "Verbose"
+              "Trace",
+              "Debug",
+              "Information",
+              "Warning",
+              "Error",
+              "Critical",
+              "None"
             ],
-            "enumDescriptions": [
-              "%configuration.razor.trace.off%",
-              "%configuration.razor.trace.messages%",
-              "%configuration.razor.trace.verbose%"
-            ],
-            "description": "%configuration.razor.trace%",
-            "order": 90
+            "default": "Information",
+            "description": "%configuration.razor.server.trace%"
           }
         }
       },

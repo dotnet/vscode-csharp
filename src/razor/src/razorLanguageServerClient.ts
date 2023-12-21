@@ -12,7 +12,7 @@ import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
-import { resolveRazorLanguageServerTrace } from './razorLanguageServerTraceResolver';
+import { resolveRazorLanguageServerLogLevel } from './razorLanguageServerTraceResolver';
 import { RazorLogger } from './razorLogger';
 import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
 import TelemetryReporter from '@vscode/extension-telemetry';
@@ -55,9 +55,9 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     }
 
     public updateTraceLevel() {
-        const languageServerTrace = resolveRazorLanguageServerTrace(this.vscodeType);
+        const languageServerLogLevel = resolveRazorLanguageServerLogLevel(this.vscodeType);
         this.setupLanguageServer();
-        this.logger.setTraceLevel(languageServerTrace);
+        this.logger.setTraceLevel(languageServerLogLevel);
     }
 
     public onStarted(listener: () => Promise<any>) {
@@ -211,7 +211,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     }
 
     private setupLanguageServer() {
-        const languageServerTrace = resolveRazorLanguageServerTrace(this.vscodeType);
+        const languageServerTrace = resolveRazorLanguageServerLogLevel(this.vscodeType);
         const options: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
             this.vscodeType,
             this.languageServerDir,
@@ -227,9 +227,9 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         this.logger.logMessage(`Razor language server path: ${options.serverPath}`);
 
-        args.push('--trace');
-        args.push(options.trace.toString());
-        this.razorTelemetryReporter.reportTraceLevel(options.trace);
+        args.push('--logLevel');
+        args.push(options.logLevel.toString());
+        this.razorTelemetryReporter.reportTraceLevel(options.logLevel);
 
         if (options.debug) {
             this.razorTelemetryReporter.reportDebugLanguageServer();
