@@ -9,7 +9,10 @@
 * Update Razor to 7.0.0-preview.23627.2 (PR: [#6770](https://github.com/dotnet/vscode-csharp/pull/6770)
   * Fixed issue where Razor trace level was ignored. New `razor.server.trace` setting created that is not ignored (PR: [dotnet/razor#9745](https://github.com/dotnet/razor/pull/9745))
 * Update Roslyn to 4.9.0-3.23611.3 (PR: [#6736](https://github.com/dotnet/vscode-csharp/pull/6736))
-
+* Update OmniSharp to 1.39.11 (PR: [#6771](https://github.com/dotnet/vscode-csharp/pull/6771))
+  * Fix loading AspNetCore projects by shipping the AspNetCore EA library
+  * Update SDKs and dependencies ([omnisharp-roslyn/#2586](https://github.com/OmniSharp/omnisharp-roslyn/issues/2586), PR: [omnisharp-roslyn/#2588](https://github.com/OmniSharp/omnisharp-roslyn/pull/2588))
+  * Updated to latest dotnet-script 1.5.0 (PR: [omnisharp-roslyn/#2585](https://github.com/OmniSharp/omnisharp-roslyn/pull/2585))
 ## 2.14.8
 * Fix Remote Process Listing from Windows (PR: [#6730](https://github.com/dotnet/vscode-csharp/pull/6730))
 * Fix description of debugger `console` setting (PR: [#6726](https://github.com/dotnet/vscode-csharp/pull/6726))
