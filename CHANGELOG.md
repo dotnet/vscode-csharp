@@ -6,9 +6,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Update Razor to 7.0.0-preview.23616.1 (PR: [#6760](https://github.com/dotnet/vscode-csharp/pull/6760)
-* Update Roslyn to 4.9.0-3.23611.3 (PR: [#6736](https://github.com/dotnet/vscode-csharp/pull/6736))
+* Update Razor to 7.0.0-preview.23627.2 (PR: [#6770](https://github.com/dotnet/vscode-csharp/pull/6770)
   * Fixed issue where Razor trace level was ignored. New `razor.server.trace` setting created that is not ignored (PR: [dotnet/razor#9745](https://github.com/dotnet/razor/pull/9745))
+* Update Roslyn to 4.9.0-3.23611.3 (PR: [#6736](https://github.com/dotnet/vscode-csharp/pull/6736))
 
 ## 2.14.8
 * Fix Remote Process Listing from Windows (PR: [#6730](https://github.com/dotnet/vscode-csharp/pull/6730))
