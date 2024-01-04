@@ -518,6 +518,9 @@ export class RoslynLanguageServer {
                 _channel.appendLine('Activating C# + C# Dev Kit...');
             }
 
+            // Set command enablement to use DevKit commands.
+            vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'RoslynDevKit');
+
             const csharpDevKitArgs = this.getCSharpDevKitExportArgs();
             args = args.concat(csharpDevKitArgs);
 
@@ -525,7 +528,9 @@ export class RoslynLanguageServer {
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             _channel.appendLine('Activating C# standalone...');
-            vscode.commands.executeCommand('setContext', 'dotnet.server.activatedStandalone', true);
+
+            // Set command enablement to use roslyn standalone commands.
+            vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
         }
 

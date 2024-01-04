@@ -184,6 +184,9 @@ export async function activate(
             roslynLanguageServerEvents
         );
     } else {
+        // Set command enablement to use O# commands.
+        vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'OmniSharp');
+
         const dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
         const dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
         eventStream.subscribe(dotnetChannelObserver.post);

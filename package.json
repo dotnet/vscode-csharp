@@ -2008,49 +2008,49 @@
         "command": "o.restart",
         "title": "%command.o.restart%",
         "category": "OmniSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.pickProjectAndStart",
         "title": "%command.o.pickProjectAndStart%",
         "category": "OmniSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.openSolution",
         "title": "%command.dotnet.openSolution%",
         "category": ".NET",
-        "enablement": "!config.dotnet.server.useOmnisharp && dotnet.server.activatedStandalone"
+        "enablement": "dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "o.fixAll.solution",
         "title": "%command.o.fixAll.solution%",
         "category": "OmniSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.fixAll.project",
         "title": "%command.o.fixAll.project%",
         "category": "OmniSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.fixAll.document",
         "title": "%command.o.fixAll.document%",
         "category": "OmniSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.reanalyze.allProjects",
         "title": "%command.o.reanalyze.allProjects%",
         "category": "OmniSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.reanalyze.currentProject",
         "title": "%command.o.reanalyze.currentProject%",
         "category": "OmniSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.generateAssets",
@@ -2061,18 +2061,13 @@
         "command": "dotnet.restore.project",
         "title": "%command.dotnet.restore.project%",
         "category": ".NET",
-        "enablement": "dotnet.server.activatedStandalone"
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.restore.all",
         "title": "%command.dotnet.restore.all%",
         "category": ".NET",
-        "enablement": "dotnet.server.activatedStandalone"
-      },
-      {
-        "command": "csharp.downloadDebugger",
-        "title": "%command.csharp.downloadDebugger%",
-        "category": "Debug"
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "csharp.listProcess",
@@ -2103,7 +2098,7 @@
         "command": "csharp.showDecompilationTerms",
         "title": "%command.csharp.showDecompilationTerms%",
         "category": "CSharp",
-        "enablement": "config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "extension.showRazorCSharpWindow",
@@ -2124,19 +2119,19 @@
         "command": "dotnet.test.runTestsInContext",
         "title": "%command.dotnet.test.runTestsInContext%",
         "category": ".NET",
-        "enablement": "dotnet.server.activatedStandalone"
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.test.debugTestsInContext",
         "title": "%command.dotnet.test.debugTestsInContext%",
         "category": ".NET",
-        "enablement": "dotnet.server.activatedStandalone"
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.restartServer",
         "title": "%command.dotnet.restartServer%",
         "category": ".NET",
-        "enablement": "!config.dotnet.server.useOmnisharp"
+        "enablement": "dotnet.server.activationContext != 'OmniSharp'"
       }
     ],
     "keybindings": [
@@ -5638,15 +5633,15 @@
       "commandPalette": [
         {
           "command": "dotnet.test.runTestsInContext",
-          "when": "editorLangId == csharp && dotnet.server.activatedStandalone"
+          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
-          "when": "editorLangId == csharp && dotnet.server.activatedStandalone"
+          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
         },
         {
           "command": "o.restart",
-          "when": "config.dotnet.server.useOmnisharp"
+          "when": "dotnet.server.activationContext == 'OmniSharp'"
         },
         {
           "command": "csharp.listProcess",
@@ -5678,12 +5673,12 @@
       "editor/context": [
         {
           "command": "dotnet.test.runTestsInContext",
-          "when": "editorLangId == csharp && dotnet.server.activatedStandalone",
+          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'",
           "group": "2_dotnet@1"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
-          "when": "editorLangId == csharp && dotnet.server.activatedStandalone",
+          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'",
           "group": "2_dotnet@2"
         }
       ]
