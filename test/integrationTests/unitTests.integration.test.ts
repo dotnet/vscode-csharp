@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { describe, beforeAll, beforeEach, afterAll, test, expect } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, openFileInWorkspaceAsync } from './integrationHelpers';
+import { activateCSharpExtension, getCodeLensesAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 import { TestProgress } from '../../src/lsptoolshost/roslynProtocol';
 
 describe(`[${testAssetWorkspace.description}] Test Unit Testing`, function () {
@@ -124,29 +124,3 @@ describe(`[${testAssetWorkspace.description}] Test Unit Testing`, function () {
         expect(testResults?.testsSkipped).toEqual(0);
     });
 });
-
-async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
-    const activeEditor = vscode.window.activeTextEditor;
-    if (!activeEditor) {
-        throw new Error('No active editor');
-    }
-
-    // The number of code lens items to resolve.  Set to a high number so we get pretty much everything in the document.
-    const resolvedItemCount = 100;
-
-    const codeLenses = <vscode.CodeLens[]>(
-        await vscode.commands.executeCommand(
-            'vscode.executeCodeLensProvider',
-            activeEditor.document.uri,
-            resolvedItemCount
-        )
-    );
-    return codeLenses.sort((a, b) => {
-        const rangeCompare = a.range.start.compareTo(b.range.start);
-        if (rangeCompare !== 0) {
-            return rangeCompare;
-        }
-
-        return a.command!.title.localeCompare(b.command!.command);
-    });
-}

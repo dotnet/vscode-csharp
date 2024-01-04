@@ -80,6 +80,32 @@ export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
     return isGivenSln(workspace, 'slnWithGenerator');
 }
 
+export async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
+    const activeEditor = vscode.window.activeTextEditor;
+    if (!activeEditor) {
+        throw new Error('No active editor');
+    }
+
+    // The number of code lens items to resolve.  Set to a high number so we get pretty much everything in the document.
+    const resolvedItemCount = 100;
+
+    const codeLenses = <vscode.CodeLens[]>(
+        await vscode.commands.executeCommand(
+            'vscode.executeCodeLensProvider',
+            activeEditor.document.uri,
+            resolvedItemCount
+        )
+    );
+    return codeLenses.sort((a, b) => {
+        const rangeCompare = a.range.start.compareTo(b.range.start);
+        if (rangeCompare !== 0) {
+            return rangeCompare;
+        }
+
+        return a.command!.title.localeCompare(b.command!.command);
+    });
+}
+
 function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {
     const primeWorkspace = workspace.workspaceFolders![0];
     const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
