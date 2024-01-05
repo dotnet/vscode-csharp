@@ -28,6 +28,7 @@ import {
     RAL,
     CancellationToken,
     RequestHandler,
+    ResponseError,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -270,8 +271,12 @@ export class RoslynLanguageServer {
             throw new Error('Tried to send request while server is not started.');
         }
 
-        const response = await this._languageClient.sendRequest(type, params, token);
-        return response;
+        try {
+            const response = await this._languageClient.sendRequest(type, params, token);
+            return response;
+        } catch (e) {
+            throw this.convertServerError(type.method, e);
+        }
     }
 
     /**
@@ -285,8 +290,12 @@ export class RoslynLanguageServer {
             throw new Error('Tried to send request while server is not started.');
         }
 
-        const response = await this._languageClient.sendRequest(type, token);
-        return response;
+        try {
+            const response = await this._languageClient.sendRequest(type, token);
+            return response;
+        } catch (e) {
+            throw this.convertServerError(type.method, e);
+        }
     }
 
     public async sendRequestWithProgress<P extends PartialResultParams, R, PR, E, RO>(
@@ -302,10 +311,15 @@ export class RoslynLanguageServer {
         const disposable = this._languageClient.onProgress(type, partialResultToken, async (partialResult) => {
             await onProgress(partialResult);
         });
-        const response = await this._languageClient
-            .sendRequest(type, params, cancellationToken)
-            .finally(() => disposable.dispose());
-        return response;
+
+        try {
+            const response = await this._languageClient.sendRequest(type, params, cancellationToken);
+            return response;
+        } catch (e) {
+            throw this.convertServerError(type.method, e);
+        } finally {
+            disposable.dispose();
+        }
     }
 
     /**
@@ -366,6 +380,25 @@ export class RoslynLanguageServer {
                 });
             }
         }
+    }
+
+    private convertServerError(request: string, e: any): Error {
+        let error: Error;
+        if (e instanceof ResponseError && e.code === -32800) {
+            // Convert the LSP RequestCancelled error (code -32800) to a CancellationError so we can handle cancellation uniformly.
+            error = new vscode.CancellationError();
+        } else if (e instanceof Error) {
+            error = e;
+        } else if (typeof e === 'string') {
+            error = new Error(e);
+        } else {
+            error = new Error(`Unknown error: ${e.toString()}`);
+        }
+
+        if (!(error instanceof vscode.CancellationError)) {
+            _channel.appendLine(`Error making ${request} request: ${error.message}`);
+        }
+        return error;
     }
 
     private async openDefaultSolutionOrProjects(): Promise<void> {
@@ -718,8 +751,19 @@ export class RoslynLanguageServer {
         // When a file is opened process any build diagnostics that may be shown
         this._languageClient.addDisposable(
             vscode.workspace.onDidOpenTextDocument(async (event) => {
-                const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
-                this._buildDiagnosticService._onFileOpened(event, buildIds);
+                try {
+                    const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
+                    this._buildDiagnosticService._onFileOpened(event, buildIds);
+                } catch (e) {
+                    if (e instanceof vscode.CancellationError) {
+                        // The request was cancelled (not due to us) - this means the server is no longer accepting requests
+                        // so there is nothing for us to do here.
+                        return;
+                    }
+
+                    // Let non-cancellation errors bubble up.
+                    throw e;
+                }
             })
         );
     }

@@ -41,10 +41,19 @@ async function chooseProjectAndRestore(
     languageServer: RoslynLanguageServer,
     restoreChannel: vscode.OutputChannel
 ): Promise<void> {
-    const projects = await languageServer.sendRequest0(
-        RestorableProjects.type,
-        new vscode.CancellationTokenSource().token
-    );
+    let projects: string[];
+    try {
+        projects = await languageServer.sendRequest0(
+            RestorableProjects.type,
+            new vscode.CancellationTokenSource().token
+        );
+    } catch (e) {
+        if (e instanceof vscode.CancellationError) {
+            return;
+        }
+
+        throw e;
+    }
 
     const items = projects.map((p) => {
         const projectName = path.basename(p);
