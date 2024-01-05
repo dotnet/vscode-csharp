@@ -8,22 +8,22 @@ import * as path from 'path';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 import { IEventEmitterFactory } from './IEventEmitterFactory';
-import { Trace } from './trace';
+import { LogLevel } from './logLevel';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';
-    public static readonly verbositySetting = 'razor.trace';
+    public static readonly verbositySetting = 'razor.server.trace';
     public verboseEnabled!: boolean;
     public messageEnabled!: boolean;
     public readonly outputChannel: vscode.OutputChannel;
 
     private readonly onLogEmitter: vscodeAdapter.EventEmitter<string>;
-    private readonly onTraceLevelChangeEmitter: vscodeAdapter.EventEmitter<Trace>;
+    private readonly onTraceLevelChangeEmitter: vscodeAdapter.EventEmitter<LogLevel>;
 
-    constructor(eventEmitterFactory: IEventEmitterFactory, public trace: Trace) {
+    constructor(eventEmitterFactory: IEventEmitterFactory, public logLevel: LogLevel) {
         this.processTraceLevel();
         this.onLogEmitter = eventEmitterFactory.create<string>();
-        this.onTraceLevelChangeEmitter = eventEmitterFactory.create<Trace>();
+        this.onTraceLevelChangeEmitter = eventEmitterFactory.create<LogLevel>();
 
         this.outputChannel = vscode.window.createOutputChannel(RazorLogger.logName);
 
@@ -31,11 +31,11 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         this.setupToStringOverrides();
     }
 
-    public setTraceLevel(trace: Trace) {
-        this.trace = trace;
+    public setTraceLevel(trace: LogLevel) {
+        this.logLevel = trace;
         this.processTraceLevel();
-        this.logMessage(`Updated trace level to: ${Trace[this.trace]}`);
-        this.onTraceLevelChangeEmitter.fire(this.trace);
+        this.logMessage(`Updated log level to: ${LogLevel[this.logLevel]}`);
+        this.onTraceLevelChangeEmitter.fire(this.logLevel);
     }
 
     public get onLog() {
@@ -109,11 +109,8 @@ ${error.stack}`;
         this.log('--------------------------------------------------------------------------------');
         this.log(`Razor.VSCode version ${packageJsonContents.defaults.razor}`);
         this.log('--------------------------------------------------------------------------------');
-        this.log(`Razor's trace level is currently set to '${Trace[this.trace]}'`);
-        this.log(
-            " - To change Razor's trace level set 'razor.trace' to " +
-                "'Off', 'Messages' or 'Verbose' and then restart VSCode."
-        );
+        this.log(`Razor's log level is currently set to '${LogLevel[this.logLevel]}'`);
+        this.log(" - To change Razor's log level set 'razor.server.trace' and then restart VSCode.");
         this.log(" - To report issues invoke the 'Report a Razor issue' command via the command palette.");
         this.log(
             '-----------------------------------------------------------------------' +
@@ -133,8 +130,8 @@ ${error.stack}`;
     }
 
     private processTraceLevel() {
-        this.verboseEnabled = this.trace >= Trace.Verbose;
-        this.messageEnabled = this.trace >= Trace.Messages;
+        this.verboseEnabled = this.logLevel <= LogLevel.Debug;
+        this.messageEnabled = this.logLevel <= LogLevel.Information;
     }
 }
 

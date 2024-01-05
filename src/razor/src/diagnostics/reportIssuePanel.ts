@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { RazorLogger } from '../razorLogger';
-import { Trace } from '../trace';
+import { LogLevel } from '../logLevel';
 import { ReportIssueCreator } from './reportIssueCreator';
 import { ReportIssueDataCollector } from './reportIssueDataCollector';
 import { ReportIssueDataCollectorFactory } from './reportIssueDataCollectorFactory';
@@ -118,7 +118,7 @@ export class ReportIssuePanel {
         }
 
         let panelBodyContent = '';
-        if (this.logger.trace.valueOf() === Trace.Verbose) {
+        if (this.logger.logLevel.valueOf() <= LogLevel.Debug) {
             const startButtonLabel = vscode.l10n.t('Start');
             const startButton = `<button onclick="startIssue()">${startButtonLabel}</button>`;
             const firstLine = vscode.l10n.t('Press {0}', startButton);
@@ -157,8 +157,8 @@ ${privacyAnchor}
 <button onclick="copyIssue()">${copyIssueContentLabel}</button>`;
         } else {
             const verbositySettingName = `<strong><em>${RazorLogger.verbositySetting}</em></strong>`;
-            const currentVerbositySettingValue = `<strong><em>${Trace[this.logger.trace]}</em></strong>`;
-            const neededVerbositySettingValue = `<strong><em>${Trace[Trace.Verbose]}</em></strong>`;
+            const currentVerbositySettingValue = `<strong><em>${LogLevel[this.logger.logLevel]}</em></strong>`;
+            const neededVerbositySettingValue = `<strong><em>${LogLevel[LogLevel.Debug]}</em></strong>`;
 
             panelBodyContent =
                 '<p>' +

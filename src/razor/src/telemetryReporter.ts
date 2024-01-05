@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { createTelemetryErrorEvent, createTelemetryEvent, HostEventStream } from './hostEventStream';
-import { Trace } from './trace';
+import { LogLevel } from './logLevel';
 
 export class TelemetryReporter {
     private readonly razorExtensionActivated = createTelemetryEvent('VSCode.Razor.RazorExtensionActivated');
@@ -18,9 +18,9 @@ export class TelemetryReporter {
         this.eventStream.post(this.razorExtensionActivated);
     }
 
-    public reportTraceLevel(trace: Trace) {
+    public reportTraceLevel(trace: LogLevel) {
         const traceLevelEvent = createTelemetryEvent('VSCode.Razor.TraceLevel', {
-            trace: Trace[trace],
+            trace: LogLevel[trace],
         });
         this.eventStream.post(traceLevelEvent);
     }

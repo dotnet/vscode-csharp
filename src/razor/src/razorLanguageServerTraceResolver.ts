@@ -3,28 +3,40 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Trace } from './trace';
+import { LogLevel } from './logLevel';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 
-export function resolveRazorLanguageServerTrace(vscodeApi: vscodeAdapter.api) {
-    const languageConfig = vscodeApi.workspace.getConfiguration('razor');
+export function resolveRazorLanguageServerLogLevel(vscodeApi: vscodeAdapter.api) {
+    const languageConfig = vscodeApi.workspace.getConfiguration('razor.server');
     const traceString = languageConfig.get<string>('trace');
-    const trace = parseTraceString(traceString);
+    const logLevel = parseTraceString(traceString);
 
-    return trace;
+    return logLevel;
 }
 
 function parseTraceString(traceString: string | undefined) {
     switch (traceString) {
-        case 'Off':
-            return Trace.Off;
-        case 'Messages':
-            return Trace.Messages;
-        case 'Verbose':
-            return Trace.Verbose;
+        case 'Trace':
+            return LogLevel.Trace;
+        case 'Verbose': // For importing old config values
+        case 'Debug':
+            return LogLevel.Debug;
+        case 'Messages': // For importing old config values
+        case 'Information':
+            return LogLevel.Information;
+        case 'Warning':
+            return LogLevel.Warning;
+        case 'Error':
+            return LogLevel.Error;
+        case 'Critical':
+            return LogLevel.Critical;
+        case 'Off': // For importing old config values
+        case 'None':
+            return LogLevel.None;
+
         default:
-            console.log(vscode.l10n.t("Invalid trace setting for Razor language server. Defaulting to '{0}'", 'Off'));
-            return Trace.Off;
+            console.log(vscode.l10n.t("Invalid razor.server.trace setting. Defaulting to '{0}'", 'Information'));
+            return LogLevel.Information;
     }
 }

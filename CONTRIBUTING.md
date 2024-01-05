@@ -39,7 +39,7 @@ https://github.com/dotnet/razor contains the server implementation.  Follow the 
 
 depending on which configuration is built.  Then, launch the extension here and change the VSCode setting `razor.languageServer.directory` to point to the Razor executable path you built above and reload the window.
 
-If you need to debug the server, you can set the VSCode setting `razor.languageServer.debug` to true.  This will trigger a `Debugger.Launch()` on the server side as it starts. You can also set `razor.trace` to `Verbose` to get more log messages in the output window
+If you need to debug the server, you can set the VSCode setting `razor.languageServer.debug` to true.  This will trigger a `Debugger.Launch()` on the server side as it starts. You can also set `razor.server.trace` to `Debug` to get more log messages in the output window
 
 ### Creating VSIXs
 
