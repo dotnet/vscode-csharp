@@ -5673,12 +5673,12 @@
       "editor/context": [
         {
           "command": "dotnet.test.runTestsInContext",
-          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'",
+          "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
           "group": "2_dotnet@1"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
-          "when": "editorLangId == csharp && dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'",
+          "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
           "group": "2_dotnet@2"
         }
       ]

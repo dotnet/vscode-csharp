@@ -518,7 +518,7 @@ export class RoslynLanguageServer {
                 _channel.appendLine('Activating C# + C# Dev Kit...');
             }
 
-            // Set command enablement to use DevKit commands.
+            // Set command enablement as soon as we know devkit is available.
             vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'RoslynDevKit');
 
             const csharpDevKitArgs = this.getCSharpDevKitExportArgs();
