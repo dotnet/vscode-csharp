@@ -66,7 +66,7 @@
   "Ignore": "Yoksay",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "envFile {0} dosyasındaki ayrıştırılamayan satırlar yok sayılıyor: {1}.",
   "Invalid project index": "Geçersiz proje dizini",
-  "Invalid trace setting for Razor language server. Defaulting to '{0}'": "Razor dil sunucusu için geçersiz izleme ayarı. Varsayılan olarak '{0}'",
+  "Invalid razor.server.trace setting. Defaulting to '{0}'": "Invalid razor.server.trace setting. Defaulting to '{0}'",
   "Is this a Bug or Feature request?": "Bu bir Hata bildirimi mi Özellik isteği mi?",
   "Logs": "Günlükler",
   "Machine information": "Makine bilgileri",

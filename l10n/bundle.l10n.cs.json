@@ -66,7 +66,7 @@
   "Ignore": "Ignorovat",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "Ignorování neanalyzovatelných řádků v souboru envFile {0}: {1}",
   "Invalid project index": "Neplatný index projektu",
-  "Invalid trace setting for Razor language server. Defaulting to '{0}'": "Neplatné nastavení trasování pro jazykový server Razor. Nastavuje se výchozí {0}.",
+  "Invalid razor.server.trace setting. Defaulting to '{0}'": "Invalid razor.server.trace setting. Defaulting to '{0}'",
   "Is this a Bug or Feature request?": "Jde o chybu, nebo žádost o funkci?",
   "Logs": "Protokoly",
   "Machine information": "Informace o počítači",

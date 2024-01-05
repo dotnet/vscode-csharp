@@ -66,7 +66,7 @@
   "Ignore": "略過",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "正在忽略 envFile {0} 中無法剖析的行: {1}。",
   "Invalid project index": "無效的專案索引",
-  "Invalid trace setting for Razor language server. Defaulting to '{0}'": "Razor 語言伺服器的追蹤設定無效。預設為 '{0}'",
+  "Invalid razor.server.trace setting. Defaulting to '{0}'": "Invalid razor.server.trace setting. Defaulting to '{0}'",
   "Is this a Bug or Feature request?": "這是 Bug 或功能要求嗎?",
   "Logs": "記錄",
   "Machine information": "電腦資訊",
