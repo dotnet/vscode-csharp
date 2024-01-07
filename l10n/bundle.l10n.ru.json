@@ -66,7 +66,7 @@
   "Ignore": "Игнорировать",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "Пропускаются строки, не поддающиеся анализу, в envFile {0}: {1}",
   "Invalid project index": "Недопустимый индекс проекта",
-  "Invalid razor.server.trace setting. Defaulting to '{0}'": "Invalid razor.server.trace setting. Defaulting to '{0}'",
+  "Invalid razor.server.trace setting. Defaulting to '{0}'": "Недопустимый параметр razor.server.trace. Применяется значение по умолчанию \"{0}\"",
   "Is this a Bug or Feature request?": "Это сообщение об ошибке или запрос новой возможности?",
   "Logs": "Журналы",
   "Machine information": "Сведения о компьютере",
