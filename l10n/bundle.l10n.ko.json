@@ -66,7 +66,7 @@
   "Ignore": "무시",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "envFile {0}: {1}에서 구문 분석할 수 없는 행을 무시합니다.",
   "Invalid project index": "잘못된 프로젝트 인덱스",
-  "Invalid razor.server.trace setting. Defaulting to '{0}'": "Invalid razor.server.trace setting. Defaulting to '{0}'",
+  "Invalid razor.server.trace setting. Defaulting to '{0}'": "razor.server.trace 설정이 잘못되었습니다. 기본값은 '{0}'입니다.",
   "Is this a Bug or Feature request?": "버그인가요, 기능 요청인가요?",
   "Logs": "로그",
   "Machine information": "컴퓨터 정보",

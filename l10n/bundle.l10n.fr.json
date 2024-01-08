@@ -66,7 +66,7 @@
   "Ignore": "Ignorer",
   "Ignoring non-parseable lines in envFile {0}: {1}.": "Lignes non analysables ignorées dans envFile {0} : {1}.",
   "Invalid project index": "Index de projet non valide",
-  "Invalid razor.server.trace setting. Defaulting to '{0}'": "Invalid razor.server.trace setting. Defaulting to '{0}'",
+  "Invalid razor.server.trace setting. Defaulting to '{0}'": "Paramètre razor.server.trace non valide. La valeur par défaut est '{0}'",
   "Is this a Bug or Feature request?": "S’agit-il d’une demande de bogue ou de fonctionnalité ?",
   "Logs": "Journaux",
   "Machine information": "Informations sur l'ordinateur",
