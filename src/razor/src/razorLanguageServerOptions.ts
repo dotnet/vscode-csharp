@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Trace } from './trace';
+import { LogLevel } from './logLevel';
 
 export interface RazorLanguageServerOptions {
     serverPath: string;
     outputChannel?: vscode.OutputChannel;
     debug?: boolean;
-    trace: Trace;
+    logLevel: LogLevel;
     usingOmniSharp: boolean;
 }

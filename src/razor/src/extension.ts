@@ -36,7 +36,7 @@ import { ProposedApisFeature } from './proposedApisFeature';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageConfiguration } from './razorLanguageConfiguration';
 import { RazorLanguageServerClient } from './razorLanguageServerClient';
-import { resolveRazorLanguageServerTrace } from './razorLanguageServerTraceResolver';
+import { resolveRazorLanguageServerLogLevel } from './razorLanguageServerTraceResolver';
 import { RazorLanguageServiceClient } from './razorLanguageServiceClient';
 import { RazorLogger } from './razorLogger';
 import { RazorReferenceProvider } from './reference/razorReferenceProvider';
@@ -71,14 +71,14 @@ export async function activate(
         create: <T>() => new vscode.EventEmitter<T>(),
     };
 
-    const languageServerTrace = resolveRazorLanguageServerTrace(vscodeType);
-    const logger = new RazorLogger(eventEmitterFactory, languageServerTrace);
+    const languageServerLogLevel = resolveRazorLanguageServerLogLevel(vscodeType);
+    const logger = new RazorLogger(eventEmitterFactory, languageServerLogLevel);
 
     try {
         const razorOptions: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
             vscodeType,
             languageServerDir,
-            languageServerTrace,
+            languageServerLogLevel,
             logger
         );
 

@@ -26,6 +26,7 @@ const dashedVersionRegExp = /[0-9]+-[0-9]+-[0-9]+/g;
 export async function updatePackageDependencies(): Promise<void> {
     const newPrimaryUrls = process.env['NEW_DEPS_URLS'];
     const newVersion = process.env['NEW_DEPS_VERSION'];
+    const oldVersion = process.env['OLD_DEPS_VERSION'] ?? ''; // Optional: Will fallback to trying to replace version with a regex.
     const packageId = process.env['NEW_DEPS_ID'];
 
     if ((!packageId && !newPrimaryUrls) || !newVersion) {
@@ -51,6 +52,10 @@ export async function updatePackageDependencies(): Promise<void> {
         throw new Error("Unexpected 'NEW_DEPS_VERSION' value. Expected format similar to: 1.2.3.");
     }
 
+    if (oldVersion.length > 0 && !/^[0-9]+\.[0-9]+\.[0-9]+[-a-zA-Z0-9.]*$/.test(oldVersion)) {
+        throw new Error("Unexpected 'OLD_DEPS_VERSION' value. Expected format similar to: 1.2.2.");
+    }
+
     const packageJSON: PackageJSONFile = JSON.parse(fs.readFileSync('package.json').toString());
 
     const eventStream = new EventStream();
@@ -72,9 +77,9 @@ export async function updatePackageDependencies(): Promise<void> {
 
     const updateDependency = async (dependency: Package): Promise<void> => {
         dependency.integrity = await downloadAndGetHash(dependency.url);
-        dependency.fallbackUrl = replaceVersion(dependency.fallbackUrl, newVersion);
-        dependency.installPath = replaceVersion(dependency.installPath, newVersion);
-        dependency.installTestPath = replaceVersion(dependency.installTestPath, newVersion);
+        dependency.fallbackUrl = replaceVersion(dependency.fallbackUrl, oldVersion, newVersion);
+        dependency.installPath = replaceVersion(dependency.installPath, oldVersion, newVersion);
+        dependency.installTestPath = replaceVersion(dependency.installTestPath, oldVersion, newVersion);
         Object.keys(packageJSON.defaults).forEach((key) => {
             //Update the version present in the defaults
             if (key.toLowerCase() == dependency.id.toLowerCase()) {
@@ -169,7 +174,7 @@ export async function updatePackageDependencies(): Promise<void> {
                 continue;
             }
 
-            dependency.url = replaceVersion(dependency.url, newVersion);
+            dependency.url = replaceVersion(dependency.url, oldVersion, newVersion);
             await updateDependency(dependency);
         }
     }
@@ -186,12 +191,16 @@ export async function updatePackageDependencies(): Promise<void> {
     fs.writeFileSync('package.json', content);
 }
 
-function replaceVersion(fileName: string, newVersion: string): string;
-function replaceVersion(fileName: undefined, newVersion: string): undefined;
-function replaceVersion(fileName: string | undefined, newVersion: string): string | undefined;
-function replaceVersion(fileName: string | undefined, newVersion: string): string | undefined {
+function replaceVersion(fileName: string, oldVersion: string, newVersion: string): string;
+function replaceVersion(fileName: undefined, oldVersion: string, newVersion: string): undefined;
+function replaceVersion(fileName: string | undefined, oldVersion: string, newVersion: string): string | undefined;
+function replaceVersion(fileName: string | undefined, oldVersion: string, newVersion: string): string | undefined {
     if (fileName === undefined) {
         return undefined; // If the file name is undefined, no version to replace
+    }
+
+    if (oldVersion.length > 0) {
+        return fileName.replaceAll(oldVersion, newVersion);
     }
 
     let regex: RegExp = dottedVersionRegExp;

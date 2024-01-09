@@ -9,6 +9,6 @@
         "dotnet.server.trace": "Trace",
         "dotnet.server.useOmnisharp": false,
         "omnisharp.enableLspDriver": false,
-        "razor.trace": "Verbose"
+        "razor.server.trace": "Trace"
     }
 }
