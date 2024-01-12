@@ -139,6 +139,20 @@ async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformatio
         languageServerDirectory
     );
 
+    const sourceBuildHostDepsJson = path.join(
+        languageServerDirectory,
+        'Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.deps.json'
+    );
+    const targetBuildHostDepsJson = path.join(
+        languageServerDirectory,
+        'BuildHost-netcore',
+        'Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.deps.json'
+    );
+
+    if (fs.existsSync(sourceBuildHostDepsJson) && !fs.existsSync(targetBuildHostDepsJson)) {
+        fs.copyFileSync(sourceBuildHostDepsJson, targetBuildHostDepsJson);
+    }
+
     // Install Roslyn DevKit dependencies.
     const roslynDevKitPackagePath = await acquireRoslynDevKit(packageJSON, false);
     await installNuGetPackage(roslynDevKitPackagePath, 'content', devKitDependenciesDirectory);
