@@ -1,11 +1,13 @@
 ## Known Issues
 
+- In version 2.15.30 only, .NET 6.0 projects fail to load if only the 6.0 SDK is installed [#6801](https://github.com/dotnet/vscode-csharp/issues/6801)
+  - If you are trying to load a project that uses the 6.0 SDK, and you do not have any higher SDKs installed, you might get an error message like "Exception thrown while loading (project name) System.Exception: The server disconnected unexpectedly." In that case, try installing a 7.0 SDK as well, which should mitigate the issue. Other workarounds are available in the bug link if needed.
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - [O# Parity] Nested code code action support for code fixes and refactorings [#5735](https://github.com/dotnet/vscode-csharp/issues/5735)
 - [O# Parity] Nuget restore [#5725](https://github.com/dotnet/vscode-csharp/issues/5725)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-## Latest
+## 2.15.30
 * Update Roslyn to 4.10.0-1.24058.1 (PR: [#6791](https://github.com/dotnet/vscode-csharp/pull/6791))
   * Fix error when a source generated file was present in find references or go to definition requests (PR: [#71395](https://github.com/dotnet/roslyn/pull/71395))
   * Remove usages of incorrectly licensed library (Microsoft.VisualStudio.LanguageServer.Protocol) for serialization of LSP json messages (PR: [#68990](https://github.com/dotnet/roslyn/pull/68990))
