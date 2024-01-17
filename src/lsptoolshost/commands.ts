@@ -103,73 +103,70 @@ async function completionComplexEdit(
     newOffset: number,
     outputChannel: vscode.OutputChannel
 ): Promise<void> {
-    let success = false;
-    const uri = UriConverter.deserialize(uriStr);
-    const editor = vscode.window.visibleTextEditors.find(
-        (editor) => editor.document.uri.path === uri.path || editor.document.uri.fsPath === uri.fsPath
+    const componentName = '[roslyn.client.completionComplexEdit]';
+
+    // Find TextDocument, opening if needed.
+    const document = await vscode.workspace.openTextDocument(uriStr);
+    if (document === undefined) {
+        outputAndThrow(outputChannel, `${componentName} Can't open document with path: '${uriStr}'`);
+    }
+
+    // Use editor if we need to deal with selection or snippets.
+    let editor: vscode.TextEditor | undefined = undefined;
+    if (isSnippetString || newOffset >= 0) {
+        editor = await vscode.window.showTextDocument(document);
+        if (editor == undefined) {
+            outputAndThrow(outputChannel, `${componentName} Editor unavailable for document with path: '${uriStr}'`);
+        }
+    }
+
+    const newRange = document.validateRange(
+        new vscode.Range(
+            textEdit.range.start.line,
+            textEdit.range.start.character,
+            textEdit.range.end.line,
+            textEdit.range.end.character
+        )
     );
 
-    if (editor !== undefined) {
-        const newRange = editor.document.validateRange(
-            new vscode.Range(
-                textEdit.range.start.line,
-                textEdit.range.start.character,
-                textEdit.range.end.line,
-                textEdit.range.end.character
-            )
-        );
+    // HACK:
+    // ApplyEdit would fail the first time it's called when an item was committed with text modifying commit char (e.g. space, '(', etc.)
+    // so we retry a couple time here as a tempory workaround. We need to either figure our the reason of the failure, and/or try the
+    // approach of sending another edit request to server with updated document.
+    let success = false;
+    for (let i = 0; i < 3; i++) {
+        if (isSnippetString) {
+            editor!.selection = new vscode.Selection(newRange.start, newRange.end);
+            success = await editor!.insertSnippet(new vscode.SnippetString(textEdit.newText));
+        } else {
+            const edit = new vscode.WorkspaceEdit();
+            const newTextEdit = vscode.TextEdit.replace(newRange, textEdit.newText);
+            edit.set(document.uri, [newTextEdit]);
+            success = await vscode.workspace.applyEdit(edit);
 
-        // HACK:
-        // ApplyEdit would fail the first time it's called when an item was committed with text modifying commit char (e.g. space, '(', etc.)
-        // so we retry a couple time here as a tempory workaround. We need to either figure our the reason of the failure, and/or try the
-        // approach of sending another edit request to server with updated document.
-        for (let i = 0; i < 3; i++) {
-            if (isSnippetString) {
-                editor.selection = new vscode.Selection(newRange.start, newRange.end);
-                success = await editor.insertSnippet(new vscode.SnippetString(textEdit.newText));
-            } else {
-                const edit = new vscode.WorkspaceEdit();
-                const newTextEdit = vscode.TextEdit.replace(newRange, textEdit.newText);
-                edit.set(editor.document.uri, [newTextEdit]);
-                success = await vscode.workspace.applyEdit(edit);
-
-                if (success && newOffset >= 0) {
-                    const newPosition = editor.document.positionAt(newOffset);
-                    editor.selections = [new vscode.Selection(newPosition, newPosition)];
-                }
+            if (success && newOffset >= 0) {
+                const newPosition = document.positionAt(newOffset);
+                editor!.selections = [new vscode.Selection(newPosition, newPosition)];
             }
+        }
 
-            if (success) {
-                break;
-            }
+        if (success) {
+            return;
         }
     }
 
     if (!success) {
-        const componentName = '[roslyn.client.completionComplexEdit]';
-        const errorMessage = 'Failed to make a complex text edit for completion.';
-        outputChannel.show();
-        outputChannel.appendLine(`${componentName} ${errorMessage}`);
-
-        if (editor === undefined) {
-            outputChannel.appendLine(
-                `${componentName} Can't find visible document with uri.fsPath: '${uri.fsPath}' and uri.path: '${uri.path}'`
-            );
-
-            outputChannel.appendLine(`${componentName} URIs of all visible documents:`);
-            for (const visibleEditor of vscode.window.visibleTextEditors) {
-                outputChannel.appendLine(
-                    `${componentName} - uri.fsPath: '${visibleEditor.document.uri.fsPath}' and uri.path: '${visibleEditor.document.uri.path}'`
-                );
-            }
-        } else {
-            outputChannel.appendLine(
-                `${componentName} ${isSnippetString ? 'TextEditor.insertSnippet' : 'workspace.applyEdit'} failed.`
-            );
-        }
-
-        throw new Error(`${componentName} ${errorMessage}`);
+        outputAndThrow(
+            outputChannel,
+            `${componentName} ${isSnippetString ? 'TextEditor.insertSnippet' : 'workspace.applyEdit'} failed.`
+        );
     }
+}
+
+function outputAndThrow(outputChannel: vscode.OutputChannel, message: string): void {
+    outputChannel.show();
+    outputChannel.appendLine(message);
+    throw new Error(message);
 }
 
 async function openSolution(languageServer: RoslynLanguageServer): Promise<vscode.Uri | undefined> {
