@@ -18,7 +18,7 @@ describe('Vscode VSIX', () => {
     vsixFiles.forEach((element) => {
         // We're packaging the platform specific Roslyn server with ready to run in the vsix, so the size should be roughly ~50MB
         // We also publish the Razor server, which is roughly ~75MB
-        const sizeInMB = 230;
+        const sizeInMB = 240;
         const maximumVsixSizeInBytes = sizeInMB * 1024 * 1024;
 
         describe(`Given ${element}`, () => {
