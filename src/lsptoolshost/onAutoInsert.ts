@@ -40,7 +40,15 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
 
             source.cancel();
             source = new vscode.CancellationTokenSource();
-            await applyAutoInsertEdit(e, changeTrimmed, languageServer, source.token);
+            try {
+                await applyAutoInsertEdit(e, changeTrimmed, languageServer, source.token);
+            } catch (e) {
+                if (e instanceof vscode.CancellationError) {
+                    return;
+                }
+
+                throw e;
+            }
         }
     });
 }
