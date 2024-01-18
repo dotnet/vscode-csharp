@@ -32,7 +32,7 @@ export function registerCommands(
         vscode.commands.registerCommand(
             'roslyn.client.completionComplexEdit',
             async (uriStr, textEdit, isSnippetString, newOffset) =>
-                completionComplexEdit(uriStr, textEdit, isSnippetString, newOffset, outputChannel)
+                completionComplexEdit(uriStr, textEdit, isSnippetString, newOffset)
         )
     );
     context.subscriptions.push(
@@ -100,23 +100,22 @@ async function completionComplexEdit(
     uriStr: string,
     textEdit: vscode.TextEdit,
     isSnippetString: boolean,
-    newOffset: number,
-    outputChannel: vscode.OutputChannel
+    newOffset: number
 ): Promise<void> {
     const componentName = '[roslyn.client.completionComplexEdit]';
 
     // Find TextDocument, opening if needed.
     const document = await vscode.workspace.openTextDocument(uriStr);
     if (document === undefined) {
-        outputAndThrow(outputChannel, `${componentName} Can't open document with path: '${uriStr}'`);
+        throw new Error(`${componentName} Can't open document with path: '${uriStr}'`);
     }
 
     // Use editor if we need to deal with selection or snippets.
     let editor: vscode.TextEditor | undefined = undefined;
     if (isSnippetString || newOffset >= 0) {
         editor = await vscode.window.showTextDocument(document);
-        if (editor == undefined) {
-            outputAndThrow(outputChannel, `${componentName} Editor unavailable for document with path: '${uriStr}'`);
+        if (editor === undefined) {
+            throw new Error(`${componentName} Editor unavailable for document with path: '${uriStr}'`);
         }
     }
 
@@ -156,17 +155,10 @@ async function completionComplexEdit(
     }
 
     if (!success) {
-        outputAndThrow(
-            outputChannel,
+        throw new Error(
             `${componentName} ${isSnippetString ? 'TextEditor.insertSnippet' : 'workspace.applyEdit'} failed.`
         );
     }
-}
-
-function outputAndThrow(outputChannel: vscode.OutputChannel, message: string): void {
-    outputChannel.show();
-    outputChannel.appendLine(message);
-    throw new Error(message);
 }
 
 async function openSolution(languageServer: RoslynLanguageServer): Promise<vscode.Uri | undefined> {
