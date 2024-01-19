@@ -6,10 +6,11 @@
   - [Setting Up Local Language Servers](#setting-up-local-language-servers)
     - [Roslyn](#roslyn)
     - [Razor](#razor)
-  - [Debugging Local Language Servers](#debugging-local-language-servers)
+  - [Configuring Local Language Servers](#configuring-local-language-servers)
     - [Roslyn](#roslyn-1)
     - [Razor](#razor-1)
-  - [Creating VSIX Packages for the Extension](#creating-vsix-packages-for-the-extension)
+  - [Debugging Local Language Servers](#debugging-local-language-servers)
+- [Creating VSIX Packages for the Extension](#creating-vsix-packages-for-the-extension)
 - [Updating the `Roslyn` Language Server Version](#updating-the-roslyn-language-server-version)
 
 ## Setting Up Local Development Environment
@@ -83,26 +84,60 @@ After building, you can find the server DLL in the build output directory. The t
 
 Similar to Roslyn, after building, the server DLL will be in the build output directory. The typical location is `$razorRepoRoot/artifacts/bin/rzls/Debug/net8.0`, but this may vary based on the built configuration.
 
-### Debugging Local Language Servers
+### Configuring Local Language Servers
 
-This section provides instructions on how to debug locally developed Roslyn and Razor language servers.
+This section provides instructions on how to debug locally developed Roslyn and Razor language servers. You can do this by either directly editing the `settings.json` file or through the VSCode settings interface.
 
 #### Roslyn
 
-1. Open the VSCode settings by using the shortcut `Ctrl+,`.
-2. Enter `dotnet server` in the search box to display Roslyn-related settings.
-3. Update the `dotnet.server.path` setting to the path of the Roslyn DLL you built earlier, then restart the language server.
-4. If you need to debug the server, enable the `dotnet.server.waitForDebugger` setting. This action triggers a `Debugger.Launch()` on the server side when it starts.
+1. Navigate to `C:\Users\YourUsername\AppData\Roaming\Code\User\settings.json` and add the following lines:
+
+```json
+"dotnet.server.waitForDebugger": true,
+"dotnet.server.path": "$roslynRepoRoot\\artifacts\\bin\\Microsoft.CodeAnalysis.LanguageServer\\Debug\\net8.0\\Microsoft.CodeAnalysis.LanguageServer.dll"
+```
+
+Replace `$roslynRepoRoot` and `YourUsername` with your actual values.
+
+Or, in VSCode settings (`Ctrl+,`):
+
+1. Search for `dotnet server`.
+2. Set `dotnet.server.path` to the path of your Roslyn DLL.
+3. Enable `dotnet.server.waitForDebugger`.
 
 #### Razor
 
-1. Open the VSCode settings by using the shortcut `Ctrl+,`.
-2. Enter `Razor` in the search box to display Razor-related settings.
-3. Update the `razor.languageServer.directory` setting to the path of the Razor DLL you built earlier, then restart the language server.
-4. If you need to debug the server, enable the `razor.languageServer.debug` setting. This action triggers a `Debugger.Launch()` on the server side when it starts.
-5. For more detailed log messages in the output window, set `razor.server.trace` to `Debug`.
+1. Navigate to `C:\Users\YourUsername\AppData\Roaming\Code\User\settings.json` and add the following lines:
 
-### Creating VSIX Packages for the Extension
+```json
+"razor.languageServer.debug": true,
+"razor.languageServer.directory": "$razorRepoRoot\\artifacts\\bin\\rzls\\Debug\\net8.0",
+"razor.server.trace": "Debug"
+```
+
+Replace `$razorRepoRoot` and `YourUsername` with your actual values.
+
+Or, in VSCode settings (`Ctrl+,`):
+
+1. Search for `Razor`.
+2. Set `razor.languageServer.directory` to the path of your Razor DLL.
+3. Enable `razor.languageServer.debug`.
+4. Set `razor.server.trace` to `Debug`. This gives you more detailed log messages in the output window.
+
+#### Running Language Servers
+
+You need to follow steps in section [Configuring Local Language Servers](#configuring-local-language-servers) to configure either Roslyn or Razor language servers for debugging first.
+
+Once those steps are complete, then
+
+1. Make sure the language server is fulling built in Debug mode.
+2. Preferably open the `.sln` solution file for that language server in a VS instance and set it aside for now. (you will be selecting it in step 5 shortly).
+3. `Ctrl+Shift+P` then hit `Reload Window` to make sure these changes take effect.
+4. A window immediately pops up prompting you to select or open a VS instance. Ignore this and hit `Cancel`. (This makes sure you don't end up accidentally trying to debug the repo root of vscode-csharp instead. Remember, You only want to debug the child VS code instance that opens up after hitting `F5`.)
+5. Hit `Ctrl+Shift+D` and hit `F5` to launch extension. The window from step 4 pops up again, asking you to select or open a VS instance. Select the VS instance you opened in step 2.
+6. The language server should now triggers a breakpoint on `Debugger.Launch()` when it starts.
+
+## Creating VSIX Packages for the Extension
 
 To package this extension, we need to create VSIX Packages. The VSIX packages can be created using the gulp command `gulp vsix:release:package`. This will create all the platform specific VSIXs that you can then install manually in VSCode.
 
