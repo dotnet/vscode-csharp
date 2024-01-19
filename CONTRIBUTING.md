@@ -126,16 +126,16 @@ Or, in VSCode settings (`Ctrl+,`):
 
 #### Running Language Servers
 
-You need to follow steps in section [Configuring Local Language Servers](#configuring-local-language-servers) to configure either Roslyn or Razor language servers for debugging first.
+Before running the language servers, ensure you have followed the steps in the [Configuring Local Language Servers](#configuring-local-language-servers) section to configure either the Roslyn or Razor language servers for debugging.
 
-Once those steps are complete, then
+After completing the configuration, follow these steps:
 
-1. Make sure the language server is fulling built in Debug mode.
-2. Preferably open the `.sln` solution file for that language server in a VS instance and set it aside for now. (you will be selecting it in step 5 shortly).
-3. `Ctrl+Shift+P` then hit `Reload Window` to make sure these changes take effect.
-4. A window immediately pops up prompting you to select or open a VS instance. Ignore this and hit `Cancel`. (This makes sure you don't end up accidentally trying to debug the repo root of vscode-csharp instead. Remember, You only want to debug the child VS code instance that opens up after hitting `F5`.)
-5. Hit `Ctrl+Shift+D` and hit `F5` to launch extension. The window from step 4 pops up again, asking you to select or open a VS instance. Select the VS instance you opened in step 2.
-6. The language server should now triggers a breakpoint on `Debugger.Launch()` when it starts.
+1. Ensure the language server is fully built in Debug mode.
+2. Open the `.sln` solution file for the language server in a Visual Studio instance. Keep this instance open for use in a later step.
+3. Press `Ctrl+Shift+P` and select `Reload Window`. This ensures the changes from the configuration step are applied.
+4. After reloading, a window will pop up prompting you to select or open a Visual Studio instance. Click `Cancel` at this stage. This is because we want to debug the child VS Code instance that will open after the next step, not the current instance.
+5. Press `Ctrl+Shift+D` and then `F5` to launch the extension. The window from step 4 will appear again, prompting you to select or open a Visual Studio instance. Now, select the instance you opened in step 2.
+6. The language server will now trigger a breakpoint on `Debugger.Launch()` when it starts.
 
 ## Creating VSIX Packages for the Extension
 
