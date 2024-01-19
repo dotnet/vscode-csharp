@@ -68,25 +68,25 @@ To run tests:
 
 ### Setting Up Local Language Servers
 
-This section provides a step-by-step guide on setting up locally developed Razor or Roslyn language servers for debugging. This setup is beneficial when troubleshooting the behavior of these language servers with the VSCode C# extension.
+This section shows how to set up local Razor or Roslyn language servers for debugging with the VSCode C# extension.
 
 #### Roslyn
 
-1. Clone the [Roslyn repository](https://github.com/dotnet/roslyn) locally. This repository contains the Roslyn server implementation.
+1. Clone the [Roslyn repository](https://github.com/dotnet/roslyn). This repository contains the Roslyn server implementation.
 2. Follow the build instructions provided in the repository.
 
-After building, you can find the server DLL in the build output directory. The typical location is `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net8.0/Microsoft.CodeAnalysis.LanguageServer.dll`, but this may vary based on the built configuration.
+The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net8.0/Microsoft.CodeAnalysis.LanguageServer.dll`, but this may vary based on the built configuration.
 
 #### Razor
 
-1. Clone the [Razor repository](https://github.com/dotnet/razor) locally. This repository contains the Razor server implementation.
+1. Clone the [Razor repository](https://github.com/dotnet/razor). This repository contains the Razor server implementation.
 2. Follow the build instructions provided in the repository.
 
-Similar to Roslyn, after building, the server DLL will be in the build output directory. The typical location is `$razorRepoRoot/artifacts/bin/rzls/Debug/net8.0`, but this may vary based on the built configuration.
+The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net8.0`.
 
 ### Configuring Local Language Servers
 
-This section provides instructions on how to debug locally developed Roslyn and Razor language servers. You can do this by either directly editing the `settings.json` file or through the VSCode settings interface.
+This section provides instructions on how to debug locally built Roslyn and Razor language servers. You can do this by either directly editing the `settings.json` file or through the VSCode settings interface.
 
 #### Roslyn
 
@@ -94,7 +94,7 @@ This section provides instructions on how to debug locally developed Roslyn and 
 
 ```json
 "dotnet.server.waitForDebugger": true,
-"dotnet.server.path": "$roslynRepoRoot\\artifacts\\bin\\Microsoft.CodeAnalysis.LanguageServer\\Debug\\net8.0\\Microsoft.CodeAnalysis.LanguageServer.dll"
+"dotnet.server.path": "$roslynRepoRoot\\artifacts\\bin\\Microsoft.CodeAnalysis.LanguageServer\\Debug\\net7.0\\Microsoft.CodeAnalysis.LanguageServer.dll"
 ```
 
 Replace `$roslynRepoRoot` and `YourUsername` with your actual values.
@@ -124,7 +124,7 @@ Or, in VSCode settings (`Ctrl+,`):
 3. Enable `razor.languageServer.debug`.
 4. Set `razor.server.trace` to `Debug`. This gives you more detailed log messages in the output window.
 
-#### Running Language Servers
+### Debugging Local Language Servers
 
 Before running the language servers, ensure you have followed the steps in the [Configuring Local Language Servers](#configuring-local-language-servers) section to configure either the Roslyn or Razor language servers for debugging.
 
