@@ -115,7 +115,7 @@ async function completionComplexEdit(
     let editor: vscode.TextEditor | undefined = undefined;
     if (isSnippetString || newOffset >= 0) {
         editor = await vscode.window.showTextDocument(document);
-        if (editor == undefined) {
+        if (editor === undefined) {
             outputAndThrow(outputChannel, `${componentName} Editor unavailable for document with path: '${uriStr}'`);
         }
     }
