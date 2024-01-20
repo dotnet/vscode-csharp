@@ -7,8 +7,9 @@
     - [Roslyn](#roslyn)
     - [Razor](#razor)
   - [Configuring Local Language Servers](#configuring-local-language-servers)
-    - [Roslyn](#roslyn-1)
-    - [Razor](#razor-1)
+    - [Finding the `settings.json` file for your workspace](#finding-the-settingsjson-file-for-your-workspace)
+    - [Configuring Roslyn Language Server](#configuring-roslyn-language-server)
+    - [Configuring Razor Language Server](#configuring-razor-language-server)
   - [Debugging Local Language Servers](#debugging-local-language-servers)
 - [Creating VSIX Packages for the Extension](#creating-vsix-packages-for-the-extension)
 - [Updating the `Roslyn` Language Server Version](#updating-the-roslyn-language-server-version)
@@ -77,18 +78,25 @@ The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net8.0`.
 
 ### Configuring Local Language Servers
 
-This section provides instructions on how to debug locally built Roslyn and Razor language servers. You can do this by either directly editing the `settings.json` file or through the VSCode settings interface.
+This section provides instructions on how to debug locally built Roslyn and Razor language servers. You can do this by either directly editing the `settings.json` file of your workspace or through the VSCode settings interface.
 
-#### Roslyn
+#### Finding the `settings.json` file for your workspace
+- Open the Command Palette with `Ctrl+Shift+P`
+- Type "Preferences: Open Workspace Settings"
+- Select the option that appears.
+- In the Workspace Settings tab, in the upper right corner, you'll see an icon that looks like a document with an arrow, which is the "Open Settings (JSON)" button.
+- Click on this button to open the `settings.json` file.
 
-1. Navigate to `C:\Users\YourUsername\AppData\Roaming\Code\User\settings.json` and add the following lines:
+#### Configuring Roslyn Language Server
+
+In your workspace `settings.json` file, add the following lines:
 
 ```json
 "dotnet.server.waitForDebugger": true,
 "dotnet.server.path": "$roslynRepoRoot\\artifacts\\bin\\Microsoft.CodeAnalysis.LanguageServer\\Debug\\net7.0\\Microsoft.CodeAnalysis.LanguageServer.dll"
 ```
 
-Replace `$roslynRepoRoot` and `YourUsername` with your actual values.
+Replace `$roslynRepoRoot` with your actual values.
 
 Or, in VSCode settings (`Ctrl+,`):
 
@@ -96,9 +104,9 @@ Or, in VSCode settings (`Ctrl+,`):
 2. Set `dotnet.server.path` to the path of your Roslyn DLL.
 3. Enable `dotnet.server.waitForDebugger`.
 
-#### Razor
+#### Configuring Razor Language Server
 
-1. Navigate to `C:\Users\YourUsername\AppData\Roaming\Code\User\settings.json` and add the following lines:
+In your workspace settings.json file, add the following lines:
 
 ```json
 "razor.languageServer.debug": true,
@@ -106,7 +114,7 @@ Or, in VSCode settings (`Ctrl+,`):
 "razor.server.trace": "Debug"
 ```
 
-Replace `$razorRepoRoot` and `YourUsername` with your actual values.
+Replace `$razorRepoRoot` with your actual values.
 
 Or, in VSCode settings (`Ctrl+,`):
 
