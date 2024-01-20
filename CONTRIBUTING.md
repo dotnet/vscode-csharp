@@ -25,20 +25,7 @@ Before you start, make sure you have the following software installed on your ma
 * Npm (The version shipped with node is fine)
 * .NET 7.0 SDK (dotnet should be on your path)
 
-Once you have these installed, you can proceed to clone the vscode-csharp repository:
-
-```bash
-git clone https://github.com/your-username/vscode-csharp.git
-cd vscode-csharp
-```
-
-Next, install the necessary npm packages:
-
-```bash
-npm install
-```
-
-Now, you're ready to start building, running, and testing the repository.
+Once you have these installed, you can navigate to the cloned vscode-csharp repository to proceed with building, running, and testing the repository.
 
 ### Building, Running, and Testing the Repository
 
@@ -50,21 +37,25 @@ Follow these steps to build, run, and test the repository:
 2. Run `npm i -g gulp` - This command installs Gulp globally.
 3. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
 4. Run `code .` - This command opens the project in Visual Studio Code.
-5. Run `npm run watch` (Optional) - This command watches for code changes.
 
 #### Running
 
 After completing the build steps:
 
-1. Press <kbd>Ctrl+Shift+D</kbd> to open the Run view in VS Code and ensure `Launch Extension` is selected.
-2. Start debugging by pressing <kbd>F5</kbd>.
+1. Run `npm run watch` (Optional) - This command watches for code changes.
+2. Press <kbd>Ctrl+Shift+D</kbd> to open the Run view in VS Code and ensure `Launch Extension` is selected.
+3. Start debugging by pressing <kbd>F5</kbd>.
 
 #### Testing
 
 To run tests:
 
 1. Execute `npm run test` or press <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration selected.
-2. For integration tests, select `Razor Integration Tests` and press <kbd>F5</kbd> to start debugging.
+2. For integration tests, select either of the two 'current file' integration tests (one for roslyn and one for razor), from the drop-down and press <kbd>F5</kbd> to start debugging:
+- For Roslyn Server: `Launch Current File slnWithCsproj Integration Tests`
+- For Razor Server:  `Launch Current File BasicRazorApp2_1 Integration Tests`
+
+These will allow you to actually debug the test, but the 'Razor integration tests' configuration does not.
 
 ### Setting Up Local Language Servers
 
@@ -130,12 +121,14 @@ Before running the language servers, ensure you have followed the steps in the [
 
 After completing the configuration, follow these steps:
 
-1. Ensure the language server is fully built in Debug mode.
-2. Open the `.sln` solution file for the language server in a Visual Studio instance. Keep this instance open for use in a later step.
-3. Press `Ctrl+Shift+P` and select `Reload Window`. This ensures the changes from the configuration step are applied.
-4. After reloading, a window will pop up prompting you to select or open a Visual Studio instance. Click `Cancel` at this stage. This is because we want to debug the child VS Code instance that will open after the next step, not the current instance.
-5. Press `Ctrl+Shift+D` and then `F5` to launch the extension. The window from step 4 will appear again, prompting you to select or open a Visual Studio instance. Now, select the instance you opened in step 2.
-6. The language server will now trigger a breakpoint on `Debugger.Launch()` when it starts.
+1. Press `Ctrl+Shift+D` and then `F5` to launch the extension. This will open a new VS Code instance.
+2. In the new VS Code instance, open the project or solution you want to debug.
+3. Set the workspace settings to have the debug or the path to the server.
+4. Ensure the language server is fully built in Debug mode.
+5. Meanwhile in a Visual Studio instance open the `.sln` solution file for the language server you want to debug. Keep this instance open for use in a later step.
+6. Back on VS Code, press `Ctrl+Shift+P` and select `Reload Window`. This ensures the changes from the configuration step are applied.
+7. After reloading, a window will pop up prompting you to select or open a Visual Studio instance. Now, select the instance you opened in step 5.
+8. The language server will now trigger a breakpoint on `Debugger.Launch()` when it starts.
 
 ## Creating VSIX Packages for the Extension
 
