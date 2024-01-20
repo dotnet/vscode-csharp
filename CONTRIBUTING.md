@@ -6,11 +6,11 @@
   - [Setting Up Local Language Servers](#setting-up-local-language-servers)
     - [Roslyn](#roslyn)
     - [Razor](#razor)
+  - [Debugging Local Language Servers](#debugging-local-language-servers)
   - [Configuring Local Language Servers](#configuring-local-language-servers)
     - [Finding the `settings.json` file for your workspace](#finding-the-settingsjson-file-for-your-workspace)
     - [Configuring Roslyn Language Server](#configuring-roslyn-language-server)
     - [Configuring Razor Language Server](#configuring-razor-language-server)
-  - [Debugging Local Language Servers](#debugging-local-language-servers)
 - [Creating VSIX Packages for the Extension](#creating-vsix-packages-for-the-extension)
 - [Updating the `Roslyn` Language Server Version](#updating-the-roslyn-language-server-version)
 
@@ -76,6 +76,23 @@ The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnal
 
 The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net8.0`.
 
+### Debugging Local Language Servers
+
+Before running the language servers, familiarize yourself with the steps in the [Configuring Local Language Servers](#configuring-local-language-servers) section to configure either the Roslyn or Razor language servers for debugging .
+
+**Note**: You would only need to configure this for the workspace you wish to debug, NOT for the repo root of vscode-csharp repo.
+
+Follow these steps to enable debugging:
+
+1. Press `Ctrl+Shift+D` and then `F5` to launch the extension. This will open a new VS Code instance for `vscode-csharp` repo.
+2. In the new VS Code instance, open the project or solution you want to debug.
+3. Follow instructions in [Configuring Local Language Servers](#configuring-local-language-servers) to find and configure the workspace settings for the language server you want to debug.
+4. Ensure the language server is fully built in Debug mode.
+5. Meanwhile in a Visual Studio instance open the `.sln` solution file for the language server you want to debug. Keep this instance open for use in a later step.
+6. Back on VS Code, press `Ctrl+Shift+P` and select `Reload Window`. This ensures the changes made in step 3 are applied.
+7. After reloading, a window will pop up prompting you to select or open a Visual Studio instance. Now, select the instance you opened in step 5.
+8. The language server will now trigger a breakpoint on `Debugger.Launch()` when it starts.
+
 ### Configuring Local Language Servers
 
 This section provides instructions on how to debug locally built Roslyn and Razor language servers. You can do this by either directly editing the `settings.json` file of your workspace or through the VSCode settings interface.
@@ -122,21 +139,6 @@ Or, in VSCode settings (`Ctrl+,`):
 2. Set `razor.languageServer.directory` to the path of your Razor DLL.
 3. Enable `razor.languageServer.debug`.
 4. Set `razor.server.trace` to `Debug`. This gives you more detailed log messages in the output window.
-
-### Debugging Local Language Servers
-
-Before running the language servers, ensure you have followed the steps in the [Configuring Local Language Servers](#configuring-local-language-servers) section to configure either the Roslyn or Razor language servers for debugging.
-
-After completing the configuration, follow these steps:
-
-1. Press `Ctrl+Shift+D` and then `F5` to launch the extension. This will open a new VS Code instance for `vscode-csharp` repo.
-2. In the new VS Code instance, open the project or solution you want to debug.
-3. Follow instructions in [Finding the `settings.json` file for your workspace](#finding-the-settingsjson-file-for-your-workspace) to find and set the workspace settings for the language server you want to debug.
-4. Ensure the language server is fully built in Debug mode.
-5. Meanwhile in a Visual Studio instance open the `.sln` solution file for the language server you want to debug. Keep this instance open for use in a later step.
-6. Back on VS Code, press `Ctrl+Shift+P` and select `Reload Window`. This ensures the changes made in step 3 are applied.
-7. After reloading, a window will pop up prompting you to select or open a Visual Studio instance. Now, select the instance you opened in step 5.
-8. The language server will now trigger a breakpoint on `Debugger.Launch()` when it starts.
 
 ## Creating VSIX Packages for the Extension
 
