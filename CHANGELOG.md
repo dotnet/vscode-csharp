@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Update Roslyn to 4.10.0-1.24066.17 (PR: [#6816](https://github.com/dotnet/vscode-csharp/pull/6816))
+* Update Roslyn to 4.10.0-1.24069.13 (PR: [#6823](https://github.com/dotnet/vscode-csharp/pull/6823))
+  * Fix request metric logging (PR: [#71734](https://github.com/dotnet/roslyn/pull/71734))
   * Fix issue loading .NET 6.0 projects when only the 6.0 SDK is installed (PR: [#71597](https://github.com/dotnet/roslyn/pull/71597))
 
 ## 2.15.30
