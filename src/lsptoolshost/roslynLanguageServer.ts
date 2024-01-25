@@ -823,7 +823,7 @@ export class RoslynLanguageServer {
             '.roslynDevKit',
             'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
         );
-        args.push('--extension', devKitDepsPath);
+        args.push('--devKitDependencyPath', devKitDepsPath);
 
         args.push('--sessionId', getSessionId());
         return args;
