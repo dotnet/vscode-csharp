@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn to run on .NET 8 (PR: [#6840](https://github.com/dotnet/vscode-csharp/pull/6840))
+
+## 2.17.7
 * Update Roslyn to 4.10.0-2.24102.11 (PR: [#6847](https://github.com/dotnet/vscode-csharp/pull/6847))
   * Fix another issue loading .NET projects when only the 6.0 SDK is installed (PR: [#71881](https://github.com/dotnet/roslyn/pull/71881))
   * Fix request info leak when project loading is cancelled (PR: [#71737](https://github.com/dotnet/roslyn/pull/71737))
