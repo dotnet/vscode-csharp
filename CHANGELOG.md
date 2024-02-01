@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Update Razor to 7.0.0-preview.24079.3 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Razor to 7.0.0-preview.24079.3 (PR: [#6841](https://github.com/dotnet/vscode-csharp/pull/6841))
   * Fix an issue with component hover not showing enough information (PR: [dotnet/razor#9862](https://github.com/dotnet/razor/pull/9862))
 * Update Roslyn to 4.10.0-2.24081.2 (PR: [#6831](https://github.com/dotnet/vscode-csharp/pull/6831))
   * Load Roslyn DevKit assemblies into the default ALC (PR: [#71807](https://github.com/dotnet/roslyn/pull/71807))
