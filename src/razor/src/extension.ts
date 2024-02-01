@@ -90,20 +90,11 @@ export async function activate(
         );
 
         const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();
-        const dotnetRuntimePath = path.dirname(dotnetInfo.path);
-
-        // Take care to always run .NET processes on the runtime that we intend.
-        // The dotnet.exe we point to should not go looking for other runtimes.
-        const env: NodeJS.ProcessEnv = { ...process.env };
-        env.DOTNET_ROOT = dotnetRuntimePath;
-        env.DOTNET_MULTILEVEL_LOOKUP = '0';
-        // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
-        env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
 
         let telemetryExtensionDllPath = '';
         // Set up DevKit environment for telemetry
         if (csharpDevkitExtension) {
-            await setupDevKitEnvironment(env, csharpDevkitExtension, logger);
+            await setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, logger);
 
             const telemetryExtensionPath = path.join(
                 util.getExtensionPath(),
@@ -121,7 +112,7 @@ export async function activate(
             razorTelemetryReporter,
             vscodeTelemetryReporter,
             telemetryExtensionDllPath,
-            env,
+            dotnetInfo.env,
             dotnetInfo.path,
             logger
         );

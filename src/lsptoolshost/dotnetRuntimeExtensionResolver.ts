@@ -9,7 +9,7 @@ import * as semver from 'semver';
 import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { PlatformInformation } from '../shared/platform';
-import { commonOptions } from '../shared/options';
+import { commonOptions, languageServerOptions } from '../shared/options';
 import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
@@ -65,6 +65,25 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         const dotnetExecutablePath = path.join(dotnetRuntimePath, dotnetExecutableName);
         if (!existsSync(dotnetExecutablePath)) {
             throw new Error(`Cannot find dotnet path '${dotnetExecutablePath}'`);
+        }
+
+        // Take care to always run .NET processes on the runtime that we intend.
+        // The dotnet.exe we point to should not go looking for other runtimes.
+        const env: NodeJS.ProcessEnv = { ...process.env };
+        env.DOTNET_ROOT = path.dirname(dotnetExecutablePath);
+        env.DOTNET_MULTILEVEL_LOOKUP = '0';
+        // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
+        env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
+
+        if (languageServerOptions.crashDumpPath) {
+            // Enable dump collection
+            env.DOTNET_DbgEnableMiniDump = '1';
+            // Collect heap dump
+            env.DOTNET_DbgMiniDumpType = '2';
+            // Collect crashreport.json with additional thread and stack frame information.
+            env.DOTNET_EnableCrashReport = '1';
+            // The dump file name format is <executable>.<pid>.dmp
+            env.DOTNET_DbgMiniDumpName = path.join(languageServerOptions.crashDumpPath, '%e.%p.dmp');
         }
 
         return {

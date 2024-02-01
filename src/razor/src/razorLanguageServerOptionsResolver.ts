@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscodeAdapter from './vscodeAdapter';
-import * as vscode from 'vscode';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { RazorLogger } from './razorLogger';
 import { LogLevel } from './logLevel';
@@ -35,23 +34,17 @@ export function resolveRazorLanguageServerOptions(
 }
 
 function findLanguageServerExecutable(withinDir: string) {
-    const extension = isWindows() ? '.exe' : '';
-    const executablePath = path.join(withinDir, `rzls${extension}`);
+    const isSelfContained = fs.existsSync(path.join(withinDir, 'coreclr.dll'));
     let fullPath = '';
-
-    if (fs.existsSync(executablePath)) {
-        fullPath = executablePath;
+    if (isSelfContained) {
+        const fileName = isWindows() ? 'rzls.exe' : 'rzls';
+        fullPath = path.join(withinDir, fileName);
     } else {
-        // Exe doesn't exist.
-        const dllPath = path.join(withinDir, 'rzls.dll');
+        fullPath = path.join(withinDir, 'rzls.dll');
+    }
 
-        if (!fs.existsSync(dllPath)) {
-            throw new Error(
-                vscode.l10n.t("Could not find Razor Language Server executable within directory '{0}'", withinDir)
-            );
-        }
-
-        fullPath = dllPath;
+    if (!fs.existsSync(fullPath)) {
+        throw new Error(`Could not find Razor Language Server executable within directory '${withinDir}'`);
     }
 
     return fullPath;
