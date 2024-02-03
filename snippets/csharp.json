@@ -347,12 +347,26 @@
         ],
         "description": "An automatically implemented property with a 'get' accessor and a private 'set' accessor. C# 3.0 or higher"
     },
+    "propi": {
+        "prefix": "propi",
+        "body": [
+            "public ${1:int} ${2:MyProperty} { get; private init; }$0"
+        ],
+        "description": "An automatically implemented property with a 'get' accessor and a private 'init' accessor. C# 9.0 or higher"
+    },
     "prop": {
         "prefix": "prop",
         "body": [
             "public ${1:int} ${2:MyProperty} { get; set; }$0"
         ],
         "description": "An automatically implemented property. C# 3.0 or higher"
+    },
+    "iprop": {
+        "prefix": "iprop",
+        "body": [
+            "public ${1:int} ${2:MyProperty} { get; init; }$0"
+        ],
+        "description": "An automatically implemented immutable property. C# 9.0 or higher"
     },
     "sim": {
         "prefix": "sim",
