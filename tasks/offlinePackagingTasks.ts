@@ -47,8 +47,12 @@ export const platformSpecificPackages: VSIXPlatformInfo[] = [
     { vsceTarget: 'win32-arm64', rid: 'win-arm64', platformInfo: new PlatformInformation('win32', 'arm64') },
     { vsceTarget: 'linux-x64', rid: 'linux-x64', platformInfo: new PlatformInformation('linux', 'x86_64') },
     { vsceTarget: 'linux-arm64', rid: 'linux-arm64', platformInfo: new PlatformInformation('linux', 'arm64') },
-    { vsceTarget: 'alpine-x64', rid: 'alpine-x64', platformInfo: new PlatformInformation('linux-musl', 'x86_64') },
-    { vsceTarget: 'alpine-arm64', rid: 'alpine-arm64', platformInfo: new PlatformInformation('linux-musl', 'arm64') },
+    { vsceTarget: 'alpine-x64', rid: 'linux-musl-x64', platformInfo: new PlatformInformation('linux-musl', 'x86_64') },
+    {
+        vsceTarget: 'alpine-arm64',
+        rid: 'linux-musl-arm64',
+        platformInfo: new PlatformInformation('linux-musl', 'arm64'),
+    },
     { vsceTarget: 'darwin-x64', rid: 'osx-x64', platformInfo: new PlatformInformation('darwin', 'x86_64') },
     { vsceTarget: 'darwin-arm64', rid: 'osx-arm64', platformInfo: new PlatformInformation('darwin', 'arm64') },
 ];

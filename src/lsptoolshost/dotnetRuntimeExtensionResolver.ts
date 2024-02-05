@@ -16,7 +16,7 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { readFile } from 'fs/promises';
 import { RuntimeInfo } from '../shared/utils/dotnetInfo';
 
-export const DotNetRuntimeVersion = '7.0';
+export const DotNetRuntimeVersion = '8.0';
 
 interface IDotnetAcquireResult {
     dotnetPath: string;
@@ -26,7 +26,6 @@ interface IDotnetAcquireResult {
  * Resolves the dotnet runtime for a server executable from given options and the dotnet runtime VSCode extension.
  */
 export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
-    private readonly minimumDotnetRuntimeVersion = '7.0';
     constructor(
         private platformInfo: PlatformInformation,
         /**
@@ -163,9 +162,9 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             }
 
             // Verify that the dotnet we found includes a runtime version that is compatible with our requirement.
-            const requiredRuntimeVersion = semver.parse(`${this.minimumDotnetRuntimeVersion}.0`);
+            const requiredRuntimeVersion = semver.parse(`${DotNetRuntimeVersion}.0`);
             if (!requiredRuntimeVersion) {
-                throw new Error(`Unable to parse minimum required version ${this.minimumDotnetRuntimeVersion}`);
+                throw new Error(`Unable to parse minimum required version ${DotNetRuntimeVersion}`);
             }
 
             const coreRuntimeVersions = dotnetInfo.Runtimes['Microsoft.NETCore.App'];
@@ -180,7 +179,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
 
             if (!matchingRuntime) {
                 throw new Error(
-                    `No compatible .NET runtime found. Minimum required version is ${this.minimumDotnetRuntimeVersion}.`
+                    `No compatible .NET runtime found. Minimum required version is ${DotNetRuntimeVersion}.`
                 );
             }
 
