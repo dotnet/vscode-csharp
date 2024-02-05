@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "無法判斷 CSharp 內容",
   "Could not determine Html content": "無法判斷 Html 內容",
   "Could not find '{0}' in or above '{1}'.": "'{1}' 中或以上找不到 '{0}'。",
-  "Could not find Razor Language Server executable within directory '{0}'": "目錄 '{0}' 中找不到 Razor 語言伺服器可執行檔",
+  "Could not find Razor Language Server executable '{0}' within directory": "Could not find Razor Language Server executable '{0}' within directory",
   "Could not find a process id to attach.": "找不到要附加的處理序識別碼。",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "在 '{0}' 中找不到 .NET Core 專案。未產生資產。",
   "Couldn't create self-signed certificate. See output for more information.": "無法建立自我簽署憑證。如需詳細資訊，請參閱輸出。",

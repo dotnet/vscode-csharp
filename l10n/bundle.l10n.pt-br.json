@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "Não foi possível determinar o conteúdo do CSharp",
   "Could not determine Html content": "Não foi possível determinar o conteúdo html",
   "Could not find '{0}' in or above '{1}'.": "Não foi possível encontrar '{0}' dentro ou acima '{1}'.",
-  "Could not find Razor Language Server executable within directory '{0}'": "Não foi possível encontrar o executável do Razor Language Server no diretório '{0}'",
+  "Could not find Razor Language Server executable '{0}' within directory": "Could not find Razor Language Server executable '{0}' within directory",
   "Could not find a process id to attach.": "Não foi possível encontrar uma ID de processo para anexar.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "Não foi possível localizar o projeto .NET Core em “{0}”. Os ativos não foram gerados.",
   "Couldn't create self-signed certificate. See output for more information.": "Não foi possível criar um certificado autoassinado. Consulte a saída para obter mais informações.",
