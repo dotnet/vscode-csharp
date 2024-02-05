@@ -23,6 +23,10 @@ import {
     CompletionRequest,
     CompletionResolveRequest,
     CompletionItem,
+    InlayHint,
+    InlayHintResolveRequest,
+    InlayHintParams,
+    InlayHintRequest,
 } from 'vscode-languageclient/node';
 import SerializableSimplifyMethodParams from '../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
@@ -40,6 +44,8 @@ export const provideSemanticTokensRangeCommand = 'roslyn.provideSemanticTokensRa
 export const roslynSimplifyMethodCommand = 'roslyn.simplifyMethod';
 export const roslynFormatNewFileCommand = 'roslyn.formatNewFile';
 export const razorInitializeCommand = 'razor.initialize';
+export const provideInlayHintsCommand = 'roslyn.provideInlayHints';
+export const resolveInlayHintCommand = 'roslyn.resolveInlayHint';
 
 export function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
@@ -97,6 +103,18 @@ export function registerRazorCommands(context: vscode.ExtensionContext, language
     context.subscriptions.push(
         vscode.commands.registerCommand(resolveCodeActionCommand, async (request: CodeAction) => {
             return await languageServer.sendRequest(CodeActionResolveRequest.type, request, CancellationToken.None);
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(provideInlayHintsCommand, async (request: InlayHintParams) => {
+            return await languageServer.sendRequest(InlayHintRequest.type, request, CancellationToken.None);
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(resolveInlayHintCommand, async (request: InlayHint) => {
+            return await languageServer.sendRequest(InlayHintResolveRequest.type, request, CancellationToken.None);
         })
     );
 
