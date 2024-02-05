@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "CSharp içeriği belirlenemedi",
   "Could not determine Html content": "Html içeriği belirlenemedi",
   "Could not find '{0}' in or above '{1}'.": "'{1}' içinde veya üzerinde '{0}' bulunamadı.",
-  "Could not find Razor Language Server executable within directory '{0}'": "'{0}' dizininde Razor Dil Sunucusu yürütülebilir dosyası bulunamadı",
+  "Could not find Razor Language Server executable '{0}' within directory": "Could not find Razor Language Server executable '{0}' within directory",
   "Could not find a process id to attach.": "Eklenecek işlem kimliği bulunamadı.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "'{0}' içinde .NET Core projesi bulunamadı. Varlıklar oluşturulmadı.",
   "Couldn't create self-signed certificate. See output for more information.": "Otomatik olarak imzalanan sertifika oluşturulamadı. Daha fazla bilgi için çıktıya bakın.",

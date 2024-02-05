@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "Не удалось определить содержимое CSharp",
   "Could not determine Html content": "Не удалось определить содержимое HTML",
   "Could not find '{0}' in or above '{1}'.": "Не удалось найти \"{0}\" в \"{1}\" или выше.",
-  "Could not find Razor Language Server executable within directory '{0}'": "Не удалось найти исполняемый файл языкового сервера Razor в каталоге \"{0}\"",
+  "Could not find Razor Language Server executable '{0}' within directory": "Could not find Razor Language Server executable '{0}' within directory",
   "Could not find a process id to attach.": "Не удалось найти идентификатор процесса для вложения.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "Не удалось найти проект .NET Core в {0}. Ресурсы не были созданы.",
   "Couldn't create self-signed certificate. See output for more information.": "Не удалось создать самозаверяющий сертификат См. выходные данные для получения дополнительных сведений.",
