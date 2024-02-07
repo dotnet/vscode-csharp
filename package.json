@@ -4892,6 +4892,10 @@
         "description": "A Razor component attribute"
       },
       {
+        "id": "razorComponentAttribute",
+        "description": "A Razor component attribute"
+      },
+      {
         "id": "razorTagHelperElement",
         "description": "A Razor TagHelper Element"
       },
@@ -5203,6 +5207,9 @@
             "entity.name.class.element.component"
           ],
           "RazorComponentAttribute": [
+            "entity.name.class.attribute.component"
+          ],
+          "razorComponentAttribute": [
             "entity.name.class.attribute.component"
           ],
           "razorTagHelperElement": [
