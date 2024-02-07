@@ -4888,10 +4888,6 @@
         "description": "A Razor component element"
       },
       {
-        "id": "RazorComponentAttribute",
-        "description": "A Razor component attribute"
-      },
-      {
         "id": "razorComponentAttribute",
         "description": "A Razor component attribute"
       },
@@ -5205,9 +5201,6 @@
         "scopes": {
           "razorComponentElement": [
             "entity.name.class.element.component"
-          ],
-          "RazorComponentAttribute": [
-            "entity.name.class.attribute.component"
           ],
           "razorComponentAttribute": [
             "entity.name.class.attribute.component"
