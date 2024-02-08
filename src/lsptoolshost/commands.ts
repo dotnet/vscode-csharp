@@ -106,7 +106,8 @@ async function completionComplexEdit(
     const componentName = '[roslyn.client.completionComplexEdit]';
 
     // Find TextDocument, opening if needed.
-    const document = await vscode.workspace.openTextDocument(uriStr);
+    const uri = UriConverter.deserialize(uriStr);
+    const document = await vscode.workspace.openTextDocument(uri);
     if (document === undefined) {
         outputAndThrow(outputChannel, `${componentName} Can't open document with path: '${uriStr}'`);
     }
