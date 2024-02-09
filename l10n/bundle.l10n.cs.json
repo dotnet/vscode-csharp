@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "Nepovedlo se určit obsah CSharp.",
   "Could not determine Html content": "Nepovedlo se určit obsah HTML.",
   "Could not find '{0}' in or above '{1}'.": "Nepovedlo se najít {0} v {1} ani výše.",
-  "Could not find Razor Language Server executable within directory '{0}'": "V adresáři {0} se nepovedlo najít spustitelný soubor jazykového serveru Razor.",
+  "Could not find Razor Language Server executable '{0}' within directory": "V adresáři se nepovedlo najít spustitelný soubor jazykového serveru Razor {0}.",
   "Could not find a process id to attach.": "Nepovedlo se najít ID procesu, který se má připojit.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "V umístění {0} se nepovedlo najít projekt .NET Core. Prostředky se nevygenerovaly.",
   "Couldn't create self-signed certificate. See output for more information.": "Certifikát podepsaný svým držitelem (self-signed certificate) se nepovedlo vytvořit. Další informace najdete ve výstupu.",

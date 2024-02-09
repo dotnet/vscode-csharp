@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "CSharp 콘텐츠를 확인할 수 없음",
   "Could not determine Html content": "Html 콘텐츠를 확인할 수 없음",
   "Could not find '{0}' in or above '{1}'.": "'{1}' 안이나 위에서 '{0}'을(를) 찾을 수 없음.",
-  "Could not find Razor Language Server executable within directory '{0}'": "디렉터리 '{0}' 내에서 Razor 언어 서버 실행 파일을 찾을 수 없습니다.",
+  "Could not find Razor Language Server executable '{0}' within directory": "디렉터리 내에서 '{0}' Razor 언어 서버 실행 파일을 찾을 수 없습니다.",
   "Could not find a process id to attach.": "첨부할 프로세스 ID를 찾을 수 없습니다.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "'{0}'에서 .NET Core 프로젝트를 찾을 수 없습니다. 자산이 생성되지 않았습니다.",
   "Couldn't create self-signed certificate. See output for more information.": "자체 서명된 인증서를 생성할 수 없습니다. 자세한 내용은 출력을 참조하세요.",
