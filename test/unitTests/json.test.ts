@@ -3,12 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { should } from 'chai';
 import { tolerantParse } from '../../src/json';
+import { describe, test, expect } from '@jest/globals';
 
-suite('JSON', () => {
-    suiteSetup(() => should());
-
+describe('JSON', () => {
     test('no comments', () => {
         const text = `{
     "hello": "world"
@@ -17,7 +15,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(text);
+        expect(result).toEqual(text);
     });
 
     test('no comments (minified)', () => {
@@ -31,7 +29,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('single-line comment before JSON', () => {
@@ -47,7 +45,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('single-line comment on separate line', () => {
@@ -63,7 +61,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('single-line comment at end of line', () => {
@@ -78,7 +76,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('single-line comment at end of text', () => {
@@ -93,7 +91,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('ignore single-line comment inside string', () => {
@@ -104,7 +102,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(text);
+        expect(result).toEqual(text);
     });
 
     test('single-line comment after string with escaped double quote', () => {
@@ -119,7 +117,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('multi-line comment at start of text', () => {
@@ -134,7 +132,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('comment out key/value pair', () => {
@@ -150,7 +148,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('multi-line comment at end of text', () => {
@@ -165,7 +163,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('ignore multi-line comment inside string', () => {
@@ -180,7 +178,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('ignore BOM', () => {
@@ -195,7 +193,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('ignore trailing comma in object member list', () => {
@@ -216,7 +214,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('ignore trailing comma in array element list', () => {
@@ -237,7 +235,7 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
     });
 
     test('ignore trailing comma in object member list with leading and trailing whitespace', () => {
@@ -254,6 +252,41 @@ suite('JSON', () => {
         const json = tolerantParse(text);
         const result = JSON.stringify(json, null, 4);
 
-        result.should.equal(expected);
+        expect(result).toEqual(expected);
+    });
+
+    test('single-line comments in multiple locations', () => {
+        const text = `
+// This comment should be allowed.
+{
+    // This comment should be allowed.
+    "version": "2.0.0",         // This comment should be allowed.
+    "tasks": [
+        // This comment should be allowed.
+        {
+            "label":   "foo",       // This comment should be allowed.
+            "type":    "shell",
+            "command": "true",
+            // This comment should be allowed.
+        },
+    ],
+}
+// This comment should be allowed.`;
+
+        const expected = `{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "foo",
+            "type": "shell",
+            "command": "true"
+        }
+    ]
+}`;
+
+        const json = tolerantParse(text);
+        const result = JSON.stringify(json, null, 4);
+
+        expect(result).toEqual(expected);
     });
 });

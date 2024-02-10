@@ -1,23 +1,36 @@
+parameters:
+  - name: versionNumberOverride
+    type: string
+    default: 'default'
+
 steps:
 
 # The server package is downloaded from NuGet
 - task: NuGetAuthenticate@1
 
 - task: NodeTool@0
-  displayName: 'Install Node.js 16.x'
+  displayName: 'Install Node.js 18.x'
   inputs:
-    versionSpec: '16.x'
+    versionSpec: '18.x'
 
 - task: UseDotNet@2
   displayName: 'Install .NET Core SDKs'
   inputs:
-    version: '7.0.100'
+    version: '7.x'
 
-# Set the CI build number to the VSIX version we're creating from this build.
 - script: |
     dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
-    $(Agent.BuildDirectory)/nbgv cloud
   displayName: Install nbgv
+
+# If we want to override the version, update the version.json here - vsix packaging will see this value
+# and use it to set the version number in the package.json.
+- ${{ if ne(parameters.versionNumberOverride, 'default') }}:
+  - script: $(Agent.BuildDirectory)/nbgv set-version ${{ parameters.versionNumberOverride }}
+    displayName: 'Override version number'
+
+# Set the CI build number to the VSIX version we're creating from this build.
+- script: $(Agent.BuildDirectory)/nbgv cloud
+  displayName: Set pipeline build number
 
 - script: |
     npm ci
@@ -26,6 +39,3 @@ steps:
 
 - script: npm run compile
   displayName: 'Compile'
-
-- script: npm run vscode:prepublish
-  displayName: 'Prepublish VSIXs'

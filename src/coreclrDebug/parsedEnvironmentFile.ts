@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import * as fs from 'fs';
 
 export class ParsedEnvironmentFile {
@@ -66,7 +67,11 @@ export class ParsedEnvironmentFile {
         // show error message if single lines cannot get parsed
         let warning: string | undefined;
         if (parseErrors.length !== 0) {
-            warning = `Ignoring non-parseable lines in envFile ${envFile}: ${parseErrors.join(', ')}.`;
+            warning = vscode.l10n.t(
+                'Ignoring non-parseable lines in envFile {0}: {1}.',
+                envFile,
+                parseErrors.join(', ')
+            );
         }
 
         return new ParsedEnvironmentFile(env, warning);

@@ -5,6 +5,8 @@
 
 import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
+import { CodeAction } from 'vscode-languageserver-protocol';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface WorkspaceDebugConfigurationParams {
     /**
@@ -82,6 +84,11 @@ export interface RunTestsParams extends lsp.WorkDoneProgressParams, lsp.PartialR
      * Whether the request should attempt to call back to the client to attach a debugger before running the tests.
      */
     attachDebugger: boolean;
+
+    /**
+     * The absolute path to a .runsettings file to configure the test run.
+     */
+    runSettingsPath?: string;
 }
 
 export interface TestProgress {
@@ -131,6 +138,38 @@ export interface ShowToastNotificationParams {
     commands: Command[];
 }
 
+export interface BuildOnlyDiagnosticIdsResult {
+    ids: string[];
+}
+
+export interface RoslynFixAllCodeAction extends CodeAction {
+    scope: string;
+}
+
+export interface NamedPipeInformation {
+    pipeName: string;
+}
+
+export interface RestoreParams extends lsp.WorkDoneProgressParams, lsp.PartialResultParams {
+    /**
+     * The set of projects to restore.
+     * If none are specified, the solution (or all loaded projects) are restored.
+     */
+    projectFilePaths: string[];
+}
+
+export interface RestorePartialResult {
+    stage: string;
+    message: string;
+}
+
+export interface ProjectNeedsRestoreName {
+    /**
+     * The set of projects that have unresolved dependencies and require a restore.
+     */
+    projectFilePaths: string[];
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -155,6 +194,12 @@ export namespace ProjectInitializationCompleteNotification {
     export const method = 'workspace/projectInitializationComplete';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.NotificationType(method);
+}
+
+export namespace ProjectConfigurationNotification {
+    export const method = 'workspace/projectConfigurationTelemetry';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.NotificationType<ProjectConfigurationMessage>(method);
 }
 
 export namespace ShowToastNotification {
@@ -191,4 +236,40 @@ export namespace OpenProjectNotification {
     export const method = 'project/open';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.NotificationType<OpenProjectParams>(method);
+}
+
+export namespace BuildOnlyDiagnosticIdsRequest {
+    export const method = 'workspace/buildOnlyDiagnosticIds';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType0<BuildOnlyDiagnosticIdsResult, void>(method);
+}
+
+export namespace CodeActionFixAllResolveRequest {
+    export const method = 'codeAction/resolveFixAll';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType<RoslynFixAllCodeAction, RoslynFixAllCodeAction, void>(method);
+}
+
+export namespace RestoreRequest {
+    export const method = 'workspace/_roslyn_restore';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.ProtocolRequestType<
+        RestoreParams,
+        RestorePartialResult[],
+        RestorePartialResult,
+        void,
+        void
+    >(method);
+}
+
+export namespace RestorableProjects {
+    export const method = 'workspace/_roslyn_restorableProjects';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType0<string[], void>(method);
+}
+
+export namespace ProjectNeedsRestoreRequest {
+    export const method = 'workspace/_roslyn_projectNeedsRestore';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.RequestType<ProjectNeedsRestoreName, void, void>(method);
 }

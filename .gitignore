@@ -3,12 +3,14 @@ obj
 node_modules
 out
 .roslyn/
+.roslynDevKit/
 .omnisharp/
 .omnisharp-*/
 .vs/
 .debugger/
 .razor/
 .razoromnisharp/
+.razortelemetry/
 .vscode-test/
 dist/
 *.razor.json

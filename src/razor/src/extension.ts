@@ -3,8 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 import * as vscodeapi from 'vscode';
+import * as util from '../../common';
 import { ExtensionContext } from 'vscode';
 import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
 import { CodeActionsHandler } from './codeActions/codeActionsHandler';
@@ -34,15 +36,23 @@ import { ProposedApisFeature } from './proposedApisFeature';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageConfiguration } from './razorLanguageConfiguration';
 import { RazorLanguageServerClient } from './razorLanguageServerClient';
-import { resolveRazorLanguageServerTrace } from './razorLanguageServerTraceResolver';
+import { resolveRazorLanguageServerLogLevel } from './razorLanguageServerTraceResolver';
 import { RazorLanguageServiceClient } from './razorLanguageServiceClient';
 import { RazorLogger } from './razorLogger';
 import { RazorReferenceProvider } from './reference/razorReferenceProvider';
 import { RazorRenameProvider } from './rename/razorRenameProvider';
 import { SemanticTokensRangeHandler } from './semantic/semanticTokensRangeHandler';
 import { RazorSignatureHelpProvider } from './signatureHelp/razorSignatureHelpProvider';
-import { TelemetryReporter } from './telemetryReporter';
+import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
 import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
+import { RazorSimplifyMethodHandler } from './simplify/razorSimplifyMethodHandler';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import { CSharpDevKitExports } from '../../csharpDevKitExports';
+import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntimeExtensionResolver';
+import { PlatformInformation } from '../../shared/platform';
+import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
+import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
+import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHandler';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -51,28 +61,72 @@ export async function activate(
     context: ExtensionContext,
     languageServerDir: string,
     eventStream: HostEventStream,
+    vscodeTelemetryReporter: TelemetryReporter,
+    csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
+    platformInfo: PlatformInformation,
     enableProposedApis = false
 ) {
-    const telemetryReporter = new TelemetryReporter(eventStream);
+    const razorTelemetryReporter = new RazorTelemetryReporter(eventStream);
     const eventEmitterFactory: IEventEmitterFactory = {
         create: <T>() => new vscode.EventEmitter<T>(),
     };
 
-    const languageServerTrace = resolveRazorLanguageServerTrace(vscodeType);
-    const logger = new RazorLogger(vscodeType, eventEmitterFactory, languageServerTrace);
+    const languageServerLogLevel = resolveRazorLanguageServerLogLevel(vscodeType);
+    const logger = new RazorLogger(eventEmitterFactory, languageServerLogLevel);
 
     try {
+        const razorOptions: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
+            vscodeType,
+            languageServerDir,
+            languageServerLogLevel,
+            logger
+        );
+
+        const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
+            platformInfo,
+            () => razorOptions.serverPath,
+            logger.outputChannel,
+            context.extensionPath
+        );
+
+        const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();
+
+        let telemetryExtensionDllPath = '';
+        // Set up DevKit environment for telemetry
+        if (csharpDevkitExtension) {
+            await setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, logger);
+
+            const telemetryExtensionPath = path.join(
+                util.getExtensionPath(),
+                '.razortelemetry',
+                'Microsoft.VisualStudio.DevKit.Razor.dll'
+            );
+            if (await util.fileExists(telemetryExtensionPath)) {
+                telemetryExtensionDllPath = telemetryExtensionPath;
+            }
+        }
+
         const languageServerClient = new RazorLanguageServerClient(
             vscodeType,
             languageServerDir,
-            telemetryReporter,
+            razorTelemetryReporter,
+            vscodeTelemetryReporter,
+            telemetryExtensionDllPath,
+            dotnetInfo.env,
+            dotnetInfo.path,
             logger
         );
+
         const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
 
-        const documentManager = new RazorDocumentManager(languageServerClient, logger);
+        const documentManager = new RazorDocumentManager(
+            languageServerClient,
+            logger,
+            razorTelemetryReporter,
+            platformInfo
+        );
         const documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
-        reportTelemetryForDocuments(documentManager, telemetryReporter);
+        reportTelemetryForDocuments(documentManager, razorTelemetryReporter);
         const languageConfiguration = new RazorLanguageConfiguration();
         const csharpFeature = new RazorCSharpFeature(documentManager, eventEmitterFactory, logger);
         const htmlFeature = new RazorHtmlFeature(documentManager, languageServiceClient, eventEmitterFactory, logger);
@@ -98,7 +152,12 @@ export async function activate(
                 languageServiceClient,
                 logger
             );
-            const semanticTokenHandler = new SemanticTokensRangeHandler(languageServerClient);
+            const semanticTokenHandler = new SemanticTokensRangeHandler(
+                documentManager,
+                documentSynchronizer,
+                languageServerClient,
+                logger
+            );
             const colorPresentationHandler = new ColorPresentationHandler(
                 documentManager,
                 languageServerClient,
@@ -180,6 +239,20 @@ export async function activate(
                 documentManager,
                 logger
             );
+            const razorSimplifyMethodHandler = new RazorSimplifyMethodHandler(
+                documentSynchronizer,
+                languageServerClient,
+                languageServiceClient,
+                documentManager,
+                logger
+            );
+            const razorFormatNewFileHandler = new RazorFormatNewFileHandler(
+                documentSynchronizer,
+                languageServerClient,
+                languageServiceClient,
+                documentManager,
+                logger
+            );
 
             localRegistrations.push(
                 languageConfiguration.register(),
@@ -223,6 +296,8 @@ export async function activate(
                 semanticTokenHandler.register(),
                 razorDiagnosticHandler.register(),
                 codeActionsHandler.register(),
+                razorSimplifyMethodHandler.register(),
+                razorFormatNewFileHandler.register(),
             ]);
         });
 
@@ -243,7 +318,7 @@ export async function activate(
         context.subscriptions.push(languageServerClient, onStopRegistration, logger);
     } catch (error) {
         logger.logError('Failed when activating Razor VSCode.', error as Error);
-        telemetryReporter.reportErrorOnActivation(error as Error);
+        razorTelemetryReporter.reportErrorOnActivation(error as Error);
     }
 }
 
@@ -273,5 +348,25 @@ async function startLanguageServer(
         context.subscriptions.push(razorFileCreatedRegistration, razorFileOpenedRegistration);
     } else {
         await languageServerClient.start();
+    }
+}
+
+async function setupDevKitEnvironment(
+    env: NodeJS.ProcessEnv,
+    csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>,
+    logger: RazorLogger
+): Promise<void> {
+    try {
+        const exports = await csharpDevkitExtension.activate();
+
+        // setupTelemetryEnvironmentAsync was a later addition to devkit (not in preview 1)
+        // so it may not exist in whatever version of devkit the user has installed
+        if (!exports.setupTelemetryEnvironmentAsync) {
+            return;
+        }
+
+        await exports.setupTelemetryEnvironmentAsync(env);
+    } catch (error) {
+        logger.logError('Failed to setup DevKit environment for telemetry.', error as Error);
     }
 }

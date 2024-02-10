@@ -60,7 +60,7 @@ export class FormattingHandler {
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
             const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
                 textDocument,
-                razorDocument.csharpDocument,
+                razorDocument.htmlDocument,
                 formattingParams.hostDocumentVersion,
                 cancellationToken
             );
@@ -70,9 +70,21 @@ export class FormattingHandler {
 
             const virtualHtmlUri = razorDocument.htmlDocument.uri;
 
+            // This is a workaround for https://github.com/microsoft/vscode/issues/191395.
+            // We need to call the HTML range formatter instead of document formattter since
+            // the latter does not respect HTML settings.
+            const htmlDocContent = razorDocument.htmlDocument.getContent();
+            const zeroBasedNumLinesHtmlDoc = this.countLines(htmlDocContent);
+            const lastLineLengthHtmlDoc = this.getLastLineLength(htmlDocContent);
+            const range = new vscode.Range(
+                new vscode.Position(0, 0),
+                new vscode.Position(zeroBasedNumLinesHtmlDoc, lastLineLengthHtmlDoc)
+            );
+
             const textEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
-                'vscode.executeFormatDocumentProvider',
+                'vscode.executeFormatRangeProvider',
                 virtualHtmlUri,
+                range,
                 formattingParams.options
             );
 

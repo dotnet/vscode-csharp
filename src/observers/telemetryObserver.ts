@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as crypto from 'crypto';
-import { machineIdSync } from 'node-machine-id';
 import { PlatformInformation } from '../shared/platform';
 import {
     BaseEvent,
@@ -18,26 +16,15 @@ import {
 } from '../omnisharp/loggingEvents';
 import { PackageError } from '../packageManager/packageError';
 import { EventType } from '../omnisharp/eventType';
-import { getDotnetInfo, DotnetInfo } from '../shared/utils/getDotnetInfo';
-
-export interface ITelemetryReporter {
-    sendTelemetryEvent(
-        eventName: string,
-        properties?: { [key: string]: string },
-        measures?: { [key: string]: number }
-    ): void;
-    sendTelemetryErrorEvent(
-        eventName: string,
-        properties?: { [key: string]: string },
-        measures?: { [key: string]: number },
-        errorProps?: string[]
-    ): void;
-}
+import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
+import { DotnetInfo } from '../shared/utils/dotnetInfo';
+import { ITelemetryReporter, getTelemetryProps } from '../shared/telemetryReporter';
+import { reportProjectConfigurationEvent } from '../shared/projectConfiguration';
 
 export class TelemetryObserver {
     private reporter: ITelemetryReporter;
     private platformInfo: PlatformInformation;
-    private solutionId?: string;
+    private solutionPath?: string;
     private dotnetInfo?: DotnetInfo;
     private useModernNet: boolean;
 
@@ -48,7 +35,7 @@ export class TelemetryObserver {
     }
 
     public post = (event: BaseEvent) => {
-        const telemetryProps = this.getTelemetryProps();
+        const telemetryProps = getTelemetryProps(this.platformInfo);
         switch (event.type) {
             case EventType.OmnisharpInitialisation:
                 this.handleOmnisharpInitialisation(<OmnisharpInitialisation>event);
@@ -89,7 +76,7 @@ export class TelemetryObserver {
                 break;
             }
             case EventType.ProjectConfigurationReceived:
-                this.handleProjectConfigurationReceived(<ProjectConfiguration>event, telemetryProps);
+                this.handleProjectConfigurationReceived(<ProjectConfiguration>event);
                 break;
         }
     };
@@ -100,7 +87,7 @@ export class TelemetryObserver {
 
     private async handleOmnisharpInitialisation(event: OmnisharpInitialisation) {
         this.dotnetInfo = await getDotnetInfo(event.dotNetCliPaths);
-        this.solutionId = this.createSolutionId(event.solutionPath);
+        this.solutionPath = event.solutionPath;
     }
 
     private handleInstallationSuccess(telemetryProps: { [key: string]: string }) {
@@ -128,45 +115,15 @@ export class TelemetryObserver {
         }
     }
 
-    private handleProjectConfigurationReceived(event: ProjectConfiguration, telemetryProps: { [key: string]: string }) {
+    private handleProjectConfigurationReceived(event: ProjectConfiguration) {
         const projectConfig = event.projectConfiguration;
-        telemetryProps['SolutionId'] = this.solutionId ?? '';
-        telemetryProps['ProjectId'] = projectConfig.ProjectId;
-        telemetryProps['SessionId'] = projectConfig.SessionId;
-        telemetryProps['OutputType'] = projectConfig.OutputKind?.toString() ?? '';
-        telemetryProps['ProjectCapabilities'] = projectConfig.ProjectCapabilities?.join(' ') ?? '';
-        telemetryProps['TargetFrameworks'] = projectConfig.TargetFrameworks.join('|');
-        telemetryProps['References'] = projectConfig.References.join('|');
-        telemetryProps['FileExtensions'] = projectConfig.FileExtensions.join('|');
-        telemetryProps['FileCounts'] = projectConfig.FileCounts?.join('|') ?? '';
-        telemetryProps['NetSdkVersion'] = this.dotnetInfo?.Version ?? '';
-        telemetryProps['useModernNet'] = this.useModernNet.toString();
-        telemetryProps['sdkStyleProject'] = projectConfig.SdkStyleProject.toString();
-        this.reporter.sendTelemetryEvent('ProjectConfiguration', telemetryProps);
-    }
-
-    private getTelemetryProps() {
-        const telemetryProps: { [key: string]: string } = {
-            'platform.architecture': this.platformInfo.architecture,
-            'platform.platform': this.platformInfo.platform,
-        };
-
-        if (this.platformInfo.distribution) {
-            telemetryProps['platform.distribution'] = this.platformInfo.distribution.toTelemetryString();
-        }
-
-        return telemetryProps;
-    }
-
-    private createSolutionId(solutionPath: string) {
-        const solutionHash = crypto.createHash('sha256').update(solutionPath).digest('hex');
-
-        const machineId = machineIdSync();
-        const machineHash = crypto.createHash('sha256').update(machineId).digest('hex');
-
-        return crypto
-            .createHash('sha256')
-            .update(solutionHash + machineHash)
-            .digest('hex');
+        reportProjectConfigurationEvent(
+            this.reporter,
+            projectConfig,
+            this.platformInfo,
+            this.dotnetInfo,
+            this.solutionPath ?? '',
+            this.useModernNet
+        );
     }
 }

@@ -3,9 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { SemanticTokensResponse } from './semanticTokensResponse';
-
 export class ProvideSemanticTokensResponse {
     // tslint:disable-next-line: variable-name
-    constructor(public Result: SemanticTokensResponse, public HostDocumentSyncVersion: number | null) {}
+    constructor(public Tokens: number[], public HostDocumentSyncVersion: number) {}
 }

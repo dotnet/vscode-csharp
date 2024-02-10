@@ -10,13 +10,11 @@ import { RoslynLanguageServer } from './roslynLanguageServer';
 import { createLaunchTargetForSolution } from '../shared/launchTarget';
 import reportIssue from '../shared/reportIssue';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import OptionProvider from '../shared/observers/optionProvider';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
-    optionProvider: OptionProvider,
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: vscode.OutputChannel
 ) {
@@ -31,7 +29,11 @@ export function registerCommands(
     // so we don't accidentally pass them directly into vscode APIs.
     context.subscriptions.push(vscode.commands.registerCommand('roslyn.client.peekReferences', peekReferencesCallback));
     context.subscriptions.push(
-        vscode.commands.registerCommand('roslyn.client.completionComplexEdit', completionComplexEdit)
+        vscode.commands.registerCommand(
+            'roslyn.client.completionComplexEdit',
+            async (uriStr, textEdit, isSnippetString, newOffset) =>
+                completionComplexEdit(uriStr, textEdit, isSnippetString, newOffset, outputChannel)
+        )
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restartServer', async () => restartServer(languageServer))
@@ -42,11 +44,9 @@ export function registerCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
-                vscode,
                 context.extension.packageJSON.version,
                 getDotnetInfo,
                 /*shouldIncludeMonoInfo:*/ false,
-                optionProvider.GetLatestOptions(),
                 hostExecutableResolver
             )
         )
@@ -72,10 +72,11 @@ async function peekReferencesCallback(uriStr: string, serverPosition: languageCl
         uri,
         vscodeApiPosition
     );
+
     if (references && Array.isArray(references)) {
         // The references could come back after the document has moved to a new state (that may not even contain the position).
         // This is fine - the VSCode API is resilient to that scenario and will not crash.
-        vscode.commands.executeCommand('editor.action.showReferences', uri, vscodeApiPosition, references);
+        await vscode.commands.executeCommand('editor.action.showReferences', uri, vscodeApiPosition, references);
     }
 }
 
@@ -99,56 +100,79 @@ async function completionComplexEdit(
     uriStr: string,
     textEdit: vscode.TextEdit,
     isSnippetString: boolean,
-    newOffset: number
+    newOffset: number,
+    outputChannel: vscode.OutputChannel
 ): Promise<void> {
-    let success = false;
+    const componentName = '[roslyn.client.completionComplexEdit]';
+
+    // Find TextDocument, opening if needed.
     const uri = UriConverter.deserialize(uriStr);
-    const editor = vscode.window.visibleTextEditors.find((editor) => editor.document.uri.path === uri.path);
+    const document = await vscode.workspace.openTextDocument(uri);
+    if (document === undefined) {
+        outputAndThrow(outputChannel, `${componentName} Can't open document with path: '${uriStr}'`);
+    }
 
-    if (editor !== undefined) {
-        const newRange = editor.document.validateRange(
-            new vscode.Range(
-                textEdit.range.start.line,
-                textEdit.range.start.character,
-                textEdit.range.end.line,
-                textEdit.range.end.character
-            )
-        );
+    // Use editor if we need to deal with selection or snippets.
+    let editor: vscode.TextEditor | undefined = undefined;
+    if (isSnippetString || newOffset >= 0) {
+        editor = await vscode.window.showTextDocument(document);
+        if (editor === undefined) {
+            outputAndThrow(outputChannel, `${componentName} Editor unavailable for document with path: '${uriStr}'`);
+        }
+    }
 
-        // HACK:
-        // ApplyEdit would fail the first time it's called when an item was committed with text modifying commit char (e.g. space, '(', etc.)
-        // so we retry a couple time here as a tempory workaround. We need to either figure our the reason of the failure, and/or try the
-        // approach of sending another edit request to server with updated document.
-        for (let i = 0; i < 3; i++) {
-            if (isSnippetString) {
-                editor.selection = new vscode.Selection(newRange.start, newRange.end);
-                success = await editor.insertSnippet(new vscode.SnippetString(textEdit.newText));
-            } else {
-                const edit = new vscode.WorkspaceEdit();
-                const newTextEdit = vscode.TextEdit.replace(newRange, textEdit.newText);
-                edit.set(editor.document.uri, [newTextEdit]);
-                success = await vscode.workspace.applyEdit(edit);
+    const newRange = document.validateRange(
+        new vscode.Range(
+            textEdit.range.start.line,
+            textEdit.range.start.character,
+            textEdit.range.end.line,
+            textEdit.range.end.character
+        )
+    );
 
-                if (success && newOffset >= 0) {
-                    const newPosition = editor.document.positionAt(newOffset);
-                    editor.selections = [new vscode.Selection(newPosition, newPosition)];
-                }
+    // HACK:
+    // ApplyEdit would fail the first time it's called when an item was committed with text modifying commit char (e.g. space, '(', etc.)
+    // so we retry a couple time here as a tempory workaround. We need to either figure our the reason of the failure, and/or try the
+    // approach of sending another edit request to server with updated document.
+    let success = false;
+    for (let i = 0; i < 3; i++) {
+        if (isSnippetString) {
+            editor!.selection = new vscode.Selection(newRange.start, newRange.end);
+            success = await editor!.insertSnippet(new vscode.SnippetString(textEdit.newText));
+        } else {
+            const edit = new vscode.WorkspaceEdit();
+            const newTextEdit = vscode.TextEdit.replace(newRange, textEdit.newText);
+            edit.set(document.uri, [newTextEdit]);
+            success = await vscode.workspace.applyEdit(edit);
+
+            if (success && newOffset >= 0) {
+                const newPosition = document.positionAt(newOffset);
+                editor!.selections = [new vscode.Selection(newPosition, newPosition)];
             }
+        }
 
-            if (success) {
-                break;
-            }
+        if (success) {
+            return;
         }
     }
 
     if (!success) {
-        throw new Error('Failed to make a complex text edit for completion.');
+        outputAndThrow(
+            outputChannel,
+            `${componentName} ${isSnippetString ? 'TextEditor.insertSnippet' : 'workspace.applyEdit'} failed.`
+        );
     }
 }
 
-async function openSolution(languageServer: RoslynLanguageServer): Promise<void> {
+function outputAndThrow(outputChannel: vscode.OutputChannel, message: string): void {
+    outputChannel.show();
+    outputChannel.appendLine(message);
+    throw new Error(message);
+}
+
+async function openSolution(languageServer: RoslynLanguageServer): Promise<vscode.Uri | undefined> {
     if (!vscode.workspace.workspaceFolders) {
-        return;
+        return undefined;
     }
 
     const solutionFiles = await vscode.workspace.findFiles('**/*.sln');
@@ -159,6 +183,8 @@ async function openSolution(languageServer: RoslynLanguageServer): Promise<void>
     });
 
     if (launchTarget) {
-        languageServer.openSolution(vscode.Uri.file(launchTarget.target));
+        const uri = vscode.Uri.file(launchTarget.target);
+        languageServer.openSolution(uri);
+        return uri;
     }
 }

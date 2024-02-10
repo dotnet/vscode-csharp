@@ -4,12 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { createTelemetryErrorEvent, createTelemetryEvent, HostEventStream } from './hostEventStream';
-import { Trace } from './trace';
+import { LogLevel } from './logLevel';
 
 export class TelemetryReporter {
     private readonly razorExtensionActivated = createTelemetryEvent('VSCode.Razor.RazorExtensionActivated');
     private readonly debugLanguageServerEvent = createTelemetryEvent('VSCode.Razor.DebugLanguageServer');
     private readonly workspaceContainsRazorEvent = createTelemetryEvent('VSCode.Razor.WorkspaceContainsRazor');
+    private readonly buffersOutOfSyncEvent = createTelemetryEvent('VSCode.Razor.BuffersOutOfSync');
     private reportedWorkspaceContainsRazor = false;
 
     constructor(private readonly eventStream: HostEventStream) {
@@ -17,11 +18,15 @@ export class TelemetryReporter {
         this.eventStream.post(this.razorExtensionActivated);
     }
 
-    public reportTraceLevel(trace: Trace) {
+    public reportTraceLevel(trace: LogLevel) {
         const traceLevelEvent = createTelemetryEvent('VSCode.Razor.TraceLevel', {
-            trace: Trace[trace],
+            trace: LogLevel[trace],
         });
         this.eventStream.post(traceLevelEvent);
+    }
+
+    public reportBuffersOutOfSync() {
+        this.eventStream.post(this.buffersOutOfSyncEvent);
     }
 
     public reportErrorOnServerStart(error: unknown) {

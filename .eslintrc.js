@@ -33,6 +33,7 @@ module.exports = {
         ],
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/promise-function-async": "error",
+        "prefer-promise-reject-errors": "error",
         "curly": "error",
         "prettier/prettier": [ "error", { "endOfLine": "auto" } ],
         "unicorn/filename-case": [

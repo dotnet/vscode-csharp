@@ -21,7 +21,6 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import CompositeDisposable from '../compositeDisposable';
 import Disposable from '../disposable';
-import OptionProvider from '../shared/observers/optionProvider';
 import { ExtensionContext, OutputChannel } from 'vscode';
 import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
 import { LspEngine } from './engines/lspEngine';
@@ -33,6 +32,8 @@ import { validateRequirements } from './requirementCheck';
 import { Advisor } from '../features/diagnosticsProvider';
 import TestManager from '../features/dotnetTest';
 import { findLaunchTargets } from './launcher';
+import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
+import { commonOptions, omnisharpOptions, razorOptions } from '../shared/options';
 
 enum ServerState {
     Starting,
@@ -111,7 +112,6 @@ export class OmniSharpServer {
         private packageJSON: any,
         private platformInfo: PlatformInformation,
         private eventStream: EventStream,
-        private optionProvider: OptionProvider,
         private extensionPath: string,
         private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver,
@@ -298,9 +298,7 @@ export class OmniSharpServer {
             return;
         }
 
-        const options = this.optionProvider.GetLatestOptions();
-
-        if (!(await validateRequirements(options))) {
+        if (!(await validateRequirements())) {
             this.eventStream.post(
                 new ObservableEvents.OmnisharpServerMessage(
                     'OmniSharp failed to start because of missing requirements.'
@@ -312,7 +310,6 @@ export class OmniSharpServer {
         const disposables = new CompositeDisposable();
 
         let engine: IEngine | undefined;
-        const omnisharpOptions = options.omnisharpOptions;
         if (omnisharpOptions.enableLspDriver) {
             engine = new LspEngine(
                 this._eventBus,
@@ -397,7 +394,7 @@ export class OmniSharpServer {
         );
 
         disposables.add(
-            this.onProjectConfigurationReceived((message: protocol.ProjectConfigurationMessage) => {
+            this.onProjectConfigurationReceived((message: ProjectConfigurationMessage) => {
                 this.eventStream.post(new ObservableEvents.ProjectConfiguration(message));
             })
         );
@@ -415,7 +412,7 @@ export class OmniSharpServer {
         const solutionPath = launchTarget.target;
         const cwd = path.dirname(solutionPath);
 
-        const args = [
+        const args: string[] = [
             '-z',
             '-s',
             solutionPath,
@@ -426,11 +423,11 @@ export class OmniSharpServer {
             omnisharpOptions.loggingLevel,
         ];
 
-        const razorOptions = options.razorOptions;
+        const razorPluginPathOption = razorOptions.razorPluginPath;
         // Razor support only exists for certain platforms, so only load the plugin if present
         const razorPluginPath =
-            razorOptions.razorPluginPath.length > 0
-                ? razorOptions.razorPluginPath
+            razorPluginPathOption.length > 0
+                ? razorPluginPathOption
                 : path.join(
                       this.extensionPath,
                       '.razoromnisharp',
@@ -441,12 +438,13 @@ export class OmniSharpServer {
             args.push('--plugin', razorPluginPath);
         }
 
-        if (options.commonOptions.waitForDebugger === true) {
+        if (commonOptions.waitForDebugger === true) {
             args.push('--debug');
         }
 
-        for (let i = 0; i < options.commonOptions.excludePaths.length; i++) {
-            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${options.commonOptions.excludePaths[i]}`);
+        const excludePath = commonOptions.excludePaths;
+        for (let i = 0; i < excludePath.length; i++) {
+            args.push(`FileOptions:SystemExcludeSearchPatterns:${i}=${excludePath[i]}`);
         }
 
         if (omnisharpOptions.enableMsBuildLoadProjectsOnDemand === true) {
@@ -477,21 +475,24 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:EnableAsyncCompletion=true');
         }
 
-        if (omnisharpOptions.sdkPath.length > 0) {
-            args.push(`Sdk:Path=${omnisharpOptions.sdkPath}`);
+        const sdkPath = omnisharpOptions.sdkPath;
+        if (sdkPath.length > 0) {
+            args.push(`Sdk:Path=${sdkPath}`);
         }
 
-        if (omnisharpOptions.sdkVersion.length > 0) {
-            args.push(`Sdk:Version=${omnisharpOptions.sdkVersion}`);
+        const sdkVersion = omnisharpOptions.sdkVersion;
+        if (sdkVersion.length > 0) {
+            args.push(`Sdk:Version=${sdkVersion}`);
         }
 
         if (omnisharpOptions.sdkIncludePrereleases) {
             args.push(`Sdk:IncludePrereleases=true`);
         }
 
-        if (omnisharpOptions.inlayHintsEnableForParameters === true) {
+        const enableInlayHintsForParameters = omnisharpOptions.inlayHintsEnableForParameters;
+        if (enableInlayHintsForParameters === true) {
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${omnisharpOptions.inlayHintsEnableForParameters.toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:EnableForParameters=${enableInlayHintsForParameters.toString()}`
             );
             args.push(
                 `RoslynExtensionsOptions:InlayHintsOptions:ForLiteralParameters=${omnisharpOptions.inlayHintsForLiteralParameters.toString()}`
@@ -516,9 +517,10 @@ export class OmniSharpServer {
             );
         }
 
-        if (omnisharpOptions.inlayHintsEnableForTypes === true) {
+        const enableInlayHintsForTypes = omnisharpOptions.inlayHintsEnableForTypes;
+        if (enableInlayHintsForTypes === true) {
             args.push(
-                `RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${omnisharpOptions.inlayHintsEnableForTypes.toString()}`
+                `RoslynExtensionsOptions:InlayHintsOptions:EnableForTypes=${enableInlayHintsForTypes.toString()}`
             );
             args.push(
                 `RoslynExtensionsOptions:InlayHintsOptions:ForImplicitVariableTypes=${omnisharpOptions.inlayHintsForImplicitVariableTypes.toString()}`
@@ -535,15 +537,16 @@ export class OmniSharpServer {
             args.push('RoslynExtensionsOptions:AnalyzeOpenDocumentsOnly=true');
         }
 
-        for (let i = 0; i < omnisharpOptions.dotNetCliPaths.length; i++) {
-            args.push(`DotNetCliOptions:LocationPaths:${i}=${omnisharpOptions.dotNetCliPaths[i]}`);
+        const dotnetCliPaths = omnisharpOptions.dotNetCliPaths;
+        for (let i = 0; i < dotnetCliPaths.length; i++) {
+            args.push(`DotNetCliOptions:LocationPaths:${i}=${dotnetCliPaths[i]}`);
         }
 
         let launchPath: string;
         try {
             launchPath = await this._omnisharpManager.GetOmniSharpLaunchPath(
                 this.packageJSON.defaults.omniSharp,
-                options.commonOptions.serverPath,
+                commonOptions.serverPath,
                 /* useFramework */ !omnisharpOptions.useModernNet,
                 this.extensionPath
             );
@@ -558,13 +561,11 @@ export class OmniSharpServer {
             return;
         }
 
-        this.eventStream.post(
-            new ObservableEvents.OmnisharpInitialisation(omnisharpOptions.dotNetCliPaths, new Date(), solutionPath)
-        );
+        this.eventStream.post(new ObservableEvents.OmnisharpInitialisation(dotnetCliPaths, new Date(), solutionPath));
         this._fireEvent(Events.BeforeServerStart, solutionPath);
 
         try {
-            await engine.start(cwd, args, launchTarget, launchPath, options);
+            await engine.start(cwd, args, launchTarget, launchPath);
 
             this._setState({
                 status: ServerState.Started,
@@ -601,17 +602,10 @@ export class OmniSharpServer {
         }
 
         const { engine } = this._state;
-        return await engine.registerProviders(
-            this,
-            this.optionProvider,
-            this.languageMiddlewareFeature,
-            eventStream,
-            advisor,
-            testManager
-        );
+        return await engine.registerProviders(this, this.languageMiddlewareFeature, eventStream, advisor, testManager);
     }
 
-    private onProjectConfigurationReceived(listener: (e: protocol.ProjectConfigurationMessage) => void) {
+    private onProjectConfigurationReceived(listener: (e: ProjectConfigurationMessage) => void) {
         return this._addListener(Events.ProjectConfiguration, listener);
     }
 
@@ -677,8 +671,7 @@ export class OmniSharpServer {
     }
 
     public async autoStart(preferredPath: string): Promise<void> {
-        const options = this.optionProvider.GetLatestOptions();
-        const launchTargets = await findLaunchTargets(options);
+        const launchTargets = await findLaunchTargets();
 
         // If there aren't any potential launch targets, we create file watcher and try to
         // start the server again once a *.sln, *.slnf, *.csproj, project.json, CSX or Cake file is created.
@@ -706,7 +699,7 @@ export class OmniSharpServer {
         }
 
         // First, try to launch against something that matches the user's preferred target
-        const defaultLaunchSolutionConfigValue = this.optionProvider.GetLatestOptions().commonOptions.defaultSolution;
+        const defaultLaunchSolutionConfigValue = commonOptions.defaultSolution;
         const defaultLaunchSolutionTarget = launchTargets.find(
             (a) => path.basename(a.target) === defaultLaunchSolutionConfigValue
         );
@@ -748,7 +741,7 @@ export class OmniSharpServer {
 
     public async makeRequest<TResponse>(command: string, data?: any, token?: CancellationToken): Promise<TResponse> {
         if (this._state.status !== ServerState.Started) {
-            return Promise.reject<TResponse>('OmniSharp server is not running.');
+            throw new Error('OmniSharp server is not running.');
         }
 
         const { engine } = this._state;

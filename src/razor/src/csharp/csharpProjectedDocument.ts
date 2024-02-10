@@ -29,6 +29,14 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         return this.projectedDocumentVersion;
     }
 
+    public get length(): number {
+        return this.content.length;
+    }
+
+    public clear() {
+        this.setContent('');
+    }
+
     public update(edits: ServerTextChange[], hostDocumentVersion: number) {
         this.removeProvisionalDot();
 

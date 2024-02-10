@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { types } from 'util';
 import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAdapter';
 
 // Option in the array should be identical to each other, except the name.
@@ -65,6 +66,14 @@ export const migrateOptions = [
         omnisharpOption: 'csharp.testsCodeLens.enabled',
         roslynOption: 'dotnet.codeLens.enableTestsCodeLens',
     },
+    {
+        omnisharpOption: 'csharp.unitTestDebuggingOptions',
+        roslynOption: 'dotnet.unitTestDebuggingOptions',
+    },
+    {
+        omnisharpOption: 'omnisharp.testRunSettings',
+        roslynOption: 'dotnet.unitTests.runSettingsPath',
+    },
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {
@@ -84,10 +93,23 @@ export async function MigrateOptions(vscode: vscode): Promise<void> {
             continue;
         }
 
-        if (roslynOptionValue == inspectionValueOfRoslynOption.defaultValue) {
+        if (shouldMove(roslynOptionValue, inspectionValueOfRoslynOption.defaultValue)) {
             await MoveOptionsValue(omnisharpOption, roslynOption, configuration);
         }
     }
+}
+
+function shouldMove(roslynOptionValue: unknown, defaultInspectValueOfRoslynOption: unknown): boolean {
+    if (roslynOptionValue == defaultInspectValueOfRoslynOption) {
+        return true;
+    }
+
+    // For certain kinds of complex object options, vscode will return a proxy object which isn't comparable to the default empty object {}.
+    if (types.isProxy(roslynOptionValue)) {
+        return JSON.stringify(roslynOptionValue) === JSON.stringify(defaultInspectValueOfRoslynOption);
+    }
+
+    return false;
 }
 
 async function MoveOptionsValue(

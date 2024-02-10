@@ -2,9 +2,11 @@
 .logs/**
 .nyc_output/**
 !.roslyn/**
+!.roslynDevKit/**
 !.omnisharp/**
 !.razor/**
 !.razoromnisharp/**
+!.razortelemetry/**
 .rpt2_cache/**
 .github/**
 .vscode/**
@@ -15,6 +17,11 @@ server/**
 src/**
 tasks/**
 test/**
+omnisharptest/**
+__mocks__/**
+jest.config.ts
+baseJestConfig.ts
+.prettierignore
 typings/**
 vsix/**
 node_modules
@@ -29,7 +36,6 @@ CODEOWNERS
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
-.mocharc.jsonc
 !README.md
 !CHANGELOG.md
 *.md

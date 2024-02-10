@@ -1,5 +1,19 @@
-trigger: none
+trigger:
+  branches:
+    include:
+    - main
+
 pr: none
+
+# localization result might not be ready when PR triggered the pipeline.
+# Run this weekly to make sure everything is localized.
+schedules:
+- cron: '0 12 * * 0'
+  displayName: Weekly localization run
+  always: true
+  branches:
+    include:
+    - main
 
 parameters:
   - name: publishLocalizationFile
@@ -31,7 +45,6 @@ stages:
       fetchDepth: 0
     - pwsh: | 
         npm install
-        npm install -g @vscode/l10n-dev
         npm install -g gulp
       displayName: 'Install tools'
     - pwsh: npm run compile

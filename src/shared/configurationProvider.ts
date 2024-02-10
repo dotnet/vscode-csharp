@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { ParsedEnvironmentFile } from '../coreclrDebug/parsedEnvironmentFile';
-import { getBrokeredServicePipeName } from '../coreclrDebug/activate';
+import { debugSessionTracker } from '../coreclrDebug/provisionalDebugSessionTracker';
 
 import { MessageItem } from '../vscodeAdapter';
 import { CertToolStatusCodes, createSelfSignedCert, hasDotnetDevCertsHttps } from '../utils/dotnetDevCertsHttps';
@@ -16,8 +16,8 @@ import {
     AttachPicker,
 } from '../features/processPicker';
 import { PlatformInformation } from './platform';
-import OptionProvider from './observers/optionProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { commonOptions } from './options';
 
 /**
  * Class used for debug configurations that will be sent to the debugger registered by {@link DebugAdapterExecutableFactory}
@@ -30,7 +30,6 @@ import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 export class BaseVsDbgConfigurationProvider implements vscode.DebugConfigurationProvider {
     public constructor(
         protected platformInformation: PlatformInformation,
-        private optionProvider: OptionProvider,
         private csharpOutputChannel: vscode.OutputChannel
     ) {}
 
@@ -67,7 +66,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             return null;
         }
 
-        const brokeredServicePipeName = getBrokeredServicePipeName();
+        const brokeredServicePipeName = debugSessionTracker.getBrokeredServicePipeName();
         if (brokeredServicePipeName !== undefined) {
             debugConfiguration.brokeredServicePipeName = brokeredServicePipeName;
         }
@@ -77,7 +76,12 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                 debugConfiguration.cwd = folder?.uri.fsPath; // Workspace folder
             }
 
-            debugConfiguration.internalConsoleOptions ??= 'openOnSessionStart';
+            if (!debugConfiguration.internalConsoleOptions) {
+                // If the target app is NOT using integratedTerminal, use 'openOnSessionStart' so that the debug console can be seen
+                // If the target app is using integratedTerminal, use 'neverOpen' so that the integrated terminal doesn't get hidden
+                debugConfiguration.internalConsoleOptions =
+                    debugConfiguration.console === 'integratedTerminal' ? 'neverOpen' : 'openOnSessionStart';
+            }
 
             // read from envFile and set config.env
             if (debugConfiguration.envFile !== undefined && debugConfiguration.envFile.length > 0) {
@@ -117,7 +121,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                     }
                 }
             } else {
-                vscode.window.showErrorMessage('No process was selected.', { modal: true });
+                vscode.window.showErrorMessage(vscode.l10n.t('No process was selected.'), { modal: true });
                 return undefined;
             }
         }
@@ -141,7 +145,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             }
 
             if (debugConfiguration.checkForDevCert) {
-                this.checkForDevCerts(this.optionProvider.GetLatestOptions().commonOptions.dotnetPath);
+                this.checkForDevCerts(commonOptions.dotnetPath);
             }
         }
 
@@ -164,7 +168,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
             config.env = parsedFile.Env;
         } catch (e) {
-            throw new Error(`Can't parse envFile ${envFile} because of ${e}`);
+            throw new Error(vscode.l10n.t("Can't parse envFile {0} because of {1}", envFile, `${e}`));
         }
 
         // remove envFile from config after parsing
@@ -174,7 +178,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
     }
 
     private async showFileWarningAsync(message: string, fileName: string) {
-        const openItem: MessageItem = { title: 'Open envFile' };
+        const openItem: MessageItem = { title: vscode.l10n.t('Open envFile') };
         const result = await vscode.window.showWarningMessage(message, openItem);
         if (result?.title === openItem.title) {
             const doc = await vscode.workspace.openTextDocument(fileName);
@@ -226,12 +230,14 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                 errorCode === CertToolStatusCodes.CertificateNotTrusted ||
                 errorCode === CertToolStatusCodes.ErrorNoValidCertificateFound
             ) {
-                const labelYes = 'Yes';
-                const labelNotNow = 'Not Now';
-                const labelMoreInfo = 'More Information';
+                const labelYes = vscode.l10n.t('Yes');
+                const labelNotNow = vscode.l10n.t('Not Now');
+                const labelMoreInfo = vscode.l10n.t('More Information');
 
                 const result = await vscode.window.showInformationMessage(
-                    'The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?',
+                    vscode.l10n.t(
+                        'The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?'
+                    ),
                     { title: labelYes },
                     { title: labelNotNow, isCloseAffordance: true },
                     { title: labelMoreInfo }
@@ -241,15 +247,22 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                     if (returnData.error === null) {
                         //if the prcess returns 0, returnData.error is null, otherwise the return code can be acessed in returnData.error.code
                         const message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
-                        vscode.window.showInformationMessage(`Self-signed certificate sucessfully ${message}.`);
+                        vscode.window.showInformationMessage(
+                            vscode.l10n.t('Self-signed certificate sucessfully {0}', message)
+                        );
                     } else {
                         this.csharpOutputChannel.appendLine(
-                            `Couldn't create self-signed certificate. ${returnData.error.message}\ncode: ${returnData.error.code}\nstdout: ${returnData.stdout}`
+                            vscode.l10n.t(
+                                `Couldn't create self-signed certificate. {0}\ncode: {1}\nstdout: {2}`,
+                                returnData.error.message,
+                                `${returnData.error.code}`,
+                                returnData.stdout
+                            )
                         );
 
-                        const labelShowOutput = 'Show Output';
+                        const labelShowOutput = vscode.l10n.t('Show Output');
                         const result = await vscode.window.showWarningMessage(
-                            "Couldn't create self-signed certificate. See output for more information.",
+                            vscode.l10n.t("Couldn't create self-signed certificate. See output for more information."),
                             labelShowOutput
                         );
                         if (result === labelShowOutput) {
@@ -258,7 +271,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                     }
                 }
                 if (result?.title === labelMoreInfo) {
-                    const launchjsonDescriptionURL = 'https://aka.ms/VSCode-CS-LaunchJson#check-for-devcert';
+                    const launchjsonDescriptionURL = 'https://aka.ms/VSCode-CS-CheckForDevCert';
                     vscode.env.openExternal(vscode.Uri.parse(launchjsonDescriptionURL));
                     this.checkForDevCerts(dotnetPath);
                 }

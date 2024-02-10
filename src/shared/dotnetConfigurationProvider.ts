@@ -55,6 +55,8 @@ function resolveWorkspaceFolderToken(projectPath: string, folderPath: string): s
 }
 
 export class DotnetConfigurationResolver implements vscode.DebugConfigurationProvider {
+    static dotnetType = 'dotnet';
+
     constructor(
         private workspaceDebugInfoProvider: IWorkspaceDebugInformationProvider,
         private dotnetWorkspaceConfigurationProvider: DotnetWorkspaceConfigurationProvider
@@ -73,12 +75,24 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
         }
 
         if (debugConfiguration.request !== 'launch') {
-            throw new Error(`'${debugConfiguration.request}' is unsupported.`);
+            if (!debugConfiguration.request) {
+                throw new Error(vscode.l10n.t("'{0}' was not set in the debug configuration.", 'request'));
+            } else {
+                throw new Error(
+                    vscode.l10n.t(
+                        "'{0}' request is not supported for the '{1}' configuration.",
+                        debugConfiguration.request,
+                        DotnetConfigurationResolver.dotnetType
+                    )
+                );
+            }
         }
 
-        let projectPath: string = debugConfiguration.projectPath;
-        if (folder && projectPath) {
-            projectPath = resolveWorkspaceFolderToken(projectPath, folder.uri.fsPath);
+        let projectPath: string | undefined = debugConfiguration.projectPath;
+        if (folder) {
+            if (projectPath) {
+                projectPath = resolveWorkspaceFolderToken(projectPath, folder.uri.fsPath);
+            }
 
             const dotnetDebugServiceProxy = await getServiceBroker()?.getProxy<IDotnetDebugConfigurationService>(
                 Descriptors.dotnetDebugConfigurationService
@@ -96,6 +110,11 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                     throw new UnavaliableLaunchServiceError();
                 }
             } catch (e) {
+                if (!projectPath) {
+                    throw new LaunchServiceError(
+                        vscode.l10n.t("'{0}' was not provided in the debug configuration.", 'projectPath')
+                    );
+                }
                 if (e instanceof UnavaliableLaunchServiceError) {
                     return await this.resolveDebugConfigurationWithWorkspaceDebugInformationProvider(
                         folder,
@@ -109,15 +128,20 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
             } finally {
                 dotnetDebugServiceProxy?.dispose();
             }
+        } else {
+            throw new Error(
+                vscode.l10n.t(
+                    "Can not find an opened workspace folder. Please open a folder before starting to debug with a '{0}' configuration'.",
+                    DotnetConfigurationResolver.dotnetType
+                )
+            );
         }
-
-        return debugConfiguration;
     }
 
     //#endregion
 
     private resolveDotnetDebugConfigurationServiceResult(
-        projectPath: string,
+        projectPath: string | undefined,
         result: IDotnetDebugConfigurationServiceResult
     ): vscode.DebugConfiguration {
         if (result.error) {
@@ -135,12 +159,27 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
 
         const debugConfigArray = result.configurations;
         if (debugConfigArray.length == 0) {
-            throw new LaunchServiceError(`No launchable target found for '${projectPath}'`);
+            if (!projectPath) {
+                throw new LaunchServiceError(vscode.l10n.t('No launchable target found.'));
+            } else {
+                throw new LaunchServiceError(vscode.l10n.t("No launchable target found for '{0}'", projectPath));
+            }
         }
         if (debugConfigArray.length == 1) {
             return debugConfigArray[0];
-        } else if (debugConfigArray.length > 1) {
-            throw new InternalServiceError('Multiple launch targets is not yet supported.');
+        } else if (debugConfigArray.length === 2) {
+            // This creates a onDidStartDebugSession event listener that will dispose of itself when it detects
+            // the debugConfiguration that is return from this method has started.
+            const startDebugEvent = vscode.debug.onDidStartDebugSession((debugSession: vscode.DebugSession) => {
+                if (debugSession.name === debugConfigArray[0].name) {
+                    startDebugEvent.dispose();
+                    vscode.debug.startDebugging(debugSession.workspaceFolder, debugConfigArray[1], debugSession);
+                }
+            });
+
+            return debugConfigArray[0];
+        } else if (debugConfigArray.length > 2) {
+            throw new InternalServiceError('Multiple launch targets (>2) is not yet supported.');
         } else {
             throw new InternalServiceError(
                 'Unexpected configuration array from IDotnetDebugConfigurationServiceResult.'
@@ -163,7 +202,9 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
             await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
         if (!info) {
             throw new Error(
-                'Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.'
+                vscode.l10n.t(
+                    'Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.'
+                )
             );
         }
 
@@ -193,15 +234,18 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                         return result;
                     } else {
                         throw new Error(
-                            `Unable to determine a configuration for '${projectPath}'. Please generate C# debug assets instead.`
+                            vscode.l10n.t(
+                                `Unable to determine a configuration for '{0}'. Please generate C# debug assets instead.`,
+                                projectPath
+                            )
                         );
                     }
                 } else {
-                    throw new Error(`'${projectPath}' is not an executable project.`);
+                    throw new Error(vscode.l10n.t("'{0}' is not an executable project.", projectPath));
                 }
             }
         }
-        throw new Error(`Unable to determine debug settings for project '${projectPath}'`);
+        throw new Error(vscode.l10n.t("Unable to determine debug settings for project '{0}'", projectPath));
     }
 
     // Workaround for VS Code not calling into the 'coreclr' resolveDebugConfigurationWithSubstitutedVariables

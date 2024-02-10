@@ -3,46 +3,54 @@ trigger:
   branches:
     include:
     - feature/*
-    - prerelease
     - release
+    - prerelease
     - main
 
 pr:
 - feature/*
-- prerelease
 - release
+- prerelease
 - main
 
-variables:
-  ${{ if eq(variables['Build.SourceBranchName'], 'release') }}:
-    prereleaseFlag: ''
-  ${{ else }}:
-    prereleaseFlag: '--prerelease'
-
 stages:
-- stage: Build
-  dependsOn: []
-  jobs:
-  - job: Build
-    steps:
-    - template: azure-pipelines/build.yml
-      parameters:
-        prereleaseFlag: $(prereleaseFlag)
-    pool:
-      name: NetCore-Public
-      demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+- template: azure-pipelines/build-all.yml
 
 - stage: Test
   displayName: Test
+  dependsOn: []
+  jobs:
+  - template: azure-pipelines/test.yml
+    parameters:
+      jobName: Linux
+      poolName: NetCore-Public
+      demandsName: 1es-ubuntu-2004-open
+
+  - template: azure-pipelines/test.yml
+    parameters:
+      jobName: Windows
+      poolName: NetCore-Public
+      demandsName: 1es-windows-2022-open
+
+  - template: azure-pipelines/test.yml
+    parameters:
+      jobName: MacOS
+      poolName: Azure Pipelines
+      vmImageName: macOS-13
+
+- stage: Test_OmniSharp
+  displayName: Test OmniSharp
   dependsOn: []
   jobs:
   - job: Test
     strategy:
       matrix:
         linux:
-          demandsName: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+          demandsName: 1es-ubuntu-2004-open
+        windows:
+          demandsName: 1es-windows-2022-open
     pool:
       name: NetCore-Public
-      demands: $(demandsName)
+      demands: ImageOverride -equals $(demandsName)
     steps:
-    - template: azure-pipelines/test.yml
+    - template: azure-pipelines/test-omnisharp.yml

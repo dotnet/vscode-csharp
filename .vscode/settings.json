@@ -16,9 +16,9 @@
     },
     "csharp.suppressDotnetRestoreNotification": true,
     "typescript.tsdk": "./node_modules/typescript/lib",
-    "mocha.enabled": true,
     "omnisharp.autoStart": false,
     "editor.formatOnSave": false,
     "eslint.lintTask.enable": true,
-    "dotnet.defaultSolution": "disable"
+    "dotnet.defaultSolution": "disable",
+    "jest.autoRun": "off"
 }

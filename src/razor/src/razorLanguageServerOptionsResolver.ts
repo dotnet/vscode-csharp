@@ -10,13 +10,13 @@ import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { RazorLogger } from './razorLogger';
-import { Trace } from './trace';
+import { LogLevel } from './logLevel';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 export function resolveRazorLanguageServerOptions(
     vscodeApi: vscodeAdapter.api,
     languageServerDir: string,
-    trace: Trace,
+    logLevel: LogLevel,
     logger: RazorLogger
 ) {
     const languageServerExecutablePath = findLanguageServerExecutable(languageServerDir);
@@ -28,30 +28,24 @@ export function resolveRazorLanguageServerOptions(
     return {
         serverPath: languageServerExecutablePath,
         debug: debugLanguageServer,
-        trace,
+        logLevel: logLevel,
         outputChannel: logger.outputChannel,
         usingOmniSharp,
     } as RazorLanguageServerOptions;
 }
 
 function findLanguageServerExecutable(withinDir: string) {
-    const extension = isWindows() ? '.exe' : '';
-    const executablePath = path.join(withinDir, `rzls${extension}`);
-    let fullPath = '';
+    // Prefer using executable over fallback to dll.
+    const fileName = isWindows() ? 'rzls.exe' : 'rzls';
+    let fullPath = path.join(withinDir, fileName);
+    if (!fs.existsSync(fullPath)) {
+        fullPath = path.join(withinDir, 'rzls.dll');
+    }
 
-    if (fs.existsSync(executablePath)) {
-        fullPath = executablePath;
-    } else {
-        // Exe doesn't exist.
-        const dllPath = path.join(withinDir, 'rzls.dll');
-
-        if (!fs.existsSync(dllPath)) {
-            throw new Error(
-                vscode.l10n.t("Could not find Razor Language Server executable within directory '{0}'", withinDir)
-            );
-        }
-
-        fullPath = dllPath;
+    if (!fs.existsSync(fullPath)) {
+        throw new Error(
+            vscode.l10n.t("Could not find Razor Language Server executable '{0}' within directory", fullPath)
+        );
     }
 
     return fullPath;

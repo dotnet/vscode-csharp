@@ -2,27 +2,20 @@ trigger:
   branches:
     include:
     - main
-    - prerelease
     - release
+    - prerelease
 pr: none
 
-variables:
-  ${{ if eq(variables['Build.SourceBranchName'], 'release') }}:
-    prereleaseFlag: ''
-  ${{ else }}:
-    prereleaseFlag: '--prerelease'
+parameters:
+  # Allows the version number to be set manually for a specific build.
+  # Useful when we need to create an updated extension version with no changes (for example to fix a bad partial release).
+  - name: versionNumberOverride
+    type: string
+    default: 'default'
 
 stages:
-- stage: Build
-  dependsOn: []
-  jobs:
-  - job: Build
-    steps:
-    - template: azure-pipelines/build.yml
-      parameters:
-        prereleaseFlag: $(prereleaseFlag)
-    pool:
-      name: NetCore1ESPool-Internal
-      demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+- template: azure-pipelines/build-all.yml
+  parameters:
+    versionNumberOverride: ${{ parameters.versionNumberOverride }}
 
 # TODO: add compliance, signing.

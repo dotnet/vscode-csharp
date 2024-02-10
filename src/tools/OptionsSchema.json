@@ -141,6 +141,57 @@
         }
       }
     },
+    "DiagnosticsLog": {
+      "type": "object",
+      "required": [],
+      "default": {},
+      "description": "Settings to control which messages are printed to the output window from the debugger's diagnostics log. This log is meant to help troubleshoot problems with the debugger.",
+      "properties": {
+        "protocolMessages": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine whether DAP protocol messages exchanged between the C# debugger and the UI should be logged to the output window. This option defaults to `false`.",
+          "default": false
+        },
+        "dispatcherMessages": {
+          "type": "string",
+          "enum": [ "none", "error", "important", "normal" ],
+          "enumDescriptions": [
+            "Do not print additional diagnostic messages.",
+            "Print error-level diagnostic messages.",
+            "Print important diagnostic messages.",
+            "Print all non-verbose diagnostic messages."
+          ],
+          "markdownDescription": "Controls which messages are printed to the output window from the debugger's dispatcher. If not specified, this will default to `none` unless one of the verbose log settings are enabled (`debugEngineAPITracing`, `debugRuntimeEventTracing`, `expressionEvaluationTracing` or `startDebuggingTracing`), in which case the default changes to `normal`.",
+          "default": "none"
+        },
+        "debugEngineAPITracing": {
+          "type": "string",
+          "enum": [ "none", "error", "all" ],
+          "enumDescriptions": [
+            "Disable tracing API calls",
+            "Print failures from debugger API calls.",
+            "Print all debugger API calls. This is very verbose."
+          ],
+          "markdownDescription": "Controls if API calls to Microsoft.VisualStudio.Debugger.Engine/vsdebugeng.h should be printed to the output window. This option defaults to `none`.",
+          "default": "none"
+        },
+        "debugRuntimeEventTracing": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine whether verbose tracing for events raised by the underlying runtime should be enabled. This option defaults to `false`.",
+          "default": false
+        },
+        "expressionEvaluationTracing": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine whether verbose tracing for expression evaluation should be enabled. This option defaults to `false`.",
+          "default": false
+        },
+        "startDebuggingTracing": {
+          "type": "boolean",
+          "markdownDescription": "Flag to determine whether verbose tracing for start debugging should be enabled. This option defaults to `false`.",
+          "default": false
+        }
+      }
+    },
     "Logging": {
       "type": "object",
       "required": [],
@@ -162,11 +213,6 @@
           "markdownDescription": "Flag to determine whether program output should be logged to the output window when not using an external console. This option defaults to `true`.",
           "default": true
         },
-        "engineLogging": {
-          "type": "boolean",
-          "markdownDescription": "Flag to determine whether diagnostic engine logs should be logged to the output window. This option defaults to `false`.",
-          "default": false
-        },
         "browserStdOut": {
           "type": "boolean",
           "markdownDescription": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
@@ -174,7 +220,7 @@
         },
         "elapsedTiming": {
           "type": "boolean",
-          "markdownDescription": "If true, engine logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
+          "markdownDescription": "If true, protocol message logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
           "default": false
         },
         "threadExit": {
@@ -185,6 +231,20 @@
         "processExit": {
           "type": "boolean",
           "markdownDescription": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
+          "default": true
+        },
+        "engineLogging": {
+          "type": "boolean",
+          "deprecationMessage": "The setting 'logging.engineLogging' has been deprecated in favor of 'logging.diagnosticsLog.protocolMessages'.",
+          "default": false
+        },
+        "diagnosticsLog": {
+          "$ref": "#/definitions/DiagnosticsLog",
+          "description": "Settings to control which messages are printed to the output window from the debugger's diagnostics log. This log is meant to help troubleshoot problems with the debugger."
+        },
+        "consoleUsageMessage": {
+          "type": "boolean",
+          "description": "Controls if a message is logged when the target process calls a 'Console.Read*' API and stdin is redirected to the console.",
           "default": true
         }
       }
@@ -311,12 +371,12 @@
           "type": "string",
           "enum": [ "internalConsole", "integratedTerminal", "externalTerminal" ],
           "enumDescriptions": [
-            "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine).",
-            "VS Code's integrated terminal.",
-            "External terminal that can be configured via user settings."
+            "The target process's console input (stdin) and output (stdout/stderr) are routed through the VS Code Debug Console.",
+            "The target process will run inside VS Code's integrated terminal.",
+            "The target process will run inside its own external terminal. When using this mode, you will need to switch focus between Visual Studio Code and the external terminal window."
           ],
-          "markdownDescription": "When launching console projects, indicates which console the target program should be launched into.",
-          "settingsDescription": "**Note:** _This option is only used for the 'dotnet' debug configuration type_.\n\nWhen launching console projects, indicates which console the target program should be launched into.",
+          "markdownDescription": "Indicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
+          "settingsDescription": "**Note:** _This option is only used for console projects launched with the `dotnet` debug configuration type_.\n\nIndicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
           "default": "internalConsole"
         },
         "externalConsole": {
@@ -351,7 +411,7 @@
         },
         "justMyCode": {
           "type": "boolean",
-          "markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson#just-my-code)",
+          "markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson-JustMyCode)",
           "default": true
         },
         "requireExactSource": {
@@ -374,7 +434,7 @@
         },
         "suppressJITOptimizations": {
           "type": "boolean",
-          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
+          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
           "default": false
         },
         "symbolOptions": {
@@ -388,7 +448,7 @@
         },
         "sourceLinkOptions": {
           "$ref": "#/definitions/SourceLinkOptions",
-          "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
+          "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-DotNet-SourceLink)",
           "default": {
             "*": { "enabled": true }
           }
@@ -470,7 +530,7 @@
         },
         "suppressJITOptimizations": {
           "type": "boolean",
-          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson#suppress-jit-optimizations)",
+          "markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
           "default": false
         },
         "symbolOptions": {
@@ -484,7 +544,7 @@
         },
         "sourceLinkOptions": {
           "$ref": "#/definitions/SourceLinkOptions",
-          "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
+          "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-DotNet-SourceLink)",
           "default": {
             "*": { "enabled": true }
           }
@@ -503,7 +563,7 @@
     },
     "SourceLinkOptions": {
       "type": "object",
-      "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-CS-LaunchJson#source-link-options)",
+      "markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-DotNet-SourceLink)",
       "additionalItems": {
         "type": "object",
         "properties": {
