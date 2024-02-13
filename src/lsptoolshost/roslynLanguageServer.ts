@@ -629,12 +629,15 @@ export class RoslynLanguageServer {
             throw new Error('Timeout. Named pipe information not received from server.');
         }
 
-        const socketPromise = new Promise<net.Socket>((resolve) => {
+        const socketPromise = new Promise<net.Socket>((resolve, reject) => {
             _channel.appendLine('attempting to connect client to server...');
             const socket = net.createConnection(pipeConnectionInfo.pipeName, () => {
                 _channel.appendLine('client has connected to server');
                 resolve(socket);
             });
+
+            // If we failed to connect for any reason, ensure the error is propagated.
+            socket.on('error', (err) => reject(err));
         });
 
         // Wait for the client to connect to the named pipe.
