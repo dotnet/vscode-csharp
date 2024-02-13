@@ -6,7 +6,13 @@
 ## Latest
 * Update Razor to 7.0.0-preview.24079.3 (PR: [#6841](https://github.com/dotnet/vscode-csharp/pull/6841))
   * Fix an issue with component hover not showing enough information (PR: [dotnet/razor#9862](https://github.com/dotnet/razor/pull/9862))
-* Update Roslyn to 4.10.0-2.24081.2 (PR: [#6831](https://github.com/dotnet/vscode-csharp/pull/6831))
+* Fix regression in override completion (PR: [#6869](https://github.com/dotnet/vscode-csharp/pull/6869))
+* Update debugger to 2.18.0 release (PR: [#6853](https://github.com/dotnet/vscode-csharp/pull/6853))
+
+## 2.17.7
+* Update Roslyn to 4.10.0-2.24102.11 (PR: [#6847](https://github.com/dotnet/vscode-csharp/pull/6847))
+  * Fix another issue loading .NET projects when only the 6.0 SDK is installed (PR: [#71881](https://github.com/dotnet/roslyn/pull/71881))
+  * Fix request info leak when project loading is cancelled (PR: [#71737](https://github.com/dotnet/roslyn/pull/71737))
   * Load Roslyn DevKit assemblies into the default ALC (PR: [#71807](https://github.com/dotnet/roslyn/pull/71807))
 
 ## 2.16.24

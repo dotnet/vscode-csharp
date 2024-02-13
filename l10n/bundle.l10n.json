@@ -48,7 +48,7 @@
   "Cannot load Razor language server because the directory was not found: '{0}'": "Cannot load Razor language server because the directory was not found: '{0}'",
   "Could not find '{0}' in or above '{1}'.": "Could not find '{0}' in or above '{1}'.",
   "Invalid razor.server.trace setting. Defaulting to '{0}'": "Invalid razor.server.trace setting. Defaulting to '{0}'",
-  "Could not find Razor Language Server executable within directory '{0}'": "Could not find Razor Language Server executable within directory '{0}'",
+  "Could not find Razor Language Server executable '{0}' within directory": "Could not find Razor Language Server executable '{0}' within directory",
   "Server failed to start after retrying 5 times.": "Server failed to start after retrying 5 times.",
   "Razor Language Server failed to start unexpectedly, please check the 'Razor Log' and report an issue.": "Razor Language Server failed to start unexpectedly, please check the 'Razor Log' and report an issue.",
   "Tried to send requests while server is not started.": "Tried to send requests while server is not started.",

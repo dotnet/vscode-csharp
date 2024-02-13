@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "CSharp コンテンツを特定できませんでした",
   "Could not determine Html content": "HTML コンテンツを特定できませんでした",
   "Could not find '{0}' in or above '{1}'.": "'{1}' 以上に '{0}' が見つかりませんでした。",
-  "Could not find Razor Language Server executable within directory '{0}'": "ディレクトリ '{0}' 内に Razor 言語サーバーの実行可能ファイルが見つかりませんでした",
+  "Could not find Razor Language Server executable '{0}' within directory": "ディレクトリ内に Razor 言語サーバーの実行可能ファイル '{0}' が見つかりませんでした",
   "Could not find a process id to attach.": "アタッチするプロセス ID が見つかりませんでした。",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "'{0}' で .NET Core プロジェクトが見つかりませんでした。アセットは生成されませんでした。",
   "Couldn't create self-signed certificate. See output for more information.": "自己署名証明書を作成できませんでした。詳細については、出力を参照してください。",
