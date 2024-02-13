@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Update Roslyn to 4.10.0-2.24112.8 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
+  * Fix issue loading WPF projects where code was not generated (PR: [#69225](https://github.com/dotnet/roslyn/pull/69225))
+  * Cleanup and harden LSP server extension loading (PR: [#71862](https://github.com/dotnet/roslyn/pull/71862))
+  * Report better warnings and errors if build hosts exit abnormally (PR: [#71909](https://github.com/dotnet/roslyn/pull/71909))
+* Log more information when the client fails to connect to the named pipe (PR: [#6881](https://github.com/dotnet/vscode-csharp/pull/6881))
+
+## 2.18.13
 * Fix regression in override completion (PR: [#6869](https://github.com/dotnet/vscode-csharp/pull/6869))
 * Update debugger to 2.18.0 release (PR: [#6853](https://github.com/dotnet/vscode-csharp/pull/6853))
 
