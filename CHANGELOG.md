@@ -8,9 +8,11 @@
   * Fix issue loading WPF projects where code was not generated (PR: [#69225](https://github.com/dotnet/roslyn/pull/69225))
   * Cleanup and harden LSP server extension loading (PR: [#71862](https://github.com/dotnet/roslyn/pull/71862))
   * Report better warnings and errors if build hosts exit abnormally (PR: [#71909](https://github.com/dotnet/roslyn/pull/71909))
+* Update Razor to 7.0.0-preview.24079.3 (PR: [#6841](https://github.com/dotnet/vscode-csharp/pull/6841))
+  * Fix an issue with component hover not showing enough information (PR: [dotnet/razor#9862](https://github.com/dotnet/razor/pull/9862))
 * Log more information when the client fails to connect to the named pipe (PR: [#6881](https://github.com/dotnet/vscode-csharp/pull/6881))
 
-## 2.18.13
+## 2.18.15
 * Fix regression in override completion (PR: [#6869](https://github.com/dotnet/vscode-csharp/pull/6869))
 * Update debugger to 2.18.0 release (PR: [#6853](https://github.com/dotnet/vscode-csharp/pull/6853))
 
