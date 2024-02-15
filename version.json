@@ -3,6 +3,7 @@
 	"version": "2.19",
 	"publicReleaseRefSpec": [
 		"^refs/heads/release$",
+    "^refs/heads/prerelease$",
 		"^refs/heads/main$",
 		"^refs/heads/patch/.*$"
 	],
