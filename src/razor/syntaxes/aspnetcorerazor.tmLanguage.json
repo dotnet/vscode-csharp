@@ -525,6 +525,15 @@
         },
         {
           "include": "#using-directive"
+        },
+        {
+          "include": "#rendermode-directive"
+        },
+        {
+          "include": "#preservewhitespace-directive"
+        },
+        {
+          "include": "#typeparam-directive"
         }
       ]
     },
@@ -846,6 +855,75 @@
         },
         "4": {
           "name": "entity.name.variable.property.cs"
+        }
+      }
+    },
+    "rendermode-directive": {
+      "name": "meta.directive",
+      "match": "(@)(rendermode)\\s+([^$]+)?",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#transition"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.rendermode"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.cs#type"
+            }
+          ]
+        }
+      }
+    },
+    "preservewhitespace-directive": {
+      "name": "meta.directive",
+      "match": "(@)(preservewhitespace)\\s+([^$]+)?",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#transition"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.preservewhitespace"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.cs#boolean-literal"
+            }
+          ]
+        }
+      }
+    },
+    "typeparam-directive": {
+      "name": "meta.directive",
+      "match": "(@)(typeparam)\\s+([^$]+)?",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#transition"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.control.razor.directive.typeparam"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "source.cs#type"
+            }
+          ]
         }
       }
     },
