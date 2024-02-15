@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "无法确定 CSharp 内容",
   "Could not determine Html content": "无法确定 Html 内容",
   "Could not find '{0}' in or above '{1}'.": "在“{0}”或更高版本中找不到“{1}”。",
-  "Could not find Razor Language Server executable within directory '{0}'": "在目录“{0}”中找不到 Razor 语言服务器可执行文件",
+  "Could not find Razor Language Server executable '{0}' within directory": "在目录中找不到 Razor 语言服务器可执行文件“{0}”",
   "Could not find a process id to attach.": "找不到要附加的进程 ID。",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "在“{0}”中找不到 .NET Core 项目。未生成资产。",
   "Couldn't create self-signed certificate. See output for more information.": "无法创建自签名证书。有关详细信息，请参阅输出。",

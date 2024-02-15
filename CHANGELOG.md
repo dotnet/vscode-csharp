@@ -5,6 +5,10 @@
 
 ## Latest
 * Update Roslyn to run on .NET 8 (PR: [#6840](https://github.com/dotnet/vscode-csharp/pull/6840))
+* Update Razor to 7.0.0-preview.24079.3 (PR: [#6841](https://github.com/dotnet/vscode-csharp/pull/6841))
+  * Fix an issue with component hover not showing enough information (PR: [dotnet/razor#9862](https://github.com/dotnet/razor/pull/9862))
+* Fix regression in override completion (PR: [#6869](https://github.com/dotnet/vscode-csharp/pull/6869))
+* Update debugger to 2.18.0 release (PR: [#6853](https://github.com/dotnet/vscode-csharp/pull/6853))
 
 ## 2.17.7
 * Update Roslyn to 4.10.0-2.24102.11 (PR: [#6847](https://github.com/dotnet/vscode-csharp/pull/6847))
