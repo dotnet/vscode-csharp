@@ -22,8 +22,12 @@ export function RunPreservewhitespaceDirectiveSuite() {
             await assertMatchesSnapshot('@preservewhitespace fal');
         });
 
-        it('Bool provided', async () => {
+        it('Bool provided (true)', async () => {
             await assertMatchesSnapshot('@preservewhitespace true');
+        });
+
+        it('Bool provided (false)', async () => {
+            await assertMatchesSnapshot('@preservewhitespace false');
         });
 
         it('Bool provided spaced', async () => {

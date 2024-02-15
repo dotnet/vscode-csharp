@@ -22,6 +22,10 @@ export function RunTypeparamDirectiveSuite() {
             await assertMatchesSnapshot('@typeparam SomeViewBase<string');
         });
 
+        it('Complete type, generic', async () => {
+            await assertMatchesSnapshot('@typeparam SomeViewBase<string>');
+        });
+
         it('Type provided', async () => {
             await assertMatchesSnapshot('@typeparam Person');
         });

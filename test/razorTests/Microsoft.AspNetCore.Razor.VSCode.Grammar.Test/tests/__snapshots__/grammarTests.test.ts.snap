@@ -2820,7 +2820,16 @@ exports[`Grammar tests @page directive Routed spaced 1`] = `
 "
 `;
 
-exports[`Grammar tests @preservewhitespace directive Bool provided 1`] = `
+exports[`Grammar tests @preservewhitespace directive Bool provided (false) 1`] = `
+"Line: @preservewhitespace false
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.directive, keyword.control.cshtml.transition
+ - token from 1 to 19 (preservewhitespace) with scopes text.aspnetcorerazor, meta.directive, keyword.control.razor.directive.preservewhitespace
+ - token from 19 to 20 ( ) with scopes text.aspnetcorerazor, meta.directive
+ - token from 20 to 25 (false) with scopes text.aspnetcorerazor, meta.directive, constant.language.boolean.false.cs
+"
+`;
+
+exports[`Grammar tests @preservewhitespace directive Bool provided (true) 1`] = `
 "Line: @preservewhitespace true
  - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.directive, keyword.control.cshtml.transition
  - token from 1 to 19 (preservewhitespace) with scopes text.aspnetcorerazor, meta.directive, keyword.control.razor.directive.preservewhitespace
@@ -2919,7 +2928,7 @@ exports[`Grammar tests @removeTagHelper directive Unquoted parameter 1`] = `
 "
 `;
 
-exports[`Grammar tests @rendermode directive Incomplete mode, generic 1`] = `
+exports[`Grammar tests @rendermode directive Incomplete mode 1`] = `
 "Line: @rendermode InteractiveWebAssemb
  - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.directive, keyword.control.cshtml.transition
  - token from 1 to 11 (rendermode) with scopes text.aspnetcorerazor, meta.directive, keyword.control.razor.directive.rendermode
@@ -3744,6 +3753,18 @@ exports[`Grammar tests @try { ... } catch/finally { ... } Single line 1`] = `
  - token from 111 to 114 (456) with scopes text.aspnetcorerazor, meta.statement.finally.razor, meta.structure.razor.csharp.codeblock, constant.numeric.decimal.cs
  - token from 114 to 115 (;) with scopes text.aspnetcorerazor, meta.statement.finally.razor, meta.structure.razor.csharp.codeblock, punctuation.terminator.statement.cs
  - token from 115 to 116 (}) with scopes text.aspnetcorerazor, meta.statement.finally.razor, meta.structure.razor.csharp.codeblock, punctuation.curlybrace.close.cs
+"
+`;
+
+exports[`Grammar tests @typeparam directive Complete type, generic 1`] = `
+"Line: @typeparam SomeViewBase<string>
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.directive, keyword.control.cshtml.transition
+ - token from 1 to 10 (typeparam) with scopes text.aspnetcorerazor, meta.directive, keyword.control.razor.directive.typeparam
+ - token from 10 to 11 ( ) with scopes text.aspnetcorerazor, meta.directive
+ - token from 11 to 23 (SomeViewBase) with scopes text.aspnetcorerazor, meta.directive, entity.name.type.cs
+ - token from 23 to 24 (<) with scopes text.aspnetcorerazor, meta.directive, punctuation.definition.typeparameters.begin.cs
+ - token from 24 to 30 (string) with scopes text.aspnetcorerazor, meta.directive, keyword.type.cs
+ - token from 30 to 31 (>) with scopes text.aspnetcorerazor, meta.directive, punctuation.definition.typeparameters.end.cs
 "
 `;
 

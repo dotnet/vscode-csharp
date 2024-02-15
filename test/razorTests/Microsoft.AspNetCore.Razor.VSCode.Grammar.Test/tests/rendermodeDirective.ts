@@ -18,7 +18,7 @@ export function RunRendermodeDirectiveSuite() {
             await assertMatchesSnapshot('@rendermode              ');
         });
 
-        it('Incomplete mode, generic', async () => {
+        it('Incomplete mode', async () => {
             await assertMatchesSnapshot('@rendermode InteractiveWebAssemb');
         });
 
