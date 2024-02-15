@@ -2825,7 +2825,7 @@ exports[`Grammar tests @preservewhitespace directive Bool provided 1`] = `
  - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.directive, keyword.control.cshtml.transition
  - token from 1 to 19 (preservewhitespace) with scopes text.aspnetcorerazor, meta.directive, keyword.control.razor.directive.preservewhitespace
  - token from 19 to 20 ( ) with scopes text.aspnetcorerazor, meta.directive
- - token from 20 to 24 (true) with scopes text.aspnetcorerazor, meta.directive, entity.name.type.cs
+ - token from 20 to 24 (true) with scopes text.aspnetcorerazor, meta.directive, constant.language.boolean.true.cs
 "
 `;
 
@@ -2834,7 +2834,7 @@ exports[`Grammar tests @preservewhitespace directive Bool provided spaced 1`] = 
  - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.directive, keyword.control.cshtml.transition
  - token from 1 to 19 (preservewhitespace) with scopes text.aspnetcorerazor, meta.directive, keyword.control.razor.directive.preservewhitespace
  - token from 19 to 33 (              ) with scopes text.aspnetcorerazor, meta.directive
- - token from 33 to 38 (false) with scopes text.aspnetcorerazor, meta.directive, entity.name.type.cs
+ - token from 33 to 38 (false) with scopes text.aspnetcorerazor, meta.directive, constant.language.boolean.false.cs
  - token from 38 to 48 (         ) with scopes text.aspnetcorerazor, meta.directive
 "
 `;
@@ -2844,7 +2844,7 @@ exports[`Grammar tests @preservewhitespace directive Incomplete bool 1`] = `
  - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.directive, keyword.control.cshtml.transition
  - token from 1 to 19 (preservewhitespace) with scopes text.aspnetcorerazor, meta.directive, keyword.control.razor.directive.preservewhitespace
  - token from 19 to 20 ( ) with scopes text.aspnetcorerazor, meta.directive
- - token from 20 to 23 (fal) with scopes text.aspnetcorerazor, meta.directive, entity.name.type.cs
+ - token from 20 to 24 (fal) with scopes text.aspnetcorerazor, meta.directive
 "
 `;
 

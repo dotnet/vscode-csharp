@@ -898,7 +898,7 @@
         "3": {
           "patterns": [
             {
-              "include": "source.cs#type"
+              "include": "source.cs#boolean-literal"
             }
           ]
         }
