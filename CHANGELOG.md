@@ -4,8 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Fix `Attribute` snippet (PR: [#6879](https://github.com/dotnet/vscode-csharp/pull/6879))
+* Add grammar support for new Razor directives: rendermode, preservewhitespace and typeparam (PR: [#6887](https://github.com/dotnet/vscode-csharp/pull/6887))
+* Ensure failures to connect to the named pipe are propagated (PR: [#6881](https://github.com/dotnet/vscode-csharp/pull/6881))
 * Update Razor to 7.0.0-preview.24079.3 (PR: [#6841](https://github.com/dotnet/vscode-csharp/pull/6841))
   * Fix an issue with component hover not showing enough information (PR: [dotnet/razor#9862](https://github.com/dotnet/razor/pull/9862))
+
+# 2.18.15
 * Fix regression in override completion (PR: [#6869](https://github.com/dotnet/vscode-csharp/pull/6869))
 * Update debugger to 2.18.0 release (PR: [#6853](https://github.com/dotnet/vscode-csharp/pull/6853))
 
