@@ -36,7 +36,7 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
                     .flatMap(([_, diagnostics]) => diagnostics);
 
                 expect(diagnosticsInDiagnosticsCs).toHaveLength(4);
-                expect(diagnosticsInCompletionCs).toHaveLength(6);
+                expect(diagnosticsInCompletionCs).toHaveLength(4);
 
                 // Compiler diagnostic in diagnostics.cs
                 expect(getCode(diagnosticsInDiagnosticsCs[2])).toBe('CS0219');
@@ -115,7 +115,7 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
                     .flatMap(([_, diagnostics]) => diagnostics);
 
                 expect(diagnosticsInDiagnosticsCs).toHaveLength(1);
-                expect(diagnosticsInCompletionCs).toHaveLength(0);
+                expect(diagnosticsInCompletionCs).toHaveLength(1);
 
                 expect(
                     diagnosticsInDiagnosticsCs.some((d) => getCode(d).startsWith('IDE') || getCode(d).startsWith('CA'))
@@ -144,7 +144,7 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
                     .flatMap(([_, diagnostics]) => diagnostics);
 
                 expect(diagnosticsInDiagnosticsCs).toHaveLength(1);
-                expect(diagnosticsInCompletionCs).toHaveLength(0);
+                expect(diagnosticsInCompletionCs).toHaveLength(1);
 
                 expect(
                     diagnosticsInDiagnosticsCs.some((d) => getCode(d).startsWith('IDE') || getCode(d).startsWith('CA'))

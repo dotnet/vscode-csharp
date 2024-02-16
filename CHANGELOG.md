@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Fix regression in override completion (PR: [#6869](https://github.com/dotnet/vscode-csharp/pull/6869))
+* Update debugger to 2.18.0 release (PR: [#6853](https://github.com/dotnet/vscode-csharp/pull/6853))
+
+## 2.17.7
+* Update Roslyn to 4.10.0-2.24102.11 (PR: [#6847](https://github.com/dotnet/vscode-csharp/pull/6847))
+  * Fix another issue loading .NET projects when only the 6.0 SDK is installed (PR: [#71881](https://github.com/dotnet/roslyn/pull/71881))
+  * Fix request info leak when project loading is cancelled (PR: [#71737](https://github.com/dotnet/roslyn/pull/71737))
+  * Load Roslyn DevKit assemblies into the default ALC (PR: [#71807](https://github.com/dotnet/roslyn/pull/71807))
+
+## 2.16.24
 * Update Roslyn to 4.10.0-1.24069.13 (PR: [#6823](https://github.com/dotnet/vscode-csharp/pull/6823))
   * Fix request metric logging (PR: [#71734](https://github.com/dotnet/roslyn/pull/71734))
   * Fix issue loading .NET 6.0 projects when only the 6.0 SDK is installed (PR: [#71597](https://github.com/dotnet/roslyn/pull/71597))

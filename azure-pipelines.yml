@@ -4,11 +4,13 @@ trigger:
     include:
     - feature/*
     - release
+    - prerelease
     - main
 
 pr:
 - feature/*
 - release
+- prerelease
 - main
 
 stages:
