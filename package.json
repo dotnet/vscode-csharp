@@ -1763,6 +1763,7 @@
               "Critical",
               "None"
             ],
+            "order": 90,
             "default": "Information",
             "description": "%configuration.razor.server.trace%"
           }
