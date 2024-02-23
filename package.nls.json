@@ -70,6 +70,7 @@
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Show remarks information when display symbol.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging. (Previously `csharp.unitTestDebuggingOptions`)",
+  "configuration.dotnet.classifyObsoleteSymbols": "Show classification for obsolete symbols.",
   "configuration.razor.languageServer.directory": "Overrides the path to the Razor Language Server directory.",
   "configuration.razor.languageServer.debug": "Specifies whether to wait for debug attach when launching the language server.",
   "configuration.razor.server.trace": "Specifies the logging level to use for the Razor server.",

@@ -1247,6 +1247,11 @@
             "default": true,
             "description": "%configuration.dotnet.symbolSearch.searchReferenceAssemblies%",
             "order": 80
+          },
+          "dotnet.classification.classifyObsoleteSymbols": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.classifyObsoleteSymbols%"
           }
         }
       },
