@@ -49,7 +49,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 return {
                     version: '' /* We don't need to know the version - we've already verified its high enough */,
                     path: dotnetPath,
-                    env: process.env,
+                    env: this.getEnvironmentVariables(dotnetPath),
                 };
             }
         }
@@ -66,6 +66,14 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             throw new Error(`Cannot find dotnet path '${dotnetExecutablePath}'`);
         }
 
+        return {
+            version: '' /* We don't need to know the version - we've already downloaded the correct one */,
+            path: dotnetExecutablePath,
+            env: this.getEnvironmentVariables(dotnetExecutablePath),
+        };
+    }
+
+    private getEnvironmentVariables(dotnetExecutablePath: string): NodeJS.ProcessEnv {
         // Take care to always run .NET processes on the runtime that we intend.
         // The dotnet.exe we point to should not go looking for other runtimes.
         const env: NodeJS.ProcessEnv = { ...process.env };
@@ -85,11 +93,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             env.DOTNET_DbgMiniDumpName = path.join(languageServerOptions.crashDumpPath, '%e.%p.dmp');
         }
 
-        return {
-            version: '' /* We don't need to know the version - we've already downloaded the correct one */,
-            path: dotnetExecutablePath,
-            env: process.env,
-        };
+        return env;
     }
 
     /**
