@@ -286,7 +286,8 @@ export async function activate(
                 htmlFeature.register(),
                 documentSynchronizer.register(),
                 reportIssueCommand.register(),
-                listenToConfigurationChanges(languageServerClient)
+                listenToConfigurationChanges(languageServerClient),
+                razorCodeActionRunner.register()
             );
 
             if (enableProposedApis) {
@@ -294,8 +295,6 @@ export async function activate(
 
                 await proposedApisFeature.register(vscodeType);
             }
-
-            razorCodeActionRunner.register();
 
             await Promise.all([
                 colorPresentationHandler.register(),
