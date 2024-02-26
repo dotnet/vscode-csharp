@@ -16,7 +16,7 @@ steps:
 - task: UseDotNet@2
   displayName: 'Install .NET Core SDKs'
   inputs:
-    version: '7.x'
+    version: '8.x'
 
 - script: |
     dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
