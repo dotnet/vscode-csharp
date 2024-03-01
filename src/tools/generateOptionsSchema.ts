@@ -379,9 +379,9 @@ export function GenerateOptionsSchema() {
     // Add the additional options we do want
     unitTestDebuggingOptions['type'] = {
         type: 'string',
-        enum: ['coreclr', 'clr', 'monovsdbg'],
+        enum: ['coreclr', 'clr'],
         description:
-            "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, 'clr' for Desktop .NET Framework, or 'monovsdbg' for Mono debugging. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+            "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
         default: 'coreclr',
     };
     unitTestDebuggingOptions['debugServer'] = {
