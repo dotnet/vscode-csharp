@@ -1456,6 +1456,11 @@
             "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
             "default": true
           },
+          "csharp.debug.symbolOptions.moduleFilter.includeSymbolsOnDemand": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description%",
+            "default": true
+          },
           "csharp.debug.allowFastEvaluate": {
             "type": "boolean",
             "description": "%generateOptionsSchema.allowFastEvaluate.description%",
@@ -1602,6 +1607,11 @@
                         "type": "boolean",
                         "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
                         "default": true
+                      },
+                      "includeSymbolsOnDemand": {
+                        "type": "boolean",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description%",
+                        "default": true
                       }
                     }
                   }
@@ -1646,7 +1656,7 @@
                   "clr",
                   "monovsdbg"
                 ],
-                "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+                "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, 'clr' for Desktop .NET Framework, or 'monovsdbg' for Mono debugging. 'clr' only works on Windows as the Desktop framework is Windows-only.",
                 "default": "coreclr"
               },
               "debugServer": {
@@ -2793,6 +2803,11 @@
                         "type": "boolean",
                         "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
                         "default": true
+                      },
+                      "includeSymbolsOnDemand": {
+                        "type": "boolean",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description%",
+                        "default": true
                       }
                     }
                   }
@@ -3297,6 +3312,11 @@
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
                         "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
+                        "default": true
+                      },
+                      "includeSymbolsOnDemand": {
+                        "type": "boolean",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description%",
                         "default": true
                       }
                     }
@@ -4079,6 +4099,11 @@
                         "type": "boolean",
                         "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
                         "default": true
+                      },
+                      "includeSymbolsOnDemand": {
+                        "type": "boolean",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description%",
+                        "default": true
                       }
                     }
                   }
@@ -4583,6 +4608,11 @@
                       "includeSymbolsNextToModules": {
                         "type": "boolean",
                         "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description%",
+                        "default": true
+                      },
+                      "includeSymbolsOnDemand": {
+                        "type": "boolean",
+                        "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description%",
                         "default": true
                       }
                     }
