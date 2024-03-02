@@ -1978,6 +1978,12 @@
             "default": true,
             "description": "Enable/disable default Razor formatter."
           },
+          "razor.format.codeBlockBraceOnNextLine": {
+            "type": "boolean",
+            "scope": "window",
+            "default": false,
+            "description": "Forces the open brace after an @code or @functions directive to be on the following line."
+          },
           "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
             "scope": "window",
