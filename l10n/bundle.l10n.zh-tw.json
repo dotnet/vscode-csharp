@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[警告]: .NET 偵錯工具不支援 x86 Windows。偵錯將無法使用。",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp 選項已變更。請重新載入視窗以套用變更",
   "pipeArgs must be a string or a string array type": "pipeArgs 必須是字串或字串陣列類型",
-  "{0} Keyword": "{0} 關鍵字",
   "{0} references": "{0} 個參考",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}，將您的問題內容貼上作為問題的本文。別忘了填寫任何未填入的詳細資料。"
 }

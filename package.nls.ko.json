@@ -187,6 +187,7 @@
   "generateOptionsSchema.symbolOptions.moduleFilter.description": "디버거에서 기호(.pdb 파일)를 로드하려고 시도할 모듈(.dll 파일)을 제어하는 옵션을 제공합니다.",
   "generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description": "디버거에서 기호를 로드하지 않아야 하는 모듈의 배열입니다. 와일드카드(예: MyCompany.*.dll)가 지원됩니다.\r\n\r\n'모드'가 'loadAllButExcluded'로 설정되어 있지 않으면 이 속성은 무시됩니다.",
   "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description": "True 이면 'includedModules' 배열에 없는 모듈에 대해 디버거는 모듈 자체 및 시작 실행 파일 옆을 계속 확인하지만 기호 검색 목록의 경로는 확인하지 않습니다. 이 옵션의 기본값은 'true'입니다.\r\n\r\n'모드'가 'loadOnlyIncluded'로 설정되어 있지 않으면 이 속성은 무시됩니다.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description": "If true, for any module NOT in the 'includedModules' array, the debugger will attempt to download symbols when it detects symbols are needed, such as when trying to step into the module. This option defaults to 'true'.\r\n\r\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
   "generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description": "디버거에서 기호를 로드해야 하는 모듈의 배열입니다. 와일드카드(예: MyCompany.*.dll)가 지원됩니다.\r\n\r\n'모드'가 'loadOnlyIncluded'로 설정되어 있지 않으면 이 속성은 무시됩니다.",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.description": "두 가지 기본 운영 모드 중 모듈 필터가 작동하는 모드를 제어합니다.",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription": "모듈이 'excludedModules' 배열에 있지 않으면 모든 모듈에 대한 기호를 로드합니다.",
