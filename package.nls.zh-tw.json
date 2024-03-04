@@ -187,6 +187,7 @@
   "generateOptionsSchema.symbolOptions.moduleFilter.description": "提供選項，以控制偵錯工具會嘗試為其載入符號 (.pdb 檔案) 的模組 (.dll 檔案)。",
   "generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description": "偵錯工具不應為其載入符號的模組陣列。支援萬用字元 (範例: MyCompany.*.dll)。\r\n\r\n除非 '模式' 設定為 'loadAllButExcluded'，否則會忽略此屬性。",
   "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description": "若為 True，針對不在 'includedModules' 陣列中的任何模組，偵錯工具仍會檢查模組本身和啟動可執行檔的旁邊，但不會檢查符號搜尋清單上的路徑。此選項預設為 'true'。\r\n\r\n除非 '模式' 設定為 'loadOnlyIncluded'，否則會忽略此屬性。",
+  "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description": "若為 true，則對於不在 'includedModules' 陣列中的任何模組，偵錯工具會在偵測到需要符號時 (例如試圖逐步執行模組時) 嘗試下載符號。此選項預設為 'true'。\r\n\r\n除非 'mode' 設定為 'loadOnlyIncluded'，否則會略過此屬性。",
   "generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description": "偵錯工具應該為其載入符號的模組陣列。支援萬用字元 (範例: MyCompany.*.dll)。\r\n\r\n除非 '模式' 設定為 'loadOnlyIncluded'，否則會忽略此屬性。",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.description": "控制模組篩選作業在兩個基本作業模式中的哪一個。",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription": "載入所有模組的符號，除非模組位於 'excludedModules' 陣列中。",

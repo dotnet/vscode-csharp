@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[UYARI]: x86 Windows, .NET hata ayıklayıcısı tarafından desteklenmiyor. Hata ayıklama kullanılamayacak.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp seçeneği değiştirildi. Değişikliği uygulamak için lütfen pencereyi yeniden yükleyin",
   "pipeArgs must be a string or a string array type": "pipeArgs bir dize veya dize dizisi türü olmalıdır",
-  "{0} Keyword": "{0} Anahtar Sözcüğü",
   "{0} references": "{0} başvuru",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, sorun içeriklerinizi sorunun gövdesi olarak yapıştırın. Daha sonrasında doldurulmamış olan ayrıntıları sağlamayı unutmayın."
 }

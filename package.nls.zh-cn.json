@@ -187,6 +187,7 @@
   "generateOptionsSchema.symbolOptions.moduleFilter.description": "提供选项来控制调试程序将尝试为哪些模块(.dll 文件)加载符号(.pdb 文件)。",
   "generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description": "调试程序不得为其加载符号的模块数组。支持通配符(例如: MyCompany.*.dll)。\r\n\r\n会忽略此属性，除非“模式”设置为 \"loadAllButExcluded\"。",
   "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description": "如果为 true，则对于未在 \"includedModules\" 数组中的任何模块，调试程序将在模块本身和启动可执行文件旁边进行检查，但它将不检查符号搜索列表上的路径。此选项默认为 \"true\"\r\n\r\n会忽略此属性，除非“模式”设置为 \"loadOnlyIncluded\"。",
+  "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description": "If true, for any module NOT in the 'includedModules' array, the debugger will attempt to download symbols when it detects symbols are needed, such as when trying to step into the module. This option defaults to 'true'.\r\n\r\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
   "generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description": "调试程序应为其加载符号的模块数组。支持通配符(例如: MyCompany.*.dll)。\r\n\r\n会忽略此属性，除非“模式”设置为 \"loadOnlyIncluded\"。",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.description": "控制模块筛选器在两种基本操作模式的下一种模式下操作。",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription": "为所有模块加载符号，除非模块在 \"excludedModules\" 数组中。",

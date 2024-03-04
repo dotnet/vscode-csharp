@@ -187,6 +187,7 @@
   "generateOptionsSchema.symbolOptions.moduleFilter.description": "デバッガーが、シンボル (.pdb ファイル) を読み込もうとするモジュール (.dll ファイル) を制御するオプションを提供します。",
   "generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description": "デバッガーがシンボルを読み込んではいけないモジュールの配列です。ワイルドカード (例: MyCompany.*.dll) がサポートされています。\r\n\r\n'mode' が 'loadAllButExcluded' に設定されていない限り、このプロパティは無視されます。",
   "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description": "True の場合、'includedModules' 配列にないモジュールの場合、デバッガーはモジュール自体と起動中の実行可能ファイルの横を確認しますが、シンボル検索リストのパスはチェックしません。このオプションの既定値は 'true' です。\r\n\r\n'mode' が 'loadOnlyIncluded' に設定されていない限り、このプロパティは無視されます。",
+  "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description": "true の場合、'includedModules' 配列にないモジュールに対して、デバッガーは、モジュールにステップインしようとしたときなど、シンボルが必要であることを検出したときにシンボルのダウンロードを試みます。このオプションの既定値は 'true' です。\r\n\r\n'mode' が 'loadOnlyIncluded' に設定されていない限り、このプロパティは無視されます。",
   "generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description": "デバッガーがシンボルを読み込むべきモジュールの配列です。ワイルドカード (例: MyCompany.*.dll) がサポートされています。\r\n\r\n'mode' が 'loadOnlyIncluded' に設定されていない限り、このプロパティは無視されます。",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.description": "モジュール フィルターが動作する 2 つの基本的な動作モードを制御します。",
   "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription": "モジュールが 'excludedModules' 配列内にある場合を除き、すべてのモジュールのシンボルを読み込みます。",
