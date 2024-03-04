@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[警告]: x86 Windows は .NET デバッガーではサポートされていません。デバッグは使用できません。",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp オプションが変更されました。変更を適用するために、ウィンドウを再読み込みしてください",
   "pipeArgs must be a string or a string array type": "pipeArgs は文字列型または文字列配列型である必要があります",
-  "{0} Keyword": "{0} キーワード",
   "{0} references": "{0} 個の参照",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}、問題の内容を問題の本文として貼り付けます。未記入の詳細があれば忘れずに記入してください。"
 }

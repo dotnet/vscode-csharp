@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[ВНИМАНИЕ!] x86 Windows не поддерживается отладчиком .NET. Отладка будет недоступна.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Параметр dotnet.server.useOmnisharp изменен. Перезагрузите окно, чтобы применить изменение",
   "pipeArgs must be a string or a string array type": "pipeArgs должен быть строкой или строковым массивом",
-  "{0} Keyword": "Ключевое слово: {0}",
   "{0} references": "Ссылок: {0}",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, вставьте описание проблемы в соответствующее поле. Не забудьте указать все необходимые сведения."
 }
