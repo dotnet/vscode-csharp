@@ -510,6 +510,8 @@ export class RoslynLanguageServer {
             args.push('--extension', extensionPath);
         }
 
+        args.push('--devKitRazorOutputPath', 'C:/CodeHub/vscode-csharp/.razor');
+
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
         // in our activation because C# Dev Kit depends on C# activation completing.
