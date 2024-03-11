@@ -119,7 +119,6 @@
   "Unexpected error when attaching to C# preview window.": "Unexpected error when attaching to C# preview window.",
   "Razor C# copied to clipboard": "Razor C# copied to clipboard",
   "Copy C#": "Copy C#",
-  "{0} Keyword": "{0} Keyword",
   "Unexpected completion trigger kind: {0}": "Unexpected completion trigger kind: {0}",
   "1 reference": "1 reference",
   "{0} references": "{0} references",

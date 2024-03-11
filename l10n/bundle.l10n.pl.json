@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[OSTRZEŻENIE]: Debuger platformy .NET nie obsługuje systemu Windows x86. Debugowanie nie będzie dostępne.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Opcja dotnet.server.useOmnisharp została zmieniona. Załaduj ponownie okno, aby zastosować zmianę",
   "pipeArgs must be a string or a string array type": "Argument pipeArgs musi być ciągiem lub typem tablicy ciągów",
-  "{0} Keyword": "Słowo kluczowe {0}",
   "{0} references": "Odwołania: {0}",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, wklej zawartość problemu jako treść problemu. Nie zapomnij wypełnić wszystkich szczegółów, które pozostały niewypełnione."
 }

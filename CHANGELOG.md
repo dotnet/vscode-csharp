@@ -4,6 +4,24 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+- Update Roslyn to run on .NET 8 (PR: [#6920](https://github.com/dotnet/vscode-csharp/pull/6920))
+  * Upgrade language server to run on .NET 8 (PR: [#72247](https://github.com/dotnet/roslyn/pull/72247))
+  * Refactors LSP server extension assembly loading (PR: [#71862](https://github.com/dotnet/roslyn/pull/71862))
+  * Report better warnings and errors if build hosts exit abnormally (PR: [#71909](https://github.com/dotnet/roslyn/pull/71909))
+* Update Razor to 7.0.0-preview.24151.1 (PR: [#6922](https://github.com/dotnet/vscode-csharp/pull/6922))
+  - Upgrade language server to run on .NET 8 (PR: [#9981](https://github.com/dotnet/razor/pull/9981))
+  - Support inlay hints (PR: [#9904](https://github.com/dotnet/razor/pull/9904) and [#6857](https://github.com/dotnet/vscode-csharp/pull/6857))
+  - Don't ship as self-contained (PR: [#9891](https://github.com/dotnet/razor/pull/9891))
+  - Better using directive completiong (PR: [#9982](https://github.com/dotnet/razor/pull/9982))
+
+## 2.19.13
+* Fix `Attribute` snippet (PR: [#6879](https://github.com/dotnet/vscode-csharp/pull/6879))
+* Add grammar support for new Razor directives: rendermode, preservewhitespace and typeparam (PR: [#6887](https://github.com/dotnet/vscode-csharp/pull/6887))
+* Ensure failures to connect to the named pipe are propagated (PR: [#6881](https://github.com/dotnet/vscode-csharp/pull/6881))
+* Update Razor to 7.0.0-preview.24079.3 (PR: [#6841](https://github.com/dotnet/vscode-csharp/pull/6841))
+  * Fix an issue with component hover not showing enough information (PR: [dotnet/razor#9862](https://github.com/dotnet/razor/pull/9862))
+
+# 2.18.15
 * Fix regression in override completion (PR: [#6869](https://github.com/dotnet/vscode-csharp/pull/6869))
 * Update debugger to 2.18.0 release (PR: [#6853](https://github.com/dotnet/vscode-csharp/pull/6853))
 
