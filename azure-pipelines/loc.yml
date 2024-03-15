@@ -40,7 +40,7 @@ extends:
       os: windows
     stages:
     - stage: LocalizationStage
-      # condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
       jobs:
       - job: Localization
         templateContext:
