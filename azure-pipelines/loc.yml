@@ -20,11 +20,12 @@ parameters:
     type: boolean
     default: true
 
-repositories:
-- repository: 1ESPipelineTemplates
-  type: git
-  name: 1ESPipelineTemplates/1ESPipelineTemplates
-  ref: refs/tags/release
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
 
 variables:
 # Variable group contains the PAT to LOC
