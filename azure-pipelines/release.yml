@@ -71,26 +71,18 @@ stages:
                 Write-Host "Publish to release channel."
               }
               $basePublishArgs += '--packagePath'
-
-              # Publish win32-ia32 last as recommended at https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
-              # Since validation is done asynchronously, we further take care to push the win32 variants in the first batch *first*,
-              # to give them the longest lead time possible before the second batch with just the win32-ia32 vsix is published.
-              $nonIA32PlatformArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix -Include *x64*, *arm64* | Sort-Object Name -Descending |% { $_ })
-              $ia32PlatformArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix -Include *ia32* | Sort-Object Name -Descending |% { $_ })
+              $publishArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix | Sort-Object Name -Descending |% { $_ })
 
               If ("${{ parameters.test }}" -eq "true") {
                 Write-Host "In test mode, command is printed instead of run."
-                Write-Host "##[command]vsce $nonIA32PlatformArgs"
-                Write-Host "##[command]vsce $ia32PlatformArgs"
+                Write-Host "##[command]vsce $publishArgs"
 
                 Write-Host "🔒 Verify PAT."
                 vsce verify-pat ms-dotnettools
               }
               Else {
-                Write-Host "##[command]vsce $nonIA32PlatformArgs"
-                vsce @nonIA32PlatformArgs
-                Write-Host "##[command]vsce $ia32PlatformArgs"
-                vsce @ia32PlatformArgs
+                Write-Host "##[command]vsce $publishArgs"
+                vsce @publishArgs
               }
             displayName: 🚀 Publish to Marketplace
             workingDirectory: $(Pipeline.Workspace)

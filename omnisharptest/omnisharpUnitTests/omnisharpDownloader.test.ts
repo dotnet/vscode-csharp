@@ -34,7 +34,7 @@ import { modernNetVersion } from '../../src/omnisharp/omnisharpPackageCreator';
         const networkSettingsProvider = () => new NetworkSettings('', false);
         let eventStream: EventStream;
         const installPath = 'somePath';
-        const platformInfo = new PlatformInformation('win32', 'x86');
+        const platformInfo = new PlatformInformation('win32', 'x86_64');
         let downloader: OmnisharpDownloader;
         let server: MockHttpsServer;
         let extensionPath: string;
@@ -61,7 +61,7 @@ import { modernNetVersion } from '../../src/omnisharp/omnisharpPackageCreator';
             await server.start();
             server.addRequestHandler(
                 'GET',
-                `/releases/${version}/omnisharp-win-x86${suffix}.zip`,
+                `/releases/${version}/omnisharp-win-x64${suffix}.zip`,
                 200,
                 {
                     'content-type': 'application/zip',
@@ -93,19 +93,19 @@ import { modernNetVersion } from '../../src/omnisharp/omnisharpPackageCreator';
         test('Events are created', async () => {
             const expectedSequence = [
                 new PackageInstallation('OmniSharp Version = 1.2.3'),
-                new LogPlatformInfo(new PlatformInformation('win32', 'x86')),
+                new LogPlatformInfo(new PlatformInformation('win32', 'x86_64')),
                 new PackageInstallStart(),
                 new DownloadStart(
-                    `OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x86), Version = 1.2.3`
+                    `OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x64), Version = 1.2.3`
                 ),
                 new DownloadSizeObtained(testZip.size),
                 new DownloadProgress(
                     100,
-                    `OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x86), Version = 1.2.3`
+                    `OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x64), Version = 1.2.3`
                 ),
                 new DownloadSuccess(' Done!'),
                 new InstallationStart(
-                    `OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x86), Version = 1.2.3`
+                    `OmniSharp for Windows (.NET ${useFramework ? '4.7.2' : '6'} / x64), Version = 1.2.3`
                 ),
                 new InstallationSuccess(),
             ];
