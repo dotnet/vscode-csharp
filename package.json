@@ -177,38 +177,6 @@
   "runtimeDependencies": [
     {
       "id": "OmniSharp",
-      "description": "OmniSharp for Windows (.NET 4.7.2 / x86)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x86-1.39.11.zip",
-      "installPath": ".omnisharp/1.39.11",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86"
-      ],
-      "installTestPath": "./.omnisharp/1.39.11/OmniSharp.exe",
-      "platformId": "win-x86",
-      "isFramework": true,
-      "integrity": "DF52F6BCEEF14033E8A8C374EF1B81D223FFD17BA9D7E297CFCF0C4BEBF0A22F"
-    },
-    {
-      "id": "OmniSharp",
-      "description": "OmniSharp for Windows (.NET 6 / x86)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x86-net6.0-1.39.11.zip",
-      "installPath": ".omnisharp/1.39.11-net6.0",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86"
-      ],
-      "installTestPath": "./.omnisharp/1.39.11-net6.0/OmniSharp.dll",
-      "platformId": "win-x86",
-      "isFramework": false,
-      "integrity": "BAF991481E56A75E2D865648A212310BB8EB9ACA44BABE64AA284C8E044DC844"
-    },
-    {
-      "id": "OmniSharp",
       "description": "OmniSharp for Windows (.NET 4.7.2 / x64)",
       "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x64-1.39.11.zip",
       "installPath": ".omnisharp/1.39.11",
@@ -620,19 +588,6 @@
     },
     {
       "id": "Razor",
-      "description": "Razor Language Server (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/ae634e36d0694be331db134d6c5494e8/razorlanguageserver-win-x86-7.0.0-preview.24161.6.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86"
-      ],
-      "integrity": "5B926A914DA51D0CEB3924EF9D2CC5FD5D55C9CDB0812C01A3C0FA8C7961DE14"
-    },
-    {
-      "id": "Razor",
       "description": "Razor Language Server (Windows / ARM64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/fa38f7d2ee74d0929e47c30d718ac096/razorlanguageserver-win-arm64-7.0.0-preview.24161.6.zip",
       "installPath": ".razor",
@@ -770,18 +725,6 @@
     },
     {
       "id": "RazorOmnisharp",
-      "description": "Razor Language Server for OmniSharp (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/e440c4f3a4a96334fe177513935fa010/razorlanguageserver-win-x86-7.0.0-preview.23363.1.zip",
-      "installPath": ".razoromnisharp",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86"
-      ]
-    },
-    {
-      "id": "RazorOmnisharp",
       "description": "Razor Language Server for OmniSharp (Windows / ARM64)",
       "url": "https://download.visualstudio.microsoft.com/download/pr/aee63398-023f-48db-bba2-30162c68f0c4/4ef26e45cf32fe8d51c0e7dd21f1fef6/razorlanguageserver-win-arm64-7.0.0-preview.23363.1.zip",
       "installPath": ".razoromnisharp",
@@ -894,19 +837,6 @@
         "x86_64"
       ],
       "integrity": "EEB71A415D0B1064462EAFF6DAD5451B7EBABF596E0651B1427387A2BA5EFA42"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (Windows / x86)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/5bf809c31472e7f6b734540f4f80c5f9/devkittelemetry-win-x86-7.0.0-preview.24161.6.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86"
-      ],
-      "integrity": "733B72988371061F45C7749ADCDB4823B7CD6CE6F0ED9C8B8FAE48EEF1E58A7F"
     },
     {
       "id": "RazorTelemetry",
