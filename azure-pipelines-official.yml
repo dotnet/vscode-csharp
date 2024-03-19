@@ -5,17 +5,39 @@ trigger:
     - release
     - prerelease
 pr: none
-
 parameters:
-  # Allows the version number to be set manually for a specific build.
-  # Useful when we need to create an updated extension version with no changes (for example to fix a bad partial release).
-  - name: versionNumberOverride
-    type: string
-    default: 'default'
+# Allows the version number to be set manually for a specific build.
+# Useful when we need to create an updated extension version with no changes (for example to fix a bad partial release).
+- name: versionNumberOverride
+  type: string
+  default: 'default'
+# Allows the marketplace release channel to be set manually for a specific build
+# Auto will determine the release channel based on the branch.
+- name: channel
+  values:
+  - release
+  - prerelease
+  - auto
+  default: auto
 
-stages:
-- template: azure-pipelines/build-all.yml
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
-    versionNumberOverride: ${{ parameters.versionNumberOverride }}
-
-# TODO: add compliance, signing.
+    pool:
+      name: netcore1espool-internal
+      image: 1es-windows-2022-pt
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - template: /azure-pipelines/build-all.yml@self
+      parameters:
+        versionNumberOverride: ${{ parameters.versionNumberOverride }}
+        isOfficial: true
+        channel: ${{ parameters.channel }}
