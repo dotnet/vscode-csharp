@@ -447,9 +447,7 @@ function profferBrokeredServices(
 
 function isSupportedPlatform(platform: PlatformInformation): boolean {
     if (platform.isWindows()) {
-        return (
-            platform.architecture === 'x86' || platform.architecture === 'x86_64' || platform.architecture === 'arm64'
-        );
+        return platform.architecture === 'x86_64' || platform.architecture === 'arm64';
     }
 
     if (platform.isMacOS()) {
