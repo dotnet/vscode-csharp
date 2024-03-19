@@ -75,6 +75,11 @@
           "type": "boolean",
           "description": "If true, for any module NOT in the 'includedModules' array, the debugger will still check next to the module itself and the launching executable, but it will not check paths on the symbol search list. This option defaults to 'true'.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
           "default": true
+        },
+        "includeSymbolsOnDemand": {
+          "type": "boolean",
+          "description": "If true, for any module NOT in the 'includedModules' array, the debugger will attempt to download symbols when it detects symbols are needed, such as when trying to step into the module. This option defaults to 'true'.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
+          "default": true
         }
       }
     }

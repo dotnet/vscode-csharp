@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "CSharp içeriği belirlenemedi",
   "Could not determine Html content": "Html içeriği belirlenemedi",
   "Could not find '{0}' in or above '{1}'.": "'{1}' içinde veya üzerinde '{0}' bulunamadı.",
-  "Could not find Razor Language Server executable within directory '{0}'": "'{0}' dizininde Razor Dil Sunucusu yürütülebilir dosyası bulunamadı",
+  "Could not find Razor Language Server executable '{0}' within directory": "'{0}' Razor Dil Sunucusu yürütülebilir dosyası dizinde bulunamadı",
   "Could not find a process id to attach.": "Eklenecek işlem kimliği bulunamadı.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "'{0}' içinde .NET Core projesi bulunamadı. Varlıklar oluşturulmadı.",
   "Couldn't create self-signed certificate. See output for more information.": "Otomatik olarak imzalanan sertifika oluşturulamadı. Daha fazla bilgi için çıktıya bakın.",
@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[UYARI]: x86 Windows, .NET hata ayıklayıcısı tarafından desteklenmiyor. Hata ayıklama kullanılamayacak.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp seçeneği değiştirildi. Değişikliği uygulamak için lütfen pencereyi yeniden yükleyin",
   "pipeArgs must be a string or a string array type": "pipeArgs bir dize veya dize dizisi türü olmalıdır",
-  "{0} Keyword": "{0} Anahtar Sözcüğü",
   "{0} references": "{0} başvuru",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, sorun içeriklerinizi sorunun gövdesi olarak yapıştırın. Daha sonrasında doldurulmamış olan ayrıntıları sağlamayı unutmayın."
 }

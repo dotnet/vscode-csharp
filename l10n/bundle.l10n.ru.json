@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "Не удалось определить содержимое CSharp",
   "Could not determine Html content": "Не удалось определить содержимое HTML",
   "Could not find '{0}' in or above '{1}'.": "Не удалось найти \"{0}\" в \"{1}\" или выше.",
-  "Could not find Razor Language Server executable within directory '{0}'": "Не удалось найти исполняемый файл языкового сервера Razor в каталоге \"{0}\"",
+  "Could not find Razor Language Server executable '{0}' within directory": "Не удалось найти исполняемый файл языкового сервера Razor в каталоге \"{0}\"",
   "Could not find a process id to attach.": "Не удалось найти идентификатор процесса для вложения.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "Не удалось найти проект .NET Core в {0}. Ресурсы не были созданы.",
   "Couldn't create self-signed certificate. See output for more information.": "Не удалось создать самозаверяющий сертификат См. выходные данные для получения дополнительных сведений.",
@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[ВНИМАНИЕ!] x86 Windows не поддерживается отладчиком .NET. Отладка будет недоступна.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "Параметр dotnet.server.useOmnisharp изменен. Перезагрузите окно, чтобы применить изменение",
   "pipeArgs must be a string or a string array type": "pipeArgs должен быть строкой или строковым массивом",
-  "{0} Keyword": "Ключевое слово: {0}",
   "{0} references": "Ссылок: {0}",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, вставьте описание проблемы в соответствующее поле. Не забудьте указать все необходимые сведения."
 }

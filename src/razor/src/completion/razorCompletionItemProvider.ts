@@ -30,8 +30,7 @@ export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implem
         hostDocumentPosition: vscode.Position,
         projectedPosition: vscode.Position,
         context: vscode.CompletionContext,
-        language: LanguageKind,
-        razorDocument: vscode.TextDocument
+        language: LanguageKind
     ) {
         if (projectedUri) {
             // "@" is not a valid trigger character for C# / HTML and therefore we need to translate
@@ -172,8 +171,6 @@ export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implem
                 }
             }
 
-            this.addUsingKeyword(language, razorDocument, hostDocumentPosition, completionItems);
-
             const isIncomplete = completions instanceof Array ? false : completions ? completions.isIncomplete : false;
             return new vscode.CompletionList(completionItems, isIncomplete);
         }
@@ -229,8 +226,7 @@ export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implem
             position,
             projection.position,
             context,
-            projection.languageKind,
-            document
+            projection.languageKind
         );
 
         return completionList;
@@ -286,38 +282,6 @@ export class RazorCompletionItemProvider extends RazorLanguageFeatureBase implem
         }
 
         return item;
-    }
-
-    private static addUsingKeyword(
-        language: LanguageKind,
-        razorDocument: vscode.TextDocument,
-        hostDocumentPosition: vscode.Position,
-        completionItems: vscode.CompletionItem[]
-    ) {
-        // This is an ugly hack, but it's needed to get the "using" keyword to show up in the completion list.
-        // The reason it doesn't show up is because the C# generated document puts the position of the cursor
-        // at '__o = [||]', which isn't a valid location for a using statement.
-        if (language == LanguageKind.CSharp) {
-            const line = razorDocument.lineAt(hostDocumentPosition.line);
-            const lineText = line.text.substring(0, hostDocumentPosition.character);
-            if (
-                lineText.endsWith('@') ||
-                lineText.endsWith(
-                    '@u' ||
-                        lineText.endsWith('@us') ||
-                        lineText.endsWith('@usi') ||
-                        lineText.endsWith('@usin') ||
-                        lineText.endsWith('@using')
-                )
-            ) {
-                const usingItem = new vscode.CompletionItem('using', vscode.CompletionItemKind.Keyword);
-
-                // Matching Roslyn's documentation behavior
-                (<CompletionItem>usingItem).documentation = vscode.l10n.t('{0} Keyword', 'using');
-
-                completionItems.push(usingItem);
-            }
-        }
     }
 }
 

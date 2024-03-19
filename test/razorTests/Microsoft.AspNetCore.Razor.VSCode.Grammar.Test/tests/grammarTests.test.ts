@@ -39,6 +39,9 @@ import { RunTryStatementSuite } from './tryStatement';
 import { RunUsingDirectiveSuite } from './usingDirective';
 import { RunUsingStatementSuite } from './usingStatement';
 import { RunWhileStatementSuite } from './whileStatement';
+import { RunRendermodeDirectiveSuite } from './rendermodeDirective';
+import { RunPreservewhitespaceDirectiveSuite } from './preservewhitespaceDirective';
+import { RunTypeparamDirectiveSuite } from './typeparamDirective';
 
 // We bring together all test suites and wrap them in one here. The reason behind this is that
 // modules get reloaded per test suite and the vscode-textmate library doesn't support the way
@@ -71,6 +74,9 @@ describe('Grammar tests', () => {
     RunSectionDirectiveSuite();
     RunLayoutDirectiveSuite();
     RunUsingDirectiveSuite();
+    RunRendermodeDirectiveSuite();
+    RunPreservewhitespaceDirectiveSuite();
+    RunTypeparamDirectiveSuite();
 
     // Razor C# Control Structures
     RunUsingStatementSuite();

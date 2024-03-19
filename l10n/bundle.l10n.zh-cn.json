@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "无法确定 CSharp 内容",
   "Could not determine Html content": "无法确定 Html 内容",
   "Could not find '{0}' in or above '{1}'.": "在“{0}”或更高版本中找不到“{1}”。",
-  "Could not find Razor Language Server executable within directory '{0}'": "在目录“{0}”中找不到 Razor 语言服务器可执行文件",
+  "Could not find Razor Language Server executable '{0}' within directory": "在目录中找不到 Razor 语言服务器可执行文件“{0}”",
   "Could not find a process id to attach.": "找不到要附加的进程 ID。",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "在“{0}”中找不到 .NET Core 项目。未生成资产。",
   "Couldn't create self-signed certificate. See output for more information.": "无法创建自签名证书。有关详细信息，请参阅输出。",
@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[WARNING]：.NET 调试程序不支持 x86 Windows。调试将不可用。",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp 选项已更改。请重新加载窗口以应用更改",
   "pipeArgs must be a string or a string array type": "pipeArgs 必须是字符串或字符串数组类型",
-  "{0} Keyword": "{0} 关键字",
   "{0} references": "{0} 个引用",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}，将问题内容粘贴为问题的正文。请记得填写任何未填充的详细信息。"
 }

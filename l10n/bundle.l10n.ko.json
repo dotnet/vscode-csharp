@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "CSharp 콘텐츠를 확인할 수 없음",
   "Could not determine Html content": "Html 콘텐츠를 확인할 수 없음",
   "Could not find '{0}' in or above '{1}'.": "'{1}' 안이나 위에서 '{0}'을(를) 찾을 수 없음.",
-  "Could not find Razor Language Server executable within directory '{0}'": "디렉터리 '{0}' 내에서 Razor 언어 서버 실행 파일을 찾을 수 없습니다.",
+  "Could not find Razor Language Server executable '{0}' within directory": "디렉터리 내에서 '{0}' Razor 언어 서버 실행 파일을 찾을 수 없습니다.",
   "Could not find a process id to attach.": "첨부할 프로세스 ID를 찾을 수 없습니다.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "'{0}'에서 .NET Core 프로젝트를 찾을 수 없습니다. 자산이 생성되지 않았습니다.",
   "Couldn't create self-signed certificate. See output for more information.": "자체 서명된 인증서를 생성할 수 없습니다. 자세한 내용은 출력을 참조하세요.",
@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[경고]: x86 Windows는 .NET 디버거에서 지원되지 않습니다. 디버깅을 사용할 수 없습니다.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp 옵션이 변경되었습니다. 변경 내용을 적용하려면 창을 다시 로드하세요.",
   "pipeArgs must be a string or a string array type": "pipeArgs는 문자열 또는 문자열 배열 유형이어야 합니다.",
-  "{0} Keyword": "{0} 키워드",
   "{0} references": "참조 {0}개",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, 문제 내용을 문제의 본문으로 붙여넣습니다. 작성하지 않은 세부 정보를 잊지 말고 입력합니다."
 }

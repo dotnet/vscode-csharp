@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "CSharp コンテンツを特定できませんでした",
   "Could not determine Html content": "HTML コンテンツを特定できませんでした",
   "Could not find '{0}' in or above '{1}'.": "'{1}' 以上に '{0}' が見つかりませんでした。",
-  "Could not find Razor Language Server executable within directory '{0}'": "ディレクトリ '{0}' 内に Razor 言語サーバーの実行可能ファイルが見つかりませんでした",
+  "Could not find Razor Language Server executable '{0}' within directory": "ディレクトリ内に Razor 言語サーバーの実行可能ファイル '{0}' が見つかりませんでした",
   "Could not find a process id to attach.": "アタッチするプロセス ID が見つかりませんでした。",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "'{0}' で .NET Core プロジェクトが見つかりませんでした。アセットは生成されませんでした。",
   "Couldn't create self-signed certificate. See output for more information.": "自己署名証明書を作成できませんでした。詳細については、出力を参照してください。",
@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[警告]: x86 Windows は .NET デバッガーではサポートされていません。デバッグは使用できません。",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp オプションが変更されました。変更を適用するために、ウィンドウを再読み込みしてください",
   "pipeArgs must be a string or a string array type": "pipeArgs は文字列型または文字列配列型である必要があります",
-  "{0} Keyword": "{0} キーワード",
   "{0} references": "{0} 個の参照",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}、問題の内容を問題の本文として貼り付けます。未記入の詳細があれば忘れずに記入してください。"
 }

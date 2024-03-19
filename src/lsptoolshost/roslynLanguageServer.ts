@@ -590,60 +590,67 @@ export class RoslynLanguageServer {
             const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
             _channel.append('[stderr] ' + result);
         });
+        childProcess.on('exit', (code) => {
+            _channel.appendLine(`Language server process exited with ${code}`);
+        });
 
         // Timeout promise used to time out the connection process if it takes too long.
-        const timeout = new Promise<undefined>((resolve, reject) => {
+        const timeout = new Promise<undefined>((resolve) => {
             RAL().timer.setTimeout(resolve, languageServerOptions.startTimeout);
+        });
 
+        const connectionPromise = new Promise<net.Socket>((resolveConnection, rejectConnection) => {
             // If the child process exited unexpectedly, reject the promise early.
             // Error information will be captured from the stdout/stderr streams above.
             childProcess.on('exit', (code) => {
                 if (code && code !== 0) {
-                    const message = `Language server process exited with ${code}`;
-                    _channel.appendLine(message);
-                    reject(new Error(message));
+                    rejectConnection(new Error('Language server process exited unexpectedly'));
                 }
             });
-        });
 
-        // The server process will create the named pipe used for communication. Wait for it to be created,
-        // and listen for the server to pass back the connection information via stdout.
-        const namedPipeConnectionPromise = new Promise<NamedPipeInformation>((resolve) => {
-            _channel.appendLine('waiting for named pipe information from server...');
-            childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
-                const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
-                // Use the regular expression to find all JSON lines
-                const jsonLines = result.match(RoslynLanguageServer.namedPipeKeyRegex);
-                if (jsonLines) {
-                    const transmittedPipeNameInfo: NamedPipeInformation = JSON.parse(jsonLines[0]);
-                    _channel.appendLine('received named pipe information from server');
-                    resolve(transmittedPipeNameInfo);
-                }
+            // The server process will create the named pipe used for communication. Wait for it to be created,
+            // and listen for the server to pass back the connection information via stdout.
+            const namedPipePromise = new Promise<NamedPipeInformation>((resolve) => {
+                _channel.appendLine('waiting for named pipe information from server...');
+                childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
+                    const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
+                    // Use the regular expression to find all JSON lines
+                    const jsonLines = result.match(RoslynLanguageServer.namedPipeKeyRegex);
+                    if (jsonLines) {
+                        const transmittedPipeNameInfo: NamedPipeInformation = JSON.parse(jsonLines[0]);
+                        _channel.appendLine('received named pipe information from server');
+                        resolve(transmittedPipeNameInfo);
+                    }
+                });
             });
-        });
 
-        // Wait for the server to send back the name of the pipe to connect to.
-        // If it takes too long it will timeout and throw an error.
-        const pipeConnectionInfo = await Promise.race([namedPipeConnectionPromise, timeout]);
-        if (pipeConnectionInfo === undefined) {
-            throw new Error('Timeout. Named pipe information not received from server.');
-        }
+            const socketPromise = namedPipePromise.then(async (pipeConnectionInfo) => {
+                return new Promise<net.Socket>((resolve, reject) => {
+                    _channel.appendLine('attempting to connect client to server...');
+                    const socket = net.createConnection(pipeConnectionInfo.pipeName, () => {
+                        _channel.appendLine('client has connected to server');
+                        resolve(socket);
+                    });
 
-        const socketPromise = new Promise<net.Socket>((resolve) => {
-            _channel.appendLine('attempting to connect client to server...');
-            const socket = net.createConnection(pipeConnectionInfo.pipeName, () => {
-                _channel.appendLine('client has connected to server');
-                resolve(socket);
+                    // If we failed to connect for any reason, ensure the error is propagated.
+                    socket.on('error', (err) => reject(err));
+                });
             });
+
+            socketPromise.then(resolveConnection, rejectConnection);
         });
 
         // Wait for the client to connect to the named pipe.
-        // If it takes too long it will timeout and throw an error.
-        const socket = await Promise.race([socketPromise, timeout]);
+        let socket: net.Socket | undefined;
+        if (commonOptions.waitForDebugger) {
+            // Do not timeout the connection when the waitForDebugger option is set.
+            socket = await connectionPromise;
+        } else {
+            socket = await Promise.race([connectionPromise, timeout]);
+        }
+
         if (socket === undefined) {
-            throw new Error(
-                'Timeout. Client cound not connect to server via named pipe: ' + pipeConnectionInfo.pipeName
-            );
+            throw new Error('Timeout. Client cound not connect to server via named pipe');
         }
 
         return {

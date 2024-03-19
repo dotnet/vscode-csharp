@@ -31,8 +31,8 @@ export function registerCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand(
             'roslyn.client.completionComplexEdit',
-            async (uriStr, textEdit, isSnippetString, newOffset) =>
-                completionComplexEdit(uriStr, textEdit, isSnippetString, newOffset, outputChannel)
+            async (textDocument, textEdit, isSnippetString, newOffset) =>
+                completionComplexEdit(textDocument, textEdit, isSnippetString, newOffset, outputChannel)
         )
     );
     context.subscriptions.push(
@@ -97,7 +97,7 @@ async function restartServer(languageServer: RoslynLanguageServer): Promise<void
  * @param newPosition The offset for new cursor position. -1 if the edit has not specified one.
  */
 async function completionComplexEdit(
-    uriStr: string,
+    textDocument: languageClient.TextDocumentIdentifier,
     textEdit: vscode.TextEdit,
     isSnippetString: boolean,
     newOffset: number,
@@ -106,9 +106,10 @@ async function completionComplexEdit(
     const componentName = '[roslyn.client.completionComplexEdit]';
 
     // Find TextDocument, opening if needed.
-    const document = await vscode.workspace.openTextDocument(uriStr);
+    const uri = UriConverter.deserialize(textDocument.uri);
+    const document = await vscode.workspace.openTextDocument(uri);
     if (document === undefined) {
-        outputAndThrow(outputChannel, `${componentName} Can't open document with path: '${uriStr}'`);
+        outputAndThrow(outputChannel, `${componentName} Can't open document with path: '${textDocument.uri}'`);
     }
 
     // Use editor if we need to deal with selection or snippets.
@@ -116,7 +117,10 @@ async function completionComplexEdit(
     if (isSnippetString || newOffset >= 0) {
         editor = await vscode.window.showTextDocument(document);
         if (editor === undefined) {
-            outputAndThrow(outputChannel, `${componentName} Editor unavailable for document with path: '${uriStr}'`);
+            outputAndThrow(
+                outputChannel,
+                `${componentName} Editor unavailable for document with path: '${textDocument.uri}'`
+            );
         }
     }
 

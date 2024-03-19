@@ -31,7 +31,7 @@
   "Could not determine CSharp content": "Non è stato possibile determinare il contenuto CSharp",
   "Could not determine Html content": "Non è stato possibile determinare il contenuto HTML",
   "Could not find '{0}' in or above '{1}'.": "Non è stato possibile trovare '{0}{0}' in o sopra '{1}'.",
-  "Could not find Razor Language Server executable within directory '{0}'": "Non è stato possibile trovare l'eseguibile del server di linguaggio Razor nella directory '{0}'",
+  "Could not find Razor Language Server executable '{0}' within directory": "Non è possibile trovare l'eseguibile del server di linguaggio Razor '{0}' nella directory",
   "Could not find a process id to attach.": "Non è stato possibile trovare un ID processo da collegare.",
   "Could not locate .NET Core project in '{0}'. Assets were not generated.": "Non è stato possibile individuare il progetto .NET Core in \"{0}\". Gli asset non sono stati generati.",
   "Couldn't create self-signed certificate. See output for more information.": "Impossibile creare il certificato autofirmato. Per altre informazioni, vedere l'output.",
@@ -172,7 +172,6 @@
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[AVVISO]: x86 Windows non è supportato dal debugger .NET. Il debug non sarà disponibile.",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "L'opzione dotnet.server.useOmnisharp è stata modificata. Ricaricare la finestra per applicare la modifica",
   "pipeArgs must be a string or a string array type": "pipeArgs deve essere un tipo stringa o matrice di stringhe",
-  "{0} Keyword": "Parola chiave di {0}",
   "{0} references": "{0} riferimenti",
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, incollare il contenuto del problema come corpo del problema. Non dimenticare di compilare i dettagli rimasti che non sono stati compilati."
 }
