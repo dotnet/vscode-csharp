@@ -6,28 +6,6 @@
 export const testPackageJSON = {
     runtimeDependencies: [
         {
-            description: 'OmniSharp for Windows (.NET 4.7.2 / x86)',
-            url: 'https://download.visualstudio.microsoft.com/download/pr/100505823/5804b7d3b5eeb7e4ae812a7cff03bd52/omnisharp-win-x86-1.28.0.zip',
-            fallbackUrl: 'https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.28.0.zip',
-            installPath: '.omnisharp',
-            platforms: ['win32'],
-            architectures: ['x86'],
-            installTestPath: './.omnisharp/OmniSharp.exe',
-            platformId: 'win-x86',
-            isFramework: true,
-        },
-        {
-            description: 'OmniSharp for Windows (.NET 6 / x86)',
-            url: 'https://download.visualstudio.microsoft.com/download/pr/100505823/5804b7d3b5eeb7e4ae812a7cff03bd52/omnisharp-win-x86-1.28.0.zip',
-            fallbackUrl: 'https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x86-1.28.0.zip',
-            installPath: '.omnisharp',
-            platforms: ['win32'],
-            architectures: ['x86'],
-            installTestPath: './.omnisharp/OmniSharp.exe',
-            platformId: 'win-x86',
-            isFramework: false,
-        },
-        {
             description: 'OmniSharp for Windows (.NET 4.7.2 / x64)',
             url: 'https://download.visualstudio.microsoft.com/download/pr/100505821/c570a9e20dbf7172f79850babd058872/omnisharp-win-x64-1.28.0.zip',
             fallbackUrl: 'https://omnisharpdownload.blob.core.windows.net/ext/omnisharp-win-x64-1.28.0.zip',
