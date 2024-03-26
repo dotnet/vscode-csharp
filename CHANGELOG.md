@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Bump razor and update changelog (PR: [#7005](https://github.com/dotnet/vscode-csharp/pull/7005))
+  * Tweak RazorConfigurationFormatter to account for serialization format change (PR: [#10157](https://github.com/dotnet/razor/pull/10157))
+  * Remove lock in BackgroundDocumentGenerator (PR: [#10159](https://github.com/dotnet/razor/pull/10157))
+  * Use PooledArrayBuilder<SyntaxToken> throughout parsers and tokenizer (PR [#10095](https://github.com/dotnet/razor/pull/10095))
+  * Fix hot path string allocations from ProjectKey (PR: [#10138](https://github.com/dotnet/razor/pull/10138))
+  * Disable latest runtime patch (PR: [#10133](https://github.com/dotnet/razor/pull/10133))
+
+
 
 ## 2.23.x
 * Rename RazorComponentAttribute semantic token to razorComponentAttribute (PR: [#6867](https://github.com/dotnet/vscode-csharp/pull/6867))
