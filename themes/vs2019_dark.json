@@ -24,6 +24,11 @@
         "sideBarSectionHeader.border": "#ccc3"
     },
     "semanticHighlighting": true,
+    "semanticTokenColors": {
+        "*.deprecated": {
+            "strikethrough": true
+        }
+    },
     // https://github.com/microsoft/vscode/blob/master/extensions/theme-defaults/themes/dark_vs.json
     "tokenColors": [
         {
