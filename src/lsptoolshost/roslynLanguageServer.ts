@@ -62,6 +62,7 @@ import { IDisposable } from '../disposable';
 import { registerNestedCodeActionCommands } from './nestedCodeAction';
 import { registerRestoreCommands } from './restore';
 import { BuildDiagnosticsService } from './buildDiagnosticsService';
+import { registerSourceGeneratedFilesContentProvider } from './sourceGeneratedFilesContentProvider';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -930,6 +931,8 @@ export async function activateRoslynLanguageServer(
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
 
     registerRestoreCommands(context, languageServer, dotnetChannel);
+
+    registerSourceGeneratedFilesContentProvider(context, languageServer);
 
     registerOnAutoInsert(languageServer);
 
