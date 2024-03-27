@@ -19,6 +19,7 @@ import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
 import { razorInitializeCommand } from '../../../lsptoolshost/razorCommands';
 import { PlatformInformation } from '../../../shared/platform';
+import { MonitorConfigurationFilePathParams } from './monitorConfigurationFilePathParams';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -183,6 +184,20 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
             this.onRazorInitializedEmitter.fire();
         }
+    }
+
+    public async monitorProjectConfigurationFile(projectId: string, projectIntermediateOutputPath: string | undefined) {
+        if (!projectIntermediateOutputPath) {
+            return;
+        }
+
+        const projectConfigFileName = `${projectIntermediateOutputPath}${this.serverClient.projectConfigurationFileName}`;
+
+        // We're using projectId as the project key here, which is a bit odd, but let me explain. It doesn't match the
+        // project key used in the Razor server, but it turns out that the endpoint only uses it as a dictionary key,
+        // so consistency across the system is not required - it just needs to be unique to this project.
+        const request = new MonitorConfigurationFilePathParams(projectId, projectConfigFileName);
+        return this.serverClient.sendRequest('razor/monitorProjectConfigurationFilePath', request);
     }
 
     private closeDocument(uri: vscode.Uri) {
