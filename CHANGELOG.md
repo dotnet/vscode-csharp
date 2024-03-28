@@ -4,11 +4,36 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Bump razor and update changelog (PR: [#7005](https://github.com/dotnet/vscode-csharp/pull/7005))
+  * Tweak RazorConfigurationFormatter to account for serialization format change (PR: [#10157](https://github.com/dotnet/razor/pull/10157))
+  * Use PooledArrayBuilder<SyntaxToken> throughout parsers and tokenizer (PR [#10095](https://github.com/dotnet/razor/pull/10095))
+  * Fix hot path string allocations from ProjectKey (PR: [#10138](https://github.com/dotnet/razor/pull/10138))
+  * Disable latest runtime patch (PR: [#10133](https://github.com/dotnet/razor/pull/10133))
+    
+## 2.23.x
+* Rename RazorComponentAttribute semantic token to razorComponentAttribute (PR: [#6867](https://github.com/dotnet/vscode-csharp/pull/6867))
+* Drop win32-ia32 platform support (PR: [#6983](https://github.com/dotnet/vscode-csharp/pull/6983))
+* Fix some issues with casing when comparing Razor files (PR: [#6974](https://github.com/dotnet/vscode-csharp/pull/6974))
+* Do not timeout on connecting to the server if waitForDebugger is set (PR: [#6969](https://github.com/dotnet/vscode-csharp/pull/6969))
+* Bump Razor and update changelog (PR: [#6965](https://github.com/dotnet/vscode-csharp/pull/6965))
+  * Fix an issue that could cause numerous semantic tokens LSP failures on new projects (PR: [#10050](https://github.com/dotnet/razor/pull/10050))
+  * Fix an issue with running on .NET 9 preview builds (PR: [#10064](https://github.com/dotnet/razor/pull/10064))
+* Update Debugger Packages to v2.19.17 (PR: [#6958](https://github.com/dotnet/vscode-csharp/pull/6958))
+
+## 2.23.2
+- Updated debugger to fix .NET debugging break with searchNuGetOrgSymbolServer enabled (PR: [#6937](https://github.com/dotnet/vscode-csharp/pull/6937))
+- Update Razor to add formatting option to force open brace onto the next line after a @code or @functions block (PR: [#10018](https://github.com/dotnet/razor/pull/10018))
+
+## 2.22.5
+* Update Razor to 7.0.0-preview.24165.1 (PR: [#6922](https://github.com/dotnet/vscode-csharp/pull/6922))
+  * Fix casing issues that cause missing components in Razor files (PR: [#10050](https://github.com/dotnet/razor/pull/10050))
+
+## 2.22.2
 - Update Roslyn to run on .NET 8 (PR: [#6920](https://github.com/dotnet/vscode-csharp/pull/6920))
   * Upgrade language server to run on .NET 8 (PR: [#72247](https://github.com/dotnet/roslyn/pull/72247))
   * Refactors LSP server extension assembly loading (PR: [#71862](https://github.com/dotnet/roslyn/pull/71862))
   * Report better warnings and errors if build hosts exit abnormally (PR: [#71909](https://github.com/dotnet/roslyn/pull/71909))
-- Update Razor to 7.0.0-preview.24154.7 (PR: [#6922](https://github.com/dotnet/vscode-csharp/pull/6922))
+- Update Razor to 7.0.0-preview.24161.6 (PR: [#6922](https://github.com/dotnet/vscode-csharp/pull/6922))
   - Upgrade language server to run on .NET 8 (PR: [#9981](https://github.com/dotnet/razor/pull/9981))
   - Support inlay hints (PR: [#9904](https://github.com/dotnet/razor/pull/9904) and [#6857](https://github.com/dotnet/vscode-csharp/pull/6857))
   - Don't ship as self-contained (PR: [#9891](https://github.com/dotnet/razor/pull/9891))
