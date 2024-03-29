@@ -4,6 +4,20 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Add oboslete classification definitions to vs2019 themes (PR: [#7011](https://github.com/dotnet/vscode-csharp/pull/7011))
+* Bump Roslyn to 4.11.0-1.24179.11 (PR: [#7011](https://github.com/dotnet/vscode-csharp/pull/7011))
+  * Add feature to strike out obsolete symbols (PR: [#72156](https://github.com/dotnet/roslyn/pull/72156))
+  * Fix issue where some file changes would be ignored on Windows due to casing (PR: [#72555](https://github.com/dotnet/roslyn/pull/72555))
+  * Drop win32-ia32 language server support (PR: [#72605](https://github.com/dotnet/roslyn/pull/72605))
+  * Use built in Razor source generator instead of generator from SDK. (PR: [#72482](https://github.com/dotnet/roslyn/pull/72482))
+  * Always log LSP server processId and increase attach timeout (PR: [#72531](https://github.com/dotnet/roslyn/pull/72531))
+* Bump razor and update changelog (PR: [#7005](https://github.com/dotnet/vscode-csharp/pull/7005))
+  * Tweak RazorConfigurationFormatter to account for serialization format change (PR: [#10157](https://github.com/dotnet/razor/pull/10157))
+  * Use PooledArrayBuilder<SyntaxToken> throughout parsers and tokenizer (PR [#10095](https://github.com/dotnet/razor/pull/10095))
+  * Fix hot path string allocations from ProjectKey (PR: [#10138](https://github.com/dotnet/razor/pull/10138))
+  * Disable latest runtime patch (PR: [#10133](https://github.com/dotnet/razor/pull/10133))
+    
+## 2.23.x
 * Rename RazorComponentAttribute semantic token to razorComponentAttribute (PR: [#6867](https://github.com/dotnet/vscode-csharp/pull/6867))
 * Drop win32-ia32 platform support (PR: [#6983](https://github.com/dotnet/vscode-csharp/pull/6983))
 * Fix some issues with casing when comparing Razor files (PR: [#6974](https://github.com/dotnet/vscode-csharp/pull/6974))
@@ -16,6 +30,10 @@
 ## 2.23.2
 - Updated debugger to fix .NET debugging break with searchNuGetOrgSymbolServer enabled (PR: [#6937](https://github.com/dotnet/vscode-csharp/pull/6937))
 - Update Razor to add formatting option to force open brace onto the next line after a @code or @functions block (PR: [#10018](https://github.com/dotnet/razor/pull/10018))
+
+## 2.22.5
+* Update Razor to 7.0.0-preview.24165.1 (PR: [#6922](https://github.com/dotnet/vscode-csharp/pull/6922))
+  * Fix casing issues that cause missing components in Razor files (PR: [#10050](https://github.com/dotnet/razor/pull/10050))
 
 ## 2.22.2
 - Update Roslyn to run on .NET 8 (PR: [#6920](https://github.com/dotnet/vscode-csharp/pull/6920))
