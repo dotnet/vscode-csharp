@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Add oboslete classification definitions to vs2019 themes (PR: [#7011](https://github.com/dotnet/vscode-csharp/pull/7011))
+* Bump Roslyn to 4.11.0-1.24179.11 (PR: [#7011](https://github.com/dotnet/vscode-csharp/pull/7011))
+  * Add feature to strike out obsolete symbols (PR: [#72156](https://github.com/dotnet/roslyn/pull/72156))
+  * Fix issue where some file changes would be ignored on Windows due to casing (PR: [#72555](https://github.com/dotnet/roslyn/pull/72555))
+  * Drop win32-ia32 language server support (PR: [#72605](https://github.com/dotnet/roslyn/pull/72605))
+  * Use built in Razor source generator instead of generator from SDK. (PR: [#72482](https://github.com/dotnet/roslyn/pull/72482))
+  * Always log LSP server processId and increase attach timeout (PR: [#72531](https://github.com/dotnet/roslyn/pull/72531))
 * Bump razor and update changelog (PR: [#7005](https://github.com/dotnet/vscode-csharp/pull/7005))
   * Tweak RazorConfigurationFormatter to account for serialization format change (PR: [#10157](https://github.com/dotnet/razor/pull/10157))
   * Use PooledArrayBuilder<SyntaxToken> throughout parsers and tokenizer (PR [#10095](https://github.com/dotnet/razor/pull/10095))
