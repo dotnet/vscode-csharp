@@ -22,23 +22,45 @@ stages:
   displayName: Test
   dependsOn: []
   jobs:
-  - template: azure-pipelines/test.yml
-    parameters:
-      jobName: Linux
-      poolName: NetCore-Public
-      demandsName: 1es-ubuntu-2004-open
+  - job: Test_Linux
+    strategy:
+      matrix:
+        DotNet6:
+          containerName: mcr.microsoft.com/dotnet/sdk:6.0
+        DotNet7:
+          containerName: mcr.microsoft.com/dotnet/sdk:7.0
+        DotNet8:
+          containerName: mcr.microsoft.com/dotnet/sdk:8.0
+    displayName:  Test Linux
+    pool:
+      name: NetCore-Public
+      demands: 1es-ubuntu-2004-open
+    container: $[ variables['containerName'] ]
+    steps:
+    - template: azure-pipelines/test.yml
+      parameters:
+        # Prefer the dotnet from the container.
+        installDotNet: false
 
-  - template: azure-pipelines/test.yml
-    parameters:
-      jobName: Windows
-      poolName: NetCore-Public
-      demandsName: 1es-windows-2022-open
-
-  - template: azure-pipelines/test.yml
-    parameters:
-      jobName: MacOS
-      poolName: Azure Pipelines
-      vmImageName: macOS-13
+  - job: Test_Windows
+    displayName: Test Windows
+    pool:
+      name: NetCore-Public
+      demands: 1es-windows-2022-open
+    steps:
+    - template: azure-pipelines/test.yml
+      parameters:
+        installDotNet: true
+  
+  - job: Test_MacOS
+    displayName: Test MacOS
+    pool:
+      name: Azure Pipelines
+      vmImage: macOS-13
+    steps:
+    - template: azure-pipelines/test.yml
+      parameters:
+        installDotNet: true
 
 - stage: Test_OmniSharp
   displayName: Test OmniSharp
