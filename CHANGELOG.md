@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
-* Add oboslete classification definitions to default themes (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
+* Add oboslete classification definitions to vs2019 themes (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
 * Bump Roslyn to 4.11.0-1.24179.11 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
   * Add feature to strike out obsolete symbols (PR: [#72156](https://github.com/dotnet/roslyn/pull/72156))
   * Fix issue where some file changes would be ignored on Windows due to casing (PR: [#72555](https://github.com/dotnet/roslyn/pull/72555))
