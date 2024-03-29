@@ -1,0 +1,19 @@
+steps:
+- script: echo "##vso[task.setvariable variable=containerId;]$(docker ps --latest --quiet)"
+  displayName: Set containerId variable
+  target: host
+  condition: eq(variables['Agent.OS'], 'Linux')
+
+- script: echo "containerId is $(containerId)"
+  displayName: Read containerId variable
+  target: host
+  condition: eq(variables['Agent.OS'], 'Linux')
+
+# The docker containers we use for linux require some additional dependencies to run VSCode.
+# Installing the dependencies requires root, but the docker image we're using doesn't have root permissions (nor sudo)
+# We can exec as root from outside the container from the host machine.
+# Really we should create our own image with these pre-installed, but we'll need to figure out how to publish the image.
+- script: docker exec --user root $(containerId) bash -c 'apt-get update -y && apt-get install -y libglib2.0-0 libnss3 libatk-bridge2.0-dev libdrm2 libgtk-3-0 libgbm-dev libasound2 xvfb'
+  displayName: 'Install additional Linux dependencies'
+  target: host
+  condition: eq(variables['Agent.OS'], 'Linux')

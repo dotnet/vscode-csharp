@@ -2,6 +2,9 @@ parameters:
   - name: versionNumberOverride
     type: string
     default: 'default'
+  - name: installDotNet
+    type: boolean
+    default: true
 
 steps:
 
@@ -13,13 +16,18 @@ steps:
   inputs:
     versionSpec: '18.x'
 
-- task: UseDotNet@2
-  displayName: 'Install .NET Core SDKs'
-  inputs:
-    version: '8.x'
+# Some tests use predefined docker images with a specific version of .NET installed.
+# So we avoid installing .NET in those cases.
+- ${{ if eq(parameters.installDotNet, true) }}:
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core SDKs'
+    inputs:
+      version: '8.x'
 
-- script: |
-    dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
+- script: dotnet --info
+  displayName: Display dotnet info
+
+- script: dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
   displayName: Install nbgv
 
 # If we want to override the version, update the version.json here - vsix packaging will see this value
