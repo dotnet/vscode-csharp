@@ -510,6 +510,11 @@ export class RoslynLanguageServer {
             args.push('--extension', extensionPath);
         }
 
+        args.push(
+            '--razorSourceGenerator',
+            path.join(context.extension.extensionPath, '.razor', 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
+        );
+
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
         // in our activation because C# Dev Kit depends on C# activation completing.
