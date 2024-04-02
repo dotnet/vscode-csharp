@@ -1706,11 +1706,11 @@
             "default": "Information",
             "description": "%configuration.razor.server.trace%"
           },
-          "razor.server.forceRuntimeCodeGeneration": {
+          "razor.languageServer.forceRuntimeCodeGeneration": {
             "type": "boolean",
             "scope": "machine-overridable",
             "default": false,
-            "description": "%configuration.razor.server.forceRuntimeCodeGeneration%",
+            "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
             "order": 90
           }
         }

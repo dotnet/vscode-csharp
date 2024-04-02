@@ -73,7 +73,7 @@
   "configuration.razor.languageServer.directory": "Overrides the path to the Razor Language Server directory.",
   "configuration.razor.languageServer.debug": "Specifies whether to wait for debug attach when launching the language server.",
   "configuration.razor.server.trace": "Specifies the logging level to use for the Razor server.",
-  "configuration.razor.server.forceRuntimeCodeGeneration": "Enable combined design time/runtime code generation for Razor files",
+  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "Enable combined design time/runtime code generation for Razor files",
   "debuggers.coreclr.configurationSnippets.label.console-local": ".NET: Launch Executable file (Console)",
   "debuggers.coreclr.configurationSnippets.label.web-local": ".NET: Launch Executable file (Web)",
   "debuggers.coreclr.configurationSnippets.label.attach-local": ".NET: Attach to a .NET process",
