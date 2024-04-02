@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 ## Latest
+* Bump Razor to 7.0.0-preview.24178.4 (PR: [#7017](https://github.com/dotnet/vscode-csharp/pull/7017))
+  * Add option to force runtime code generation for razor (a.k.a fuse)
+  * [Fix vscode fuse feature flag (10169)](https://github.com/dotnet/razor/pull/10169)
+  * [Replace `BatchingWorkQueue` with `AsyncBatchingWorkQueue` from Roslyn (10140)](https://github.com/dotnet/razor/pull/10140)
 * Add oboslete classification definitions to vs2019 themes (PR: [#7011](https://github.com/dotnet/vscode-csharp/pull/7011))
 * Bump Roslyn to 4.11.0-1.24179.11 (PR: [#7011](https://github.com/dotnet/vscode-csharp/pull/7011))
   * Add feature to strike out obsolete symbols (PR: [#72156](https://github.com/dotnet/roslyn/pull/72156))
@@ -16,7 +20,7 @@
   * Use PooledArrayBuilder<SyntaxToken> throughout parsers and tokenizer (PR [#10095](https://github.com/dotnet/razor/pull/10095))
   * Fix hot path string allocations from ProjectKey (PR: [#10138](https://github.com/dotnet/razor/pull/10138))
   * Disable latest runtime patch (PR: [#10133](https://github.com/dotnet/razor/pull/10133))
-    
+
 ## 2.23.x
 * Rename RazorComponentAttribute semantic token to razorComponentAttribute (PR: [#6867](https://github.com/dotnet/vscode-csharp/pull/6867))
 * Drop win32-ia32 platform support (PR: [#6983](https://github.com/dotnet/vscode-csharp/pull/6983))
