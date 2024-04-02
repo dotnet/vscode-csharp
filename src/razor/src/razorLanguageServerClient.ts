@@ -247,6 +247,11 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');
 
+            if (options.forceRuntimeCodeGeneration) {
+                args.push('--ForceRuntimeCodeGeneration');
+                args.push('true');
+            }
+
             if (this.telemetryExtensionDllPath.length > 0) {
                 args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
                 args.push('--sessionId', getSessionId());

@@ -1705,6 +1705,13 @@
             "order": 90,
             "default": "Information",
             "description": "%configuration.razor.server.trace%"
+          },
+          "razor.server.forceRuntimeCodeGeneration": {
+            "type": "boolean",
+            "scope": "machine-overridable",
+            "default": false,
+            "description": "%configuration.razor.server.forceRuntimeCodeGeneration%",
+            "order": 90
           }
         }
       },
