@@ -24,6 +24,7 @@ export function resolveRazorLanguageServerOptions(
     const debugLanguageServer = serverConfig.get<boolean>('debug');
     const usingOmniSharp =
         !getCSharpDevKit() && vscodeApi.workspace.getConfiguration().get<boolean>('dotnet.server.useOmnisharp');
+    const forceRuntimeCodeGeneration = serverConfig.get<boolean>('forceRuntimeCodeGeneration');
 
     return {
         serverPath: languageServerExecutablePath,
@@ -31,6 +32,7 @@ export function resolveRazorLanguageServerOptions(
         logLevel: logLevel,
         outputChannel: logger.outputChannel,
         usingOmniSharp,
+        forceRuntimeCodeGeneration,
     } as RazorLanguageServerOptions;
 }
 
