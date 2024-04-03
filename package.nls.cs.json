@@ -72,6 +72,7 @@
   "configuration.dotnet.unitTestDebuggingOptions": "Možnosti, které se mají použít s ladicím programem při spouštění pro ladění testů jednotek. (Dříve csharp.unitTestDebuggingOptions)",
   "configuration.razor.languageServer.debug": "Určuje, jestli se má při spouštění jazykového serveru čekat na připojení ladění.",
   "configuration.razor.languageServer.directory": "Přepíše cestu k adresáři jazykového serveru Razor.",
+  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(EXPERIMENTAL) Enable combined design time/runtime code generation for Razor files",
   "configuration.razor.server.trace": "Určuje úroveň protokolování, která se má použít pro server Razor.",
   "debuggers.coreclr.configurationSnippets.description.attach": "Připojte ladicí program .NET (coreclr) ke spuštěným procesům. Můžete to provést také pomocí příkazu „Připojit k procesu .NET 5+ nebo .NET Core“.",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "Tento fragment kódu se používá ke spuštění nového procesu v ladicím programu Blazor WebAssembly (blazorwasm), který určuje cestu ke spustitelnému souboru, který se má spustit. Ve většině případů je „.NET: Spustit projekt jazyka C#“ fragment kódu lepší volbou, ale tento fragment kódu lze použít k úplné kontrole nad všemi možnostmi spuštění. Tento fragment kódu je pro hostované projekty Blazor, což je projekt, který má back-endovou aplikaci ASP.NET Core pro obsluhu svých souborů.",
