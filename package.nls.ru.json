@@ -72,6 +72,7 @@
   "configuration.dotnet.unitTestDebuggingOptions": "Параметры, которые используются с отладчиком при запуске для отладки модульных тестов. (Ранее — \"csharp.unitTestDebuggingOptions\")",
   "configuration.razor.languageServer.debug": "Указывает, следует ли ожидать подключения отладки при запуске языкового сервера.",
   "configuration.razor.languageServer.directory": "Переопределяет путь к каталогу языкового сервера Razor.",
+  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(EXPERIMENTAL) Enable combined design time/runtime code generation for Razor files",
   "configuration.razor.server.trace": "Задает уровень ведения журнала, который будет использоваться для сервера Razor.",
   "debuggers.coreclr.configurationSnippets.description.attach": "Присоедините отладчик .NET (coreclr) к запущенному процессу. Это также можно сделать с помощью команды \"Присоединение к процессу .NET 5+ или .NET Core\".",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "Этот фрагмент кода используется для запуска нового процесса в отладчике Blazor WebAssembly (blazorwasm), указывая путь к исполняемому файлу для запуска. В большинстве случаев фрагмент кода \".NET: запуск проекта C#\" является более оптимальным вариантом, но этот фрагмент можно использовать для полного управления всеми параметрами запуска. Этот фрагмент кода предназначен для размещенных проектов Blazor, которые используют серверное приложение ASP.NET Core для обработки своих файлов.",

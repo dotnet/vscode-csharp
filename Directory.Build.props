@@ -1,0 +1,9 @@
+<Project>
+    <PropertyGroup>
+        <!--
+            Defines the lowest supported target framework for the extension.
+            Used by server download / integration tests to ensure they run when only this SDK is installed.
+        -->
+        <LowestSupportedTargetFramework>net6.0</LowestSupportedTargetFramework>
+    </PropertyGroup>
+</Project>
