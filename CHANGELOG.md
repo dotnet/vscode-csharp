@@ -3,11 +3,13 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-## Latest
+# Latest
 * Bump Razor to 7.0.0-preview.24178.4 (PR: [#7017](https://github.com/dotnet/vscode-csharp/pull/7017))
   * Add option to force runtime code generation for razor (a.k.a fuse)
   * [Fix vscode fuse feature flag (10169)](https://github.com/dotnet/razor/pull/10169)
   * [Replace `BatchingWorkQueue` with `AsyncBatchingWorkQueue` from Roslyn (10140)](https://github.com/dotnet/razor/pull/10140)
+
+## 2.24.17
 * Add oboslete classification definitions to vs2019 themes (PR: [#7011](https://github.com/dotnet/vscode-csharp/pull/7011))
 * Bump Roslyn to 4.11.0-1.24179.11 (PR: [#7011](https://github.com/dotnet/vscode-csharp/pull/7011))
   * Add feature to strike out obsolete symbols (PR: [#72156](https://github.com/dotnet/roslyn/pull/72156))
