@@ -101,7 +101,7 @@ export class RoslynLanguageServer {
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
-    private _onAutoInsertFeature: OnAutoInsertFeature | undefined;
+    public readonly _onAutoInsertFeature: OnAutoInsertFeature;
 
     public _buildDiagnosticService: BuildDiagnosticsService;
 
@@ -129,6 +129,8 @@ export class RoslynLanguageServer {
         this.registerDebuggerAttach();
 
         registerShowToastNotification(this._languageClient);
+
+        this._onAutoInsertFeature = new OnAutoInsertFeature(this._languageClient);
     }
 
     private registerSetTrace() {
@@ -242,7 +244,6 @@ export class RoslynLanguageServer {
 
         const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);
 
-        server._onAutoInsertFeature = new OnAutoInsertFeature(client);
         client.registerFeature(server._onAutoInsertFeature);
 
         // Start the client. This will also launch the server process.
