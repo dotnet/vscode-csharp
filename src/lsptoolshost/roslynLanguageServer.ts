@@ -62,6 +62,7 @@ import { IDisposable } from '../disposable';
 import { registerNestedCodeActionCommands } from './nestedCodeAction';
 import { registerRestoreCommands } from './restore';
 import { BuildDiagnosticsService } from './buildDiagnosticsService';
+import { OnAutoInsertFeature } from './onAutoInsertFeature';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -99,6 +100,8 @@ export class RoslynLanguageServer {
 
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
+
+    private _onAutoInsertFeature: OnAutoInsertFeature | undefined;
 
     public _buildDiagnosticService: BuildDiagnosticsService;
 
@@ -238,6 +241,9 @@ export class RoslynLanguageServer {
         client.registerProposedFeatures();
 
         const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);
+
+        server._onAutoInsertFeature = new OnAutoInsertFeature(client);
+        client.registerFeature(server._onAutoInsertFeature);
 
         // Start the client. This will also launch the server process.
         await client.start();
@@ -476,9 +482,8 @@ export class RoslynLanguageServer {
         }
     }
 
-    public getServerCapabilities(): any {
-        const capabilities: any = this._languageClient.initializeResult?.capabilities;
-        return capabilities;
+    public getOnAutoInsertFeature(): OnAutoInsertFeature | undefined {
+        return this._onAutoInsertFeature;
     }
 
     private static async startServer(
