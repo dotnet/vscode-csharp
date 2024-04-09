@@ -22,7 +22,6 @@ import {
 } from 'vscode-languageserver-protocol';
 
 import * as RoslynProtocol from './roslynProtocol';
-import * as Is from 'vscode-languageclient/lib/common/utils/is';
 import * as UUID from 'vscode-languageclient/lib/common/utils/uuid';
 
 export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAutoInsertRegistrationOptions> {
@@ -123,15 +122,13 @@ export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAuto
 
     private getRegistrationOptions(
         documentSelector: DocumentSelector | undefined,
-        capability: undefined | boolean | RoslynProtocol.OnAutoInsertOptions
+        capability: undefined | RoslynProtocol.OnAutoInsertOptions
     ): (RoslynProtocol.OnAutoInsertRegistrationOptions & { documentSelector: DocumentSelector }) | undefined {
         if (!documentSelector || !capability) {
             return undefined;
         }
-        return (
-            Is.boolean(capability) && capability === true
-                ? { documentSelector }
-                : Object.assign({}, capability, { documentSelector })
-        ) as RoslynProtocol.OnAutoInsertRegistrationOptions & { documentSelector: DocumentSelector };
+        return Object.assign({}, capability, { documentSelector }) as RoslynProtocol.OnAutoInsertRegistrationOptions & {
+            documentSelector: DocumentSelector;
+        };
     }
 }
