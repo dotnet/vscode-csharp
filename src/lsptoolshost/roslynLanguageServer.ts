@@ -849,7 +849,7 @@ export class RoslynLanguageServer {
             }
 
             const message = vscode.l10n.t(
-                'Intellicode completions will not be provided, {0} failed to activate.',
+                'IntelliCode features will not be available, {0} failed to activate.',
                 csharpDevkitIntelliCodeExtensionId
             );
             const showOutput = vscode.l10n.t('Go to output');

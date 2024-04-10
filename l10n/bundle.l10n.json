@@ -135,7 +135,7 @@
   "Choose": "Choose",
   "Choose and set default": "Choose and set default",
   "Do not load any": "Do not load any",
-  "Intellicode completions will not be provided, {0} failed to activate.": "Intellicode completions will not be provided, {0} failed to activate.",
+  "IntelliCode features will not be available, {0} failed to activate.": "IntelliCode features will not be available, {0} failed to activate.",
   "Go to output": "Go to output",
   "Suppress notification": "Suppress notification",
   "Restore {0}": "Restore {0}",
