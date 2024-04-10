@@ -10,6 +10,7 @@ import * as languageClient from 'vscode-languageclient/node';
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } from './roslynProtocol';
 import { commonOptions } from '../shared/options';
+import { UriConverter } from './uriConverter';
 
 export function registerUnitTestingCommands(
     context: vscode.ExtensionContext,
@@ -52,7 +53,9 @@ async function runTestsInContext(
         start: activeEditor.selection.active,
         end: activeEditor.selection.active,
     };
-    const textDocument: languageClient.TextDocumentIdentifier = { uri: activeEditor.document.fileName };
+    const textDocument: languageClient.TextDocumentIdentifier = languageClient.TextDocumentIdentifier.create(
+        UriConverter.serialize(activeEditor.document.uri)
+    );
     const request: RunTestsParams = { textDocument: textDocument, range: contextRange, attachDebugger: debug };
     return runTests(request, languageServer, dotnetTestChannel);
 }
