@@ -506,10 +506,6 @@ export class RoslynLanguageServer {
             args.push('--logLevel', logLevel);
         }
 
-        for (const extensionPath of additionalExtensionPaths) {
-            args.push('--extension', extensionPath);
-        }
-
         args.push(
             '--razorSourceGenerator',
             path.join(context.extension.extensionPath, '.razor', 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
@@ -540,7 +536,7 @@ export class RoslynLanguageServer {
             // Set command enablement as soon as we know devkit is available.
             vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'RoslynDevKit');
 
-            const csharpDevKitArgs = this.getCSharpDevKitExportArgs();
+            const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths);
             args = args.concat(csharpDevKitArgs);
 
             await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension);
@@ -551,6 +547,10 @@ export class RoslynLanguageServer {
             // Set command enablement to use roslyn standalone commands.
             vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
+        }
+
+        for (const extensionPath of additionalExtensionPaths) {
+            args.push('--extension', extensionPath);
         }
 
         if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
@@ -806,7 +806,7 @@ export class RoslynLanguageServer {
         );
     }
 
-    private static getCSharpDevKitExportArgs(): string[] {
+    private static getCSharpDevKitExportArgs(additionalExtensionPaths: string[]): string[] {
         const args: string[] = [];
 
         const clientRoot = __dirname;
@@ -819,6 +819,14 @@ export class RoslynLanguageServer {
         args.push('--devKitDependencyPath', devKitDepsPath);
 
         args.push('--sessionId', getSessionId());
+
+        // Also include the Xaml Dev Kit extensions
+        const xamlBasePath = path.join(clientRoot, '..', '.xamlDesignTools', 'lib', 'netstandard2.0');
+        additionalExtensionPaths.push(path.join(xamlBasePath, 'Microsoft.VisualStudio.DesignTools.CodeAnalysis.dll'));
+        additionalExtensionPaths.push(
+            path.join(xamlBasePath, 'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll')
+        );
+
         return args;
     }
 
