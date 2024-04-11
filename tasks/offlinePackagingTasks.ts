@@ -341,14 +341,12 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
 }
 
 async function cleanAsync() {
-    await del([
-        'install.*',
-        '.omnisharp*',
-        '.debugger',
-        '.razor',
-        languageServerDirectory,
-        devKitDependenciesDirectory,
-    ]);
+    const directoriesToDelete = ['install.*', '.omnisharp*', '.debugger', '.razor'];
+    for (const key in nugetPackageInfo) {
+        directoriesToDelete.push(nugetPackageInfo[key].vsixOutputPath);
+    }
+
+    await del(directoriesToDelete);
 }
 
 async function buildVsix(packageJSON: any, outputFolder: string, prerelease: boolean, platformInfo?: VSIXPlatformInfo) {
