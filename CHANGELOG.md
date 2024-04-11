@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.11.0-1.24209.10 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
+  * Fix issue with case sensitivity when finding documentIds for URIs (PR: [#72965](https://github.com/dotnet/roslyn/pull/72965))
+  * Bulk add/remove projects to workspace (PR: [#72957](https://github.com/dotnet/roslyn/pull/72957))
+  * Allow language specific handlers to use their own types for serialization (PR: [#72230](https://github.com/dotnet/roslyn/pull/72230))
+  * Update VS telemetry for devkit (PR: [#72894](https://github.com/dotnet/roslyn/pull/72894))
 * Bump Razor to 7.0.0-preview.24178.4 (PR: [#7017](https://github.com/dotnet/vscode-csharp/pull/7017))
   * Add option to force runtime code generation for razor (a.k.a fuse)
   * [Fix vscode fuse feature flag (10169)](https://github.com/dotnet/razor/pull/10169)
