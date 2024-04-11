@@ -16,6 +16,7 @@ export const packedVsixOutputRoot = commandLineOptions.outputFolder || path.join
 export const nugetTempPath = path.join(rootPath, 'out', '.nuget');
 export const languageServerDirectory = path.join(rootPath, '.roslyn');
 export const devKitDependenciesDirectory = path.join(rootPath, '.roslynDevKit');
+export const xamlDesignToolsDirectory = path.join(rootPath, '.xamlDesignTools');
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 
