@@ -4,7 +4,7 @@ node_modules
 out
 .roslyn/
 .roslynDevKit/
-.xamlDesignTools/
+.xamlTools/
 .omnisharp/
 .omnisharp-*/
 .vs/

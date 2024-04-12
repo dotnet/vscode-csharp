@@ -19,9 +19,9 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         optionName: 'roslynDevKit',
         componentDllPaths: ['Microsoft.VisualStudio.LanguageServices.DevKit.dll'],
     },
-    xamlDesignTools: {
-        defaultFolderName: '.xamlDesignTools',
-        optionName: 'xamlDesignTools',
+    xamlTools: {
+        defaultFolderName: '.xamlTools',
+        optionName: 'xamlTools',
         componentDllPaths: [
             path.join('lib', 'netstandard2.0', 'Microsoft.VisualStudio.DesignTools.CodeAnalysis.dll'),
             path.join('lib', 'netstandard2.0', 'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll'),

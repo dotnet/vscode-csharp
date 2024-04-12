@@ -42,7 +42,7 @@
     "razor": "7.0.0-preview.24178.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "razorTelemetry": "7.0.0-preview.24178.4",
-    "xamlDesignTools": "17.11.34811.206"
+    "xamlTools": "17.11.34811.206"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1630,8 +1630,8 @@
                 "description": "%configuration.dotnet.server.componentPaths.roslynDevKit%",
                 "type": "string"
               },
-              "xamlDesignTools": {
-                "description": "%configuration.dotnet.server.componentPaths.xamlDesignTools%",
+              "xamlTools": {
+                "description": "%configuration.dotnet.server.componentPaths.xamlTools%",
                 "type": "string"
               }
             },
@@ -1682,11 +1682,11 @@
             "default": null,
             "description": "%configuration.dotnet.server.crashDumpPath%"
           },
-          "dotnet.server.enableXamlIntellisense": {
+          "dotnet.server.enableXamlTools": {
             "scope": "machine-overridable",
             "type": "boolean",
             "default": false,
-            "description": "%configuration.dotnet.server.enableXamlIntellisense%"
+            "description": "%configuration.dotnet.server.enableXamlTools%"
           },
           "dotnet.projects.binaryLogPath": {
             "scope": "machine-overridable",

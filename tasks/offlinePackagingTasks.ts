@@ -24,7 +24,7 @@ import {
     nugetTempPath,
     rootPath,
     devKitDependenciesDirectory,
-    xamlDesignToolsDirectory,
+    xamlToolsDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
@@ -78,11 +78,11 @@ export const nugetPackageInfo: { [key: string]: NugetPackageInfo } = {
         getPackageContentPath: (_platformInfo) => 'content',
         vsixOutputPath: devKitDependenciesDirectory,
     },
-    xamlDesignTools: {
+    xamlTools: {
         getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.DesignToolsBase',
-        packageJsonName: 'xamlDesignTools',
+        packageJsonName: 'xamlTools',
         getPackageContentPath: (_platformInfo) => '',
-        vsixOutputPath: xamlDesignToolsDirectory,
+        vsixOutputPath: xamlToolsDirectory,
     },
 };
 
