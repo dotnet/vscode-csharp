@@ -529,7 +529,8 @@ export class RoslynLanguageServer {
             if (csharpDevkitIntelliCodeExtension) {
                 _channel.appendLine('Activating C# + C# Dev Kit + C# IntelliCode...');
                 const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(
-                    csharpDevkitIntelliCodeExtension
+                    csharpDevkitIntelliCodeExtension,
+                    context
                 );
                 args = args.concat(csharpDevkitIntelliCodeArgs);
             } else {
@@ -822,14 +823,48 @@ export class RoslynLanguageServer {
     }
 
     private static async getCSharpDevkitIntelliCodeExportArgs(
-        csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>
+        csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>,
+        extensionContext: vscode.ExtensionContext
     ): Promise<string[]> {
-        const exports = await csharpDevkitIntelliCodeExtension.activate();
+        try {
+            const exports = await csharpDevkitIntelliCodeExtension.activate();
 
-        const starredCompletionComponentPath = exports.components['@vsintellicode/starred-suggestions-csharp'];
+            const starredCompletionComponentPath = exports.components['@vsintellicode/starred-suggestions-csharp'];
 
-        const csharpIntelliCodeArgs: string[] = ['--starredCompletionComponentPath', starredCompletionComponentPath];
-        return csharpIntelliCodeArgs;
+            const csharpIntelliCodeArgs: string[] = [
+                '--starredCompletionComponentPath',
+                starredCompletionComponentPath,
+            ];
+            return csharpIntelliCodeArgs;
+        } catch (e) {
+            _channel.appendLine(`Activation of ${csharpDevkitIntelliCodeExtensionId} failed`);
+            _channel.appendLine(e instanceof Error ? e.message : (e as string));
+            if (e instanceof Error && e.stack) {
+                _channel.appendLine(e.stack);
+            }
+
+            const stateKey = 'disableIntellicodeFailedPopup';
+            if (extensionContext.globalState.get(stateKey) === true) {
+                return [];
+            }
+
+            const message = vscode.l10n.t(
+                'IntelliCode features will not be available, {0} failed to activate.',
+                csharpDevkitIntelliCodeExtensionId
+            );
+            const showOutput = vscode.l10n.t('Go to output');
+            const suppressNotification = vscode.l10n.t('Suppress notification');
+            // Buttons are shown in right-to-left order, with a close button to the right of everything;
+            vscode.window.showErrorMessage(message, showOutput, suppressNotification).then((value) => {
+                if (value === showOutput) {
+                    _channel.show();
+                } else if (value == suppressNotification) {
+                    extensionContext.globalState.update(stateKey, true);
+                }
+            });
+
+            return [];
+        }
     }
 
     private static async setupDevKitEnvironment(
