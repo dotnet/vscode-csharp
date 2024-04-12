@@ -1682,11 +1682,11 @@
             "default": null,
             "description": "%configuration.dotnet.server.crashDumpPath%"
           },
-          "dotnet.enableXamlTools": {
+          "dotnet.enableXamlToolsPreview": {
             "scope": "machine-overridable",
             "type": "boolean",
             "default": false,
-            "description": "%configuration.dotnet.enableXamlTools%"
+            "description": "%configuration.dotnet.enableXamlToolsPreview%"
           },
           "dotnet.projects.binaryLogPath": {
             "scope": "machine-overridable",
