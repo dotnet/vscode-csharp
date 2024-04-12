@@ -403,7 +403,7 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
         return readOption<{ [key: string]: string }>('dotnet.server.componentPaths', {});
     }
     public get enableXamlTools() {
-        return readOption<boolean>('dotnet.server.enableXamlTools', false);
+        return readOption<boolean>('dotnet.enableXamlTools', false);
     }
 }
 
