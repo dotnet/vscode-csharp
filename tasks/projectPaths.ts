@@ -5,6 +5,7 @@
 
 import * as path from 'path';
 import { commandLineOptions } from './commandLineArguments';
+import { componentInfo } from '../src/lsptoolshost/builtInComponents';
 
 export const rootPath = path.resolve(__dirname, '..');
 
@@ -15,8 +16,8 @@ export const jestPath = path.join(nodeModulesPath, 'jest', 'bin', 'jest');
 export const packedVsixOutputRoot = commandLineOptions.outputFolder || path.join(rootPath, 'vsix');
 export const nugetTempPath = path.join(rootPath, 'out', '.nuget');
 export const languageServerDirectory = path.join(rootPath, '.roslyn');
-export const devKitDependenciesDirectory = path.join(rootPath, '.roslynDevKit');
-export const xamlDesignToolsDirectory = path.join(rootPath, '.xamlDesignTools');
+export const devKitDependenciesDirectory = path.join(rootPath, componentInfo.roslynDevKit.defaultFolderName);
+export const xamlDesignToolsDirectory = path.join(rootPath, componentInfo.xamlDesignTools.defaultFolderName);
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 

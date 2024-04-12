@@ -56,9 +56,10 @@ import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents'
 import { ServerStateChange } from './lsptoolshost/serverStateChange';
 import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
 import { RazorTelemetryDownloader } from './razor/razorTelemetryDownloader';
-import { commonOptions, omnisharpOptions, razorOptions } from './shared/options';
+import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from './shared/options';
 import { BuildResultDiagnostics } from './lsptoolshost/services/buildResultReporterService';
 import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
+import { getComponentFolder } from './lsptoolshost/builtInComponents';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -366,6 +367,9 @@ export async function activate(
             experimental: {
                 sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
                 languageServerEvents: roslynLanguageServerEvents,
+            },
+            getComponentFolder: (componentName) => {
+                return getComponentFolder(componentName, languageServerOptions);
             },
         };
     } else {

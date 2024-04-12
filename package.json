@@ -42,7 +42,7 @@
     "razor": "7.0.0-preview.24178.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "razorTelemetry": "7.0.0-preview.24178.4",
-    "xamlDesignTools": "17.11.34810.23"
+    "xamlDesignTools": "17.11.34811.206"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1621,6 +1621,21 @@
             "type": "string",
             "scope": "machine-overridable",
             "description": "%configuration.dotnet.server.path%"
+          },
+          "dotnet.server.componentPaths": {
+            "type": "object",
+            "description": "%configuration.dotnet.server.componentPaths%",
+            "properties": {
+              "roslynDevKit": {
+                "description": "%configuration.dotnet.server.componentPaths.roslynDevKit%",
+                "type": "string"
+              },
+              "xamlDesignTools": {
+                "description": "%configuration.dotnet.server.componentPaths.xamlDesignTools%",
+                "type": "string"
+              }
+            },
+            "default": {}
           },
           "dotnet.server.startTimeout": {
             "type": "number",

@@ -62,6 +62,7 @@ import { IDisposable } from '../disposable';
 import { registerNestedCodeActionCommands } from './nestedCodeAction';
 import { registerRestoreCommands } from './restore';
 import { BuildDiagnosticsService } from './buildDiagnosticsService';
+import { getComponentPaths } from './builtInComponents';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -809,24 +810,19 @@ export class RoslynLanguageServer {
     private static getCSharpDevKitExportArgs(additionalExtensionPaths: string[]): string[] {
         const args: string[] = [];
 
-        const clientRoot = __dirname;
-        const devKitDepsPath = path.join(
-            clientRoot,
-            '..',
-            '.roslynDevKit',
-            'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
-        );
-        args.push('--devKitDependencyPath', devKitDepsPath);
+        const devKitDepsPath = getComponentPaths('roslynDevKit', languageServerOptions);
+        if (devKitDepsPath.length > 1) {
+            throw new Error('Expected only one devkit deps path');
+        }
+
+        args.push('--devKitDependencyPath', devKitDepsPath[0]);
 
         args.push('--sessionId', getSessionId());
 
         // Also include the Xaml Dev Kit extensions
-        const xamlBasePath = path.join(clientRoot, '..', '.xamlDesignTools', 'lib', 'netstandard2.0');
-        additionalExtensionPaths.push(path.join(xamlBasePath, 'Microsoft.VisualStudio.DesignTools.CodeAnalysis.dll'));
-        additionalExtensionPaths.push(
-            path.join(xamlBasePath, 'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll')
+        getComponentPaths('xamlDesignTools', languageServerOptions).forEach((path) =>
+            additionalExtensionPaths.push(path)
         );
-
         return args;
     }
 
