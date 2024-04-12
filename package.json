@@ -1682,6 +1682,12 @@
             "default": null,
             "description": "%configuration.dotnet.server.crashDumpPath%"
           },
+          "dotnet.server.enableXamlIntellisense": {
+            "scope": "machine-overridable",
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.server.enableXamlIntellisense%"
+          },
           "dotnet.projects.binaryLogPath": {
             "scope": "machine-overridable",
             "type": "string",

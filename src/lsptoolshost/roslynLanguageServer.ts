@@ -819,10 +819,12 @@ export class RoslynLanguageServer {
 
         args.push('--sessionId', getSessionId());
 
-        // Also include the Xaml Dev Kit extensions
-        getComponentPaths('xamlDesignTools', languageServerOptions).forEach((path) =>
-            additionalExtensionPaths.push(path)
-        );
+        // Also include the Xaml Dev Kit extensions, if enabled.
+        if (languageServerOptions.enableXamlIntellisense) {
+            getComponentPaths('xamlDesignTools', languageServerOptions).forEach((path) =>
+                additionalExtensionPaths.push(path)
+            );
+        }
         return args;
     }
 
