@@ -14,6 +14,16 @@
     }
   ],
   "repository": {
+    "expression": {
+      "patterns": [
+        {
+          "include": "#explicit-razor-expression"
+        },
+        {
+          "include": "#implicit-expression"
+        }
+      ]
+    },
     "razor-control-structures": {
       "patterns": [
         {
