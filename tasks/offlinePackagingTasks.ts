@@ -81,7 +81,7 @@ export const nugetPackageInfo: { [key: string]: NugetPackageInfo } = {
     xamlTools: {
         getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.DesignToolsBase',
         packageJsonName: 'xamlTools',
-        getPackageContentPath: (_platformInfo) => '',
+        getPackageContentPath: (_platformInfo) => 'content',
         vsixOutputPath: xamlToolsDirectory,
     },
 };

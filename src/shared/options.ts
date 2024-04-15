@@ -78,7 +78,7 @@ export interface LanguageServerOptions {
     readonly analyzerDiagnosticScope: string;
     readonly compilerDiagnosticScope: string;
     readonly componentPaths: { [key: string]: string } | null;
-    readonly enableXamlTools: boolean;
+    readonly enableXamlToolsPreview: boolean;
 }
 
 export interface RazorOptions {
@@ -402,7 +402,7 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get componentPaths() {
         return readOption<{ [key: string]: string }>('dotnet.server.componentPaths', {});
     }
-    public get enableXamlTools() {
+    public get enableXamlToolsPreview() {
         return readOption<boolean>('dotnet.enableXamlToolsPreview', false);
     }
 }
@@ -499,5 +499,5 @@ export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof Languag
     'documentSelector',
     'preferCSharpExtension',
     'componentPaths',
-    'enableXamlTools',
+    'enableXamlToolsPreview',
 ];

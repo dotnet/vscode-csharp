@@ -23,8 +23,8 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         defaultFolderName: '.xamlTools',
         optionName: 'xamlTools',
         componentDllPaths: [
-            path.join('lib', 'netstandard2.0', 'Microsoft.VisualStudio.DesignTools.CodeAnalysis.dll'),
-            path.join('lib', 'netstandard2.0', 'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll'),
+            'Microsoft.VisualStudio.DesignTools.CodeAnalysis.dll',
+            'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll',
         ],
     },
 };
