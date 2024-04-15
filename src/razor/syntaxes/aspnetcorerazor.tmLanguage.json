@@ -64,7 +64,7 @@
         }
       ]
     },
-    "expression": {
+    "implicit-or-explicit-expression": {
       "patterns": [
         {
           "include": "#explicit-razor-expression"
