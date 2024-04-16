@@ -64,6 +64,16 @@
         }
       ]
     },
+    "implicit-or-explicit-expression": {
+      "patterns": [
+        {
+          "include": "#explicit-razor-expression"
+        },
+        {
+          "include": "#implicit-expression"
+        }
+      ]
+    },
     "escaped-transition": {
       "name": "constant.character.escape.razor.transition",
       "match": "@@"
