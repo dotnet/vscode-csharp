@@ -3,6 +3,16 @@ scopeName: text.aspnetcorerazor
 fileTypes:
   - 'razor'
   - 'cshtml'
+
+# These injections make sure that razor expressions can be recognized in the HTML grammar, specifically in strings
+injections:
+  string.quoted.double.html:
+    patterns:
+      - include: '#explicit-or-implicit-expression'
+  string.quoted.single.html:
+    patterns:
+      - include: '#explicit-or-implicit-expression'
+
 patterns:
   - include: '#razor-control-structures'
   - include: 'text.html.basic'
@@ -32,7 +42,7 @@ repository:
       - include: '#implicit-expression'
 
   # a clause to combine the explicit and implicit razor expressions, used by the html grammar
-  implicit-or-explicit-expression:
+  explicit-or-implicit-expression:
     patterns:
       - include: '#explicit-razor-expression'
       - include: '#implicit-expression'

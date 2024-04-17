@@ -10,8 +10,19 @@ import { assertMatchesSnapshot } from './infrastructure/testUtilities';
 
 export function RunHTMLDynamicAttributeSuite() {
     describe('HTML dynamic (razor) attribute', () => {
-        it('razor inside attribute', async () => {
+        it('razor inside attribute double inside double quotes', async () => {
             await assertMatchesSnapshot('<div id="@("")"> </div>');
+        });
+
+        it('razor inside attribute single inside single quotes', async () => {
+            await assertMatchesSnapshot("<div id='@('')''> </div>");
+        });
+
+        it('razor inside attribute single inside double quotes', async () => {
+            await assertMatchesSnapshot('<div id="@(\'\')"> </div>');
+        });
+        it('razor inside attribute double inside single quotes', async () => {
+            await assertMatchesSnapshot('<div id=\'@("")\'> </div>');
         });
 
         it('single quotes in side double quotes', async () => {

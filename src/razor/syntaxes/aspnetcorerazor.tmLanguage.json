@@ -5,6 +5,22 @@
     "razor",
     "cshtml"
   ],
+  "injections": {
+    "string.quoted.double.html": {
+      "patterns": [
+        {
+          "include": "#explicit-or-implicit-expression"
+        }
+      ]
+    },
+    "string.quoted.single.html": {
+      "patterns": [
+        {
+          "include": "#explicit-or-implicit-expression"
+        }
+      ]
+    }
+  },
   "patterns": [
     {
       "include": "#razor-control-structures"
@@ -64,7 +80,7 @@
         }
       ]
     },
-    "implicit-or-explicit-expression": {
+    "explicit-or-implicit-expression": {
       "patterns": [
         {
           "include": "#explicit-razor-expression"
