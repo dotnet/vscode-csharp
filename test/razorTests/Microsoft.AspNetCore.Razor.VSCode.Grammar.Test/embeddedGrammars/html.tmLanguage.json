@@ -114,9 +114,6 @@
 											"name": "string.quoted.double.html",
 											"patterns": [
 												{
-													"include": "text.aspnetcorerazor#implicit-or-explicit-expression"
-												},
-												{
 													"include": "#entities"
 												}
 											]
@@ -140,9 +137,6 @@
 											},
 											"name": "string.quoted.single.html",
 											"patterns": [
-												{
-													"include": "text.aspnetcorerazor#implicit-or-explicit-expression"
-												},
 												{
 													"include": "#entities"
 												}
@@ -410,9 +404,6 @@
 							"name": "string.quoted.double.html",
 							"patterns": [
 								{
-									"include": "text.aspnetcorerazor#implicit-or-explicit-expression"
-								},
-								{
 									"include": "#entities"
 								}
 							]
@@ -432,9 +423,6 @@
 							},
 							"name": "string.quoted.single.html",
 							"patterns": [
-								{
-									"include": "text.aspnetcorerazor#implicit-or-explicit-expression"
-								},
 								{
 									"include": "#entities"
 								}
