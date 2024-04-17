@@ -8,10 +8,13 @@ fileTypes:
 injections:
   string.quoted.double.html:
     patterns:
-      - include: '#explicit-or-implicit-expression'
+      - include: '#explicit-razor-expression'
+      - include: '#implicit-expression'
+
   string.quoted.single.html:
     patterns:
-      - include: '#explicit-or-implicit-expression'
+      - include: '#explicit-razor-expression'
+      - include: '#implicit-expression'
 
 patterns:
   - include: '#razor-control-structures'
@@ -41,11 +44,6 @@ repository:
       - include: '#optionally-transitioned-csharp-control-structures'
       - include: '#implicit-expression'
 
-  # a clause to combine the explicit and implicit razor expressions, used by the html grammar
-  explicit-or-implicit-expression:
-    patterns:
-      - include: '#explicit-razor-expression'
-      - include: '#implicit-expression'
 
   escaped-transition:
     name: constant.character.escape.razor.transition
