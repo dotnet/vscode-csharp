@@ -5205,7 +5205,7 @@ exports[`Grammar tests HTML dynamic (razor) attribute double quotes inside singl
 "
 `;
 
-exports[`Grammar tests HTML dynamic (razor) attribute razor inside attribute 1`] = `
+exports[`Grammar tests HTML dynamic (razor) attribute razor inside attribute double inside double quotes 1`] = `
 "Line: <div id="@("")"> </div>
  - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, punctuation.definition.tag.begin.html
  - token from 1 to 4 (div) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, entity.name.tag.html
@@ -5224,6 +5224,73 @@ exports[`Grammar tests HTML dynamic (razor) attribute razor inside attribute 1`]
  - token from 17 to 19 (</) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, punctuation.definition.tag.begin.html
  - token from 19 to 22 (div) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, entity.name.tag.html
  - token from 22 to 23 (>) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, punctuation.definition.tag.end.html
+"
+`;
+
+exports[`Grammar tests HTML dynamic (razor) attribute razor inside attribute double inside single quotes 1`] = `
+"Line: <div id='@("")'> </div>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, punctuation.definition.tag.begin.html
+ - token from 1 to 4 (div) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, entity.name.tag.html
+ - token from 4 to 5 ( ) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html
+ - token from 5 to 7 (id) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, entity.other.attribute-name.html
+ - token from 7 to 8 (=) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, punctuation.separator.key-value.html
+ - token from 8 to 9 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, punctuation.definition.string.begin.html
+ - token from 9 to 10 (@) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, keyword.control.cshtml.transition
+ - token from 10 to 11 (() with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, keyword.control.cshtml
+ - token from 11 to 12 (") with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, string.quoted.double.cs, punctuation.definition.string.begin.cs
+ - token from 12 to 13 (") with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, string.quoted.double.cs, punctuation.definition.string.end.cs
+ - token from 13 to 14 ()) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, keyword.control.cshtml
+ - token from 14 to 15 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, punctuation.definition.string.end.html
+ - token from 15 to 16 (>) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, punctuation.definition.tag.end.html
+ - token from 16 to 17 ( ) with scopes text.aspnetcorerazor
+ - token from 17 to 19 (</) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, punctuation.definition.tag.begin.html
+ - token from 19 to 22 (div) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, entity.name.tag.html
+ - token from 22 to 23 (>) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, punctuation.definition.tag.end.html
+"
+`;
+
+exports[`Grammar tests HTML dynamic (razor) attribute razor inside attribute single inside double quotes 1`] = `
+"Line: <div id="@('')"> </div>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, punctuation.definition.tag.begin.html
+ - token from 1 to 4 (div) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, entity.name.tag.html
+ - token from 4 to 5 ( ) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html
+ - token from 5 to 7 (id) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, entity.other.attribute-name.html
+ - token from 7 to 8 (=) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, punctuation.separator.key-value.html
+ - token from 8 to 9 (") with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.double.html, punctuation.definition.string.begin.html
+ - token from 9 to 10 (@) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.double.html, meta.expression.explicit.cshtml, keyword.control.cshtml.transition
+ - token from 10 to 11 (() with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.double.html, meta.expression.explicit.cshtml, keyword.control.cshtml
+ - token from 11 to 12 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.double.html, meta.expression.explicit.cshtml, string.quoted.single.cs, punctuation.definition.char.begin.cs
+ - token from 12 to 13 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.double.html, meta.expression.explicit.cshtml, string.quoted.single.cs, punctuation.definition.char.end.cs
+ - token from 13 to 14 ()) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.double.html, meta.expression.explicit.cshtml, keyword.control.cshtml
+ - token from 14 to 15 (") with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.double.html, punctuation.definition.string.end.html
+ - token from 15 to 16 (>) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, punctuation.definition.tag.end.html
+ - token from 16 to 17 ( ) with scopes text.aspnetcorerazor
+ - token from 17 to 19 (</) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, punctuation.definition.tag.begin.html
+ - token from 19 to 22 (div) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, entity.name.tag.html
+ - token from 22 to 23 (>) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, punctuation.definition.tag.end.html
+"
+`;
+
+exports[`Grammar tests HTML dynamic (razor) attribute razor inside attribute single inside single quotes 1`] = `
+"Line: <div id='@('')''> </div>
+ - token from 0 to 1 (<) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, punctuation.definition.tag.begin.html
+ - token from 1 to 4 (div) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, entity.name.tag.html
+ - token from 4 to 5 ( ) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html
+ - token from 5 to 7 (id) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, entity.other.attribute-name.html
+ - token from 7 to 8 (=) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, punctuation.separator.key-value.html
+ - token from 8 to 9 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, punctuation.definition.string.begin.html
+ - token from 9 to 10 (@) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, keyword.control.cshtml.transition
+ - token from 10 to 11 (() with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, keyword.control.cshtml
+ - token from 11 to 12 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, string.quoted.single.cs, punctuation.definition.char.begin.cs
+ - token from 12 to 13 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, string.quoted.single.cs, punctuation.definition.char.end.cs
+ - token from 13 to 14 ()) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, meta.expression.explicit.cshtml, keyword.control.cshtml
+ - token from 14 to 15 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, meta.attribute.id.html, string.quoted.single.html, punctuation.definition.string.end.html
+ - token from 15 to 16 (') with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, invalid.illegal.character-not-allowed-here.html
+ - token from 16 to 17 (>) with scopes text.aspnetcorerazor, meta.tag.structure.div.start.html, punctuation.definition.tag.end.html
+ - token from 17 to 18 ( ) with scopes text.aspnetcorerazor
+ - token from 18 to 20 (</) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, punctuation.definition.tag.begin.html
+ - token from 20 to 23 (div) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, entity.name.tag.html
+ - token from 23 to 24 (>) with scopes text.aspnetcorerazor, meta.tag.structure.div.end.html, punctuation.definition.tag.end.html
 "
 `;
 
