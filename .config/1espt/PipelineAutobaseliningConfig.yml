@@ -10,11 +10,15 @@ pipelines:
           lastModifiedDate: 2024-03-18
         armory:
           lastModifiedDate: 2024-03-18
+        psscriptanalyzer:
+          lastModifiedDate: 2024-04-19
       binary:
         credscan:
           lastModifiedDate: 2024-03-18
         binskim:
           lastModifiedDate: 2024-03-18
+        spotbugs:
+          lastModifiedDate: 2024-04-19
   1264:
     retail:
       source:
