@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Upgrade Debugger for 2.19.18 Release (PR: [#7060](https://github.com/dotnet/vscode-csharp/pull/7060))
+* Textmate: fix Razor expression classification inside of HTML tags using injection (PR: [#7055](https://github.com/dotnet/vscode-csharp/pull/7055))
+* Textmate: fix Razor expression classification inside of HTML tags (PR: [#7051](https://github.com/dotnet/vscode-csharp/pull/7051))
+
+# 2.26.13
 * Update Roslyn to 4.11.0-1.24209.10 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
   * Fix issue with case sensitivity when finding documentIds for URIs (PR: [#72965](https://github.com/dotnet/roslyn/pull/72965))
   * Bulk add/remove projects to workspace (PR: [#72957](https://github.com/dotnet/roslyn/pull/72957))
@@ -28,7 +33,7 @@
   * Fix hot path string allocations from ProjectKey (PR: [#10138](https://github.com/dotnet/razor/pull/10138))
   * Disable latest runtime patch (PR: [#10133](https://github.com/dotnet/razor/pull/10133))
 
-## 2.23.x
+## 2.23.15
 * Rename RazorComponentAttribute semantic token to razorComponentAttribute (PR: [#6867](https://github.com/dotnet/vscode-csharp/pull/6867))
 * Drop win32-ia32 platform support (PR: [#6983](https://github.com/dotnet/vscode-csharp/pull/6983))
 * Fix some issues with casing when comparing Razor files (PR: [#6974](https://github.com/dotnet/vscode-csharp/pull/6974))
