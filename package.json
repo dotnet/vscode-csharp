@@ -5590,6 +5590,16 @@
         "aliases": [
           "ASP.NET Razor"
         ]
+      },
+      {
+        "id": "xaml",
+        "extensions": [
+          ".xaml"
+        ],
+        "configuration": "./src/xaml/language-configuration.json",
+        "aliases": [
+          "XAML"
+        ]
       }
     ],
     "grammars": [
@@ -5600,6 +5610,11 @@
         "unbalancedBracketScopes": [
           "text.aspnetcorerazor"
         ]
+      },
+      {
+        "language": "xaml",
+        "scopeName": "source.xaml",
+        "path": "./src/xaml/syntaxes/xaml.tmLanguage.json"
       }
     ],
     "menus": {
