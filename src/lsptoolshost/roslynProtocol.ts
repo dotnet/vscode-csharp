@@ -59,6 +59,11 @@ export interface OnAutoInsertParams {
 export interface OnAutoInsertResponseItem {
     _vs_textEditFormat: lsp.InsertTextFormat;
     _vs_textEdit: lsp.TextEdit;
+
+    /**
+     * An optional command that is executed *after* inserting.
+     */
+    command?: Command;
 }
 
 /**
