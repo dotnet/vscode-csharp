@@ -29,12 +29,14 @@ export interface LaunchTarget {
 }
 
 export function createLaunchTargetForSolution(resource: vscode.Uri): LaunchTarget {
-    const dirname = path.dirname(resource.fsPath);
+    const directoryPath = path.dirname(resource.fsPath);
+    const relativePath = vscode.workspace.asRelativePath(directoryPath);
     return {
         label: path.basename(resource.fsPath),
-        description: vscode.workspace.asRelativePath(dirname),
+        // When the relativePath matches the directoryPath, it means we are in the root of the workspace.
+        description: directoryPath === relativePath ? '' : relativePath,
         target: resource.fsPath,
-        directory: path.dirname(resource.fsPath),
+        directory: directoryPath,
         workspaceKind: LaunchTargetKind.Solution,
     };
 }
