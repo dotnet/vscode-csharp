@@ -957,7 +957,7 @@
     "onCommand:o.showOutput",
     "onCommand:omnisharp.registerLanguageMiddleware",
     "workspaceContains:project.json",
-    "workspaceContains:**/*.{csproj,sln,slnf,csx,cake}"
+    "workspaceContains:**/*.{csproj,csx,cake}"
   ],
   "contributes": {
     "themes": [
