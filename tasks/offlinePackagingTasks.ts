@@ -65,7 +65,7 @@ interface NugetPackageInfo {
 }
 
 // Set of NuGet packages that we need to download and install.
-export const nugetPackageInfo: { [key: string]: NugetPackageInfo } = {
+export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
     roslyn: {
         getPackageName: (platformInfo) => `Microsoft.CodeAnalysis.LanguageServer.${platformInfo?.rid ?? 'neutral'}`,
         packageJsonName: 'roslyn',
@@ -155,15 +155,15 @@ gulp.task(
         const packageJSON = getPackageJSON();
 
         // Fetch the neutral package that we don't otherwise have in our platform list
-        await acquireNugetPackage(nugetPackageInfo.roslyn, undefined, packageJSON, true);
+        await acquireNugetPackage(allNugetPackages.roslyn, undefined, packageJSON, true);
 
         // And now fetch each platform specific
         for (const p of platformSpecificPackages) {
-            await acquireNugetPackage(nugetPackageInfo.roslyn, p, packageJSON, true);
+            await acquireNugetPackage(allNugetPackages.roslyn, p, packageJSON, true);
         }
 
         // Also pull in the Roslyn DevKit dependencies nuget package.
-        await acquireNugetPackage(nugetPackageInfo.RoslynDevKit, undefined, packageJSON, true);
+        await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, packageJSON, true);
     }, 'installDependencies')
 );
 
@@ -172,8 +172,8 @@ async function acquireAndInstallAllNugetPackages(
     packageJSON: any,
     interactive: boolean
 ) {
-    for (const key in nugetPackageInfo) {
-        const nugetPackage = nugetPackageInfo[key];
+    for (const key in allNugetPackages) {
+        const nugetPackage = allNugetPackages[key];
         const packagePath = await acquireNugetPackage(nugetPackage, platformInfo, packageJSON, interactive);
         await installNuGetPackage(packagePath, nugetPackage, platformInfo);
     }
@@ -342,8 +342,8 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
 
 async function cleanAsync() {
     const directoriesToDelete = ['install.*', '.omnisharp*', '.debugger', '.razor'];
-    for (const key in nugetPackageInfo) {
-        directoriesToDelete.push(nugetPackageInfo[key].vsixOutputPath);
+    for (const key in allNugetPackages) {
+        directoriesToDelete.push(allNugetPackages[key].vsixOutputPath);
     }
 
     await del(directoriesToDelete);
