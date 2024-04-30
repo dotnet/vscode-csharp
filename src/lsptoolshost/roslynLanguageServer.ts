@@ -63,6 +63,7 @@ import { registerNestedCodeActionCommands } from './nestedCodeAction';
 import { registerRestoreCommands } from './restore';
 import { BuildDiagnosticsService } from './buildDiagnosticsService';
 import { getComponentPaths } from './builtInComponents';
+import { OnAutoInsertFeature } from './onAutoInsertFeature';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -101,6 +102,8 @@ export class RoslynLanguageServer {
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
+    public readonly _onAutoInsertFeature: OnAutoInsertFeature;
+
     public _buildDiagnosticService: BuildDiagnosticsService;
 
     constructor(
@@ -127,6 +130,8 @@ export class RoslynLanguageServer {
         this.registerDebuggerAttach();
 
         registerShowToastNotification(this._languageClient);
+
+        this._onAutoInsertFeature = new OnAutoInsertFeature(this._languageClient);
     }
 
     private registerSetTrace() {
@@ -239,6 +244,8 @@ export class RoslynLanguageServer {
         client.registerProposedFeatures();
 
         const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);
+
+        client.registerFeature(server._onAutoInsertFeature);
 
         // Start the client. This will also launch the server process.
         await client.start();
@@ -477,9 +484,8 @@ export class RoslynLanguageServer {
         }
     }
 
-    public getServerCapabilities(): any {
-        const capabilities: any = this._languageClient.initializeResult?.capabilities;
-        return capabilities;
+    public getOnAutoInsertFeature(): OnAutoInsertFeature | undefined {
+        return this._onAutoInsertFeature;
     }
 
     private static async startServer(

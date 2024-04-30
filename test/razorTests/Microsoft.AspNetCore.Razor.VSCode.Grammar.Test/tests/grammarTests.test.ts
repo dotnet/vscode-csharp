@@ -42,6 +42,7 @@ import { RunWhileStatementSuite } from './whileStatement';
 import { RunRendermodeDirectiveSuite } from './rendermodeDirective';
 import { RunPreservewhitespaceDirectiveSuite } from './preservewhitespaceDirective';
 import { RunTypeparamDirectiveSuite } from './typeparamDirective';
+import { RunHTMLDynamicAttributeSuite } from './htmlDynamicAttribute';
 
 // We bring together all test suites and wrap them in one here. The reason behind this is that
 // modules get reloaded per test suite and the vscode-textmate library doesn't support the way
@@ -93,4 +94,5 @@ describe('Grammar tests', () => {
     // Html stuff
     RunScriptBlockSuite();
     RunStyleBlockSuite();
+    RunHTMLDynamicAttributeSuite();
 });
