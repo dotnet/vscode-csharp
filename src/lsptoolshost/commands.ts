@@ -178,7 +178,7 @@ async function openSolution(languageServer: RoslynLanguageServer): Promise<vscod
         return undefined;
     }
 
-    const solutionFiles = await vscode.workspace.findFiles('**/*.sln');
+    const solutionFiles = await vscode.workspace.findFiles('**/*.{sln,slnf}');
     const launchTargets = solutionFiles.map(createLaunchTargetForSolution);
     const launchTarget = await vscode.window.showQuickPick(launchTargets, {
         matchOnDescription: true,
