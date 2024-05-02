@@ -32,10 +32,10 @@ variables:
 - group: OneLocBuildVariables
 
 extends:
-  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     pool:
-      name: NetCore1ESPool-Svc-Internal
+      name: netcore1espool-internal
       image: 1es-windows-2022-pt
       os: windows
     stages:

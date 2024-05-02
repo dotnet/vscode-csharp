@@ -52,5 +52,8 @@ webpack.config.js
 !src/razor/language-configuration.json
 !src/razor/syntaxes/*
 
+!src/xaml/language-configuration.json
+!src/xaml/syntaxes/*
+
 +RuntimeLicenses/dependencies/*
 coreclr-debug/install.log
