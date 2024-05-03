@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* List solution filter files (.slnf) in the 'Open Solution' command. (PR: [#7082](https://github.com/dotnet/vscode-csharp/pull/7082))
+* No longer activate on the presence of .sln or .slnf files (PR: [#7081](https://github.com/dotnet/vscode-csharp/pull/7081))
+* Update Debugger Packages to v2.28.1 (PR: [#7072](https://github.com/dotnet/vscode-csharp/pull/7072))
+
+# 2.28.8
 * Update Roslyn to 4.11.0-1.24226.4 (PR: [#7069](https://github.com/dotnet/vscode-csharp/pull/7069))
   * Separate document diagnostics into multiple buckets to improve diagnostics performance (PR: [#73073](https://github.com/dotnet/roslyn/pull/73073))
   * Improve performance of diagnostics when analysis is set to fullSolution (PR: [#73201](https://github.com/dotnet/roslyn/pull/73201))
