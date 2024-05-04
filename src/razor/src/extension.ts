@@ -98,13 +98,15 @@ export async function activate(
         if (csharpDevkitExtension) {
             await setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, logger);
 
-            const telemetryExtensionPath = path.join(
-                util.getExtensionPath(),
-                '.razortelemetry',
-                'Microsoft.VisualStudio.DevKit.Razor.dll'
-            );
-            if (await util.fileExists(telemetryExtensionPath)) {
-                telemetryExtensionDllPath = telemetryExtensionPath;
+            if (vscode.env.isTelemetryEnabled) {
+                const telemetryExtensionPath = path.join(
+                    util.getExtensionPath(),
+                    '.razortelemetry',
+                    'Microsoft.VisualStudio.DevKit.Razor.dll'
+                );
+                if (await util.fileExists(telemetryExtensionPath)) {
+                    telemetryExtensionDllPath = telemetryExtensionPath;
+                }
             }
         }
 
