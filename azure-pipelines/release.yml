@@ -27,7 +27,7 @@ extends:
   parameters:
     pool:
       name: netcore1espool-internal
-      image: 1es-windows-2022-pt
+      image: 1es-windows-2022
       os: windows
     customBuildTags:
     - ES365AIMigrationTooling
@@ -39,7 +39,7 @@ extends:
         environment: vscode-csharp-release-approvals
         pool:
           name: netcore1espool-internal
-          image: 1es-ubuntu-2204-pt
+          image: 1es-ubuntu-2204
           os: linux
         strategy:
           runOnce:
@@ -116,7 +116,7 @@ extends:
       - job: 'Tag'
         pool:
           name: netcore1espool-internal
-          image: 1es-ubuntu-2204-pt
+          image: 1es-ubuntu-2204
           os: linux
         steps:
         - task: NodeTool@0

@@ -20,7 +20,7 @@ stages:
     pool:
       ${{ if eq(parameters.isOfficial, true) }}:
         name: netcore1espool-internal
-        image: 1es-ubuntu-2204-pt
+        image: 1es-ubuntu-2204
       ${{ else }}:
         name: Azure Pipelines
         vmImage: ubuntu-latest
@@ -63,7 +63,7 @@ stages:
       pool:
         ${{ if eq(parameters.isOfficial, true) }}:
           name: netcore1espool-internal
-          image: 1es-ubuntu-2204-pt
+          image: 1es-ubuntu-2204
         ${{ else }}:
           name: Azure Pipelines
           vmImage: ubuntu-latest
@@ -76,7 +76,7 @@ stages:
       pool:
         ${{ if eq(parameters.isOfficial, true) }}:
           name: netcore1espool-internal
-          image: 1es-windows-2022-pt
+          image: 1es-windows-2022
         ${{ else }}:
           name: Azure Pipelines
           vmImage: windows-latest
