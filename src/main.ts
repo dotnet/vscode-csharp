@@ -131,7 +131,7 @@ export async function activate(
 
     if (!useOmnisharpServer) {
         // Download Razor server telemetry bits if DevKit is installed.
-        if (csharpDevkitExtension) {
+        if (csharpDevkitExtension && vscode.env.isTelemetryEnabled) {
             const razorTelemetryDownloader = new RazorTelemetryDownloader(
                 networkSettingsProvider,
                 eventStream,
