@@ -22,9 +22,13 @@ async function main() {
 
         console.log('Display: ' + process.env.DISPLAY);
 
-        const result = cp.spawnSync(cli, [...args, '--install-extension', 'ms-dotnettools.vscode-dotnet-runtime'], {
+        const fullArgs = [...args, '--install-extension', 'ms-dotnettools.vscode-dotnet-runtime'];
+        console.log(fullArgs);
+        const result = cp.spawnSync(cli, fullArgs, {
             encoding: 'utf-8',
             stdio: 'inherit',
+            // Workaround as described in https://github.com/nodejs/node/issues/52554
+            shell: true,
         });
         if (result.error) {
             throw new Error(`Failed to install the runtime extension: ${result.error}`);

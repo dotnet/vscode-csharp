@@ -9,15 +9,10 @@ import { UriConverter } from './uriConverter';
 import { FormattingOptions, TextDocumentIdentifier } from 'vscode-languageclient/node';
 import * as RoslynProtocol from './roslynProtocol';
 import { RoslynLanguageServer } from './roslynLanguageServer';
-import { languageServerOptions } from '../shared/options';
 
 export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
     let source = new vscode.CancellationTokenSource();
     vscode.workspace.onDidChangeTextDocument(async (e) => {
-        if (!languageServerOptions.documentSelector.includes(e.document.languageId)) {
-            return;
-        }
-
         if (e.contentChanges.length > 1 || e.contentChanges.length === 0) {
             return;
         }
@@ -28,27 +23,31 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
             return;
         }
 
-        const capabilities = await languageServer.getServerCapabilities();
+        const onAutoInsertFeature = languageServer.getOnAutoInsertFeature();
+        const onAutoInsertOptions = onAutoInsertFeature?.getOptions(e.document);
+        const vsTriggerCharacters = onAutoInsertOptions?._vs_triggerCharacters;
 
-        if (capabilities._vs_onAutoInsertProvider) {
-            // Regular expression to match all whitespace characters except the newline character
-            const changeTrimmed = change.text.replace(/[^\S\n]+/g, '');
+        if (vsTriggerCharacters === undefined) {
+            return;
+        }
 
-            if (!capabilities._vs_onAutoInsertProvider._vs_triggerCharacters.includes(changeTrimmed)) {
+        // Regular expression to match all whitespace characters except the newline character
+        const changeTrimmed = change.text.replace(/[^\S\n]+/g, '');
+
+        if (!vsTriggerCharacters.includes(changeTrimmed)) {
+            return;
+        }
+
+        source.cancel();
+        source = new vscode.CancellationTokenSource();
+        try {
+            await applyAutoInsertEdit(e, changeTrimmed, languageServer, source.token);
+        } catch (e) {
+            if (e instanceof vscode.CancellationError) {
                 return;
             }
 
-            source.cancel();
-            source = new vscode.CancellationTokenSource();
-            try {
-                await applyAutoInsertEdit(e, changeTrimmed, languageServer, source.token);
-            } catch (e) {
-                if (e instanceof vscode.CancellationError) {
-                    return;
-                }
-
-                throw e;
-            }
+            throw e;
         }
     });
 }

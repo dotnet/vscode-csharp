@@ -11,8 +11,8 @@
         <RestorePackagesPath>../out/.nuget/</RestorePackagesPath>
         <!-- It's still PackageReference, so project intermediates are still created. -->
         <MSBuildProjectExtensionsPath>$(RestorePackagesPath)obj/</MSBuildProjectExtensionsPath>
-        <!-- This is not super relevant, as long as your SDK version supports it. -->
-        <TargetFramework>net8.0</TargetFramework>
+        <!-- We use the lowest supported target framework so we can build and run integration tests against the lowest supported target framework -->
+        <TargetFramework>$(LowestSupportedTargetFramework)</TargetFramework>
         <!-- If a package is resolved to a fallback folder, it may not be downloaded.-->
         <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
         <!-- We don't want to build this project, so we do not need the reference assemblies for the framework we chose.-->

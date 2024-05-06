@@ -62,6 +62,7 @@ import { IDisposable } from '../disposable';
 import { registerNestedCodeActionCommands } from './nestedCodeAction';
 import { registerRestoreCommands } from './restore';
 import { BuildDiagnosticsService } from './buildDiagnosticsService';
+import { OnAutoInsertFeature } from './onAutoInsertFeature';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -100,6 +101,8 @@ export class RoslynLanguageServer {
     /** The project files previously opened; we hold onto this for the same reason as _solutionFile. */
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
+    public readonly _onAutoInsertFeature: OnAutoInsertFeature;
+
     public _buildDiagnosticService: BuildDiagnosticsService;
 
     constructor(
@@ -126,6 +129,8 @@ export class RoslynLanguageServer {
         this.registerDebuggerAttach();
 
         registerShowToastNotification(this._languageClient);
+
+        this._onAutoInsertFeature = new OnAutoInsertFeature(this._languageClient);
     }
 
     private registerSetTrace() {
@@ -238,6 +243,8 @@ export class RoslynLanguageServer {
         client.registerProposedFeatures();
 
         const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);
+
+        client.registerFeature(server._onAutoInsertFeature);
 
         // Start the client. This will also launch the server process.
         await client.start();
@@ -476,9 +483,8 @@ export class RoslynLanguageServer {
         }
     }
 
-    public getServerCapabilities(): any {
-        const capabilities: any = this._languageClient.initializeResult?.capabilities;
-        return capabilities;
+    public getOnAutoInsertFeature(): OnAutoInsertFeature | undefined {
+        return this._onAutoInsertFeature;
     }
 
     private static async startServer(
@@ -510,6 +516,11 @@ export class RoslynLanguageServer {
             args.push('--extension', extensionPath);
         }
 
+        args.push(
+            '--razorSourceGenerator',
+            path.join(context.extension.extensionPath, '.razor', 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
+        );
+
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
         // in our activation because C# Dev Kit depends on C# activation completing.
@@ -524,7 +535,8 @@ export class RoslynLanguageServer {
             if (csharpDevkitIntelliCodeExtension) {
                 _channel.appendLine('Activating C# + C# Dev Kit + C# IntelliCode...');
                 const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(
-                    csharpDevkitIntelliCodeExtension
+                    csharpDevkitIntelliCodeExtension,
+                    context
                 );
                 args = args.concat(csharpDevkitIntelliCodeArgs);
             } else {
@@ -817,14 +829,48 @@ export class RoslynLanguageServer {
     }
 
     private static async getCSharpDevkitIntelliCodeExportArgs(
-        csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>
+        csharpDevkitIntelliCodeExtension: vscode.Extension<CSharpIntelliCodeExports>,
+        extensionContext: vscode.ExtensionContext
     ): Promise<string[]> {
-        const exports = await csharpDevkitIntelliCodeExtension.activate();
+        try {
+            const exports = await csharpDevkitIntelliCodeExtension.activate();
 
-        const starredCompletionComponentPath = exports.components['@vsintellicode/starred-suggestions-csharp'];
+            const starredCompletionComponentPath = exports.components['@vsintellicode/starred-suggestions-csharp'];
 
-        const csharpIntelliCodeArgs: string[] = ['--starredCompletionComponentPath', starredCompletionComponentPath];
-        return csharpIntelliCodeArgs;
+            const csharpIntelliCodeArgs: string[] = [
+                '--starredCompletionComponentPath',
+                starredCompletionComponentPath,
+            ];
+            return csharpIntelliCodeArgs;
+        } catch (e) {
+            _channel.appendLine(`Activation of ${csharpDevkitIntelliCodeExtensionId} failed`);
+            _channel.appendLine(e instanceof Error ? e.message : (e as string));
+            if (e instanceof Error && e.stack) {
+                _channel.appendLine(e.stack);
+            }
+
+            const stateKey = 'disableIntellicodeFailedPopup';
+            if (extensionContext.globalState.get(stateKey) === true) {
+                return [];
+            }
+
+            const message = vscode.l10n.t(
+                'IntelliCode features will not be available, {0} failed to activate.',
+                csharpDevkitIntelliCodeExtensionId
+            );
+            const showOutput = vscode.l10n.t('Go to output');
+            const suppressNotification = vscode.l10n.t('Suppress notification');
+            // Buttons are shown in right-to-left order, with a close button to the right of everything;
+            vscode.window.showErrorMessage(message, showOutput, suppressNotification).then((value) => {
+                if (value === showOutput) {
+                    _channel.show();
+                } else if (value == suppressNotification) {
+                    extensionContext.globalState.update(stateKey, true);
+                }
+            });
+
+            return [];
+        }
     }
 
     private static async setupDevKitEnvironment(
