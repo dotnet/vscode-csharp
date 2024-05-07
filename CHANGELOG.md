@@ -3,6 +3,9 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Next
+* Update Razor to 7.0.0-preview.24252.7 (PR: [#7100](https://github.com/dotnet/vscode-csharp/pull/7100))
+
 # Latest
 * List solution filter files (.slnf) in the 'Open Solution' command. (PR: [#7082](https://github.com/dotnet/vscode-csharp/pull/7082))
 * No longer activate on the presence of .sln or .slnf files (PR: [#7081](https://github.com/dotnet/vscode-csharp/pull/7081))
