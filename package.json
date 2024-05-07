@@ -1391,10 +1391,25 @@
             "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description%",
             "default": true
           },
-          "csharp.debug.allowFastEvaluate": {
+          "csharp.debug.expressionEvaluationOptions.allowImplicitFuncEval": {
             "type": "boolean",
-            "description": "%generateOptionsSchema.allowFastEvaluate.description%",
+            "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
             "default": true
+          },
+          "csharp.debug.expressionEvaluationOptions.allowToString": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.expressionEvaluationOptions.allowFastEvaluate": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+            "default": true
+          },
+          "csharp.debug.expressionEvaluationOptions.showRawValues": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+            "default": false
           },
           "dotnet.unitTestDebuggingOptions": {
             "type": "object",
@@ -1561,15 +1576,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetArchitecture": {
                 "type": "string",
@@ -2769,15 +2806,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetOutputLogPath": {
                 "type": "string",
@@ -3279,15 +3338,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetArchitecture": {
                 "type": "string",
@@ -4065,15 +4146,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetOutputLogPath": {
                 "type": "string",
@@ -4575,15 +4678,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetArchitecture": {
                 "type": "string",
