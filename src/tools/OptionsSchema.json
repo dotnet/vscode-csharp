@@ -453,10 +453,10 @@
             "*": { "enabled": true }
           }
         },
-        "allowFastEvaluate": {
-          "type": "boolean",
-          "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
-          "default": true
+        "expressionEvaluationOptions": {
+          "$ref": "#/definitions/ExpressionEvaluationOptions",
+          "description": "Options to control how the debugger evaluates expressions in data tips, the debug view's 'Watch' and 'Variables' sections, or in the Debug Console.",
+          "default": {}
         },
         "targetOutputLogPath": {
           "type": "string",
@@ -549,10 +549,10 @@
             "*": { "enabled": true }
           }
         },
-        "allowFastEvaluate": {
-          "type": "boolean",
-          "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
-          "default": true
+        "expressionEvaluationOptions": {
+          "$ref": "#/definitions/ExpressionEvaluationOptions",
+          "description": "Options to control how the debugger evaluates expressions in data tips, the debug view's 'Watch' and 'Variables' sections, or in the Debug Console.",
+          "default": {}
         },
         "targetArchitecture": {
           "type": "string",
@@ -570,8 +570,35 @@
           "enabled": {
             "title": "boolean",
             "markdownDescription": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
-            "default": "true"
+            "default": true
           }
+        }
+      }
+    },
+    "ExpressionEvaluationOptions": {
+      "type": "object",
+      "description": "Options to control how the debugger evaluates expressions in data tips, the debug view's 'Watch' and 'Variables' sections, or in the Debug Console.",
+      "default": {},
+      "properties": {
+        "allowImplicitFuncEval": {
+          "type": "boolean",
+          "description": "When true (the default state), the debugger will automatically call property `get` methods and other implicit function calls.",
+          "default": true
+        },
+        "allowToString": {
+          "type": "boolean",
+          "markdownDescription": "When true (the default state), the debugger will automatically call `ToString` to format objects. This option has no effect if `allowImplicitFuncEval` is `false`.",
+          "default": true
+        },
+        "allowFastEvaluate": {
+          "type": "boolean",
+          "description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+          "default": true
+        },
+        "showRawValues": {
+          "type": "boolean",
+          "description": "When true, the debugger will show raw structure of objects in variables windows.",
+          "default": false
         }
       }
     }
