@@ -79,6 +79,7 @@ export interface LanguageServerOptions {
     readonly compilerDiagnosticScope: string;
     readonly componentPaths: { [key: string]: string } | null;
     readonly enableXamlToolsPreview: boolean;
+    readonly suppressLspErrorToasts: boolean;
 }
 
 export interface RazorOptions {
@@ -404,6 +405,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get enableXamlToolsPreview() {
         return readOption<boolean>('dotnet.enableXamlToolsPreview', false);
+    }
+    public get suppressLspErrorToasts() {
+        return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
     }
 }
 
