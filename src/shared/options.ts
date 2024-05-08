@@ -77,6 +77,8 @@ export interface LanguageServerOptions {
     readonly crashDumpPath: string | undefined;
     readonly analyzerDiagnosticScope: string;
     readonly compilerDiagnosticScope: string;
+    readonly componentPaths: { [key: string]: string } | null;
+    readonly enableXamlToolsPreview: boolean;
     readonly suppressLspErrorToasts: boolean;
 }
 
@@ -398,6 +400,12 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get compilerDiagnosticScope() {
         return readOption<string>('dotnet.backgroundAnalysis.compilerDiagnosticsScope', 'openFiles');
     }
+    public get componentPaths() {
+        return readOption<{ [key: string]: string }>('dotnet.server.componentPaths', {});
+    }
+    public get enableXamlToolsPreview() {
+        return readOption<boolean>('dotnet.enableXamlToolsPreview', true);
+    }
     public get suppressLspErrorToasts() {
         return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
     }
@@ -494,4 +502,6 @@ export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof Languag
     'logLevel',
     'documentSelector',
     'preferCSharpExtension',
+    'componentPaths',
+    'enableXamlToolsPreview',
 ];
