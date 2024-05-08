@@ -77,6 +77,7 @@ export interface LanguageServerOptions {
     readonly crashDumpPath: string | undefined;
     readonly analyzerDiagnosticScope: string;
     readonly compilerDiagnosticScope: string;
+    readonly suppressLspErrorToasts: boolean;
 }
 
 export interface RazorOptions {
@@ -396,6 +397,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get compilerDiagnosticScope() {
         return readOption<string>('dotnet.backgroundAnalysis.compilerDiagnosticsScope', 'openFiles');
+    }
+    public get suppressLspErrorToasts() {
+        return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
     }
 }
 
