@@ -66,6 +66,7 @@
   "configuration.dotnet.server.extensionPaths": "Eseguire l’override per il percorso del server di linguaggio --argomenti estensione",
   "configuration.dotnet.server.path": "Specifica il percorso assoluto dell'eseguibile del server (LSP od O#). Se lasciato vuoto, viene usata la versione aggiunta all'estensione C#. (In precedenza “omnisharp.path”)",
   "configuration.dotnet.server.startTimeout": "Specifica un timeout (in ms) per l'avvio del client e la sua connessione al server di linguaggio.",
+  "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.dotnet.server.trace": "Imposta il livello di registrazione per il server di linguaggio",
   "configuration.dotnet.server.waitForDebugger": "Passa il flag --debug all'avvio del server per consentire il collegamento di un debugger. (In precedenza “omnisharp.waitForDebugger”)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Cerca simboli negli assembly di riferimento. Influisce sulle funzionalità che richiedono la ricerca di simboli, ad esempio l'aggiunta di importazioni.",

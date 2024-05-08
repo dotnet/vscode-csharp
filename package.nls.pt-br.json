@@ -66,6 +66,7 @@
   "configuration.dotnet.server.extensionPaths": "Substituir o caminho para os argumentos --extension do servidor de idiomas",
   "configuration.dotnet.server.path": "Especifica o caminho absoluto para o executável do servidor (LSP ou O#). Quando deixado em branco, a versão fixada na extensão C# é usada. (Anteriormente `omnisharp.path`)",
   "configuration.dotnet.server.startTimeout": "Especifica um tempo limite (em ms) para o cliente iniciar e conectar-se com êxito ao servidor de idioma.",
+  "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.dotnet.server.trace": "Define o nível de log para o servidor de idiomas",
   "configuration.dotnet.server.waitForDebugger": "Passa o sinalizador --debug ao iniciar o servidor para permitir que um depurador seja anexado. (Anteriormente `omnisharp.waitForDebugger`)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Pesquisar símbolos em montagens de referência. Afeta os recursos que exigem pesquisa de símbolos, como adicionar importações.",

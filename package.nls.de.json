@@ -66,6 +66,7 @@
   "configuration.dotnet.server.extensionPaths": "Außerkraftsetzung für Pfad zu Sprachserver --extension-Argumenten",
   "configuration.dotnet.server.path": "Gibt den absoluten Pfad zur ausführbaren Serverdatei (LSP oder O#) an. Wenn sie leer gelassen wird, wird die an die C#-Erweiterung angeheftete Version verwendet. (Zuvor \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "Gibt ein Timeout (in ms) an, mit dem der Client erfolgreich gestartet und eine Verbindung mit dem Sprachserver hergestellt werden kann.",
+  "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.dotnet.server.trace": "Legt den Protokolliergrad für den Sprachserver fest.",
   "configuration.dotnet.server.waitForDebugger": "Übergibt das Flag \"--debug\" beim Starten des Servers, damit ein Debugger angefügt werden kann. (Zuvor \"omnisharp.waitForDebugger\")",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Symbole in Verweisassemblys suchen. Dies wirkt sich auf Features aus, die eine Symbolsuche erfordern, z. B. Importe hinzufügen.",
