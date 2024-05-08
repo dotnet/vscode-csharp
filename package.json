@@ -37,11 +37,12 @@
     }
   },
   "defaults": {
-    "roslyn": "4.11.0-1.24226.4",
+    "roslyn": "4.11.0-2.24229.10",
     "omniSharp": "1.39.11",
     "razor": "7.0.0-preview.24178.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "razorTelemetry": "7.0.0-preview.24178.4"
+    "razorTelemetry": "7.0.0-preview.24178.4",
+    "xamlTools": "17.11.34907.35"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1658,6 +1659,21 @@
             "scope": "machine-overridable",
             "description": "%configuration.dotnet.server.path%"
           },
+          "dotnet.server.componentPaths": {
+            "type": "object",
+            "description": "%configuration.dotnet.server.componentPaths%",
+            "properties": {
+              "roslynDevKit": {
+                "description": "%configuration.dotnet.server.componentPaths.roslynDevKit%",
+                "type": "string"
+              },
+              "xamlTools": {
+                "description": "%configuration.dotnet.server.componentPaths.xamlTools%",
+                "type": "string"
+              }
+            },
+            "default": {}
+          },
           "dotnet.server.startTimeout": {
             "type": "number",
             "scope": "machine-overridable",
@@ -1702,6 +1718,12 @@
             "type": "string",
             "default": null,
             "description": "%configuration.dotnet.server.crashDumpPath%"
+          },
+          "dotnet.enableXamlToolsPreview": {
+            "scope": "machine-overridable",
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.enableXamlToolsPreview%"
           },
           "dotnet.projects.binaryLogPath": {
             "scope": "machine-overridable",
