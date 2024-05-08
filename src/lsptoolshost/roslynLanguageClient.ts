@@ -21,8 +21,6 @@ import { languageServerOptions } from '../shared/options';
 export class RoslynLanguageClient extends LanguageClient {
     private readonly _disposables: CompositeDisposable;
 
-    //private readonly Map<
-
     constructor(
         id: string,
         name: string,
