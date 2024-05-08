@@ -404,7 +404,7 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
         return readOption<{ [key: string]: string }>('dotnet.server.componentPaths', {});
     }
     public get enableXamlToolsPreview() {
-        return readOption<boolean>('dotnet.enableXamlToolsPreview', false);
+        return readOption<boolean>('dotnet.enableXamlToolsPreview', true);
     }
     public get suppressLspErrorToasts() {
         return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
