@@ -70,7 +70,7 @@
   "configuration.dotnet.server.extensionPaths": "Přepsat pro cestu k jazykovému serveru -- argumenty rozšíření",
   "configuration.dotnet.server.path": "Určuje absolutní cestu ke spustitelnému souboru serveru (LSP nebo O#). Ponechání prázdné vede k použití verze připnuté k rozšíření C#. (Dříve omnisharp.path)",
   "configuration.dotnet.server.startTimeout": "Určuje časový limit (v ms), aby se klient úspěšně spustil a připojil k jazykovému serveru.",
-  "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
+  "configuration.dotnet.server.suppressLspErrorToasts": "Potlačí zobrazování informačních zpráv o chybách, pokud na serveru dojde k chybě, ze které se dá zotavit.",
   "configuration.dotnet.server.trace": "Nastaví úroveň protokolování pro jazykový server",
   "configuration.dotnet.server.waitForDebugger": "Při spuštění serveru předá příznak --debug, aby bylo možné připojit ladicí program. (Dříve omnisharp.waitForDebugger)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Hledat symboly v referenčních sestaveních Ovlivňuje funkce, které vyžadují vyhledávání symbolů, například přidání importů.",
