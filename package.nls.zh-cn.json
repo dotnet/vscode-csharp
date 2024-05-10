@@ -70,7 +70,7 @@
   "configuration.dotnet.server.extensionPaths": "替代语言服务器 --extension 参数的路径",
   "configuration.dotnet.server.path": "指定服务器(LSP 或 O#)可执行文件的绝对路径。如果留空，会使用固定到 C# 扩展的版本。(之前为 \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "为客户端指定一个超时 (以毫秒为单位)，以成功启动并连接到语言服务器。",
-  "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
+  "configuration.dotnet.server.suppressLspErrorToasts": "当服务器遇到可恢复错误时，禁止显示错误 toast。",
   "configuration.dotnet.server.trace": "设置语言服务器的日志记录级别",
   "configuration.dotnet.server.waitForDebugger": "启动服务器时传递 --debug 标志，以允许附加调试器。(之前为 \"omnisharp.waitForDebugger\")",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "在引用程序集中搜索符号。它会影响需要符号搜索的功能，例如添加导入。",

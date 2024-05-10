@@ -70,7 +70,7 @@
   "configuration.dotnet.server.extensionPaths": "Dil sunucusu --extension bağımsız değişkenleri yolunu geçersiz kıl",
   "configuration.dotnet.server.path": "Sunucunun (LSP veya O#) yürütülebilir dosyasının mutlak yolunu belirtir. Boş bırakıldığında C# Uzantısına sabitlenen sürüm kullanılır. (Önceden 'omnisharp.path')",
   "configuration.dotnet.server.startTimeout": "İstemcinin başarılı bir şekilde başlatılması ve dil sunucusuna bağlanması için zaman aşımını (ms cinsinden) belirtir.",
-  "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
+  "configuration.dotnet.server.suppressLspErrorToasts": "Sunucu kurtarılabilir bir hatayla karşılaştığında hata bildirimlerinin görünmesini engeller.",
   "configuration.dotnet.server.trace": "Dil sunucusu için günlük düzeyini ayarlar",
   "configuration.dotnet.server.waitForDebugger": "Bir hata ayıklayıcının eklenmesine izin vermek için sunucuyu başlatırken --debug bayrağını iletir. (Önceden 'omnisharp.waitForDebugger')",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Başvuru derlemeleri içinde sembolleri arama. İçeri aktarma ekleme gibi sembol arama gerektiren özellikleri etkiler.",
