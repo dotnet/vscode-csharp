@@ -70,7 +70,7 @@
   "configuration.dotnet.server.extensionPaths": "言語サーバーへのパスのオーバーライド --拡張引数",
   "configuration.dotnet.server.path": "サーバー (LSP または O#) 実行可能ファイルに絶対パスを指定します。空のままにすると、C# 拡張機能にピン留めされたバージョンが使用されます。(以前の `omnisharp.path`)",
   "configuration.dotnet.server.startTimeout": "クライアントが正常に起動して言語サーバーに接続するためのタイムアウト (ミリ秒) を指定します。",
-  "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
+  "configuration.dotnet.server.suppressLspErrorToasts": "サーバーで回復可能なエラーが発生した場合に、エラー トーストが表示されないようにします。",
   "configuration.dotnet.server.trace": "言語サーバーのログ記録レベルを設定する",
   "configuration.dotnet.server.waitForDebugger": "デバッガーのアタッチを許可するために、サーバーを起動するときに --debug フラグを渡します。(以前の `omnisharp.waitForDebugger`)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "参照アセンブリ内のシンボルを検索します。影響を受ける機能には、インポートの追加などのシンボル検索が必要です。",
