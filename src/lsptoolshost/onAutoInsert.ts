@@ -88,7 +88,11 @@ async function applyAutoInsertEdit(
 
         const applied = vscode.workspace.applyEdit(edit);
         if (!applied) {
-            throw new Error('Tried to insert a comment but an error occurred.');
+            throw new Error('Tried to apply an edit but an error occurred.');
+        }
+
+        if (response.command !== undefined) {
+            vscode.commands.executeCommand(response.command.command, response.command.arguments);
         }
     }
 }
