@@ -43,7 +43,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Effectuez la complétion automatique du nom d’objet pour les membres que vous avez récemment sélectionnés.",
   "configuration.dotnet.defaultSolution.description": "Le chemin d’accès de la solution par défaut à ouvrir dans l’espace de travail, ou la valeur ’disable’ pour l’ignorer. (Précédemment `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.dotnetPath": "Spécifie le chemin d’accès à un répertoire d’installation de dotnet à utiliser à la place du répertoire par défaut du système. Cela n’a d’influence que sur l’installation dotnet à utiliser pour héberger le serveur de langues lui-même. Exemple : \"/home/username/mycustomdotnetdirect\" : \"/home/nom d’utilisateur/monrépertoiredotnetpersonnalisé\".",
-  "configuration.dotnet.enableXamlToolsPreview": "[Experimental] Enables XAML tools when using C# Dev Kit",
+  "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Mettez en surbrillance les composants JSON associés sous le curseur.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Mettre en surbrillance les composants d’expression régulière associés sous le curseur.",
   "configuration.dotnet.implementType.insertionBehavior": "Emplacement d’insertion des propriétés, des événements et des méthodes lors de l’implémentation d’une interface ou d’une classe abstraite.",

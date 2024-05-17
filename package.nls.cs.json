@@ -43,7 +43,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Pro členy, které jste nedávno vybrali, proveďte automatické dokončování názvů objektů.",
   "configuration.dotnet.defaultSolution.description": "Cesta výchozího řešení, které se má otevřít v pracovním prostoru. Můžete přeskočit nastavením na „zakázat“. (Dříve omnisharp.defaultLaunchSolution)",
   "configuration.dotnet.dotnetPath": "Zadává cestu k adresáři instalace dotnet, která se má použít místo výchozí systémové instalace. To má vliv pouze na instalaci dotnet, která se má použít k hostování samotného jazykového serveru. Příklad: /home/username/mycustomdotnetdirectory",
-  "configuration.dotnet.enableXamlToolsPreview": "[Experimental] Enables XAML tools when using C# Dev Kit",
+  "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Zvýrazněte související komponenty JSON pod kurzorem.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Zvýraznit související komponenty regulárního výrazu pod kurzorem.",
   "configuration.dotnet.implementType.insertionBehavior": "Umístění vložení vlastností, událostí a metod při implementaci rozhraní nebo abstraktní třídy.",
