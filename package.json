@@ -42,7 +42,7 @@
     "razor": "7.0.0-preview.24178.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "razorTelemetry": "7.0.0-preview.24178.4",
-    "xamlTools": "17.11.34907.35"
+    "xamlTools": "17.11.34917.22"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1719,11 +1719,11 @@
             "default": null,
             "description": "%configuration.dotnet.server.crashDumpPath%"
           },
-          "dotnet.enableXamlToolsPreview": {
+          "dotnet.enableXamlTools": {
             "scope": "machine-overridable",
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.enableXamlToolsPreview%"
+            "description": "%configuration.dotnet.enableXamlTools%"
           },
           "dotnet.server.suppressLspErrorToasts": {
             "type": "boolean",

@@ -20,7 +20,7 @@
 
 # 2.30.24
 * XAML IntelliSense for .NET MAUI (Issue: [#565](https://github.com/microsoft/vscode-dotnettools/issues/565))
-  * Controlled by preview feature flag `dotnet.enableXamlToolsPreview` which is on by default
+  * Controlled by feature flag `dotnet.enableXamlTools` which is on by default
   * Requires C# Dev Kit and .NET MAUI extensions
 * Update Roslyn to 4.11.0-2.24259.4 (PR: [#7117](https://github.com/dotnet/vscode-csharp/pull/7117))
   * Shrink the size and remove unnecessary dependencies in the build host (PR: [#73393](https://github.com/dotnet/roslyn/pull/73393))
