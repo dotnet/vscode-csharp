@@ -6,6 +6,9 @@ trigger:
     - release
     - prerelease
     - main
+  paths:
+    exclude:
+    - *.md
 
 pr:
 - feature/*

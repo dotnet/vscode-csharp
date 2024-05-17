@@ -2,7 +2,7 @@
 
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
-
+test
 # Latest
 * XAML IntelliSense for .NET MAUI (Issue: [#565](https://github.com/microsoft/vscode-dotnettools/issues/565))
   * Controlled by preview feature flag `dotnet.enableXamlToolsPreview` which is on by default
