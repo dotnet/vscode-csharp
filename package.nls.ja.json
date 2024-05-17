@@ -43,7 +43,6 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "最近選択したメンバーの自動オブジェクト名の完了を実行します。",
   "configuration.dotnet.defaultSolution.description": "ワークスペースで開く既定のソリューションのパス。スキップするには 'disable' に設定します。(以前の `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.dotnetPath": "既定のシステム ディレクトリの代わりに使用する dotnet インストール ディレクトリへのパスを指定します。これは、言語サーバー自体をホストするために使用する dotnet インストールにのみ影響します。例: \"/home/username/mycustomdotnetdirectory\"。",
-  "configuration.dotnet.enableXamlToolsPreview": "[試験段階] C# 開発キットを使用するときに XAML ツールを有効にします",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "カーソルの下にある関連する JSON コンポーネントをハイライトします。",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "カーソルの下にある関連する正規表現コンポーネントをハイライトします。",
   "configuration.dotnet.implementType.insertionBehavior": "インターフェイスまたは抽象クラスを実装する場合の、プロパティ、イベント、メソッドの挿入場所です。",

@@ -1719,12 +1719,6 @@
             "default": null,
             "description": "%configuration.dotnet.server.crashDumpPath%"
           },
-          "dotnet.enableXamlToolsPreview": {
-            "scope": "machine-overridable",
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.dotnet.enableXamlToolsPreview%"
-          },
           "dotnet.server.suppressLspErrorToasts": {
             "type": "boolean",
             "default": false,
