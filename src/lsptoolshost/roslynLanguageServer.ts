@@ -826,7 +826,7 @@ export class RoslynLanguageServer {
         args.push('--sessionId', getSessionId());
 
         // Also include the Xaml Dev Kit extensions, if enabled.
-        if (languageServerOptions.enableXamlToolsPreview) {
+        if (languageServerOptions.enableXamlTools) {
             getComponentPaths('xamlTools', languageServerOptions).forEach((path) =>
                 additionalExtensionPaths.push(path)
             );

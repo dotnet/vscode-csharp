@@ -43,7 +43,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Wykonaj automatyczne uzupełnianie nazw obiektów dla elementów członkowskich, które zostały ostatnio wybrane.",
   "configuration.dotnet.defaultSolution.description": "Ścieżka domyślnego rozwiązania, która ma zostać otwarta w obszarze roboczym, lub ustawiona na wartość „wyłącz”, aby je pominąć. (Poprzednio „omnisharp.defaultLaunchSolution”)",
   "configuration.dotnet.dotnetPath": "Określa ścieżkę do katalogu instalacyjnego dotnet, który ma być używany zamiast domyślnego katalogu systemowego. Ma to wpływ tylko na instalację dotnet używaną do hostowania samego serwera językowego. Przykład: „/home/username/mycustomdotnetdirectory”.",
-  "configuration.dotnet.enableXamlToolsPreview": "[Eksperymentalne] Włącza narzędzia XAML podczas korzystania z zestawu deweloperskiego języka C#",
+  "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Wyróżnij powiązane składniki JSON pod kursorem.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Wyróżnij powiązane składniki wyrażenia regularnego pod kursorem.",
   "configuration.dotnet.implementType.insertionBehavior": "Lokalizacja wstawiania właściwości, zdarzeń i metod podczas implementowania interfejsu lub klasy abstrakcyjnej.",
