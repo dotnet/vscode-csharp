@@ -6,15 +6,18 @@ trigger:
     - release
     - prerelease
     - main
+  
+
+pr:
+  branches:
+    include:
+    - feature/*
+    - release
+    - prerelease
+    - main
   paths:
     exclude:
     - *.md
-
-pr:
-- feature/*
-- release
-- prerelease
-- main
 
 stages:
 - template: azure-pipelines/build-all.yml
