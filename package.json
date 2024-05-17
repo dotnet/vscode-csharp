@@ -37,11 +37,12 @@
     }
   },
   "defaults": {
-    "roslyn": "4.11.0-1.24226.4",
+    "roslyn": "4.11.0-2.24259.4",
     "omniSharp": "1.39.11",
     "razor": "7.0.0-preview.24178.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "razorTelemetry": "7.0.0-preview.24178.4"
+    "razorTelemetry": "7.0.0-preview.24178.4",
+    "xamlTools": "17.11.34917.22"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -420,7 +421,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -430,12 +431,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "CE69C839F829DEF94A82B901C91AAF68F34347185B69EE28F6785F815C5BD4A4"
+      "integrity": "73C4FA5922404E5789986DBD744EB65E59F7122F797E7846FAF7F844E60EDE07"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -444,12 +445,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "54CCB244E433E1842DC4E9676C0668CCD376F2B0F39191B749DFE916349B8BCF"
+      "integrity": "60051C810E72C3E9A1314C08245586461A06735E1E528FACA1095C40365E8279"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -463,12 +464,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "9292ECC3CA147D7EB33F2C0317E71F10EB40A15C6DD89868459F79F5D141368A"
+      "integrity": "E6AE6D46B3FE4E8D8124E06FC9374C39844907EAB91A7B774F6128175CB3C1AD"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -481,12 +482,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "65679210178241932F4D688769D7394CDA05ABE302F6C66FCD213974B34E7DF3"
+      "integrity": "0BF425B67C155012790C5EC7DCB69BE7087774A51B3AF59B7BEBA467BFD48997"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -499,12 +500,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "12590D9CFA333081F667AFAB6C6877235764D0DA82A7BC191AC2AB3B2B473B0C"
+      "integrity": "063298BEB4D9D9F0741E0BC7E3999B71E6BB4C3221A4E3DF29D5153FA27E6DA3"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -517,12 +518,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "73A576F98203224708F75C4538967AC7636BFFC8394E6034FE586554D7C1FC0E"
+      "integrity": "6DC9F98C34B41F08A449F9E4EE04E6BAFFD5A57E3632990A3B83BDCB2D2FF7B9"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-linux-musl-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -535,12 +536,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "44889E74066F8ACFF1B5D46368F9AA579470EFBEA47F9F0BACD0AA219FA7C7A1"
+      "integrity": "F985AFFA755734A6262F52C1E8D5D7235F4448628CA949A06D0F6806552EC64B"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-linux-musl-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-linux-musl-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -553,12 +554,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "C79202A750BB95FE2F9621A29AD8811B39753109B6508EC9E36D7D1830F891B9"
+      "integrity": "ED7A76B386478AD54D97E6FAB06D7AB56970770CD6499FC902316FA3BB3484D1"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-19-18/coreclr-debug-linux-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -571,7 +572,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "899CDF7BFE503BA4DA93DB9D4FCE5A9B98D17E5B512DC599896AECD866F687FA"
+      "integrity": "7AD45121D59DBFE8A96952E6BF8D474A5249CF7AE87C64AB24F9DC1DB5A8E6BA"
     },
     {
       "id": "Razor",
@@ -957,7 +958,7 @@
     "onCommand:o.showOutput",
     "onCommand:omnisharp.registerLanguageMiddleware",
     "workspaceContains:project.json",
-    "workspaceContains:**/*.{csproj,sln,slnf,csx,cake}"
+    "workspaceContains:**/*.{csproj,csx,cake}"
   ],
   "contributes": {
     "themes": [
@@ -1391,10 +1392,25 @@
             "description": "%generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description%",
             "default": true
           },
-          "csharp.debug.allowFastEvaluate": {
+          "csharp.debug.expressionEvaluationOptions.allowImplicitFuncEval": {
             "type": "boolean",
-            "description": "%generateOptionsSchema.allowFastEvaluate.description%",
+            "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
             "default": true
+          },
+          "csharp.debug.expressionEvaluationOptions.allowToString": {
+            "type": "boolean",
+            "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+            "default": true
+          },
+          "csharp.debug.expressionEvaluationOptions.allowFastEvaluate": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+            "default": true
+          },
+          "csharp.debug.expressionEvaluationOptions.showRawValues": {
+            "type": "boolean",
+            "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+            "default": false
           },
           "dotnet.unitTestDebuggingOptions": {
             "type": "object",
@@ -1561,15 +1577,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetArchitecture": {
                 "type": "string",
@@ -1621,6 +1659,21 @@
             "scope": "machine-overridable",
             "description": "%configuration.dotnet.server.path%"
           },
+          "dotnet.server.componentPaths": {
+            "type": "object",
+            "description": "%configuration.dotnet.server.componentPaths%",
+            "properties": {
+              "roslynDevKit": {
+                "description": "%configuration.dotnet.server.componentPaths.roslynDevKit%",
+                "type": "string"
+              },
+              "xamlTools": {
+                "description": "%configuration.dotnet.server.componentPaths.xamlTools%",
+                "type": "string"
+              }
+            },
+            "default": {}
+          },
           "dotnet.server.startTimeout": {
             "type": "number",
             "scope": "machine-overridable",
@@ -1665,6 +1718,17 @@
             "type": "string",
             "default": null,
             "description": "%configuration.dotnet.server.crashDumpPath%"
+          },
+          "dotnet.enableXamlTools": {
+            "scope": "machine-overridable",
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.enableXamlTools%"
+          },
+          "dotnet.server.suppressLspErrorToasts": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.server.suppressLspErrorToasts%"
           },
           "dotnet.projects.binaryLogPath": {
             "scope": "machine-overridable",
@@ -2769,15 +2833,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetOutputLogPath": {
                 "type": "string",
@@ -3279,15 +3365,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetArchitecture": {
                 "type": "string",
@@ -4065,15 +4173,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetOutputLogPath": {
                 "type": "string",
@@ -4575,15 +4705,37 @@
                     "enabled": {
                       "title": "boolean",
                       "markdownDescription": "%generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription%",
-                      "default": "true"
+                      "default": true
                     }
                   }
                 }
               },
-              "allowFastEvaluate": {
-                "type": "boolean",
-                "description": "%generateOptionsSchema.allowFastEvaluate.description%",
-                "default": true
+              "expressionEvaluationOptions": {
+                "description": "%generateOptionsSchema.expressionEvaluationOptions.description%",
+                "default": {},
+                "type": "object",
+                "properties": {
+                  "allowImplicitFuncEval": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description%",
+                    "default": true
+                  },
+                  "allowToString": {
+                    "type": "boolean",
+                    "markdownDescription": "%generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription%",
+                    "default": true
+                  },
+                  "allowFastEvaluate": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description%",
+                    "default": true
+                  },
+                  "showRawValues": {
+                    "type": "boolean",
+                    "description": "%generateOptionsSchema.expressionEvaluationOptions.showRawValues.description%",
+                    "default": false
+                  }
+                }
               },
               "targetArchitecture": {
                 "type": "string",

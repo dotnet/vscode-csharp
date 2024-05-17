@@ -62,6 +62,7 @@ import { IDisposable } from '../disposable';
 import { registerNestedCodeActionCommands } from './nestedCodeAction';
 import { registerRestoreCommands } from './restore';
 import { BuildDiagnosticsService } from './buildDiagnosticsService';
+import { getComponentPaths } from './builtInComponents';
 import { OnAutoInsertFeature } from './onAutoInsertFeature';
 
 let _channel: vscode.OutputChannel;
@@ -512,10 +513,6 @@ export class RoslynLanguageServer {
             args.push('--logLevel', logLevel);
         }
 
-        for (const extensionPath of additionalExtensionPaths) {
-            args.push('--extension', extensionPath);
-        }
-
         args.push(
             '--razorSourceGenerator',
             path.join(context.extension.extensionPath, '.razor', 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
@@ -546,7 +543,7 @@ export class RoslynLanguageServer {
             // Set command enablement as soon as we know devkit is available.
             vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'RoslynDevKit');
 
-            const csharpDevKitArgs = this.getCSharpDevKitExportArgs();
+            const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths);
             args = args.concat(csharpDevKitArgs);
 
             await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension);
@@ -557,6 +554,10 @@ export class RoslynLanguageServer {
             // Set command enablement to use roslyn standalone commands.
             vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
+        }
+
+        for (const extensionPath of additionalExtensionPaths) {
+            args.push('--extension', extensionPath);
         }
 
         if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
@@ -812,19 +813,24 @@ export class RoslynLanguageServer {
         );
     }
 
-    private static getCSharpDevKitExportArgs(): string[] {
+    private static getCSharpDevKitExportArgs(additionalExtensionPaths: string[]): string[] {
         const args: string[] = [];
 
-        const clientRoot = __dirname;
-        const devKitDepsPath = path.join(
-            clientRoot,
-            '..',
-            '.roslynDevKit',
-            'Microsoft.VisualStudio.LanguageServices.DevKit.dll'
-        );
-        args.push('--devKitDependencyPath', devKitDepsPath);
+        const devKitDepsPath = getComponentPaths('roslynDevKit', languageServerOptions);
+        if (devKitDepsPath.length > 1) {
+            throw new Error('Expected only one devkit deps path');
+        }
+
+        args.push('--devKitDependencyPath', devKitDepsPath[0]);
 
         args.push('--sessionId', getSessionId());
+
+        // Also include the Xaml Dev Kit extensions, if enabled.
+        if (languageServerOptions.enableXamlTools) {
+            getComponentPaths('xamlTools', languageServerOptions).forEach((path) =>
+                additionalExtensionPaths.push(path)
+            );
+        }
         return args;
     }
 

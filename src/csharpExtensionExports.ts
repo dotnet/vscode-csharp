@@ -25,6 +25,7 @@ export interface CSharpExtensionExports {
     profferBrokeredServices: (container: GlobalBrokeredServiceContainer) => void;
     determineBrowserType: () => Promise<string | undefined>;
     experimental: CSharpExtensionExperimentalExports;
+    getComponentFolder: (componentName: string) => string;
 }
 
 export interface CSharpExtensionExperimentalExports {

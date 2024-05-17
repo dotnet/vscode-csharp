@@ -4,6 +4,26 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* XAML IntelliSense for .NET MAUI (Issue: [#565](https://github.com/microsoft/vscode-dotnettools/issues/565))
+  * Controlled by feature flag `dotnet.enableXamlTools` which is on by default
+  * Requires C# Dev Kit and .NET MAUI extensions
+* Update Roslyn to 4.11.0-2.24259.4 (PR: [#7117](https://github.com/dotnet/vscode-csharp/pull/7117))
+  * Shrink the size and remove unnecessary dependencies in the build host (PR: [#73393](https://github.com/dotnet/roslyn/pull/73393))
+  * Make fix-all code action more parallel (PR: [#73356](https://github.com/dotnet/roslyn/pull/73356))
+  * Allow use of more Hot Reload brokered services by LSP (for VS Code) (PR: [#73240](https://github.com/dotnet/roslyn/pull/73240))
+  * Improve parallel processing in FAR (PR: [#73253](https://github.com/dotnet/roslyn/pull/73253))
+  * Improve parallel processing in NavTo (PR: [#73249](https://github.com/dotnet/roslyn/pull/73249))
+* Add temporary option, `dotnet.server.suppressLspErrorToasts` to allow suppression of recoverable LSP error toasts (PR: [#7106](https://github.com/dotnet/vscode-csharp/pull/7106))
+* Update Debugger to v2.30.0 (PR: [#7101](https://github.com/dotnet/vscode-csharp/pull/7101))
+  * Adds support for disabling implict evaluation of properties and functions (Issue: [#3173](https://github.com/dotnet/vscode-csharp/pull/3173))
+* Don't download razor telemetry if disabled by vscode (PR: [#7092](https://github.com/dotnet/vscode-csharp/pull/7092))
+
+# 2.29.11
+* List solution filter files (.slnf) in the 'Open Solution' command. (PR: [#7082](https://github.com/dotnet/vscode-csharp/pull/7082))
+* No longer activate on the presence of .sln or .slnf files (PR: [#7081](https://github.com/dotnet/vscode-csharp/pull/7081))
+* Update Debugger Packages to v2.28.1 (PR: [#7072](https://github.com/dotnet/vscode-csharp/pull/7072))
+
+# 2.28.8
 * Update Roslyn to 4.11.0-1.24226.4 (PR: [#7069](https://github.com/dotnet/vscode-csharp/pull/7069))
   * Separate document diagnostics into multiple buckets to improve diagnostics performance (PR: [#73073](https://github.com/dotnet/roslyn/pull/73073))
   * Improve performance of diagnostics when analysis is set to fullSolution (PR: [#73201](https://github.com/dotnet/roslyn/pull/73201))

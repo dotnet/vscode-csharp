@@ -77,6 +77,9 @@ export interface LanguageServerOptions {
     readonly crashDumpPath: string | undefined;
     readonly analyzerDiagnosticScope: string;
     readonly compilerDiagnosticScope: string;
+    readonly componentPaths: { [key: string]: string } | null;
+    readonly enableXamlTools: boolean;
+    readonly suppressLspErrorToasts: boolean;
 }
 
 export interface RazorOptions {
@@ -397,6 +400,15 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get compilerDiagnosticScope() {
         return readOption<string>('dotnet.backgroundAnalysis.compilerDiagnosticsScope', 'openFiles');
     }
+    public get componentPaths() {
+        return readOption<{ [key: string]: string }>('dotnet.server.componentPaths', {});
+    }
+    public get enableXamlTools() {
+        return readOption<boolean>('dotnet.enableXamlTools', true);
+    }
+    public get suppressLspErrorToasts() {
+        return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
+    }
 }
 
 class RazorOptionsImpl implements RazorOptions {
@@ -490,4 +502,6 @@ export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof Languag
     'logLevel',
     'documentSelector',
     'preferCSharpExtension',
+    'componentPaths',
+    'enableXamlTools',
 ];
