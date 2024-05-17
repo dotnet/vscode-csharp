@@ -6,7 +6,7 @@ trigger:
     - release
     - prerelease
     - main
-  
+
 pr:
   branches:
     include:
