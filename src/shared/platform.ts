@@ -173,7 +173,7 @@ export class PlatformInformation {
     }
 
     private static async GetUnixArchitecture(): Promise<string> {
-        const architecture = (await util.execChildProcess('uname -m', __dirname)).trim();
+        const architecture = (await util.execChildProcess('uname -m', __dirname, process.env)).trim();
         if (architecture === 'aarch64') {
             return 'arm64';
         }
