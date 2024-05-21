@@ -616,6 +616,12 @@ export class RoslynLanguageServer {
 
         args.push('--extensionLogDirectory', context.logUri.fsPath);
 
+        const env = dotnetInfo.env;
+        if (!languageServerOptions.useServerGC) {
+            // The server by default uses serverGC, if the user opts out we need to set the environment variable to disable it.
+            env.DOTNET_gcServer = '0';
+        }
+
         let childProcess: cp.ChildProcessWithoutNullStreams;
         const cpOptions: cp.SpawnOptionsWithoutStdio = {
             detached: true,
