@@ -43,7 +43,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "為您最近選取的成員執行自動物件名稱完成。",
   "configuration.dotnet.defaultSolution.description": "要在工作區中開啟的預設解決方案路徑，或設為 [停用] 以略過它。(先前為 `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.dotnetPath": "指定要使用的 dotnet 安裝目錄路徑，而非系統預設的路徑。這只會影響用來裝載語言伺服器本身的 dotnet 安裝。範例: \"/home/username/mycustomdotnetdirectory”。",
-  "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
+  "configuration.dotnet.enableXamlTools": "使用 C# 開發套件時啟用 XAML 工具",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "反白資料指標下的相關 JSON 元件。",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "反白資料指標下的相關規則運算式元件。",
   "configuration.dotnet.implementType.insertionBehavior": "實作介面或抽象類別時，屬性、事件和方法的插入位置。",
