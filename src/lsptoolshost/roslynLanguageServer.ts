@@ -56,7 +56,7 @@ import { registerShowToastNotification } from './showToastNotification';
 import { registerRazorCommands } from './razorCommands';
 import { registerOnAutoInsert } from './onAutoInsert';
 import { registerCodeActionFixAllCommands } from './fixAllCodeAction';
-import { commonOptions, languageServerOptions, omnisharpOptions } from '../shared/options';
+import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from '../shared/options';
 import { NamedPipeInformation } from './roslynProtocol';
 import { IDisposable } from '../disposable';
 import { registerNestedCodeActionCommands } from './nestedCodeAction';
@@ -513,9 +513,16 @@ export class RoslynLanguageServer {
             args.push('--logLevel', logLevel);
         }
 
+        const razorPath =
+            razorOptions.razorServerPath === ''
+                ? path.join(context.extension.extensionPath, '.razor')
+                : razorOptions.razorServerPath;
+
+        args.push('--razorSourceGenerator', path.join(razorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
+
         args.push(
-            '--razorSourceGenerator',
-            path.join(context.extension.extensionPath, '.razor', 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
+            '--razorDesignTimePath',
+            path.join(razorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
         );
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
