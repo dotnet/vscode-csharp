@@ -58,8 +58,8 @@ export function safeLength<T>(arr: T[] | undefined) {
 
 export async function execChildProcess(
     command: string,
-    workingDirectory: string = getExtensionPath(),
-    env: NodeJS.ProcessEnv = {}
+    workingDirectory: string,
+    env: NodeJS.ProcessEnv
 ): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         cp.exec(command, { cwd: workingDirectory, maxBuffer: 500 * 1024, env: env }, (error, stdout, stderr) => {

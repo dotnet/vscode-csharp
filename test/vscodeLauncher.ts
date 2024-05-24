@@ -69,7 +69,7 @@ async function main() {
             }
 
             const dotnetPath = path.join(process.env.DOTNET_ROOT, 'dotnet');
-            await execChildProcess(`${dotnetPath} build ${sln}`, workspacePath);
+            await execChildProcess(`${dotnetPath} build ${sln}`, workspacePath, process.env);
         }
 
         // Download VS Code, unzip it and run the integration test
