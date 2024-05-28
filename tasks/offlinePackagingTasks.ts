@@ -280,6 +280,7 @@ async function restoreNugetPackage(packageName: string, packageVersion: string, 
         dotnetArgs.push('--interactive');
     }
 
+    console.log(`Restore args: dotnet ${dotnetArgs.join(' ')}`);
     const process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
     await new Promise((resolve) => {
         process.on('exit', (exitCode, _) => {
