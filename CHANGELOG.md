@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Use XML settings for XAML language-configuration.json (PR: https://github.com/dotnet/vscode-csharp/pull/7162)
+* Bump xamlTools to the latest (PR: https://github.com/dotnet/vscode-csharp/pull/7161)
+* Update Debugger to v2.30.1 (PR: https://github.com/dotnet/vscode-csharp/pull/7145)
+
+# 2.31.28
 * Update Razor to use source generator shipped in extension instead of the SDK (PR: [#7134](https://github.com/dotnet/vscode-csharp/pull/7134))
   * Fixes incorrect 'Amibuity between' errors displaying in Razor files (Issue: [#10351](https://github.com/dotnet/razor/issues/10351))
 * Update Roslyn to 4.11.0-2.24267.3 (PR: [#7134](https://github.com/dotnet/vscode-csharp/pull/7134))
