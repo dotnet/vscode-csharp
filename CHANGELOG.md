@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update xamlTools to 17.11.34924.19 (PR: [#7192](https://github.com/dotnet/vscode-csharp/pull/7192))
+* Include process environment variables when running shell commands (PR: [#7152](https://github.com/dotnet/vscode-csharp/pull/7152))
+
+# 2.32.14
 * Use XML settings for XAML language-configuration.json (PR: https://github.com/dotnet/vscode-csharp/pull/7162)
 * Bump xamlTools to the latest (PR: https://github.com/dotnet/vscode-csharp/pull/7161)
 * Update Debugger to v2.30.1 (PR: https://github.com/dotnet/vscode-csharp/pull/7145)
