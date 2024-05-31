@@ -8,8 +8,11 @@
 * Bump xamlTools to the latest (PR: https://github.com/dotnet/vscode-csharp/pull/7161)
 * Update Debugger to v2.30.1 (PR: https://github.com/dotnet/vscode-csharp/pull/7145)
 
-# 2.30.28
-* Update Roslyn to 4.11.0-2.24266.3 (PR: [#7135](https://github.com/dotnet/vscode-csharp/pull/7135))
+# 2.31.28
+* Update Razor to use source generator shipped in extension instead of the SDK (PR: [#7134](https://github.com/dotnet/vscode-csharp/pull/7134))
+  * Fixes incorrect 'Amibuity between' errors displaying in Razor files (Issue: [#10351](https://github.com/dotnet/razor/issues/10351))
+* Update Roslyn to 4.11.0-2.24267.3 (PR: [#7134](https://github.com/dotnet/vscode-csharp/pull/7134))
+  * Allow Razor to use source generator shipped with tooling (PR: [#73524](https://github.com/dotnet/roslyn/pull/73524))
   * Various performance improvements and allocation reductions
     * Reduce allocations in retrieving text from parsed trees (PR: [#73512](https://github.com/dotnet/roslyn/pull/73512))
     * Improve code action performance (PR: [#73493](https://github.com/dotnet/roslyn/pull/73493))
