@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update xamlTools to 17.11.34931.156 (PR: [#7195](https://github.com/dotnet/vscode-csharp/pull/7195))
+  * Support XAML Hot Reload on iOS physical devices
+  * Encrypt Hot Reload connection
+  * Fix issue where WinUI Hot Reload stops working on successive debug sessions
+  * Fix issue where Hot Reload sometimes doesn't work on first debug launch
+* Include process environment variables when running shell commands (PR: [#7152](https://github.com/dotnet/vscode-csharp/pull/7152))
+
+# 2.32.14
 * Use XML settings for XAML language-configuration.json (PR: https://github.com/dotnet/vscode-csharp/pull/7162)
 * Bump xamlTools to the latest (PR: https://github.com/dotnet/vscode-csharp/pull/7161)
 * Update Debugger to v2.30.1 (PR: https://github.com/dotnet/vscode-csharp/pull/7145)
