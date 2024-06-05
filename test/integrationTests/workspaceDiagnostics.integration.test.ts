@@ -35,24 +35,24 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
                     .filter(([uri, _]) => uri.fsPath.endsWith('completion.cs'))
                     .flatMap(([_, diagnostics]) => diagnostics);
 
-                expect(diagnosticsInDiagnosticsCs).toHaveLength(4);
-                expect(diagnosticsInCompletionCs).toHaveLength(4);
+                expect(diagnosticsInDiagnosticsCs).toHaveLength(5);
+                expect(diagnosticsInCompletionCs).toHaveLength(5);
 
                 // Compiler diagnostic in diagnostics.cs
-                expect(getCode(diagnosticsInDiagnosticsCs[2])).toBe('CS0219');
-                expect(diagnosticsInDiagnosticsCs[2].message).toBe(
+                expect(getCode(diagnosticsInDiagnosticsCs[3])).toBe('CS0219');
+                expect(diagnosticsInDiagnosticsCs[3].message).toBe(
                     "The variable 'notUsed' is assigned but its value is never used"
                 );
-                expect(diagnosticsInDiagnosticsCs[2].range).toEqual(new vscode.Range(8, 16, 8, 23));
-                expect(diagnosticsInDiagnosticsCs[2].severity).toBe(vscode.DiagnosticSeverity.Warning);
+                expect(diagnosticsInDiagnosticsCs[3].range).toEqual(new vscode.Range(8, 16, 8, 23));
+                expect(diagnosticsInDiagnosticsCs[3].severity).toBe(vscode.DiagnosticSeverity.Warning);
 
                 // Analyzer diagnostic in diagnostics.cs
-                expect(getCode(diagnosticsInDiagnosticsCs[1])).toBe('CA1822');
-                expect(diagnosticsInDiagnosticsCs[1].message).toBe(
+                expect(getCode(diagnosticsInDiagnosticsCs[2])).toBe('CA1822');
+                expect(diagnosticsInDiagnosticsCs[2].message).toBe(
                     "Member 'FooBarBar' does not access instance data and can be marked as static"
                 );
-                expect(diagnosticsInDiagnosticsCs[1].range).toEqual(new vscode.Range(6, 20, 6, 29));
-                expect(diagnosticsInDiagnosticsCs[1].severity).toBe(vscode.DiagnosticSeverity.Hint);
+                expect(diagnosticsInDiagnosticsCs[2].range).toEqual(new vscode.Range(6, 20, 6, 29));
+                expect(diagnosticsInDiagnosticsCs[2].severity).toBe(vscode.DiagnosticSeverity.Hint);
 
                 // Analyzer diagnostic in completion.cs
                 expect(getCode(diagnosticsInCompletionCs[0])).toBe('IDE0005');
@@ -75,7 +75,7 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
                     .filter(([uri, _]) => uri.fsPath.endsWith('diagnostics.cs'))
                     .flatMap(([_, diagnostics]) => diagnostics);
 
-                expect(diagnosticsInDiagnosticsCs).toHaveLength(3);
+                expect(diagnosticsInDiagnosticsCs).toHaveLength(4);
                 expect(diagnosticsInDiagnosticsCs.some((d) => getCode(d).startsWith('CS'))).toBe(false);
             });
         });
@@ -93,7 +93,7 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
                     .filter(([uri, _]) => uri.fsPath.endsWith('diagnostics.cs'))
                     .flatMap(([_, diagnostics]) => diagnostics);
 
-                expect(diagnosticsInDiagnosticsCs).toHaveLength(3);
+                expect(diagnosticsInDiagnosticsCs).toHaveLength(4);
                 expect(diagnosticsInDiagnosticsCs.some((d) => getCode(d).startsWith('CS'))).toBe(false);
             });
         });
