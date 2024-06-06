@@ -32,29 +32,34 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
             });
 
             await waitForExpectedFileDiagnostics((diagnostics) => {
-                expect(diagnostics).toHaveLength(4);
+                expect(diagnostics).toHaveLength(5);
 
                 expect(getCode(diagnostics[0])).toBe('IDE0005');
                 expect(diagnostics[0].message).toBe('Using directive is unnecessary.');
                 expect(diagnostics[0].range).toEqual(new vscode.Range(0, 0, 0, 16));
                 expect(diagnostics[0].severity).toBe(vscode.DiagnosticSeverity.Hint);
 
-                expect(getCode(diagnostics[1])).toBe('CA1822');
-                expect(diagnostics[1].message).toBe(
-                    "Member 'FooBarBar' does not access instance data and can be marked as static"
-                );
-                expect(diagnostics[1].range).toEqual(new vscode.Range(6, 20, 6, 29));
+                expect(getCode(diagnostics[1])).toBe('IDE0130');
+                expect(diagnostics[1].message).toBe('Namespace "Foo" does not match folder structure, expected "app"');
+                expect(diagnostics[1].range).toEqual(new vscode.Range(2, 10, 2, 13));
                 expect(diagnostics[1].severity).toBe(vscode.DiagnosticSeverity.Hint);
 
-                expect(getCode(diagnostics[2])).toBe('CS0219');
-                expect(diagnostics[2].message).toBe("The variable 'notUsed' is assigned but its value is never used");
-                expect(diagnostics[2].range).toEqual(new vscode.Range(8, 16, 8, 23));
-                expect(diagnostics[2].severity).toBe(vscode.DiagnosticSeverity.Warning);
+                expect(getCode(diagnostics[2])).toBe('CA1822');
+                expect(diagnostics[2].message).toBe(
+                    "Member 'FooBarBar' does not access instance data and can be marked as static"
+                );
+                expect(diagnostics[2].range).toEqual(new vscode.Range(6, 20, 6, 29));
+                expect(diagnostics[2].severity).toBe(vscode.DiagnosticSeverity.Hint);
 
-                expect(getCode(diagnostics[3])).toBe('IDE0059');
-                expect(diagnostics[3].message).toBe("Unnecessary assignment of a value to 'notUsed'");
+                expect(getCode(diagnostics[3])).toBe('CS0219');
+                expect(diagnostics[3].message).toBe("The variable 'notUsed' is assigned but its value is never used");
                 expect(diagnostics[3].range).toEqual(new vscode.Range(8, 16, 8, 23));
-                expect(diagnostics[3].severity).toBe(vscode.DiagnosticSeverity.Hint);
+                expect(diagnostics[3].severity).toBe(vscode.DiagnosticSeverity.Warning);
+
+                expect(getCode(diagnostics[4])).toBe('IDE0059');
+                expect(diagnostics[4].message).toBe("Unnecessary assignment of a value to 'notUsed'");
+                expect(diagnostics[4].range).toEqual(new vscode.Range(8, 16, 8, 23));
+                expect(diagnostics[4].severity).toBe(vscode.DiagnosticSeverity.Hint);
             }, file);
         });
 
@@ -65,12 +70,12 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
             });
 
             await waitForExpectedFileDiagnostics((diagnostics) => {
-                expect(diagnostics).toHaveLength(4);
+                expect(diagnostics).toHaveLength(5);
 
-                expect(getCode(diagnostics[2])).toBe('CS0219');
-                expect(diagnostics[2].message).toBe("The variable 'notUsed' is assigned but its value is never used");
-                expect(diagnostics[2].range).toEqual(new vscode.Range(8, 16, 8, 23));
-                expect(diagnostics[2].severity).toBe(vscode.DiagnosticSeverity.Warning);
+                expect(getCode(diagnostics[3])).toBe('CS0219');
+                expect(diagnostics[3].message).toBe("The variable 'notUsed' is assigned but its value is never used");
+                expect(diagnostics[3].range).toEqual(new vscode.Range(8, 16, 8, 23));
+                expect(diagnostics[3].severity).toBe(vscode.DiagnosticSeverity.Warning);
             }, file);
         });
 
@@ -83,7 +88,7 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
             await integrationHelpers.restartLanguageServer();
 
             await waitForExpectedFileDiagnostics((diagnostics) => {
-                expect(diagnostics).toHaveLength(3);
+                expect(diagnostics).toHaveLength(4);
 
                 expect(diagnostics.some((d) => getCode(d).startsWith('CS'))).toBe(false);
             }, file);
@@ -96,24 +101,29 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
             });
 
             await waitForExpectedFileDiagnostics((diagnostics) => {
-                expect(diagnostics).toHaveLength(4);
+                expect(diagnostics).toHaveLength(5);
 
                 expect(getCode(diagnostics[0])).toBe('IDE0005');
                 expect(diagnostics[0].message).toBe('Using directive is unnecessary.');
                 expect(diagnostics[0].range).toEqual(new vscode.Range(0, 0, 0, 16));
                 expect(diagnostics[0].severity).toBe(vscode.DiagnosticSeverity.Hint);
 
-                expect(getCode(diagnostics[1])).toBe('CA1822');
-                expect(diagnostics[1].message).toBe(
-                    "Member 'FooBarBar' does not access instance data and can be marked as static"
-                );
-                expect(diagnostics[1].range).toEqual(new vscode.Range(6, 20, 6, 29));
+                expect(getCode(diagnostics[1])).toBe('IDE0130');
+                expect(diagnostics[1].message).toBe('Namespace "Foo" does not match folder structure, expected "app"');
+                expect(diagnostics[1].range).toEqual(new vscode.Range(2, 10, 2, 13));
                 expect(diagnostics[1].severity).toBe(vscode.DiagnosticSeverity.Hint);
 
-                expect(getCode(diagnostics[3])).toBe('IDE0059');
-                expect(diagnostics[3].message).toBe("Unnecessary assignment of a value to 'notUsed'");
-                expect(diagnostics[3].range).toEqual(new vscode.Range(8, 16, 8, 23));
-                expect(diagnostics[3].severity).toBe(vscode.DiagnosticSeverity.Hint);
+                expect(getCode(diagnostics[2])).toBe('CA1822');
+                expect(diagnostics[2].message).toBe(
+                    "Member 'FooBarBar' does not access instance data and can be marked as static"
+                );
+                expect(diagnostics[2].range).toEqual(new vscode.Range(6, 20, 6, 29));
+                expect(diagnostics[2].severity).toBe(vscode.DiagnosticSeverity.Hint);
+
+                expect(getCode(diagnostics[4])).toBe('IDE0059');
+                expect(diagnostics[4].message).toBe("Unnecessary assignment of a value to 'notUsed'");
+                expect(diagnostics[4].range).toEqual(new vscode.Range(8, 16, 8, 23));
+                expect(diagnostics[4].severity).toBe(vscode.DiagnosticSeverity.Hint);
             }, file);
         });
 
