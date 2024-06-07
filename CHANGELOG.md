@@ -4,6 +4,48 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.11.0-3.24304.4 (PR: [#7191](https://github.com/dotnet/vscode-csharp/pull/7191))
+  * Fix build host when only the .net 6 SDK is installed (PR: [#73818](https://github.com/dotnet/roslyn/pull/73818))
+  * Bump Razor to 9.0.0-preview.24281.3 (PR: [#73817](https://github.com/dotnet/roslyn/pull/73817))
+  * Fix null reference exception during shutdown (PR: [#73790](https://github.com/dotnet/roslyn/pull/73790))
+  * Fix race causing workspace diagnostics to be stale (PR: [#73653](https://github.com/dotnet/roslyn/pull/73653))
+  * Reduce upfront assembly loads in language server (PR: [#73566](https://github.com/dotnet/roslyn/pull/73566))
+  * Update Debugger.Contracts to 17.11.0-beta.24274.2 (PR: [#73748](https://github.com/dotnet/roslyn/pull/73748))
+  * Fix signature help in nested method calls (PR: [#73606](https://github.com/dotnet/roslyn/pull/73606))
+  * Ignore drive casing when comparing paths for .editorconfig on windows platforms (PR: [#73380](https://github.com/dotnet/roslyn/pull/73380))
+  * Remove dependency on all Roslyn assemblies from build host (PR: [#73497](https://github.com/dotnet/roslyn/pull/73497))
+  * Various performance improvements and allocation reductions
+    * Improve AddImport conflict detection performance (PR: [#73780](https://github.com/dotnet/roslyn/pull/73780))
+    * Modify (Large/Source)Text.ParseLineStart to specify an initial capacity for line count (PR: [#73701](https://github.com/dotnet/roslyn/pull/73701))
+    * Reduce exceptions in work queue (PR: [#73766](https://github.com/dotnet/roslyn/pull/73766))
+    * Run providers in parallel when determining if we should show the lightbulb icon (PR: [#73758](https://github.com/dotnet/roslyn/pull/73758))
+    * Change the DocumentationCommentId to use a PooledStringBuilder (PR: [#73737](https://github.com/dotnet/roslyn/pull/73737))
+    * Avoid unnecessary array+linq allocs in common case (PR: [#73727](https://github.com/dotnet/roslyn/pull/73727))
+    * Improve performance in async / await keyword highlighting (PR: [#73721](https://github.com/dotnet/roslyn/pull/73721))
+    * Avoid unnecessary tree walk when hitting non-relevant directives (PR: [#73720](https://github.com/dotnet/roslyn/pull/73720))
+    * Utilize ImmutableCollectionsMarshal to get ROS for XxHash128.Hash call (PR: [#73692](https://github.com/dotnet/roslyn/pull/73692))
+    * Use IAsyncEnumerable for Find References (PR: [#73613](https://github.com/dotnet/roslyn/pull/73613))
+    * Compute classifications for FAR results in parallel (PR: [#73599](https://github.com/dotnet/roslyn/pull/73599))
+    * Switch to a List as the backing store for the FAR window from an ImmutableList (PR: [#73589](https://github.com/dotnet/roslyn/pull/73589))
+    * Switch FAR data from an immutable dictionary to an immutable array (PR: [#73587](https://github.com/dotnet/roslyn/pull/73587))
+    * More classification perf fixes. (PR: [#73535](https://github.com/dotnet/roslyn/pull/73535))
+    * Avoid unnecessary allocations while finding token matches in a file (PR: [#73547](https://github.com/dotnet/roslyn/pull/73547))
+    * Lower the amount of time FAR spends in classification by 4% (PR: [#73533](https://github.com/dotnet/roslyn/pull/73533))
+
+# 2.33.13
+* Update xamlTools to 17.11.34931.156 (PR: [#7195](https://github.com/dotnet/vscode-csharp/pull/7195))
+  * Support XAML Hot Reload on iOS physical devices
+  * Encrypt Hot Reload connection
+  * Fix issue where WinUI Hot Reload stops working on successive debug sessions
+  * Fix issue where Hot Reload sometimes doesn't work on first debug launch
+* Include process environment variables when running shell commands (PR: [#7152](https://github.com/dotnet/vscode-csharp/pull/7152))
+
+# 2.32.14
+* Use XML settings for XAML language-configuration.json (PR: https://github.com/dotnet/vscode-csharp/pull/7162)
+* Bump xamlTools to the latest (PR: https://github.com/dotnet/vscode-csharp/pull/7161)
+* Update Debugger to v2.30.1 (PR: https://github.com/dotnet/vscode-csharp/pull/7145)
+
+# 2.31.28
 * Update Razor to use source generator shipped in extension instead of the SDK (PR: [#7134](https://github.com/dotnet/vscode-csharp/pull/7134))
   * Fixes incorrect 'Amibuity between' errors displaying in Razor files (Issue: [#10351](https://github.com/dotnet/razor/issues/10351))
 * Update Roslyn to 4.11.0-2.24267.3 (PR: [#7134](https://github.com/dotnet/vscode-csharp/pull/7134))

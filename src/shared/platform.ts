@@ -173,7 +173,7 @@ export class PlatformInformation {
     }
 
     private static async GetUnixArchitecture(): Promise<string> {
-        const architecture = (await util.execChildProcess('uname -m', __dirname)).trim();
+        const architecture = (await util.execChildProcess('uname -m', __dirname, process.env)).trim();
         if (architecture === 'aarch64') {
             return 'arm64';
         }
@@ -183,7 +183,7 @@ export class PlatformInformation {
     // Emulates https://github.com/dotnet/install-scripts/blob/3c6cc06/src/dotnet-install.sh#L187-L189.
     private static async GetIsMusl(): Promise<boolean> {
         try {
-            const output = await util.execChildProcess('ldd --version', __dirname);
+            const output = await util.execChildProcess('ldd --version', __dirname, process.env);
             return output.includes('musl');
         } catch (err) {
             return err instanceof Error ? err.message.includes('musl') : false;
