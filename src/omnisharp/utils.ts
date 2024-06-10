@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import { CancellationToken } from 'vscode-languageserver-protocol';
 import {
     isWebProject,
+    isWebAssemblyProject,
     isBlazorWebAssemblyProject,
     isBlazorWebAssemblyHosted,
     findNetCoreTargetFramework,
@@ -171,7 +172,7 @@ export async function requestWorkspaceInformation(server: OmniSharpServer) {
     if (response.MsBuild && response.MsBuild.Projects) {
         for (const project of response.MsBuild.Projects) {
             project.IsWebProject = isWebProject(project.Path);
-
+            project.IsWebAssemblyProject = isWebAssemblyProject(project.Path);
             const isProjectBlazorWebAssemblyProject = await isBlazorWebAssemblyProject(project.Path);
 
             const targetsDotnetCore =

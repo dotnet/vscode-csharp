@@ -96,4 +96,13 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
             return [createFallbackLaunchConfiguration(), parse(createAttachConfiguration())];
         }
     }
+
+    async getAssetsPathAndProgram(folder: vscode.WorkspaceFolder): Promise<[string, string]> {
+        const info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
+        if (!info) {
+            return ['', ''];
+        }
+        const generator = new AssetGenerator(info, folder);
+        return generator.getAssetsPathAndProgram();
+    }
 }

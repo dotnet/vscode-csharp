@@ -43,6 +43,14 @@ export function isWebProject(projectPath: string): boolean {
     return projectFileText.toLowerCase().indexOf('sdk="microsoft.net.sdk.web"') >= 0;
 }
 
+export function isWebAssemblyProject(projectPath: string): boolean {
+    const projectFileText = fs.readFileSync(projectPath, 'utf8');
+
+    // Assume that this is an MSBuild project. In that case, look for the 'Sdk="Microsoft.NET.Sdk.BlazorWebAssembly"' attribute.
+    // TODO: Have OmniSharp provide the list of SDKs used by a project and check that list instead.
+    return projectFileText.toLowerCase().indexOf('sdk="microsoft.net.sdk.blazorwebassembly"') >= 0;
+}
+
 export async function isBlazorWebAssemblyProject(projectPath: string): Promise<boolean> {
     const projectDirectory = path.dirname(projectPath);
     const launchSettingsPath = path.join(projectDirectory, 'Properties', 'launchSettings.json');

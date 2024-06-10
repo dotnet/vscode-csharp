@@ -18,6 +18,7 @@ import {
 import { PlatformInformation } from './platform';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { commonOptions } from './options';
+import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider';
 
 /**
  * Class used for debug configurations that will be sent to the debugger registered by {@link DebugAdapterExecutableFactory}
@@ -148,7 +149,18 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                 this.checkForDevCerts(commonOptions.dotnetPath);
             }
         }
-
+        if (debugConfiguration.type === 'monovsdbg' && this instanceof DotnetWorkspaceConfigurationProvider) {
+            const configProvider = this as DotnetWorkspaceConfigurationProvider;
+            if (
+                folder &&
+                debugConfiguration.monoDebuggerOptions.platform === 'browser' &&
+                debugConfiguration.monoDebuggerOptions.assetsPath == null
+            ) {
+                const [assetsPath, programName] = await configProvider.getAssetsPathAndProgram(folder);
+                debugConfiguration.monoDebuggerOptions.assetsPath = assetsPath;
+                debugConfiguration.program = programName;
+            }
+        }
         return debugConfiguration;
     }
 

@@ -344,6 +344,18 @@ export class AssetGenerator {
 
         return result;
     }
+
+    public getAssetsPathAndProgram(): [string, string] {
+        let assetsPath = ``;
+        this.executableProjects.forEach((project) => {
+            if (project.isWebAssemblyProject) {
+                assetsPath += path.join(path.dirname(project.outputPath), path.sep);
+                assetsPath += ';';
+            }
+        });
+        assetsPath = assetsPath.slice(0, -1);
+        return [assetsPath, this.executableProjects[0].outputPath];
+    }
 }
 
 export enum ProgramLaunchType {

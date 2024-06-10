@@ -371,6 +371,7 @@ export async function activate(
             getComponentFolder: (componentName) => {
                 return getComponentFolder(componentName, languageServerOptions);
             },
+            tryToUseVSDbgForMono: BlazorDebugConfigurationProvider.tryToUseVSDbgForMono,
         };
     } else {
         return {

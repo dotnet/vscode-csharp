@@ -505,7 +505,8 @@ function createMSBuildWorkspaceInformation(
     isExe = true,
     isWebProject = false,
     isBlazorWebAssemblyStandalone = false,
-    isBlazorWebAssemblyHosted = false
+    isBlazorWebAssemblyHosted = false,
+    isWebAssemblyProject = false
 ): ProjectDebugInformation[] {
     return [
         {
@@ -527,6 +528,7 @@ function createMSBuildWorkspaceInformation(
             isWebProject: isWebProject,
             isBlazorWebAssemblyHosted: isBlazorWebAssemblyHosted,
             isBlazorWebAssemblyStandalone: isBlazorWebAssemblyStandalone,
+            isWebAssemblyProject: isWebAssemblyProject,
         },
     ];
 }
