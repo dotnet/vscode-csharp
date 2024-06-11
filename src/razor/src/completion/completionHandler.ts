@@ -11,7 +11,7 @@ import {
     CompletionTriggerKind,
     RequestType,
 } from 'vscode-languageclient';
-import { provideCompletionsCommand } from '../../../lsptoolshost/razorCommands';
+import { provideCompletionsCommand, resolveCompletionsCommand } from '../../../lsptoolshost/razorCommands';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
@@ -116,8 +116,6 @@ export class CompletionHandler {
                     ? CompletionTriggerKind.Invoked
                     : delegatedCompletionParams.context.triggerKind;
 
-            let completions: vscode.CompletionList | vscode.CompletionItem[];
-
             if (delegatedCompletionParams.projectedKind === LanguageKind.CSharp) {
                 const params: CompletionParams = {
                     context: {
@@ -130,18 +128,20 @@ export class CompletionHandler {
                     position: delegatedCompletionParams.projectedPosition,
                 };
 
-                completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
+                const roslynCompletions = await vscode.commands.executeCommand<CompletionList>(
                     provideCompletionsCommand,
                     params
                 );
-            } else {
-                completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
-                    'vscode.executeCompletionItemProvider',
-                    UriConverter.deserialize(virtualDocumentUri),
-                    delegatedCompletionParams.projectedPosition,
-                    modifiedTriggerCharacter
-                );
+                return roslynCompletions;
             }
+
+            // HTML case
+            const completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
+                'vscode.executeCompletionItemProvider',
+                UriConverter.deserialize(virtualDocumentUri),
+                delegatedCompletionParams.projectedPosition,
+                modifiedTriggerCharacter
+            );
 
             const completionItems =
                 completions instanceof Array
@@ -149,7 +149,7 @@ export class CompletionHandler {
                     : completions
                     ? completions.items // was vscode.CompletionList
                     : [];
-            // TODO: do this conversion for HTML only, C# seems fine without it
+
             const convertedCompletionItems: CompletionItem[] = new Array(completionItems.length);
             for (let i = 0; i < completionItems.length; i++) {
                 const completionItem = completionItems[i];
@@ -176,10 +176,26 @@ export class CompletionHandler {
     }
 
     private async provideResolvedCompletionItem(
-        _1: SerializableDelegatedCompletionItemResolveParams,
-        _2: vscode.CancellationToken
+        delegatedCompletionItemResolveParams: SerializableDelegatedCompletionItemResolveParams,
+        _cancellationToken: vscode.CancellationToken
     ) {
-        // TODO: add implementation :)
+        // TODO: Snippet support
+
+        if (delegatedCompletionItemResolveParams.originatingKind != LanguageKind.CSharp) {
+            return delegatedCompletionItemResolveParams.completionItem;
+        } else {
+            const newItem = await vscode.commands.executeCommand<CompletionItem>(
+                resolveCompletionsCommand,
+                delegatedCompletionItemResolveParams.completionItem
+            );
+
+            if (!newItem) {
+                return delegatedCompletionItemResolveParams.completionItem;
+            }
+
+            return newItem;
+        }
+
         return CompletionHandler.emptyCompletionItem;
     }
 }
