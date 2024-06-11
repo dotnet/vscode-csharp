@@ -153,7 +153,7 @@
     "find-versions": "4.0.0",
     "get-port": "5.1.1",
     "glob-promise": "4.1.0",
-    "gulp": "4.0.2",
+    "gulp": "5.0.0",
     "jest": "^29.6.2",
     "jest-cli": "^29.6.4",
     "jest-junit": "^16.0.0",
