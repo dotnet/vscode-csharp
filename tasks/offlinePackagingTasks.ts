@@ -25,6 +25,7 @@ import {
     rootPath,
     devKitDependenciesDirectory,
     xamlToolsDirectory,
+    razorLanguageServerDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
@@ -83,6 +84,12 @@ export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
         packageJsonName: 'xamlTools',
         getPackageContentPath: (_platformInfo) => 'content',
         vsixOutputPath: xamlToolsDirectory,
+    },
+    razor: {
+        getPackageName: (platformInfo) => `rzls.${platformInfo?.rid ?? 'neutral'}`,
+        packageJsonName: 'razor',
+        getPackageContentPath: (platformInfo) => path.join('content', 'LanguageServer', platformInfo?.rid ?? 'neutral'),
+        vsixOutputPath: razorLanguageServerDirectory,
     },
 };
 
