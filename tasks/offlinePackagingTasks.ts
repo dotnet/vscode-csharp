@@ -174,6 +174,26 @@ gulp.task(
     }, 'installDependencies')
 );
 
+// Defines a special task to acquire all the platform specific Razor packages.
+// All packages need to be saved to the consumption AzDo artifacts feed, for non-platform
+// specific packages this only requires running the installDependencies tasks.  However for Razor packages
+// we need to acquire the nuget packages once for each platform to ensure they get saved to the feed.
+gulp.task(
+    'updateRazorVersion',
+    // Run the fetch of all packages, and then also installDependencies after
+    gulp.series(async () => {
+        const packageJSON = getPackageJSON();
+
+        // Fetch the neutral package that we don't otherwise have in our platform list
+        await acquireNugetPackage(allNugetPackages.razor, undefined, packageJSON, true);
+
+        // And now fetch each platform specific
+        for (const p of platformSpecificPackages) {
+            await acquireNugetPackage(allNugetPackages.razor, p, packageJSON, true);
+        }
+    }, 'installDependencies')
+);
+
 async function acquireAndInstallAllNugetPackages(
     platformInfo: VSIXPlatformInfo | undefined,
     packageJSON: any,
