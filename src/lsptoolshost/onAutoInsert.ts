@@ -4,27 +4,45 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { UriConverter } from './uriConverter';
 
-import { FormattingOptions, TextDocumentIdentifier } from 'vscode-languageclient/node';
+import { FormattingOptions, LanguageClient, TextDocumentIdentifier } from 'vscode-languageclient/node';
 import * as RoslynProtocol from './roslynProtocol';
 import { RoslynLanguageServer } from './roslynLanguageServer';
 
-export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
+export function registerOnAutoInsert(languageServer: RoslynLanguageServer, languageClient: LanguageClient) {
     let source = new vscode.CancellationTokenSource();
-    vscode.workspace.onDidChangeTextDocument(async (e) => {
+
+    // We explicitly register against the server's didChange notification (instead of the VSCode workspace API)
+    // as we want to ensure that the server has processed the change before we request edits from auto insert.
+    // The VSCode workspace API will sometimes call this before the LSP client can send the change, leading to auto insert not working.
+    languageClient.getFeature('textDocument/didChange').onNotificationSent(async (event) => {
+        const e = event.params;
         if (e.contentChanges.length > 1 || e.contentChanges.length === 0) {
             return;
         }
 
         const change = e.contentChanges[0];
-
-        if (!change.range.isEmpty) {
+        // TextDocumentContentChangeEvent is a union type that does not return a range if the change event is for a full document.
+        // Full document changes are not supported for onautoinsert.
+        if (!('range' in change)) {
             return;
         }
 
+        // Convert to a VSCode range for ease of handling.
+        const vscodeRange = languageClient.protocol2CodeConverter.asRange(change.range);
+
+        // Empty or multiline changes are not supported for onautoinsert.
+        if (!vscodeRange.isEmpty || !vscodeRange.isSingleLine) {
+            return;
+        }
+
+        // We need to convert to a vscode TextDocument to apply the correct capabilities.
+        const uri = languageClient.protocol2CodeConverter.asUri(e.textDocument.uri);
+        // This is a no-op because the document is already open (in order to be edited).
+        const document = await vscode.workspace.openTextDocument(uri);
+
         const onAutoInsertFeature = languageServer.getOnAutoInsertFeature();
-        const onAutoInsertOptions = onAutoInsertFeature?.getOptions(e.document);
+        const onAutoInsertOptions = onAutoInsertFeature?.getOptions(document);
         const vsTriggerCharacters = onAutoInsertOptions?._vs_triggerCharacters;
 
         if (vsTriggerCharacters === undefined) {
@@ -38,10 +56,17 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
             return;
         }
 
+        // We have a single line range so we can compute the length by comparing the start and end character positions.
+        const rangeLength = vscodeRange.end.character - vscodeRange.start.character;
+
+        // The server expects the request position to represent the caret position in the text after the change has already been applied.
+        // We need to calculate what that position would be after the change is applied and send that to the server.
+        const position = vscodeRange.start.translate(0, change.text.length - rangeLength);
+
         source.cancel();
         source = new vscode.CancellationTokenSource();
         try {
-            await applyAutoInsertEdit(e, changeTrimmed, languageServer, source.token);
+            await applyAutoInsertEdit(position, changeTrimmed, e.textDocument, uri, languageServer, source.token);
         } catch (e) {
             if (e instanceof vscode.CancellationError) {
                 return;
@@ -53,25 +78,18 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
 }
 
 async function applyAutoInsertEdit(
-    e: vscode.TextDocumentChangeEvent,
-    changeTrimmed: string,
+    position: vscode.Position,
+    changeTextTrimmed: string,
+    textDocumentIdentifier: TextDocumentIdentifier,
+    uri: vscode.Uri,
     languageServer: RoslynLanguageServer,
     token: vscode.CancellationToken
 ) {
-    const change = e.contentChanges[0];
-    // The server expects the request position to represent the caret position in the text after the change has already been applied.
-    // We need to calculate what that position would be after the change is applied and send that to the server.
-    const position = new vscode.Position(
-        change.range.start.line,
-        change.range.start.character + (change.text.length - change.rangeLength)
-    );
-    const uri = UriConverter.serialize(e.document.uri);
-    const textDocument = TextDocumentIdentifier.create(uri);
     const formattingOptions = getFormattingOptions();
     const request: RoslynProtocol.OnAutoInsertParams = {
-        _vs_textDocument: textDocument,
+        _vs_textDocument: textDocumentIdentifier,
         _vs_position: position,
-        _vs_ch: changeTrimmed,
+        _vs_ch: changeTextTrimmed,
         _vs_options: formattingOptions,
     };
 
@@ -84,7 +102,7 @@ async function applyAutoInsertEdit(
         const code: any = vscode;
         const textEdits = [new code.SnippetTextEdit(new vscode.Range(startPosition, endPosition), docComment)];
         const edit = new vscode.WorkspaceEdit();
-        edit.set(e.document.uri, textEdits);
+        edit.set(uri, textEdits);
 
         const applied = vscode.workspace.applyEdit(edit);
         if (!applied) {
