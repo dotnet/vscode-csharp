@@ -159,18 +159,10 @@ gulp.task(
     'updateRoslynVersion',
     // Run the fetch of all packages, and then also installDependencies after
     gulp.series(async () => {
-        const packageJSON = getPackageJSON();
-
-        // Fetch the neutral package that we don't otherwise have in our platform list
-        await acquireNugetPackage(allNugetPackages.roslyn, undefined, packageJSON, true);
-
-        // And now fetch each platform specific
-        for (const p of platformSpecificPackages) {
-            await acquireNugetPackage(allNugetPackages.roslyn, p, packageJSON, true);
-        }
+        await updateNugetPackageVersion(allNugetPackages.roslyn);
 
         // Also pull in the Roslyn DevKit dependencies nuget package.
-        await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, packageJSON, true);
+        await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, getPackageJSON(), true);
     }, 'installDependencies')
 );
 
@@ -182,15 +174,7 @@ gulp.task(
     'updateRazorVersion',
     // Run the fetch of all packages, and then also installDependencies after
     gulp.series(async () => {
-        const packageJSON = getPackageJSON();
-
-        // Fetch the neutral package that we don't otherwise have in our platform list
-        await acquireNugetPackage(allNugetPackages.razor, undefined, packageJSON, true);
-
-        // And now fetch each platform specific
-        for (const p of platformSpecificPackages) {
-            await acquireNugetPackage(allNugetPackages.razor, p, packageJSON, true);
-        }
+        await updateNugetPackageVersion(allNugetPackages.razor);
     }, 'installDependencies')
 );
 
@@ -397,5 +381,17 @@ function getPackageName(packageJSON: any, vscodePlatformId?: string) {
         return `${name}-${vscodePlatformId}-${version}.vsix`;
     } else {
         return `${name}-${version}.vsix`;
+    }
+}
+
+async function updateNugetPackageVersion(packageInfo: NugetPackageInfo) {
+    const packageJSON = getPackageJSON();
+
+    // Fetch the neutral package that we don't otherwise have in our platform list
+    await acquireNugetPackage(packageInfo, undefined, packageJSON, true);
+
+    // And now fetch each platform specific
+    for (const p of platformSpecificPackages) {
+        await acquireNugetPackage(packageInfo, p, packageJSON, true);
     }
 }
