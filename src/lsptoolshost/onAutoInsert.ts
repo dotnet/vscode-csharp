@@ -25,7 +25,8 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer) {
 
         const onAutoInsertFeature = languageServer.getOnAutoInsertFeature();
         const onAutoInsertOptions = onAutoInsertFeature?.getOptions(e.document);
-        const vsTriggerCharacters = onAutoInsertOptions?._vs_triggerCharacters;
+        const vsTriggerCharacters =
+            onAutoInsertOptions?._vs_triggerCharacters ?? onAutoInsertOptions?.TriggerCharacters;
 
         if (vsTriggerCharacters === undefined) {
             return;

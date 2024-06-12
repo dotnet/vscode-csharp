@@ -74,6 +74,11 @@ export interface OnAutoInsertOptions {
      * List of characters triggering an {@link OnAutoInsertRequest}.
      */
     _vs_triggerCharacters?: string[];
+
+    /**
+     * Temporary workaround for serialization issues with the `triggerCharacters` property.
+     */
+    TriggerCharacters?: string[];
 }
 
 /**
