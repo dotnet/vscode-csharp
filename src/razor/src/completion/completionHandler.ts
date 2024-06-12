@@ -132,6 +132,7 @@ export class CompletionHandler {
                     provideCompletionsCommand,
                     params
                 );
+                this.AdjustRoslynCompletionList(roslynCompletions, delegatedCompletionParams.context.triggerCharacter);
                 return roslynCompletions;
             }
 
@@ -197,5 +198,32 @@ export class CompletionHandler {
         }
 
         return CompletionHandler.emptyCompletionItem;
+    }
+
+    private AdjustRoslynCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
+        const data = completionList.itemDefaults?.data;
+        for (const completionItem of completionList.items) {
+            // textEdit is deprecated in favor of .range. Clear out its value to avoid any unexpected behavior.
+            completionItem.textEdit = undefined;
+
+            if (triggerCharacter === '@' && completionItem.commitCharacters) {
+                // We remove `{`, '(', and '*' from the commit characters to prevent auto-completing the first
+                // completion item with a curly brace when a user intended to type `@{}` or `@()`.
+                completionItem.commitCharacters = completionItem.commitCharacters.filter(
+                    (commitChar) => commitChar !== '{' && commitChar !== '(' && commitChar !== '*'
+                );
+            }
+
+            // for intellicode items, manually set the insertText to avoid including stars in the commit
+            if (completionItem.label.toString().includes('\u2605')) {
+                if (completionItem.textEditText) {
+                    completionItem.insertText = completionItem.textEditText;
+                }
+            }
+
+            if (!completionItem.data) {
+                completionItem.data = data;
+            }
+        }
     }
 }
