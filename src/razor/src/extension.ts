@@ -3,10 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
 import * as vscode from 'vscode';
 import * as vscodeapi from 'vscode';
-import * as util from '../../common';
 import { ExtensionContext } from 'vscode';
 import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
 import { CodeActionsHandler } from './codeActions/codeActionsHandler';
@@ -55,7 +53,7 @@ import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsR
 import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHandler';
 import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
-import { getComponentFolder, getComponentPaths } from '../../lsptoolshost/builtInComponents';
+import { getComponentPaths } from '../../lsptoolshost/builtInComponents';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
