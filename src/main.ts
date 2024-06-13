@@ -102,6 +102,8 @@ export async function activate(
         requiredPackageIds.push('OmniSharp');
     }
 
+    requiredPackageIds.push('VSWebAssemblyBridge');
+
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
     await initializeDotnetPath();
 
