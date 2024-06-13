@@ -42,7 +42,7 @@
     "razor": "9.0.0-preview.24311.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "razorTelemetry": "7.0.0-preview.24178.4",
-    "xamlTools": "17.11.34931.156"
+    "xamlTools": "17.11.35013.26"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
