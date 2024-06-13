@@ -20,6 +20,7 @@ import { SerializableDelegatedCompletionParams } from './serializableDelegatedCo
 import { SerializableDelegatedCompletionItemResolveParams } from './serializableDelegatedCompletionItemResolveParams';
 import { LanguageKind } from '../rpc/languageKind';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { MarkupContent } from 'vscode-html-languageservice';
 
 export class CompletionHandler {
     private static readonly completionEndpoint = 'razor/completion';
@@ -116,6 +117,7 @@ export class CompletionHandler {
                     ? CompletionTriggerKind.Invoked
                     : delegatedCompletionParams.context.triggerKind;
 
+            // Roslyn/C# completion
             if (delegatedCompletionParams.projectedKind === LanguageKind.CSharp) {
                 const params: CompletionParams = {
                     context: {
@@ -132,11 +134,14 @@ export class CompletionHandler {
                     provideCompletionsCommand,
                     params
                 );
-                this.AdjustRoslynCompletionList(roslynCompletions, delegatedCompletionParams.context.triggerCharacter);
+                CompletionHandler.AdjustRoslynCompletionList(
+                    roslynCompletions,
+                    delegatedCompletionParams.context.triggerCharacter
+                );
                 return roslynCompletions;
             }
 
-            // HTML case
+            // HTML completion
             const completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
                 'vscode.executeCompletionItemProvider',
                 UriConverter.deserialize(virtualDocumentUri),
@@ -158,6 +163,7 @@ export class CompletionHandler {
                     label: completionItem.label,
                     kind: completionItem.kind,
                     commitCharacters: completionItem.commitCharacters,
+                    documentation: CompletionHandler.ToMarkupContent(completionItem.documentation),
                 };
                 convertedCompletionItems[i] = convertedCompletionItem;
             }
@@ -200,7 +206,7 @@ export class CompletionHandler {
         return CompletionHandler.emptyCompletionItem;
     }
 
-    private AdjustRoslynCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
+    private static AdjustRoslynCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
         const data = completionList.itemDefaults?.data;
         for (const completionItem of completionList.items) {
             // textEdit is deprecated in favor of .range. Clear out its value to avoid any unexpected behavior.
@@ -225,5 +231,19 @@ export class CompletionHandler {
                 completionItem.data = data;
             }
         }
+    }
+
+    // converts completion item documentation from vscode format to LSP format
+    private static ToMarkupContent(documentation?: string | vscode.MarkdownString): string | MarkupContent | undefined {
+        const markdownString = documentation as vscode.MarkdownString;
+        if (!markdownString?.value) {
+            return <string | undefined>documentation;
+        }
+        const markupContent: MarkupContent = {
+            value: markdownString.value,
+            kind: 'markdown',
+        };
+
+        return markupContent;
     }
 }
