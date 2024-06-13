@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Razor to 9.0.0-preview.24311.4 (PR: [#7225](https://github.com/dotnet/vscode-csharp/pull/7225))
+  * Fix Parsing regression from 8.0.205, commas after @ character
+  * Improve diagnostic reliability for js/ts
+  * Fix tooling for projects that don't use the razor sdk
 * Update Roslyn to 4.11.0-3.24307.2 (PR: [#7211](https://github.com/dotnet/vscode-csharp/pull/7211))
   * Avoid writing analyzer shadow copies to /tmp/ on Unix (PR: [#73809](https://github.com/dotnet/roslyn/pull/73809))
   * Fix exponential blowup parsing pathological files (PR: [#73788](https://github.com/dotnet/roslyn/pull/73788))
