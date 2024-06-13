@@ -160,10 +160,14 @@ export class CompletionHandler {
             for (let i = 0; i < completionItems.length; i++) {
                 const completionItem = completionItems[i];
                 const convertedCompletionItem = <CompletionItem>{
-                    label: completionItem.label,
-                    kind: completionItem.kind,
                     commitCharacters: completionItem.commitCharacters,
+                    detail: completionItem.detail,
                     documentation: CompletionHandler.ToMarkupContent(completionItem.documentation),
+                    filterText: completionItem.filterText,
+                    kind: completionItem.kind,
+                    label: completionItem.label,
+                    preselect: completionItem.preselect,
+                    sortText: completionItem.sortText,
                 };
                 convertedCompletionItems[i] = convertedCompletionItem;
             }
