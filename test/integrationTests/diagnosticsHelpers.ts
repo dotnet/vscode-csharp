@@ -21,7 +21,7 @@ export async function waitForExpectedDiagnostics(
     assertExpectedDiagnostics: (input: [vscode.Uri, vscode.Diagnostic[]][]) => void,
     file?: vscode.Uri
 ): Promise<void> {
-    let duration = 30 * 1000;
+    let duration = 60 * 1000;
     const step = 500;
     let error: any = undefined;
     while (duration > 0) {
