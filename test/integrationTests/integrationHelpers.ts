@@ -58,6 +58,14 @@ export async function openFileInWorkspaceAsync(relativeFilePath: string): Promis
     return uri;
 }
 
+/**
+ * Reverts any unsaved changes to the active file.
+ * Useful to reset state between tests without fully reloading everything.
+ */
+export async function revertActiveFile(): Promise<void> {
+    await vscode.commands.executeCommand('workbench.action.files.revert');
+}
+
 export async function restartLanguageServer(): Promise<void> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     // Register to wait for initialization events and restart the server.
@@ -111,4 +119,34 @@ function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName:
     const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
 
     return projectFileName === expectedProjectFileName;
+}
+
+export async function waitForExpectedResult<T>(
+    getValue: () => Promise<T> | T,
+    duration: number,
+    step: number,
+    expression: (input: T) => void
+): Promise<void> {
+    let value: T;
+    let error: any = undefined;
+
+    while (duration > 0) {
+        value = await getValue();
+
+        try {
+            expression(value);
+            return;
+        } catch (e) {
+            error = e;
+            // Wait for a bit and try again.
+            await new Promise((r) => setTimeout(r, step));
+            duration -= step;
+        }
+    }
+
+    throw new Error(`Polling did not succeed within the alotted duration: ${error}`);
+}
+
+export async function sleep(ms = 0) {
+    return new Promise((r) => setTimeout(r, ms));
 }
