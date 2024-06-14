@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
-* Update Roslyn to 4.11.0-3.24313.9 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
+* Improve reliability of documentation comment auto insertion (PR: [#7230](https://github.com/dotnet/vscode-csharp/pull/7230))
+* Update Roslyn to 4.11.0-3.24313.9 (PR: [#7234](https://github.com/dotnet/vscode-csharp/pull/7234))
   * Fix issue serializing exceptions (PR: [#73851](https://github.com/dotnet/roslyn/pull/73851))
   * Cache the last string's hash to improve cpu cost in solution load (PR: [#73937](https://github.com/dotnet/roslyn/pull/73937))
   * Improve EnC log messages (PR: [#73919](https://github.com/dotnet/roslyn/pull/73919))
@@ -19,6 +20,7 @@
   * Fix Parsing regression from 8.0.205, commas after @ character
   * Improve diagnostic reliability for js/ts
   * Fix tooling for projects that don't use the razor sdk
+* Update debugger packages to v2.34.1. (PR: [#7224](https://github.com/dotnet/vscode-csharp/pull/7224))
 
 # 2.34.10
 * Update Roslyn to 4.11.0-3.24307.2 (PR: [#7211](https://github.com/dotnet/vscode-csharp/pull/7211))
