@@ -4,6 +4,19 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.11.0-3.24313.9 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
+  * Fix issue serializing exceptions (PR: [#73851](https://github.com/dotnet/roslyn/pull/73851))
+  * Cache the last string's hash to improve cpu cost in solution load (PR: [#73937](https://github.com/dotnet/roslyn/pull/73937))
+  * Improve EnC log messages (PR: [#73919](https://github.com/dotnet/roslyn/pull/73919))
+  * Reduce allocations in PENamespaceSymbol.GetMembers() (PR: [#73794](https://github.com/dotnet/roslyn/pull/73794))
+  * Change global option change notification to batch all option changes (PR: [#73882](https://github.com/dotnet/roslyn/pull/73882))
+  * Update msbuild version to 17.3.4 (PR: [#73283](https://github.com/dotnet/roslyn/pull/73283))
+* Update XAML tools to 17.11.35013.26 (PR: [#7233](https://github.com/dotnet/vscode-csharp/pull/7233))
+  * Fixes AutoInsert in MAUI
+  * Support GUID properties when parsing XAML
+  * Improve support for x:DataType in MAUI
+
+# 2.34.10
 * Update Roslyn to 4.11.0-3.24307.2 (PR: [#7211](https://github.com/dotnet/vscode-csharp/pull/7211))
   * Avoid writing analyzer shadow copies to /tmp/ on Unix (PR: [#73809](https://github.com/dotnet/roslyn/pull/73809))
   * Fix exponential blowup parsing pathological files (PR: [#73788](https://github.com/dotnet/roslyn/pull/73788))
