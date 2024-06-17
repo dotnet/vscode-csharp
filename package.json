@@ -819,7 +819,6 @@
     "onLanguage:csharp",
     "onCommand:o.showOutput",
     "onCommand:omnisharp.registerLanguageMiddleware",
-    "workspaceContains:project.json",
     "workspaceContains:**/*.{csproj,csx,cake}"
   ],
   "contributes": {
@@ -1863,10 +1862,6 @@
           "appsettings.*.json"
         ],
         "url": "https://json.schemastore.org/appsettings"
-      },
-      {
-        "fileMatch": "project.json",
-        "url": "http://json.schemastore.org/project"
       },
       {
         "fileMatch": "omnisharp.json",

@@ -24,7 +24,6 @@ import { PlatformInformation } from './shared/platform';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
 import { TelemetryObserver } from './observers/telemetryObserver';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/projectStatusBarObserver';
 import { vscodeNetworkSettingsProvider } from './networkSettings';
 import { ErrorMessageObserver } from './observers/errorMessageObserver';
@@ -282,8 +281,6 @@ export async function activate(
 
         context.subscriptions.push(registerOmnisharpOptionChanges(optionStream));
 
-        // register JSON completion & hover providers for project.json
-        context.subscriptions.push(addJSONProviders());
         context.subscriptions.push(
             vscode.window.onDidChangeActiveTextEditor(() => {
                 eventStream.post(new ActiveTextEditorChanged());
