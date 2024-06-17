@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-
 import {
     CompletionItem,
     CompletionList,
@@ -12,7 +11,9 @@ import {
     CompletionTriggerKind,
     InsertReplaceEdit,
     InsertTextMode,
+    MarkupContent,
     Position,
+    Range,
     RequestType,
     TextEdit,
 } from 'vscode-languageclient';
@@ -25,7 +26,6 @@ import { SerializableDelegatedCompletionParams } from './serializableDelegatedCo
 import { SerializableDelegatedCompletionItemResolveParams } from './serializableDelegatedCompletionItemResolveParams';
 import { LanguageKind } from '../rpc/languageKind';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
-import { MarkupContent, Range } from 'vscode-html-languageservice';
 
 export class CompletionHandler {
     private static readonly completionEndpoint = 'razor/completion';
