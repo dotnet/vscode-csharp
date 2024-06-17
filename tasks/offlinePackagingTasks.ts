@@ -183,7 +183,7 @@ gulp.task(
     gulp.series(async () => {
         await updateNugetPackageVersion(allNugetPackages.razor);
 
-        // Also pull in the Roslyn DevKit dependencies nuget package.
+        // Also pull in the Razor DevKit dependencies nuget package.
         await acquireNugetPackage(allNugetPackages.razorDevKit, undefined, getPackageJSON(), true);
     }, 'installDependencies')
 );
