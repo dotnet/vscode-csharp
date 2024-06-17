@@ -4,12 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+
 import {
     CompletionItem,
     CompletionList,
     CompletionParams,
     CompletionTriggerKind,
+    InsertReplaceEdit,
+    InsertTextMode,
+    Position,
     RequestType,
+    TextEdit,
 } from 'vscode-languageclient';
 import { provideCompletionsCommand, resolveCompletionsCommand } from '../../../lsptoolshost/razorCommands';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
@@ -20,7 +25,7 @@ import { SerializableDelegatedCompletionParams } from './serializableDelegatedCo
 import { SerializableDelegatedCompletionItemResolveParams } from './serializableDelegatedCompletionItemResolveParams';
 import { LanguageKind } from '../rpc/languageKind';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
-import { MarkupContent } from 'vscode-html-languageservice';
+import { MarkupContent, Range } from 'vscode-html-languageservice';
 
 export class CompletionHandler {
     private static readonly completionEndpoint = 'razor/completion';
@@ -160,14 +165,21 @@ export class CompletionHandler {
             for (let i = 0; i < completionItems.length; i++) {
                 const completionItem = completionItems[i];
                 const convertedCompletionItem = <CompletionItem>{
+                    command: completionItem.command, // no conversion needed as fields match
                     commitCharacters: completionItem.commitCharacters,
                     detail: completionItem.detail,
                     documentation: CompletionHandler.ToMarkupContent(completionItem.documentation),
                     filterText: completionItem.filterText,
+                    insertText: CompletionHandler.ToLspInsertText(completionItem.insertText),
+                    insertTextMode: CompletionHandler.ToInsertTextMode(completionItem.keepWhitespace),
                     kind: completionItem.kind,
-                    label: completionItem.label,
+                    label: CompletionHandler.ToLspCompletionItemLabel(completionItem.label),
                     preselect: completionItem.preselect,
                     sortText: completionItem.sortText,
+                    textEdit: CompletionHandler.ToLspTextEdit(
+                        CompletionHandler.ToLspInsertText(completionItem.insertText),
+                        completionItem.range
+                    ),
                 };
                 convertedCompletionItems[i] = convertedCompletionItem;
             }
@@ -249,5 +261,83 @@ export class CompletionHandler {
         };
 
         return markupContent;
+    }
+
+    private static ToLspCompletionItemLabel(label: string | vscode.CompletionItemLabel): string {
+        const completionItemLabel = label as vscode.CompletionItemLabel;
+        return completionItemLabel?.label ?? <string>label;
+    }
+
+    private static ToLspInsertText(insertText?: string | vscode.SnippetString): string | undefined {
+        const snippetString = insertText as vscode.SnippetString;
+        return snippetString?.value ?? <string | undefined>insertText;
+    }
+
+    private static ToLspTextEdit(
+        newText?: string,
+        range?: vscode.Range | { inserting: vscode.Range; replacing: vscode.Range }
+    ): TextEdit | InsertReplaceEdit | undefined {
+        if (!range) {
+            return undefined;
+        }
+        if (!newText) {
+            newText = '';
+        }
+        const insertingRange = (range as any).inserting;
+        if (insertingRange) {
+            // do something
+        }
+        const replacingRange = (range as any).replacing;
+        if (replacingRange) {
+            // Do something else
+        }
+
+        if (!(insertingRange || replacingRange)) {
+            const textEdit: TextEdit = {
+                newText: newText,
+                range: this.ToLspRange(<vscode.Range>range),
+            };
+
+            return textEdit;
+        }
+
+        if (!insertingRange || !replacingRange) {
+            // We need both inserting and replacing ranges to convert to InsertReplaceEdit
+            return undefined;
+        }
+        const insertReplaceEdit: InsertReplaceEdit = {
+            newText: newText,
+            insert: CompletionHandler.ToLspRange(insertingRange),
+            replace: CompletionHandler.ToLspRange(replacingRange),
+        };
+
+        return insertReplaceEdit;
+    }
+
+    private static ToLspRange(range: vscode.Range): Range {
+        const lspRange: Range = {
+            start: CompletionHandler.ToLspPosition(range.start),
+            end: CompletionHandler.ToLspPosition(range.end),
+        };
+
+        return lspRange;
+    }
+
+    private static ToLspPosition(position: vscode.Position): Position {
+        const lspPosition: Position = {
+            line: position.line,
+            character: position.character,
+        };
+
+        return lspPosition;
+    }
+
+    private static ToInsertTextMode(keepWhitespace?: boolean): InsertTextMode | undefined {
+        if (keepWhitespace === undefined) {
+            return undefined;
+        }
+
+        const insertTextMode: InsertTextMode = keepWhitespace ? InsertTextMode.asIs : InsertTextMode.adjustIndentation;
+        return insertTextMode;
     }
 }
