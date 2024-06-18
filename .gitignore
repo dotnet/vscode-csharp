@@ -12,6 +12,7 @@ out
 .razor/
 .razoromnisharp/
 .razortelemetry/
+.razorDevKit/
 .vscode-test/
 dist/
 *.razor.json

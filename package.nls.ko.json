@@ -43,7 +43,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "최근에 선택한 멤버에 대해 자동 개체 이름 완성을 수행합니다.",
   "configuration.dotnet.defaultSolution.description": "작업 영역에서 열릴 기본 솔루션의 경로, 건너뛰려면 '비활성화'로 설정하세요(이전 `omnisharp.defaultLaunchSolution`).",
   "configuration.dotnet.dotnetPath": "기본 시스템 대신 사용할 dotnet 설치 디렉터리를 지정합니다. 이는 언어 서버 자체를 호스팅하는 데 사용할 dotnet 설치에만 영향을 줍니다(예: \"/home/username/mycustomdotnetdirectory\").",
-  "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
+  "configuration.dotnet.enableXamlTools": "C# 개발자 키트를 사용할 때 XAML 도구 사용",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "커서 아래에서 관련 JSON 구성 요소를 강조 표시합니다.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "커서 아래의 관련 정규식 구성 요소를 강조 표시합니다.",
   "configuration.dotnet.implementType.insertionBehavior": "인터페이스 또는 추상 클래스를 구현할 때 속성, 이벤트 및 메서드의 삽입 위치입니다.",

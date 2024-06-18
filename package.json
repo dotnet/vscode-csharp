@@ -37,12 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.11.0-2.24267.3",
+    "roslyn": "4.11.0-3.24313.9",
     "omniSharp": "1.39.11",
-    "razor": "7.0.0-preview.24266.1",
+    "razor": "9.0.0-preview.24316.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "razorTelemetry": "7.0.0-preview.24178.4",
-    "xamlTools": "17.11.34924.19"
+    "xamlTools": "17.11.35013.26"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -153,7 +152,7 @@
     "find-versions": "4.0.0",
     "get-port": "5.1.1",
     "glob-promise": "4.1.0",
-    "gulp": "4.0.2",
+    "gulp": "5.0.0",
     "jest": "^29.6.2",
     "jest-cli": "^29.6.4",
     "jest-junit": "^16.0.0",
@@ -421,7 +420,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -431,12 +430,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "8DD0C7B6936A538220E8A4DB7D9263A151986DE4956E33E86C80465BAD8521C0"
+      "integrity": "51E1D32D7A2FA219FB1D0DA1653499A37FAB146C5DB8FAE1152EA1D9439CB44F"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -445,12 +444,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "7D284CB85CDC1E85EB1BE143A31DC22FECFE3C4B576A507907AC7D32C7610E65"
+      "integrity": "9255B1E7F54D0BF6A425B3EB24285F344C454D389EDDCDA3A152E5AB68C75DDC"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -464,12 +463,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "A61ABA3B6F3A1524E95C7FE07ECF70F156996652E5E3CBB01C50E75CC5A08CEE"
+      "integrity": "A34F01035D135B48016211C93D0834C2569923EBCCA1A63F86081DA3EFEEB66C"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -482,12 +481,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "9DE76C63EF7D2A2BA8600B381158C57EBD58D8BF235B85D1F1DDE4E7239282B1"
+      "integrity": "977F1E49FC561E3CB9C6B5305B48E5597BBE91C4A0FD0DE49DB73107555D966E"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -500,12 +499,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "2AB179096B5202ED0EAC6BF0C5D17F4506191D24A9A51867B4F4024E036764E2"
+      "integrity": "975F5D034E36F0AC5E22F5B3B536C7F1FF1D2E0B7C2F94A50121845470302A73"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -518,12 +517,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "25DA86215FD5E0EB091130C9A82443D8B28F3A20A1159127C7F3AE4BE8B9B7AD"
+      "integrity": "A9D9DC69815DB4CDDA97BA9B1F5C186F7ECFDAF85F9A32C249B4B4DA2E0A69F6"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-linux-musl-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -536,12 +535,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "7DAB78E1955D95511665A4037E5CEDCF7C39A9FCC269A19A6738672238AE1A52"
+      "integrity": "A7FB2C2F8B325C7DE533483CFC87C056D80C20E2FDE4313AC39DA683A31ACADD"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-linux-musl-arm64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-linux-musl-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -554,12 +553,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "F28A3A76C13A36D94E59C53494D7BAF2A12EB4B005249246972999F064434573"
+      "integrity": "DE7A55DD7A060333E0A5FB45C91DF8C1CFCCA35080B24327938DDD5DC6DE45D7"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-30-1/coreclr-debug-linux-x64.zip",
+      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-34-1/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -572,145 +571,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "83EF1FF3BEE1E152550DB53C1EB8625794F0CCDBB94DBBB4B6876CD36A02DBDC"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/970b8dd2e4a3b9f3487ef4239de68bcf/razorlanguageserver-win-x64-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "integrity": "8D255E5DB63345CAEFB795B93F029C108345D5E234B7D7B86FB54EBDE9B3FC2A"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/08ae2e66be350ce2c2017fd7eb03978f/razorlanguageserver-win-arm64-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "integrity": "E4074218E23D45D4269985A18F1627BDD7426A16DC4539E434FE00F1E6EFE81E"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/041a5e759efa80ba48dac5e2e686d2b1/razorlanguageserver-linux-x64-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./rzls"
-      ],
-      "integrity": "4EF2240CA5EAADB30D0BD3EDF259858925B8EEDBE81F04B5FADA6370DCC4DD64"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/b23fa3ac36f10300deb05a6f6d705117/razorlanguageserver-linux-arm64-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./rzls"
-      ],
-      "integrity": "622D13897AE67A18A2801F2B500BDD929E355847625091C2F5F85C8A74359CBE"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/0558e8219fe7cad00352ef194c9721dc/razorlanguageserver-linux-musl-x64-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./rzls"
-      ],
-      "integrity": "61ED517AD29DFB3BDF01852F43AD455698437111B925B872115E3B39174C77AA"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/ef50cb22ece80d50723b2e88dd6cc38c/razorlanguageserver-linux-musl-arm64-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./rzls"
-      ],
-      "integrity": "DDC420476CC117857DED9DCDBFB8A387A102E9C19DE57749ADB8351CEF7ACEDD"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/002f2c48425cfc3f4ab2dcdd95c856e6/razorlanguageserver-osx-x64-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "binaries": [
-        "./rzls"
-      ],
-      "integrity": "AB86AD64955373EC9F0EA23FBDDA9D676B895150A5BAF75E1CFC1321B2B6ADBB"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/71361816a0db3363b7afcc9f667e034b/razorlanguageserver-osx-arm64-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "binaries": [
-        "./rzls"
-      ],
-      "integrity": "C30559DD13E3A5799FC596992FA04822A253C7EDB514EBE52E24A318DD0288EE"
-    },
-    {
-      "id": "Razor",
-      "description": "Razor Language Server (Platform Agnostic)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/f64a0a13-30e9-4525-8ed9-4f18e89a01f2/2e78857667b37f4c1dc570b45de5c967/razorlanguageserver-platformagnostic-7.0.0-preview.24266.1.zip",
-      "installPath": ".razor",
-      "platforms": [
-        "neutral"
-      ],
-      "architectures": [
-        "neutral"
-      ],
-      "binaries": [
-        "./rzls"
-      ],
-      "integrity": "EE83F90BC19447192171703BCCCA30CADB6177C9D37CCE61E6042B8662321C80"
+      "integrity": "EB7CABB79A99FFBA926DE436D862253B10AFA8EC9D5706FE18D0C2671E564117"
     },
     {
       "id": "RazorOmnisharp",
@@ -827,123 +688,6 @@
       ]
     },
     {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (Windows / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/5a98d8f4e481dbb7ae3cdb3695b75c46/devkittelemetry-win-x64-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "integrity": "2C575C90AFFD159CD3A0F96AB3C74C939F6E774E409816C802763383782137EC"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (Windows / ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4f16ff826fedd33ad80d265c5409588b/devkittelemetry-win-arm64-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "win32"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "integrity": "9B0787738031C6FA1F0CF50C888926949ED08ECE17EDA006F31422E0BE8EAAD1"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (Linux / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/f58cf629939f0df77d142be881f9e233/devkittelemetry-linux-x64-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "integrity": "E7607984AB18D29CF3BA71D22D70A8952896657FD29D7892926EA9A73CCC87F3"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (Linux ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/704e369c5905f9ece819ebce77fb78d8/devkittelemetry-linux-arm64-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "linux"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "integrity": "42E2263FAA4A13307899DA520C488082E241FFDE6A61A5639828A171C8423BF5"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (Linux musl / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/c75e84ff813be5c9833d96dc2066a364/devkittelemetry-linux-musl-x64-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "integrity": "C6C737B0707415C8EE9DB185C8A776FAB50BF1F8250C9EF8D756283ADA5FE518"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (Linux musl ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4049a66147717a53860bbc969bf32faa/devkittelemetry-linux-musl-arm64-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "linux-musl"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "integrity": "14421ED81E82094CA13498B6B338950EDA605189A3FD91211EDCE554AB330070"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (macOS / x64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/36545ba0998f1fc380e877e38b2f35f1/devkittelemetry-osx-x64-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "x86_64"
-      ],
-      "integrity": "D081FA25B5B0DF99175690E6F903720F10ADF9AD0CAC684C29715B841C6D6BB3"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (macOS ARM64)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/1c912419ea45c8d95cfa28a8a04640dc/devkittelemetry-osx-arm64-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "darwin"
-      ],
-      "architectures": [
-        "arm64"
-      ],
-      "integrity": "28D9F1E00151773078A26BDB9917CE6823E9D5D76799788238FE4AE7644A1493"
-    },
-    {
-      "id": "RazorTelemetry",
-      "description": "Razor Language Server Telemetry (Platform Agnostic)",
-      "url": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/0a32698e8ba1ab93489d79f34f8ae8d0/devkittelemetry-platformagnostic-7.0.0-preview.24178.4.zip",
-      "installPath": ".razortelemetry",
-      "platforms": [
-        "netural"
-      ],
-      "architectures": [
-        "neutral"
-      ],
-      "integrity": "3FDF8F19E66C85F06692BE2AA5803437C387EB65C6262030CD301388C3EB6261"
-    },
-    {
       "id": "VSWebAssemblyBridge",
       "description": "VSWebAssemblyBridge (Platform Agnostic)",
       "url": "https://vsdebugger.blob.core.windows.net/vswebassemblybridge-8-0-0-preview-24312-2/vswebassemblybridge.zip",
@@ -974,7 +718,6 @@
     "onLanguage:csharp",
     "onCommand:o.showOutput",
     "onCommand:omnisharp.registerLanguageMiddleware",
-    "workspaceContains:project.json",
     "workspaceContains:**/*.{csproj,csx,cake}"
   ],
   "contributes": {
@@ -2023,10 +1766,6 @@
           "appsettings.*.json"
         ],
         "url": "https://json.schemastore.org/appsettings"
-      },
-      {
-        "fileMatch": "project.json",
-        "url": "http://json.schemastore.org/project"
       },
       {
         "fileMatch": "omnisharp.json",

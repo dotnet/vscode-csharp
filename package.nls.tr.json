@@ -43,7 +43,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Yakın zamanda seçtiğiniz üyeler için otomatik nesne adı tamamlama gerçekleştirin.",
   "configuration.dotnet.defaultSolution.description": "Varsayılan çözümün yolu, çalışma alanında açılacak veya atlamak için 'devre dışı' olarak ayarlanacak. (Daha önce 'omnisharp.defaultLaunchSolution')",
   "configuration.dotnet.dotnetPath": "Varsayılan sistem dizini yerine kullanılacak bir dotnet kurulum dizininin yolunu belirtir. Bu, yalnızca dil sunucusunun kendisini barındırmak için kullanılacak dotnet kurulumunu etkiler. Örnek: \"/home/username/mycustomdotnetdirectory\".",
-  "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
+  "configuration.dotnet.enableXamlTools": "C# Geliştirme Setini kullanırken XAML araçlarını etkinleştirir",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "İmlecin altındaki ilgili JSON bileşenlerini vurgula.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "İmleç altındaki ilgili normal ifade bileşenlerini vurgula.",
   "configuration.dotnet.implementType.insertionBehavior": "Arabirim veya soyut sınıf uygulanırken özellikler, olaylar ve yöntemlerin eklenme konumu.",

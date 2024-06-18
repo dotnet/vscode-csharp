@@ -25,6 +25,8 @@ import {
     rootPath,
     devKitDependenciesDirectory,
     xamlToolsDirectory,
+    razorLanguageServerDirectory,
+    razorDevKitDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
@@ -83,6 +85,18 @@ export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
         packageJsonName: 'xamlTools',
         getPackageContentPath: (_platformInfo) => 'content',
         vsixOutputPath: xamlToolsDirectory,
+    },
+    razor: {
+        getPackageName: (platformInfo) => `rzls.${platformInfo?.rid ?? 'neutral'}`,
+        packageJsonName: 'razor',
+        getPackageContentPath: (platformInfo) => path.join('content', 'LanguageServer', platformInfo?.rid ?? 'neutral'),
+        vsixOutputPath: razorLanguageServerDirectory,
+    },
+    razorDevKit: {
+        getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.DevKit.Razor',
+        packageJsonName: 'razor',
+        getPackageContentPath: (_platformInfo) => 'content',
+        vsixOutputPath: razorDevKitDirectory,
     },
 };
 
@@ -152,18 +166,25 @@ gulp.task(
     'updateRoslynVersion',
     // Run the fetch of all packages, and then also installDependencies after
     gulp.series(async () => {
-        const packageJSON = getPackageJSON();
-
-        // Fetch the neutral package that we don't otherwise have in our platform list
-        await acquireNugetPackage(allNugetPackages.roslyn, undefined, packageJSON, true);
-
-        // And now fetch each platform specific
-        for (const p of platformSpecificPackages) {
-            await acquireNugetPackage(allNugetPackages.roslyn, p, packageJSON, true);
-        }
+        await updateNugetPackageVersion(allNugetPackages.roslyn);
 
         // Also pull in the Roslyn DevKit dependencies nuget package.
-        await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, packageJSON, true);
+        await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, getPackageJSON(), true);
+    }, 'installDependencies')
+);
+
+// Defines a special task to acquire all the platform specific Razor packages.
+// All packages need to be saved to the consumption AzDo artifacts feed, for non-platform
+// specific packages this only requires running the installDependencies tasks.  However for Razor packages
+// we need to acquire the nuget packages once for each platform to ensure they get saved to the feed.
+gulp.task(
+    'updateRazorVersion',
+    // Run the fetch of all packages, and then also installDependencies after
+    gulp.series(async () => {
+        await updateNugetPackageVersion(allNugetPackages.razor);
+
+        // Also pull in the Razor DevKit dependencies nuget package.
+        await acquireNugetPackage(allNugetPackages.razorDevKit, undefined, getPackageJSON(), true);
     }, 'installDependencies')
 );
 
@@ -370,5 +391,17 @@ function getPackageName(packageJSON: any, vscodePlatformId?: string) {
         return `${name}-${vscodePlatformId}-${version}.vsix`;
     } else {
         return `${name}-${version}.vsix`;
+    }
+}
+
+async function updateNugetPackageVersion(packageInfo: NugetPackageInfo) {
+    const packageJSON = getPackageJSON();
+
+    // Fetch the neutral package that we don't otherwise have in our platform list
+    await acquireNugetPackage(packageInfo, undefined, packageJSON, true);
+
+    // And now fetch each platform specific
+    for (const p of platformSpecificPackages) {
+        await acquireNugetPackage(packageInfo, p, packageJSON, true);
     }
 }
