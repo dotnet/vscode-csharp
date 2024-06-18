@@ -212,7 +212,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             args,
             cwd,
             cascadeTerminateToConfigurations: [ONLY_JS_DEBUG_NAME, SERVER_APP_NAME, JS_DEBUG_NAME],
-            ...configuration.dotNetConfig
+            ...configuration.dotNetConfig,
         };
 
         app.monoDebuggerOptions = {
@@ -220,7 +220,6 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             port: portICorDebug,
             platform: 'browser',
             isServer: true,
-            //assetsPath: 'C:\\diag\\icordebug_wasm_vscode\\test\\bin\\Debug\\net9.0\\',
         };
 
         try {
