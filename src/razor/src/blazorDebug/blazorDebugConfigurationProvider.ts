@@ -132,7 +132,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         url: string
     ) {
         const wasmConfig = vscode.workspace.getConfiguration('csharp');
-        const useVSDbg = configuration.useVSDbg || wasmConfig.get<boolean>('mono.debug.useVSDbg') == true;
+        const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
         let portBrowserDebug = -1;
         if (useVSDbg) {
             [inspectUri, portBrowserDebug] = await this.attachToAppOnBrowser(folder, configuration);
@@ -209,11 +209,10 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             name: MANAGED_DEBUG_NAME,
             type: 'monovsdbg',
             request: 'launch',
-            //program: 'C:\\diag\\icordebug_wasm_vscode\\test\\obj\\Debug\\net9.0\\test.dll',
             args,
             cwd,
             cascadeTerminateToConfigurations: [ONLY_JS_DEBUG_NAME, SERVER_APP_NAME, JS_DEBUG_NAME],
-            ...configuration.dotNetConfig,
+            ...configuration.dotNetConfig
         };
 
         app.monoDebuggerOptions = {
@@ -330,7 +329,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
 
     public static async tryToUseVSDbgForMono(urlStr: string): Promise<[string, number, number]> {
         const wasmConfig = vscode.workspace.getConfiguration('csharp');
-        const useVSDbg = wasmConfig.get<boolean>('mono.debug.useVSDbg') == true;
+        const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
         if (useVSDbg) {
             const [inspectUri, portICorDebug, portBrowserDebug] =
                 await BlazorDebugConfigurationProvider.launchVsWebAssemblyBridge(urlStr);

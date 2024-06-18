@@ -436,5 +436,5 @@
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
   },
-  "generateOptionsSchema.useVSDbg.description": "Enable new .NET 8+ Mono Debugger (preview)"
+  "generateOptionsSchema.useVSDbg.description": "Enable new .NET 9+ Wasm Debugger (preview)"
 }

@@ -9,12 +9,7 @@ import {
     IWorkspaceDebugInformationProvider,
     ProjectDebugInformation,
 } from '../shared/IWorkspaceDebugInformationProvider';
-import {
-    isBlazorWebAssemblyHosted,
-    isBlazorWebAssemblyProject,
-    isWebProject,
-    isWebAssemblyProject,
-} from '../shared/utils';
+import { isBlazorWebAssemblyHosted, isBlazorWebAssemblyProject, isWebProject } from '../shared/utils';
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import {
     ProjectDebugConfiguration,
@@ -54,8 +49,7 @@ export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugI
 
         // LSP serializes and deserializes URIs as (URI formatted) strings not actual types.  So convert to the actual type here.
         const projects: ProjectDebugInformation[] | undefined = await mapAsync(response, async (p) => {
-            const webProject = isWebProject(p.projectPath);
-            const webAssemblyProject = isWebAssemblyProject(p.projectPath);
+            const [webProject, webAssemblyProject] = isWebProject(p.projectPath);
             const webAssemblyBlazor = await isBlazorWebAssemblyProject(p.projectPath);
             return {
                 projectPath: p.projectPath,
