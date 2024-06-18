@@ -27,9 +27,14 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
             'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll',
         ],
     },
+    razorDevKit: {
+        defaultFolderName: '.razorDevKit',
+        optionName: 'razorDevKit',
+        componentDllPaths: ['Microsoft.VisualStudio.DevKit.Razor.dll'],
+    },
 };
 
-export function getComponentPaths(componentName: string, options: LanguageServerOptions): string[] {
+export function getComponentPaths(componentName: string, options: LanguageServerOptions | undefined): string[] {
     const component = componentInfo[componentName];
     const baseFolder = getComponentFolderPath(component, options);
     const paths = component.componentDllPaths.map((dllPath) => path.join(baseFolder, dllPath));
@@ -42,13 +47,13 @@ export function getComponentPaths(componentName: string, options: LanguageServer
     return paths;
 }
 
-export function getComponentFolder(componentName: string, options: LanguageServerOptions): string {
+export function getComponentFolder(componentName: string, options: LanguageServerOptions | undefined): string {
     const component = componentInfo[componentName];
     return getComponentFolderPath(component, options);
 }
 
-function getComponentFolderPath(component: ComponentInfo, options: LanguageServerOptions): string {
-    if (options.componentPaths) {
+function getComponentFolderPath(component: ComponentInfo, options: LanguageServerOptions | undefined): string {
+    if (options?.componentPaths) {
         const optionValue = options.componentPaths[component.optionName];
         if (optionValue) {
             return optionValue;
