@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import execa = require('execa');
-import { promises, readFileSync } from 'fs';
+import { promises, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
@@ -97,6 +97,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             cwd,
             env: {
                 ASPNETCORE_ENVIRONMENT: 'Development',
+                DOTNET_MODIFIABLE_ASSEMBLIES: 'debug',
                 ...configuration.env,
             },
             launchBrowser: {
@@ -134,7 +135,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         const wasmConfig = vscode.workspace.getConfiguration('csharp');
         const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
         let portBrowserDebug = -1;
-        if (useVSDbg) {
+        if (useVSDbg && existsSync(BlazorDebugConfigurationProvider.getWebAssemblyWebBridgePath())) {
             [inspectUri, portBrowserDebug] = await this.attachToAppOnBrowser(folder, configuration);
         }
 
@@ -212,7 +213,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             args,
             cwd,
             cascadeTerminateToConfigurations: [ONLY_JS_DEBUG_NAME, SERVER_APP_NAME, JS_DEBUG_NAME],
-            ...configuration.dotNetConfig,
+            ...configuration.dotNetConfig
         };
 
         app.monoDebuggerOptions = {
@@ -245,14 +246,9 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
 
     private static async launchVsWebAssemblyBridge(urlStr: string): Promise<[string, number, number]> {
         const dotnetPath = process.platform === 'win32' ? 'dotnet.exe' : 'dotnet';
-        const vsWebAssemblyBridge = path.join(
-            getExtensionPath(),
-            '.vswebassemblybridge',
-            'Microsoft.Diagnostics.BrowserDebugHost.dll'
-        );
         const devToolsUrl = `http://localhost:0`; // Browser debugging port address
         const spawnedProxyArgs = [
-            `${vsWebAssemblyBridge}`,
+            `${BlazorDebugConfigurationProvider.getWebAssemblyWebBridgePath()}`,
             '--DevToolsUrl',
             `${devToolsUrl}`,
             '--UseVsDbg',
@@ -326,10 +322,20 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         return ['', -1, -1];
     }
 
+    private static getWebAssemblyWebBridgePath() {
+        const vsWebAssemblyBridge = path.join(
+            getExtensionPath(),
+            '.vswebassemblybridge',
+            'Microsoft.Diagnostics.BrowserDebugHost.dll'
+        );
+        return vsWebAssemblyBridge;
+    }
+
     public static async tryToUseVSDbgForMono(urlStr: string): Promise<[string, number, number]> {
         const wasmConfig = vscode.workspace.getConfiguration('csharp');
         const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
-        if (useVSDbg) {
+
+        if (useVSDbg && existsSync(BlazorDebugConfigurationProvider.getWebAssemblyWebBridgePath())) {
             const [inspectUri, portICorDebug, portBrowserDebug] =
                 await BlazorDebugConfigurationProvider.launchVsWebAssemblyBridge(urlStr);
 
