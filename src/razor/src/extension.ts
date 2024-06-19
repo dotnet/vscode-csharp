@@ -146,6 +146,7 @@ export async function activate(
             documentManager,
             documentSynchronizer,
             languageServerClient,
+            csharpFeature.projectionProvider,
             logger
         );
 

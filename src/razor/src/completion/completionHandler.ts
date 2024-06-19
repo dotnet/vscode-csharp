@@ -26,6 +26,10 @@ import { SerializableDelegatedCompletionParams } from './serializableDelegatedCo
 import { SerializableDelegatedCompletionItemResolveParams } from './serializableDelegatedCompletionItemResolveParams';
 import { LanguageKind } from '../rpc/languageKind';
 import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { SerializableTextEdit } from '../rpc/serializableTextEdit';
+import { CSharpProjectedDocument } from '../csharp/csharpProjectedDocument';
+import { IProjectedDocument } from '../projection/IProjectedDocument';
+import { CSharpProjectedDocumentContentProvider } from '../csharp/csharpProjectedDocumentContentProvider';
 
 export class CompletionHandler {
     private static readonly completionEndpoint = 'razor/completion';
@@ -46,6 +50,7 @@ export class CompletionHandler {
         private readonly documentManager: RazorDocumentManager,
         private readonly documentSynchronizer: RazorDocumentSynchronizer,
         private readonly serverClient: RazorLanguageServerClient,
+        private readonly projectedCSharpProvider: CSharpProjectedDocumentContentProvider,
         private readonly logger: RazorLogger
     ) {}
 
@@ -124,26 +129,14 @@ export class CompletionHandler {
 
             // Roslyn/C# completion
             if (delegatedCompletionParams.projectedKind === LanguageKind.CSharp) {
-                const params: CompletionParams = {
-                    context: {
-                        triggerKind: triggerKind,
-                        triggerCharacter: modifiedTriggerCharacter,
-                    },
-                    textDocument: {
-                        uri: virtualDocumentUri,
-                    },
-                    position: delegatedCompletionParams.projectedPosition,
-                };
-
-                const roslynCompletions = await vscode.commands.executeCommand<CompletionList>(
-                    provideCompletionsCommand,
-                    params
+                return this.provideCSharpCompletions(
+                    triggerKind,
+                    modifiedTriggerCharacter,
+                    virtualDocument as CSharpProjectedDocument,
+                    virtualDocumentUri,
+                    delegatedCompletionParams.projectedPosition,
+                    delegatedCompletionParams.provisionalTextEdit
                 );
-                CompletionHandler.AdjustRoslynCompletionList(
-                    roslynCompletions,
-                    delegatedCompletionParams.context.triggerCharacter
-                );
-                return roslynCompletions;
             }
 
             // HTML completion
@@ -222,7 +215,7 @@ export class CompletionHandler {
         return CompletionHandler.emptyCompletionItem;
     }
 
-    private static AdjustRoslynCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
+    private static AdjustCSharpCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
         const data = completionList.itemDefaults?.data;
         for (const completionItem of completionList.items) {
             // textEdit is deprecated in favor of .range. Clear out its value to avoid any unexpected behavior.
@@ -247,6 +240,78 @@ export class CompletionHandler {
                 completionItem.data = data;
             }
         }
+    }
+
+    private async provideCSharpCompletions(
+        triggerKind: CompletionTriggerKind,
+        triggerCharacter: string | undefined,
+        virtualDocument: CSharpProjectedDocument,
+        virtualDocumentUri: string,
+        projectedPosition: Position,
+        provisionalTextEdit?: SerializableTextEdit
+    ) {
+        const params: CompletionParams = {
+            context: {
+                triggerKind: triggerKind,
+                triggerCharacter: triggerCharacter,
+            },
+            textDocument: {
+                uri: virtualDocumentUri,
+            },
+            position: projectedPosition,
+        };
+
+        if (provisionalTextEdit) {
+            const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
+            if (absoluteIndex === -1) {
+                return CompletionHandler.emptyCompletionList;
+            }
+            virtualDocument.addProvisionalDotAt(absoluteIndex);
+            this.projectedCSharpProvider.ensureDocumentContent(virtualDocument.uri);
+
+            // We open and then re-save because we're adding content to the text document within an event.
+            // We need to allow the system to propogate this text document change.
+            const newDocument = await vscode.workspace.openTextDocument(virtualDocument.uri);
+            await newDocument.save();
+
+            params.position = <Position>{
+                line: projectedPosition.line,
+                character: projectedPosition.character + 1,
+            };
+        }
+        const csharpCompletions = await vscode.commands.executeCommand<CompletionList>(
+            provideCompletionsCommand,
+            params
+        );
+        CompletionHandler.AdjustCSharpCompletionList(csharpCompletions, triggerCharacter);
+        return csharpCompletions;
+    }
+
+    private static getIndexOfPosition(document: IProjectedDocument, position: Position) {
+        const content: string = document.getContent();
+        let lineNumber = 0;
+        let index = 0;
+        while (lineNumber < position.line && index < content.length) {
+            const ch = content[index];
+            if (ch === '\r') {
+                lineNumber++;
+                if (index + 1 < content.length && content[index + 1] === '\n') {
+                    index++;
+                }
+            } else if (ch === '\n') {
+                lineNumber++;
+            }
+
+            index++;
+        }
+
+        if (lineNumber !== position.line) {
+            return -1;
+        }
+
+        const positionIndex = index + position.character - 1;
+
+        return positionIndex;
     }
 
     // converts completion item documentation from vscode format to LSP format
