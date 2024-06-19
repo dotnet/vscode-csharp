@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.11.0-3.24319.4 (PR: [#7249](https://github.com/dotnet/vscode-csharp/pull/7249))
+  * Add brokered service for Hot Reload in VS Code: GenericHotReloadAgentManagerService (PR: [#74029](https://github.com/dotnet/roslyn/pull/74029))
+  * Bump razor to include fix for project serialization (PR: [#74021](https://github.com/dotnet/roslyn/pull/74021))
+  * Fix find refs doing too much work lookign for types that had an alias to them in one file. (PR: [#74015](https://github.com/dotnet/roslyn/pull/74015))
+  * Ensure source generated documents are up-to-date before analyzing EnC changes (PR: [#73989](https://github.com/dotnet/roslyn/pull/73989))
+  * Fix project configuration telemetry for legacy csproj projects (PR: [#73995](https://github.com/dotnet/roslyn/pull/73995))
+  * Throw when there is a syntax version mismatch in codelens (PR: [#73902](https://github.com/dotnet/roslyn/pull/73902))
+
+# 2.35.15
 * Improve reliability of documentation comment auto insertion (PR: [#7230](https://github.com/dotnet/vscode-csharp/pull/7230))
 * Update Roslyn to 4.11.0-3.24313.9 (PR: [#7234](https://github.com/dotnet/vscode-csharp/pull/7234))
   * Fix issue serializing exceptions (PR: [#73851](https://github.com/dotnet/roslyn/pull/73851))
