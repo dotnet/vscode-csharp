@@ -213,7 +213,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             args,
             cwd,
             cascadeTerminateToConfigurations: [ONLY_JS_DEBUG_NAME, SERVER_APP_NAME, JS_DEBUG_NAME],
-            ...configuration.dotNetConfig
+            ...configuration.dotNetConfig,
         };
 
         app.monoDebuggerOptions = {
