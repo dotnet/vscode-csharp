@@ -41,9 +41,9 @@ export class CompletionHandler {
         CompletionItem,
         any
     > = new RequestType(CompletionHandler.completionResolveEndpoint);
-    // TODO: do we always need empty result members defined? Can we declare type on handler function and return null?
-    // Also, none of the empty repsonses are declared as static readonly in other handles - should they be?
-    private static readonly emptyCompletionList: CompletionList = <CompletionList>{};
+    private static readonly emptyCompletionList: CompletionList = <CompletionList>{
+        items: new Array(0),
+    };
     private static readonly emptyCompletionItem: CompletionItem = <CompletionItem>{};
 
     constructor(
@@ -94,11 +94,14 @@ export class CompletionHandler {
             } else if (delegatedCompletionParams.projectedKind === LanguageKind.CSharp) {
                 virtualDocument = razorDocument.csharpDocument;
             } else {
-                // TODO: equivalent of Debug.Fail?
+                this.logger.logWarning(`Unknown language kind value ${delegatedCompletionParams.projectedKind}`);
                 return CompletionHandler.emptyCompletionList;
             }
 
-            // TODO: Should we check for null or undefined virtual document like we do in C# code?
+            if (!virtualDocument) {
+                this.logger.logWarning(`Null or undefined virtual document: ${virtualDocument}`);
+                return CompletionHandler.emptyCompletionList;
+            }
 
             const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
                 textDocument,
@@ -113,8 +116,6 @@ export class CompletionHandler {
             const virtualDocumentUri = UriConverter.serialize(virtualDocument.uri);
 
             delegatedCompletionParams.identifier.textDocumentIdentifier.uri = virtualDocumentUri;
-
-            // TODO: support for provisional edits
 
             // "@" is not a valid trigger character for C# / HTML and therefore we need to translate
             // it into a non-trigger invocation.
@@ -139,51 +140,12 @@ export class CompletionHandler {
                 );
             }
 
-            // HTML completion
-            const completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
-                'vscode.executeCompletionItemProvider',
-                UriConverter.deserialize(virtualDocumentUri),
+            // HTML completion - provided via vscode command
+            return this.provideVscodeCompletions(
+                virtualDocument.uri,
                 delegatedCompletionParams.projectedPosition,
                 modifiedTriggerCharacter
             );
-
-            const completionItems =
-                completions instanceof Array
-                    ? completions // was vscode.CompletionItem[]
-                    : completions
-                    ? completions.items // was vscode.CompletionList
-                    : [];
-
-            const convertedCompletionItems: CompletionItem[] = new Array(completionItems.length);
-            for (let i = 0; i < completionItems.length; i++) {
-                const completionItem = completionItems[i];
-                const convertedCompletionItem = <CompletionItem>{
-                    command: completionItem.command, // no conversion needed as fields match
-                    commitCharacters: completionItem.commitCharacters,
-                    detail: completionItem.detail,
-                    documentation: CompletionHandler.ToMarkupContent(completionItem.documentation),
-                    filterText: completionItem.filterText,
-                    insertText: CompletionHandler.ToLspInsertText(completionItem.insertText),
-                    insertTextMode: CompletionHandler.ToInsertTextMode(completionItem.keepWhitespace),
-                    kind: completionItem.kind,
-                    label: CompletionHandler.ToLspCompletionItemLabel(completionItem.label),
-                    preselect: completionItem.preselect,
-                    sortText: completionItem.sortText,
-                    textEdit: CompletionHandler.ToLspTextEdit(
-                        CompletionHandler.ToLspInsertText(completionItem.insertText),
-                        completionItem.range
-                    ),
-                };
-                convertedCompletionItems[i] = convertedCompletionItem;
-            }
-
-            const isIncomplete = completions instanceof Array ? false : completions ? completions.isIncomplete : false;
-            const completionList = <CompletionList>{
-                isIncomplete: isIncomplete,
-                items: convertedCompletionItems,
-            };
-
-            return completionList;
         } catch (error) {
             this.logger.logWarning(`${CompletionHandler.completionEndpoint} failed with ${error}`);
         }
@@ -213,33 +175,6 @@ export class CompletionHandler {
         }
 
         return CompletionHandler.emptyCompletionItem;
-    }
-
-    private static AdjustCSharpCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
-        const data = completionList.itemDefaults?.data;
-        for (const completionItem of completionList.items) {
-            // textEdit is deprecated in favor of .range. Clear out its value to avoid any unexpected behavior.
-            completionItem.textEdit = undefined;
-
-            if (triggerCharacter === '@' && completionItem.commitCharacters) {
-                // We remove `{`, '(', and '*' from the commit characters to prevent auto-completing the first
-                // completion item with a curly brace when a user intended to type `@{}` or `@()`.
-                completionItem.commitCharacters = completionItem.commitCharacters.filter(
-                    (commitChar) => commitChar !== '{' && commitChar !== '(' && commitChar !== '*'
-                );
-            }
-
-            // for intellicode items, manually set the insertText to avoid including stars in the commit
-            if (completionItem.label.toString().includes('\u2605')) {
-                if (completionItem.textEditText) {
-                    completionItem.insertText = completionItem.textEditText;
-                }
-            }
-
-            if (!completionItem.data) {
-                completionItem.data = data;
-            }
-        }
     }
 
     private async provideCSharpCompletions(
@@ -274,10 +209,7 @@ export class CompletionHandler {
             const newDocument = await vscode.workspace.openTextDocument(virtualDocument.uri);
             await newDocument.save();
 
-            params.position = <Position>{
-                line: projectedPosition.line,
-                character: projectedPosition.character + 1,
-            };
+            return this.provideVscodeCompletions(virtualDocument.uri, projectedPosition, triggerCharacter);
         }
         const csharpCompletions = await vscode.commands.executeCommand<CompletionList>(
             provideCompletionsCommand,
@@ -287,7 +219,36 @@ export class CompletionHandler {
         return csharpCompletions;
     }
 
-    private static getIndexOfPosition(document: IProjectedDocument, position: Position) {
+    private static AdjustCSharpCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
+        const data = completionList.itemDefaults?.data;
+        for (const completionItem of completionList.items) {
+            // textEdit is deprecated in favor of .range. Clear out its value to avoid any unexpected behavior.
+            completionItem.textEdit = undefined;
+
+            if (triggerCharacter === '@' && completionItem.commitCharacters) {
+                // We remove `{`, '(', and '*' from the commit characters to prevent auto-completing the first
+                // completion item with a curly brace when a user intended to type `@{}` or `@()`.
+                completionItem.commitCharacters = completionItem.commitCharacters.filter(
+                    (commitChar) => commitChar !== '{' && commitChar !== '(' && commitChar !== '*'
+                );
+            }
+
+            // for intellicode items, manually set the insertText to avoid including stars in the commit
+            if (completionItem.label.toString().includes('\u2605')) {
+                if (completionItem.textEditText) {
+                    completionItem.insertText = completionItem.textEditText;
+                }
+            }
+
+            // copy default item data to each item or else completion item resolve will fail later
+            if (!completionItem.data) {
+                completionItem.data = data;
+            }
+        }
+    }
+
+    // convert (line, character) Position to absolute index number
+    private static getIndexOfPosition(document: IProjectedDocument, position: Position): number {
         const content: string = document.getContent();
         let lineNumber = 0;
         let index = 0;
@@ -314,8 +275,59 @@ export class CompletionHandler {
         return positionIndex;
     }
 
+    private async provideVscodeCompletions(
+        virtualDocumentUri: vscode.Uri,
+        projectedPosition: Position,
+        triggerCharacter: string | undefined
+    ) {
+        const completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
+            'vscode.executeCompletionItemProvider',
+            virtualDocumentUri,
+            projectedPosition,
+            triggerCharacter
+        );
+
+        const completionItems =
+            completions instanceof Array
+                ? completions // was vscode.CompletionItem[]
+                : completions
+                ? completions.items // was vscode.CompletionList
+                : [];
+
+        const convertedCompletionItems: CompletionItem[] = new Array(completionItems.length);
+        for (let i = 0; i < completionItems.length; i++) {
+            const completionItem = completionItems[i];
+            const convertedCompletionItem = <CompletionItem>{
+                command: completionItem.command, // no conversion needed as fields match
+                commitCharacters: completionItem.commitCharacters,
+                detail: completionItem.detail,
+                documentation: CompletionHandler.toMarkupContent(completionItem.documentation),
+                filterText: completionItem.filterText,
+                insertText: CompletionHandler.toLspInsertText(completionItem.insertText),
+                insertTextMode: CompletionHandler.toInsertTextMode(completionItem.keepWhitespace),
+                kind: completionItem.kind ? completionItem.kind + 1 : completionItem.kind, // VSCode and LSP are off by one
+                label: CompletionHandler.toLspCompletionItemLabel(completionItem.label),
+                preselect: completionItem.preselect,
+                sortText: completionItem.sortText,
+                textEdit: CompletionHandler.toLspTextEdit(
+                    CompletionHandler.toLspInsertText(completionItem.insertText),
+                    completionItem.range
+                ),
+            };
+            convertedCompletionItems[i] = convertedCompletionItem;
+        }
+
+        const isIncomplete = completions instanceof Array ? false : completions ? completions.isIncomplete : false;
+        const completionList = <CompletionList>{
+            isIncomplete: isIncomplete,
+            items: convertedCompletionItems,
+        };
+
+        return completionList;
+    }
+
     // converts completion item documentation from vscode format to LSP format
-    private static ToMarkupContent(documentation?: string | vscode.MarkdownString): string | MarkupContent | undefined {
+    private static toMarkupContent(documentation?: string | vscode.MarkdownString): string | MarkupContent | undefined {
         const markdownString = documentation as vscode.MarkdownString;
         if (!markdownString?.value) {
             return <string | undefined>documentation;
@@ -328,17 +340,17 @@ export class CompletionHandler {
         return markupContent;
     }
 
-    private static ToLspCompletionItemLabel(label: string | vscode.CompletionItemLabel): string {
+    private static toLspCompletionItemLabel(label: string | vscode.CompletionItemLabel): string {
         const completionItemLabel = label as vscode.CompletionItemLabel;
         return completionItemLabel?.label ?? <string>label;
     }
 
-    private static ToLspInsertText(insertText?: string | vscode.SnippetString): string | undefined {
+    private static toLspInsertText(insertText?: string | vscode.SnippetString): string | undefined {
         const snippetString = insertText as vscode.SnippetString;
         return snippetString?.value ?? <string | undefined>insertText;
     }
 
-    private static ToLspTextEdit(
+    private static toLspTextEdit(
         newText?: string,
         range?: vscode.Range | { inserting: vscode.Range; replacing: vscode.Range }
     ): TextEdit | InsertReplaceEdit | undefined {
@@ -360,7 +372,7 @@ export class CompletionHandler {
         if (!(insertingRange || replacingRange)) {
             const textEdit: TextEdit = {
                 newText: newText,
-                range: this.ToLspRange(<vscode.Range>range),
+                range: this.toLspRange(<vscode.Range>range),
             };
 
             return textEdit;
@@ -372,23 +384,23 @@ export class CompletionHandler {
         }
         const insertReplaceEdit: InsertReplaceEdit = {
             newText: newText,
-            insert: CompletionHandler.ToLspRange(insertingRange),
-            replace: CompletionHandler.ToLspRange(replacingRange),
+            insert: CompletionHandler.toLspRange(insertingRange),
+            replace: CompletionHandler.toLspRange(replacingRange),
         };
 
         return insertReplaceEdit;
     }
 
-    private static ToLspRange(range: vscode.Range): Range {
+    private static toLspRange(range: vscode.Range): Range {
         const lspRange: Range = {
-            start: CompletionHandler.ToLspPosition(range.start),
-            end: CompletionHandler.ToLspPosition(range.end),
+            start: CompletionHandler.toLspPosition(range.start),
+            end: CompletionHandler.toLspPosition(range.end),
         };
 
         return lspRange;
     }
 
-    private static ToLspPosition(position: vscode.Position): Position {
+    private static toLspPosition(position: vscode.Position): Position {
         const lspPosition: Position = {
             line: position.line,
             character: position.character,
@@ -397,7 +409,7 @@ export class CompletionHandler {
         return lspPosition;
     }
 
-    private static ToInsertTextMode(keepWhitespace?: boolean): InsertTextMode | undefined {
+    private static toInsertTextMode(keepWhitespace?: boolean): InsertTextMode | undefined {
         if (keepWhitespace === undefined) {
             return undefined;
         }
