@@ -197,29 +197,75 @@ export class CompletionHandler {
         };
 
         if (provisionalTextEdit) {
-            const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
-            if (absoluteIndex === -1) {
-                return CompletionHandler.emptyCompletionList;
-            }
-            virtualDocument.addProvisionalDotAt(absoluteIndex);
-            this.projectedCSharpProvider.ensureDocumentContent(virtualDocument.uri);
-
-            // We open and then re-save because we're adding content to the text document within an event.
-            // We need to allow the system to propogate this text document change.
-            const newDocument = await vscode.workspace.openTextDocument(virtualDocument.uri);
-            await newDocument.save();
-
-            return this.provideVscodeCompletions(virtualDocument.uri, projectedPosition, triggerCharacter);
+            // provisional C# completion
+            return this.provideCSharpProvisionalCompletions(
+                triggerKind,
+                triggerCharacter,
+                virtualDocument,
+                virtualDocumentUri,
+                projectedPosition
+            );
         }
+
+        // non-provisional C# completion
         const csharpCompletions = await vscode.commands.executeCommand<CompletionList>(
             provideCompletionsCommand,
             params
         );
-        CompletionHandler.AdjustCSharpCompletionList(csharpCompletions, triggerCharacter);
+        CompletionHandler.adjustCSharpCompletionList(csharpCompletions, triggerCharacter);
         return csharpCompletions;
     }
 
-    private static AdjustCSharpCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
+    // Provides 'provisional' C# completions.
+    // This happens when a user types '.' after an object. In that case '.' is initially in
+    // html document and not generated C# document. To get correct completions as soon as the user
+    // types '.' we need to
+    // 1. Temporarily add '.' to projected C# document at the correct position (projected position)
+    // 2. Make sure projected document is updated on the Roslyn server so Roslyn provides correct completions
+    // 3. Invoke Roslyn/C# completion and return that to the Razor LSP server.
+    //    NOTE: currently there is an issue (see comments in code below) causing us to invoke vscode command
+    //    rather then the Roslyn command
+    // 4. Remove temporarily (provisionally) added '.' from the projected C# buffer.
+    // 5. Make sure the projected C# document is updated since the user will likely continue interacting with this document.
+    private async provideCSharpProvisionalCompletions(
+        triggerKind: CompletionTriggerKind,
+        triggerCharacter: string | undefined,
+        virtualDocument: CSharpProjectedDocument,
+        virtualDocumentUri: string,
+        projectedPosition: Position
+    ) {
+        const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
+        if (absoluteIndex === -1) {
+            return CompletionHandler.emptyCompletionList;
+        }
+
+        try {
+            // temporarily add '.' to projected C# document to ensure correct completions are provided
+            virtualDocument.addProvisionalDotAt(absoluteIndex);
+            await this.ensureProjectedCSharpDocumentUpdated(virtualDocument.uri);
+
+            // Current code has to execute vscode command vscode.executeCompletionItemProvider for provisional completion
+            // Calling roslyn command vscode.executeCompletionItemProvider returns null
+            // Tracked by https://github.com/dotnet/vscode-csharp/issues/7250
+            return this.provideVscodeCompletions(virtualDocument.uri, projectedPosition, triggerCharacter);
+        } finally {
+            if (virtualDocument.removeProvisionalDot()) {
+                await this.ensureProjectedCSharpDocumentUpdated(virtualDocument.uri);
+            }
+        }
+    }
+
+    private async ensureProjectedCSharpDocumentUpdated(virtualDocumentUri: vscode.Uri) {
+        this.projectedCSharpProvider.ensureDocumentContent(virtualDocumentUri);
+
+        // We open and then re-save because we're adding content to the text document within an event.
+        // We need to allow the system to propogate this text document change.
+        const newDocument = await vscode.workspace.openTextDocument(virtualDocumentUri);
+        await newDocument.save();
+    }
+
+    // Adjust Roslyn completion command results to make it more palatable to VSCode
+    private static adjustCSharpCompletionList(completionList: CompletionList, triggerCharacter: string | undefined) {
         const data = completionList.itemDefaults?.data;
         for (const completionItem of completionList.items) {
             // textEdit is deprecated in favor of .range. Clear out its value to avoid any unexpected behavior.
@@ -247,7 +293,7 @@ export class CompletionHandler {
         }
     }
 
-    // convert (line, character) Position to absolute index number
+    // Convert (line, character) Position to absolute index number
     private static getIndexOfPosition(document: IProjectedDocument, position: Position): number {
         const content: string = document.getContent();
         let lineNumber = 0;
@@ -275,6 +321,10 @@ export class CompletionHandler {
         return positionIndex;
     }
 
+    // Provide completions using standard vscode executeCompletionItemProvider command
+    // Used in HTML context and (temporarily) C# provisional completion context (calling Roslyn
+    // directly during provisional completion session returns null, root cause TBD, tracked by
+    // https://github.com/dotnet/vscode-csharp/issues/7250)
     private async provideVscodeCompletions(
         virtualDocumentUri: vscode.Uri,
         projectedPosition: Position,
