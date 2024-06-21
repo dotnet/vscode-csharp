@@ -43,7 +43,5 @@ class WorkspaceStatus {
                 item.busy = false;
             }
         });
-
-        languageServer.
     }
 }
