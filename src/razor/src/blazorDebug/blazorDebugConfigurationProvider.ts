@@ -17,6 +17,57 @@ import showErrorMessage from '../../../observers/utils/showErrorMessage';
 import path = require('path');
 import * as cp from 'child_process';
 import { getExtensionPath } from '../../../common';
+import { debugSessionTracker } from '../../../coreclrDebug/provisionalDebugSessionTracker';
+import { getCSharpDevKit } from '../../../utils/getCSharpDevKit';
+import Descriptors from '../../../lsptoolshost/services/descriptors';
+import { CancellationToken } from 'vscode';
+import { IDisposable, IObserver } from '@microsoft/servicehub-framework';
+
+export interface Project {
+    Id: {
+        ProjectPath: string;
+        ProjectGuid?: string;
+    };
+    ActiveConfigurations?: [ProjectConfiguration];
+}
+
+export interface QueryResult<T> {
+    Versions?: any;
+
+    Items?: [T];
+}
+
+export interface ProjectConfiguration {
+    BuildProperties?: any;
+}
+
+/**
+ * This service provides implementation to execute a project query.
+ */
+export interface IQueryExecutionService {
+    /**
+     * execute a query.
+     * @param query a query string.
+     */
+    ExecuteQueryAsync(query: string, cancellationToken?: CancellationToken): Promise<string>;
+
+    /**
+     * execute an update query.
+     * @param query a query string.
+     */
+    ExecuteRemoteExecutableAsync(query: string, cancellationToken?: CancellationToken): Promise<string>;
+
+    /**
+     * Subscribe query results/
+     * @param query a query string.
+     * @param resultsReceiver an observer to receive results.
+     */
+    SubscribeQueryResultsAsync(
+        query: string,
+        resultsReceiver: IObserver<string>,
+        cancellationToken?: CancellationToken
+    ): Promise<IDisposable>;
+}
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     private static readonly autoDetectUserNotice: string = vscode.l10n.t(
@@ -132,11 +183,11 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         inspectUri: string,
         url: string
     ) {
-        const wasmConfig = vscode.workspace.getConfiguration('csharp');
-        const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
+        const originalInspectUri = inspectUri;
+        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg();
         let portBrowserDebug = -1;
-        if (useVSDbg && existsSync(BlazorDebugConfigurationProvider.getWebAssemblyWebBridgePath())) {
-            [inspectUri, portBrowserDebug] = await this.attachToAppOnBrowser(folder, configuration);
+        if (useVSDbg) {
+            [inspectUri, portBrowserDebug] = await this.attachToAppOnBrowser(folder, configuration, url);
         }
 
         const configBrowser = configuration.browser;
@@ -170,6 +221,20 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             browser.port = portBrowserDebug;
         }
 
+        const monovsdbgSession = debugSessionTracker.getDebugSessionByName('monovsdbg');
+        if (useVSDbg) {
+            //means that we don't have c#devkit installed so we get information from configSettings
+            if (monovsdbgSession === undefined && getCSharpDevKit() === undefined) {
+                //something wrong happened kill the vswebassembly and use the older debugger
+                browser.inspectUri = originalInspectUri;
+                browser.port = undefined;
+                const oldPid = BlazorDebugConfigurationProvider.pidsByUrl.get(browser.url);
+                if (oldPid != undefined) {
+                    process.kill(oldPid);
+                }
+            }
+        }
+
         try {
             /**
              * The browser debugger will immediately launch after the
@@ -199,10 +264,11 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
 
     private async attachToAppOnBrowser(
         folder: vscode.WorkspaceFolder | undefined,
-        configuration: vscode.DebugConfiguration
+        configuration: vscode.DebugConfiguration,
+        url: string
     ): Promise<[string, number]> {
         const [inspectUriRet, portICorDebug, portBrowserDebug] =
-            await BlazorDebugConfigurationProvider.launchVsWebAssemblyBridge(configuration.url);
+            await BlazorDebugConfigurationProvider.launchVsWebAssemblyBridge(configuration.url || url);
 
         const cwd = configuration.cwd || '${workspaceFolder}';
         const args = configuration.hosted ? [] : ['run'];
@@ -322,6 +388,73 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         return ['', -1, -1];
     }
 
+    private static async isNet9OrNewer(): Promise<boolean> {
+        let isNet9OrNewer = false;
+        const configurationsObject = {
+            $properties: ['BuildProperties'],
+            BuildProperties: {
+                $properties: ['Id', 'Name', 'Value', 'StorageType'],
+                $where: {
+                    '&&': [
+                        { '==': [{ '.': 'Name' }, 'TargetFramework'] },
+                        { '==': [{ '.': 'StorageType' }, 'ProjectFile'] },
+                    ],
+                },
+            },
+        };
+        const query = {
+            context: 'Projects',
+            query: {
+                $properties: ['ActiveConfigurations'],
+                ActiveConfigurations: configurationsObject,
+                $filter: { ProjectsByCapabilities: ['WebAssembly'] },
+            },
+        };
+
+        const queryString = JSON.stringify(query);
+        const proxy = await getCSharpDevKit()?.exports.serviceBroker.getProxy<IQueryExecutionService>(
+            Descriptors.projectQueryExecutionService
+        );
+        try {
+            if (proxy) {
+                const result = await proxy.ExecuteQueryAsync(queryString);
+                const queryResult = JSON.parse(result) as QueryResult<Project>;
+                if (queryResult && queryResult.Items) {
+                    isNet9OrNewer = true;
+                    queryResult.Items.forEach((project) => {
+                        project.ActiveConfigurations?.forEach((activeConfig) => {
+                            if (
+                                activeConfig.BuildProperties[0].Value == 'net5.0' ||
+                                activeConfig.BuildProperties[0].Value == 'net6.0' ||
+                                activeConfig.BuildProperties[0].Value == 'net7.0' ||
+                                activeConfig.BuildProperties[0].Value == 'net8.0'
+                            ) {
+                                isNet9OrNewer = false;
+                            }
+                        });
+                    });
+                    return isNet9OrNewer;
+                }
+            }
+        } catch (err) {
+            throw new Error('Exception while talking to proxy: ' + err);
+        } finally {
+            proxy?.dispose();
+        }
+        return isNet9OrNewer;
+    }
+    private static async useVSDbg(): Promise<boolean> {
+        const wasmConfig = vscode.workspace.getConfiguration('csharp');
+        const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
+        const existWebAssemblyWebBridge = existsSync(BlazorDebugConfigurationProvider.getWebAssemblyWebBridgePath());
+        const csharpDevKitExtension = getCSharpDevKit();
+        let isNet9OrNewer = true;
+        if (useVSDbg && existWebAssemblyWebBridge && csharpDevKitExtension !== undefined) {
+            isNet9OrNewer = await BlazorDebugConfigurationProvider.isNet9OrNewer();
+        }
+        return useVSDbg && existWebAssemblyWebBridge && isNet9OrNewer;
+    }
+
     private static getWebAssemblyWebBridgePath() {
         const vsWebAssemblyBridge = path.join(
             getExtensionPath(),
@@ -332,10 +465,9 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
     }
 
     public static async tryToUseVSDbgForMono(urlStr: string): Promise<[string, number, number]> {
-        const wasmConfig = vscode.workspace.getConfiguration('csharp');
-        const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
+        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg();
 
-        if (useVSDbg && existsSync(BlazorDebugConfigurationProvider.getWebAssemblyWebBridgePath())) {
+        if (useVSDbg) {
             const [inspectUri, portICorDebug, portBrowserDebug] =
                 await BlazorDebugConfigurationProvider.launchVsWebAssemblyBridge(urlStr);
 

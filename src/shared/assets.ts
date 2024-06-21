@@ -356,6 +356,21 @@ export class AssetGenerator {
         assetsPath = assetsPath.slice(0, -1);
         return [assetsPath, this.executableProjects[0].outputPath];
     }
+
+    public isDotNet9OrNewer(): boolean {
+        let ret = false;
+        this.executableProjects.forEach((project) => {
+            if (project.isWebAssemblyProject) {
+                const projectFileText = fs.readFileSync(project.projectPath, 'utf8');
+                ret =
+                    projectFileText.toLowerCase().indexOf('net8.0') < 0 &&
+                    projectFileText.toLowerCase().indexOf('net7.0') < 0 &&
+                    projectFileText.toLowerCase().indexOf('net6.0') < 0 &&
+                    projectFileText.toLowerCase().indexOf('net5.0') < 0;
+            }
+        });
+        return ret;
+    }
 }
 
 export enum ProgramLaunchType {

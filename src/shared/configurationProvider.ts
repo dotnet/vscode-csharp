@@ -149,16 +149,25 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                 this.checkForDevCerts(commonOptions.dotnetPath);
             }
         }
-        if (debugConfiguration.type === 'monovsdbg' && this instanceof DotnetWorkspaceConfigurationProvider) {
+        if (
+            debugConfiguration.type === 'monovsdbg' &&
+            debugConfiguration.monoDebuggerOptions.platform === 'browser' &&
+            this instanceof DotnetWorkspaceConfigurationProvider
+        ) {
             const configProvider = this as DotnetWorkspaceConfigurationProvider;
-            if (
-                folder &&
-                debugConfiguration.monoDebuggerOptions.platform === 'browser' &&
-                debugConfiguration.monoDebuggerOptions.assetsPath == null
-            ) {
+            if (folder && debugConfiguration.monoDebuggerOptions.assetsPath == null) {
+                const csharpDevKitExtension = getCSharpDevKit();
+                if (csharpDevKitExtension === undefined) {
+                    if (!(await configProvider.isDotNet9OrNewer(folder))) {
+                        return undefined;
+                    }
+                }
                 const [assetsPath, programName] = await configProvider.getAssetsPathAndProgram(folder);
                 debugConfiguration.monoDebuggerOptions.assetsPath = assetsPath;
                 debugConfiguration.program = programName;
+                if (debugConfiguration.program == null) {
+                    return undefined;
+                }
             }
         }
         return debugConfiguration;
