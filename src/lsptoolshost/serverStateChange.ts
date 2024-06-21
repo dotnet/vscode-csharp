@@ -5,5 +5,6 @@
 
 export enum ServerStateChange {
     Started = 0,
-    ProjectInitializationComplete = 1,
+    ProjectInitializationStarted = 1,
+    ProjectInitializationComplete = 2,
 }
