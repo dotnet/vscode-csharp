@@ -113,10 +113,6 @@ export class CompletionHandler {
                 return CompletionHandler.emptyCompletionList;
             }
 
-            const virtualDocumentUri = UriConverter.serialize(virtualDocument.uri);
-
-            delegatedCompletionParams.identifier.textDocumentIdentifier.uri = virtualDocumentUri;
-
             // "@" is not a valid trigger character for C# / HTML and therefore we need to translate
             // it into a non-trigger invocation.
             const modifiedTriggerCharacter =
@@ -134,7 +130,6 @@ export class CompletionHandler {
                     triggerKind,
                     modifiedTriggerCharacter,
                     virtualDocument as CSharpProjectedDocument,
-                    virtualDocumentUri,
                     delegatedCompletionParams.projectedPosition,
                     delegatedCompletionParams.provisionalTextEdit
                 );
@@ -181,10 +176,16 @@ export class CompletionHandler {
         triggerKind: CompletionTriggerKind,
         triggerCharacter: string | undefined,
         virtualDocument: CSharpProjectedDocument,
-        virtualDocumentUri: string,
         projectedPosition: Position,
         provisionalTextEdit?: SerializableTextEdit
     ) {
+        if (provisionalTextEdit) {
+            // provisional C# completion
+            return this.provideCSharpProvisionalCompletions(triggerCharacter, virtualDocument, projectedPosition);
+        }
+
+        // non-provisional C# completion
+        const virtualDocumentUri = UriConverter.serialize(virtualDocument.uri);
         const params: CompletionParams = {
             context: {
                 triggerKind: triggerKind,
@@ -196,18 +197,6 @@ export class CompletionHandler {
             position: projectedPosition,
         };
 
-        if (provisionalTextEdit) {
-            // provisional C# completion
-            return this.provideCSharpProvisionalCompletions(
-                triggerKind,
-                triggerCharacter,
-                virtualDocument,
-                virtualDocumentUri,
-                projectedPosition
-            );
-        }
-
-        // non-provisional C# completion
         const csharpCompletions = await vscode.commands.executeCommand<CompletionList>(
             provideCompletionsCommand,
             params
@@ -228,10 +217,8 @@ export class CompletionHandler {
     // 4. Remove temporarily (provisionally) added '.' from the projected C# buffer.
     // 5. Make sure the projected C# document is updated since the user will likely continue interacting with this document.
     private async provideCSharpProvisionalCompletions(
-        triggerKind: CompletionTriggerKind,
         triggerCharacter: string | undefined,
         virtualDocument: CSharpProjectedDocument,
-        virtualDocumentUri: string,
         projectedPosition: Position
     ) {
         const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
