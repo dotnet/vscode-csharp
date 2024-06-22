@@ -5,8 +5,8 @@
 !.roslynDevKit/**
 !.omnisharp/**
 !.razor/**
+!.razorDevKit/**
 !.razoromnisharp/**
-!.razortelemetry/**
 .rpt2_cache/**
 .github/**
 .vscode/**

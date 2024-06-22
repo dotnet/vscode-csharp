@@ -3,10 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
 import * as vscode from 'vscode';
 import * as vscodeapi from 'vscode';
-import * as util from '../../common';
 import { ExtensionContext } from 'vscode';
 import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
 import { CodeActionsHandler } from './codeActions/codeActionsHandler';
@@ -55,6 +53,7 @@ import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsR
 import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHandler';
 import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
+import { getComponentPaths } from '../../lsptoolshost/builtInComponents';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -99,13 +98,11 @@ export async function activate(
             await setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, logger);
 
             if (vscode.env.isTelemetryEnabled) {
-                const telemetryExtensionPath = path.join(
-                    util.getExtensionPath(),
-                    '.razortelemetry',
-                    'Microsoft.VisualStudio.DevKit.Razor.dll'
-                );
-                if (await util.fileExists(telemetryExtensionPath)) {
-                    telemetryExtensionDllPath = telemetryExtensionPath;
+                const razorComponentPaths = getComponentPaths('razorDevKit', undefined);
+                if (razorComponentPaths.length !== 1) {
+                    logger.logError('Failed to find Razor DevKit telemetry extension path.', undefined);
+                } else {
+                    telemetryExtensionDllPath = razorComponentPaths[0];
                 }
             }
         }
