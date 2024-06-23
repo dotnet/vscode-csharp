@@ -131,6 +131,8 @@ export class RoslynLanguageServer {
 
         registerShowToastNotification(this._languageClient);
 
+        registerOnAutoInsert(this, this._languageClient);
+
         this._onAutoInsertFeature = new OnAutoInsertFeature(this._languageClient);
     }
 
@@ -989,8 +991,6 @@ export async function activateRoslynLanguageServer(
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
 
     registerRestoreCommands(context, languageServer, dotnetChannel);
-
-    registerOnAutoInsert(languageServer);
 
     context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
 

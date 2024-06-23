@@ -674,12 +674,12 @@ export class OmniSharpServer {
         const launchTargets = await findLaunchTargets();
 
         // If there aren't any potential launch targets, we create file watcher and try to
-        // start the server again once a *.sln, *.slnf, *.csproj, project.json, CSX or Cake file is created.
+        // start the server again once a *.sln, *.slnf, *.csproj, CSX or Cake file is created.
         if (launchTargets.length === 0) {
             await new Promise<void>((resolve) => {
                 // 1st watch for files
                 const watcher = this.vscode.workspace.createFileSystemWatcher(
-                    '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+                    '{**/*.sln,**/*.slnf,**/*.csproj,**/*.csx,**/*.cake}',
                     /*ignoreCreateEvents*/ false,
                     /*ignoreChangeEvents*/ true,
                     /*ignoreDeleteEvents*/ true

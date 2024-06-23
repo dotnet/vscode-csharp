@@ -41,7 +41,6 @@
   "Do not load any": "No cargar ninguno",
   "Does not contain .NET Core projects.": "No contiene proyectos de .NET Core.",
   "Don't Ask Again": "No volver a preguntar",
-  "Downloading Razor Telemetry Package": "Descarga del paquete de telemetría Razor",
   "Enable launching a web browser when ASP.NET Core starts. For more information: {0}": "Habilite el inicio de un explorador web cuando se inicie ASP.NET Core. Para obtener más información: {0}",
   "Error Message: ": "Mensaje de error: ",
   "Expand": "Expandir",

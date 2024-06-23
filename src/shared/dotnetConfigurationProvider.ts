@@ -110,12 +110,13 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
                     throw new UnavaliableLaunchServiceError();
                 }
             } catch (e) {
-                if (!projectPath) {
-                    throw new LaunchServiceError(
-                        vscode.l10n.t("'{0}' was not provided in the debug configuration.", 'projectPath')
-                    );
-                }
                 if (e instanceof UnavaliableLaunchServiceError) {
+                    if (!projectPath) {
+                        throw new LaunchServiceError(
+                            vscode.l10n.t("'{0}' was not provided in the debug configuration.", 'projectPath')
+                        );
+                    }
+
                     return await this.resolveDebugConfigurationWithWorkspaceDebugInformationProvider(
                         folder,
                         projectPath
