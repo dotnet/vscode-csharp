@@ -150,7 +150,6 @@
   "Unable to resolve VSCode's version of CSharp": "Nepovedlo se rozpoznat verzi jazyka CSharp v nástroji VSCode.",
   "Unable to resolve VSCode's version of Html": "Nepovedlo se přeložit verzi HTML nástroje VSCode.",
   "Unexpected RuntimeId '{0}'.": "Neočekávané RuntimeId „{0}“",
-  "Unexpected completion trigger kind: {0}": "Neočekávaný druh triggeru dokončení: {0}",
   "Unexpected error when attaching to C# preview window.": "Při připojování k oknu náhledu jazyka C# došlo k neočekávané chybě.",
   "Unexpected error when attaching to HTML preview window.": "Při připojování k oknu náhledu HTML došlo k neočekávané chybě.",
   "Unexpected error when attaching to report Razor issue window.": "Při připojování k oknu pro nahlášení problémů s Razorem došlo k neočekávané chybě.",
