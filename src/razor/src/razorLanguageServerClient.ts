@@ -150,6 +150,14 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         return this.client.sendRequest<TResponseType>(method, param);
     }
 
+    public async sendNotification(method: string, param: any) {
+        if (!this.isStarted) {
+            throw new Error(vscode.l10n.t('Tried to send requests while server is not started.'));
+        }
+
+        return this.client.sendNotification(method, param);
+    }
+
     public async onRequestWithParams<P, R, E>(method: RequestType<P, R, E>, handler: RequestHandler<P, R, E>) {
         if (!this.isStarted) {
             throw new Error(vscode.l10n.t('Tried to bind on request logic while server is not started.'));
@@ -208,6 +216,11 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         }
 
         return this.stopHandle;
+    }
+
+    public async connectNamedPipe(pipeName: string): Promise<void> {
+        await this.startHandle;
+        await this.sendNotification('razor/connect', { pipeName: pipeName });
     }
 
     private setupLanguageServer() {
