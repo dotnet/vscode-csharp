@@ -13,6 +13,10 @@
   * Throw when there is a syntax version mismatch in codelens (PR: [#73902](https://github.com/dotnet/roslyn/pull/73902))
 * Remove runtime download of Razor telemetry pkg (PR: [#7236](https://github.com/dotnet/vscode-csharp/pull/7236))
 * Remove legacy project.json support (PR: [#7244](https://github.com/dotnet/vscode-csharp/pull/7244))
+* Update xamlTools to 17.11.35021.135
+  * Trigger full page MAUI XAML Hot Reload when clicking the Hot Reload icon, matching VS Windows
+  * Fix "Ambiguous reference" in HotReloadMobileTapInitializer (Issue: [#1204](https://github.com/microsoft/vscode-dotnettools/issues/1204))
+  * Give descriptive error if using Hot Reload with Android on pre .NET8, saying to update .NET
 
 # 2.35.15
 * Improve reliability of documentation comment auto insertion (PR: [#7230](https://github.com/dotnet/vscode-csharp/pull/7230))
