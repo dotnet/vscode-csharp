@@ -150,7 +150,6 @@
   "Unable to resolve VSCode's version of CSharp": "VSCode의 CSharp 버전을 해결할 수 없음",
   "Unable to resolve VSCode's version of Html": "VSCode의 HTML 버전을 해결할 수 없음",
   "Unexpected RuntimeId '{0}'.": "예기치 않은 RuntimeId '{0}'입니다.",
-  "Unexpected completion trigger kind: {0}": "예기치 않은 완료 트리거 종류: {0}",
   "Unexpected error when attaching to C# preview window.": "C# 미리 보기 창에 연결할 때 예기치 않은 오류가 발생했습니다.",
   "Unexpected error when attaching to HTML preview window.": "HTML 미리 보기 창에 연결할 때 예기치 않은 오류가 발생했습니다.",
   "Unexpected error when attaching to report Razor issue window.": "Razor 문제 보고 창에 연결하는 동안 예기치 않은 오류가 발생했습니다.",

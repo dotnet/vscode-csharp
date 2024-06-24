@@ -150,7 +150,6 @@
   "Unable to resolve VSCode's version of CSharp": "Nie można rozpoznać wersji CSharp programu VSCode",
   "Unable to resolve VSCode's version of Html": "Nie można rozpoznać wersji HTML programu VSCode",
   "Unexpected RuntimeId '{0}'.": "Nieoczekiwany identyfikator RuntimeId „{0}”.",
-  "Unexpected completion trigger kind: {0}": "Nieoczekiwany rodzaj wyzwalacza ukończenia: {0}",
   "Unexpected error when attaching to C# preview window.": "Nieoczekiwany błąd podczas dołączania do okna podglądu języka C#.",
   "Unexpected error when attaching to HTML preview window.": "Nieoczekiwany błąd podczas dołączania do okna podglądu HTML.",
   "Unexpected error when attaching to report Razor issue window.": "Nieoczekiwany błąd podczas dołączania do okna raportowania problemu Razor.",
