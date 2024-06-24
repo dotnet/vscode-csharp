@@ -150,7 +150,6 @@
   "Unable to resolve VSCode's version of CSharp": "VSCode-Version von CSharp kann nicht aufgelöst werden.",
   "Unable to resolve VSCode's version of Html": "VSCode-Version von HTML kann nicht aufgelöst werden",
   "Unexpected RuntimeId '{0}'.": "Unerwartete RuntimeId \"{0}\".",
-  "Unexpected completion trigger kind: {0}": "Unerwartete Vervollständigungstriggerart: {0}",
   "Unexpected error when attaching to C# preview window.": "Unerwarteter Fehler beim Anfügen an das C#-Vorschaufenster.",
   "Unexpected error when attaching to HTML preview window.": "Unerwarteter Fehler beim Anfügen an das HTML-Vorschaufenster.",
   "Unexpected error when attaching to report Razor issue window.": "Unerwarteter Fehler beim Anfügen an das Fenster \"Razor-Problem melden\"",
