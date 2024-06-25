@@ -10,6 +10,7 @@ import {
     CompletionParams,
     CompletionTriggerKind,
     InsertReplaceEdit,
+    InsertTextFormat,
     InsertTextMode,
     MarkupContent,
     Position,
@@ -344,6 +345,7 @@ export class CompletionHandler {
                 documentation: CompletionHandler.toMarkupContent(completionItem.documentation),
                 filterText: completionItem.filterText,
                 insertText: CompletionHandler.toLspInsertText(completionItem.insertText),
+                insertTextFormat: CompletionHandler.toLspInsertTextFormat(completionItem.insertText),
                 insertTextMode: CompletionHandler.toInsertTextMode(completionItem.keepWhitespace),
                 kind: completionItem.kind ? completionItem.kind + 1 : completionItem.kind, // VSCode and LSP are off by one
                 label: CompletionHandler.toLspCompletionItemLabel(completionItem.label),
@@ -388,6 +390,19 @@ export class CompletionHandler {
     private static toLspInsertText(insertText?: string | vscode.SnippetString): string | undefined {
         const snippetString = insertText as vscode.SnippetString;
         return snippetString?.value ?? <string | undefined>insertText;
+    }
+
+    private static toLspInsertTextFormat(insertText?: string | vscode.SnippetString): InsertTextFormat {
+        return insertText instanceof vscode.SnippetString ? InsertTextFormat.Snippet : InsertTextFormat.PlainText;
+    }
+
+    private static toInsertTextMode(keepWhitespace?: boolean): InsertTextMode | undefined {
+        if (keepWhitespace === undefined) {
+            return undefined;
+        }
+
+        const insertTextMode: InsertTextMode = keepWhitespace ? InsertTextMode.asIs : InsertTextMode.adjustIndentation;
+        return insertTextMode;
     }
 
     private static toLspTextEdit(
@@ -447,14 +462,5 @@ export class CompletionHandler {
         };
 
         return lspPosition;
-    }
-
-    private static toInsertTextMode(keepWhitespace?: boolean): InsertTextMode | undefined {
-        if (keepWhitespace === undefined) {
-            return undefined;
-        }
-
-        const insertTextMode: InsertTextMode = keepWhitespace ? InsertTextMode.asIs : InsertTextMode.adjustIndentation;
-        return insertTextMode;
     }
 }
