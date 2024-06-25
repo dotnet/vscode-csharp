@@ -201,6 +201,9 @@ export class CompletionHandler {
             provideCompletionsCommand,
             params
         );
+        if (!csharpCompletions) {
+            return CompletionHandler.emptyCompletionList;
+        }
         CompletionHandler.adjustCSharpCompletionList(csharpCompletions, triggerCharacter);
         return csharpCompletions;
     }
