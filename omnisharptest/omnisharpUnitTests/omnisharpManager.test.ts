@@ -35,16 +35,6 @@ describe(OmnisharpManager.name, () => {
 
     [
         {
-            platformInfo: new PlatformInformation('win32', 'x86'),
-            platformId: 'win-x86',
-            useFramework: false,
-        },
-        {
-            platformInfo: new PlatformInformation('win32', 'x86'),
-            platformId: 'win-x86',
-            useFramework: true,
-        },
-        {
             platformInfo: new PlatformInformation('win32', 'x86_64'),
             platformId: 'win-x64',
             useFramework: false,

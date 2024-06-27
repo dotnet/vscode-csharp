@@ -5,7 +5,7 @@
 
 import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
-import { CodeAction } from 'vscode-languageserver-protocol';
+import { CodeAction, TextDocumentRegistrationOptions } from 'vscode-languageserver-protocol';
 import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface WorkspaceDebugConfigurationParams {
@@ -59,7 +59,27 @@ export interface OnAutoInsertParams {
 export interface OnAutoInsertResponseItem {
     _vs_textEditFormat: lsp.InsertTextFormat;
     _vs_textEdit: lsp.TextEdit;
+
+    /**
+     * An optional command that is executed *after* inserting.
+     */
+    command?: Command;
 }
+
+/**
+ * OnAutoInsert options.
+ */
+export interface OnAutoInsertOptions {
+    /**
+     * List of characters triggering an {@link OnAutoInsertRequest}.
+     */
+    _vs_triggerCharacters?: string[];
+}
+
+/**
+ * Registration options for an {@link OnAutoInsertRequest}.
+ */
+export interface OnAutoInsertRegistrationOptions extends TextDocumentRegistrationOptions, OnAutoInsertOptions {}
 
 export interface RegisterSolutionSnapshotResponseItem {
     /**

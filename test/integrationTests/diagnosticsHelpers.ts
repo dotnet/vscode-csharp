@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
 import { expect } from '@jest/globals';
-import { restartLanguageServer } from './integrationHelpers';
+import { restartLanguageServer, waitForExpectedResult } from './integrationHelpers';
 
 function sortDiagnostics(diagnostics: vscode.Diagnostic[]): vscode.Diagnostic[] {
     return diagnostics.sort((a, b) => {
@@ -21,32 +21,26 @@ export async function waitForExpectedDiagnostics(
     assertExpectedDiagnostics: (input: [vscode.Uri, vscode.Diagnostic[]][]) => void,
     file?: vscode.Uri
 ): Promise<void> {
-    let duration = 30 * 1000;
+    const duration = 30 * 1000;
     const step = 500;
-    let error: any = undefined;
-    while (duration > 0) {
-        const diagnostics: [vscode.Uri, vscode.Diagnostic[]][] = [];
-        if (file) {
-            diagnostics.push([file, sortDiagnostics(vscode.languages.getDiagnostics(file))]);
-        } else {
-            const allDiagnostics = vscode.languages.getDiagnostics();
-            for (const [uri, uriDiagnostics] of allDiagnostics) {
-                diagnostics.push([uri, sortDiagnostics(uriDiagnostics)]);
+    await waitForExpectedResult<[vscode.Uri, vscode.Diagnostic[]][]>(
+        () => {
+            const diagnostics: [vscode.Uri, vscode.Diagnostic[]][] = [];
+            if (file) {
+                diagnostics.push([file, sortDiagnostics(vscode.languages.getDiagnostics(file))]);
+            } else {
+                const allDiagnostics = vscode.languages.getDiagnostics();
+                for (const [uri, uriDiagnostics] of allDiagnostics) {
+                    diagnostics.push([uri, sortDiagnostics(uriDiagnostics)]);
+                }
             }
-        }
 
-        try {
-            assertExpectedDiagnostics(diagnostics);
-            return;
-        } catch (e) {
-            error = e;
-            // Wait for a bit and try again.
-            await new Promise((r) => setTimeout(r, step));
-            duration -= step;
-        }
-    }
-
-    throw new Error(`Polling did not succeed within the alotted duration: ${error}`);
+            return diagnostics;
+        },
+        duration,
+        step,
+        assertExpectedDiagnostics
+    );
 }
 
 export async function setBackgroundAnalysisScopes(scopes: { compiler: string; analyzer: string }): Promise<void> {

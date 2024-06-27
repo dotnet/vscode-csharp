@@ -35,7 +35,6 @@ describe('Asset generation: csproj', () => {
         isNotNull(tasksJson.tasks[0].args);
         const buildPath = tasksJson.tasks[0].args[1];
 
-        // ${workspaceFolder}/project.json
         const segments = buildPath.split(path.posix.sep);
         expect(segments).toStrictEqual(['${workspaceFolder}', 'testApp.csproj']);
     });
@@ -123,7 +122,6 @@ describe('Asset generation: csproj', () => {
         isNotNull(tasksJson.tasks[0].args);
         const buildPath = tasksJson.tasks[0].args[1];
 
-        // ${workspaceFolder}/nested/project.json
         const segments = buildPath.split(path.posix.sep);
         expect(segments).toStrictEqual(['${workspaceFolder}', 'nested', 'testApp.csproj']);
     });

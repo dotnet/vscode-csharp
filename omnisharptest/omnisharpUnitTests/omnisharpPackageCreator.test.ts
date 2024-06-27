@@ -72,22 +72,6 @@ describe('GetOmnisharpPackage : Output package depends on the input package and 
             expect(resultPackage.installPath).toEqual(`experimentPath/1.2.3${pathSuffix}`);
         });
 
-        test(`Install test path is calculated using specified path, version and ends with OmniSharp.exe or OmniSharp.dll - Windows(x86) ${
-            useFramework ? 'on framework' : ''
-        }`, () => {
-            const testPackage = inputPackages.find((element) => element.platformId && element.platformId == 'win-x86');
-            const resultPackage = SetBinaryAndGetPackage(
-                testPackage!,
-                useFramework,
-                serverUrl,
-                '1.2.3',
-                'experimentPath'
-            );
-            expect(resultPackage.installTestPath).toEqual(
-                `./experimentPath/1.2.3${pathSuffix}/OmniSharp.${useFramework ? 'exe' : 'dll'}`
-            );
-        });
-
         test(`Install test path is calculated using specified path, version and ends with OmniSharp.exe or OmniSharp.dll - Windows(x64) ${
             useFramework ? 'on framework' : ''
         }`, () => {

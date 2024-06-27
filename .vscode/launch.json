@@ -6,13 +6,9 @@
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": [
-                "--extensionDevelopmentPath=${workspaceRoot}"
-            ],
+            "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
             "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/dist/*.js"
-            ],
+            "outFiles": ["${workspaceRoot}/dist/*.js"],
             "preLaunchTask": "buildDev"
         },
         {
@@ -26,21 +22,15 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/dist/*.js",
-                "${workspaceRoot}/out/test/**/*.js"
-            ],
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ],
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "buildDev",
             "internalConsoleOptions": "openOnSessionStart"
         },
@@ -55,21 +45,15 @@
                 "--profile-temp",
                 "${workspaceRoot}/test/razorIntegrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/razorIntegrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/test/razorIntegrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/dist/*.js",
-                "${workspaceRoot}/out/test/**/*.js"
-            ],
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ],
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "buildDev",
             "internalConsoleOptions": "openOnSessionStart"
         },
@@ -84,7 +68,7 @@
                 "--profile-temp",
                 "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests",
+                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -92,14 +76,8 @@
                 "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/dist/*.js",
-                "${workspaceRoot}/out/test/**/*.js"
-            ],
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ],
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "buildDev"
         },
         {
@@ -118,17 +96,11 @@
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "OSVC_SUITE": "${input:omnisharpAssetName}",
-                "TEST_FILE_FILTER": "${file}",
+                "TEST_FILE_FILTER": "${file}"
             },
             "sourceMaps": true,
-            "outFiles": [
-                "${workspaceRoot}/dist/*.js",
-                "${workspaceRoot}/out/test/**/*.js"
-            ],
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ],
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
             "preLaunchTask": "buildDev"
         },
         {
@@ -137,9 +109,7 @@
             "name": "Debug gulp task",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": [
-                "${input:gulpTaskName}"
-            ],
+            "args": ["${input:gulpTaskName}"],
             "cwd": "${workspaceFolder}"
         },
         {
@@ -148,48 +118,28 @@
             "name": "Update OmniSharp package dependencies",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": [
-                "updatePackageDependencies"
-            ],
+            "args": ["updatePackageDependencies"],
             "env": {
                 "NEW_DEPS_ID": "OmniSharp",
-                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x86-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-arm64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x86-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-arm64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-musl-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-musl-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x86-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-arm64-net6.0-1.39.11.zip",
+                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x86-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-arm64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-arm64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-musl-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-musl-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-arm64-net6.0-1.39.11.zip",
                 "OLD_DEPS_VERSION": "1.39.10",
-                "NEW_DEPS_VERSION": "1.39.11",
+                "NEW_DEPS_VERSION": "1.39.11"
             },
             "cwd": "${workspaceFolder}"
         },
         {
-          "type": "node",
-          "request": "launch",
-          "name": "Update razor package dependencies",
-          "preLaunchTask": "build",
-          "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-          "args": [
-              "updatePackageDependencies"
-          ],
-          "env": {
-              "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/85d6dcb5b0164aa042c88d4668d94041/razorlanguageserver-linux-arm64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/6a89b05d4c14a3542789c3ca650018b6/razorlanguageserver-linux-musl-arm64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/b37a814188d56ac90f409a6e49098f4f/razorlanguageserver-linux-musl-x64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/04efb92c455ec620381317a43c480a1b/razorlanguageserver-linux-x64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/dfdfeadc3ed450706a0d00e057773fc6/razorlanguageserver-osx-arm64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/2d73f9a16d450702b8ac8dbdde142799/razorlanguageserver-osx-x64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/fa73364791a8e908ff44a159d1f000d3/razorlanguageserver-platformagnostic-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/fa38f7d2ee74d0929e47c30d718ac096/razorlanguageserver-win-arm64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/fde24d8c856defdccbb652be05bc0fea/razorlanguageserver-win-x64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/ae634e36d0694be331db134d6c5494e8/razorlanguageserver-win-x86-7.0.0-preview.24161.6.zip",
-              "NEW_DEPS_VERSION": "7.0.0-preview.24161.6",
-              "NEW_DEPS_ID": "Razor"
-          },
-          "cwd": "${workspaceFolder}"
-      },
-      {
-        "type": "node",
-        "request": "launch",
-        "name": "Update razor telemetry package dependencies",
-        "preLaunchTask": "build",
-        "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-        "args": [
-            "updatePackageDependencies"
-        ],
-        "env": {
-            "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/37c9cbad7a9df0efa17d40da3b8ff303/devkittelemetry-linux-arm64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/782d968486f5324e3ff0c7d5fbc31191/devkittelemetry-linux-musl-arm64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/7fc42bdb835a845efb4ee7cc5cf606d9/devkittelemetry-linux-musl-x64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/b50efac289c46267b8e67318ab840ee4/devkittelemetry-linux-x64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/9f4cdc6489f81ee9d94c218a61bc19a0/devkittelemetry-osx-arm64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/473295a389ea3331c39b6bab7e52d990/devkittelemetry-osx-x64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/9e99d301df6c535a4b5e031fbf3695d4/devkittelemetry-platformagnostic-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/36519b4fb02af42c26e5df12592999cc/devkittelemetry-win-arm64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/c32a8e0f3ef1690f9b76dafabbfa8cae/devkittelemetry-win-x64-7.0.0-preview.24161.6.zip,https://download.visualstudio.microsoft.com/download/pr/39e88c64-efc2-4674-9b47-f2fed0bbd49d/5bf809c31472e7f6b734540f4f80c5f9/devkittelemetry-win-x86-7.0.0-preview.24161.6.zip",
-            "NEW_DEPS_VERSION": "7.0.0-preview.24161.6",
-            "NEW_DEPS_ID": "RazorTelemetry"
-        },
-        "cwd": "${workspaceFolder}"
+            "type": "node",
+            "request": "launch",
+            "name": "Update razor telemetry package dependencies",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": ["updatePackageDependencies"],
+            "env": {
+                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/704e369c5905f9ece819ebce77fb78d8/devkittelemetry-linux-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4049a66147717a53860bbc969bf32faa/devkittelemetry-linux-musl-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/c75e84ff813be5c9833d96dc2066a364/devkittelemetry-linux-musl-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/f58cf629939f0df77d142be881f9e233/devkittelemetry-linux-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/1c912419ea45c8d95cfa28a8a04640dc/devkittelemetry-osx-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/36545ba0998f1fc380e877e38b2f35f1/devkittelemetry-osx-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/0a32698e8ba1ab93489d79f34f8ae8d0/devkittelemetry-platformagnostic-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4f16ff826fedd33ad80d265c5409588b/devkittelemetry-win-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/5a98d8f4e481dbb7ae3cdb3695b75c46/devkittelemetry-win-x64-7.0.0-preview.24178.4.zip",
+                "NEW_DEPS_VERSION": "7.0.0-preview.24178.4",
+                "NEW_DEPS_ID": "RazorTelemetry"
+            },
+            "cwd": "${workspaceFolder}"
         },
         {
             "type": "node",
@@ -197,9 +147,7 @@
             "name": "Generate debugger options schema",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": [
-                "generateOptionsSchema"
-            ],
+            "args": ["generateOptionsSchema"],
             "cwd": "${workspaceFolder}"
         },
         {
@@ -208,9 +156,7 @@
             "name": "Razor integration tests",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": [
-                "test:razorintegration"
-            ],
+            "args": ["test:razorintegration"],
             "cwd": "${workspaceFolder}"
         }
     ],
@@ -219,18 +165,12 @@
             "id": "omnisharpAssetName",
             "description": "The name of the asset folder to use for the OmniSharp integration test.",
             "type": "pickString",
-            "options": [
-                "singleCsproj",
-                "BasicRazorApp2_1",
-                "slnWithCsproj",
-                "slnFilterWithCsproj",
-                "slnWithGenerator"
-            ]
+            "options": ["singleCsproj", "BasicRazorApp2_1", "slnWithCsproj", "slnFilterWithCsproj", "slnWithGenerator"]
         },
         {
             "id": "gulpTaskName",
             "description": "The name of the gulp task to debug",
-            "type": "promptString",
+            "type": "promptString"
         }
     ]
 }

@@ -4,6 +4,7 @@ node_modules
 out
 .roslyn/
 .roslynDevKit/
+.xamlTools/
 .omnisharp/
 .omnisharp-*/
 .vs/
@@ -11,6 +12,7 @@ out
 .razor/
 .razoromnisharp/
 .razortelemetry/
+.razorDevKit/
 .vscode-test/
 dist/
 *.razor.json

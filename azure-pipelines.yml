@@ -8,35 +8,73 @@ trigger:
     - main
 
 pr:
-- feature/*
-- release
-- prerelease
-- main
+  branches:
+    include:
+    - feature/*
+    - release
+    - prerelease
+    - main
+  paths:
+    exclude:
+    - ./*.md
 
 stages:
 - template: azure-pipelines/build-all.yml
+  parameters:
+    isOfficial: false
 
-- stage: Test
-  displayName: Test
+- stage: Test_Linux_Stage
+  displayName: Test Linux
   dependsOn: []
   jobs:
-  - template: azure-pipelines/test.yml
-    parameters:
-      jobName: Linux
-      poolName: NetCore-Public
-      demandsName: 1es-ubuntu-2004-open
+  - job: Test_Linux_Job
+    displayName:  Test Linux
+    strategy:
+      matrix:
+        DotNet6:
+          containerName: mcr.microsoft.com/dotnet/sdk:6.0
+        DotNet7:
+          containerName: mcr.microsoft.com/dotnet/sdk:7.0
+        DotNet8:
+          containerName: mcr.microsoft.com/dotnet/sdk:8.0
+    pool:
+      name: NetCore-Public
+      demands: ImageOverride -equals 1es-ubuntu-2004-open
+    container: $[ variables['containerName'] ]
+    steps:
+    - template: azure-pipelines/test.yml
+      parameters:
+        # Prefer the dotnet from the container.
+        installDotNet: false
+        installAdditionalLinuxDependencies: true
 
-  - template: azure-pipelines/test.yml
-    parameters:
-      jobName: Windows
-      poolName: NetCore-Public
-      demandsName: 1es-windows-2022-open
+- stage: Test_Windows_Stage
+  displayName: Test Windows
+  dependsOn: []
+  jobs:
+  - job: Test_Windows_Job
+    displayName: Test Windows
+    pool:
+      name: NetCore-Public
+      demands: ImageOverride -equals 1es-windows-2022-open
+    steps:
+    - template: azure-pipelines/test.yml
+      parameters:
+        installDotNet: true
 
-  - template: azure-pipelines/test.yml
-    parameters:
-      jobName: MacOS
-      poolName: Azure Pipelines
-      vmImageName: macOS-13
+- stage: Test_MacOS_Stage
+  displayName: Test MacOS
+  dependsOn: []
+  jobs:
+  - job: Test_MacOS_Job
+    displayName: Test MacOS
+    pool:
+      name: Azure Pipelines
+      vmImage: macOS-13
+    steps:
+    - template: azure-pipelines/test.yml
+      parameters:
+        installDotNet: true
 
 - stage: Test_OmniSharp
   displayName: Test OmniSharp

@@ -24,6 +24,9 @@ import {
     nugetTempPath,
     rootPath,
     devKitDependenciesDirectory,
+    xamlToolsDirectory,
+    razorLanguageServerDirectory,
+    razorDevKitDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
@@ -43,7 +46,6 @@ interface VSIXPlatformInfo {
 // Mapping of vsce vsix packaging target to the RID used to build the server executable
 export const platformSpecificPackages: VSIXPlatformInfo[] = [
     { vsceTarget: 'win32-x64', rid: 'win-x64', platformInfo: new PlatformInformation('win32', 'x86_64') },
-    { vsceTarget: 'win32-ia32', rid: 'win-x86', platformInfo: new PlatformInformation('win32', 'x86') },
     { vsceTarget: 'win32-arm64', rid: 'win-arm64', platformInfo: new PlatformInformation('win32', 'arm64') },
     { vsceTarget: 'linux-x64', rid: 'linux-x64', platformInfo: new PlatformInformation('linux', 'x86_64') },
     { vsceTarget: 'linux-arm64', rid: 'linux-arm64', platformInfo: new PlatformInformation('linux', 'arm64') },
@@ -56,6 +58,47 @@ export const platformSpecificPackages: VSIXPlatformInfo[] = [
     { vsceTarget: 'darwin-x64', rid: 'osx-x64', platformInfo: new PlatformInformation('darwin', 'x86_64') },
     { vsceTarget: 'darwin-arm64', rid: 'osx-arm64', platformInfo: new PlatformInformation('darwin', 'arm64') },
 ];
+
+interface NugetPackageInfo {
+    getPackageName: (platformInfo: VSIXPlatformInfo | undefined) => string;
+    packageJsonName: string;
+    getPackageContentPath: (platformInfo: VSIXPlatformInfo | undefined) => string;
+    vsixOutputPath: string;
+}
+
+// Set of NuGet packages that we need to download and install.
+export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
+    roslyn: {
+        getPackageName: (platformInfo) => `Microsoft.CodeAnalysis.LanguageServer.${platformInfo?.rid ?? 'neutral'}`,
+        packageJsonName: 'roslyn',
+        getPackageContentPath: (platformInfo) => path.join('content', 'LanguageServer', platformInfo?.rid ?? 'neutral'),
+        vsixOutputPath: languageServerDirectory,
+    },
+    roslynDevKit: {
+        getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.LanguageServices.DevKit',
+        packageJsonName: 'roslyn',
+        getPackageContentPath: (_platformInfo) => 'content',
+        vsixOutputPath: devKitDependenciesDirectory,
+    },
+    xamlTools: {
+        getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.DesignToolsBase',
+        packageJsonName: 'xamlTools',
+        getPackageContentPath: (_platformInfo) => 'content',
+        vsixOutputPath: xamlToolsDirectory,
+    },
+    razor: {
+        getPackageName: (platformInfo) => `rzls.${platformInfo?.rid ?? 'neutral'}`,
+        packageJsonName: 'razor',
+        getPackageContentPath: (platformInfo) => path.join('content', 'LanguageServer', platformInfo?.rid ?? 'neutral'),
+        vsixOutputPath: razorLanguageServerDirectory,
+    },
+    razorDevKit: {
+        getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.DevKit.Razor',
+        packageJsonName: 'razor',
+        getPackageContentPath: (_platformInfo) => 'content',
+        vsixOutputPath: razorDevKitDirectory,
+    },
+};
 
 const vsixTasks: string[] = [];
 for (const p of platformSpecificPackages) {
@@ -101,11 +144,12 @@ gulp.task('installDependencies', async () => {
     const packageJSON = getPackageJSON();
 
     const platform = await PlatformInformation.GetCurrent();
+    const vsixPlatformInfo = platformSpecificPackages.find(
+        (p) => p.platformInfo.platform === platform.platform && p.platformInfo.architecture === platform.architecture
+    )!;
 
     try {
-        await installRoslyn(packageJSON, platform);
-        await installDebugger(packageJSON, platform);
-        await installRazor(packageJSON, platform);
+        acquireAndInstallAllNugetPackages(vsixPlatformInfo, packageJSON, true);
     } catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
         // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
@@ -114,52 +158,82 @@ gulp.task('installDependencies', async () => {
     }
 });
 
+// Defines a special task to acquire all the platform specific Roslyn packages.
+// All packages need to be saved to the consumption AzDo artifacts feed, for non-platform
+// specific packages this only requires running the installDependencies tasks.  However for Roslyn packages
+// we need to acquire the nuget packages once for each platform to ensure they get saved to the feed.
 gulp.task(
     'updateRoslynVersion',
     // Run the fetch of all packages, and then also installDependencies after
     gulp.series(async () => {
-        const packageJSON = getPackageJSON();
-
-        // Fetch the neutral package that we don't otherwise have in our platform list
-        await acquireRoslyn(packageJSON, undefined, true);
-
-        // And now fetch each platform specific
-        for (const p of platformSpecificPackages) {
-            await acquireRoslyn(packageJSON, p.platformInfo, true);
-        }
+        await updateNugetPackageVersion(allNugetPackages.roslyn);
 
         // Also pull in the Roslyn DevKit dependencies nuget package.
-        await acquireRoslynDevKit(packageJSON, true);
+        await acquireNugetPackage(allNugetPackages.roslynDevKit, undefined, getPackageJSON(), true);
     }, 'installDependencies')
 );
 
-// Install Tasks
-async function installRoslyn(packageJSON: any, platformInfo?: PlatformInformation) {
-    // Install the Roslyn language server bits.
-    const { packagePath, serverPlatform } = await acquireRoslyn(packageJSON, platformInfo, false);
-    await installNuGetPackage(
-        packagePath,
-        path.join('content', 'LanguageServer', serverPlatform),
-        languageServerDirectory
-    );
+// Defines a special task to acquire all the platform specific Razor packages.
+// All packages need to be saved to the consumption AzDo artifacts feed, for non-platform
+// specific packages this only requires running the installDependencies tasks.  However for Razor packages
+// we need to acquire the nuget packages once for each platform to ensure they get saved to the feed.
+gulp.task(
+    'updateRazorVersion',
+    // Run the fetch of all packages, and then also installDependencies after
+    gulp.series(async () => {
+        await updateNugetPackageVersion(allNugetPackages.razor);
 
-    // Install Roslyn DevKit dependencies.
-    const roslynDevKitPackagePath = await acquireRoslynDevKit(packageJSON, false);
-    await installNuGetPackage(roslynDevKitPackagePath, 'content', devKitDependenciesDirectory);
+        // Also pull in the Razor DevKit dependencies nuget package.
+        await acquireNugetPackage(allNugetPackages.razorDevKit, undefined, getPackageJSON(), true);
+    }, 'installDependencies')
+);
+
+async function acquireAndInstallAllNugetPackages(
+    platformInfo: VSIXPlatformInfo | undefined,
+    packageJSON: any,
+    interactive: boolean
+) {
+    for (const key in allNugetPackages) {
+        const nugetPackage = allNugetPackages[key];
+        const packagePath = await acquireNugetPackage(nugetPackage, platformInfo, packageJSON, interactive);
+        await installNuGetPackage(packagePath, nugetPackage, platformInfo);
+    }
 }
 
-async function installNuGetPackage(pathToPackage: string, contentPath: string, outputPath: string) {
+async function acquireNugetPackage(
+    nugetPackageInfo: NugetPackageInfo,
+    platformInfo: VSIXPlatformInfo | undefined,
+    packageJSON: any,
+    interactive: boolean
+) {
+    const packageVersion = packageJSON.defaults[nugetPackageInfo.packageJsonName];
+    const packageName = nugetPackageInfo.getPackageName(platformInfo);
+    const packagePath = await restoreNugetPackage(packageName, packageVersion, interactive);
+    return packagePath;
+}
+
+async function installNuGetPackage(
+    pathToPackage: string,
+    nugetPackageInfo: NugetPackageInfo,
+    platformInfo: VSIXPlatformInfo | undefined
+) {
     // Get the directory containing the content.
-    const contentDirectory = path.join(pathToPackage, contentPath);
+    const pathToContentInNugetPackage = nugetPackageInfo.getPackageContentPath(platformInfo);
+    const contentDirectory = path.join(pathToPackage, pathToContentInNugetPackage);
     if (!fs.existsSync(contentDirectory)) {
-        throw new Error(`Failed to find NuGet package content at ${contentDirectory}`);
+        throw new Error(
+            `Failed to find NuGet package content at ${contentDirectory} for ${nugetPackageInfo.getPackageName(
+                platformInfo
+            )}`
+        );
     }
 
     const numFilesToCopy = fs.readdirSync(contentDirectory).length;
 
     console.log(`Extracting content from ${contentDirectory}`);
 
-    // Copy the files to the language server directory.
+    // Copy the files to the specified output directory.
+    const outputPath = nugetPackageInfo.vsixOutputPath;
     fs.mkdirSync(outputPath);
     fsextra.copySync(contentDirectory, outputPath);
     const numCopiedFiles = fs.readdirSync(outputPath).length;
@@ -168,43 +242,6 @@ async function installNuGetPackage(pathToPackage: string, contentPath: string, o
     if (numFilesToCopy !== numCopiedFiles) {
         throw new Error('Failed to copy all files from NuGet package');
     }
-}
-
-async function acquireRoslyn(
-    packageJSON: any,
-    platformInfo: PlatformInformation | undefined,
-    interactive: boolean
-): Promise<{ packagePath: string; serverPlatform: string }> {
-    const roslynVersion = packageJSON.defaults.roslyn;
-
-    // Find the matching server RID for the current platform.
-    let serverPlatform: string;
-    if (platformInfo === undefined) {
-        serverPlatform = 'neutral';
-    } else {
-        serverPlatform = platformSpecificPackages.find(
-            (p) =>
-                p.platformInfo.platform === platformInfo.platform &&
-                p.platformInfo.architecture === platformInfo.architecture
-        )!.rid;
-    }
-
-    const packagePath = await acquireNugetPackage(
-        `Microsoft.CodeAnalysis.LanguageServer.${serverPlatform}`,
-        roslynVersion,
-        interactive
-    );
-    return { packagePath, serverPlatform };
-}
-
-async function acquireRoslynDevKit(packageJSON: any, interactive: boolean): Promise<string> {
-    const roslynVersion = packageJSON.defaults.roslyn;
-    const packagePath = await acquireNugetPackage(
-        `Microsoft.VisualStudio.LanguageServices.DevKit`,
-        roslynVersion,
-        interactive
-    );
-    return packagePath;
 }
 
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
@@ -244,7 +281,7 @@ async function installPackageJsonDependency(
     }
 }
 
-async function acquireNugetPackage(packageName: string, packageVersion: string, interactive: boolean): Promise<string> {
+async function restoreNugetPackage(packageName: string, packageVersion: string, interactive: boolean): Promise<string> {
     packageName = packageName.toLocaleLowerCase();
     const packageOutputPath = path.join(nugetTempPath, packageName, packageVersion);
     if (fs.existsSync(packageOutputPath)) {
@@ -264,6 +301,7 @@ async function acquireNugetPackage(packageName: string, packageVersion: string, 
         dotnetArgs.push('--interactive');
     }
 
+    console.log(`Restore args: dotnet ${dotnetArgs.join(' ')}`);
     const process = cp.spawn('dotnet', dotnetArgs, { stdio: 'inherit' });
     await new Promise((resolve) => {
         process.on('exit', (exitCode, _) => {
@@ -311,13 +349,7 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
         if (vsixPlatform === undefined) {
             await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
         } else {
-            await buildVsix(
-                packageJSON,
-                packedVsixOutputRoot,
-                prerelease,
-                vsixPlatform.vsceTarget,
-                vsixPlatform.platformInfo
-            );
+            await buildVsix(packageJSON, packedVsixOutputRoot, prerelease, vsixPlatform);
         }
     } catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
@@ -331,32 +363,24 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
 }
 
 async function cleanAsync() {
-    await del([
-        'install.*',
-        '.omnisharp*',
-        '.debugger',
-        '.razor',
-        languageServerDirectory,
-        devKitDependenciesDirectory,
-    ]);
-}
-
-async function buildVsix(
-    packageJSON: any,
-    outputFolder: string,
-    prerelease: boolean,
-    vsceTarget?: string,
-    platformInfo?: PlatformInformation
-) {
-    await installRoslyn(packageJSON, platformInfo);
-
-    if (platformInfo != null) {
-        await installRazor(packageJSON, platformInfo);
-        await installDebugger(packageJSON, platformInfo);
+    const directoriesToDelete = ['install.*', '.omnisharp*', '.debugger', '.razor'];
+    for (const key in allNugetPackages) {
+        directoriesToDelete.push(allNugetPackages[key].vsixOutputPath);
     }
 
-    const packageFileName = getPackageName(packageJSON, vsceTarget);
-    await createPackageAsync(outputFolder, prerelease, packageFileName, vsceTarget);
+    await del(directoriesToDelete);
+}
+
+async function buildVsix(packageJSON: any, outputFolder: string, prerelease: boolean, platformInfo?: VSIXPlatformInfo) {
+    await acquireAndInstallAllNugetPackages(platformInfo, packageJSON, false);
+
+    if (platformInfo != null) {
+        await installRazor(packageJSON, platformInfo.platformInfo);
+        await installDebugger(packageJSON, platformInfo.platformInfo);
+    }
+
+    const packageFileName = getPackageName(packageJSON, platformInfo?.vsceTarget);
+    await createPackageAsync(outputFolder, prerelease, packageFileName, platformInfo?.vsceTarget);
 }
 
 function getPackageName(packageJSON: any, vscodePlatformId?: string) {
@@ -367,5 +391,17 @@ function getPackageName(packageJSON: any, vscodePlatformId?: string) {
         return `${name}-${vscodePlatformId}-${version}.vsix`;
     } else {
         return `${name}-${version}.vsix`;
+    }
+}
+
+async function updateNugetPackageVersion(packageInfo: NugetPackageInfo) {
+    const packageJSON = getPackageJSON();
+
+    // Fetch the neutral package that we don't otherwise have in our platform list
+    await acquireNugetPackage(packageInfo, undefined, packageJSON, true);
+
+    // And now fetch each platform specific
+    for (const p of platformSpecificPackages) {
+        await acquireNugetPackage(packageInfo, p, packageJSON, true);
     }
 }

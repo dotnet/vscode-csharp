@@ -24,7 +24,6 @@ import { PlatformInformation } from './shared/platform';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
 import { TelemetryObserver } from './observers/telemetryObserver';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { addJSONProviders } from './features/json/jsonContributions';
 import { ProjectStatusBarObserver } from './observers/projectStatusBarObserver';
 import { vscodeNetworkSettingsProvider } from './networkSettings';
 import { ErrorMessageObserver } from './observers/errorMessageObserver';
@@ -55,10 +54,10 @@ import { registerOmnisharpOptionChanges } from './omnisharp/omnisharpOptionChang
 import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents';
 import { ServerStateChange } from './lsptoolshost/serverStateChange';
 import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
-import { RazorTelemetryDownloader } from './razor/razorTelemetryDownloader';
-import { commonOptions, omnisharpOptions, razorOptions } from './shared/options';
+import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from './shared/options';
 import { BuildResultDiagnostics } from './lsptoolshost/services/buildResultReporterService';
 import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
+import { getComponentFolder } from './lsptoolshost/builtInComponents';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -130,21 +129,6 @@ export async function activate(
     let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
 
     if (!useOmnisharpServer) {
-        // Download Razor server telemetry bits if DevKit is installed.
-        if (csharpDevkitExtension) {
-            const razorTelemetryDownloader = new RazorTelemetryDownloader(
-                networkSettingsProvider,
-                eventStream,
-                context.extension.packageJSON,
-                platformInfo,
-                context.extension.extensionPath
-            );
-
-            await razorTelemetryDownloader.DownloadAndInstallRazorTelemetry(
-                context.extension.packageJSON.defaults.razorTelemetry
-            );
-        }
-
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
         // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
         //
@@ -281,8 +265,6 @@ export async function activate(
 
         context.subscriptions.push(registerOmnisharpOptionChanges(optionStream));
 
-        // register JSON completion & hover providers for project.json
-        context.subscriptions.push(addJSONProviders());
         context.subscriptions.push(
             vscode.window.onDidChangeActiveTextEditor(() => {
                 eventStream.post(new ActiveTextEditorChanged());
@@ -367,6 +349,9 @@ export async function activate(
                 sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
                 languageServerEvents: roslynLanguageServerEvents,
             },
+            getComponentFolder: (componentName) => {
+                return getComponentFolder(componentName, languageServerOptions);
+            },
         };
     } else {
         return {
@@ -447,9 +432,7 @@ function profferBrokeredServices(
 
 function isSupportedPlatform(platform: PlatformInformation): boolean {
     if (platform.isWindows()) {
-        return (
-            platform.architecture === 'x86' || platform.architecture === 'x86_64' || platform.architecture === 'arm64'
-        );
+        return platform.architecture === 'x86_64' || platform.architecture === 'arm64';
     }
 
     if (platform.isMacOS()) {
