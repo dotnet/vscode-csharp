@@ -259,6 +259,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('true');
             args.push('--UpdateBuffersForClosedDocuments');
             args.push('true');
+            args.push('--SingleServerCompletionSupport');
+            args.push('true');
 
             if (options.forceRuntimeCodeGeneration) {
                 args.push('--ForceRuntimeCodeGeneration');
