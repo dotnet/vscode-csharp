@@ -4,6 +4,22 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Razor to 9.0.0-preview.24327.6 (PR: [#7273](https://github.com/dotnet/vscode-csharp/pull/7273))
+  * Use a named pipe to communicate projectinfo in vscode (PR: [#10521](https://ryzngard@github.com/dotnet/razor/pull/10521))
+  * Reduce allocations in Razor's DirectiveVisitor (PR: [10521](https://ryzngard@github.com/dotnet/razor/pull/10521))
+* Update Roslyn to 4.12.0-1.24328.6 (PR: [#7273](https://github.com/dotnet/vscode-csharp/pull/7273))
+  * Consume new Razor EA (PR: [#74134](https://github.com/dotnet/roslyn/pull/74134))
+  * Report diagnostic for field and value in property accessors when used as primary expressions only (PR: [#74164](https://github.com/dotnet/roslyn/pull/74164))
+  * Ensure an empty run result doesn't throw when generators are present (PR: [#74034](https://github.com/dotnet/roslyn/pull/74034))
+  * Support navigating to an interceptor location when on an intercepted method call (PR: [#74006](https://github.com/dotnet/roslyn/pull/74006))
+  * Add type hints for collection expressions (PR: [#74051](https://github.com/dotnet/roslyn/pull/74051))
+  * Ensure source generated documents are up-to-date before analyzing EnC changes (PR: [#73989](https://github.com/dotnet/roslyn/pull/73989))
+  * Support goto-def taking you from an interceptor method to the location being intercepted (PR: [#73992](https://github.com/dotnet/roslyn/pull/73992))
+  * Various performance fixes
+    * Reduce allocations in AbstractProjectExtensionProvider.FilterExtensions (PR [#74112](https://github.com/dotnet/roslyn/pull/74112))
+    * Avoid re-running all codeaction requests at low priority (PR: [#74083](https://github.com/dotnet/roslyn/pull/74083))
+    * Reduce time spent in ConflictResolver.Session.GetNodesOrTokensToCheckForConflicts (PR: [#74101](https://github.com/dotnet/roslyn/pull/74101))
+    * Avoid allocations in AbstractSyntaxIndex<>.GetIndexAsync( PR: [#74075](https://github.com/dotnet/roslyn/pull/74075))
 * Improve reliability of documentation comment auto insertion (PR: [#7230](https://github.com/dotnet/vscode-csharp/pull/7230))
 * Update Roslyn to 4.11.0-3.24313.9 (PR: [#7234](https://github.com/dotnet/vscode-csharp/pull/7234))
   * Fix issue serializing exceptions (PR: [#73851](https://github.com/dotnet/roslyn/pull/73851))
