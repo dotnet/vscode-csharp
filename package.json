@@ -1462,16 +1462,21 @@
             "default": null,
             "description": "%configuration.dotnet.server.crashDumpPath%"
           },
+          "dotnet.server.suppressLspErrorToasts": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.server.suppressLspErrorToasts%"
+          },
+          "dotnet.server.useServerGC": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.server.useServerGC%"
+          },
           "dotnet.enableXamlTools": {
             "scope": "machine-overridable",
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.enableXamlTools%"
-          },
-          "dotnet.server.suppressLspErrorToasts": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.server.suppressLspErrorToasts%"
           },
           "dotnet.projects.binaryLogPath": {
             "scope": "machine-overridable",

@@ -80,6 +80,7 @@ export interface LanguageServerOptions {
     readonly componentPaths: { [key: string]: string } | null;
     readonly enableXamlTools: boolean;
     readonly suppressLspErrorToasts: boolean;
+    readonly useServerGC: boolean;
 }
 
 export interface RazorOptions {
@@ -410,6 +411,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     public get suppressLspErrorToasts() {
         return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
     }
+    public get useServerGC() {
+        return readOption<boolean>('dotnet.server.useServerGC', true);
+    }
 }
 
 class RazorOptionsImpl implements RazorOptions {
@@ -508,4 +512,5 @@ export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof Languag
     'preferCSharpExtension',
     'componentPaths',
     'enableXamlTools',
+    'useServerGC',
 ];
