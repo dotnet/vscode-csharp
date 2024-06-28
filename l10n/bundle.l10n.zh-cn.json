@@ -41,7 +41,6 @@
   "Do not load any": "请勿加载任何",
   "Does not contain .NET Core projects.": "不包含 .NET Core 项目。",
   "Don't Ask Again": "不再询问",
-  "Downloading Razor Telemetry Package": "正在下载 Razor 遥测包",
   "Enable launching a web browser when ASP.NET Core starts. For more information: {0}": "启用在启动 ASP.NET Core 时启动 Web 浏览器。有关详细信息: {0}",
   "Error Message: ": "错误消息: ",
   "Expand": "展开",

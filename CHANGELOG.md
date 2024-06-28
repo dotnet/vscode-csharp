@@ -4,6 +4,26 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Razor to 9.0.0-preview.24325.5 (PR: [#7277](https://github.com/dotnet/vscode-csharp/pull/7277))
+  * Fix completion commit characters (PR: [#10533](https://github.com/dotnet/razor/pull/10533))
+  * Add back roll foward to rzls (PR: [#10530](https://github.com/dotnet/razor/pull/10530))
+  * Don't show misc files project in hover info (PR: [#10503](https://github.com/dotnet/razor/pull/10503))
+  * Fold C# statement keyword blocks (PR: [#10496](https://github.com/dotnet/razor/pull/10496))
+* Update Roslyn to 4.11.0-3.24320.2 (PR: [#7257](https://github.com/dotnet/vscode-csharp/pull/7257))
+  * Add brokered service for Hot Reload in VS Code: GenericHotReloadAgentManagerService (PR: [#74029](https://github.com/dotnet/roslyn/pull/74029))
+  * Bump razor to include fix for project serialization (PR: [#74021](https://github.com/dotnet/roslyn/pull/74021))
+  * Fix find refs doing too much work lookign for types that had an alias to them in one file. (PR: [#74015](https://github.com/dotnet/roslyn/pull/74015))
+  * Ensure source generated documents are up-to-date before analyzing EnC changes (PR: [#73989](https://github.com/dotnet/roslyn/pull/73989))
+  * Fix project configuration telemetry for legacy csproj projects (PR: [#73995](https://github.com/dotnet/roslyn/pull/73995))
+  * Throw when there is a syntax version mismatch in codelens (PR: [#73902](https://github.com/dotnet/roslyn/pull/73902))
+* Remove runtime download of Razor telemetry pkg (PR: [#7236](https://github.com/dotnet/vscode-csharp/pull/7236))
+* Remove legacy project.json support (PR: [#7244](https://github.com/dotnet/vscode-csharp/pull/7244))
+* Update xamlTools to 17.11.35021.135
+  * Trigger full page MAUI XAML Hot Reload when clicking the Hot Reload icon, matching VS Windows
+  * Fix "Ambiguous reference" in HotReloadMobileTapInitializer (Issue: [#1204](https://github.com/microsoft/vscode-dotnettools/issues/1204))
+  * Give descriptive error if using Hot Reload with Android on pre .NET8, saying to update .NET
+
+# 2.35.15
 * Improve reliability of documentation comment auto insertion (PR: [#7230](https://github.com/dotnet/vscode-csharp/pull/7230))
 * Update Roslyn to 4.11.0-3.24313.9 (PR: [#7234](https://github.com/dotnet/vscode-csharp/pull/7234))
   * Fix issue serializing exceptions (PR: [#73851](https://github.com/dotnet/roslyn/pull/73851))
