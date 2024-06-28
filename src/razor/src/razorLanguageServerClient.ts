@@ -220,7 +220,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
     public async connectNamedPipe(pipeName: string): Promise<void> {
         await this.startHandle;
-        await this.sendNotification('razor/connect', { pipeName: pipeName });
+        await this.sendNotification('razor/namedPipeConnect', { pipeName: pipeName });
     }
 
     private setupLanguageServer() {
