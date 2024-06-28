@@ -31,9 +31,8 @@ export const disabledSchemes = new Set([vsls]);
 
 /**
  * Returns a list of potential targets on which OmniSharp can be launched.
- * This includes `project.json` files, `*.sln` and `*.slnf` files (if any `*.csproj` files are found), and the root folder
- * (if it doesn't contain a `project.json` file, but `project.json` files exist). In addition, the root folder
- * is included if there are any `*.csproj` files present, but a `*.sln` or `*.slnf` file is not found.
+ * This includes `*.sln` and `*.slnf` files (if any `*.csproj` files are found), and the root folder
+ * In addition, the root folder is included if there are any `*.csproj` files present, but a `*.sln` or `*.slnf` file is not found.
  */
 export async function findLaunchTargets(): Promise<LaunchTarget[]> {
     if (!vscode.workspace.workspaceFolders) {
@@ -41,7 +40,7 @@ export async function findLaunchTargets(): Promise<LaunchTarget[]> {
     }
 
     const projectFiles = await vscode.workspace.findFiles(
-        /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/project.json,**/*.csx,**/*.cake}',
+        /*include*/ '{**/*.sln,**/*.slnf,**/*.csproj,**/*.csx,**/*.cake}',
         /*exclude*/ `{${omnisharpOptions.projectFilesExcludePattern}}`
     );
 
@@ -65,8 +64,6 @@ export function resourcesToLaunchTargets(
 ): LaunchTarget[] {
     // The list of launch targets is calculated like so:
     //   * If there are .csproj files, .sln and .slnf files are considered as launch targets.
-    //   * Any project.json file is considered a launch target.
-    //   * If there is no project.json file in a workspace folder, the workspace folder as added as a launch target.
     //   * Additionally, if there are .csproj files, but no .sln or .slnf file, the root is added as a launch target.
     //
     // TODO:
@@ -124,7 +121,6 @@ export function resourcesAndFolderMapToLaunchTargets(
     const otherTargets: LaunchTarget[] = [];
 
     workspaceFolderToUriMap.forEach((resources, folderIndex) => {
-        let hasProjectJsonAtRoot = false;
         let hasCSX = false;
         let hasCake = false;
         let hasCs = false;
@@ -137,24 +133,11 @@ export function resourcesAndFolderMapToLaunchTargets(
             if (isSolution(resource)) {
                 solutionTargets.push(createLaunchTargetForSolution(resource));
             }
-            // Add project.json files
-            else if (isProjectJson(resource)) {
-                const dirname = path.dirname(resource.fsPath);
-                hasProjectJsonAtRoot = hasProjectJsonAtRoot || dirname === folderPath;
-                projectJsonTargets.push({
-                    label: path.basename(resource.fsPath),
-                    description: vscode.workspace.asRelativePath(dirname),
-                    target: dirname,
-                    directory: dirname,
-                    workspaceKind: LaunchTargetKind.ProjectJson,
-                });
-            }
             // Add .csproj files
             else if (isCSharpProject(resource)) {
                 const dirname = path.dirname(resource.fsPath);
                 // OmniSharp doesn't support opening a project directly, however, it will open a project if
-                // we pass a folder path which contains a single .csproj. This is similar to how project.json
-                // is supported.
+                // we pass a folder path which contains a single .csproj.
                 projectTargets.push({
                     label: path.basename(resource.fsPath),
                     description: vscode.workspace.asRelativePath(dirname),
@@ -176,12 +159,10 @@ export function resourcesAndFolderMapToLaunchTargets(
 
         const hasCsProjFiles = projectTargets.length > 0;
         const hasSlnFile = solutionTargets.length > 0;
-        const hasProjectJson = projectJsonTargets.length > 0;
 
         // Add the root folder under the following circumstances:
         // * If there are .csproj files, but no .sln or .slnf file, and none in the root.
-        // * If there are project.json files, but none in the root.
-        if ((hasCsProjFiles && !hasSlnFile) || (hasProjectJson && !hasProjectJsonAtRoot)) {
+        if (hasCsProjFiles && !hasSlnFile) {
             projectRootTargets.push({
                 label: path.basename(folderPath),
                 description: 'All contained projects',
@@ -213,7 +194,7 @@ export function resourcesAndFolderMapToLaunchTargets(
             });
         }
 
-        if (hasCs && !hasSlnFile && !hasCsProjFiles && !hasProjectJson && !hasProjectJsonAtRoot) {
+        if (hasCs && !hasSlnFile && !hasCsProjFiles) {
             otherTargets.push({
                 label: path.basename(folderPath),
                 description: '',
@@ -244,10 +225,6 @@ function isCSharpProject(resource: vscode.Uri): boolean {
 
 function isSolution(resource: vscode.Uri): boolean {
     return /\.slnf?$/i.test(resource.fsPath);
-}
-
-function isProjectJson(resource: vscode.Uri): boolean {
-    return /\project.json$/i.test(resource.fsPath);
 }
 
 function isCsx(resource: vscode.Uri): boolean {

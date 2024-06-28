@@ -26,6 +26,7 @@ import {
     devKitDependenciesDirectory,
     xamlToolsDirectory,
     razorLanguageServerDirectory,
+    razorDevKitDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync } from '../tasks/vsceTasks';
@@ -90,6 +91,12 @@ export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
         packageJsonName: 'razor',
         getPackageContentPath: (platformInfo) => path.join('content', 'LanguageServer', platformInfo?.rid ?? 'neutral'),
         vsixOutputPath: razorLanguageServerDirectory,
+    },
+    razorDevKit: {
+        getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.DevKit.Razor',
+        packageJsonName: 'razor',
+        getPackageContentPath: (_platformInfo) => 'content',
+        vsixOutputPath: razorDevKitDirectory,
     },
 };
 
@@ -175,6 +182,9 @@ gulp.task(
     // Run the fetch of all packages, and then also installDependencies after
     gulp.series(async () => {
         await updateNugetPackageVersion(allNugetPackages.razor);
+
+        // Also pull in the Razor DevKit dependencies nuget package.
+        await acquireNugetPackage(allNugetPackages.razorDevKit, undefined, getPackageJSON(), true);
     }, 'installDependencies')
 );
 

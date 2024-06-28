@@ -199,7 +199,7 @@ export default class TestManager extends AbstractProvider {
         if (projectInfo.MsBuildProject) {
             targetFrameworkVersion = projectInfo.MsBuildProject.TargetFramework;
         } else {
-            throw new Error('Expected project.json or .csproj project.');
+            throw new Error('Expected .csproj project.');
         }
 
         return targetFrameworkVersion;
@@ -480,9 +480,6 @@ export default class TestManager extends AbstractProvider {
     }
 
     public async debugDotnetTest(testMethod: string, fileName: string, testFrameworkName: string, noBuild = false) {
-        // We support to styles of 'dotnet test' for debugging: The legacy 'project.json' testing, and the newer csproj support
-        // using VS Test. These require a different level of communication.
-
         this._eventStream.post(new DotNetTestDebugStart(testMethod));
 
         const { debugEventListener, targetFrameworkVersion } = await this._recordDebugAndGetDebugValues(
