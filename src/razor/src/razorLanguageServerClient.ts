@@ -220,6 +220,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
     public async connectNamedPipe(pipeName: string): Promise<void> {
         await this.startHandle;
+
+        // Params must match https://github.com/dotnet/razor/blob/92005deac54f3e9d1a4d1d8f04389379cccfa354/src/Razor/src/Microsoft.CodeAnalysis.Razor.Workspaces/Protocol/RazorNamedPipeConnectParams.cs#L9
         await this.sendNotification('razor/namedPipeConnect', { pipeName: pipeName });
     }
 

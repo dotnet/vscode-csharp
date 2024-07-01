@@ -134,6 +134,7 @@ export function registerRazorCommands(context: vscode.ExtensionContext, language
     // us when they need us to initialize the Razor things.
     context.subscriptions.push(
         vscode.commands.registerCommand(razorInitializeCommand, async (pipeName) => {
+            // params object must match https://github.com/dotnet/roslyn/blob/325ec8d93f9a28701fdcacffb175d2b01c3ac682/src/LanguageServer/Microsoft.CodeAnalysis.LanguageServer/HostWorkspace/RazorInitializeHandler.cs#L37
             await languageServer.sendNotification('razor/initialize', { pipeName: pipeName });
         })
     );
