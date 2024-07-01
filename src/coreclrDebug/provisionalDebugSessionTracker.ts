@@ -88,12 +88,12 @@ export class ProvisionalDebugSessionTracker {
         this._onDidStartDebugSession?.dispose();
         this._onDidTerminateDebugSession?.dispose();
     }
-    getDebugSessionByName(name: string): vscode.DebugSession | undefined {
+    getDebugSessionByType(type: string): vscode.DebugSession | undefined {
         const sessions = this._sessions;
         if (sessions != undefined) {
             const sessionsIt = sessions.entries();
             for (const session of sessionsIt) {
-                if (session[0].type == name) {
+                if (session[0].type == type) {
                     return session[0];
                 }
             }
