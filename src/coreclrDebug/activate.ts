@@ -111,19 +111,23 @@ async function checkIsValidArchitecture(
 ): Promise<boolean> {
     if (platformInformation) {
         if (platformInformation.isMacOS()) {
-            if (platformInformation.architecture === 'arm64') {
-                return true;
-            }
-
-            // Validate we are on compatiable macOS version if we are x86_64
-            if (
-                platformInformation.architecture !== 'x86_64' ||
-                (platformInformation.architecture === 'x86_64' && !CoreClrDebugUtil.isMacOSSupported())
-            ) {
+            if (platformInformation.architecture !== 'arm64' && platformInformation.architecture !== 'x86_64') {
                 eventStream.post(
                     new DebuggerPrerequisiteFailure(
                         vscode.l10n.t(
-                            '[ERROR] The debugger cannot be installed. The debugger requires macOS 10.12 (Sierra) or newer.'
+                            "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'",
+                            platformInformation.architecture
+                        )
+                    )
+                );
+                return false;
+            }
+
+            if (!CoreClrDebugUtil.isMacOSSupported()) {
+                eventStream.post(
+                    new DebuggerPrerequisiteFailure(
+                        vscode.l10n.t(
+                            '[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.'
                         )
                     )
                 );
