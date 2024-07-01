@@ -22,6 +22,7 @@ import { getCSharpDevKit } from '../../../utils/getCSharpDevKit';
 import Descriptors from '../../../lsptoolshost/services/descriptors';
 import { CancellationToken } from 'vscode';
 import { IDisposable, IObserver } from '@microsoft/servicehub-framework';
+import { EventEmitter } from 'events';
 
 export interface Project {
     Id: {
@@ -324,30 +325,31 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             '--OwnerPid',
             `${process.pid}`,
         ];
-        const spawnedProxy = cp.spawn(dotnetPath, spawnedProxyArgs);
-
-        try {
-            let chunksProcessed = 0;
-            let proxyICorDebugPort = -1;
-            let proxyBrowserPort = -1;
-            for await (const output of spawnedProxy.stdout) {
-                // If we haven't found the URL in the first ten chunks processed
-                // then bail out.
-                if (chunksProcessed++ > 10) {
-                    return ['', -1, -1];
+        const cpOptions: cp.SpawnOptionsWithoutStdio = {
+            detached: true,
+            windowsHide: true,
+        };
+        let chunksProcessed = 0;
+        let proxyICorDebugPort = -1;
+        let proxyBrowserPort = -1;
+        let newUri = '';
+        const spawnedProxy = cp.spawn(dotnetPath, spawnedProxyArgs, cpOptions);
+        const eventEmmiter = new EventEmitter();
+        function handleData(stream: NodeJS.ReadableStream) {
+            stream.on('data', (chunk) => {
+                BlazorDebugConfigurationProvider.vsWebAssemblyBridgeOutputChannel.appendLine(chunk.toString());
+                if (newUri != '') {
+                    return;
                 }
-                BlazorDebugConfigurationProvider.vsWebAssemblyBridgeOutputChannel.appendLine(output);
-                // The debug proxy server outputs the port it is listening on in the
-                // standard output of the launched application. We need to pass this URL
-                // back to the debugger so we extract the URL from stdout using a regex.
-                // The debug proxy will not exit until killed via the `killDebugProxy`
-                // method so parsing stdout is necessary to extract the URL.
+                if (chunksProcessed++ > 10) {
+                    eventEmmiter.emit('vsWebAssemblyReady');
+                }
                 const matchExprProxyUrl = 'Now listening on: (?<url>.*)';
                 const matchExprICorDebugPort = 'Listening iCorDebug on: (?<port>.*)';
                 const matchExprBrowserPort = 'Waiting for browser on: (?<port>.*)';
-                const foundProxyUrl = `${output}`.match(matchExprProxyUrl);
-                const foundICorDebugPort = `${output}`.match(matchExprICorDebugPort);
-                const foundBrowserPort = `${output}`.match(matchExprBrowserPort);
+                const foundProxyUrl = `${chunk}`.match(matchExprProxyUrl);
+                const foundICorDebugPort = `${chunk}`.match(matchExprICorDebugPort);
+                const foundBrowserPort = `${chunk}`.match(matchExprBrowserPort);
                 const proxyUrlString = foundProxyUrl?.groups?.url;
                 if (foundICorDebugPort?.groups?.port != undefined) {
                     proxyICorDebugPort = Number(foundICorDebugPort?.groups?.port);
@@ -365,27 +367,21 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
                     }
                     BlazorDebugConfigurationProvider.pidsByUrl.set(urlStr, spawnedProxy.pid);
                     const url = new URL(proxyUrlString);
-                    return [
-                        `${url.protocol.replace(`http`, `ws`)}//${url.host}{browserInspectUriPath}`,
-                        proxyICorDebugPort,
-                        proxyBrowserPort,
-                    ];
+                    newUri = `${url.protocol.replace(`http`, `ws`)}//${url.host}{browserInspectUriPath}`;
+                    eventEmmiter.emit('vsWebAssemblyReady');
                 }
-            }
+            });
 
-            for await (const error of spawnedProxy.stderr) {
-                BlazorDebugConfigurationProvider.vsWebAssemblyBridgeOutputChannel.appendLine(`ERROR: ${error}`);
-            }
-        } catch (error: any) {
-            if (spawnedProxy.pid) {
-                BlazorDebugConfigurationProvider.vsWebAssemblyBridgeOutputChannel.appendLine(
-                    `Error occured while spawning debug proxy. Terminating debug proxy server.`
-                );
-                process.kill(spawnedProxy.pid);
-            }
-            throw error;
+            stream.on('err', (err) => {
+                BlazorDebugConfigurationProvider.vsWebAssemblyBridgeOutputChannel.appendLine(err.toString());
+                eventEmmiter.emit('vsWebAssemblyReady');
+            });
         }
-        return ['', -1, -1];
+
+        handleData(spawnedProxy.stdout);
+        handleData(spawnedProxy.stderr);
+        await new Promise((resolve) => eventEmmiter.once('vsWebAssemblyReady', resolve));
+        return [newUri, proxyICorDebugPort, proxyBrowserPort];
     }
 
     private static async isNet9OrNewer(): Promise<boolean> {
@@ -419,17 +415,14 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             if (proxy) {
                 const result = await proxy.ExecuteQueryAsync(queryString);
                 const queryResult = JSON.parse(result) as QueryResult<Project>;
+                const pattern = /net(\d+\.\d+)/;
                 if (queryResult && queryResult.Items) {
-                    isNet9OrNewer = true;
+                    isNet9OrNewer = false;
                     queryResult.Items.forEach((project) => {
                         project.ActiveConfigurations?.forEach((activeConfig) => {
-                            if (
-                                activeConfig.BuildProperties[0].Value == 'net5.0' ||
-                                activeConfig.BuildProperties[0].Value == 'net6.0' ||
-                                activeConfig.BuildProperties[0].Value == 'net7.0' ||
-                                activeConfig.BuildProperties[0].Value == 'net8.0'
-                            ) {
-                                isNet9OrNewer = false;
+                            const match = activeConfig.BuildProperties[0].Value.match(pattern);
+                            if (match && match[1] >= 9) {
+                                isNet9OrNewer = true;
                             }
                         });
                     });
@@ -446,6 +439,9 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
     private static async useVSDbg(): Promise<boolean> {
         const wasmConfig = vscode.workspace.getConfiguration('csharp');
         const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
+        if (!useVSDbg) {
+            return false;
+        }
         const existWebAssemblyWebBridge = existsSync(BlazorDebugConfigurationProvider.getWebAssemblyWebBridgePath());
         const csharpDevKitExtension = getCSharpDevKit();
         let isNet9OrNewer = true;
