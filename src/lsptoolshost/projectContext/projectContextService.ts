@@ -15,12 +15,14 @@ import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../utils/uriConverter';
 import { LanguageServerEvents, ServerState } from '../server/languageServerEvents';
 import { RoslynLanguageClient } from '../server/roslynLanguageClient';
+import { CancellationToken } from 'vscode-languageclient/node';
 
 export interface ProjectContextChangeEvent {
     languageId: string;
     uri: vscode.Uri;
     context: VSProjectContext;
     isVerified: boolean;
+    hasAdditionalContexts: boolean;
 }
 
 // We want to verify the project context is in a stable state before warning the user about miscellaneous files.
@@ -30,6 +32,7 @@ let _verifyTimeout: NodeJS.Timeout | undefined;
 let _documentUriToVerify: vscode.Uri | undefined;
 
 export class ProjectContextService {
+    private readonly _projectContextMap: Map<string, VSProjectContext> = new Map();
     private readonly _contextChangeEmitter = new vscode.EventEmitter<ProjectContextChangeEvent>();
     private _source = new vscode.CancellationTokenSource();
     private readonly _emptyProjectContext: VSProjectContext = {
@@ -64,6 +67,53 @@ export class ProjectContextService {
         return this._contextChangeEmitter.event;
     }
 
+    public async getDocumentContext(uri: string | vscode.Uri): Promise<VSProjectContext | undefined>;
+    public async getDocumentContext(
+        uri: string | vscode.Uri,
+        contextList?: VSProjectContextList | undefined
+    ): Promise<VSProjectContext>;
+    public async getDocumentContext(
+        uri: string | vscode.Uri,
+        contextList?: VSProjectContextList | undefined
+    ): Promise<VSProjectContext | undefined> {
+        // To find the current context for the specified document we need to know the list
+        // of contexts that it is a part of.
+        contextList ??= await this.getProjectContexts(uri, CancellationToken.None);
+        if (contextList === undefined) {
+            return undefined;
+        }
+
+        const key = this.getContextKey(contextList);
+
+        // If this list of contexts hasn't been queried before that set the context to the default.
+        if (!this._projectContextMap.has(key)) {
+            this._projectContextMap.set(key, contextList._vs_projectContexts[contextList._vs_defaultIndex]);
+        }
+
+        return this._projectContextMap.get(key);
+    }
+
+    private getContextKey(contextList: VSProjectContextList): string {
+        return contextList._vs_projectContexts
+            .map((context) => context._vs_label)
+            .sort()
+            .join(';');
+    }
+
+    public setActiveFileContext(contextList: VSProjectContextList, context: VSProjectContext): void {
+        const textEditor = vscode.window.activeTextEditor;
+        const uri = textEditor?.document?.uri;
+        const languageId = textEditor?.document?.languageId;
+        if (!uri || languageId !== 'csharp') {
+            return;
+        }
+
+        const key = this.getContextKey(contextList);
+        this._projectContextMap.set(key, context);
+
+        this._contextChangeEmitter.fire({ languageId, uri, context, isVerified: true, hasAdditionalContexts: true });
+    }
+
     public async refresh() {
         const textEditor = vscode.window.activeTextEditor;
         const languageId = textEditor?.document?.languageId;
@@ -90,30 +140,43 @@ export class ProjectContextService {
         }
 
         if (!this._languageServer.isRunning()) {
-            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext, isVerified: false });
+            this._contextChangeEmitter.fire({
+                languageId,
+                uri,
+                context: this._emptyProjectContext,
+                isVerified: false,
+                hasAdditionalContexts: false,
+            });
             return;
         }
 
         const contextList = await this.getProjectContexts(uri, this._source.token);
         if (!contextList) {
-            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext, isVerified: false });
+            this._contextChangeEmitter.fire({
+                languageId,
+                uri,
+                context: this._emptyProjectContext,
+                isVerified: false,
+                hasAdditionalContexts: false,
+            });
             return;
         }
 
         const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
-        this._contextChangeEmitter.fire({ languageId, uri, context, isVerified: false });
+        const hasAdditionalContexts = contextList._vs_projectContexts.length > 1;
+        this._contextChangeEmitter.fire({ languageId, uri, context, isVerified: false, hasAdditionalContexts });
 
         // If we do not recieve a refresh even within the timout period, send a verified event.
         _verifyTimeout = setTimeout(() => {
-            this._contextChangeEmitter.fire({ languageId, uri, context, isVerified: true });
+            this._contextChangeEmitter.fire({ languageId, uri, context, isVerified: true, hasAdditionalContexts });
         }, VerificationDelay);
     }
 
-    private async getProjectContexts(
-        uri: vscode.Uri,
+    public async getProjectContexts(
+        uri: string | vscode.Uri,
         token: vscode.CancellationToken
     ): Promise<VSProjectContextList | undefined> {
-        const uriString = UriConverter.serialize(uri);
+        const uriString = uri instanceof vscode.Uri ? UriConverter.serialize(uri) : uri;
         const textDocument = TextDocumentIdentifier.create(uriString);
 
         try {

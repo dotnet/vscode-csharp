@@ -10,6 +10,8 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { registerWorkspaceCommands } from './workspace/workspaceCommands';
 import { registerServerCommands } from './server/serverCommands';
+import { CancellationToken } from 'vscode-languageclient/node';
+import { VSProjectContext } from './server/roslynProtocol';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -18,7 +20,7 @@ export function registerCommands(
     outputChannel: vscode.LogOutputChannel,
     csharpTraceChannel: vscode.LogOutputChannel
 ) {
-    registerExtensionCommands(context, hostExecutableResolver, outputChannel, csharpTraceChannel);
+    registerExtensionCommands(context, languageServer, hostExecutableResolver, outputChannel, csharpTraceChannel);
     registerWorkspaceCommands(context, languageServer);
     registerServerCommands(context, languageServer, outputChannel);
 }
@@ -28,10 +30,16 @@ export function registerCommands(
  */
 function registerExtensionCommands(
     context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: vscode.LogOutputChannel,
     csharpTraceChannel: vscode.LogOutputChannel
 ) {
+    context.subscriptions.push(
+        vscode.commands.registerCommand('csharp.changeProjectContext', async (options) =>
+            changeProjectContext(languageServer, options)
+        )
+    );
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
@@ -46,4 +54,48 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
+}
+async function changeProjectContext(
+    languageServer: RoslynLanguageServer,
+    options: ChangeProjectContextOptions | undefined
+): Promise<VSProjectContext | undefined> {
+    const editor = vscode.window.activeTextEditor;
+    if (editor === undefined) {
+        return;
+    }
+    const contextList = await languageServer._projectContextService.getProjectContexts(
+        editor.document.uri,
+        CancellationToken.None
+    );
+    if (contextList === undefined) {
+        return;
+    }
+
+    let context: VSProjectContext | undefined = undefined;
+
+    if (options !== undefined) {
+        const contextLabel = `${options.projectName} (${options.tfm})`;
+        context = contextList._vs_projectContexts.find((context) => context._vs_label === contextLabel);
+    } else {
+        const items = contextList._vs_projectContexts.map((context) => {
+            return { label: context._vs_label, context };
+        });
+        const selectedItem = await vscode.window.showQuickPick(items, {
+            placeHolder: vscode.l10n.t('Select project context'),
+        });
+        context = selectedItem?.context;
+    }
+
+    if (context === undefined) {
+        return;
+    }
+
+    languageServer._projectContextService.setActiveFileContext(contextList, context);
+    // TODO: Replace this with proper server-side onDidChange notifications
+    editor.edit(() => 0);
+}
+
+interface ChangeProjectContextOptions {
+    projectName: string;
+    tfm: string;
 }
