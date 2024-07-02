@@ -28,6 +28,7 @@ import { ProjectConfigurationMessage } from '../../shared/projectConfiguration';
 export interface VSProjectContextList {
     _vs_projectContexts: VSProjectContext[];
     _vs_defaultIndex: number;
+    _vs_key: string;
 }
 
 export interface VSProjectContext {
