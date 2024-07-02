@@ -37,12 +37,29 @@ export function resolveRazorLanguageServerOptions(
 }
 
 function findLanguageServerExecutable(withinDir: string) {
-    // Prefer using executable over fallback to dll.
-    const fileName = isWindows() ? 'rzls.exe' : 'rzls';
-    let fullPath = path.join(withinDir, fileName);
-    if (!fs.existsSync(fullPath)) {
-        fullPath = path.join(withinDir, 'rzls.dll');
+    // On Windows we use the executable, which is "rzls.exe".
+    // On macOS we use the dll, which is "rzls.dll".
+    // On everything else we use the executable, which is "rzls".
+
+    const fileName = 'rzls';
+    let extension = '';
+
+    if (isWindows()) {
+        extension = '.exe';
     }
+
+    if (isMacOS()) {
+        // Use the DLL on MacOS to work around signing issue tracked by https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
+        extension = '.dll';
+    }
+
+    let pathWithExtension = `${fileName}${extension}`;
+    if (!fs.existsSync(pathWithExtension)) {
+        // We might be running a platform neutral vsix which has no executable, instead we run the dll directly.
+        pathWithExtension = `${fileName}.dll`;
+    }
+
+    let fullPath = path.join(withinDir, pathWithExtension);
 
     if (!fs.existsSync(fullPath)) {
         throw new Error(
@@ -55,4 +72,8 @@ function findLanguageServerExecutable(withinDir: string) {
 
 function isWindows() {
     return !!os.platform().match(/^win/);
+}
+
+function isMacOS() {
+    return os.platform() === 'darwin';
 }
