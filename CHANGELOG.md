@@ -22,6 +22,8 @@
     * Avoid re-running all codeaction requests at low priority (PR: [#74083](https://github.com/dotnet/roslyn/pull/74083))
     * Reduce time spent in ConflictResolver.Session.GetNodesOrTokensToCheckForConflicts (PR: [#74101](https://github.com/dotnet/roslyn/pull/74101))
     * Avoid allocations in AbstractSyntaxIndex<>.GetIndexAsync( PR: [#74075](https://github.com/dotnet/roslyn/pull/74075))
+
+# 2.37.x
 * Bump xamltools to 17.11.35027.17 (PR: [#7288](https://github.com/dotnet/vscode-csharp/pull/7288))
   * Fix impossible to enter multiple spaces in attribute area
   * Fix cannot accept Copilot suggestion with Tab when IntelliSense is open
