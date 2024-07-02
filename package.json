@@ -37,11 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.11.0-3.24313.9",
+    "roslyn": "4.11.0-3.24320.2",
     "omniSharp": "1.39.11",
-    "razor": "9.0.0-preview.24316.1",
+    "razor": "9.0.0-preview.24325.5",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.11.35013.26"
+    "xamlTools": "17.11.35027.202"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1753,7 +1753,7 @@
           "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
             "scope": "window",
-            "default": "false",
+            "default": false,
             "description": "Specifies whether to commit tag helper and component elements with a space."
           }
         }

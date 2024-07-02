@@ -83,9 +83,9 @@ export class CoreClrDebugUtil {
     }
 
     public static isMacOSSupported(): boolean {
-        // .NET Core 2.0 requires macOS 10.12 (Sierra), which is Darwin 16.0+
+        // .NET 8 requires macOS 12 (Monterey), which is Darwin 21.0+
         // Darwin version chart: https://en.wikipedia.org/wiki/Darwin_(operating_system)
-        return semver.gte(os.release(), '16.0.0');
+        return semver.gte(os.release(), '21.0.0');
     }
 
     public static existsSync(path: string): boolean {
