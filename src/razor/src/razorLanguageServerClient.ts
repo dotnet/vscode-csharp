@@ -150,6 +150,14 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         return this.client.sendRequest<TResponseType>(method, param);
     }
 
+    public async sendNotification(method: string, param: any) {
+        if (!this.isStarted) {
+            throw new Error(vscode.l10n.t('Tried to send requests while server is not started.'));
+        }
+
+        return this.client.sendNotification(method, param);
+    }
+
     public async onRequestWithParams<P, R, E>(method: RequestType<P, R, E>, handler: RequestHandler<P, R, E>) {
         if (!this.isStarted) {
             throw new Error(vscode.l10n.t('Tried to bind on request logic while server is not started.'));
@@ -210,6 +218,13 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         return this.stopHandle;
     }
 
+    public async connectNamedPipe(pipeName: string): Promise<void> {
+        await this.startHandle;
+
+        // Params must match https://github.com/dotnet/razor/blob/92005deac54f3e9d1a4d1d8f04389379cccfa354/src/Razor/src/Microsoft.CodeAnalysis.Razor.Workspaces/Protocol/RazorNamedPipeConnectParams.cs#L9
+        await this.sendNotification('razor/namedPipeConnect', { pipeName: pipeName });
+    }
+
     private setupLanguageServer() {
         const languageServerTrace = resolveRazorLanguageServerLogLevel(this.vscodeType);
         const options: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
@@ -240,8 +255,6 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         // TODO: When all of this code is on GitHub, should we just pass `--omnisharp` as a flag to rzls, and let it decide?
         if (!options.usingOmniSharp) {
-            args.push('--projectConfigurationFileName');
-            args.push('project.razor.vscode.bin');
             args.push('--DelegateToCSharpOnDiagnosticPublish');
             args.push('true');
             args.push('--UpdateBuffersForClosedDocuments');
