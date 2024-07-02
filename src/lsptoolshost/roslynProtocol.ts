@@ -210,6 +210,12 @@ export namespace RegisterSolutionSnapshotRequest {
     export const type = new lsp.RequestType0<RegisterSolutionSnapshotResponseItem, void>(method);
 }
 
+export namespace ProjectInitializationStartedNotification {
+    export const method = 'workspace/projectInitializationStarted';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.NotificationType(method);
+}
+
 export namespace ProjectInitializationCompleteNotification {
     export const method = 'workspace/projectInitializationComplete';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;

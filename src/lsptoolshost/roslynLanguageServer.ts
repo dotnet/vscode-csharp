@@ -64,6 +64,7 @@ import { registerRestoreCommands } from './restore';
 import { BuildDiagnosticsService } from './buildDiagnosticsService';
 import { getComponentPaths } from './builtInComponents';
 import { OnAutoInsertFeature } from './onAutoInsertFeature';
+import { registerLanguageStatusItems } from './languageStatusBar';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -115,7 +116,7 @@ export class RoslynLanguageServer {
     ) {
         this.registerSetTrace();
         this.registerSendOpenSolution();
-        this.registerOnProjectInitializationComplete();
+        this.registerProjectInitialization();
         this.registerReportProjectConfiguration();
         this.registerExtensionsChanged();
         this.registerTelemetryChanged();
@@ -162,7 +163,11 @@ export class RoslynLanguageServer {
         });
     }
 
-    private registerOnProjectInitializationComplete() {
+    private registerProjectInitialization() {
+        this._languageClient.onNotification(RoslynProtocol.ProjectInitializationStartedNotification.type, () => {
+            this._languageServerEvents.onServerStateChangeEmitter.fire(ServerStateChange.ProjectInitializationStarted);
+        });
+
         this._languageClient.onNotification(RoslynProtocol.ProjectInitializationCompleteNotification.type, () => {
             this._languageServerEvents.onServerStateChangeEmitter.fire(ServerStateChange.ProjectInitializationComplete);
         });
@@ -260,6 +265,16 @@ export class RoslynLanguageServer {
 
     public async restart(): Promise<void> {
         await this._languageClient.restart();
+    }
+
+    public workspaceDisplayName(): string {
+        if (this._solutionFile !== undefined) {
+            return path.basename(this._solutionFile.fsPath);
+        } else if (this._projectFiles?.length > 0) {
+            return vscode.l10n.t('Workspace projects');
+        }
+
+        return '';
     }
 
     /**
@@ -977,6 +992,8 @@ export async function activateRoslynLanguageServer(
         additionalExtensionPaths,
         languageServerEvents
     );
+
+    registerLanguageStatusItems(context, languageServer, languageServerEvents);
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, hostExecutableResolver, _channel);
