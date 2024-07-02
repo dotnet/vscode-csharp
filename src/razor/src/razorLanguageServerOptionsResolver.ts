@@ -59,7 +59,7 @@ function findLanguageServerExecutable(withinDir: string) {
         pathWithExtension = `${fileName}.dll`;
     }
 
-    let fullPath = path.join(withinDir, pathWithExtension);
+    const fullPath = path.join(withinDir, pathWithExtension);
 
     if (!fs.existsSync(fullPath)) {
         throw new Error(
