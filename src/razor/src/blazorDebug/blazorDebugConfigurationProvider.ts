@@ -411,23 +411,24 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         const proxy = await getCSharpDevKit()?.exports.serviceBroker.getProxy<IQueryExecutionService>(
             Descriptors.projectQueryExecutionService
         );
+        if (!proxy) {
+            throw new Error('Unable to obtain required service from C# Dev Kit.');
+        }
         try {
-            if (proxy) {
-                const result = await proxy.ExecuteQueryAsync(queryString);
-                const queryResult = JSON.parse(result) as QueryResult<Project>;
-                const pattern = /net(\d+\.\d+)/;
-                if (queryResult && queryResult.Items) {
-                    isNet9OrNewer = false;
-                    queryResult.Items.forEach((project) => {
-                        project.ActiveConfigurations?.forEach((activeConfig) => {
-                            const match = activeConfig.BuildProperties[0].Value.match(pattern);
-                            if (match && match[1] >= 9) {
-                                isNet9OrNewer = true;
-                            }
-                        });
+            const result = await proxy.ExecuteQueryAsync(queryString);
+            const queryResult = JSON.parse(result) as QueryResult<Project>;
+            const pattern = /net(\d+\.\d+)/;
+            if (queryResult && queryResult.Items) {
+                isNet9OrNewer = false;
+                queryResult.Items.forEach((project) => {
+                    project.ActiveConfigurations?.forEach((activeConfig) => {
+                        const match = activeConfig.BuildProperties[0].Value.match(pattern);
+                        if (match && match[1] >= 9) {
+                            isNet9OrNewer = true;
+                        }
                     });
-                    return isNet9OrNewer;
-                }
+                });
+                return isNet9OrNewer;
             }
         } catch (err) {
             throw new Error('Exception while talking to proxy: ' + err);
