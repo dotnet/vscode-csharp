@@ -5,8 +5,8 @@
 
 # Latest
 * Update Razor to 9.0.0-preview.24327.6 (PR: [#7273](https://github.com/dotnet/vscode-csharp/pull/7273))
-  * Use a named pipe to communicate projectinfo in vscode (PR: [#10521](https://ryzngard@github.com/dotnet/razor/pull/10521))
-  * Reduce allocations in Razor's DirectiveVisitor (PR: [10521](https://ryzngard@github.com/dotnet/razor/pull/10521))
+  * Use a named pipe to communicate projectinfo in vscode (PR: [#10521](https://github.com/dotnet/razor/pull/10521))
+  * Reduce allocations in Razor's DirectiveVisitor (PR: [10521](https://github.com/dotnet/razor/pull/10521))
 * Update Roslyn to 4.12.0-1.24352.1 (PR: [#7273](https://github.com/dotnet/vscode-csharp/pull/7273))
   * Report a diagnostic on missing body in partial property implementation (PR [#74224](https://github.com/dotnet/roslyn/pull/74224))
   * Do not offer 'convert' namespace when the ns has sibling types (PR [#74216](https://github.com/dotnet/roslyn/pull/74216)
@@ -22,6 +22,15 @@
     * Avoid re-running all codeaction requests at low priority (PR: [#74083](https://github.com/dotnet/roslyn/pull/74083))
     * Reduce time spent in ConflictResolver.Session.GetNodesOrTokensToCheckForConflicts (PR: [#74101](https://github.com/dotnet/roslyn/pull/74101))
     * Avoid allocations in AbstractSyntaxIndex<>.GetIndexAsync( PR: [#74075](https://github.com/dotnet/roslyn/pull/74075))
+* Bump xamltools to 17.11.35027.17 (PR: [#7288](https://github.com/dotnet/vscode-csharp/pull/7288))
+  * Fix impossible to enter multiple spaces in attribute area
+  * Fix cannot accept Copilot suggestion with Tab when IntelliSense is open
+* Fixing snippets in Razor LSP completion (PR: [#7274](https://github.com/dotnet/vscode-csharp/pull/7274))
+* Fix NRE in Razor completion. (PR: [#7272](https://github.com/dotnet/vscode-csharp/pull/7272))
+* Update debugger to indicate Monterey as the lowest supported MacOS version (PR: [#7256](https://github.com/dotnet/vscode-csharp/pull/7256))
+* Improve Razor completion experience (tag helpers, icons) (PR: [#7205](https://github.com/dotnet/vscode-csharp/pull/7205))
+
+# 2.36.19
 * Update Razor to 9.0.0-preview.24325.5 (PR: [#7277](https://github.com/dotnet/vscode-csharp/pull/7277))
   * Fix completion commit characters (PR: [#10533](https://github.com/dotnet/razor/pull/10533))
   * Add back roll foward to rzls (PR: [#10530](https://github.com/dotnet/razor/pull/10530))
