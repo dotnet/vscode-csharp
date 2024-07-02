@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump xamltools to 17.11.35027.17 (PR: [#7288](https://github.com/dotnet/vscode-csharp/pull/7288))
+  * Fix impossible to enter multiple spaces in attribute area
+  * Fix cannot accept Copilot suggestion with Tab when IntelliSense is open
+* Fixing snippets in Razor LSP completion (PR: [#7274](https://github.com/dotnet/vscode-csharp/pull/7274))
+* Fix NRE in Razor completion. (PR: [#7272](https://github.com/dotnet/vscode-csharp/pull/7272))
+* Update debugger to indicate Monterey as the lowest supported MacOS version (PR: [#7256](https://github.com/dotnet/vscode-csharp/pull/7256))
+* Improve Razor completion experience (tag helpers, icons) (PR: [#7205](https://github.com/dotnet/vscode-csharp/pull/7205))
+
+# 2.36.19
 * Update Razor to 9.0.0-preview.24325.5 (PR: [#7277](https://github.com/dotnet/vscode-csharp/pull/7277))
   * Fix completion commit characters (PR: [#10533](https://github.com/dotnet/razor/pull/10533))
   * Add back roll foward to rzls (PR: [#10530](https://github.com/dotnet/razor/pull/10530))
