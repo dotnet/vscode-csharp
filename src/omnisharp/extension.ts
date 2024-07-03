@@ -108,9 +108,10 @@ export async function activate(
             server.onServerStart(() => {
                 utils.requestWorkspaceInformation(server).then((workspaceInfo) => {
                     if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
-                        const shortMessage =
-                            'project.json is no longer a supported project format for .NET Core applications.';
-                        const moreDetailItem: vscode.MessageItem = { title: 'More Detail' };
+                        const shortMessage = vscode.l10n.t(
+                            'project.json is no longer a supported project format for .NET Core applications.'
+                        );
+                        const moreDetailItem: vscode.MessageItem = { title: vscode.l10n.t('More Detail') };
                         vscode.window.showWarningMessage(shortMessage, moreDetailItem).then((_) => {
                             eventStream.post(new ProjectJsonDeprecatedWarning());
                         });
