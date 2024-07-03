@@ -20,7 +20,6 @@ import Disposable from '../disposable';
 import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
-import { getDecompilationAuthorization } from './decompilationPrompt';
 import { DotnetResolver } from './dotnetResolver';
 import { Advisor } from '../features/diagnosticsProvider';
 import { OmnisharpWorkspaceDebugInformationProvider } from '../omnisharpWorkspaceDebugInformationProvider';
@@ -50,8 +49,6 @@ export async function activate(
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
 
-    const decompilationAuthorized = await getDecompilationAuthorization(context);
-
     const server = new OmniSharpServer(
         vscode,
         provider,
@@ -61,7 +58,6 @@ export async function activate(
         extensionPath,
         omnisharpMonoResolver,
         omnisharpDotnetResolver,
-        decompilationAuthorized,
         context,
         outputChannel,
         languageMiddlewareFeature
