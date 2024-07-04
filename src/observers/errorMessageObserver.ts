@@ -13,6 +13,7 @@ import {
 import { vscode } from '../vscodeAdapter';
 import showErrorMessage from './utils/showErrorMessage';
 import { EventType } from '../omnisharp/eventType';
+import { l10n } from 'vscode';
 
 export class ErrorMessageObserver {
     constructor(private vscode: vscode) {}
@@ -37,7 +38,11 @@ export class ErrorMessageObserver {
         if (!event.retry) {
             showErrorMessage(
                 this.vscode,
-                `Package ${event.packageDescription} download from ${event.url} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download`
+                l10n.t(
+                    `Package {0} download from {1} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download`,
+                    event.packageDescription,
+                    event.url
+                )
             );
         }
     }
@@ -47,10 +52,10 @@ export class ErrorMessageObserver {
     }
 
     private handleDotnetTestRunFailure(event: DotNetTestRunFailure) {
-        showErrorMessage(this.vscode, `Failed to run test because ${event.message}.`);
+        showErrorMessage(this.vscode, l10n.t(`Failed to run test: {0}`, event.message));
     }
 
     private handleDotNetTestDebugStartFailure(event: DotNetTestDebugStartFailure) {
-        showErrorMessage(this.vscode, `Failed to start debugger: ${event.message}`);
+        showErrorMessage(this.vscode, l10n.t(`Failed to start debugger: {0}`, event.message));
     }
 }
