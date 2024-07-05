@@ -8,13 +8,17 @@ import { RoslynLanguageServer } from './roslynLanguageServer';
 import { RoslynLanguageServerEvents } from './languageServerEvents';
 import { languageServerOptions } from '../shared/options';
 import { ServerStateChange } from './serverStateChange';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 export function registerLanguageStatusItems(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     languageServerEvents: RoslynLanguageServerEvents
 ) {
-    WorkspaceStatus.createStatusItem(context, languageServer, languageServerEvents);
+    // DevKit will provide an equivalent workspace status item.
+    if (!getCSharpDevKit()) {
+        WorkspaceStatus.createStatusItem(context, languageServer, languageServerEvents);
+    }
 }
 
 class WorkspaceStatus {
