@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { CSharpExtensionExports } from '../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
-import { ServerStateChange } from '../../src/lsptoolshost/serverStateChange';
+import { ServerState } from '../../src/lsptoolshost/serverStateChange';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 
 export async function activateCSharpExtension(): Promise<void> {
@@ -70,8 +70,8 @@ export async function restartLanguageServer(): Promise<void> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     // Register to wait for initialization events and restart the server.
     const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
-        csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange(async (state) => {
-            if (state === ServerStateChange.ProjectInitializationComplete) {
+        csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange(async (e) => {
+            if (e.state === ServerState.ProjectInitializationComplete) {
                 resolve();
             }
         });

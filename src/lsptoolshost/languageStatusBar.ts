@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { RoslynLanguageServerEvents } from './languageServerEvents';
 import { languageServerOptions } from '../shared/options';
-import { ServerStateChange } from './serverStateChange';
+import { ServerState } from './serverStateChange';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 export function registerLanguageStatusItems(
@@ -17,16 +17,12 @@ export function registerLanguageStatusItems(
 ) {
     // DevKit will provide an equivalent workspace status item.
     if (!getCSharpDevKit()) {
-        WorkspaceStatus.createStatusItem(context, languageServer, languageServerEvents);
+        WorkspaceStatus.createStatusItem(context, languageServerEvents);
     }
 }
 
 class WorkspaceStatus {
-    static createStatusItem(
-        context: vscode.ExtensionContext,
-        languageServer: RoslynLanguageServer,
-        languageServerEvents: RoslynLanguageServerEvents
-    ) {
+    static createStatusItem(context: vscode.ExtensionContext, languageServerEvents: RoslynLanguageServerEvents) {
         const item = vscode.languages.createLanguageStatusItem(
             'csharp.workspaceStatus',
             languageServerOptions.documentSelector
@@ -39,13 +35,8 @@ class WorkspaceStatus {
         context.subscriptions.push(item);
 
         languageServerEvents.onServerStateChange((e) => {
-            if (e === ServerStateChange.ProjectInitializationStarted) {
-                item.text = languageServer.workspaceDisplayName();
-                item.busy = true;
-            } else if (e === ServerStateChange.ProjectInitializationComplete) {
-                item.text = languageServer.workspaceDisplayName();
-                item.busy = false;
-            }
+            item.text = e.workspaceLabel;
+            item.busy = e.state === ServerState.ProjectInitializationStarted;
         });
     }
 }

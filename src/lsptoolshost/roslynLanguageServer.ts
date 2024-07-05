@@ -37,7 +37,7 @@ import ShowInformationMessage from '../shared/observers/utils/showInformationMes
 import * as RoslynProtocol from './roslynProtocol';
 import { CSharpDevKitExports } from '../csharpDevKitExports';
 import { SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
-import { ServerStateChange } from './serverStateChange';
+import { ServerState } from './serverStateChange';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../csharpIntelliCodeExports';
 import { csharpDevkitExtensionId, csharpDevkitIntelliCodeExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
@@ -158,18 +158,20 @@ export class RoslynLanguageServer {
                     await this.openDefaultSolutionOrProjects();
                 }
                 await this.sendOrSubscribeForServiceBrokerConnection();
-                this._languageServerEvents.onServerStateChangeEmitter.fire(ServerStateChange.Started);
+                this._languageServerEvents.onServerStateChangeEmitter.fire({
+                    state: ServerState.Started,
+                    workspaceLabel: this.workspaceDisplayName(),
+                });
             }
         });
     }
 
     private registerProjectInitialization() {
-        this._languageClient.onNotification(RoslynProtocol.ProjectInitializationStartedNotification.type, () => {
-            this._languageServerEvents.onServerStateChangeEmitter.fire(ServerStateChange.ProjectInitializationStarted);
-        });
-
         this._languageClient.onNotification(RoslynProtocol.ProjectInitializationCompleteNotification.type, () => {
-            this._languageServerEvents.onServerStateChangeEmitter.fire(ServerStateChange.ProjectInitializationComplete);
+            this._languageServerEvents.onServerStateChangeEmitter.fire({
+                state: ServerState.ProjectInitializationComplete,
+                workspaceLabel: this.workspaceDisplayName(),
+            });
         });
     }
 
@@ -394,16 +396,20 @@ export class RoslynLanguageServer {
                 await this._languageClient.sendNotification(RoslynProtocol.OpenSolutionNotification.type, {
                     solution: protocolUri,
                 });
-            }
-
-            if (this._projectFiles.length > 0) {
+            } else if (this._projectFiles.length > 0) {
                 const projectProtocolUris = this._projectFiles.map((uri) =>
                     this._languageClient.clientOptions.uriConverters!.code2Protocol(uri)
                 );
                 await this._languageClient.sendNotification(RoslynProtocol.OpenProjectNotification.type, {
                     projects: projectProtocolUris,
                 });
+            } else {
+                return;
             }
+            this._languageServerEvents.onServerStateChangeEmitter.fire({
+                state: ServerState.ProjectInitializationStarted,
+                workspaceLabel: this.workspaceDisplayName(),
+            });
         }
     }
 
