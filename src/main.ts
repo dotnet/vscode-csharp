@@ -285,12 +285,15 @@ export async function activate(
     }
 
     if (!isSupportedPlatform(platformInfo)) {
-        let errorMessage = `The C# extension for Visual Studio Code is incompatible on ${platformInfo.platform} ${platformInfo.architecture}`;
-
         // Check to see if VS Code is running remotely
         if (context.extension.extensionKind === vscode.ExtensionKind.Workspace) {
-            const setupButton = 'How to setup Remote Debugging';
-            errorMessage += ` with the VS Code Remote Extensions. To see avaliable workarounds, click on '${setupButton}'.`;
+            const setupButton = vscode.l10n.t('How to setup Remote Debugging');
+            const errorMessage = vscode.l10n.t(
+                `The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.`,
+                platformInfo.platform,
+                platformInfo.architecture,
+                setupButton
+            );
 
             await vscode.window.showErrorMessage(errorMessage, setupButton).then((selectedItem) => {
                 if (selectedItem === setupButton) {
@@ -300,6 +303,11 @@ export async function activate(
                 }
             });
         } else {
+            const errorMessage = vscode.l10n.t(
+                'The C# extension for Visual Studio Code is incompatible on {0} {1}.',
+                platformInfo.platform,
+                platformInfo.architecture
+            );
             await vscode.window.showErrorMessage(errorMessage);
         }
 

@@ -834,10 +834,11 @@ export class RoslynLanguageServer {
         // Subscribe to telemetry events so we can enable/disable as needed
         this._languageClient.addDisposable(
             vscode.env.onDidChangeTelemetryEnabled((_: boolean) => {
-                const title = 'Restart Language Server';
+                const title = vscode.l10n.t('Restart Language Server');
                 const command = 'dotnet.restartServer';
-                const message =
-                    'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?';
+                const message = vscode.l10n.t(
+                    'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?'
+                );
                 ShowInformationMessage(vscode, message, { title, command });
             })
         );
