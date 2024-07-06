@@ -41,7 +41,7 @@
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24325.5",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.11.35021.135"
+    "xamlTools": "17.11.35027.202"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1731,7 +1731,7 @@
           "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
             "scope": "window",
-            "default": "false",
+            "default": false,
             "description": "Specifies whether to commit tag helper and component elements with a space."
           }
         }
