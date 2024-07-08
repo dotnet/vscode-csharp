@@ -26,7 +26,7 @@ export interface CSharpExtensionExports {
     determineBrowserType: () => Promise<string | undefined>;
     experimental: CSharpExtensionExperimentalExports;
     getComponentFolder: (componentName: string) => string;
-    tryToUseVSDbgForMono: (urlStr: string) => Promise<[string, number, number]>;
+    tryToUseVSDbgForMono: (urlStr: string, projectPath: string) => Promise<[string, number, number]>;
 }
 
 export interface CSharpExtensionExperimentalExports {

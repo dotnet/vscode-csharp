@@ -185,7 +185,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         url: string
     ) {
         const originalInspectUri = inspectUri;
-        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg();
+        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg('');
         let portBrowserDebug = -1;
         if (useVSDbg) {
             [inspectUri, portBrowserDebug] = await this.attachToAppOnBrowser(folder, configuration, url);
@@ -384,7 +384,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         return [newUri, proxyICorDebugPort, proxyBrowserPort];
     }
 
-    private static async isNet9OrNewer(): Promise<boolean> {
+    private static async isNet9OrNewer(projectPath: string): Promise<boolean> {
         let isNet9OrNewer = false;
         const configurationsObject = {
             $properties: ['BuildProperties'],
@@ -401,13 +401,25 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         const query = {
             context: 'Projects',
             query: {
-                $properties: ['ActiveConfigurations'],
+                $properties: ['ActiveConfigurations', 'Path'],
                 ActiveConfigurations: configurationsObject,
                 $filter: { ProjectsByCapabilities: ['WebAssembly'] },
             },
         };
-
-        const queryString = JSON.stringify(query);
+        let queryString = '';
+        if (projectPath != '') {
+            const query = {
+                context: 'Projects',
+                query: {
+                    $properties: ['ActiveConfigurations', 'Path'],
+                    ActiveConfigurations: configurationsObject,
+                    $where: { '==': [{ '.': 'Path' }, projectPath] },
+                },
+            };
+            queryString = JSON.stringify(query);
+        } else {
+            queryString = JSON.stringify(query);
+        }
         const proxy = await getCSharpDevKit()?.exports.serviceBroker.getProxy<IQueryExecutionService>(
             Descriptors.projectQueryExecutionService
         );
@@ -437,7 +449,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         }
         return isNet9OrNewer;
     }
-    private static async useVSDbg(): Promise<boolean> {
+    private static async useVSDbg(projectPath: string): Promise<boolean> {
         const wasmConfig = vscode.workspace.getConfiguration('csharp');
         const useVSDbg = wasmConfig.get<boolean>('wasm.debug.useVSDbg') == true;
         if (!useVSDbg) {
@@ -446,8 +458,8 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         const existWebAssemblyWebBridge = existsSync(BlazorDebugConfigurationProvider.getWebAssemblyWebBridgePath());
         const csharpDevKitExtension = getCSharpDevKit();
         let isNet9OrNewer = true;
-        if (useVSDbg && existWebAssemblyWebBridge && csharpDevKitExtension !== undefined) {
-            isNet9OrNewer = await BlazorDebugConfigurationProvider.isNet9OrNewer();
+        if (existWebAssemblyWebBridge && csharpDevKitExtension !== undefined) {
+            isNet9OrNewer = await BlazorDebugConfigurationProvider.isNet9OrNewer(projectPath);
         }
         return useVSDbg && existWebAssemblyWebBridge && isNet9OrNewer;
     }
@@ -461,8 +473,8 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         return vsWebAssemblyBridge;
     }
 
-    public static async tryToUseVSDbgForMono(urlStr: string): Promise<[string, number, number]> {
-        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg();
+    public static async tryToUseVSDbgForMono(urlStr: string, projectPath: string): Promise<[string, number, number]> {
+        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg(projectPath);
 
         if (useVSDbg) {
             const [inspectUri, portICorDebug, portBrowserDebug] =
