@@ -37,6 +37,7 @@
   "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
   "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
+  "configuration.dotnet.projects.binaryLogPath": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors.",
   "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.implementType.insertionBehavior": "The insertion location of properties, events, and methods When implement interface or abstract class.",
   "configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind": "Place them with other members of the same kind.",
@@ -75,6 +76,50 @@
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Show remarks information when display symbol.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging. (Previously `csharp.unitTestDebuggingOptions`)",
+  "configuration.dotnet.unitTests.runSettingsPath": {
+    "message": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "configuration.omnisharp.dotnet.server.useOmnisharp": "Switches to use the Omnisharp server for language features when enabled (requires restart). This option will not be honored with C# Dev Kit installed.",
+  "configuration.omnisharp.csharp.format.enable": "Enable/disable default C# formatter (requires restart).",
+  "configuration.omnisharp.csharp.suppressDotnetInstallWarning": "Suppress the warning that the .NET Core SDK is not on the path.",
+  "configuration.omnisharp.csharp.suppressDotnetRestoreNotification": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved.",
+  "configuration.omnisharp.csharp.suppressProjectJsonWarning": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications",
+  "configuration.omnisharp.csharp.suppressBuildAssetsNotification": "Suppress the notification window to add missing assets to build or debug the application.",
+  "configuration.omnisharp.csharp.suppressHiddenDiagnostics": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane.",
+  "configuration.omnisharp.csharp.referencesCodeLens.filteredSymbols": "Array of custom symbol names for which CodeLens should be disabled.",
+  "configuration.omnisharp.csharp.maxProjectFileCountForDiagnosticAnalysis": "Specifies the maximum number of files for which diagnostics are reported for the whole workspace. If this limit is exceeded, diagnostics will be shown for currently opened files only. Specify 0 or less to disable the limit completely.",
+  "configuration.omnisharp.csharp.semanticHighlighting.enabled": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect.",
+  "configuration.omnisharp.csharp.showOmnisharpLogOnError": "Shows the OmniSharp log in the Output pane when OmniSharp reports an error.",
+  "configuration.omnisharp.useModernNet.title": "Use .NET 6 build of OmniSharp",
+  "configuration.omnisharp.useModernNet.description": "Use OmniSharp build for .NET 6. This version _does not_ support non-SDK-style .NET Framework projects, including Unity. SDK-style Framework, .NET Core, and .NET 5+ projects should see significant performance improvements.",
+  "configuration.omnisharp.sdkPath": "Specifies the path to a .NET SDK installation to use for project loading instead of the highest version installed. Applies when \"useModernNet\" is set to true. Example: /home/username/dotnet/sdks/6.0.300.",
+  "configuration.omnisharp.sdkVersion": "Specifies the version of the .NET SDK to use for project loading instead of the highest version installed. Applies when \"useModernNet\" is set to true. Example: 6.0.300.",
+  "configuration.omnisharp.sdkIncludePrereleases": "Specifies whether to include preview versions of the .NET SDK when determining which version to use for project loading. Applies when \"useModernNet\" is set to true.",
+  "configuration.omnisharp.monoPath": "Specifies the path to a mono installation to use when \"useModernNet\" is set to false, instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\"",
+  "configuration.omnisharp.loggingLevel": "Specifies the level of logging output from the OmniSharp server.",
+  "configuration.omnisharp.autoStart": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command",
+  "configuration.omnisharp.projectFilesExcludePattern": "The exclude pattern used by OmniSharp to find all project files.",
+  "configuration.omnisharp.projectLoadTimeout": "The time Visual Studio Code will wait for the OmniSharp server to start. Time is expressed in seconds.",
+  "configuration.omnisharp.maxProjectResults": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250).",
+  "configuration.omnisharp.useEditorFormattingSettings": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size).",
+  "configuration.omnisharp.minFindSymbolsFilterLength": "The minimum number of characters to enter before 'Go to Symbol in Workspace' operation shows any results.",
+  "configuration.omnisharp.maxFindSymbolsItems": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The limit is applied only when a positive number is specified here.",
+  "configuration.omnisharp.disableMSBuildDiagnosticWarning": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log",
+  "configuration.omnisharp.enableMsBuildLoadProjectsOnDemand": "If true, MSBuild project system will only load projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. With this setting enabled OmniSharp may load fewer projects and may thus display incomplete reference lists for symbols.",
+  "configuration.omnisharp.enableEditorConfigSupport": "Enables support for reading code style, naming convention and analyzer settings from .editorconfig.",
+  "configuration.omnisharp.enableDecompilationSupport": "Enables support for decompiling external references instead of viewing metadata.",
+  "configuration.omnisharp.enableLspDriver": "Enables support for the experimental language protocol based engine (requires reload to setup bindings correctly)",
+  "configuration.omnisharp.organizeImportsOnFormat": "Specifies whether 'using' directives should be grouped and sorted during document formatting.",
+  "configuration.omnisharp.enableAsyncCompletion": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results.",
+  "configuration.omnisharp.dotNetCliPaths": "Paths to a local download of the .NET CLI to use for running any user code.",
+  "configuration.omnisharp.razor.plugin.path": "Overrides the path to the Razor plugin dll.",
+  "configuration.omnisharp.razor.devmode": "Forces the extension to run in a mode that enables local Razor.VSCode development.",
+  "configuration.omnisharp.razor.format.enable": "Enable/disable default Razor formatter.",
+  "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Forces the open brace after an @code or @functions directive to be on the following line.",
+  "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Specifies whether to commit tag helper and component elements with a space.",
   "configuration.razor.languageServer.directory": "Overrides the path to the Razor Language Server directory.",
   "configuration.razor.languageServer.debug": "Specifies whether to wait for debug attach when launching the language server.",
   "configuration.razor.server.trace": "Specifies the logging level to use for the Razor server.",
@@ -411,6 +456,15 @@
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
+  },
+  "generateOptionsSchema.type.markdownDescription": {
+    "message": "Type type of code to debug. Can be either `coreclr` for .NET Core debugging, or `clr` for Desktop .NET Framework. `clr` only works on Windows as the Desktop framework is Windows-only.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.debugServer.description": {
+    "message": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode"
   },
   "generateOptionsSchema.checkForDevCert.description": {
     "message": "If you are launching a web project on Windows or macOS and this is enabled, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. If unspecified, defaults to true when `serverReadyAction` is set. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found or isn't trusted, the user will be prompted to install/trust it.",

@@ -26,7 +26,6 @@ import CompositeDisposable from '../compositeDisposable';
 import reportIssue from '../shared/reportIssue';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { getDecompilationAuthorization, resetDecompilationAuthorization } from '../omnisharp/decompilationPrompt';
 import { IWorkspaceDebugInformationProvider } from '../shared/IWorkspaceDebugInformationProvider';
 
 export default function registerCommands(
@@ -78,26 +77,10 @@ export default function registerCommands(
         )
     );
 
-    disposable.add(
-        vscode.commands.registerCommand('csharp.showDecompilationTerms', async () =>
-            showDecompilationTerms(context, server)
-        )
-    );
-
     return new CompositeDisposable(disposable);
 }
 
-async function showDecompilationTerms(context: vscode.ExtensionContext, server: OmniSharpServer) {
-    // Reset the decompilation authorization so the user will be prompted on restart.
-    resetDecompilationAuthorization(context);
-
-    await restartOmniSharp(context, server);
-}
-
 async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSharpServer) {
-    // Update decompilation authorization.
-    server.decompilationAuthorized = await getDecompilationAuthorization(context);
-
     if (server.isRunning()) {
         server.restart();
     } else {
