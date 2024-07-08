@@ -115,7 +115,6 @@ export class OmniSharpServer {
         private extensionPath: string,
         private monoResolver: IHostExecutableResolver,
         private dotnetResolver: IHostExecutableResolver,
-        public decompilationAuthorized: boolean,
         private context: ExtensionContext,
         private outputChannel: OutputChannel,
         private languageMiddlewareFeature: LanguageMiddlewareFeature
@@ -463,7 +462,7 @@ export class OmniSharpServer {
             args.push('FormattingOptions:OrganizeImports=true');
         }
 
-        if (this.decompilationAuthorized && omnisharpOptions.enableDecompilationSupport === true) {
+        if (omnisharpOptions.enableDecompilationSupport === true) {
             args.push('RoslynExtensionsOptions:EnableDecompilationSupport=true');
         }
 

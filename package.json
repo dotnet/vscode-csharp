@@ -1388,19 +1388,19 @@
                   "coreclr",
                   "clr"
                 ],
-                "description": "Type type of code to debug. Can be either 'coreclr' for .NET Core debugging, or 'clr' for Desktop .NET Framework. 'clr' only works on Windows as the Desktop framework is Windows-only.",
+                "markdownDescription": "%generateOptionsSchema.type.markdownDescription%",
                 "default": "coreclr"
               },
               "debugServer": {
                 "type": "number",
-                "description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+                "description": "%generateOptionsSchema.debugServer.description%",
                 "default": 4711
               }
             }
           },
           "dotnet.unitTests.runSettingsPath": {
             "type": "string",
-            "description": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)"
+            "markdownDescription": "%configuration.dotnet.unitTests.runSettingsPath.markdownDescription%"
           }
         }
       },
@@ -1499,7 +1499,7 @@
             "scope": "machine-overridable",
             "type": "string",
             "default": null,
-            "description": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors."
+            "description": "%configuration.dotnet.projects.binaryLogPath%"
           },
           "dotnet.projects.enableAutomaticRestore": {
             "type": "boolean",
@@ -1551,38 +1551,38 @@
           "dotnet.server.useOmnisharp": {
             "type": "boolean",
             "default": false,
-            "description": "Switches to use the Omnisharp server for language features when enabled (requires restart). This option will not be honored with C# Dev Kit installed.",
+            "description": "%configuration.omnisharp.dotnet.server.useOmnisharp%",
             "order": 0
           },
           "csharp.format.enable": {
             "type": "boolean",
             "default": true,
-            "description": "Enable/disable default C# formatter (requires restart)."
+            "description": "%configuration.omnisharp.csharp.format.enable%"
           },
           "csharp.suppressDotnetInstallWarning": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress the warning that the .NET Core SDK is not on the path."
+            "description": "%configuration.omnisharp.csharp.suppressDotnetInstallWarning%"
           },
           "csharp.suppressDotnetRestoreNotification": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved."
+            "description": "%configuration.omnisharp.csharp.suppressDotnetRestoreNotification%"
           },
           "csharp.suppressProjectJsonWarning": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications"
+            "description": "%configuration.omnisharp.csharp.suppressProjectJsonWarning%"
           },
           "csharp.suppressBuildAssetsNotification": {
             "type": "boolean",
             "default": false,
-            "description": "Suppress the notification window to add missing assets to build or debug the application."
+            "description": "%configuration.omnisharp.csharp.suppressBuildAssetsNotification%"
           },
           "csharp.suppressHiddenDiagnostics": {
             "type": "boolean",
             "default": true,
-            "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane."
+            "description": "%configuration.omnisharp.csharp.suppressHiddenDiagnostics%"
           },
           "csharp.referencesCodeLens.filteredSymbols": {
             "type": "array",
@@ -1590,51 +1590,51 @@
               "type": "string"
             },
             "default": [],
-            "description": "Array of custom symbol names for which CodeLens should be disabled."
+            "description": "%configuration.omnisharp.csharp.referencesCodeLens.filteredSymbols%"
           },
           "csharp.maxProjectFileCountForDiagnosticAnalysis": {
             "type": "number",
             "default": 1000,
-            "description": "Specifies the maximum number of files for which diagnostics are reported for the whole workspace. If this limit is exceeded, diagnostics will be shown for currently opened files only. Specify 0 or less to disable the limit completely."
+            "description": "%configuration.omnisharp.csharp.maxProjectFileCountForDiagnosticAnalysis%"
           },
           "csharp.semanticHighlighting.enabled": {
             "type": "boolean",
             "default": true,
-            "description": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect.",
+            "description": "%configuration.omnisharp.csharp.semanticHighlighting.enabled%",
             "scope": "window"
           },
           "csharp.showOmnisharpLogOnError": {
             "type": "boolean",
             "default": true,
-            "description": "Shows the OmniSharp log in the Output pane when OmniSharp reports an error."
+            "description": "%configuration.omnisharp.csharp.showOmnisharpLogOnError%"
           },
           "omnisharp.useModernNet": {
             "type": "boolean",
             "default": true,
             "scope": "window",
-            "title": "Use .NET 6 build of OmniSharp",
-            "description": "Use OmniSharp build for .NET 6. This version _does not_ support non-SDK-style .NET Framework projects, including Unity. SDK-style Framework, .NET Core, and .NET 5+ projects should see significant performance improvements."
+            "title": "%configuration.omnisharp.useModernNet.title%",
+            "description": "%configuration.omnisharp.useModernNet.description%"
           },
           "omnisharp.sdkPath": {
             "type": "string",
             "scope": "window",
-            "description": "Specifies the path to a .NET SDK installation to use for project loading instead of the highest version installed. Applies when \"useModernNet\" is set to true. Example: /home/username/dotnet/sdks/6.0.300."
+            "description": "%configuration.omnisharp.sdkPath%"
           },
           "omnisharp.sdkVersion": {
             "type": "string",
             "scope": "window",
-            "description": "Specifies the version of the .NET SDK to use for project loading instead of the highest version installed. Applies when \"useModernNet\" is set to true. Example: 6.0.300."
+            "description": "%configuration.omnisharp.sdkVersion%"
           },
           "omnisharp.sdkIncludePrereleases": {
             "type": "boolean",
             "scope": "window",
             "default": true,
-            "description": "Specifies whether to include preview versions of the .NET SDK when determining which version to use for project loading. Applies when \"useModernNet\" is set to true."
+            "description": "%configuration.omnisharp.sdkIncludePrereleases%"
           },
           "omnisharp.monoPath": {
             "type": "string",
             "scope": "machine",
-            "description": "Specifies the path to a mono installation to use when \"useModernNet\" is set to false, instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\""
+            "description": "%configuration.omnisharp.monoPath%"
           },
           "omnisharp.loggingLevel": {
             "type": "string",
@@ -1647,114 +1647,114 @@
               "error",
               "critical"
             ],
-            "description": "Specifies the level of logging output from the OmniSharp server."
+            "description": "%configuration.omnisharp.loggingLevel%"
           },
           "omnisharp.autoStart": {
             "type": "boolean",
             "default": true,
-            "description": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command"
+            "description": "%configuration.omnisharp.autoStart%"
           },
           "omnisharp.projectFilesExcludePattern": {
             "type": "string",
             "default": "**/node_modules/**,**/.git/**,**/bower_components/**",
-            "description": "The exclude pattern used by OmniSharp to find all project files."
+            "description": "%configuration.omnisharp.projectFilesExcludePattern%"
           },
           "omnisharp.projectLoadTimeout": {
             "type": "number",
             "default": 60,
-            "description": "The time Visual Studio Code will wait for the OmniSharp server to start. Time is expressed in seconds."
+            "description": "%configuration.omnisharp.projectLoadTimeout%"
           },
           "omnisharp.maxProjectResults": {
             "type": "number",
             "default": 250,
-            "description": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250)."
+            "description": "%configuration.omnisharp.maxProjectResults%"
           },
           "omnisharp.useEditorFormattingSettings": {
             "type": "boolean",
             "default": true,
-            "description": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size)."
+            "description": "%configuration.omnisharp.useEditorFormattingSettings%"
           },
           "omnisharp.minFindSymbolsFilterLength": {
             "type": "number",
             "default": 0,
-            "description": "The minimum number of characters to enter before 'Go to Symbol in Workspace' operation shows any results."
+            "description": "%configuration.omnisharp.minFindSymbolsFilterLength%"
           },
           "omnisharp.maxFindSymbolsItems": {
             "type": "number",
             "default": 1000,
-            "description": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The limit is applied only when a positive number is specified here."
+            "description": "%configuration.omnisharp.maxFindSymbolsItems%"
           },
           "omnisharp.disableMSBuildDiagnosticWarning": {
             "type": "boolean",
             "default": false,
-            "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log"
+            "description": "%configuration.omnisharp.disableMSBuildDiagnosticWarning%"
           },
           "omnisharp.enableMsBuildLoadProjectsOnDemand": {
             "type": "boolean",
             "default": false,
-            "description": "If true, MSBuild project system will only load projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. With this setting enabled OmniSharp may load fewer projects and may thus display incomplete reference lists for symbols."
+            "description": "%configuration.omnisharp.enableMsBuildLoadProjectsOnDemand%"
           },
           "omnisharp.enableEditorConfigSupport": {
             "type": "boolean",
             "default": true,
-            "description": "Enables support for reading code style, naming convention and analyzer settings from .editorconfig."
+            "description": "%configuration.omnisharp.enableEditorConfigSupport%"
           },
           "omnisharp.enableDecompilationSupport": {
             "type": "boolean",
             "default": false,
             "scope": "machine",
-            "description": "Enables support for decompiling external references instead of viewing metadata."
+            "description": "%configuration.omnisharp.enableDecompilationSupport%"
           },
           "omnisharp.enableLspDriver": {
             "type": "boolean",
             "default": false,
-            "description": "Enables support for the experimental language protocol based engine (requires reload to setup bindings correctly)"
+            "description": "%configuration.omnisharp.enableLspDriver%"
           },
           "omnisharp.organizeImportsOnFormat": {
             "type": "boolean",
             "default": false,
-            "description": "Specifies whether 'using' directives should be grouped and sorted during document formatting."
+            "description": "%configuration.omnisharp.organizeImportsOnFormat%"
           },
           "omnisharp.enableAsyncCompletion": {
             "type": "boolean",
             "default": false,
-            "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results."
+            "description": "%configuration.omnisharp.enableAsyncCompletion%"
           },
           "omnisharp.dotNetCliPaths": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Paths to a local download of the .NET CLI to use for running any user code.",
+            "description": "%configuration.omnisharp.dotNetCliPaths%",
             "uniqueItems": true
           },
           "razor.plugin.path": {
             "type": "string",
             "scope": "machine",
-            "description": "Overrides the path to the Razor plugin dll."
+            "description": "%configuration.omnisharp.razor.plugin.path%"
           },
           "razor.devmode": {
             "type": "boolean",
             "default": false,
-            "description": "Forces the omnisharp-vscode extension to run in a mode that enables local Razor.VSCode deving."
+            "description": "%configuration.omnisharp.razor.devmode%"
           },
           "razor.format.enable": {
             "type": "boolean",
             "scope": "window",
             "default": true,
-            "description": "Enable/disable default Razor formatter."
+            "description": "%configuration.omnisharp.razor.format.enable%"
           },
           "razor.format.codeBlockBraceOnNextLine": {
             "type": "boolean",
             "scope": "window",
             "default": false,
-            "description": "Forces the open brace after an @code or @functions directive to be on the following line."
+            "description": "%configuration.omnisharp.razor.format.codeBlockBraceOnNextLine%"
           },
           "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
             "scope": "window",
             "default": false,
-            "description": "Specifies whether to commit tag helper and component elements with a space."
+            "description": "%configuration.omnisharp.razor.completion.commitElementsWithSpace%"
           }
         }
       }

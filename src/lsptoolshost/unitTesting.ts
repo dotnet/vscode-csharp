@@ -68,7 +68,7 @@ async function runTests(
     dotnetTestChannel: vscode.OutputChannel
 ): Promise<TestProgress | undefined> {
     if (_testRunInProgress) {
-        vscode.window.showErrorMessage('Test run already in progress');
+        vscode.window.showErrorMessage(vscode.l10n.t('Test run already in progress'));
         return;
     }
 

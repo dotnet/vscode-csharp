@@ -63,7 +63,7 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
     private async fixAllMenu(server: OmniSharpServer, scope: protocol.FixAllScope): Promise<void> {
         const fileName = vscode.window.activeTextEditor?.document.fileName;
         if (fileName === undefined) {
-            vscode.window.showWarningMessage('Text editor must be focused to fix all issues');
+            vscode.window.showWarningMessage(vscode.l10n.t('Text editor must be focused to fix all issues'));
             return;
         }
 
@@ -71,13 +71,14 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
 
         let targets = availableFixes.Items.map((x) => `${x.Id}: ${x.Message}`);
 
+        const fixAllItem = vscode.l10n.t('Fix all issues');
         if (scope === protocol.FixAllScope.Document) {
-            targets = ['Fix all issues', ...targets];
+            targets = [fixAllItem, ...targets];
         }
 
         const action = await vscode.window.showQuickPick(targets, {
             matchOnDescription: true,
-            placeHolder: `Select fix all action`,
+            placeHolder: vscode.l10n.t(`Select fix all action`),
         });
 
         if (action === undefined) {
@@ -85,7 +86,7 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
         }
 
         let filter: FixAllItem[] | undefined;
-        if (action !== 'Fix all issues') {
+        if (action !== fixAllItem) {
             const actionTokens = action.split(':');
             filter = [{ Id: actionTokens[0], Message: actionTokens[1] }];
         }
