@@ -3,6 +3,10 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Latest
+* Bump xamltools to 17.12.35103.251 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7309))
+  * Fixed issue with Exception type related to https://github.com/microsoft/vscode-dotnettools/issues/1247
+
 # 2.38.x
 * Start localizing additional strings (PR: [#7305](https://github.com/dotnet/vscode-csharp/pull/7305))
 * Fix issue launching Razor server on macOS (PR: [#7300](https://github.com/dotnet/vscode-csharp/pull/7300))
