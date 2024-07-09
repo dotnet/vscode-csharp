@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
-* Bump xamltools to 17.11.35027.17 (PR: [#7288](https://github.com/dotnet/vscode-csharp/pull/7288))
+* Bump xamltools to 17.12.35103.251 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7309))
+  * Fixed issue with Exception type related to https://github.com/microsoft/vscode-dotnettools/issues/1247
   * Fix impossible to enter multiple spaces in attribute area
   * Fix cannot accept Copilot suggestion with Tab when IntelliSense is open
 * Fixing snippets in Razor LSP completion (PR: [#7274](https://github.com/dotnet/vscode-csharp/pull/7274))
