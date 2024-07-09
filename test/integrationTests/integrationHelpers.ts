@@ -16,7 +16,9 @@ export async function activateCSharpExtension(): Promise<void> {
     const dotnetRuntimeExtension =
         vscode.extensions.getExtension<CSharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
     if (!dotnetRuntimeExtension) {
-        await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId);
+        await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId, {
+            donotSync: true,
+        });
         await vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
 
