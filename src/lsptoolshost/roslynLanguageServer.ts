@@ -65,6 +65,7 @@ import { BuildDiagnosticsService } from './buildDiagnosticsService';
 import { getComponentPaths } from './builtInComponents';
 import { OnAutoInsertFeature } from './onAutoInsertFeature';
 import { registerLanguageStatusItems } from './languageStatusBar';
+import { ProjectContextService } from './services/projectContextService';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -106,6 +107,7 @@ export class RoslynLanguageServer {
     public readonly _onAutoInsertFeature: OnAutoInsertFeature;
 
     public _buildDiagnosticService: BuildDiagnosticsService;
+    public _projectContextService: ProjectContextService;
 
     constructor(
         private _languageClient: RoslynLanguageClient,
@@ -124,6 +126,8 @@ export class RoslynLanguageServer {
         const diagnosticsReportedByBuild = vscode.languages.createDiagnosticCollection('csharp-build');
         this._buildDiagnosticService = new BuildDiagnosticsService(diagnosticsReportedByBuild);
         this.registerDocumentOpenForDiagnostics();
+
+        this._projectContextService = new ProjectContextService(this);
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo();
