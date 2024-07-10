@@ -127,7 +127,7 @@ export class RoslynLanguageServer {
         this._buildDiagnosticService = new BuildDiagnosticsService(diagnosticsReportedByBuild);
         this.registerDocumentOpenForDiagnostics();
 
-        this._projectContextService = new ProjectContextService(this);
+        this._projectContextService = new ProjectContextService(this, this._languageServerEvents);
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo();

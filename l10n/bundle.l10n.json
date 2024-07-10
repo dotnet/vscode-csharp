@@ -162,7 +162,7 @@
   "C# Workspace Status": "C# Workspace Status",
   "Open solution": "Open solution",
   "C# Project Context Status": "C# Project Context Status",
-  "Project Context": "Project Context",
+  "Active File Context": "Active File Context",
   "Pick a fix all scope": "Pick a fix all scope",
   "Fix All Code Action": "Fix All Code Action",
   "pipeArgs must be a string or a string array type": "pipeArgs must be a string or a string array type",

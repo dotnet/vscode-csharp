@@ -19,7 +19,7 @@ export function registerLanguageStatusItems(
     if (!getCSharpDevKit()) {
         WorkspaceStatus.createStatusItem(context, languageServerEvents);
     }
-    ProjectContextStatus.createStatusItem(context, languageServer, languageServerEvents);
+    ProjectContextStatus.createStatusItem(context, languageServer);
 }
 
 class WorkspaceStatus {
@@ -43,11 +43,7 @@ class WorkspaceStatus {
 }
 
 class ProjectContextStatus {
-    static createStatusItem(
-        context: vscode.ExtensionContext,
-        languageServer: RoslynLanguageServer,
-        languageServerEvents: RoslynLanguageServerEvents
-    ) {
+    static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
         const projectContextService = languageServer._projectContextService;
 
         const item = vscode.languages.createLanguageStatusItem(
@@ -55,29 +51,12 @@ class ProjectContextStatus {
             languageServerOptions.documentSelector
         );
         item.name = vscode.l10n.t('C# Project Context Status');
-        item.detail = vscode.l10n.t('Project Context');
+        item.detail = vscode.l10n.t('Active File Context');
         context.subscriptions.push(item);
 
-        updateItem(vscode.window.activeTextEditor);
-        context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateItem));
-
-        languageServerEvents.onServerStateChange((e) => {
-            if (e.state === ServerState.ProjectInitializationComplete) {
-                projectContextService.clear();
-                updateItem(vscode.window.activeTextEditor);
-            }
+        projectContextService.onActiveFileContextChanged((e) => {
+            item.text = e.context._vs_label;
         });
-
-        async function updateItem(e: vscode.TextEditor | undefined) {
-            if (e?.document.languageId !== 'csharp') {
-                item.text = '';
-                return;
-            }
-
-            const projectContext = await projectContextService.getCurrentProjectContext(e.document.uri);
-            if (projectContext) {
-                item.text = projectContext._vs_label;
-            }
-        }
+        projectContextService.refresh();
     }
 }
