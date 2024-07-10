@@ -30,7 +30,7 @@ export class ProjectContextService {
             }
         });
 
-        vscode.window.onDidChangeActiveTextEditor(this.refresh);
+        vscode.window.onDidChangeActiveTextEditor(async (_) => this.refresh());
     }
 
     public get onActiveFileContextChanged(): vscode.Event<ProjectContextChangeEvent> {
