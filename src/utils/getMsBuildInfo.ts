@@ -7,8 +7,6 @@ import { join } from 'path';
 import { execChildProcess } from '../common';
 import { CoreClrDebugUtil } from '../coreclrDebug/util';
 
-export const MSBUILD_MISSING_MESSAGE = 'A valid msbuild installation could not be found.';
-
 let _msbuildVersion: string | undefined;
 
 export async function getMSBuildVersion(): Promise<string | undefined> {
