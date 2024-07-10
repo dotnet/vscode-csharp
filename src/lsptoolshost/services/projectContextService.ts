@@ -49,17 +49,13 @@ export class ProjectContextService {
         this._source.cancel();
         this._source = new vscode.CancellationTokenSource();
 
-        try {
-            const contextList = await this.getProjectContexts(uri, this._source.token);
-            if (!contextList) {
-                return;
-            }
-
-            const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
-            this._contextChangeEmitter.fire({ uri, context });
-        } catch {
-            // This request was cancelled
+        const contextList = await this.getProjectContexts(uri, this._source.token);
+        if (!contextList) {
+            return;
         }
+
+        const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
+        this._contextChangeEmitter.fire({ uri, context });
     }
 
     private async getProjectContexts(
@@ -69,10 +65,18 @@ export class ProjectContextService {
         const uriString = UriConverter.serialize(uri);
         const textDocument = TextDocumentIdentifier.create(uriString);
 
-        return this._languageServer.sendRequest(
-            VSGetProjectContextsRequest.type,
-            { _vs_textDocument: textDocument },
-            token
-        );
+        try {
+            return this._languageServer.sendRequest(
+                VSGetProjectContextsRequest.type,
+                { _vs_textDocument: textDocument },
+                token
+            );
+        } catch (error) {
+            if (error instanceof vscode.CancellationError) {
+                return undefined;
+            }
+
+            throw error;
+        }
     }
 }
