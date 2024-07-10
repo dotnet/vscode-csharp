@@ -41,6 +41,11 @@ describe(`[${testAssetWorkspace.description}] Test Completion`, function () {
         const methodOverrideItem = completionList.items.find(
             (item) => item.label === 'Method(singleCsproj2.NeedsImport n)'
         );
+
+        if (!methodOverrideItem) {
+            throw new Error(completionList.items.reduce((acc, item) => acc + item.label + '\n', ''));
+        }
+
         expect(methodOverrideItem).toBeDefined();
         expect(methodOverrideItem!.kind).toEqual(vscode.CompletionItemKind.Method);
         expect(methodOverrideItem!.command).toBeDefined();

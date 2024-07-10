@@ -4,6 +4,32 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Razor to 9.0.0-preview.24327.6 (PR: [#7273](https://github.com/dotnet/vscode-csharp/pull/7273))
+  * Use a named pipe to communicate projectinfo in vscode (PR: [#10521](https://github.com/dotnet/razor/pull/10521))
+  * Reduce allocations in Razor's DirectiveVisitor (PR: [10521](https://github.com/dotnet/razor/pull/10521))
+* Update Roslyn to 4.12.0-1.24359.8 (PR: [#7273](https://github.com/dotnet/vscode-csharp/pull/7273))
+  * Fix UseNullPropagationCodeFixProvider for parenthesized property access (PR: [#74316](https://github.com/dotnet/roslyn/pull/74316))
+  * Sync solution contents consistently(PR: [#72860](https://github.com/dotnet/roslyn/pull/72860))
+  * Rename the record parameter when its property get renamed (PR: [#74168](https://github.com/dotnet/roslyn/pull/74168))
+  * Make project system workspace transformation functions resilient to being attempted twice (PR: [#74189](https://github.com/dotnet/roslyn/pull/74189))
+  * Report a diagnostic on missing body in partial property implementation (PR [#74224](https://github.com/dotnet/roslyn/pull/74224))
+  * Do not offer 'convert' namespace when the ns has sibling types (PR [#74216](https://github.com/dotnet/roslyn/pull/74216)
+  * Consume new Razor EA (PR: [#74134](https://github.com/dotnet/roslyn/pull/74134))
+  * Report diagnostic for field and value in property accessors when used as primary expressions only (PR: [#74164](https://github.com/dotnet/roslyn/pull/74164))
+  * Ensure an empty run result doesn't throw when generators are present (PR: [#74034](https://github.com/dotnet/roslyn/pull/74034))
+  * Support navigating to an interceptor location when on an intercepted method call (PR: [#74006](https://github.com/dotnet/roslyn/pull/74006))
+  * Add type hints for collection expressions (PR: [#74051](https://github.com/dotnet/roslyn/pull/74051))
+  * Ensure source generated documents are up-to-date before analyzing EnC changes (PR: [#73989](https://github.com/dotnet/roslyn/pull/73989))
+  * Support goto-def taking you from an interceptor method to the location being intercepted (PR: [#73992](https://github.com/dotnet/roslyn/pull/73992))
+  * Various performance fixes
+    * Reduce closures allocated during invocation of CapturedSymbolReplacement.Replacement (PR: [#74258](https://github.com/dotnet/roslyn/pull/74258))
+    * Reduce allocations in SymbolDeclaredCompilationEvent (PR: [#74250](https://github.com/dotnet/roslyn/pull/74250))
+    * Reduce allocations in AbstractProjectExtensionProvider.FilterExtensions (PR [#74112](https://github.com/dotnet/roslyn/pull/74112))
+    * Avoid re-running all codeaction requests at low priority (PR: [#74083](https://github.com/dotnet/roslyn/pull/74083))
+    * Reduce time spent in ConflictResolver.Session.GetNodesOrTokensToCheckForConflicts (PR: [#74101](https://github.com/dotnet/roslyn/pull/74101))
+    * Avoid allocations in AbstractSyntaxIndex<>.GetIndexAsync( PR: [#74075](https://github.com/dotnet/roslyn/pull/74075))
+
+# 2.37.x
 * Bump xamltools to 17.12.35103.251 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7309))
   * Fixed issue with Exception type related to https://github.com/microsoft/vscode-dotnettools/issues/1247
 
