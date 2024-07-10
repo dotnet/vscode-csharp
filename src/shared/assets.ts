@@ -366,7 +366,7 @@ export class AssetGenerator {
                 projectFileText = projectFileText.toLowerCase();
                 const pattern =
                     /.*<targetframework>.*<\/targetframework>.*|.*<targetframeworks>.*<\/targetframeworks>.*/;
-                const pattern2 = /net(\d+\.\d+)/g;
+                const pattern2 = /^net(\d+\.\d+)\b/g;
                 const match = projectFileText.match(pattern);
                 if (match) {
                     const matches = match[0]

@@ -185,7 +185,12 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         url: string
     ) {
         const originalInspectUri = inspectUri;
-        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg('');
+        let folderPath = configuration.cwd;
+        if (folder && folderPath) {
+            folderPath = folderPath.replace('${workspaceFolder}', fileURLToPath(folder.uri.toString()));
+            folderPath = folderPath.replaceAll(/[\\/]/g, path.sep);
+        }
+        const useVSDbg = await BlazorDebugConfigurationProvider.useVSDbg(folderPath ? folderPath : '');
         let portBrowserDebug = -1;
         if (useVSDbg) {
             [inspectUri, portBrowserDebug] = await this.attachToAppOnBrowser(folder, configuration, url);
@@ -413,7 +418,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
                 query: {
                     $properties: ['ActiveConfigurations', 'Path'],
                     ActiveConfigurations: configurationsObject,
-                    $where: { '==': [{ '.': 'Path' }, projectPath] },
+                    $where: { startswith: [{ '.': 'Path' }, projectPath] },
                 },
             };
             queryString = JSON.stringify(query);
@@ -429,7 +434,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         try {
             const result = await proxy.ExecuteQueryAsync(queryString);
             const queryResult = JSON.parse(result) as QueryResult<Project>;
-            const pattern = /net(\d+\.\d+)/;
+            const pattern = /^net(\d+\.\d+)\b/;
             if (queryResult && queryResult.Items) {
                 isNet9OrNewer = false;
                 queryResult.Items.forEach((project) => {
