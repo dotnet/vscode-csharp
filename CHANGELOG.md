@@ -6,6 +6,13 @@
 # Latest
 * Bump xamltools to 17.12.35103.251 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7309))
   * Fixed issue with Exception type related to https://github.com/microsoft/vscode-dotnettools/issues/1247
+
+# 2.38.16
+* Start localizing additional strings (PR: [#7305](https://github.com/dotnet/vscode-csharp/pull/7305))
+* Fix issue launching Razor server on macOS (PR: [#7300](https://github.com/dotnet/vscode-csharp/pull/7300))
+
+# 2.37.26
+* Bump xamltools to 17.11.35027.17 (PR: [#7288](https://github.com/dotnet/vscode-csharp/pull/7288))
   * Fix impossible to enter multiple spaces in attribute area
   * Fix cannot accept Copilot suggestion with Tab when IntelliSense is open
 * Fixing snippets in Razor LSP completion (PR: [#7274](https://github.com/dotnet/vscode-csharp/pull/7274))
