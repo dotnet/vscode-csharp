@@ -145,7 +145,7 @@
   "generateOptionsSchema.console.markdownDescription": "Indique dans quelle console le programme cible doit être lancé. Pour plus d’informations, consultez https://aka.ms/VSCode-CS-LaunchJson-Console.",
   "generateOptionsSchema.console.settingsDescription": "**Remarque :** _Cette option n’est utilisée que pour les projets de console lancés avec la configuration de débogage `dotnet` type_.\r\n\r\nIndique dans quelle console le programme cible doit être lancé. Pour plus d’informations, consultez https://aka.ms/VSCode-CS-LaunchJson-Console.",
   "generateOptionsSchema.cwd.description": "Chemin du répertoire de travail du programme en cours de débogage. La valeur par défaut est l’espace de travail actuel.",
-  "generateOptionsSchema.debugServer.description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+  "generateOptionsSchema.debugServer.description": "Pour le développement d'une extension de débogage uniquement : si un port est spécifié, VS Code tente de se connecter à un adaptateur de débogage s'exécutant en mode serveur",
   "generateOptionsSchema.enableStepFiltering.markdownDescription": "Indicateur permettant d’activer l’exécution pas à pas sur les propriétés et les opérateurs. Cette option a la valeur par défaut 'true'.",
   "generateOptionsSchema.env.description": "Variables d'environnement passées au programme.",
   "generateOptionsSchema.envFile.markdownDescription": "Variables d’environnement passées au programme par un fichier. Par ex., « ${workspaceFolder}/.env »",
