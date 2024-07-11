@@ -9,6 +9,7 @@ import { RoslynLanguageServerEvents } from './languageServerEvents';
 import { languageServerOptions } from '../shared/options';
 import { ServerState } from './serverStateChange';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { RazorLanguage } from '../razor/src/razorLanguage';
 
 export function registerLanguageStatusItems(
     context: vscode.ExtensionContext,
@@ -22,12 +23,17 @@ export function registerLanguageStatusItems(
     ProjectContextStatus.createStatusItem(context, languageServer);
 }
 
+function combineDocumentSelectors(...selectors: vscode.DocumentSelector[]): vscode.DocumentSelector {
+    return selectors.reduce<(string | vscode.DocumentFilter)[]>((acc, selector) => acc.concat(selector), []);
+}
+
 class WorkspaceStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServerEvents: RoslynLanguageServerEvents) {
-        const item = vscode.languages.createLanguageStatusItem(
-            'csharp.workspaceStatus',
-            languageServerOptions.documentSelector
+        const documentSelector = combineDocumentSelectors(
+            languageServerOptions.documentSelector,
+            RazorLanguage.documentSelector
         );
+        const item = vscode.languages.createLanguageStatusItem('csharp.workspaceStatus', documentSelector);
         item.name = vscode.l10n.t('C# Workspace Status');
         item.command = {
             command: 'dotnet.openSolution',
