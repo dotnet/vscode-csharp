@@ -8,6 +8,21 @@ import * as lsp from 'vscode-languageserver-protocol';
 import { CodeAction, TextDocumentRegistrationOptions } from 'vscode-languageserver-protocol';
 import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
+export interface VSProjectContextList {
+    _vs_projectContexts: VSProjectContext[];
+    _vs_defaultIndex: number;
+}
+
+export interface VSProjectContext {
+    _vs_label: string;
+    _vs_id: string;
+    _vs_kind: string;
+}
+
+export interface VSTextDocumentIdentifier extends lsp.TextDocumentIdentifier {
+    _vs_projectContext: VSProjectContext | undefined;
+}
+
 export interface WorkspaceDebugConfigurationParams {
     /**
      * Workspace path containing the solution/projects to get debug information for.
@@ -86,6 +101,13 @@ export interface RegisterSolutionSnapshotResponseItem {
      * Represents a solution snapshot.
      */
     id: lsp.integer;
+}
+
+export interface VSGetProjectContextParams {
+    /**
+     * The document the project context is being requested for.
+     */
+    _vs_textDocument: lsp.TextDocumentIdentifier;
 }
 
 export interface RunTestsParams extends lsp.WorkDoneProgressParams, lsp.PartialResultParams {
@@ -208,6 +230,12 @@ export namespace RegisterSolutionSnapshotRequest {
     export const method = 'workspace/_vs_registerSolutionSnapshot';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.RequestType0<RegisterSolutionSnapshotResponseItem, void>(method);
+}
+
+export namespace VSGetProjectContextsRequest {
+    export const method = 'textDocument/_vs_getProjectContexts';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType<VSGetProjectContextParams, VSProjectContextList, void>(method);
 }
 
 export namespace ProjectInitializationCompleteNotification {

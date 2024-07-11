@@ -19,6 +19,7 @@ export function registerLanguageStatusItems(
     if (!getCSharpDevKit()) {
         WorkspaceStatus.createStatusItem(context, languageServerEvents);
     }
+    ProjectContextStatus.createStatusItem(context, languageServer);
 }
 
 class WorkspaceStatus {
@@ -38,5 +39,24 @@ class WorkspaceStatus {
             item.text = e.workspaceLabel;
             item.busy = e.state === ServerState.ProjectInitializationStarted;
         });
+    }
+}
+
+class ProjectContextStatus {
+    static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
+        const projectContextService = languageServer._projectContextService;
+
+        const item = vscode.languages.createLanguageStatusItem(
+            'csharp.projectContextStatus',
+            languageServerOptions.documentSelector
+        );
+        item.name = vscode.l10n.t('C# Project Context Status');
+        item.detail = vscode.l10n.t('Active File Context');
+        context.subscriptions.push(item);
+
+        projectContextService.onActiveFileContextChanged((e) => {
+            item.text = e.context._vs_label;
+        });
+        projectContextService.refresh();
     }
 }

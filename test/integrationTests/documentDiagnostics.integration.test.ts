@@ -85,8 +85,6 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
                 analyzer: AnalysisSetting.OpenFiles,
             });
 
-            await integrationHelpers.restartLanguageServer();
-
             await waitForExpectedFileDiagnostics((diagnostics) => {
                 expect(diagnostics).toHaveLength(4);
 
