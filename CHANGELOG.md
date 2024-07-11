@@ -5,12 +5,10 @@
 
 # Latest
 * Update Razor to 9.0.0-preview.24360.1 (PR: [#7327](https://github.com/dotnet/vscode-csharp/pull/7327))
-  * Improve perf in generator cache cases (PR: [#10577](https://ryzngard@github.com/dotnet/razor/pull/10577))
-  * Handle InsertReplaceEdit for completion (PR: [#10563](https://ryzngard@github.com/dotnet/razor/pull/10563))
-  * Use System.Text.Json for serialization (PR: [#10551](https://ryzngard@github.com/dotnet/razor/pull/10551))
-  * Support `DocumentSymbol` results from Roslyn (PR: [#10560](https://ryzngard@github.com/dotnet/razor/pull/10560))
-  * Merge release/dev17.11 to main (PR: [#10555](https://ryzngard@github.com/dotnet/razor/pull/10555))
-  * Fixing regression in legacy Razor editor used in .Net Framework projects (#10542) (PR: [#10554](https://ryzngard@github.com/dotnet/razor/pull/10554))
+  * Improve perf in generator cache cases (PR: [#10577](https://github.com/dotnet/razor/pull/10577))
+  * Handle InsertReplaceEdit for completion (PR: [#10563](https://github.com/dotnet/razor/pull/10563))
+  * Use System.Text.Json for serialization (PR: [#10551](https://github.com/dotnet/razor/pull/10551))
+  * Support `DocumentSymbol` results from Roslyn (PR: [#10560](https://github.com/dotnet/razor/pull/10560))
   * Use a named pipe to communicate projectinfo in vscode (PR: [#10521](https://github.com/dotnet/razor/pull/10521))
   * Reduce allocations in Razor's DirectiveVisitor (PR: [10521](https://github.com/dotnet/razor/pull/10521))
 * Update Roslyn to 4.12.0-1.24359.11 (PR: [#7326](https://github.com/dotnet/vscode-csharp/pull/7326))
