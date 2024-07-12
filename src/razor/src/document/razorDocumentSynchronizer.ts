@@ -123,7 +123,6 @@ export class RazorDocumentSynchronizer {
 
         const documentKey = getUriPath(context.projectedDocument.uri);
         const synchronizations = this.synchronizations[documentKey];
-        clearTimeout(context.timeoutId);
 
         if (synchronizations.length === 1) {
             delete this.synchronizations[documentKey];
@@ -170,9 +169,8 @@ export class RazorDocumentSynchronizer {
                 }
             },
             dispose: () => {
-                while (rejectionsForCancel.length > 0) {
-                    rejectionsForCancel.pop();
-                }
+                rejectionsForCancel.length = 0;
+                clearTimeout(context.timeoutId);
             },
             projectedDocumentSynchronized,
             onProjectedDocumentSynchronized,
