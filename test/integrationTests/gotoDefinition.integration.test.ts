@@ -6,20 +6,24 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, openFileInWorkspaceAsync } from './integrationHelpers';
-import { describe, beforeAll, beforeEach, afterAll, test, expect } from '@jest/globals';
+import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
-describe(`[${testAssetWorkspace.description}] Test Go To Definition`, function () {
-    beforeAll(async function () {
+describe(`[${testAssetWorkspace.description}] Test Go To Definition`, () => {
+    beforeAll(async () => {
         await activateCSharpExtension();
     });
 
-    beforeEach(async function () {
+    beforeEach(async () => {
         await openFileInWorkspaceAsync(path.join('src', 'app', 'definition.cs'));
     });
 
     afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
+    });
+
+    afterEach(async () => {
+        await closeAllEditorsAsync();
     });
 
     test('Navigates to definition in same file', async () => {

@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { describe, test, beforeAll, afterAll, expect } from '@jest/globals';
+import { describe, test, beforeAll, afterAll, expect, beforeEach, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting } from '../../src/lsptoolshost/buildDiagnosticsService';
 import * as integrationHelpers from './integrationHelpers';
 import path = require('path');
 import { getCode, setBackgroundAnalysisScopes, waitForExpectedDiagnostics } from './diagnosticsHelpers';
-describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
-    beforeAll(async function () {
+
+describe(`[${testAssetWorkspace.description}] Test diagnostics`, () => {
+    beforeAll(async () => {
         await integrationHelpers.activateCSharpExtension();
     });
 
@@ -21,8 +22,12 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
 
     describe('Open document diagnostics', () => {
         let file: vscode.Uri;
-        beforeAll(async () => {
+        beforeEach(async () => {
             file = await integrationHelpers.openFileInWorkspaceAsync(path.join('src', 'app', 'diagnostics.cs'));
+        });
+
+        afterEach(async () => {
+            await integrationHelpers.closeAllEditorsAsync();
         });
 
         test('Compiler and analyzer diagnostics reported for open file when set to OpenFiles', async () => {
