@@ -34,6 +34,8 @@
     * Avoid allocations in AbstractSyntaxIndex<>.GetIndexAsync( PR: [#74075](https://github.com/dotnet/roslyn/pull/74075))
 * Bump xamltools to 17.12.35112.24 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7334))
   * Fixed issue with Exception type related to https://github.com/microsoft/vscode-dotnettools/issues/1247
+  * Fixed Hot Reload not working on some Android device models: https://github.com/microsoft/vscode-dotnettools/issues/1241
+ 
 
 # 2.38.16
 * Start localizing additional strings (PR: [#7305](https://github.com/dotnet/vscode-csharp/pull/7305))
