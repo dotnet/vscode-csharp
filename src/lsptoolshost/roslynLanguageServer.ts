@@ -57,7 +57,7 @@ import { registerRazorCommands } from './razorCommands';
 import { registerOnAutoInsert } from './onAutoInsert';
 import { registerCodeActionFixAllCommands } from './fixAllCodeAction';
 import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from '../shared/options';
-import { NamedPipeInformation } from './roslynProtocol';
+import { NamedPipeInformation, VSTextDocumentIdentifier } from './roslynProtocol';
 import { IDisposable } from '../disposable';
 import { registerNestedCodeActionCommands } from './nestedCodeAction';
 import { registerRestoreCommands } from './restore';
@@ -127,7 +127,7 @@ export class RoslynLanguageServer {
         this._buildDiagnosticService = new BuildDiagnosticsService(diagnosticsReportedByBuild);
         this.registerDocumentOpenForDiagnostics();
 
-        this._projectContextService = new ProjectContextService(this, this._languageServerEvents);
+        this._projectContextService = new ProjectContextService(this, _languageServerEvents);
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo();
@@ -220,6 +220,7 @@ export class RoslynLanguageServer {
         };
 
         const documentSelector = languageServerOptions.documentSelector;
+        let server: RoslynLanguageServer | undefined = undefined;
 
         // Options to control the language client
         const clientOptions: LanguageClientOptions = {
@@ -240,6 +241,22 @@ export class RoslynLanguageServer {
                 protocol2Code: UriConverter.deserialize,
             },
             middleware: {
+                async sendRequest(type, param, token, next) {
+                    if (isObject(param)) {
+                        if ('textDocument' in param) {
+                            const textDocument = <VSTextDocumentIdentifier>param.textDocument;
+                            textDocument._vs_projectContext = server?._projectContextService.getDocumentContext(
+                                textDocument.uri
+                            );
+                        } else if ('_vs_textDocument' in param) {
+                            const textDocument = <VSTextDocumentIdentifier>param._vs_textDocument;
+                            textDocument._vs_projectContext = server?._projectContextService.getDocumentContext(
+                                textDocument.uri
+                            );
+                        }
+                    }
+                    return next(type, param, token);
+                },
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },
@@ -256,7 +273,7 @@ export class RoslynLanguageServer {
 
         client.registerProposedFeatures();
 
-        const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);
+        server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);
 
         client.registerFeature(server._onAutoInsertFeature);
 
@@ -1106,4 +1123,8 @@ function getSessionId(): string {
 
 export function isString(value: any): value is string {
     return typeof value === 'string' || value instanceof String;
+}
+
+export function isObject(value: any): value is object {
+    return value !== null && typeof value === 'object';
 }

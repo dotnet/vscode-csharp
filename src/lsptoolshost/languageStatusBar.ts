@@ -51,7 +51,10 @@ class WorkspaceStatus {
 class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
         const projectContextService = languageServer._projectContextService;
-
+        const selectContextCommand = {
+            command: 'csharp.changeDocumentContext',
+            title: vscode.l10n.t('Select context'),
+        };
         const item = vscode.languages.createLanguageStatusItem(
             'csharp.projectContextStatus',
             languageServerOptions.documentSelector
@@ -60,8 +63,11 @@ class ProjectContextStatus {
         item.detail = vscode.l10n.t('Active File Context');
         context.subscriptions.push(item);
 
-        projectContextService.onActiveFileContextChanged((e) => {
-            item.text = e.context._vs_label;
+        projectContextService.onDocumentContextChanged((e) => {
+            if (vscode.window.activeTextEditor?.document.uri === e.uri) {
+                item.text = e.context._vs_label;
+                item.command = e.hasAdditionalContexts ? selectContextCommand : undefined;
+            }
         });
         projectContextService.refresh();
     }

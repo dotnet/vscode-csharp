@@ -11,6 +11,8 @@ import { createLaunchTargetForSolution } from '../shared/launchTarget';
 import reportIssue from '../shared/reportIssue';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
+import { VSProjectContext } from './roslynProtocol';
+import { CancellationToken } from 'vscode-languageclient/node';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -40,6 +42,11 @@ export function registerCommands(
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer))
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('csharp.changeDocumentContext', async () =>
+            changeDocumentContext(languageServer)
+        )
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
@@ -189,5 +196,36 @@ async function openSolution(languageServer: RoslynLanguageServer): Promise<vscod
         const uri = vscode.Uri.file(launchTarget.target);
         languageServer.openSolution(uri);
         return uri;
+    }
+}
+
+async function changeDocumentContext(languageServer: RoslynLanguageServer): Promise<VSProjectContext | undefined> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+    const projectContexts = await languageServer._projectContextService.getProjectContexts(
+        editor.document.uri,
+        CancellationToken.None
+    );
+    if (!projectContexts) {
+        return;
+    }
+
+    const items = projectContexts._vs_projectContexts.map((context) => {
+        return { label: context._vs_label, context };
+    });
+    const selectedItem = await vscode.window.showQuickPick(items, {
+        placeHolder: vscode.l10n.t('Select project context'),
+    });
+
+    if (selectedItem) {
+        languageServer._projectContextService.setDocumentContext(
+            editor.document.uri,
+            selectedItem.context,
+            projectContexts._vs_projectContexts.length > 1
+        );
+        // TODO: Replace this with proper server-side onDidChange notifications
+        editor.edit(() => 0);
     }
 }

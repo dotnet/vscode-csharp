@@ -14,9 +14,12 @@ import { ServerState } from '../serverStateChange';
 export interface ProjectContextChangeEvent {
     uri: vscode.Uri;
     context: VSProjectContext;
+    hasAdditionalContexts: boolean;
 }
 
 export class ProjectContextService {
+    /** Track the project context for a particular document uri. */
+    private readonly _documentContexts: { [uri: string]: VSProjectContext } = {};
     private readonly _contextChangeEmitter = new vscode.EventEmitter<ProjectContextChangeEvent>();
     private _source = new vscode.CancellationTokenSource();
 
@@ -33,8 +36,25 @@ export class ProjectContextService {
         vscode.window.onDidChangeActiveTextEditor(async (_) => this.refresh());
     }
 
-    public get onActiveFileContextChanged(): vscode.Event<ProjectContextChangeEvent> {
+    public get onDocumentContextChanged(): vscode.Event<ProjectContextChangeEvent> {
         return this._contextChangeEmitter.event;
+    }
+
+    public getDocumentContext(uri: string | vscode.Uri): VSProjectContext | undefined {
+        const uriString = uri instanceof vscode.Uri ? UriConverter.serialize(uri) : uri;
+        return this._documentContexts[uriString];
+    }
+
+    public setDocumentContext(
+        uri: string | vscode.Uri,
+        context: VSProjectContext,
+        hasAdditionalContexts: boolean
+    ): void {
+        const uriString = uri instanceof vscode.Uri ? UriConverter.serialize(uri) : uri;
+        uri = uri instanceof vscode.Uri ? uri : UriConverter.deserialize(uri);
+
+        this._documentContexts[uriString] = context;
+        this._contextChangeEmitter.fire({ uri, context, hasAdditionalContexts });
     }
 
     public async refresh() {
@@ -54,15 +74,26 @@ export class ProjectContextService {
             return;
         }
 
-        const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
-        this._contextChangeEmitter.fire({ uri, context });
+        // Determine if the user has selected a context for this document and whether
+        // it is still in the list of contexts.
+        const uriString = UriConverter.serialize(uri);
+        const selectedContext = this._documentContexts[uriString];
+        const selectedContextValid = selectedContext
+            ? contextList._vs_projectContexts.some((c) => c._vs_id == selectedContext._vs_id)
+            : false;
+
+        const defaultContext = contextList._vs_projectContexts[contextList._vs_defaultIndex];
+        const context = selectedContextValid ? selectedContext : defaultContext;
+        const hasAdditionalContexts = contextList._vs_projectContexts.length > 1;
+
+        this._contextChangeEmitter.fire({ uri, context, hasAdditionalContexts });
     }
 
-    private async getProjectContexts(
-        uri: vscode.Uri,
+    public async getProjectContexts(
+        uri: string | vscode.Uri,
         token: vscode.CancellationToken
     ): Promise<VSProjectContextList | undefined> {
-        const uriString = UriConverter.serialize(uri);
+        const uriString = uri instanceof vscode.Uri ? UriConverter.serialize(uri) : uri;
         const textDocument = TextDocumentIdentifier.create(uriString);
 
         try {
