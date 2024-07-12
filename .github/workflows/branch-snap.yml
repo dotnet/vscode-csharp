@@ -11,4 +11,3 @@ jobs:
     uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@main
     with:
       configuration_file_path: '.config/snap-flow.json'
-      configuration_file_branch: 'custom-branch-if-needed'

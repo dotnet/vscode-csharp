@@ -8,6 +8,7 @@
 !.razorDevKit/**
 !.razoromnisharp/**
 .rpt2_cache/**
+.config/**
 .github/**
 .vscode/**
 .vscode-test/**
