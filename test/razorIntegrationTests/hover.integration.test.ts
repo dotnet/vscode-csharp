@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
+import { describe, beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../integrationTests/integrationHelpers';
 
@@ -15,8 +15,11 @@ describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
             return;
         }
 
-        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'Index.cshtml'));
         await integrationHelpers.activateCSharpExtension();
+    });
+
+    beforeEach(async function () {
+        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'Index.cshtml'));
     });
 
     afterAll(async () => {
