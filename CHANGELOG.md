@@ -7,7 +7,7 @@
 
 # 2.39.x
 * Add language status bar item displaying project context for open files (PR: [#7321](https://github.com/dotnet/vscode-csharp/pull/7321))
-* Add language status bar item for workspace status (C# standalone) (PR: [#7254](https://github.com/dotnet/vscode-csharp/pull/7254))
+* Add language status bar item for workspace status (C# standalone) (PR: [#7254](https://github.com/dotnet/vscode-csharp/pull/7254), PR: [#7329])https://github.com/dotnet/vscode-csharp/pull/7329))
 * Update Razor to 9.0.0-preview.24360.1 (PR: [#7327](https://github.com/dotnet/vscode-csharp/pull/7327))
   * Improve perf in generator cache cases (PR: [#10577](https://github.com/dotnet/razor/pull/10577))
   * Handle InsertReplaceEdit for completion (PR: [#10563](https://github.com/dotnet/razor/pull/10563))
