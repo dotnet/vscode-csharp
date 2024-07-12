@@ -50,12 +50,13 @@ class WorkspaceStatus {
 
 class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
+        const documentSelector = combineDocumentSelectors(
+            languageServerOptions.documentSelector,
+            RazorLanguage.documentSelector
+        );
         const projectContextService = languageServer._projectContextService;
 
-        const item = vscode.languages.createLanguageStatusItem(
-            'csharp.projectContextStatus',
-            languageServerOptions.documentSelector
-        );
+        const item = vscode.languages.createLanguageStatusItem('csharp.projectContextStatus', documentSelector);
         item.name = vscode.l10n.t('C# Project Context Status');
         item.detail = vscode.l10n.t('Active File Context');
         context.subscriptions.push(item);

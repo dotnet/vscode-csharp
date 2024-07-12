@@ -10,6 +10,9 @@ import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../uriConverter';
 import { LanguageServerEvents } from '../languageServerEvents';
 import { ServerState } from '../serverStateChange';
+import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileInfoHandler';
+import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideDynamicFileResponse';
+import { ProvideDynamicFileParams } from '../../razor/src/dynamicFile/provideDynamicFileParams';
 
 export interface ProjectContextChangeEvent {
     uri: vscode.Uri;
@@ -39,11 +42,22 @@ export class ProjectContextService {
 
     public async refresh() {
         const textEditor = vscode.window.activeTextEditor;
-        if (textEditor?.document?.languageId !== 'csharp') {
+        const languageId = textEditor?.document?.languageId;
+        if (languageId !== 'csharp' && languageId !== 'aspnetcorerazor') {
             return;
         }
 
-        const uri = textEditor.document.uri;
+        let uri = textEditor!.document.uri;
+
+        // If the active document is a Razor file, we need to map it back to a C# file.
+        if (languageId === 'aspnetcorerazor') {
+            const virtualUri = await this.getVirtualCSharpUri(uri);
+            if (!virtualUri) {
+                return;
+            }
+
+            uri = virtualUri;
+        }
 
         // If we have an open request, cancel it.
         this._source.cancel();
@@ -56,6 +70,20 @@ export class ProjectContextService {
 
         const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
         this._contextChangeEmitter.fire({ uri, context });
+    }
+
+    private async getVirtualCSharpUri(uri: vscode.Uri): Promise<vscode.Uri | undefined> {
+        const response = await vscode.commands.executeCommand<ProvideDynamicFileResponse>(
+            DynamicFileInfoHandler.provideDynamicFileInfoCommand,
+            new ProvideDynamicFileParams([uri.fsPath])
+        );
+
+        const responseUri = response.generatedFiles[0];
+        if (!responseUri) {
+            return undefined;
+        }
+
+        return UriConverter.deserialize(responseUri);
     }
 
     private async getProjectContexts(
