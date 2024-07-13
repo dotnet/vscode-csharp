@@ -11,3 +11,17 @@ jobs:
     uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@main
     with:
       configuration_file_path: '.config/snap-flow.json'
+
+  create-pull-request:
+    if: github.ref == 'refs/heads/testing_action'
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Create version.json update PR
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Update main version
+          title: 'Update main version'
+          branch: merge/update-main-version
+          # awk '/"version":/{split($2,a,/[.]/);$1="        \"version\":";$2=a[1]"."a[2]+1"$3"};1' version.json

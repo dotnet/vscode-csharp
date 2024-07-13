@@ -3,7 +3,7 @@
 	"version": "2.39",
 	"publicReleaseRefSpec": [
 		"^refs/heads/release$",
-    "^refs/heads/prerelease$",
+    	"^refs/heads/prerelease$",
 		"^refs/heads/main$",
 		"^refs/heads/patch/.*$"
 	],
