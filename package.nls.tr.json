@@ -145,7 +145,7 @@
   "generateOptionsSchema.console.markdownDescription": "Hedef programın hangi konsolda başlatılması gerektiğini belirtir. Daha fazla bilgi için https://aka.ms/VSCode-CS-LaunchJson-Console sayfasına bakın.",
   "generateOptionsSchema.console.settingsDescription": "**Not:** _Bu seçenek yalnıza `dotnet` hata ayıklama yapılandırması türüyle başlatılan konsol projeleri için kullanılabilir_.\r\n\r\nHedef programın hangi konsolda başlatılması gerektiğini belirtir. Daha fazla bilgi için https://aka.ms/VSCode-CS-LaunchJson-Console sayfasına bakın.",
   "generateOptionsSchema.cwd.description": "Hataları ayıklanan programın çalışma dizininin yolu. Varsayılan, geçerli çalışma alanıdır.",
-  "generateOptionsSchema.debugServer.description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+  "generateOptionsSchema.debugServer.description": "Yalnızca hata ayıklama uzantısı geliştirme için: Bağlantı noktası belirtilirse VS Code sunucu modunda çalışan bir hata ayıklama bağdaştırıcısına bağlanmaya çalışır",
   "generateOptionsSchema.enableStepFiltering.markdownDescription": "Özellikler ve İşleçler üzerinde adımlamayı etkinleştiren bayrak. Bu seçenek varsayılan olarak `true` değerini alır.",
   "generateOptionsSchema.env.description": "Programa geçirilen ortam değişkenleri.",
   "generateOptionsSchema.envFile.markdownDescription": "Bir dosya tarafından programa geçirilen ortam değişkenleri. Ör. '${workspaceFolder}/.env'",

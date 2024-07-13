@@ -52,7 +52,7 @@ import { RazorOmnisharpDownloader } from './razor/razorOmnisharpDownloader';
 import { RoslynLanguageServerExport } from './lsptoolshost/roslynLanguageServerExportChannel';
 import { registerOmnisharpOptionChanges } from './omnisharp/omnisharpOptionChanges';
 import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents';
-import { ServerStateChange } from './lsptoolshost/serverStateChange';
+import { ServerState } from './lsptoolshost/serverStateChange';
 import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
 import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from './shared/options';
 import { BuildResultDiagnostics } from './lsptoolshost/services/buildResultReporterService';
@@ -149,8 +149,8 @@ export async function activate(
 
         // Setup a listener for project initialization complete before we start the server.
         projectInitializationCompletePromise = new Promise((resolve, _) => {
-            roslynLanguageServerEvents.onServerStateChange(async (state) => {
-                if (state === ServerStateChange.ProjectInitializationComplete) {
+            roslynLanguageServerEvents.onServerStateChange(async (e) => {
+                if (e.state === ServerState.ProjectInitializationComplete) {
                     resolve();
                 }
             });

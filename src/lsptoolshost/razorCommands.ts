@@ -133,8 +133,9 @@ export function registerRazorCommands(context: vscode.ExtensionContext, language
     // a project. We want to defer this work until necessary, so this command is called by the Razor document manager to tell
     // us when they need us to initialize the Razor things.
     context.subscriptions.push(
-        vscode.commands.registerCommand(razorInitializeCommand, async () => {
-            await languageServer.sendNotification('razor/initialize', {});
+        vscode.commands.registerCommand(razorInitializeCommand, async (pipeName) => {
+            // params object must match https://github.com/dotnet/roslyn/blob/325ec8d93f9a28701fdcacffb175d2b01c3ac682/src/LanguageServer/Microsoft.CodeAnalysis.LanguageServer/HostWorkspace/RazorInitializeHandler.cs#L37
+            await languageServer.sendNotification('razor/initialize', { pipeName: pipeName });
         })
     );
 }

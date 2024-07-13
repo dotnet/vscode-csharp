@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
+import { describe, beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../integrationTests/integrationHelpers';
 
@@ -20,8 +20,11 @@ describe(`Razor Formatting ${testAssetWorkspace.description}`, function () {
         const htmlConfig = vscode.workspace.getConfiguration('html');
         await htmlConfig.update('format.enable', true);
 
-        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'BadlyFormatted.razor'));
         await integrationHelpers.activateCSharpExtension();
+    });
+
+    beforeEach(async function () {
+        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'BadlyFormatted.razor'));
     });
 
     afterAll(async () => {

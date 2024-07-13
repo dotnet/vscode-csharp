@@ -145,7 +145,7 @@
   "generateOptionsSchema.console.markdownDescription": "指出目的程式應該啟動到哪一個主控台。如需詳細資訊，請參閱 https://aka.ms/VSCode-CS-LaunchJson-Console。",
   "generateOptionsSchema.console.settingsDescription": "**注意:** _此選項僅適用於使用 'dotnet' 偵錯設定 type_ 啟動的主控台專案。\r\n\r\n指出目的程式應該啟動到哪一個主控台。如需詳細資訊，請參閱 https://aka.ms/VSCode-CS-LaunchJson-Console。",
   "generateOptionsSchema.cwd.description": "正在偵錯之程式的工作目錄路徑。預設值是目前的工作區。",
-  "generateOptionsSchema.debugServer.description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+  "generateOptionsSchema.debugServer.description": "僅限偵錯延伸模組開發: 如果指定了連接埠，VS Code 會嘗試連線至以伺服器模式執行的偵錯配接器",
   "generateOptionsSchema.enableStepFiltering.markdownDescription": "要啟用逐步執行屬性和運算子的旗標。此選項預設為 'true'。",
   "generateOptionsSchema.env.description": "傳遞給程式的環境變數。",
   "generateOptionsSchema.envFile.markdownDescription": "檔案傳遞給程式的環境變數。例如 '${workspaceFolder}/.env'",

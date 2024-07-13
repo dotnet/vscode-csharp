@@ -10,7 +10,7 @@ import { IWorkspaceDebugInformationProvider } from '../shared/IWorkspaceDebugInf
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { RoslynWorkspaceDebugInformationProvider } from './roslynWorkspaceDebugConfigurationProvider';
 import { PlatformInformation } from '../shared/platform';
-import { ServerStateChange } from './serverStateChange';
+import { ServerState } from './serverStateChange';
 import { DotnetConfigurationResolver } from '../shared/dotnetConfigurationProvider';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { RoslynLanguageServerEvents } from './languageServerEvents';
@@ -25,8 +25,8 @@ export function registerDebugger(
     const workspaceInformationProvider: IWorkspaceDebugInformationProvider =
         new RoslynWorkspaceDebugInformationProvider(languageServer, csharpOutputChannel);
 
-    const disposable = languageServerEvents.onServerStateChange(async (state) => {
-        if (state === ServerStateChange.ProjectInitializationComplete) {
+    const disposable = languageServerEvents.onServerStateChange(async (e) => {
+        if (e.state === ServerState.ProjectInitializationComplete) {
             const csharpDevkitExtension = getCSharpDevKit();
             if (!csharpDevkitExtension) {
                 // Update or add tasks.json and launch.json

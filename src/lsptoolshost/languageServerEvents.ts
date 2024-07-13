@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { ServerStateChange } from './serverStateChange';
+import { ServerStateChangeEvent } from './serverStateChange';
 import { IDisposable } from '../disposable';
 
 /**
@@ -12,7 +12,7 @@ import { IDisposable } from '../disposable';
  * These events can be consumed to wait for the server to reach a certain state.
  */
 export interface LanguageServerEvents {
-    readonly onServerStateChange: vscode.Event<ServerStateChange>;
+    readonly onServerStateChange: vscode.Event<ServerStateChangeEvent>;
 }
 
 /**
@@ -21,9 +21,9 @@ export interface LanguageServerEvents {
  * register for events without having to know about the specific current state of the language server.
  */
 export class RoslynLanguageServerEvents implements LanguageServerEvents, IDisposable {
-    public readonly onServerStateChangeEmitter = new vscode.EventEmitter<ServerStateChange>();
+    public readonly onServerStateChangeEmitter = new vscode.EventEmitter<ServerStateChangeEvent>();
 
-    public get onServerStateChange(): vscode.Event<ServerStateChange> {
+    public get onServerStateChange(): vscode.Event<ServerStateChangeEvent> {
         return this.onServerStateChangeEmitter.event;
     }
 
