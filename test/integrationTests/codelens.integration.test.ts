@@ -6,22 +6,31 @@
 import * as lsp from 'vscode-languageserver-protocol';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { describe, beforeAll, beforeEach, afterAll, test, expect } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, getCodeLensesAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import {
+    activateCSharpExtension,
+    closeAllEditorsAsync,
+    getCodeLensesAsync,
+    openFileInWorkspaceAsync,
+} from './integrationHelpers';
 
-describe(`[${testAssetWorkspace.description}] Test CodeLens`, function () {
-    beforeAll(async function () {
+describe(`[${testAssetWorkspace.description}] Test CodeLens`, () => {
+    beforeAll(async () => {
         await activateCSharpExtension();
     });
 
-    beforeEach(async function () {
+    beforeEach(async () => {
         const fileName = path.join('src', 'app', 'reference.cs');
         await openFileInWorkspaceAsync(fileName);
     });
 
     afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
+    });
+
+    afterEach(async () => {
+        await closeAllEditorsAsync();
     });
 
     test('CodeLens references are displayed', async () => {

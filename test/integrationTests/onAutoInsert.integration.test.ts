@@ -8,6 +8,7 @@ import * as path from 'path';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import {
     activateCSharpExtension,
+    closeAllEditorsAsync,
     openFileInWorkspaceAsync,
     revertActiveFile,
     sleep,
@@ -15,17 +16,18 @@ import {
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
-describe(`[${testAssetWorkspace.description}] Test OnAutoInsert`, function () {
-    beforeAll(async function () {
+describe(`[${testAssetWorkspace.description}] Test OnAutoInsert`, () => {
+    beforeAll(async () => {
         await activateCSharpExtension();
     });
 
-    beforeEach(async function () {
+    beforeEach(async () => {
         await openFileInWorkspaceAsync(path.join('src', 'app', 'DocComments.cs'));
     });
 
     afterEach(async () => {
         await revertActiveFile();
+        await closeAllEditorsAsync();
     });
 
     afterAll(async () => {

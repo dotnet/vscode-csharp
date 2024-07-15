@@ -9,8 +9,8 @@ import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { CommonCommands, OmniSharpCommands, RoslynCommands } from './expectedCommands';
 
-describe(`Command Enablement: ${testAssetWorkspace.description}`, function () {
-    beforeAll(async function () {
+describe(`Command Enablement: ${testAssetWorkspace.description}`, () => {
+    beforeAll(async () => {
         await activateCSharpExtension();
     });
 
@@ -18,7 +18,7 @@ describe(`Command Enablement: ${testAssetWorkspace.description}`, function () {
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test('Roslyn commands are available', async function () {
+    test('Roslyn commands are available', async () => {
         const commands = await vscode.commands.getCommands(true);
 
         // Ensure the standalone Roslyn commands are available.
