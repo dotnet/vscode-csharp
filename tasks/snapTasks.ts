@@ -8,18 +8,18 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 gulp.task('incrementVersionJson', async (): Promise<void> => {
-    let versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
-    let file = fs.readFileSync(versionFilePath, 'utf8');
-    let versionJson = JSON.parse(file);
+    const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
+    const file = fs.readFileSync(versionFilePath, 'utf8');
+    const versionJson = JSON.parse(file);
 
-    let version = versionJson.version as string;
-    let split = version.split('.');
-    let newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
+    const version = versionJson.version as string;
+    const split = version.split('.');
+    const newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
 
     console.log(`Updating ${version} to ${newVersion}`);
 
     versionJson.version = newVersion;
-    let newJson = JSON.stringify(versionJson, null, 4);
+    const newJson = JSON.stringify(versionJson, null, 4);
     console.log(`New json: ${newJson}`);
 
     fs.writeFileSync(versionFilePath, newJson);
