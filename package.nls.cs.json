@@ -145,7 +145,7 @@
   "generateOptionsSchema.console.markdownDescription": "Označuje, do které konzoly se má cílový program spustit. Další informace najdete tady: https://aka.ms/VSCode-CS-LaunchJson-Console.",
   "generateOptionsSchema.console.settingsDescription": "**Poznámka:** _Tato možnost se používá jenom pro projekty konzoly spuštěné s konfigurací ladění typu dotnet_.\r\n\r\nOznačuje, do které konzoly se má cílový program spustit. Další informace najdete tady: https://aka.ms/VSCode-CS-LaunchJson-Console.",
   "generateOptionsSchema.cwd.description": "Cesta k pracovnímu adresáři laděného programu. Výchozí hodnota je aktuální pracovní prostor.",
-  "generateOptionsSchema.debugServer.description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+  "generateOptionsSchema.debugServer.description": "Pouze pro vývoj rozšíření ladění: Pokud je zadán port, VS Code se pokusí připojit k adaptéru ladění spuštěnému v režimu serveru.",
   "generateOptionsSchema.enableStepFiltering.markdownDescription": "Příznakem povolíte krokování nad vlastnostmi a operátory. Výchozí hodnota této možnosti je true.",
   "generateOptionsSchema.env.description": "Proměnné prostředí se předaly programu.",
   "generateOptionsSchema.envFile.markdownDescription": "Proměnné prostředí předané do programu souborem. Příklad: ${workspaceFolder}/.env",

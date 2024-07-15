@@ -145,7 +145,7 @@
   "generateOptionsSchema.console.markdownDescription": "Wskazuje konsolę, do której ma zostać uruchomiony program docelowy. Aby uzyskać więcej informacji, zobacz https://aka.ms/VSCode-CS-LaunchJson-Console.",
   "generateOptionsSchema.console.settingsDescription": "**Uwaga:** _Ta opcja jest używana tylko w przypadku projektów konsoli uruchamianych z typem konfiguracji debugowania „dotnet”_.\r\n\r\nWskazuje konsolę, do której ma zostać uruchomiony program docelowy. Aby uzyskać więcej informacji, zobacz https://aka.ms/VSCode-CS-LaunchJson-Console.",
   "generateOptionsSchema.cwd.description": "Ścieżka do katalogu roboczego debugowanego programu. Ustawieniem domyślnym jest bieżący obszar roboczy.",
-  "generateOptionsSchema.debugServer.description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+  "generateOptionsSchema.debugServer.description": "Tylko dla programowania rozszerzeń debugowania: jeśli określono port, program VS Code próbuje nawiązać połączenie z adapterem debugowania uruchomionym w trybie serwera",
   "generateOptionsSchema.enableStepFiltering.markdownDescription": "Flaga umożliwiająca przejście przez właściwości i operatory. Ta opcja jest domyślnie ustawiona na wartość „true”.",
   "generateOptionsSchema.env.description": "Zmienne środowiskowe przekazywane do programu.",
   "generateOptionsSchema.envFile.markdownDescription": "Zmienne środowiskowe przekazywane do programu przez plik, np. „${workspaceFolder}/.env”",

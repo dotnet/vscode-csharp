@@ -145,7 +145,7 @@
   "generateOptionsSchema.console.markdownDescription": "Indica in quale console deve essere avviato il programma di destinazione. Vedere https://aka.ms/VSCode-CS-LaunchJson-Console per ulteriori informazioni.",
   "generateOptionsSchema.console.settingsDescription": "**Nota:** _Questa opzione è usata solo per i progetti console avviati con il tipo di configurazione di debug 'dotnet'_.\r\n\r\nIndica in quale console deve essere avviato il programma di destinazione. Vedere https://aka.ms/VSCode-CS-LaunchJson-Console per ulteriori informazioni.",
   "generateOptionsSchema.cwd.description": "Percorso della directory di lavoro del programma in fase di debug. Il valore predefinito è l’area di lavoro corrente.",
-  "generateOptionsSchema.debugServer.description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+  "generateOptionsSchema.debugServer.description": "Solo per lo sviluppo dell'estensione di debug: se si specifica una porta, Visual Studio Code prova a connettersi a un adattatore di debug in esecuzione in modalità server",
   "generateOptionsSchema.enableStepFiltering.markdownDescription": "Flag per abilitare il passaggio di proprietà e operatori. L'impostazione predefinita di questa opzione è 'true'.",
   "generateOptionsSchema.env.description": "Variabili di ambiente passate al programma.",
   "generateOptionsSchema.envFile.markdownDescription": "Variabili di ambiente passate al programma da un file. Ad esempio: '${workspaceFolder}/.env'",

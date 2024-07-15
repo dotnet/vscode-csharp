@@ -145,7 +145,7 @@
   "generateOptionsSchema.console.markdownDescription": "Indica em qual console o programa de destino deve ser iniciado. Veja https://aka.ms/VSCode-CS-LaunchJson-Console para mais informação.",
   "generateOptionsSchema.console.settingsDescription": "**Observação:** _This é usada apenas para projetos de console iniciados com a configuração de depuração 'dotnet' type_.\r\n\r\nIndica em qual console o programa de destino deve ser iniciado. Veja https://aka.ms/VSCode-CS-LaunchJson-Console para mais informação.",
   "generateOptionsSchema.cwd.description": "Caminho para o diretório de trabalho do programa que está sendo depurado. O padrão é o espaço de trabalho atual.",
-  "generateOptionsSchema.debugServer.description": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode",
+  "generateOptionsSchema.debugServer.description": "Somente para desenvolvimento de extensão de depuração: se uma porta for especificada, o VS Code tentará se conectar a um adaptador de depuração em execução no modo do servidor",
   "generateOptionsSchema.enableStepFiltering.markdownDescription": "Sinalizador para habilitar o passo a passo sobre Propriedades e Operadores. Esta opção é padronizada como `true`.",
   "generateOptionsSchema.env.description": "Variáveis de ambiente passadas para o programa.",
   "generateOptionsSchema.envFile.markdownDescription": "Variáveis de ambiente passadas para o programa por um arquivo. Por exemplo. `${workspaceFolder}/.env`",

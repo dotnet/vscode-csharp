@@ -4,16 +4,24 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
-* Update Razor to 9.0.0-preview.24327.6 (PR: [#7273](https://github.com/dotnet/vscode-csharp/pull/7273))
+
+# 2.39.x
+* Add language status bar item displaying project context for open files (PR: [#7321](https://github.com/dotnet/vscode-csharp/pull/7321), PR: [#7333](https://github.com/dotnet/vscode-csharp/pull/7333))
+* Add language status bar item for workspace status (C# standalone) (PR: [#7254](https://github.com/dotnet/vscode-csharp/pull/7254), PR: [#7329])https://github.com/dotnet/vscode-csharp/pull/7329))
+* Update Razor to 9.0.0-preview.24360.1 (PR: [#7327](https://github.com/dotnet/vscode-csharp/pull/7327))
+  * Improve perf in generator cache cases (PR: [#10577](https://github.com/dotnet/razor/pull/10577))
+  * Handle InsertReplaceEdit for completion (PR: [#10563](https://github.com/dotnet/razor/pull/10563))
+  * Use System.Text.Json for serialization (PR: [#10551](https://github.com/dotnet/razor/pull/10551))
+  * Support `DocumentSymbol` results from Roslyn (PR: [#10560](https://github.com/dotnet/razor/pull/10560))
   * Use a named pipe to communicate projectinfo in vscode (PR: [#10521](https://github.com/dotnet/razor/pull/10521))
   * Reduce allocations in Razor's DirectiveVisitor (PR: [10521](https://github.com/dotnet/razor/pull/10521))
-* Update Roslyn to 4.12.0-1.24359.8 (PR: [#7273](https://github.com/dotnet/vscode-csharp/pull/7273))
+* Update Roslyn to 4.12.0-1.24359.11 (PR: [#7326](https://github.com/dotnet/vscode-csharp/pull/7326))
+  * Fix issue causing error toasts to display on diff window views or new C# documents (PR: [#74300](https://github.com/dotnet/roslyn/pull/74300))
+  * Fix issue where loaded projects would be missing references (PR: [#74189](https://github.com/dotnet/roslyn/pull/74189))
   * Fix UseNullPropagationCodeFixProvider for parenthesized property access (PR: [#74316](https://github.com/dotnet/roslyn/pull/74316))
-  * Sync solution contents consistently(PR: [#72860](https://github.com/dotnet/roslyn/pull/72860))
   * Rename the record parameter when its property get renamed (PR: [#74168](https://github.com/dotnet/roslyn/pull/74168))
-  * Make project system workspace transformation functions resilient to being attempted twice (PR: [#74189](https://github.com/dotnet/roslyn/pull/74189))
   * Report a diagnostic on missing body in partial property implementation (PR [#74224](https://github.com/dotnet/roslyn/pull/74224))
-  * Do not offer 'convert' namespace when the ns has sibling types (PR [#74216](https://github.com/dotnet/roslyn/pull/74216)
+  * Do not offer 'convert' namespace when the ns has sibling types (PR [#74216](https://github.com/dotnet/roslyn/pull/74216))
   * Consume new Razor EA (PR: [#74134](https://github.com/dotnet/roslyn/pull/74134))
   * Report diagnostic for field and value in property accessors when used as primary expressions only (PR: [#74164](https://github.com/dotnet/roslyn/pull/74164))
   * Ensure an empty run result doesn't throw when generators are present (PR: [#74034](https://github.com/dotnet/roslyn/pull/74034))
@@ -28,10 +36,10 @@
     * Avoid re-running all codeaction requests at low priority (PR: [#74083](https://github.com/dotnet/roslyn/pull/74083))
     * Reduce time spent in ConflictResolver.Session.GetNodesOrTokensToCheckForConflicts (PR: [#74101](https://github.com/dotnet/roslyn/pull/74101))
     * Avoid allocations in AbstractSyntaxIndex<>.GetIndexAsync( PR: [#74075](https://github.com/dotnet/roslyn/pull/74075))
-
-# 2.37.x
-* Bump xamltools to 17.12.35103.251 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7309))
+* Bump xamltools to 17.12.35112.24 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7334))
   * Fixed issue with Exception type related to https://github.com/microsoft/vscode-dotnettools/issues/1247
+  * Fixed Hot Reload not working on some Android device models: https://github.com/microsoft/vscode-dotnettools/issues/1241
+ 
 
 # 2.38.16
 * Start localizing additional strings (PR: [#7305](https://github.com/dotnet/vscode-csharp/pull/7305))
