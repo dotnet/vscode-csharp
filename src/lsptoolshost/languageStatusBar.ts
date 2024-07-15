@@ -33,17 +33,27 @@ class WorkspaceStatus {
             languageServerOptions.documentSelector,
             RazorLanguage.documentSelector
         );
-        const item = vscode.languages.createLanguageStatusItem('csharp.workspaceStatus', documentSelector);
-        item.name = vscode.l10n.t('C# Workspace Status');
-        item.command = {
+        const openSolutionCommand = {
             command: 'dotnet.openSolution',
             title: vscode.l10n.t('Open solution'),
         };
+        const restartServerCommand = {
+            command: 'dotnet.restartServer',
+            title: vscode.l10n.t('Restart server'),
+        };
+
+        const item = vscode.languages.createLanguageStatusItem('csharp.workspaceStatus', documentSelector);
+        item.name = vscode.l10n.t('C# Workspace Status');
         context.subscriptions.push(item);
 
         languageServerEvents.onServerStateChange((e) => {
             item.text = e.workspaceLabel;
             item.busy = e.state === ServerState.ProjectInitializationStarted;
+            item.severity =
+                e.state === ServerState.Stopped
+                    ? vscode.LanguageStatusSeverity.Warning
+                    : vscode.LanguageStatusSeverity.Information;
+            item.command = e.state === ServerState.Stopped ? restartServerCommand : openSolutionCommand;
         });
     }
 }

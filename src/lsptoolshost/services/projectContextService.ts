@@ -22,13 +22,18 @@ export interface ProjectContextChangeEvent {
 export class ProjectContextService {
     private readonly _contextChangeEmitter = new vscode.EventEmitter<ProjectContextChangeEvent>();
     private _source = new vscode.CancellationTokenSource();
+    private readonly _emptyProjectContext: VSProjectContext = {
+        _vs_id: '',
+        _vs_kind: '',
+        _vs_label: '',
+    };
 
     constructor(private _languageServer: RoslynLanguageServer, _languageServerEvents: LanguageServerEvents) {
         _languageServerEvents.onServerStateChange((e) => {
             // When the project initialization is complete, open files
             // could move from the miscellaneous workspace context into
             // an open project.
-            if (e.state === ServerState.ProjectInitializationComplete) {
+            if (e.state === ServerState.Stopped || e.state === ServerState.ProjectInitializationComplete) {
                 this.refresh();
             }
         });
@@ -47,7 +52,16 @@ export class ProjectContextService {
             return;
         }
 
+        // If we have an open request, cancel it.
+        this._source.cancel();
+        this._source = new vscode.CancellationTokenSource();
+
         let uri = textEditor!.document.uri;
+
+        if (!this._languageServer.isRunning()) {
+            this._contextChangeEmitter.fire({ uri, context: this._emptyProjectContext });
+            return;
+        }
 
         // If the active document is a Razor file, we need to map it back to a C# file.
         if (languageId === 'aspnetcorerazor') {
@@ -58,10 +72,6 @@ export class ProjectContextService {
 
             uri = virtualUri;
         }
-
-        // If we have an open request, cancel it.
-        this._source.cancel();
-        this._source = new vscode.CancellationTokenSource();
 
         const contextList = await this.getProjectContexts(uri, this._source.token);
         if (!contextList) {
