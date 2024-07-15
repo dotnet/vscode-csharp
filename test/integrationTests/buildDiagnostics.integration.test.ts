@@ -4,19 +4,26 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting, BuildDiagnosticsService } from '../../src/lsptoolshost/buildDiagnosticsService';
 import * as integrationHelpers from './integrationHelpers';
 import path = require('path');
-describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, function () {
-    beforeAll(async function () {
-        await integrationHelpers.openFileInWorkspaceAsync(path.join('src', 'app', 'inlayHints.cs'));
+describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, () => {
+    beforeAll(async () => {
         await integrationHelpers.activateCSharpExtension();
+    });
+
+    beforeEach(async () => {
+        await integrationHelpers.openFileInWorkspaceAsync(path.join('src', 'app', 'inlayHints.cs'));
     });
 
     afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
+    });
+
+    afterEach(async () => {
+        await integrationHelpers.closeAllEditorsAsync();
     });
 
     test('OpenFiles diagnostics', async () => {
