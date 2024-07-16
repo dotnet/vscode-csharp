@@ -732,7 +732,7 @@
         "title": "Text Editor",
         "order": 1,
         "properties": {
-          "dotnet.implementType.insertionBehavior": {
+          "dotnet.typeMembers.memberInsertionLocation": {
             "type": "string",
             "enum": [
               "withOtherMembersOfTheSameKind",
@@ -740,13 +740,13 @@
             ],
             "default": "withOtherMembersOfTheSameKind",
             "enumDescriptions": [
-              "%configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind%",
-              "%configuration.dotnet.implementType.insertionBehavior.atTheEnd%"
+              "%configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind%",
+              "%configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd%"
             ],
-            "description": "%configuration.dotnet.implementType.insertionBehavior%",
+            "description": "%configuration.dotnet.typeMembers.memberInsertionLocation%",
             "order": 10
           },
-          "dotnet.implementType.propertyGenerationBehavior": {
+          "dotnet.typeMembers.propertyGenerationBehavior": {
             "type": "string",
             "enum": [
               "preferThrowingProperties",
@@ -754,10 +754,10 @@
             ],
             "default": "preferThrowingProperties",
             "enumDescriptions": [
-              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferThrowingProperties%",
-              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferAutoProperties%"
+              "%configuration.dotnet.typeMembers.propertyGenerationBehavior.preferThrowingProperties%",
+              "%configuration.dotnet.typeMembers.propertyGenerationBehavior.preferAutoProperties%"
             ],
-            "description": "%configuration.dotnet.implementType.propertyGenerationBehavior%",
+            "description": "%configuration.dotnet.typeMembers.propertyGenerationBehavior%",
             "order": 10
           },
           "dotnet.codeLens.enableReferencesCodeLens": {
