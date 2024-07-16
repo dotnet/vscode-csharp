@@ -104,7 +104,7 @@ export class ProjectContextService {
         const textDocument = TextDocumentIdentifier.create(uriString);
 
         try {
-            return this._languageServer.sendRequest(
+            return await this._languageServer.sendRequest(
                 VSGetProjectContextsRequest.type,
                 { _vs_textDocument: textDocument },
                 token
