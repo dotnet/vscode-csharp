@@ -97,30 +97,30 @@ export async function MigrateOptions(vscode: vscode): Promise<void> {
             continue;
         }
 
-        const inspectionValueOfnewName = configuration.inspect(newName);
-        if (inspectionValueOfnewName == undefined) {
+        const inspectionValueOfNewOption = configuration.inspect(newName);
+        if (inspectionValueOfNewOption == undefined) {
             continue;
         }
 
-        const newNameValue = configuration.get(newName);
-        if (newNameValue == undefined) {
+        const newOptionValue = configuration.get(newName);
+        if (newOptionValue == undefined) {
             continue;
         }
 
-        if (shouldMove(newNameValue, inspectionValueOfnewName.defaultValue)) {
+        if (shouldMove(newOptionValue, inspectionValueOfNewOption.defaultValue)) {
             await MoveOptionsValue(oldName, newName, configuration);
         }
     }
 }
 
-function shouldMove(newNameValue: unknown, defaultInspectValueOfnewName: unknown): boolean {
-    if (newNameValue == defaultInspectValueOfnewName) {
+function shouldMove(newOptionValue: unknown, defaultInspectValueOfNewOption: unknown): boolean {
+    if (newOptionValue == defaultInspectValueOfNewOption) {
         return true;
     }
 
     // For certain kinds of complex object options, vscode will return a proxy object which isn't comparable to the default empty object {}.
-    if (types.isProxy(newNameValue)) {
-        return JSON.stringify(newNameValue) === JSON.stringify(defaultInspectValueOfnewName);
+    if (types.isProxy(newOptionValue)) {
+        return JSON.stringify(newOptionValue) === JSON.stringify(defaultInspectValueOfNewOption);
     }
 
     return false;
