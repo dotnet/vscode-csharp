@@ -9,104 +9,118 @@ import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAd
 // Option in the array should be identical to each other, except the name.
 export const migrateOptions = [
     {
-        omnisharpOption: 'csharp.inlayHints.parameters.enabled',
-        roslynOption: 'dotnet.inlayHints.enableInlayHintsForParameters',
+        oldName: 'csharp.inlayHints.parameters.enabled',
+        newName: 'dotnet.inlayHints.enableInlayHintsForParameters',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.parameters.forLiteralParameters',
-        roslynOption: 'dotnet.inlayHints.enableInlayHintsForLiteralParameters',
+        oldName: 'csharp.inlayHints.parameters.forLiteralParameters',
+        newName: 'dotnet.inlayHints.enableInlayHintsForLiteralParameters',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.parameters.forIndexerParameters',
-        roslynOption: 'dotnet.inlayHints.enableInlayHintsForIndexerParameters',
+        oldName: 'csharp.inlayHints.parameters.forIndexerParameters',
+        newName: 'dotnet.inlayHints.enableInlayHintsForIndexerParameters',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.parameters.forObjectCreationParameters',
-        roslynOption: 'dotnet.inlayHints.enableInlayHintsForObjectCreationParameters',
+        oldName: 'csharp.inlayHints.parameters.forObjectCreationParameters',
+        newName: 'dotnet.inlayHints.enableInlayHintsForObjectCreationParameters',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.parameters.forOtherParameters',
-        roslynOption: 'dotnet.inlayHints.enableInlayHintsForOtherParameters',
+        oldName: 'csharp.inlayHints.parameters.forOtherParameters',
+        newName: 'dotnet.inlayHints.enableInlayHintsForOtherParameters',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix',
-        roslynOption: 'dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix',
+        oldName: 'csharp.inlayHints.parameters.suppressForParametersThatDifferOnlyBySuffix',
+        newName: 'dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent',
-        roslynOption: 'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent',
+        oldName: 'csharp.inlayHints.parameters.suppressForParametersThatMatchMethodIntent',
+        newName: 'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName',
-        roslynOption: 'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName',
-    },
-    { omnisharpOption: 'csharp.inlayHints.types.enabled', roslynOption: 'csharp.inlayHints.enableInlayHintsForTypes' },
-    {
-        omnisharpOption: 'csharp.inlayHints.types.forImplicitVariableTypes',
-        roslynOption: 'csharp.inlayHints.enableInlayHintsForImplicitVariableTypes',
+        oldName: 'csharp.inlayHints.parameters.suppressForParametersThatMatchArgumentName',
+        newName: 'dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.types.forLambdaParameterTypes',
-        roslynOption: 'csharp.inlayHints.enableInlayHintsForLambdaParameterTypes',
+        oldName: 'csharp.inlayHints.types.enabled',
+        newName: 'csharp.inlayHints.enableInlayHintsForTypes',
     },
     {
-        omnisharpOption: 'csharp.inlayHints.types.forImplicitObjectCreation',
-        roslynOption: 'csharp.inlayHints.enableInlayHintsForImplicitObjectCreation',
-    },
-    { omnisharpOption: 'omnisharp.defaultLaunchSolution', roslynOption: 'dotnet.defaultSolution' },
-    {
-        omnisharpOption: 'omnisharp.enableImportCompletion',
-        roslynOption: 'dotnet.completion.showCompletionItemsFromUnimportedNamespaces',
+        oldName: 'csharp.inlayHints.types.forImplicitVariableTypes',
+        newName: 'csharp.inlayHints.enableInlayHintsForImplicitVariableTypes',
     },
     {
-        omnisharpOption: 'csharp.referencesCodeLens.enabled',
-        roslynOption: 'dotnet.codeLens.enableReferencesCodeLens',
+        oldName: 'csharp.inlayHints.types.forLambdaParameterTypes',
+        newName: 'csharp.inlayHints.enableInlayHintsForLambdaParameterTypes',
     },
     {
-        omnisharpOption: 'csharp.testsCodeLens.enabled',
-        roslynOption: 'dotnet.codeLens.enableTestsCodeLens',
+        oldName: 'csharp.inlayHints.types.forImplicitObjectCreation',
+        newName: 'csharp.inlayHints.enableInlayHintsForImplicitObjectCreation',
     },
     {
-        omnisharpOption: 'csharp.unitTestDebuggingOptions',
-        roslynOption: 'dotnet.unitTestDebuggingOptions',
+        oldName: 'omnisharp.defaultLaunchSolution',
+        newName: 'dotnet.defaultSolution',
     },
     {
-        omnisharpOption: 'omnisharp.testRunSettings',
-        roslynOption: 'dotnet.unitTests.runSettingsPath',
+        oldName: 'omnisharp.enableImportCompletion',
+        newName: 'dotnet.completion.showCompletionItemsFromUnimportedNamespaces',
+    },
+    {
+        oldName: 'csharp.referencesCodeLens.enabled',
+        newName: 'dotnet.codeLens.enableReferencesCodeLens',
+    },
+    {
+        oldName: 'csharp.testsCodeLens.enabled',
+        newName: 'dotnet.codeLens.enableTestsCodeLens',
+    },
+    {
+        oldName: 'csharp.unitTestDebuggingOptions',
+        newName: 'dotnet.unitTestDebuggingOptions',
+    },
+    {
+        oldName: 'omnisharp.testRunSettings',
+        newName: 'dotnet.unitTests.runSettingsPath',
+    },
+    {
+        oldName: 'dotnet.implementType.insertionBehavior',
+        newName: 'dotnet.typeMembers.memberInsertionLocation',
+    },
+    {
+        oldName: 'dotnet.implementType.propertyGenerationBehavior',
+        newName: 'dotnet.typeMembers.propertyGenerationBehavior',
     },
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {
     const configuration = vscode.workspace.getConfiguration();
-    for (const { omnisharpOption, roslynOption } of migrateOptions) {
-        if (!configuration.has(omnisharpOption)) {
+    for (const { oldName, newName } of migrateOptions) {
+        if (!configuration.has(oldName)) {
             continue;
         }
 
-        const inspectionValueOfRoslynOption = configuration.inspect(roslynOption);
-        if (inspectionValueOfRoslynOption == undefined) {
+        const inspectionValueOfNewOption = configuration.inspect(newName);
+        if (inspectionValueOfNewOption == undefined) {
             continue;
         }
 
-        const roslynOptionValue = configuration.get(roslynOption);
-        if (roslynOptionValue == undefined) {
+        const newOptionValue = configuration.get(newName);
+        if (newOptionValue == undefined) {
             continue;
         }
 
-        if (shouldMove(roslynOptionValue, inspectionValueOfRoslynOption.defaultValue)) {
-            await MoveOptionsValue(omnisharpOption, roslynOption, configuration);
+        if (shouldMove(newOptionValue, inspectionValueOfNewOption.defaultValue)) {
+            await MoveOptionsValue(oldName, newName, configuration);
         }
     }
 }
 
-function shouldMove(roslynOptionValue: unknown, defaultInspectValueOfRoslynOption: unknown): boolean {
-    if (roslynOptionValue == defaultInspectValueOfRoslynOption) {
+function shouldMove(newOptionValue: unknown, defaultInspectValueOfNewOption: unknown): boolean {
+    if (newOptionValue == defaultInspectValueOfNewOption) {
         return true;
     }
 
     // For certain kinds of complex object options, vscode will return a proxy object which isn't comparable to the default empty object {}.
-    if (types.isProxy(roslynOptionValue)) {
-        return JSON.stringify(roslynOptionValue) === JSON.stringify(defaultInspectValueOfRoslynOption);
+    if (types.isProxy(newOptionValue)) {
+        return JSON.stringify(newOptionValue) === JSON.stringify(defaultInspectValueOfNewOption);
     }
 
     return false;

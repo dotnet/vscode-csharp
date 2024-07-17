@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.12.0-1.24359.11",
+    "roslyn": "4.12.0-1.24366.6",
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24365.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -732,7 +732,7 @@
         "title": "Text Editor",
         "order": 1,
         "properties": {
-          "dotnet.implementType.insertionBehavior": {
+          "dotnet.typeMembers.memberInsertionLocation": {
             "type": "string",
             "enum": [
               "withOtherMembersOfTheSameKind",
@@ -740,13 +740,13 @@
             ],
             "default": "withOtherMembersOfTheSameKind",
             "enumDescriptions": [
-              "%configuration.dotnet.implementType.insertionBehavior.withOtherMembersOfTheSameKind%",
-              "%configuration.dotnet.implementType.insertionBehavior.atTheEnd%"
+              "%configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind%",
+              "%configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd%"
             ],
-            "description": "%configuration.dotnet.implementType.insertionBehavior%",
+            "description": "%configuration.dotnet.typeMembers.memberInsertionLocation%",
             "order": 10
           },
-          "dotnet.implementType.propertyGenerationBehavior": {
+          "dotnet.typeMembers.propertyGenerationBehavior": {
             "type": "string",
             "enum": [
               "preferThrowingProperties",
@@ -754,10 +754,10 @@
             ],
             "default": "preferThrowingProperties",
             "enumDescriptions": [
-              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferThrowingProperties%",
-              "%configuration.dotnet.implementType.propertyGenerationBehavior.preferAutoProperties%"
+              "%configuration.dotnet.typeMembers.propertyGenerationBehavior.preferThrowingProperties%",
+              "%configuration.dotnet.typeMembers.propertyGenerationBehavior.preferAutoProperties%"
             ],
-            "description": "%configuration.dotnet.implementType.propertyGenerationBehavior%",
+            "description": "%configuration.dotnet.typeMembers.propertyGenerationBehavior%",
             "order": 10
           },
           "dotnet.codeLens.enableReferencesCodeLens": {
