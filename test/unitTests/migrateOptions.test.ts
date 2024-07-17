@@ -19,8 +19,8 @@ describe('Migrate configuration should in package.json', () => {
     ];
 
     migrateOptions.forEach((data) => {
-        test(`Should have ${data.roslynOption} in package.json`, () => {
-            expect(configurations).toContain(data.roslynOption);
+        test(`Should have ${data.newName} in package.json`, () => {
+            expect(configurations).toContain(data.newName);
         });
     });
 });
