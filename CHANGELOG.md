@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump xamltools to 17.12.35117.32 (PR: [#7362](https://github.com/dotnet/vscode-csharp/pull/7362))
 
 # 2.39.x
 * Add language status bar item displaying project context for open files (PR: [#7321](https://github.com/dotnet/vscode-csharp/pull/7321), PR: [#7333](https://github.com/dotnet/vscode-csharp/pull/7333))
@@ -38,7 +39,7 @@
     * Avoid re-running all codeaction requests at low priority (PR: [#74083](https://github.com/dotnet/roslyn/pull/74083))
     * Reduce time spent in ConflictResolver.Session.GetNodesOrTokensToCheckForConflicts (PR: [#74101](https://github.com/dotnet/roslyn/pull/74101))
     * Avoid allocations in AbstractSyntaxIndex<>.GetIndexAsync( PR: [#74075](https://github.com/dotnet/roslyn/pull/74075))
-* Bump xamltools to 17.12.35117.32 (PR: [#7362](https://github.com/dotnet/vscode-csharp/pull/7362))
+* Bump xamltools to 17.12.35112.24 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7334))
   * Fixed issue with Exception type related to https://github.com/microsoft/vscode-dotnettools/issues/1247
   * Fixed Hot Reload not working on some Android device models: https://github.com/microsoft/vscode-dotnettools/issues/1241
 
