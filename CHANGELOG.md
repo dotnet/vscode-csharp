@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.12.0-1.24366.6 (PR: [#7326](https://github.com/dotnet/vscode-csharp/pull/7326))
+* Renamed settings (PR: [#7356](https://github.com/dotnet/vscode-csharp/pull/7356))
+  * `dotnet.implementType.insertionBehavior` to `dotnet.typeMembers.memberInsertionLocation`
+  * `dotnet.implementType.propertyGenerationBehavior` to `dotnet.typeMembers.propertyGenerationBehavior`
 
 # 2.39.x
 * Add language status bar item displaying project context for open files (PR: [#7321](https://github.com/dotnet/vscode-csharp/pull/7321), PR: [#7333](https://github.com/dotnet/vscode-csharp/pull/7333))
@@ -17,7 +21,7 @@
   * Support `DocumentSymbol` results from Roslyn (PR: [#10560](https://github.com/dotnet/razor/pull/10560))
   * Use a named pipe to communicate projectinfo in vscode (PR: [#10521](https://github.com/dotnet/razor/pull/10521))
   * Reduce allocations in Razor's DirectiveVisitor (PR: [10521](https://github.com/dotnet/razor/pull/10521))
-* Update Roslyn to 4.12.0-1.24366.6 (PR: [#7326](https://github.com/dotnet/vscode-csharp/pull/7326))
+* Update Roslyn to 4.12.0-1.24359.11 (PR: [#7326](https://github.com/dotnet/vscode-csharp/pull/7326))
   * Fix issue causing error toasts to display on diff window views or new C# documents (PR: [#74300](https://github.com/dotnet/roslyn/pull/74300))
   * Fix issue where loaded projects would be missing references (PR: [#74189](https://github.com/dotnet/roslyn/pull/74189))
   * Fix UseNullPropagationCodeFixProvider for parenthesized property access (PR: [#74316](https://github.com/dotnet/roslyn/pull/74316))
@@ -41,9 +45,6 @@
 * Bump xamltools to 17.12.35112.24 (PR: [#7309](https://github.com/dotnet/vscode-csharp/pull/7334))
   * Fixed issue with Exception type related to https://github.com/microsoft/vscode-dotnettools/issues/1247
   * Fixed Hot Reload not working on some Android device models: https://github.com/microsoft/vscode-dotnettools/issues/1241
-* Renamed settings (PR: [#7356](https://github.com/dotnet/vscode-csharp/pull/7356))
-  * `dotnet.implementType.insertionBehavior` to `dotnet.typeMembers.memberInsertionLocation`
-  * `dotnet.implementType.propertyGenerationBehavior` to `dotnet.typeMembers.propertyGenerationBehavior`
 
 # 2.38.16
 * Start localizing additional strings (PR: [#7305](https://github.com/dotnet/vscode-csharp/pull/7305))
