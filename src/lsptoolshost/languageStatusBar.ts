@@ -33,29 +33,40 @@ class WorkspaceStatus {
             languageServerOptions.documentSelector,
             RazorLanguage.documentSelector
         );
-        const item = vscode.languages.createLanguageStatusItem('csharp.workspaceStatus', documentSelector);
-        item.name = vscode.l10n.t('C# Workspace Status');
-        item.command = {
+        const openSolutionCommand = {
             command: 'dotnet.openSolution',
             title: vscode.l10n.t('Open solution'),
         };
+        const restartServerCommand = {
+            command: 'dotnet.restartServer',
+            title: vscode.l10n.t('Restart server'),
+        };
+
+        const item = vscode.languages.createLanguageStatusItem('csharp.workspaceStatus', documentSelector);
+        item.name = vscode.l10n.t('C# Workspace Status');
         context.subscriptions.push(item);
 
         languageServerEvents.onServerStateChange((e) => {
             item.text = e.workspaceLabel;
             item.busy = e.state === ServerState.ProjectInitializationStarted;
+            item.severity =
+                e.state === ServerState.Stopped
+                    ? vscode.LanguageStatusSeverity.Warning
+                    : vscode.LanguageStatusSeverity.Information;
+            item.command = e.state === ServerState.Stopped ? restartServerCommand : openSolutionCommand;
         });
     }
 }
 
 class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
+        const documentSelector = combineDocumentSelectors(
+            languageServerOptions.documentSelector,
+            RazorLanguage.documentSelector
+        );
         const projectContextService = languageServer._projectContextService;
 
-        const item = vscode.languages.createLanguageStatusItem(
-            'csharp.projectContextStatus',
-            languageServerOptions.documentSelector
-        );
+        const item = vscode.languages.createLanguageStatusItem('csharp.projectContextStatus', documentSelector);
         item.name = vscode.l10n.t('C# Project Context Status');
         item.detail = vscode.l10n.t('Active File Context');
         context.subscriptions.push(item);

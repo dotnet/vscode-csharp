@@ -4,9 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 export enum ServerState {
-    Started = 0,
-    ProjectInitializationStarted = 1,
-    ProjectInitializationComplete = 2,
+    Stopped = 0,
+    Started = 1,
+    ProjectInitializationStarted = 2,
+    ProjectInitializationComplete = 3,
 }
 
 export interface ServerStateChangeEvent {

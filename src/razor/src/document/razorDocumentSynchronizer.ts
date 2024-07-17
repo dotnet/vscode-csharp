@@ -119,9 +119,10 @@ export class RazorDocumentSynchronizer {
     }
 
     private removeSynchronization(context: SynchronizationContext) {
+        context.dispose();
+
         const documentKey = getUriPath(context.projectedDocument.uri);
         const synchronizations = this.synchronizations[documentKey];
-        clearTimeout(context.timeoutId);
 
         if (synchronizations.length === 1) {
             delete this.synchronizations[documentKey];
@@ -166,6 +167,10 @@ export class RazorDocumentSynchronizer {
                 for (const reject of rejectionsForCancel) {
                     reject(reason);
                 }
+            },
+            dispose: () => {
+                rejectionsForCancel.length = 0;
+                clearTimeout(context.timeoutId);
             },
             projectedDocumentSynchronized,
             onProjectedDocumentSynchronized,
@@ -271,4 +276,5 @@ interface SynchronizationContext {
     readonly projectedTextDocumentSynchronized: () => void;
     readonly onProjectedTextDocumentSynchronized: Promise<void>;
     readonly cancel: (reason: string) => void;
+    readonly dispose: () => void;
 }

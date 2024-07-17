@@ -119,6 +119,7 @@ export class RoslynLanguageServer {
         this.registerSetTrace();
         this.registerSendOpenSolution();
         this.registerProjectInitialization();
+        this.registerServerStateChanged();
         this.registerReportProjectConfiguration();
         this.registerExtensionsChanged();
         this.registerTelemetryChanged();
@@ -153,6 +154,22 @@ export class RoslynLanguageServer {
         });
     }
 
+    private registerServerStateChanged() {
+        this._languageClient.onDidChangeState(async (state) => {
+            if (state.newState === State.Running) {
+                this._languageServerEvents.onServerStateChangeEmitter.fire({
+                    state: ServerState.Started,
+                    workspaceLabel: this.workspaceDisplayName(),
+                });
+            } else if (state.newState === State.Stopped) {
+                this._languageServerEvents.onServerStateChangeEmitter.fire({
+                    state: ServerState.Stopped,
+                    workspaceLabel: vscode.l10n.t('Server stopped'),
+                });
+            }
+        });
+    }
+
     private registerSendOpenSolution() {
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
@@ -162,10 +179,6 @@ export class RoslynLanguageServer {
                     await this.openDefaultSolutionOrProjects();
                 }
                 await this.sendOrSubscribeForServiceBrokerConnection();
-                this._languageServerEvents.onServerStateChangeEmitter.fire({
-                    state: ServerState.Started,
-                    workspaceLabel: this.workspaceDisplayName(),
-                });
             }
         });
     }
