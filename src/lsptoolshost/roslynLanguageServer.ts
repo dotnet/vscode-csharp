@@ -607,7 +607,9 @@ export class RoslynLanguageServer {
             args.push('--extension', extensionPath);
         }
 
-        if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
+        const isTraceLogLevel = logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel));
+
+        if (isTraceLogLevel) {
             _channel.appendLine(`Starting server at ${serverPath}`);
         }
 
@@ -620,6 +622,9 @@ export class RoslynLanguageServer {
         if (!languageServerOptions.useServerGC) {
             // The server by default uses serverGC, if the user opts out we need to set the environment variable to disable it.
             env.DOTNET_gcServer = '0';
+            if (isTraceLogLevel) {
+                _channel.appendLine("ServerGC disabled");
+            }
         }
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
