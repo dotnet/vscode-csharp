@@ -623,7 +623,7 @@ export class RoslynLanguageServer {
             // The server by default uses serverGC, if the user opts out we need to set the environment variable to disable it.
             env.DOTNET_gcServer = '0';
             if (isTraceLogLevel) {
-                _channel.appendLine("ServerGC disabled");
+                _channel.appendLine('ServerGC disabled');
             }
         }
 
