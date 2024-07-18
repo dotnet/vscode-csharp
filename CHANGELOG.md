@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump xamltools to 17.12.35117.32 (PR: [#7362](https://github.com/dotnet/vscode-csharp/pull/7362))
 * Update Roslyn to 4.12.0-1.24366.6 (PR: [#7326](https://github.com/dotnet/vscode-csharp/pull/7326))
 * Renamed settings (PR: [#7356](https://github.com/dotnet/vscode-csharp/pull/7356))
   * `dotnet.implementType.insertionBehavior` to `dotnet.typeMembers.memberInsertionLocation`
