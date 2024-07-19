@@ -5,13 +5,13 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
+import { describe, beforeAll, afterAll, test, expect, beforeEach, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from './integrationHelpers';
 import { InlayHint, InlayHintKind, Position } from 'vscode-languageserver-protocol';
 
-describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, function () {
-    beforeAll(async function () {
+describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, () => {
+    beforeAll(async () => {
         const editorConfig = vscode.workspace.getConfiguration('editor');
         await editorConfig.update('inlayHints.enabled', true);
         const dotnetConfig = vscode.workspace.getConfiguration('dotnet');
@@ -30,12 +30,19 @@ describe(`[${testAssetWorkspace.description}] Test LSP Inlay Hints `, function (
         await csharpConfig.update('inlayHints.enableInlayHintsForLambdaParameterTypes', true);
         await csharpConfig.update('inlayHints.enableInlayHintsForImplicitObjectCreation', true);
 
-        await integrationHelpers.openFileInWorkspaceAsync(path.join('src', 'app', 'inlayHints.cs'));
         await integrationHelpers.activateCSharpExtension();
+    });
+
+    beforeEach(async () => {
+        await integrationHelpers.openFileInWorkspaceAsync(path.join('src', 'app', 'inlayHints.cs'));
     });
 
     afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
+    });
+
+    afterEach(async () => {
+        await integrationHelpers.closeAllEditorsAsync();
     });
 
     test('Hints retrieved for region', async () => {

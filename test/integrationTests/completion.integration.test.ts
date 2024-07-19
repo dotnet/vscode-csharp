@@ -5,22 +5,26 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { describe, beforeAll, beforeEach, afterAll, test, expect } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, openFileInWorkspaceAsync } from './integrationHelpers';
+import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 
-describe(`[${testAssetWorkspace.description}] Test Completion`, function () {
-    beforeAll(async function () {
+describe(`[${testAssetWorkspace.description}] Test Completion`, () => {
+    beforeAll(async () => {
         await activateCSharpExtension();
     });
 
-    beforeEach(async function () {
+    beforeEach(async () => {
         const fileName = path.join('src', 'app', 'completion.cs');
         await openFileInWorkspaceAsync(fileName);
     });
 
     afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
+    });
+
+    afterEach(async () => {
+        await closeAllEditorsAsync();
     });
 
     test('Returns completion items', async () => {

@@ -9,8 +9,8 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting } from '../../src/lsptoolshost/buildDiagnosticsService';
 import * as integrationHelpers from './integrationHelpers';
 import { getCode, setBackgroundAnalysisScopes, waitForExpectedDiagnostics } from './diagnosticsHelpers';
-describe(`[${testAssetWorkspace.description}] Test diagnostics`, function () {
-    beforeAll(async function () {
+describe(`[${testAssetWorkspace.description}] Test diagnostics`, () => {
+    beforeAll(async () => {
         await integrationHelpers.activateCSharpExtension();
     });
 

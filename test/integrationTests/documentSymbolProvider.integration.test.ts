@@ -3,17 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { expect, test, beforeAll, afterAll, describe } from '@jest/globals';
+import { expect, test, beforeAll, afterAll, describe, afterEach, beforeEach } from '@jest/globals';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, openFileInWorkspaceAsync } from './integrationHelpers';
+import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 
-describe(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function () {
+describe(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, () => {
     let fileUri: vscode.Uri;
 
-    beforeAll(async function () {
+    beforeAll(async () => {
         await activateCSharpExtension();
+    });
+
+    beforeEach(async () => {
         const relativePath = path.join('src', 'app', 'documentSymbols.cs');
         fileUri = await openFileInWorkspaceAsync(relativePath);
     });
@@ -22,7 +25,11 @@ describe(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, function (
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test('Returns all elements', async function () {
+    afterEach(async () => {
+        await closeAllEditorsAsync();
+    });
+
+    test('Returns all elements', async () => {
         const symbols = await GetDocumentSymbols(fileUri);
 
         expect(symbols).toHaveLength(5);
