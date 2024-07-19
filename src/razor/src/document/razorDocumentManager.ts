@@ -19,6 +19,7 @@ import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
 import { razorInitializeCommand } from '../../../lsptoolshost/razorCommands';
 import { PlatformInformation } from '../../../shared/platform';
+import { generateUuid } from 'vscode-languageclient/lib/common/utils/uuid';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -176,7 +177,11 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // a Razor file.
         if (this.roslynActivated && !this.razorDocumentGenerationInitialized) {
             this.razorDocumentGenerationInitialized = true;
-            vscode.commands.executeCommand(razorInitializeCommand);
+            const pipeName = generateUuid();
+
+            vscode.commands.executeCommand(razorInitializeCommand, pipeName);
+            this.serverClient.connectNamedPipe(pipeName);
+
             for (const document of this.documents) {
                 await this.ensureDocumentAndProjectedDocumentsOpen(document);
             }

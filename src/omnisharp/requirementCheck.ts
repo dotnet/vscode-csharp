@@ -116,13 +116,18 @@ async function promptToDownloadDotNetSDK() {
 
 async function promptToDownloadMono() {
     return new Promise<PromptResult>((resolve, _) => {
-        const message =
-            'OmniSharp requires a complete install of Mono (including MSBuild) to provide language services when `omnisharp.useModernNet` is disabled in Settings. Please install the latest Mono and restart.';
+        const message = vscode.l10n.t(
+            'OmniSharp requires a complete install of Mono (including MSBuild) to provide language services when `omnisharp.useModernNet` is disabled in Settings. Please install the latest Mono and restart.'
+        );
 
         const messageOptions: vscode.MessageOptions = { modal: true };
 
-        const yesItem: PromptItem = { title: 'Download Mono', result: PromptResult.Yes };
-        const noItem: PromptItem = { title: 'Open settings', result: PromptResult.No, isCloseAffordance: true };
+        const yesItem: PromptItem = { title: vscode.l10n.t('Download Mono'), result: PromptResult.Yes };
+        const noItem: PromptItem = {
+            title: vscode.l10n.t('Open settings'),
+            result: PromptResult.No,
+            isCloseAffordance: true,
+        };
 
         vscode.window
             .showErrorMessage(message, messageOptions, noItem, yesItem)

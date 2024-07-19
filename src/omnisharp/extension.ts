@@ -20,7 +20,6 @@ import Disposable from '../disposable';
 import { OmniSharpMonoResolver } from './omniSharpMonoResolver';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
-import { getDecompilationAuthorization } from './decompilationPrompt';
 import { DotnetResolver } from './dotnetResolver';
 import { Advisor } from '../features/diagnosticsProvider';
 import { OmnisharpWorkspaceDebugInformationProvider } from '../omnisharpWorkspaceDebugInformationProvider';
@@ -50,8 +49,6 @@ export async function activate(
     languageMiddlewareFeature.register();
     disposables.add(languageMiddlewareFeature);
 
-    const decompilationAuthorized = await getDecompilationAuthorization(context);
-
     const server = new OmniSharpServer(
         vscode,
         provider,
@@ -61,7 +58,6 @@ export async function activate(
         extensionPath,
         omnisharpMonoResolver,
         omnisharpDotnetResolver,
-        decompilationAuthorized,
         context,
         outputChannel,
         languageMiddlewareFeature
@@ -112,9 +108,10 @@ export async function activate(
             server.onServerStart(() => {
                 utils.requestWorkspaceInformation(server).then((workspaceInfo) => {
                     if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
-                        const shortMessage =
-                            'project.json is no longer a supported project format for .NET Core applications.';
-                        const moreDetailItem: vscode.MessageItem = { title: 'More Detail' };
+                        const shortMessage = vscode.l10n.t(
+                            'project.json is no longer a supported project format for .NET Core applications.'
+                        );
+                        const moreDetailItem: vscode.MessageItem = { title: vscode.l10n.t('More Detail') };
                         vscode.window.showWarningMessage(shortMessage, moreDetailItem).then((_) => {
                             eventStream.post(new ProjectJsonDeprecatedWarning());
                         });
