@@ -4,8 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Add option to disable server gc (PR: [#7155](https://github.com/dotnet/vscode-csharp/pull/7155))
+* Update the workspace status bar when the server is stopped. (PR: [#7352](https://github.com/dotnet/vscode-csharp/pull/7352))
+* Update Debugger to v2.39.0 (PR: [#7342](https://github.com/dotnet/vscode-csharp/pull/7342))
 * Bump xamltools to 17.12.35119.17 (PR: [#7366](https://github.com/dotnet/vscode-csharp/pull/7366))
-* Update Roslyn to 4.12.0-1.24366.6 (PR: [#7326](https://github.com/dotnet/vscode-csharp/pull/7326))
+* Update Roslyn to 4.12.0-1.24366.6 (PR: [#7356](https://github.com/dotnet/vscode-csharp/pull/7356))
+  * Convert ImplementTypeOptions to editorconfig options (PR: [#74376](https://github.com/dotnet/roslyn/pull/74376))
+  * Remove double array allocation in SemanticTokens (PR: [#74271](https://github.com/dotnet/roslyn/pull/74271))
+  * Do not use memory mapped files on non-windows (PR: [#74339](https://github.com/dotnet/roslyn/pull/74339))
 * Renamed settings (PR: [#7356](https://github.com/dotnet/vscode-csharp/pull/7356))
   * `dotnet.implementType.insertionBehavior` to `dotnet.typeMembers.memberInsertionLocation`
   * `dotnet.implementType.propertyGenerationBehavior` to `dotnet.typeMembers.propertyGenerationBehavior`
