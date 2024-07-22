@@ -155,19 +155,23 @@ export class CompletionHandler {
     ) {
         // TODO: Snippet support
 
-        if (delegatedCompletionItemResolveParams.originatingKind != LanguageKind.CSharp) {
-            return delegatedCompletionItemResolveParams.completionItem;
-        } else {
-            const newItem = await vscode.commands.executeCommand<CompletionItem>(
-                resolveCompletionsCommand,
-                delegatedCompletionItemResolveParams.completionItem
-            );
-
-            if (!newItem) {
+        try {
+            if (delegatedCompletionItemResolveParams.originatingKind != LanguageKind.CSharp) {
                 return delegatedCompletionItemResolveParams.completionItem;
-            }
+            } else {
+                const newItem = await vscode.commands.executeCommand<CompletionItem>(
+                    resolveCompletionsCommand,
+                    delegatedCompletionItemResolveParams.completionItem
+                );
 
-            return newItem;
+                if (!newItem) {
+                    return delegatedCompletionItemResolveParams.completionItem;
+                }
+
+                return newItem;
+            }
+        } catch (error) {
+            this.logger.logWarning(`${CompletionHandler.completionResolveEndpoint} failed with ${error}`);
         }
 
         return CompletionHandler.emptyCompletionItem;
@@ -180,33 +184,39 @@ export class CompletionHandler {
         projectedPosition: Position,
         provisionalTextEdit?: SerializableTextEdit
     ) {
-        if (provisionalTextEdit) {
-            // provisional C# completion
-            return this.provideCSharpProvisionalCompletions(triggerCharacter, virtualDocument, projectedPosition);
+        try {
+            if (provisionalTextEdit) {
+                // provisional C# completion
+                return this.provideCSharpProvisionalCompletions(triggerCharacter, virtualDocument, projectedPosition);
+            }
+
+            // non-provisional C# completion
+            const virtualDocumentUri = UriConverter.serialize(virtualDocument.uri);
+            const params: CompletionParams = {
+                context: {
+                    triggerKind: triggerKind,
+                    triggerCharacter: triggerCharacter,
+                },
+                textDocument: {
+                    uri: virtualDocumentUri,
+                },
+                position: projectedPosition,
+            };
+
+            const csharpCompletions = await vscode.commands.executeCommand<CompletionList>(
+                provideCompletionsCommand,
+                params
+            );
+            if (!csharpCompletions) {
+                return CompletionHandler.emptyCompletionList;
+            }
+            CompletionHandler.adjustCSharpCompletionList(csharpCompletions, triggerCharacter);
+            return csharpCompletions;
+        } catch (error) {
+            this.logger.logWarning(`${CompletionHandler.completionEndpoint} failed with ${error}`);
         }
 
-        // non-provisional C# completion
-        const virtualDocumentUri = UriConverter.serialize(virtualDocument.uri);
-        const params: CompletionParams = {
-            context: {
-                triggerKind: triggerKind,
-                triggerCharacter: triggerCharacter,
-            },
-            textDocument: {
-                uri: virtualDocumentUri,
-            },
-            position: projectedPosition,
-        };
-
-        const csharpCompletions = await vscode.commands.executeCommand<CompletionList>(
-            provideCompletionsCommand,
-            params
-        );
-        if (!csharpCompletions) {
-            return CompletionHandler.emptyCompletionList;
-        }
-        CompletionHandler.adjustCSharpCompletionList(csharpCompletions, triggerCharacter);
-        return csharpCompletions;
+        return CompletionHandler.emptyCompletionList;
     }
 
     // Provides 'provisional' C# completions.
