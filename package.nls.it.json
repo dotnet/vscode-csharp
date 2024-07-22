@@ -67,7 +67,7 @@
   "configuration.dotnet.server.startTimeout": "Specifica un timeout (in ms) per l'avvio del client e la sua connessione al server di linguaggio.",
   "configuration.dotnet.server.suppressLspErrorToasts": "Impedisce la visualizzazione degli avvisi popup di errore se il server rileva un errore reversibile.",
   "configuration.dotnet.server.trace": "Imposta il livello di registrazione per il server di linguaggio",
-  "configuration.dotnet.server.useServerGC": "Configure the language server to use .NET server garbage collection.  Server garbage collection generally provides better performance at the expensive of higher memory consumption.",
+  "configuration.dotnet.server.useServerGC": "Configurare il server del linguaggio per l'utilizzo di Garbage Collection del server .NET.  Garbage Collection del server offre in genere prestazioni migliori a spese di un consumo di memoria più elevato.",
   "configuration.dotnet.server.waitForDebugger": "Passa il flag --debug all'avvio del server per consentire il collegamento di un debugger. (In precedenza “omnisharp.waitForDebugger”)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Cerca simboli negli assembly di riferimento. Influisce sulle funzionalità che richiedono la ricerca di simboli, ad esempio l'aggiunta di importazioni.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "La posizione di inserimento di proprietà, eventi e metodi quando si implementa un'interfaccia o una classe astratta.",
