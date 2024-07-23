@@ -67,7 +67,7 @@
   "configuration.dotnet.server.startTimeout": "İstemcinin başarılı bir şekilde başlatılması ve dil sunucusuna bağlanması için zaman aşımını (ms cinsinden) belirtir.",
   "configuration.dotnet.server.suppressLspErrorToasts": "Sunucu kurtarılabilir bir hatayla karşılaştığında hata bildirimlerinin görünmesini engeller.",
   "configuration.dotnet.server.trace": "Dil sunucusu için günlük düzeyini ayarlar",
-  "configuration.dotnet.server.useServerGC": "Configure the language server to use .NET server garbage collection.  Server garbage collection generally provides better performance at the expensive of higher memory consumption.",
+  "configuration.dotnet.server.useServerGC": "Dil sunucusunu .NET sunucusu atık toplamayı kullanmak üzere yapılandırın.  Sunucu atık toplama, genellikle yüksek bellek tüketimi pahasına daha iyi performans sağlar.",
   "configuration.dotnet.server.waitForDebugger": "Bir hata ayıklayıcının eklenmesine izin vermek için sunucuyu başlatırken --debug bayrağını iletir. (Önceden 'omnisharp.waitForDebugger')",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Başvuru derlemeleri içinde sembolleri arama. İçeri aktarma ekleme gibi sembol arama gerektiren özellikleri etkiler.",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "Arabirim veya soyut sınıf uygulanırken özellikler, olaylar ve yöntemlerin eklenme konumu.",
