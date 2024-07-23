@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Razor to 9.0.0-preview.24366.2 (PR: [#7384](https://github.com/dotnet/vscode-csharp/pull/7384))
+  * [FUSE] Component attribute nameof() (#10581) (PR: [#10581](https://github.com/dotnet/razor/pull/10581))
+  * Pool CodeWriter ReadOnlyMemory<char> pages (#10585) (PR: [#10585](https://github.com/dotnet/razor/pull/10585))
+  * Improve performance of `DefaultRazorTagHelperContextDiscoveryPhase` (#10602) (PR: [#10602](https://github.com/dotnet/razor/pull/10602))
+  * Flesh out `PooledArrayBuilder<T>` a bit (#10606) (PR: [#10606](https://github.com/dotnet/razor/pull/10606))
+
+# 2.40.x
 * Add option to disable server gc (PR: [#7155](https://github.com/dotnet/vscode-csharp/pull/7155))
 * Update the workspace status bar when the server is stopped. (PR: [#7352](https://github.com/dotnet/vscode-csharp/pull/7352))
 * Update Debugger to v2.39.0 (PR: [#7342](https://github.com/dotnet/vscode-csharp/pull/7342))
