@@ -2,9 +2,10 @@
 
 name: Flow release/prerelease changes to main
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 */3 * * *'
+  push:
+   branches:
+     - 'release'
+     - 'prerelease'
 
 permissions:
   contents: write
