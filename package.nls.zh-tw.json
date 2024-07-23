@@ -67,7 +67,7 @@
   "configuration.dotnet.server.startTimeout": "指定用戶端順利啟動並連接到語言伺服器的逾時 (毫秒)。",
   "configuration.dotnet.server.suppressLspErrorToasts": "如果伺服器發生可復原的錯誤，隱藏不顯示錯誤快顯通知。",
   "configuration.dotnet.server.trace": "設定語言伺服器的記錄層次",
-  "configuration.dotnet.server.useServerGC": "Configure the language server to use .NET server garbage collection.  Server garbage collection generally provides better performance at the expensive of higher memory consumption.",
+  "configuration.dotnet.server.useServerGC": "設定語言伺服器以使用 .NET 伺服器垃圾收集。伺服器垃圾收集通常會在耗用較高的記憶體時提供較佳的效能。",
   "configuration.dotnet.server.waitForDebugger": "啟動伺服器時傳遞 --debug 旗標，以允許附加偵錯工具。(先前為 `omnisharp.waitForDebugger`)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "在參考組件中搜尋符號。這會影響需要符號搜尋的功能，例如新增匯入。",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "實作介面或抽象類別時，屬性、事件和方法的插入位置。",
