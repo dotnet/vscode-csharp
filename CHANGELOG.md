@@ -15,6 +15,11 @@
 * Renamed settings (PR: [#7356](https://github.com/dotnet/vscode-csharp/pull/7356))
   * `dotnet.implementType.insertionBehavior` to `dotnet.typeMembers.memberInsertionLocation`
   * `dotnet.implementType.propertyGenerationBehavior` to `dotnet.typeMembers.propertyGenerationBehavior`
+* Update Razor to 9.0.0-preview.24366.2 (PR: [#7384](https://github.com/dotnet/vscode-csharp/pull/7384))
+  * [FUSE] Component attribute nameof() (#10581) (PR: [#10581](https://github.com/dotnet/razor/pull/10581))
+  * Pool CodeWriter ReadOnlyMemory<char> pages (#10585) (PR: [#10585](https://github.com/dotnet/razor/pull/10585))
+  * Improve performance of `DefaultRazorTagHelperContextDiscoveryPhase` (#10602) (PR: [#10602](https://github.com/dotnet/razor/pull/10602))
+  * Flesh out `PooledArrayBuilder<T>` a bit (#10606) (PR: [#10606](https://github.com/dotnet/razor/pull/10606))
 
 # 2.39.x
 * Add language status bar item displaying project context for open files (PR: [#7321](https://github.com/dotnet/vscode-csharp/pull/7321), PR: [#7333](https://github.com/dotnet/vscode-csharp/pull/7333))
