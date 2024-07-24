@@ -9,6 +9,7 @@
   * Pool CodeWriter ReadOnlyMemory<char> pages (#10585) (PR: [#10585](https://github.com/dotnet/razor/pull/10585))
   * Improve performance of `DefaultRazorTagHelperContextDiscoveryPhase` (#10602) (PR: [#10602](https://github.com/dotnet/razor/pull/10602))
   * Flesh out `PooledArrayBuilder<T>` a bit (#10606) (PR: [#10606](https://github.com/dotnet/razor/pull/10606))
+* Bump xamltools to 17.12.35124.29 (PR: [#7387](https://github.com/dotnet/vscode-csharp/pull/7387))
 
 # 2.40.x
 * Add option to disable server gc (PR: [#7155](https://github.com/dotnet/vscode-csharp/pull/7155))
