@@ -15,10 +15,6 @@ parameters:
     default: main
 
 resources:
-  pipelines:
-  - pipeline: BlueCI
-    source: vscode-csharp-next
-    branch: feature/lsp_tools_host
   repositories:
   - repository: VSCodeExtensionRepo
     type: git
@@ -43,10 +39,46 @@ jobs:
     displayName: 🔏 Authenticate NPM feed
     inputs:
       workingFile: $(Pipeline.Workspace)/.npmrc
-  - download: BlueCI
+  - pwsh: |
+      # Make sure to use TLS 1.2
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+      # Get metadata for the latest main build of vscode-csharp
+      Write-Host "##[group]Get vscode-csharp build metadata"
+      $latestMainBuild = Invoke-WebRequest -Uri "https://dev.azure.com/dnceng-public/public/_apis/build/builds?definitions=259&resultFilter=succeeded&statusFilter=completed&maxBuildsPerDefinition=1&queryOrder=finishTimeDescending&branchName=refs/heads/main"
+      $buildData = ConvertFrom-JSON $latestMainBuild.Content 
+      # Get the latest build id
+      $buildId = $buildData.value.id
+      Write-Host "##[endgroup]""
+
+      Write-Host "##[group]Download and extract zip"
+      $artifactUri = "https://dev.azure.com/dnceng-public/public/_apis/build/builds/$buildId/artifacts?artifactName=VSIX_Prerelease&%24format=zip"
+      Write-Host "##[debug]Downloading $artifactUri"
+
+      Add-Type -assembly "System.IO.Compression.FileSystem"
+      Add-Type -assembly "System.IO.Compression"
+
+      Try {
+        $zipStream = (New-Object System.Net.WebClient).OpenRead($artifactUri)
+      }
+      Catch {
+          Write-Host "Info: Opening stream failed, trying again with proxy settings."
+          $proxy = [System.Net.WebRequest]::GetSystemWebProxy()
+          $proxy.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials
+          $webClient = New-Object System.Net.WebClient
+          $webClient.UseDefaultCredentials = $false
+          $webClient.proxy = $proxy
+
+          $zipStream = $webClient.OpenRead($url)
+      }
+      
+      Write-Host "##[debug]Extracting zip"
+      $zipArchive = New-Object System.IO.Compression.ZipArchive -ArgumentList $zipStream
+      [System.IO.Compression.ZipFileExtensions]::ExtractToDirectory($zipArchive, "BlueCI")
+      Write-Host "##[endgroup]"
     displayName: 🔻 Download C# extension
   - pwsh: |
-      Get-ChildItem -Path '$(Pipeline.Workspace)/BlueCI/VSIXs*/*.vsix' -Recurse |% {
+      Get-ChildItem -Path '$(Pipeline.Workspace)/BlueCI/VSIX*/*.vsix' -Recurse |% {
         if ($_.Name -Match '^csharp-(?<os>\w+)-(?<arch>\w+)-(?<version>\d+\.\d+\.\d+(-[\w\.]+)?).vsix$') {
           $version = $Matches['version']
           Write-Host "##vso[build.updatebuildnumber]$version"
@@ -76,7 +108,7 @@ jobs:
       }
 
       # Identify the last attempt artifact.
-      $vsixSrc = @(Get-ChildItem -Path '$(Pipeline.Workspace)/BlueCI/VSIXs*' -Directory | Sort-Object -Property Name -Descending)[0]
+      $vsixSrc = @(Get-ChildItem -Path '$(Pipeline.Workspace)/BlueCI/VSIX*' -Directory | Sort-Object -Property Name -Descending)[0]
 
       $InsertNpmDependencies = ''
       Get-ChildItem -Path $vsixSrc -Filter '*.vsix' |% {
