@@ -3,7 +3,21 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# Latest
+# 2.41.x
+* Bump Roslyn to 4.12.0-1.24376.3 (PR: [#7393](https://github.com/dotnet/vscode-csharp/pull/7393))
+  * Fix race condition in LSP FindAllReferences when linked files were involved.(PR: [#74566](https://github.com/dotnet/roslyn/pull/74566))
+  * Fix dll load issue when loading Razor projects in VSCode (PR: [#74570](https://github.com/dotnet/roslyn/pull/74570))
+  * Don't bring up completion when deleting in an xml doc comment's text (PR: [#74558](https://github.com/dotnet/roslyn/pull/74558))
+  * Merge changes from a single DidChange notification (PR: [#74268](https://github.com/dotnet/roslyn/pull/74268))
+  * Support language features in metadata / decompiled source (PR: [#74488](https://github.com/dotnet/roslyn/pull/74488))
+  * Fix crash in sighelp (PR: [#74510](https://github.com/dotnet/roslyn/pull/74510))
+* Update Debugger Packages to v2.40.0 (PR: [#7390](https://github.com/dotnet/vscode-csharp/pull/7390))
+* Update Razor to 9.0.0-preview.24366.2 (PR: [#7384](https://github.com/dotnet/vscode-csharp/pull/7384))
+  * [FUSE] Component attribute nameof() (#10581) (PR: [#10581](https://github.com/dotnet/razor/pull/10581))
+  * Pool CodeWriter ReadOnlyMemory<char> pages (#10585) (PR: [#10585](https://github.com/dotnet/razor/pull/10585))
+  * Improve performance of `DefaultRazorTagHelperContextDiscoveryPhase` (#10602) (PR: [#10602](https://github.com/dotnet/razor/pull/10602))
+  * Flesh out `PooledArrayBuilder<T>` a bit (#10606) (PR: [#10606](https://github.com/dotnet/razor/pull/10606))
+* Bump xamltools to 17.12.35126.17 (PR: [#7392](https://github.com/dotnet/vscode-csharp/pull/7392))
 * Add option to disable server gc (PR: [#7155](https://github.com/dotnet/vscode-csharp/pull/7155))
 * Update the workspace status bar when the server is stopped. (PR: [#7352](https://github.com/dotnet/vscode-csharp/pull/7352))
 * Update Debugger to v2.39.0 (PR: [#7342](https://github.com/dotnet/vscode-csharp/pull/7342))

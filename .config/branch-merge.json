@@ -7,7 +7,7 @@
         },
         // Merge any release only changes to main.
         "release": {
-            "MergeToBranch": "release",
+            "MergeToBranch": "main",
             "ExtraSwitches": "-QuietComments"
         }
     }
