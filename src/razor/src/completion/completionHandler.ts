@@ -190,7 +190,6 @@ export class CompletionHandler {
         try {
             if (provisionalTextEdit) {
                 // provisional C# completion
-                console.log('provisional completion');
                 return this.provideCSharpProvisionalCompletions(triggerCharacter, virtualDocument, projectedPosition);
             }
 
