@@ -156,7 +156,10 @@ export class CompletionHandler {
         // TODO: Snippet support
 
         try {
-            if (delegatedCompletionItemResolveParams.originatingKind != LanguageKind.CSharp) {
+            if (
+                delegatedCompletionItemResolveParams.originatingKind != LanguageKind.CSharp ||
+                delegatedCompletionItemResolveParams.completionItem.data.TextDocument == null
+            ) {
                 return delegatedCompletionItemResolveParams.completionItem;
             } else {
                 const newItem = await vscode.commands.executeCommand<CompletionItem>(
@@ -187,6 +190,7 @@ export class CompletionHandler {
         try {
             if (provisionalTextEdit) {
                 // provisional C# completion
+                console.log('provisional completion');
                 return this.provideCSharpProvisionalCompletions(triggerCharacter, virtualDocument, projectedPosition);
             }
 
