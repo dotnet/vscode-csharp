@@ -3,6 +3,9 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Latest
+* Bump xamltools to 17.12.35131.21 (PR: [#7409](https://github.com/dotnet/vscode-csharp/pull/7409))
+
 # 2.41.x
 * Bump Roslyn to 4.12.0-1.24376.3 (PR: [#7393](https://github.com/dotnet/vscode-csharp/pull/7393))
   * Fix race condition in LSP FindAllReferences when linked files were involved.(PR: [#74566](https://github.com/dotnet/roslyn/pull/74566))
