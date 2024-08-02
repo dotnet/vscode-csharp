@@ -4,6 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump Roslyn to 4.12.0-2.24401.2 (PR: [#7413](https://github.com/dotnet/vscode-csharp/pull/7413))
+  * Reduce allocations in SyntaxEquivalence.AreEquivalent by using a more appropriate pooling mechanism for the stack it uses to walk trees. (PR: [#74610](https://github.com/dotnet/roslyn/pull/74610))
+  * Reduce allocations in SyntaxNodeExtensions.GetMembers to instead execute a given lambda over the collection. (PR: [#74628](https://github.com/dotnet/roslyn/pull/74628))
+  * Modify ISyntaxFacts methods to allocate less (PR: [#74596](https://github.com/dotnet/roslyn/pull/74596))
+  * Fix cases where unused private members were not grayed out (PR: [#74589](https://github.com/dotnet/roslyn/pull/74589))
+  * Fix URI handling when comparing encoded and unencoded URIs (PR: [#74544](https://github.com/dotnet/roslyn/pull/74544))
 * Bump xamltools to 17.12.35131.21 (PR: [#7409](https://github.com/dotnet/vscode-csharp/pull/7409))
 
 # 2.41.x
