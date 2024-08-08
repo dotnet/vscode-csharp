@@ -10,7 +10,7 @@
   * Modify ISyntaxFacts methods to allocate less (PR: [#74596](https://github.com/dotnet/roslyn/pull/74596))
   * Fix cases where unused private members were not grayed out (PR: [#74589](https://github.com/dotnet/roslyn/pull/74589))
   * Fix URI handling when comparing encoded and unencoded URIs (PR: [#74544](https://github.com/dotnet/roslyn/pull/74544))
-* Bump xamltools to 17.12.35208.23 (PR: [#7409](https://github.com/dotnet/vscode-csharp/pull/7409))
+* Bump xamltools to 17.12.35208.23 (PR: [#7422](https://github.com/dotnet/vscode-csharp/pull/7422))
 
 # 2.41.x
 * Bump Roslyn to 4.12.0-1.24376.3 (PR: [#7393](https://github.com/dotnet/vscode-csharp/pull/7393))
