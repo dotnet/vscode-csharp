@@ -191,6 +191,7 @@
   "Unexpected message received from debugger.": "Unexpected message received from debugger.",
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERROR]: C# Extension failed to install the debugger package.",
   "Could not find a process id to attach.": "Could not find a process id to attach.",
+  "Unable to launch Attach to Process Listing. ": "Unable to launch Attach to Process Listing. ",
   "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'": "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'",
   "[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.": "[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.",
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.",
