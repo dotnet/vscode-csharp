@@ -170,6 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "Nepovedlo se určit nastavení ladění pro projekt „{0}“",
   "Unable to find Razor extension version.": "Nepovedlo se najít verzi rozšíření Razor.",
   "Unable to generate assets to build and debug. {0}.": "Nepovedlo se vygenerovat prostředky pro sestavení a ladění. {0}",
+  "Unable to launch Attach to Process dialog: ": "Unable to launch Attach to Process dialog: ",
   "Unable to resolve VSCode's version of CSharp": "Nepovedlo se rozpoznat verzi jazyka CSharp v nástroji VSCode.",
   "Unable to resolve VSCode's version of Html": "Nepovedlo se přeložit verzi HTML nástroje VSCode.",
   "Unexpected RuntimeId '{0}'.": "Neočekávané RuntimeId „{0}“",

@@ -170,6 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "プロジェクト '{0}' のデバッグ設定を特定できません",
   "Unable to find Razor extension version.": "Razor 拡張機能のバージョンが見つかりません。",
   "Unable to generate assets to build and debug. {0}.": "ビルドおよびデバッグする資産を生成できません。{0}。",
+  "Unable to launch Attach to Process dialog: ": "Unable to launch Attach to Process dialog: ",
   "Unable to resolve VSCode's version of CSharp": "VSCode の CSharp のバージョンを解決できません",
   "Unable to resolve VSCode's version of Html": "VSCode の HTML のバージョンを解決できません",
   "Unexpected RuntimeId '{0}'.": "予期しない RuntimeId '{0}' です。",
