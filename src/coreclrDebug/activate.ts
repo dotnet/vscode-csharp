@@ -20,7 +20,6 @@ import { RemoteAttachPicker } from '../features/processPicker';
 import CompositeDisposable from '../compositeDisposable';
 import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
 import { omnisharpOptions } from '../shared/options';
-import { RoslynLanguageServer } from '../lsptoolshost/roslynLanguageServer';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -28,7 +27,7 @@ export async function activate(
     platformInformation: PlatformInformation,
     eventStream: EventStream,
     csharpOutputChannel: vscode.OutputChannel,
-    roslynLanguageServerStartedPromise: Promise<RoslynLanguageServer> | undefined
+    languageServerStartedPromise: Promise<any> | undefined
 ) {
     const disposables = new CompositeDisposable();
 
@@ -69,9 +68,9 @@ export async function activate(
     disposables.add(
         vscode.commands.registerCommand('csharp.attachToProcess', async () => {
             // Ensure dotnetWorkspaceConfigurationProvider is registered
-            if (roslynLanguageServerStartedPromise) {
+            if (languageServerStartedPromise) {
                 try {
-                    await roslynLanguageServerStartedPromise;
+                    await languageServerStartedPromise;
                 } catch (e: any) {
                     if (e as Error) {
                         throw new Error(vscode.l10n.t('Unable to launch Attach to Process dialog: ') + e.message);

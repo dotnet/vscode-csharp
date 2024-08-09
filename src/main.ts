@@ -324,7 +324,7 @@ export async function activate(
             platformInfo,
             eventStream,
             csharpChannel,
-            roslynLanguageServerStartedPromise
+            roslynLanguageServerStartedPromise ?? omnisharpLangServicePromise
         );
     }
 
