@@ -170,6 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "Não foi possível determinar as configurações de depuração para o projeto \"{0}\"",
   "Unable to find Razor extension version.": "Não é possível localizar a versão da extensão do Razor.",
   "Unable to generate assets to build and debug. {0}.": "Não foi possível gerar os ativos para compilar e depurar. {0}.",
+  "Unable to launch Attach to Process dialog: ": "Unable to launch Attach to Process dialog: ",
   "Unable to resolve VSCode's version of CSharp": "Não é possível resolver a versão do CSharp do VSCode",
   "Unable to resolve VSCode's version of Html": "Não é possível resolver a versão do Html do VSCode",
   "Unexpected RuntimeId '{0}'.": "RuntimeId inesperada \"{0}\".",
