@@ -307,6 +307,8 @@ export class CompletionHandler {
         return positionIndex;
     }
 
+    // Provide completions using standard vscode executeCompletionItemProvider command
+    // Used in HTML context
     private async provideVscodeCompletions(
         virtualDocumentUri: vscode.Uri,
         projectedPosition: Position,
