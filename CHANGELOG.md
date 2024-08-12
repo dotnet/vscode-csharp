@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump xamltools to 17.12.35212.11 (PR: [#7436](https://github.com/dotnet/vscode-csharp/pull/7436))
+
+# 2.43.x
 * Bump Roslyn to 4.12.0-2.24408.4 (PR: [#7429](https://github.com/dotnet/vscode-csharp/pull/7429))
   * Reduce allocations in SyntaxEquivalence.AreEquivalent by using a more appropriate pooling mechanism for the stack it uses to walk trees. (PR: [#74610](https://github.com/dotnet/roslyn/pull/74610))
   * Reduce allocations in SyntaxNodeExtensions.GetMembers to instead execute a given lambda over the collection. (PR: [#74628](https://github.com/dotnet/roslyn/pull/74628))
@@ -12,7 +15,7 @@
   * Fix URI handling when comparing encoded and unencoded URIs (PR: [#74544](https://github.com/dotnet/roslyn/pull/74544))
   * Only report project load events for initial load in VSCode (PR: [#74688](https://github.com/dotnet/roslyn/pull/74688))
   * Reduce allocations in AbstractSymbolCompletionProvider.CreateItems (PR: [#74670](https://github.com/dotnet/roslyn/pull/74670))
-* Bump xamltools to 17.12.35212.11 (PR: [#7436](https://github.com/dotnet/vscode-csharp/pull/7436))
+* Bump xamltools to 17.12.35209.18 (PR: [#7428](https://github.com/dotnet/vscode-csharp/pull/7428))
 * Task 2187810: [VS Code] Add OnEnter rules to indent tags (PR: [#7426](https://github.com/dotnet/vscode-csharp/pull/7426))
 * Fix completion handler bug that causes language server to crash (#7401) (PR: [#7406](https://github.com/dotnet/vscode-csharp/pull/7406))
 
