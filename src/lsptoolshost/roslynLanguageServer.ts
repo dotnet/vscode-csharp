@@ -66,6 +66,8 @@ import { getComponentPaths } from './builtInComponents';
 import { OnAutoInsertFeature } from './onAutoInsertFeature';
 import { registerLanguageStatusItems } from './languageStatusBar';
 import { ProjectContextService } from './services/projectContextService';
+import { ProvideDynamicFileResponse } from '../razor/src/dynamicFile/provideDynamicFileResponse';
+import { ProvideDynamicFileParams } from '../razor/src/dynamicFile/provideDynamicFileParams';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -730,11 +732,19 @@ export class RoslynLanguageServer {
         };
     }
 
+    private ProvideDyanmicFileInfoType: RequestType<ProvideDynamicFileInfoParams, ProvideDynamicFileResponse, any> =
+        new RequestType(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName);
+
     private registerDynamicFileInfo() {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
-        this._languageClient.onRequest(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName, async (request) =>
-            vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
+        this._languageClient.onRequest<ProvideDynamicFileInfoParams, ProvideDynamicFileResponse, any>(
+            this.ProvideDyanmicFileInfoType,
+            async (request) =>
+                vscode.commands.executeCommand(
+                    DynamicFileInfoHandler.provideDynamicFileInfoCommand,
+                    new ProvideDynamicFileParams(request.razorFiles.map((s) => MapStringUri(s)))
+                )
         );
         this._languageClient.onNotification(
             RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
@@ -1130,4 +1140,21 @@ function getSessionId(): string {
 
 export function isString(value: any): value is string {
     return typeof value === 'string' || value instanceof String;
+}
+
+// matches https://github.com/dotnet/roslyn/blob/6696095f5aa51290707b5d8518b861ee0bab7884/src/LanguageServer/Microsoft.CodeAnalysis.LanguageServer/HostWorkspace/RazorDynamicFileInfoProvider.cs#L21
+interface ProvideDynamicFileInfoParams {
+    razorFiles: string[];
+}
+
+// https://github.com/dotnet/roslyn/blob/21e07ecbcfa306608dc17418b5893ba50bb2fea9/src/LanguageServer/Protocol/Extensions/ProtocolConversions.cs#L199
+// CreateAbsoluteUri has different behavior if a string is Ascii or not. For Ascii, it provides an absolute path such as 'C:\project\page.razor,
+// but for non-Ascii characters it prepends `file://` and escapes the uri. This is the inverse of that by assuming anything starting with `file://` can
+// be parsed directly. Otherwise use Uri.file to parse the content.
+function MapStringUri(s: string): vscode.Uri {
+    if (s.startsWith('file://')) {
+        return vscode.Uri.parse(s, true);
+    }
+
+    return vscode.Uri.file(s);
 }

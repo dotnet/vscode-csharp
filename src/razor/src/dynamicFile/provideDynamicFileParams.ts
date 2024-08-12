@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { DocumentUri } from 'vscode-languageclient/node';
+import { Uri } from 'vscode';
 
 export class ProvideDynamicFileParams {
-    constructor(public readonly razorFiles: DocumentUri[]) {}
+    constructor(public readonly razorFiles: Uri[]) {}
 }

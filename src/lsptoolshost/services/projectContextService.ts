@@ -85,7 +85,7 @@ export class ProjectContextService {
     private async getVirtualCSharpUri(uri: vscode.Uri): Promise<vscode.Uri | undefined> {
         const response = await vscode.commands.executeCommand<ProvideDynamicFileResponse>(
             DynamicFileInfoHandler.provideDynamicFileInfoCommand,
-            new ProvideDynamicFileParams([uri.fsPath])
+            new ProvideDynamicFileParams([uri])
         );
 
         const responseUri = response.generatedFiles[0];
