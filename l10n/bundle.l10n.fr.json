@@ -170,7 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "Impossible de déterminer les paramètres de débogage pour le projet « {0} »",
   "Unable to find Razor extension version.": "La version de l’extension Razor est introuvable.",
   "Unable to generate assets to build and debug. {0}.": "Impossible de générer des ressources pour la génération et le débogage. {0}.",
-  "Unable to launch Attach to Process dialog: ": "Unable to launch Attach to Process dialog: ",
+  "Unable to launch Attach to Process dialog: ": "Impossible de lancer la boîte de dialogue Attacher au processus : ",
   "Unable to resolve VSCode's version of CSharp": "Impossible de résoudre la version de CSharp de VSCode",
   "Unable to resolve VSCode's version of Html": "Impossible de résoudre la version HTML de VSCode",
   "Unexpected RuntimeId '{0}'.": "RuntimeId « {0} » inattendu.",
