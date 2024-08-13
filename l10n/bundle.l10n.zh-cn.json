@@ -170,7 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "无法确定项目 \"{0}\" 的调试设置",
   "Unable to find Razor extension version.": "找不到 Razor 扩展版本。",
   "Unable to generate assets to build and debug. {0}.": "无法生成资产以生成和调试。{0}。",
-  "Unable to launch Attach to Process dialog: ": "Unable to launch Attach to Process dialog: ",
+  "Unable to launch Attach to Process dialog: ": "无法启动“附加到进程”对话框:",
   "Unable to resolve VSCode's version of CSharp": "无法解析 VSCode 的 CSharp 版本",
   "Unable to resolve VSCode's version of Html": "无法解析 VSCode 的 Html 版本",
   "Unexpected RuntimeId '{0}'.": "意外的 RuntimeId \"{0}\"。",

@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump xamltools to 17.12.35212.11 (PR: [#7436](https://github.com/dotnet/vscode-csharp/pull/7436))
+
+# 2.43.x
 * Bump Roslyn to 4.12.0-2.24408.4 (PR: [#7429](https://github.com/dotnet/vscode-csharp/pull/7429))
   * Reduce allocations in SyntaxEquivalence.AreEquivalent by using a more appropriate pooling mechanism for the stack it uses to walk trees. (PR: [#74610](https://github.com/dotnet/roslyn/pull/74610))
   * Reduce allocations in SyntaxNodeExtensions.GetMembers to instead execute a given lambda over the collection. (PR: [#74628](https://github.com/dotnet/roslyn/pull/74628))
