@@ -4,7 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
-* Bump Roslyn to 4.12.0-2.24408.4 (PR: [#7429](https://github.com/dotnet/vscode-csharp/pull/7429))
+* Fix handling Razor files with non-ascii characters (PR: [#7442](https://github.com/dotnet/vscode-csharp/pull/7442))
+* Bump Roslyn to 4.12.0-2.24413.5 (PR: [#7442](https://github.com/dotnet/vscode-csharp/pull/7442))
+  * Fix URI comparisons for different casing (PR: [#74746](https://github.com/dotnet/roslyn/pull/74746))
+  * Remove implicit unsafe cast in foreach(PR: [#74747](https://github.com/dotnet/roslyn/pull/74747))
+  * Send a TextDocumentidentifier for razor dynamic file requests/responses (PR: [#74727](https://github.com/dotnet/roslyn/pull/74727))
+  * Fix issues with VSCode LSP EA causing handlers to fail to load (PR: [#74700](https://github.com/dotnet/roslyn/pull/74700))
   * Reduce allocations in SyntaxEquivalence.AreEquivalent by using a more appropriate pooling mechanism for the stack it uses to walk trees. (PR: [#74610](https://github.com/dotnet/roslyn/pull/74610))
   * Reduce allocations in SyntaxNodeExtensions.GetMembers to instead execute a given lambda over the collection. (PR: [#74628](https://github.com/dotnet/roslyn/pull/74628))
   * Modify ISyntaxFacts methods to allocate less (PR: [#74596](https://github.com/dotnet/roslyn/pull/74596))

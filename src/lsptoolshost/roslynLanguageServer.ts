@@ -66,6 +66,8 @@ import { getComponentPaths } from './builtInComponents';
 import { OnAutoInsertFeature } from './onAutoInsertFeature';
 import { registerLanguageStatusItems } from './languageStatusBar';
 import { ProjectContextService } from './services/projectContextService';
+import { ProvideDynamicFileResponse } from '../razor/src/dynamicFile/provideDynamicFileResponse';
+import { ProvideDynamicFileParams } from '../razor/src/dynamicFile/provideDynamicFileParams';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -730,11 +732,16 @@ export class RoslynLanguageServer {
         };
     }
 
+    private ProvideDyanmicFileInfoType: RequestType<ProvideDynamicFileParams, ProvideDynamicFileResponse, any> =
+        new RequestType(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName);
+
     private registerDynamicFileInfo() {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
-        this._languageClient.onRequest(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName, async (request) =>
-            vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
+        this._languageClient.onRequest<ProvideDynamicFileParams, ProvideDynamicFileResponse, any>(
+            this.ProvideDyanmicFileInfoType,
+            async (request) =>
+                vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
         );
         this._languageClient.onNotification(
             RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
