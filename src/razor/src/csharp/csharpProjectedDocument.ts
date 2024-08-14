@@ -13,7 +13,9 @@ export class CSharpProjectedDocument implements IProjectedDocument {
 
     private content = '';
     private preProvisionalContent: string | undefined;
+    private preResolveProvisionalContent: string | undefined;
     private provisionalEditAt: number | undefined;
+    private resolveProvisionalEditAt: number | undefined;
     private hostDocumentVersion: number | null = null;
     private projectedDocumentVersion = 0;
 
@@ -80,12 +82,49 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         if (this.provisionalEditAt && this.preProvisionalContent) {
             // Undo provisional edit if one was applied.
             this.setContent(this.preProvisionalContent);
+            this.resolveProvisionalEditAt = this.provisionalEditAt;
             this.provisionalEditAt = undefined;
             this.preProvisionalContent = undefined;
             return true;
         }
 
         return false;
+    }
+
+    public addResolveProvisionalDotAt() {
+        //remove the last resolve provisional dot it it exists
+        this.removeResolveProvisionalDot();
+        if (this.resolveProvisionalEditAt) {
+            const newContent = this.getEditedContent(
+                '.',
+                this.resolveProvisionalEditAt,
+                this.resolveProvisionalEditAt,
+                this.content
+            );
+            this.preResolveProvisionalContent = this.content;
+            this.setContent(newContent);
+            return true;
+        }
+        return false;
+    }
+
+    public removeResolveProvisionalDot(clearEditIndex = false) {
+        if (this.resolveProvisionalEditAt && this.preResolveProvisionalContent) {
+            if (clearEditIndex) {
+                this.resolveProvisionalEditAt = undefined;
+            }
+            // Undo provisional edit if one was applied.
+            this.setContent(this.preResolveProvisionalContent);
+            this.provisionalEditAt = undefined;
+            this.preResolveProvisionalContent = undefined;
+            return true;
+        }
+
+        return false;
+    }
+
+    public getResolveProvisionalEditIndex() {
+        return this.resolveProvisionalEditAt;
     }
 
     private getEditedContent(newText: string, start: number, end: number, content: string) {

@@ -154,7 +154,12 @@ export class CompletionHandler {
         _cancellationToken: vscode.CancellationToken
     ) {
         // TODO: Snippet support
-
+        const razorDocumentUri = vscode.Uri.parse(
+            delegatedCompletionItemResolveParams.identifier.textDocumentIdentifier.uri,
+            true
+        );
+        const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
+        const virtualCsharpDocument = razorDocument.csharpDocument as CSharpProjectedDocument;
         try {
             if (
                 delegatedCompletionItemResolveParams.originatingKind != LanguageKind.CSharp ||
@@ -162,6 +167,16 @@ export class CompletionHandler {
             ) {
                 return delegatedCompletionItemResolveParams.completionItem;
             } else {
+                // will add a provisional dot to the C# document if a C# completion was triggered
+                if (virtualCsharpDocument.addResolveProvisionalDotAt()) {
+                    const absoluteIndex = virtualCsharpDocument.getResolveProvisionalEditIndex();
+                    if (absoluteIndex !== undefined) {
+                        await this.ensureProvisionalDotUpdatedInCSharpDocument(
+                            virtualCsharpDocument.uri,
+                            absoluteIndex
+                        );
+                    }
+                }
                 const newItem = await vscode.commands.executeCommand<CompletionItem>(
                     resolveCompletionsCommand,
                     delegatedCompletionItemResolveParams.completionItem
@@ -175,6 +190,20 @@ export class CompletionHandler {
             }
         } catch (error) {
             this.logger.logWarning(`${CompletionHandler.completionResolveEndpoint} failed with ${error}`);
+        } finally {
+            // remove the provisional dot after the resolve has completed and if it was added
+            const clearEditIndex = true;
+            if (virtualCsharpDocument.removeResolveProvisionalDot(clearEditIndex)) {
+                const absoluteIndex = virtualCsharpDocument.getResolveProvisionalEditIndex();
+                const removeDot = true;
+                if (absoluteIndex !== undefined) {
+                    await this.ensureProvisionalDotUpdatedInCSharpDocument(
+                        virtualCsharpDocument.uri,
+                        absoluteIndex,
+                        removeDot
+                    );
+                }
+            }
         }
 
         return CompletionHandler.emptyCompletionItem;
@@ -187,18 +216,19 @@ export class CompletionHandler {
         projectedPosition: Position,
         provisionalTextEdit?: SerializableTextEdit
     ) {
+        // Convert projected position to absolute index for provisional dot
+        const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
         try {
             if (provisionalTextEdit) {
                 // provisional C# completion
                 // add '.' to projected C# document to ensure correct completions are provided
                 // This is because when a user types '.' after an object, it is initially in
                 // html document and not generated C# document.
-                const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
                 if (absoluteIndex === -1) {
                     return CompletionHandler.emptyCompletionList;
                 }
                 virtualDocument.addProvisionalDotAt(absoluteIndex);
-                await this.ensureProvisionalDotAddedAtCSharpDocument(virtualDocument.uri, absoluteIndex);
+                await this.ensureProvisionalDotUpdatedInCSharpDocument(virtualDocument.uri, absoluteIndex);
             }
 
             const virtualDocumentUri = UriConverter.serialize(virtualDocument.uri);
@@ -224,6 +254,11 @@ export class CompletionHandler {
             return csharpCompletions;
         } catch (error) {
             this.logger.logWarning(`${CompletionHandler.completionEndpoint} failed with ${error}`);
+        } finally {
+            if (provisionalTextEdit && virtualDocument.removeProvisionalDot()) {
+                const removeDot = true;
+                await this.ensureProvisionalDotUpdatedInCSharpDocument(virtualDocument.uri, absoluteIndex, removeDot);
+            }
         }
 
         return CompletionHandler.emptyCompletionList;
@@ -233,19 +268,24 @@ export class CompletionHandler {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    private async ensureProvisionalDotAddedAtCSharpDocument(virtualDocumentUri: vscode.Uri, absoluteIndex: number) {
+    private async ensureProvisionalDotUpdatedInCSharpDocument(
+        virtualDocumentUri: vscode.Uri,
+        absoluteIndex: number,
+        removeDot = false // if true then we ensure the provisional dot is removed instead of being added
+    ) {
         // notifies the C# document content provider that the document content has changed
         this.projectedCSharpProvider.ensureDocumentContent(virtualDocumentUri);
         // Wait for the document to be updated before continuing
-        const startTime = Date.now();
         const timeout = 5000;
-        const newDocument = await vscode.workspace.openTextDocument(virtualDocumentUri);
+        let newDocument = await vscode.workspace.openTextDocument(virtualDocumentUri);
+        const startTime = Date.now();
 
-        while (newDocument.getText()[absoluteIndex] !== '.') {
+        while ((newDocument.getText()[absoluteIndex] === '.') === removeDot) {
             if (Date.now() - startTime > timeout) {
                 throw new Error('Timeout waiting for document update');
             }
             await this.delay(100);
+            newDocument = await vscode.workspace.openTextDocument(virtualDocumentUri);
         }
         await newDocument.save();
     }
