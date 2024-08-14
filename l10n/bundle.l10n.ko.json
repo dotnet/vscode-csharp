@@ -170,6 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "프로젝트 '{0}'에 대한 디버그 설정을 결정할 수 없습니다.",
   "Unable to find Razor extension version.": "Razor 확장 버전을 찾을 수 없음.",
   "Unable to generate assets to build and debug. {0}.": "빌드 및 디버그할 자산을 생성할 수 없습니다. {0}.",
+  "Unable to launch Attach to Process dialog: ": "프로세스에 연결 대화 상자를 시작할 수 없음: ",
   "Unable to resolve VSCode's version of CSharp": "VSCode의 CSharp 버전을 해결할 수 없음",
   "Unable to resolve VSCode's version of Html": "VSCode의 HTML 버전을 해결할 수 없음",
   "Unexpected RuntimeId '{0}'.": "예기치 않은 RuntimeId '{0}'입니다.",
