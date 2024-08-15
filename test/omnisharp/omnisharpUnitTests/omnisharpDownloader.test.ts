@@ -61,7 +61,7 @@ import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator
             await server.start();
             server.addRequestHandler(
                 'GET',
-                `/releases/${version}/omnisharp-win-x64${suffix}.zip`,
+                `/releases/download/v${version}/omnisharp-win-x64${suffix}.zip`,
                 200,
                 {
                     'content-type': 'application/zip',
