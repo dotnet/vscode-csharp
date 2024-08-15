@@ -167,7 +167,8 @@ export class CompletionHandler {
             ) {
                 return delegatedCompletionItemResolveParams.completionItem;
             } else {
-                // will add a provisional dot to the C# document if a C# completion was triggered
+                // will add a provisional dot to the C# document if a C# provisional completion triggered
+                // this resolve completion request
                 if (virtualCsharpDocument.addResolveProvisionalDotAt()) {
                     const absoluteIndex = virtualCsharpDocument.getResolveProvisionalEditIndex();
                     if (absoluteIndex !== undefined) {
@@ -192,8 +193,7 @@ export class CompletionHandler {
             this.logger.logWarning(`${CompletionHandler.completionResolveEndpoint} failed with ${error}`);
         } finally {
             // remove the provisional dot after the resolve has completed and if it was added
-            const clearEditIndex = true;
-            if (virtualCsharpDocument.removeResolveProvisionalDot(clearEditIndex)) {
+            if (virtualCsharpDocument.removeResolveProvisionalDot()) {
                 const absoluteIndex = virtualCsharpDocument.getResolveProvisionalEditIndex();
                 const removeDot = true;
                 if (absoluteIndex !== undefined) {
@@ -219,6 +219,11 @@ export class CompletionHandler {
         // Convert projected position to absolute index for provisional dot
         const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
         try {
+            // currently, we are temporarily adding a '.' to the C# document to ensure correct completions are provided
+            // for each roslyn.resolveCompletion request and we remember the location from the last provisional completion request.
+            // Therefore we need to remove the resolve provisional dot position
+            // at the start of every completion request in case a '.' gets added when it shouldn't be.
+            virtualDocument.clearResolveProvisionalEditIndex();
             if (provisionalTextEdit) {
                 // provisional C# completion
                 // add '.' to projected C# document to ensure correct completions are provided

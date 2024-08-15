@@ -91,6 +91,9 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         return false;
     }
 
+    // add resolve provisional dot if a provisional completion request was made
+    // A resolve provisional dot is the same as a provisional dot, but it remembers the
+    // last provisional dot inserted location and is used for the roslyn.resolveCompletion API
     public addResolveProvisionalDotAt() {
         //remove the last resolve provisional dot it it exists
         this.removeResolveProvisionalDot();
@@ -108,11 +111,8 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         return false;
     }
 
-    public removeResolveProvisionalDot(clearEditIndex = false) {
+    public removeResolveProvisionalDot() {
         if (this.resolveProvisionalEditAt && this.preResolveProvisionalContent) {
-            if (clearEditIndex) {
-                this.resolveProvisionalEditAt = undefined;
-            }
             // Undo provisional edit if one was applied.
             this.setContent(this.preResolveProvisionalContent);
             this.provisionalEditAt = undefined;
@@ -125,6 +125,13 @@ export class CSharpProjectedDocument implements IProjectedDocument {
 
     public getResolveProvisionalEditIndex() {
         return this.resolveProvisionalEditAt;
+    }
+
+    // since multiple roslyn.resolveCompletion requests can be made for each completion,
+    // we need to clear the resolveProvisionalEditIndex (currently when a new completion request is made,
+    // this works if resolve requests are always preceded by a completion request)
+    public clearResolveProvisionalEditIndex() {
+        this.resolveProvisionalEditAt = undefined;
     }
 
     private getEditedContent(newText: string, start: number, end: number, content: string) {
