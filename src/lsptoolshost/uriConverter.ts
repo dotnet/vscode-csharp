@@ -24,6 +24,6 @@ export class UriConverter {
     }
 
     public static deserialize(value: string): vscode.Uri {
-        return vscode.Uri.parse(value);
+        return vscode.Uri.parse(value, true);
     }
 }
