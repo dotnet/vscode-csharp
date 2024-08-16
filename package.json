@@ -788,6 +788,12 @@
             "description": "%configuration.dotnet.completion.provideRegexCompletions%",
             "order": 20
           },
+          "dotnet.completion.triggerCompletionInArgumentLists": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.completion.triggerCompletionInArgumentLists%",
+            "order": 20
+          },
           "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
             "type": "string",
             "enum": [

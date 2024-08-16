@@ -51,6 +51,7 @@
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file. (Previously `omnisharp.enableImportCompletion`)",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Perform automatic object name completion for the members that you have recently selected.",
   "configuration.dotnet.completion.provideRegexCompletions": "Show regular expressions in completion list.",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "Run background code analysis for: (Previously `omnisharp.enableRoslynAnalyzers`)",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.openFiles": "Open documents",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "Entire solution",
