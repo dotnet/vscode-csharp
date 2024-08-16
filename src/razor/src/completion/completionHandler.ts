@@ -160,6 +160,7 @@ export class CompletionHandler {
         );
         const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
         const virtualCsharpDocument = razorDocument.csharpDocument as CSharpProjectedDocument;
+        const provisionalDotPosition = virtualCsharpDocument.getProvisionalDotPosition();
         try {
             if (
                 delegatedCompletionItemResolveParams.originatingKind != LanguageKind.CSharp ||
@@ -169,12 +170,11 @@ export class CompletionHandler {
             } else {
                 // will add a provisional dot to the C# document if a C# provisional completion triggered
                 // this resolve completion request
-                if (virtualCsharpDocument.addResolveProvisionalDotAt()) {
-                    const absoluteIndex = virtualCsharpDocument.getResolveProvisionalEditIndex();
-                    if (absoluteIndex !== undefined) {
+                if (virtualCsharpDocument.ensureResolveProvisionalDot()) {
+                    if (provisionalDotPosition !== undefined) {
                         await this.ensureProvisionalDotUpdatedInCSharpDocument(
                             virtualCsharpDocument.uri,
-                            absoluteIndex
+                            provisionalDotPosition
                         );
                     }
                 }
@@ -194,12 +194,11 @@ export class CompletionHandler {
         } finally {
             // remove the provisional dot after the resolve has completed and if it was added
             if (virtualCsharpDocument.removeResolveProvisionalDot()) {
-                const absoluteIndex = virtualCsharpDocument.getResolveProvisionalEditIndex();
                 const removeDot = true;
-                if (absoluteIndex !== undefined) {
+                if (provisionalDotPosition !== undefined) {
                     await this.ensureProvisionalDotUpdatedInCSharpDocument(
                         virtualCsharpDocument.uri,
-                        absoluteIndex,
+                        provisionalDotPosition,
                         removeDot
                     );
                 }
@@ -223,7 +222,7 @@ export class CompletionHandler {
             // for each roslyn.resolveCompletion request and we remember the location from the last provisional completion request.
             // Therefore we need to remove the resolve provisional dot position
             // at the start of every completion request in case a '.' gets added when it shouldn't be.
-            virtualDocument.clearResolveProvisionalEditIndex();
+            virtualDocument.clearResolveCompletionRequestVariables();
             if (provisionalTextEdit) {
                 // provisional C# completion
                 // add '.' to projected C# document to ensure correct completions are provided
@@ -233,7 +232,9 @@ export class CompletionHandler {
                     return CompletionHandler.emptyCompletionList;
                 }
                 virtualDocument.addProvisionalDotAt(absoluteIndex);
-                await this.ensureProvisionalDotUpdatedInCSharpDocument(virtualDocument.uri, absoluteIndex);
+                // projected Position is passed in to the virtual doc so that it can be used during the resolve request
+                virtualDocument.setProvisionalDotPosition(projectedPosition);
+                await this.ensureProvisionalDotUpdatedInCSharpDocument(virtualDocument.uri, projectedPosition);
             }
 
             const virtualDocumentUri = UriConverter.serialize(virtualDocument.uri);
@@ -262,37 +263,54 @@ export class CompletionHandler {
         } finally {
             if (provisionalTextEdit && virtualDocument.removeProvisionalDot()) {
                 const removeDot = true;
-                await this.ensureProvisionalDotUpdatedInCSharpDocument(virtualDocument.uri, absoluteIndex, removeDot);
+                await this.ensureProvisionalDotUpdatedInCSharpDocument(
+                    virtualDocument.uri,
+                    projectedPosition,
+                    removeDot
+                );
             }
         }
 
         return CompletionHandler.emptyCompletionList;
     }
 
-    private async delay(ms: number) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
     private async ensureProvisionalDotUpdatedInCSharpDocument(
         virtualDocumentUri: vscode.Uri,
-        absoluteIndex: number,
+        projectedPosition: Position,
         removeDot = false // if true then we ensure the provisional dot is removed instead of being added
     ) {
         // notifies the C# document content provider that the document content has changed
         this.projectedCSharpProvider.ensureDocumentContent(virtualDocumentUri);
-        // Wait for the document to be updated before continuing
-        const timeout = 5000;
-        let newDocument = await vscode.workspace.openTextDocument(virtualDocumentUri);
-        const startTime = Date.now();
+        await this.waitForDocumentChange(virtualDocumentUri, projectedPosition, removeDot);
+    }
 
-        while ((newDocument.getText()[absoluteIndex] === '.') === removeDot) {
-            if (Date.now() - startTime > timeout) {
-                throw new Error('Timeout waiting for document update');
-            }
-            await this.delay(100);
-            newDocument = await vscode.workspace.openTextDocument(virtualDocumentUri);
-        }
-        await newDocument.save();
+    // make sure the provisional dot is added or deleted in the virtual document for provisional completion
+    private async waitForDocumentChange(
+        uri: vscode.Uri,
+        projectedPosition: Position,
+        removeDot: boolean
+    ): Promise<void> {
+        return new Promise((resolve) => {
+            const disposable = vscode.workspace.onDidChangeTextDocument((event) => {
+                const matchingText = removeDot ? '' : '.';
+                if (event.document.uri.toString() === uri.toString()) {
+                    // Check if the change is at the expected index
+                    const changeAtIndex = event.contentChanges.some(
+                        (change) =>
+                            change.range.start.character <= projectedPosition.character &&
+                            change.range.start.line === projectedPosition.line &&
+                            change.range.end.character + 1 >= projectedPosition.character &&
+                            change.range.end.line === projectedPosition.line &&
+                            change.text === matchingText
+                    );
+                    if (changeAtIndex) {
+                        // Resolve the promise and dispose of the event listener
+                        resolve();
+                        disposable.dispose();
+                    }
+                }
+            });
+        });
     }
 
     // Adjust Roslyn completion command results to make it more palatable to VSCode

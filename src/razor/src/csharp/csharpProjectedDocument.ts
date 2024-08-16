@@ -6,6 +6,7 @@
 import { IProjectedDocument } from '../projection/IProjectedDocument';
 import { ServerTextChange } from '../rpc/serverTextChange';
 import { getUriPath } from '../uriPaths';
+import { Position } from 'vscode-languageclient';
 import * as vscode from '../vscodeAdapter';
 
 export class CSharpProjectedDocument implements IProjectedDocument {
@@ -16,6 +17,7 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     private preResolveProvisionalContent: string | undefined;
     private provisionalEditAt: number | undefined;
     private resolveProvisionalEditAt: number | undefined;
+    private ProvisionalDotPosition: Position | undefined;
     private hostDocumentVersion: number | null = null;
     private projectedDocumentVersion = 0;
 
@@ -69,8 +71,10 @@ export class CSharpProjectedDocument implements IProjectedDocument {
             // Edits already applied.
             return;
         }
-
+        //reset the state for provisional completion and resolve completion
         this.removeProvisionalDot();
+        this.resolveProvisionalEditAt = undefined;
+        this.ProvisionalDotPosition = undefined;
 
         const newContent = this.getEditedContent('.', index, index, this.content);
         this.preProvisionalContent = this.content;
@@ -94,9 +98,10 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     // add resolve provisional dot if a provisional completion request was made
     // A resolve provisional dot is the same as a provisional dot, but it remembers the
     // last provisional dot inserted location and is used for the roslyn.resolveCompletion API
-    public addResolveProvisionalDotAt() {
+    public ensureResolveProvisionalDot() {
         //remove the last resolve provisional dot it it exists
         this.removeResolveProvisionalDot();
+
         if (this.resolveProvisionalEditAt) {
             const newContent = this.getEditedContent(
                 '.',
@@ -123,15 +128,20 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         return false;
     }
 
-    public getResolveProvisionalEditIndex() {
-        return this.resolveProvisionalEditAt;
+    public setProvisionalDotPosition(position: Position) {
+        this.ProvisionalDotPosition = position;
+    }
+
+    public getProvisionalDotPosition() {
+        return this.ProvisionalDotPosition;
     }
 
     // since multiple roslyn.resolveCompletion requests can be made for each completion,
     // we need to clear the resolveProvisionalEditIndex (currently when a new completion request is made,
     // this works if resolve requests are always preceded by a completion request)
-    public clearResolveProvisionalEditIndex() {
+    public clearResolveCompletionRequestVariables() {
         this.resolveProvisionalEditAt = undefined;
+        this.ProvisionalDotPosition = undefined;
     }
 
     private getEditedContent(newText: string, start: number, end: number, content: string) {
