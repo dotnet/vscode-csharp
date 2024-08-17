@@ -4,9 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump Roslyn to 4.12.0-2.24416.3 (PR: [#7448](https://github.com/dotnet/vscode-csharp/pull/7448))
+  * Use EnableCodeStyleSeverity instead of AnalysisLevel to control new diagnostic severity behavior (PR: [#73843](https://github.com/dotnet/roslyn/pull/73843))
+  * Cleanup LSP error reporting (PR: [#74530](https://github.com/dotnet/roslyn/pull/74530))
+  * Add support in DevKit for source link go to definition (requires C# DevKit version `v1.10.6 (pre-release)` or higher) (PR: [#74626](https://github.com/dotnet/roslyn/pull/74626))
 * Bump xamltools to 17.12.35216.22 (PR: [#7447](https://github.com/dotnet/vscode-csharp/pull/7447))
+* Update Debugger to v2.43.0 (PR: [#7420](https://github.com/dotnet/vscode-csharp/pull/7420))
 
-# 2.43.x
+# 2.43.16
 * Fix handling Razor files with non-ascii characters (PR: [#7442](https://github.com/dotnet/vscode-csharp/pull/7442))
 * Bump Roslyn to 4.12.0-2.24413.5 (PR: [#7442](https://github.com/dotnet/vscode-csharp/pull/7442))
   * Fix URI comparisons for different casing (PR: [#74746](https://github.com/dotnet/roslyn/pull/74746))
