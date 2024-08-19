@@ -4,6 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Add option `dotnet.completion.triggerCompletionInArgumentLists` to disable completion in argument lists (PR: [#7446](https://github.com/dotnet/vscode-csharp/pull/7446))
+* Bump Roslyn to 4.12.0-2.24417.1 (PR: [#7446](https://github.com/dotnet/vscode-csharp/pull/7446))
+  * Fix issue projects would fail to load with missing output path error (PR: [#74791](https://github.com/dotnet/roslyn/pull/74791))
+  * Expose option to disable completion triggers argument list (PR: [#74792](https://github.com/dotnet/roslyn/pull/74792))
+
+# 2.44.x
 * Bump Roslyn to 4.12.0-2.24416.3 (PR: [#7448](https://github.com/dotnet/vscode-csharp/pull/7448))
   * Use EnableCodeStyleSeverity instead of AnalysisLevel to control new diagnostic severity behavior (PR: [#73843](https://github.com/dotnet/roslyn/pull/73843))
   * Cleanup LSP error reporting (PR: [#74530](https://github.com/dotnet/roslyn/pull/74530))

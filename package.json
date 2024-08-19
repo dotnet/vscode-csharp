@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.12.0-2.24416.3",
+    "roslyn": "4.12.0-2.24417.1",
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24366.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -786,6 +786,12 @@
             "type": "boolean",
             "default": "true",
             "description": "%configuration.dotnet.completion.provideRegexCompletions%",
+            "order": 20
+          },
+          "dotnet.completion.triggerCompletionInArgumentLists": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.completion.triggerCompletionInArgumentLists%",
             "order": 20
           },
           "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
