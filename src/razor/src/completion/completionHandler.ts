@@ -154,7 +154,13 @@ export class CompletionHandler {
         _cancellationToken: vscode.CancellationToken
     ) {
         // TODO: Snippet support
-
+        const razorDocumentUri = vscode.Uri.parse(
+            delegatedCompletionItemResolveParams.identifier.textDocumentIdentifier.uri,
+            true
+        );
+        const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
+        const virtualCsharpDocument = razorDocument.csharpDocument as CSharpProjectedDocument;
+        const provisionalDotPosition = virtualCsharpDocument.getProvisionalDotPosition();
         try {
             if (
                 delegatedCompletionItemResolveParams.originatingKind != LanguageKind.CSharp ||
@@ -162,6 +168,16 @@ export class CompletionHandler {
             ) {
                 return delegatedCompletionItemResolveParams.completionItem;
             } else {
+                // will add a provisional dot to the C# document if a C# provisional completion triggered
+                // this resolve completion request
+                if (virtualCsharpDocument.ensureResolveProvisionalDot()) {
+                    if (provisionalDotPosition !== undefined) {
+                        await this.ensureProvisionalDotUpdatedInCSharpDocument(
+                            virtualCsharpDocument.uri,
+                            provisionalDotPosition
+                        );
+                    }
+                }
                 const newItem = await vscode.commands.executeCommand<CompletionItem>(
                     resolveCompletionsCommand,
                     delegatedCompletionItemResolveParams.completionItem
@@ -175,6 +191,18 @@ export class CompletionHandler {
             }
         } catch (error) {
             this.logger.logWarning(`${CompletionHandler.completionResolveEndpoint} failed with ${error}`);
+        } finally {
+            // remove the provisional dot after the resolve has completed and if it was added
+            if (virtualCsharpDocument.removeResolveProvisionalDot()) {
+                const removeDot = true;
+                if (provisionalDotPosition !== undefined) {
+                    await this.ensureProvisionalDotUpdatedInCSharpDocument(
+                        virtualCsharpDocument.uri,
+                        provisionalDotPosition,
+                        removeDot
+                    );
+                }
+            }
         }
 
         return CompletionHandler.emptyCompletionItem;
@@ -187,13 +215,28 @@ export class CompletionHandler {
         projectedPosition: Position,
         provisionalTextEdit?: SerializableTextEdit
     ) {
+        // Convert projected position to absolute index for provisional dot
+        const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
         try {
+            // currently, we are temporarily adding a '.' to the C# document to ensure correct completions are provided
+            // for each roslyn.resolveCompletion request and we remember the location from the last provisional completion request.
+            // Therefore we need to remove the resolve provisional dot position
+            // at the start of every completion request in case a '.' gets added when it shouldn't be.
+            virtualDocument.clearResolveCompletionRequestVariables();
             if (provisionalTextEdit) {
                 // provisional C# completion
-                return this.provideCSharpProvisionalCompletions(triggerCharacter, virtualDocument, projectedPosition);
+                // add '.' to projected C# document to ensure correct completions are provided
+                // This is because when a user types '.' after an object, it is initially in
+                // html document and not generated C# document.
+                if (absoluteIndex === -1) {
+                    return CompletionHandler.emptyCompletionList;
+                }
+                virtualDocument.addProvisionalDotAt(absoluteIndex);
+                // projected Position is passed in to the virtual doc so that it can be used during the resolve request
+                virtualDocument.setProvisionalDotPosition(projectedPosition);
+                await this.ensureProvisionalDotUpdatedInCSharpDocument(virtualDocument.uri, projectedPosition);
             }
 
-            // non-provisional C# completion
             const virtualDocumentUri = UriConverter.serialize(virtualDocument.uri);
             const params: CompletionParams = {
                 context: {
@@ -217,55 +260,57 @@ export class CompletionHandler {
             return csharpCompletions;
         } catch (error) {
             this.logger.logWarning(`${CompletionHandler.completionEndpoint} failed with ${error}`);
+        } finally {
+            if (provisionalTextEdit && virtualDocument.removeProvisionalDot()) {
+                const removeDot = true;
+                await this.ensureProvisionalDotUpdatedInCSharpDocument(
+                    virtualDocument.uri,
+                    projectedPosition,
+                    removeDot
+                );
+            }
         }
 
         return CompletionHandler.emptyCompletionList;
     }
 
-    // Provides 'provisional' C# completions.
-    // This happens when a user types '.' after an object. In that case '.' is initially in
-    // html document and not generated C# document. To get correct completions as soon as the user
-    // types '.' we need to
-    // 1. Temporarily add '.' to projected C# document at the correct position (projected position)
-    // 2. Make sure projected document is updated on the Roslyn server so Roslyn provides correct completions
-    // 3. Invoke Roslyn/C# completion and return that to the Razor LSP server.
-    //    NOTE: currently there is an issue (see comments in code below) causing us to invoke vscode command
-    //    rather then the Roslyn command
-    // 4. Remove temporarily (provisionally) added '.' from the projected C# buffer.
-    // 5. Make sure the projected C# document is updated since the user will likely continue interacting with this document.
-    private async provideCSharpProvisionalCompletions(
-        triggerCharacter: string | undefined,
-        virtualDocument: CSharpProjectedDocument,
-        projectedPosition: Position
+    private async ensureProvisionalDotUpdatedInCSharpDocument(
+        virtualDocumentUri: vscode.Uri,
+        projectedPosition: Position,
+        removeDot = false // if true then we ensure the provisional dot is removed instead of being added
     ) {
-        const absoluteIndex = CompletionHandler.getIndexOfPosition(virtualDocument, projectedPosition);
-        if (absoluteIndex === -1) {
-            return CompletionHandler.emptyCompletionList;
-        }
-
-        try {
-            // temporarily add '.' to projected C# document to ensure correct completions are provided
-            virtualDocument.addProvisionalDotAt(absoluteIndex);
-            await this.ensureProjectedCSharpDocumentUpdated(virtualDocument.uri);
-
-            // Current code has to execute vscode command vscode.executeCompletionItemProvider for provisional completion
-            // Calling roslyn command vscode.executeCompletionItemProvider returns null
-            // Tracked by https://github.com/dotnet/vscode-csharp/issues/7250
-            return this.provideVscodeCompletions(virtualDocument.uri, projectedPosition, triggerCharacter);
-        } finally {
-            if (virtualDocument.removeProvisionalDot()) {
-                await this.ensureProjectedCSharpDocumentUpdated(virtualDocument.uri);
-            }
-        }
+        // notifies the C# document content provider that the document content has changed
+        this.projectedCSharpProvider.ensureDocumentContent(virtualDocumentUri);
+        await this.waitForDocumentChange(virtualDocumentUri, projectedPosition, removeDot);
     }
 
-    private async ensureProjectedCSharpDocumentUpdated(virtualDocumentUri: vscode.Uri) {
-        this.projectedCSharpProvider.ensureDocumentContent(virtualDocumentUri);
-
-        // We open and then re-save because we're adding content to the text document within an event.
-        // We need to allow the system to propogate this text document change.
-        const newDocument = await vscode.workspace.openTextDocument(virtualDocumentUri);
-        await newDocument.save();
+    // make sure the provisional dot is added or deleted in the virtual document for provisional completion
+    private async waitForDocumentChange(
+        uri: vscode.Uri,
+        projectedPosition: Position,
+        removeDot: boolean
+    ): Promise<void> {
+        return new Promise((resolve) => {
+            const disposable = vscode.workspace.onDidChangeTextDocument((event) => {
+                const matchingText = removeDot ? '' : '.';
+                if (event.document.uri.toString() === uri.toString()) {
+                    // Check if the change is at the expected index
+                    const changeAtIndex = event.contentChanges.some(
+                        (change) =>
+                            change.range.start.character <= projectedPosition.character &&
+                            change.range.start.line === projectedPosition.line &&
+                            change.range.end.character + 1 >= projectedPosition.character &&
+                            change.range.end.line === projectedPosition.line &&
+                            change.text === matchingText
+                    );
+                    if (changeAtIndex) {
+                        // Resolve the promise and dispose of the event listener
+                        resolve();
+                        disposable.dispose();
+                    }
+                }
+            });
+        });
     }
 
     // Adjust Roslyn completion command results to make it more palatable to VSCode
@@ -326,9 +371,7 @@ export class CompletionHandler {
     }
 
     // Provide completions using standard vscode executeCompletionItemProvider command
-    // Used in HTML context and (temporarily) C# provisional completion context (calling Roslyn
-    // directly during provisional completion session returns null, root cause TBD, tracked by
-    // https://github.com/dotnet/vscode-csharp/issues/7250)
+    // Used in HTML context
     private async provideVscodeCompletions(
         virtualDocumentUri: vscode.Uri,
         projectedPosition: Position,
