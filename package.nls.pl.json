@@ -41,6 +41,7 @@
   "configuration.dotnet.completion.provideRegexCompletions": "Pokaż wyrażenia regularne na liście uzupełniania.",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Zapewnia obsługę wyświetlania niezaimportowanych typów i niezaimportowanych metod rozszerzeń na listach uzupełniania. Po zadeklarowaniu odpowiednia dyrektywa using zostanie dodana w górnej części bieżącego pliku. (Wcześniej „omnisharp.enableImportCompletion”)",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Wykonaj automatyczne uzupełnianie nazw obiektów dla elementów członkowskich, które zostały ostatnio wybrane.",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
   "configuration.dotnet.defaultSolution.description": "Ścieżka domyślnego rozwiązania, która ma zostać otwarta w obszarze roboczym, lub ustawiona na wartość „wyłącz”, aby je pominąć. (Poprzednio „omnisharp.defaultLaunchSolution”)",
   "configuration.dotnet.dotnetPath": "Określa ścieżkę do katalogu instalacyjnego dotnet, który ma być używany zamiast domyślnego katalogu systemowego. Ma to wpływ tylko na instalację dotnet używaną do hostowania samego serwera językowego. Przykład: „/home/username/mycustomdotnetdirectory”.",
   "configuration.dotnet.enableXamlTools": "Włącza narzędzia XAML podczas korzystania z zestawu deweloperskiego języka C#",

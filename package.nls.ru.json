@@ -41,6 +41,7 @@
   "configuration.dotnet.completion.provideRegexCompletions": "Отображение регулярных выражений в списке завершения.",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Включает поддержку отображения неимпортированных типов и неимпортированных методов расширения в списках завершения. При фиксации соответствующая директива использования будет добавлена в начало текущего файла. (Ранее — \"omnisharp.enableImportCompletion\")",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Выполните автоматическое завершение имен объектов для выбранных элементов.",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
   "configuration.dotnet.defaultSolution.description": "Путь к решению по умолчанию, которое будет открыто в рабочей области. Или задайте значение \"Отключить\", чтобы пропустить его. (Ранее — \"omnisharp.defaultLaunchSolution\")",
   "configuration.dotnet.dotnetPath": "Указывает путь к каталогу установки dotnet для использования вместо стандартного системного каталога. Это влияет только на установку dotnet, используемую для размещения самого языкового сервера. Пример: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.dotnet.enableXamlTools": "Включает инструменты XAML при использовании комплекта разработки C# Dev Kit.",
