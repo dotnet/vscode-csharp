@@ -41,6 +41,7 @@
   "configuration.dotnet.completion.provideRegexCompletions": "入力候補一覧に正規表現を表示します。",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "インポートされていない型とインポートされていない拡張メソッドを入力候補一覧に表示するためのサポートを有効にします。コミットすると、現在のファイルの先頭に適切な using ディレクティブが追加されます。(以前の `omnisharp.enableImportCompletion`)",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "最近選択したメンバーの自動オブジェクト名の完了を実行します。",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
   "configuration.dotnet.defaultSolution.description": "ワークスペースで開く既定のソリューションのパス。スキップするには 'disable' に設定します。(以前の `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.dotnetPath": "既定のシステム ディレクトリの代わりに使用する dotnet インストール ディレクトリへのパスを指定します。これは、言語サーバー自体をホストするために使用する dotnet インストールにのみ影響します。例: \"/home/username/mycustomdotnetdirectory\"。",
   "configuration.dotnet.enableXamlTools": "C# 開発キットを使用するときに XAML ツールを有効にします",

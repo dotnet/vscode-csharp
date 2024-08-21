@@ -41,6 +41,7 @@
   "configuration.dotnet.completion.provideRegexCompletions": "Umožňuje zobrazit regulární výrazy v seznamu dokončení.",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Povolí podporu zobrazení neimportovaných typů a neimportovaných metod rozšíření v seznamech dokončení. Při potvrzení se na začátek aktuálního souboru přidá příslušná direktiva použití. (Dříve omnisharp.enableImportCompletion)",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Pro členy, které jste nedávno vybrali, proveďte automatické dokončování názvů objektů.",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
   "configuration.dotnet.defaultSolution.description": "Cesta výchozího řešení, které se má otevřít v pracovním prostoru. Můžete přeskočit nastavením na „zakázat“. (Dříve omnisharp.defaultLaunchSolution)",
   "configuration.dotnet.dotnetPath": "Zadává cestu k adresáři instalace dotnet, která se má použít místo výchozí systémové instalace. To má vliv pouze na instalaci dotnet, která se má použít k hostování samotného jazykového serveru. Příklad: /home/username/mycustomdotnetdirectory",
   "configuration.dotnet.enableXamlTools": "Povolí nástroje XAML při použití sady C# Dev Kit",
