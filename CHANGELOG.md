@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump Razor to 9.0.0-preview.24418.1 (PR: [#7456](https://github.com/dotnet/vscode-csharp/pull/7456))
+  * Don't add already known documents to the misc files project (#10753) (PR: [#10753](https://github.com/dotnet/razor/pull/10753))
+  * Remove ItemCollection from TagHelperDescriptorProviderContext (#10720) (PR: [#10720](https://github.com/dotnet/razor/pull/10720))
+  * Cohost inlay hint support (#10672) (PR: [#10672](https://github.com/dotnet/razor/pull/10672))
+  * Fix excerpt service to allow for multi line verbatim strings (#10675) (PR: [#10675](https://github.com/dotnet/razor/pull/10675))
+  * Fix attribute parsing recovery (#10620) (PR: [#10620](https://github.com/dotnet/razor/pull/10620))
+  * Turn off trailing whitespace triming in strings (#10646) (PR: [#10646](https://github.com/dotnet/razor/pull/10646))
+  * Handle `:get`/`:set` in `EditorRequired` checking (#10628) (PR: [#10628](https://github.com/dotnet/razor/pull/10628))
 * Add option `dotnet.completion.triggerCompletionInArgumentLists` to disable completion in argument lists (PR: [#7446](https://github.com/dotnet/vscode-csharp/pull/7446))
 * Bump Roslyn to 4.12.0-2.24417.1 (PR: [#7446](https://github.com/dotnet/vscode-csharp/pull/7446))
   * Fix issue projects would fail to load with missing output path error (PR: [#74791](https://github.com/dotnet/roslyn/pull/74791))
