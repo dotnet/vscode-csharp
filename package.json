@@ -37,11 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.12.0-2.24416.3",
+    "roslyn": "4.12.0-2.24422.6",
     "omniSharp": "1.39.11",
-    "razor": "9.0.0-preview.24366.2",
+    "razor": "9.0.0-preview.24418.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.12.35216.22"
+    "xamlTools": "17.12.35223.16"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -786,6 +786,12 @@
             "type": "boolean",
             "default": "true",
             "description": "%configuration.dotnet.completion.provideRegexCompletions%",
+            "order": 20
+          },
+          "dotnet.completion.triggerCompletionInArgumentLists": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.completion.triggerCompletionInArgumentLists%",
             "order": 20
           },
           "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
