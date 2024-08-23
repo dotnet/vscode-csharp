@@ -20,8 +20,9 @@
   * Update LSP Protocol Types (PR: [#73911](https://github.com/dotnet/roslyn/pull/73911))
   * Fix issue projects would fail to load with missing output path error (PR: [#74791](https://github.com/dotnet/roslyn/pull/74791))
   * Expose option to disable completion triggers argument list (PR: [#74792](https://github.com/dotnet/roslyn/pull/74792))
-* Bump xamltools to 17.12.35221.21 (PR: [#7457](https://github.com/dotnet/vscode-csharp/pull/7457))
 * Update Debugger to v2.43.0 (PR: [#7420](https://github.com/dotnet/vscode-csharp/pull/7420))
+* Bump xamltools to 17.12.35223.16 (PR: [#7464](https://github.com/dotnet/vscode-csharp/pull/7464))
+* Added XAML Hot Reload support for x:FactoryMethod and x:Arguments
 
 # 2.44.x
 * Bump Roslyn to 4.12.0-2.24416.3 (PR: [#7448](https://github.com/dotnet/vscode-csharp/pull/7448))
