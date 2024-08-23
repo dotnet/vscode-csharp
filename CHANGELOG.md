@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))
 * Bump Razor to 9.0.0-preview.24418.1 (PR: [#7456](https://github.com/dotnet/vscode-csharp/pull/7456))
   * Don't add already known documents to the misc files project (#10753) (PR: [#10753](https://github.com/dotnet/razor/pull/10753))
   * Remove ItemCollection from TagHelperDescriptorProviderContext (#10720) (PR: [#10720](https://github.com/dotnet/razor/pull/10720))
@@ -12,11 +13,15 @@
   * Fix attribute parsing recovery (#10620) (PR: [#10620](https://github.com/dotnet/razor/pull/10620))
   * Turn off trailing whitespace triming in strings (#10646) (PR: [#10646](https://github.com/dotnet/razor/pull/10646))
   * Handle `:get`/`:set` in `EditorRequired` checking (#10628) (PR: [#10628](https://github.com/dotnet/razor/pull/10628))
+* Include tooltip to Razor provisional completion (PR: [#7440](https://github.com/dotnet/vscode-csharp/pull/7440))
 * Add option `dotnet.completion.triggerCompletionInArgumentLists` to disable completion in argument lists (PR: [#7446](https://github.com/dotnet/vscode-csharp/pull/7446))
-* Bump Roslyn to 4.12.0-2.24417.1 (PR: [#7446](https://github.com/dotnet/vscode-csharp/pull/7446))
+* Bump Roslyn to 4.12.0-2.24422.6 (PR: [#7463](https://github.com/dotnet/vscode-csharp/pull/7463))
+  * Fix error closing source link documents in VSCode (PR: [#74862](https://github.com/dotnet/roslyn/pull/74862))
+  * Update LSP Protocol Types (PR: [#73911](https://github.com/dotnet/roslyn/pull/73911))
   * Fix issue projects would fail to load with missing output path error (PR: [#74791](https://github.com/dotnet/roslyn/pull/74791))
   * Expose option to disable completion triggers argument list (PR: [#74792](https://github.com/dotnet/roslyn/pull/74792))
 * Bump xamltools to 17.12.35221.21 (PR: [#7457](https://github.com/dotnet/vscode-csharp/pull/7457))
+* Update Debugger to v2.43.0 (PR: [#7420](https://github.com/dotnet/vscode-csharp/pull/7420))
 
 # 2.44.x
 * Bump Roslyn to 4.12.0-2.24416.3 (PR: [#7448](https://github.com/dotnet/vscode-csharp/pull/7448))
