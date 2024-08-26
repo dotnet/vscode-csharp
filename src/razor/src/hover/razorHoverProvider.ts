@@ -48,7 +48,7 @@ export class RazorHoverProvider extends RazorLanguageFeatureBase implements vsco
             return;
         }
 
-        if (document.version !== remappedResponse.hostDocumentVersion) {
+        if (projection.hostDocumentVersion !== remappedResponse.hostDocumentVersion) {
             // This hover result is for a different version of the text document, bail.
             return;
         }
