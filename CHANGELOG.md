@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+
+# 2.45.17
 * Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))
 * Bump Razor to 9.0.0-preview.24418.1 (PR: [#7456](https://github.com/dotnet/vscode-csharp/pull/7456))
   * Don't add already known documents to the misc files project (#10753) (PR: [#10753](https://github.com/dotnet/razor/pull/10753))
@@ -24,7 +26,7 @@
 * Bump xamltools to 17.12.35223.16 (PR: [#7464](https://github.com/dotnet/vscode-csharp/pull/7464))
 * Added XAML Hot Reload support for x:FactoryMethod and x:Arguments
 
-# 2.44.x
+# 2.44.19
 * Bump Roslyn to 4.12.0-2.24416.3 (PR: [#7448](https://github.com/dotnet/vscode-csharp/pull/7448))
   * Use EnableCodeStyleSeverity instead of AnalysisLevel to control new diagnostic severity behavior (PR: [#73843](https://github.com/dotnet/roslyn/pull/73843))
   * Cleanup LSP error reporting (PR: [#74530](https://github.com/dotnet/roslyn/pull/74530))
@@ -51,7 +53,7 @@
 * Task 2187810: [VS Code] Add OnEnter rules to indent tags (PR: [#7426](https://github.com/dotnet/vscode-csharp/pull/7426))
 * Fix completion handler bug that causes language server to crash (#7401) (PR: [#7406](https://github.com/dotnet/vscode-csharp/pull/7406))
 
-# 2.41.x
+# 2.41.26
 * Bump Roslyn to 4.12.0-1.24376.3 (PR: [#7393](https://github.com/dotnet/vscode-csharp/pull/7393))
   * Fix race condition in LSP FindAllReferences when linked files were involved.(PR: [#74566](https://github.com/dotnet/roslyn/pull/74566))
   * Fix dll load issue when loading Razor projects in VSCode (PR: [#74570](https://github.com/dotnet/roslyn/pull/74570))
@@ -78,7 +80,7 @@
   * `dotnet.implementType.insertionBehavior` to `dotnet.typeMembers.memberInsertionLocation`
   * `dotnet.implementType.propertyGenerationBehavior` to `dotnet.typeMembers.propertyGenerationBehavior`
 
-# 2.39.x
+# 2.39.29
 * Add language status bar item displaying project context for open files (PR: [#7321](https://github.com/dotnet/vscode-csharp/pull/7321), PR: [#7333](https://github.com/dotnet/vscode-csharp/pull/7333))
 * Add language status bar item for workspace status (C# standalone) (PR: [#7254](https://github.com/dotnet/vscode-csharp/pull/7254), PR: [#7329])https://github.com/dotnet/vscode-csharp/pull/7329))
 * Update Razor to 9.0.0-preview.24365.1 (PR: [#7354](https://github.com/dotnet/vscode-csharp/pull/7354))
