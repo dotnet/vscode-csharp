@@ -5,6 +5,7 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { EOL } from 'os';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
@@ -35,8 +36,7 @@ describe(`[${testAssetWorkspace.description}] Hover Tests`, () => {
             )
         );
 
-        const expected =
-            '```csharp\r\nbool testissue.Compare(int gameObject, string tagName)\r\n```\r\n  \r\nA cref&nbsp;testissue  \r\n**strong text**  \r\n_italic text_  \r\n<u>underline text</u>  \r\n  \r\n•&nbsp;Item 1\\.  \r\n•&nbsp;Item 2\\.  \r\n  \r\n[link text](https://google.com)  \r\n  \r\nRemarks are cool too\\.  \r\n  \r\nReturns:  \r\n&nbsp;&nbsp;a string  \r\n  \r\nExceptions:  \r\n&nbsp;&nbsp;NullReferenceException  \r\n';
+        const expected = `\`\`\`csharp${EOL}bool testissue.Compare(int gameObject, string tagName)${EOL}\`\`\`${EOL}  ${EOL}A cref&nbsp;testissue  ${EOL}**strong text**  ${EOL}_italic text_  ${EOL}<u>underline text</u>  ${EOL}  ${EOL}•&nbsp;Item 1\\.  ${EOL}•&nbsp;Item 2\\.  ${EOL}  ${EOL}[link text](https://google.com)  ${EOL}  ${EOL}Remarks are cool too\\.  ${EOL}  ${EOL}Returns:  ${EOL}&nbsp;&nbsp;a string  ${EOL}  ${EOL}Exceptions:  ${EOL}&nbsp;&nbsp;NullReferenceException  ${EOL}`;
 
         expect(hovers.length).toEqual(1);
         expect((hovers[0].contents[0] as vscode.MarkdownString).value).toEqual(expected);
