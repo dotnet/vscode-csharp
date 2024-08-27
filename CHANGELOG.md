@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+
+# 2.45.17
 * Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))
 * Bump Razor to 9.0.0-preview.24418.1 (PR: [#7456](https://github.com/dotnet/vscode-csharp/pull/7456))
   * Don't add already known documents to the misc files project (#10753) (PR: [#10753](https://github.com/dotnet/razor/pull/10753))
