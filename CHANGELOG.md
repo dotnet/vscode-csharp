@@ -5,7 +5,7 @@
 
 # Latest
 
-* Update Razor to 9.0.0-preview.24427.2 (PR: [#]())
+* Update Razor to 9.0.0-preview.24427.2 (PR: [#7484](https://github.com/dotnet/vscode-csharp/pull/7484))
   * Suppress unique ids (PR: [#10791](https://github.com/dotnet/razor/pull/10791))
   * Self-versioned documents (PR: [#10747](https://github.com/dotnet/razor/pull/10747))
   * Update NOTICE.txt (PR: [#10768](https://github.com/dotnet/razor/pull/10768))
