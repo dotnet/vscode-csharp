@@ -9,7 +9,6 @@ export interface IProjectedDocument {
     readonly path: string;
     readonly uri: vscode.Uri;
     readonly hostDocumentSyncVersion: number | null;
-    readonly projectedDocumentSyncVersion: number;
     readonly length: number;
     getContent(): string;
 }

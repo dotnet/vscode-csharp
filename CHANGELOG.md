@@ -4,13 +4,21 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump Razor to 9.0.0-preview.24427.2  (PR: [#7471](https://github.com/dotnet/vscode-csharp/pull/7471))
+  * Suppress unique ids (#10791) (PR: [#10791](https://github.com/dotnet/razor/pull/10791))
+  * Self-versioned documents (#10747) (PR: [#10747](https://github.com/dotnet/razor/pull/10747))
+  * Remove ItemCollection from CodeRenderingContext (#10764) (PR: [#10764](https://github.com/dotnet/razor/pull/10764))
+  * Moving formatting service to common layer (#10761) (PR: [#10761](https://github.com/dotnet/razor/pull/10761))
+  * Allow LSP and cohosting to provide specialized methods to get a syntax tree (#10765) (PR: [#10765](https://github.com/dotnet/razor/pull/10765))
+  * Update NOTICE.txt (#10768) (PR: [#10768](https://github.com/dotnet/razor/pull/10768))
+  * Allow @@ as a fallback (#10752) (PR: [#10752](https://github.com/dotnet/razor/pull/10752))
+  * Support component rename from an end tag (#10762) (PR: [#10762](https://github.com/dotnet/razor/pull/10762))
 
 # 2.45.17
 * Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))
 * Bump Razor to 9.0.0-preview.24418.1 (PR: [#7456](https://github.com/dotnet/vscode-csharp/pull/7456))
   * Don't add already known documents to the misc files project (#10753) (PR: [#10753](https://github.com/dotnet/razor/pull/10753))
   * Remove ItemCollection from TagHelperDescriptorProviderContext (#10720) (PR: [#10720](https://github.com/dotnet/razor/pull/10720))
-  * Cohost inlay hint support (#10672) (PR: [#10672](https://github.com/dotnet/razor/pull/10672))
   * Fix excerpt service to allow for multi line verbatim strings (#10675) (PR: [#10675](https://github.com/dotnet/razor/pull/10675))
   * Fix attribute parsing recovery (#10620) (PR: [#10620](https://github.com/dotnet/razor/pull/10620))
   * Turn off trailing whitespace triming in strings (#10646) (PR: [#10646](https://github.com/dotnet/razor/pull/10646))
