@@ -41,7 +41,7 @@
   "configuration.dotnet.completion.provideRegexCompletions": "在完成清單中顯示規則運算式。",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "啟用在完成清單中顯示未匯入的類型和未匯入的擴充方法的支援。認可時，適當的 using 指示詞會新增到目前檔案的頂端。(先前為 `omnisharp.enableImportCompletion`)",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "為您最近選取的成員執行自動物件名稱完成。",
-  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "自動在引數清單中顯示自動完成清單",
   "configuration.dotnet.defaultSolution.description": "要在工作區中開啟的預設解決方案路徑，或設為 [停用] 以略過它。(先前為 `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.dotnetPath": "指定要使用的 dotnet 安裝目錄路徑，而非系統預設的路徑。這只會影響用來裝載語言伺服器本身的 dotnet 安裝。範例: \"/home/username/mycustomdotnetdirectory”。",
   "configuration.dotnet.enableXamlTools": "使用 C# 開發套件時啟用 XAML 工具",
