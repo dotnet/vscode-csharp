@@ -5,6 +5,13 @@
 
 # Latest
 
+* Update Razor to 9.0.0-preview.24427.2 (PR: [#]())
+  * Suppress unique ids (PR: [#10791](https://github.com/dotnet/razor/pull/10791))
+  * Self-versioned documents (PR: [#10747](https://github.com/dotnet/razor/pull/10747))
+  * Update NOTICE.txt (PR: [#10768](https://github.com/dotnet/razor/pull/10768))
+  * Allow @@ as a fallback (PR: [#10752](https://github.com/dotnet/razor/pull/10752))
+  * Support component rename from an end tag (PR: [#10762](https://github.com/dotnet/razor/pull/10762))
+
 # 2.45.17
 * Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))
 * Bump Razor to 9.0.0-preview.24418.1 (PR: [#7456](https://github.com/dotnet/vscode-csharp/pull/7456))
