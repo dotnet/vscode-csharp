@@ -98,6 +98,10 @@ extends:
                     }
                     $basePublishArgs += '--packagePath'
                     $publishArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix | Sort-Object Name -Descending |% { $_ })
+                    $publishArgs += '--manifestPath'
+                    $publishArgs += (Get-ChildItem $publishArtifacts\*.manifest | Sort-Object Name -Descending |% { $_ })
+                    $publishArgs += '--signaturePath'
+                    $publishArgs += (Get-ChildItem $publishArtifacts\*.signature.p7s | Sort-Object Name -Descending |% { $_ })
 
                     If ("${{ parameters.test }}" -eq "true") {
                       Write-Host "In test mode, command is printed instead of run."

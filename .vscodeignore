@@ -14,7 +14,7 @@
 .vscode-test/**
 coverage/**
 out/**
-server/**
+msbuild/**
 src/**
 tasks/**
 test/**
@@ -34,6 +34,9 @@ azure-pipelines
 .editorconfig
 .gitignore
 CODEOWNERS
+Directory.Build.props
+global.json
+NuGet.config
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE
