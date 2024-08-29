@@ -1,8 +1,8 @@
 name: Update Fork and Apply Patches
 
 on:
-  schedule:
-    - cron: '0 0 * * *'  # Runs every day at midnight
+  # schedule:
+  #   - cron: '0 0 * * *'  # Runs every day at midnight
   workflow_dispatch:
   push:
     branches:
@@ -30,7 +30,7 @@ jobs:
         run: git fetch upstream
 
       - name: Merge Upstream Changes
-        run: git merge upstream/main  # Replace 'main' with the default branch of the original repository
+        run: git merge upstream/main --allow-unrelated-histories  # Replace 'main' with the default branch of the original repository
 
       - name: Apply Patches
         run: |
