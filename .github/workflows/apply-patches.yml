@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  update-fork:
+  update-and-patch-fork:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,6 +42,6 @@ jobs:
             done
           fi
 
-      - name: Push Changes
+      - name: Commit & Push Changes
         run: |
-          git push origin main
+          git add . && git commit -m "Applying patches at ${{ steps.date.outputs.date }}" && git push origin main
