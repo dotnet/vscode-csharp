@@ -42,6 +42,10 @@ jobs:
             done
           fi
 
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
       - name: Commit & Push Changes
         run: |
           git add . && git commit -m "Applying patches at ${{ steps.date.outputs.date }}" && git push origin main
