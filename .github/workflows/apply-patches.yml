@@ -1,0 +1,47 @@
+name: Update Fork and Apply Patches
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Fork
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+
+      - name: Add Upstream
+        run: git remote add upstream https://github.com/dotnet/vscode-csharp.git
+
+      - name: Fetch Upstream
+        run: git fetch upstream
+
+      - name: Merge Upstream Changes
+        run: git merge upstream/main  # Replace 'main' with the default branch of the original repository
+
+      - name: Apply Patches
+        run: |
+          if test -d _patches; then
+            for patch in _patches/*.sh; do
+              echo "Applying $patch"
+              chmod +x "$patch"
+              . "$patch"
+            done
+          fi
+
+      - name: Push Changes
+        run: |
+          git push origin main
