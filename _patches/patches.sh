@@ -1,70 +1,76 @@
 #!/bin/sh
+# set -x
+set -e
 
 # Patches from here https://github.com/dotnet/vscode-csharp/compare/main...muhammadsammy:free-vscode-csharp:master#diff-0ccaa77cc937eeac924d069abe67a8510757b97f326950c258d0e74a61a461d0R290
+
 
 # Patch 1: Remove specific lines from .eslintrc.js
 sed -i '/"header\/header": \[ 2, "block", \[/,/\],/d' .eslintrc.js
 
 # Remove licences
-rm RuntimeLicenses/dependencies/OpenDebugAD7-License.txt
-rm RuntimeLicenses/license.txt
+rm RuntimeLicenses/dependencies/OpenDebugAD7-License.txt || true
+rm RuntimeLicenses/license.txt || true
 
 #TODO: Patch image
 
 # Replace extension name
 EXTENSION_NAME="blipk-vscodium.csharp"
-find . -type f -exec sed -i "s/ms-dotnettools.csharp/$EXTENSION_NAME/g" {} +
+find . -type f -exec sed -i "s/blipk-vscodium.csharp/$EXTENSION_NAME/g" {} +
 
 # Patch src/coreclrDebug/activate.ts
 sed -i "s/if (!executable) {/const pipeTransport = _session.configuration.pipeTransport;\n        if (!executable || typeof pipeTransport === 'object') {/" src/coreclrDebug/activate.ts
 sed -i "s/let options: vscode.DebugAdapterExecutableOptions | undefined = undefined;/let options: vscode.DebugAdapterExecutableOptions = {};/" src/coreclrDebug/activate.ts
-sed -i "/executable = new vscode.DebugAdapterExecutable(command, [], options);/c\
-            let command = '';\
-            let args = [];\
-            if (typeof pipeTransport === 'object') {\
-                if (pipeTransport.debuggerPath) {\
-                    command = pipeTransport.debuggerPath;\
-                } else {\
-                    command = path.join(\
-                        common.getExtensionPath(),\
-                        '.debugger',\
-                        'netcoredbg',\
-                        'netcoredbg' + CoreClrDebugUtil.getPlatformExeExtension()\
-                    );\
-                }\
-                if (pipeTransport.debuggerArgs) {\
-                    args = pipeTransport.debuggerArgs;\
-                } else {\
-                    args.push('--interpreter=vscode', '--');\
-                }\
-                if (pipeTransport.pipeProgram) {\
-                    args.push(pipeTransport.pipeProgram);\
-                }\
-                if (pipeTransport.pipeArgs) {\
-                    args.push(pipeTransport.pipeArgs);\
-                }\
-                if (pipeTransport.pipeCwd) {\
-                    options.cwd = pipeTransport.pipeCwd;\
-                }\
-            } else {\
-                command = path.join(\
-                    common.getExtensionPath(),\
-                    '.debugger',\
-                    'netcoredbg',\
-                    'netcoredbg' + CoreClrDebugUtil.getPlatformExeExtension()\
-                );\
-                args = ['--interpreter=vscode'];\
-            }\
-            executable = new vscode.DebugAdapterExecutable(command, args, options);" src/coreclrDebug/activate.ts
+cat << 'EOL' > temp_replacement.sed
+            let command = '';
+            let args = [];
+            if (typeof pipeTransport === 'object') {
+                if (pipeTransport.debuggerPath) {
+                    command = pipeTransport.debuggerPath;
+                } else {
+                    command = path.join(
+                        common.getExtensionPath(),
+                        '.debugger',
+                        'netcoredbg',
+                        'netcoredbg' + CoreClrDebugUtil.getPlatformExeExtension()
+                    );
+                }
+                if (pipeTransport.debuggerArgs) {
+                    args = pipeTransport.debuggerArgs;
+                } else {
+                    args.push('--interpreter=vscode', '--');
+                }
+                if (pipeTransport.pipeProgram) {
+                    args.push(pipeTransport.pipeProgram);
+                }
+                if (pipeTransport.pipeArgs) {
+                    args.push(pipeTransport.pipeArgs);
+                }
+                if (pipeTransport.pipeCwd) {
+                    options.cwd = pipeTransport.pipeCwd;
+                }
+            } else {
+                command = path.join(
+                    common.getExtensionPath(),
+                    '.debugger',
+                    'netcoredbg',
+                    'netcoredbg' + CoreClrDebugUtil.getPlatformExeExtension()
+                );
+                args = ['--interpreter=vscode'];
+            }
+            executable = new vscode.DebugAdapterExecutable(command, args, options);
+EOL
+sed -i "/executable = new vscode.DebugAdapterExecutable(command, \[\], options);/r temp_replacement.sed" src/coreclrDebug/activate.ts
+rm temp_replacement.sed
 
 # Patch src/lsptoolshost/roslynLanguageServer.ts
 sed -i "/import TelemetryReporter from '@vscode\/extension-telemetry';/d" src/lsptoolshost/roslynLanguageServer.ts
 sed -i "/private _telemetryReporter: TelemetryReporter,/d" src/lsptoolshost/roslynLanguageServer.ts
 sed -i "s/reportProjectConfigurationEvent(this._telemetryReporter, params, this._platformInfo, dotnetInfo, this._solutionFile?.fsPath, true);/reportProjectConfigurationEvent(params, this._platformInfo, dotnetInfo, this._solutionFile?.fsPath, true);/" src/lsptoolshost/roslynLanguageServer.ts
-sed -i "/telemetryReporter: TelemetryReporter,/d" src/lsptoolshost/roslynLanguageServer.ts
 sed -i "s/await this.startServer(platformInfo, hostExecutableResolver, context, telemetryReporter, additionalExtensionPaths);/await this.startServer(platformInfo, hostExecutableResolver, context, additionalExtensionPaths);/" src/lsptoolshost/roslynLanguageServer.ts
 sed -i "s/const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);/const server = new RoslynLanguageServer(client, platformInfo, context, languageServerEvents);/" src/lsptoolshost/roslynLanguageServer.ts
-sed -i "s/telemetryReporter: TelemetryReporter,/d" src/lsptoolshost/roslynLanguageServer.ts
+sed -i "/telemetryReporter: TelemetryReporter,/d" src/lsptoolshost/roslynLanguageServer.ts
+
 
 # Patch src/main.ts
 sed -i "/import { TelemetryObserver } from '.\/observers\/telemetryObserver';/d" src/main.ts
