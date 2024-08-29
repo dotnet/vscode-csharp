@@ -3,7 +3,8 @@
 # Patches from here https://github.com/dotnet/vscode-csharp/compare/main...muhammadsammy:free-vscode-csharp:master#diff-0ccaa77cc937eeac924d069abe67a8510757b97f326950c258d0e74a61a461d0R290
 
 # Patch 1: Remove specific lines from .eslintrc.js
-sed -i '/"header/header": [ 2, "block", [/,/]/d' .eslintrc.js
+sed -i '/"header\/header": \[ 2, "block", \[/,/]/d' .eslintrc.js
+
 
 # Remove licences
 rm RuntimeLicenses/dependencies/OpenDebugAD7-License.txt
@@ -13,7 +14,6 @@ rm RuntimeLicenses/license.txt
 
 # Replace extension name
 EXTENSION_NAME="blipk-vscodium.csharp"
-
 find . -type f -exec sed -i "s/ms-dotnettools.csharp/$EXTENSION_NAME/g" {} +
 
 
