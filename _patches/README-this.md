@@ -38,7 +38,10 @@ PR's to fork and patch those to depend on this extension instead are welcome.
 
 
 
-##### Build from source
+<details>
+<summary>Development notes</summary>
+
+##### Build from source locally
 
 ```bash
 git clone https://github.com/blipk/vscodium-csharp.git
@@ -48,3 +51,21 @@ npm run vscode:prepublish
 npx gulp 'vsix:release:neutral'
 ```
 
+##### CI Notes (GitHub Actions)
+
+A series of GitHub Action workflows are run to apply the patches and build the release.
+
+1. apply-patches.yml:
+    - first it merges changes from the official C# extension upstream
+    - then it runs any `.sh` files in the _patches directory - these are how patches are applied
+    - it is run whenever pushing to main, or at midnight every night
+    - it won't run if it doesnt detect any changes upstream, or if the last `ci.yml` failed
+    - to force it to run push a commit with `[force-ci]` in its message
+2. ci.yml: this installs all dependencies and builds the `.vsix` files for each platform
+3. ci-release.yml: this creates a github release and uploads the `.vsix` files from the previous workflow to it - it will also eventually upload them to Open VSX
+
+###### Other notes
+
+- The packages are versioned by the date and time they were created at
+
+</details>
