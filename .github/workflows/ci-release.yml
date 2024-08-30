@@ -44,15 +44,14 @@ jobs:
     - name: Download all build artifacts
       uses: actions/download-artifact@v4
       with:
-        path: ./vsix
+        path: ./vsix-release
         merge-multiple: true
         run-id: ${{ env.WORKFLOW_RUN_ID }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Display structure of downloaded files
       run: |
-        ls -R ./vsix
-        ls -R /home/runner/work/vscodium-csharp/vscodium-csharp/
+        ls -R ./vsix-release
 
     - name: Get package version
       run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
@@ -97,7 +96,7 @@ jobs:
         script: |
           const fs = require('fs');
           const path = require('path');
-          const releasesPath = path.join(process.env.GITHUB_WORKSPACE, 'vsix')
+          const releasesPath = path.join(process.env.GITHUB_WORKSPACE, 'vsix-release')
 
           const releasePlatforms = [
             'darwin-x64', 'linux-x64', 'win32-x64',
