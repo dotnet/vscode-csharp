@@ -4,6 +4,9 @@ set -e
 
 # Patches from here https://github.com/dotnet/vscode-csharp/compare/main...muhammadsammy:free-vscode-csharp:master#diff-0ccaa77cc937eeac924d069abe67a8510757b97f326950c258d0e74a61a461d0R290
 
+# Don't use .npmrc
+rm .npmrc || true
+
 
 # Remove/update licences
 rm RuntimeLicenses/dependencies/OpenDebugAD7-License.txt || true
