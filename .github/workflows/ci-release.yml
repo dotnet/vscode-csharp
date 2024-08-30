@@ -5,6 +5,12 @@ on:
     workflows: ["OmniSharp-VSCode CI"]
     types:
       - completed
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Run this manually'
+        required: false
+        type: boolean
 
 jobs:
   release:

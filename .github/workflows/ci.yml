@@ -5,6 +5,12 @@ on:
       workflows: ["Update Fork and Apply Patches"]
       types:
         - completed
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Run this manually'
+        required: false
+        type: boolean
   # push:
   #   branches: [ main, feature/** ]
 
