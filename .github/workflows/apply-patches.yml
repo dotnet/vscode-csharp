@@ -123,5 +123,8 @@ jobs:
 
       - name: Commit & Push Changes
         run: |
+          git reset HEAD .github
+          git restore --staged .github
           git add -- ':!./.github'
-          git commit -m "[post-patch] patching at ${{ steps.date.outputs.date }}" && git push origin main
+          git commit -m "[post-patch] patching at ${{ steps.date.outputs.date }}"
+          git push origin main
