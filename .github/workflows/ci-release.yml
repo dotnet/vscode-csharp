@@ -52,14 +52,37 @@ jobs:
 
     - name: Create GitHub Release
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: actions/github-script@v6
+      continue-on-error: true
       with:
-        tag_name: v${{ env.VERSION }}
-        release_name: Release ${{ env.VERSION }}
-        draft: false
-        prerelease: false
+        script: |
+          try {
+            const response = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `v${process.env.VERSION}`,
+              name: `Release ${process.env.VERSION}`,
+              draft: false,
+              prerelease: false,
+            });
+            core.setOutput('upload_url', response.data.upload_url);
+          } catch (error) {
+            if (error.status === 422 && error.message.includes('already_exists')) {
+              console.log('Release already exists. Retrieving existing release upload URL.');
+              const releases = await github.rest.repos.listReleases({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              const existingRelease = releases.data.find(release => release.tag_name === `v${process.env.VERSION}`);
+              if (existingRelease) {
+                core.setOutput('upload_url', existingRelease.upload_url);
+              } else {
+                throw new Error('Release exists but could not find it.');
+              }
+            } else {
+              throw error;
+            }
+          }
 
     - name: Upload release build (darwin-x64)
       uses: actions/upload-release-asset@v1
