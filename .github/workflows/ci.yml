@@ -35,7 +35,6 @@ jobs:
     - name: Install dependencies
       run: |
           npm config set registry https://registry.npmjs.org/
-          npm -ddd
           npm add tar
           npm add --save-dev @types/tar
           npm ci
