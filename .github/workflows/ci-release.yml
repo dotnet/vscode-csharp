@@ -116,7 +116,7 @@ jobs:
           extracted_file=$(find "$extract_dir" -type f)
           extension="${extracted_file##*.}"
           echo "$extracted_file"
-          mv "$extracted_file" "vsix-release/${base_name}.${extension}"
+          mv "$extracted_file" "vsix-release/${base_name}"
 
           rm -rf "$extract_dir"
         done
@@ -202,8 +202,8 @@ jobs:
             } else {
               console.log(`File ${artifact.path} does not exist. Skipping upload.`);
             }
+          }
 
-            if (!uploadedArtifacts.length) {
-              throw new Error("Did not find any artifacts to upload")
-            }
+          if (!uploadedArtifacts.length) {
+            throw new Error("Did not find any artifacts to upload")
           }
