@@ -1,0 +1,91 @@
+name: OmniSharp-VSCode CI Release
+
+on:
+  workflow_run:
+    workflows: ["OmniSharp-VSCode CI"]
+    types:
+      - completed
+
+jobs:
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download build artifacts (darwin-x64)
+      uses: actions/download-artifact@v3
+      with:
+        name: csharp-darwin-x64.vsix
+        path: ./vsix
+
+    - name: Download build artifacts (linux-x64)
+      uses: actions/download-artifact@v3
+      with:
+        name: csharp-linux-x64.vsix
+        path: ./vsix
+
+    - name: Download build artifacts (win32-x64)
+      uses: actions/download-artifact@v3
+      with:
+        name: csharp-win32-x64.vsix
+        path: ./vsix
+
+    - name: Download build artifacts (platform-neutral)
+      uses: actions/download-artifact@v3
+      with:
+        name: csharp-platform-neutral.vsix
+        path: ./vsix
+
+    - name: Get package version
+      run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ env.VERSION }}
+        release_name: Release ${{ env.VERSION }}
+        draft: false
+        prerelease: false
+
+    - name: Upload release build (darwin-x64)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./vsix/csharp-darwin-x64.vsix
+        asset_name: csharp-darwin-x64-${{ env.VERSION }}.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (linux-x64)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./vsix/csharp-linux-x64.vsix
+        asset_name: csharp-linux-x64-${{ env.VERSION }}.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (win32-x64)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./vsix/csharp-win32-x64.vsix
+        asset_name: csharp-win32-x64-${{ env.VERSION }}.vsix
+        asset_content_type: application/zip
+
+    - name: Upload release build (platform-neutral)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./vsix/csharp-platform-neutral.vsix
+        asset_name: csharp-platform-neutral-${{ env.VERSION }}.vsix
+        asset_content_type: application/zip

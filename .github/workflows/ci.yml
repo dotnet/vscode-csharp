@@ -74,61 +74,8 @@ jobs:
         path: ./vsix/csharp-win32-x64-*.vsix
         name: csharp-win32-x64.vsix
 
-
-
-
-
-    - name: Get package version
-      run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
-
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload build artifact (platform-neutral)
+      uses: actions/upload-artifact@v3
       with:
-        tag_name: v${{ env.VERSION }}
-        release_name: Release ${{ env.VERSION }}
-        draft: false
-        prerelease: false
-
-
-    - name: Upload release build (darwin-x64)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./vsix/csharp-darwin-x64-*.vsix
-        asset_name: csharp-darwin-x64-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip
-
-    - name: Upload release build (linux-x64)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./vsix/csharp-linux-x64-*.vsix
-        asset_name: csharp-linux-x64-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip
-
-    - name: Upload release build (win32-x64)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./vsix/csharp-win32-x64-*.vsix
-        asset_name: csharp-win32-x64-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip
-
-    - name: Upload release build (platform-neutral)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./vsix/csharp-${{ env.VERSION }}.vsix
-        asset_name: csharp-platform-neutral-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip
+        path: ./vsix/csharp-*.vsix
+        name: csharp-platform-neutral.vsix
