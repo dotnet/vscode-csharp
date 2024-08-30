@@ -38,6 +38,8 @@ jobs:
           npm add --save-dev @types/tar
           npm ci
           npm i -g gulp
+    - name: Lint fix
+      run: npx eslint ./ --fix
     - name: Compile
       run: npm run compile
 
