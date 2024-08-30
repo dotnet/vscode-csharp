@@ -106,7 +106,7 @@ jobs:
         WORKFLOW_RUN_ID: ${{ env.WORKFLOW_RUN_ID }}
 
     - name: Extract build artifacts
-      run: 7z x "./vsix-release/*.zip" -o ./vsix-release
+      run: 7z x "./vsix-release/*.zip" -ovsix-release
 
     - name: Display structure of downloaded files
       run: |
