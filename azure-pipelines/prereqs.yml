@@ -12,9 +12,9 @@ steps:
 - task: NuGetAuthenticate@1
 
 - task: NodeTool@0
-  displayName: 'Install Node.js 18.x'
+  displayName: 'Install Node.js 20.x'
   inputs:
-    versionSpec: '18.x'
+    versionSpec: '20.x'
 
 # Some tests use predefined docker images with a specific version of .NET installed.
 # So we avoid installing .NET in those cases.

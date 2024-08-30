@@ -135,9 +135,9 @@
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
-    "@vscode/l10n-dev": "^0.0.30",
+    "@vscode/l10n-dev": "^0.0.35",
     "@vscode/test-electron": "2.3.8",
-    "@vscode/vsce": "2.21.0",
+    "@vscode/vsce": "3.0.0",
     "archiver": "5.3.0",
     "del": "3.0.0",
     "eslint": "^8.43.0",
@@ -1384,7 +1384,7 @@
           },
           "dotnet.unitTests.runSettingsPath": {
             "type": "string",
-            "markdownDescription": "%configuration.dotnet.unitTests.runSettingsPath.markdownDescription%"
+            "markdownDescription": "%configuration.dotnet.unitTests.runSettingsPath%"
           }
         }
       },
