@@ -50,7 +50,9 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Display structure of downloaded files
-      run: ls -R ./vsix
+      run: |
+        ls -R ./vsix
+        ls -R /home/runner/work/vscodium-csharp/vscodium-csharp/
 
     - name: Get package version
       run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
