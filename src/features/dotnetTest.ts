@@ -691,7 +691,7 @@ class DebugEventListener {
             this._pipePath = '\\\\.\\pipe\\Microsoft.VSCode.CSharpExt.TestDebugEvents' + process.pid;
         } else {
             const tmpdir = utils.getUnixTempDirectory();
-            this._pipePath = path.join(tmpdir, 'ms-dotnettools.csharp-tde-' + process.pid);
+            this._pipePath = path.join(tmpdir, 'blipk-vscodium.csharp-tde-' + process.pid);
         }
     }
 
