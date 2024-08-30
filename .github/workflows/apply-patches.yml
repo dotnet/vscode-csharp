@@ -123,4 +123,5 @@ jobs:
 
       - name: Commit & Push Changes
         run: |
-          git add . && git commit -m "[post-patch] patching at ${{ steps.date.outputs.date }}" && git push origin main
+          git add -- ':!./.github'
+          git commit -m "[post-patch] patching at ${{ steps.date.outputs.date }}" && git push origin main
