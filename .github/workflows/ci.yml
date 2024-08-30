@@ -24,19 +24,13 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '7.x'
+        dotnet-version: '8.x'
 
     - name: Install Node.js 18.x
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
         registry-url: https://registry.npmjs.org/
-
-    - name: Configure npm to use public registry
-      run: npm config set registry https://registry.npmjs.org/
-
-    - name: Add dependencies
-      run: npm add tar && npm add --save-dev @types/tar
 
     - name: Install dependencies
       run: |
