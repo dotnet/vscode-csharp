@@ -1,5 +1,9 @@
 name: Update Fork and Apply Patches
 
+permissions:
+  contents: write
+  workflows: write
+
 on:
   schedule:
     - cron: '0 0 * * *'
@@ -109,7 +113,6 @@ jobs:
           git add -- . ':!./.github'
           git commit -m "[pre-patch] Update from upstream at ${{ steps.date.outputs.date }}"
           git push origin main
-          git sparse-checkout disableaa
 
       - name: Apply Patches
         run: |
