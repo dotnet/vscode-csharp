@@ -33,6 +33,8 @@ jobs:
 
     - name: Install dependencies
       run: |
+          npm add tar
+          npm add --save-dev @types/tar
           npm ci
           npm i -g gulp
     - name: Compile
