@@ -5,17 +5,22 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { describe, beforeAll, beforeEach, afterAll, test, expect } from '@jest/globals';
+import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, getCodeLensesAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import {
+    activateCSharpExtension,
+    closeAllEditorsAsync,
+    getCodeLensesAsync,
+    openFileInWorkspaceAsync,
+} from './integrationHelpers';
 import { TestProgress } from '../../src/lsptoolshost/roslynProtocol';
 
-describe(`[${testAssetWorkspace.description}] Test Unit Testing`, function () {
-    beforeAll(async function () {
+describe(`[${testAssetWorkspace.description}] Test Unit Testing`, () => {
+    beforeAll(async () => {
         await activateCSharpExtension();
     });
 
-    beforeEach(async function () {
+    beforeEach(async () => {
         vscode.workspace
             .getConfiguration()
             .update('dotnet.unitTests.runSettingsPath', undefined, vscode.ConfigurationTarget.Workspace);
@@ -25,6 +30,10 @@ describe(`[${testAssetWorkspace.description}] Test Unit Testing`, function () {
 
     afterAll(async () => {
         await testAssetWorkspace.cleanupWorkspace();
+    });
+
+    afterEach(async () => {
+        await closeAllEditorsAsync();
     });
 
     test('Unit test code lens items are displayed', async () => {

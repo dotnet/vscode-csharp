@@ -60,6 +60,10 @@ export async function openFileInWorkspaceAsync(relativeFilePath: string): Promis
     return uri;
 }
 
+export async function closeAllEditorsAsync(): Promise<void> {
+    await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+}
+
 /**
  * Reverts any unsaved changes to the active file.
  * Useful to reset state between tests without fully reloading everything.

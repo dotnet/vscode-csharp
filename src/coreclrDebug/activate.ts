@@ -26,7 +26,8 @@ export async function activate(
     context: vscode.ExtensionContext,
     platformInformation: PlatformInformation,
     eventStream: EventStream,
-    csharpOutputChannel: vscode.OutputChannel
+    csharpOutputChannel: vscode.OutputChannel,
+    languageServerStartedPromise: Promise<any> | undefined
 ) {
     const disposables = new CompositeDisposable();
 
@@ -66,6 +67,19 @@ export async function activate(
     // Register a command to fire attach to process for the coreclr debug engine.
     disposables.add(
         vscode.commands.registerCommand('csharp.attachToProcess', async () => {
+            // Ensure dotnetWorkspaceConfigurationProvider is registered
+            if (languageServerStartedPromise) {
+                try {
+                    await languageServerStartedPromise;
+                } catch (e: any) {
+                    if (e as Error) {
+                        throw new Error(vscode.l10n.t('Unable to launch Attach to Process dialog: ') + e.message);
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+
             vscode.debug.startDebugging(
                 undefined,
                 {
