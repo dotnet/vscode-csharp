@@ -5,5 +5,6 @@
 
 import * as gulp from 'gulp';
 
+gulp.task('package:neutral', gulp.series('vsix:release:neutral'));
 gulp.task('package:offline', gulp.series('vsix:release:package'));
 gulp.task('vsix:offline:package', gulp.series('vsix:release:package'));
