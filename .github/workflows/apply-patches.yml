@@ -46,7 +46,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { data: workflows } = await github.actions.listRepoWorkflows({
+            const { data: workflows } = await github.rest.actions.listRepoWorkflows({
               owner: context.repo.owner,
               repo: context.repo.repo
             });
@@ -57,7 +57,7 @@ jobs:
               return;
             }
 
-            const { data: workflowRuns } = await github.actions.listWorkflowRuns({
+            const { data: workflowRuns } = await github.rest.actions.listWorkflowRuns({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: ciWorkflow.id,
@@ -67,10 +67,10 @@ jobs:
 
             if (workflowRuns.total_count > 0) {
               console.log('The last run of OmniSharp-VSCode CI succeeded');
-              console.log('::set-output name=ci_success::true');
+              core.setOutput('ci_success', 'true');
             } else {
               console.log('The last run of OmniSharp-VSCode CI did not succeed');
-              console.log('::set-output name=ci_success::false');
+              core.setOutput('ci_success', 'false');
             }
 
       - name: Set Override Failure Variable
