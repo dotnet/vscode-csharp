@@ -1,5 +1,7 @@
 import json
 
+# curl -s https://api.github.com/repos/dotnet/vscode-csharp/compare/main...muhammadsammy:free-vscode-csharp:master > comparison.json
+
 # Load the comparison data from the file
 with open('comparison.json', 'r') as file:
     comparison_data = json.load(file)

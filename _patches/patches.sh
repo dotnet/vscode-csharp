@@ -6,11 +6,16 @@ set -e
 
 
 # Patch 1: Remove specific lines from .eslintrc.js
-sed -i '/"header\/header": \[ 2, "block", \[/,/\],/d' .eslintrc.js
+sed -i '/"header\/header": \[ 2, "block", \[/,/^\s*\]\s*\]\s*$/d' .eslintrc.js
 
-# Remove licences
+
+
+# Remove/update licences
 rm RuntimeLicenses/dependencies/OpenDebugAD7-License.txt || true
-rm RuntimeLicenses/license.txt || true
+yes | /bin/cp -rf _patches/RuntimeLicences-license.txt RuntimeLicenses/license.txt
+sed -i "s/Copyright (c) .NET Foundation and Contributors/Copyright (c) Blipk A.D. and Contributors for Current Work and Modifications in This Fork,\nCopyright (c) Muhammad Sammy and Contributors for Current Work and Modifications in Their Fork.\nOriginal Work Copyright (c) .NET Foundation and Contributors/" LICENSE.txt
+
+
 
 #TODO: Patch image
 
@@ -66,10 +71,12 @@ rm temp_replacement.sed
 # Patch src/lsptoolshost/roslynLanguageServer.ts
 sed -i "/import TelemetryReporter from '@vscode\/extension-telemetry';/d" src/lsptoolshost/roslynLanguageServer.ts
 sed -i "/private _telemetryReporter: TelemetryReporter,/d" src/lsptoolshost/roslynLanguageServer.ts
-sed -i "s/reportProjectConfigurationEvent(this._telemetryReporter, params, this._platformInfo, dotnetInfo, this._solutionFile?.fsPath, true);/reportProjectConfigurationEvent(params, this._platformInfo, dotnetInfo, this._solutionFile?.fsPath, true);/" src/lsptoolshost/roslynLanguageServer.ts
-sed -i "s/await this.startServer(platformInfo, hostExecutableResolver, context, telemetryReporter, additionalExtensionPaths);/await this.startServer(platformInfo, hostExecutableResolver, context, additionalExtensionPaths);/" src/lsptoolshost/roslynLanguageServer.ts
+
 sed -i "s/const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);/const server = new RoslynLanguageServer(client, platformInfo, context, languageServerEvents);/" src/lsptoolshost/roslynLanguageServer.ts
 sed -i "/telemetryReporter: TelemetryReporter,/d" src/lsptoolshost/roslynLanguageServer.ts
+sed -i "/            reportProjectConfigurationEvent(/,/);/c\            reportProjectConfigurationEvent(params, this._platformInfo, dotnetInfo, this._solutionFile?.fsPath, true);" src/lsptoolshost/roslynLanguageServer.ts
+sed -i "/return await this.startServer(/,/);/c\            return await this.startServer(platformInfo, hostExecutableResolver, context, additionalExtensionPaths);" src/lsptoolshost/roslynLanguageServer.ts
+
 
 
 # Patch src/main.ts
@@ -81,7 +88,7 @@ sed -i "/context.subscriptions.push(reporter);/d" src/main.ts
 sed -i "/const telemetryObserver = new TelemetryObserver(platformInfo, () => reporter, useModernNetOption);/d" src/main.ts
 sed -i "/eventStream.subscribe(telemetryObserver.post);/d" src/main.ts
 sed -i "/reporter,/d" src/main.ts
-sed -i "/const activationProperties: { \[key: string\]: string } = {/d" src/main.ts
+sed -i "/const activationProperties: { \[key: string\]: string } = {/,/};/d" src/main.ts
 sed -i "/serverKind: useOmnisharpServer ? 'OmniSharp' : 'Roslyn',/d" src/main.ts
 sed -i "/reporter.sendTelemetryEvent('CSharpActivated', activationProperties);/d" src/main.ts
 
@@ -89,13 +96,19 @@ sed -i "/reporter.sendTelemetryEvent('CSharpActivated', activationProperties);/d
 sed -i "/this.reporter,/d" src/observers/telemetryObserver.ts
 
 # Patch src/packageManager/downloadAndInstallPackages.ts
-sed -i "/import { InstallTarGz } from '.\/tarGzInstaller';/d" src/packageManager/downloadAndInstallPackages.ts
-sed -i "/await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);/c\
-                    if (pkg.url.includes('.tar.gz')) {\
-                        await InstallTarGz(buffer, pkg.description, pkg.installPath, eventStream);\
-                    } else {\
-                        await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);\
-                    }" src/packageManager/downloadAndInstallPackages.ts
+
+sed -i "/import { DownloadFile } from '.\/fileDownloader';/a import { InstallTarGz } from '.\/tarGzInstaller';" src/packageManager/downloadAndInstallPackages.ts
+cat << 'EOL' > temp_replacement.sed
+                    if (pkg.url.includes('.tar.gz')) {
+                        await InstallTarGz(buffer, pkg.description, pkg.installPath, eventStream);
+                    } else {
+                        await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                    }
+EOL
+# Replace and delete wasnt working so delete the original line after replace
+sed -i "/await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);/r temp_replacement.sed" src/packageManager/downloadAndInstallPackages.ts
+sed -i '0,/await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);/{//d;}' src/packageManager/downloadAndInstallPackages.ts
+rm temp_replacement.sed
 
 # Add src/packageManager/tarGzInstaller.ts
 cat <<EOL > src/packageManager/tarGzInstaller.ts
@@ -144,55 +157,86 @@ sed -i "/vscodeTelemetryReporter: TelemetryReporter,/d" src/razor/razor.ts
 sed -i "/vscodeTelemetryReporter,/d" src/razor/razor.ts
 
 # Patch src/razor/src/extension.ts
-sed -i "/import * as vscodeapi from 'vscode';/d" src/razor/src/extension.ts
-sed -i "/import { ExtensionContext } from 'vscode';/d" src/razor/src/extension.ts
 sed -i "1i import * as path from 'path';" src/razor/src/extension.ts
-sed -i "s/import { CSharpDevKitExports } from '..\/..\/csharpDevKitExports';/import type { CSharpDevKitExports } from '..\/..\/csharpDevKitExports';/" src/razor/src/extension.ts
-sed -i "s/import { PlatformInformation } from '..\/..\/shared\/platform';/import type { PlatformInformation } from '..\/..\/shared\/platform';/" src/razor/src/extension.ts
-sed -i "s/import { IEventEmitterFactory } from '.\/IEventEmitterFactory';/import type { IEventEmitterFactory } from '.\/IEventEmitterFactory';/" src/razor/src/extension.ts
-sed -i "s/import { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/import type { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/" src/razor/src/extension.ts
-sed -i "s/import { HostEventStream } from '.\/hostEventStream';/import type { HostEventStream } from '.\/hostEventStream';/" src/razor/src/extension.ts
+# sed -i "s/import { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/import type { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/" src/razor/src/extension.ts
+# sed -i "s/import { HostEventStream } from '.\/hostEventStream';/import type { HostEventStream } from '.\/hostEventStream';/" src/razor/src/extension.ts
+cat << 'EOL' > temp_replacement.sed
+import type { CSharpDevKitExports } from '../../csharpDevKitExports';
+import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntimeExtensionResolver';
+import type { PlatformInformation } from '../../shared/platform';
+import type { IEventEmitterFactory } from './IEventEmitterFactory';
+EOL
+sed -i "/import { ExtensionContext } from 'vscode';/r temp_replacement.sed" src/razor/src/extension.ts
+rm temp_replacement.sed
+
+sed -i "/    vscodeTelemetryReporter: TelemetryReporter,/d" src/razor/src/extension.ts
+
+cat << 'EOL' > temp_replacement.sed
+        const dotnetRuntimePath = path.dirname(dotnetInfo.path);
+
+        // Take care to always run .NET processes on the runtime that we intend.
+        // The dotnet.exe we point to should not go looking for other runtimes.
+        const env: NodeJS.ProcessEnv = { ...process.env };
+        env.DOTNET_ROOT = dotnetRuntimePath;
+        env.DOTNET_MULTILEVEL_LOOKUP = '0';
+        // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
+        env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
+EOL
+sed -i "/const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();/r temp_replacement.sed" src/razor/src/extension.ts
+rm temp_replacement.sed
+
+sed -i "/let telemetryExtensionDllPath = '';/d" src/razor/src/extension.ts
+
+pattern="await setupDevKitEnvironment(.|\s)*?razorComponentPaths\[0\];(.|\s)*?}(.|\s)*?}"
+python _patches/replacer.py "src/razor/src/extension.ts" "$pattern" "await setupDevKitEnvironment(env, csharpDevkitExtension, logger);"
+
 
 # Patch src/razor/src/razorLanguageServerClient.ts
 sed -i "/import TelemetryReporter from '@vscode\/extension-telemetry';/d" src/razor/src/razorLanguageServerClient.ts
 sed -i "s/private readonly vscodeTelemetryReporter: TelemetryReporter,/private readonly isCSharpDevKitActivated: boolean,/" src/razor/src/razorLanguageServerClient.ts
 sed -i "s/private readonly telemetryExtensionDllPath: string,//" src/razor/src/razorLanguageServerClient.ts
-sed -i "/if (options.forceRuntimeCodeGeneration) {/d" src/razor/src/razorLanguageServerClient.ts
-sed -i "/args.push('--ForceRuntimeCodeGeneration');/d" src/razor/src/razorLanguageServerClient.ts
-sed -i "/args.push('true');/d" src/razor/src/razorLanguageServerClient.ts
-sed -i "/if (this.telemetryExtensionDllPath.length > 0) {/d" src/razor/src/razorLanguageServerClient.ts
-sed -i "/args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);/d" src/razor/src/razorLanguageServerClient.ts
-sed -i "/args.push('--telemetryExtensionPath', this.telemetryExtensionDllPath);/d" src/razor/src/razorLanguageServerClient.ts
+pattern="if \(options\.forceRuntimeCodeGeneration\) {(.|\s)*?args\.push\('--telemetryExtensionPath', this\.telemetryExtensionDllPath\);"
+python _patches/replacer.py "src/razor/src/razorLanguageServerClient.ts" "$pattern" "if (this.isCSharpDevKitActivated) {\n                args.push('--sessionId', getSessionId());"
+
 
 # Patch src/shared/projectConfiguration.ts
-sed -i "/import { ITelemetryReporter, getTelemetryProps } from '.\/telemetryReporter';/d" src/shared/projectConfiguration.ts
-sed -i "1i import { getTelemetryProps } from '.\/telemetryReporter';" src/shared/projectConfiguration.ts
+sed -i "s/import { ITelemetryReporter, getTelemetryProps } from '.\/telemetryReporter';/import { getTelemetryProps } from '.\/telemetryReporter';/" src/shared/projectConfiguration.ts
 sed -i "/reporter: ITelemetryReporter,/d" src/shared/projectConfiguration.ts
 sed -i "/reporter.sendTelemetryEvent('ProjectConfiguration', telemetryProps);/d" src/shared/projectConfiguration.ts
 
+
 # Patch src/tools/OptionsSchema.json
+sed -i "s/~\/vsdbg\/vsdbg/\/usr\/bin\/netcoredbg/g" src/tools/OptionsSchema.json
 sed -i "s/vsdbg/netcoredbg/g" src/tools/OptionsSchema.json
 
 # Patch tasks/backcompatTasks.ts
 sed -i "1i gulp.task('package:neutral', gulp.series('vsix:release:neutral'));" tasks/backcompatTasks.ts
 
 # Patch tasks/offlinePackagingTasks.ts
-sed -i "1i gulp.task('vsix:release:neutral', async () => {\
-    await cleanAsync();\
-    await doPackageNeutral();\
-});\
-\
-async function doPackageNeutral() {\
-    let prerelease = false;\
-    if (argv.prerelease) {\
-        prerelease = true;\
-    }\
-    try {\
-        const packageJSON = getPackageJSON();\
-        await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);\
-    } catch (err) {\
-        console.log(err);\
-    }\
-}" tasks/offlinePackagingTasks.ts
+pattern="await doPackageOffline\(undefined\);\n}\);"
+replacement="await doPackageOffline(undefined);
+});
+
+async function doPackageNeutral() {
+    let prerelease = false;
+    if (argv.prerelease) {
+        prerelease = true;
+    }
+
+    try {
+        // Get the package.json.
+        const packageJSON = getPackageJSON();
+        // Output the platform neutral VSIX using the platform neutral server bits we created before.
+        await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+gulp.task('vsix:release:neutral', async () => {
+    await cleanAsync();
+    await doPackageNeutral();
+});"
+python _patches/replacer.py "tasks/offlinePackagingTasks.ts" "$pattern" "$replacement"
 
 echo "All patches applied successfully."
