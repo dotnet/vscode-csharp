@@ -103,6 +103,7 @@ jobs:
 
       - name: Checkout Upstream Changes
         run: |
+          git fetch
           git sparse-checkout set --no-cone '/*' '!.github'
           git checkout upstream/main -- .
           git checkout origin/main -- ".github"
