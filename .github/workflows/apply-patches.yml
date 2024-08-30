@@ -94,8 +94,9 @@ jobs:
           echo "No changes in upstream repository and the last run of OmniSharp-VSCode CI succeeded. Failing the workflow."
           exit 1
 
-      # - name: Merge Upstream Changes
-      #   run: git merge upstream/main --allow-unrelated-histories
+      - name: Get current date (After Patch)
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d %R')"
 
       - name: Checkout Upstream Changes
         run: |
@@ -115,10 +116,6 @@ jobs:
               . "$patch"
             done
           fi
-
-      - name: Get current date (After Patch)
-        id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d %R')"
 
       - name: Commit & Push Changes
         run: |
