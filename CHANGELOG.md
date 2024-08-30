@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.12.0-3.24430.2 (PR: [#7496](https://github.com/dotnet/vscode-csharp/pull/7496))
 * Bump Razor to 9.0.0-preview.24427.2  (PR: [#7471](https://github.com/dotnet/vscode-csharp/pull/7471))
   * Suppress unique ids (#10791) (PR: [#10791](https://github.com/dotnet/razor/pull/10791))
   * Self-versioned documents (#10747) (PR: [#10747](https://github.com/dotnet/razor/pull/10747))
