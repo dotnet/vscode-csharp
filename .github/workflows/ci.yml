@@ -32,9 +32,14 @@ jobs:
         node-version: '18.x'
         registry-url: https://registry.npmjs.org/
 
+    - name: Configure npm to use public registry
+      run: npm config set registry https://registry.npmjs.org/
+
+    - name: Add dependencies
+      run: npm add tar && npm add --save-dev @types/tar
+
     - name: Install dependencies
       run: |
-          npm config set registry https://registry.npmjs.org/
           npm add tar
           npm add --save-dev @types/tar
           npm ci
