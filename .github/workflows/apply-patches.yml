@@ -1,9 +1,14 @@
 name: Update Fork and Apply Patches
 
 on:
-  # schedule:
-  #   - cron: '0 0 * * *'  # Runs every day at midnight
+  schedule:
+    - cron: '0 0 * * *'
   workflow_dispatch:
+    inputs:
+      force_ci:
+        description: 'Override failure condition to force CI workflow to run'
+        required: false
+        default: 'false'
   push:
     branches:
       - main
@@ -29,8 +34,66 @@ jobs:
       - name: Fetch Upstream
         run: git fetch upstream
 
+      - name: Check for Upstream Changes
+        id: check-changes
+        run: |
+          UPSTREAM_COMMITS=$(git rev-list HEAD..upstream/main --count)
+          echo "Upstream commits: $UPSTREAM_COMMITS"
+          echo "::set-output name=upstream_commits::$UPSTREAM_COMMITS"
+
+      - name: Check Last Run of OmniSharp-VSCode CI
+        id: check-ci
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: workflows } = await github.actions.listRepoWorkflows({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const ciWorkflow = workflows.workflows.find(workflow => workflow.name === 'OmniSharp-VSCode CI');
+            if (!ciWorkflow) {
+              core.setFailed('OmniSharp-VSCode CI workflow not found');
+              return;
+            }
+
+            const { data: workflowRuns } = await github.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: ciWorkflow.id,
+              per_page: 1,
+              status: 'success'
+            });
+
+            if (workflowRuns.total_count > 0) {
+              console.log('The last run of OmniSharp-VSCode CI succeeded');
+              console.log('::set-output name=ci_success::true');
+            } else {
+              console.log('The last run of OmniSharp-VSCode CI did not succeed');
+              console.log('::set-output name=ci_success::false');
+            }
+
+      - name: Set Override Failure Variable
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "FORCE_CI=${{ github.event.inputs.force_ci }}" >> $GITHUB_ENV
+
+      - name: Set Override Failure from Commit Message
+        if: github.event_name == 'push'
+        run: |
+          if [[ "$(git log -1 --pretty=%B)" == *"[force-ci]"* ]]; then
+            echo "FORCE_CI=true" >> $GITHUB_ENV
+          else
+            echo "FORCE_CI=false" >> $GITHUB_ENV
+          fi
+
+      - name: Fail if no upstream changes and CI succeeded
+        if: steps.check-changes.outputs.upstream_commits == '0' && steps.check-ci.outputs.ci_success == 'true' && env.FORCE_CI != 'true'
+        run: |
+          echo "No changes in upstream repository and the last run of OmniSharp-VSCode CI succeeded. Failing the workflow."
+          exit 1
+
       - name: Merge Upstream Changes
-        run: git merge upstream/main --allow-unrelated-histories  # Replace 'main' with the default branch of the original repository
+        run: git merge upstream/main --allow-unrelated-histories
 
       - name: Apply Patches
         run: |
