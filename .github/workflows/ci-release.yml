@@ -106,7 +106,20 @@ jobs:
         WORKFLOW_RUN_ID: ${{ env.WORKFLOW_RUN_ID }}
 
     - name: Extract build artifacts
-      run: 7z x "./vsix-release/*.zip" -ovsix-release
+      run: |
+        for zipfile in ./vsix-release/*.zip; do
+          base_name=$(basename "$zipfile" .zip)
+
+          extract_dir="vsix-release/$base_name/"
+          7z x "$zipfile" -o"$extract_dir" > /dev/null
+
+          extracted_file=$(find "$extract_dir" -type f)
+          extension="${extracted_file##*.}"
+          echo "$extracted_file"
+          mv "$extracted_file" "vsix-release/${base_name}.${extension}"
+
+          rm -rf "$extract_dir"
+        done
 
     - name: Display structure of downloaded files
       run: |
