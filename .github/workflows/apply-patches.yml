@@ -128,3 +128,9 @@ jobs:
           git add -- ':!./.github'
           git commit -m "[post-patch] patching at ${{ steps.date.outputs.date }}"
           git push origin main
+
+      - name: Sync with upstream
+        run: |
+          git fetch upstream
+          git checkout main
+          git merge upstream/main
