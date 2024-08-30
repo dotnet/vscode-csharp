@@ -1,6 +1,0 @@
-{
-    "ui": "tdd",
-    "require": [
-        "source-map-support/register"
-    ]
-}

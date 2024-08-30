@@ -1,8 +1,0 @@
-# This is a generated file from vscode-l10n tool, and it always uses 'lf' and line ending. Set it to 'lf' so we don't get warning every time when localization file get changed.
-l10n/bundle.l10n.json text eol=lf
-
-# This is a Unix shell script, so it always use the 'lf' line ends
-scripts/remoteProcessPickerScript text eol=lf
-
-# This is a generated file. Set it to 'lf' so we don't get git errors when it is generated on Windows.
-src/razor/syntaxes/aspnetcorerazor.tmLanguage.json eol=lf

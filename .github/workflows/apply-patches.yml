@@ -16,6 +16,7 @@ on:
 jobs:
   update-and-patch-fork:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout Fork
@@ -93,8 +94,15 @@ jobs:
           echo "No changes in upstream repository and the last run of OmniSharp-VSCode CI succeeded. Failing the workflow."
           exit 1
 
-      - name: Merge Upstream Changes
-        run: git merge upstream/main --allow-unrelated-histories
+      # - name: Merge Upstream Changes
+      #   run: git merge upstream/main --allow-unrelated-histories
+
+      - name: Checkout Upstream Changes
+        run: |
+          git checkout upstream/main -- .
+          git add .
+          git commit -m "[pre-patch] Update from upstream at ${{ github.event.inputs.force_ci }}"
+          git push origin main
 
       - name: Apply Patches
         run: |
@@ -106,10 +114,10 @@ jobs:
             done
           fi
 
-      - name: Get current date
+      - name: Get current date (After Patch)
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d %R')"
 
       - name: Commit & Push Changes
         run: |
-          git add . && git commit -m "Applying patches at ${{ steps.date.outputs.date }}" && git push origin main
+          git add . && git commit -m "[post-patch] patching at ${{ steps.date.outputs.date }}" && git push origin main

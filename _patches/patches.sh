@@ -11,8 +11,7 @@ rm .npmrc || true
 rs="_patches/replacer.py"
 
 # Update readme
-yes | /bin/cp -rf _patches/README-original.md README-original.md
-yes | /bin/cp -rf _patches/README-this.md README.md
+yes | /bin/cp -rf _patches/README.md README.md
 
 
 # Remove/update licences
