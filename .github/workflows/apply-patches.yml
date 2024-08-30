@@ -105,10 +105,11 @@ jobs:
         run: |
           git sparse-checkout set --no-cone '/*' '!.github'
           git checkout upstream/main -- .
-          git add -- . ':!.github'
+          git checkout origin/main -- ./.github
+          git add -- . :!.github
           git commit -m "[pre-patch] Update from upstream at ${{ steps.date.outputs.date }}"
           git push origin main
-          git sparse-checkout disable
+          git sparse-checkout disableaa
 
       - name: Apply Patches
         run: |
