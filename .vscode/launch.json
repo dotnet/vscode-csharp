@@ -1,0 +1,176 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": ["--extensionDevelopmentPath=${workspaceRoot}"],
+            "sourceMaps": true,
+            "outFiles": ["${workspaceRoot}/dist/*.js"],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Launch Current File slnWithCsproj Integration Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+            "preLaunchTask": "buildDev",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Launch Current File BasicRazorApp2_1 Integration Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/test/razorIntegrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/razorIntegrationTests"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+            "preLaunchTask": "buildDev",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Omnisharp: Launch Current File Integration Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "${input:omnisharpAssetName}",
+                "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "name": "Omnisharp: Launch Current File Integration Tests [LSP]",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Create a temp profile that has no extensions / user settings.
+                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
+                "--profile-temp",
+                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_lsp_${input:omnisharpAssetName}.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "OSVC_SUITE": "${input:omnisharpAssetName}",
+                "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+            "preLaunchTask": "buildDev"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug gulp task",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": ["${input:gulpTaskName}"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Update OmniSharp package dependencies",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": ["updatePackageDependencies"],
+            "env": {
+                "NEW_DEPS_ID": "OmniSharp",
+                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x86-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-arm64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-arm64-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-musl-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-musl-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-linux-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-osx-arm64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-x64-net6.0-1.39.11.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.11/omnisharp-win-arm64-net6.0-1.39.11.zip",
+                "OLD_DEPS_VERSION": "1.39.10",
+                "NEW_DEPS_VERSION": "1.39.11"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Update razor telemetry package dependencies",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": ["updatePackageDependencies"],
+            "env": {
+                "NEW_DEPS_URLS": "https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/704e369c5905f9ece819ebce77fb78d8/devkittelemetry-linux-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4049a66147717a53860bbc969bf32faa/devkittelemetry-linux-musl-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/c75e84ff813be5c9833d96dc2066a364/devkittelemetry-linux-musl-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/f58cf629939f0df77d142be881f9e233/devkittelemetry-linux-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/1c912419ea45c8d95cfa28a8a04640dc/devkittelemetry-osx-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/36545ba0998f1fc380e877e38b2f35f1/devkittelemetry-osx-x64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/0a32698e8ba1ab93489d79f34f8ae8d0/devkittelemetry-platformagnostic-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/4f16ff826fedd33ad80d265c5409588b/devkittelemetry-win-arm64-7.0.0-preview.24178.4.zip,https://download.visualstudio.microsoft.com/download/pr/534f8426-a4f4-4b2d-b3ba-c4e16a38c48c/5a98d8f4e481dbb7ae3cdb3695b75c46/devkittelemetry-win-x64-7.0.0-preview.24178.4.zip",
+                "NEW_DEPS_VERSION": "7.0.0-preview.24178.4",
+                "NEW_DEPS_ID": "RazorTelemetry"
+            },
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Generate debugger options schema",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": ["generateOptionsSchema"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Razor integration tests",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": ["test:razorintegration"],
+            "cwd": "${workspaceFolder}"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "omnisharpAssetName",
+            "description": "The name of the asset folder to use for the OmniSharp integration test.",
+            "type": "pickString",
+            "options": ["singleCsproj", "BasicRazorApp2_1", "slnWithCsproj", "slnFilterWithCsproj", "slnWithGenerator"]
+        },
+        {
+            "id": "gulpTaskName",
+            "description": "The name of the gulp task to debug",
+            "type": "promptString"
+        }
+    ]
+}

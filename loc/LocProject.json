@@ -1,0 +1,14 @@
+{
+    "Projects": [
+        {
+            "LanguageSet": "VS_Main_Languages",
+            "LocItems": [
+                {
+                    "SourceFile": "./loc/vscode-csharp.xlf",
+                    "CopyOption": "LangIDOnName",
+                    "OutputPath": "./loc/"
+                }
+            ]
+        }
+    ]
+}
