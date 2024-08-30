@@ -61,7 +61,10 @@ cat << 'EOL' > temp_replacement.sed
             executable = new vscode.DebugAdapterExecutable(command, args, options);
 EOL
 sed -i "/executable = new vscode.DebugAdapterExecutable(command, \[\], options);/r temp_replacement.sed" src/coreclrDebug/activate.ts
+sed -i "/executable = new vscode.DebugAdapterExecutable(command, \[\], options);/d" src/coreclrDebug/activate.ts
 rm temp_replacement.sed
+pattern="            const command = path\.join\((.|\s)*?\);"
+python _patches/replacer.py "src/coreclrDebug/activate.ts" "$pattern" ""
 
 # Patch src/lsptoolshost/roslynLanguageServer.ts
 sed -i "/import TelemetryReporter from '@vscode\/extension-telemetry';/d" src/lsptoolshost/roslynLanguageServer.ts
@@ -162,16 +165,9 @@ sed -i "/vscodeTelemetryReporter,/d" src/razor/razor.ts
 sed -i "1i import * as path from 'path';" src/razor/src/extension.ts
 # sed -i "s/import { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/import type { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/" src/razor/src/extension.ts
 # sed -i "s/import { HostEventStream } from '.\/hostEventStream';/import type { HostEventStream } from '.\/hostEventStream';/" src/razor/src/extension.ts
-cat << 'EOL' > temp_replacement.sed
-import type { CSharpDevKitExports } from '../../csharpDevKitExports';
-import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntimeExtensionResolver';
-import type { PlatformInformation } from '../../shared/platform';
-import type { IEventEmitterFactory } from './IEventEmitterFactory';
-EOL
-sed -i "/import { ExtensionContext } from 'vscode';/r temp_replacement.sed" src/razor/src/extension.ts
-rm temp_replacement.sed
-
 sed -i "/    vscodeTelemetryReporter: TelemetryReporter,/d" src/razor/src/extension.ts
+python _patches/replacer.py "src/razor/src/extension.ts" "import TelemetryReporter from '@vscode/extension-telemetry';\n" "$replacement"
+python _patches/replacer.py "src/razor/src/extension.ts" "import { getComponentPaths } from '../../lsptoolshost/builtInComponents';\n" "$replacement"
 
 cat << 'EOL' > temp_replacement.sed
         const dotnetRuntimePath = path.dirname(dotnetInfo.path);
