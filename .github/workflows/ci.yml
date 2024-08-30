@@ -80,8 +80,8 @@ jobs:
         path: ./vsix/csharp-win32-x64-*.vsix
         name: csharp-win32-x64.vsix
 
-    # - name: Upload build artifact (platform-neutral)
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     path: ./vsix/csharp-*.vsix
-    #     name: csharp-platform-neutral.vsix
+    - name: Upload build artifact (platform-neutral)
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./vsix/csharp-*.vsix
+        name: csharp-platform-neutral.vsix
