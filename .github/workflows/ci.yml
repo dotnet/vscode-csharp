@@ -30,12 +30,13 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
+        registry-url: https://registry.npmjs.org/
 
     - name: Install dependencies
       run: |
-          npm ci
           npm add tar
           npm add --save-dev @types/tar
+          npm ci
           npm i -g gulp
     - name: Compile
       run: npm run compile
