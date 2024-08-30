@@ -118,6 +118,7 @@ export class TelemetryObserver {
     private handleProjectConfigurationReceived(event: ProjectConfiguration) {
         const projectConfig = event.projectConfiguration;
         reportProjectConfigurationEvent(
+            this.reporter,
             projectConfig,
             this.platformInfo,
             this.dotnetInfo,

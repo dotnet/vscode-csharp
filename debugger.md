@@ -1,6 +1,6 @@
 ## .NET Debugging in Visual Studio Code
 
-While it is possible to use the C# extension as a standalone extension, we highly recommend using [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=blipk-vscodium.csharp). When using C# Dev Kit, the [official C# debugger documentation](https://code.visualstudio.com/docs/csharp/debugging) and the [official getting started guide](https://code.visualstudio.com/docs/csharp/getting-started) should be used instead of this page.
+While it is possible to use the C# extension as a standalone extension, we highly recommend using [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp). When using C# Dev Kit, the [official C# debugger documentation](https://code.visualstudio.com/docs/csharp/debugging) and the [official getting started guide](https://code.visualstudio.com/docs/csharp/getting-started) should be used instead of this page.
 
 ## Getting started debugging without C# Dev Kit
 

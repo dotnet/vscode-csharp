@@ -36,16 +36,16 @@ export async function activateCSharpExtension(): Promise<ActivationResult> {
         configuration.update('path', process.env.OMNISHARP_LOCATION, vscode.ConfigurationTarget.WorkspaceFolder);
     }
 
-    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>('blipk-vscodium.csharp');
+    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
-        throw new Error('Failed to find installation of blipk-vscodium.csharp');
+        throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
     await csharpExtension.activate();
 
     await csharpExtension.exports.initializationFinished();
-    console.log('blipk-vscodium.csharp activated');
+    console.log('ms-dotnettools.csharp activated');
 
     // Output the directory where logs are being written so if a test fails we can match it to the right logs.
     console.log(`Extension log directory: ${csharpExtension.exports.logDirectory}`);
@@ -59,9 +59,9 @@ export async function activateCSharpExtension(): Promise<ActivationResult> {
 }
 
 export async function restartOmniSharpServer(): Promise<void> {
-    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>('blipk-vscodium.csharp');
+    const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
-        throw new Error('Failed to find installation of blipk-vscodium.csharp');
+        throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
     if (!csharpExtension.isActive) {
