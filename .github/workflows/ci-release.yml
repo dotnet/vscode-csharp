@@ -174,8 +174,15 @@ jobs:
         script: |
           const fs = require('fs');
           const path = require('path');
-          const releasesPath = path.join(process.env.GITHUB_WORKSPACE, 'vsix-release')
 
+          const forceReleaseVar = process.env.FORCE_RELEASE
+          const forceRelease = forceReleaseVar === "true" || forceReleaseVar === true
+          if (forceRelease) {
+            console.log("FORCE_RELEASE is true - errors will be logged but ignored")
+          }
+
+
+          const releasesPath = path.join(process.env.GITHUB_WORKSPACE, 'vsix-release')
           const releasePlatforms = [
             'darwin-x64', 'linux-x64', 'win32-x64',
             'platform-neutral'
@@ -187,7 +194,6 @@ jobs:
             })
           )
 
-          try {
           const uploadedArtifacts = []
           for (const artifact of artifacts) {
             if (fs.existsSync(artifact.path)) {
@@ -204,7 +210,12 @@ jobs:
                 console.log(`Uploaded ${artifact.name}`);
                 uploadedArtifacts.push(artifact)
               }).catch(error => {
-                console.error(`Failed to upload ${artifact.name}: ${error}`);
+                const msg = `Failed to upload ${artifact.name}: ${error}`
+                if (forceRelease) {
+                  console.log(msg)
+                } else {
+                  console.error(msg);
+                }
               });
             } else {
               console.log(`File ${artifact.path} does not exist. Skipping upload.`);
@@ -212,16 +223,11 @@ jobs:
           }
 
           if (!uploadedArtifacts.length) {
-            throw new Error("Did not find any artifacts to upload")
-          }
-
-          } catch (e) {
-            const forceRelease = process.env.FORCE_RELEASE
-            if (forceRelease === "true" || forceRelease === true) {
-              console.log("Ignoring error:", e.message)
-              console.log("Encountered error but continuing due to FORCE_RELEASE")
+            const msg = "Did not find any artifacts to upload"
+            if (forceRelease) {
+              console.log(msg)
             } else {
-              throw e
+              throw new Error(msg)
             }
           }
 

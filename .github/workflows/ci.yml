@@ -56,6 +56,10 @@ jobs:
     - name: Build VSIXs
       run: gulp 'vsix:release:package'
 
+    - name: Display structure of built packages
+      run: |
+        ls -R ./vsix
+
     - name: Upload build artifact (darwin-x64)
       id: upload-release-asset-darwin-x64
       uses: actions/upload-artifact@v3
