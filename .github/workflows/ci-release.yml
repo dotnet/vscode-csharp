@@ -87,14 +87,18 @@ jobs:
             }
 
             for (const artifact of artifacts.artifacts) {
-              const zipPath = path.join(outputPath, `${artifact.name}.zip`);
-              const { data: download } = await github.rest.actions.downloadArtifact({
+              core.notice(`Getting redirect URL for artifact ${artifact.id} ${artifact.name}`)
+              const result = await github.rest.actions.downloadArtifact({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 artifact_id: artifact.id,
                 archive_format: 'zip',
               });
-              await downloadArtifact(download.url, zipPath);
+              core.notice(`Got result ${result}`)
+              core.notice(result)
+
+              const zipPath = path.join(outputPath, `${artifact.name}.zip`);
+              await downloadArtifact(result.url, zipPath);
             }
           }
 
