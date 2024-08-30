@@ -55,7 +55,6 @@ jobs:
         script: |
           const fs = require('fs');
           const path = require('path');
-          const fetch = require('node-fetch');
 
           const runId = process.env.WORKFLOW_RUN_ID;
           const outputPath = './vsix-release';
