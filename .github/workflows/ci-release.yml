@@ -208,14 +208,13 @@ jobs:
             throw new Error("Did not find any artifacts to upload")
           }
 
+    - name: Install Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
 
-    # - name: Install Node.js 18.x
-    #   uses: actions/setup-node@v3
-    #   with:
-    #     node-version: '18.x'
-
-    # - name: Publish to Open-VSX
-    #   run: |
-    #       npm ci
-    #       npm i -g ovsx
-    #       ovsx publish --packagePath $(find ./vsix-release -iname *.vsix) -p ${{ secrets.OPEN_VSX_TOKEN }}
+    - name: Publish to Open-VSX
+      run: |
+          npm ci
+          npm i -g ovsx
+          ovsx publish --packagePath $(find ./vsix-release -iname *.vsix) -p ${{ secrets.OPEN_VSX_TOKEN }}
