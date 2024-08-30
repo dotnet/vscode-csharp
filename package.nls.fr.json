@@ -41,7 +41,7 @@
   "configuration.dotnet.completion.provideRegexCompletions": "Afficher les expressions régulières dans la liste de saisie semi-automatique.",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Active la prise en charge de l’affichage des types non pris en charge et des méthodes d’extension non prises en charge dans les listes de saisie semi-automatique. Une fois validée, la directive using appropriée est ajoutée en haut du fichier actif. (Précédemment `omnisharp.enableImportCompletion`)",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Effectuez la complétion automatique du nom d’objet pour les membres que vous avez récemment sélectionnés.",
-  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Afficher automatiquement la liste de complétion dans les listes d'arguments",
   "configuration.dotnet.defaultSolution.description": "Le chemin d’accès de la solution par défaut à ouvrir dans l’espace de travail, ou la valeur ’disable’ pour l’ignorer. (Précédemment `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.dotnetPath": "Spécifie le chemin d’accès à un répertoire d’installation de dotnet à utiliser à la place du répertoire par défaut du système. Cela n’a d’influence que sur l’installation dotnet à utiliser pour héberger le serveur de langues lui-même. Exemple : \"/home/username/mycustomdotnetdirect\" : \"/home/nom d’utilisateur/monrépertoiredotnetpersonnalisé\".",
   "configuration.dotnet.enableXamlTools": "Active les outils XAML lors de l’utilisation du Kit de développement C#",

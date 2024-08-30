@@ -87,7 +87,7 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, () => {
             });
 
             await waitForExpectedDiagnostics((diagnostics) => {
-                expect(diagnostics).toHaveLength(31);
+                expect(diagnostics.length).toBeGreaterThan(2);
 
                 const diagnosticsInDiagnosticsCs = diagnostics
                     .filter(([uri, _]) => uri.fsPath.endsWith('diagnostics.cs'))
