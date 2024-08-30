@@ -7,6 +7,9 @@ set -e
 # Don't use .npmrc
 rm .npmrc || true
 
+# Python regex patching script
+rs="_patches/replacer.py"
+
 
 # Remove/update licences
 rm RuntimeLicenses/dependencies/OpenDebugAD7-License.txt || true
@@ -67,11 +70,11 @@ sed -i "/executable = new vscode.DebugAdapterExecutable(command, \[\], options);
 sed -i "/executable = new vscode.DebugAdapterExecutable(command, \[\], options);/d" src/coreclrDebug/activate.ts
 rm temp_replacement.sed
 pattern="import { CoreClrDebugUtil, getTargetArchitecture } from './util';"
-python _patches/replacer.py "src/coreclrDebug/activate.ts" "$pattern" "import { CoreClrDebugUtil } from './util';"
+python "$rs" "src/coreclrDebug/activate.ts" "$pattern" "import { CoreClrDebugUtil } from './util';"
 pattern="            const targetArchitecture = (.|\s)*?\);"
-python _patches/replacer.py "src/coreclrDebug/activate.ts" "$pattern" ""
+python "$rs" "src/coreclrDebug/activate.ts" "$pattern" ""
 pattern="            const command = path\.join\((.|\s)*?\);"
-python _patches/replacer.py "src/coreclrDebug/activate.ts" "$pattern" ""
+python "$rs" "src/coreclrDebug/activate.ts" "$pattern" ""
 
 # Patch src/lsptoolshost/roslynLanguageServer.ts
 sed -i "/import TelemetryReporter from '@vscode\/extension-telemetry';/d" src/lsptoolshost/roslynLanguageServer.ts
@@ -81,7 +84,7 @@ sed -i "/return await this.startServer(/,/);/c\            return await this.sta
 sed -i "/telemetryReporter: TelemetryReporter,/d" src/lsptoolshost/roslynLanguageServer.ts
 
 pattern="\/\/ shouldn't this arg only be set if it's running with CSDevKit\?\s+args\.push\('--telemetryLevel', telemetryReporter\.telemetryLevel\);"
-python _patches/replacer.py "src/lsptoolshost/roslynLanguageServer.ts" "$pattern" ""
+python "$rs" "src/lsptoolshost/roslynLanguageServer.ts" "$pattern" ""
 
 sed -i "s/const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);/const server = new RoslynLanguageServer(client, platformInfo, context, languageServerEvents);/" src/lsptoolshost/roslynLanguageServer.ts
 
@@ -173,8 +176,8 @@ sed -i "1i import * as path from 'path';" src/razor/src/extension.ts
 # sed -i "s/import { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/import type { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/" src/razor/src/extension.ts
 # sed -i "s/import { HostEventStream } from '.\/hostEventStream';/import type { HostEventStream } from '.\/hostEventStream';/" src/razor/src/extension.ts
 sed -i "/    vscodeTelemetryReporter: TelemetryReporter,/d" src/razor/src/extension.ts
-python _patches/replacer.py "src/razor/src/extension.ts" "import TelemetryReporter from '@vscode/extension-telemetry';\n" "$replacement"
-python _patches/replacer.py "src/razor/src/extension.ts" "import { getComponentPaths } from '../../lsptoolshost/builtInComponents';\n" "$replacement"
+python "$rs" "src/razor/src/extension.ts" "import TelemetryReporter from '@vscode/extension-telemetry';\n" "$replacement"
+python "$rs" "src/razor/src/extension.ts" "import { getComponentPaths } from '../../lsptoolshost/builtInComponents';\n" "$replacement"
 
 cat << 'EOL' > temp_replacement.sed
         const dotnetRuntimePath = path.dirname(dotnetInfo.path);
@@ -193,14 +196,14 @@ rm temp_replacement.sed
 sed -i "/let telemetryExtensionDllPath = '';/d" src/razor/src/extension.ts
 
 pattern="await setupDevKitEnvironment(.|\s)*?razorComponentPaths\[0\];(.|\s)*?}(.|\s)*?}"
-python _patches/replacer.py "src/razor/src/extension.ts" "$pattern" "await setupDevKitEnvironment(env, csharpDevkitExtension, logger);"
+python "$rs" "src/razor/src/extension.ts" "$pattern" "await setupDevKitEnvironment(env, csharpDevkitExtension, logger);"
 
 pattern="vscodeTelemetryReporter,
             telemetryExtensionDllPath,
             dotnetInfo.env,"
 replacement="csharpDevkitExtension !== undefined,
             env,"
-python _patches/replacer.py "src/razor/src/extension.ts" "$pattern" "$replacement"
+python "$rs" "src/razor/src/extension.ts" "$pattern" "$replacement"
 
 
 # Patch src/razor/src/razorLanguageServerClient.ts
@@ -208,7 +211,7 @@ sed -i "/import TelemetryReporter from '@vscode\/extension-telemetry';/d" src/ra
 sed -i "s/private readonly vscodeTelemetryReporter: TelemetryReporter,/private readonly isCSharpDevKitActivated: boolean,/" src/razor/src/razorLanguageServerClient.ts
 sed -i "s/private readonly telemetryExtensionDllPath: string,//" src/razor/src/razorLanguageServerClient.ts
 pattern="if \(options\.forceRuntimeCodeGeneration\) {(.|\s)*?args\.push\('--telemetryExtensionPath', this\.telemetryExtensionDllPath\);"
-python _patches/replacer.py "src/razor/src/razorLanguageServerClient.ts" "$pattern" "if (this.isCSharpDevKitActivated) {\n                args.push('--sessionId', getSessionId());"
+python "$rs" "src/razor/src/razorLanguageServerClient.ts" "$pattern" "if (this.isCSharpDevKitActivated) {\n                args.push('--sessionId', getSessionId());"
 
 
 # Patch src/shared/projectConfiguration.ts
@@ -249,6 +252,6 @@ gulp.task('vsix:release:neutral', async () => {
     await cleanAsync();
     await doPackageNeutral();
 });"
-python _patches/replacer.py "tasks/offlinePackagingTasks.ts" "$pattern" "$replacement"
+python "$rs" "tasks/offlinePackagingTasks.ts" "$pattern" "$replacement"
 
 echo "All patches applied successfully."
