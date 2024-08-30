@@ -16,7 +16,7 @@ yes | /bin/cp -rf _patches/csharpIcon.png images/csharpIcon.png
 
 # Replace extension name
 EXTENSION_NAME="blipk-vscodium.csharp"
-find . -type f -exec sed -i "s/ms-dotnettools.csharp/$EXTENSION_NAME/g" {} +
+find . -type f ! -path '*/patches.sh' -exec sed -i "s/ms-dotnettools.csharp/$EXTENSION_NAME/g" {} +
 
 # Patch src/coreclrDebug/activate.ts
 sed -i "s/if (!executable) {/const pipeTransport = _session.configuration.pipeTransport;\n        if (!executable || typeof pipeTransport === 'object') {/" src/coreclrDebug/activate.ts
