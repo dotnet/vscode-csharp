@@ -66,6 +66,8 @@ EOL
 sed -i "/executable = new vscode.DebugAdapterExecutable(command, \[\], options);/r temp_replacement.sed" src/coreclrDebug/activate.ts
 sed -i "/executable = new vscode.DebugAdapterExecutable(command, \[\], options);/d" src/coreclrDebug/activate.ts
 rm temp_replacement.sed
+pattern="            const targetArchitecture = (.|\s)*?\);"
+python _patches/replacer.py "src/coreclrDebug/activate.ts" "$pattern" ""
 pattern="            const command = path\.join\((.|\s)*?\);"
 python _patches/replacer.py "src/coreclrDebug/activate.ts" "$pattern" ""
 
