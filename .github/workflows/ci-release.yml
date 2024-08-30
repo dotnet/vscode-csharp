@@ -49,6 +49,9 @@ jobs:
         run-id: ${{ env.WORKFLOW_RUN_ID }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Display structure of downloaded files
+      run: ls -R ./vsix
+
     - name: Get package version
       run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
 
