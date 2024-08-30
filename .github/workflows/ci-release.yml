@@ -41,13 +41,64 @@ jobs:
     - name: Set Workflow Run ID
       run: echo "WORKFLOW_RUN_ID=${{ steps.find-ci-run.outputs.result }}" >> $GITHUB_ENV
 
+    # - name: Download all build artifacts
+    #   uses: actions/download-artifact@v4
+    #   with:
+    #     path: ./vsix-release
+    #     merge-multiple: true
+    #     run-id: ${{ env.WORKFLOW_RUN_ID }}
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Download all build artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/github-script@v6
       with:
-        path: ./vsix-release
-        merge-multiple: true
-        run-id: ${{ env.WORKFLOW_RUN_ID }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          const fetch = require('node-fetch');
+
+          const runId = process.env.WORKFLOW_RUN_ID;
+          const outputPath = './vsix-release';
+
+          async function downloadArtifact(url, dest) {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+            const fileStream = fs.createWriteStream(dest);
+            return new Promise((resolve, reject) => {
+              response.body.pipe(fileStream);
+              response.body.on('error', reject);
+              fileStream.on('finish', resolve);
+            });
+          }
+
+          async function main() {
+            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: runId,
+            });
+
+            if (!fs.existsSync(outputPath)) {
+              fs.mkdirSync(outputPath, { recursive: true });
+            }
+
+            for (const artifact of artifacts.artifacts) {
+              const zipPath = path.join(outputPath, `${artifact.name}.zip`);
+              const { data: download } = await github.rest.actions.downloadArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id,
+                archive_format: 'zip',
+              });
+              await downloadArtifact(download.url, zipPath);
+            }
+          }
+
+          main().catch(error => {
+            core.setFailed(error.message);
+          });
+      env:
+        WORKFLOW_RUN_ID: ${{ env.WORKFLOW_RUN_ID }}
 
     - name: Display structure of downloaded files
       run: |
