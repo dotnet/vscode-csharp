@@ -41,31 +41,9 @@ jobs:
     - name: Set Workflow Run ID
       run: echo "WORKFLOW_RUN_ID=${{ steps.find-ci-run.outputs.result }}" >> $GITHUB_ENV
 
-    - name: Download build artifacts (darwin-x64)
+    - name: Download all build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: csharp-darwin-x64.vsix
-        path: ./vsix
-        run-id: ${{ env.WORKFLOW_RUN_ID }}
-
-    - name: Download build artifacts (linux-x64)
-      uses: actions/download-artifact@v4
-      with:
-        name: csharp-linux-x64.vsix
-        path: ./vsix
-        run-id: ${{ env.WORKFLOW_RUN_ID }}
-
-    - name: Download build artifacts (win32-x64)
-      uses: actions/download-artifact@v4
-      with:
-        name: csharp-win32-x64.vsix
-        path: ./vsix
-        run-id: ${{ env.WORKFLOW_RUN_ID }}
-
-    - name: Download build artifacts (platform-neutral)
-      uses: actions/download-artifact@v4
-      with:
-        name: csharp-platform-neutral.vsix
         path: ./vsix
         run-id: ${{ env.WORKFLOW_RUN_ID }}
 
