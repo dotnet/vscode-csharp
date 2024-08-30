@@ -222,7 +222,7 @@ sed -i "s/~\/vsdbg\/vsdbg/\/usr\/bin\/netcoredbg/g" src/tools/OptionsSchema.json
 sed -i "s/vsdbg/netcoredbg/g" src/tools/OptionsSchema.json
 
 # Patch tasks/backcompatTasks.ts
-sed -i "1i gulp.task('package:neutral', gulp.series('vsix:release:neutral'));" tasks/backcompatTasks.ts
+sed -i "8i gulp.task('package:neutral', gulp.series('vsix:release:neutral'));" tasks/backcompatTasks.ts
 
 # Patch tasks/offlinePackagingTasks.ts
 pattern="await doPackageOffline\(undefined\);\n}\);"
