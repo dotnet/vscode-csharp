@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Patch package.json
 rf="package.json"
 rs="_patches/replacer.py"
@@ -11,7 +13,11 @@ replacement='"publisher": "blipk"'
 python3 "$rs" "$rf" "$pattern" "$replacement"
 
 pattern='"description": "Base language support for C#"'
-replacement='"description": "Free/Libre C# support for vscode-compatible editors"'
+replacement='"description": "Base language support for C# with libre NetCoreDbg debugger"'
+python3 "$rs" "$rf" "$pattern" "$replacement"
+
+pattern='"displayName": "C#"'
+replacement='"displayName": "C# with NetCoreDbg"'
 python3 "$rs" "$rf" "$pattern" "$replacement"
 
 pattern='"author": "Microsoft Corporation"'

@@ -10,6 +10,10 @@ rm .npmrc || true
 # Python regex patching script
 rs="_patches/replacer.py"
 
+# Update readme
+yes | /bin/cp -rf _patches/README-original.md README-original.md
+yes | /bin/cp -rf _patches/README-this.md README.md
+
 
 # Remove/update licences
 rm RuntimeLicenses/dependencies/OpenDebugAD7-License.txt || true
