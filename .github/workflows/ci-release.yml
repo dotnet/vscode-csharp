@@ -60,7 +60,6 @@ jobs:
           const outputPath = './vsix-release';
 
           async function downloadArtifact(url, dest) {
-            core.notice(`Downloading ${url} to ${dest}`)
             const response = await fetch(url, {
               headers: {
                 Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
@@ -94,11 +93,9 @@ jobs:
                 artifact_id: artifact.id,
                 archive_format: 'zip',
               });
-              core.notice(`Got result ${result}`)
-              core.notice(result)
-
-              const zipPath = path.join(outputPath, `${artifact.name}.zip`);
-              await downloadArtifact(result.url, zipPath);
+              const dest = path.join(outputPath, `${artifact.name}.zip`);
+              core.notice(`Downloading ${result.url} to ${dest}`)
+              await downloadArtifact(result.url, dest);
             }
           }
 
@@ -107,6 +104,9 @@ jobs:
           });
       env:
         WORKFLOW_RUN_ID: ${{ env.WORKFLOW_RUN_ID }}
+
+    - name: Extract build artifacts
+      run: 7z x "./vsix-release/*.zip" -o ./vsix-release
 
     - name: Display structure of downloaded files
       run: |
