@@ -99,16 +99,13 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d %R')"
 
-      - name: Checkout/Merge Upstream Changes
+      - name: Checkout/Merge Upstream Changes (without .github folder)
         run: |
           git checkout main
           git checkout upstream/main -- .
-          git reset HEAD .github
-          git clean -f
-          git checkout -- .
-          git status
+          git merge --no-commit --no-ff origin/main
+          git reset -- .github
           git commit -m "[pre-patch] Update from upstream at ${{ steps.date.outputs.date }}"
-          git merge -s main upstream/main
           git push origin main
 
       - name: Apply Patches
