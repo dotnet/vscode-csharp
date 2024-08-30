@@ -1,0 +1,3 @@
+* @dotnet/roslyn-ide
+/src/coreclr-debug/ @dotnet/ide-debugger-contracts
+/src/razor/ @dotnet/razor-tooling

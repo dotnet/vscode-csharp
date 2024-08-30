@@ -1,0 +1,49 @@
+parameters:
+  - name: versionNumberOverride
+    type: string
+    default: 'default'
+  - name: installDotNet
+    type: boolean
+    default: true
+
+steps:
+
+# The server package is downloaded from NuGet
+- task: NuGetAuthenticate@1
+
+- task: NodeTool@0
+  displayName: 'Install Node.js 18.x'
+  inputs:
+    versionSpec: '18.x'
+
+# Some tests use predefined docker images with a specific version of .NET installed.
+# So we avoid installing .NET in those cases.
+- ${{ if eq(parameters.installDotNet, true) }}:
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core SDKs'
+    inputs:
+      version: '8.x'
+
+- script: dotnet --info
+  displayName: Display dotnet info
+
+- script: dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
+  displayName: Install nbgv
+
+# If we want to override the version, update the version.json here - vsix packaging will see this value
+# and use it to set the version number in the package.json.
+- ${{ if ne(parameters.versionNumberOverride, 'default') }}:
+  - script: $(Agent.BuildDirectory)/nbgv set-version ${{ parameters.versionNumberOverride }}
+    displayName: 'Override version number'
+
+# Set the CI build number to the VSIX version we're creating from this build.
+- script: $(Agent.BuildDirectory)/nbgv cloud
+  displayName: Set pipeline build number
+
+- script: |
+    npm ci
+    npm i -g gulp
+  displayName: 'Install dependencies'
+
+- script: npm run compile
+  displayName: 'Compile'

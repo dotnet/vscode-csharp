@@ -1,0 +1,33 @@
+steps:
+- checkout: self
+  clean: true
+  submodules: true
+  fetchTags: false
+  fetchDepth: 1
+
+- template: prereqs.yml
+
+- template: test-prereqs.yml
+
+- script: npm run omnisharptest
+  displayName: 🧪 Run unit and integration tests
+  env:
+    DISPLAY: :99.0
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  displayName: 'Publish Test Results'
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '*junit.xml'
+    searchFolder: '$(Build.SourcesDirectory)/out'
+    publishRunAttachments: true
+    mergeTestResults: true
+    testRunTitle: OmniSharp $(Agent.JobName) (Attempt $(System.JobAttempt))
+
+- task: PublishPipelineArtifact@1
+  condition: failed()
+  displayName: 'Upload integration test logs'
+  inputs:
+    targetPath: '$(Build.SourcesDirectory)/.vscode-test/user-data/logs'
+    artifactName: 'VSCode Test OmniSharp Logs ($(Agent.JobName)-$(System.JobAttempt))'

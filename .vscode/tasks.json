@@ -1,0 +1,48 @@
+{
+	"version": "2.0.0",
+	"presentation": {
+		"echo": true,
+		"reveal": "always",
+		"focus": false,
+		"panel": "shared"
+	},
+	"tasks": [
+		{
+			"label": "build",
+			"command": "npm",
+			"type": "shell",
+			"args": [
+				"run",
+				"compile"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "buildDev",
+			"command": "npm",
+			"type": "shell",
+			"args": [
+				"run",
+				"compileDev"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "test",
+			"command": "echo",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"args": [
+				"Run tests in VS Code by launching the debugger with the 'Launch Tests' configuration."
+			]
+		},
+	]
+}

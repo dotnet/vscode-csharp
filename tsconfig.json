@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "outDir": "out",
+        "lib": [
+            "ES2021"
+        ],
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "moduleDetection": "force",
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true,
+        "noUnusedLocals": true,
+        "noFallthroughCasesInSwitch": true
+    },
+    "include": [
+        "gulpfile.ts", // tslint gets quite angry if we don't do this
+        "src",
+        "tasks",
+        "test",
+        "omnisharptest",
+        "typings",
+        "__mocks__",
+        "jest.config.ts",
+        "baseJestConfig.ts",
+    ]
+}
