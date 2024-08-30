@@ -18,29 +18,56 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: Find Latest Successful CI Run
+      id: find-ci-run
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const runs = await github.rest.actions.listWorkflowRuns({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: "OmniSharp-VSCode CI",
+            status: "success",
+            per_page: 1
+          });
+          if (runs.data.workflow_runs.length === 0) {
+            throw new Error("No successful workflow runs found");
+          }
+          return runs.data.workflow_runs[0].id;
+
+    - name: Set Workflow Run ID
+      run: echo "WORKFLOW_RUN_ID=${{ steps.find-ci-run.outputs.result }}" >> $GITHUB_ENV
+
     - name: Download build artifacts (darwin-x64)
       uses: actions/download-artifact@v3
       with:
         name: csharp-darwin-x64.vsix
         path: ./vsix
+        workflow_run_id: ${{ env.WORKFLOW_RUN_ID }}
 
     - name: Download build artifacts (linux-x64)
       uses: actions/download-artifact@v3
       with:
         name: csharp-linux-x64.vsix
         path: ./vsix
+        workflow_run_id: ${{ env.WORKFLOW_RUN_ID }}
 
     - name: Download build artifacts (win32-x64)
       uses: actions/download-artifact@v3
       with:
         name: csharp-win32-x64.vsix
         path: ./vsix
+        workflow_run_id: ${{ env.WORKFLOW_RUN_ID }}
 
     - name: Download build artifacts (platform-neutral)
       uses: actions/download-artifact@v3
       with:
         name: csharp-platform-neutral.vsix
         path: ./vsix
+        workflow_run_id: ${{ env.WORKFLOW_RUN_ID }}
 
     - name: Get package version
       run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
