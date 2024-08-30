@@ -2,7 +2,9 @@
 rf="package.json"
 rs="replacer.py"
 
-# TODO: Bump the "version" properly
+# Set version to current date/time
+PACKAGE_VERSION=$(date +'%Y-%m-%d_%H-%M')
+python3 "$rs" "$rf" '"version": "(.|\s)*?"' "\"version\": \"$PACKAGE_VERSION\""
 
 pattern='"publisher": "ms-dotnettools"'
 replacement='"publisher": "blipk"'
