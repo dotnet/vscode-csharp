@@ -1,4 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/sh
+
+set -x
+set -e
 
 # Patch package.json
 rf="package.json"

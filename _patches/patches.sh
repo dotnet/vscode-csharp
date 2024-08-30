@@ -227,34 +227,6 @@ sed -i "/reporter.sendTelemetryEvent('ProjectConfiguration', telemetryProps);/d"
 sed -i "s/~\/vsdbg\/vsdbg/\/usr\/bin\/netcoredbg/g" src/tools/OptionsSchema.json
 sed -i "s/vsdbg/netcoredbg/g" src/tools/OptionsSchema.json
 
-# Patch tasks/backcompatTasks.ts
-sed -i "8i gulp.task('package:neutral', gulp.series('vsix:release:neutral'));" tasks/backcompatTasks.ts
 
-# Patch tasks/offlinePackagingTasks.ts
-pattern="await doPackageOffline\(undefined\);\n}\);"
-replacement="await doPackageOffline(undefined);
-});
-
-async function doPackageNeutral() {
-    let prerelease = false;
-    if (argv.prerelease) {
-        prerelease = true;
-    }
-
-    try {
-        // Get the package.json.
-        const packageJSON = getPackageJSON();
-        // Output the platform neutral VSIX using the platform neutral server bits we created before.
-        await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-gulp.task('vsix:release:neutral', async () => {
-    await cleanAsync();
-    await doPackageNeutral();
-});"
-python "$rs" "tasks/offlinePackagingTasks.ts" "$pattern" "$replacement"
 
 echo "All patches applied successfully."

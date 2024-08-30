@@ -56,9 +56,6 @@ jobs:
     - name: Build VSIXs
       run: gulp 'vsix:release:package'
 
-
-
-
     - name: Upload build artifact (darwin-x64)
       id: upload-release-asset-darwin-x64
       uses: actions/upload-artifact@v3
@@ -83,5 +80,5 @@ jobs:
     - name: Upload build artifact (platform-neutral)
       uses: actions/upload-artifact@v3
       with:
-        path: ./vsix/csharp-*.vsix
+        path: ./vsix/csharp-platform-neutral-*.vsix
         name: csharp-platform-neutral.vsix

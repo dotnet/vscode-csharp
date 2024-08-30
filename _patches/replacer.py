@@ -20,9 +20,20 @@ except ValueError as e:
 with open(target_file, "r") as file:
     content = file.read()
 
-regex = re.compile(re.escape(pattern), re.DOTALL | re.MULTILINE )
-new_content, number_of_subs_made = re.subn(pattern, replacement, content)
-print(f"Made {number_of_subs_made} substitutions in file {target_file}")
+try:
+    regex = re.compile(re.escape(pattern), re.DOTALL | re.MULTILINE )
+    new_content, number_of_subs_made = re.subn(pattern, replacement, content)
+
+    if number_of_subs_made == 0:
+        raise ValueError("No substitutions were made - check patch regex")
+except Exception as e:
+    print(f"target_file: {target_file}")
+    print(f"pattern: {pattern[:55]}")
+    print(f"replacement: {replacement[:55]}")
+    raise e
+
 
 with open(target_file, "w") as file:
    file.write(new_content)
+
+print(f"Made {number_of_subs_made} substitutions in file {target_file}")

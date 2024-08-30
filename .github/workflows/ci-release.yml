@@ -172,7 +172,7 @@ jobs:
 
           const releasePlatforms = [
             'darwin-x64', 'linux-x64', 'win32-x64',
-            //'platform-neutral'
+            'platform-neutral'
           ]
           const artifacts = releasePlatforms.map(
             platform => ({
