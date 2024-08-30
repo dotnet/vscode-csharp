@@ -7,10 +7,11 @@ on:
       - completed
   workflow_dispatch:
     inputs:
-      tags:
-        description: 'Run this manually'
-        required: false
+      force_release:
+        description: 'Override any failure conditions in uploading release artifacts, to release to Open VSX'
         type: boolean
+        default: false
+        required: false
 
 jobs:
   release:
@@ -40,14 +41,6 @@ jobs:
 
     - name: Set Workflow Run ID
       run: echo "WORKFLOW_RUN_ID=${{ steps.find-ci-run.outputs.result }}" >> $GITHUB_ENV
-
-    # - name: Download all build artifacts
-    #   uses: actions/download-artifact@v4
-    #   with:
-    #     path: ./vsix-release
-    #     merge-multiple: true
-    #     run-id: ${{ env.WORKFLOW_RUN_ID }}
-    #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Download all build artifacts
       uses: actions/github-script@v6
@@ -128,6 +121,19 @@ jobs:
     - name: Get package version
       run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
 
+    - name: Set Force Release Override from Manual Worfklow Dispatch
+      if: github.event_name == 'workflow_dispatch'
+      run: echo "FORCE_RELEASE=${{ github.event.inputs.force_release }}" >> $GITHUB_ENV
+
+    - name: Set Force Release Override from Commit Message
+      if: github.event_name == 'push'
+      run: |
+        if [[ "$(git log -1 --pretty=%B)" == *"[force-release]"* ]]; then
+          echo "FORCE_RELEASE=true" >> $GITHUB_ENV
+        else
+          echo "FORCE_RELEASE=false" >> $GITHUB_ENV
+        fi
+
     - name: Create GitHub Release
       id: create_release
       uses: actions/github-script@v6
@@ -181,6 +187,7 @@ jobs:
             })
           )
 
+          try {
           const uploadedArtifacts = []
           for (const artifact of artifacts) {
             if (fs.existsSync(artifact.path)) {
@@ -206,6 +213,16 @@ jobs:
 
           if (!uploadedArtifacts.length) {
             throw new Error("Did not find any artifacts to upload")
+          }
+
+          } catch (e) {
+            const forceRelease = process.env.FORCE_RELEASE
+            if (forceRelease === "true" || forceRelease === true) {
+              console.log("Ignoring error:", e.message)
+              console.log("Encountered error but continuing due to FORCE_RELEASE")
+            } else {
+              throw e
+            }
           }
 
     - name: Install Node.js 18.x

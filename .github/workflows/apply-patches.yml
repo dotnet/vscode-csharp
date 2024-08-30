@@ -8,8 +8,9 @@ on:
     inputs:
       force_ci:
         description: 'Override failure condition to force CI workflow to run'
+        type: boolean
+        default: false
         required: false
-        default: 'false'
   push:
     branches:
       - main
@@ -76,7 +77,7 @@ jobs:
               core.setOutput('ci_success', 'false');
             }
 
-      - name: Set Override Failure Variable
+      - name: Set Override Failure from Manual Worfklow Dispatch
         if: github.event_name == 'workflow_dispatch'
         run: echo "FORCE_CI=${{ github.event.inputs.force_ci }}" >> $GITHUB_ENV
 
