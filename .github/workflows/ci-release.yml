@@ -86,42 +86,42 @@ jobs:
             }
           }
 
-    - name: Upload release build (darwin-x64)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload release builds
+      uses: actions/github-script@v6
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./vsix/csharp-darwin-x64.vsix
-        asset_name: csharp-darwin-x64-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          const releasesPath = path.join(process.env.GITHUB_WORKSPACE, 'vsix')
 
-    - name: Upload release build (linux-x64)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./vsix/csharp-linux-x64.vsix
-        asset_name: csharp-linux-x64-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip
+          const releasePlatforms = [
+            'darwin-x64', 'linux-x64', 'win32-x64',
+            //'platform-neutral'
+          ]
+          const artifacts = releasePlatforms.map(
+            platform => ({
+              path: path.join(releasesPath, `csharp-${platform}.vsix`),
+              name: `csharp-${platform}-${process.env.VERSION}.vsix`
+            })
+          )
 
-    - name: Upload release build (win32-x64)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./vsix/csharp-win32-x64.vsix
-        asset_name: csharp-win32-x64-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip
-
-    - name: Upload release build (platform-neutral)
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./vsix/csharp-platform-neutral.vsix
-        asset_name: csharp-platform-neutral-${{ env.VERSION }}.vsix
-        asset_content_type: application/zip
+          for (const artifact of artifacts) {
+            if (fs.existsSync(artifact.path)) {
+              console.log(`Uploading ${artifact.name}...`);
+              github.rest.repos.uploadReleaseAsset({
+                url: '${{ steps.create_release.outputs.upload_url }}',
+                headers: {
+                  'content-type': 'application/zip',
+                  'content-length': fs.statSync(artifact.path).size
+                },
+                name: artifact.name,
+                data: fs.readFileSync(artifact.path)
+              }).then(response => {
+                console.log(`Uploaded ${artifact.name}`);
+              }).catch(error => {
+                console.error(`Failed to upload ${artifact.name}: ${error}`);
+              });
+            } else {
+              console.log(`File ${artifact.path} does not exist. Skipping upload.`);
+            }
+          }
