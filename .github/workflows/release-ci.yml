@@ -1,0 +1,53 @@
+name: OmniSharp-VSCode Release CI
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'
+
+    - name: Install Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+
+    - name: Install dependencies
+      run: |
+          npm ci
+          npm i -g gulp
+    - name: Compile
+      run: npm run compile
+
+    - name: Prepublish VSIX
+      run: npm run vscode:prepublish
+
+    - name: Build VSIX
+      run: gulp 'vsix:release:neutral'
+
+    - name: Get package version
+      run: node -e "console.log('VERSION=' + require('./package.json').version)" >> $GITHUB_ENV
+
+    - name: Upload release build
+      id: upload-release-asset-neutral
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./vsix/csharp-${{ env.VERSION }}.vsix
+        asset_name: csharp-platform-neutral-${{ env.VERSION }}.vsix
+        asset_content_type: application/zip

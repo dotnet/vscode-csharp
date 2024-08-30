@@ -1,0 +1,66 @@
+name: OmniSharp-VSCode CI
+
+on:
+  workflow_run:
+      workflows: ["Update Fork and Apply Patches"]
+      types:
+        - completed
+  # push:
+  #   branches: [ main, feature/** ]
+
+  # pull_request:
+  #   branches: [ main, feature/** ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'
+
+    - name: Install Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+
+    - name: Install dependencies
+      run: |
+          npm ci
+          npm i -g gulp
+    - name: Compile
+      run: npm run compile
+
+    - name: Prepublish VSIXs
+      run: npm run vscode:prepublish
+
+    - name: Build VSIXs
+      run: gulp 'vsix:release:package'
+
+    - name: Upload build artifact (darwin-x64)
+      id: upload-release-asset-darwin-x64
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./vsix/csharp-darwin-x64-*.vsix
+        name: csharp-darwin-x64.vsix
+
+    - name: Upload build artifact (linux-x64)
+      id: upload-release-asset-linux-x64
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./vsix/csharp-linux-x64-*.vsix
+        name: csharp-linux-x64.vsix
+
+    - name: Upload build artifact (win32-x64)
+      id: upload-release-asset-win32-x64
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./vsix/csharp-win32-x64-*.vsix
+        name: csharp-win32-x64.vsix

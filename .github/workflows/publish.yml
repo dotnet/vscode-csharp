@@ -1,0 +1,43 @@
+on:
+  release:
+    types:
+      - released
+
+name: Publish the Extension to OpenVSX
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'
+
+    - name: Install Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+
+    - name: Install dependencies
+      run: |
+          npm ci
+          npm i -g gulp
+          npm i -g ovsx
+    - name: Compile
+      run: npm run compile
+
+    - name: Prepublish VSIX
+      run: npm run vscode:prepublish
+
+    - name: Build VSIX
+      run: gulp 'vsix:release:neutral'
+
+    - name: Publish to Open-VSX
+      run: ovsx publish --packagePath $(find . -iname *.vsix) -p ${{ secrets.OPEN_VSX_TOKEN }}
