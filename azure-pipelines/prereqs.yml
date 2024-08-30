@@ -11,10 +11,7 @@ steps:
 # The server package is downloaded from NuGet
 - task: NuGetAuthenticate@1
 
-- task: NodeTool@0
-  displayName: 'Install Node.js 20.x'
-  inputs:
-    versionSpec: '20.x'
+- template: /azure-pipelines/install-node.yml@self
 
 # Some tests use predefined docker images with a specific version of .NET installed.
 # So we avoid installing .NET in those cases.
