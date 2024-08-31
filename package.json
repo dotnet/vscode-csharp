@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "blipk",
-  "version": "2024-08-31_02-25",
+  "version": "2024-08-31_02-38",
   "description": "Base language support for C# with libre NetCoreDbg debugger",
   "displayName": "C# with NetCoreDbg",
   "author": "blipk",
@@ -49,13 +49,13 @@
     {
       "moniker": {
         "name": "Microsoft.CodeAnalysis.LanguageClient.SolutionSnapshotProvider",
-        "version": "2024-08-31_02-25"
+        "version": "2024-08-31_02-38"
       }
     },
     {
       "moniker": {
         "name": "Microsoft.VisualStudio.CSharpExtension.BuildResultService",
-        "version": "2024-08-31_02-25"
+        "version": "2024-08-31_02-38"
       }
     }
   ],
