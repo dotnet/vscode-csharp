@@ -84,5 +84,5 @@ jobs:
     - name: Upload build artifact (platform-neutral)
       uses: actions/upload-artifact@v3
       with:
-        path: ./vsix/csharp-platform-neutral-*.vsix
+        path: ./vsix/csharp-[0-9.]*.vsix
         name: csharp-platform-neutral.vsix
