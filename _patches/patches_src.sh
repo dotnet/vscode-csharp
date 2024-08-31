@@ -160,8 +160,8 @@ sed -i "1i import * as path from 'path';" src/razor/src/extension.ts
 # sed -i "s/import { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/import type { RazorLanguageServerOptions } from '.\/razorLanguageServerOptions';/" src/razor/src/extension.ts
 # sed -i "s/import { HostEventStream } from '.\/hostEventStream';/import type { HostEventStream } from '.\/hostEventStream';/" src/razor/src/extension.ts
 sed -i "/    vscodeTelemetryReporter: TelemetryReporter,/d" src/razor/src/extension.ts
-python "$rs" "src/razor/src/extension.ts" "import TelemetryReporter from '@vscode/extension-telemetry';\n" "$replacement"
-python "$rs" "src/razor/src/extension.ts" "import { getComponentPaths } from '../../lsptoolshost/builtInComponents';\n" "$replacement"
+python "$rs" "src/razor/src/extension.ts" "import TelemetryReporter from '@vscode/extension-telemetry';\n" ""
+python "$rs" "src/razor/src/extension.ts" "import { getComponentPaths } from '../../lsptoolshost/builtInComponents';\n" ""
 
 cat << 'EOL' > temp_replacement.sed
         const dotnetRuntimePath = path.dirname(dotnetInfo.path);

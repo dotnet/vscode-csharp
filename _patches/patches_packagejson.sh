@@ -10,27 +10,27 @@ replacement=""
 
 # Set version to current date/time
 PACKAGE_VERSION=$(date +'%Y-%m-%d_%H-%M')
-python3 "$rs" "$rf" '"version": "(.|\s)*?"' "\"version\": \"$PACKAGE_VERSION\""
+python "$rs" "$rf" '"version": "(.|\s)*?"' "\"version\": \"$PACKAGE_VERSION\""
 
 pattern='"publisher": "ms-dotnettools"'
 replacement='"publisher": "blipk"'
-python3 "$rs" "$rf" "$pattern" "$replacement"
+python "$rs" "$rf" "$pattern" "$replacement"
 
 pattern='"description": "Base language support for C#"'
 replacement='"description": "Base language support for C# with libre NetCoreDbg debugger"'
-python3 "$rs" "$rf" "$pattern" "$replacement"
+python "$rs" "$rf" "$pattern" "$replacement"
 
 pattern='"displayName": "C#"'
 replacement='"displayName": "C# with NetCoreDbg"'
-python3 "$rs" "$rf" "$pattern" "$replacement"
+python "$rs" "$rf" "$pattern" "$replacement"
 
 pattern='"author": "Microsoft Corporation"'
 replacement='"author": "blipk"'
-python3 "$rs" "$rf" "$pattern" "$replacement"
+python "$rs" "$rf" "$pattern" "$replacement"
 
 pattern='github\.com/dotnet/vscode-csharp'
 replacement='github.com/blipk/vscodium-csharp'
-python3 "$rs" "$rf" "$pattern" "$replacement"
+python "$rs" "$rf" "$pattern" "$replacement"
 
 pattern='{
       "id": "Debugger",
@@ -389,12 +389,11 @@ replacement='{
       ],
       "integrity": "EE83F90BC19447192171703BCCCA30CADB6177C9D37CCE61E6042B8662321C80"
     },'
-python3 "$rs" "$rf" "$pattern" "$replacement"
+python "$rs" "$rf" "$pattern" "$replacement"
 
 
 pattern='~/vsdbg/vsdbg'
 replacement='/usr/bin/netcoredbg'
-python3 "$rs" "$rf" "$pattern" "$replacement"
-
+python "$rs" "$rf" "$pattern" "$replacement"
 
 echo "$FILE applied successfully."
