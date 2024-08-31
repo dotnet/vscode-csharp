@@ -55,7 +55,7 @@ jobs:
           async function downloadArtifact(url, dest) {
             const response = await fetch(url, {
               headers: {
-                Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+                Authorization: `Bearer ${process.env.GH_TOKEN}`,
               }
             });
             if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
@@ -97,6 +97,7 @@ jobs:
           });
       env:
         WORKFLOW_RUN_ID: ${{ env.WORKFLOW_RUN_ID }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Extract build artifacts
       run: |
