@@ -127,35 +127,13 @@ gulp.task('vsix:release:package:neutral', async () => {
     await doPackageOffline(undefined);
 });
 
-async function doPackageNeutral() {
-    let prerelease = false;
-    if (argv.prerelease) {
-        prerelease = true;
-    }
-
-    try {
-        // Get the package.json.
-        const packageJSON = getPackageJSON();
-        // Output the platform neutral VSIX using the platform neutral server bits we created before.
-        await buildVsix(packageJSON, packedVsixOutputRoot, prerelease);
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-gulp.task('vsix:release:package:neutral-clean', async () => {
-    await cleanAsync();
-    await doPackageNeutral();
-});
-
-
 gulp.task(
     'vsix:release:package',
     gulp.series(
         'vsix:release:package:windows',
         'vsix:release:package:linux',
         'vsix:release:package:darwin',
-        'vsix:release:package:neutral-clean'
+        'vsix:release:package:neutral'
     )
 );
 
