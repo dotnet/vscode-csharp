@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!/bin/bash
 set -x
 set -e
 
@@ -394,3 +393,6 @@ python3 "$rs" "$rf" "$pattern" "$replacement"
 pattern='~/vsdbg/vsdbg'
 replacement='/usr/bin/netcoredbg'
 python3 "$rs" "$rf" "$pattern" "$replacement"
+
+
+echo "$FILE applied successfully."

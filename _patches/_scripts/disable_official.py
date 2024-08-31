@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 """
-This disables the official C# extension `blipk-vscodium.csharp`
+This disables the official C# extension `ms-dotnettools.csharp`
 And removes it as a depency for any other extensions that rely on it.
-And adds this extension as a depency instead.
 
 This allows those extensions to be used with this fork.
 
@@ -66,8 +65,9 @@ def update_extension_compatibility(extensions_file_path, undo=False):
         print(f"Could not find {extensions_file_path}")
         return
 
-    remove_ids = ["blipk-vscodium.csharp"]
-    add_ids = ["blipk.csharp"]
+    remove_ids = ["blipk.csharp", "ms-dotnettools.csharp"]
+    # add_ids = ["blipk.csharp"]
+    add_ids = []
 
     if undo:
         remove_ids, add_ids = add_ids, remove_ids
@@ -115,7 +115,7 @@ def main(undo=False):
 
 
     update_extension_compatibility(extensions_file_path, undo)
-    disable_extension(extensions_file_path, "blipk-vscodium.csharp")
+    disable_extension(extensions_file_path, "ms-dotnettools.csharp")
 
 
 if __name__ == "__main__":
