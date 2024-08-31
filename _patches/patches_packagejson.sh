@@ -5,6 +5,8 @@ set -e
 # Patch package.json
 rf="package.json"
 rs="_patches/replacer.py"
+pattern=""
+replacement=""
 
 # Set version to current date/time
 PACKAGE_VERSION=$(date +'%Y-%m-%d_%H-%M')

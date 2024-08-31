@@ -6,6 +6,8 @@ set -e
 
 # Python regex patching script
 rs="_patches/replacer.py"
+pattern=""
+replacement=""
 
 # Patch src/coreclrDebug/activate.ts
 sed -i "s/if (!executable) {/const pipeTransport = _session.configuration.pipeTransport;\n        if (!executable || typeof pipeTransport === 'object') {/" src/coreclrDebug/activate.ts

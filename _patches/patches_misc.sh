@@ -6,6 +6,8 @@ set -e
 
 # Python regex patching script
 rs="_patches/replacer.py"
+pattern=""
+replacement=""
 
 # Remove/update licences
 rm RuntimeLicenses/dependencies/OpenDebugAD7-License.txt || true

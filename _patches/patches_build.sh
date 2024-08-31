@@ -4,6 +4,8 @@ set -e
 
 # Python regex patching script
 rs="_patches/replacer.py"
+pattern=""
+replacement=""
 
 # Update readme
 yes | /bin/cp -rf _patches/README.md README.md

@@ -44,7 +44,7 @@ import { RazorSignatureHelpProvider } from './signatureHelp/razorSignatureHelpPr
 import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
 import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
 import { RazorSimplifyMethodHandler } from './simplify/razorSimplifyMethodHandler';
-/usr/bin/netcoredbgimport { CSharpDevKitExports } from '../../csharpDevKitExports';
+import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntimeExtensionResolver';
 import { PlatformInformation } from '../../shared/platform';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
@@ -52,7 +52,7 @@ import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsR
 import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHandler';
 import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
-/usr/bin/netcoredbg
+
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
 export async function activate(
