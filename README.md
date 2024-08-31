@@ -15,7 +15,7 @@ Patches originally based on changes made in [free-vscode-csharp](https://github.
 
 - Download the extension vsix from [latest CI run artifacts](https://github.com/blipk/vscodium-csharp/actions/workflows/ci.yml).
 
-- This extension is NOT YET published at [Open VSX](https://open-vsx.org/extension/blipk/vscodium-csharp).
+- This extension is published at [Open VSX](https://open-vsx.org/extension/blipk/csharp).
 
 #### Install this extension
 
