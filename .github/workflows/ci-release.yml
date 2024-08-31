@@ -57,9 +57,9 @@ jobs:
 
           async function downloadArtifact(url, dest) {
             const response = await fetch(url, {
-              headers: {
-                Authorization: `Bearer ${process.env.GH_TOKEN}`,
-              }
+              //headers: {
+              //  Authorization: `Bearer ${process.env.GH_TOKEN}`,
+              //}
             });
             if (!response.ok) throw new Error(`Failed to fetch ${url} - ${response.statusText}`);
             const fileStream = fs.createWriteStream(dest);
