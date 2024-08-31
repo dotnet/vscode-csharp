@@ -22,6 +22,8 @@ import { OmnisharpLoggerObserver } from './observers/omnisharpLoggerObserver';
 import { OmnisharpStatusBarObserver } from './observers/omnisharpStatusBarObserver';
 import { PlatformInformation } from './shared/platform';
 import { StatusBarItemAdapter } from './statusBarItemAdapter';
+import { TelemetryObserver } from './observers/telemetryObserver';
+import TelemetryReporter from '@vscode/extension-telemetry';
 import { ProjectStatusBarObserver } from './observers/projectStatusBarObserver';
 import { vscodeNetworkSettingsProvider } from './networkSettings';
 import { ErrorMessageObserver } from './observers/errorMessageObserver';
@@ -75,6 +77,10 @@ export async function activate(
         throw error;
     }
 
+    const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
+    const reporter = new TelemetryReporter(aiKey);
+    // ensure it gets properly disposed. Upon disposal the events will be flushed.
+    context.subscriptions.push(reporter);
 
     const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
     const dotnetChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
@@ -98,6 +104,8 @@ export async function activate(
     await initializeDotnetPath();
 
     const useModernNetOption = omnisharpOptions.useModernNet;
+    const telemetryObserver = new TelemetryObserver(platformInfo, () => reporter, useModernNetOption);
+    eventStream.subscribe(telemetryObserver.post);
 
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = useOmnisharpServer && useModernNetOption !== true;
@@ -133,6 +141,7 @@ export async function activate(
             context,
             context.extension.extensionPath,
             eventStream,
+            reporter,
             csharpDevkitExtension,
             platformInfo,
             /* useOmnisharpServer */ false
@@ -155,6 +164,7 @@ export async function activate(
             csharpChannel,
             dotnetTestChannel,
             dotnetChannel,
+            reporter,
             roslynLanguageServerEvents
         );
     } else {
@@ -266,6 +276,7 @@ export async function activate(
                 context,
                 context.extension.extensionPath,
                 eventStream,
+                reporter,
                 undefined,
                 platformInfo,
                 /* useOmnisharpServer */ true
@@ -317,6 +328,10 @@ export async function activate(
         );
     }
 
+    const activationProperties: { [key: string]: string } = {
+        serverKind: useOmnisharpServer ? 'OmniSharp' : 'Roslyn',
+    };
+    reporter.sendTelemetryEvent('CSharpActivated', activationProperties);
 
     if (!useOmnisharpServer) {
         debugSessionTracker.initializeDebugSessionHandlers(context);

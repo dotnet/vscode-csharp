@@ -4,4 +4,4 @@
  *--------------------------------------------------------------------------------------------*/
 
 // The Razor experience is shipped as part of OmniSharp, this is their extension ID.
-export const razorExtensionId = 'blipk-vscodium.csharp';
+export const razorExtensionId = 'ms-dotnettools.csharp';

@@ -22,9 +22,9 @@ export async function activateCSharpExtension(): Promise<void> {
         await vscode.commands.executeCommand('workbench.action.reloadWindow');
     }
 
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('blipk-vscodium.csharp');
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
-        throw new Error('Failed to find installation of blipk-vscodium.csharp');
+        throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
     // Run a restore manually to make sure the project is up to date since we don't have automatic restore.
@@ -40,7 +40,7 @@ export async function activateCSharpExtension(): Promise<void> {
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
     await csharpExtension.activate();
     await csharpExtension.exports.initializationFinished();
-    console.log('blipk-vscodium.csharp activated');
+    console.log('ms-dotnettools.csharp activated');
     console.log(`Extension Log Directory: ${csharpExtension.exports.logDirectory}`);
 
     if (shouldRestart) {
@@ -73,7 +73,7 @@ export async function revertActiveFile(): Promise<void> {
 }
 
 export async function restartLanguageServer(): Promise<void> {
-    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('blipk-vscodium.csharp');
+    const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     // Register to wait for initialization events and restart the server.
     const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
         csharpExtension!.exports.experimental.languageServerEvents.onServerStateChange(async (e) => {
