@@ -32,9 +32,10 @@ Either option will prompt you to choose the vsix file you downloaded for your pl
 3. If you don't have a launch.json set up: from the debugging tab click `create a launch.json file` then click the suggested .NET debugger, then select your .csproj file
 4. You can now debug C# from the debugging tab, which will use NetCoreDbg
 
-Because some other extensions (Auto-Using for C#, C# Dev Kit) depend on the official C# extension they won't be available while using this extension.
+Some other extensions (C# Dev Kit) depend on the official C# extension and will have to be disabled with it.
 
-PR's to fork and patch those to depend on this extension instead are welcome.
+To avoid this limitation you can use the python script in `_patches/_scripts/disable_official.py` which changes extension dependencies from the official extension to this one.
+
 
 
 
