@@ -1,3 +1,4 @@
+import * as path from 'path';
 ﻿/*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -43,8 +44,7 @@ import { RazorSignatureHelpProvider } from './signatureHelp/razorSignatureHelpPr
 import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
 import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
 import { RazorSimplifyMethodHandler } from './simplify/razorSimplifyMethodHandler';
-import TelemetryReporter from '@vscode/extension-telemetry';
-import { CSharpDevKitExports } from '../../csharpDevKitExports';
+/usr/bin/netcoredbgimport { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntimeExtensionResolver';
 import { PlatformInformation } from '../../shared/platform';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
@@ -52,8 +52,7 @@ import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsR
 import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHandler';
 import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
-import { getComponentPaths } from '../../lsptoolshost/builtInComponents';
-
+/usr/bin/netcoredbg
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
 export async function activate(
@@ -61,7 +60,6 @@ export async function activate(
     context: ExtensionContext,
     languageServerDir: string,
     eventStream: HostEventStream,
-    vscodeTelemetryReporter: TelemetryReporter,
     csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
     platformInfo: PlatformInformation,
     enableProposedApis = false
@@ -90,29 +88,27 @@ export async function activate(
         );
 
         const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();
+        const dotnetRuntimePath = path.dirname(dotnetInfo.path);
 
-        let telemetryExtensionDllPath = '';
+        // Take care to always run .NET processes on the runtime that we intend.
+        // The dotnet.exe we point to should not go looking for other runtimes.
+        const env: NodeJS.ProcessEnv = { ...process.env };
+        env.DOTNET_ROOT = dotnetRuntimePath;
+        env.DOTNET_MULTILEVEL_LOOKUP = '0';
+        // Save user's DOTNET_ROOT env-var value so server can recover the user setting when needed
+        env.DOTNET_ROOT_USER = process.env.DOTNET_ROOT ?? 'EMPTY';
+
         // Set up DevKit environment for telemetry
         if (csharpDevkitExtension) {
-            await setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, logger);
-
-            if (vscode.env.isTelemetryEnabled) {
-                const razorComponentPaths = getComponentPaths('razorDevKit', undefined);
-                if (razorComponentPaths.length !== 1) {
-                    logger.logError('Failed to find Razor DevKit telemetry extension path.', undefined);
-                } else {
-                    telemetryExtensionDllPath = razorComponentPaths[0];
-                }
-            }
+            await setupDevKitEnvironment(env, csharpDevkitExtension, logger);
         }
 
         const languageServerClient = new RazorLanguageServerClient(
             vscodeType,
             languageServerDir,
             razorTelemetryReporter,
-            vscodeTelemetryReporter,
-            telemetryExtensionDllPath,
-            dotnetInfo.env,
+            csharpDevkitExtension !== undefined,
+            env,
             dotnetInfo.path,
             logger
         );
