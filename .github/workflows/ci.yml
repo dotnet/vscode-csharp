@@ -24,17 +24,17 @@ jobs:
     timeout-minutes: 30
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.x'
 
     - name: Install Node.js 18.x
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18.x'
         registry-url: https://registry.npmjs.org/
@@ -62,27 +62,27 @@ jobs:
 
     - name: Upload build artifact (darwin-x64)
       id: upload-release-asset-darwin-x64
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ./vsix/csharp-darwin-x64-*.vsix
         name: csharp-darwin-x64.vsix
 
     - name: Upload build artifact (linux-x64)
       id: upload-release-asset-linux-x64
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ./vsix/csharp-linux-x64-*.vsix
         name: csharp-linux-x64.vsix
 
     - name: Upload build artifact (win32-x64)
       id: upload-release-asset-win32-x64
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ./vsix/csharp-win32-x64-*.vsix
         name: csharp-win32-x64.vsix
 
     - name: Upload build artifact (platform-neutral)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ./vsix/csharp-[0-9.]*.vsix
         name: csharp-platform-neutral.vsix
