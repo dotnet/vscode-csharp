@@ -1,8 +1,6 @@
 MIT License
 
-Copyright (c) Blipk A.D. and Contributors for Current Work and Modifications in This Fork,
-Copyright (c) Muhammad Sammy and Contributors for Current Work and Modifications in Their Fork.
-Original Work Copyright (c) .NET Foundation and Contributors
+Copyright (c) .NET Foundation and Contributors
 All Rights Reserved
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
