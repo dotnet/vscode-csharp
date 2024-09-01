@@ -57,19 +57,23 @@ npx gulp 'vsix:release:package:neutral-clean'
 A series of GitHub Action workflows are run to apply the patches and build the release.
 
 1. apply-patches.yml:
-    - first it fetches and checkouts the current state of the main branch from the official C# extension upstream (excluding the .github and .vscode directories)
+    - first it fetches and then checkouts the current state of the main branch from the official C# extension upstream
     - then it runs `___patching/_patcher.sh` which runs any `.sh` files in the `___patching/_patches` directory - these are how patches are applied
-    - it then merges the patched upstream into this repository (excluding the .github and .vscode directories)
+    - it then merges the patched upstream and commits it to this repository
+
+    Notes:
+    - The `.github` and `.vscode` directories are excluded from any git actions, this is to avoid merge conflicts as these are not necessary for the extension
+    - The commits made before and after the patch have messsages with `[pre-patch]` and `[post-patch]` respectively
 
     Run conditions:
     - it is run whenever pushing to main, or at midnight every night
-    - it won't run if it doesnt detect any changes upstream, or if the last `ci-build.yml` failed
+    - it won't run if it doesnt detect any changes upstream AND if the last `ci-build.yml` succeeded
     - to force it to run push a commit with `[force-ci]` in its message
 2. ci-build.yml: this installs all dependencies and builds the `.vsix` files for each platform
 3. ci-release.yml: this creates a github release and uploads the `.vsix` files from the previous workflow to it, then it publishes it to Open VSX
 
 ###### Other notes
 
-- The packages are versioned by the date and time they were created at
+- The github releases packages are versioned by the date and time they were created at, Open VSX package has the version from `version.json`
 
 </details>
