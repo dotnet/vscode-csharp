@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-"""
+r"""
 This is a lot easier than sed or awk for multiline search and replace
 
-To match inclusive and inbetween two parts use $pattern_start(.|\s)*?$pattern_end
+To match inclusive and inbetween two parts use $pattern_start((.|\s)*?)$pattern_end
 
 Remember to escape brackets and dots in the pattern.
 
 Uage example:
-    python _patches/replacer.py "$source_file" "$pattern" "$replacement"
+    python replacer.py "$source_file" "$pattern" "$replacement"
 """
 import sys
 import re

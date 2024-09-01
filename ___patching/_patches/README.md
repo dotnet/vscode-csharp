@@ -13,7 +13,7 @@ Patches originally based on changes made in [free-vscode-csharp](https://github.
 
 - Download the vsix file from the [latest release assets](https://github.com/blipk/vscodium-csharp/releases/latest).
 
-- Download the extension vsix from [latest CI run artifacts](https://github.com/blipk/vscodium-csharp/actions/workflows/ci.yml).
+- Download the extension vsix from [latest CI run artifacts](https://github.com/blipk/vscodium-csharp/actions/workflows/ci-build.yml).
 
 - This extension is published at [Open VSX](https://open-vsx.org/extension/blipk/csharp).
 
@@ -34,7 +34,7 @@ Either option will prompt you to choose the vsix file you downloaded for your pl
 
 Some other extensions (C# Dev Kit) depend on the official C# extension and will have to be disabled with it.
 
-To avoid this limitation you can use the python script in `_patches/_scripts/disable_official.py` which changes extension dependencies from the official extension to this one.
+To avoid this limitation you can use the python script in `___patching/_patches/_scripts/disable_official.py` which changes extension dependencies from the official extension to this one.
 
 
 
@@ -58,11 +58,11 @@ A series of GitHub Action workflows are run to apply the patches and build the r
 
 1. apply-patches.yml:
     - first it merges changes from the official C# extension upstream
-    - then it runs any `.sh` files in the _patches directory - these are how patches are applied
+    - then it runs `___patching/_patcher.sh` which runs any `.sh` files in the `___patching/_patches` directory - these are how patches are applied
     - it is run whenever pushing to main, or at midnight every night
-    - it won't run if it doesnt detect any changes upstream, or if the last `ci.yml` failed
+    - it won't run if it doesnt detect any changes upstream, or if the last `ci-build.yml` failed
     - to force it to run push a commit with `[force-ci]` in its message
-2. ci.yml: this installs all dependencies and builds the `.vsix` files for each platform
+2. ci-build.yml: this installs all dependencies and builds the `.vsix` files for each platform
 3. ci-release.yml: this creates a github release and uploads the `.vsix` files from the previous workflow to it - it will also eventually upload them to Open VSX
 
 ###### Other notes

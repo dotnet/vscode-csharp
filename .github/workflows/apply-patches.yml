@@ -14,6 +14,11 @@ on:
   push:
     branches:
       - main
+  # push:
+  #   branches: [ main, feature/** ]
+
+  # pull_request:
+  #   branches: [ main, feature/** ]
 
 jobs:
   update-and-patch-fork:
@@ -90,12 +95,6 @@ jobs:
             echo "FORCE_CI=false" >> $GITHUB_ENV
           fi
 
-      - name: Fail if no upstream changes and CI succeeded
-        if: steps.check-changes.outputs.upstream_commits == '0' && steps.check-ci.outputs.ci_success == 'true' && env.FORCE_CI != 'true'
-        run: |
-          echo "No changes in upstream repository and the last run of OmniSharp-VSCode CI succeeded. Failing the workflow."
-          exit 1
-
       - name: Get current date (After Patch)
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d %R')"
@@ -111,13 +110,9 @@ jobs:
 
       - name: Apply Patches
         run: |
-          if test -d _patches; then
-            for patch in _patches/*.sh; do
-              echo "Applying $patch"
-              chmod +x "$patch"
-              . "$patch"
-            done
-          fi
+          PATCHER="___patching/patcher.sh"
+          chmod +x "$PATCHER"
+          . "$PATCHER"
 
       - name: Sync/Merge With Upstream (without .github)
         run: |
@@ -132,3 +127,9 @@ jobs:
           git add -- ':!./.github'
           git commit -m "[post-patch] patching at ${{ steps.date.outputs.date }}"
           git push origin main
+
+      - name: Skip proceeding to build if no upstream changes and last CI succeeded
+        if: steps.check-changes.outputs.upstream_commits == '0' && steps.check-ci.outputs.ci_success == 'true' && env.FORCE_CI != 'true'
+        run: |
+          echo "No changes in upstream repository and the last run of OmniSharp-VSCode CI succeeded. Failing the workflow."
+          exit 1

@@ -11,11 +11,6 @@ on:
         description: 'Run this manually'
         required: false
         type: boolean
-  # push:
-  #   branches: [ main, feature/** ]
-
-  # pull_request:
-  #   branches: [ main, feature/** ]
 
 jobs:
   build:
