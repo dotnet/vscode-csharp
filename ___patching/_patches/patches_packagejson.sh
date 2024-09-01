@@ -13,6 +13,10 @@ rf="$SOURCE_DIR/package.json"
 PACKAGE_VERSION=$(date +'%Y-%m-%d_%H-%M')
 python "$rs" "$rf" '"version": "((.|\s)*?)"' "\"version\": \"$PACKAGE_VERSION\""
 
+pattern='"license": "SEE LICENSE IN RuntimeLicenses/license.txt",'
+replacement='"license": "SEE LICENSE.txt AND RuntimeLicenses/license.txt",'
+python "$rs" "$rf" "$pattern" "$replacement"
+
 pattern='"publisher": "ms-dotnettools"'
 replacement='"publisher": "blipk"'
 python "$rs" "$rf" "$pattern" "$replacement"
