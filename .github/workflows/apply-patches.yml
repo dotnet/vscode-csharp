@@ -64,7 +64,7 @@ jobs:
 
             const ciWorkflow = workflows.workflows.find(workflow => workflow.name === ciBuildName);
             if (!ciWorkflow) {
-              core.setFailed(`${ciBuildName} workflow not found``);
+              core.setFailed(`${ciBuildName} workflow not found`);
               return;
             }
 
@@ -77,10 +77,10 @@ jobs:
             });
 
             if (workflowRuns.total_count > 0) {
-              console.log(`The last run of ${ciBuildName} succeeded``);
+              console.log(`The last run of ${ciBuildName} succeeded`);
               core.setOutput('ci_success', 'true');
             } else {
-              console.log(`The last run of ${ciBuildName} did not succeed``);
+              console.log(`The last run of ${ciBuildName} did not succeed`);
               core.setOutput('ci_success', 'false');
             }
 
