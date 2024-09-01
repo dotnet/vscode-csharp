@@ -98,17 +98,23 @@ jobs:
           fi
           echo $FORCE_CI
 
-      - name: Get current date (After Patch)
+      - name: Get current date/time
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d %R')"
+        run: echo "RUN_DATE_TIME=$(date +'%Y-%m-%d %R')" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout Upstream Changes (without .github)
+      - name: Checkout Upstream Changes
         run: |
           git checkout upstream/main -- .
+
           git reset HEAD .github
           git restore --staged .github
           git add -- ':!./.github'
-          git commit -m "[pre-patch] Update from upstream at ${{ steps.date.outputs.date }}"
+
+          git reset HEAD .vscode
+          git restore --staged .vscode
+          git add -- ':!./.vscode'
+
+          git commit -m "[pre-patch] Update from upstream at ${{ steps.date.outputs.RUN_DATE_TIME }}"
           git push origin main
 
       - name: Apply Patches
@@ -117,18 +123,24 @@ jobs:
           chmod +x "$PATCHER"
           . "$PATCHER"
 
-      - name: Sync/Merge With Upstream (without .github)
+      - name: Sync/Merge With Upstream
         run: |
           git checkout main
           git merge --no-commit --no-ff upstream/main
           git reset -- ./.github
+          git reset -- ./.vscode
 
       - name: Commit & Push Changes
         run: |
           git reset HEAD .github
           git restore --staged .github
           git add -- ':!./.github'
-          git commit -m "[post-patch] patching at ${{ steps.date.outputs.date }}"
+
+          git reset HEAD .vscode
+          git restore --staged .vscode
+          git add -- ':!./.vscode'
+
+          git commit -m "[post-patch] patching at ${{ steps.date.outputs.RUN_DATE_TIME }}"
           git push origin main
 
       - name: Skip proceeding to build if no upstream changes and last CI succeeded
