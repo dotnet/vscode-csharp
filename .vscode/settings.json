@@ -1,7 +1,7 @@
 {
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
-    "prettier.requireConfig": true,
+    "prettier.requireConfig": false,
     "files.exclude": {
         "typings": false,
         "vsix": true
@@ -20,8 +20,7 @@
     "editor.formatOnSave": false,
     "eslint.lintTask.enable": true,
     "dotnet.defaultSolution": "disable",
-    "jest.autoRun": "off",
     "shellcheck.customArgs": [
         "-x"
-    ]
+    ],
 }

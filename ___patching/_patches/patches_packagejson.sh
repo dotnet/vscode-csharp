@@ -40,8 +40,8 @@ python "$rs" "$rf" "$pattern" "$replacement"
 
 # Get the URL of the latest netcoredbg release
 initial_url="https://github.com/Samsung/netcoredbg/releases/latest"
-final_url=$(curl -Ls -o /dev/null -w %{url_effective} "$initial_url")
-last_part=$(echo $final_url | awk -F/ '{print $NF}')
+final_url=$(curl -Ls -o /dev/null -w "%{url_effective}" "$initial_url")
+last_part=$(echo "$final_url" | awk -F/ '{print $NF}')
 NETCORE_DBG_RELEASE_BASE="https://github.com/Samsung/netcoredbg/releases/download/$last_part"
 
 

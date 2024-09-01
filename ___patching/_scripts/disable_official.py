@@ -15,10 +15,11 @@ import sys
 import json
 import shutil
 
+
 def update_extension_dependencies(
     file_path,
     remove_extension_ids: list[str] | None = None,
-    add_extension_ids: list[str] | None = None
+    add_extension_ids: list[str] | None = None,
 ):
     """
     Remove and/or add extensionDependencies in a vscode extensions package.json
@@ -32,7 +33,7 @@ def update_extension_dependencies(
         return
 
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             data = json.load(file)
     except FileNotFoundError:
         print(f"Could not find {file_path}")
@@ -50,12 +51,14 @@ def update_extension_dependencies(
                     data["extensionDependencies"].append(add_extension_id)
                     deps_added.append(add_extension_id)
 
-
     if deps_removed or deps_added:
-        print(f"Updated `extensionDependencies` in {file_path}\n    - removed: {deps_removed}\n    + added:   {deps_added}")
+        print(
+            f"Updated `extensionDependencies` in {file_path}\n    - removed: {deps_removed}\n    + added:   {deps_added}"
+        )
 
-    with open(file_path, 'w') as file:
+    with open(file_path, "w") as file:
         json.dump(data, file, indent=4)
+
 
 def update_extension_compatibility(extensions_file_path, undo=False):
     try:
@@ -74,12 +77,10 @@ def update_extension_compatibility(extensions_file_path, undo=False):
 
     for extension in extensions_file:
         print(f"Checking extension `{extension['identifier']['id']}`")
-        extension_package_file = os.path.join(extension['location']['path'], "package.json")
-        update_extension_dependencies(
-            extension_package_file,
-            remove_ids,
-            add_ids
+        extension_package_file = os.path.join(
+            extension["location"]["path"], "package.json"
         )
+        update_extension_dependencies(extension_package_file, remove_ids, add_ids)
 
 
 def disable_extension(extensions_file_path, extension_id, delete=False):
@@ -92,17 +93,17 @@ def disable_extension(extensions_file_path, extension_id, delete=False):
 
     deleted = []
     for index, extension in enumerate(extensions_file):
-        if extension['identifier']['id'] == extension_id:
+        if extension["identifier"]["id"] == extension_id:
             deleted.append(index)
 
         if delete:
-            shutil.rmtree(extension['location']['path'])
+            shutil.rmtree(extension["location"]["path"])
 
     for index in deleted:
         del extensions_file[index]
 
     if deleted:
-        with open(extensions_file_path, 'w') as file:
+        with open(extensions_file_path, "w") as file:
             json.dump(extensions_file, file, indent=4)
         print(f"Removed `{extension_id}` from {extensions_file_path}")
     else:
@@ -112,7 +113,6 @@ def disable_extension(extensions_file_path, extension_id, delete=False):
 def main(undo=False):
     extensions_dir = os.path.expanduser("~/.vscode-oss/extensions/")
     extensions_file_path = os.path.join(extensions_dir, "extensions.json")
-
 
     update_extension_compatibility(extensions_file_path, undo)
     disable_extension(extensions_file_path, "ms-dotnettools.csharp")

@@ -21,7 +21,7 @@ with open(target_file, "r") as file:
     content = file.read()
 
 try:
-    regex = re.compile(re.escape(pattern), re.DOTALL | re.MULTILINE )
+    regex = re.compile(re.escape(pattern), re.DOTALL | re.MULTILINE)
     new_content, number_of_subs_made = re.subn(pattern, replacement, content)
 
     if number_of_subs_made == 0:
@@ -34,6 +34,6 @@ except Exception as e:
 
 
 with open(target_file, "w") as file:
-   file.write(new_content)
+    file.write(new_content)
 
 print(f"Made {number_of_subs_made} substitutions in file {target_file}")
