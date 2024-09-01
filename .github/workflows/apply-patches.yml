@@ -128,13 +128,9 @@ jobs:
 
       - name: Commit & Push Changes
         run: |
-          git reset HEAD .github
-          git restore --staged .github
-          git add -- ':!./.github'
-
-          git reset HEAD .vscode
-          git restore --staged .vscode
-          git add -- ':!./.vscode'
+          git reset HEAD .github .vscode
+          git restore --staged .github .vscode
+          git add -- ':!./.github' ':!./.vscode'
 
           git commit -m "[post-patch] patching at ${{ steps.date.outputs.RUN_DATE_TIME }}"
           git push origin main
