@@ -48,7 +48,7 @@ jobs:
         run: |
           UPSTREAM_COMMITS=$(git rev-list HEAD..upstream/main --count)
           echo "Upstream commits: $UPSTREAM_COMMITS"
-          echo "::set-output name=upstream_commits::$UPSTREAM_COMMITS"
+          echo "UPSTREAM_COMMITS=$UPSTREAM_COMMITS" >> "$GITHUB_OUTPUT"
 
       - name: Check Last Run of Step 2 - Build VSIX packages
         id: check-ci
@@ -136,7 +136,7 @@ jobs:
           git push origin main
 
       - name: Skip proceeding to build if no upstream changes and last CI succeeded
-        if: (steps.check-changes.outputs.upstream_commits == '0' && steps.check-ci.outputs.ci_success == 'true') && env.FORCE_CI != 'true'
+        if: (steps.check-changes.outputs.UPSTREAM_COMMITS == '0' && steps.check-ci.outputs.ci_success == 'true') && env.FORCE_CI != 'true'
         run: |
           echo "No changes in upstream repository and the last run of `Step 2 - Build VSIX packages`` succeeded. Failing the workflow."
           exit 1
