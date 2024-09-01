@@ -9,6 +9,7 @@ Remember to escape brackets and dots in the pattern.
 Uage example:
     python replacer.py "$source_file" "$pattern" "$replacement"
 """
+
 import sys
 import re
 
