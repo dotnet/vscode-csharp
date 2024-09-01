@@ -49,7 +49,7 @@ git clone https://github.com/blipk/vscodium-csharp.git
 cd vscodium-csharp
 npm install
 npm run vscode:prepublish
-npx gulp 'vsix:release:package:neutral-clean'
+npx gulp 'vsix:release:package:neutral'
 ```
 
 ##### CI Notes (GitHub Actions)
