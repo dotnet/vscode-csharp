@@ -57,8 +57,11 @@ npx gulp 'vsix:release:package:neutral-clean'
 A series of GitHub Action workflows are run to apply the patches and build the release.
 
 1. apply-patches.yml:
-    - first it fetches and checkouts the current state of the main branch from the official C# extension upstream
+    - first it fetches and checkouts the current state of the main branch from the official C# extension upstream (excluding the .github and .vscode directories)
     - then it runs `___patching/_patcher.sh` which runs any `.sh` files in the `___patching/_patches` directory - these are how patches are applied
+    - it then merges the patched upstream into this repository (excluding the .github and .vscode directories)
+
+    Run conditions:
     - it is run whenever pushing to main, or at midnight every night
     - it won't run if it doesnt detect any changes upstream, or if the last `ci-build.yml` failed
     - to force it to run push a commit with `[force-ci]` in its message
