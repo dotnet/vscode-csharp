@@ -34,7 +34,7 @@ Either option will prompt you to choose the vsix file you downloaded for your pl
 
 Some other extensions (C# Dev Kit) depend on the official C# extension and will have to be disabled with it.
 
-To avoid this limitation you can use the python script in `___patching/_patches/_scripts/disable_official.py` which changes extension dependencies from the official extension to this one.
+To avoid this limitation you can use the python script in [`___patching/_scripts/disable_official.py`](https://github.com/blipk/vscodium-csharp/blob/main/___patching/_scripts/disable_official.py) which changes extension dependencies from the official extension to this one.
 
 
 

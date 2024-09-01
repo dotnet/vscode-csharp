@@ -2,7 +2,7 @@
 
 """
 This disables the official C# extension `ms-dotnettools.csharp`
-And removes it as a depency for any other extensions that rely on it.
+And removes it as a dependency for any other extensions that rely on it.
 
 This allows those extensions to be used with this fork.
 
