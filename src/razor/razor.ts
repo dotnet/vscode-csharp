@@ -9,12 +9,14 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as Razor from '../../src/razor/src/extension';
 import { EventStream } from '../eventStream';
+import TelemetryReporter from '@vscode/extension-telemetry';
 import { PlatformInformation } from '../shared/platform';
 
 export async function activateRazorExtension(
     context: vscode.ExtensionContext,
     extensionPath: string,
     eventStream: EventStream,
+    vscodeTelemetryReporter: TelemetryReporter,
     csharpDevkitExtension: vscode.Extension<any> | undefined,
     platformInfo: PlatformInformation,
     useOmnisharpServer: boolean
@@ -43,6 +45,7 @@ export async function activateRazorExtension(
                 context,
                 languageServerDir,
                 eventStream,
+                vscodeTelemetryReporter,
                 csharpDevkitExtension,
                 platformInfo,
                 /* enableProposedApis: */ false
