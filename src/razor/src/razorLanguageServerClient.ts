@@ -15,7 +15,6 @@ import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsR
 import { resolveRazorLanguageServerLogLevel } from './razorLanguageServerTraceResolver';
 import { RazorLogger } from './razorLogger';
 import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
-import TelemetryReporter from '@vscode/extension-telemetry';
 import { randomUUID } from 'crypto';
 
 const events = {
@@ -37,8 +36,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         private readonly vscodeType: typeof vscode,
         private readonly languageServerDir: string,
         private readonly razorTelemetryReporter: RazorTelemetryReporter,
-        private readonly vscodeTelemetryReporter: TelemetryReporter,
-        private readonly telemetryExtensionDllPath: string,
+        private readonly isCSharpDevKitActivated: boolean,
+        
         private readonly env: NodeJS.ProcessEnv,
         private readonly dotnetExecutablePath: string,
         private readonly logger: RazorLogger
@@ -262,15 +261,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('--SingleServerCompletionSupport');
             args.push('true');
 
-            if (options.forceRuntimeCodeGeneration) {
-                args.push('--ForceRuntimeCodeGeneration');
-                args.push('true');
-            }
-
-            if (this.telemetryExtensionDllPath.length > 0) {
-                args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
+            if (this.isCSharpDevKitActivated) {
                 args.push('--sessionId', getSessionId());
-                args.push('--telemetryExtensionPath', this.telemetryExtensionDllPath);
             }
         }
 
