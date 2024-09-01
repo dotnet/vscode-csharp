@@ -1,8 +1,8 @@
-name: OmniSharp-VSCode CI
+name: Step 2 - Build VSIX packages
 
 on:
   workflow_run:
-      workflows: ["Update Fork and Apply Patches"]
+      workflows: ["Step 1 - Update Fork and Apply Patches"]
       types:
         - completed
   workflow_dispatch:

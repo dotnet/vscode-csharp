@@ -1,8 +1,8 @@
-name: OmniSharp-VSCode CI Release
+name: Step 3 - Release VSIX packages
 
 on:
   workflow_run:
-    workflows: ["OmniSharp-VSCode CI"]
+    workflows: ["Step 2 - Build VSIX packages"]
     types:
       - completed
   workflow_dispatch:

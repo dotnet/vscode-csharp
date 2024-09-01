@@ -1,4 +1,4 @@
-name: Update Fork and Apply Patches
+name: Step 1 - Update Fork and Apply Patches
 
 
 on:
@@ -50,7 +50,7 @@ jobs:
           echo "Upstream commits: $UPSTREAM_COMMITS"
           echo "::set-output name=upstream_commits::$UPSTREAM_COMMITS"
 
-      - name: Check Last Run of OmniSharp-VSCode CI
+      - name: Check Last Run of Step 2 - Build VSIX packages
         id: check-ci
         uses: actions/github-script@v6
         with:
@@ -60,9 +60,11 @@ jobs:
               repo: context.repo.repo
             });
 
-            const ciWorkflow = workflows.workflows.find(workflow => workflow.name === 'OmniSharp-VSCode CI');
+            const ciBuildName = "Step 2 - Build VSIX packages"
+
+            const ciWorkflow = workflows.workflows.find(workflow => workflow.name === ciBuildName);
             if (!ciWorkflow) {
-              core.setFailed('OmniSharp-VSCode CI workflow not found');
+              core.setFailed(`${ciBuildName} workflow not found``);
               return;
             }
 
@@ -75,10 +77,10 @@ jobs:
             });
 
             if (workflowRuns.total_count > 0) {
-              console.log('The last run of OmniSharp-VSCode CI succeeded');
+              console.log(`The last run of ${ciBuildName} succeeded``);
               core.setOutput('ci_success', 'true');
             } else {
-              console.log('The last run of OmniSharp-VSCode CI did not succeed');
+              console.log(`The last run of ${ciBuildName} did not succeed``);
               core.setOutput('ci_success', 'false');
             }
 
@@ -94,6 +96,7 @@ jobs:
           else
             echo "FORCE_CI=false" >> $GITHUB_ENV
           fi
+          echo $FORCE_CI
 
       - name: Get current date (After Patch)
         id: date
@@ -129,7 +132,7 @@ jobs:
           git push origin main
 
       - name: Skip proceeding to build if no upstream changes and last CI succeeded
-        if: steps.check-changes.outputs.upstream_commits == '0' && steps.check-ci.outputs.ci_success == 'true' && env.FORCE_CI != 'true'
+        if: (steps.check-changes.outputs.upstream_commits == '0' && steps.check-ci.outputs.ci_success == 'true') && env.FORCE_CI != 'true'
         run: |
-          echo "No changes in upstream repository and the last run of OmniSharp-VSCode CI succeeded. Failing the workflow."
+          echo "No changes in upstream repository and the last run of `Step 2 - Build VSIX packages`` succeeded. Failing the workflow."
           exit 1
