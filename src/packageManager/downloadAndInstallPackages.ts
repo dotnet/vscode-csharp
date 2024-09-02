@@ -6,6 +6,7 @@
 import { PackageError } from './packageError';
 import { NestedError } from '../nestedError';
 import { DownloadFile } from './fileDownloader';
+import { InstallTarGz } from './tarGzInstaller';
 import { InstallZip } from './zipInstaller';
 import { EventStream } from '../eventStream';
 import { NetworkSettingsProvider } from '../networkSettings';
@@ -45,7 +46,11 @@ export async function downloadAndInstallPackages(
                 );
                 if (downloadValidator(buffer, pkg.integrity, eventStream)) {
                     installationStage = 'installPackage';
-                    await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                    if (pkg.url.includes('.tar.gz')) {
+                        await InstallTarGz(buffer, pkg.description, pkg.installPath, eventStream);
+                    } else {
+                        await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
+                    }
                     installationStage = 'touchLockFile';
                     await touchInstallFile(pkg.installPath, InstallFileType.Lock);
                     break;
