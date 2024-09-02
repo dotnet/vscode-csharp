@@ -38,6 +38,7 @@ import * as RoslynProtocol from './roslynProtocol';
 import { CSharpDevKitExports } from '../csharpDevKitExports';
 import { SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
 import { ServerState } from './serverStateChange';
+import TelemetryReporter from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../csharpIntelliCodeExports';
 import { csharpDevkitExtensionId, csharpDevkitIntelliCodeExtensionId, getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { randomUUID } from 'crypto';
@@ -114,6 +115,7 @@ export class RoslynLanguageServer {
         private _languageClient: RoslynLanguageClient,
         private _platformInfo: PlatformInformation,
         private _context: vscode.ExtensionContext,
+        private _telemetryReporter: TelemetryReporter,
         private _languageServerEvents: RoslynLanguageServerEvents
     ) {
         this.registerSetTrace();
@@ -199,7 +201,14 @@ export class RoslynLanguageServer {
             if (!dotnetInfo) {
                 dotnetInfo = await getDotnetInfo([]);
             }
-            reportProjectConfigurationEvent(params, this._platformInfo, dotnetInfo, this._solutionFile?.fsPath, true);
+            reportProjectConfigurationEvent(
+                this._telemetryReporter,
+                params,
+                this._platformInfo,
+                dotnetInfo,
+                this._solutionFile?.fsPath,
+                true
+            );
         });
     }
 
@@ -211,11 +220,18 @@ export class RoslynLanguageServer {
         platformInfo: PlatformInformation,
         hostExecutableResolver: IHostExecutableResolver,
         context: vscode.ExtensionContext,
+        telemetryReporter: TelemetryReporter,
         additionalExtensionPaths: string[],
         languageServerEvents: RoslynLanguageServerEvents
     ): Promise<RoslynLanguageServer> {
         const serverOptions: ServerOptions = async () => {
-            return await this.startServer(platformInfo, hostExecutableResolver, context, additionalExtensionPaths);
+            return await this.startServer(
+                platformInfo,
+                hostExecutableResolver,
+                context,
+                telemetryReporter,
+                additionalExtensionPaths
+            );
         };
 
         const documentSelector = languageServerOptions.documentSelector;
@@ -255,7 +271,7 @@ export class RoslynLanguageServer {
 
         client.registerProposedFeatures();
 
-        const server = new RoslynLanguageServer(client, platformInfo, context, languageServerEvents);
+        const server = new RoslynLanguageServer(client, platformInfo, context, telemetryReporter, languageServerEvents);
 
         client.registerFeature(server._onAutoInsertFeature);
 
@@ -518,6 +534,7 @@ export class RoslynLanguageServer {
         platformInfo: PlatformInformation,
         hostExecutableResolver: IHostExecutableResolver,
         context: vscode.ExtensionContext,
+        telemetryReporter: TelemetryReporter,
         additionalExtensionPaths: string[]
     ): Promise<MessageTransports> {
         const serverPath = getServerPath(platformInfo);
@@ -598,7 +615,8 @@ export class RoslynLanguageServer {
             _channel.appendLine(`Starting server at ${serverPath}`);
         }
 
-        
+        // shouldn't this arg only be set if it's running with CSDevKit?
+        args.push('--telemetryLevel', telemetryReporter.telemetryLevel);
 
         args.push('--extensionLogDirectory', context.logUri.fsPath);
 
@@ -992,6 +1010,7 @@ export async function activateRoslynLanguageServer(
     outputChannel: vscode.OutputChannel,
     dotnetTestChannel: vscode.OutputChannel,
     dotnetChannel: vscode.OutputChannel,
+    reporter: TelemetryReporter,
     languageServerEvents: RoslynLanguageServerEvents
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
@@ -1011,6 +1030,7 @@ export async function activateRoslynLanguageServer(
         platformInfo,
         hostExecutableResolver,
         context,
+        reporter,
         additionalExtensionPaths,
         languageServerEvents
     );
