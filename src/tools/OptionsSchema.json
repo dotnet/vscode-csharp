@@ -59,12 +59,12 @@
     "PipeTransport": {
       "type": "object",
       "required": [ "debuggerPath" ],
-      "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (netcoredbg).",
+      "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
       "default": {
         "pipeCwd": "${workspaceFolder}",
         "pipeProgram": "enter the fully qualified path for the pipe program name, for example '/usr/bin/ssh'",
         "pipeArgs": [],
-        "debuggerPath": "enter the path for the debugger on the target machine, for example /usr/bin/netcoredbg"
+        "debuggerPath": "enter the path for the debugger on the target machine, for example ~/vsdbg/vsdbg"
       },
       "properties": {
         "pipeCwd": {
@@ -97,7 +97,7 @@
         "debuggerPath": {
           "type": "string",
           "description": "The full path to the debugger on the target machine.",
-          "default": "/usr/bin/netcoredbg"
+          "default": "~/vsdbg/vsdbg"
         },
         "pipeEnv": {
           "type": "object",
@@ -430,7 +430,7 @@
         },
         "pipeTransport": {
           "$ref": "#/definitions/PipeTransport",
-          "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (netcoredbg)."
+          "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg)."
         },
         "suppressJITOptimizations": {
           "type": "boolean",
@@ -526,7 +526,7 @@
         },
         "pipeTransport": {
           "$ref": "#/definitions/PipeTransport",
-          "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (netcoredbg)."
+          "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg)."
         },
         "suppressJITOptimizations": {
           "type": "boolean",
