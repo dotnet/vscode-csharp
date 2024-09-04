@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump xamltools to 17.12.35304.30 (PR: [#7507](https://github.com/dotnet/vscode-csharp/pull/7508))
+
+# 2.46.x
 * Update Roslyn to 4.12.0-3.24430.2 (PR: [#7496](https://github.com/dotnet/vscode-csharp/pull/7496))
 * Bump Razor to 9.0.0-preview.24427.2  (PR: [#7471](https://github.com/dotnet/vscode-csharp/pull/7471))
   * Suppress unique ids (#10791) (PR: [#10791](https://github.com/dotnet/razor/pull/10791))
@@ -14,7 +17,7 @@
   * Update NOTICE.txt (#10768) (PR: [#10768](https://github.com/dotnet/razor/pull/10768))
   * Allow @@ as a fallback (#10752) (PR: [#10752](https://github.com/dotnet/razor/pull/10752))
   * Support component rename from an end tag (#10762) (PR: [#10762](https://github.com/dotnet/razor/pull/10762))
-* Bump xamltools to 17.12.35304.30 (PR: [#7507](https://github.com/dotnet/vscode-csharp/pull/7508))
+* Bump xamltools to 17.12.35230.10 (PR: [#7493](https://github.com/dotnet/vscode-csharp/pull/7493))
 
 # 2.45.17
 * Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))
