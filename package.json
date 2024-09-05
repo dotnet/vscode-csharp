@@ -5579,6 +5579,11 @@
         "contents": "%viewsWelcome.debug.contents%",
         "when": "debugStartLanguage == csharp && !dotnet.debug.serviceBrokerAvailable"
       }
-    ]
+    ],
+    "configurationDefaults": {
+      "[xaml]": {
+        "editor.wordBasedSuggestions": "off"
+      }
+    }
   }
 }
