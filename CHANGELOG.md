@@ -5,6 +5,7 @@
 
 # Latest
 * Bump xamltools to 17.12.35305.252 (PR: [#7521](https://github.com/dotnet/vscode-csharp/pull/7521))
+  * XAML editor enabled various lightbulbs related to x:DataType, BindingContext and Bindings.
 
 # 2.46.x
 * Update Roslyn to 4.12.0-3.24430.2 (PR: [#7496](https://github.com/dotnet/vscode-csharp/pull/7496))
