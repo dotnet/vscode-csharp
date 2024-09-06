@@ -32,14 +32,6 @@
           "*.xlf": "xml",
           "*.yml": "azure-pipelines"
         },
-        // ms-dotnettools.csharp settings
-        "omnisharp.disableMSBuildDiagnosticWarning": true,
-        "omnisharp.enableEditorConfigSupport": true,
-        "omnisharp.enableImportCompletion": true,
-        "omnisharp.useModernNet": true,
-        "omnisharp.enableAsyncCompletion": true,
-        // ms-dotnettools.csdevkit settings
-        "dotnet.defaultSolution": "Roslyn.sln",
         // ms-vscode.powershell settings
         "powershell.promptToUpdatePowerShell": false,
         "powershell.integratedConsole.showOnStartup": false,
