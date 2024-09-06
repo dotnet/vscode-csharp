@@ -89,13 +89,14 @@ extends:
                     $publishArtifacts = $allArtifacts[0]
                     Write-Host "All artifacts: $($allArtifacts). Publishing $($publishArtifacts)."
 
-                    $basePublishArgs = , "publish --azure-credential"
+                    $basePublishArgs = , "publish"
                     If ( $uploadPrerelease ) {
                       $basePublishArgs += "--pre-release"
                       Write-Host "Publish to pre-release channel."
                     } Else {
                       Write-Host "Publish to release channel."
                     }
+                    $basePublishArgs += '--azure-credential'
                     $basePublishArgs += '--packagePath'
                     $publishArgs = $basePublishArgs + (Get-ChildItem $publishArtifacts\*.vsix | Sort-Object Name -Descending |% { $_ })
 
