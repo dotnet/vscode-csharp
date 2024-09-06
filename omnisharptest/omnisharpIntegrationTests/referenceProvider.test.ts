@@ -5,7 +5,7 @@
 
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
 import * as vscode from 'vscode';
-import OmniSharpReferenceProvider from '../../src/features/referenceProvider';
+import OmniSharpReferenceProvider from '../../src/omnisharp/features/referenceProvider';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';

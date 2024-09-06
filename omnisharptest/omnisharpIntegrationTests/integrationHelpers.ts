@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { Advisor } from '../../src/features/diagnosticsProvider';
+import { Advisor } from '../../src/omnisharp/features/diagnosticsProvider';
 import { EventStream } from '../../src/eventStream';
 import { EventType } from '../../src/omnisharp/eventType';
 import { OmnisharpExtensionExports } from '../../src/csharpExtensionExports';

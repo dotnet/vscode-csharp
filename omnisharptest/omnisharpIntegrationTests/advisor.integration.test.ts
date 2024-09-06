@@ -9,7 +9,7 @@ import * as vscode from 'vscode';
 import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 
-import { Advisor } from '../../src/features/diagnosticsProvider';
+import { Advisor } from '../../src/omnisharp/features/diagnosticsProvider';
 
 function setLimit(to: number | null) {
     const csharpConfig = vscode.workspace.getConfiguration('csharp');

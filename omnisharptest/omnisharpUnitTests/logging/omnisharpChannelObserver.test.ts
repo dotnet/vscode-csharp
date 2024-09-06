@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel, getWorkspaceConfiguration } from '../../../test/unitTests/fakes';
-import { OmnisharpChannelObserver } from '../../../src/observers/omnisharpChannelObserver';
+import { OmnisharpChannelObserver } from '../../../src/omnisharp/observers/omnisharpChannelObserver';
 import {
     OmnisharpFailure,
     ShowOmniSharpChannel,

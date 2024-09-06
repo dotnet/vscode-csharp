@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from '../../observers/baseLoggerObserver';
+import { BaseLoggerObserver } from './baseLoggerObserver';
 import * as Event from '../../omnisharp/loggingEvents';
 import { PackageError } from '../../packageManager/packageError';
 import { EventType } from '../../omnisharp/eventType';

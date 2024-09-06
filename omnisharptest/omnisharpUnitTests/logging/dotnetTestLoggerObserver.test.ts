@@ -20,7 +20,7 @@ import {
     DotNetTestRunInContextStart,
     DotNetTestDebugInContextStart,
 } from '../../../src/omnisharp/loggingEvents';
-import DotNetTestLoggerObserver from '../../../src/observers/dotnetTestLoggerObserver';
+import DotNetTestLoggerObserver from '../../../src/omnisharp/observers/dotnetTestLoggerObserver';
 import * as protocol from '../../../src/omnisharp/protocol';
 
 describe(`${DotNetTestLoggerObserver.name}`, () => {

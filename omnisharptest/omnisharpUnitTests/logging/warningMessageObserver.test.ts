@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { WarningMessageObserver } from '../../../src/observers/warningMessageObserver';
+import { WarningMessageObserver } from '../../../src/omnisharp/observers/warningMessageObserver';
 import {
     getFakeVsCode,
     getMSBuildDiagnosticsMessage,
