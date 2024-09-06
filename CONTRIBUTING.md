@@ -22,7 +22,7 @@ Setting up your local development environment for the vscode-csharp repository i
 
 Before you start, make sure you have the following software installed on your machine:
 
-* Node.js v18 ([v18.17.0 LTS](https://nodejs.org/en/blog/release/v20.17.0)).
+* Node.js v20 ([v20.17.0 LTS](https://nodejs.org/en/blog/release/v20.17.0)).
   * Note - Building with higher major versions of Node.js is not advised - it may work but we do not test it.
 * Npm (The version shipped with node is fine)
 * .NET 8.0 SDK (dotnet should be on your path)
@@ -36,9 +36,10 @@ Follow these steps to build, run, and test the repository:
 #### Building
 
 1. Run `npm i` - This command installs the project dependencies.
-2. Run `npm i -g gulp` - This command installs Gulp globally.
-3. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
-4. Run `code .` - This command opens the project in Visual Studio Code.
+2. Run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
+3. Run `npm i -g gulp` - This command installs Gulp globally.
+4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
+5. Run `code .` - This command opens the project in Visual Studio Code.
 
 #### Running
 

@@ -37,11 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.12.0-3.24430.2",
+    "roslyn": "4.12.0-3.24456.2",
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24427.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.12.35230.10"
+    "xamlTools": "17.12.35305.252"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -171,7 +171,7 @@
     "vscode-oniguruma": "^1.6.1",
     "vscode-textmate": "^6.0.0",
     "vscode-uri": "^3.0.7",
-    "webpack": "5.76.0",
+    "webpack": "5.94.0",
     "webpack-cli": "4.6.0"
   },
   "runtimeDependencies": [
@@ -5579,6 +5579,11 @@
         "contents": "%viewsWelcome.debug.contents%",
         "when": "debugStartLanguage == csharp && !dotnet.debug.serviceBrokerAvailable"
       }
-    ]
+    ],
+    "configurationDefaults": {
+      "[xaml]": {
+        "editor.wordBasedSuggestions": "off"
+      }
+    }
   }
 }
