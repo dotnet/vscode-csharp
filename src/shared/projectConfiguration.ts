@@ -6,7 +6,7 @@
 import * as crypto from 'crypto';
 import { machineIdSync } from 'node-machine-id';
 import { PlatformInformation } from './platform';
-import { ITelemetryReporter, getTelemetryProps } from './telemetryReporter';
+import { getTelemetryProps } from './telemetryReporter';
 import { DotnetInfo } from './utils/dotnetInfo';
 
 export interface ProjectConfigurationMessage {
@@ -22,7 +22,6 @@ export interface ProjectConfigurationMessage {
 }
 
 export function reportProjectConfigurationEvent(
-    reporter: ITelemetryReporter,
     projectConfig: ProjectConfigurationMessage,
     platformInfo: PlatformInformation,
     dotnetInfo: DotnetInfo | undefined,
@@ -51,7 +50,6 @@ export function reportProjectConfigurationEvent(
         telemetryProps['useModernNet'] = useModernNet.toString();
     }
 
-    reporter.sendTelemetryEvent('ProjectConfiguration', telemetryProps);
 }
 
 function createSolutionId(solutionPath: string) {
