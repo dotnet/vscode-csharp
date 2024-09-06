@@ -13,7 +13,7 @@ import {
     DotNetTestsInClassRunStart,
     DotNetTestDebugStart,
 } from '../../../src/omnisharp/loggingEvents';
-import DotnetTestChannelObserver from '../../../src/observers/dotnetTestChannelObserver';
+import DotnetTestChannelObserver from '../../../src/omnisharp/observers/dotnetTestChannelObserver';
 
 describe('DotnetTestChannelObserver', () => {
     let hasShown: boolean;

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { OmnisharpLoggerObserver } from '../../../src/observers/omnisharpLoggerObserver';
+import { OmnisharpLoggerObserver } from '../../../src/omnisharp/observers/omnisharpLoggerObserver';
 import {
     OmnisharpServerMsBuildProjectDiagnostics,
     EventWithMessage,

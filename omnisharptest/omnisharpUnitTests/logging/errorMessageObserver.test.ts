@@ -6,7 +6,7 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { vscode } from '../../../src/vscodeAdapter';
 
-import { ErrorMessageObserver } from '../../../src/observers/errorMessageObserver';
+import { ErrorMessageObserver } from '../../../src/omnisharp/observers/errorMessageObserver';
 import {
     ZipError,
     DotNetTestRunFailure,

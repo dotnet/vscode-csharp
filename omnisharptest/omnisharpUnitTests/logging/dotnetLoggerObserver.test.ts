@@ -5,7 +5,7 @@
 
 import { describe, test, expect } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
-import { DotnetLoggerObserver } from '../../../src/observers/dotnetLoggerObserver';
+import { DotnetLoggerObserver } from '../../../src/omnisharp/observers/dotnetLoggerObserver';
 import {
     CommandDotNetRestoreProgress,
     CommandDotNetRestoreSucceeded,
