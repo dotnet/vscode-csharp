@@ -50,7 +50,7 @@ describe(`Formatting Tests`, () => {
             '    }',
             '}',
         ];
-        expectText(vscode.window.activeTextEditor!.document, expectedText);
+        await expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 
     test('Document range formatting formats only the range', async () => {
@@ -70,7 +70,7 @@ describe(`Formatting Tests`, () => {
             '    }',
             '}',
         ];
-        expectText(vscode.window.activeTextEditor!.document, expectedText);
+        await expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 
     test('Document on type formatting formats the typed location', async () => {
@@ -89,6 +89,6 @@ describe(`Formatting Tests`, () => {
             '    }',
             '}',
         ];
-        expectText(vscode.window.activeTextEditor!.document, expectedText);
+        await expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 });

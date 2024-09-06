@@ -61,7 +61,7 @@ describe(`Code Actions Tests`, () => {
 
         await vscode.workspace.applyEdit(actions[0].edit!);
 
-        expectText(vscode.window.activeTextEditor!.document, [
+        await expectText(vscode.window.activeTextEditor!.document, [
             'namespace CodeActionsTests;',
             '',
             'class CodeActions',
@@ -84,7 +84,7 @@ describe(`Code Actions Tests`, () => {
 
         await vscode.workspace.applyEdit(actions[0].edit!);
 
-        expectText(vscode.window.activeTextEditor!.document, [
+        await expectText(vscode.window.activeTextEditor!.document, [
             'using System;',
             '',
             'namespace CodeActionsTests;',
@@ -112,7 +112,7 @@ describe(`Code Actions Tests`, () => {
 
         await invokeQuickPickAction(action, /*quickPickIndex: Document*/ 0);
 
-        expectText(vscode.window.activeTextEditor!.document, [
+        await expectText(vscode.window.activeTextEditor!.document, [
             'using System;',
             '',
             'namespace CodeActionsTests;',
@@ -141,7 +141,7 @@ describe(`Code Actions Tests`, () => {
 
         await invokeQuickPickAction(action, /*quickPickIndex: Project*/ 1);
 
-        expectText(vscode.window.activeTextEditor!.document, [
+        await expectText(vscode.window.activeTextEditor!.document, [
             'using System;',
             '',
             'namespace CodeActionsTests;',
@@ -160,7 +160,7 @@ describe(`Code Actions Tests`, () => {
 
         const projectFile = vscode.workspace.textDocuments.find((d) => d.fileName.endsWith('CodeActionsInProject.cs'));
         expect(projectFile).toBeDefined();
-        expectText(projectFile!, [
+        await expectText(projectFile!, [
             'using System;',
             '',
             'namespace CodeActionsTests;',
@@ -182,7 +182,7 @@ describe(`Code Actions Tests`, () => {
 
         await invokeQuickPickAction(action, /*quickPickIndex: Solution*/ 2);
 
-        expectText(vscode.window.activeTextEditor!.document, [
+        await expectText(vscode.window.activeTextEditor!.document, [
             'using System;',
             '',
             'namespace CodeActionsTests;',
@@ -203,7 +203,7 @@ describe(`Code Actions Tests`, () => {
             d.fileName.endsWith('CodeActionsInProject.cs')
         );
         expect(currentProjectFile).toBeDefined();
-        expectText(currentProjectFile!, [
+        await expectText(currentProjectFile!, [
             'using System;',
             '',
             'namespace CodeActionsTests;',
@@ -217,7 +217,7 @@ describe(`Code Actions Tests`, () => {
             d.fileName.endsWith('CodeActionsInSolution.cs')
         );
         expect(otherProjectFile).toBeDefined();
-        expectText(otherProjectFile!, [
+        await expectText(otherProjectFile!, [
             'using System;',
             '',
             'namespace CodeActionsTests;',
@@ -236,7 +236,7 @@ describe(`Code Actions Tests`, () => {
 
         await invokeQuickPickAction(action, /*quickPickIndex: Convert to binary*/ 0);
 
-        expectText(vscode.window.activeTextEditor!.document, [
+        await expectText(vscode.window.activeTextEditor!.document, [
             'using System;',
             '',
             'namespace CodeActionsTests;',
@@ -261,7 +261,7 @@ describe(`Code Actions Tests`, () => {
 
         await invokeQuickPickAction(action, /*quickPickIndex: Suppress CS0219 -> in Source*/ 0);
 
-        expectText(vscode.window.activeTextEditor!.document, [
+        await expectText(vscode.window.activeTextEditor!.document, [
             'using System;',
             '',
             'namespace CodeActionsTests;',

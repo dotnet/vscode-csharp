@@ -18,13 +18,13 @@ export interface ActivationResult {
 
 export async function activateCSharpExtension(): Promise<ActivationResult> {
     const configuration = vscode.workspace.getConfiguration();
-    configuration.update(
+    await configuration.update(
         'omnisharp.enableLspDriver',
         process.env.OMNISHARP_DRIVER === 'lsp' ? true : false,
         vscode.ConfigurationTarget.WorkspaceFolder
     );
     if (process.env.OMNISHARP_LOCATION) {
-        configuration.update('path', process.env.OMNISHARP_LOCATION, vscode.ConfigurationTarget.WorkspaceFolder);
+        await configuration.update('path', process.env.OMNISHARP_LOCATION, vscode.ConfigurationTarget.WorkspaceFolder);
     }
 
     const csharpExtension = vscode.extensions.getExtension<OmnisharpExtensionExports>('ms-dotnettools.csharp');
@@ -67,8 +67,8 @@ export async function restartOmniSharpServer(): Promise<void> {
                     resolve();
                 }
             });
-            vscode.commands.executeCommand('o.restart');
         });
+        await vscode.commands.executeCommand('o.restart');
         console.log('OmniSharp restarted');
     } catch (err) {
         console.log(JSON.stringify(err));

@@ -22,7 +22,7 @@ describeIfCSharp(`Unit Testing Tests`, () => {
     });
 
     beforeEach(async () => {
-        vscode.workspace
+        await vscode.workspace
             .getConfiguration()
             .update('dotnet.unitTests.runSettingsPath', undefined, vscode.ConfigurationTarget.Workspace);
         const fileName = path.join('test', 'UnitTest1.cs');

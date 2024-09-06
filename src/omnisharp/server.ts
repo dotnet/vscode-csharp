@@ -127,8 +127,8 @@ export class OmniSharpServer {
             extensionPath
         );
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
-        this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe((_) => {
-            this.updateProjectInfo();
+        this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe(async (_) => {
+            await this.updateProjectInfo();
         });
         this.firstUpdateProject = true;
     }
@@ -608,12 +608,12 @@ export class OmniSharpServer {
         return this._addListener(Events.ProjectConfiguration, listener);
     }
 
-    private debounceUpdateProjectWithLeadingTrue = () => {
+    private debounceUpdateProjectWithLeadingTrue = async () => {
         // Call the updateProjectInfo directly if it is the first time, otherwise debounce the request
         // This needs to be done so that we have a project information for the first incoming request
 
         if (this.firstUpdateProject) {
-            this.updateProjectInfo();
+            await this.updateProjectInfo();
         } else {
             this.updateProjectDebouncer.next(new ObservableEvents.ProjectModified());
         }

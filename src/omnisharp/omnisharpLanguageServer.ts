@@ -50,6 +50,7 @@ import { ITelemetryReporter } from '../shared/telemetryReporter';
 import { Observable } from 'rxjs';
 import { registerOmnisharpOptionChanges } from './omnisharpOptionChanges';
 import { CSharpLoggerObserver } from './observers/csharpLoggerObserver';
+import { showWarningMessage } from '../shared/observers/utils/showMessage';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -249,16 +250,15 @@ async function activate(
     const csharpConfig = vscode.workspace.getConfiguration('csharp');
     if (!csharpConfig.get<boolean>('suppressProjectJsonWarning')) {
         disposables.add(
-            server.onServerStart(() => {
-                utils.requestWorkspaceInformation(server).then((workspaceInfo) => {
+            server.onServerStart(async () => {
+                await utils.requestWorkspaceInformation(server).then((workspaceInfo) => {
                     if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
                         const shortMessage = vscode.l10n.t(
                             'project.json is no longer a supported project format for .NET Core applications.'
                         );
-                        const moreDetailItem: vscode.MessageItem = { title: vscode.l10n.t('More Detail') };
-                        vscode.window.showWarningMessage(shortMessage, moreDetailItem).then((_) => {
-                            eventStream.post(new ProjectJsonDeprecatedWarning());
-                        });
+                        const moreDetailItem = vscode.l10n.t('More Detail');
+                        eventStream.post(new ProjectJsonDeprecatedWarning());
+                        showWarningMessage(vscode, shortMessage, moreDetailItem);
                     }
                 });
             })
@@ -267,10 +267,10 @@ async function activate(
 
     // Send telemetry about the sorts of projects the server was started on.
     disposables.add(
-        server.onServerStart(() => {
+        server.onServerStart(async () => {
             const measures: { [key: string]: number } = {};
 
-            utils.requestWorkspaceInformation(server).then((workspaceInfo) => {
+            await utils.requestWorkspaceInformation(server).then((workspaceInfo) => {
                 if (workspaceInfo.DotNet && workspaceInfo.DotNet.Projects.length > 0) {
                     measures['projectjson.projectcount'] = workspaceInfo.DotNet.Projects.length;
                     measures['projectjson.filecount'] = sum(workspaceInfo.DotNet.Projects, (p) =>
@@ -299,18 +299,18 @@ async function activate(
     );
 
     disposables.add(
-        server.onBeforeServerStart((path) => {
+        server.onBeforeServerStart(async (path) => {
             if (razorOptions.razorDevMode) {
                 eventStream.post(new RazorDevModeActive());
             }
 
             // read and store last solution or folder path
-            context.workspaceState.update('lastSolutionPathOrFolder', path);
+            await context.workspaceState.update('lastSolutionPathOrFolder', path);
         })
     );
 
     if (omnisharpOptions.autoStart) {
-        server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
+        await server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
     }
 
     // stop server on deactivate
@@ -318,7 +318,7 @@ async function activate(
         new Disposable(() => {
             testManager.dispose();
             advisor.dispose();
-            server.stop();
+            server.stop().catch((err) => console.error(err));
         })
     );
 

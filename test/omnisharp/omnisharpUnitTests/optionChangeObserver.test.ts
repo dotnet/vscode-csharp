@@ -41,10 +41,10 @@ describe('OmniSharpConfigChangeObserver', () => {
         { config: 'omnisharp', section: 'loggingLevel', value: 'verbose' },
     ].forEach((elem) => {
         describe(`When the ${elem.config} ${elem.section} changes`, () => {
-            beforeEach(() => {
+            beforeEach(async () => {
                 expect(infoMessage).toBe(undefined);
                 expect(invokedCommand).toBe(undefined);
-                updateConfig(vscode, elem.config, elem.section, elem.value);
+                await updateConfig(vscode, elem.config, elem.section, elem.value);
                 optionObservable.next();
             });
 
@@ -72,10 +72,10 @@ describe('OmniSharpConfigChangeObserver', () => {
 
     [{ config: 'dotnet', section: 'server.useOmnisharp', value: true }].forEach((elem) => {
         describe(`When the ${elem.config} ${elem.section} changes`, () => {
-            beforeEach(() => {
+            beforeEach(async () => {
                 expect(infoMessage).toBe(undefined);
                 expect(invokedCommand).toBe(undefined);
-                updateConfig(vscode, elem.config, elem.section, elem.value);
+                await updateConfig(vscode, elem.config, elem.section, elem.value);
                 optionObservable.next();
             });
 
@@ -111,10 +111,10 @@ describe('OmniSharpConfigChangeObserver', () => {
         { config: 'omnisharp', section: 'projectLoadTimeout', value: 1000 },
         { config: 'omnisharp', section: 'autoStart', value: false },
     ].forEach((elem) => {
-        test(`Information Message is not shown on change in ${elem.config}.${elem.section}`, () => {
+        test(`Information Message is not shown on change in ${elem.config}.${elem.section}`, async () => {
             expect(infoMessage).toBe(undefined);
             expect(invokedCommand).toBe(undefined);
-            updateConfig(vscode, elem.config, elem.section, elem.value);
+            await updateConfig(vscode, elem.config, elem.section, elem.value);
             optionObservable.next();
             expect(infoMessage).toBe(undefined);
         });

@@ -33,11 +33,11 @@ export class TelemetryObserver {
         this.useModernNet = useModernNet;
     }
 
-    public post = (event: BaseEvent) => {
+    public post = async (event: BaseEvent) => {
         const telemetryProps = getTelemetryProps(this.platformInfo);
         switch (event.type) {
             case EventType.OmnisharpInitialisation:
-                this.handleOmnisharpInitialisation(<OmnisharpInitialisation>event);
+                await this.handleOmnisharpInitialisation(<OmnisharpInitialisation>event);
                 break;
             case EventType.PackageInstallation:
                 this.reporter.sendTelemetryEvent('AcquisitionStart');

@@ -37,7 +37,7 @@ export default class TestZip {
             archive.on('error', reject);
             archive.on('end', () => resolve(Buffer.concat(buffers)));
             filesToAdd.forEach((elem) => archive.append(elem.content, { name: elem.path }));
-            archive.finalize();
+            archive.finalize().catch((any) => reject(any));
         });
 
         return new TestZip(finalBuffer, filesToAdd);

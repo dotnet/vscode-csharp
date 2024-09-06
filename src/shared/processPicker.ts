@@ -650,35 +650,38 @@ async function execChildProcessAndOutputErrorToChannel(
     channel.appendLine(`Executing: ${process}`);
 
     return new Promise<string>((resolve, reject) => {
-        GetSysNativePathIfNeeded(platformInfo).then((newEnv) => {
-            child_process.exec(
-                process,
-                { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 },
-                (error, stdout, stderr) => {
-                    let channelOutput = '';
+        GetSysNativePathIfNeeded(platformInfo).then(
+            (newEnv) => {
+                child_process.exec(
+                    process,
+                    { cwd: workingDirectory, env: newEnv, maxBuffer: 500 * 1024 },
+                    (error, stdout, stderr) => {
+                        let channelOutput = '';
 
-                    if (stdout && stdout.length > 0) {
-                        channelOutput = channelOutput.concat(stdout);
+                        if (stdout && stdout.length > 0) {
+                            channelOutput = channelOutput.concat(stdout);
+                        }
+
+                        if (stderr && stderr.length > 0) {
+                            channelOutput = channelOutput.concat('stderr: ' + stderr);
+                        }
+
+                        if (error) {
+                            channelOutput = channelOutput.concat(vscode.l10n.t('Error Message: ') + error.message);
+                        }
+
+                        if (error || (stderr && stderr.length > 0)) {
+                            channel.append(channelOutput);
+                            channel.show();
+                            reject(new Error(vscode.l10n.t('See {0} output', 'remote-attach')));
+                            return;
+                        }
+
+                        resolve(stdout);
                     }
-
-                    if (stderr && stderr.length > 0) {
-                        channelOutput = channelOutput.concat('stderr: ' + stderr);
-                    }
-
-                    if (error) {
-                        channelOutput = channelOutput.concat(vscode.l10n.t('Error Message: ') + error.message);
-                    }
-
-                    if (error || (stderr && stderr.length > 0)) {
-                        channel.append(channelOutput);
-                        channel.show();
-                        reject(new Error(vscode.l10n.t('See {0} output', 'remote-attach')));
-                        return;
-                    }
-
-                    resolve(stdout);
-                }
-            );
-        });
+                );
+            },
+            (innerRejects) => reject(innerRejects)
+        );
     });
 }

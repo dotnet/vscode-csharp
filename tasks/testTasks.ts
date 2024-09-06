@@ -20,7 +20,7 @@ createIntegrationTestSubTasks();
 createOmniSharpTestSubTasks();
 
 gulp.task('test:artifacts', async () => {
-    runJestTest(jestArtifactTestsProjectName);
+    await runJestTest(jestArtifactTestsProjectName);
 });
 
 // Overall test command that runs everything except O# tests.
@@ -43,13 +43,13 @@ function createUnitTestSubTasks() {
     });
 
     gulp.task('test:unit:razor', async () => {
-        runJestTest(razorTestProjectName);
+        await runJestTest(razorTestProjectName);
     });
 
     gulp.task('test:unit', gulp.series('test:unit:csharp', 'test:unit:razor'));
 }
 
-async function createIntegrationTestSubTasks() {
+function createIntegrationTestSubTasks() {
     const integrationTestProjects = ['slnWithCsproj'];
     for (const projectName of integrationTestProjects) {
         gulp.task(`test:integration:csharp:${projectName}`, async () =>

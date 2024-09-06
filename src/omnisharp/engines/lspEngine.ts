@@ -247,7 +247,7 @@ export class LspEngine implements IEngine {
         };
 
         const client = new LanguageClient('Omnisharp Server', serverOptions, clientOptions);
-        client.setTrace(Trace.Verbose);
+        await client.setTrace(Trace.Verbose);
 
         // The goal here is to disable all the features and light them up over time.
         const features: (StaticFeature | DynamicFeature<any>)[] = (client as any)._features;

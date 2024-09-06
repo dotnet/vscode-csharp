@@ -25,9 +25,9 @@ export async function validateRequirements(): Promise<boolean> {
 
         if (downloadSdk === PromptResult.Yes) {
             const dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
-            vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
+            await vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
         } else if (downloadSdk === PromptResult.No) {
-            vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+            await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
         }
 
         return false;
@@ -40,9 +40,9 @@ export async function validateRequirements(): Promise<boolean> {
 
         if (downloadMono === PromptResult.Yes) {
             const monoURL = 'https://www.mono-project.com/download/stable/';
-            vscode.env.openExternal(vscode.Uri.parse(monoURL));
+            await vscode.env.openExternal(vscode.Uri.parse(monoURL));
         } else if (downloadMono === PromptResult.No) {
-            vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+            await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
         }
 
         return false;
@@ -108,7 +108,7 @@ async function promptToDownloadDotNetSDK() {
         const yesItem: PromptItem = { title: 'Get the SDK', result: PromptResult.Yes };
         const noItem: PromptItem = { title: 'Open settings', result: PromptResult.No, isCloseAffordance: true };
 
-        vscode.window
+        void vscode.window
             .showErrorMessage(message, messageOptions, noItem, yesItem)
             .then((selection) => resolve(selection?.result ?? PromptResult.Dismissed));
     });
@@ -129,7 +129,7 @@ async function promptToDownloadMono() {
             isCloseAffordance: true,
         };
 
-        vscode.window
+        void vscode.window
             .showErrorMessage(message, messageOptions, noItem, yesItem)
             .then((selection) => resolve(selection?.result ?? PromptResult.Dismissed));
     });

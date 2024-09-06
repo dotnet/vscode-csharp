@@ -41,60 +41,62 @@ describe('Options tests', () => {
         expect(commonOptions.runSettingsPath).toEqual('');
     });
 
-    test('Verify return no excluded paths when files.exclude empty', () => {
-        vscode.workspace.getConfiguration().update('files.exclude', {});
+    test('Verify return no excluded paths when files.exclude empty', async () => {
+        await vscode.workspace.getConfiguration().update('files.exclude', {});
 
         const excludedPaths = commonOptions.excludePaths;
         expect(excludedPaths).toHaveLength(0);
     });
 
-    test('Verify return excluded paths when files.exclude populated', () => {
-        vscode.workspace.getConfiguration().update('files.exclude', { '**/node_modules': true, '**/assets': false });
+    test('Verify return excluded paths when files.exclude populated', async () => {
+        await vscode.workspace
+            .getConfiguration()
+            .update('files.exclude', { '**/node_modules': true, '**/assets': false });
 
         const excludedPaths = commonOptions.excludePaths;
         expect(excludedPaths).toStrictEqual(['**/node_modules']);
     });
 
-    test('Verify return no excluded paths when files.exclude and search.exclude empty', () => {
-        vscode.workspace.getConfiguration().update('files.exclude', {});
-        vscode.workspace.getConfiguration().update('search.exclude', {});
+    test('Verify return no excluded paths when files.exclude and search.exclude empty', async () => {
+        await vscode.workspace.getConfiguration().update('files.exclude', {});
+        await vscode.workspace.getConfiguration().update('search.exclude', {});
 
         const excludedPaths = commonOptions.excludePaths;
         expect(excludedPaths).toHaveLength(0);
     });
 
-    test('BACK-COMPAT: "omnisharp.loggingLevel": "verbose" == "omnisharp.loggingLevel": "debug"', () => {
-        vscode.workspace.getConfiguration().update('omnisharp.loggingLevel', 'verbose');
+    test('BACK-COMPAT: "omnisharp.loggingLevel": "verbose" == "omnisharp.loggingLevel": "debug"', async () => {
+        await vscode.workspace.getConfiguration().update('omnisharp.loggingLevel', 'verbose');
 
         expect(omnisharpOptions.loggingLevel).toEqual('debug');
     });
 
-    test('BACK-COMPAT: "csharp.omnisharp" is used if it is set and "omnisharp.path" is not', () => {
-        vscode.workspace.getConfiguration().update('csharp.omnisharp', 'OldPath');
+    test('BACK-COMPAT: "csharp.omnisharp" is used if it is set and "omnisharp.path" is not', async () => {
+        await vscode.workspace.getConfiguration().update('csharp.omnisharp', 'OldPath');
 
         expect(commonOptions.serverPath).toEqual('OldPath');
     });
 
-    test('BACK-COMPAT: "csharp.omnisharp" is not used if "omnisharp.path" is set', () => {
-        vscode.workspace.getConfiguration().update('omnisharp.path', 'NewPath');
-        vscode.workspace.getConfiguration().update('csharp.omnisharp', 'OldPath');
+    test('BACK-COMPAT: "csharp.omnisharp" is not used if "omnisharp.path" is set', async () => {
+        await vscode.workspace.getConfiguration().update('omnisharp.path', 'NewPath');
+        await vscode.workspace.getConfiguration().update('csharp.omnisharp', 'OldPath');
 
         expect(commonOptions.serverPath).toEqual('NewPath');
     });
 
-    test('"omnisharp.defaultLaunchSolution" is used if set', () => {
+    test('"omnisharp.defaultLaunchSolution" is used if set', async () => {
         const workspaceFolderUri = URI.file('/Test');
         jest.replaceProperty(vscode.workspace, 'workspaceFolders', [
             { index: 0, name: 'Test', uri: workspaceFolderUri },
         ]);
 
-        vscode.workspace.getConfiguration().update('omnisharp.defaultLaunchSolution', 'some_valid_solution.sln');
+        await vscode.workspace.getConfiguration().update('omnisharp.defaultLaunchSolution', 'some_valid_solution.sln');
 
         expect(commonOptions.defaultSolution).toEqual(path.join(workspaceFolderUri.fsPath, 'some_valid_solution.sln'));
     });
 
-    test('"omnisharp.testRunSettings" is used if set', () => {
-        vscode.workspace
+    test('"omnisharp.testRunSettings" is used if set', async () => {
+        await vscode.workspace
             .getConfiguration()
             .update('omnisharp.testRunSettings', 'some_valid_path\\some_valid_runsettings_files.runsettings');
 

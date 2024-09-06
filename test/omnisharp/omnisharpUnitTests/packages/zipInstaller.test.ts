@@ -67,7 +67,7 @@ describe('ZipInstaller', () => {
     });
 
     test('Error is thrown when the buffer contains an invalid zip', async () => {
-        expect(
+        await expect(
             InstallZip(Buffer.from('My file', 'utf8'), 'Text File', installationPath, [], eventStream)
         ).rejects.toThrow();
     });

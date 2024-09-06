@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { vscode } from '../../../../src/vscodeAdapter';
-
+import { MessageItem, vscode } from '../../../../src/vscodeAdapter';
 import { ErrorMessageObserver } from '../../../../src/omnisharp/observers/errorMessageObserver';
 import { ZipError, EventWithMessage, IntegrityCheckFailure } from '../../../../src/shared/loggingEvents';
 import { getFakeVsCode } from '../../../fakes';
@@ -16,7 +15,7 @@ describe('ErrorMessageObserver', () => {
     let errorMessage: string | undefined;
     const observer = new ErrorMessageObserver(vscode);
 
-    vscode.window.showErrorMessage = async (message: string, ..._: string[]) => {
+    vscode.window.showErrorMessage = async <T extends MessageItem>(message: string, ..._items: T[]) => {
         errorMessage = message;
         return Promise.resolve<string>('Done');
     };

@@ -40,6 +40,7 @@ import { BuildResultDiagnostics } from './lsptoolshost/services/buildResultRepor
 import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
 import { getComponentFolder } from './lsptoolshost/builtInComponents';
 import { activateOmniSharpLanguageServer, ActivationResult } from './omnisharp/omnisharpLanguageServer';
+import { ActionOption, showErrorMessage } from './shared/observers/utils/showMessage';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -175,28 +176,28 @@ export async function activate(
     if (!isSupportedPlatform(platformInfo)) {
         // Check to see if VS Code is running remotely
         if (context.extension.extensionKind === vscode.ExtensionKind.Workspace) {
-            const setupButton = vscode.l10n.t('How to setup Remote Debugging');
+            const setupButton: ActionOption = {
+                title: vscode.l10n.t('How to setup Remote Debugging'),
+                action: async () => {
+                    const remoteDebugInfoURL =
+                        'https://github.com/dotnet/vscode-csharp/wiki/Remote-Debugging-On-Linux-Arm';
+                    await vscode.env.openExternal(vscode.Uri.parse(remoteDebugInfoURL));
+                },
+            };
             const errorMessage = vscode.l10n.t(
                 `The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.`,
                 platformInfo.platform,
                 platformInfo.architecture,
-                setupButton
+                setupButton.title
             );
-
-            await vscode.window.showErrorMessage(errorMessage, setupButton).then((selectedItem) => {
-                if (selectedItem === setupButton) {
-                    const remoteDebugInfoURL =
-                        'https://github.com/dotnet/vscode-csharp/wiki/Remote-Debugging-On-Linux-Arm';
-                    vscode.env.openExternal(vscode.Uri.parse(remoteDebugInfoURL));
-                }
-            });
+            showErrorMessage(vscode, errorMessage, setupButton);
         } else {
             const errorMessage = vscode.l10n.t(
                 'The C# extension for Visual Studio Code is incompatible on {0} {1}.',
                 platformInfo.platform,
                 platformInfo.architecture
             );
-            await vscode.window.showErrorMessage(errorMessage);
+            showErrorMessage(vscode, errorMessage);
         }
 
         // Unsupported platform
@@ -294,10 +295,10 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
 
                 // Notify the vsdbg configuration provider that C# dev kit has been loaded.
                 exports.serverProcessLoaded(async () => {
-                    debugSessionTracker.onCsDevKitInitialized(await exports.getBrokeredServiceServerPipeName());
+                    await debugSessionTracker.onCsDevKitInitialized(await exports.getBrokeredServiceServerPipeName());
                 });
 
-                vscode.commands.executeCommand('setContext', 'dotnet.debug.serviceBrokerAvailable', true);
+                await vscode.commands.executeCommand('setContext', 'dotnet.debug.serviceBrokerAvailable', true);
             } else {
                 csharpLogObserver.logger.appendLine(
                     `[ERROR] '${csharpDevkitExtensionId}' activated but did not return expected Exports.`

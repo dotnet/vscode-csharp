@@ -110,7 +110,7 @@ async function applyAutoInsertEdit(
         }
 
         if (response.command !== undefined) {
-            vscode.commands.executeCommand(response.command.command, response.command.arguments);
+            await vscode.commands.executeCommand(response.command.command, response.command.arguments);
         }
     }
 }

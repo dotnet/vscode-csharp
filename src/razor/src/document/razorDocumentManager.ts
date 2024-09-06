@@ -179,8 +179,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             this.razorDocumentGenerationInitialized = true;
             const pipeName = generateUuid();
 
-            vscode.commands.executeCommand(razorInitializeCommand, pipeName);
-            this.serverClient.connectNamedPipe(pipeName);
+            await vscode.commands.executeCommand(razorInitializeCommand, pipeName);
+            await this.serverClient.connectNamedPipe(pipeName);
 
             for (const document of this.documents) {
                 await this.ensureDocumentAndProjectedDocumentsOpen(document);
