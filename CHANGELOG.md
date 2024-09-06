@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
-* Bump xamltools to 17.12.35304.30 (PR: [#7507](https://github.com/dotnet/vscode-csharp/pull/7508))
+* Bump xamltools to 17.12.35305.252 (PR: [#7521](https://github.com/dotnet/vscode-csharp/pull/7521))
 
 # 2.46.x
 * Update Roslyn to 4.12.0-3.24430.2 (PR: [#7496](https://github.com/dotnet/vscode-csharp/pull/7496))
