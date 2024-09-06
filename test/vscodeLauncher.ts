@@ -17,7 +17,7 @@ function getSln(workspacePath: string): string | undefined {
 
 async function main() {
     try {
-        const vscodeExecutablePath = await downloadAndUnzipVSCode('stable');
+        const vscodeExecutablePath = await downloadAndUnzipVSCode('1.92.2');
         const [cli, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
         console.log('Display: ' + process.env.DISPLAY);
