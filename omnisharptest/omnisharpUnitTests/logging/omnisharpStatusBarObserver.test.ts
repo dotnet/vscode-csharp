@@ -18,7 +18,10 @@ import {
     BaseEvent,
     InstallationSuccess,
 } from '../../../src/omnisharp/loggingEvents';
-import { OmnisharpStatusBarObserver, StatusBarColors } from '../../../src/observers/omnisharpStatusBarObserver';
+import {
+    OmnisharpStatusBarObserver,
+    StatusBarColors,
+} from '../../../src/omnisharp/observers/omnisharpStatusBarObserver';
 
 describe('OmnisharpStatusBarObserver', () => {
     let showCalled: boolean;

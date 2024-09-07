@@ -16,7 +16,7 @@ import {
 import { EventStream } from '../eventStream';
 import { getRuntimeDependencyPackageWithId } from '../tools/runtimeDependencyPackageUtils';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { RemoteAttachPicker } from '../features/processPicker';
+import { RemoteAttachPicker } from '../omnisharp/features/processPicker';
 import CompositeDisposable from '../compositeDisposable';
 import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
 import { omnisharpOptions } from '../shared/options';

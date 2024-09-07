@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel } from '../../../test/unitTests/fakes';
-import { RazorLoggerObserver } from '../../../src/observers/razorLoggerObserver';
+import { RazorLoggerObserver } from '../../../src/omnisharp/observers/razorLoggerObserver';
 import {
     RazorPluginPathSpecified,
     RazorPluginPathDoesNotExist,

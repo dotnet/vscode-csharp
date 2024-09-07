@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { expect, test, beforeAll, afterAll } from '@jest/globals';
-import OmniSharpCompletionProvider from '../../src/features/completionProvider';
+import OmniSharpCompletionProvider from '../../src/omnisharp/features/completionProvider';
 import * as vscode from 'vscode';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import * as path from 'path';

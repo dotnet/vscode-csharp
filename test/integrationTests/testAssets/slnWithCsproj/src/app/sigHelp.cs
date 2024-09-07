@@ -18,6 +18,17 @@ namespace Test
         {
             DoWork(4, 4.0f, 5.0);
             noDocMethod();
+            Outer(Inner());
         }
+
+        /// <summary>
+        /// Outer
+        /// </summary>
+        public static string Outer(string s) => "Outer";
+
+        /// <summary>
+        /// Inner
+        /// </summary>
+        public static string Inner() => "Inner";
     }
 }

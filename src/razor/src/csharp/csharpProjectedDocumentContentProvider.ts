@@ -29,7 +29,7 @@ export class CSharpProjectedDocumentContentProvider implements vscode.TextDocume
         return this.onDidChangeEmitter.event;
     }
 
-    public async provideTextDocumentContent(uri: vscode.Uri) {
+    public provideTextDocumentContent(uri: vscode.Uri) {
         const razorDocument = this.findRazorDocument(uri);
         if (!razorDocument) {
             // Document was removed from the document manager, meaning there's no more content for this
@@ -46,7 +46,7 @@ export class CSharpProjectedDocumentContentProvider implements vscode.TextDocume
         }
 
         const content = `${razorDocument.csharpDocument.getContent()}
-// ${razorDocument.csharpDocument.projectedDocumentSyncVersion}`;
+// ${razorDocument.csharpDocument.hostDocumentSyncVersion}`;
 
         return content;
     }

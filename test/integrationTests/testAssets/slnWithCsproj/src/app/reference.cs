@@ -12,6 +12,7 @@ namespace minimal
         public Bar()
         {
             new Foo().Baz();
+            Test.Definition d;
         }
     }
 }

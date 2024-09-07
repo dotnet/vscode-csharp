@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { beforeEach, test, describe, expect } from '@jest/globals';
-import { TelemetryObserver } from '../../../src/observers/telemetryObserver';
+import { TelemetryObserver } from '../../../src/omnisharp/observers/telemetryObserver';
 import { PlatformInformation } from '../../../src/shared/platform';
 import {
     PackageInstallation,
