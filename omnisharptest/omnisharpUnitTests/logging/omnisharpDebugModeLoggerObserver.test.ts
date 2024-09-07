@@ -15,7 +15,7 @@ import {
     OmnisharpServerProcessRequestComplete,
     OmnisharpServerRequestCancelled,
 } from '../../../src/omnisharp/loggingEvents';
-import { OmnisharpDebugModeLoggerObserver } from '../../../src/observers/omnisharpDebugModeLoggerObserver';
+import { OmnisharpDebugModeLoggerObserver } from '../../../src/omnisharp/observers/omnisharpDebugModeLoggerObserver';
 
 describe('OmnisharpDebugModeLoggerObserver', () => {
     let logOutput = '';

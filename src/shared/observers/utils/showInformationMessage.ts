@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { vscode } from '../../../vscodeAdapter';
-import MessageItemWithCommand from '../../../observers/utils/messageItemWithCommand';
+import MessageItemWithCommand from '../../../omnisharp/observers/utils/messageItemWithCommand';
 
 export default async function showInformationMessage(
     vscode: vscode,

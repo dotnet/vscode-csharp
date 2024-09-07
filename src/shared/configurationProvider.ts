@@ -14,7 +14,7 @@ import {
     RemoteAttachPicker,
     DotNetAttachItemsProviderFactory,
     AttachPicker,
-} from '../features/processPicker';
+} from '../omnisharp/features/processPicker';
 import { PlatformInformation } from './platform';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { commonOptions } from './options';

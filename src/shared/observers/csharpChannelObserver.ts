@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseChannelObserver } from '../../observers/baseChannelObserver';
+import { BaseChannelObserver } from './baseChannelObserver';
 import { EventType } from '../../omnisharp/eventType';
 import { BaseEvent } from '../../omnisharp/loggingEvents';
 

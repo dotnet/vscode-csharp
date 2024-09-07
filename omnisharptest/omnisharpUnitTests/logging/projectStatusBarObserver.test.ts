@@ -6,7 +6,7 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from '../../../test/unitTests/fakes';
 import { StatusBarItem } from '../../../src/vscodeAdapter';
-import { ProjectStatusBarObserver } from '../../../src/observers/projectStatusBarObserver';
+import { ProjectStatusBarObserver } from '../../../src/omnisharp/observers/projectStatusBarObserver';
 import { OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnStop } from '../../../src/omnisharp/loggingEvents';
 
 describe('ProjectStatusBarObserver', () => {

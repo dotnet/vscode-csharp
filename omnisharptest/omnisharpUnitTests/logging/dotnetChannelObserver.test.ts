@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { DotNetChannelObserver } from '../../../src/observers/dotnetChannelObserver';
+import { DotNetChannelObserver } from '../../../src/omnisharp/observers/dotnetChannelObserver';
 import { getNullChannel } from '../../../test/unitTests/fakes';
 import { CommandDotNetRestoreStart } from '../../../src/omnisharp/loggingEvents';
 
