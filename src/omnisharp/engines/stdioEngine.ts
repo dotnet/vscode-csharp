@@ -15,7 +15,7 @@ import { omnisharpOptions } from '../../shared/options';
 import { PlatformInformation } from '../../shared/platform';
 import { launchOmniSharp } from '../launcher';
 import { setTimeout } from 'timers';
-import * as ObservableEvents from '../loggingEvents';
+import * as ObservableEvents from '../omnisharpLoggingEvents';
 import { EventStream } from '../../eventStream';
 import CompositeDisposable from '../../compositeDisposable';
 import Disposable from '../../disposable';

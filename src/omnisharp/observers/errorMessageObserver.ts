@@ -3,16 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {
-    BaseEvent,
-    ZipError,
-    DotNetTestRunFailure,
-    DotNetTestDebugStartFailure,
-    IntegrityCheckFailure,
-} from '../loggingEvents';
+import { BaseEvent, IntegrityCheckFailure, ZipError } from '../../shared/loggingEvents';
+import { DotNetTestRunFailure, DotNetTestDebugStartFailure } from '../omnisharpLoggingEvents';
 import { vscode } from '../../vscodeAdapter';
-import showErrorMessage from './utils/showErrorMessage';
-import { EventType } from '../eventType';
+import showErrorMessage from '../../shared/observers/utils/showErrorMessage';
+import { EventType } from '../../shared/eventType';
 import { l10n } from 'vscode';
 
 export class ErrorMessageObserver {

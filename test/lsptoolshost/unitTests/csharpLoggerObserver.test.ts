@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { getNullChannel } from '../../../fakes';
-import { CsharpLoggerObserver } from '../../../../src/shared/observers/csharpLoggerObserver';
-import { PlatformInformation } from '../../../../src/shared/platform';
-import * as Event from '../../../../src/omnisharp/loggingEvents';
-import { PackageError } from '../../../../src/packageManager/packageError';
-import { Package } from '../../../../src/packageManager/package';
+import { getNullChannel } from '../../fakes';
+import { CsharpLoggerObserver } from '../../../src/shared/observers/csharpLoggerObserver';
+import { PlatformInformation } from '../../../src/shared/platform';
+import { PackageError } from '../../../src/packageManager/packageError';
+import { Package } from '../../../src/packageManager/package';
+import * as Event from '../../../src/shared/loggingEvents';
 
 describe('CsharpLoggerObserver', () => {
     let logOutput = '';
@@ -176,12 +176,6 @@ describe('CsharpLoggerObserver', () => {
 
     test(`ActivationFailure: Some message is logged`, () => {
         const event = new Event.ActivationFailure();
-        observer.post(event);
-        expect(logOutput).toBeTruthy();
-    });
-
-    test(`ProjectJsonDeprecatedWarning: Some message is logged`, () => {
-        const event = new Event.ProjectJsonDeprecatedWarning();
         observer.post(event);
         expect(logOutput).toBeTruthy();
     });

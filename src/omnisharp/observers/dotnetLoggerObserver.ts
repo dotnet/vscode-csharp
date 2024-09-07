@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver';
+import { BaseEvent } from '../../shared/loggingEvents';
 import {
-    BaseEvent,
     CommandDotNetRestoreProgress,
     CommandDotNetRestoreSucceeded,
     CommandDotNetRestoreFailed,
-} from '../loggingEvents';
-import { EventType } from '../eventType';
+} from '../omnisharpLoggingEvents';
+import { EventType } from '../../shared/eventType';
 
 export class DotnetLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {

@@ -3,17 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as ObservableEvent from '../loggingEvents';
 import { vscode } from '../../vscodeAdapter';
 import showInformationMessage from '../../shared/observers/utils/showInformationMessage';
-import { EventType } from '../eventType';
+import { EventType } from '../../shared/eventType';
 import { omnisharpOptions } from '../../shared/options';
 import { l10n } from 'vscode';
+import { BaseEvent } from '../../shared/loggingEvents';
 
 export class InformationMessageObserver {
     constructor(private vscode: vscode) {}
 
-    public post = (event: ObservableEvent.BaseEvent) => {
+    public post = (event: BaseEvent) => {
         switch (event.type) {
             case EventType.OmnisharpServerUnresolvedDependencies:
                 this.handleOmnisharpServerUnresolvedDependencies();

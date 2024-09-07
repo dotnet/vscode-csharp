@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver';
-import { RazorPluginPathSpecified, BaseEvent, RazorPluginPathDoesNotExist } from '../loggingEvents';
-import { EventType } from '../eventType';
+import { RazorPluginPathSpecified, RazorPluginPathDoesNotExist } from '../omnisharpLoggingEvents';
+import { EventType } from '../../shared/eventType';
+import { BaseEvent } from '../../shared/loggingEvents';
 
 export class RazorLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {

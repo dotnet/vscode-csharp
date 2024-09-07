@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseChannelObserver } from './baseChannelObserver';
-import { EventType } from '../../omnisharp/eventType';
-import { BaseEvent } from '../../omnisharp/loggingEvents';
+import { EventType } from '../eventType';
+import { BaseEvent } from '../../shared/loggingEvents';
 
 export class CsharpChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {

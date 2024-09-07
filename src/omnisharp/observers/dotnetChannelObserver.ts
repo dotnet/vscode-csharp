@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseChannelObserver } from '../../shared/observers/baseChannelObserver';
-import { BaseEvent } from '../loggingEvents';
-import { EventType } from '../eventType';
+import { EventType } from '../../shared/eventType';
+import { BaseEvent } from '../../shared/loggingEvents';
 
 export class DotNetChannelObserver extends BaseChannelObserver {
     public post = (event: BaseEvent) => {

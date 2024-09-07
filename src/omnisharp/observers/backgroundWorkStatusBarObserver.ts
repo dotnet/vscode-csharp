@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseStatusBarItemObserver } from './baseStatusBarItemObserver';
-import { BaseEvent, OmnisharpBackgroundDiagnosticStatus } from '../loggingEvents';
-import { EventType } from '../eventType';
+import { BaseEvent } from '../../shared/loggingEvents';
+import { OmnisharpBackgroundDiagnosticStatus } from '../omnisharpLoggingEvents';
+import { EventType } from '../../shared/eventType';
 import { BackgroundDiagnosticStatus } from '../protocol';
 
 export class BackgroundWorkStatusBarObserver extends BaseStatusBarItemObserver {

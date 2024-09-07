@@ -12,7 +12,7 @@ import {
     DownloadFailure,
     DownloadProgress,
     DownloadSizeObtained,
-} from '../omnisharp/loggingEvents';
+} from '../shared/loggingEvents';
 import { NestedError } from '../nestedError';
 import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';

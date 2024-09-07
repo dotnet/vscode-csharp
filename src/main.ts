@@ -7,12 +7,11 @@ import * as coreclrdebug from './coreclrDebug/activate';
 import * as util from './common';
 import * as vscode from 'vscode';
 
-import { ActivationFailure, ActiveTextEditorChanged } from './omnisharp/loggingEvents';
+import { ActivationFailure } from './shared/loggingEvents';
 import { CsharpChannelObserver } from './shared/observers/csharpChannelObserver';
 import { CsharpLoggerObserver } from './shared/observers/csharpLoggerObserver';
 import { EventStream } from './eventStream';
 import { PlatformInformation } from './shared/platform';
-import { TelemetryObserver } from './omnisharp/observers/telemetryObserver';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { vscodeNetworkSettingsProvider } from './networkSettings';
 import createOptionStream from './shared/observables/createOptionStream';
@@ -33,7 +32,6 @@ import { CSharpExtensionExports, OmnisharpExtensionExports } from './csharpExten
 import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
 import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
 import { RoslynLanguageServerExport } from './lsptoolshost/roslynLanguageServerExportChannel';
-import { registerOmnisharpOptionChanges } from './omnisharp/omnisharpOptionChanges';
 import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents';
 import { ServerState } from './lsptoolshost/serverStateChange';
 import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
@@ -87,12 +85,8 @@ export async function activate(
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
     await initializeDotnetPath();
 
-    const useModernNetOption = omnisharpOptions.useModernNet;
-    const telemetryObserver = new TelemetryObserver(platformInfo, () => reporter, useModernNetOption);
-    eventStream.subscribe(telemetryObserver.post);
-
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
-    const useFramework = useOmnisharpServer && useModernNetOption !== true;
+    const useFramework = useOmnisharpServer && omnisharpOptions.useModernNet !== true;
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) =>
         downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
     const runtimeDependenciesExist = await ensureRuntimeDependencies(
@@ -156,19 +150,13 @@ export async function activate(
         omnisharpLangServicePromise = activateOmniSharpLanguageServer(
             context,
             platformInfo,
+            optionStream,
             networkSettingsProvider,
             eventStream,
             csharpChannel,
             dotnetTestChannel,
-            dotnetChannel
-        );
-
-        context.subscriptions.push(registerOmnisharpOptionChanges(optionStream));
-
-        context.subscriptions.push(
-            vscode.window.onDidChangeActiveTextEditor(() => {
-                eventStream.post(new ActiveTextEditorChanged());
-            })
+            dotnetChannel,
+            reporter
         );
 
         if (!razorOptions.razorDevMode) {
@@ -198,7 +186,7 @@ export async function activate(
             await vscode.window.showErrorMessage(errorMessage, setupButton).then((selectedItem) => {
                 if (selectedItem === setupButton) {
                     const remoteDebugInfoURL =
-                        'https://github.com/OmniSharp/omnisharp-vscode/wiki/Remote-Debugging-On-Linux-Arm';
+                        'https://github.com/dotnet/vscode-csharp/wiki/Remote-Debugging-On-Linux-Arm';
                     vscode.env.openExternal(vscode.Uri.parse(remoteDebugInfoURL));
                 }
             });

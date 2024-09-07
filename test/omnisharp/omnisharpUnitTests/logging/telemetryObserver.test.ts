@@ -6,10 +6,8 @@
 import { beforeEach, test, describe, expect } from '@jest/globals';
 import { TelemetryObserver } from '../../../../src/omnisharp/observers/telemetryObserver';
 import { PlatformInformation } from '../../../../src/shared/platform';
+import { PackageInstallation, InstallationFailure, InstallationSuccess } from '../../../../src/shared/loggingEvents';
 import {
-    PackageInstallation,
-    InstallationFailure,
-    InstallationSuccess,
     TestExecutionCountReport,
     TelemetryEventWithMeasures,
     OmnisharpDelayTrackerEventMeasures,
@@ -17,7 +15,7 @@ import {
     TelemetryEvent,
     ProjectConfiguration,
     TelemetryErrorEvent,
-} from '../../../../src/omnisharp/loggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 import { getNullTelemetryReporter } from '../../../fakes';
 import { Package } from '../../../../src/packageManager/package';
 import { PackageError } from '../../../../src/packageManager/packageError';

@@ -5,9 +5,9 @@
 
 import { BaseChannelObserver } from '../../shared/observers/baseChannelObserver';
 import { OutputChannel } from '../../vscodeAdapter';
-import { BaseEvent } from '../loggingEvents';
-import { EventType } from '../eventType';
+import { EventType } from '../../shared/eventType';
 import { omnisharpOptions } from '../../shared/options';
+import { BaseEvent } from '../../shared/loggingEvents';
 
 export class OmnisharpChannelObserver extends BaseChannelObserver {
     constructor(channel: OutputChannel) {

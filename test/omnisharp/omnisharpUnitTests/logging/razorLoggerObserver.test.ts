@@ -9,7 +9,7 @@ import {
     RazorPluginPathSpecified,
     RazorPluginPathDoesNotExist,
     RazorDevModeActive,
-} from '../../../../src/omnisharp/loggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 
 describe('RazorLoggerObserver', () => {
     let logOutput = '';

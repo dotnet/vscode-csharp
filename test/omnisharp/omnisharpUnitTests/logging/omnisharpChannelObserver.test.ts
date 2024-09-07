@@ -7,14 +7,14 @@ import * as vscode from 'vscode';
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel, getWorkspaceConfiguration } from '../../../fakes';
 import { OmnisharpChannelObserver } from '../../../../src/omnisharp/observers/omnisharpChannelObserver';
+import { BaseEvent } from '../../../../src/shared/loggingEvents';
+import { Subject } from 'rxjs';
 import {
     OmnisharpFailure,
-    ShowOmniSharpChannel,
-    BaseEvent,
     OmnisharpRestart,
     OmnisharpServerOnStdErr,
-} from '../../../../src/omnisharp/loggingEvents';
-import { Subject } from 'rxjs';
+    ShowOmniSharpChannel,
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 
 describe('OmnisharpChannelObserver', () => {
     let hasShown: boolean;

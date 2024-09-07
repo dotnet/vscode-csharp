@@ -6,12 +6,12 @@
 import { describe, test, expect } from '@jest/globals';
 import { getNullChannel } from '../../../fakes';
 import { DotnetLoggerObserver } from '../../../../src/omnisharp/observers/dotnetLoggerObserver';
+import { EventWithMessage } from '../../../../src/shared/loggingEvents';
 import {
+    CommandDotNetRestoreFailed,
     CommandDotNetRestoreProgress,
     CommandDotNetRestoreSucceeded,
-    CommandDotNetRestoreFailed,
-    EventWithMessage,
-} from '../../../../src/omnisharp/loggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 
 describe('DotnetLoggerObserver', () => {
     [

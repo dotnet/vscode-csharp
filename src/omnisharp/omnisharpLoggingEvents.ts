@@ -3,16 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { PlatformInformation } from '../shared/platform';
 import { Request } from './requestQueue';
 import * as protocol from './protocol';
 import { LaunchTarget } from '../shared/launchTarget';
-import { EventType } from './eventType';
+import { EventType } from '../shared/eventType';
 import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
-
-export interface BaseEvent {
-    type: EventType;
-}
+import { BaseEvent, EventWithMessage } from '../shared/loggingEvents';
 
 export class TelemetryEvent implements BaseEvent {
     type = EventType.TelemetryEvent;
@@ -60,35 +56,6 @@ export class OmnisharpLaunch implements BaseEvent {
         public command: string,
         public pid: number
     ) {}
-}
-
-export class PackageInstallStart implements BaseEvent {
-    type = EventType.PackageInstallStart;
-}
-
-export class PackageInstallation implements BaseEvent {
-    type = EventType.PackageInstallation;
-    constructor(public packageInfo: string) {}
-}
-
-export class LogPlatformInfo implements BaseEvent {
-    type = EventType.LogPlatformInfo;
-    constructor(public info: PlatformInformation) {}
-}
-
-export class InstallationStart implements BaseEvent {
-    type = EventType.InstallationStart;
-    constructor(public packageDescription: string) {}
-}
-
-export class InstallationFailure implements BaseEvent {
-    type = EventType.InstallationFailure;
-    constructor(public stage: string, public error: any) {}
-}
-
-export class DownloadProgress implements BaseEvent {
-    type = EventType.DownloadProgress;
-    constructor(public downloadPercentage: number, public packageDescription: string) {}
 }
 
 export class OmnisharpFailure implements BaseEvent {
@@ -174,31 +141,6 @@ export class WorkspaceInformationUpdated implements BaseEvent {
     constructor(public info: protocol.WorkspaceInformationResponse) {}
 }
 
-export class EventWithMessage implements BaseEvent {
-    type = EventType.EventWithMessage;
-    constructor(public message: string) {}
-}
-
-export class DownloadStart implements BaseEvent {
-    type = EventType.DownloadStart;
-    constructor(public packageDescription: string) {}
-}
-
-export class DownloadFallBack implements BaseEvent {
-    type = EventType.DownloadFallBack;
-    constructor(public fallbackUrl: string) {}
-}
-
-export class DownloadSizeObtained implements BaseEvent {
-    type = EventType.DownloadSizeObtained;
-    constructor(public packageSize: number) {}
-}
-
-export class ZipError implements BaseEvent {
-    type = EventType.ZipError;
-    constructor(public message: string) {}
-}
-
 export class ReportDotNetTestResults implements BaseEvent {
     type = EventType.ReportDotNetTestResults;
     constructor(public results: protocol.V2.DotNetTestResult[] | undefined) {}
@@ -244,15 +186,6 @@ export class DocumentSynchronizationFailure implements BaseEvent {
     constructor(public documentPath: string, public errorMessage: string) {}
 }
 
-export class IntegrityCheckFailure {
-    type = EventType.IntegrityCheckFailure;
-    constructor(public packageDescription: string, public url: string, public retry: boolean) {}
-}
-
-export class IntegrityCheckSuccess {
-    type = EventType.IntegrityCheckSuccess;
-}
-
 export class RazorPluginPathSpecified implements BaseEvent {
     type = EventType.RazorPluginPathSpecified;
     constructor(public path: string) {}
@@ -263,45 +196,42 @@ export class RazorPluginPathDoesNotExist implements BaseEvent {
     constructor(public path: string) {}
 }
 
-export class DebuggerPrerequisiteFailure extends EventWithMessage {
-    type = EventType.DebuggerPrerequisiteFailure;
-}
-export class DebuggerPrerequisiteWarning extends EventWithMessage {
-    type = EventType.DebuggerPrerequisiteWarning;
-}
 export class CommandDotNetRestoreProgress extends EventWithMessage {
     type = EventType.CommandDotNetRestoreProgress;
 }
+
 export class CommandDotNetRestoreSucceeded extends EventWithMessage {
     type = EventType.CommandDotNetRestoreSucceeded;
 }
+
 export class CommandDotNetRestoreFailed extends EventWithMessage {
     type = EventType.CommandDotNetRestoreFailed;
 }
-export class DownloadSuccess extends EventWithMessage {
-    type = EventType.DownloadSuccess;
-}
-export class DownloadFailure extends EventWithMessage {
-    type = EventType.DownloadFailure;
-}
+
 export class OmnisharpServerOnStdErr extends EventWithMessage {
     type = EventType.OmnisharpServerOnStdErr;
 }
+
 export class OmnisharpServerMessage extends EventWithMessage {
     type = EventType.OmnisharpServerMessage;
 }
+
 export class OmnisharpServerVerboseMessage extends EventWithMessage {
     type = EventType.OmnisharpServerVerboseMessage;
 }
+
 export class DotNetTestMessage extends EventWithMessage {
     type = EventType.DotNetTestMessage;
 }
+
 export class DotNetTestRunFailure extends EventWithMessage {
     type = EventType.DotNetTestRunFailure;
 }
+
 export class DotNetTestDebugWarning extends EventWithMessage {
     type = EventType.DotNetTestDebugWarning;
 }
+
 export class DotNetTestDebugStartFailure extends EventWithMessage {
     type = EventType.DotNetTestDebugStartFailure;
 }
@@ -309,57 +239,59 @@ export class DotNetTestDebugStartFailure extends EventWithMessage {
 export class RazorDevModeActive implements BaseEvent {
     type = EventType.RazorDevModeActive;
 }
+
 export class ProjectModified implements BaseEvent {
     type = EventType.ProjectModified;
 }
-export class ActivationFailure implements BaseEvent {
-    type = EventType.ActivationFailure;
-}
+
 export class ShowOmniSharpChannel implements BaseEvent {
     type = EventType.ShowOmniSharpChannel;
 }
-export class DebuggerNotInstalledFailure implements BaseEvent {
-    type = EventType.DebuggerNotInstalledFailure;
-}
+
 export class CommandDotNetRestoreStart implements BaseEvent {
     type = EventType.CommandDotNetRestoreStart;
 }
-export class InstallationSuccess implements BaseEvent {
-    type = EventType.InstallationSuccess;
-}
+
 export class OmnisharpServerProcessRequestComplete implements BaseEvent {
     type = EventType.OmnisharpServerProcessRequestComplete;
 }
+
 export class ProjectJsonDeprecatedWarning implements BaseEvent {
     type = EventType.ProjectJsonDeprecatedWarning;
 }
+
 export class OmnisharpOnBeforeServerStart implements BaseEvent {
     type = EventType.OmnisharpOnBeforeServerStart;
 }
+
 export class OmnisharpOnBeforeServerInstall implements BaseEvent {
     type = EventType.OmnisharpOnBeforeServerInstall;
 }
+
 export class ActiveTextEditorChanged implements BaseEvent {
     type = EventType.ActiveTextEditorChanged;
 }
+
 export class OmnisharpServerOnStop implements BaseEvent {
     type = EventType.OmnisharpServerOnStop;
 }
+
 export class OmnisharpServerOnStart implements BaseEvent {
     type = EventType.OmnisharpServerOnStart;
 }
+
 export class LatestBuildDownloadStart implements BaseEvent {
     type = EventType.LatestBuildDownloadStart;
 }
+
 export class OmnisharpRestart implements BaseEvent {
     type = EventType.OmnisharpRestart;
 }
+
 export class DotNetTestDebugComplete implements BaseEvent {
     type = EventType.DotNetTestDebugComplete;
 }
-export class DownloadValidation implements BaseEvent {
-    type = EventType.DownloadValidation;
-}
+
 export class ShowChannel implements BaseEvent {
     type = EventType.ShowChannel;
 }

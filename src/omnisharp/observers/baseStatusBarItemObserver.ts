@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { BaseEvent } from '../../shared/loggingEvents';
 import { StatusBarItem } from '../../vscodeAdapter';
-import { BaseEvent } from '../loggingEvents';
 
 export abstract class BaseStatusBarItemObserver {
     constructor(private statusBarItem: StatusBarItem) {}

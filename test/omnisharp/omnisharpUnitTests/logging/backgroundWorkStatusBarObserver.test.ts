@@ -5,7 +5,7 @@
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { StatusBarItem } from '../../../../src/vscodeAdapter';
-import { OmnisharpBackgroundDiagnosticStatus } from '../../../../src/omnisharp/loggingEvents';
+import { OmnisharpBackgroundDiagnosticStatus } from '../../../../src/omnisharp/omnisharpLoggingEvents';
 import { BackgroundWorkStatusBarObserver } from '../../../../src/omnisharp/observers/backgroundWorkStatusBarObserver';
 import { BackgroundDiagnosticStatus } from '../../../../src/omnisharp/protocol';
 
