@@ -131,6 +131,17 @@ export function sortLocations(locations: vscode.Location[]): vscode.Location[] {
     });
 }
 
+export function findRangeOfString(editor: vscode.TextEditor, stringToFind: string): vscode.Range[] {
+    const text = editor.document.getText();
+    const matches = [...text.matchAll(new RegExp(stringToFind, 'gm'))];
+    const ranges = matches.map((match) => {
+        const startPos = editor.document.positionAt(match.index!);
+        const endPos = editor.document.positionAt(match.index! + stringToFind.length);
+        return new vscode.Range(startPos, endPos);
+    });
+    return ranges;
+}
+
 function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {
     const primeWorkspace = workspace.workspaceFolders![0];
     const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
