@@ -51,12 +51,16 @@ After completing the build steps:
 
 #### Testing
 
-To run tests:
+To run all tests, execute `npm run test`.
 
-1. Execute `npm run test` or press <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration selected.
-2. For integration tests, select either of the two 'current file' integration tests (one for roslyn and one for razor), from the drop-down and press <kbd>F5</kbd> to start debugging:
-- For Roslyn Server: `Launch Current File slnWithCsproj Integration Tests`
-- For Razor Server:  `Launch Current File BasicRazorApp2_1 Integration Tests`
+To debug unit tests locally, press <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration selected.
+
+To debug integration tests
+1.  Import the `csharp-standalone-profile.code-profile` in VSCode to setup a clean profile in which to run integration tests.  This must be imported at least once to use the launch configurations.
+2.  Open any integration test file and <kbd>F5</kbd> launch with the correct launch configuration selected.
+    - For integration tests inside `test/lsptoolshost`, use `Launch Current File slnWithCsproj Integration Tests`
+    - For integration tests inside `test/razor`, use `Launch Current File BasicRazorApp2_1 Integration Tests`
+    - For integration tests inside `test/omnisharp`, use one of the `Omnisharp:` current file profiles
 
 These will allow you to actually debug the test, but the 'Razor integration tests' configuration does not.
 

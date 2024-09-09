@@ -20,7 +20,8 @@
                 // Launch VSCode using a specific profile to ensure that user settings are not used.
                 // This profile must be imported into vscode before running this launch configuration.
                 // The profile can be found under /test/csharp-standalone-profile.
-                "--profile csharp-standalone-profile",
+                "--profile",
+                "csharp-standalone-profile",
                 "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests"
@@ -44,7 +45,8 @@
                 // Launch VSCode using a specific profile to ensure that user settings are not used.
                 // This profile must be imported into vscode before running this launch configuration.
                 // The profile can be found under /test/csharp-standalone-profile.
-                "--profile csharp-standalone-profile",
+                "--profile",
+                "csharp-standalone-profile",
                 "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests"
@@ -68,7 +70,8 @@
                 // Launch VSCode using a specific profile to ensure that user settings are not used.
                 // This profile must be imported into vscode before running this launch configuration.
                 // The profile can be found under /test/csharp-standalone-profile.
-                "--profile csharp-standalone-profile",
+                "--profile",
+                "csharp-standalone-profile",
                 "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
@@ -92,7 +95,8 @@
                 // Launch VSCode using a specific profile to ensure that user settings are not used.
                 // This profile must be imported into vscode before running this launch configuration.
                 // The profile can be found under /test/csharp-standalone-profile.
-                "--profile csharp-standalone-profile",
+                "--profile",
+                "csharp-standalone-profile",
                 "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_lsp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
