@@ -18,7 +18,6 @@ server/**
 src/**
 tasks/**
 test/**
-omnisharptest/**
 __mocks__/**
 jest.config.ts
 baseJestConfig.ts

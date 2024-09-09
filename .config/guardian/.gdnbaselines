@@ -14,7 +14,7 @@
     "d6ffb0614846153cf3cc5936d0444ed9eda6fe6854febb4c8ea59243c120b223": {
       "signature": "d6ffb0614846153cf3cc5936d0444ed9eda6fe6854febb4c8ea59243c120b223",
       "alternativeSignatures": [],
-      "target": "omnisharptest/omnisharpUnitTests/testAssets/private.pem",
+      "target": "test/omnisharp/omnisharpUnitTests/testAssets/private.pem",
       "line": 1,
       "memberOf": [
         "default"
