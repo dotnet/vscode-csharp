@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { EOL } from 'os';
 import { expect } from '@jest/globals';
 
 export async function formatDocumentAsync(): Promise<void> {
@@ -56,9 +55,4 @@ async function applyEditsAsync(edits: vscode.TextEdit[]): Promise<void> {
     workspaceEdit.set(vscode.window.activeTextEditor!.document.uri, edits);
     const succeeded = await vscode.workspace.applyEdit(workspaceEdit);
     expect(succeeded).toBe(true);
-}
-
-export async function expectText(expectedLines: string[]) {
-    const expectedText = expectedLines.join(EOL);
-    expect(vscode.window.activeTextEditor!.document.getText()).toBe(expectedText);
 }

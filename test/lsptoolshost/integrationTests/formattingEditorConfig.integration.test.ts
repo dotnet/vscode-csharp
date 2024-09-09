@@ -6,9 +6,14 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import {
+    activateCSharpExtension,
+    closeAllEditorsAsync,
+    expectText,
+    openFileInWorkspaceAsync,
+} from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, afterEach } from '@jest/globals';
-import { expectText, formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers';
+import { formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers';
 
 describe(`[${testAssetWorkspace.description}] Formatting With EditorConfig Tests`, () => {
     beforeAll(async () => {
@@ -45,7 +50,7 @@ describe(`[${testAssetWorkspace.description}] Formatting With EditorConfig Tests
             '    }',
             '}',
         ];
-        expectText(expectedText);
+        expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 
     test('Document range formatting respects editorconfig', async () => {
@@ -67,7 +72,7 @@ describe(`[${testAssetWorkspace.description}] Formatting With EditorConfig Tests
             '    }',
             '}',
         ];
-        expectText(expectedText);
+        expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 
     test('Document on type formatting respects editorconfig', async () => {
@@ -90,6 +95,6 @@ describe(`[${testAssetWorkspace.description}] Formatting With EditorConfig Tests
             '    }',
             '}',
         ];
-        expectText(expectedText);
+        expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 });
