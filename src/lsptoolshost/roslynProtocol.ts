@@ -188,6 +188,15 @@ export interface RoslynFixAllCodeAction extends CodeAction {
     scope: string;
 }
 
+/**
+ * Should match the definition on the server side, but only the properties we require on the client side.
+ * https://github.com/dotnet/roslyn/blob/bd5c00e5e09de8564093f42d87fe49d4971f2e84/src/LanguageServer/Protocol/Handler/CodeActions/CodeActionResolveData.cs#L16C20-L16C41
+ */
+export interface CodeActionResolveData {
+    UniqueIdentifier: string;
+    FixAllFlavors?: string[];
+}
+
 export interface NamedPipeInformation {
     pipeName: string;
 }
