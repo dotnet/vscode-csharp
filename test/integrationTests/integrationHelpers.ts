@@ -122,13 +122,17 @@ export async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
 
 export function sortLocations(locations: vscode.Location[]): vscode.Location[] {
     return locations.sort((a, b) => {
-        const uriCompare = a.uri.fsPath.localeCompare(b.uri.fsPath);
-        if (uriCompare !== 0) {
-            return uriCompare;
-        }
-
-        return a.range.start.compareTo(b.range.start);
+        return compareLocations(a, b);
     });
+}
+
+export function compareLocations(a: vscode.Location, b: vscode.Location): number {
+    const uriCompare = a.uri.fsPath.localeCompare(b.uri.fsPath);
+    if (uriCompare !== 0) {
+        return uriCompare;
+    }
+
+    return a.range.start.compareTo(b.range.start);
 }
 
 function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {
