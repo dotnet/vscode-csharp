@@ -19,7 +19,7 @@ import {
     CommandDotNetRestoreProgress,
     CommandDotNetRestoreSucceeded,
     CommandDotNetRestoreFailed,
-} from '../loggingEvents';
+} from '../omnisharpLoggingEvents';
 import { EventStream } from '../../eventStream';
 import { PlatformInformation } from '../../shared/platform';
 import CompositeDisposable from '../../compositeDisposable';

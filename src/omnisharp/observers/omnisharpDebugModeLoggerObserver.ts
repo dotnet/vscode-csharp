@@ -5,8 +5,8 @@
 
 import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver';
 import * as os from 'os';
+import { BaseEvent } from '../../shared/loggingEvents';
 import {
-    BaseEvent,
     OmnisharpRequestMessage,
     OmnisharpServerEnqueueRequest,
     OmnisharpServerDequeueRequest,
@@ -14,8 +14,8 @@ import {
     OmnisharpServerVerboseMessage,
     OmnisharpServerProcessRequestStart,
     OmnisharpEventPacketReceived,
-} from '../loggingEvents';
-import { EventType } from '../eventType';
+} from '../omnisharpLoggingEvents';
+import { EventType } from '../../shared/eventType';
 
 export class OmnisharpDebugModeLoggerObserver extends BaseLoggerObserver {
     public post = (event: BaseEvent) => {

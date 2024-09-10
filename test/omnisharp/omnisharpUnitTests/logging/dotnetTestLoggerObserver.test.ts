@@ -5,23 +5,22 @@
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel } from '../../../fakes';
-import {
-    EventWithMessage,
-    DotNetTestDebugWarning,
-    DotNetTestDebugStart,
-    BaseEvent,
-    DotNetTestRunStart,
-    DotNetTestDebugProcessStart,
-    DotNetTestMessage,
-    DotNetTestDebugComplete,
-    ReportDotNetTestResults,
-    DotNetTestsInClassDebugStart,
-    DotNetTestsInClassRunStart,
-    DotNetTestRunInContextStart,
-    DotNetTestDebugInContextStart,
-} from '../../../../src/omnisharp/loggingEvents';
+import { EventWithMessage, BaseEvent } from '../../../../src/shared/loggingEvents';
 import DotNetTestLoggerObserver from '../../../../src/omnisharp/observers/dotnetTestLoggerObserver';
 import * as protocol from '../../../../src/omnisharp/protocol';
+import {
+    DotNetTestDebugComplete,
+    DotNetTestDebugInContextStart,
+    DotNetTestDebugProcessStart,
+    DotNetTestDebugStart,
+    DotNetTestDebugWarning,
+    DotNetTestMessage,
+    DotNetTestRunInContextStart,
+    DotNetTestRunStart,
+    DotNetTestsInClassDebugStart,
+    DotNetTestsInClassRunStart,
+    ReportDotNetTestResults,
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 
 describe(`${DotNetTestLoggerObserver.name}`, () => {
     let appendedMessage: string;

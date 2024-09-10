@@ -5,11 +5,12 @@
 
 import { debounceTime } from 'rxjs/operators';
 import { vscode } from '../../vscodeAdapter';
-import { BaseEvent, OmnisharpServerMsBuildProjectDiagnostics } from '../loggingEvents';
+import { BaseEvent } from '../../shared/loggingEvents';
+import { OmnisharpServerMsBuildProjectDiagnostics } from '../omnisharpLoggingEvents';
 import { Scheduler, Subject } from 'rxjs';
 
-import showWarningMessage from './utils/showWarningMessage';
-import { EventType } from '../eventType';
+import showWarningMessage from '../../shared/observers/utils/showWarningMessage';
+import { EventType } from '../../shared/eventType';
 import { l10n } from 'vscode';
 
 export class WarningMessageObserver {

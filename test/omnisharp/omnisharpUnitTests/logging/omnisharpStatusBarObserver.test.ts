@@ -6,18 +6,20 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { StatusBarItem } from '../../../../src/vscodeAdapter';
 import {
+    DownloadStart,
+    InstallationStart,
+    DownloadProgress,
+    BaseEvent,
+    InstallationSuccess,
+} from '../../../../src/shared/loggingEvents';
+import {
     OmnisharpOnBeforeServerInstall,
     OmnisharpOnBeforeServerStart,
     OmnisharpServerOnServerError,
     OmnisharpServerOnStart,
     OmnisharpServerOnStop,
-    DownloadStart,
-    InstallationStart,
-    DownloadProgress,
     OmnisharpServerOnStdErr,
-    BaseEvent,
-    InstallationSuccess,
-} from '../../../../src/omnisharp/loggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 import {
     OmnisharpStatusBarObserver,
     StatusBarColors,

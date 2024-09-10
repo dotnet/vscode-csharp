@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import * as serverUtils from './omnisharp/utils';
+import * as serverUtils from './utils';
 import {
     IWorkspaceDebugInformationProvider,
     ProjectDebugInformation,
-} from './shared/IWorkspaceDebugInformationProvider';
-import { OmniSharpServer } from './omnisharp/server';
+} from '../shared/IWorkspaceDebugInformationProvider';
+import { OmniSharpServer } from './server';
 import { Uri } from 'vscode';
-import { findNetCoreTargetFramework } from './shared/utils';
-import { isSubfolderOf } from './common';
+import { findNetCoreTargetFramework } from '../shared/utils';
+import { isSubfolderOf } from '../common';
 
 export class OmnisharpWorkspaceDebugInformationProvider implements IWorkspaceDebugInformationProvider {
     constructor(private server: OmniSharpServer) {}

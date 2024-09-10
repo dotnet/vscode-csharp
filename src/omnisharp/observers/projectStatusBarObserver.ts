@@ -4,9 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { basename } from 'path';
-import { BaseEvent, WorkspaceInformationUpdated } from '../loggingEvents';
+import { BaseEvent } from '../../shared/loggingEvents';
+import { WorkspaceInformationUpdated } from '../omnisharpLoggingEvents';
 import { BaseStatusBarItemObserver } from './baseStatusBarItemObserver';
-import { EventType } from '../eventType';
+import { EventType } from '../../shared/eventType';
 
 export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
     public post = (event: BaseEvent) => {

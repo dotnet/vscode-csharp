@@ -7,14 +7,9 @@ import { describe, test, expect, beforeEach } from '@jest/globals';
 import { vscode } from '../../../../src/vscodeAdapter';
 
 import { ErrorMessageObserver } from '../../../../src/omnisharp/observers/errorMessageObserver';
-import {
-    ZipError,
-    DotNetTestRunFailure,
-    DotNetTestDebugStartFailure,
-    EventWithMessage,
-    IntegrityCheckFailure,
-} from '../../../../src/omnisharp/loggingEvents';
+import { ZipError, EventWithMessage, IntegrityCheckFailure } from '../../../../src/shared/loggingEvents';
 import { getFakeVsCode } from '../../../fakes';
+import { DotNetTestDebugStartFailure, DotNetTestRunFailure } from '../../../../src/omnisharp/omnisharpLoggingEvents';
 
 describe('ErrorMessageObserver', () => {
     const vscode: vscode = getFakeVsCode();

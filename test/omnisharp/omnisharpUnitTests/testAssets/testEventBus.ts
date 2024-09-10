@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { EventStream } from '../../../../src/eventStream';
-import { BaseEvent } from '../../../../src/omnisharp/loggingEvents';
+import { BaseEvent } from '../../../../src/shared/loggingEvents';
 import Disposable, { IDisposable } from '../../../../src/disposable';
 
 export default class TestEventBus {

@@ -10,8 +10,7 @@ import {
     LogPlatformInfo,
     InstallationSuccess,
     InstallationFailure,
-    LatestBuildDownloadStart,
-} from './loggingEvents';
+} from '../shared/loggingEvents';
 import { EventStream } from '../eventStream';
 import { NetworkSettingsProvider } from '../networkSettings';
 import { downloadAndInstallPackages } from '../packageManager/downloadAndInstallPackages';
@@ -19,6 +18,7 @@ import { DownloadFile } from '../packageManager/fileDownloader';
 import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall';
 import { isValidDownload } from '../packageManager/isValidDownload';
+import { LatestBuildDownloadStart } from './omnisharpLoggingEvents';
 
 export class OmnisharpDownloader {
     public constructor(

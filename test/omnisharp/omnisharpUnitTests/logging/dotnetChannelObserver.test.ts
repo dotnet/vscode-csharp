@@ -6,7 +6,7 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { DotNetChannelObserver } from '../../../../src/omnisharp/observers/dotnetChannelObserver';
 import { getNullChannel } from '../../../fakes';
-import { CommandDotNetRestoreStart } from '../../../../src/omnisharp/loggingEvents';
+import { CommandDotNetRestoreStart } from '../../../../src/omnisharp/omnisharpLoggingEvents';
 
 describe('DotnetChannelObserver', () => {
     let hasShown: boolean;

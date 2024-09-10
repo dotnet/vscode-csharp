@@ -9,7 +9,7 @@ import { configure } from '../launcher';
 import { LaunchTarget } from '../../shared/launchTarget';
 import { EventEmitter } from 'events';
 import { setTimeout } from 'timers';
-import * as ObservableEvents from '../loggingEvents';
+import * as ObservableEvents from '../omnisharpLoggingEvents';
 import { EventStream } from '../../eventStream';
 import CompositeDisposable from '../../compositeDisposable';
 import Disposable from '../../disposable';

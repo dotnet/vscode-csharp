@@ -28,7 +28,7 @@ import {
     DotNetTestDebugStartFailure,
     DotNetTestRunInContextStart,
     DotNetTestDebugInContextStart,
-} from '../loggingEvents';
+} from '../omnisharpLoggingEvents';
 import { EventStream } from '../../eventStream';
 import LaunchConfiguration from './launchConfiguration';
 import Disposable from '../../disposable';

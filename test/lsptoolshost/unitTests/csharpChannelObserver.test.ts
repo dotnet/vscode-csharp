@@ -4,24 +4,22 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import { getNullChannel } from '../../../fakes';
-import { CsharpChannelObserver } from '../../../../src/shared/observers/csharpChannelObserver';
+import { getNullChannel } from '../../fakes';
+import { CsharpChannelObserver } from '../../../src/shared/observers/csharpChannelObserver';
 import {
     InstallationFailure,
-    DebuggerNotInstalledFailure,
-    DebuggerPrerequisiteFailure,
-    ProjectJsonDeprecatedWarning,
     BaseEvent,
     PackageInstallStart,
     IntegrityCheckFailure,
-} from '../../../../src/omnisharp/loggingEvents';
+    DebuggerNotInstalledFailure,
+    DebuggerPrerequisiteFailure,
+} from '../../../src/shared/loggingEvents';
 
 describe('CsharpChannelObserver', () => {
     [
         new InstallationFailure('someStage', 'someError'),
         new DebuggerNotInstalledFailure(),
         new DebuggerPrerequisiteFailure('some failure'),
-        new ProjectJsonDeprecatedWarning(),
         new IntegrityCheckFailure('', '', true),
         new PackageInstallStart(),
     ].forEach((event: BaseEvent) => {

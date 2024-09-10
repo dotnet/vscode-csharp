@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from '../../vscodeAdapter';
-import { BaseEvent } from '../../omnisharp/loggingEvents';
+import { BaseEvent } from '../../shared/loggingEvents';
 
 export abstract class BaseChannelObserver {
     constructor(private channel: vscode.OutputChannel) {}

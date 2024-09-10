@@ -9,8 +9,8 @@ import * as path from 'path';
 import { activateCSharpExtension, describeIfSlnWithCsProj } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { EventStream } from '../../../src/eventStream';
-import { EventType } from '../../../src/omnisharp/eventType';
-import { OmnisharpRequestMessage } from '../../../src/omnisharp/loggingEvents';
+import { EventType } from '../../../src/shared/eventType';
+import { OmnisharpRequestMessage } from '../../../src/omnisharp/omnisharpLoggingEvents';
 import { V2 } from '../../../src/omnisharp/protocol';
 import { isNotNull } from '../testUtil';
 

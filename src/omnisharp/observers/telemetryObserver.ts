@@ -4,18 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from '../../shared/platform';
+import { BaseEvent, InstallationFailure } from '../../shared/loggingEvents';
 import {
-    BaseEvent,
-    InstallationFailure,
     TestExecutionCountReport,
     TelemetryEventWithMeasures,
     TelemetryEvent,
     ProjectConfiguration,
     TelemetryErrorEvent,
     OmnisharpInitialisation,
-} from '../loggingEvents';
+} from '../omnisharpLoggingEvents';
 import { PackageError } from '../../packageManager/packageError';
-import { EventType } from '../eventType';
+import { EventType } from '../../shared/eventType';
 import { getDotnetInfo } from '../../shared/utils/getDotnetInfo';
 import { DotnetInfo } from '../../shared/utils/dotnetInfo';
 import { ITelemetryReporter, getTelemetryProps } from '../../shared/telemetryReporter';
