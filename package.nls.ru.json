@@ -55,6 +55,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "Скрывать подсказки, когда аргумент соответствует имени параметра",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Скрывать подсказки, если имя параметра соответствует намерению метода.",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Включить переход к декомпилированным источникам.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
   "configuration.dotnet.preferCSharpExtension": "Принудительно загружает проекты только с расширением C#.  Это может быть полезно при использовании устаревших типов проектов, которые не поддерживаются C# Dev Kit. (Требуется перезагрузка окна)",
   "configuration.dotnet.projects.binaryLogPath": "Настраивает путь, в который записываются двоичные журналы MSBuild при загрузке проектов, чтобы помочь диагностировать ошибки загрузки.",
   "configuration.dotnet.projects.enableAutomaticRestore": "Включает автоматическое восстановление NuGet при обнаружении расширением отсутствия ресурсов.",

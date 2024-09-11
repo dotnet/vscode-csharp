@@ -55,6 +55,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "Potlačit nápovědy, když argument odpovídá názvu parametru",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Potlačit nápovědy, když název parametru odpovídá záměru metody",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Povolit navigaci na dekompilované zdroje.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
   "configuration.dotnet.preferCSharpExtension": "Vynutí načtení projektů pouze s rozšířením jazyka C#.  To může být užitečné při použití starších typů projektů, které jazyk C# Dev Kit nepodporuje. (Vyžaduje opětovné načtení okna)",
   "configuration.dotnet.projects.binaryLogPath": "Nastaví cestu, do které se při načítání projektů zapisují binární protokoly MSBuildu, aby se usnadnil diagnostika chyb načítání.",
   "configuration.dotnet.projects.enableAutomaticRestore": "Povolí automatické obnovení balíčku NuGet, pokud rozšíření zjistí, že chybí prostředky.",
