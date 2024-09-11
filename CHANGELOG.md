@@ -7,8 +7,9 @@
 * Update Roslyn to 4.12.0-3.24456.2 (PR: [#7525](https://github.com/dotnet/vscode-csharp/pull/7525))
   * Avoid BuildHost crash in Mono due to missing types (PR: [#74994](https://github.com/dotnet/roslyn/pull/74994))
 * Turn off word suggestions in XAML completions (PR: [#7516](https://github.com/dotnet/vscode-csharp/pull/7516))
-* Bump xamltools to 17.12.35305.252 (PR: [#7521](https://github.com/dotnet/vscode-csharp/pull/7521))
+* Bump xamltools to 17.12.35311.18 (PR: [#7549](https://github.com/dotnet/vscode-csharp/pull/7549))
   * XAML editor enabled various lightbulbs related to x:DataType, BindingContext and Bindings.
+  * XAML color swatches
 
 # 2.46.x
 * Update Roslyn to 4.12.0-3.24430.2 (PR: [#7496](https://github.com/dotnet/vscode-csharp/pull/7496))
