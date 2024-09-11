@@ -6,7 +6,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import {
+    activateCSharpExtension,
+    closeAllEditorsAsync,
+    findRangeOfString,
+    openFileInWorkspaceAsync,
+} from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
 describe(`[${testAssetWorkspace.description}] Test Go To Definition`, () => {
@@ -79,6 +84,50 @@ describe(`[${testAssetWorkspace.description}] Test Go To Definition`, () => {
         );
     });
 
+    test('Navigates from definition in decompiled source goes to decompiled source', async () => {
+        await openFileInWorkspaceAsync(path.join('test', 'UnitTest1.cs'));
+
+        // Get definitions
+        const requestPosition = new vscode.Position(13, 9);
+        const definitionList = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDefinitionProvider',
+                vscode.window.activeTextEditor!.document.uri,
+                requestPosition
+            )
+        );
+        expect(definitionList.length).toEqual(1);
+        const definitionPath = definitionList[0].uri;
+        expect(definitionPath.fsPath).toContain('FactAttribute.cs');
+
+        // Navigate
+        await navigate(requestPosition, definitionList, 'FactAttribute.cs');
+        expect(vscode.window.activeTextEditor?.document.getText()).toContain(
+            '// Decompiled with ICSharpCode.Decompiler'
+        );
+
+        // Get definitions from inside FactAttribute.cs
+        // Rather than hardcoding a location, we find the location by searching the document as different SDKs may have different versions of the source.
+        const rangeOfDefinition = findRangeOfString(vscode.window.activeTextEditor!, 'XunitTestCaseDiscoverer')[0];
+        const attributeUsageDefinition = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDefinitionProvider',
+                vscode.window.activeTextEditor!.document.uri,
+                rangeOfDefinition.start
+            )
+        );
+
+        expect(attributeUsageDefinition.length).toEqual(1);
+        const attributeDefinitionPath = attributeUsageDefinition[0].uri;
+        expect(attributeDefinitionPath.fsPath).toContain('XunitTestCaseDiscovererAttribute.cs');
+
+        // Navigate
+        await navigate(rangeOfDefinition.start, attributeUsageDefinition, 'XunitTestCaseDiscovererAttribute.cs');
+        expect(vscode.window.activeTextEditor?.document.getText()).toContain(
+            '// Decompiled with ICSharpCode.Decompiler'
+        );
+    });
+
     test('Navigates to definition in metadata as source', async () => {
         // Get definitions
         const requestPosition = new vscode.Position(10, 25);
@@ -95,6 +144,48 @@ describe(`[${testAssetWorkspace.description}] Test Go To Definition`, () => {
 
         // Navigate
         await navigate(requestPosition, definitionList, 'Console.cs');
+        expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
+            '// Decompiled with ICSharpCode.Decompiler'
+        );
+    });
+
+    test('Navigates to definition from inside metadata as source', async () => {
+        // Get definitions
+        const requestPosition = new vscode.Position(10, 25);
+        const definitionList = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDefinitionProvider',
+                vscode.window.activeTextEditor!.document.uri,
+                requestPosition
+            )
+        );
+        expect(definitionList.length).toEqual(1);
+        const definitionPath = definitionList[0].uri;
+        expect(definitionPath.fsPath).toContain('Console.cs');
+
+        // Navigate
+        await navigate(requestPosition, definitionList, 'Console.cs');
+        expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
+            '// Decompiled with ICSharpCode.Decompiler'
+        );
+
+        // Get definitions from inside Console.cs
+        // Rather than hardcoding a location, we find the location by searching the document as different SDKs may have different versions of the source.
+        const rangeOfDefinition = findRangeOfString(vscode.window.activeTextEditor!, 'ConsoleColor ForegroundColor')[0];
+        const consoleColorDefinition = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDefinitionProvider',
+                vscode.window.activeTextEditor!.document.uri,
+                rangeOfDefinition.start
+            )
+        );
+
+        expect(consoleColorDefinition.length).toEqual(1);
+        const consoleColorDefinitionPath = consoleColorDefinition[0].uri;
+        expect(consoleColorDefinitionPath.fsPath).toContain('ConsoleColor.cs');
+
+        // Navigate
+        await navigate(rangeOfDefinition.start, consoleColorDefinition, 'ConsoleColor.cs');
         expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
             '// Decompiled with ICSharpCode.Decompiler'
         );
