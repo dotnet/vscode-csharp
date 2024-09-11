@@ -10,10 +10,10 @@ import { codeExtensionPath, rootPath, outPath } from './projectPaths';
 import spawnNode from './spawnNode';
 import * as jest from 'jest';
 import { Config } from '@jest/types';
-import { jestOmniSharpUnitTestProjectName } from '../omnisharptest/omnisharpUnitTests/jest.config';
-import { jestUnitTestProjectName } from '../test/unitTests/jest.config';
-import { razorTestProjectName } from '../test/razorTests/jest.config';
-import { jestArtifactTestsProjectName } from '../test/artifactTests/jest.config';
+import { jestOmniSharpUnitTestProjectName } from '../test/omnisharp/omnisharpUnitTests/jest.config';
+import { jestUnitTestProjectName } from '../test/lsptoolshost/unitTests/jest.config';
+import { razorTestProjectName } from '../test/razor/razorTests/jest.config';
+import { jestArtifactTestsProjectName } from '../test/lsptoolshost/artifactTests/jest.config';
 
 gulp.task('test:razor', async () => {
     runJestTest(razorTestProjectName);
@@ -22,7 +22,11 @@ gulp.task('test:razor', async () => {
 const razorIntegrationTestProjects = ['BasicRazorApp2_1'];
 for (const projectName of razorIntegrationTestProjects) {
     gulp.task(`test:razorintegration:${projectName}`, async () =>
-        runIntegrationTest(projectName, 'razorIntegrationTests', `Razor Test Integration ${projectName}`)
+        runIntegrationTest(
+            projectName,
+            path.join('razor', 'razorIntegrationTests'),
+            `Razor Test Integration ${projectName}`
+        )
     );
 }
 
@@ -76,7 +80,11 @@ gulp.task('test:unit', async () => {
 const integrationTestProjects = ['slnWithCsproj'];
 for (const projectName of integrationTestProjects) {
     gulp.task(`test:integration:${projectName}`, async () =>
-        runIntegrationTest(projectName, 'integrationTests', `Test Integration ${projectName}`)
+        runIntegrationTest(
+            projectName,
+            path.join('lsptoolshost', 'integrationTests'),
+            `Test Integration ${projectName}`
+        )
     );
 }
 
@@ -89,7 +97,7 @@ gulp.task('test', gulp.series('test:unit', 'test:integration', 'test:razor', 'te
 
 async function runOmnisharpJestIntegrationTest(testAssetName: string, engine: 'stdio' | 'lsp', suiteName: string) {
     const workspaceFile = `omnisharp${engine === 'lsp' ? '_lsp' : ''}_${testAssetName}.code-workspace`;
-    const testFolder = path.join('omnisharptest', 'omnisharpIntegrationTests');
+    const testFolder = path.join('test', 'omnisharp', 'omnisharpIntegrationTests');
 
     const env = {
         OSVC_SUITE: testAssetName,

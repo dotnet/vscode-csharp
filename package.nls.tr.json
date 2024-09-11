@@ -41,7 +41,7 @@
   "configuration.dotnet.completion.provideRegexCompletions": "Tamamlama listesinde normal ifadeleri göster.",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Tamamlanma listelerinde içe aktarılmamış türleri ve içe aktarılmamış uzantı yöntemlerini göstermeye yönelik desteği etkinleştirir. Taahhüt edildiğinde, uygun kullanım yönergesi geçerli dosyanın en üstüne eklenecektir. (Önceden 'omnisharp.enableImportCompletion')",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Yakın zamanda seçtiğiniz üyeler için otomatik nesne adı tamamlama gerçekleştirin.",
-  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Bağımsız değişken listelerinde tamamlama listesini otomatik olarak göster",
   "configuration.dotnet.defaultSolution.description": "Varsayılan çözümün yolu, çalışma alanında açılacak veya atlamak için 'devre dışı' olarak ayarlanacak. (Daha önce 'omnisharp.defaultLaunchSolution')",
   "configuration.dotnet.dotnetPath": "Varsayılan sistem dizini yerine kullanılacak bir dotnet kurulum dizininin yolunu belirtir. Bu, yalnızca dil sunucusunun kendisini barındırmak için kullanılacak dotnet kurulumunu etkiler. Örnek: \"/home/username/mycustomdotnetdirectory\".",
   "configuration.dotnet.enableXamlTools": "C# Geliştirme Setini kullanırken XAML araçlarını etkinleştirir",

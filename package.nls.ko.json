@@ -41,7 +41,7 @@
   "configuration.dotnet.completion.provideRegexCompletions": "완성 목록에 정규식을 표시합니다.",
   "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "완성 목록에 가져오지 않은 유형과 가져오지 않은 확장 메서드를 표시하기 위한 지원을 활성화합니다. 커밋되면 적절한 using 지시문이 현재 파일의 맨 위에 추가됩니다(이전 `omnisharp.enableImportCompletion`).",
   "configuration.dotnet.completion.showNameCompletionSuggestions": "최근에 선택한 멤버에 대해 자동 개체 이름 완성을 수행합니다.",
-  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "인수 목록에 자동으로 완성 목록 표시",
   "configuration.dotnet.defaultSolution.description": "작업 영역에서 열릴 기본 솔루션의 경로, 건너뛰려면 '비활성화'로 설정하세요(이전 `omnisharp.defaultLaunchSolution`).",
   "configuration.dotnet.dotnetPath": "기본 시스템 대신 사용할 dotnet 설치 디렉터리를 지정합니다. 이는 언어 서버 자체를 호스팅하는 데 사용할 dotnet 설치에만 영향을 줍니다(예: \"/home/username/mycustomdotnetdirectory\").",
   "configuration.dotnet.enableXamlTools": "C# 개발자 키트를 사용할 때 XAML 도구 사용",

@@ -9,7 +9,7 @@ import { configure } from '../launcher';
 import { LaunchTarget } from '../../shared/launchTarget';
 import { EventEmitter } from 'events';
 import { setTimeout } from 'timers';
-import * as ObservableEvents from '../loggingEvents';
+import * as ObservableEvents from '../omnisharpLoggingEvents';
 import { EventStream } from '../../eventStream';
 import CompositeDisposable from '../../compositeDisposable';
 import Disposable from '../../disposable';
@@ -38,8 +38,8 @@ import { DiagnosticFeature } from 'vscode-languageclient/lib/common/diagnostic';
 import { NotebookDocumentSyncFeature } from 'vscode-languageclient/lib/common/notebook';
 import { TypeHierarchyFeature } from 'vscode-languageclient/lib/common/typeHierarchy';
 import { CallHierarchyFeature } from 'vscode-languageclient/lib/common/callHierarchy';
-import { Advisor } from '../../features/diagnosticsProvider';
-import dotnetTest from '../../features/dotnetTest';
+import { Advisor } from '../features/diagnosticsProvider';
+import dotnetTest from '../features/dotnetTest';
 
 export class LspEngine implements IEngine {
     client: LanguageClient | undefined;

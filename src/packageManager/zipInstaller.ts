@@ -8,7 +8,7 @@ import { mkdirp } from 'async-file';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from '../eventStream';
-import { InstallationStart, ZipError } from '../omnisharp/loggingEvents';
+import { InstallationStart, ZipError } from '../shared/loggingEvents';
 import { NestedError } from '../nestedError';
 import { AbsolutePath } from './absolutePath';
 

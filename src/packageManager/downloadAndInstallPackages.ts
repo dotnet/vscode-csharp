@@ -11,9 +11,9 @@ import { EventStream } from '../eventStream';
 import { NetworkSettingsProvider } from '../networkSettings';
 import { AbsolutePathPackage } from './absolutePathPackage';
 import { touchInstallFile, InstallFileType, deleteInstallFile, installFileExists } from '../common';
-import { InstallationFailure, IntegrityCheckFailure } from '../omnisharp/loggingEvents';
+import { InstallationFailure, IntegrityCheckFailure } from '../shared/loggingEvents';
 import { mkdirpSync } from 'fs-extra';
-import { PackageInstallStart } from '../omnisharp/loggingEvents';
+import { PackageInstallStart } from '../shared/loggingEvents';
 import { DownloadValidator } from './isValidDownload';
 import { CancellationToken } from 'vscode';
 

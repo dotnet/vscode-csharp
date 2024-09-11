@@ -17,12 +17,14 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                // Create a temp profile that has no extensions / user settings.
-                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
-                "--profile-temp",
-                "${workspaceRoot}/test/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
+                // Launch VSCode using a specific profile to ensure that user settings are not used.
+                // This profile must be imported into vscode before running this launch configuration.
+                // The profile can be found under /test/csharp-standalone-profile.
+                "--profile",
+                "csharp-standalone-profile",
+                "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -40,12 +42,14 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                // Create a temp profile that has no extensions / user settings.
-                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
-                "--profile-temp",
-                "${workspaceRoot}/test/razorIntegrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
+                // Launch VSCode using a specific profile to ensure that user settings are not used.
+                // This profile must be imported into vscode before running this launch configuration.
+                // The profile can be found under /test/csharp-standalone-profile.
+                "--profile",
+                "csharp-standalone-profile",
+                "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/razorIntegrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -63,12 +67,14 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                // Create a temp profile that has no extensions / user settings.
-                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
-                "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
+                // Launch VSCode using a specific profile to ensure that user settings are not used.
+                // This profile must be imported into vscode before running this launch configuration.
+                // The profile can be found under /test/csharp-standalone-profile.
+                "--profile",
+                "csharp-standalone-profile",
+                "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -86,12 +92,14 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                // Create a temp profile that has no extensions / user settings.
-                // This allows us to only have the C# extension + the dotnet runtime installer extension dependency.
-                "--profile-temp",
-                "${workspaceRoot}/omnisharptest/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_lsp_${input:omnisharpAssetName}.code-workspace",
+                // Launch VSCode using a specific profile to ensure that user settings are not used.
+                // This profile must be imported into vscode before running this launch configuration.
+                // The profile can be found under /test/csharp-standalone-profile.
+                "--profile",
+                "csharp-standalone-profile",
+                "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_lsp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/omnisharptest/omnisharpIntegrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",

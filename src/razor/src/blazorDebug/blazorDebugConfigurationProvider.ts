@@ -13,7 +13,7 @@ import { RazorLogger } from '../razorLogger';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
 import { onDidTerminateDebugSession } from './terminateDebugHandler';
 import showInformationMessage from '../../../shared/observers/utils/showInformationMessage';
-import showErrorMessage from '../../../observers/utils/showErrorMessage';
+import showErrorMessage from '../../../shared/observers/utils/showErrorMessage';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     private static readonly autoDetectUserNotice: string = vscode.l10n.t(
