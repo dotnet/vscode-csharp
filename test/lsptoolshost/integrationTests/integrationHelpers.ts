@@ -9,6 +9,8 @@ import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
 import { ServerState } from '../../../src/lsptoolshost/serverStateChange';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { EOL } from 'os';
+import { expect } from '@jest/globals';
 
 export async function activateCSharpExtension(): Promise<void> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
@@ -166,4 +168,9 @@ export async function waitForExpectedResult<T>(
 
 export async function sleep(ms = 0) {
     return new Promise((r) => setTimeout(r, ms));
+}
+
+export async function expectText(document: vscode.TextDocument, expectedLines: string[]) {
+    const expectedText = expectedLines.join(EOL);
+    expect(document.getText()).toBe(expectedText);
 }
