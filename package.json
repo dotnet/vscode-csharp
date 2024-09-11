@@ -916,6 +916,12 @@
             "description": "%configuration.dotnet.navigation.navigateToDecompiledSources%",
             "order": 60
           },
+          "dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": {
+            "type": "boolean",
+            "default": "true",
+            "description": "%configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources%",
+            "order": 60
+          },
           "dotnet.quickInfo.showRemarksInQuickInfo": {
             "type": "boolean",
             "default": "true",

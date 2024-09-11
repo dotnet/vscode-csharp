@@ -27,6 +27,13 @@
   * Support component rename from an end tag (#10762) (PR: [#10762](https://github.com/dotnet/razor/pull/10762))
 * Bump xamltools to 17.12.35230.10 (PR: [#7493](https://github.com/dotnet/vscode-csharp/pull/7493))
 
+# 2.45.25
+* Bump Roslyn to 4.12.0-2.24461.7 (PR: [#7544](https://github.com/dotnet/vscode-csharp/pull/7544))
+  * Fix crash when closing source link documents (PR: [#75047](https://github.com/dotnet/roslyn/pull/75047))
+  * Add option to disable source link (PR: [#75047](https://github.com/dotnet/roslyn/pull/75047))
+  * Fix issue navigating from source link documents (PR: [#75033](https://github.com/dotnet/roslyn/pull/75033))
+* Fix exception applying fix all code action (PR: [#7537](https://github.com/dotnet/vscode-csharp/pull/7537))
+
 # 2.45.17
 * Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))
 * Bump Razor to 9.0.0-preview.24418.1 (PR: [#7456](https://github.com/dotnet/vscode-csharp/pull/7456))

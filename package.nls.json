@@ -75,6 +75,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "Suppress hints when argument matches parameter name",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Suppress hints when parameter name matches the method's intent",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Enable navigation to decomplied sources.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Show remarks information when display symbol.",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
   "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging. (Previously `csharp.unitTestDebuggingOptions`)",
