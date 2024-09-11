@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.12.0-3.24461.4 (PR: [#7554](https://github.com/dotnet/vscode-csharp/pull/7554))
+  * Fix issue where closing sourcelink document threw if not opened (PR: [#75046](https://github.com/dotnet/roslyn/pull/75046))
+  * Expose sourcelink option to VSCode (PR: [#75044](https://github.com/dotnet/roslyn/pull/75044))
+  * Report source generator failures in Hot Reload diagnostics (PR: [#75029](https://github.com/dotnet/roslyn/pull/75029))
+  * Fix issue navigating from source link documents (PR: [#75030](https://github.com/dotnet/roslyn/pull/75030))
 * Bump xamltools to 17.12.35311.18 (PR: [#7549](https://github.com/dotnet/vscode-csharp/pull/7549))
   * XAML color swatches
 
