@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump Roslyn to 4.12.0-2.24461.7 (PR: [#7544](https://github.com/dotnet/vscode-csharp/pull/7544))
+  * Fix crash when closing source link documents (PR: [#75047](https://github.com/dotnet/roslyn/pull/75047))
+  * Add option to disable source link (PR: [#75047](https://github.com/dotnet/roslyn/pull/75047))
+  * Fix issue navigating from source link documents (PR: [#75033](https://github.com/dotnet/roslyn/pull/75033))
+* Fix exception applying fix all code action (PR: [#7537](https://github.com/dotnet/vscode-csharp/pull/7537))
+
+# 2.45.20
 * Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))
 * Bump Razor to 9.0.0-preview.24418.1 (PR: [#7456](https://github.com/dotnet/vscode-csharp/pull/7456))
   * Don't add already known documents to the misc files project (#10753) (PR: [#10753](https://github.com/dotnet/razor/pull/10753))
