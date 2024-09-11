@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BaseLoggerObserver } from '../../shared/observers/baseLoggerObserver';
+import { BaseEvent } from '../../shared/loggingEvents';
 import {
-    BaseEvent,
     OmnisharpInitialisation,
     OmnisharpLaunch,
     OmnisharpFailure,
@@ -15,9 +15,9 @@ import {
     OmnisharpServerMsBuildProjectDiagnostics,
     OmnisharpServerOnStdErr,
     OmnisharpEventPacketReceived,
-} from '../loggingEvents';
+} from '../omnisharpLoggingEvents';
 import * as os from 'os';
-import { EventType } from '../eventType';
+import { EventType } from '../../shared/eventType';
 import * as vscode from 'vscode';
 import { PlatformInformation } from '../../shared/platform';
 import { Logger } from '../../logger';

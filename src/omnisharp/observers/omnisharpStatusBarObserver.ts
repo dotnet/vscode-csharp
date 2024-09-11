@@ -3,15 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {
-    BaseEvent,
-    DownloadStart,
-    InstallationStart,
-    DownloadProgress,
-    OmnisharpServerOnStdErr,
-} from '../loggingEvents';
+import { BaseEvent, DownloadProgress, DownloadStart, InstallationStart } from '../../shared/loggingEvents';
+import { OmnisharpServerOnStdErr } from '../omnisharpLoggingEvents';
 import { BaseStatusBarItemObserver } from './baseStatusBarItemObserver';
-import { EventType } from '../eventType';
+import { EventType } from '../../shared/eventType';
 
 export enum StatusBarColors {
     Red = 'rgb(218,0,0)',

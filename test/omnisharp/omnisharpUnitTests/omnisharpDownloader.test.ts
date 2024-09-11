@@ -24,7 +24,7 @@ import {
     InstallationStart,
     InstallationSuccess,
     PackageInstallStart,
-} from '../../../src/omnisharp/loggingEvents';
+} from '../../../src/shared/loggingEvents';
 import TestEventBus from './testAssets/testEventBus';
 import { testPackageJSON } from './testAssets/testAssets';
 import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';

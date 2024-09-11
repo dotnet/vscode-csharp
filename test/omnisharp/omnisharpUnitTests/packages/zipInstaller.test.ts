@@ -11,7 +11,7 @@ import { CreateTmpDir, TmpAsset } from '../../../../src/createTmpAsset';
 import { InstallZip } from '../../../../src/packageManager/zipInstaller';
 import { EventStream } from '../../../../src/eventStream';
 import { PlatformInformation } from '../../../../src/shared/platform';
-import { BaseEvent, InstallationStart, ZipError } from '../../../../src/omnisharp/loggingEvents';
+import { BaseEvent, InstallationStart, ZipError } from '../../../../src/shared/loggingEvents';
 import { createTestFile } from '../testAssets/testFile';
 import TestZip from '../testAssets/testZip';
 import TestEventBus from '../testAssets/testEventBus';

@@ -10,7 +10,7 @@ import { FileChangeType } from '../protocol';
 import { IDisposable } from '../../disposable';
 import CompositeDisposable from '../../compositeDisposable';
 import { EventStream } from '../../eventStream';
-import { DocumentSynchronizationFailure } from '../loggingEvents';
+import { DocumentSynchronizationFailure } from '../omnisharpLoggingEvents';
 
 async function trackCurrentVirtualDocuments(server: OmniSharpServer, eventStream: EventStream) {
     for (let i = 0; i < workspace.textDocuments.length; i++) {

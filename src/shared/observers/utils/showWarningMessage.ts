@@ -6,15 +6,11 @@
 import { vscode } from '../../../vscodeAdapter';
 import MessageItemWithCommand from './messageItemWithCommand';
 
-export default async function showInformationMessage(
-    vscode: vscode,
-    message: string,
-    ...items: MessageItemWithCommand[]
-) {
+export default async function showWarningMessage(vscode: vscode, message: string, ...items: MessageItemWithCommand[]) {
     try {
-        const value = await vscode.window.showInformationMessage<MessageItemWithCommand>(message, ...items);
+        const value = await vscode.window.showWarningMessage<MessageItemWithCommand>(message, ...items);
         if (value?.command) {
-            vscode.commands.executeCommand(value.command);
+            await vscode.commands.executeCommand<string>(value.command);
         }
     } catch (err) {
         console.log(err);

@@ -10,8 +10,9 @@ import { activateCSharpExtension, describeIfNotRazorOrGenerator } from './integr
 import testAssetWorkspace from './testAssets/activeTestAssetWorkspace';
 import { poll, assertWithPoll } from './poll';
 import { EventStream } from '../../../src/eventStream';
-import { EventType } from '../../../src/omnisharp/eventType';
-import { BaseEvent, OmnisharpBackgroundDiagnosticStatus } from '../../../src/omnisharp/loggingEvents';
+import { EventType } from '../../../src/shared/eventType';
+import { BaseEvent } from '../../../src/shared/loggingEvents';
+import { OmnisharpBackgroundDiagnosticStatus } from '../../../src/omnisharp/omnisharpLoggingEvents';
 import { BackgroundDiagnosticStatus } from '../../../src/omnisharp/protocol';
 
 function listenEvents<T extends BaseEvent>(stream: EventStream, type: EventType): T[] {

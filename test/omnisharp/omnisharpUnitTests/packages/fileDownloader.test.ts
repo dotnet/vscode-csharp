@@ -14,7 +14,7 @@ import {
     DownloadSuccess,
     DownloadFallBack,
     DownloadFailure,
-} from '../../../../src/omnisharp/loggingEvents';
+} from '../../../../src/shared/loggingEvents';
 import MockHttpsServer from '../testAssets/mockHttpsServer';
 import TestEventBus from '../testAssets/testEventBus';
 

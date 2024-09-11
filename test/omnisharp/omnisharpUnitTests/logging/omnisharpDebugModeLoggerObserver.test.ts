@@ -4,18 +4,18 @@
  *--------------------------------------------------------------------------------------------*/
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getNullChannel } from '../../../fakes';
-import {
-    OmnisharpServerVerboseMessage,
-    EventWithMessage,
-    OmnisharpRequestMessage,
-    OmnisharpServerEnqueueRequest,
-    OmnisharpServerDequeueRequest,
-    OmnisharpServerProcessRequestStart,
-    OmnisharpEventPacketReceived,
-    OmnisharpServerProcessRequestComplete,
-    OmnisharpServerRequestCancelled,
-} from '../../../../src/omnisharp/loggingEvents';
+import { EventWithMessage } from '../../../../src/shared/loggingEvents';
 import { OmnisharpDebugModeLoggerObserver } from '../../../../src/omnisharp/observers/omnisharpDebugModeLoggerObserver';
+import {
+    OmnisharpEventPacketReceived,
+    OmnisharpRequestMessage,
+    OmnisharpServerDequeueRequest,
+    OmnisharpServerEnqueueRequest,
+    OmnisharpServerProcessRequestComplete,
+    OmnisharpServerProcessRequestStart,
+    OmnisharpServerRequestCancelled,
+    OmnisharpServerVerboseMessage,
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 
 describe('OmnisharpDebugModeLoggerObserver', () => {
     let logOutput = '';

@@ -5,8 +5,8 @@
 
 import * as vscode from 'vscode';
 import { EventStream } from '../../../../src/eventStream';
-import { EventType } from '../../../../src/omnisharp/eventType';
-import { BaseEvent } from '../../../../src/omnisharp/loggingEvents';
+import { EventType } from '../../../../src/shared/eventType';
+import { BaseEvent } from '../../../../src/shared/loggingEvents';
 import { poll } from '../poll';
 import { ITestAssetWorkspace, TestAssetWorkspace } from '../../../lsptoolshost/integrationTests/testAssets/testAssets';
 import { ActivationResult } from '../integrationHelpers';

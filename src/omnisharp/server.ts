@@ -14,7 +14,7 @@ import { EventEmitter } from 'events';
 import { OmnisharpManager } from './omnisharpManager';
 import { PlatformInformation } from '../shared/platform';
 import { OmnisharpDownloader } from './omnisharpDownloader';
-import * as ObservableEvents from './loggingEvents';
+import * as ObservableEvents from './omnisharpLoggingEvents';
 import { EventStream } from '../eventStream';
 import { NetworkSettingsProvider } from '../networkSettings';
 import { Subject } from 'rxjs';

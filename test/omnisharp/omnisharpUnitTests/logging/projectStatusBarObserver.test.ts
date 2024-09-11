@@ -7,7 +7,10 @@ import { describe, test, expect, beforeEach } from '@jest/globals';
 import { getWorkspaceInformationUpdated, getMSBuildWorkspaceInformation } from '../../../fakes';
 import { StatusBarItem } from '../../../../src/vscodeAdapter';
 import { ProjectStatusBarObserver } from '../../../../src/omnisharp/observers/projectStatusBarObserver';
-import { OmnisharpOnMultipleLaunchTargets, OmnisharpServerOnStop } from '../../../../src/omnisharp/loggingEvents';
+import {
+    OmnisharpOnMultipleLaunchTargets,
+    OmnisharpServerOnStop,
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 
 describe('ProjectStatusBarObserver', () => {
     let showCalled: boolean;

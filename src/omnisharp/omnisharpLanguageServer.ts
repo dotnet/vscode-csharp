@@ -32,14 +32,24 @@ import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
 import { OmniSharpServer } from './server';
 import { Advisor } from './features/diagnosticsProvider';
 import TestManager from './features/dotnetTest';
-import { OmnisharpWorkspaceDebugInformationProvider } from '../omnisharpWorkspaceDebugInformationProvider';
+import { OmnisharpWorkspaceDebugInformationProvider } from './omnisharpWorkspaceDebugInformationProvider';
 import Disposable from '../disposable';
 import registerCommands from './features/commands';
 import { addAssetsIfNecessary } from '../shared/assets';
-import { OmnisharpStart, ProjectJsonDeprecatedWarning, RazorDevModeActive } from './loggingEvents';
+import {
+    ActiveTextEditorChanged,
+    OmnisharpStart,
+    ProjectJsonDeprecatedWarning,
+    RazorDevModeActive,
+} from './omnisharpLoggingEvents';
 import { DotnetWorkspaceConfigurationProvider } from '../shared/workspaceConfigurationProvider';
 import { getMonoVersion } from '../utils/getMonoVersion';
 import { safeLength, sum } from '../common';
+import { TelemetryObserver } from './observers/telemetryObserver';
+import { ITelemetryReporter } from '../shared/telemetryReporter';
+import { Observable } from 'rxjs';
+import { registerOmnisharpOptionChanges } from './omnisharpOptionChanges';
+import { CSharpLoggerObserver } from './observers/csharpLoggerObserver';
 
 export interface ActivationResult {
     readonly server: OmniSharpServer;
@@ -50,14 +60,23 @@ export interface ActivationResult {
 export async function activateOmniSharpLanguageServer(
     context: vscode.ExtensionContext,
     platformInfo: PlatformInformation,
+    optionStream: Observable<void>,
     networkSettingsProvider: NetworkSettingsProvider,
     eventStream: EventStream,
     csharpChannel: vscode.OutputChannel,
     dotnetTestChannel: vscode.OutputChannel,
-    dotnetChannel: vscode.OutputChannel
+    dotnetChannel: vscode.OutputChannel,
+    reporter: ITelemetryReporter
 ): Promise<ActivationResult> {
     // Set command enablement to use O# commands.
     vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'OmniSharp');
+
+    const useModernNetOption = omnisharpOptions.useModernNet;
+    const telemetryObserver = new TelemetryObserver(platformInfo, () => reporter, useModernNetOption);
+    eventStream.subscribe(telemetryObserver.post);
+
+    const csharpLoggerObserver = new CSharpLoggerObserver(csharpChannel);
+    eventStream.subscribe(csharpLoggerObserver.post);
 
     const dotnetChannelObserver = new DotNetChannelObserver(dotnetChannel);
     const dotnetLoggerObserver = new DotnetLoggerObserver(dotnetChannel);
@@ -135,6 +154,14 @@ export async function activateOmniSharpLanguageServer(
             context.extension.packageJSON.defaults.razorOmnisharp
         );
     }
+
+    registerOmnisharpOptionChanges(optionStream);
+
+    context.subscriptions.push(
+        vscode.window.onDidChangeActiveTextEditor(() => {
+            eventStream.post(new ActiveTextEditorChanged());
+        })
+    );
 
     // activate language services
     return activate(

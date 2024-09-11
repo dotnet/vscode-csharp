@@ -7,7 +7,6 @@ import { describe, test, expect, beforeEach } from '@jest/globals';
 import { OmnisharpLoggerObserver } from '../../../../src/omnisharp/observers/omnisharpLoggerObserver';
 import {
     OmnisharpServerMsBuildProjectDiagnostics,
-    EventWithMessage,
     OmnisharpServerOnStdErr,
     OmnisharpServerMessage,
     OmnisharpServerOnServerError,
@@ -16,9 +15,10 @@ import {
     OmnisharpServerOnError,
     OmnisharpFailure,
     OmnisharpEventPacketReceived,
-} from '../../../../src/omnisharp/loggingEvents';
+} from '../../../../src/omnisharp/omnisharpLoggingEvents';
 import { OutputChannel } from 'vscode';
 import { PlatformInformation } from '../../../../src/shared/platform';
+import { EventWithMessage } from '../../../../src/shared/loggingEvents';
 
 describe('OmnisharpLoggerObserver', () => {
     let logOutput = '';
