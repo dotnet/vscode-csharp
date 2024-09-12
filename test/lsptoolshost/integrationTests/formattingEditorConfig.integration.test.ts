@@ -15,7 +15,7 @@ import {
 import { describe, beforeAll, beforeEach, afterAll, test, afterEach } from '@jest/globals';
 import { formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers';
 
-describe(`[${testAssetWorkspace.description}] Formatting With EditorConfig Tests`, () => {
+describe(`Formatting With EditorConfig Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

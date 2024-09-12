@@ -24,58 +24,55 @@ stages:
     isOfficial: false
     signType: test
 
-- stage: Test_Linux_Stage
-  displayName: Test Linux
+- stage:
+  displayName: Test Linux (.NET 6)
   dependsOn: []
   jobs:
-  - job: Test_Linux_Job
-    displayName:  Test Linux
-    strategy:
-      matrix:
-        DotNet6:
-          containerName: mcr.microsoft.com/dotnet/sdk:6.0
-        DotNet7:
-          containerName: mcr.microsoft.com/dotnet/sdk:7.0
-        DotNet8:
-          containerName: mcr.microsoft.com/dotnet/sdk:8.0
-    pool:
-      name: NetCore-Public
-      demands: ImageOverride -equals 1es-ubuntu-2004-open
-    container: $[ variables['containerName'] ]
-    steps:
-    - template: azure-pipelines/test.yml
-      parameters:
-        # Prefer the dotnet from the container.
-        installDotNet: false
-        installAdditionalLinuxDependencies: true
+  - template: azure-pipelines/test-matrix.yml
+    parameters:
+      # Prefer the dotnet from the container.
+      installDotNet: false
+      installAdditionalLinuxDependencies: true
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals 1es-ubuntu-2004-open
+      containerName: mcr.microsoft.com/dotnet/sdk:6.0
+
+- stage:
+  displayName: Test Linux (.NET 8)
+  dependsOn: []
+  jobs:
+  - template: azure-pipelines/test-matrix.yml
+    parameters:
+      # Prefer the dotnet from the container.
+      installDotNet: false
+      installAdditionalLinuxDependencies: true
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals 1es-ubuntu-2004-open
+      containerName: mcr.microsoft.com/dotnet/sdk:8.0
 
 - stage: Test_Windows_Stage
   displayName: Test Windows
   dependsOn: []
   jobs:
-  - job: Test_Windows_Job
-    displayName: Test Windows
-    pool:
-      name: NetCore-Public
-      demands: ImageOverride -equals 1es-windows-2022-open
-    steps:
-    - template: azure-pipelines/test.yml
-      parameters:
-        installDotNet: true
+  - template: azure-pipelines/test-matrix.yml
+    parameters:
+      installDotNet: true
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals 1es-windows-2022-open
 
 - stage: Test_MacOS_Stage
   displayName: Test MacOS
   dependsOn: []
   jobs:
-  - job: Test_MacOS_Job
-    displayName: Test MacOS
-    pool:
-      name: Azure Pipelines
-      vmImage: macOS-13
-    steps:
-    - template: azure-pipelines/test.yml
-      parameters:
-        installDotNet: true
+  - template: azure-pipelines/test-matrix.yml
+    parameters:
+      installDotNet: true
+      pool:
+        name: Azure Pipelines
+        vmImage: macOS-13
 
 - stage: Test_OmniSharp
   displayName: Test OmniSharp

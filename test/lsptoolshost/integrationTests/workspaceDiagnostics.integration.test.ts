@@ -7,11 +7,13 @@ import * as vscode from 'vscode';
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting } from '../../../src/lsptoolshost/buildDiagnosticsService';
-import * as integrationHelpers from './integrationHelpers';
 import { getCode, setBackgroundAnalysisScopes, waitForExpectedDiagnostics } from './diagnosticsHelpers';
-describe(`[${testAssetWorkspace.description}] Test diagnostics`, () => {
+import { activateCSharpExtension, describeIfCSharp } from './integrationHelpers';
+
+// Restarting the server is required for these tests, but not supported with C# Dev Kit.
+describeIfCSharp(`Workspace Diagnostic Tests`, () => {
     beforeAll(async () => {
-        await integrationHelpers.activateCSharpExtension();
+        await activateCSharpExtension();
     });
 
     afterAll(async () => {

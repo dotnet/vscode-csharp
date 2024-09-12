@@ -9,7 +9,7 @@ import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { CommonCommands, OmniSharpCommands, RoslynCommands } from './expectedCommands';
 
-describe(`Command Enablement: ${testAssetWorkspace.description}`, () => {
+describe(`Command Enablement Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

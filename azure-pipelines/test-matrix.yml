@@ -1,0 +1,30 @@
+parameters:
+  - name: pool
+    type: object
+  - name: containerName
+    type: string
+    default: ''
+  - name: installDotNet
+    type: boolean
+  - name: installAdditionalLinuxDependencies
+    type: boolean
+    default: false
+
+jobs:
+- job:
+  strategy:
+    matrix:
+      CSharpTests:
+        npmCommand: 'test:withoutDevKit'
+      DevKitTests:
+        npmCommand: test:integration:devkit
+  pool: ${{ parameters.pool }}
+  ${{ if parameters.containerName }}:
+    container: ${{ parameters.containerName }}
+  steps:
+  - template: /azure-pipelines/test.yml@self
+    parameters:
+      # Prefer the dotnet from the container.
+      installDotNet: false
+      installAdditionalLinuxDependencies: true
+      npmCommand: $(npmCommand)
