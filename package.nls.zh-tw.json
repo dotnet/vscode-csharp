@@ -55,6 +55,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "當引數符合參數名稱時抑制提示",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "當參數名稱符合方法的意圖時，不出現提示",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "啟用到反向組譯來源的瀏覽。",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
   "configuration.dotnet.preferCSharpExtension": "強制專案僅以 C# 延伸模組載入。使用 C# 開發人員套件不支援的舊版專案類型時，這會很有用。(需要重新載入視窗)",
   "configuration.dotnet.projects.binaryLogPath": "設定載入專案時，寫入 MSBuild 二進位記錄的路徑，以協助診斷載入錯誤。",
   "configuration.dotnet.projects.enableAutomaticRestore": "如果延伸模組偵測到資產遺失，則啟用自動 NuGet 還原。",

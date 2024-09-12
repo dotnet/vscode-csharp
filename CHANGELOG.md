@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.12.0-3.24461.4 (PR: [#7554](https://github.com/dotnet/vscode-csharp/pull/7554))
+  * Fix issue where closing sourcelink document threw if not opened (PR: [#75046](https://github.com/dotnet/roslyn/pull/75046))
+  * Expose sourcelink option to VSCode (PR: [#75044](https://github.com/dotnet/roslyn/pull/75044))
+  * Report source generator failures in Hot Reload diagnostics (PR: [#75029](https://github.com/dotnet/roslyn/pull/75029))
+  * Fix issue navigating from source link documents (PR: [#75030](https://github.com/dotnet/roslyn/pull/75030))
+* Bump xamltools to 17.12.35311.18 (PR: [#7549](https://github.com/dotnet/vscode-csharp/pull/7549))
+  * XAML color swatches
+
+# 2.47.x
 * Update Roslyn to 4.12.0-3.24456.2 (PR: [#7525](https://github.com/dotnet/vscode-csharp/pull/7525))
   * Avoid BuildHost crash in Mono due to missing types (PR: [#74994](https://github.com/dotnet/roslyn/pull/74994))
 * Turn off word suggestions in XAML completions (PR: [#7516](https://github.com/dotnet/vscode-csharp/pull/7516))
@@ -22,6 +31,13 @@
   * Allow @@ as a fallback (#10752) (PR: [#10752](https://github.com/dotnet/razor/pull/10752))
   * Support component rename from an end tag (#10762) (PR: [#10762](https://github.com/dotnet/razor/pull/10762))
 * Bump xamltools to 17.12.35230.10 (PR: [#7493](https://github.com/dotnet/vscode-csharp/pull/7493))
+
+# 2.45.25
+* Bump Roslyn to 4.12.0-2.24461.7 (PR: [#7544](https://github.com/dotnet/vscode-csharp/pull/7544))
+  * Fix crash when closing source link documents (PR: [#75047](https://github.com/dotnet/roslyn/pull/75047))
+  * Add option to disable source link (PR: [#75047](https://github.com/dotnet/roslyn/pull/75047))
+  * Fix issue navigating from source link documents (PR: [#75033](https://github.com/dotnet/roslyn/pull/75033))
+* Fix exception applying fix all code action (PR: [#7537](https://github.com/dotnet/vscode-csharp/pull/7537))
 
 # 2.45.17
 * Fix check for rzls being present (PR: [#7462](https://github.com/dotnet/vscode-csharp/pull/7462))

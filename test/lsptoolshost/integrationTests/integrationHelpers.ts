@@ -9,19 +9,10 @@ import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
 import { ServerState } from '../../../src/lsptoolshost/serverStateChange';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
+import { EOL } from 'os';
+import { expect } from '@jest/globals';
 
 export async function activateCSharpExtension(): Promise<void> {
-    // Ensure the dependent extension exists - when launching via F5 launch.json we can't install the extension prior to opening vscode.
-    const vscodeDotnetRuntimeExtensionId = 'ms-dotnettools.vscode-dotnet-runtime';
-    const dotnetRuntimeExtension =
-        vscode.extensions.getExtension<CSharpExtensionExports>(vscodeDotnetRuntimeExtensionId);
-    if (!dotnetRuntimeExtension) {
-        await vscode.commands.executeCommand('workbench.extensions.installExtension', vscodeDotnetRuntimeExtensionId, {
-            donotSync: true,
-        });
-        await vscode.commands.executeCommand('workbench.action.reloadWindow');
-    }
-
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
         throw new Error('Failed to find installation of ms-dotnettools.csharp');
@@ -131,6 +122,17 @@ export function sortLocations(locations: vscode.Location[]): vscode.Location[] {
     });
 }
 
+export function findRangeOfString(editor: vscode.TextEditor, stringToFind: string): vscode.Range[] {
+    const text = editor.document.getText();
+    const matches = [...text.matchAll(new RegExp(stringToFind, 'gm'))];
+    const ranges = matches.map((match) => {
+        const startPos = editor.document.positionAt(match.index!);
+        const endPos = editor.document.positionAt(match.index! + stringToFind.length);
+        return new vscode.Range(startPos, endPos);
+    });
+    return ranges;
+}
+
 function isGivenSln(workspace: typeof vscode.workspace, expectedProjectFileName: string) {
     const primeWorkspace = workspace.workspaceFolders![0];
     const projectFileName = primeWorkspace.uri.fsPath.split(path.sep).pop();
@@ -166,4 +168,9 @@ export async function waitForExpectedResult<T>(
 
 export async function sleep(ms = 0) {
     return new Promise((r) => setTimeout(r, ms));
+}
+
+export async function expectText(document: vscode.TextDocument, expectedLines: string[]) {
+    const expectedText = expectedLines.join(EOL);
+    expect(document.getText()).toBe(expectedText);
 }
