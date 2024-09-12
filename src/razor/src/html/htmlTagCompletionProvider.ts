@@ -15,7 +15,7 @@ import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { LanguageKind } from '../rpc/languageKind';
 
 export class HtmlTagCompletionProvider {
-    private timeout: NodeJS.Timer | undefined = void 0;
+    private timeout: NodeJS.Timeout | undefined = void 0;
     private enabled = false;
     private htmlLanguageService: HtmlLanguageService | undefined;
 

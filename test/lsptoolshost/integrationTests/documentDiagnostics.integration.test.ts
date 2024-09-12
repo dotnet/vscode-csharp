@@ -7,13 +7,19 @@ import * as vscode from 'vscode';
 import { describe, test, beforeAll, afterAll, expect, beforeEach, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting } from '../../../src/lsptoolshost/buildDiagnosticsService';
-import * as integrationHelpers from './integrationHelpers';
 import path = require('path');
 import { getCode, setBackgroundAnalysisScopes, waitForExpectedDiagnostics } from './diagnosticsHelpers';
+import {
+    activateCSharpExtension,
+    closeAllEditorsAsync,
+    describeIfCSharp,
+    openFileInWorkspaceAsync,
+} from './integrationHelpers';
 
-describe(`[${testAssetWorkspace.description}] Test diagnostics`, () => {
+// Restarting the server is required for these tests, but not supported with C# Dev Kit.
+describeIfCSharp(`Document Diagnostics Tests`, () => {
     beforeAll(async () => {
-        await integrationHelpers.activateCSharpExtension();
+        await activateCSharpExtension();
     });
 
     afterAll(async () => {
@@ -23,11 +29,11 @@ describe(`[${testAssetWorkspace.description}] Test diagnostics`, () => {
     describe('Open document diagnostics', () => {
         let file: vscode.Uri;
         beforeEach(async () => {
-            file = await integrationHelpers.openFileInWorkspaceAsync(path.join('src', 'app', 'diagnostics.cs'));
+            file = await openFileInWorkspaceAsync(path.join('src', 'app', 'diagnostics.cs'));
         });
 
         afterEach(async () => {
-            await integrationHelpers.closeAllEditorsAsync();
+            await closeAllEditorsAsync();
         });
 
         test('Compiler and analyzer diagnostics reported for open file when set to OpenFiles', async () => {

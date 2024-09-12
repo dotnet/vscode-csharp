@@ -41,7 +41,7 @@ const TelemetryReportingDelay = 2 * 60 * 1000; // two minutes
 export default class TestManager extends AbstractProvider {
     private _runCounts?: { [testFrameworkName: string]: number };
     private _debugCounts?: { [testFrameworkName: string]: number };
-    private _telemetryIntervalId?: NodeJS.Timer = undefined;
+    private _telemetryIntervalId?: NodeJS.Timeout = undefined;
     private _eventStream: EventStream;
 
     constructor(

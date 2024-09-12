@@ -6,6 +6,7 @@
     ],
     "settings": {
         "dotnet.server.useOmnisharp": true,
-        "omnisharp.enableLspDriver": true
+        "omnisharp.enableLspDriver": true,
+        "dotnet.preferCSharpExtension": true,
     }
 }

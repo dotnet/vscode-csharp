@@ -43,10 +43,7 @@ export async function InstallZip(
                     } catch (err) {
                         const error = err as NodeJS.ErrnoException; // Hack for TypeScript to type err correctly
                         return reject(
-                            new NestedError(
-                                'Error creating directory for zip directory entry:' + error.code ?? '',
-                                error
-                            )
+                            new NestedError('Error creating directory for zip directory entry:' + error.code, error)
                         );
                     }
                 } else {

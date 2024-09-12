@@ -15,7 +15,7 @@ import {
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
 
-describe(`[${testAssetWorkspace.description}] Test CodeLens`, () => {
+describe(`CodeLens Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

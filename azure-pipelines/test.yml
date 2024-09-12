@@ -4,6 +4,8 @@ parameters:
   - name: installAdditionalLinuxDependencies
     type: boolean
     default: false
+  - name: npmCommand
+    type: string
 
 steps:
 - checkout: self
@@ -23,8 +25,8 @@ steps:
   parameters:
     installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
 
-- script: npm run test
-  displayName: 🧪 Run unit and integration tests
+- script: npm run ${{ parameters.npmCommand }}
+  displayName: 🧪 Run $(Agent.JobName)
   env:
     DISPLAY: :99.0
 
@@ -43,5 +45,5 @@ steps:
   condition: failed()
   displayName: 'Upload integration test logs'
   inputs:
-    targetPath: '$(Build.SourcesDirectory)/.vscode-test/user-data/logs'
+    targetPath: '$(Build.SourcesDirectory)/out/logs'
     artifactName: 'VSCode Test Logs ($(Agent.JobName)-$(System.JobAttempt))'

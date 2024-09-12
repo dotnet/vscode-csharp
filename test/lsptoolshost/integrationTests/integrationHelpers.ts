@@ -5,12 +5,13 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as semver from 'semver';
 import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
 import { ServerState } from '../../../src/lsptoolshost/serverStateChange';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL } from 'os';
-import { expect } from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
 export async function activateCSharpExtension(): Promise<void> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
@@ -18,14 +19,29 @@ export async function activateCSharpExtension(): Promise<void> {
         throw new Error('Failed to find installation of ms-dotnettools.csharp');
     }
 
-    // Run a restore manually to make sure the project is up to date since we don't have automatic restore.
-    await testAssetWorkspace.restoreLspToolsHostAsync();
-
-    // If the extension is already active, we need to restart it to ensure we start with a clean server state.
-    // For example, a previous test may have changed configs, deleted restored packages or made other changes that would put it in an invalid state.
     let shouldRestart = false;
-    if (csharpExtension.isActive) {
-        shouldRestart = true;
+
+    const csDevKitExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csdevkit');
+    if (usingDevKit()) {
+        if (!csDevKitExtension) {
+            throw new Error('Failed to find installation of ms-dotnettools.csdevkit');
+        }
+
+        // Ensure C# Dev Kit has a minimum version.
+        const version = csDevKitExtension.packageJSON.version;
+        const minimumVersion = '1.10.18';
+        if (semver.lt(version, minimumVersion)) {
+            throw new Error(`C# Dev Kit version ${version} is below required minimum of ${minimumVersion}`);
+        }
+    } else {
+        // Run a restore manually to make sure the project is up to date since we don't have automatic restore.
+        await testAssetWorkspace.restoreLspToolsHostAsync();
+
+        // If the extension is already active, we need to restart it to ensure we start with a clean server state.
+        // For example, a previous test may have changed configs, deleted restored packages or made other changes that would put it in an invalid state.
+        if (csharpExtension.isActive) {
+            shouldRestart = true;
+        }
     }
 
     // Explicitly await the extension activation even if completed so that we capture any errors it threw during activation.
@@ -37,6 +53,10 @@ export async function activateCSharpExtension(): Promise<void> {
     if (shouldRestart) {
         await restartLanguageServer();
     }
+}
+
+export function usingDevKit(): boolean {
+    return vscode.workspace.getConfiguration().get<boolean>('dotnet.preferCSharpExtension') !== true;
 }
 
 export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<vscode.Uri> {
@@ -64,6 +84,10 @@ export async function revertActiveFile(): Promise<void> {
 }
 
 export async function restartLanguageServer(): Promise<void> {
+    if (usingDevKit()) {
+        // Restarting the server will cause us to lose all project information when using C# Dev Kit.
+        throw new Error('Cannot restart language server when using the C# Dev Kit');
+    }
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     // Register to wait for initialization events and restart the server.
     const waitForInitialProjectLoad = new Promise<void>((resolve, _) => {
@@ -173,4 +197,17 @@ export async function sleep(ms = 0) {
 export async function expectText(document: vscode.TextDocument, expectedLines: string[]) {
     const expectedText = expectedLines.join(EOL);
     expect(document.getText()).toBe(expectedText);
+}
+
+export const describeIfCSharp = describeIf(!usingDevKit());
+export const describeIfDevKit = describeIf(usingDevKit());
+export const testIfCSharp = testIf(!usingDevKit());
+export const testIfDevKit = testIf(usingDevKit());
+
+function describeIf(condition: boolean) {
+    return condition ? describe : describe.skip;
+}
+
+function testIf(condition: boolean) {
+    return condition ? test : test.skip;
 }

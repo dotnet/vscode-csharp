@@ -14,7 +14,7 @@ import {
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
-describe(`[${testAssetWorkspace.description}] Test Go To Implementation`, () => {
+describe(`Go To Implementation Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

@@ -11,10 +11,12 @@ import {
     closeAllEditorsAsync,
     findRangeOfString,
     openFileInWorkspaceAsync,
+    testIfCSharp,
+    testIfDevKit,
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
-describe(`[${testAssetWorkspace.description}] Test Go To Definition`, () => {
+describe(`Go To Definition Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });
@@ -61,7 +63,7 @@ describe(`[${testAssetWorkspace.description}] Test Go To Definition`, () => {
         await navigate(requestPosition, definitionList, 'diagnostics.cs');
     });
 
-    test('Navigates to definition in decompiled source', async () => {
+    testIfCSharp('Navigates to definition in decompiled source', async () => {
         await openFileInWorkspaceAsync(path.join('test', 'UnitTest1.cs'));
 
         // Get definitions
@@ -84,7 +86,7 @@ describe(`[${testAssetWorkspace.description}] Test Go To Definition`, () => {
         );
     });
 
-    test('Navigates from definition in decompiled source goes to decompiled source', async () => {
+    testIfCSharp('Navigates from definition in decompiled source goes to decompiled source', async () => {
         await openFileInWorkspaceAsync(path.join('test', 'UnitTest1.cs'));
 
         // Get definitions
@@ -208,6 +210,80 @@ describe(`[${testAssetWorkspace.description}] Test Go To Definition`, () => {
         expect(definitionList[1].range).toStrictEqual(
             new vscode.Range(new vscode.Position(14, 25), new vscode.Position(14, 35))
         );
+    });
+
+    testIfDevKit('Navigates to definition in source link', async () => {
+        await openFileInWorkspaceAsync(path.join('test', 'UnitTest1.cs'));
+
+        // Get definitions
+        const requestPosition = new vscode.Position(13, 9);
+        const definitionList = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDefinitionProvider',
+                vscode.window.activeTextEditor!.document.uri,
+                requestPosition
+            )
+        );
+        expect(definitionList.length).toEqual(1);
+        const definitionPath = definitionList[0].uri;
+        expect(definitionPath.fsPath).toContain('FactAttribute.cs');
+
+        // Navigate
+        await navigate(requestPosition, definitionList, 'FactAttribute.cs');
+
+        // File should not be decompiled and should come from the symbol cache
+        expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
+            '// Decompiled with ICSharpCode.Decompiler'
+        );
+        expect(vscode.window.activeTextEditor?.document.uri.path.toLowerCase()).toContain('symbolcache');
+    });
+
+    testIfDevKit('Navigates from definition in source link source goes to source link', async () => {
+        await openFileInWorkspaceAsync(path.join('test', 'UnitTest1.cs'));
+
+        // Get definitions
+        const requestPosition = new vscode.Position(13, 9);
+        const definitionList = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDefinitionProvider',
+                vscode.window.activeTextEditor!.document.uri,
+                requestPosition
+            )
+        );
+        expect(definitionList.length).toEqual(1);
+        const definitionPath = definitionList[0].uri;
+        expect(definitionPath.fsPath).toContain('FactAttribute.cs');
+
+        // Navigate
+        await navigate(requestPosition, definitionList, 'FactAttribute.cs');
+        // File should not be decompiled and should come from the symbol cache
+        expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
+            '// Decompiled with ICSharpCode.Decompiler'
+        );
+        expect(vscode.window.activeTextEditor?.document.uri.path.toLowerCase()).toContain('symbolcache');
+
+        // Get definitions from inside FactAttribute.cs
+        // Rather than hardcoding a location, we find the location by searching the document as different SDKs may have different versions of the source.
+        const rangeOfDefinition = findRangeOfString(vscode.window.activeTextEditor!, 'XunitTestCaseDiscoverer')[0];
+        const attributeUsageDefinition = <vscode.Location[]>(
+            await vscode.commands.executeCommand(
+                'vscode.executeDefinitionProvider',
+                vscode.window.activeTextEditor!.document.uri,
+                rangeOfDefinition.start
+            )
+        );
+
+        expect(attributeUsageDefinition.length).toEqual(1);
+        const attributeDefinitionPath = attributeUsageDefinition[0].uri;
+        expect(attributeDefinitionPath.fsPath).toContain('XunitTestCaseDiscovererAttribute.cs');
+
+        // Navigate
+        await navigate(rangeOfDefinition.start, attributeUsageDefinition, 'XunitTestCaseDiscovererAttribute.cs');
+        // File should not be decompiled and should come from the symbol cache
+        expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
+            '// Decompiled with ICSharpCode.Decompiler'
+        );
+        expect(vscode.window.activeTextEditor?.document.uri.path.toLowerCase()).toContain('symbolcache');
     });
 });
 
