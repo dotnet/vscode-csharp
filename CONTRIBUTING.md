@@ -56,9 +56,9 @@ To run all tests, execute `npm run test`.
 To debug unit tests locally, press <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration selected.
 
 To debug integration tests
-1.  Import the `csharp-standalone-profile.code-profile` in VSCode to setup a clean profile in which to run integration tests.  This must be imported at least once to use the launch configurations.
+1.  Import the `csharp-test-profile.code-profile` in VSCode to setup a clean profile in which to run integration tests.  This must be imported at least once to use the launch configurations (ensure the extensions are updated in the profile).
 2.  Open any integration test file and <kbd>F5</kbd> launch with the correct launch configuration selected.
-    - For integration tests inside `test/lsptoolshost`, use `Launch Current File slnWithCsproj Integration Tests`
+    - For integration tests inside `test/lsptoolshost`, use either `Launch Current File slnWithCsproj Integration Tests` or `[DevKit] Launch Current File slnWithCsproj Integration Tests` (to run tests using C# + C# Dev Kit)
     - For integration tests inside `test/razor`, use `Launch Current File BasicRazorApp2_1 Integration Tests`
     - For integration tests inside `test/omnisharp`, use one of the `Omnisharp:` current file profiles
 

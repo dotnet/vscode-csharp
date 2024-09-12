@@ -9,7 +9,7 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
-describe(`[${testAssetWorkspace.description}] Classification Tests`, () => {
+describe(`Classification Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });
