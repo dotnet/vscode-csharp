@@ -10,13 +10,20 @@ parameters:
   - prerelease
   - auto
   default: auto
+- name: signType
+  values:
+  - test
+  - real
+  - auto
+  default: auto
+
 stages:
 - stage: Build
   displayName: 'Build VSIXs'
   dependsOn: []
   jobs:
-  - job: SetChannelVariable
-    displayName: 'Set Channel Variable'
+  - job: SetRunVariables
+    displayName: 'Set Run Variables'
     pool:
       ${{ if eq(parameters.isOfficial, true) }}:
         name: netcore1espool-internal
@@ -53,8 +60,37 @@ stages:
           Write-Host "Setting pipeline channel variable to Release."
           Write-Host "##vso[task.setvariable variable=channel;isoutput=true]Release"
         }
-      name: passOutput
-      
+      name: passChannel
+      displayName: Set Channel Variable
+
+    - pwsh: |
+        $signType = "test"
+        if ("${{ parameters.isOfficial }}" -ne "true") {
+          Write-Host "Not an official build, test signing"
+          $signType = "test"
+        } elseif ("${{ parameters.signType }}"  -eq "test") {
+          Write-Host "Sign type override set to ${{ parameters.signType }}"
+          $signType = "test"
+        } elseif ("${{ parameters.signType }}"  -eq "real") {
+          Write-Host "Sign type override set to ${{ parameters.signType }}"
+          $signType = "real"
+        } else {
+          Write-Host "Sign type override is ${{ parameters.signType }}, using branch configuration to determine sign type"
+          Write-Host "Detected branch $(Build.SourceBranchName)"
+          if ( ("$(Build.SourceBranchName)" -eq "release") -or ("$(Build.SourceBranchName)" -eq "prerelease")) {
+            Write-Host "Branch is a release branch, using real sign type."
+            $signType = 'real'
+          } else {
+            Write-Host "Branch is test branch, using test sign type."
+            $signType = 'test'
+          }
+        }
+
+        Write-Host "Setting pipeline signType variable to " $signType
+        Write-Host "##vso[task.setvariable variable=signType;isoutput=true]$signType"
+      name: passSignType
+      displayName: Set Sign Type
+
   - template: /azure-pipelines/build.yml@self
     parameters:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}

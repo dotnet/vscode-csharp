@@ -60,7 +60,7 @@
     }
   ],
   "scripts": {
-    "vscode:prepublish": "tsc -p ./ && webpack --mode production",
+    "vscode:prepublish": "tsc -p ./ && webpack --mode production && gulp signJs",
     "l10nDevGenerateLocalizationBundle": "npx @vscode/l10n-dev export --outDir ./l10n ./src",
     "compile": "tsc -p ./ && npx eslint ./ && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
