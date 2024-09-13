@@ -155,22 +155,38 @@ async function runDevKitIntegrationTests(testAssetName: string, testFolderName: 
     // are not easy APIs to use to know if the project is reloading due to workspace changes.
     // So we have to isolate the C# Dev Kit tests into smaller test runs (in this case, per file), where each run
     // launches VSCode and runs the tests in that file.
-    console.log(`Searching for test files in ${testFolderName}`);
+    const testFolder = path.join(rootPath, 'test', testFolderName);
+    console.log(`Searching for test files in ${testFolder}`);
     const allFiles = fs
-        .readdirSync(testFolderName, {
+        .readdirSync(testFolder, {
             recursive: true,
         })
         .filter((f) => typeof f === 'string');
-    const devKitTestFiles = allFiles.filter((f) => f.endsWith('.test.ts'));
-    console.log(`Running tests in ${devKitTestFiles.join(', ')}`);
-    for (const testFileName of devKitTestFiles) {
-        await runIntegrationTest(
-            testAssetName,
-            testFolderName,
-            suiteName,
-            `devkit_${testAssetName}.code-workspace`,
-            testFileName
-        );
+    const devKitTestFiles = allFiles.filter((f) => f.endsWith('.test.ts')).map((f) => path.join(testFolder, f));
+    if (devKitTestFiles.length === 0) {
+        throw new Error(`No test files found in ${testFolder}`);
+    }
+
+    let failed: boolean = false;
+    for (const testFile of devKitTestFiles) {
+        try {
+            await runIntegrationTest(
+                testAssetName,
+                testFolderName,
+                suiteName,
+                `devkit_${testAssetName}.code-workspace`,
+                testFile
+            );
+        } catch (err) {
+            // We have to catch the error to continue running tests from the rest of the files.
+            failed = true;
+            console.error(`Tests in ${path.basename(testFile)} failed`, err);
+        }
+    }
+
+    if (failed) {
+        // Ensure the task fails if any tests failed.
+        throw new Error('One or more tests failed.');
     }
 }
 
@@ -179,18 +195,11 @@ async function runIntegrationTest(
     testFolderName: string,
     suiteName: string,
     vscodeWorkspaceFileName = `${testAssetName}.code-workspace`,
-    testFileName: string | undefined = undefined
+    testFile: string | undefined = undefined
 ) {
     const testFolder = path.join('test', testFolderName);
     const env: NodeJS.ProcessEnv = {};
-    return await runJestIntegrationTest(
-        testAssetName,
-        testFolder,
-        vscodeWorkspaceFileName,
-        suiteName,
-        env,
-        testFileName
-    );
+    return await runJestIntegrationTest(testAssetName, testFolder, vscodeWorkspaceFileName, suiteName, env, testFile);
 }
 
 /**
@@ -207,9 +216,9 @@ async function runJestIntegrationTest(
     workspaceFileName: string,
     suiteName: string,
     env: NodeJS.ProcessEnv = {},
-    testFileName: string | undefined = undefined
+    testFile: string | undefined = undefined
 ) {
-    const logDirectoryName = testFileName ? `${suiteName}_${testFileName}` : suiteName;
+    const logDirectoryName = testFile ? `${suiteName}_${path.basename(testFile)}` : suiteName;
     // Delete any logs produced by a previous run of the same test suite.
     const logDirectoryPath = path.join(outPath, 'logs', logDirectoryName);
     await deleteDirectoryRetry(logDirectoryPath);
@@ -237,22 +246,25 @@ async function runJestIntegrationTest(
     env.JEST_JUNIT_OUTPUT_NAME = getJUnitFileName(suiteName);
     env.JEST_SUITE_NAME = suiteName;
 
-    if (testFileName) {
-        console.log(`Running only tests in ${testFileName}`);
-        process.env.TEST_FILE_FILTER = testFileName;
+    if (testFile) {
+        console.log(`Setting test file filter to: ${testFile}`);
+        process.env.TEST_FILE_FILTER = testFile;
     }
 
-    const result = await prepareVSCodeAndExecuteTests(rootPath, vscodeRunnerPath, workspacePath, env);
+    try {
+        const result = await prepareVSCodeAndExecuteTests(rootPath, vscodeRunnerPath, workspacePath, env);
+        if (result > 0) {
+            // The VSCode API will generally throw if jest fails the test, but we can get errors before the test runs (e.g. launching VSCode).
+            // So here we make sure to error if we don't get a clean exit code.
+            throw new Error(`Exit code: ${result}`);
+        }
 
-    // Copy the logs VSCode produced to the output log directory
-    fs.cpSync(vscodeLogOutputDirectory, logDirectoryPath, { recursive: true });
-
-    if (result > 0) {
-        // Ensure that gulp fails when tests fail
-        throw new Error(`Exit code: ${result}`);
+        return result;
+    } finally {
+        // Copy the logs VSCode produced to the output log directory
+        console.log(`Copying logs from ${vscodeLogOutputDirectory} to ${logDirectoryPath}`);
+        fs.cpSync(vscodeLogOutputDirectory, logDirectoryPath, { recursive: true });
     }
-
-    return result;
 }
 
 async function runJestTest(project: string) {
@@ -285,8 +297,12 @@ async function deleteDirectoryRetry(directory: string) {
     if (!fs.existsSync(directory)) {
         return;
     }
-    fs.rmSync(directory, { recursive: true, force: true });
-    const delay = new Promise((res) => setTimeout(res, 5000));
-    await delay;
-    fs.rmSync(directory, { recursive: true, force: true });
+    try {
+        fs.rmSync(directory, { recursive: true, force: true });
+    } catch (_) {
+        console.log(`Failed to delete directory ${directory}, waiting 5 seconds and trying again.`);
+        const delay = new Promise((res) => setTimeout(res, 5000));
+        await delay;
+        fs.rmSync(directory, { recursive: true, force: true });
+    }
 }
