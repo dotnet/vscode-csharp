@@ -1,0 +1,40 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: pool
+    type: object
+  - name: containerName
+    type: string
+    default: ''
+  - name: installDotNet
+      type: boolean
+  - name: installAdditionalLinuxDependencies
+    type: boolean
+    default: false
+
+jobs:
+- job: 'Build_${{ parameters.platform }}_vsixs'
+  pool: ${{ parameters.pool }}
+
+- job: ${{ parameters.jobName }}
+  displayName:  ${{ parameters.jobName }}
+  strategy:
+    matrix:
+      UnitTests:
+        npmCommand: 'test:unit'
+      CSharpTests:
+        npmCommand: test:integration:csharp
+      DevKitTests:
+        npmCommand: test:integration:devkit
+      RazorTests:
+        npmCommand: test:integration:razor
+  pool: ${{ parameters.pool }}
+  ${{ if parameters.containerName }}:
+    container: ${{ parameters.containerName }}
+  steps:
+  - template: azure-pipelines/test.yml
+    parameters:
+      # Prefer the dotnet from the container.
+      installDotNet: false
+      installAdditionalLinuxDependencies: true
+      npmCommand: $[ variables['npmCommand'] ]
