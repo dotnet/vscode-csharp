@@ -51,7 +51,7 @@ export default class OmniSharpDefinitionProvider
         try {
             const gotoDefinitionResponse = await serverUtils.goToDefinition(this._server, req, token);
             return await this.GetLocationsFromResponse(gotoDefinitionResponse, token);
-        } catch (error) {
+        } catch (_) {
             return [];
         }
     }
@@ -67,7 +67,7 @@ export default class OmniSharpDefinitionProvider
         try {
             const goToTypeDefinitionResponse = await serverUtils.goToTypeDefinition(this._server, req, token);
             return await this.GetLocationsFromResponse(goToTypeDefinitionResponse, token);
-        } catch (error) {
+        } catch (_) {
             return [];
         }
     }

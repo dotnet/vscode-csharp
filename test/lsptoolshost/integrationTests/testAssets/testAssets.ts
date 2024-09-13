@@ -59,7 +59,7 @@ export class TestAssetWorkspace {
 
         try {
             await cleanUpRoutine();
-        } catch (error) {
+        } catch (_error) {
             // Its possible that cleanup fails for locked files etc, for this reason retry is added.
             await sleep();
             await cleanUpRoutine();

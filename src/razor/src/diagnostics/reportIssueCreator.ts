@@ -212,7 +212,7 @@ ${csharpTextDocument.getText()}`;
                 csharpContent = `${csharpContent}
 ${errorSuffix}`;
             }
-        } catch (e) {
+        } catch (_) {
             csharpContent = `${csharpContent}
 ${errorSuffix}`;
         }
@@ -239,7 +239,7 @@ ${htmlTextDocument.getText()}`;
                 htmlContent = `${htmlContent}
 ${errorSuffix}`;
             }
-        } catch (e) {
+        } catch (_) {
             htmlContent = `${htmlContent}
 ${errorSuffix}`;
         }

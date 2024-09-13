@@ -55,7 +55,7 @@ export default class OmniSharpSignatureHelpProvider extends AbstractSupport impl
             }
 
             return ret;
-        } catch (error) {
+        } catch (_) {
             return undefined;
         }
     }

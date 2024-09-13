@@ -43,7 +43,7 @@ export async function DownloadFile(
                 const buffer = await downloadFile(description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
                 return buffer;
-            } catch (fallbackUrlError) {
+            } catch (_) {
                 throw primaryUrlError;
             }
         } else {
