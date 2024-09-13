@@ -21,7 +21,7 @@ describe('package.nls.json validation tests', () => {
             for (const key of keysWithURLExamples) {
                 try {
                     expect(packageNLSJson[key]).toContain('\u200b');
-                } catch (e) {
+                } catch (_) {
                     throw "Missing \\u200b in example urls, please run 'gulp fixLocURLs' and check in those changes.";
                 }
             }

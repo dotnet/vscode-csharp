@@ -44,7 +44,7 @@ export default class OmniSharpRenameProvider extends AbstractSupport implements 
             // Allow language middlewares to re-map its edits if necessary.
             const result = await this._languageMiddlewareFeature.remap('remapWorkspaceEdit', edit, token);
             return result;
-        } catch (error) {
+        } catch (_) {
             return undefined;
         }
     }

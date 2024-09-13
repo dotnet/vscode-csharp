@@ -399,7 +399,7 @@ export class StdioEngine implements IEngine {
         let packet: protocol.WireProtocol.Packet;
         try {
             packet = JSON.parse(line);
-        } catch (err) {
+        } catch (_) {
             // This isn't JSON
             return;
         }

@@ -26,7 +26,7 @@ export default class OmniSharpDocumentSymbolProvider extends AbstractSupport imp
             }
 
             return [];
-        } catch (error) {
+        } catch (_) {
             return [];
         }
     }

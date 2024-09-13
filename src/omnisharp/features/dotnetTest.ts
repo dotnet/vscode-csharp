@@ -190,7 +190,7 @@ export default class TestManager extends AbstractProvider {
         let projectInfo: protocol.ProjectInformationResponse;
         try {
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
-        } catch (error) {
+        } catch (_) {
             return undefined;
         }
 
@@ -465,7 +465,7 @@ export default class TestManager extends AbstractProvider {
         let projectInfo: protocol.ProjectInformationResponse;
         try {
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: fileName });
-        } catch (error) {
+        } catch (_) {
             throw new Error('Could not determine project type.');
         }
 
@@ -708,7 +708,7 @@ class DebugEventListener {
                 let event: DebuggerEventsProtocol.DebuggerEvent;
                 try {
                     event = DebuggerEventsProtocol.decodePacket(buffer);
-                } catch (e) {
+                } catch (_) {
                     this._eventStream.post(new DotNetTestDebugWarning('Invalid event received from debugger'));
                     return;
                 }
@@ -803,7 +803,7 @@ class DebugEventListener {
         try {
             serverUtils.debugTestStop(this._server, request);
             this.close();
-        } catch (error) {
+        } catch (_) {
             return;
         }
     }
