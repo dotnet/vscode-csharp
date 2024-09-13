@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bump xamltools to 17.12.35312.88 (PR: [#7562](https://github.com/dotnet/vscode-csharp/pull/7562))
+
+# 2.48.x
 * Update Roslyn to 4.12.0-3.24461.4 (PR: [#7554](https://github.com/dotnet/vscode-csharp/pull/7554))
   * Fix issue where closing sourcelink document threw if not opened (PR: [#75046](https://github.com/dotnet/roslyn/pull/75046))
   * Expose sourcelink option to VSCode (PR: [#75044](https://github.com/dotnet/roslyn/pull/75044))
