@@ -4,7 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
-* Update Roslyn to 4.12.0-3.24461.4 (PR: [#7554](https://github.com/dotnet/vscode-csharp/pull/7554))
+* Add signing support to VSIX (PR: [#7490](https://github.com/dotnet/vscode-csharp/pull/7490))
+* Update Debugger to v2.47.0 (PR: [#7547](https://github.com/dotnet/vscode-csharp/pull/7547))
+  * Adds in support for .NET 9 Break for Async User-Unhandled
+* Do not inject 'debugConsoleVerbosity' for 'coreclr' (PR: [#7546](https://github.com/dotnet/vscode-csharp/pull/7546))
+* Do not auto surround `<`, `[` and `(` in XAML. (PR: [#7540](https://github.com/dotnet/vscode-csharp/pull/7540))
+* Fix resolve fix all code action (PR: [#7536](https://github.com/dotnet/vscode-csharp/pull/7536))
+* Update Roslyn to 4.12.0-3.24463.6 (PR: [#7564](https://github.com/dotnet/vscode-csharp/pull/7564))
+  * Fix order modifiers code action not showing up in vscode (PR: [#75092](https://github.com/dotnet/roslyn/pull/75092))
+  * Log unit test output (PR: [#75084](https://github.com/dotnet/roslyn/pull/75084))
   * Fix issue where closing sourcelink document threw if not opened (PR: [#75046](https://github.com/dotnet/roslyn/pull/75046))
   * Expose sourcelink option to VSCode (PR: [#75044](https://github.com/dotnet/roslyn/pull/75044))
   * Report source generator failures in Hot Reload diagnostics (PR: [#75029](https://github.com/dotnet/roslyn/pull/75029))
