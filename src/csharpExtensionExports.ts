@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Advisor } from './features/diagnosticsProvider';
+import { Advisor } from './omnisharp/features/diagnosticsProvider';
 import { EventStream } from './eventStream';
-import TestManager from './features/dotnetTest';
+import TestManager from './omnisharp/features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { RequestType } from 'vscode-languageclient/node';
 import { LanguageServerEvents } from './lsptoolshost/languageServerEvents';

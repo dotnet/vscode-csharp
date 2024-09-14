@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { PlatformInformation } from './shared/platform';
-import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './omnisharp/loggingEvents';
+import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './shared/loggingEvents';
 import { EventStream } from './eventStream';
 import { getRuntimeDependenciesPackages } from './tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall';

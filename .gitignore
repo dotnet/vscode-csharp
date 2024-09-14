@@ -14,6 +14,8 @@ out
 .razortelemetry/
 .razorDevKit/
 .vscode-test/
+msbuild/signing/signJs/*.log
+msbuild/signing/signVsix/*.log
 dist/
 *.razor.json
 

@@ -22,6 +22,7 @@ stages:
 - template: azure-pipelines/build-all.yml
   parameters:
     isOfficial: false
+    signType: test
 
 - stage: Test_Linux_Stage
   displayName: Test Linux

@@ -17,21 +17,26 @@ function getSln(workspacePath: string): string | undefined {
 
 async function main() {
     try {
-        const vscodeExecutablePath = await downloadAndUnzipVSCode('1.92.2');
+        const vscodeExecutablePath = await downloadAndUnzipVSCode('stable');
         const [cli, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
         console.log('Display: ' + process.env.DISPLAY);
 
         const fullArgs = [...args, '--install-extension', 'ms-dotnettools.vscode-dotnet-runtime'];
-        console.log(fullArgs);
-        const result = cp.spawnSync(cli, fullArgs, {
+
+        // Since we're using shell execute, spaces in the CLI path will get interpeted as args
+        // Therefore we wrap the CLI path in quotes as on MacOS the path can contain spaces.
+        const cliWrapped = `"${cli}"`;
+        console.log(`${cliWrapped} ${fullArgs}`);
+
+        const result = cp.spawnSync(cliWrapped, fullArgs, {
             encoding: 'utf-8',
             stdio: 'inherit',
             // Workaround as described in https://github.com/nodejs/node/issues/52554
             shell: true,
         });
-        if (result.error) {
-            throw new Error(`Failed to install the runtime extension: ${result.error}`);
+        if (result.error || result.status !== 0) {
+            throw new Error(`Failed to install the runtime extension: ${JSON.stringify(result)}`);
         }
 
         // The folder containing the Extension Manifest package.json

@@ -19,6 +19,13 @@ parameters:
   - prerelease
   - auto
   default: auto
+# Allows the sign type to be set manually for a specific build
+- name: signType
+  values:
+  - test
+  - real
+  - auto
+  default: auto
 
 resources:
   repositories:
@@ -51,3 +58,4 @@ extends:
         versionNumberOverride: ${{ parameters.versionNumberOverride }}
         isOfficial: true
         channel: ${{ parameters.channel }}
+        signType: ${{ parameters.signType }}
