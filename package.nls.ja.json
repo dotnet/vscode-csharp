@@ -55,7 +55,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "引数がパラメーター名と一致するとき、ヒントを抑制する",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "パラメーター名がメソッドの意図と一致する場合にヒントを非表示にする",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "逆コンパイルされたソースへのナビゲーションを有効にします。",
-  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Source Link および埋め込みソースに移動できるようにします。",
   "configuration.dotnet.preferCSharpExtension": "C# 拡張機能のみを使用してプロジェクトを強制的に読み込みます。 これは、C# Dev Kit でサポートされていないレガシ プロジェクトの種類を使用する場合に役立ちます。(ウィンドウの再読み込みが必要)",
   "configuration.dotnet.projects.binaryLogPath": "読み込みエラーの診断に役立つ、プロジェクト読み込み時に MSBuild バイナリ ログが書き込まれるパスを設定します。",
   "configuration.dotnet.projects.enableAutomaticRestore": "拡張機能で資産が見つからないと検出された場合に、NuGet の自動復元を有効にします。",

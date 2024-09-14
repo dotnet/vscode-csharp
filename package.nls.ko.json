@@ -55,7 +55,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "인수가 매개 변수 이름과 일치하는 경우 힌트 표시 안 함",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "매개 변수 이름이 메서드의 의도와 일치하는 경우 힌트 표시 안 함",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "디컴파일된 원본 탐색을 사용하도록 설정합니다.",
-  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "소스 링크 및 포함된 원본에 대한 탐색을 사용하도록 설정합니다.",
   "configuration.dotnet.preferCSharpExtension": "프로젝트가 C# 확장으로만 로드되도록 합니다.  C# 개발 키트에서 지원되지 않는 레거시 프로젝트 형식을 사용할 때 유용할 수 있습니다(창 다시 로드 필요).",
   "configuration.dotnet.projects.binaryLogPath": "로드 오류를 진단하는 데 도움이 되도록 프로젝트를 로드할 때 MSBuild 이진 로그가 기록되는 경로를 설정합니다.",
   "configuration.dotnet.projects.enableAutomaticRestore": "확장에서 자산이 누락된 것을 감지하는 경우 자동 NuGet 복원을 사용하도록 설정합니다.",
