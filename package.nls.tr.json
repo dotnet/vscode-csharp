@@ -55,7 +55,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "Bağımsız değişken parametre adıyla eşleştiğinde ipuçlarını bastır",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Parametre adı metodun hedefi ile eşleştiğinde ipuçlarını gizle",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Derlenmiş kaynaklarda gezinmeyi etkinleştir.",
-  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Kaynak bağlantısı ve ekli kaynaklarda gezinmeyi etkinleştirin.",
   "configuration.dotnet.preferCSharpExtension": "Projeleri yalnızca C# uzantısıyla yüklenmeye zorlar.  Bu, C# Dev Kit tarafından desteklenmeyen eski proje türlerini kullanırken yararlı olabilir. (Pencerenin yeniden yüklenmesi gerekir)",
   "configuration.dotnet.projects.binaryLogPath": "Yükleme hatalarını teşhis etmeye yardımcı olmak için projeler yüklenirken MSBuild ikili günlüklerinin yazılacağı bir yol belirler.",
   "configuration.dotnet.projects.enableAutomaticRestore": "Uzantı varlıkların eksik olduğunu algılarsa otomatik NuGet geri yükleme işlemini etkinleştirir.",
