@@ -21,7 +21,7 @@ module.exports = {
     rules: {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/semi": ["error", "always"],
+        "@typescript-eslint/no-require-imports": "off",
         // Allow unused vars if prefixed by _
         "@typescript-eslint/no-unused-vars": [
             "warn",

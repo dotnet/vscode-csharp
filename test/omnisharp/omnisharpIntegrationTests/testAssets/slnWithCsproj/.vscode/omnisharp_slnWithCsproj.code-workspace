@@ -10,5 +10,6 @@
         "dotnet.server.useOmnisharp": true,
         "omnisharp.enableLspDriver": false,
         "dotnet.defaultSolution": "b_SecondInOrder_SlnFile.sln",
+        "dotnet.preferCSharpExtension": true,
     }
 }

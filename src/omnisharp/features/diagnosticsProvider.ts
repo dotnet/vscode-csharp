@@ -279,7 +279,7 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
                 document.uri,
                 diagnosticsInFile.map((x) => x.diagnostic)
             );
-        } catch (error) {
+        } catch (_) {
             return;
         }
     }

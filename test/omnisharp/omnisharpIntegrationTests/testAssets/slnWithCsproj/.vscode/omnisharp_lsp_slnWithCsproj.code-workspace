@@ -9,6 +9,7 @@
         "omnisharp.enableRoslynAnalyzers": true,
         "dotnet.server.useOmnisharp": true,
         "omnisharp.enableLspDriver": true,
-        "dotnet.defaultSolution": "b_SecondInOrder_SlnFile.sln"
+        "dotnet.defaultSolution": "b_SecondInOrder_SlnFile.sln",
+        "dotnet.preferCSharpExtension": true,
     }
 }

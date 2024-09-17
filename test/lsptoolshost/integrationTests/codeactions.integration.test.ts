@@ -14,7 +14,7 @@ import {
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
 
-describe(`[${testAssetWorkspace.description}] Test Code Actions`, () => {
+describe(`Code Actions Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

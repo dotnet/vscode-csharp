@@ -67,7 +67,7 @@ export async function downloadAndInstallPackages(
                 if (await installFileExists(pkg.installPath, InstallFileType.Begin)) {
                     await deleteInstallFile(pkg.installPath, InstallFileType.Begin);
                 }
-            } catch (error) {
+            } catch (_) {
                 /* empty */
             }
         }

@@ -9,7 +9,7 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting, BuildDiagnosticsService } from '../../../src/lsptoolshost/buildDiagnosticsService';
 import * as integrationHelpers from './integrationHelpers';
 import path = require('path');
-describe(`Build and live diagnostics dedupe ${testAssetWorkspace.description}`, () => {
+describe(`Build and live diagnostics dedupe`, () => {
     beforeAll(async () => {
         await integrationHelpers.activateCSharpExtension();
     });

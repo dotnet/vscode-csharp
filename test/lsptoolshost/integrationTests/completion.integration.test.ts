@@ -9,7 +9,7 @@ import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } fr
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 
-describe(`[${testAssetWorkspace.description}] Test Completion`, () => {
+describe(`Completion Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

@@ -256,7 +256,7 @@ interface SynchronizationContext {
     readonly projectedDocument: IProjectedDocument;
     readonly logIdentifier: number;
     readonly toHostDocumentVersion: number;
-    readonly timeoutId: NodeJS.Timer;
+    readonly timeoutId: NodeJS.Timeout;
     readonly projectedDocumentSynchronized: () => void;
     readonly onProjectedDocumentSynchronized: Promise<void>;
     readonly projectedTextDocumentSynchronized: () => void;
