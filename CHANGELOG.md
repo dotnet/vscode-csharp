@@ -4,6 +4,19 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Razor to 9.0.0-preview.24467.1
+  * Fixing WrapWithDiv bug (PR: [#10871](https://github.com/dotnet/razor/pull/10871))
+  * Switch to new VMR control schema. (PR: [#10883](https://github.com/dotnet/razor/pull/10883))
+  * Ensure type arguments are `global::` qualified (PR: [#10834](https://github.com/dotnet/razor/pull/10834))
+  * Fix LF line-ending auto format bug (PR: [#10802](https://github.com/dotnet/razor/pull/10802))
+  * Change RazorSyntaxTree.Diagnostics from an IReadOnlyList<RazorDiagnostic> to an ImmutableArray<RazorDiagnostic> (PR: [#10797](https://github.com/dotnet/razor/pull/10797))
+  * Clarify [EventHandler] tag helper discovery logic and avoid exception (PR: [#10828](https://github.com/dotnet/razor/pull/10828))
+  * Fix setting breakpoints with self versioned documents (PR: [#10811](https://github.com/dotnet/razor/pull/10811))
+  * Write out JS comments when there would be 4 or more consecutive tildes in generated Html (PR: [#10805](https://github.com/dotnet/razor/pull/10805))
+  * Global namespace component bind (PR: [#10798](https://github.com/dotnet/razor/pull/10798))
+  * Fix find all references calls to Roslyn (PR: [#10807](https://github.com/dotnet/razor/pull/10807))
+  * Change UseConsolidatedMvcViews to default to true (PR: [#10795](https://github.com/dotnet/razor/pull/10795))
+  * Fix provisional completion corrupting generated C# documents (PR: [#10806](https://github.com/dotnet/razor/pull/10806))
 * Add signing support to VSIX (PR: [#7490](https://github.com/dotnet/vscode-csharp/pull/7490))
 * Update Debugger to v2.47.0 (PR: [#7547](https://github.com/dotnet/vscode-csharp/pull/7547))
   * Adds in support for .NET 9 Break for Async User-Unhandled
