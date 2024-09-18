@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Razor to 9.0.0-preview.24467.1
+  * Fix LF line-ending auto format bug (PR: [#10802](https://github.com/dotnet/razor/pull/10802))
 * Bump xamltools to 17.12.35318.29 (PR: [#7577](https://github.com/dotnet/vscode-csharp/pull/7577))
 
 # 2.48.x
