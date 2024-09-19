@@ -227,8 +227,7 @@ export interface CopilotRelatedDocumentsParams extends lsp.WorkDoneProgressParam
 }
 
 export interface CopilotRelatedDocumentsReport {
-    _vs_resultId: string | null;
-    _vs_file_paths: string[] | null;
+    _vs_file_paths?: string[];
 }
 
 export namespace WorkspaceDebugConfigurationRequest {

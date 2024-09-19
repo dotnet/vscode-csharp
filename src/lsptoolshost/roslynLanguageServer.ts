@@ -68,7 +68,7 @@ import { registerLanguageStatusItems } from './languageStatusBar';
 import { ProjectContextService } from './services/projectContextService';
 import { ProvideDynamicFileResponse } from '../razor/src/dynamicFile/provideDynamicFileResponse';
 import { ProvideDynamicFileParams } from '../razor/src/dynamicFile/provideDynamicFileParams';
-import { registerCopilotExtension } from './copilot';
+import { registerCopilotExtensionAsync } from './copilot';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -1037,7 +1037,7 @@ export async function activateRoslynLanguageServer(
     );
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
-    await registerCopilotExtension(languageServer, _channel);
+    await registerCopilotExtensionAsync(languageServer, _traceChannel);
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, hostExecutableResolver, _channel);

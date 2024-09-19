@@ -10,30 +10,33 @@ import { RoslynLanguageServer } from './roslynLanguageServer';
 import { UriConverter } from './uriConverter';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 
-export async function registerCopilotExtension(languageServer: RoslynLanguageServer, channel: vscode.OutputChannel) {
+interface CopilotRelatedFilesProviderRegistration {
+    registerRelatedFilesProvider(
+        providerId: { extensionId: string; languageId: string },
+        callback: (uri: vscode.Uri) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
+    ): void;
+}
+
+export async function registerCopilotExtensionAsync(
+    languageServer: RoslynLanguageServer,
+    tracingChannel: vscode.OutputChannel
+) {
     const ext = vscode.extensions.getExtension('github.copilot');
     if (!ext) {
-        channel.appendLine('GitHub Copilot extension not installed. Skipping call to `registerRelatedFilesProvider`');
-        return;
-    }
-    await ext.activate();
-    const relatedAPI = ext.exports as
-        | {
-              registerRelatedFilesProvider(
-                  providerId: { extensionId: string; languageId: string },
-                  callback: (
-                      uri: vscode.Uri
-                  ) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
-              ): void;
-          }
-        | undefined;
-    if (!relatedAPI) {
-        channel.appendLine(
-            'Incompatible GitHub Copilot extension installed. Skipping call to `registerRelatedFilesProvider`'
+        tracingChannel.appendLine(
+            'GitHub Copilot extension not installed. Skip registeration of C# related files provider.'
         );
         return;
     }
-    channel.appendLine('registerRelatedFilesProvider succeeded.');
+    await ext.activate();
+    const relatedAPI = ext.exports as CopilotRelatedFilesProviderRegistration | undefined;
+    if (!relatedAPI) {
+        tracingChannel.appendLine(
+            'Incompatible GitHub Copilot extension installed. Skip registeration of C# related files provider.'
+        );
+        return;
+    }
+    tracingChannel.appendLine('registeration of C# related files provider for GitHub Copilot extension succeeded.');
 
     const id = {
         extensionId: CSharpExtensionId,
@@ -41,19 +44,17 @@ export async function registerCopilotExtension(languageServer: RoslynLanguageSer
     };
 
     relatedAPI.registerRelatedFilesProvider(id, async (uri) => {
-        const writeOutput = (output: CopilotRelatedDocumentsReport[], builder: vscode.Uri[] | null) => {
-            if (output) {
-                for (const report of output) {
+        const buildResult = (reports: CopilotRelatedDocumentsReport[], builder?: vscode.Uri[]) => {
+            if (reports) {
+                for (const report of reports) {
                     if (report._vs_file_paths) {
                         for (const filePath of report._vs_file_paths) {
-                            channel.appendLine('found related file: ' + filePath);
                             builder?.push(vscode.Uri.file(filePath));
                         }
                     }
                 }
             }
         };
-
         const relatedFiles: vscode.Uri[] = [];
         const uriString = UriConverter.serialize(uri);
         const textDocument = TextDocumentIdentifier.create(uriString);
@@ -66,24 +67,16 @@ export async function registerCopilotExtension(languageServer: RoslynLanguageSer
                     character: 0,
                 },
             },
-            async (p) => {
-                writeOutput(p, relatedFiles);
-            }
+            async (r) => buildResult(r, relatedFiles)
         );
 
-        await responsePromise.then(
-            (result) => {
-                writeOutput(result, null);
-                return;
-            },
-            (err) => {
-                channel.appendLine(err);
-                return;
+        try {
+            await responsePromise;
+        } catch (e) {
+            if (e instanceof Error) {
+                tracingChannel.appendLine(e.message);
             }
-        );
-
-        return {
-            entries: relatedFiles,
-        };
+        }
+        return { entries: relatedFiles };
     });
 }
