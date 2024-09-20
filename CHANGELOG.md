@@ -9,9 +9,13 @@
 * Update Razor to 9.0.0-preview.24467.1
   * Fix LF line-ending auto format bug (PR: [#10802](https://github.com/dotnet/razor/pull/10802))
 * Bumped xamltools to 17.12.35319.159 (PR: [#7583](https://github.com/dotnet/vscode-csharp/pull/7583))
-* Bump xamlTools to 17.12.35318.29 (PR: [#7577](https://github.com/OmniSharp/omnisharp-vscode/pull/7577))
-* Register Copilot `relatedFilesProvider` for C# (PR: [#7578](https://github.com/OmniSharp/omnisharp-vscode/pull/7578))
-
+* Bump xamlTools to 17.12.35318.29 (PR: [#7577](https://github.com/dotnet/vscode-csharp/pull/7577))
+* Register Copilot `relatedFilesProvider` for C# (PR: [#7578](https://github.com/dotnet/vscode-csharp/pull/7578))
+* Update Roslyn to 4.12.0-3.24470.4 (PR: [#7589](https://github.com/dotnet/vscode-csharp/pull/7589))
+  * Remove ResultId from RelatedDocumentsHandler (PR: [#75176](https://github.com/dotnet/roslyn/pull/75176))
+  * Do not attempt to report EnC diagnostics for non-host workspaces (PR: [#75138](https://github.com/dotnet/roslyn/pull/75138))
+  * Allow Razor to get diagnostics for cohosting (PR: [#75102](https://github.com/dotnet/roslyn/pull/75102))
+Í
 # 2.48.x
 * Add signing support to VSIX (PR: [#7490](https://github.com/dotnet/vscode-csharp/pull/7490))
 * Update Debugger to v2.47.0 (PR: [#7547](https://github.com/dotnet/vscode-csharp/pull/7547))
