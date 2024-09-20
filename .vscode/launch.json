@@ -19,16 +19,41 @@
             "args": [
                 // Launch VSCode using a specific profile to ensure that user settings are not used.
                 // This profile must be imported into vscode before running this launch configuration.
-                // The profile can be found under /test/csharp-standalone-profile.
+                // The profile can be found under /test/csharp-test-profile.
                 "--profile",
-                "csharp-standalone-profile",
-                "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/lsp_tools_host_slnWithCsproj.code-workspace",
+                "csharp-test-profile",
+                "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
                 "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+            "preLaunchTask": "buildDev",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "[DevKit] Launch Current File slnWithCsproj Integration Tests",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Launch VSCode using a specific profile to ensure that user settings are not used.
+                // This profile must be imported into vscode before running this launch configuration.
+                // The profile can be found under /test/csharp-test-profile.
+                "--profile",
+                "csharp-test-profile",
+                "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/devkit_slnWithCsproj.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "TEST_FILE_FILTER": "${file}",
             },
             "sourceMaps": true,
             "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
@@ -44,9 +69,9 @@
             "args": [
                 // Launch VSCode using a specific profile to ensure that user settings are not used.
                 // This profile must be imported into vscode before running this launch configuration.
-                // The profile can be found under /test/csharp-standalone-profile.
+                // The profile can be found under /test/csharp-test-profile.
                 "--profile",
-                "csharp-standalone-profile",
+                "csharp-test-profile",
                 "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests"
@@ -69,9 +94,9 @@
             "args": [
                 // Launch VSCode using a specific profile to ensure that user settings are not used.
                 // This profile must be imported into vscode before running this launch configuration.
-                // The profile can be found under /test/csharp-standalone-profile.
+                // The profile can be found under /test/csharp-test-profile.
                 "--profile",
-                "csharp-standalone-profile",
+                "csharp-test-profile",
                 "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"
@@ -94,9 +119,9 @@
             "args": [
                 // Launch VSCode using a specific profile to ensure that user settings are not used.
                 // This profile must be imported into vscode before running this launch configuration.
-                // The profile can be found under /test/csharp-standalone-profile.
+                // The profile can be found under /test/csharp-test-profile.
                 "--profile",
-                "csharp-standalone-profile",
+                "csharp-test-profile",
                 "${workspaceRoot}/test/omnisharp/omnisharpIntegrationTests/testAssets/${input:omnisharpAssetName}/.vscode/omnisharp_lsp_${input:omnisharpAssetName}.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/omnisharp/omnisharpIntegrationTests"

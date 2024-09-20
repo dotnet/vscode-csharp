@@ -135,7 +135,7 @@ describe('FileDownloader', () => {
             ];
             try {
                 await DownloadFile(fileDescription, eventStream, networkSettingsProvider, getURL(errorUrlPath));
-            } catch (error) {
+            } catch (_) {
                 expect(eventBus.getEvents()).toStrictEqual(eventsSequence);
             }
         });

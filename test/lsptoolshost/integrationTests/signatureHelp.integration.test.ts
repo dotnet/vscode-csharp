@@ -9,7 +9,7 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
-describe(`[${testAssetWorkspace.description}] Signature Help Tests`, () => {
+describe(`Signature Help Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

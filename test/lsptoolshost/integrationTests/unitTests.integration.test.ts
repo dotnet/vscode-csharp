@@ -5,17 +5,18 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
+    describeIfCSharp,
     getCodeLensesAsync,
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
 import { TestProgress } from '../../../src/lsptoolshost/roslynProtocol';
 
-describe(`[${testAssetWorkspace.description}] Test Unit Testing`, () => {
+describeIfCSharp(`Unit Testing Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

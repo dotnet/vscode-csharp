@@ -68,9 +68,9 @@ describeIfNotRazorOrGenerator(`${OmniSharpDefinitionProvider.name}: ${testAssetW
             )
         );
         expect(definitionList.length).toEqual(2);
-        expect(definitionList[0]).toBeDefined;
+        expect(definitionList[0]).toBeDefined();
         expect(definitionList[0].uri.path).toContain('typeDefinition.cs');
-        expect(definitionList[1]).toBeDefined;
+        expect(definitionList[1]).toBeDefined();
         expect(definitionList[1].uri.path).toContain('typeDefinition.cs');
     });
 

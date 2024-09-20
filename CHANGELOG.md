@@ -3,7 +3,16 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# Latest
+# 2.50.x
+
+# 2.49.x
+* Update Razor to 9.0.0-preview.24467.1
+  * Fix LF line-ending auto format bug (PR: [#10802](https://github.com/dotnet/razor/pull/10802))
+* Bumped xamltools to 17.12.35319.159 (PR: [#7583](https://github.com/dotnet/vscode-csharp/pull/7583))
+* Bump xamlTools to 17.12.35318.29 (PR: [#7577](https://github.com/OmniSharp/omnisharp-vscode/pull/7577))
+* Register Copilot `relatedFilesProvider` for C# (PR: [#7578](https://github.com/OmniSharp/omnisharp-vscode/pull/7578))
+
+# 2.48.x
 * Add signing support to VSIX (PR: [#7490](https://github.com/dotnet/vscode-csharp/pull/7490))
 * Update Debugger to v2.47.0 (PR: [#7547](https://github.com/dotnet/vscode-csharp/pull/7547))
   * Adds in support for .NET 9 Break for Async User-Unhandled

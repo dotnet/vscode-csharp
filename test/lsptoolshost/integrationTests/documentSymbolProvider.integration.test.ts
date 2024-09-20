@@ -9,7 +9,7 @@ import * as path from 'path';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 
-describe(`DocumentSymbolProvider: ${testAssetWorkspace.description}`, () => {
+describe(`Document Symbol Tests`, () => {
     let fileUri: vscode.Uri;
 
     beforeAll(async () => {

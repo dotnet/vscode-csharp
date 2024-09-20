@@ -74,7 +74,7 @@ async function checkRequirements(): Promise<RequirementResult> {
         let monoError = false;
         try {
             await monoResolver.getHostExecutableInfo();
-        } catch (e) {
+        } catch (_) {
             monoError = true;
         }
 

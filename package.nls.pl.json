@@ -55,7 +55,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "Pomiń wskazówki, gdy argument pasuje do nazwy parametru",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Pomiń wskazówki, gdy nazwa parametru pasuje do intencji metody",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "Włącz nawigację do zdekompilowanych źródeł.",
-  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Włącz nawigację do linku do źródła i osadzonych źródeł.",
   "configuration.dotnet.preferCSharpExtension": "Wymusza ładowanie projektów tylko z rozszerzeniem języka C#.  Może to być przydatne w przypadku korzystania ze starszych typów projektów, które nie są obsługiwane przez zestaw C# Dev Kit. (Wymaga ponownego załadowania okna)",
   "configuration.dotnet.projects.binaryLogPath": "Ustawia ścieżkę, w której dzienniki binarne programu MSBuild są zapisywane podczas ładowania projektów, aby ułatwić diagnozowanie błędów ładowania.",
   "configuration.dotnet.projects.enableAutomaticRestore": "Włącza automatyczne przywracanie pakietu NuGet, jeśli rozszerzenie wykryje brak zasobów.",

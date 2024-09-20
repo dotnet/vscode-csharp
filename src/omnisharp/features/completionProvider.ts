@@ -95,7 +95,7 @@ export default class OmniSharpCompletionProvider extends AbstractProvider implem
             this.#lastCompletions = lastCompletions;
 
             return { items: mappedItems };
-        } catch (error) {
+        } catch (_) {
             return;
         }
     }
@@ -115,7 +115,7 @@ export default class OmniSharpCompletionProvider extends AbstractProvider implem
         try {
             const response = await serverUtils.getCompletionResolve(this._server, request, token);
             return this._convertToVscodeCompletionItem(response.Item, item.command?.arguments?.[1] as TextDocument);
-        } catch (error) {
+        } catch (_) {
             return item;
         }
     }
@@ -155,7 +155,7 @@ export default class OmniSharpCompletionProvider extends AbstractProvider implem
 
             const finalPosition = new Position(response.Line, response.Column);
             editor.selections = [new Selection(finalPosition, finalPosition)];
-        } catch (error) {
+        } catch (_) {
             return;
         }
     }

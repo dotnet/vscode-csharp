@@ -96,7 +96,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             if (response && response.Elements) {
                 return createCodeLenses(response.Elements, document.fileName);
             }
-        } catch (error) {
+        } catch (_) {
             /* empty */
         }
 
@@ -162,7 +162,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
             };
 
             return codeLens;
-        } catch (error) {
+        } catch (_) {
             return undefined;
         }
     }
@@ -188,7 +188,7 @@ export default class OmniSharpCodeLensProvider extends AbstractProvider implemen
         let projectInfo: protocol.ProjectInformationResponse;
         try {
             projectInfo = await serverUtils.requestProjectInformation(this._server, { FileName: codeLens.fileName });
-        } catch (error) {
+        } catch (_) {
             return undefined;
         }
 

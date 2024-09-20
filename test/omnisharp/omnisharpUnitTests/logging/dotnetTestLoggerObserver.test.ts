@@ -63,7 +63,7 @@ describe(`${DotNetTestLoggerObserver.name}`, () => {
     [new DotNetTestRunInContextStart('foo', 1, 2), new DotNetTestDebugInContextStart('foo', 1, 2)].forEach(
         (event: BaseEvent) => {
             test(`${event.constructor.name}: File name and line/column are logged`, () => {
-                expect(appendedMessage).toBeFalsy;
+                expect(appendedMessage).toBeFalsy();
                 observer.post(event);
                 expect(appendedMessage).toContain('foo');
                 expect(appendedMessage).toContain('2');

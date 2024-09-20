@@ -16,7 +16,7 @@ import {
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
-describe(`[${testAssetWorkspace.description}] Test OnAutoInsert`, () => {
+describe(`OnAutoInsert Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
     });

@@ -8,6 +8,7 @@
         "omnisharp.path": "latest",
         "omnisharp.enableRoslynAnalyzers": true,
         "omnisharp.enableLspDriver": false,
-        "dotnet.server.useOmnisharp": true
+        "dotnet.server.useOmnisharp": true,
+        "dotnet.preferCSharpExtension": true,
     }
 }

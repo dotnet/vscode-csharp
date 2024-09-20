@@ -55,7 +55,7 @@
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "当参数与参数名称匹配时抑制提示",
   "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "当参数名称与方法的意图匹配时禁止显示提示",
   "configuration.dotnet.navigation.navigateToDecompiledSources": "启用对分解源的导航。",
-  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "启用对源链接和嵌入源的导航。",
   "configuration.dotnet.preferCSharpExtension": "仅强制使用 C# 扩展加载项目。使用 C# Dev Kit 不支持的旧项目类型时，这可能很有用。(需要重新加载窗口)",
   "configuration.dotnet.projects.binaryLogPath": "设置在加载项目时写入 MSBuild 二进制日志的路径，以帮助诊断加载错误。",
   "configuration.dotnet.projects.enableAutomaticRestore": "如果扩展检测到缺少资产，则启用“自动 NuGet 还原”。",

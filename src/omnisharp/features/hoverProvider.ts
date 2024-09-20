@@ -26,7 +26,7 @@ export default class OmniSharpHoverProvider extends AbstractSupport implements H
             markdownString.appendMarkdown(response.Markdown);
 
             return new Hover(markdownString);
-        } catch (error) {
+        } catch (_) {
             return undefined;
         }
     }

@@ -35,7 +35,7 @@ export class OmniSharpStructureProvider extends AbstractSupport implements Foldi
             }
 
             return ranges;
-        } catch (error) {
+        } catch (_) {
             return [];
         }
     }
