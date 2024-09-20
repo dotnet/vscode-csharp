@@ -1037,7 +1037,7 @@ export async function activateRoslynLanguageServer(
     );
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
-    await registerCopilotExtensionAsync(languageServer, _traceChannel);
+    await registerCopilotExtensionAsync(languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, hostExecutableResolver, _channel);

@@ -9,6 +9,7 @@ import { CopilotRelatedDocumentsReport, CopilotRelatedDocumentsRequest } from '.
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { UriConverter } from './uriConverter';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
+import { languageServerOptions } from '../shared/options';
 
 interface CopilotRelatedFilesProviderRegistration {
     registerRelatedFilesProvider(
@@ -19,24 +20,35 @@ interface CopilotRelatedFilesProviderRegistration {
 
 export async function registerCopilotExtensionAsync(
     languageServer: RoslynLanguageServer,
-    tracingChannel: vscode.OutputChannel
+    channel: vscode.OutputChannel
 ) {
+    const isTraceLogLevel =
+        languageServerOptions.logLevel &&
+        (languageServerOptions.logLevel === 'Trace' || languageServerOptions.logLevel === 'Debug');
+
     const ext = vscode.extensions.getExtension('github.copilot');
     if (!ext) {
-        tracingChannel.appendLine(
-            'GitHub Copilot extension not installed. Skip registeration of C# related files provider.'
-        );
+        if (isTraceLogLevel) {
+            channel.appendLine(
+                'GitHub Copilot extension not installed. Skip registeration of C# related files provider.'
+            );
+        }
         return;
     }
     await ext.activate();
     const relatedAPI = ext.exports as CopilotRelatedFilesProviderRegistration | undefined;
     if (!relatedAPI) {
-        tracingChannel.appendLine(
-            'Incompatible GitHub Copilot extension installed. Skip registeration of C# related files provider.'
-        );
+        if (isTraceLogLevel) {
+            channel.appendLine(
+                'Incompatible GitHub Copilot extension installed. Skip registeration of C# related files provider.'
+            );
+        }
         return;
     }
-    tracingChannel.appendLine('registeration of C# related files provider for GitHub Copilot extension succeeded.');
+
+    if (isTraceLogLevel) {
+        channel.appendLine('registeration of C# related files provider for GitHub Copilot extension succeeded.');
+    }
 
     const id = {
         extensionId: CSharpExtensionId,
@@ -58,23 +70,21 @@ export async function registerCopilotExtensionAsync(
         const relatedFiles: vscode.Uri[] = [];
         const uriString = UriConverter.serialize(uri);
         const textDocument = TextDocumentIdentifier.create(uriString);
-        const responsePromise = languageServer.sendRequestWithProgress(
-            CopilotRelatedDocumentsRequest.type,
-            {
-                _vs_textDocument: textDocument,
-                position: {
-                    line: 0,
-                    character: 0,
-                },
-            },
-            async (r) => buildResult(r, relatedFiles)
-        );
-
         try {
-            await responsePromise;
+            await languageServer.sendRequestWithProgress(
+                CopilotRelatedDocumentsRequest.type,
+                {
+                    _vs_textDocument: textDocument,
+                    position: {
+                        line: 0,
+                        character: 0,
+                    },
+                },
+                async (r) => buildResult(r, relatedFiles)
+            );
         } catch (e) {
             if (e instanceof Error) {
-                tracingChannel.appendLine(e.message);
+                channel.appendLine(e.message);
             }
         }
         return { entries: relatedFiles };
