@@ -51,6 +51,7 @@ jobs:
     displayName: 'Build VSIXs'
     env:
       SignType: $(signType)
+      XSIGN_ARGS: --debug
 
   - ${{ if eq(parameters.isOfficial, true) }}:
     - script: gulp signVsix
