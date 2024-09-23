@@ -29,9 +29,9 @@ jobs:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}
 
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.11.x'
+    displayName: 'Use Python 3.11'
     inputs:
-      versionSpec: 3.11.x
+      versionSpec: 3.11
 
   # If we're in an official build, install the signing plugin
   - ${{ if eq(parameters.isOfficial, true) }}:
@@ -56,7 +56,6 @@ jobs:
     displayName: 'Build VSIXs'
     env:
       SignType: $(signType)
-      XSIGN_ARGS: --debug
 
   - ${{ if eq(parameters.isOfficial, true) }}:
     - script: gulp signVsix
