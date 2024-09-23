@@ -67,7 +67,6 @@ jobs:
         PathtoPublish: '$(Build.SourcesDirectory)/vsix'
         ArtifactName: 'VSIX_$(channel)'
     - task: 1ES.PublishBuildArtifacts@1
-      condition: succeeded()
       displayName: 'Publish Signing Logs'
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/out/logs'
