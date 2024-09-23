@@ -28,6 +28,11 @@ jobs:
     parameters:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}
 
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.11'
+    inputs:
+      versionSpec: 3.11
+
   # If we're in an official build, install the signing plugin
   - ${{ if eq(parameters.isOfficial, true) }}:
     - task: MicroBuildSigningPlugin@4
