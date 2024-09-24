@@ -28,6 +28,11 @@ jobs:
     parameters:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}
 
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.11'
+    inputs:
+      versionSpec: 3.11
+
   # If we're in an official build, install the signing plugin
   - ${{ if eq(parameters.isOfficial, true) }}:
     - task: MicroBuildSigningPlugin@4
@@ -67,7 +72,7 @@ jobs:
         PathtoPublish: '$(Build.SourcesDirectory)/vsix'
         ArtifactName: 'VSIX_$(channel)'
     - task: 1ES.PublishBuildArtifacts@1
-      condition: succeeded()
+      condition: succeededOrFailed()
       displayName: 'Publish Signing Logs'
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/out/logs'
