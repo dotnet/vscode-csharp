@@ -245,7 +245,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                     action: async () => {
                         const returnData = await createSelfSignedCert(dotnetPath);
                         if (returnData.error === null) {
-                            //if the prcess returns 0, returnData.error is null, otherwise the return code can be acessed in returnData.error.code
+                            // if the process returns 0, returnData.error is null, otherwise the return code can be accessed in returnData.error.code
                             const message =
                                 errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
                             showInformationMessage(

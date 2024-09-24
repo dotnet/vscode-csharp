@@ -40,7 +40,6 @@ function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void 
     };
     if (changedOptions.changedCommonOptions.find((key) => key === 'useOmnisharpServer')) {
         // If the user has changed the useOmnisharpServer flag we need to reload the window.
-        // Intentionally not awaiting this promise - we don't want to block handling changes on showing the notification prompt.
         showInformationMessage(
             vscode,
             vscode.l10n.t(
@@ -56,6 +55,5 @@ function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void 
     const message = vscode.l10n.t(
         'C# configuration has changed. Would you like to reload the window to apply your changes?'
     );
-    // Intentionally not awaiting this promise - we don't want to block handling changes on showing the notification prompt.
     showInformationMessage(vscode, message, reloadTitle);
 }

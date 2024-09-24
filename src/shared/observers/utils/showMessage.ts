@@ -81,22 +81,15 @@ function showMessage(
     delegateFunc(message, messageOptions, ...items).then(
         async (selectedItem) => {
             if (selectedItem) {
-                const item = items.find((i) => i);
-                if (item === undefined) {
-                    // This should never happen - we got an item back that we didn't provide
-                    throw new Error(
-                        `Could not find item with message: ${selectedItem}; items:${JSON.stringify(items)}`
-                    );
-                }
-                if (typeof item === 'string') {
+                if (typeof selectedItem === 'string') {
                     return;
-                } else if ('action' in item && item.action) {
-                    await item.action();
-                } else if ('command' in item && item.command) {
-                    if (item.arguments) {
-                        await vscode.commands.executeCommand(item.command, ...item.arguments);
+                } else if ('action' in selectedItem && selectedItem.action) {
+                    await selectedItem.action();
+                } else if ('command' in selectedItem && selectedItem.command) {
+                    if (selectedItem.arguments) {
+                        await vscode.commands.executeCommand(selectedItem.command, ...selectedItem.arguments);
                     } else {
-                        await vscode.commands.executeCommand(item.command);
+                        await vscode.commands.executeCommand(selectedItem.command);
                     }
                 }
             }

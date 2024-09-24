@@ -80,7 +80,6 @@ export async function restore(
     showOutput: boolean
 ): Promise<void> {
     if (_restoreInProgress) {
-        // Show error message but don't await the dismissal of it.
         showErrorMessage(vscode, vscode.l10n.t('Restore already in progress'));
         return;
     }
