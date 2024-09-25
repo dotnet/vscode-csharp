@@ -770,10 +770,10 @@
             "default": true,
             "description": "%configuration.dotnet.codeLens.enableTestsCodeLens%"
           },
-          "dotnet.onAutoInsert.enableOnAutoInsert": {
+          "dotnet.onAutoInsert.enableAutoInsert": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.onAutoInsert.enableOnAutoInsert%"
+            "description": "%configuration.dotnet.autoInsert.enableAutoInsert%"
           },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",
