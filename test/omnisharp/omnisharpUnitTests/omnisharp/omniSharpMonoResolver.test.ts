@@ -24,10 +24,10 @@ describe(`${OmniSharpMonoResolver.name}`, () => {
         return Promise.resolve(version);
     };
 
-    beforeEach(() => {
+    beforeEach(async () => {
         getMonoCalled = false;
         jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue(getWorkspaceConfiguration());
-        vscode.workspace.getConfiguration().update('omnisharp.monoPath', monoPath);
+        await vscode.workspace.getConfiguration().update('omnisharp.monoPath', monoPath);
     });
 
     test(`it returns the path and version if the version is greater than or equal to ${requiredMonoVersion}`, async () => {

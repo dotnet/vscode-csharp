@@ -156,7 +156,7 @@ export function getFakeVsCode(): vscode.vscode {
             showWarningMessage: <T extends vscode.MessageItem>(_message: string, ..._items: T[]) => {
                 throw new Error('Not Implemented');
             },
-            showErrorMessage: (_message: string, ..._items: string[]) => {
+            showErrorMessage: <T extends vscode.MessageItem>(_message: string, ..._items: T[]) => {
                 throw new Error('Not Implemented');
             },
         },
@@ -293,8 +293,13 @@ export function getVSCodeWithConfig(vscodeAdapter: vscode.vscode = getFakeVsCode
     return vscodeAdapter;
 }
 
-export function updateConfig(vscodeAdapter: vscode.vscode, section: string | undefined, config: string, value: any) {
-    const workspaceConfig = vscodeAdapter.workspace.getConfiguration(section);
+export async function updateConfig(
+    vscode: vscode.vscode,
+    section: string | undefined,
+    config: string,
+    value: any
+): Promise<void> {
+    const workspaceConfig = vscode.workspace.getConfiguration(section);
     const configEntry = section ? `${section}.${config}` : config;
-    workspaceConfig.update(configEntry, value);
+    await workspaceConfig.update(configEntry, value);
 }

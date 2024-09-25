@@ -119,13 +119,13 @@ describe(OmnisharpManager.name, () => {
             });
 
             test('Throws error if the path is neither an absolute path nor a valid semver, nor the string "latest"', async () => {
-                expect(
+                await expect(
                     manager.GetOmniSharpLaunchPath(defaultVersion, 'Some incorrect path', useFramework, extensionPath)
                 ).rejects.toThrowError(Error);
             });
 
             test('Throws error when the specified path is an invalid semver', async () => {
-                expect(
+                await expect(
                     manager.GetOmniSharpLaunchPath(defaultVersion, 'a.b.c', useFramework, extensionPath)
                 ).rejects.toThrowError(Error);
             });

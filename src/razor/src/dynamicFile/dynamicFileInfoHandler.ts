@@ -30,7 +30,7 @@ export class DynamicFileInfoHandler {
         vscode.commands.registerCommand(
             DynamicFileInfoHandler.removeDynamicFileInfoCommand,
             async (request: RemoveDynamicFileParams) => {
-                this.removeDynamicFileInfo(request);
+                await this.removeDynamicFileInfo(request);
             }
         );
     }

@@ -6,9 +6,9 @@
 import { BaseEvent, IntegrityCheckFailure, ZipError } from '../../shared/loggingEvents';
 import { DotNetTestRunFailure, DotNetTestDebugStartFailure } from '../omnisharpLoggingEvents';
 import { vscode } from '../../vscodeAdapter';
-import showErrorMessage from '../../shared/observers/utils/showErrorMessage';
 import { EventType } from '../../shared/eventType';
 import { l10n } from 'vscode';
+import { showErrorMessage } from '../../shared/observers/utils/showMessage';
 
 export class ErrorMessageObserver {
     constructor(private vscode: vscode) {}

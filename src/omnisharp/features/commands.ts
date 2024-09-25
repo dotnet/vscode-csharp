@@ -82,9 +82,9 @@ export default function registerCommands(
 
 async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSharpServer) {
     if (server.isRunning()) {
-        server.restart();
+        await server.restart();
     } else {
-        server.autoStart('');
+        await server.autoStart('');
     }
 }
 

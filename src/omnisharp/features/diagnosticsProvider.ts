@@ -159,11 +159,11 @@ class OmniSharpDiagnosticsProvider extends AbstractSupport {
         }
 
         this._subscriptions.push(
-            this._validateAllPipe.pipe(debounceTime(3000)).subscribe(() => {
+            this._validateAllPipe.pipe(debounceTime(3000)).subscribe(async () => {
                 if (this._validationAdvisor.shouldValidateAll()) {
-                    this._validateEntireWorkspace();
+                    await this._validateEntireWorkspace();
                 } else if (this._validationAdvisor.shouldValidateFiles()) {
-                    this._validateOpenDocuments();
+                    await this._validateOpenDocuments();
                 }
             })
         );

@@ -125,7 +125,7 @@ describe('FileDownloader', () => {
             } catch {
                 /* empty */
             }
-            expect(downloadPromise).rejects.toThrow();
+            await expect(downloadPromise).rejects.toThrow();
         });
 
         test('Download Start and Download Failure events are created', async () => {

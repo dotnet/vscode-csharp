@@ -9,18 +9,22 @@ import { BaseEvent } from '../../shared/loggingEvents';
 import { OmnisharpServerMsBuildProjectDiagnostics } from '../omnisharpLoggingEvents';
 import { Scheduler, Subject } from 'rxjs';
 
-import showWarningMessage from '../../shared/observers/utils/showWarningMessage';
 import { EventType } from '../../shared/eventType';
 import { l10n } from 'vscode';
+import { CommandOption, showWarningMessage } from '../../shared/observers/utils/showMessage';
 
 export class WarningMessageObserver {
     private warningMessageDebouncer: Subject<BaseEvent>;
 
     constructor(private vscode: vscode, private disableMsBuildDiagnosticWarning: () => boolean, scheduler?: Scheduler) {
         this.warningMessageDebouncer = new Subject<BaseEvent>();
-        this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe(async (_) => {
+        this.warningMessageDebouncer.pipe(debounceTime(1500, scheduler)).subscribe((_) => {
             const message = l10n.t('Some projects have trouble loading. Please review the output for more details.');
-            await showWarningMessage(this.vscode, message, { title: l10n.t('Show Output'), command: 'o.showOutput' });
+            const buttonTitle: CommandOption = {
+                title: l10n.t('Show Output'),
+                command: 'o.showOutput',
+            };
+            showWarningMessage(this.vscode, message, buttonTitle);
         });
     }
 

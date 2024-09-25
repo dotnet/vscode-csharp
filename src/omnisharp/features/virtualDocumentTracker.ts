@@ -136,7 +136,9 @@ function logSynchronizationFailure(uri: Uri, error: any, server: OmniSharpServer
 }
 
 export default function trackVirtualDocuments(server: OmniSharpServer, eventStream: EventStream): IDisposable {
-    trackCurrentVirtualDocuments(server, eventStream);
+    trackCurrentVirtualDocuments(server, eventStream).catch((any) => {
+        throw new Error(`Failed to track current virtual documents: ${any}`);
+    });
     const disposable = trackFutureVirtualDocuments(server, eventStream);
 
     return disposable;

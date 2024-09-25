@@ -23,7 +23,7 @@ describe('OmnisharpChannelObserver', () => {
     const optionObservable = new Subject<void>();
     let observer: OmnisharpChannelObserver;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         hasShown = false;
         hasCleared = false;
         preserveFocus = false;
@@ -40,7 +40,7 @@ describe('OmnisharpChannelObserver', () => {
 
         jest.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue(getWorkspaceConfiguration());
 
-        vscode.workspace.getConfiguration().update('csharp.showOmnisharpLogOnError', true);
+        await vscode.workspace.getConfiguration().update('csharp.showOmnisharpLogOnError', true);
         optionObservable.next();
     });
 
@@ -57,8 +57,8 @@ describe('OmnisharpChannelObserver', () => {
         });
     });
 
-    test(`OmnisharpServerOnStdErr: Channel is not shown when disabled in configuration`, () => {
-        vscode.workspace.getConfiguration().update('csharp.showOmnisharpLogOnError', false);
+    test(`OmnisharpServerOnStdErr: Channel is not shown when disabled in configuration`, async () => {
+        await vscode.workspace.getConfiguration().update('csharp.showOmnisharpLogOnError', false);
         optionObservable.next();
 
         expect(hasShown).toEqual(false);

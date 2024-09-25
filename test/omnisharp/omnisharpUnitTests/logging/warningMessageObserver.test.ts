@@ -14,6 +14,7 @@ import { vscode } from '../../../../src/vscodeAdapter';
 import { TestScheduler } from 'rxjs/testing';
 import { from as observableFrom, Subject } from 'rxjs';
 import { timeout, map } from 'rxjs/operators';
+import { MessageOptions } from 'vscode';
 
 describe('WarningMessageObserver', () => {
     let doClickOk: () => void;
@@ -32,7 +33,7 @@ describe('WarningMessageObserver', () => {
     let observer: WarningMessageObserver;
     const vscode: vscode = getFakeVsCode();
 
-    vscode.window.showWarningMessage = async <T>(message: string, ...items: T[]) => {
+    vscode.window.showWarningMessage = async <T>(message: string, _options: MessageOptions, ...items: T[]) => {
         warningMessages.push(message);
         assertionObservable.next(`[${warningMessages.length}] ${message}`);
         return new Promise<T | undefined>((resolve) => {

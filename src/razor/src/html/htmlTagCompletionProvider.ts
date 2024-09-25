@@ -166,12 +166,12 @@ export class HtmlTagCompletionProvider {
 
             const selections = activeEditor.selections;
             if (selections.length && selections.some((s) => s.active.isEqual(position))) {
-                activeEditor.insertSnippet(
+                await activeEditor.insertSnippet(
                     new vscode.SnippetString(tagCompletion),
                     selections.map((s) => s.active)
                 );
             } else {
-                activeEditor.insertSnippet(new vscode.SnippetString(tagCompletion), position);
+                await activeEditor.insertSnippet(new vscode.SnippetString(tagCompletion), position);
             }
         }, 75);
     }

@@ -12,8 +12,7 @@ import { ChromeBrowserFinder, EdgeBrowserFinder } from '@vscode/js-debug-browser
 import { RazorLogger } from '../razorLogger';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
 import { onDidTerminateDebugSession } from './terminateDebugHandler';
-import showInformationMessage from '../../../shared/observers/utils/showInformationMessage';
-import showErrorMessage from '../../../shared/observers/utils/showErrorMessage';
+import { ActionOption, showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     private static readonly autoDetectUserNotice: string = vscode.l10n.t(
@@ -168,14 +167,15 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             const message = vscode.l10n.t(
                 'There was an unexpected error while launching your debugging session. Check the console for helpful logs and visit the debugging docs for more info.'
             );
-            const viewDebugDocsButton = vscode.l10n.t('View Debug Docs');
-            const ignoreButton = vscode.l10n.t('Ignore');
-            this.vscodeType.window.showErrorMessage(message, viewDebugDocsButton, ignoreButton).then(async (result) => {
-                if (result === viewDebugDocsButton) {
+            const viewDebugDocsButton: ActionOption = {
+                title: vscode.l10n.t('View Debug Docs'),
+                action: async () => {
                     const debugDocsUri = 'https://aka.ms/blazorwasmcodedebug';
                     await this.vscodeType.commands.executeCommand(`vcode.open`, debugDocsUri);
-                }
-            });
+                },
+            };
+            const ignoreButton = vscode.l10n.t('Ignore');
+            showErrorMessage(this.vscodeType, message, viewDebugDocsButton, ignoreButton);
         }
     }
 

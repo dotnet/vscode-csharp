@@ -31,4 +31,6 @@ async function main() {
     }
 }
 
+// top level async not supported in our version of ts/modules
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 main();
