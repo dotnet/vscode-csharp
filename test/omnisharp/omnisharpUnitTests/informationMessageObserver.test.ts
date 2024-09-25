@@ -33,7 +33,7 @@ describe('InformationMessageObserver', () => {
         jest.spyOn(vscode.window, 'showInformationMessage').mockImplementation(
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
-            async <T>(message: string, ...items: T[]) => {
+            async <T>(message: string, _options: vscode.MessageOptions, ...items: T[]) => {
                 infoMessage = message;
                 return new Promise<T | undefined>((resolve) => {
                     doClickCancel = () => {

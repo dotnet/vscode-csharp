@@ -128,7 +128,11 @@ describe('Option changes observer', () => {
     });
 
     function resetMocks() {
-        vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
+        vscode.window.showInformationMessage = async <T>(
+            message: string,
+            _options: vscode.MessageOptions,
+            ...items: T[]
+        ) => {
             infoMessage = message;
             return new Promise<T | undefined>((resolve) => {
                 doClickCancel = () => {
