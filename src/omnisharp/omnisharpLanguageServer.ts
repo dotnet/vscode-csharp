@@ -310,7 +310,10 @@ async function activate(
     );
 
     if (omnisharpOptions.autoStart) {
-        await server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', ''));
+        // We intentionally do not await this as we don't want to block activation on the server starting.
+        server.autoStart(context.workspaceState.get<string>('lastSolutionPathOrFolder', '')).catch((err) => {
+            throw err;
+        });
     }
 
     // stop server on deactivate

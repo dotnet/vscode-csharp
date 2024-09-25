@@ -57,8 +57,8 @@ export async function restartOmniSharpServer(): Promise<void> {
                     resolve();
                 }
             });
+            vscode.commands.executeCommand('o.restart');
         });
-        await vscode.commands.executeCommand('o.restart');
         console.log('OmniSharp restarted');
     } catch (err) {
         console.log(JSON.stringify(err));
