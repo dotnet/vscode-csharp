@@ -8,10 +8,10 @@ import * as os from 'os';
 import { Package } from '../packageManager/package';
 import { DownloadFile } from '../packageManager/fileDownloader';
 import { EventStream } from '../eventStream';
-import * as Event from '../omnisharp/loggingEvents';
+import * as Event from '../shared/loggingEvents';
 import NetworkSettings, { NetworkSettingsProvider } from '../networkSettings';
 import { getBufferIntegrityHash } from '../packageManager/isValidDownload';
-import { EventType } from '../omnisharp/eventType';
+import { EventType } from '../shared/eventType';
 
 interface PackageJSONFile {
     runtimeDependencies: Package[];

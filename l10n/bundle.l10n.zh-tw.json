@@ -170,6 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "無法判斷專案 '{0}' 的偵錯設定",
   "Unable to find Razor extension version.": "找不到 Razor 延伸模組版本。",
   "Unable to generate assets to build and debug. {0}.": "無法產生資產以建置及偵錯。{0}。",
+  "Unable to launch Attach to Process dialog: ": "無法啟動 [附加至處理序] 對話方塊：",
   "Unable to resolve VSCode's version of CSharp": "無法解析 VSCode 的 CSharp 版本",
   "Unable to resolve VSCode's version of Html": "無法解析 VSCode 的 HTML 版本",
   "Unexpected RuntimeId '{0}'.": "未預期的 RuntimeId '{0}'。",

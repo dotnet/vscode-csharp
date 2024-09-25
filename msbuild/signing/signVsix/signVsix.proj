@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <GenerateAssemblyVersionInfo>false</GenerateAssemblyVersionInfo>
+        <EnableDefaultSignFiles>false</EnableDefaultSignFiles>
+        <MicroBuild_DoNotStrongNameSign>true</MicroBuild_DoNotStrongNameSign>
+        <IsPackable>false</IsPackable>
+        <OutDir>$(RepoRoot)vsix\</OutDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="1.0.0" />
+    </ItemGroup>
+
+    <PropertyGroup Condition="'$(SignType)' == ''">
+        <SignType>test</SignType>
+    </PropertyGroup>
+
+    <!-- Copies the manifest file to <name>.signature.p7s which is required to submit to the signing service -->
+    <Target Name="CopyManifestAsSignature" BeforeTargets="SignFiles">
+        <ItemGroup>
+            <ManifestFiles Include="$(OutDir)*.manifest" />
+        </ItemGroup>
+        <Copy SourceFiles="@(ManifestFiles)" DestinationFiles="@(ManifestFiles->Replace('.manifest','.signature.p7s'))" />
+        <Error
+            Text="Did not find any .signature.p7s files to sign - ensure that the .manifest files have been generated."
+            Condition="'@(ManifestFiles->Count())' == '0'" />
+        <ItemGroup>
+            <FilesToSign Include="$(OutDir)*.signature.p7s">
+                <Authenticode>VSCodePublisher</Authenticode>
+            </FilesToSign>
+        </ItemGroup>
+    </Target>
+</Project>

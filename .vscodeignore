@@ -13,12 +13,12 @@
 .vscode/**
 .vscode-test/**
 coverage/**
+docs/**
 out/**
-server/**
+msbuild/**
 src/**
 tasks/**
 test/**
-omnisharptest/**
 __mocks__/**
 jest.config.ts
 baseJestConfig.ts
@@ -34,6 +34,9 @@ azure-pipelines
 .editorconfig
 .gitignore
 CODEOWNERS
+Directory.Build.props
+global.json
+NuGet.config
 gulpfile.ts
 !install.Lock
 ISSUE_TEMPLATE

@@ -170,6 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "'{0}' projesi için hata ayıklama ayarları belirlenemedi",
   "Unable to find Razor extension version.": "Razor uzantısı sürümü bulunamıyor.",
   "Unable to generate assets to build and debug. {0}.": "Derlemek ve hata ayıklamak için varlıklar oluşturulamıyor. {0}.",
+  "Unable to launch Attach to Process dialog: ": "İşleme Ekle iletişim kutusu başlatılamıyor: ",
   "Unable to resolve VSCode's version of CSharp": "VSCode'un CSharp sürümü çözümlenemiyor",
   "Unable to resolve VSCode's version of Html": "VSCode'un HTML sürümü çözümlenemiyor",
   "Unexpected RuntimeId '{0}'.": "Beklenmeyen RuntimeId '{0}'.",

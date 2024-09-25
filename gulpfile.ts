@@ -10,3 +10,4 @@ require('./tasks/localizationTasks');
 require('./tasks/createTagsTasks');
 require('./tasks/debuggerTasks');
 require('./tasks/snapTasks');
+require('./tasks/signingTasks');

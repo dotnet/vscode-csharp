@@ -9,6 +9,7 @@ import { LogLevel } from '../logLevel';
 import { ReportIssueCreator } from './reportIssueCreator';
 import { ReportIssueDataCollector } from './reportIssueDataCollector';
 import { ReportIssueDataCollectorFactory } from './reportIssueDataCollectorFactory';
+import { showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage';
 
 export class ReportIssuePanel {
     public static readonly viewType = 'razorReportIssue';
@@ -52,9 +53,7 @@ export class ReportIssuePanel {
 
     private attachToCurrentPanel() {
         if (!this.panel) {
-            vscode.window.showErrorMessage(
-                vscode.l10n.t('Unexpected error when attaching to report Razor issue window.')
-            );
+            showErrorMessage(vscode, vscode.l10n.t('Unexpected error when attaching to report Razor issue window.'));
             return;
         }
 
@@ -63,7 +62,8 @@ export class ReportIssuePanel {
                 case 'copyIssue':
                     if (!this.issueContent) {
                         if (!this.dataCollector) {
-                            vscode.window.showErrorMessage(
+                            showErrorMessage(
+                                vscode,
                                 vscode.l10n.t('You must first start the data collection before copying.')
                             );
                             return;
@@ -74,7 +74,7 @@ export class ReportIssuePanel {
                     }
 
                     await vscode.env.clipboard.writeText(this.issueContent);
-                    vscode.window.showInformationMessage(vscode.l10n.t('Razor issue copied to clipboard'));
+                    showInformationMessage(vscode, vscode.l10n.t('Razor issue copied to clipboard'));
                     return;
                 case 'startIssue':
                     if (this.dataCollector) {
@@ -83,19 +83,22 @@ export class ReportIssuePanel {
                     }
                     this.issueContent = undefined;
                     this.dataCollector = this.dataCollectorFactory.create();
-                    vscode.window.showInformationMessage(
+                    showInformationMessage(
+                        vscode,
                         vscode.l10n.t('Razor issue data collection started. Reproduce the issue then press "Stop"')
                     );
                     return;
                 case 'stopIssue':
                     if (!this.dataCollector) {
-                        vscode.window.showErrorMessage(
+                        showErrorMessage(
+                            vscode,
                             vscode.l10n.t('You must first start the data collection before stopping.')
                         );
                         return;
                     }
                     this.dataCollector.stop();
-                    vscode.window.showInformationMessage(
+                    showInformationMessage(
+                        vscode,
                         vscode.l10n.t('Razor issue data collection stopped. Copying issue content...')
                     );
                     return;

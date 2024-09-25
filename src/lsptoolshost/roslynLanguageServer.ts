@@ -33,7 +33,6 @@ import {
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
 import { DynamicFileInfoHandler } from '../razor/src/dynamicFile/dynamicFileInfoHandler';
-import ShowInformationMessage from '../shared/observers/utils/showInformationMessage';
 import * as RoslynProtocol from './roslynProtocol';
 import { CSharpDevKitExports } from '../csharpDevKitExports';
 import { SolutionSnapshotId } from './services/ISolutionSnapshotProvider';
@@ -66,6 +65,15 @@ import { getComponentPaths } from './builtInComponents';
 import { OnAutoInsertFeature } from './onAutoInsertFeature';
 import { registerLanguageStatusItems } from './languageStatusBar';
 import { ProjectContextService } from './services/projectContextService';
+import { ProvideDynamicFileResponse } from '../razor/src/dynamicFile/provideDynamicFileResponse';
+import { ProvideDynamicFileParams } from '../razor/src/dynamicFile/provideDynamicFileParams';
+import { registerCopilotExtensionAsync } from './copilot';
+import {
+    ActionOption,
+    CommandOption,
+    showErrorMessage,
+    showInformationMessage,
+} from '../shared/observers/utils/showMessage';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -455,13 +463,13 @@ export class RoslynLanguageServer {
         const defaultSolution = commonOptions.defaultSolution;
         if (!_wasActivatedWithCSharpDevkit && defaultSolution !== 'disable' && this._solutionFile === undefined) {
             if (defaultSolution !== '') {
-                this.openSolution(vscode.Uri.file(defaultSolution));
+                await this.openSolution(vscode.Uri.file(defaultSolution));
             } else {
                 // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
                 const solutionUris = await vscode.workspace.findFiles('**/*.sln', '**/node_modules/**', 2);
                 if (solutionUris) {
                     if (solutionUris.length === 1) {
-                        this.openSolution(solutionUris[0]);
+                        await this.openSolution(solutionUris[0]);
                     } else if (solutionUris.length > 1) {
                         // We have more than one solution, so we'll prompt the user to use the picker.
                         const chosen = await vscode.window.showInformationMessage(
@@ -475,14 +483,16 @@ export class RoslynLanguageServer {
 
                         if (chosen) {
                             if (chosen.action === 'disable') {
-                                vscode.workspace.getConfiguration().update('dotnet.defaultSolution', 'disable', false);
+                                await vscode.workspace
+                                    .getConfiguration()
+                                    .update('dotnet.defaultSolution', 'disable', false);
                             } else {
                                 const chosenSolution: vscode.Uri | undefined = await vscode.commands.executeCommand(
                                     'dotnet.openSolution'
                                 );
                                 if (chosen.action === 'openAndSetDefault' && chosenSolution) {
                                     const relativePath = vscode.workspace.asRelativePath(chosenSolution);
-                                    vscode.workspace
+                                    await vscode.workspace
                                         .getConfiguration()
                                         .update('dotnet.defaultSolution', relativePath, false);
                                 }
@@ -496,7 +506,7 @@ export class RoslynLanguageServer {
                             omnisharpOptions.maxProjectResults
                         );
 
-                        this.openProjects(projectUris);
+                        await this.openProjects(projectUris);
                     }
                 }
             }
@@ -514,7 +524,7 @@ export class RoslynLanguageServer {
             // then we have no projects, and so this extension won't have anything to do.
             if (exports.hasServerProcessLoaded()) {
                 const pipeName = await exports.getBrokeredServiceServerPipeName();
-                this._languageClient.sendNotification('serviceBroker/connect', { pipeName: pipeName });
+                await this._languageClient.sendNotification('serviceBroker/connect', { pipeName: pipeName });
             } else {
                 // We'll subscribe if the process later launches, and call this function again to send the pipe name.
                 this._context.subscriptions.push(
@@ -588,7 +598,7 @@ export class RoslynLanguageServer {
             }
 
             // Set command enablement as soon as we know devkit is available.
-            vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'RoslynDevKit');
+            await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'RoslynDevKit');
 
             const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths);
             args = args.concat(csharpDevKitArgs);
@@ -599,7 +609,7 @@ export class RoslynLanguageServer {
             _channel.appendLine('Activating C# standalone...');
 
             // Set command enablement to use roslyn standalone commands.
-            vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
+            await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
         }
 
@@ -730,11 +740,16 @@ export class RoslynLanguageServer {
         };
     }
 
+    private ProvideDyanmicFileInfoType: RequestType<ProvideDynamicFileParams, ProvideDynamicFileResponse, any> =
+        new RequestType(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName);
+
     private registerDynamicFileInfo() {
         // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
         // a command.
-        this._languageClient.onRequest(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName, async (request) =>
-            vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
+        this._languageClient.onRequest<ProvideDynamicFileParams, ProvideDynamicFileResponse, any>(
+            this.ProvideDyanmicFileInfoType,
+            async (request) =>
+                vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
         );
         this._languageClient.onNotification(
             RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
@@ -816,7 +831,7 @@ export class RoslynLanguageServer {
             vscode.workspace.onDidOpenTextDocument(async (event) => {
                 try {
                     const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
-                    this._buildDiagnosticService._onFileOpened(event, buildIds);
+                    await this._buildDiagnosticService._onFileOpened(event, buildIds);
                 } catch (e) {
                     if (e instanceof vscode.CancellationError) {
                         // The request was cancelled (not due to us) - this means the server is no longer accepting requests
@@ -842,14 +857,16 @@ export class RoslynLanguageServer {
                     return;
                 }
 
-                const title = vscode.l10n.t('Restart Language Server');
-                const command = 'dotnet.restartServer';
+                const title: CommandOption = {
+                    title: vscode.l10n.t('Restart Language Server'),
+                    command: 'dotnet.restartServer',
+                };
                 if (csharpDevkitExtension && !_wasActivatedWithCSharpDevkit) {
                     // We previously started without C# Dev Kit and its now installed.
                     // Offer a prompt to restart the server to use C# Dev Kit.
                     _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
                     const message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
-                    ShowInformationMessage(vscode, message, { title, command });
+                    showInformationMessage(vscode, message, title);
                 } else {
                     // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
                     // which will automatically restart this extension too.
@@ -862,12 +879,14 @@ export class RoslynLanguageServer {
         // Subscribe to telemetry events so we can enable/disable as needed
         this._languageClient.addDisposable(
             vscode.env.onDidChangeTelemetryEnabled((_: boolean) => {
-                const title = vscode.l10n.t('Restart Language Server');
-                const command = 'dotnet.restartServer';
+                const restart: CommandOption = {
+                    title: vscode.l10n.t('Restart Language Server'),
+                    command: 'dotnet.restartServer',
+                };
                 const message = vscode.l10n.t(
                     'Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?'
                 );
-                ShowInformationMessage(vscode, message, { title, command });
+                showInformationMessage(vscode, message, restart);
             })
         );
     }
@@ -923,17 +942,21 @@ export class RoslynLanguageServer {
                 'IntelliCode features will not be available, {0} failed to activate.',
                 csharpDevkitIntelliCodeExtensionId
             );
-            const showOutput = vscode.l10n.t('Go to output');
-            const suppressNotification = vscode.l10n.t('Suppress notification');
-            // Buttons are shown in right-to-left order, with a close button to the right of everything;
-            vscode.window.showErrorMessage(message, showOutput, suppressNotification).then((value) => {
-                if (value === showOutput) {
+            const showOutput: ActionOption = {
+                title: vscode.l10n.t('Go to output'),
+                action: async () => {
                     _channel.show();
-                } else if (value == suppressNotification) {
-                    extensionContext.globalState.update(stateKey, true);
-                }
-            });
+                },
+            };
+            const suppressNotification: ActionOption = {
+                title: vscode.l10n.t('Suppress notification'),
+                action: async () => {
+                    await extensionContext.globalState.update(stateKey, true);
+                },
+            };
 
+            // Buttons are shown in right-to-left order, with a close button to the right of everything;
+            showErrorMessage(vscode, message, showOutput, suppressNotification);
             return [];
         }
     }
@@ -1029,6 +1052,7 @@ export async function activateRoslynLanguageServer(
     );
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
+    await registerCopilotExtensionAsync(languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, hostExecutableResolver, _channel);

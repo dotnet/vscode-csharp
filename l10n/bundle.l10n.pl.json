@@ -170,6 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "Nie można określić ustawień debugowania dla projektu „{0}”",
   "Unable to find Razor extension version.": "Nie można odnaleźć wersji rozszerzenia Razor.",
   "Unable to generate assets to build and debug. {0}.": "Nie można wygenerować zasobów do skompilowania i debugowania. {0}.",
+  "Unable to launch Attach to Process dialog: ": "Nie można uruchomić okna dialogowego Dołączanie do procesu: ",
   "Unable to resolve VSCode's version of CSharp": "Nie można rozpoznać wersji CSharp programu VSCode",
   "Unable to resolve VSCode's version of Html": "Nie można rozpoznać wersji HTML programu VSCode",
   "Unexpected RuntimeId '{0}'.": "Nieoczekiwany identyfikator RuntimeId „{0}”.",

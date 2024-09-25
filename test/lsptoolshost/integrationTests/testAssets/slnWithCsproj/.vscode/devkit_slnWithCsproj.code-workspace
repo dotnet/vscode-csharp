@@ -1,0 +1,13 @@
+{	
+    "folders": [	
+        {	
+            "path": ".."	
+        }	
+    ],	
+    "settings": {	
+        "dotnet.defaultSolution": "b_SecondInOrder_SlnFile.sln",	
+        "dotnet.server.trace": "Trace",	
+        "dotnet.server.useOmnisharp": false,	
+        "dotnet.preferCSharpExtension": false,
+    }	
+}

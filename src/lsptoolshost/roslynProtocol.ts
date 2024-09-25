@@ -188,6 +188,15 @@ export interface RoslynFixAllCodeAction extends CodeAction {
     scope: string;
 }
 
+/**
+ * Should match the definition on the server side, but only the properties we require on the client side.
+ * https://github.com/dotnet/roslyn/blob/bd5c00e5e09de8564093f42d87fe49d4971f2e84/src/LanguageServer/Protocol/Handler/CodeActions/CodeActionResolveData.cs#L16C20-L16C41
+ */
+export interface CodeActionResolveData {
+    UniqueIdentifier: string;
+    FixAllFlavors?: string[];
+}
+
 export interface NamedPipeInformation {
     pipeName: string;
 }
@@ -210,6 +219,15 @@ export interface ProjectNeedsRestoreName {
      * The set of projects that have unresolved dependencies and require a restore.
      */
     projectFilePaths: string[];
+}
+
+export interface CopilotRelatedDocumentsParams extends lsp.WorkDoneProgressParams, lsp.PartialResultParams {
+    _vs_textDocument: lsp.TextDocumentIdentifier;
+    position: lsp.Position;
+}
+
+export interface CopilotRelatedDocumentsReport {
+    _vs_file_paths?: string[];
 }
 
 export namespace WorkspaceDebugConfigurationRequest {
@@ -320,4 +338,16 @@ export namespace ProjectNeedsRestoreRequest {
     export const method = 'workspace/_roslyn_projectNeedsRestore';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.RequestType<ProjectNeedsRestoreName, void, void>(method);
+}
+
+export namespace CopilotRelatedDocumentsRequest {
+    export const method = 'copilot/_related_documents';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.ProtocolRequestType<
+        CopilotRelatedDocumentsParams,
+        CopilotRelatedDocumentsReport[],
+        CopilotRelatedDocumentsReport[],
+        void,
+        void
+    >(method);
 }

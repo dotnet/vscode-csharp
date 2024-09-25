@@ -18,6 +18,7 @@ import { parse } from 'jsonc-parser';
 import { IWorkspaceDebugInformationProvider } from './IWorkspaceDebugInformationProvider';
 import { PlatformInformation } from './platform';
 import { BaseVsDbgConfigurationProvider } from './configurationProvider';
+import { showErrorMessage } from './observers/utils/showMessage';
 
 /**
  * This class will be used for providing debug configurations given workspace information.
@@ -39,7 +40,8 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
         _?: vscode.CancellationToken
     ): Promise<vscode.DebugConfiguration[]> {
         if (!folder || !folder.uri) {
-            vscode.window.showErrorMessage(
+            showErrorMessage(
+                vscode,
                 vscode.l10n.t('Cannot create .NET debug configurations. No workspace folder was selected.')
             );
             return [];
@@ -48,7 +50,8 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
         try {
             const info = await this.workspaceDebugInfoProvider.getWorkspaceDebugInformation(folder.uri);
             if (!info) {
-                vscode.window.showErrorMessage(
+                showErrorMessage(
+                    vscode,
                     vscode.l10n.t(
                         'Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.'
                     )
@@ -57,7 +60,8 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
             }
 
             if (info.length === 0) {
-                vscode.window.showErrorMessage(
+                showErrorMessage(
+                    vscode,
                     vscode.l10n.t(
                         "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.",
                         folder.uri.fsPath

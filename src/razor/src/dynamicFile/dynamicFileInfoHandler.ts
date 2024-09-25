@@ -30,29 +30,27 @@ export class DynamicFileInfoHandler {
         vscode.commands.registerCommand(
             DynamicFileInfoHandler.removeDynamicFileInfoCommand,
             async (request: RemoveDynamicFileParams) => {
-                this.removeDynamicFileInfo(request);
+                await this.removeDynamicFileInfo(request);
             }
         );
     }
 
     // Given Razor document URIs, returns associated generated doc URIs
-    private async provideDynamicFileInfo(request: ProvideDynamicFileParams): Promise<ProvideDynamicFileResponse> {
-        const uris = request.razorFiles;
-        const virtualUris = new Array<DocumentUri | null>();
+    private async provideDynamicFileInfo(
+        request: ProvideDynamicFileParams
+    ): Promise<ProvideDynamicFileResponse | null> {
+        let virtualUri: DocumentUri | null = null;
         try {
-            for (const razorDocumentPath of uris) {
-                const vscodeUri = vscode.Uri.file(razorDocumentPath);
-                const razorDocument = await this.documentManager.getDocument(vscodeUri);
-                if (razorDocument === undefined) {
-                    virtualUris.push(null);
-                    this.logger.logWarning(
-                        `Could not find Razor document ${razorDocumentPath}; adding null as a placeholder in URI array.`
-                    );
-                } else {
-                    // Retrieve generated doc URIs for each Razor URI we are given
-                    const virtualCsharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
-                    virtualUris.push(virtualCsharpUri);
-                }
+            const vscodeUri = vscode.Uri.parse(request.razorDocument.uri, true);
+            const razorDocument = await this.documentManager.getDocument(vscodeUri);
+            if (razorDocument === undefined) {
+                this.logger.logWarning(
+                    `Could not find Razor document ${vscodeUri.fsPath}; adding null as a placeholder in URI array.`
+                );
+            } else {
+                // Retrieve generated doc URIs for each Razor URI we are given
+                const virtualCsharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
+                virtualUri = virtualCsharpUri;
             }
 
             this.documentManager.roslynActivated = true;
@@ -64,17 +62,18 @@ export class DynamicFileInfoHandler {
             this.logger.logWarning(`${DynamicFileInfoHandler.provideDynamicFileInfoCommand} failed with ${error}`);
         }
 
-        return new ProvideDynamicFileResponse(virtualUris);
+        if (virtualUri) {
+            return new ProvideDynamicFileResponse({ uri: virtualUri });
+        }
+
+        return null;
     }
 
     private async removeDynamicFileInfo(request: RemoveDynamicFileParams) {
         try {
-            const uris = request.razorFiles;
-            for (const razorDocumentPath of uris) {
-                const vscodeUri = vscode.Uri.file(razorDocumentPath);
-                if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
-                    this.documentManager.didCloseRazorCSharpDocument(vscodeUri);
-                }
+            const vscodeUri = UriConverter.deserialize(request.csharpDocument.uri);
+            if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
+                this.documentManager.didCloseRazorCSharpDocument(vscodeUri);
             }
         } catch (error) {
             this.logger.logWarning(`${DynamicFileInfoHandler.removeDynamicFileInfoCommand} failed with ${error}`);

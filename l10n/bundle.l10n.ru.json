@@ -170,6 +170,7 @@
   "Unable to determine debug settings for project '{0}'": "Не удалось определить параметры отладки для проекта \"{0}\"",
   "Unable to find Razor extension version.": "Не удалось найти версию расширения Razor.",
   "Unable to generate assets to build and debug. {0}.": "Не удалось создать ресурсы для сборки и отладки. {0}.",
+  "Unable to launch Attach to Process dialog: ": "Не удалось запустить диалоговое окно \"Присоединить к процессу\": ",
   "Unable to resolve VSCode's version of CSharp": "Не удалось разрешить версию VSCode CSharp",
   "Unable to resolve VSCode's version of Html": "Не удалось разрешить версию VSCode HTML",
   "Unexpected RuntimeId '{0}'.": "Неожиданный RuntimeId \"{0}\".",

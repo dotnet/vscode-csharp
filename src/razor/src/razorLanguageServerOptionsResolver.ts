@@ -54,12 +54,13 @@ function findLanguageServerExecutable(withinDir: string) {
     }
 
     let pathWithExtension = `${fileName}${extension}`;
-    if (!fs.existsSync(pathWithExtension)) {
+    let fullPath = path.join(withinDir, pathWithExtension);
+
+    if (!fs.existsSync(fullPath)) {
         // We might be running a platform neutral vsix which has no executable, instead we run the dll directly.
         pathWithExtension = `${fileName}.dll`;
+        fullPath = path.join(withinDir, pathWithExtension);
     }
-
-    const fullPath = path.join(withinDir, pathWithExtension);
 
     if (!fs.existsSync(fullPath)) {
         throw new Error(

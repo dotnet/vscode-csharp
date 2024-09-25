@@ -46,7 +46,7 @@ export class RazorDocumentHighlightProvider
                 continue;
             }
 
-            if (document.version !== remappedResponse.hostDocumentVersion) {
+            if (projection.hostDocumentVersion !== remappedResponse.hostDocumentVersion) {
                 // This highlight result is for a different version of the text document, bail.
                 continue;
             }

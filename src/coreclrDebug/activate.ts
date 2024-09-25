@@ -12,21 +12,23 @@ import {
     DebuggerPrerequisiteWarning,
     DebuggerPrerequisiteFailure,
     DebuggerNotInstalledFailure,
-} from '../omnisharp/loggingEvents';
+} from '../shared/loggingEvents';
 import { EventStream } from '../eventStream';
 import { getRuntimeDependencyPackageWithId } from '../tools/runtimeDependencyPackageUtils';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
-import { RemoteAttachPicker } from '../features/processPicker';
+import { RemoteAttachPicker } from '../shared/processPicker';
 import CompositeDisposable from '../compositeDisposable';
 import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
 import { omnisharpOptions } from '../shared/options';
+import { ActionOption, showErrorMessage } from '../shared/observers/utils/showMessage';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
     context: vscode.ExtensionContext,
     platformInformation: PlatformInformation,
     eventStream: EventStream,
-    csharpOutputChannel: vscode.OutputChannel
+    csharpOutputChannel: vscode.OutputChannel,
+    languageServerStartedPromise: Promise<any> | undefined
 ) {
     const disposables = new CompositeDisposable();
 
@@ -45,7 +47,7 @@ export async function activate(
             showInstallErrorMessage(eventStream);
         }
     } else if (!CoreClrDebugUtil.existsSync(debugUtil.installCompleteFilePath())) {
-        completeDebuggerInstall(debugUtil, platformInformation, eventStream);
+        await completeDebuggerInstall(debugUtil, platformInformation, eventStream);
     }
 
     // register process picker for attach for legacy configurations.
@@ -66,7 +68,20 @@ export async function activate(
     // Register a command to fire attach to process for the coreclr debug engine.
     disposables.add(
         vscode.commands.registerCommand('csharp.attachToProcess', async () => {
-            vscode.debug.startDebugging(
+            // Ensure dotnetWorkspaceConfigurationProvider is registered
+            if (languageServerStartedPromise) {
+                try {
+                    await languageServerStartedPromise;
+                } catch (e: any) {
+                    if (e as Error) {
+                        throw new Error(vscode.l10n.t('Unable to launch Attach to Process dialog: ') + e.message);
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+
+            await vscode.debug.startDebugging(
                 undefined,
                 {
                     name: '.NET Core Attach',
@@ -169,7 +184,8 @@ async function completeDebuggerInstall(
         const isValidArchitecture = await checkIsValidArchitecture(platformInformation, eventStream);
         if (!isValidArchitecture) {
             eventStream.post(new DebuggerNotInstalledFailure());
-            vscode.window.showErrorMessage(
+            showErrorMessage(
+                vscode,
                 vscode.l10n.t(
                     'Failed to complete the installation of the C# extension. Please see the error in the output window below.'
                 )
@@ -178,7 +194,7 @@ async function completeDebuggerInstall(
         }
 
         // Write install.complete
-        CoreClrDebugUtil.writeEmptyFile(debugUtil.installCompleteFilePath());
+        await CoreClrDebugUtil.writeEmptyFile(debugUtil.installCompleteFilePath());
 
         return true;
     } catch (err) {
@@ -194,7 +210,8 @@ async function completeDebuggerInstall(
 
 function showInstallErrorMessage(eventStream: EventStream) {
     eventStream.post(new DebuggerNotInstalledFailure());
-    vscode.window.showErrorMessage(
+    showErrorMessage(
+        vscode,
         vscode.l10n.t(
             'An error occurred during installation of the .NET Debugger. The C# extension may need to be reinstalled.'
         )
@@ -204,22 +221,28 @@ function showInstallErrorMessage(eventStream: EventStream) {
 function showDotnetToolsWarning(message: string): void {
     const config = vscode.workspace.getConfiguration('csharp');
     if (!config.get('suppressDotnetInstallWarning', false)) {
-        const getDotNetMessage = vscode.l10n.t('Get the SDK');
-        const goToSettingsMessage = vscode.l10n.t('Disable message in settings');
-        const helpMessage = vscode.l10n.t('Help');
+        const getDotNetMessage: ActionOption = {
+            title: vscode.l10n.t('Get the SDK'),
+            action: async () => {
+                await vscode.env.openExternal(vscode.Uri.parse('https://dot.net/core-sdk-vscode'));
+            },
+        };
+        const goToSettingsMessage: ActionOption = {
+            title: vscode.l10n.t('Disable message in settings'),
+            action: async () => {
+                await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+            },
+        };
+        const helpMessage: ActionOption = {
+            title: vscode.l10n.t('Help'),
+            action: async () => {
+                await vscode.env.openExternal(vscode.Uri.parse('https://aka.ms/VSCode-CS-DotnetNotFoundHelp'));
+            },
+        };
+
         // Buttons are shown in right-to-left order, with a close button to the right of everything;
         // getDotNetMessage will be the first button, then goToSettingsMessage, then the close button.
-        vscode.window.showErrorMessage(message, goToSettingsMessage, getDotNetMessage, helpMessage).then((value) => {
-            if (value === getDotNetMessage) {
-                const dotnetcoreURL = 'https://dot.net/core-sdk-vscode';
-                vscode.env.openExternal(vscode.Uri.parse(dotnetcoreURL));
-            } else if (value === goToSettingsMessage) {
-                vscode.commands.executeCommand('workbench.action.openGlobalSettings');
-            } else if (value == helpMessage) {
-                const helpURL = 'https://aka.ms/VSCode-CS-DotnetNotFoundHelp';
-                vscode.env.openExternal(vscode.Uri.parse(helpURL));
-            }
-        });
+        showErrorMessage(vscode, message, goToSettingsMessage, getDotNetMessage, helpMessage);
     }
 }
 

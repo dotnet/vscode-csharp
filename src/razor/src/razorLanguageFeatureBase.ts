@@ -64,6 +64,7 @@ export class RazorLanguageFeatureBase {
                     uri: projectedUri,
                     position: languageResponse.position,
                     languageKind: languageResponse.kind,
+                    hostDocumentVersion: projectedDocument.hostDocumentSyncVersion,
                 } as ProjectionResult;
             }
             default:

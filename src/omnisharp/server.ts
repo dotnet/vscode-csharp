@@ -6,7 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as protocol from './protocol';
-import * as serverUtils from '../omnisharp/utils';
+import * as serverUtils from './utils';
 import { vscode, CancellationToken } from '../vscodeAdapter';
 import { LaunchTarget, LaunchTargetKind } from '../shared/launchTarget';
 import { DelayTracker } from './delayTracker';
@@ -14,7 +14,7 @@ import { EventEmitter } from 'events';
 import { OmnisharpManager } from './omnisharpManager';
 import { PlatformInformation } from '../shared/platform';
 import { OmnisharpDownloader } from './omnisharpDownloader';
-import * as ObservableEvents from './loggingEvents';
+import * as ObservableEvents from './omnisharpLoggingEvents';
 import { EventStream } from '../eventStream';
 import { NetworkSettingsProvider } from '../networkSettings';
 import { Subject } from 'rxjs';
@@ -27,10 +27,10 @@ import { LspEngine } from './engines/lspEngine';
 import { IEngine } from './engines/IEngine';
 import { StdioEngine } from './engines/stdioEngine';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
-import { showProjectSelector } from '../features/commands';
+import { showProjectSelector } from './features/commands';
 import { validateRequirements } from './requirementCheck';
-import { Advisor } from '../features/diagnosticsProvider';
-import TestManager from '../features/dotnetTest';
+import { Advisor } from './features/diagnosticsProvider';
+import TestManager from './features/dotnetTest';
 import { findLaunchTargets } from './launcher';
 import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 import { commonOptions, omnisharpOptions, razorOptions } from '../shared/options';
@@ -127,8 +127,8 @@ export class OmniSharpServer {
             extensionPath
         );
         this._omnisharpManager = new OmnisharpManager(downloader, platformInfo);
-        this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe((_) => {
-            this.updateProjectInfo();
+        this.updateProjectDebouncer.pipe(debounceTime(1500)).subscribe(async (_) => {
+            await this.updateProjectInfo();
         });
         this.firstUpdateProject = true;
     }
@@ -608,12 +608,12 @@ export class OmniSharpServer {
         return this._addListener(Events.ProjectConfiguration, listener);
     }
 
-    private debounceUpdateProjectWithLeadingTrue = () => {
+    private debounceUpdateProjectWithLeadingTrue = async () => {
         // Call the updateProjectInfo directly if it is the first time, otherwise debounce the request
         // This needs to be done so that we have a project information for the first incoming request
 
         if (this.firstUpdateProject) {
-            this.updateProjectInfo();
+            await this.updateProjectInfo();
         } else {
             this.updateProjectDebouncer.next(new ObservableEvents.ProjectModified());
         }
