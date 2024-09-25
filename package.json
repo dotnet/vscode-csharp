@@ -732,6 +732,11 @@
         "title": "Text Editor",
         "order": 1,
         "properties": {
+          "dotnet.autoInsert.enableAutoInsert": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.autoInsert.enableAutoInsert%"
+          },
           "dotnet.typeMembers.memberInsertionLocation": {
             "type": "string",
             "enum": [
@@ -769,11 +774,6 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.codeLens.enableTestsCodeLens%"
-          },
-          "dotnet.onAutoInsert.enableAutoInsert": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.dotnet.autoInsert.enableAutoInsert%"
           },
           "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": {
             "type": "boolean",
