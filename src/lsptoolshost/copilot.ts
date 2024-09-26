@@ -21,10 +21,7 @@ interface CopilotRelatedFilesProviderRegistration {
     ): vscode.Disposable;
 }
 
-export function registerCopilotExtension(
-    languageServer: RoslynLanguageServer,
-    channel: vscode.OutputChannel
-) {
+export function registerCopilotExtension(languageServer: RoslynLanguageServer, channel: vscode.OutputChannel) {
     const isTraceLogLevel =
         languageServerOptions.logLevel &&
         (languageServerOptions.logLevel === 'Trace' || languageServerOptions.logLevel === 'Debug');
