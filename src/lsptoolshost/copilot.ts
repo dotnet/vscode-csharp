@@ -14,11 +14,14 @@ import { languageServerOptions } from '../shared/options';
 interface CopilotRelatedFilesProviderRegistration {
     registerRelatedFilesProvider(
         providerId: { extensionId: string; languageId: string },
-        callback: (uri: vscode.Uri) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
-    ): void;
+        callback: (
+            uri: vscode.Uri,
+            cancellationToken: vscode.CancellationToken
+        ) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
+    ): vscode.Disposable;
 }
 
-export async function registerCopilotExtensionAsync(
+export function registerCopilotExtension(
     languageServer: RoslynLanguageServer,
     channel: vscode.OutputChannel
 ) {
@@ -35,58 +38,60 @@ export async function registerCopilotExtensionAsync(
         }
         return;
     }
-    await ext.activate();
-    const relatedAPI = ext.exports as CopilotRelatedFilesProviderRegistration | undefined;
-    if (!relatedAPI) {
-        if (isTraceLogLevel) {
-            channel.appendLine(
-                'Incompatible GitHub Copilot extension installed. Skip registeration of C# related files provider.'
-            );
+    ext.activate().then(() => {
+        const relatedAPI = ext.exports as CopilotRelatedFilesProviderRegistration | undefined;
+        if (!relatedAPI) {
+            if (isTraceLogLevel) {
+                channel.appendLine(
+                    'Incompatible GitHub Copilot extension installed. Skip registeration of C# related files provider.'
+                );
+            }
+            return;
         }
-        return;
-    }
 
-    if (isTraceLogLevel) {
-        channel.appendLine('registeration of C# related files provider for GitHub Copilot extension succeeded.');
-    }
+        if (isTraceLogLevel) {
+            channel.appendLine('registeration of C# related files provider for GitHub Copilot extension succeeded.');
+        }
 
-    const id = {
-        extensionId: CSharpExtensionId,
-        languageId: 'csharp',
-    };
+        const id = {
+            extensionId: CSharpExtensionId,
+            languageId: 'csharp',
+        };
 
-    relatedAPI.registerRelatedFilesProvider(id, async (uri) => {
-        const buildResult = (reports: CopilotRelatedDocumentsReport[], builder?: vscode.Uri[]) => {
-            if (reports) {
-                for (const report of reports) {
-                    if (report._vs_file_paths) {
-                        for (const filePath of report._vs_file_paths) {
-                            builder?.push(vscode.Uri.file(filePath));
+        relatedAPI.registerRelatedFilesProvider(id, async (uri, token) => {
+            const buildResult = (reports: CopilotRelatedDocumentsReport[], builder?: vscode.Uri[]) => {
+                if (reports) {
+                    for (const report of reports) {
+                        if (report._vs_file_paths) {
+                            for (const filePath of report._vs_file_paths) {
+                                builder?.push(vscode.Uri.file(filePath));
+                            }
                         }
                     }
                 }
-            }
-        };
-        const relatedFiles: vscode.Uri[] = [];
-        const uriString = UriConverter.serialize(uri);
-        const textDocument = TextDocumentIdentifier.create(uriString);
-        try {
-            await languageServer.sendRequestWithProgress(
-                CopilotRelatedDocumentsRequest.type,
-                {
-                    _vs_textDocument: textDocument,
-                    position: {
-                        line: 0,
-                        character: 0,
+            };
+            const relatedFiles: vscode.Uri[] = [];
+            const uriString = UriConverter.serialize(uri);
+            const textDocument = TextDocumentIdentifier.create(uriString);
+            try {
+                await languageServer.sendRequestWithProgress(
+                    CopilotRelatedDocumentsRequest.type,
+                    {
+                        _vs_textDocument: textDocument,
+                        position: {
+                            line: 0,
+                            character: 0,
+                        },
                     },
-                },
-                async (r) => buildResult(r, relatedFiles)
-            );
-        } catch (e) {
-            if (e instanceof Error) {
-                channel.appendLine(e.message);
+                    async (r) => buildResult(r, relatedFiles),
+                    token
+                );
+            } catch (e) {
+                if (e instanceof Error) {
+                    channel.appendLine(e.message);
+                }
             }
-        }
-        return { entries: relatedFiles };
+            return { entries: relatedFiles };
+        });
     });
 }
