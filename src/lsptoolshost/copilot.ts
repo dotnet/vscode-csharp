@@ -47,7 +47,7 @@ export function registerCopilotExtension(languageServer: RoslynLanguageServer, c
         }
 
         if (isTraceLogLevel) {
-            channel.appendLine('registeration of C# related files provider for GitHub Copilot extension succeeded.');
+            channel.appendLine('registration of C# related files provider for GitHub Copilot extension succeeded.');
         }
 
         const id = {
