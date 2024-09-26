@@ -16,7 +16,7 @@ interface CopilotRelatedFilesProviderRegistration {
         providerId: { extensionId: string; languageId: string },
         callback: (
             uri: vscode.Uri,
-            cancellationToken: vscode.CancellationToken
+            cancellationToken?: vscode.CancellationToken
         ) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
     ): vscode.Disposable;
 }
