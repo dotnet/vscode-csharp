@@ -3,6 +3,9 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Latest
+* Bumped xamltools to 17.12.35326.17 (PR: [#7610](https://github.com/dotnet/vscode-csharp/pull/7610))
+
 # 2.50.x
 * Bumped xamltools to 17.12.35324.244 (PR: [#7600](https://github.com/dotnet/vscode-csharp/pull/7600))
 
