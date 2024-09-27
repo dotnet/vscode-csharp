@@ -361,7 +361,7 @@ export namespace CopilotRelatedDocumentsRequest {
 }
 
 export namespace SourceGeneratorGetTextRequest {
-    export const method = 'sourceGeneratedFile/_roslyn_getText';
+    export const method = 'sourceGeneratedDocument/_roslyn_getText';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.RequestType<SourceGeneratorGetRequestParams, SourceGeneratedDocumentText, void>(method);
 }
