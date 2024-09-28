@@ -4,7 +4,7 @@ module.exports = {
     },
     extends: [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
     ],
     parser: "@typescript-eslint/parser",
     parserOptions: {
@@ -33,6 +33,7 @@ module.exports = {
         ],
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/promise-function-async": "error",
+        "@typescript-eslint/no-floating-promises": "error",
         "prefer-promise-reject-errors": "error",
         "curly": "error",
         "prettier/prettier": [ "error", { "endOfLine": "auto" } ],

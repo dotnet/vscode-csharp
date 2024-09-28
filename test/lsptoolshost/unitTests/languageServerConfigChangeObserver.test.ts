@@ -39,10 +39,10 @@ describe('Option changes observer', () => {
         { config: 'dotnet', section: 'preferCSharpExtension', value: true },
     ].forEach((elem) => {
         describe(`When the ${elem.config}.${elem.section} changes`, () => {
-            beforeEach(() => {
+            beforeEach(async () => {
                 expect(infoMessage).toBe(undefined);
                 expect(invokedCommand).toBe(undefined);
-                updateConfig(vscode, elem.config, elem.section, elem.value);
+                await updateConfig(vscode, elem.config, elem.section, elem.value);
                 optionObservable.next();
             });
 
@@ -70,10 +70,10 @@ describe('Option changes observer', () => {
 
     [{ config: 'dotnet', section: 'server.useOmnisharp', value: true }].forEach((elem) => {
         describe(`When the ${elem.config}.${elem.section} changes`, () => {
-            beforeEach(() => {
+            beforeEach(async () => {
                 expect(infoMessage).toBe(undefined);
                 expect(invokedCommand).toBe(undefined);
-                updateConfig(vscode, elem.config, elem.section, elem.value);
+                await updateConfig(vscode, elem.config, elem.section, elem.value);
                 optionObservable.next();
             });
 
@@ -103,10 +103,10 @@ describe('Option changes observer', () => {
         { config: 'dotnet', section: 'server.documentSelector', value: ['csharp'] },
         { config: 'dotnet', section: 'server.trace', value: 'Information' },
     ].forEach((elem) => {
-        test(`Information Message is not shown if no change in value for ${elem.config}.${elem.section}`, () => {
+        test(`Information Message is not shown if no change in value for ${elem.config}.${elem.section}`, async () => {
             expect(infoMessage).toBe(undefined);
             expect(invokedCommand).toBe(undefined);
-            updateConfig(vscode, elem.config, elem.section, elem.value);
+            await updateConfig(vscode, elem.config, elem.section, elem.value);
             optionObservable.next();
             expect(infoMessage).toBe(undefined);
         });
@@ -118,17 +118,21 @@ describe('Option changes observer', () => {
         { config: 'files', section: 'exclude', value: false },
         { config: 'search', section: 'exclude', value: 1000 },
     ].forEach((elem) => {
-        test(`Information Message is not shown on change in ${elem.config}.${elem.section}`, () => {
+        test(`Information Message is not shown on change in ${elem.config}.${elem.section}`, async () => {
             expect(infoMessage).toBe(undefined);
             expect(invokedCommand).toBe(undefined);
-            updateConfig(vscode, elem.config, elem.section, elem.value);
+            await updateConfig(vscode, elem.config, elem.section, elem.value);
             optionObservable.next();
             expect(infoMessage).toBe(undefined);
         });
     });
 
     function resetMocks() {
-        vscode.window.showInformationMessage = async <T>(message: string, ...items: T[]) => {
+        vscode.window.showInformationMessage = async <T>(
+            message: string,
+            _options: vscode.MessageOptions,
+            ...items: T[]
+        ) => {
             infoMessage = message;
             return new Promise<T | undefined>((resolve) => {
                 doClickCancel = () => {

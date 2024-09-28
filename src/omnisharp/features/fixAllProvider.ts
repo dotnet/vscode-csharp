@@ -13,6 +13,7 @@ import AbstractProvider from './abstractProvider';
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
 import { buildEditForResponse } from '../fileOperationsResponseEditBuilder';
 import { CancellationToken } from 'vscode-languageserver-protocol';
+import { showWarningMessage } from '../../shared/observers/utils/showMessage';
 
 export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.CodeActionProvider {
     public static fixAllCodeActionKind = vscode.CodeActionKind.SourceFixAll.append('csharp');
@@ -63,7 +64,7 @@ export class OmniSharpFixAllProvider extends AbstractProvider implements vscode.
     private async fixAllMenu(server: OmniSharpServer, scope: protocol.FixAllScope): Promise<void> {
         const fileName = vscode.window.activeTextEditor?.document.fileName;
         if (fileName === undefined) {
-            vscode.window.showWarningMessage(vscode.l10n.t('Text editor must be focused to fix all issues'));
+            showWarningMessage(vscode, vscode.l10n.t('Text editor must be focused to fix all issues'));
             return;
         }
 

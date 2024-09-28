@@ -11,6 +11,7 @@ import { RoslynLanguageServer } from './roslynLanguageServer';
 import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } from './roslynProtocol';
 import { commonOptions } from '../shared/options';
 import { UriConverter } from './uriConverter';
+import { showErrorMessage } from '../shared/observers/utils/showMessage';
 
 export function registerUnitTestingCommands(
     context: vscode.ExtensionContext,
@@ -68,7 +69,7 @@ async function runTests(
     dotnetTestChannel: vscode.OutputChannel
 ): Promise<TestProgress | undefined> {
     if (_testRunInProgress) {
-        vscode.window.showErrorMessage(vscode.l10n.t('Test run already in progress'));
+        showErrorMessage(vscode, vscode.l10n.t('Test run already in progress'));
         return;
     }
 

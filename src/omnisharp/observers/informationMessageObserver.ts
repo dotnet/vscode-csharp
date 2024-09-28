@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { vscode } from '../../vscodeAdapter';
-import showInformationMessage from '../../shared/observers/utils/showInformationMessage';
 import { EventType } from '../../shared/eventType';
 import { omnisharpOptions } from '../../shared/options';
 import { l10n } from 'vscode';
 import { BaseEvent } from '../../shared/loggingEvents';
+import { CommandOption, showInformationMessage } from '../../shared/observers/utils/showMessage';
 
 export class InformationMessageObserver {
     constructor(private vscode: vscode) {}
@@ -21,16 +21,17 @@ export class InformationMessageObserver {
         }
     };
 
-    private async handleOmnisharpServerUnresolvedDependencies() {
+    private handleOmnisharpServerUnresolvedDependencies() {
         //to do: determine if we need the unresolved dependencies message
         if (!omnisharpOptions.suppressDotnetRestoreNotification) {
             const message = l10n.t(
                 `There are unresolved dependencies. Please execute the restore command to continue.`
             );
-            return showInformationMessage(this.vscode, message, {
+            const buttonTitle: CommandOption = {
                 title: l10n.t('Restore'),
                 command: 'dotnet.restore.all',
-            });
+            };
+            showInformationMessage(this.vscode, message, buttonTitle);
         }
     }
 }

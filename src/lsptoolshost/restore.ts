@@ -13,6 +13,7 @@ import {
     ProjectNeedsRestoreRequest,
 } from './roslynProtocol';
 import path = require('path');
+import { showErrorMessage } from '../shared/observers/utils/showMessage';
 
 let _restoreInProgress = false;
 
@@ -79,7 +80,7 @@ export async function restore(
     showOutput: boolean
 ): Promise<void> {
     if (_restoreInProgress) {
-        vscode.window.showErrorMessage(vscode.l10n.t('Restore already in progress'));
+        showErrorMessage(vscode, vscode.l10n.t('Restore already in progress'));
         return;
     }
     _restoreInProgress = true;

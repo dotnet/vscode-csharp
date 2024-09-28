@@ -50,7 +50,7 @@ describe(`Formatting With EditorConfig Tests`, () => {
             '    }',
             '}',
         ];
-        expectText(vscode.window.activeTextEditor!.document, expectedText);
+        await expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 
     test('Document range formatting respects editorconfig', async () => {
@@ -72,7 +72,7 @@ describe(`Formatting With EditorConfig Tests`, () => {
             '    }',
             '}',
         ];
-        expectText(vscode.window.activeTextEditor!.document, expectedText);
+        await expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 
     test('Document on type formatting respects editorconfig', async () => {
@@ -95,6 +95,6 @@ describe(`Formatting With EditorConfig Tests`, () => {
             '    }',
             '}',
         ];
-        expectText(vscode.window.activeTextEditor!.document, expectedText);
+        await expectText(vscode.window.activeTextEditor!.document, expectedText);
     });
 });

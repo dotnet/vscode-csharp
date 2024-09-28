@@ -179,8 +179,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             this.razorDocumentGenerationInitialized = true;
             const pipeName = generateUuid();
 
-            vscode.commands.executeCommand(razorInitializeCommand, pipeName);
-            this.serverClient.connectNamedPipe(pipeName);
+            await vscode.commands.executeCommand(razorInitializeCommand, pipeName);
+            await this.serverClient.connectNamedPipe(pipeName);
 
             for (const document of this.documents) {
                 await this.ensureDocumentAndProjectedDocumentsOpen(document);
@@ -193,11 +193,13 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     private closeDocument(uri: vscode.Uri) {
         const document = this._getDocument(uri);
 
-        // Files outside of the workspace will return undefined from getWorkspaceFolder
-        const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-        if (!workspaceFolder) {
-            // Out of workspace files should be removed once they're closed
-            this.removeDocument(uri);
+        // Documents that are files should be removed if they are outside the workspace folder
+        if (uri.scheme === 'file') {
+            // Files outside of the workspace will return undefined from getWorkspaceFolder
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+            if (!workspaceFolder) {
+                this.removeDocument(uri);
+            }
         }
 
         this.notifyDocumentChange(document, RazorDocumentChangeKind.closed);

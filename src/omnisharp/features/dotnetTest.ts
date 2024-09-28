@@ -704,7 +704,7 @@ class DebugEventListener {
         DebugEventListener.s_activeInstance = this;
 
         const serverSocket = net.createServer((socket) => {
-            socket.on('data', (buffer) => {
+            socket.on('data', async (buffer) => {
                 let event: DebuggerEventsProtocol.DebuggerEvent;
                 try {
                     event = DebuggerEventsProtocol.decodePacket(buffer);
@@ -717,19 +717,19 @@ class DebugEventListener {
                     case DebuggerEventsProtocol.ProcessLaunched: {
                         const processLaunchedEvent = <DebuggerEventsProtocol.ProcessLaunchedEvent>event;
                         this._eventStream.post(new DotNetTestDebugProcessStart(processLaunchedEvent.targetProcessId));
-                        this.onProcessLaunched(processLaunchedEvent.targetProcessId);
+                        await this.onProcessLaunched(processLaunchedEvent.targetProcessId);
                         break;
                     }
 
                     case DebuggerEventsProtocol.DebuggingStopped:
                         this._eventStream.post(new DotNetTestDebugComplete());
-                        this.onDebuggingStopped();
+                        await this.onDebuggingStopped();
                         break;
                 }
             });
 
-            socket.on('end', () => {
-                this.onDebuggingStopped();
+            socket.on('end', async () => {
+                await this.onDebuggingStopped();
             });
         });
 
@@ -792,7 +792,7 @@ class DebugEventListener {
         }
     }
 
-    private onDebuggingStopped(): void {
+    private async onDebuggingStopped(): Promise<void> {
         if (this._isClosed) {
             return;
         }
@@ -801,7 +801,7 @@ class DebugEventListener {
             FileName: this._fileName,
         };
         try {
-            serverUtils.debugTestStop(this._server, request);
+            await serverUtils.debugTestStop(this._server, request);
             this.close();
         } catch (_) {
             return;

@@ -33,7 +33,7 @@ describe('InformationMessageObserver', () => {
         jest.spyOn(vscode.window, 'showInformationMessage').mockImplementation(
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
-            async <T>(message: string, ...items: T[]) => {
+            async <T>(message: string, _options: vscode.MessageOptions, ...items: T[]) => {
                 infoMessage = message;
                 return new Promise<T | undefined>((resolve) => {
                     doClickCancel = () => {
@@ -63,8 +63,8 @@ describe('InformationMessageObserver', () => {
     ].forEach((elem) => {
         describe(elem.event.constructor.name, () => {
             describe('Suppress Dotnet Restore Notification is true', () => {
-                beforeEach(() => {
-                    vscode.workspace.getConfiguration().update('csharp.suppressDotnetRestoreNotification', true);
+                beforeEach(async () => {
+                    await vscode.workspace.getConfiguration().update('csharp.suppressDotnetRestoreNotification', true);
                     optionObservable.next();
                 });
 
@@ -75,8 +75,8 @@ describe('InformationMessageObserver', () => {
             });
 
             describe('Suppress Dotnet Restore Notification is false', () => {
-                beforeEach(() => {
-                    vscode.workspace.getConfiguration().update('csharp.suppressDotnetRestoreNotification', false);
+                beforeEach(async () => {
+                    await vscode.workspace.getConfiguration().update('csharp.suppressDotnetRestoreNotification', false);
                     optionObservable.next();
                 });
 

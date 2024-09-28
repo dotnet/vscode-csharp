@@ -171,10 +171,10 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
         } else if (debugConfigArray.length === 2) {
             // This creates a onDidStartDebugSession event listener that will dispose of itself when it detects
             // the debugConfiguration that is return from this method has started.
-            const startDebugEvent = vscode.debug.onDidStartDebugSession((debugSession: vscode.DebugSession) => {
+            const startDebugEvent = vscode.debug.onDidStartDebugSession(async (debugSession: vscode.DebugSession) => {
                 if (debugSession.name === debugConfigArray[0].name) {
                     startDebugEvent.dispose();
-                    vscode.debug.startDebugging(debugSession.workspaceFolder, debugConfigArray[1], debugSession);
+                    await vscode.debug.startDebugging(debugSession.workspaceFolder, debugConfigArray[1], debugSession);
                 }
             });
 

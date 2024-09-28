@@ -74,6 +74,10 @@ class ProjectContextStatus {
         projectContextService.onActiveFileContextChanged((e) => {
             item.text = e.context._vs_label;
         });
-        projectContextService.refresh();
+
+        // Trigger a refresh, but don't block creation on the refresh completing.
+        projectContextService.refresh().catch((e) => {
+            throw new Error(`Error refreshing project context status ${e}`);
+        });
     }
 }

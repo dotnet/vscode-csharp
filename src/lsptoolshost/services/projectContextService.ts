@@ -29,12 +29,12 @@ export class ProjectContextService {
     };
 
     constructor(private _languageServer: RoslynLanguageServer, _languageServerEvents: LanguageServerEvents) {
-        _languageServerEvents.onServerStateChange((e) => {
+        _languageServerEvents.onServerStateChange(async (e) => {
             // When the project initialization is complete, open files
             // could move from the miscellaneous workspace context into
             // an open project.
             if (e.state === ServerState.Stopped || e.state === ServerState.ProjectInitializationComplete) {
-                this.refresh();
+                await this.refresh();
             }
         });
 

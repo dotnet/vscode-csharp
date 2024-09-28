@@ -7,8 +7,8 @@ import * as vscode from 'vscode';
 import { Observable } from 'rxjs';
 import { CommonOptionsThatTriggerReload, LanguageServerOptionsThatTriggerReload } from '../shared/options';
 import { HandleOptionChanges, OptionChangeObserver, OptionChanges } from '../shared/observers/optionChangeObserver';
-import ShowInformationMessage from '../shared/observers/utils/showInformationMessage';
 import Disposable from '../disposable';
+import { CommandOption, showInformationMessage } from '../shared/observers/utils/showMessage';
 
 export function registerLanguageServerOptionChanges(optionObservable: Observable<void>): Disposable {
     const optionChangeObserver: OptionChangeObserver = {
@@ -34,19 +34,18 @@ function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void 
         return;
     }
 
-    const reloadTitle = vscode.l10n.t('Reload Window');
-    const reloadCommand = 'workbench.action.reloadWindow';
+    const reloadTitle: CommandOption = {
+        title: vscode.l10n.t('Reload Window'),
+        command: 'workbench.action.reloadWindow',
+    };
     if (changedOptions.changedCommonOptions.find((key) => key === 'useOmnisharpServer')) {
         // If the user has changed the useOmnisharpServer flag we need to reload the window.
-        ShowInformationMessage(
+        showInformationMessage(
             vscode,
             vscode.l10n.t(
                 'dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change'
             ),
-            {
-                title: reloadTitle,
-                command: reloadCommand,
-            }
+            reloadTitle
         );
         return;
     }
@@ -56,5 +55,5 @@ function handleLanguageServerOptionChanges(changedOptions: OptionChanges): void 
     const message = vscode.l10n.t(
         'C# configuration has changed. Would you like to reload the window to apply your changes?'
     );
-    ShowInformationMessage(vscode, message, { title: reloadTitle, command: reloadCommand });
+    showInformationMessage(vscode, message, reloadTitle);
 }

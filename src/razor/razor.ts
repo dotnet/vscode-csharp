@@ -11,6 +11,7 @@ import * as Razor from '../../src/razor/src/extension';
 import { EventStream } from '../eventStream';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { PlatformInformation } from '../shared/platform';
+import { showWarningMessage } from '../shared/observers/utils/showMessage';
 
 export async function activateRazorExtension(
     context: vscode.ExtensionContext,
@@ -52,7 +53,8 @@ export async function activateRazorExtension(
             );
         }
     } else {
-        vscode.window.showWarningMessage(
+        showWarningMessage(
+            vscode,
             vscode.l10n.t(
                 "Cannot load Razor language server because the directory was not found: '{0}'",
                 languageServerDir
