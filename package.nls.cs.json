@@ -69,7 +69,6 @@
   "configuration.dotnet.server.startTimeout": "Určuje časový limit (v ms), aby se klient úspěšně spustil a připojil k jazykovému serveru.",
   "configuration.dotnet.server.suppressLspErrorToasts": "Potlačí zobrazování informačních zpráv o chybách, pokud na serveru dojde k chybě, ze které se dá zotavit.",
   "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Potlačí zobrazování informačních upozornění, pokud je aktivní dokument mimo otevřený pracovní prostor.",
-  "configuration.dotnet.server.trace": "Nastaví úroveň protokolování pro jazykový server",
   "configuration.dotnet.server.useServerGC": "Nakonfigurujte jazykový server tak, aby používal uvolňování paměti serveru .NET.  Uvolňování paměti serveru obecně přináší vyšší výkon za cenu vyšší spotřeby paměti.",
   "configuration.dotnet.server.waitForDebugger": "Při spuštění serveru předá příznak --debug, aby bylo možné připojit ladicí program. (Dříve omnisharp.waitForDebugger)",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Hledat symboly v referenčních sestaveních Ovlivňuje funkce, které vyžadují vyhledávání symbolů, například přidání importů.",
