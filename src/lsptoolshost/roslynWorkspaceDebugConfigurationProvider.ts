@@ -19,7 +19,7 @@ import {
 import { UriConverter } from './uriConverter';
 
 export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugInformationProvider {
-    constructor(private server: RoslynLanguageServer, private outputChannel: vscode.OutputChannel) {}
+    constructor(private server: RoslynLanguageServer, private outputChannel: vscode.LogOutputChannel) {}
 
     public async getWorkspaceDebugInformation(
         workspaceFolder: vscode.Uri
@@ -43,7 +43,7 @@ export class RoslynWorkspaceDebugInformationProvider implements IWorkspaceDebugI
             // Server errors are already logged by the language client, but its totally possible
             // that we fail because the server is restarting or a process got killed, etc.
             // Catch the error and log to the correct output (instead of going to the extension host output).
-            this.outputChannel.appendLine(`Failed to get debug configuration: ${e}`);
+            this.outputChannel.error(`Failed to get debug configuration`, e);
             return;
         }
 

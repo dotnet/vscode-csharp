@@ -54,7 +54,7 @@ export async function prepareVSCodeAndExecuteTests(
         extensionDevelopmentPath: extensionDevelopmentPath,
         extensionTestsPath: extensionTestsPath,
         // Launch with info logging as anything else is way too verbose and will hide test results.
-        launchArgs: [workspacePath, '-n', '--log', 'info', '--user-data-dir', userDataDir],
+        launchArgs: [workspacePath, '-n', '--user-data-dir', userDataDir, '--log', 'ms-dotnettools.csharp:trace'],
         extensionTestsEnv: env,
     });
 

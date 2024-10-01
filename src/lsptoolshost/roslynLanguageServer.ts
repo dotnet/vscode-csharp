@@ -77,7 +77,7 @@ import {
 import { registerSourceGeneratedFilesContentProvider } from './sourceGeneratedFilesContentProvider';
 import { registerMiscellaneousFileNotifier } from './miscellaneousFileNotifier';
 
-let _channel: vscode.OutputChannel;
+let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
 
 // Flag indicating if C# Devkit was installed the last time we activated.
@@ -164,11 +164,25 @@ export class RoslynLanguageServer {
         // setTrace only works after the client is already running.
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
-                const languageClientTraceLevel = RoslynLanguageServer.GetTraceLevel(languageServerOptions.logLevel);
-
-                await this._languageClient.setTrace(languageClientTraceLevel);
+                await this.updateLogLevel();
             }
         });
+        // Register for changes to the log level.
+        _channel.onDidChangeLogLevel(async () => {
+            await this.updateLogLevel();
+        });
+    }
+
+    private async updateLogLevel(): Promise<void> {
+        if (this._languageClient.state === State.Running) {
+            const languageClientTraceLevel = RoslynLanguageServer.GetTraceLevel(_channel.logLevel);
+            // Update the server's log level.
+            await this.sendNotification('roslyn/updateLogLevel', {
+                logLevel: RoslynLanguageServer.GetServerLogLevel(_channel.logLevel),
+            });
+            // Update the trace level that the client uses to log trace messages.
+            await this._languageClient.setTrace(languageClientTraceLevel);
+        }
     }
 
     private registerServerStateChanged() {
@@ -467,7 +481,7 @@ export class RoslynLanguageServer {
         }
 
         if (!(error instanceof vscode.CancellationError)) {
-            _channel.appendLine(`Error making ${request} request: ${error.message}`);
+            _channel.error(`Error making ${request} request`, error);
         }
         return error;
     }
@@ -565,7 +579,7 @@ export class RoslynLanguageServer {
         const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();
         const dotnetExecutablePath = dotnetInfo.path;
 
-        _channel.appendLine('Dotnet path: ' + dotnetExecutablePath);
+        _channel.info('Dotnet path: ' + dotnetExecutablePath);
 
         let args: string[] = [];
 
@@ -573,7 +587,10 @@ export class RoslynLanguageServer {
             args.push('--debug');
         }
 
-        const logLevel = languageServerOptions.logLevel;
+        // Get the initial log level from the channel.
+        // Changes to the channel log level will be picked up by the server after
+        // LSP finishes initializing and we're able to pick up the new value.
+        const logLevel = this.GetServerLogLevel(_channel.logLevel);
         if (logLevel) {
             args.push('--logLevel', logLevel);
         }
@@ -602,14 +619,14 @@ export class RoslynLanguageServer {
                 csharpDevkitIntelliCodeExtensionId
             );
             if (csharpDevkitIntelliCodeExtension) {
-                _channel.appendLine('Activating C# + C# Dev Kit + C# IntelliCode...');
+                _channel.info('Activating C# + C# Dev Kit + C# IntelliCode...');
                 const csharpDevkitIntelliCodeArgs = await this.getCSharpDevkitIntelliCodeExportArgs(
                     csharpDevkitIntelliCodeExtension,
                     context
                 );
                 args = args.concat(csharpDevkitIntelliCodeArgs);
             } else {
-                _channel.appendLine('Activating C# + C# Dev Kit...');
+                _channel.info('Activating C# + C# Dev Kit...');
             }
 
             // Set command enablement as soon as we know devkit is available.
@@ -621,7 +638,7 @@ export class RoslynLanguageServer {
             await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
-            _channel.appendLine('Activating C# standalone...');
+            _channel.info('Activating C# standalone...');
 
             // Set command enablement to use roslyn standalone commands.
             await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
@@ -632,11 +649,7 @@ export class RoslynLanguageServer {
             args.push('--extension', extensionPath);
         }
 
-        const isTraceLogLevel = logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel));
-
-        if (isTraceLogLevel) {
-            _channel.appendLine(`Starting server at ${serverPath}`);
-        }
+        _channel.debug(`Starting server at ${serverPath}`);
 
         // shouldn't this arg only be set if it's running with CSDevKit?
         args.push('--telemetryLevel', telemetryReporter.telemetryLevel);
@@ -647,9 +660,7 @@ export class RoslynLanguageServer {
         if (!languageServerOptions.useServerGC) {
             // The server by default uses serverGC, if the user opts out we need to set the environment variable to disable it.
             env.DOTNET_gcServer = '0';
-            if (isTraceLogLevel) {
-                _channel.appendLine('ServerGC disabled');
-            }
+            _channel.debug('ServerGC disabled');
         }
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
@@ -663,16 +674,12 @@ export class RoslynLanguageServer {
             // If we were given a path to a dll, launch that via dotnet.
             const argsWithPath = [serverPath].concat(args);
 
-            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
-                _channel.appendLine(`Server arguments ${argsWithPath.join(' ')}`);
-            }
+            _channel.debug(`Server arguments ${argsWithPath.join(' ')}`);
 
             childProcess = cp.spawn(dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
-            if (logLevel && [Trace.Messages, Trace.Verbose].includes(this.GetTraceLevel(logLevel))) {
-                _channel.appendLine(`Server arguments ${args.join(' ')}`);
-            }
+            _channel.debug(`Server arguments ${args.join(' ')}`);
 
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
@@ -680,14 +687,14 @@ export class RoslynLanguageServer {
         // Record the stdout and stderr streams from the server process.
         childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
             const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
-            _channel.append('[stdout] ' + result);
+            _channel.info('[stdout] ' + result);
         });
         childProcess.stderr.on('data', (data: { toString: (arg0: any) => any }) => {
             const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
-            _channel.append('[stderr] ' + result);
+            _channel.error('[stderr] ' + result);
         });
         childProcess.on('exit', (code) => {
-            _channel.appendLine(`Language server process exited with ${code}`);
+            _channel.info(`Language server process exited with ${code}`);
         });
 
         // Timeout promise used to time out the connection process if it takes too long.
@@ -707,14 +714,14 @@ export class RoslynLanguageServer {
             // The server process will create the named pipe used for communication. Wait for it to be created,
             // and listen for the server to pass back the connection information via stdout.
             const namedPipePromise = new Promise<NamedPipeInformation>((resolve) => {
-                _channel.appendLine('waiting for named pipe information from server...');
+                _channel.debug('waiting for named pipe information from server...');
                 childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
                     const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
                     // Use the regular expression to find all JSON lines
                     const jsonLines = result.match(RoslynLanguageServer.namedPipeKeyRegex);
                     if (jsonLines) {
                         const transmittedPipeNameInfo: NamedPipeInformation = JSON.parse(jsonLines[0]);
-                        _channel.appendLine('received named pipe information from server');
+                        _channel.info('received named pipe information from server');
                         resolve(transmittedPipeNameInfo);
                     }
                 });
@@ -722,9 +729,9 @@ export class RoslynLanguageServer {
 
             const socketPromise = namedPipePromise.then(async (pipeConnectionInfo) => {
                 return new Promise<net.Socket>((resolve, reject) => {
-                    _channel.appendLine('attempting to connect client to server...');
+                    _channel.debug('attempting to connect client to server...');
                     const socket = net.createConnection(pipeConnectionInfo.pipeName, () => {
-                        _channel.appendLine('client has connected to server');
+                        _channel.info('client has connected to server');
                         resolve(socket);
                     });
 
@@ -879,7 +886,7 @@ export class RoslynLanguageServer {
                 if (csharpDevkitExtension && !_wasActivatedWithCSharpDevkit) {
                     // We previously started without C# Dev Kit and its now installed.
                     // Offer a prompt to restart the server to use C# Dev Kit.
-                    _channel.appendLine(`Detected new installation of ${csharpDevkitExtensionId}`);
+                    _channel.info(`Detected new installation of ${csharpDevkitExtensionId}`);
                     const message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
                     showInformationMessage(vscode, message, title);
                 } else {
@@ -942,10 +949,9 @@ export class RoslynLanguageServer {
             ];
             return csharpIntelliCodeArgs;
         } catch (e) {
-            _channel.appendLine(`Activation of ${csharpDevkitIntelliCodeExtensionId} failed`);
-            _channel.appendLine(e instanceof Error ? e.message : (e as string));
+            _channel.error(`Activation of ${csharpDevkitIntelliCodeExtensionId} failed`, e);
             if (e instanceof Error && e.stack) {
-                _channel.appendLine(e.stack);
+                _channel.info(e.stack);
             }
 
             const stateKey = 'disableIntellicodeFailedPopup';
@@ -991,26 +997,44 @@ export class RoslynLanguageServer {
         await exports.setupTelemetryEnvironmentAsync(env);
     }
 
-    private static GetTraceLevel(logLevel: string): Trace {
+    /**
+     * Returns the C# Microsoft.Extensions.Logging.LogLevel enum string value
+     * corresponding to the given vscode.LogLevel.
+     */
+    private static GetServerLogLevel(logLevel: vscode.LogLevel): string {
         switch (logLevel) {
-            case 'Trace':
+            case vscode.LogLevel.Trace:
+                return 'Trace';
+            case vscode.LogLevel.Debug:
+                return 'Debug';
+            case vscode.LogLevel.Info:
+                return 'Information';
+            case vscode.LogLevel.Warning:
+                return 'Warning';
+            case vscode.LogLevel.Error:
+                return 'Error';
+            case vscode.LogLevel.Off:
+                return 'None';
+            default:
+                throw new Error(`Invalid log level ${logLevel}`);
+        }
+    }
+
+    private static GetTraceLevel(logLevel: vscode.LogLevel): Trace {
+        switch (logLevel) {
+            case vscode.LogLevel.Trace:
                 return Trace.Verbose;
-            case 'Debug':
+            case vscode.LogLevel.Debug:
                 return Trace.Messages;
-            case 'Information':
+            case vscode.LogLevel.Info:
                 return Trace.Off;
-            case 'Warning':
+            case vscode.LogLevel.Warning:
                 return Trace.Off;
-            case 'Error':
+            case vscode.LogLevel.Error:
                 return Trace.Off;
-            case 'Critical':
-                return Trace.Off;
-            case 'None':
+            case vscode.LogLevel.Off:
                 return Trace.Off;
             default:
-                _channel.appendLine(
-                    `Invalid log level ${logLevel}, server will not start. Please set the 'dotnet.server.trace' configuration to a valid value`
-                );
                 throw new Error(`Invalid log level ${logLevel}`);
         }
     }
@@ -1038,15 +1062,14 @@ export async function activateRoslynLanguageServer(
     context: vscode.ExtensionContext,
     platformInfo: PlatformInformation,
     optionObservable: Observable<void>,
-    outputChannel: vscode.OutputChannel,
-    dotnetTestChannel: vscode.OutputChannel,
-    dotnetChannel: vscode.OutputChannel,
+    outputChannel: vscode.LogOutputChannel,
     reporter: TelemetryReporter,
     languageServerEvents: RoslynLanguageServerEvents
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
+    // The trace channel verbosity is controlled by the _channel verbosity.
     _traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
 
     const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
@@ -1077,12 +1100,12 @@ export async function activateRoslynLanguageServer(
 
     registerRazorCommands(context, languageServer);
 
-    registerUnitTestingCommands(context, languageServer, dotnetTestChannel);
+    registerUnitTestingCommands(context, languageServer);
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
 
-    registerRestoreCommands(context, languageServer, dotnetChannel);
+    registerRestoreCommands(context, languageServer);
 
     registerSourceGeneratedFilesContentProvider(context, languageServer);
 
@@ -1094,19 +1117,19 @@ export async function activateRoslynLanguageServer(
         const extensionsFromPackageJson = vscode.extensions.all.flatMap((extension) => {
             let loadPaths = extension.packageJSON.contributes?.['csharpExtensionLoadPaths'];
             if (loadPaths === undefined || loadPaths === null) {
-                _traceChannel.appendLine(`Extension ${extension.id} does not contribute csharpExtensionLoadPaths`);
+                _channel.debug(`Extension ${extension.id} does not contribute csharpExtensionLoadPaths`);
                 return [];
             }
 
             if (!Array.isArray(loadPaths) || loadPaths.some((loadPath) => typeof loadPath !== 'string')) {
-                _channel.appendLine(
+                _channel.warn(
                     `Extension ${extension.id} has invalid csharpExtensionLoadPaths. Expected string array, found ${loadPaths}`
                 );
                 return [];
             }
 
             loadPaths = loadPaths.map((loadPath) => path.join(extension.extensionPath, loadPath));
-            _traceChannel.appendLine(`Extension ${extension.id} contributes csharpExtensionLoadPaths: ${loadPaths}`);
+            _channel.trace(`Extension ${extension.id} contributes csharpExtensionLoadPaths: ${loadPaths}`);
             return loadPaths;
         });
         const extensionsFromOptions = languageServerOptions.extensionsPaths ?? [];

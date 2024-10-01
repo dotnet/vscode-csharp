@@ -13,7 +13,7 @@ import { getFixAllResponse } from './fixAllCodeAction';
 export function registerNestedCodeActionCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
@@ -26,7 +26,7 @@ export function registerNestedCodeActionCommands(
 async function registerNestedResolveCodeAction(
     languageServer: RoslynLanguageServer,
     codeActionData: any,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ): Promise<void> {
     if (codeActionData) {
         const data = <LSPAny>codeActionData;
@@ -69,7 +69,7 @@ async function registerNestedResolveCodeAction(
 
                         if (!response.edit) {
                             outputChannel.show();
-                            outputChannel.appendLine(`Failed to make an edit for completion.`);
+                            outputChannel.error(`Failed to make an edit for completion.`);
                             throw new Error('Tried to retrieve a code action edit, but an error occurred.');
                         }
 
@@ -81,7 +81,7 @@ async function registerNestedResolveCodeAction(
                             const componentName = '[roslyn.client.nestedCodeAction]';
                             const errorMessage = 'Failed to make am edit for completion.';
                             outputChannel.show();
-                            outputChannel.appendLine(`${componentName} ${errorMessage}`);
+                            outputChannel.error(`${componentName} ${errorMessage}`);
                             throw new Error('Tried to insert code action edit, but an error occurred.');
                         }
                     }

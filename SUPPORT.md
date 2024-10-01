@@ -19,6 +19,8 @@ We highly recommend using the C# extension's built-in command, `CSharp: Report a
 
 The template has a section to include the `C#` output window logs.  These logs are not automatically included as they may contain personal information (such as full file paths and project names), but they are key to resolving problems.  
 
+TODO UPDATE ON NEW INSTRUCTIONS
+
 1.  First, set `dotnet.server.trace` to `Trace` in VSCode settings
     ![settings window showing trace option](./docs/trace_logs.png)
 2.  Reload the window via the `Developer: Reload Window` (`workbench.action.reloadWindow`) command

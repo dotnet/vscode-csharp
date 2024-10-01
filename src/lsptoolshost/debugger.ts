@@ -20,7 +20,7 @@ export function registerDebugger(
     languageServer: RoslynLanguageServer,
     languageServerEvents: RoslynLanguageServerEvents,
     platformInfo: PlatformInformation,
-    csharpOutputChannel: vscode.OutputChannel
+    csharpOutputChannel: vscode.LogOutputChannel
 ) {
     const workspaceInformationProvider: IWorkspaceDebugInformationProvider =
         new RoslynWorkspaceDebugInformationProvider(languageServer, csharpOutputChannel);

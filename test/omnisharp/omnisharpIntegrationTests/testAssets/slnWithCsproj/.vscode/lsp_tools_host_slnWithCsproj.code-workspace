@@ -6,7 +6,6 @@
     ],	
     "settings": {	
         "dotnet.defaultSolution": "b_SecondInOrder_SlnFile.sln",	
-        "dotnet.server.trace": "Trace",	
         "dotnet.server.useOmnisharp": false,	
         "omnisharp.enableLspDriver": false,
         "dotnet.preferCSharpExtension": true,
