@@ -4,7 +4,6 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
-
 * Update Razor to 9.0.0-preview.24480.1 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
   * Fuse fix usings (PR: [#10925](https://github.com/dotnet/razor/pull/10925))
   * Fuse incorrect page directives (PR: [#10907](https://github.com/dotnet/razor/pull/10907))
