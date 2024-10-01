@@ -3,6 +3,17 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Latest
+
+* Update Razor to 9.0.0-preview.24480.1 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
+  * Fuse fix usings (PR: [#10925](https://github.com/dotnet/razor/pull/10925))
+  * Fuse incorrect page directives (PR: [#10907](https://github.com/dotnet/razor/pull/10907))
+  * Calculate SuppressAddComponentParameter in tooling (PR: [#10763](https://github.com/dotnet/razor/pull/10763))
+  * Fix some `AssumeNotNull` assumptions (PR: [#10901](https://github.com/dotnet/razor/pull/10901))
+  * Fixing HTML attribute commit (PR: [#10897](https://github.com/dotnet/razor/pull/10897))
+  * Fix `FormattingContext` disposal (PR: [#10887](https://github.com/dotnet/razor/pull/10887))
+  * Fix #10891 - Formatting does not respect indentation within Razor comment blocks (PR: [#10893](https://github.com/dotnet/razor/pull/10893))
+
 # 2.50.x
 * Update Roslyn to 4.13.0-1.24477.2 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
   * Use MSBuild globs to determine which file changes are relevant (PR: [#75139](https://github.com/dotnet/roslyn/pull/75139))
