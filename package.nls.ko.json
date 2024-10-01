@@ -69,7 +69,6 @@
   "configuration.dotnet.server.startTimeout": "클라이언트가 언어 서버를 시작하고 연결하기 위한 시간 제한(밀리초)을 지정합니다.",
   "configuration.dotnet.server.suppressLspErrorToasts": "서버에서 복구 가능한 오류가 발생하는 경우 오류 알림이 표시되지 않도록 합니다.",
   "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "활성 문서가 열려 있는 작업 영역 밖에 있는 경우 경고 알림이 표시되지 않도록 합니다.",
-  "configuration.dotnet.server.trace": "언어 서버의 로깅 수준을 설정합니다.",
   "configuration.dotnet.server.useServerGC": ".NET 서버 가비지 수집을 사용하도록 언어 서버를 구성합니다.  서버 가비지 수집은 일반적으로 메모리 사용량이 많을수록 성능이 향상됩니다.",
   "configuration.dotnet.server.waitForDebugger": "디버거 연결을 허용하기 위해 서버를 시작할 때 --debug 플래그를 전달합니다(이전 `omnisharp.waitForDebugger`).",
   "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "참조 어셈블리에서 기호를 검색합니다. 가져오기 추가와 같은 기호 검색이 필요한 기능에 영향을 줍니다.",
