@@ -12,6 +12,7 @@
   * Fixing HTML attribute commit (PR: [#10897](https://github.com/dotnet/razor/pull/10897))
   * Fix `FormattingContext` disposal (PR: [#10887](https://github.com/dotnet/razor/pull/10887))
   * Fix #10891 - Formatting does not respect indentation within Razor comment blocks (PR: [#10893](https://github.com/dotnet/razor/pull/10893))
+  * Bump XamlTools to 17.12.35401.161 (PR: [#7620](https://github.com/dotnet/vscode-csharp/pull/7620))
 
 # 2.50.x
 * Update Roslyn to 4.13.0-1.24477.2 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
