@@ -16,6 +16,7 @@ interface CopilotRelatedFilesProviderRegistration {
         providerId: { extensionId: string; languageId: string },
         callback: (
             uri: vscode.Uri,
+            context: { flags: Record<string, unknown> },
             cancellationToken?: vscode.CancellationToken
         ) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
     ): vscode.Disposable;
@@ -55,7 +56,7 @@ export function registerCopilotExtension(languageServer: RoslynLanguageServer, c
             languageId: 'csharp',
         };
 
-        relatedAPI.registerRelatedFilesProvider(id, async (uri, token) => {
+        relatedAPI.registerRelatedFilesProvider(id, async (uri, _, token) => {
             const buildResult = (reports: CopilotRelatedDocumentsReport[], builder?: vscode.Uri[]) => {
                 if (reports) {
                     for (const report of reports) {
