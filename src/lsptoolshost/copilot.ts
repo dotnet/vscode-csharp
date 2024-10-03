@@ -11,6 +11,13 @@ import { UriConverter } from './uriConverter';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { languageServerOptions } from '../shared/options';
 
+interface CopilotTrait {
+    name: string;
+    value: string;
+    includeInPrompt?: boolean;
+    promptTextOverride?: string;
+}
+
 interface CopilotRelatedFilesProviderRegistration {
     registerRelatedFilesProvider(
         providerId: { extensionId: string; languageId: string },
@@ -18,7 +25,7 @@ interface CopilotRelatedFilesProviderRegistration {
             uri: vscode.Uri,
             context: { flags: Record<string, unknown> },
             cancellationToken?: vscode.CancellationToken
-        ) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
+        ) => Promise<{ entries: vscode.Uri[]; traits?: CopilotTrait[] }>
     ): vscode.Disposable;
 }
 
