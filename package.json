@@ -1536,6 +1536,11 @@
             "default": false,
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
             "order": 90
+          },
+          "razor.languageServer.suppressLspErrorToasts": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
           }
         }
       },

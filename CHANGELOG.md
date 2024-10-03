@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Suppress recoverable errors from razor LSP (PR: [#7624](https://github.com/dotnet/vscode-csharp/pull/7624))
+  * NOTE: this can be re-enabled by setting `razor.languageServer.suppressLspErrorToasts = false`
 * Update Roslyn to 4.13.0-1.24501.3 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
   * Fix issue loading analyzers when using EnforceCodeStyleInBuild (PR: [#75250](https://github.com/dotnet/roslyn/pull/75250))
 * Update Razor to 9.0.0-preview.24480.1 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
