@@ -8,7 +8,7 @@ import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
 import { RequestHandler, RequestType } from 'vscode-jsonrpc';
 import { GenericNotificationHandler, InitializeResult, LanguageClientOptions, State } from 'vscode-languageclient';
-import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import { ServerOptions } from 'vscode-languageclient/node';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
@@ -18,6 +18,7 @@ import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { randomUUID } from 'crypto';
 import { showErrorMessage } from '../../shared/observers/utils/showMessage';
+import { RazorLanguageClient } from './razorLanguageClient';
 
 const events = {
     ServerStop: 'ServerStop',
@@ -26,7 +27,7 @@ const events = {
 export class RazorLanguageServerClient implements vscode.Disposable {
     private clientOptions!: LanguageClientOptions;
     private serverOptions!: ServerOptions;
-    private client!: LanguageClient;
+    private client!: RazorLanguageClient;
     private onStartListeners: Array<() => Promise<any>> = [];
     private onStartedListeners: Array<() => Promise<any>> = [];
     private eventBus: EventEmitter;
@@ -299,7 +300,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         this.serverOptions = childProcess;
 
-        this.client = new LanguageClient(
+        this.client = new RazorLanguageClient(
             'razorLanguageServer',
             'Razor Language Server',
             this.serverOptions,
