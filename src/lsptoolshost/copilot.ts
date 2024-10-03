@@ -11,13 +11,21 @@ import { UriConverter } from './uriConverter';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { languageServerOptions } from '../shared/options';
 
+interface CopilotTrait {
+    name: string;
+    value: string;
+    includeInPrompt?: boolean;
+    promptTextOverride?: string;
+}
+
 interface CopilotRelatedFilesProviderRegistration {
     registerRelatedFilesProvider(
         providerId: { extensionId: string; languageId: string },
         callback: (
             uri: vscode.Uri,
+            context: { flags: Record<string, unknown> },
             cancellationToken?: vscode.CancellationToken
-        ) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
+        ) => Promise<{ entries: vscode.Uri[]; traits?: CopilotTrait[] }>
     ): vscode.Disposable;
 }
 
@@ -55,7 +63,7 @@ export function registerCopilotExtension(languageServer: RoslynLanguageServer, c
             languageId: 'csharp',
         };
 
-        relatedAPI.registerRelatedFilesProvider(id, async (uri, token) => {
+        relatedAPI.registerRelatedFilesProvider(id, async (uri, _, token) => {
             const buildResult = (reports: CopilotRelatedDocumentsReport[], builder?: vscode.Uri[]) => {
                 if (reports) {
                     for (const report of reports) {
