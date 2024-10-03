@@ -10,16 +10,21 @@ import {
     MessageSignature,
     ServerOptions,
 } from 'vscode-languageclient/node';
+import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 
 export class RazorLanguageClient extends LanguageClient {
+    razorOptions: RazorLanguageServerOptions;
+
     constructor(
         id: string,
         name: string,
         serverOptions: ServerOptions,
         clientOptions: LanguageClientOptions,
+        razorOptions: RazorLanguageServerOptions,
         forceDebug?: boolean
     ) {
         super(id, name, serverOptions, clientOptions, forceDebug);
+        this.razorOptions = razorOptions;
     }
 
     override handleFailedRequest<T>(
@@ -27,14 +32,12 @@ export class RazorLanguageClient extends LanguageClient {
         token: CancellationToken | undefined,
         error: any,
         defaultValue: T,
-        _showNotification?: boolean
+        showNotification?: boolean
     ) {
-        // Temporarily suppress toasts until co-hosting. This resolves some
-        // underlying issues like the below list. This should be re-enabled when we have
-        // confidence that users are receiving actionable errors from the language server.
-        // https://github.com/microsoft/vscode-dotnettools/issues/722
-        // https://github.com/dotnet/vscode-csharp/issues/6973
-        // https://github.com/microsoft/vscode-languageserver-node/issues/1449
-        return super.handleFailedRequest(type, token, error, defaultValue, false);
+        if (this.razorOptions.suppressErrorToasts) {
+            return super.handleFailedRequest(type, token, error, defaultValue, false);
+        }
+
+        return super.handleFailedRequest(type, token, error, defaultValue, showNotification);
     }
 }

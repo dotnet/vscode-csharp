@@ -304,7 +304,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             'razorLanguageServer',
             'Razor Language Server',
             this.serverOptions,
-            this.clientOptions
+            this.clientOptions,
+            options
         );
     }
 }
