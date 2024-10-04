@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bumped xamltools to 17.12.35403.211 (PR: [#7625](https://github.com/dotnet/vscode-csharp/pull/7625))
 * Suppress recoverable errors from razor LSP (PR: [#7624](https://github.com/dotnet/vscode-csharp/pull/7624))
   * NOTE: this can be re-enabled by setting `razor.languageServer.suppressLspErrorToasts = false`
 * Update Roslyn to 4.13.0-1.24501.3 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
