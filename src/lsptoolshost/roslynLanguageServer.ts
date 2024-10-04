@@ -74,6 +74,7 @@ import {
     showErrorMessage,
     showInformationMessage,
 } from '../shared/observers/utils/showMessage';
+import { registerSourceGeneratedFilesContentProvider } from './sourceGeneratedFilesContentProvider';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -1067,6 +1068,8 @@ export async function activateRoslynLanguageServer(
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
 
     registerRestoreCommands(context, languageServer, dotnetChannel);
+
+    registerSourceGeneratedFilesContentProvider(context, languageServer);
 
     context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
 
