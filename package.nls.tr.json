@@ -121,6 +121,7 @@
   "configuration.razor.languageServer.debug": "Dil sunucusunu başlatırken hata ayıklama eklemesinin beklenip beklenmeyeceğini belirtir.",
   "configuration.razor.languageServer.directory": "Razor Dil Sunucusu dizininin yolunu geçersiz kılıyor.",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(DENEYSEL) Razor dosyaları için birleşik tasarım zamanı/çalışma zamanı kodu oluşturmayı etkinleştirin",
+  "configuration.razor.languageServer.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.razor.server.trace": "Razor sunucusu için kullanılacak günlük kaydı düzeyini belirtir.",
   "debuggers.coreclr.configurationSnippets.description.attach": ".NET hata ayıklayıcısını (coreclr) çalışan bir işleme ekleyin. Bu, '.NET 5+ veya .NET Core işlemine ekle' komutu kullanılarak da kullanılabilir.",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "Bu kod parçacığı, Blazor WebAssembly hata ayıklayıcısı (blazorwasm) altında, başlatılacak yürütülebilir dosyanın yolunu belirten yeni bir işlemi başlatmak için kullanılır. Çoğu durumda, \".NET: C# projesini başlat\" kod parçacığı daha iyi bir seçimdir, ancak bu kod parçacığı tüm başlatma seçenekleri üzerinde tam denetime sahip olmak için kullanılabilir. Bu kod parçacığı dosyalarını sunmak için arka uç ASP.NET Core uygulamasına sahip bir proje olan, barındırılan Blazor projeleri içindir.",
