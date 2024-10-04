@@ -10,12 +10,20 @@ import { languageServerOptions } from '../shared/options';
 import { ServerState } from './serverStateChange';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { RazorLanguage } from '../razor/src/razorLanguage';
+import { VSWorkspaceKind } from './roslynProtocol';
+
+let currentServerState: ServerState = ServerState.Stopped;
 
 export function registerLanguageStatusItems(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     languageServerEvents: RoslynLanguageServerEvents
 ) {
+    // Track the current server state.
+    languageServerEvents.onServerStateChange((e) => {
+        currentServerState = e.state;
+    });
+
     // DevKit will provide an equivalent workspace status item.
     if (!getCSharpDevKit()) {
         WorkspaceStatus.createStatusItem(context, languageServerEvents);
@@ -44,6 +52,8 @@ class WorkspaceStatus {
 
         const item = vscode.languages.createLanguageStatusItem('csharp.workspaceStatus', documentSelector);
         item.name = vscode.l10n.t('C# Workspace Status');
+        item.severity = vscode.LanguageStatusSeverity.Error;
+        item.command = openSolutionCommand;
         context.subscriptions.push(item);
 
         languageServerEvents.onServerStateChange((e) => {
@@ -51,7 +61,7 @@ class WorkspaceStatus {
             item.busy = e.state === ServerState.ProjectInitializationStarted;
             item.severity =
                 e.state === ServerState.Stopped
-                    ? vscode.LanguageStatusSeverity.Warning
+                    ? vscode.LanguageStatusSeverity.Error
                     : vscode.LanguageStatusSeverity.Information;
             item.command = e.state === ServerState.Stopped ? restartServerCommand : openSolutionCommand;
         });
@@ -73,6 +83,17 @@ class ProjectContextStatus {
 
         projectContextService.onActiveFileContextChanged((e) => {
             item.text = e.context._vs_label;
+
+            // Show a warning when the active file is part of the Miscellaneous File workspace and
+            // project initialization is complete.
+            if (currentServerState === ServerState.ProjectInitializationComplete) {
+                item.severity =
+                    e.context._vs_workspace_kind === VSWorkspaceKind.MiscellaneousFiles
+                        ? vscode.LanguageStatusSeverity.Warning
+                        : vscode.LanguageStatusSeverity.Information;
+            } else {
+                item.severity = vscode.LanguageStatusSeverity.Information;
+            }
         });
 
         // Trigger a refresh, but don't block creation on the refresh completing.
