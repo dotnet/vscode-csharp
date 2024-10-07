@@ -121,6 +121,7 @@
   "configuration.razor.languageServer.debug": "Określa, czy czekać na dołączenie debugowania podczas uruchamiania serwera języka.",
   "configuration.razor.languageServer.directory": "Przesłania ścieżkę do katalogu serwera języka Razor.",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(EKSPERYMENTALNE) Włącz łączny czas projektowania/generowanie kodu środowiska uruchomieniowego dla plików Razor",
+  "configuration.razor.languageServer.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.razor.server.trace": "Określa poziom rejestrowania, który ma być używany dla serwera Razor.",
   "debuggers.coreclr.configurationSnippets.description.attach": "Dołącz debuger platformy .NET (coreclr) do uruchomionego procesu. Można to również zrobić za pomocą polecenia „Dołącz do procesu .NET 5+ lub .NET Core”.",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "Ten fragment kodu służy do uruchamiania nowego procesu w debugerze zestawu WebAssembly platformy Blazor (blazorwasm), określając ścieżkę do pliku wykonywalnego do uruchomienia. W większości przypadków „.NET: Fragment kodu „Launch C# project” (Uruchom projekt C#) jest lepszym wyborem, ale za pomocą tego fragmentu kodu można mieć pełną kontrolę nad wszystkimi opcjami uruchamiania. Ten fragment kodu jest przeznaczony dla hostowanych projektów Platformy Blazor, czyli projektu, który ma zaplecze ASP.NET aplikacji Core do obsługi plików.",
