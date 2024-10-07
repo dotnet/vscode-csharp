@@ -3,6 +3,27 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Latest
+* Update Roslyn to 4.13.0-1.24503.11 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
+  * LSP hover responses escape backticks within inline code (PR: [#75364](https://github.com/dotnet/roslyn/pull/75364))
+  * Localize build host message output (PR: [#74910](https://github.com/dotnet/roslyn/pull/74910))
+  * Log and report NFW when we fail to apply project system update (PR: [#75362](https://github.com/dotnet/roslyn/pull/75362))
+  * Reduce allocations and UI thread CPU costs in WithDoNotCreateCreationPolicy (PR: [#75358](https://github.com/dotnet/roslyn/pull/75358))
+  * Enable support for an LSP client to open source generated files (PR: [#75180](https://github.com/dotnet/roslyn/pull/75180))
+  * Improve error reporting when reading bad metadata during EnC (PR: [#75304](https://github.com/dotnet/roslyn/pull/75304))
+* Suppress recoverable errors from razor LSP (PR: [#7624](https://github.com/dotnet/vscode-csharp/pull/7624))
+  * NOTE: this can be re-enabled by setting `razor.languageServer.suppressLspErrorToasts = false`
+* Update Roslyn to 4.13.0-1.24501.3 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
+  * Fix issue loading analyzers when using EnforceCodeStyleInBuild (PR: [#75250](https://github.com/dotnet/roslyn/pull/75250))
+* Update Razor to 9.0.0-preview.24480.1 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
+  * Fuse fix usings (PR: [#10925](https://github.com/dotnet/razor/pull/10925))
+  * Fuse incorrect page directives (PR: [#10907](https://github.com/dotnet/razor/pull/10907))
+  * Calculate SuppressAddComponentParameter in tooling (PR: [#10763](https://github.com/dotnet/razor/pull/10763))
+  * Fix some `AssumeNotNull` assumptions (PR: [#10901](https://github.com/dotnet/razor/pull/10901))
+  * Fixing HTML attribute commit (PR: [#10897](https://github.com/dotnet/razor/pull/10897))
+  * Fix `FormattingContext` disposal (PR: [#10887](https://github.com/dotnet/razor/pull/10887))
+  * Fix #10891 - Formatting does not respect indentation within Razor comment blocks (PR: [#10893](https://github.com/dotnet/razor/pull/10893))
+
 # 2.50.x
 * Update Roslyn to 4.13.0-1.24477.2 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
   * Use MSBuild globs to determine which file changes are relevant (PR: [#75139](https://github.com/dotnet/roslyn/pull/75139))

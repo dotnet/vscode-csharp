@@ -37,9 +37,9 @@
     }
   },
   "defaults": {
-    "roslyn": "4.13.0-1.24477.2",
+    "roslyn": "4.13.0-1.24503.11",
     "omniSharp": "1.39.11",
-    "razor": "9.0.0-preview.24467.1",
+    "razor": "9.0.0-preview.24480.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "17.12.35326.17"
   },
@@ -1536,6 +1536,11 @@
             "default": false,
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
             "order": 90
+          },
+          "razor.languageServer.suppressLspErrorToasts": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
           }
         }
       },
