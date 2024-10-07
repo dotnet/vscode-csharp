@@ -15,7 +15,7 @@ import { omnisharpOptions } from '../../shared/options';
 import { PlatformInformation } from '../../shared/platform';
 import { launchOmniSharp } from '../launcher';
 import { setTimeout } from 'timers';
-import * as ObservableEvents from '../loggingEvents';
+import * as ObservableEvents from '../omnisharpLoggingEvents';
 import { EventStream } from '../../eventStream';
 import CompositeDisposable from '../../compositeDisposable';
 import Disposable from '../../disposable';
@@ -23,32 +23,32 @@ import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableR
 import { removeBOMFromBuffer, removeBOMFromString } from '../../utils/removeBom';
 import { IEngine } from './IEngine';
 import { Events, OmniSharpServer } from '../server';
-import DefinitionMetadataDocumentProvider from '../../features/definitionMetadataDocumentProvider';
-import SourceGeneratedDocumentProvider from '../../features/sourceGeneratedDocumentProvider';
+import DefinitionMetadataDocumentProvider from '../features/definitionMetadataDocumentProvider';
+import SourceGeneratedDocumentProvider from '../features/sourceGeneratedDocumentProvider';
 import * as vscode from 'vscode';
-import OmniSharpCodeLensProvider from '../../features/codeLensProvider';
-import OmniSharpDocumentHighlightProvider from '../../features/documentHighlightProvider';
-import OmniSharpDocumentSymbolProvider from '../../features/documentSymbolProvider';
-import OmniSharpHoverProvider from '../../features/hoverProvider';
-import OmniSharpRenameProvider from '../../features/renameProvider';
-import OmniSharpFormatProvider from '../../features/formattingEditProvider';
-import OmniSharpWorkspaceSymbolProvider from '../../features/workspaceSymbolProvider';
-import OmniSharpSignatureHelpProvider from '../../features/signatureHelpProvider';
-import { OmniSharpFixAllProvider } from '../../features/fixAllProvider';
-import OmniSharpCompletionProvider, { CompletionAfterInsertCommand } from '../../features/completionProvider';
-import OmniSharpReferenceProvider from '../../features/referenceProvider';
-import OmniSharpImplementationProvider from '../../features/implementationProvider';
-import OmniSharpSemanticTokensProvider from '../../features/semanticTokensProvider';
-import OmniSharpInlayHintProvider from '../../features/inlayHintProvider';
-import fileOpenClose from '../../features/fileOpenCloseProvider';
-import trackVirtualDocuments from '../../features/virtualDocumentTracker';
-import OmniSharpCodeActionProvider from '../../features/codeActionProvider';
-import forwardChanges from '../../features/changeForwarding';
-import OmniSharpDefinitionProvider from '../../features/definitionProvider';
-import reportDiagnostics, { Advisor } from '../../features/diagnosticsProvider';
+import OmniSharpCodeLensProvider from '../features/codeLensProvider';
+import OmniSharpDocumentHighlightProvider from '../features/documentHighlightProvider';
+import OmniSharpDocumentSymbolProvider from '../features/documentSymbolProvider';
+import OmniSharpHoverProvider from '../features/hoverProvider';
+import OmniSharpRenameProvider from '../features/renameProvider';
+import OmniSharpFormatProvider from '../features/formattingEditProvider';
+import OmniSharpWorkspaceSymbolProvider from '../features/workspaceSymbolProvider';
+import OmniSharpSignatureHelpProvider from '../features/signatureHelpProvider';
+import { OmniSharpFixAllProvider } from '../features/fixAllProvider';
+import OmniSharpCompletionProvider, { CompletionAfterInsertCommand } from '../features/completionProvider';
+import OmniSharpReferenceProvider from '../features/referenceProvider';
+import OmniSharpImplementationProvider from '../features/implementationProvider';
+import OmniSharpSemanticTokensProvider from '../features/semanticTokensProvider';
+import OmniSharpInlayHintProvider from '../features/inlayHintProvider';
+import fileOpenClose from '../features/fileOpenCloseProvider';
+import trackVirtualDocuments from '../features/virtualDocumentTracker';
+import OmniSharpCodeActionProvider from '../features/codeActionProvider';
+import forwardChanges from '../features/changeForwarding';
+import OmniSharpDefinitionProvider from '../features/definitionProvider';
+import reportDiagnostics, { Advisor } from '../features/diagnosticsProvider';
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import TestManager from '../../features/dotnetTest';
-import { OmniSharpStructureProvider } from '../../features/structureProvider';
+import TestManager from '../features/dotnetTest';
+import { OmniSharpStructureProvider } from '../features/structureProvider';
 
 export class StdioEngine implements IEngine {
     private static _nextId = 1;
@@ -399,7 +399,7 @@ export class StdioEngine implements IEngine {
         let packet: protocol.WireProtocol.Packet;
         try {
             packet = JSON.parse(line);
-        } catch (err) {
+        } catch (_) {
             // This isn't JSON
             return;
         }

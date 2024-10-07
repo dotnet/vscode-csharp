@@ -7,50 +7,29 @@ import * as vscode from 'vscode';
 import { RoslynLanguageClient } from './roslynLanguageClient';
 import { MessageType } from 'vscode-languageserver-protocol';
 import { ShowToastNotification } from './roslynProtocol';
+import { showErrorMessage, showInformationMessage, showWarningMessage } from '../shared/observers/utils/showMessage';
 
 export function registerShowToastNotification(client: RoslynLanguageClient) {
     client.onNotification(ShowToastNotification.type, async (notification) => {
-        const messageOptions: vscode.MessageOptions = {
-            modal: false,
-        };
-        const commands = notification.commands.map((command) => command.title);
-        const executeCommandByName = async (result: string | undefined) => {
-            if (result) {
-                const command = notification.commands.find((command) => command.title === result);
-                if (!command) {
-                    throw new Error(`Unknown command ${result}`);
-                }
-
-                if (command.arguments) {
-                    await vscode.commands.executeCommand(command.command, ...command.arguments);
-                } else {
-                    await vscode.commands.executeCommand(command.command);
-                }
-            }
-        };
+        const buttonOptions = notification.commands.map((command) => {
+            return {
+                title: command.title,
+                command: command.command,
+                arguments: command.arguments,
+            };
+        });
 
         switch (notification.messageType) {
             case MessageType.Error: {
-                const result = await vscode.window.showErrorMessage(notification.message, messageOptions, ...commands);
-                executeCommandByName(result);
+                showErrorMessage(vscode, notification.message, ...buttonOptions);
                 break;
             }
             case MessageType.Warning: {
-                const result = await vscode.window.showWarningMessage(
-                    notification.message,
-                    messageOptions,
-                    ...commands
-                );
-                executeCommandByName(result);
+                showWarningMessage(vscode, notification.message, ...buttonOptions);
                 break;
             }
             default: {
-                const result = await vscode.window.showInformationMessage(
-                    notification.message,
-                    messageOptions,
-                    ...commands
-                );
-                executeCommandByName(result);
+                showInformationMessage(vscode, notification.message, ...buttonOptions);
                 break;
             }
         }

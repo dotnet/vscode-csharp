@@ -46,7 +46,7 @@ export class HtmlProjectedDocumentContentProvider implements vscode.TextDocument
         }
 
         const content = `${razorDocument.htmlDocument.getContent()}
-// ${razorDocument.htmlDocument.projectedDocumentSyncVersion}`;
+// ${razorDocument.htmlDocument.hostDocumentSyncVersion}`;
 
         return content;
     }

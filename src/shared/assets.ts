@@ -14,6 +14,7 @@ import * as vscode from 'vscode';
 
 import { tolerantParse } from '../json';
 import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider';
+import { showErrorMessage } from './observers/utils/showMessage';
 
 type DebugConsoleOptions = { console: string };
 
@@ -572,7 +573,7 @@ export async function getBuildOperations(generator: AssetGenerator): Promise<Ass
                         tasksConfiguration = tolerantParse(text);
                     } catch (error) {
                         const message = error instanceof Error ? error.message : `${error}`;
-                        vscode.window.showErrorMessage(vscode.l10n.t('Failed to parse tasks.json file: {0}', message));
+                        showErrorMessage(vscode, vscode.l10n.t('Failed to parse tasks.json file: {0}', message));
                         return resolve({ updateTasksJson: false });
                     }
 
@@ -861,26 +862,33 @@ async function getExistingAssets(generator: AssetGenerator) {
 }
 
 async function shouldGenerateAssets(generator: AssetGenerator): Promise<boolean> {
-    return new Promise<boolean>((resolve, _) => {
-        getExistingAssets(generator).then((res) => {
-            if (res.length > 0) {
-                const yesItem = { title: vscode.l10n.t('Yes') };
-                const cancelItem = { title: vscode.l10n.t('Cancel'), isCloseAffordance: true };
-                vscode.window
-                    .showWarningMessage(vscode.l10n.t('Replace existing build and debug assets?'), cancelItem, yesItem)
-                    .then((selection) => {
-                        if (selection === yesItem) {
-                            resolve(true);
-                        } else {
-                            // The user clicked cancel
-                            resolve(false);
-                        }
-                    });
-            } else {
-                // The assets don't exist, so we're good to go.
-                resolve(true);
-            }
-        });
+    return new Promise<boolean>((resolve, reject) => {
+        getExistingAssets(generator).then(
+            (res) => {
+                if (res.length > 0) {
+                    const yesItem = { title: vscode.l10n.t('Yes') };
+                    const cancelItem = { title: vscode.l10n.t('Cancel'), isCloseAffordance: true };
+                    vscode.window
+                        .showWarningMessage(
+                            vscode.l10n.t('Replace existing build and debug assets?'),
+                            cancelItem,
+                            yesItem
+                        )
+                        .then((selection) => {
+                            if (selection === yesItem) {
+                                resolve(true);
+                            } else {
+                                // The user clicked cancel
+                                resolve(false);
+                            }
+                        });
+                } else {
+                    // The assets don't exist, so we're good to go.
+                    resolve(true);
+                }
+            },
+            (err) => reject(err)
+        );
     });
 }
 
@@ -925,7 +933,8 @@ export async function generateAssets(
                 await fs.ensureDir(generator.vscodeFolder);
                 await addAssets(generator, operations);
             } else {
-                await vscode.window.showErrorMessage(
+                showErrorMessage(
+                    vscode,
                     vscode.l10n.t(
                         `Could not locate .NET Core project in '{0}'. Assets were not generated.`,
                         workspaceFolder.name
@@ -934,9 +943,7 @@ export async function generateAssets(
             }
         }
     } catch (err) {
-        await vscode.window.showErrorMessage(
-            vscode.l10n.t('Unable to generate assets to build and debug. {0}.', `${err}`)
-        );
+        showErrorMessage(vscode, vscode.l10n.t('Unable to generate assets to build and debug. {0}.', `${err}`));
     }
 }
 

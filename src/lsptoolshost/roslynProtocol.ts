@@ -221,6 +221,15 @@ export interface ProjectNeedsRestoreName {
     projectFilePaths: string[];
 }
 
+export interface CopilotRelatedDocumentsParams extends lsp.WorkDoneProgressParams, lsp.PartialResultParams {
+    _vs_textDocument: lsp.TextDocumentIdentifier;
+    position: lsp.Position;
+}
+
+export interface CopilotRelatedDocumentsReport {
+    _vs_file_paths?: string[];
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -329,4 +338,16 @@ export namespace ProjectNeedsRestoreRequest {
     export const method = 'workspace/_roslyn_projectNeedsRestore';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
     export const type = new lsp.RequestType<ProjectNeedsRestoreName, void, void>(method);
+}
+
+export namespace CopilotRelatedDocumentsRequest {
+    export const method = 'copilot/_related_documents';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.ProtocolRequestType<
+        CopilotRelatedDocumentsParams,
+        CopilotRelatedDocumentsReport[],
+        CopilotRelatedDocumentsReport[],
+        void,
+        void
+    >(method);
 }

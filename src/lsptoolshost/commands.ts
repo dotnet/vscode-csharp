@@ -187,7 +187,7 @@ async function openSolution(languageServer: RoslynLanguageServer): Promise<vscod
 
     if (launchTarget) {
         const uri = vscode.Uri.file(launchTarget.target);
-        languageServer.openSolution(uri);
+        await languageServer.openSolution(uri);
         return uri;
     }
 }

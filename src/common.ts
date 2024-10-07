@@ -220,7 +220,7 @@ export function findPowerShell(): string | undefined {
                 if (fs.statSync(candidate).isFile()) {
                     return name;
                 }
-            } catch (e) {
+            } catch (_) {
                 /* empty */
             }
         }

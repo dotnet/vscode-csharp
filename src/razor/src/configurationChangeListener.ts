@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import { RazorLanguageServerClient } from './razorLanguageServerClient';
 import { RazorLogger } from './razorLogger';
+import { ActionOption, showInformationMessage } from '../../shared/observers/utils/showMessage';
 
 export function listenToConfigurationChanges(languageServerClient: RazorLanguageServerClient): vscode.Disposable {
     return vscode.workspace.onDidChangeConfiguration((event) => {
@@ -19,15 +20,13 @@ function razorTraceConfigurationChangeHandler(languageServerClient: RazorLanguag
     const promptText: string = vscode.l10n.t(
         'Would you like to restart the Razor Language Server to enable the Razor trace configuration change?'
     );
-    const restartButtonText = vscode.l10n.t('Restart');
-
-    vscode.window.showInformationMessage(promptText, restartButtonText).then(async (result) => {
-        if (result !== restartButtonText) {
-            return;
-        }
-
-        await languageServerClient.stop();
-        languageServerClient.updateTraceLevel();
-        await languageServerClient.start();
-    });
+    const restartButtonText: ActionOption = {
+        title: vscode.l10n.t('Restart'),
+        action: async () => {
+            await languageServerClient.stop();
+            languageServerClient.updateTraceLevel();
+            await languageServerClient.start();
+        },
+    };
+    showInformationMessage(vscode, promptText, restartButtonText);
 }

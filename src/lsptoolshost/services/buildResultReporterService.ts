@@ -25,6 +25,6 @@ export class BuildResultDiagnostics implements IBuildResultDiagnostics {
     public async reportBuildResult(buildDiagnostics: { [uri: string]: vscode.Diagnostic[] }): Promise<void> {
         const langServer: RoslynLanguageServer = await this._languageServerPromise;
         const buildOnlyIds: string[] = await langServer.getBuildOnlyDiagnosticIds(CancellationToken.None);
-        langServer._buildDiagnosticService.setBuildDiagnostics(buildDiagnostics, buildOnlyIds);
+        await langServer._buildDiagnosticService.setBuildDiagnostics(buildDiagnostics, buildOnlyIds);
     }
 }

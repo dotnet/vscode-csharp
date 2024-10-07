@@ -43,7 +43,9 @@ export async function CreateTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
         name: tmpDir.name,
         dispose: () => {
             if (unsafeCleanup) {
-                rimraf(tmpDir.name); //to delete directories that have folders inside them
+                rimraf(tmpDir.name).catch((rejectReason) => {
+                    throw new Error(`Failed to cleanup ${tmpDir.name} at ${tmpDir.fd}: ${rejectReason}`);
+                }); //to delete directories that have folders inside them
             } else {
                 tmpDir.removeCallback();
             }

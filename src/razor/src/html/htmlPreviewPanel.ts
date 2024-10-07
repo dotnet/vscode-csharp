@@ -8,6 +8,7 @@ import { IRazorDocumentChangeEvent } from '../document/IRazorDocumentChangeEvent
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { getUriPath } from '../uriPaths';
+import { showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage';
 
 export class HtmlPreviewPanel {
     public static readonly viewType = 'razorHtmlPreview';
@@ -61,7 +62,7 @@ export class HtmlPreviewPanel {
 
     private attachToCurrentPanel() {
         if (!this.panel) {
-            vscode.window.showErrorMessage(vscode.l10n.t('Unexpected error when attaching to HTML preview window.'));
+            showErrorMessage(vscode, vscode.l10n.t('Unexpected error when attaching to HTML preview window.'));
             return;
         }
 
@@ -73,7 +74,7 @@ export class HtmlPreviewPanel {
                     }
 
                     await vscode.env.clipboard.writeText(this.htmlContent);
-                    vscode.window.showInformationMessage(vscode.l10n.t('Razor HTML copied to clipboard'));
+                    showInformationMessage(vscode, vscode.l10n.t('Razor HTML copied to clipboard'));
                     return;
             }
         });

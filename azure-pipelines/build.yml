@@ -13,9 +13,11 @@ jobs:
 - job: 'Build_${{ parameters.platform }}_vsixs'
   pool: ${{ parameters.pool }}
   displayName: 'Build ${{ parameters.platform }} vsixs'
-  dependsOn: SetChannelVariable
+  dependsOn: SetRunVariables
   variables:
-    channel: $[ dependencies.SetChannelVariable.outputs['passOutput.channel'] ]
+    channel: $[ dependencies.SetRunVariables.outputs['passChannel.channel'] ]
+    signType: $[ dependencies.SetRunVariables.outputs['passSignType.signType'] ]
+    teamName: DotNetCore
   steps:
   - checkout: self
     clean: true
@@ -25,6 +27,25 @@ jobs:
   - template: /azure-pipelines/prereqs.yml@self
     parameters:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}
+
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.11'
+    inputs:
+      versionSpec: 3.11
+
+  # If we're in an official build, install the signing plugin
+  - ${{ if eq(parameters.isOfficial, true) }}:
+    - task: MicroBuildSigningPlugin@4
+      displayName: 🔧 Install MicroBuild Signing Plugin
+      inputs:
+        signType: $(signType)
+        zipSources: false
+        feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
+        azureSubscription: 'MicroBuild Signing Task (DevDiv)'
+      env:
+        SignType: $(signType)
+        TeamName: $(teamName)
+
   - pwsh: |
       Write-Host "Building VSIXs for platform ${{ parameters.platform }} and channel $(channel)"
       if ("$(channel)" -eq "Release") {
@@ -33,6 +54,15 @@ jobs:
         gulp vsix:release:package:${{ parameters.platform }} --prerelease
       }
     displayName: 'Build VSIXs'
+    env:
+      SignType: $(signType)
+
+  - ${{ if eq(parameters.isOfficial, true) }}:
+    - script: gulp signVsix
+      condition: succeeded()
+      displayName: 'Sign VSIXs'
+      env:
+        SignType: $(signType)
 
   - ${{ if eq(parameters.isOfficial, true) }}:
     - task: 1ES.PublishBuildArtifacts@1
@@ -41,6 +71,12 @@ jobs:
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/vsix'
         ArtifactName: 'VSIX_$(channel)'
+    - task: 1ES.PublishBuildArtifacts@1
+      condition: succeededOrFailed()
+      displayName: 'Publish Signing Logs'
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/out/logs'
+        ArtifactName: '${{ parameters.platform }} Signing Logs'
   - ${{ else }}:
     - task: PublishBuildArtifacts@1
       condition: succeeded()
