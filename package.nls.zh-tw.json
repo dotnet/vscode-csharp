@@ -121,6 +121,7 @@
   "configuration.razor.languageServer.debug": "指定啟動語言伺服器時，是否要等候偵錯附加。",
   "configuration.razor.languageServer.directory": "覆寫 Razor 語言伺服器目錄的路徑。",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(實驗性) 啟用適用於 Razor 檔案的合併設計階段/執行階段程式碼產生",
+  "configuration.razor.languageServer.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.razor.server.trace": "指定要用於 Razor 伺服器的記錄層級。",
   "debuggers.coreclr.configurationSnippets.description.attach": "將 .NET 偵錯工具 (coreclr) 連結到執行中的流程。這也可以使用 'Attach to a .NET 5+ or .NET Core process' 命令來完成。",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "此程式碼片段可用來啟動 Blazor WebAssembly 偵錯工具 (blazorwasm) 下的新流程，並指定要啟動之可執行檔的路徑。在大部分情況下，「.NET: Launch C# project」程式碼片段是較佳的選擇，但此程式碼片段可用來完全控制所有啟動選項。此程式碼片段適用於裝載的 Blazor 專案，該專案是具有後端 ASP.NET Core 應用程式以提供其檔案服務的專案。",
