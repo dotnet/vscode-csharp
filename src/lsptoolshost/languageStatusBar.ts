@@ -10,7 +10,6 @@ import { languageServerOptions } from '../shared/options';
 import { ServerState } from './serverStateChange';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { RazorLanguage } from '../razor/src/razorLanguage';
-import { VSWorkspaceKind } from './roslynProtocol';
 
 let currentServerState: ServerState = ServerState.Stopped;
 
@@ -87,10 +86,9 @@ class ProjectContextStatus {
             // Show a warning when the active file is part of the Miscellaneous File workspace and
             // project initialization is complete.
             if (currentServerState === ServerState.ProjectInitializationComplete) {
-                item.severity =
-                    e.context._vs_workspace_kind === VSWorkspaceKind.MiscellaneousFiles
-                        ? vscode.LanguageStatusSeverity.Warning
-                        : vscode.LanguageStatusSeverity.Information;
+                item.severity = e.context._vs_is_miscellaneous
+                    ? vscode.LanguageStatusSeverity.Warning
+                    : vscode.LanguageStatusSeverity.Information;
             } else {
                 item.severity = vscode.LanguageStatusSeverity.Information;
             }

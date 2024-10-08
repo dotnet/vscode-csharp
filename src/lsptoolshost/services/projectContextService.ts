@@ -5,12 +5,7 @@
 
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../roslynLanguageServer';
-import {
-    VSGetProjectContextsRequest,
-    VSProjectContext,
-    VSProjectContextList,
-    VSWorkspaceKind,
-} from '../roslynProtocol';
+import { VSGetProjectContextsRequest, VSProjectContext, VSProjectContextList } from '../roslynProtocol';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../uriConverter';
 import { LanguageServerEvents } from '../languageServerEvents';
@@ -31,7 +26,7 @@ export class ProjectContextService {
         _vs_id: '',
         _vs_kind: '',
         _vs_label: '',
-        _vs_workspace_kind: VSWorkspaceKind.Unknown,
+        _vs_is_miscellaneous: false,
     };
 
     constructor(private _languageServer: RoslynLanguageServer, _languageServerEvents: LanguageServerEvents) {

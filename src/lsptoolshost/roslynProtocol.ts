@@ -13,17 +13,11 @@ export interface VSProjectContextList {
     _vs_defaultIndex: number;
 }
 
-export enum VSWorkspaceKind {
-    Unknown = 0,
-    Host = 1,
-    MiscellaneousFiles = 2,
-}
-
 export interface VSProjectContext {
     _vs_label: string;
     _vs_id: string;
     _vs_kind: string;
-    _vs_workspace_kind: VSWorkspaceKind;
+    _vs_is_miscellaneous: boolean;
 }
 
 export interface VSTextDocumentIdentifier extends lsp.TextDocumentIdentifier {
