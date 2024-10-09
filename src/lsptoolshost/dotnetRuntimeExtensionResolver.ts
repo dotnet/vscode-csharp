@@ -16,7 +16,7 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { readFile } from 'fs/promises';
 import { RuntimeInfo } from '../shared/utils/dotnetInfo';
 
-export const DotNetRuntimeVersion = '8.0';
+export const DotNetRuntimeVersion = '8.0.10';
 
 interface IDotnetAcquireResult {
     dotnetPath: string;
@@ -166,7 +166,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             }
 
             // Verify that the dotnet we found includes a runtime version that is compatible with our requirement.
-            const requiredRuntimeVersion = semver.parse(`${DotNetRuntimeVersion}.0`);
+            const requiredRuntimeVersion = semver.parse(`${DotNetRuntimeVersion}`);
             if (!requiredRuntimeVersion) {
                 throw new Error(`Unable to parse minimum required version ${DotNetRuntimeVersion}`);
             }
