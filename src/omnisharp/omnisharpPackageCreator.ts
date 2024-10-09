@@ -53,7 +53,7 @@ function GetPackage(
         ...inputPackage,
         integrity: undefined,
         description: `${inputPackage.description}, Version = ${version}`,
-        url: `${serverUrl}/releases/${version}/omnisharp-${inputPackage.platformId}${packageSuffix}.zip`,
+        url: `${serverUrl}/releases/download/v${version}/omnisharp-${inputPackage.platformId}${packageSuffix}.zip`,
         installPath: `${installPath}/${version}${packageSuffix}`,
         installTestPath: `./${installPath}/${version}${packageSuffix}/${installBinary}`,
     };

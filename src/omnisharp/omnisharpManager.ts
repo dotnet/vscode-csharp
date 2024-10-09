@@ -11,16 +11,16 @@ import { PlatformInformation } from '../shared/platform';
 import { modernNetVersion } from './omnisharpPackageCreator';
 
 export class OmnisharpManager {
-    private readonly latestVersionFileServerPath = 'releases/versioninfo.txt';
-
     private readonly installPath = '.omnisharp';
+    private readonly githubRepoUrl = 'https://github.com/OmniSharp/omnisharp-roslyn';
+    private readonly githubApiUrl = 'https://api.github.com/repos/OmniSharp/omnisharp-roslyn';
 
     public constructor(
         private downloader: OmnisharpDownloader,
         private platformInfo: PlatformInformation,
         // Only the tests set this. Instead of making this configurable,
         // we should probably just mock the HTTP requests, not create an entire mock HTTP server.
-        private serverUrl: string = 'https://roslynomnisharp.blob.core.windows.net'
+        private serverUrl: string | undefined = undefined
     ) {}
 
     public async GetOmniSharpLaunchPath(
@@ -54,7 +54,7 @@ export class OmnisharpManager {
     }
 
     private async InstallLatestAndReturnLaunchInfo(useFramework: boolean, extensionPath: string): Promise<string> {
-        const version = await this.downloader.GetLatestVersion(this.serverUrl, this.latestVersionFileServerPath);
+        const version = await this.downloader.GetLatestVersion(this.serverUrl ?? this.githubApiUrl);
         return await this.InstallVersionAndReturnLaunchInfo(version, useFramework, extensionPath);
     }
 
@@ -64,7 +64,12 @@ export class OmnisharpManager {
         extensionPath: string
     ): Promise<string> {
         if (semver.valid(version)) {
-            await this.downloader.DownloadAndInstallOmnisharp(version, useFramework, this.serverUrl, this.installPath);
+            await this.downloader.DownloadAndInstallOmnisharp(
+                version,
+                useFramework,
+                this.serverUrl ?? this.githubRepoUrl,
+                this.installPath
+            );
             return this.GetLaunchPathForVersion(version, this.platformInfo, useFramework, extensionPath);
         } else {
             throw new Error(`Invalid OmniSharp version - ${version}`);

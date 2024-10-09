@@ -87,7 +87,7 @@ describe(OmnisharpManager.name, () => {
                 suffix = useFramework ? '' : `-net${modernNetVersion}`;
                 server.addRequestHandler(
                     'GET',
-                    `/releases/${testVersion}/omnisharp-${elem.platformId}${suffix}.zip`,
+                    `/releases/download/v${testVersion}/omnisharp-${elem.platformId}${suffix}.zip`,
                     200,
                     {
                         'content-type': 'application/zip',
@@ -98,17 +98,21 @@ describe(OmnisharpManager.name, () => {
 
                 server.addRequestHandler(
                     'GET',
-                    `/releases/versioninfo.txt`,
+                    `/releases`,
                     200,
                     {
-                        'content-type': 'application/text',
+                        'content-type': 'application/json',
                     },
-                    latestVersion
+                    `[
+                        {
+                            "tag_name": "v${latestVersion}"
+                        }
+                    ]`
                 );
 
                 server.addRequestHandler(
                     'GET',
-                    `/releases/${latestVersion}/omnisharp-${elem.platformId}${suffix}.zip`,
+                    `/releases/download/v${latestVersion}/omnisharp-${elem.platformId}${suffix}.zip`,
                     200,
                     {
                         'content-type': 'application/zip',

@@ -129,7 +129,7 @@ async function downloadFile(
             response.on('error', (err) => {
                 reject(
                     new NestedError(
-                        `Failed to download from ${urlString}. Error Message: ${err.message} || 'NONE'}`,
+                        `Failed to download from ${urlString}. Error Message: ${err.message || 'NONE'}`,
                         err
                     )
                 );

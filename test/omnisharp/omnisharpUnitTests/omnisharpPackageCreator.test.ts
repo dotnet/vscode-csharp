@@ -152,7 +152,7 @@ describe('GetOmnisharpPackage : Output package depends on the input package and 
             '1.1.1',
             installPath
         );
-        expect(resultPackage.url).toEqual('http://someurl/releases/1.1.1/omnisharp-os-architecture.zip');
+        expect(resultPackage.url).toEqual('http://someurl/releases/download/v1.1.1/omnisharp-os-architecture.zip');
     });
 
     test('Download url is calculated using server url and version (useFramework: false)', () => {
@@ -167,7 +167,7 @@ describe('GetOmnisharpPackage : Output package depends on the input package and 
             installPath
         );
         expect(resultPackage.url).toEqual(
-            `http://someurl/releases/1.1.1/omnisharp-os-architecture-net${modernNetVersion}.zip`
+            `http://someurl/releases/download/v1.1.1/omnisharp-os-architecture-net${modernNetVersion}.zip`
         );
     });
 });
