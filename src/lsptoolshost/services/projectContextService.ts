@@ -26,6 +26,7 @@ export class ProjectContextService {
         _vs_id: '',
         _vs_kind: '',
         _vs_label: '',
+        _vs_is_miscellaneous: false,
     };
 
     constructor(private _languageServer: RoslynLanguageServer, _languageServerEvents: LanguageServerEvents) {
