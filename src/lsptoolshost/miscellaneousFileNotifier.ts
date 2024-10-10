@@ -17,32 +17,33 @@ export function registerMiscellaneousFileNotifier(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer
 ) {
-    context.workspaceState.update(SuppressMiscellaneousFilesToastsOption, undefined);
-
     languageServer._projectContextService.onActiveFileContextChanged((e) => {
-        const hash = createHash(e.uri.toString(/*skipEncoding:*/ true));
-        if (NotifiedDocuments.has(hash)) {
-            return;
-        }
-
+        // Only warn for miscellaneous files when the workspace is fully initialized.
         if (!e.context._vs_is_miscellaneous || languageServer.state !== ServerState.ProjectInitializationComplete) {
             return;
         }
 
-        if (languageServerOptions.suppressMiscellaneousFilesToasts) {
+        // Check settings and workspaceState to see if we should suppress the toast.
+        if (
+            languageServerOptions.suppressMiscellaneousFilesToasts ||
+            context.workspaceState.get<boolean>(SuppressMiscellaneousFilesToastsOption, false)
+        ) {
             return;
         }
 
-        if (context.workspaceState.get<boolean>(SuppressMiscellaneousFilesToastsOption, false)) {
+        // Check to see if we have already notified the user about this document.
+        const hash = createHash(e.uri.toString(/*skipEncoding:*/ true));
+        if (NotifiedDocuments.has(hash)) {
             return;
+        } else {
+            NotifiedDocuments.add(hash);
         }
-
-        NotifiedDocuments.add(hash);
 
         const message = vscode.l10n.t(
             'The active document is not part of the open workspace. Not all language features will be available.'
         );
         const dismissItem = vscode.l10n.t('Dismiss');
+        // Provide the user a way to easily disable the toast without changing settings.
         const disableWorkspace: ActionOption = {
             title: vscode.l10n.t('Do not show for this workspace'),
             action: async () => {
