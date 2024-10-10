@@ -24,7 +24,6 @@ jobs:
   steps:
   - template: /azure-pipelines/test.yml@self
     parameters:
-      # Prefer the dotnet from the container.
-      installDotNet: false
+      installDotNet: true
       installAdditionalLinuxDependencies: true
       npmCommand: $(npmCommand)
