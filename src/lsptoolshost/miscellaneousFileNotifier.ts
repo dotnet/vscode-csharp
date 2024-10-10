@@ -4,24 +4,24 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import * as crypto from 'crypto';
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { ActionOption, showWarningMessage } from '../shared/observers/utils/showMessage';
 import { ServerState } from './serverStateChange';
-import path = require('path');
+import { languageServerOptions } from '../shared/options';
 
-const NotifyMiscellaneousFilesOption = 'dotnet.miscellaneousFilesNotification.enabled';
-const RecentlyNotifiedDocuments = new Set<vscode.Uri>();
-const CooldownTime = 60 * 1000;
+const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
+const NotifiedDocuments = new Set<string>();
 
 export function registerMiscellaneousFileNotifier(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer
 ) {
-    context.workspaceState.update(NotifyMiscellaneousFilesOption, undefined);
-    context.globalState.update(NotifyMiscellaneousFilesOption, undefined);
+    context.workspaceState.update(SuppressMiscellaneousFilesToastsOption, undefined);
 
     languageServer._projectContextService.onActiveFileContextChanged((e) => {
-        if (RecentlyNotifiedDocuments.has(e.uri)) {
+        const hash = createHash(e.uri.toString(/*skipEncoding:*/ true));
+        if (NotifiedDocuments.has(hash)) {
             return;
         }
 
@@ -29,37 +29,30 @@ export function registerMiscellaneousFileNotifier(
             return;
         }
 
-        if (!context.globalState.get<boolean>(NotifyMiscellaneousFilesOption, true)) {
+        if (languageServerOptions.suppressMiscellaneousFilesToasts) {
             return;
         }
 
-        if (!context.workspaceState.get<boolean>(NotifyMiscellaneousFilesOption, true)) {
+        if (context.workspaceState.get<boolean>(SuppressMiscellaneousFilesToastsOption, false)) {
             return;
         }
 
-        RecentlyNotifiedDocuments.add(e.uri);
+        NotifiedDocuments.add(hash);
 
         const message = vscode.l10n.t(
-            '{0} is not part of the open workspace. Not all language features will be available.',
-            path.basename(e.uri.fsPath)
+            'The active document is not part of the open workspace. Not all language features will be available.'
         );
         const dismissItem = vscode.l10n.t('Dismiss');
         const disableWorkspace: ActionOption = {
             title: vscode.l10n.t('Do not show for this workspace'),
             action: async () => {
-                context.workspaceState.update(NotifyMiscellaneousFilesOption, false);
+                context.workspaceState.update(SuppressMiscellaneousFilesToastsOption, true);
             },
         };
-        const disableGlobal: ActionOption = {
-            title: vscode.l10n.t('Do not show again'),
-            action: async () => {
-                context.globalState.update(NotifyMiscellaneousFilesOption, false);
-            },
-        };
-        showWarningMessage(vscode, message, disableWorkspace, disableGlobal, dismissItem);
-
-        setTimeout(() => {
-            RecentlyNotifiedDocuments.delete(e.uri);
-        }, CooldownTime);
+        showWarningMessage(vscode, message, dismissItem, disableWorkspace);
     });
+}
+
+function createHash(data: string): string {
+    return crypto.createHash('sha256').update(data).digest('hex');
 }

@@ -80,6 +80,7 @@ export interface LanguageServerOptions {
     readonly componentPaths: { [key: string]: string } | null;
     readonly enableXamlTools: boolean;
     readonly suppressLspErrorToasts: boolean;
+    readonly suppressMiscellaneousFilesToasts: boolean;
     readonly useServerGC: boolean;
 }
 
@@ -410,6 +411,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get suppressLspErrorToasts() {
         return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
+    }
+    public get suppressMiscellaneousFilesToasts() {
+        return readOption<boolean>('dotnet.server.suppressMiscellaneousFilesToasts', false);
     }
     public get useServerGC() {
         return readOption<boolean>('dotnet.server.useServerGC', true);
