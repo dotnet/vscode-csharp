@@ -68,6 +68,7 @@
   "configuration.dotnet.server.path": "서버(LSP 또는 O#) 실행 파일의 절대 경로를 지정합니다. 비어 있으면 C# 확장에 고정된 버전이 사용됩니다(이전 `omnisharp.path`).",
   "configuration.dotnet.server.startTimeout": "클라이언트가 언어 서버를 시작하고 연결하기 위한 시간 제한(밀리초)을 지정합니다.",
   "configuration.dotnet.server.suppressLspErrorToasts": "서버에서 복구 가능한 오류가 발생하는 경우 오류 알림이 표시되지 않도록 합니다.",
+  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suppress warning toasts from showing up if the active document is outside the open workspace.",
   "configuration.dotnet.server.trace": "언어 서버의 로깅 수준을 설정합니다.",
   "configuration.dotnet.server.useServerGC": ".NET 서버 가비지 수집을 사용하도록 언어 서버를 구성합니다.  서버 가비지 수집은 일반적으로 메모리 사용량이 많을수록 성능이 향상됩니다.",
   "configuration.dotnet.server.waitForDebugger": "디버거 연결을 허용하기 위해 서버를 시작할 때 --debug 플래그를 전달합니다(이전 `omnisharp.waitForDebugger`).",
