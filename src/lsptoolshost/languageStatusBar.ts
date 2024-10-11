@@ -11,18 +11,11 @@ import { ServerState } from './serverStateChange';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { RazorLanguage } from '../razor/src/razorLanguage';
 
-let currentServerState: ServerState = ServerState.Stopped;
-
 export function registerLanguageStatusItems(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     languageServerEvents: RoslynLanguageServerEvents
 ) {
-    // Track the current server state.
-    languageServerEvents.onServerStateChange((e) => {
-        currentServerState = e.state;
-    });
-
     // DevKit will provide an equivalent workspace status item.
     if (!getCSharpDevKit()) {
         WorkspaceStatus.createStatusItem(context, languageServerEvents);
@@ -85,13 +78,19 @@ class ProjectContextStatus {
 
             // Show a warning when the active file is part of the Miscellaneous File workspace and
             // project initialization is complete.
-            if (currentServerState === ServerState.ProjectInitializationComplete) {
+            if (languageServer.state === ServerState.ProjectInitializationComplete) {
                 item.severity = e.context._vs_is_miscellaneous
                     ? vscode.LanguageStatusSeverity.Warning
                     : vscode.LanguageStatusSeverity.Information;
             } else {
                 item.severity = vscode.LanguageStatusSeverity.Information;
             }
+
+            item.detail = e.context._vs_is_miscellaneous
+                ? vscode.l10n.t(
+                      'The active document is not part of the open workspace. Not all language features will be available.'
+                  )
+                : vscode.l10n.t('Active File Context');
         });
 
         // Trigger a refresh, but don't block creation on the refresh completing.

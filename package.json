@@ -1479,6 +1479,11 @@
             "default": false,
             "description": "%configuration.dotnet.server.suppressLspErrorToasts%"
           },
+          "dotnet.server.suppressMiscellaneousFilesToasts": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.server.suppressMiscellaneousFilesToasts%"
+          },
           "dotnet.server.useServerGC": {
             "type": "boolean",
             "default": true,

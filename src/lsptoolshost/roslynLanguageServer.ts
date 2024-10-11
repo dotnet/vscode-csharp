@@ -75,6 +75,7 @@ import {
     showInformationMessage,
 } from '../shared/observers/utils/showMessage';
 import { registerSourceGeneratedFilesContentProvider } from './sourceGeneratedFilesContentProvider';
+import { registerMiscellaneousFileNotifier } from './miscellaneousFileNotifier';
 
 let _channel: vscode.OutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -115,8 +116,10 @@ export class RoslynLanguageServer {
 
     public readonly _onAutoInsertFeature: OnAutoInsertFeature;
 
-    public _buildDiagnosticService: BuildDiagnosticsService;
-    public _projectContextService: ProjectContextService;
+    public readonly _buildDiagnosticService: BuildDiagnosticsService;
+    public readonly _projectContextService: ProjectContextService;
+
+    private _state: ServerState = ServerState.Stopped;
 
     constructor(
         private _languageClient: RoslynLanguageClient,
@@ -129,6 +132,7 @@ export class RoslynLanguageServer {
         this.registerSendOpenSolution();
         this.registerProjectInitialization();
         this.registerServerStateChanged();
+        this.registerServerStateTracking();
         this.registerReportProjectConfiguration();
         this.registerExtensionsChanged();
         this.registerTelemetryChanged();
@@ -149,6 +153,10 @@ export class RoslynLanguageServer {
         registerOnAutoInsert(this, this._languageClient);
 
         this._onAutoInsertFeature = new OnAutoInsertFeature(this._languageClient);
+    }
+
+    public get state(): ServerState {
+        return this._state;
     }
 
     private registerSetTrace() {
@@ -176,6 +184,12 @@ export class RoslynLanguageServer {
                     workspaceLabel: vscode.l10n.t('Server stopped'),
                 });
             }
+        });
+    }
+
+    private registerServerStateTracking() {
+        this._languageServerEvents.onServerStateChange((e) => {
+            this._state = e.state;
         });
     }
 
@@ -1053,6 +1067,7 @@ export async function activateRoslynLanguageServer(
     );
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
+    registerMiscellaneousFileNotifier(context, languageServer);
     registerCopilotExtension(languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
