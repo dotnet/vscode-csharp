@@ -17,6 +17,7 @@ export interface VSProjectContext {
     _vs_label: string;
     _vs_id: string;
     _vs_kind: string;
+    _vs_is_miscellaneous: boolean;
 }
 
 export interface VSTextDocumentIdentifier extends lsp.TextDocumentIdentifier {

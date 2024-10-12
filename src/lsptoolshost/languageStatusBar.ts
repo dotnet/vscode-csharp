@@ -44,6 +44,8 @@ class WorkspaceStatus {
 
         const item = vscode.languages.createLanguageStatusItem('csharp.workspaceStatus', documentSelector);
         item.name = vscode.l10n.t('C# Workspace Status');
+        item.severity = vscode.LanguageStatusSeverity.Error;
+        item.command = openSolutionCommand;
         context.subscriptions.push(item);
 
         languageServerEvents.onServerStateChange((e) => {
@@ -51,7 +53,7 @@ class WorkspaceStatus {
             item.busy = e.state === ServerState.ProjectInitializationStarted;
             item.severity =
                 e.state === ServerState.Stopped
-                    ? vscode.LanguageStatusSeverity.Warning
+                    ? vscode.LanguageStatusSeverity.Error
                     : vscode.LanguageStatusSeverity.Information;
             item.command = e.state === ServerState.Stopped ? restartServerCommand : openSolutionCommand;
         });
@@ -73,6 +75,22 @@ class ProjectContextStatus {
 
         projectContextService.onActiveFileContextChanged((e) => {
             item.text = e.context._vs_label;
+
+            // Show a warning when the active file is part of the Miscellaneous File workspace and
+            // project initialization is complete.
+            if (languageServer.state === ServerState.ProjectInitializationComplete) {
+                item.severity = e.context._vs_is_miscellaneous
+                    ? vscode.LanguageStatusSeverity.Warning
+                    : vscode.LanguageStatusSeverity.Information;
+            } else {
+                item.severity = vscode.LanguageStatusSeverity.Information;
+            }
+
+            item.detail = e.context._vs_is_miscellaneous
+                ? vscode.l10n.t(
+                      'The active document is not part of the open workspace. Not all language features will be available.'
+                  )
+                : vscode.l10n.t('Active File Context');
         });
 
         // Trigger a refresh, but don't block creation on the refresh completing.

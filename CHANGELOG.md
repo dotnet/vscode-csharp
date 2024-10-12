@@ -3,7 +3,18 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# Latest
+# 2.52.x
+* Add  miscellaneous file open notifications  (PR: [#7652](https://github.com/dotnet/vscode-csharp/pull/7652))
+* Require at least version 8.0.10 of the .net runtime (PR: [#7651](https://github.com/dotnet/vscode-csharp/pull/7651))
+* Warn when the active file is not part of the open workspace (PR: [#7628](https://github.com/dotnet/vscode-csharp/pull/7628))
+* Update debugger to 2.52.0 (PR: [#7648](https://github.com/dotnet/vscode-csharp/pull/7648))
+* Ensure Razor is initialized when project loaded outside of the workspace (PR: [#7645](https://github.com/dotnet/vscode-csharp/pull/7645))
+* Update Roslyn to 4.13.0-1.24511.1 (PR: [#7628](https://github.com/dotnet/vscode-csharp/pull/7628))
+  * Add a WorkspaceKind property to ProjectContext. (PR: [#75384](https://github.com/dotnet/roslyn/pull/75384))
+  * Convert more lambda rude edits to runtime rude edits (PR: [#75285](https://github.com/dotnet/roslyn/pull/75285))
+* Bumped xamlTools to 17.12.35403.211 (PR: [#7629](https://github.com/dotnet/vscode-csharp/pull/7629))
+
+# 2.51.17
 * Update Roslyn to 4.13.0-1.24503.11 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
   * LSP hover responses escape backticks within inline code (PR: [#75364](https://github.com/dotnet/roslyn/pull/75364))
   * Localize build host message output (PR: [#74910](https://github.com/dotnet/roslyn/pull/74910))
@@ -24,7 +35,7 @@
   * Fix `FormattingContext` disposal (PR: [#10887](https://github.com/dotnet/razor/pull/10887))
   * Fix #10891 - Formatting does not respect indentation within Razor comment blocks (PR: [#10893](https://github.com/dotnet/razor/pull/10893))
 
-# 2.50.x
+# 2.50.25
 * Update Roslyn to 4.13.0-1.24477.2 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
   * Use MSBuild globs to determine which file changes are relevant (PR: [#75139](https://github.com/dotnet/roslyn/pull/75139))
   * Allow <code> in DocComments to render as a block in Hover response (PR: [#75215](https://github.com/dotnet/roslyn/pull/75215))
@@ -34,7 +45,7 @@
 * Support copilot registerRelatedFilesProvider API (PR: [#7605](https://github.com/dotnet/vscode-csharp/pull/7605))
 * Update Debugger packages to v2.50.0 (PR: [#7597](https://github.com/dotnet/vscode-csharp/pull/7597))
 
-# 2.49.x
+# 2.49.25
 * Update Razor to 9.0.0-preview.24467.1
   * Fix LF line-ending auto format bug (PR: [#10802](https://github.com/dotnet/razor/pull/10802))
 * Bumped xamltools to 17.12.35319.159 (PR: [#7583](https://github.com/dotnet/vscode-csharp/pull/7583))
@@ -45,7 +56,7 @@
   * Do not attempt to report EnC diagnostics for non-host workspaces (PR: [#75138](https://github.com/dotnet/roslyn/pull/75138))
   * Allow Razor to get diagnostics for cohosting (PR: [#75102](https://github.com/dotnet/roslyn/pull/75102))
 Í
-# 2.48.x
+# 2.48.31
 * Add signing support to VSIX (PR: [#7490](https://github.com/dotnet/vscode-csharp/pull/7490))
 * Update Debugger to v2.47.0 (PR: [#7547](https://github.com/dotnet/vscode-csharp/pull/7547))
   * Adds in support for .NET 9 Break for Async User-Unhandled
@@ -62,14 +73,14 @@
 * Bump xamltools to 17.12.35311.18 (PR: [#7549](https://github.com/dotnet/vscode-csharp/pull/7549))
   * XAML color swatches
 
-# 2.47.x
+# 2.47.21
 * Update Roslyn to 4.12.0-3.24456.2 (PR: [#7525](https://github.com/dotnet/vscode-csharp/pull/7525))
   * Avoid BuildHost crash in Mono due to missing types (PR: [#74994](https://github.com/dotnet/roslyn/pull/74994))
 * Turn off word suggestions in XAML completions (PR: [#7516](https://github.com/dotnet/vscode-csharp/pull/7516))
 * Bump xamltools to 17.12.35305.252 (PR: [#7521](https://github.com/dotnet/vscode-csharp/pull/7521))
   * XAML editor enabled various lightbulbs related to x:DataType, BindingContext and Bindings.
 
-# 2.46.x
+# 2.46.32
 * Update Roslyn to 4.12.0-3.24430.2 (PR: [#7496](https://github.com/dotnet/vscode-csharp/pull/7496))
 * Bump Razor to 9.0.0-preview.24427.2  (PR: [#7471](https://github.com/dotnet/vscode-csharp/pull/7471))
   * Suppress unique ids (#10791) (PR: [#10791](https://github.com/dotnet/razor/pull/10791))
