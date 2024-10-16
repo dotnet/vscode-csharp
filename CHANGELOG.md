@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
-* Update razor to 9.0.0-preview.24516.1 (PR: [#]())
+* Update razor to 9.0.0-preview.24516.1 (PR: [#7667](https://github.com/dotnet/vscode-csharp/pull/7667))
     * Add CLaSP Request Tracking (PR: [#11015](https://github.com/dotnet/razor/pull/11015))
     * Fix potentially ambiguous System.Object in _Imports.razor (PR: [#10999](https://github.com/dotnet/razor/pull/10999))
     * Fix nullability to match specification (PR: [#11003](https://github.com/dotnet/razor/pull/11003))
