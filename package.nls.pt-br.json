@@ -68,7 +68,7 @@
   "configuration.dotnet.server.path": "Especifica o caminho absoluto para o executável do servidor (LSP ou O#). Quando deixado em branco, a versão fixada na extensão C# é usada. (Anteriormente `omnisharp.path`)",
   "configuration.dotnet.server.startTimeout": "Especifica um tempo limite (em ms) para o cliente iniciar e conectar-se com êxito ao servidor de idioma.",
   "configuration.dotnet.server.suppressLspErrorToasts": "Suprime a exibição de notificações do erro se o servidor encontrar um erro recuperável.",
-  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suppress warning toasts from showing up if the active document is outside the open workspace.",
+  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suprima a exibição de notificações de aviso do sistema se o documento ativo estiver fora do workspace aberto.",
   "configuration.dotnet.server.trace": "Define o nível de log para o servidor de idiomas",
   "configuration.dotnet.server.useServerGC": "Configure o servidor de linguagem para usar a coleta de lixo do servidor do .NET.  A coleta de lixo do servidor geralmente fornece um melhor desempenho às custas de um consumo de memória mais alto.",
   "configuration.dotnet.server.waitForDebugger": "Passa o sinalizador --debug ao iniciar o servidor para permitir que um depurador seja anexado. (Anteriormente `omnisharp.waitForDebugger`)",

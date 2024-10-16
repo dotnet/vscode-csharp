@@ -42,7 +42,7 @@
   "Description of the problem": "Описание проблемы",
   "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?": "Обнаружено изменение параметров телеметрии. Они вступят в силу только после перезапуска языкового сервера. Выполнить перезапуск?",
   "Disable message in settings": "Отключить сообщение в параметрах",
-  "Dismiss": "Dismiss",
+  "Dismiss": "Отклонить",
   "Do not load any": "Не загружать",
   "Do not show for this workspace": "Do not show for this workspace",
   "Does not contain .NET Core projects.": "Не содержит проектов .NET Core.",

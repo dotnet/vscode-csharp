@@ -42,7 +42,7 @@
   "Description of the problem": "問題の説明",
   "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?": "テレメトリ設定の変更が検出されました。言語サーバーが再起動されるまで、これらは有効になりません。再起動しますか?",
   "Disable message in settings": "設定でメッセージを無効にする",
-  "Dismiss": "Dismiss",
+  "Dismiss": "無視",
   "Do not load any": "何も読み込まない",
   "Do not show for this workspace": "Do not show for this workspace",
   "Does not contain .NET Core projects.": ".NET Core プロジェクトが含まれていません。",
