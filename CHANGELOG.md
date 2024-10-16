@@ -12,7 +12,7 @@
 * Update Roslyn to 4.13.0-1.24511.1 (PR: [#7628](https://github.com/dotnet/vscode-csharp/pull/7628))
   * Add a WorkspaceKind property to ProjectContext. (PR: [#75384](https://github.com/dotnet/roslyn/pull/75384))
   * Convert more lambda rude edits to runtime rude edits (PR: [#75285](https://github.com/dotnet/roslyn/pull/75285))
-* Bumped xamlTools to 17.12.35403.211 (PR: [#7629](https://github.com/dotnet/vscode-csharp/pull/7629))
+* Bumped xamlTools to 17.13.35414.86 (PR: [#7664](https://github.com/dotnet/vscode-csharp/pull/7664))
 
 # 2.51.17
 * Update Roslyn to 4.13.0-1.24503.11 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
