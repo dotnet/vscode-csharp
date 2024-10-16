@@ -3,6 +3,21 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Latest
+* Update razor to 9.0.0-preview.24516.1 (PR: [#]())
+    * Add CLaSP Request Tracking (PR: [#11015](https://github.com/dotnet/razor/pull/11015))
+    * Fix potentially ambiguous System.Object in _Imports.razor (PR: [#10999](https://github.com/dotnet/razor/pull/10999))
+    * Fix nullability to match specification (PR: [#11003](https://github.com/dotnet/razor/pull/11003))
+    * Recognize `_Imports.razor` in the source generator (PR: [#10992](https://github.com/dotnet/razor/pull/10992))
+    * Fix @inherits mapping for fuse (PR: [#10985](https://github.com/dotnet/razor/pull/10985))
+    * Fix project publish (or: Various project system fixes) (PR: [#10983](https://github.com/dotnet/razor/pull/10983))
+    * Emit and map empty csharp tokens (PR: [#10969](https://github.com/dotnet/razor/pull/10969))
+    * Fix Generate Event Handler code action (PR: [#10967](https://github.com/dotnet/razor/pull/10967))
+    * Add IProjectSnapshot.ContainsDocument to test document paths cheaply (PR: [#10975](https://github.com/dotnet/razor/pull/10975))
+    * Refresh diagnostics on project changes (PR: [#10964](https://github.com/dotnet/razor/pull/10964))
+    * Don't throw if we get an old/bad Inlay Hint request (PR: [#10968](https://github.com/dotnet/razor/pull/10968))
+    * Fix on type formatting (PR: [#10949](https://github.com/dotnet/razor/pull/10949))
+
 # 2.52.x
 * Add  miscellaneous file open notifications  (PR: [#7652](https://github.com/dotnet/vscode-csharp/pull/7652))
 * Require at least version 8.0.10 of the .net runtime (PR: [#7651](https://github.com/dotnet/vscode-csharp/pull/7651))
