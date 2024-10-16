@@ -18,8 +18,12 @@ export function registerMiscellaneousFileNotifier(
     languageServer: RoslynLanguageServer
 ) {
     languageServer._projectContextService.onActiveFileContextChanged((e) => {
-        // Only warn for miscellaneous files when the workspace is fully initialized.
-        if (!e.context._vs_is_miscellaneous || languageServer.state !== ServerState.ProjectInitializationComplete) {
+        // Only warn for C# miscellaneous files when the workspace is fully initialized.
+        if (
+            e.languageId !== 'csharp' ||
+            !e.context._vs_is_miscellaneous ||
+            languageServer.state !== ServerState.ProjectInitializationComplete
+        ) {
             return;
         }
 

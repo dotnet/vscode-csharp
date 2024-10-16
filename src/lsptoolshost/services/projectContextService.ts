@@ -12,6 +12,7 @@ import { LanguageServerEvents } from '../languageServerEvents';
 import { ServerState } from '../serverStateChange';
 
 export interface ProjectContextChangeEvent {
+    languageId: string;
     uri: vscode.Uri;
     context: VSProjectContext;
 }
@@ -57,17 +58,18 @@ export class ProjectContextService {
         const uri = textEditor!.document.uri;
 
         if (!this._languageServer.isRunning()) {
-            this._contextChangeEmitter.fire({ uri, context: this._emptyProjectContext });
+            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext });
             return;
         }
 
         const contextList = await this.getProjectContexts(uri, this._source.token);
         if (!contextList) {
+            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext });
             return;
         }
 
         const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
-        this._contextChangeEmitter.fire({ uri, context });
+        this._contextChangeEmitter.fire({ languageId, uri, context });
     }
 
     private async getProjectContexts(
