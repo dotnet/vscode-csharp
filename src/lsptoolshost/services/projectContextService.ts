@@ -10,11 +10,9 @@ import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../uriConverter';
 import { LanguageServerEvents } from '../languageServerEvents';
 import { ServerState } from '../serverStateChange';
-import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileInfoHandler';
-import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideDynamicFileResponse';
-import { ProvideDynamicFileParams } from '../../razor/src/dynamicFile/provideDynamicFileParams';
 
 export interface ProjectContextChangeEvent {
+    languageId: string;
     uri: vscode.Uri;
     context: VSProjectContext;
 }
@@ -57,44 +55,21 @@ export class ProjectContextService {
         this._source.cancel();
         this._source = new vscode.CancellationTokenSource();
 
-        let uri = textEditor!.document.uri;
+        const uri = textEditor!.document.uri;
 
         if (!this._languageServer.isRunning()) {
-            this._contextChangeEmitter.fire({ uri, context: this._emptyProjectContext });
+            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext });
             return;
-        }
-
-        // If the active document is a Razor file, we need to map it back to a C# file.
-        if (languageId === 'aspnetcorerazor') {
-            const virtualUri = await this.getVirtualCSharpUri(uri);
-            if (!virtualUri) {
-                return;
-            }
-
-            uri = virtualUri;
         }
 
         const contextList = await this.getProjectContexts(uri, this._source.token);
         if (!contextList) {
+            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext });
             return;
         }
 
         const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
-        this._contextChangeEmitter.fire({ uri, context });
-    }
-
-    private async getVirtualCSharpUri(uri: vscode.Uri): Promise<vscode.Uri | undefined> {
-        const response = await vscode.commands.executeCommand<ProvideDynamicFileResponse>(
-            DynamicFileInfoHandler.provideDynamicFileInfoCommand,
-            new ProvideDynamicFileParams({ uri: UriConverter.serialize(uri) })
-        );
-
-        const responseUri = response.csharpDocument?.uri;
-        if (!responseUri) {
-            return undefined;
-        }
-
-        return UriConverter.deserialize(responseUri);
+        this._contextChangeEmitter.fire({ languageId, uri, context });
     }
 
     private async getProjectContexts(
