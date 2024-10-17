@@ -42,7 +42,7 @@
   "Description of the problem": "Sorunun açıklaması",
   "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?": "Telemetri ayarlarında değişiklik algılandı. Bunlar dil sunucusu yeniden başlatılana kadar etkili olmayacaktır, yeniden başlatmak ister misiniz?",
   "Disable message in settings": "Ayarlarda iletiyi devre dışı bırakma",
-  "Dismiss": "Dismiss",
+  "Dismiss": "Kapat",
   "Do not load any": "Hiçbir şey yükleme",
   "Do not show for this workspace": "Do not show for this workspace",
   "Does not contain .NET Core projects.": ".NET Core projeleri içermiyor.",
