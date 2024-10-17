@@ -30,7 +30,6 @@
   * Convert more lambda rude edits to runtime rude edits (PR: [#75285](https://github.com/dotnet/roslyn/pull/75285))
 * Bumped xamlTools to 17.12.35403.211 (PR: [#7629](https://github.com/dotnet/vscode-csharp/pull/7629))
 
-
 # 2.51.17
 * Update Roslyn to 4.13.0-1.24503.11 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
   * LSP hover responses escape backticks within inline code (PR: [#75364](https://github.com/dotnet/roslyn/pull/75364))
