@@ -42,7 +42,7 @@
   "Description of the problem": "Popis problému",
   "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?": "Zjistila se změna v nastavení telemetrie. Tyto změny se projeví až po restartování jazykového serveru. Chcete ho restartovat?",
   "Disable message in settings": "Zakázat zprávu v nastavení",
-  "Dismiss": "Dismiss",
+  "Dismiss": "Zrušit",
   "Do not load any": "Nic nenačítat",
   "Do not show for this workspace": "Do not show for this workspace",
   "Does not contain .NET Core projects.": "Neobsahuje projekty .NET Core.",
