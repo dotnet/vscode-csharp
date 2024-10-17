@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Bumped xamlTools to 17.13.35414.86 (PR: [#7664](https://github.com/dotnet/vscode-csharp/pull/7664))
 * Update razor to 9.0.0-preview.24516.1 (PR: [#7667](https://github.com/dotnet/vscode-csharp/pull/7667))
     * Add CLaSP Request Tracking (PR: [#11015](https://github.com/dotnet/razor/pull/11015))
     * Fix potentially ambiguous System.Object in _Imports.razor (PR: [#10999](https://github.com/dotnet/razor/pull/10999))
@@ -27,7 +28,8 @@
 * Update Roslyn to 4.13.0-1.24511.1 (PR: [#7628](https://github.com/dotnet/vscode-csharp/pull/7628))
   * Add a WorkspaceKind property to ProjectContext. (PR: [#75384](https://github.com/dotnet/roslyn/pull/75384))
   * Convert more lambda rude edits to runtime rude edits (PR: [#75285](https://github.com/dotnet/roslyn/pull/75285))
-* Bumped xamlTools to 17.13.35414.86 (PR: [#7664](https://github.com/dotnet/vscode-csharp/pull/7664))
+* Bumped xamlTools to 17.12.35403.211 (PR: [#7629](https://github.com/dotnet/vscode-csharp/pull/7629))
+
 
 # 2.51.17
 * Update Roslyn to 4.13.0-1.24503.11 (PR: [#7618](https://github.com/dotnet/vscode-csharp/pull/7618))
