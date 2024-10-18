@@ -102,7 +102,7 @@ export async function restartLanguageServer(): Promise<void> {
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {
-    return isGivenSln(workspace, 'BasicRazorApp2_1');
+    return isGivenSln(workspace, 'RazorApp');
 }
 
 export function isSlnWithGenerator(workspace: typeof vscode.workspace) {

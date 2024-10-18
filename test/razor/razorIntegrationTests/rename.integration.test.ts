@@ -41,7 +41,7 @@ describe(`Razor Rename ${testAssetWorkspace.description}`, function () {
                 'vscode.executeDocumentRenameProvider',
                 activeDocument,
                 new vscode.Position(11, 20),
-                'message2'
+                'newName'
             )
         );
 
@@ -55,11 +55,15 @@ describe(`Razor Rename ${testAssetWorkspace.description}`, function () {
         expect(edits.length).toBe(3);
 
         const edit1 = edits[0];
-        expect(edit1.range).toStrictEqual(new vscode.Range(new vscode.Position(3, 15), new vscode.Position(3, 15)));
-        expect(edit1.newText).toBe('2');
+        expect(edit1.range).toStrictEqual(new vscode.Range(new vscode.Position(6, 33), new vscode.Position(6, 45)));
+        expect(edit1.newText).toBe('newName');
 
         const edit2 = edits[1];
-        expect(edit2.range).toStrictEqual(new vscode.Range(new vscode.Position(6, 13), new vscode.Position(6, 13)));
-        expect(edit2.newText).toBe('2');
+        expect(edit2.range).toStrictEqual(new vscode.Range(new vscode.Position(11, 16), new vscode.Position(11, 28)));
+        expect(edit2.newText).toBe('newName');
+
+        const edit3 = edits[2];
+        expect(edit3.range).toStrictEqual(new vscode.Range(new vscode.Position(15, 8), new vscode.Position(15, 20)));
+        expect(edit3.newText).toBe('newName');
     });
 });
