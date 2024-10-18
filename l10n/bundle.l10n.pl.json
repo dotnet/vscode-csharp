@@ -42,7 +42,7 @@
   "Description of the problem": "Opis problemu",
   "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?": "Wykryto zmianę ustawień telemetrii. Te zmiany zaczną obowiązywać dopiero po ponownym uruchomieniu serwera językowego. Czy chcesz ponownie uruchomić?",
   "Disable message in settings": "Wyłącz komunikat w ustawieniach",
-  "Dismiss": "Dismiss",
+  "Dismiss": "Odrzuć",
   "Do not load any": "Nie ładuj żadnych",
   "Do not show for this workspace": "Do not show for this workspace",
   "Does not contain .NET Core projects.": "Nie zawiera projektów platformy .NET Core.",

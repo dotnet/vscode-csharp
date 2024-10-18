@@ -3,6 +3,27 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Latest
+* Update Roslyn to 4.13.0-1.24518.1 (PR: [#7670](https://github.com/dotnet/vscode-csharp/pull/7670))
+  * Fix issue where server sometimes crashed when saving new C# file for the first time (PR: [#75509](https://github.com/dotnet/roslyn/pull/75509))
+  * Report LSP loading telemetry (PR: [#75402](https://github.com/dotnet/roslyn/pull/75402))
+* Bumped xamlTools to 17.13.35414.86 (PR: [#7664](https://github.com/dotnet/vscode-csharp/pull/7664))
+* Escape code block in changelog (PR: [#7665](https://github.com/dotnet/vscode-csharp/pull/7665))
+* Lookup Razor file context using its document uri. (PR: [#7663](https://github.com/dotnet/vscode-csharp/pull/7663))
+* Update razor to 9.0.0-preview.24516.1 (PR: [#7667](https://github.com/dotnet/vscode-csharp/pull/7667))
+    * Add CLaSP Request Tracking (PR: [#11015](https://github.com/dotnet/razor/pull/11015))
+    * Fix potentially ambiguous System.Object in _Imports.razor (PR: [#10999](https://github.com/dotnet/razor/pull/10999))
+    * Fix nullability to match specification (PR: [#11003](https://github.com/dotnet/razor/pull/11003))
+    * Recognize `_Imports.razor` in the source generator (PR: [#10992](https://github.com/dotnet/razor/pull/10992))
+    * Fix @inherits mapping for fuse (PR: [#10985](https://github.com/dotnet/razor/pull/10985))
+    * Fix project publish (or: Various project system fixes) (PR: [#10983](https://github.com/dotnet/razor/pull/10983))
+    * Emit and map empty csharp tokens (PR: [#10969](https://github.com/dotnet/razor/pull/10969))
+    * Fix Generate Event Handler code action (PR: [#10967](https://github.com/dotnet/razor/pull/10967))
+    * Add IProjectSnapshot.ContainsDocument to test document paths cheaply (PR: [#10975](https://github.com/dotnet/razor/pull/10975))
+    * Refresh diagnostics on project changes (PR: [#10964](https://github.com/dotnet/razor/pull/10964))
+    * Don't throw if we get an old/bad Inlay Hint request (PR: [#10968](https://github.com/dotnet/razor/pull/10968))
+    * Fix on type formatting (PR: [#10949](https://github.com/dotnet/razor/pull/10949))
+
 # 2.52.x
 * Add  miscellaneous file open notifications  (PR: [#7652](https://github.com/dotnet/vscode-csharp/pull/7652))
 * Require at least version 8.0.10 of the .net runtime (PR: [#7651](https://github.com/dotnet/vscode-csharp/pull/7651))
@@ -38,7 +59,7 @@
 # 2.50.25
 * Update Roslyn to 4.13.0-1.24477.2 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
   * Use MSBuild globs to determine which file changes are relevant (PR: [#75139](https://github.com/dotnet/roslyn/pull/75139))
-  * Allow <code> in DocComments to render as a block in Hover response (PR: [#75215](https://github.com/dotnet/roslyn/pull/75215))
+  * Allow `<code>` in DocComments to render as a block in Hover response (PR: [#75215](https://github.com/dotnet/roslyn/pull/75215))
   * Ignore irrelevant exceptions when reporting LSP server NFW (PR: [#75150](https://github.com/dotnet/roslyn/pull/75150))
 * Bumped xamltools to 17.12.35326.17 (PR: [#7610](https://github.com/dotnet/vscode-csharp/pull/7610))
 * Do not remove documents if they are not files (PR: [#7607](https://github.com/dotnet/vscode-csharp/pull/7607))
