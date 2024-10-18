@@ -68,7 +68,7 @@
   "configuration.dotnet.server.path": "Gibt den absoluten Pfad zur ausführbaren Serverdatei (LSP oder O#) an. Wenn sie leer gelassen wird, wird die an die C#-Erweiterung angeheftete Version verwendet. (Zuvor \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "Gibt ein Timeout (in ms) an, mit dem der Client erfolgreich gestartet und eine Verbindung mit dem Sprachserver hergestellt werden kann.",
   "configuration.dotnet.server.suppressLspErrorToasts": "Unterdrückt, dass Fehler-Popups angezeigt werden, wenn auf dem Server ein wiederherstellbarer Fehler auftritt.",
-  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suppress warning toasts from showing up if the active document is outside the open workspace.",
+  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Hiermit wird die Anzeige von Popupwarnungen unterdrückt, wenn sich das aktive Dokument außerhalb des geöffneten Arbeitsbereichs befindet.",
   "configuration.dotnet.server.trace": "Legt den Protokolliergrad für den Sprachserver fest.",
   "configuration.dotnet.server.useServerGC": "Konfigurieren Sie den Sprachserver für die Verwendung der GC des .NET-Servers.  Die GC auf dem Server bietet im Allgemeinen eine bessere Leistung bei einem höheren Arbeitsspeicherverbrauch.",
   "configuration.dotnet.server.waitForDebugger": "Übergibt das Flag \"--debug\" beim Starten des Servers, damit ein Debugger angefügt werden kann. (Zuvor \"omnisharp.waitForDebugger\")",
