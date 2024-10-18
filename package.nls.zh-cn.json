@@ -68,7 +68,7 @@
   "configuration.dotnet.server.path": "指定服务器(LSP 或 O#)可执行文件的绝对路径。如果留空，会使用固定到 C# 扩展的版本。(之前为 \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "为客户端指定一个超时 (以毫秒为单位)，以成功启动并连接到语言服务器。",
   "configuration.dotnet.server.suppressLspErrorToasts": "当服务器遇到可恢复错误时，禁止显示错误 toast。",
-  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suppress warning toasts from showing up if the active document is outside the open workspace.",
+  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "如果活动文档在打开的工作区之外，则禁止显示警告 toast。",
   "configuration.dotnet.server.trace": "设置语言服务器的日志记录级别",
   "configuration.dotnet.server.useServerGC": "将语言服务器配置为使用 .NET 服务器垃圾回收。服务器垃圾回收在提供更好的性能时通常需要消耗更多内存。",
   "configuration.dotnet.server.waitForDebugger": "启动服务器时传递 --debug 标志，以允许附加调试器。(之前为 \"omnisharp.waitForDebugger\")",

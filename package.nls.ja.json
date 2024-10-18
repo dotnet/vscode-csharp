@@ -68,7 +68,7 @@
   "configuration.dotnet.server.path": "サーバー (LSP または O#) 実行可能ファイルに絶対パスを指定します。空のままにすると、C# 拡張機能にピン留めされたバージョンが使用されます。(以前の `omnisharp.path`)",
   "configuration.dotnet.server.startTimeout": "クライアントが正常に起動して言語サーバーに接続するためのタイムアウト (ミリ秒) を指定します。",
   "configuration.dotnet.server.suppressLspErrorToasts": "サーバーで回復可能なエラーが発生した場合に、エラー トーストが表示されないようにします。",
-  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suppress warning toasts from showing up if the active document is outside the open workspace.",
+  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "開いているワークスペースに属さないドキュメントがアクティブである場合に、警告トーストを表示しないようにします。",
   "configuration.dotnet.server.trace": "言語サーバーのログ記録レベルを設定する",
   "configuration.dotnet.server.useServerGC": ".NET サーバーのガベージ コレクションを使用するように言語サーバーを構成します。サーバー GC は一般に、メモリ消費量が高いことをコストにパフォーマンスを向上させます。",
   "configuration.dotnet.server.waitForDebugger": "デバッガーのアタッチを許可するために、サーバーを起動するときに --debug フラグを渡します。(以前の `omnisharp.waitForDebugger`)",

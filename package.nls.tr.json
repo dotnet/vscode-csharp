@@ -68,7 +68,7 @@
   "configuration.dotnet.server.path": "Sunucunun (LSP veya O#) yürütülebilir dosyasının mutlak yolunu belirtir. Boş bırakıldığında C# Uzantısına sabitlenen sürüm kullanılır. (Önceden 'omnisharp.path')",
   "configuration.dotnet.server.startTimeout": "İstemcinin başarılı bir şekilde başlatılması ve dil sunucusuna bağlanması için zaman aşımını (ms cinsinden) belirtir.",
   "configuration.dotnet.server.suppressLspErrorToasts": "Sunucu kurtarılabilir bir hatayla karşılaştığında hata bildirimlerinin görünmesini engeller.",
-  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suppress warning toasts from showing up if the active document is outside the open workspace.",
+  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Etkin belge açık çalışma alanının dışındaysa, uyarı bildirimlerini göstermeyi durdur.",
   "configuration.dotnet.server.trace": "Dil sunucusu için günlük düzeyini ayarlar",
   "configuration.dotnet.server.useServerGC": "Dil sunucusunu .NET sunucusu atık toplamayı kullanmak üzere yapılandırın.  Sunucu atık toplama, genellikle yüksek bellek tüketimi pahasına daha iyi performans sağlar.",
   "configuration.dotnet.server.waitForDebugger": "Bir hata ayıklayıcının eklenmesine izin vermek için sunucuyu başlatırken --debug bayrağını iletir. (Önceden 'omnisharp.waitForDebugger')",
