@@ -75,7 +75,7 @@ function createIntegrationTestSubTasks() {
         gulp.series(integrationTestProjects.map((projectName) => `test:integration:devkit:${projectName}`))
     );
 
-    const razorIntegrationTestProjects = ['BasicRazorApp2_1'];
+    const razorIntegrationTestProjects = ['RazorApp'];
     for (const projectName of razorIntegrationTestProjects) {
         gulp.task(`test:razorintegration:${projectName}`, async () =>
             runIntegrationTest(
@@ -102,12 +102,7 @@ function createOmniSharpTestSubTasks() {
         await runJestTest(jestOmniSharpUnitTestProjectName);
     });
 
-    const omnisharpIntegrationTestProjects = [
-        'singleCsproj',
-        'slnWithCsproj',
-        'slnFilterWithCsproj',
-        'BasicRazorApp2_1',
-    ];
+    const omnisharpIntegrationTestProjects = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'RazorApp'];
 
     for (const projectName of omnisharpIntegrationTestProjects) {
         gulp.task(`omnisharptest:integration:${projectName}:stdio`, async () =>
