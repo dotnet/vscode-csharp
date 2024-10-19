@@ -50,8 +50,8 @@ describe(`Razor Rename ${testAssetWorkspace.description}`, function () {
         const entries = workspaceEdit.entries();
         expect(entries.length).toBe(1);
 
-        const [uri1, edits] = entries[0];
-        expect(uri1).toStrictEqual(activeDocument);
+        const [uri, edits] = entries[0];
+        expect(uri.path).toStrictEqual(activeDocument.path);
         expect(edits.length).toBe(3);
 
         const edit1 = edits[0];
