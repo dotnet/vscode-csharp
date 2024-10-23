@@ -95,20 +95,19 @@ export async function activate(
             requiredDotnetRuntimeExtensionVersion,
             dotnetRuntimeExtensionId
         );
-        await vscode.window.showErrorMessage(prompt, button).then(async (selection) => {
-            if (selection === button) {
-                await vscode.commands.executeCommand('workbench.extensions.installExtension', dotnetRuntimeExtensionId);
-                await vscode.commands.executeCommand('workbench.action.reloadWindow');
-            } else {
-                throw new Error(
-                    vscode.l10n.t(
-                        'Version {0} of the .NET Install Tool ({2}) was not found, will not activate.',
-                        requiredDotnetRuntimeExtensionVersion,
-                        dotnetRuntimeExtensionId
-                    )
-                );
-            }
-        });
+        const selection = await vscode.window.showErrorMessage(prompt, button);
+        if (selection === button) {
+            await vscode.commands.executeCommand('workbench.extensions.installExtension', dotnetRuntimeExtensionId);
+            await vscode.commands.executeCommand('workbench.action.reloadWindow');
+        } else {
+            throw new Error(
+                vscode.l10n.t(
+                    'Version {0} of the .NET Install Tool ({2}) was not found, will not activate.',
+                    requiredDotnetRuntimeExtensionVersion,
+                    dotnetRuntimeExtensionId
+                )
+            );
+        }
     }
 
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.

@@ -38,7 +38,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 return this.hostInfo;
             }
 
-            this.channel.appendLine(`Acquiring .NET runtime version ${DotNetRuntimeVersion}`);
+            this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
             const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
             const findPathRequest: IDotnetFindPathContext = {
                 acquireContext: {
