@@ -41,6 +41,7 @@ import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTrack
 import { getComponentFolder } from './lsptoolshost/builtInComponents';
 import { activateOmniSharpLanguageServer, ActivationResult } from './omnisharp/omnisharpLanguageServer';
 import { ActionOption, showErrorMessage } from './shared/observers/utils/showMessage';
+import { lt } from 'semver';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -79,6 +80,35 @@ export async function activate(
     const useOmnisharpServer = !csharpDevkitExtension && commonOptions.useOmnisharpServer;
     if (useOmnisharpServer) {
         requiredPackageIds.push('OmniSharp');
+    }
+
+    const dotnetRuntimeExtensionId = 'ms-dotnettools.vscode-dotnet-runtime';
+    const requiredDotnetRuntimeExtensionVersion = '2.2.1';
+
+    const dotnetRuntimeExtension = vscode.extensions.getExtension(dotnetRuntimeExtensionId);
+    const dotnetRuntimeExtensionVersion = dotnetRuntimeExtension?.packageJSON.version;
+    if (lt(dotnetRuntimeExtensionVersion, requiredDotnetRuntimeExtensionVersion)) {
+        const button = vscode.l10n.t('Update and reload');
+        const prompt = vscode.l10n.t(
+            'The {0} extension requires version {1} or greater of the .NET Install Tool ({2}) extension.  Please update to continue',
+            context.extension.packageJSON.displayName,
+            requiredDotnetRuntimeExtensionVersion,
+            dotnetRuntimeExtensionId
+        );
+        await vscode.window.showErrorMessage(prompt, button).then(async (selection) => {
+            if (selection === button) {
+                await vscode.commands.executeCommand('workbench.extensions.installExtension', dotnetRuntimeExtensionId);
+                await vscode.commands.executeCommand('workbench.action.reloadWindow');
+            } else {
+                throw new Error(
+                    vscode.l10n.t(
+                        'Version {0} of the .NET Install Tool ({2}) was not found, will not activate.',
+                        requiredDotnetRuntimeExtensionVersion,
+                        dotnetRuntimeExtensionId
+                    )
+                );
+            }
+        });
     }
 
     // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.

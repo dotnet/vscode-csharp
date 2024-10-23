@@ -1,6 +1,9 @@
 {
   ".NET Test Log": ".NET Test Log",
   ".NET NuGet Restore": ".NET NuGet Restore",
+  "Update and reload": "Update and reload",
+  "The {0} extension requires version {1} or greater of the .NET Install Tool ({2}) extension.  Please update to continue": "The {0} extension requires version {1} or greater of the .NET Install Tool ({2}) extension.  Please update to continue",
+  "Version {0} of the .NET Install Tool ({2}) was not found, will not activate.": "Version {0} of the .NET Install Tool ({2}) was not found, will not activate.",
   "How to setup Remote Debugging": "How to setup Remote Debugging",
   "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.": "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.",
   "The C# extension for Visual Studio Code is incompatible on {0} {1}.": "The C# extension for Visual Studio Code is incompatible on {0} {1}.",
