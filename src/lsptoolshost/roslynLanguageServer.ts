@@ -1051,7 +1051,6 @@ export async function activateRoslynLanguageServer(
 
     const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
         platformInfo,
-        getServerPath,
         outputChannel,
         context.extensionPath
     );
