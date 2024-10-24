@@ -3,18 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
-import * as vscode from 'vscode';
-
-import BasicRazorApp2_1 from './basicRazorApp21';
 import { ITestAssetWorkspace, TestAssetWorkspace } from '../../../lsptoolshost/integrationTests/testAssets/testAssets';
 
-const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
-    BasicRazorApp2_1,
+const workspace: ITestAssetWorkspace = {
+    description: 'Basic Razor app',
+    projects: [
+        {
+            relativeFilePath: 'RazorApp.csproj',
+        },
+    ],
 };
 
-const workspaceName = vscode.workspace.workspaceFolders![0].uri.fsPath.split(path.sep).pop();
-
-const activeTestAssetWorkspace = new TestAssetWorkspace(testAssetWorkspaces[workspaceName!]);
+const activeTestAssetWorkspace = new TestAssetWorkspace(workspace);
 
 export default activeTestAssetWorkspace;

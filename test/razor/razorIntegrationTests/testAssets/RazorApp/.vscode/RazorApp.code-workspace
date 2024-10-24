@@ -5,11 +5,11 @@
         }
     ],
     "settings": {
-        "dotnet.defaultSolution": "BasicRazorApp2_1.sln",
+        "dotnet.defaultSolution": "RazorApp.sln",
         "dotnet.server.trace": "Trace",
         "dotnet.server.useOmnisharp": false,
         "omnisharp.enableLspDriver": false,
         "razor.server.trace": "Trace",
-        "dotnet.preferCSharpExtension": true,
+        "dotnet.preferCSharpExtension": true
     }
 }

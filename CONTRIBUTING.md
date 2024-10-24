@@ -59,7 +59,7 @@ To debug integration tests
 1.  Import the `csharp-test-profile.code-profile` in VSCode to setup a clean profile in which to run integration tests.  This must be imported at least once to use the launch configurations (ensure the extensions are updated in the profile).
 2.  Open any integration test file and <kbd>F5</kbd> launch with the correct launch configuration selected.
     - For integration tests inside `test/lsptoolshost`, use either `Launch Current File slnWithCsproj Integration Tests` or `[DevKit] Launch Current File slnWithCsproj Integration Tests` (to run tests using C# + C# Dev Kit)
-    - For integration tests inside `test/razor`, use `Launch Current File BasicRazorApp2_1 Integration Tests`
+    - For integration tests inside `test/razor`, use `[Razor] Run Current File Integration Test`
     - For integration tests inside `test/omnisharp`, use one of the `Omnisharp:` current file profiles
 
 These will allow you to actually debug the test, but the 'Razor integration tests' configuration does not.

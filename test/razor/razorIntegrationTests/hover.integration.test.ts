@@ -19,7 +19,7 @@ describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
     });
 
     beforeEach(async function () {
-        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'Index.cshtml'));
+        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'Hover.cshtml'));
     });
 
     afterAll(async () => {
