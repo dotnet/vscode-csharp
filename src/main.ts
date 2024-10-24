@@ -65,9 +65,7 @@ export async function activate(
     // ensure it gets properly disposed. Upon disposal the events will be flushed.
     context.subscriptions.push(reporter);
 
-    const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
-    const dotnetChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
-    const csharpChannel = vscode.window.createOutputChannel('C#');
+    const csharpChannel = vscode.window.createOutputChannel('C#', { log: true });
     const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     const csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
     eventStream.subscribe(csharpchannelObserver.post);
@@ -141,13 +139,13 @@ export async function activate(
             platformInfo,
             optionStream,
             csharpChannel,
-            dotnetTestChannel,
-            dotnetChannel,
             reporter,
             roslynLanguageServerEvents
         );
     } else {
         // activate language services
+        const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
+        const dotnetChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
         omnisharpLangServicePromise = activateOmniSharpLanguageServer(
             context,
             platformInfo,

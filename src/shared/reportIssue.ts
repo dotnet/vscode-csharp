@@ -125,14 +125,14 @@ function getLogInfo(useOmnisharp: boolean): string {
         return `<!--
 If you can, it would be the most helpful to zip up and attach the entire extensions log folder.  The folder can be opened by running the \`workbench.action.openExtensionLogsFolder\` command.
 
-Additionally, if you can reproduce the issue reliably, set the value of the \`dotnet.server.trace\` option to \`Trace\` and re-run the scenario to get more detailed logs.
+Additionally, if you can reproduce the issue reliably, set the \`C#\` output window log level to 'Trace' re-run the scenario to get more detailed logs.
 -->
         
 ### C# log ###
 <details>Post the output from Output-->C# here</details>
 
 ### C# LSP Trace Logs ###
-<details>Post the output from Output-->C# LSP Trace Logs here.  Requires \`dotnet.server.trace\` to be set to \`Trace\`</details>`;
+<details>Post the output from Output-->C# LSP Trace Logs here.  Requires the \`C#\` output window log level to be set to \`Trace\`</details>`;
     }
 }
 

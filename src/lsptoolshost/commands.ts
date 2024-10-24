@@ -16,7 +16,7 @@ export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ) {
     // It is very important to be careful about the types used as parameters for these command callbacks.
     // If the arguments are coming from the server as json, it is NOT appropriate to use type definitions
@@ -101,7 +101,7 @@ async function completionComplexEdit(
     textEdit: vscode.TextEdit,
     isSnippetString: boolean,
     newOffset: number,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ): Promise<void> {
     const componentName = '[roslyn.client.completionComplexEdit]';
 
@@ -167,9 +167,9 @@ async function completionComplexEdit(
     }
 }
 
-function outputAndThrow(outputChannel: vscode.OutputChannel, message: string): void {
+function outputAndThrow(outputChannel: vscode.LogOutputChannel, message: string): void {
     outputChannel.show();
-    outputChannel.appendLine(message);
+    outputChannel.error(message);
     throw new Error(message);
 }
 
