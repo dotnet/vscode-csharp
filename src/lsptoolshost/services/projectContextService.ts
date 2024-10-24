@@ -47,7 +47,7 @@ export class ProjectContextService {
     public async refresh() {
         const textEditor = vscode.window.activeTextEditor;
         const languageId = textEditor?.document?.languageId;
-        if (languageId !== 'csharp' && languageId !== 'aspnetcorerazor') {
+        if (languageId !== 'csharp') {
             return;
         }
 

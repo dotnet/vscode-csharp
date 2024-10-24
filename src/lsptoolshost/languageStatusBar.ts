@@ -29,10 +29,7 @@ function combineDocumentSelectors(...selectors: vscode.DocumentSelector[]): vsco
 
 class WorkspaceStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServerEvents: RoslynLanguageServerEvents) {
-        const documentSelector = combineDocumentSelectors(
-            languageServerOptions.documentSelector,
-            RazorLanguage.documentSelector
-        );
+        const documentSelector = combineDocumentSelectors(languageServerOptions.documentSelector);
         const openSolutionCommand = {
             command: 'dotnet.openSolution',
             title: vscode.l10n.t('Open solution'),
