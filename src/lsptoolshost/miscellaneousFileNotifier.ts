@@ -13,10 +13,10 @@ import { languageServerOptions } from '../shared/options';
 const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
 const NotifiedDocuments = new Set<string>();
 
-const VerificationDelay = 2 * 1000;
+const NotificationDelay = 2 * 1000;
 
 let _notifyTimeout: NodeJS.Timeout | undefined;
-let _documentUriToVerify: vscode.Uri | undefined;
+let _documentUriToNotify: vscode.Uri | undefined;
 
 export function registerMiscellaneousFileNotifier(
     context: vscode.ExtensionContext,
@@ -24,7 +24,7 @@ export function registerMiscellaneousFileNotifier(
 ) {
     languageServer._projectContextService.onActiveFileContextChanged((e) => {
         // Whether we have refreshed the active document's project context.
-        let isVerificationPass = false;
+        let isNotifyPass = false;
 
         if (_notifyTimeout) {
             // If we have changed active document then do not notify about the previous one.
@@ -32,14 +32,14 @@ export function registerMiscellaneousFileNotifier(
             _notifyTimeout = undefined;
         }
 
-        if (_documentUriToVerify) {
-            if (e.uri.toString() === _documentUriToVerify.toString()) {
+        if (_documentUriToNotify) {
+            if (e.uri.toString() === _documentUriToNotify.toString()) {
                 // We have rerequested project contexts for the active document
                 // and we can now notify if the document isn't part of the workspace.
-                isVerificationPass = true;
+                isNotifyPass = true;
             }
 
-            _documentUriToVerify = undefined;
+            _documentUriToNotify = undefined;
         }
 
         // Only warn for C# miscellaneous files when the workspace is fully initialized.
@@ -65,18 +65,18 @@ export function registerMiscellaneousFileNotifier(
             return;
         }
 
-        if (!isVerificationPass) {
+        if (!isNotifyPass) {
             // Request the active project context be refreshed but delay the request to give
             // time for the project system to update with new files.
             _notifyTimeout = setTimeout(() => {
                 _notifyTimeout = undefined;
-                _documentUriToVerify = e.uri;
+                _documentUriToNotify = e.uri;
 
                 // Trigger a refresh, but don't block on refresh completing.
                 languageServer._projectContextService.refresh().catch((e) => {
                     throw new Error(`Error refreshing project context status ${e}`);
                 });
-            }, VerificationDelay);
+            }, NotificationDelay);
 
             return;
         }
