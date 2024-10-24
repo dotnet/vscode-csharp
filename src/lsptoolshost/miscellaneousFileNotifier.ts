@@ -81,6 +81,8 @@ export function registerMiscellaneousFileNotifier(
             return;
         }
 
+        NotifiedDocuments.add(hash);
+
         const message = vscode.l10n.t(
             'The active document is not part of the open workspace. Not all language features will be available.'
         );
