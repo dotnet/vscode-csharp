@@ -13,11 +13,35 @@ import { languageServerOptions } from '../shared/options';
 const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
 const NotifiedDocuments = new Set<string>();
 
+const NotificationDelay = 2 * 1000;
+
+let _notifyTimeout: NodeJS.Timeout | undefined;
+let _documentUriToNotify: vscode.Uri | undefined;
+
 export function registerMiscellaneousFileNotifier(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer
 ) {
     languageServer._projectContextService.onActiveFileContextChanged((e) => {
+        // Whether we have refreshed the active document's project context.
+        let isNotifyPass = false;
+
+        if (_notifyTimeout) {
+            // If we have changed active document then do not notify about the previous one.
+            clearTimeout(_notifyTimeout);
+            _notifyTimeout = undefined;
+        }
+
+        if (_documentUriToNotify) {
+            if (e.uri.toString() === _documentUriToNotify.toString()) {
+                // We have rerequested project contexts for the active document
+                // and we can now notify if the document isn't part of the workspace.
+                isNotifyPass = true;
+            }
+
+            _documentUriToNotify = undefined;
+        }
+
         // Only warn for C# miscellaneous files when the workspace is fully initialized.
         if (
             e.languageId !== 'csharp' ||
@@ -39,9 +63,25 @@ export function registerMiscellaneousFileNotifier(
         const hash = createHash(e.uri.toString(/*skipEncoding:*/ true));
         if (NotifiedDocuments.has(hash)) {
             return;
-        } else {
-            NotifiedDocuments.add(hash);
         }
+
+        if (!isNotifyPass) {
+            // Request the active project context be refreshed but delay the request to give
+            // time for the project system to update with new files.
+            _notifyTimeout = setTimeout(() => {
+                _notifyTimeout = undefined;
+                _documentUriToNotify = e.uri;
+
+                // Trigger a refresh, but don't block on refresh completing.
+                languageServer._projectContextService.refresh().catch((e) => {
+                    throw new Error(`Error refreshing project context status ${e}`);
+                });
+            }, NotificationDelay);
+
+            return;
+        }
+
+        NotifiedDocuments.add(hash);
 
         const message = vscode.l10n.t(
             'The active document is not part of the open workspace. Not all language features will be available.'
