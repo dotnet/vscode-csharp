@@ -21,6 +21,7 @@ export function registerMiscellaneousFileNotifier(
         // Only warn for C# miscellaneous files when the workspace is fully initialized.
         if (
             e.languageId !== 'csharp' ||
+            !e.isVerified ||
             !e.context._vs_is_miscellaneous ||
             languageServer.state !== ServerState.ProjectInitializationComplete
         ) {
@@ -39,9 +40,9 @@ export function registerMiscellaneousFileNotifier(
         const hash = createHash(e.uri.toString(/*skipEncoding:*/ true));
         if (NotifiedDocuments.has(hash)) {
             return;
-        } else {
-            NotifiedDocuments.add(hash);
         }
+
+        NotifiedDocuments.add(hash);
 
         const message = vscode.l10n.t(
             'The active document is not part of the open workspace. Not all language features will be available.'
