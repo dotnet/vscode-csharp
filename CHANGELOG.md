@@ -5,7 +5,7 @@
 
 # Latest
 * Bumped xamlTools to 17.13.35422.31 (PR: [#7685](https://github.com/dotnet/vscode-csharp/pull/7685))
-* Update razor to 9.0.0-preview.24524.4 (PR: [#]())
+* Update razor to 9.0.0-preview.24524.4 (PR: [#7692](https://github.com/dotnet/vscode-csharp/pull/7692))
   * Roslyn Tokenizer (#11086) (PR: [#11086](https://github.com/dotnet/razor/pull/11086))
     * **Experimental feature**
   * Add flush method and make it implementation detail on how that happens (#11087) (PR: [#11087](https://github.com/dotnet/razor/pull/11087))
