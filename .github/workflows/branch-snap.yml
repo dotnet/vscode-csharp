@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies 
         run: npm ci
       - name: Update version.json
-        run: npx gulp incrementVersionJson
-      - name: Create version.json update PR
+        run: npx gulp incrementVersion
+      - name: Create version update PR
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
