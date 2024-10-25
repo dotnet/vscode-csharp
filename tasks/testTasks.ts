@@ -102,7 +102,12 @@ function createOmniSharpTestSubTasks() {
         await runJestTest(jestOmniSharpUnitTestProjectName);
     });
 
-    const omnisharpIntegrationTestProjects = ['singleCsproj', 'slnWithCsproj', 'slnFilterWithCsproj', 'RazorApp'];
+    const omnisharpIntegrationTestProjects = [
+        'singleCsproj',
+        'slnWithCsproj',
+        'slnFilterWithCsproj',
+        'BasicRazorApp2_1',
+    ];
 
     for (const projectName of omnisharpIntegrationTestProjects) {
         gulp.task(`omnisharptest:integration:${projectName}:stdio`, async () =>
