@@ -15,7 +15,13 @@ export interface ProjectContextChangeEvent {
     languageId: string;
     uri: vscode.Uri;
     context: VSProjectContext;
+    isVerified: boolean;
 }
+
+const VerificationDelay = 2 * 1000;
+
+let _verifyTimeout: NodeJS.Timeout | undefined;
+let _documentUriToVerify: vscode.Uri | undefined;
 
 export class ProjectContextService {
     private readonly _contextChangeEmitter = new vscode.EventEmitter<ProjectContextChangeEvent>();
@@ -47,7 +53,7 @@ export class ProjectContextService {
     public async refresh() {
         const textEditor = vscode.window.activeTextEditor;
         const languageId = textEditor?.document?.languageId;
-        if (languageId !== 'csharp' && languageId !== 'aspnetcorerazor') {
+        if (languageId !== 'csharp') {
             return;
         }
 
@@ -57,19 +63,55 @@ export class ProjectContextService {
 
         const uri = textEditor!.document.uri;
 
+        // Whether we have refreshed the active document's project context.
+        let isVerifyPass = false;
+
+        if (_verifyTimeout) {
+            // If we have changed active document then do not verify the previous one.
+            clearTimeout(_verifyTimeout);
+            _verifyTimeout = undefined;
+        }
+
+        if (_documentUriToVerify) {
+            if (uri.toString() === _documentUriToVerify.toString()) {
+                // We have rerequested project contexts for the active document
+                // and we can now notify if the document isn't part of the workspace.
+                isVerifyPass = true;
+            }
+
+            _documentUriToVerify = undefined;
+        }
+
         if (!this._languageServer.isRunning()) {
-            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext });
+            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext, isVerified: false });
             return;
         }
 
         const contextList = await this.getProjectContexts(uri, this._source.token);
         if (!contextList) {
-            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext });
+            this._contextChangeEmitter.fire({ languageId, uri, context: this._emptyProjectContext, isVerified: false });
             return;
         }
 
         const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
-        this._contextChangeEmitter.fire({ languageId, uri, context });
+        const isVerified = !context._vs_is_miscellaneous || isVerifyPass;
+        this._contextChangeEmitter.fire({ languageId, uri, context, isVerified });
+
+        if (context._vs_is_miscellaneous && !isVerifyPass) {
+            // Request the active project context be refreshed but delay the request to give
+            // time for the project system to update with new files.
+            _verifyTimeout = setTimeout(() => {
+                _verifyTimeout = undefined;
+                _documentUriToVerify = uri;
+
+                // Trigger a refresh, but don't block on refresh completing.
+                this.refresh().catch((e) => {
+                    throw new Error(`Error refreshing project context status ${e}`);
+                });
+            }, VerificationDelay);
+
+            return;
+        }
     }
 
     private async getProjectContexts(
