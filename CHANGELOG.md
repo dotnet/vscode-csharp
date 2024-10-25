@@ -3,7 +3,7 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# Latest
+# 2.54.x
 * Update Roslyn to 4.13.0-1.24525.2 (PR: [#7694](https://github.com/dotnet/vscode-csharp/pull/7694))
   * Fix error message spelling (PR: [#75601](https://github.com/dotnet/roslyn/pull/75601))
   * Improve diagnostic performance by re-using results if diagnostic data is the same (PR: [#75587](https://github.com/dotnet/roslyn/pull/75587))
