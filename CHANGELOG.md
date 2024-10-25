@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # Latest
+* Update Roslyn to 4.13.0-1.24525.2 (PR: [#7694](https://github.com/dotnet/vscode-csharp/pull/7694))
+  * Fix error message spelling (PR: [#75601](https://github.com/dotnet/roslyn/pull/75601))
+  * Improve diagnostic performance by re-using results if diagnostic data is the same (PR: [#75587](https://github.com/dotnet/roslyn/pull/75587))
+  * Improve performance in checksum computation (PR: [#75479](https://github.com/dotnet/roslyn/pull/75479))
 * Bumped xamlTools to 17.13.35422.31 (PR: [#7685](https://github.com/dotnet/vscode-csharp/pull/7685))
 * Update Razor to 9.0.0-preview.24524.4 (PR: [#7692](https://github.com/dotnet/vscode-csharp/pull/7692))
   * Roslyn Tokenizer (#11086) (PR: [#11086](https://github.com/dotnet/razor/pull/11086))
