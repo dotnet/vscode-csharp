@@ -4,6 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.55.x
+* Switch to new log output window API and remove `dotnet.server.trace` (PR: [#7688](https://github.com/dotnet/vscode-csharp/pull/7688))
+* Update Roslyn to 4.13.0-1.24528.3 (PR: [#7688](https://github.com/dotnet/vscode-csharp/pull/7688))
+  * Fix crash when 'add await' analyzers binding expressions (PR: [#75644](https://github.com/dotnet/roslyn/pull/75644))
+  * Shorten names shown in 'pull member up' (PR: [#75643](https://github.com/dotnet/roslyn/pull/75643))
+  * Fix inaccessible constructors shown in sighelp (PR: [#75642](https://github.com/dotnet/roslyn/pull/75642))
+  * Allow the client to update the server logging level dynamically (PR: [#75615](https://github.com/dotnet/roslyn/pull/75615))
 
 # 2.54.x
 * Update debugger packages to v2.54.0 (PR: [#7691](https://github.com/dotnet/vscode-csharp/pull/7691))
