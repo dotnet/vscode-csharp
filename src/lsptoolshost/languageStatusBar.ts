@@ -29,10 +29,7 @@ function combineDocumentSelectors(...selectors: vscode.DocumentSelector[]): vsco
 
 class WorkspaceStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServerEvents: RoslynLanguageServerEvents) {
-        const documentSelector = combineDocumentSelectors(
-            languageServerOptions.documentSelector,
-            RazorLanguage.documentSelector
-        );
+        const documentSelector = combineDocumentSelectors(languageServerOptions.documentSelector);
         const openSolutionCommand = {
             command: 'dotnet.openSolution',
             title: vscode.l10n.t('Open solution'),
@@ -79,9 +76,10 @@ class ProjectContextStatus {
             // Show a warning when the active file is part of the Miscellaneous File workspace and
             // project initialization is complete.
             if (languageServer.state === ServerState.ProjectInitializationComplete) {
-                item.severity = e.context._vs_is_miscellaneous
-                    ? vscode.LanguageStatusSeverity.Warning
-                    : vscode.LanguageStatusSeverity.Information;
+                item.severity =
+                    e.context._vs_is_miscellaneous && e.isVerified
+                        ? vscode.LanguageStatusSeverity.Warning
+                        : vscode.LanguageStatusSeverity.Information;
             } else {
                 item.severity = vscode.LanguageStatusSeverity.Information;
             }
