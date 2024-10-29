@@ -11,6 +11,7 @@ import { createLaunchTargetForSolution } from '../shared/launchTarget';
 import reportIssue from '../shared/reportIssue';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -38,9 +39,11 @@ export function registerCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restartServer', async () => restartServer(languageServer))
     );
-    context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer))
-    );
+    if (!getCSharpDevKit()) {
+        context.subscriptions.push(
+            vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer))
+        );
+    }
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
