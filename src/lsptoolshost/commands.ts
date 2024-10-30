@@ -11,12 +11,13 @@ import { createLaunchTargetForSolution } from '../shared/launchTarget';
 import reportIssue from '../shared/reportIssue';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ) {
     // It is very important to be careful about the types used as parameters for these command callbacks.
     // If the arguments are coming from the server as json, it is NOT appropriate to use type definitions
@@ -38,9 +39,11 @@ export function registerCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restartServer', async () => restartServer(languageServer))
     );
-    context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer))
-    );
+    if (!getCSharpDevKit()) {
+        context.subscriptions.push(
+            vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer))
+        );
+    }
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
@@ -101,7 +104,7 @@ async function completionComplexEdit(
     textEdit: vscode.TextEdit,
     isSnippetString: boolean,
     newOffset: number,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ): Promise<void> {
     const componentName = '[roslyn.client.completionComplexEdit]';
 
@@ -167,9 +170,9 @@ async function completionComplexEdit(
     }
 }
 
-function outputAndThrow(outputChannel: vscode.OutputChannel, message: string): void {
+function outputAndThrow(outputChannel: vscode.LogOutputChannel, message: string): void {
     outputChannel.show();
-    outputChannel.appendLine(message);
+    outputChannel.error(message);
     throw new Error(message);
 }
 

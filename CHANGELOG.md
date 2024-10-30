@@ -9,6 +9,12 @@
   * Update project configuration from Roslyn info (#11092) (PR: [#11092](https://github.com/dotnet/razor/pull/11092))
   * Reduce the amount of telemetry emitted (#11094) (PR: [#11094](https://github.com/dotnet/razor/pull/11094))
   * Remove tooling MvcShims (#11088) (PR: [#11088](https://github.com/dotnet/razor/pull/11088))
+* Switch to new log output window API and remove `dotnet.server.trace` (PR: [#7688](https://github.com/dotnet/vscode-csharp/pull/7688))
+* Update Roslyn to 4.13.0-1.24528.3 (PR: [#7688](https://github.com/dotnet/vscode-csharp/pull/7688))
+  * Fix crash when 'add await' analyzers binding expressions (PR: [#75644](https://github.com/dotnet/roslyn/pull/75644))
+  * Shorten names shown in 'pull member up' (PR: [#75643](https://github.com/dotnet/roslyn/pull/75643))
+  * Fix inaccessible constructors shown in sighelp (PR: [#75642](https://github.com/dotnet/roslyn/pull/75642))
+  * Allow the client to update the server logging level dynamically (PR: [#75615](https://github.com/dotnet/roslyn/pull/75615))
 * Bumped xamlTools to 17.13.35429.30 (PR: [#7706](https://github.com/dotnet/vscode-csharp/pull/7706))
 
 # 2.54.x

@@ -69,7 +69,6 @@ export interface OmnisharpServerOptions {
 }
 
 export interface LanguageServerOptions {
-    readonly logLevel: string;
     readonly documentSelector: DocumentSelector;
     readonly extensionsPaths: string[] | null;
     readonly preferCSharpExtension: boolean;
@@ -379,9 +378,6 @@ class OmnisharpOptionsImpl implements OmnisharpServerOptions {
 }
 
 class LanguageServerOptionsImpl implements LanguageServerOptions {
-    public get logLevel() {
-        return readOption<string>('dotnet.server.trace', 'Information');
-    }
     public get documentSelector() {
         return readOption<DocumentSelector>('dotnet.server.documentSelector', ['csharp']);
     }
@@ -511,7 +507,6 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
 ];
 
 export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
-    'logLevel',
     'documentSelector',
     'preferCSharpExtension',
     'componentPaths',

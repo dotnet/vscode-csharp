@@ -35,7 +35,6 @@ describe('Option changes observer', () => {
 
     [
         { config: 'dotnet', section: 'server.documentSelector', value: ['other'] },
-        { config: 'dotnet', section: 'server.trace', value: 'trace' },
         { config: 'dotnet', section: 'preferCSharpExtension', value: true },
     ].forEach((elem) => {
         describe(`When the ${elem.config}.${elem.section} changes`, () => {
@@ -99,10 +98,7 @@ describe('Option changes observer', () => {
         });
     });
 
-    [
-        { config: 'dotnet', section: 'server.documentSelector', value: ['csharp'] },
-        { config: 'dotnet', section: 'server.trace', value: 'Information' },
-    ].forEach((elem) => {
+    [{ config: 'dotnet', section: 'server.documentSelector', value: ['csharp'] }].forEach((elem) => {
         test(`Information Message is not shown if no change in value for ${elem.config}.${elem.section}`, async () => {
             expect(infoMessage).toBe(undefined);
             expect(invokedCommand).toBe(undefined);
