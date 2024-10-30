@@ -134,6 +134,7 @@
   "Restore {0}": "Restaurer {0}",
   "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Exécuter et déboguer : aucun navigateur valide n’est installé. Installez Edge ou Chrome.",
   "Run and Debug: auto-detection found {0} for a launch browser": "Exécuter et déboguer : détection automatique détectée {0} pour un navigateur de lancement",
+  "Security Warning": "Security Warning",
   "See {0} output": "Voir la sortie {0}",
   "Select fix all action": "Sélectionner corriger toutes les actions",
   "Select the process to attach to": "Sélectionner le processus à attacher",
