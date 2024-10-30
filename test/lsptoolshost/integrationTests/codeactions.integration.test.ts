@@ -322,6 +322,7 @@ async function getCodeActions(
 ): Promise<vscode.CodeAction[]> {
     const uri = vscode.window.activeTextEditor!.document.uri;
     console.log(`Getting actions for ${uri.toString()}`);
+    await new Promise((r) => setTimeout(r, 5000));
     const codeActions = await vscode.commands.executeCommand<vscode.CodeAction[]>(
         'vscode.executeCodeActionProvider',
         uri,
