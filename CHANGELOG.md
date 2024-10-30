@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.55.x
+* Update Roslyn to 4.13.0-2.24529.3 (PR: [#???](https://github.com/dotnet/vscode-csharp/pull/???))
+* Update Razor to 9.0.0-preview.24528.3 (PR: [#???](https://github.com/dotnet/vscode-csharp/pull/???))
 
 # 2.54.x
 * Update debugger packages to v2.54.0 (PR: [#7691](https://github.com/dotnet/vscode-csharp/pull/7691))
