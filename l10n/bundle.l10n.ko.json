@@ -134,6 +134,7 @@
   "Restore {0}": "{0} 복원",
   "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "실행 및 디버그:유효한 브라우저가 설치되어 있지 않습니다. Edge나 Chrome을 설치하세요.",
   "Run and Debug: auto-detection found {0} for a launch browser": "실행 및 디버그: 자동 검색에서 시작 브라우저에 대한 {0} 발견",
+  "Security Warning": "Security Warning",
   "See {0} output": "{0} 출력 보기",
   "Select fix all action": "모든 작업 수정 선택",
   "Select the process to attach to": "연결할 프로세스 선택",
