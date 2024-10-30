@@ -37,11 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.13.0-1.24525.2",
+    "roslyn": "4.13.0-1.24528.3",
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24524.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.13.35422.31"
+    "xamlTools": "17.13.35429.30"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -133,7 +133,7 @@
     "@types/tmp": "0.0.33",
     "@types/unzipper": "^0.9.1",
     "@types/uuid": "^9.0.1",
-    "@types/vscode": "1.73.0",
+    "@types/vscode": "1.93.0",
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "^8.5.0",
     "@typescript-eslint/parser": "^8.5.0",
@@ -690,7 +690,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.75.0"
+    "vscode": "^1.93.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -1441,21 +1441,6 @@
             "scope": "machine-overridable",
             "default": false,
             "description": "%configuration.dotnet.server.waitForDebugger%"
-          },
-          "dotnet.server.trace": {
-            "scope": "window",
-            "type": "string",
-            "enum": [
-              "Trace",
-              "Debug",
-              "Information",
-              "Warning",
-              "Error",
-              "Critical",
-              "None"
-            ],
-            "default": "Information",
-            "description": "%configuration.dotnet.server.trace%"
           },
           "dotnet.server.extensionPaths": {
             "scope": "machine-overridable",

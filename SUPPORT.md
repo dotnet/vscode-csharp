@@ -19,15 +19,25 @@ We highly recommend using the C# extension's built-in command, `CSharp: Report a
 
 The template has a section to include the `C#` output window logs.  These logs are not automatically included as they may contain personal information (such as full file paths and project names), but they are key to resolving problems.  
 
-1.  First, set `dotnet.server.trace` to `Trace` in VSCode settings
-    ![settings window showing trace option](./docs/trace_logs.png)
-2.  Reload the window via the `Developer: Reload Window` (`workbench.action.reloadWindow`) command
-3.  Reproduce the issue
-4.  Open the output window via `View` -> `Output` and change to the `C#` output window.
-5.  Select all (e.g. cntrl+a) and copy paste into the issue template under the 'C# Log' section.  If you need to redact file paths and other information, please do so at this time.
-6.  Once the logs are collected, reset `dotnet.server.trace` back to `Information`
+1.  Find the `C#` output window (`View` -> `Output`) and set the log level to `Trace`
+    ![c# output window showing trace option](./docs/csharp_trace.png)
+2.  Reproduce the issue
+3.  In the `C#` output window, select all (e.g. `cntrl+a`) and copy paste into the issue template under the 'C# Log' section.  If you need to redact file paths and other information, please do so at this time.
+4.  Once the logs are collected, reset the window log level to `Info`
 
-Oftentimes the C# logs are enough, but sometimes when dealing with LSP server issues, the LSP trace logs are required.  These can be found by following the same steps as above, but using the `C# LSP Trace Logs` output window instead.
+If the issue only reproduces on extension startup, you can set `Trace` as the default (see screenshot above), reload the window, and trace logs will be captured on startup.
+
+##### C# LSP Trace Logs
+Sometimes we need to know exactly what requests were sent to the Roslyn language server.  To capture these logs:
+
+1.  Set the log level to `Trace` for the `C#` output window as described above.
+2.  Find the `C# LSP Trace Logs` output window
+3.  Reproduce the issue
+4.  Copy the contents of the `C# LSP Trace Logs` output window.
+
+##### Other ways to set the log level
+1.  When launching VSCode from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
+2.  Invoke the `Developer: Set Log Level` command from the VSCode command palette, find the `C#` entry and set the level.
 
 #### Project loading problems
 

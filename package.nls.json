@@ -31,7 +31,6 @@
   "configuration.dotnet.server.componentPaths.xamlTools": "Overrides the folder path for the .xamlTools component of the language server",
   "configuration.dotnet.server.startTimeout": "Specifies a timeout (in ms) for the client to successfully start and connect to the language server.",
   "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached. (Previously `omnisharp.waitForDebugger`)",
-  "configuration.dotnet.server.trace": "Sets the logging level for the language server",
   "configuration.dotnet.server.extensionPaths": "Override for path to language server --extension arguments",
   "configuration.dotnet.server.crashDumpPath": "Sets a folder path where crash dumps are written to if the language server crashes.  Must be writeable by the user.",
   "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",

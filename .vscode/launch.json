@@ -24,7 +24,9 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests",
+                "--log",
+                "ms-dotnettools.csharp:trace"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -49,7 +51,9 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/lsptoolshost/integrationTests/testAssets/slnWithCsproj/.vscode/devkit_slnWithCsproj.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/lsptoolshost/integrationTests",
+                "--log",
+                "ms-dotnettools.csharp:trace"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
@@ -74,7 +78,9 @@
                 "csharp-test-profile",
                 "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/RazorApp/.vscode/RazorApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
-                "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests"
+                "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests",
+                "--log",
+                "ms-dotnettools.csharp:trace"
             ],
             "env": {
                 "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
