@@ -5,7 +5,6 @@
 
 import { Command } from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
-import { CodeAction, TextDocumentRegistrationOptions } from 'vscode-languageserver-protocol';
 import { ProjectConfigurationMessage } from '../shared/projectConfiguration';
 
 export interface VSProjectContextList {
@@ -95,7 +94,7 @@ export interface OnAutoInsertOptions {
 /**
  * Registration options for an {@link OnAutoInsertRequest}.
  */
-export interface OnAutoInsertRegistrationOptions extends TextDocumentRegistrationOptions, OnAutoInsertOptions {}
+export interface OnAutoInsertRegistrationOptions extends lsp.TextDocumentRegistrationOptions, OnAutoInsertOptions {}
 
 export interface RegisterSolutionSnapshotResponseItem {
     /**
@@ -185,7 +184,7 @@ export interface BuildOnlyDiagnosticIdsResult {
     ids: string[];
 }
 
-export interface RoslynFixAllCodeAction extends CodeAction {
+export interface RoslynFixAllCodeAction extends lsp.CodeAction {
     scope: string;
 }
 

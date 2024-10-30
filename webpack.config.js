@@ -25,7 +25,9 @@ const config = {
         '@opentelemetry/tracing': 'commonjs @opentelemetry/tracing', // optional
     },
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
+        conditionNames: ['import', 'require'],
+        mainFields: ['module', 'main'],
     },
     node: {
         __dirname: false //preserve the default node.js behavior for __dirname

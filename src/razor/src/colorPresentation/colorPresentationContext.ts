@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Range } from 'vscode-languageserver-types';
+import { Range } from 'vscode-languageserver-protocol';
 
 export class ColorPresentationContext {
     constructor(public readonly uri: vscode.Uri, public readonly range: Range) {}
