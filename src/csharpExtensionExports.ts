@@ -35,4 +35,6 @@ export interface CSharpExtensionExperimentalExports {
         token: vscode.CancellationToken
     ) => Promise<Response>;
     languageServerEvents: LanguageServerEvents;
+    outputChannel: vscode.OutputChannel;
+    traceChannel: vscode.OutputChannel;
 }

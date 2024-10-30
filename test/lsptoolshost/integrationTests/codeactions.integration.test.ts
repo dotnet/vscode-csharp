@@ -13,10 +13,12 @@ import {
     expectText,
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
+import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 
 describe(`Code Actions Tests`, () => {
+    let csharpExports: CSharpExtensionExports | undefined = undefined;
     beforeAll(async () => {
-        await activateCSharpExtension();
+        csharpExports = await activateCSharpExtension();
     });
 
     beforeEach(async () => {
@@ -34,7 +36,11 @@ describe(`Code Actions Tests`, () => {
 
     test('Lightbulb displays actions', async () => {
         console.log('LIGHTBULB TEST');
+        csharpExports!.experimental.outputChannel.appendLine('Lightbulb displays actions');
+        csharpExports!.experimental.traceChannel.appendLine('Lightbulb displays actions');
         const actions = await getCodeActions(new vscode.Range(0, 0, 0, 12));
+        csharpExports!.experimental.traceChannel.appendLine(`Got actions ${actions.length}`);
+        csharpExports!.experimental.traceChannel.appendLine(JSON.stringify(actions, null, 4));
         expect(actions.length).toBeGreaterThanOrEqual(3);
         console.log(actions.length);
         console.log(actions.map((a) => a.title).join(', '));
@@ -314,21 +320,17 @@ async function getCodeActions(
     range: vscode.Range,
     resolveCount: number | undefined = undefined
 ): Promise<vscode.CodeAction[]> {
+    const uri = vscode.window.activeTextEditor!.document.uri;
+    console.log(`Getting actions for ${uri.toString()}`);
     const codeActions = await vscode.commands.executeCommand<vscode.CodeAction[]>(
         'vscode.executeCodeActionProvider',
-        vscode.window.activeTextEditor!.document.uri,
+        uri,
         range,
         /** kind **/ undefined,
         resolveCount
     );
 
     console.log(JSON.stringify(codeActions, null, 4));
-
-    const moreAction = codeActions.find((a) => a.title === 'More...');
-    if (moreAction) {
-        console.log('More actions available');
-        console.log(JSON.stringify(moreAction, null, 4));
-    }
 
     return codeActions;
 }
