@@ -33,6 +33,7 @@ describe(`Code Actions Tests`, () => {
     });
 
     test('Lightbulb displays actions', async () => {
+        console.log('LIGHTBULB TEST');
         const actions = await getCodeActions(new vscode.Range(0, 0, 0, 12));
         expect(actions.length).toBeGreaterThanOrEqual(3);
         console.log(actions.length);
@@ -321,10 +322,12 @@ async function getCodeActions(
         resolveCount
     );
 
+    console.log(JSON.stringify(codeActions, null, 4));
+
     const moreAction = codeActions.find((a) => a.title === 'More...');
     if (moreAction) {
         console.log('More actions available');
-        console.log(JSON.stringify(moreAction));
+        console.log(JSON.stringify(moreAction, null, 4));
     }
 
     return codeActions;
