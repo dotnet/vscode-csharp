@@ -35,7 +35,8 @@ describe(`Code Actions Tests`, () => {
     test('Lightbulb displays actions', async () => {
         const actions = await getCodeActions(new vscode.Range(0, 0, 0, 12));
         expect(actions.length).toBeGreaterThanOrEqual(3);
-
+        console.log(actions.length);
+        console.log(actions.map((a) => a.title).join(', '));
         // Verify we have unresolved code actions.
         expect(actions[0].title).toBe('Remove unnecessary usings');
         expect(actions[0].kind).toStrictEqual(vscode.CodeActionKind.QuickFix);
@@ -55,7 +56,8 @@ describe(`Code Actions Tests`, () => {
 
     test('Remove unnecessary usings applied', async () => {
         const actions = await getCodeActions(new vscode.Range(0, 0, 0, 12), 10);
-
+        console.log(actions.length);
+        console.log(actions.map((a) => a.title).join(', '));
         expect(actions[0].title).toBe('Remove unnecessary usings');
         expect(actions[0].edit).toBeDefined();
 
