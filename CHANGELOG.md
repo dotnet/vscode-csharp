@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.55.x
+* Bumped xamlTools to 17.13.35429.30 (PR: [#7706](https://github.com/dotnet/vscode-csharp/pull/7706))
 
 # 2.54.x
 * Update debugger packages to v2.54.0 (PR: [#7691](https://github.com/dotnet/vscode-csharp/pull/7691))
