@@ -168,6 +168,7 @@
   "IntelliCode features will not be available, {0} failed to activate.": "IntelliCode features will not be available, {0} failed to activate.",
   "Go to output": "Go to output",
   "Suppress notification": "Suppress notification",
+  "C# LSP Trace Logs": "C# LSP Trace Logs",
   "Restore {0}": "Restore {0}",
   "Restore already in progress": "Restore already in progress",
   "Sending request": "Sending request",
