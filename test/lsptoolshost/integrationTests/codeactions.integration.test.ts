@@ -320,6 +320,13 @@ async function getCodeActions(
         /** kind **/ undefined,
         resolveCount
     );
+
+    const moreAction = codeActions.find((a) => a.title === 'More...');
+    if (moreAction) {
+        console.log('More actions available');
+        console.log(JSON.stringify(moreAction));
+    }
+
     return codeActions;
 }
 
