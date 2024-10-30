@@ -9,6 +9,7 @@
   * Update project configuration from Roslyn info (#11092) (PR: [#11092](https://github.com/dotnet/razor/pull/11092))
   * Reduce the amount of telemetry emitted (#11094) (PR: [#11094](https://github.com/dotnet/razor/pull/11094))
   * Remove tooling MvcShims (#11088) (PR: [#11088](https://github.com/dotnet/razor/pull/11088))
+* Bumped xamlTools to 17.13.35429.30 (PR: [#7706](https://github.com/dotnet/vscode-csharp/pull/7706))
 
 # 2.54.x
 * Update debugger packages to v2.54.0 (PR: [#7691](https://github.com/dotnet/vscode-csharp/pull/7691))
