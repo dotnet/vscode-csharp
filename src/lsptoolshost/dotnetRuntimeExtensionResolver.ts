@@ -49,15 +49,15 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 },
                 versionSpecRequirement: 'greater_than_or_equal',
             };
-            const result = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
+            let acquireResult = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
                 'dotnet.findPath',
                 findPathRequest
             );
-            if (result === undefined) {
-                throw new Error('Failed to locate .NET runtime');
+            if (acquireResult === undefined) {
+                acquireResult = await this.acquireRuntime();
             }
 
-            dotnetExecutablePath = result.dotnetPath;
+            dotnetExecutablePath = acquireResult.dotnetPath;
         }
 
         const hostInfo = {
@@ -90,6 +90,30 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         }
 
         return env;
+    }
+
+    /**
+     * Acquires the .NET runtime if it is not already present.
+     * @returns The path to the .NET runtime
+     */
+    private async acquireRuntime(): Promise<IDotnetAcquireResult> {
+        let status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquireStatus', {
+            version: DotNetRuntimeVersion,
+            requestingExtensionId: CSharpExtensionId,
+        });
+        if (status === undefined) {
+            await vscode.commands.executeCommand('dotnet.showAcquisitionLog');
+
+            status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquire', {
+                version: DotNetRuntimeVersion,
+                requestingExtensionId: CSharpExtensionId,
+            });
+            if (!status) {
+                throw new Error('Could not resolve the dotnet path!');
+            }
+        }
+
+        return status;
     }
 
     private async getArchitectureFromTargetPlatform(): Promise<string | undefined> {
