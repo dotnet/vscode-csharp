@@ -12,7 +12,7 @@ import { commonOptions, languageServerOptions } from '../shared/options';
 import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { readFile } from 'fs/promises';
-import { IDotnetFindPathContext } from './dotnetRuntimeExtensionApi';
+import { IDotnetAcquireResult, IDotnetFindPathContext } from './dotnetRuntimeExtensionApi';
 
 export const DotNetRuntimeVersion = '8.0.10';
 
@@ -49,8 +49,15 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 },
                 versionSpecRequirement: 'greater_than_or_equal',
             };
-            const result = await vscode.commands.executeCommand<string>('dotnet.findPath', findPathRequest);
-            dotnetExecutablePath = result;
+            const result = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
+                'dotnet.findPath',
+                findPathRequest
+            );
+            if (result === undefined) {
+                throw new Error('Failed to locate .NET runtime');
+            }
+
+            dotnetExecutablePath = result.dotnetPath;
         }
 
         const hostInfo = {
