@@ -102,7 +102,7 @@ export async function activate(
         } else {
             throw new Error(
                 vscode.l10n.t(
-                    'Version {0} of the .NET Install Tool ({2}) was not found, will not activate.',
+                    'Version {0} of the .NET Install Tool ({1}) was not found, will not activate.',
                     requiredDotnetRuntimeExtensionVersion,
                     dotnetRuntimeExtensionId
                 )
