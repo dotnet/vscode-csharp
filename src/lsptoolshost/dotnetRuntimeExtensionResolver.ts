@@ -54,6 +54,9 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 findPathRequest
             );
             if (acquireResult === undefined) {
+                this.channel.appendLine(
+                    `Failed to find .NET ${DotNetRuntimeVersion} from path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime`
+                );
                 acquireResult = await this.acquireRuntime();
             }
 
