@@ -47,6 +47,8 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntimeExtensionResolver';
 import { PlatformInformation } from '../../shared/platform';
+import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
+import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
 import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHandler';
 import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
@@ -73,8 +75,16 @@ export async function activate(
     const logger = new RazorLogger(eventEmitterFactory, languageServerLogLevel);
 
     try {
+        const razorOptions: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
+            vscodeType,
+            languageServerDir,
+            languageServerLogLevel,
+            logger
+        );
+
         const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
             platformInfo,
+            () => razorOptions.serverPath,
             logger.outputChannel,
             context.extensionPath
         );

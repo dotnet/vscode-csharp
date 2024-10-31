@@ -22,6 +22,10 @@ export const DotNetRuntimeVersion = '8.0.10';
 export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
     constructor(
         private platformInfo: PlatformInformation,
+        /**
+         * This is a function instead of a string because the server path can change while the extension is active (when the option changes).
+         */
+        private getServerPath: (platform: PlatformInformation) => string,
         private channel: vscode.OutputChannel,
         private extensionPath: string
     ) {}
@@ -57,7 +61,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 this.channel.appendLine(
                     `Did not find .NET ${DotNetRuntimeVersion} on path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime`
                 );
-                acquireResult = await this.acquireRuntime();
+                acquireResult = await this.acquireDotNetProcessDependencies();
             }
 
             dotnetExecutablePath = acquireResult.dotnetPath;
@@ -117,6 +121,23 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         }
 
         return status;
+    }
+
+    /**
+     * Acquires the .NET runtime and any other dependencies required to spawn a particular .NET executable.
+     * @param path The path to the entrypoint assembly. Typically a .dll.
+     */
+    private async acquireDotNetProcessDependencies(): Promise<IDotnetAcquireResult> {
+        const acquireResult = await this.acquireRuntime();
+
+        const args = [this.getServerPath(this.platformInfo)];
+        // This will install any missing Linux dependencies.
+        await vscode.commands.executeCommand('dotnet.ensureDotnetDependencies', {
+            command: acquireResult.dotnetPath,
+            arguments: args,
+        });
+
+        return acquireResult;
     }
 
     private async getArchitectureFromTargetPlatform(): Promise<string | undefined> {
