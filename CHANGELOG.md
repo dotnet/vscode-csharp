@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.55.x
+* Update Roslyn to 4.13.0-2.24531.3 (PR: [#7722](https://github.com/dotnet/vscode-csharp/pull/7722))
+  * Proffer project system query service (PR: [#75682](https://github.com/dotnet/roslyn/pull/75682))
+  * Ensure discards are initially soft selected in VSCode (PR: [#75655](https://github.com/dotnet/roslyn/pull/75655))
+  * Reduce allocations in VirtualCharService.CreateVirtualCharSequence (PR: [#75654](https://github.com/dotnet/roslyn/pull/75654))
+  * Reduce allocations in TextDocumentStates.AddRange (PR: [#75640](https://github.com/dotnet/roslyn/pull/75640))
 * Update Razor to 9.0.0-preview.24531.4 (PR: [#7723](https://github.com/dotnet/vscode-csharp/pull/7723))
   * Fix aggregate telemetry reliability (PR: [#11134](https://github.com/dotnet/razor/pull/11134))
   * [FUSE] Fix OnAutoInsert and override completion and possible others (PR: [#11122](https://github.com/dotnet/razor/pull/11122))
