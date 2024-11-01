@@ -134,6 +134,7 @@
   "Restore {0}": "Obnovit {0}",
   "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Spustit a ladit: Není nainstalovaný platný prohlížeč. Nainstalujte si prosím Edge nebo Chrome.",
   "Run and Debug: auto-detection found {0} for a launch browser": "Spustit a ladit: Automatická detekce našla {0} pro spouštěný prohlížeč.",
+  "Security Warning": "Upozornění zabezpečení",
   "See {0} output": "Zobrazit výstup {0}",
   "Select fix all action": "Vybrat akci Opravit vše",
   "Select the process to attach to": "Vyberte proces, ke kterému se má program připojit.",

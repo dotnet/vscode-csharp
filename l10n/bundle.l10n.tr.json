@@ -134,6 +134,7 @@
   "Restore {0}": "{0} öğesini geri yükle",
   "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Çalıştır ve Hata Ayıkla: Geçerli bir tarayıcı yüklü değil. Lütfen Edge veya Chrome tarayıcısını yükleyin.",
   "Run and Debug: auto-detection found {0} for a launch browser": "Çalıştır ve Hata Ayıkla: otomatik algılama bir başlatma tarayıcısı için {0} buldu",
+  "Security Warning": "Güvenlik Uyarısı",
   "See {0} output": "{0} çıktısını göster",
   "Select fix all action": "Tüm eylemi düzelt'i seçin",
   "Select the process to attach to": "Eklenilecek işlemi seçin",
