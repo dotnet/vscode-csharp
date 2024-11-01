@@ -24,7 +24,7 @@
       * XAML IntelliseSense completions for name properties like Setter.TargetName
 
 # 2.54.x
-* Update Razor to 9.0.0-preview.24531.4 (PR: [#]())
+* Update Razor to 9.0.0-preview.24531.4 (PR: [#7723](https://github.com/dotnet/vscode-csharp/pull/7723))
   * Fix aggregate telemetry reliability (PR: [#11134](https://github.com/dotnet/razor/pull/11134))
   * [FUSE] Fix OnAutoInsert and override completion and possible others (PR: [#11122](https://github.com/dotnet/razor/pull/11122))
 * Update debugger packages to v2.54.0 (PR: [#7691](https://github.com/dotnet/vscode-csharp/pull/7691))
