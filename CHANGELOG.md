@@ -15,7 +15,13 @@
   * Shorten names shown in 'pull member up' (PR: [#75643](https://github.com/dotnet/roslyn/pull/75643))
   * Fix inaccessible constructors shown in sighelp (PR: [#75642](https://github.com/dotnet/roslyn/pull/75642))
   * Allow the client to update the server logging level dynamically (PR: [#75615](https://github.com/dotnet/roslyn/pull/75615))
-* Bumped xamlTools to 17.13.35429.30 (PR: [#7706](https://github.com/dotnet/vscode-csharp/pull/7706))
+* Bumped xamlTools to 17.13.35431.11 (PR: [#7719](https://github.com/dotnet/vscode-csharp/pull/7719))
+  * XAML validation improvements
+      * Validating  properties of Setters, Triggers, Conditions.
+      * Validating text values like `<Color> Red </Color>`
+      * Warnings for obsolete values like LayoutOptions.CenterAndExpand
+      * XAML IntelliseSense completions for ResourceDictionary.Source
+      * XAML IntelliseSense completions for name properties like Setter.TargetName
 
 # 2.54.x
 * Update debugger packages to v2.54.0 (PR: [#7691](https://github.com/dotnet/vscode-csharp/pull/7691))
