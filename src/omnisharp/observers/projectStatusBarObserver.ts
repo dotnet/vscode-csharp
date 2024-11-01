@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import { basename } from 'path';
 import { BaseEvent } from '../../shared/loggingEvents';
 import { WorkspaceInformationUpdated } from '../omnisharpLoggingEvents';
@@ -14,7 +15,7 @@ export class ProjectStatusBarObserver extends BaseStatusBarItemObserver {
         switch (event.type) {
             case EventType.OmnisharpOnMultipleLaunchTargets:
                 this.SetAndShowStatusBar(
-                    '$(file-submodule) Select project',
+                    '$(file-submodule) ' + vscode.l10n.t('Select project'),
                     'o.pickProjectAndStart',
                     'rgb(90, 218, 90)'
                 );
