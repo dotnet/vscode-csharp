@@ -148,6 +148,7 @@
   "project.json is no longer a supported project format for .NET Core applications.": "project.json is no longer a supported project format for .NET Core applications.",
   "More Detail": "More Detail",
   "Some projects have trouble loading. Please review the output for more details.": "Some projects have trouble loading. Please review the output for more details.",
+  "Select project": "Select project",
   "There are unresolved dependencies. Please execute the restore command to continue.": "There are unresolved dependencies. Please execute the restore command to continue.",
   "Restore": "Restore",
   "Package {0} download from {1} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download": "Package {0} download from {1} failed integrity check. Some features may not work as expected. Please restart Visual Studio Code to retrigger the download",
