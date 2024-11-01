@@ -134,6 +134,7 @@
   "Restore {0}": "Przywróć plik {0}",
   "Run and Debug: A valid browser is not installed. Please install Edge or Chrome.": "Uruchom i debuguj: nie zainstalowano prawidłowej przeglądarki. Zainstaluj przeglądarkę Edge lub Chrome.",
   "Run and Debug: auto-detection found {0} for a launch browser": "Uruchamianie i debugowanie: automatyczne wykrywanie znalazło {0} dla przeglądarki uruchamiania",
+  "Security Warning": "Ostrzeżenie o zabezpieczeniach",
   "See {0} output": "Zobacz dane wyjściowe {0}",
   "Select fix all action": "Wybierz pozycję Napraw całą akcję",
   "Select the process to attach to": "Wybierz docelowy proces dołączania",
