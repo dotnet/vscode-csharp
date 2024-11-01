@@ -4,7 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.55.x
-* Update Roslyn to 4.13.0-2.24529.3 (PR: [#7705](https://github.com/dotnet/vscode-csharp/pull/7705))
+* Update Roslyn to 4.13.0-2.24531.3 (PR: [#7722](https://github.com/dotnet/vscode-csharp/pull/7722))
+  * Proffer project system query service (PR: [#75682](https://github.com/dotnet/roslyn/pull/75682))
+  * Ensure discards are initially soft selected in VSCode (PR: [#75655](https://github.com/dotnet/roslyn/pull/75655))
+  * Reduce allocations in VirtualCharService.CreateVirtualCharSequence (PR: [#75654](https://github.com/dotnet/roslyn/pull/75654))
+  * Reduce allocations in TextDocumentStates.AddRange (PR: [#75640](https://github.com/dotnet/roslyn/pull/75640))
 * Update Razor to 9.0.0-preview.24528.3 (PR: [#7705](https://github.com/dotnet/vscode-csharp/pull/7705))
   * Update project configuration from Roslyn info (#11092) (PR: [#11092](https://github.com/dotnet/razor/pull/11092))
   * Reduce the amount of telemetry emitted (#11094) (PR: [#11094](https://github.com/dotnet/razor/pull/11094))
