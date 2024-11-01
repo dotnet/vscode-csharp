@@ -21,6 +21,7 @@
   * Report a better error for void components (#11041) (PR: [#11041](https://github.com/dotnet/razor/pull/11041))
   * Ensure model directives are mapped at runtime (#11007) (PR: [#11007](https://github.com/dotnet/razor/pull/11007))
   * Including @using for Out-of-Scope Razor Component References (#10651) (PR: [#10651](https://github.com/dotnet/razor/pull/10651))
+* Make checkDevCert a modal dialogue (PR: [#7704](https://github.com/dotnet/vscode-csharp/pull/7704))
 
 # 2.53.x
 * Update Roslyn to 4.13.0-1.24518.1 (PR: [#7670](https://github.com/dotnet/vscode-csharp/pull/7670))
