@@ -1898,7 +1898,7 @@
         "command": "dotnet.restartServer",
         "title": "%command.dotnet.restartServer%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext != 'OmniSharp'"
+        "enablement": "dotnet.server.activationContext == 'Roslyn'"
       }
     ],
     "keybindings": [
