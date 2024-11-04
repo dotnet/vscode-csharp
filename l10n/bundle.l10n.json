@@ -1,4 +1,6 @@
 {
+  ".NET Test Log": ".NET Test Log",
+  ".NET NuGet Restore": ".NET NuGet Restore",
   "How to setup Remote Debugging": "How to setup Remote Debugging",
   "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.": "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.",
   "The C# extension for Visual Studio Code is incompatible on {0} {1}.": "The C# extension for Visual Studio Code is incompatible on {0} {1}.",
@@ -7,6 +9,7 @@
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.",
   "Does not contain .NET Core projects.": "Does not contain .NET Core projects.",
   "pipeArgs must be a string or a string array type": "pipeArgs must be a string or a string array type",
+  "remote-attach": "remote-attach",
   "Name not defined in current configuration.": "Name not defined in current configuration.",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.",
   "Select the process to attach to": "Select the process to attach to",
@@ -145,6 +148,7 @@
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change",
   "C# configuration has changed. Would you like to relaunch the Language Server with your changes?": "C# configuration has changed. Would you like to relaunch the Language Server with your changes?",
   "Restart Language Server": "Restart Language Server",
+  "OmniSharp Log": "OmniSharp Log",
   "project.json is no longer a supported project format for .NET Core applications.": "project.json is no longer a supported project format for .NET Core applications.",
   "More Detail": "More Detail",
   "Some projects have trouble loading. Please review the output for more details.": "Some projects have trouble loading. Please review the output for more details.",
