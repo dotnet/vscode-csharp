@@ -89,7 +89,7 @@ export async function activateOmniSharpLanguageServer(
     eventStream.subscribe(dotnetTestChannelObserver.post);
     eventStream.subscribe(dotnetTestLoggerObserver.post);
 
-    const omnisharpChannel = vscode.window.createOutputChannel('OmniSharp Log');
+    const omnisharpChannel = vscode.window.createOutputChannel(vscode.l10n.t('OmniSharp Log'));
     const omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, platformInfo);
     const omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
     eventStream.subscribe(omnisharpLogObserver.post);

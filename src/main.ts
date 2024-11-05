@@ -144,8 +144,8 @@ export async function activate(
         );
     } else {
         // activate language services
-        const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
-        const dotnetChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
+        const dotnetTestChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET Test Log'));
+        const dotnetChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET NuGet Restore'));
         omnisharpLangServicePromise = activateOmniSharpLanguageServer(
             context,
             platformInfo,
