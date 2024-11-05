@@ -39,6 +39,9 @@ export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAuto
             RoslynProtocol.OnAutoInsertRegistrationOptions
         >(RoslynProtocol.OnAutoInsertRequest.method);
     }
+    clear(): void {
+        this._registrations.clear();
+    }
     fillInitializeParams?: ((params: InitializeParams) => void) | undefined;
     preInitialize?:
         | ((capabilities: ServerCapabilities<any>, documentSelector: DocumentSelector | undefined) => void)

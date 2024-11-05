@@ -6,8 +6,14 @@
 import * as cp from 'child_process';
 import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
-import { RequestHandler, RequestType } from 'vscode-jsonrpc';
-import { GenericNotificationHandler, InitializeResult, LanguageClientOptions, State } from 'vscode-languageclient';
+import { RequestHandler } from 'vscode-jsonrpc';
+import {
+    GenericNotificationHandler,
+    InitializeResult,
+    LanguageClientOptions,
+    RequestType,
+    State,
+} from 'vscode-languageclient';
 import { ServerOptions } from 'vscode-languageclient/node';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';

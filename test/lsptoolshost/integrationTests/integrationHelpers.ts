@@ -13,7 +13,7 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL } from 'os';
 import { describe, expect, test } from '@jest/globals';
 
-export async function activateCSharpExtension(): Promise<void> {
+export async function activateCSharpExtension(): Promise<CSharpExtensionExports> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
         throw new Error('Failed to find installation of ms-dotnettools.csharp');
@@ -53,6 +53,8 @@ export async function activateCSharpExtension(): Promise<void> {
     if (shouldRestart) {
         await restartLanguageServer();
     }
+
+    return csharpExtension.exports;
 }
 
 export function usingDevKit(): boolean {

@@ -405,7 +405,7 @@ export class LspEngine implements IEngine {
                     registrations: true,
                 };
             },
-            dispose() {
+            clear() {
                 /* empty */
             },
             fillClientCapabilities(_) {

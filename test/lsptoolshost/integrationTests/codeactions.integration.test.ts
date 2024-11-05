@@ -13,10 +13,12 @@ import {
     expectText,
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
+import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 
 describe(`Code Actions Tests`, () => {
+    let csharpExports: CSharpExtensionExports | undefined = undefined;
     beforeAll(async () => {
-        await activateCSharpExtension();
+        csharpExports = await activateCSharpExtension();
     });
 
     beforeEach(async () => {
@@ -33,9 +35,15 @@ describe(`Code Actions Tests`, () => {
     });
 
     test('Lightbulb displays actions', async () => {
+        console.log('LIGHTBULB TEST');
+        csharpExports!.experimental.outputChannel.appendLine('Lightbulb displays actions');
+        csharpExports!.experimental.traceChannel.appendLine('Lightbulb displays actions');
         const actions = await getCodeActions(new vscode.Range(0, 0, 0, 12));
+        csharpExports!.experimental.traceChannel.appendLine(`Got actions ${actions.length}`);
+        csharpExports!.experimental.traceChannel.appendLine(JSON.stringify(actions, null, 4));
         expect(actions.length).toBeGreaterThanOrEqual(3);
-
+        console.log(actions.length);
+        console.log(actions.map((a) => a.title).join(', '));
         // Verify we have unresolved code actions.
         expect(actions[0].title).toBe('Remove unnecessary usings');
         expect(actions[0].kind).toStrictEqual(vscode.CodeActionKind.QuickFix);
@@ -55,7 +63,8 @@ describe(`Code Actions Tests`, () => {
 
     test('Remove unnecessary usings applied', async () => {
         const actions = await getCodeActions(new vscode.Range(0, 0, 0, 12), 10);
-
+        console.log(actions.length);
+        console.log(actions.map((a) => a.title).join(', '));
         expect(actions[0].title).toBe('Remove unnecessary usings');
         expect(actions[0].edit).toBeDefined();
 
@@ -311,13 +320,18 @@ async function getCodeActions(
     range: vscode.Range,
     resolveCount: number | undefined = undefined
 ): Promise<vscode.CodeAction[]> {
+    const uri = vscode.window.activeTextEditor!.document.uri;
+    console.log(`Getting actions for ${uri.toString()}`);
     const codeActions = await vscode.commands.executeCommand<vscode.CodeAction[]>(
         'vscode.executeCodeActionProvider',
-        vscode.window.activeTextEditor!.document.uri,
+        uri,
         range,
         /** kind **/ undefined,
         resolveCount
     );
+
+    console.log(JSON.stringify(codeActions, null, 4));
+
     return codeActions;
 }
 

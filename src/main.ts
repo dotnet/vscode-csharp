@@ -104,7 +104,7 @@ export async function activate(
     let roslynLanguageServerStartedPromise: Promise<RoslynLanguageServer> | undefined = undefined;
     let razorLanguageServerStartedPromise: Promise<void> | undefined = undefined;
     let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
-
+    const traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
     if (!useOmnisharpServer) {
         // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
         // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
@@ -139,6 +139,7 @@ export async function activate(
             platformInfo,
             optionStream,
             csharpChannel,
+            traceChannel,
             reporter,
             roslynLanguageServerEvents
         );
@@ -244,6 +245,8 @@ export async function activate(
             experimental: {
                 sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
                 languageServerEvents: roslynLanguageServerEvents,
+                outputChannel: csharpChannel,
+                traceChannel: traceChannel,
             },
             getComponentFolder: (componentName) => {
                 return getComponentFolder(componentName, languageServerOptions);
