@@ -137,7 +137,7 @@
   "Security Warning": "보안 경고",
   "See {0} output": "{0} 출력 보기",
   "Select fix all action": "모든 작업 수정 선택",
-  "Select project": "Select project",
+  "Select project": "프로젝트 선택",
   "Select the process to attach to": "연결할 프로세스 선택",
   "Select the project to launch": "시작할 프로젝트 선택",
   "Self-signed certificate sucessfully {0}": "자체 서명된 인증서 성공적으로 {0}",
