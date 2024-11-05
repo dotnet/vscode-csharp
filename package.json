@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.13.0-2.24529.3",
+    "roslyn": "4.13.0-2.24531.3",
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24531.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -1899,7 +1899,7 @@
         "command": "dotnet.restartServer",
         "title": "%command.dotnet.restartServer%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext != 'OmniSharp'"
+        "enablement": "dotnet.server.activationContext == 'Roslyn'"
       }
     ],
     "keybindings": [

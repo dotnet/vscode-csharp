@@ -3,7 +3,14 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.56.x
+
 # 2.55.x
+* Update Roslyn to 4.13.0-2.24531.3 (PR: [#7722](https://github.com/dotnet/vscode-csharp/pull/7722))
+  * Proffer project system query service (PR: [#75682](https://github.com/dotnet/roslyn/pull/75682))
+  * Ensure discards are initially soft selected in VSCode (PR: [#75655](https://github.com/dotnet/roslyn/pull/75655))
+  * Reduce allocations in VirtualCharService.CreateVirtualCharSequence (PR: [#75654](https://github.com/dotnet/roslyn/pull/75654))
+  * Reduce allocations in TextDocumentStates.AddRange (PR: [#75640](https://github.com/dotnet/roslyn/pull/75640))
 * Update Razor to 9.0.0-preview.24531.4 (PR: [#7723](https://github.com/dotnet/vscode-csharp/pull/7723))
   * Fix aggregate telemetry reliability (PR: [#11134](https://github.com/dotnet/razor/pull/11134))
   * [FUSE] Fix OnAutoInsert and override completion and possible others (PR: [#11122](https://github.com/dotnet/razor/pull/11122))
@@ -46,6 +53,7 @@
   * Report a better error for void components (#11041) (PR: [#11041](https://github.com/dotnet/razor/pull/11041))
   * Ensure model directives are mapped at runtime (#11007) (PR: [#11007](https://github.com/dotnet/razor/pull/11007))
   * Including @using for Out-of-Scope Razor Component References (#10651) (PR: [#10651](https://github.com/dotnet/razor/pull/10651))
+* Make checkDevCert a modal dialogue (PR: [#7704](https://github.com/dotnet/vscode-csharp/pull/7704))
 
 # 2.53.x
 * Update Roslyn to 4.13.0-1.24518.1 (PR: [#7670](https://github.com/dotnet/vscode-csharp/pull/7670))
