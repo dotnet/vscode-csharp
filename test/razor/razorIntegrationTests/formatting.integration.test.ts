@@ -9,7 +9,7 @@ import { beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
 
-integrationHelpers.describeIfNotMacOS(`Razor Formatting ${testAssetWorkspace.description}`, function () {
+integrationHelpers.describeIfWindows(`Razor Formatting ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;

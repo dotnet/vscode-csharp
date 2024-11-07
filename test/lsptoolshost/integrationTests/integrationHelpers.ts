@@ -230,9 +230,11 @@ export async function expectText(document: vscode.TextDocument, expectedLines: s
 export const describeIfCSharp = describeIf(!usingDevKit());
 export const describeIfDevKit = describeIf(usingDevKit());
 export const describeIfNotMacOS = describeIf(!isMacOS());
+export const describeIfWindows = describeIf(isWindows());
 export const testIfCSharp = testIf(!usingDevKit());
 export const testIfDevKit = testIf(usingDevKit());
 export const testIfNotMacOS = testIf(!isMacOS());
+export const testIfWindows = testIf(isWindows());
 
 function describeIf(condition: boolean) {
     return condition ? describe : describe.skip;
@@ -245,4 +247,9 @@ function testIf(condition: boolean) {
 function isMacOS() {
     const currentPlatform = platform();
     return currentPlatform === 'darwin';
+}
+
+function isWindows() {
+    const currentPlatform = platform();
+    return currentPlatform === 'win32';
 }
