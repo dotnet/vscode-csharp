@@ -41,6 +41,7 @@ import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTrack
 import { getComponentFolder } from './lsptoolshost/builtInComponents';
 import { activateOmniSharpLanguageServer, ActivationResult } from './omnisharp/omnisharpLanguageServer';
 import { ActionOption, showErrorMessage } from './shared/observers/utils/showMessage';
+import { TelemetryEventNames } from './shared/telemetryEventNames';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -144,8 +145,8 @@ export async function activate(
         );
     } else {
         // activate language services
-        const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
-        const dotnetChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
+        const dotnetTestChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET Test Log'));
+        const dotnetChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET NuGet Restore'));
         omnisharpLangServicePromise = activateOmniSharpLanguageServer(
             context,
             platformInfo,
@@ -218,7 +219,7 @@ export async function activate(
     const activationProperties: { [key: string]: string } = {
         serverKind: useOmnisharpServer ? 'OmniSharp' : 'Roslyn',
     };
-    reporter.sendTelemetryEvent('CSharpActivated', activationProperties);
+    reporter.sendTelemetryEvent(TelemetryEventNames.CSharpActivated, activationProperties);
 
     if (!useOmnisharpServer) {
         debugSessionTracker.initializeDebugSessionHandlers(context);

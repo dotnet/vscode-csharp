@@ -23,7 +23,7 @@ export function registerRestoreCommands(context: vscode.ExtensionContext, langua
         // We do not need to register restore commands if using C# devkit.
         return;
     }
-    const restoreChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
+    const restoreChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET NuGet Restore'));
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
             return chooseProjectAndRestore(languageServer, restoreChannel);
