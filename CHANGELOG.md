@@ -15,6 +15,8 @@
   * Reduce allocations in ProjectSystemProjectFactory.ConvertMetadataReferencesToProjectReferences_NoLock (PR: [#75646](https://github.com/dotnet/roslyn/pull/75646))
   * Reduce memory and CPU costs due to SegmentedList usage (PR: [#75661](https://github.com/dotnet/roslyn/pull/75661))
 * Bump xamltools to 17.13.35506.24 (PR: [#7740](https://github.com/dotnet/vscode-csharp/pull/7740))
+* Bump xamltools to 17.13.35507.225 (PR: [#7754](https://github.com/dotnet/vscode-csharp/pull/7754))
+  * XAML IntelliseSense completions for Image.Source 
 
 # 2.55.x
 * Update Roslyn to 4.13.0-2.24531.3 (PR: [#7722](https://github.com/dotnet/vscode-csharp/pull/7722))
