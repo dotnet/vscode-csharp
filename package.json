@@ -39,7 +39,7 @@
   "defaults": {
     "roslyn": "4.13.0-2.24531.3",
     "omniSharp": "1.39.11",
-    "razor": "9.0.0-preview.24531.4",
+    "razor": "9.0.0-preview.24555.12",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "17.13.35506.24"
   },
@@ -1526,6 +1526,13 @@
             "scope": "machine-overridable",
             "default": false,
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
+            "order": 90
+          },
+          "razor.languageServer.useRoslynTokenizer": {
+            "type": "boolean",
+            "scope": "machine-overridable",
+            "default": false,
+            "markdownDescription": "%configuration.razor.languageServer.useRoslynTokenizer%",
             "order": 90
           },
           "razor.languageServer.suppressLspErrorToasts": {
