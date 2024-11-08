@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.56.x
+* Update Razor to 9.0.0-preview.24557.11 (PR: [#7756](https://github.com/dotnet/vscode-csharp/pull/7756))
+  * Fix FUSE hook up in VS Code (#11175) (PR: [#11175](https://github.com/dotnet/razor/pull/11175))
+  * Update VSTelemetryAPI version (#11181) (PR: [#11181](https://github.com/dotnet/razor/pull/11181))
+  * Improvements for Assumed.Unreachable(...) (#11155) (PR: [#11155](https://github.com/dotnet/razor/pull/11155))
+  * Better logging for named pipe (#11144) (PR: [#11144](https://github.com/dotnet/razor/pull/11144))
+  * Fix code actions (and code actions integration tests) (#11141) (PR: [#11141](https://github.com/dotnet/razor/pull/11141))
+  * Fix some things for extract component (#11137) (PR: [#11137](https://github.com/dotnet/razor/pull/11137))
+  * More CodeAction moves in preparation for cohosting (#11135) (PR: [#11135](https://github.com/dotnet/razor/pull/11135))
 * Update Roslyn to 4.13.0-2.24557.5 (PR: [#7752](https://github.com/dotnet/vscode-csharp/pull/7752))
   * Fix telemetry property value (PR: [#75813](https://github.com/dotnet/roslyn/pull/75813))
   * Classify 'await' as a control keyword (PR: [#75782](https://github.com/dotnet/roslyn/pull/75782))
