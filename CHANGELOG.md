@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.56.x
+* Update Roslyn to 4.13.0-2.24557.5 (PR: [#7752](https://github.com/dotnet/vscode-csharp/pull/7752))
+  * Fix telemetry property value (PR: [#75813](https://github.com/dotnet/roslyn/pull/75813))
+  * Classify 'await' as a control keyword (PR: [#75782](https://github.com/dotnet/roslyn/pull/75782))
+  * Allow renaming with overload resolution when only one overload exists(PR: [#75752](https://github.com/dotnet/roslyn/pull/75752))
+  * Fix issue loading completion providers from `<Analyyzer>` project items (PR: [#75721](https://github.com/dotnet/roslyn/pull/75721))
+  * Expose code actions to Razor cohosting (PR: [#75711](https://github.com/dotnet/roslyn/pull/75711))
+  * Do not include source generated documents in related document results (PR: [#75718](https://github.com/dotnet/roslyn/pull/75718))
+  * Fix issue where inlay hints could not be resolved if multiple editors opened side by side (PR: [#75709](https://github.com/dotnet/roslyn/pull/75709))
+  * Reduce allocations in ProjectSystemProjectFactory.ConvertMetadataReferencesToProjectReferences_NoLock (PR: [#75646](https://github.com/dotnet/roslyn/pull/75646))
+  * Reduce memory and CPU costs due to SegmentedList usage (PR: [#75661](https://github.com/dotnet/roslyn/pull/75661))
 * Bump xamltools to 17.13.35506.24 (PR: [#7740](https://github.com/dotnet/vscode-csharp/pull/7740))
 
 # 2.55.x
