@@ -4,7 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.56.x
-* Bump xamltools to 17.13.35506.24 (PR: [#7740](https://github.com/dotnet/vscode-csharp/pull/7740))
+* Update Roslyn to 4.13.0-2.24557.5 (PR: [#7749](https://github.com/dotnet/vscode-csharp/pull/7749))
+* Bump xamltools to 17.13.35507.225 (PR: [#7749](https://github.com/dotnet/vscode-csharp/pull/7749))
+  * XAML IntelliseSense completions for Image.Source 
 
 # 2.55.x
 * Update Roslyn to 4.13.0-2.24531.3 (PR: [#7722](https://github.com/dotnet/vscode-csharp/pull/7722))
