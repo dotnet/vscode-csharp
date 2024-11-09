@@ -66,7 +66,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Launch Current File BasicRazorApp2_1 Integration Tests",
+            "name": "[Razor] Run Current File Integration Test",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -76,7 +76,7 @@
                 // The profile can be found under /test/csharp-test-profile.
                 "--profile",
                 "csharp-test-profile",
-                "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/BasicRazorApp2_1/.vscode/lsp_tools_host_BasicRazorApp2_1.code-workspace",
+                "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/RazorApp/.vscode/RazorApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests",
                 "--log",
@@ -89,7 +89,7 @@
             "sourceMaps": true,
             "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
-            "preLaunchTask": "buildDev",
+            "preLaunchTask": "buildTest",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
@@ -204,7 +204,7 @@
             "id": "omnisharpAssetName",
             "description": "The name of the asset folder to use for the OmniSharp integration test.",
             "type": "pickString",
-            "options": ["singleCsproj", "BasicRazorApp2_1", "slnWithCsproj", "slnFilterWithCsproj", "slnWithGenerator"]
+            "options": ["singleCsproj", "RazorApp", "slnWithCsproj", "slnFilterWithCsproj", "slnWithGenerator"]
         },
         {
             "id": "gulpTaskName",

@@ -11,14 +11,14 @@ import { ITestAssetWorkspace, TestAssetWorkspace } from './testAssets';
 import singleCsproj from './singleCsproj';
 import slnWithCsproj from './slnWithCsproj';
 import slnFilterWithCsproj from './slnFilterWithCsproj';
-import BasicRazorApp2_1 from './basicRazorApp21';
+import RazorApp from './razorApp';
 import slnWithGenerator from './slnWithGenerator';
 
 const testAssetWorkspaces: { [x: string]: ITestAssetWorkspace } = {
     singleCsproj,
     slnWithCsproj,
     slnFilterWithCsproj,
-    BasicRazorApp2_1,
+    RazorApp,
     slnWithGenerator,
 };
 

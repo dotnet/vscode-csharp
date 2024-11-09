@@ -5,11 +5,11 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { describe, beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
+import { beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
 
-describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
+integrationHelpers.describeIfWindows(`Razor Hover ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
@@ -19,7 +19,7 @@ describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
     });
 
     beforeEach(async function () {
-        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'Index.cshtml'));
+        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'Hover.cshtml'));
     });
 
     afterAll(async () => {

@@ -19,7 +19,7 @@ export function registerUnitTestingCommands(context: vscode.ExtensionContext, la
         // If using C# devkit, we don't need to register any test commands.
         return;
     }
-    const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
+    const dotnetTestChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET Test Log'));
     context.subscriptions.push(
         vscode.commands.registerCommand(
             'dotnet.test.run',
