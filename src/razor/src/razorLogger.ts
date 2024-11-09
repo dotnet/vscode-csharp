@@ -25,7 +25,7 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         this.onLogEmitter = eventEmitterFactory.create<string>();
         this.onTraceLevelChangeEmitter = eventEmitterFactory.create<LogLevel>();
 
-        this.outputChannel = vscode.window.createOutputChannel(RazorLogger.logName);
+        this.outputChannel = vscode.window.createOutputChannel(vscode.l10n.t('Razor Log'));
 
         this.logRazorInformation();
         this.setupToStringOverrides();

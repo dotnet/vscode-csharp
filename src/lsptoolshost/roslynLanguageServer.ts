@@ -1076,7 +1076,7 @@ export async function activateRoslynLanguageServer(
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     // The trace channel verbosity is controlled by the _channel verbosity.
-    _traceChannel = vscode.window.createOutputChannel('C# LSP Trace Logs');
+    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'));
 
     reporter.sendTelemetryEvent(TelemetryEventNames.ClientInitialize);
 
