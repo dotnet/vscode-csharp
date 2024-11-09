@@ -25,6 +25,7 @@ export function resolveRazorLanguageServerOptions(
     const usingOmniSharp =
         !getCSharpDevKit() && vscodeApi.workspace.getConfiguration().get<boolean>('dotnet.server.useOmnisharp');
     const forceRuntimeCodeGeneration = serverConfig.get<boolean>('forceRuntimeCodeGeneration');
+    const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
 
     return {
         serverPath: languageServerExecutablePath,
@@ -33,6 +34,7 @@ export function resolveRazorLanguageServerOptions(
         outputChannel: logger.outputChannel,
         usingOmniSharp,
         forceRuntimeCodeGeneration,
+        suppressErrorToasts,
     } as RazorLanguageServerOptions;
 }
 

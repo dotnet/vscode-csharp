@@ -135,6 +135,34 @@ export async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
     });
 }
 
+export async function navigate(
+    originalPosition: vscode.Position,
+    definitionLocations: vscode.Location[],
+    expectedFileName: string
+): Promise<void> {
+    const windowChanged = new Promise<void>((resolve, _) => {
+        vscode.window.onDidChangeActiveTextEditor((_e) => {
+            if (_e?.document.fileName.includes(expectedFileName)) {
+                resolve();
+            }
+        });
+    });
+
+    await vscode.commands.executeCommand(
+        'editor.action.goToLocations',
+        vscode.window.activeTextEditor!.document.uri,
+        originalPosition,
+        definitionLocations,
+        'goto',
+        'Failed to navigate'
+    );
+
+    // Navigation happens asynchronously when a different file is opened, so we need to wait for the window to change.
+    await windowChanged;
+
+    expect(vscode.window.activeTextEditor?.document.fileName).toContain(expectedFileName);
+}
+
 export function sortLocations(locations: vscode.Location[]): vscode.Location[] {
     return locations.sort((a, b) => {
         const uriCompare = a.uri.fsPath.localeCompare(b.uri.fsPath);

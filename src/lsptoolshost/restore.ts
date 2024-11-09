@@ -14,14 +14,16 @@ import {
 } from './roslynProtocol';
 import path = require('path');
 import { showErrorMessage } from '../shared/observers/utils/showMessage';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
 let _restoreInProgress = false;
 
-export function registerRestoreCommands(
-    context: vscode.ExtensionContext,
-    languageServer: RoslynLanguageServer,
-    restoreChannel: vscode.OutputChannel
-) {
+export function registerRestoreCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
+    if (getCSharpDevKit()) {
+        // We do not need to register restore commands if using C# devkit.
+        return;
+    }
+    const restoreChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
             return chooseProjectAndRestore(languageServer, restoreChannel);

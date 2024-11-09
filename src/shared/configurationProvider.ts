@@ -150,7 +150,9 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             }
 
             if (debugConfiguration.checkForDevCert) {
-                await this.checkForDevCerts(commonOptions.dotnetPath);
+                if (!(await this.checkForDevCerts(commonOptions.dotnetPath))) {
+                    return undefined;
+                }
             }
         }
 
@@ -233,70 +235,78 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         }
     }
 
-    private async checkForDevCerts(dotnetPath: string) {
-        await hasDotnetDevCertsHttps(dotnetPath).then(async (returnData) => {
+    private async checkForDevCerts(dotnetPath: string): Promise<boolean> {
+        let result: boolean | undefined = undefined;
+
+        while (result === undefined) {
+            const returnData = await hasDotnetDevCertsHttps(dotnetPath);
             const errorCode = returnData.error?.code;
             if (
                 errorCode === CertToolStatusCodes.CertificateNotTrusted ||
                 errorCode === CertToolStatusCodes.ErrorNoValidCertificateFound
             ) {
-                const labelYes: ActionOption = {
-                    title: vscode.l10n.t('Yes'),
-                    action: async () => {
-                        const returnData = await createSelfSignedCert(dotnetPath);
-                        if (returnData.error === null) {
-                            // if the process returns 0, returnData.error is null, otherwise the return code can be accessed in returnData.error.code
-                            const message =
-                                errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
-                            showInformationMessage(
-                                vscode,
-                                vscode.l10n.t('Self-signed certificate sucessfully {0}', message)
-                            );
-                        } else {
-                            this.csharpOutputChannel.appendLine(
-                                vscode.l10n.t(
-                                    `Couldn't create self-signed certificate. {0}\ncode: {1}\nstdout: {2}`,
-                                    returnData.error.message,
-                                    `${returnData.error.code}`,
-                                    returnData.stdout
-                                )
-                            );
+                const labelYes = vscode.l10n.t('Yes');
+                const labelMoreInfo = vscode.l10n.t('More Information');
 
-                            const labelShowOutput: ActionOption = {
-                                title: vscode.l10n.t('Show Output'),
-                                action: async () => {
-                                    this.csharpOutputChannel.show();
-                                },
-                            };
-                            showWarningMessage(
-                                vscode,
-                                vscode.l10n.t(
-                                    "Couldn't create self-signed certificate. See output for more information."
-                                ),
-                                labelShowOutput
-                            );
-                        }
+                const dialogResult = await vscode.window.showWarningMessage(
+                    vscode.l10n.t('Security Warning'),
+                    {
+                        modal: true,
+                        detail: vscode.l10n.t(
+                            'The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?'
+                        ),
                     },
-                };
-                const labelNotNow = vscode.l10n.t('Not Now');
-                const labelMoreInfo: ActionOption = {
-                    title: vscode.l10n.t('More Information'),
-                    action: async () => {
-                        const launchjsonDescriptionURL = 'https://aka.ms/VSCode-CS-CheckForDevCert';
-                        await vscode.env.openExternal(vscode.Uri.parse(launchjsonDescriptionURL));
-                        await this.checkForDevCerts(dotnetPath);
-                    },
-                };
-                showInformationMessage(
-                    vscode,
-                    vscode.l10n.t(
-                        'The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?'
-                    ),
                     labelYes,
-                    labelNotNow,
                     labelMoreInfo
                 );
+
+                if (dialogResult === labelYes) {
+                    const returnData = await createSelfSignedCert(dotnetPath);
+                    if (returnData.error === null) {
+                        // if the process returns 0, returnData.error is null, otherwise the return code can be accessed in returnData.error.code
+                        const message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
+                        showInformationMessage(
+                            vscode,
+                            vscode.l10n.t('Self-signed certificate sucessfully {0}', message)
+                        );
+
+                        result = true;
+                    } else {
+                        this.csharpOutputChannel.appendLine(
+                            vscode.l10n.t(
+                                `Couldn't create self-signed certificate. {0}\ncode: {1}\nstdout: {2}`,
+                                returnData.error.message,
+                                `${returnData.error.code}`,
+                                returnData.stdout
+                            )
+                        );
+
+                        const labelShowOutput: ActionOption = {
+                            title: vscode.l10n.t('Show Output'),
+                            action: async () => {
+                                this.csharpOutputChannel.show();
+                            },
+                        };
+                        showWarningMessage(
+                            vscode,
+                            vscode.l10n.t("Couldn't create self-signed certificate. See output for more information."),
+                            labelShowOutput
+                        );
+
+                        result = false;
+                    }
+                } else if (dialogResult === labelMoreInfo) {
+                    const launchjsonDescriptionURL = 'https://aka.ms/VSCode-CS-CheckForDevCert';
+                    await vscode.env.openExternal(vscode.Uri.parse(launchjsonDescriptionURL));
+                } else if (dialogResult === undefined) {
+                    // User cancelled dialog and wishes to continue debugging.
+                    result = true;
+                }
+            } else {
+                result = true;
             }
-        });
+        }
+
+        return result;
     }
 }

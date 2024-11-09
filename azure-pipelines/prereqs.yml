@@ -17,9 +17,9 @@ steps:
 # So we avoid installing .NET in those cases.
 - ${{ if eq(parameters.installDotNet, true) }}:
   - task: UseDotNet@2
-    displayName: 'Install .NET Core SDKs'
+    displayName: 'Install .NET SDK'
     inputs:
-      version: '8.x'
+      version: '8.0.403'
 
 - script: dotnet --info
   displayName: Display dotnet info

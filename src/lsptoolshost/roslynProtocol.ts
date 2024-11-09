@@ -17,6 +17,7 @@ export interface VSProjectContext {
     _vs_label: string;
     _vs_id: string;
     _vs_kind: string;
+    _vs_is_miscellaneous: boolean;
 }
 
 export interface VSTextDocumentIdentifier extends lsp.TextDocumentIdentifier {
@@ -230,6 +231,14 @@ export interface CopilotRelatedDocumentsReport {
     _vs_file_paths?: string[];
 }
 
+export interface SourceGeneratorGetRequestParams {
+    textDocument: lsp.TextDocumentIdentifier;
+}
+
+export interface SourceGeneratedDocumentText {
+    text: string;
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
@@ -350,4 +359,10 @@ export namespace CopilotRelatedDocumentsRequest {
         void,
         void
     >(method);
+}
+
+export namespace SourceGeneratorGetTextRequest {
+    export const method = 'sourceGeneratedDocument/_roslyn_getText';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
+    export const type = new lsp.RequestType<SourceGeneratorGetRequestParams, SourceGeneratedDocumentText, void>(method);
 }

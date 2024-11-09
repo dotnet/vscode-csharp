@@ -41,6 +41,7 @@ import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTrack
 import { getComponentFolder } from './lsptoolshost/builtInComponents';
 import { activateOmniSharpLanguageServer, ActivationResult } from './omnisharp/omnisharpLanguageServer';
 import { ActionOption, showErrorMessage } from './shared/observers/utils/showMessage';
+import { TelemetryEventNames } from './shared/telemetryEventNames';
 
 export async function activate(
     context: vscode.ExtensionContext
@@ -65,9 +66,7 @@ export async function activate(
     // ensure it gets properly disposed. Upon disposal the events will be flushed.
     context.subscriptions.push(reporter);
 
-    const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
-    const dotnetChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
-    const csharpChannel = vscode.window.createOutputChannel('C#');
+    const csharpChannel = vscode.window.createOutputChannel('C#', { log: true });
     const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     const csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
     eventStream.subscribe(csharpchannelObserver.post);
@@ -141,13 +140,13 @@ export async function activate(
             platformInfo,
             optionStream,
             csharpChannel,
-            dotnetTestChannel,
-            dotnetChannel,
             reporter,
             roslynLanguageServerEvents
         );
     } else {
         // activate language services
+        const dotnetTestChannel = vscode.window.createOutputChannel('.NET Test Log');
+        const dotnetChannel = vscode.window.createOutputChannel('.NET NuGet Restore');
         omnisharpLangServicePromise = activateOmniSharpLanguageServer(
             context,
             platformInfo,
@@ -220,7 +219,7 @@ export async function activate(
     const activationProperties: { [key: string]: string } = {
         serverKind: useOmnisharpServer ? 'OmniSharp' : 'Roslyn',
     };
-    reporter.sendTelemetryEvent('CSharpActivated', activationProperties);
+    reporter.sendTelemetryEvent(TelemetryEventNames.CSharpActivated, activationProperties);
 
     if (!useOmnisharpServer) {
         debugSessionTracker.initializeDebugSessionHandlers(context);

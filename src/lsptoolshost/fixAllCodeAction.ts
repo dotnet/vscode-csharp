@@ -13,7 +13,7 @@ import { UriConverter } from './uriConverter';
 export function registerCodeActionFixAllCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand(
@@ -26,7 +26,7 @@ export function registerCodeActionFixAllCommands(
 export async function getFixAllResponse(
     data: RoslynProtocol.CodeActionResolveData,
     languageServer: RoslynLanguageServer,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ) {
     if (!data.FixAllFlavors) {
         throw new Error(`FixAllFlavors is missing from data ${JSON.stringify(data)}`);
@@ -64,7 +64,7 @@ export async function getFixAllResponse(
                         const componentName = '[roslyn.client.fixAllCodeAction]';
                         const errorMessage = 'Failed to make a fix all edit for completion.';
                         outputChannel.show();
-                        outputChannel.appendLine(`${componentName} ${errorMessage}`);
+                        outputChannel.error(`${componentName} ${errorMessage}`);
                         throw new Error('Tried to insert multiple code action edits, but an error occurred.');
                     }
                 }
@@ -76,7 +76,7 @@ export async function getFixAllResponse(
 async function registerFixAllResolveCodeAction(
     languageServer: RoslynLanguageServer,
     codeActionData: RoslynProtocol.CodeActionResolveData,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ) {
     if (codeActionData) {
         const data = <LSPAny>codeActionData;

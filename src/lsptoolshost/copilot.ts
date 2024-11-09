@@ -9,53 +9,48 @@ import { CopilotRelatedDocumentsReport, CopilotRelatedDocumentsRequest } from '.
 import { RoslynLanguageServer } from './roslynLanguageServer';
 import { UriConverter } from './uriConverter';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
-import { languageServerOptions } from '../shared/options';
+
+interface CopilotTrait {
+    name: string;
+    value: string;
+    includeInPrompt?: boolean;
+    promptTextOverride?: string;
+}
 
 interface CopilotRelatedFilesProviderRegistration {
     registerRelatedFilesProvider(
         providerId: { extensionId: string; languageId: string },
         callback: (
             uri: vscode.Uri,
+            context: { flags: Record<string, unknown> },
             cancellationToken?: vscode.CancellationToken
-        ) => Promise<{ entries: vscode.Uri[]; traits?: { name: string; value: string }[] }>
+        ) => Promise<{ entries: vscode.Uri[]; traits?: CopilotTrait[] }>
     ): vscode.Disposable;
 }
 
-export function registerCopilotExtension(languageServer: RoslynLanguageServer, channel: vscode.OutputChannel) {
-    const isTraceLogLevel =
-        languageServerOptions.logLevel &&
-        (languageServerOptions.logLevel === 'Trace' || languageServerOptions.logLevel === 'Debug');
-
+export function registerCopilotExtension(languageServer: RoslynLanguageServer, channel: vscode.LogOutputChannel) {
     const ext = vscode.extensions.getExtension('github.copilot');
     if (!ext) {
-        if (isTraceLogLevel) {
-            channel.appendLine(
-                'GitHub Copilot extension not installed. Skip registeration of C# related files provider.'
-            );
-        }
+        channel.debug('GitHub Copilot extension not installed. Skip registeration of C# related files provider.');
         return;
     }
     ext.activate().then(() => {
         const relatedAPI = ext.exports as CopilotRelatedFilesProviderRegistration | undefined;
         if (!relatedAPI) {
-            if (isTraceLogLevel) {
-                channel.appendLine(
-                    'Incompatible GitHub Copilot extension installed. Skip registeration of C# related files provider.'
-                );
-            }
+            channel.debug(
+                'Incompatible GitHub Copilot extension installed. Skip registeration of C# related files provider.'
+            );
             return;
         }
 
-        if (isTraceLogLevel) {
-            channel.appendLine('registration of C# related files provider for GitHub Copilot extension succeeded.');
-        }
+        channel.debug('registration of C# related files provider for GitHub Copilot extension succeeded.');
 
         const id = {
             extensionId: CSharpExtensionId,
             languageId: 'csharp',
         };
 
-        relatedAPI.registerRelatedFilesProvider(id, async (uri, token) => {
+        relatedAPI.registerRelatedFilesProvider(id, async (uri, _, token) => {
             const buildResult = (reports: CopilotRelatedDocumentsReport[], builder?: vscode.Uri[]) => {
                 if (reports) {
                     for (const report of reports) {

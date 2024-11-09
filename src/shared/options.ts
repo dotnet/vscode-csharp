@@ -69,7 +69,6 @@ export interface OmnisharpServerOptions {
 }
 
 export interface LanguageServerOptions {
-    readonly logLevel: string;
     readonly documentSelector: DocumentSelector;
     readonly extensionsPaths: string[] | null;
     readonly preferCSharpExtension: boolean;
@@ -80,6 +79,7 @@ export interface LanguageServerOptions {
     readonly componentPaths: { [key: string]: string } | null;
     readonly enableXamlTools: boolean;
     readonly suppressLspErrorToasts: boolean;
+    readonly suppressMiscellaneousFilesToasts: boolean;
     readonly useServerGC: boolean;
 }
 
@@ -378,9 +378,6 @@ class OmnisharpOptionsImpl implements OmnisharpServerOptions {
 }
 
 class LanguageServerOptionsImpl implements LanguageServerOptions {
-    public get logLevel() {
-        return readOption<string>('dotnet.server.trace', 'Information');
-    }
     public get documentSelector() {
         return readOption<DocumentSelector>('dotnet.server.documentSelector', ['csharp']);
     }
@@ -410,6 +407,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get suppressLspErrorToasts() {
         return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
+    }
+    public get suppressMiscellaneousFilesToasts() {
+        return readOption<boolean>('dotnet.server.suppressMiscellaneousFilesToasts', false);
     }
     public get useServerGC() {
         return readOption<boolean>('dotnet.server.useServerGC', true);
@@ -507,7 +507,6 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
 ];
 
 export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
-    'logLevel',
     'documentSelector',
     'preferCSharpExtension',
     'componentPaths',
