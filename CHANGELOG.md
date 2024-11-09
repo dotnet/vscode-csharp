@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.57.x
+
 # 2.56.x
 * Update Razor to 9.0.0-preview.24557.11 (PR: [#7756](https://github.com/dotnet/vscode-csharp/pull/7756))
   * Fix FUSE hook up in VS Code (#11175) (PR: [#11175](https://github.com/dotnet/razor/pull/11175))
