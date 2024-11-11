@@ -128,7 +128,7 @@
   "configuration.razor.server.trace": "Specifies the logging level to use for the Razor server.",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(EXPERIMENTAL) Enable combined design time/runtime code generation for Razor files",
   "configuration.razor.languageServer.useRoslynTokenizer": {
-    "message": "(EXPERIMENTAL) Use the C# tokenizer for Razor files in the IDE. Enables some new C# features, like interpolated and raw strings, in Razor files opened in Visual Studio. This matches using `<features>use-roslyn-tokenizer</feature>` in a `.csproj` file for command line builds, and may result in inconsistencies if this option and your project files do not match.",
+    "message": "(EXPERIMENTAL) Use the C# tokenizer for Razor files in the IDE. Enables some new C# features, like interpolated and raw strings, in Razor files opened in Visual Studio Code. This matches using `<features>use-roslyn-tokenizer</feature>` in a `.csproj` file for command line builds, and may result in inconsistencies if this option and your project files do not match.",
     "comment": [
       "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
     ]
