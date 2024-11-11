@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.56.x
+* Update Roslyn to 4.13.0-2.24561.3 (PR: [#7765](https://github.com/dotnet/vscode-csharp/pull/7765))
+  * Update Razor to fix serialization issue loading projects (PR: [#75794](https://github.com/dotnet/roslyn/pull/75794))
 * Update Razor to 9.0.0-preview.24557.11 (PR: [#7756](https://github.com/dotnet/vscode-csharp/pull/7756))
   * Fix FUSE hook up in VS Code (#11175) (PR: [#11175](https://github.com/dotnet/razor/pull/11175))
   * Update VSTelemetryAPI version (#11181) (PR: [#11181](https://github.com/dotnet/razor/pull/11181))
