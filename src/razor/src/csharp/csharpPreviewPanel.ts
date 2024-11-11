@@ -126,6 +126,9 @@ export class CSharpPreviewPanel {
             vertical-align: middle;
             cursor: pointer;
         }
+        button:focus-visible {
+            outline-color: var(--vscode-focusBorder)
+        }
     </style>
 
     <script type="text/javascript">
