@@ -4,8 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.57.x
+* Update Razor to 9.0.0-preview.24561.3 (PR: [#7748](https://github.com/dotnet/vscode-csharp/pull/7748))
+  * Add feature flag to turn on the new Roslyn tokenizer (PR: [#11185](https://github.com/dotnet/razor/pull/11185))
 
 # 2.56.x
+* Update Roslyn to 4.13.0-2.24561.3 (PR: [#7765](https://github.com/dotnet/vscode-csharp/pull/7765))
+  * Update Razor to fix serialization issue loading projects (PR: [#75794](https://github.com/dotnet/roslyn/pull/75794))
 * Update Razor to 9.0.0-preview.24557.11 (PR: [#7756](https://github.com/dotnet/vscode-csharp/pull/7756))
   * Fix FUSE hook up in VS Code (#11175) (PR: [#11175](https://github.com/dotnet/razor/pull/11175))
   * Update VSTelemetryAPI version (#11181) (PR: [#11181](https://github.com/dotnet/razor/pull/11181))
@@ -26,9 +30,13 @@
   * Reduce memory and CPU costs due to SegmentedList usage (PR: [#75661](https://github.com/dotnet/roslyn/pull/75661))
 * Bump xamltools to 17.13.35506.24 (PR: [#7740](https://github.com/dotnet/vscode-csharp/pull/7740))
 * Bump xamltools to 17.13.35507.225 (PR: [#7755](https://github.com/dotnet/vscode-csharp/pull/7755))
-  * XAML IntelliseSense completions for Image.Source 
+  * XAML IntelliseSense completions for Image.Source
 
 # 2.55.x
+* Update Razor to 9.0.0-preview.24557.10 (PR: [#7757](https://github.com/dotnet/vscode-csharp/pull/7757))
+  * Update VSTelemetryAPI version (#11181) (PR: [#11181](https://github.com/dotnet/razor/pull/11181))
+* Update Roslyn to 4.13.0-2.24557.6 (PR: [#7751](https://github.com/dotnet/vscode-csharp/pull/7751))
+  * Fix issue telemetry reporting incorrect property value (PR: [#75817](https://github.com/dotnet/roslyn/pull/75817))
 * Update Roslyn to 4.13.0-2.24531.3 (PR: [#7722](https://github.com/dotnet/vscode-csharp/pull/7722))
   * Proffer project system query service (PR: [#75682](https://github.com/dotnet/roslyn/pull/75682))
   * Ensure discards are initially soft selected in VSCode (PR: [#75655](https://github.com/dotnet/roslyn/pull/75655))
