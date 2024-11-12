@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.57.x
+* Update Razor to 9.0.0-preview.24561.3 (PR: [#7748](https://github.com/dotnet/vscode-csharp/pull/7748))
+  * Add feature flag to turn on the new Roslyn tokenizer (PR: [#11185](https://github.com/dotnet/razor/pull/11185))
 
 # 2.56.x
 * Update Roslyn to 4.13.0-2.24561.3 (PR: [#7765](https://github.com/dotnet/vscode-csharp/pull/7765))
@@ -28,7 +30,7 @@
   * Reduce memory and CPU costs due to SegmentedList usage (PR: [#75661](https://github.com/dotnet/roslyn/pull/75661))
 * Bump xamltools to 17.13.35506.24 (PR: [#7740](https://github.com/dotnet/vscode-csharp/pull/7740))
 * Bump xamltools to 17.13.35507.225 (PR: [#7755](https://github.com/dotnet/vscode-csharp/pull/7755))
-  * XAML IntelliseSense completions for Image.Source 
+  * XAML IntelliseSense completions for Image.Source
 
 # 2.55.x
 * Update Razor to 9.0.0-preview.24557.10 (PR: [#7757](https://github.com/dotnet/vscode-csharp/pull/7757))
