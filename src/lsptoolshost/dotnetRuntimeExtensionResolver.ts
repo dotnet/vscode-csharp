@@ -16,7 +16,7 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { readFile } from 'fs/promises';
 import { RuntimeInfo } from '../shared/utils/dotnetInfo';
 
-export const DotNetRuntimeVersion = '8.0.10';
+export const DotNetRuntimeVersion = '8.0';
 
 interface IDotnetAcquireResult {
     dotnetPath: string;
