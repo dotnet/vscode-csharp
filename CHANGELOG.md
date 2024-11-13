@@ -6,6 +6,7 @@
 # 2.57.x
 * Update Razor to 9.0.0-preview.24561.3 (PR: [#7748](https://github.com/dotnet/vscode-csharp/pull/7748))
   * Add feature flag to turn on the new Roslyn tokenizer (PR: [#11185](https://github.com/dotnet/razor/pull/11185))
+* Bump xamltools to 17.13.35513.19 (PR: [#7776](https://github.com/dotnet/vscode-csharp/pull/7776))
 
 # 2.56.x
 * Update Roslyn to 4.13.0-2.24561.3 (PR: [#7765](https://github.com/dotnet/vscode-csharp/pull/7765))
