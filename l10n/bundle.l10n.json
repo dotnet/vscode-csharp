@@ -163,6 +163,7 @@
   "Fix all issues": "Fix all issues",
   "Select fix all action": "Select fix all action",
   "Test run already in progress": "Test run already in progress",
+  "Generated document not found": "Generated document not found",
   "Server stopped": "Server stopped",
   "Workspace projects": "Workspace projects",
   "Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.": "Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.",
