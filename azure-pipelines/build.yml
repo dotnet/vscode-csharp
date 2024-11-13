@@ -8,6 +8,8 @@ parameters:
   type: object
 - name: isOfficial
   type: boolean
+- name: dotnetVersion
+  type: string
 
 jobs:
 - job: 'Build_${{ parameters.platform }}_vsixs'
@@ -27,6 +29,7 @@ jobs:
   - template: /azure-pipelines/prereqs.yml@self
     parameters:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}
+      dotnetVersion: ${{ parameters.dotnetVersion}}
 
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.11'

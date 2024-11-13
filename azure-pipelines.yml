@@ -18,11 +18,15 @@ pr:
     exclude:
     - ./*.md
 
+variables:
+  defaultDotnetVersion: '8.0.403'
+
 stages:
 - template: azure-pipelines/build-all.yml
   parameters:
     isOfficial: false
     signType: test
+    dotnetVersion: $(defaultDotnetVersion)
 
 - stage:
   displayName: Test Linux (.NET 6)
@@ -31,7 +35,7 @@ stages:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       # Prefer the dotnet from the container.
-      installDotNet: false
+      dotnetVersion: ''
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
@@ -45,7 +49,7 @@ stages:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       # Prefer the dotnet from the container.
-      installDotNet: false
+      dotnetVersion: ''
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
@@ -58,7 +62,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
-      installDotNet: true
+      dotnetVersion: $(defaultDotnetVersion)
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals 1es-windows-2022-open
@@ -69,7 +73,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
-      installDotNet: true
+      dotnetVersion: $(defaultDotnetVersion)
       pool:
         name: Azure Pipelines
         vmImage: macOS-13
@@ -90,3 +94,5 @@ stages:
       demands: ImageOverride -equals $(demandsName)
     steps:
     - template: azure-pipelines/test-omnisharp.yml
+      parameters:
+        dotnetVersion: $(defaultDotnetVersion)
