@@ -1,3 +1,7 @@
+parameters:
+  - name: dotnetVersion
+    type: string
+
 steps:
 - checkout: self
   clean: true
@@ -6,6 +10,8 @@ steps:
   fetchDepth: 1
 
 - template: prereqs.yml
+  parameters:
+    dotnetVersion: ${{ parameters.dotnetVersion }}
 
 - template: test-prereqs.yml
 

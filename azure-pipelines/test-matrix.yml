@@ -4,8 +4,8 @@ parameters:
   - name: containerName
     type: string
     default: ''
-  - name: installDotNet
-    type: boolean
+  - name: dotnetVersion
+    type: string
   - name: installAdditionalLinuxDependencies
     type: boolean
     default: false
@@ -24,6 +24,6 @@ jobs:
   steps:
   - template: /azure-pipelines/test.yml@self
     parameters:
-      installDotNet: true
+      dotnetVersion: ${{ parameters.dotnetVersion }}
       installAdditionalLinuxDependencies: true
       npmCommand: $(npmCommand)
