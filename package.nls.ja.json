@@ -122,6 +122,7 @@
   "configuration.razor.languageServer.directory": "Razor Language Server ディレクトリへのパスをオーバーライドします。",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(試験段階) Razor ファイルのデザイン時間/ランタイム コード生成の併用を有効にする",
   "configuration.razor.languageServer.suppressLspErrorToasts": "サーバーで回復可能なエラーが発生した場合に、エラー トーストが表示されないようにします。",
+  "configuration.razor.languageServer.useRoslynTokenizer": "(試験段階) IDE で Razor ファイルの C# トークナイザーを使用します。Visual Studio Code で開かれた Razor ファイルで、挿入文字列や生文字列などの新しい C# 機能を有効にします。これは、コマンド ライン ビルドに '<features>use-roslyn-tokenizer</feature>' を使用して一致します。このオプションとプロジェクト ファイルが一致しない場合、不整合が発生する可能性があります。",
   "configuration.razor.server.trace": "Razor サーバーに使用するログ レベルを指定します。",
   "debuggers.coreclr.configurationSnippets.description.attach": "実行中のプロセスに .NET デバッガー (coreclr) をアタッチします。これは、'.NET 5 以降または .NET Core プロセスにアタッチする' コマンドを使用して行うこともできます。",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "このスニペットは、起動する実行可能ファイルへのパスを指定して、Blazor WebAssembly デバッガー (blazorwasm) で新しいプロセスを起動するために使用されます。ほとんどの場合、\".NET: Launch C# プロジェクト\" スニペットの方が適切ですが、このスニペットを使用すると、すべての起動オプションを完全に制御できます。このスニペットは、ホストされている Blazor プロジェクト用です。これは、ファイルを提供するバックエンド ASP.NET Core アプリを持つプロジェクトです。",
