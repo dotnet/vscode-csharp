@@ -1,6 +1,8 @@
 parameters:
   - name: dotnetVersion
     type: string
+  - name: testVSCodeVersion
+    type: string
 
 steps:
 - checkout: self
@@ -19,6 +21,7 @@ steps:
   displayName: 🧪 Run unit and integration tests
   env:
     DISPLAY: :99.0
+    CODE_VERSION: ${{ parameters.testVSCodeVersion }}
 
 - task: PublishTestResults@2
   condition: succeededOrFailed()

@@ -16,10 +16,25 @@ pr:
     - main
   paths:
     exclude:
-    - ./*.md
+    - ./*.md  
+
+# Run a scheduled build every night on main to run tests against insiders VSCode.
+# The variable testVSCodeVersion is set to insiders based on the build reason.
+schedules:
+  - cron: "0 0 * * *"
+    displayName: Daily Insiders Build
+    branches:
+      include:
+        - main
 
 variables:
-  defaultDotnetVersion: '8.0.403'
+- name: defaultDotnetVersion
+  value: '8.0.403'
+- name: testVSCodeVersion
+  ${{ if eq( variables['Build.Reason'], 'Schedule' ) }}: 
+    value: insiders
+  ${{ else }}: 
+    value: stable
 
 stages:
 - template: azure-pipelines/build-all.yml
@@ -36,6 +51,7 @@ stages:
     parameters:
       # Prefer the dotnet from the container.
       dotnetVersion: ''
+      testVSCodeVersion: $(testVSCodeVersion)
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
@@ -50,6 +66,7 @@ stages:
     parameters:
       # Prefer the dotnet from the container.
       dotnetVersion: ''
+      testVSCodeVersion: $(testVSCodeVersion)
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
@@ -63,6 +80,7 @@ stages:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       dotnetVersion: $(defaultDotnetVersion)
+      testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals 1es-windows-2022-open
@@ -74,6 +92,7 @@ stages:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       dotnetVersion: $(defaultDotnetVersion)
+      testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: Azure Pipelines
         vmImage: macOS-13
@@ -96,3 +115,4 @@ stages:
     - template: azure-pipelines/test-omnisharp.yml
       parameters:
         dotnetVersion: $(defaultDotnetVersion)
+        testVSCodeVersion: $(testVSCodeVersion)
