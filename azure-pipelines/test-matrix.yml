@@ -9,6 +9,8 @@ parameters:
   - name: installAdditionalLinuxDependencies
     type: boolean
     default: false
+  - name: testVSCodeVersion
+    type: string
 
 jobs:
 - job:
@@ -27,3 +29,4 @@ jobs:
       dotnetVersion: ${{ parameters.dotnetVersion }}
       installAdditionalLinuxDependencies: true
       npmCommand: $(npmCommand)
+      testVSCodeVersion: ${{ parameters.testVSCodeVersion }}
