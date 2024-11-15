@@ -4,8 +4,21 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.57.x
+* Update Roslyn to 4.13.0-2.24565.3 (PR: [#7792](https://github.com/dotnet/vscode-csharp/pull/7792))
+  * Add support for go to type definition (PR: [#75819](https://github.com/dotnet/roslyn/pull/75819))
+  * Reduce formatting allocations when scrolling (PR: [#75912](https://github.com/dotnet/roslyn/pull/75912))
+  * Improve go-to-impl with error conditions (PR: [#75913](https://github.com/dotnet/roslyn/pull/75913))
+  * Update 'use simple using statement' to support global statements (PR: [#75921](https://github.com/dotnet/roslyn/pull/75921))
+  * Fix case where we were erroneously offering to convert a dictionary to use a collection expression. (PR: [#75897](https://github.com/dotnet/roslyn/pull/75897))
+  * Recover better when a user uses commas in a for-statement instead of semicolons (PR: [#75632](https://github.com/dotnet/roslyn/pull/75632))
+  * Do not run 'remove unnecessary imports' on generated code (PR: [#74762](https://github.com/dotnet/roslyn/pull/74762))
+  * improve goto-def on an invalid override (PR: [#75901](https://github.com/dotnet/roslyn/pull/75901))
+  * Fix formatting of simplify-linq-expression (PR: [#75860](https://github.com/dotnet/roslyn/pull/75860))
+  * Add new line before 'where' constraints in Quick Info (PR: [#60545](https://github.com/dotnet/roslyn/pull/60545))
+* Increase default server start timeout to 2minutes (PR: [#7788](https://github.com/dotnet/vscode-csharp/pull/7788))
 * Update Razor to 9.0.0-preview.24561.3 (PR: [#7748](https://github.com/dotnet/vscode-csharp/pull/7748))
   * Add feature flag to turn on the new Roslyn tokenizer (PR: [#11185](https://github.com/dotnet/razor/pull/11185))
+* Fix Razor preview panel button colors to have more visible contrast ratio (PR: [#7766](https://github.com/dotnet/vscode-csharp/pull/7766))
 * Bump xamltools to 17.13.35513.19 (PR: [#7777](https://github.com/dotnet/vscode-csharp/pull/7777))
 
 # 2.56.x
