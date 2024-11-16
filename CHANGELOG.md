@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.58.x
+
 # 2.57.x
 * Update Razor to 9.0.0-preview.24565.1 (PR: [#7793])(https://github.com/dotnet/vscode-csharp/pull/7793)
 * Update Roslyn to 4.13.0-2.24565.3 (PR: [#7792](https://github.com/dotnet/vscode-csharp/pull/7792))
