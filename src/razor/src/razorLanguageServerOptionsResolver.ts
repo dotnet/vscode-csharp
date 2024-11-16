@@ -25,6 +25,7 @@ export function resolveRazorLanguageServerOptions(
     const usingOmniSharp =
         !getCSharpDevKit() && vscodeApi.workspace.getConfiguration().get<boolean>('dotnet.server.useOmnisharp');
     const forceRuntimeCodeGeneration = serverConfig.get<boolean>('forceRuntimeCodeGeneration');
+    const useRoslynTokenizer = serverConfig.get<boolean>('useRoslynTokenizer');
     const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
 
     return {
@@ -34,6 +35,7 @@ export function resolveRazorLanguageServerOptions(
         outputChannel: logger.outputChannel,
         usingOmniSharp,
         forceRuntimeCodeGeneration,
+        useRoslynTokenizer,
         suppressErrorToasts,
     } as RazorLanguageServerOptions;
 }
