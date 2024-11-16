@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.57.x
+* Update Razor to 9.0.0-preview.24565.1 (PR: [#7793])(https://github.com/dotnet/vscode-csharp/pull/7793)
 * Update Roslyn to 4.13.0-2.24565.3 (PR: [#7792](https://github.com/dotnet/vscode-csharp/pull/7792))
   * Add support for go to type definition (PR: [#75819](https://github.com/dotnet/roslyn/pull/75819))
   * Reduce formatting allocations when scrolling (PR: [#75912](https://github.com/dotnet/roslyn/pull/75912))
