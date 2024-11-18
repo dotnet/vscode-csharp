@@ -5,6 +5,9 @@
 
 # 2.57.x
 * Update Razor to 9.0.0-preview.24565.1 (PR: [#7793])(https://github.com/dotnet/vscode-csharp/pull/7793)
+  * Fine tuning of what types of project update affect what state (#11213) (PR: [#11213](https://github.com/dotnet/razor/pull/11213))
+  * Fix request duration logging (#11198) (PR: [#11198](https://github.com/dotnet/razor/pull/11198))
+  * Update ProjectWorkspaceState and HostProject at the same time (#11191) (PR: [#11191](https://github.com/dotnet/razor/pull/11191))
 * Update Roslyn to 4.13.0-2.24565.3 (PR: [#7792](https://github.com/dotnet/vscode-csharp/pull/7792))
   * Add support for go to type definition (PR: [#75819](https://github.com/dotnet/roslyn/pull/75819))
   * Reduce formatting allocations when scrolling (PR: [#75912](https://github.com/dotnet/roslyn/pull/75912))
