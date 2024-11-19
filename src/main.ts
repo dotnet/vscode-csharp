@@ -91,7 +91,7 @@ export async function activate(
     if (lt(dotnetRuntimeExtensionVersion, requiredDotnetRuntimeExtensionVersion)) {
         const button = vscode.l10n.t('Update and reload');
         const prompt = vscode.l10n.t(
-            'The {0} extension requires version {1} or greater of the .NET Install Tool ({2}) extension.  Please update to continue',
+            'The {0} extension requires at least {1} of the .NET Install Tool ({2}) extension. Please update to continue',
             context.extension.packageJSON.displayName,
             requiredDotnetRuntimeExtensionVersion,
             dotnetRuntimeExtensionId
@@ -103,9 +103,10 @@ export async function activate(
         } else {
             throw new Error(
                 vscode.l10n.t(
-                    'Version {0} of the .NET Install Tool ({1}) was not found, will not activate.',
+                    'Version {0} of the .NET Install Tool ({1}) was not found, {2} will not activate.',
                     requiredDotnetRuntimeExtensionVersion,
-                    dotnetRuntimeExtensionId
+                    dotnetRuntimeExtensionId,
+                    context.extension.packageJSON.displayName
                 )
             );
         }
