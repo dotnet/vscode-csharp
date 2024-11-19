@@ -9,41 +9,42 @@ import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 import { IEventEmitterFactory } from './IEventEmitterFactory';
 import { LogLevel } from './logLevel';
+import { RazorLanguageServerClient } from './razorLanguageServerClient';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';
-    public static readonly verbositySetting = 'razor.server.trace';
     public verboseEnabled!: boolean;
     public messageEnabled!: boolean;
-    public readonly outputChannel: vscode.OutputChannel;
+    public readonly outputChannel: vscode.LogOutputChannel;
+    public languageServerClient: RazorLanguageServerClient | undefined;
 
     private readonly onLogEmitter: vscodeAdapter.EventEmitter<string>;
-    private readonly onTraceLevelChangeEmitter: vscodeAdapter.EventEmitter<LogLevel>;
 
     constructor(eventEmitterFactory: IEventEmitterFactory, public logLevel: LogLevel) {
-        this.processTraceLevel();
+        this.outputChannel = vscode.window.createOutputChannel(vscode.l10n.t('Razor Log'), { log: true });
         this.onLogEmitter = eventEmitterFactory.create<string>();
-        this.onTraceLevelChangeEmitter = eventEmitterFactory.create<LogLevel>();
+        this.processTraceLevel();
 
-        this.outputChannel = vscode.window.createOutputChannel(vscode.l10n.t('Razor Log'));
+        this.outputChannel.onDidChangeLogLevel(async () => {
+            await this.updateLogLevelAsync();
+        });
 
         this.logRazorInformation();
         this.setupToStringOverrides();
     }
 
-    public setTraceLevel(trace: LogLevel) {
-        this.logLevel = trace;
+    async updateLogLevelAsync() {
         this.processTraceLevel();
-        this.logMessage(`Updated log level to: ${LogLevel[this.logLevel]}`);
-        this.onTraceLevelChangeEmitter.fire(this.logLevel);
+
+        if (this.languageServerClient) {
+            await this.languageServerClient.sendNotification('razor/updateLogLevel', {
+                logLevel: convertLogLevel(this.outputChannel.logLevel),
+            });
+        }
     }
 
     public get onLog() {
         return this.onLogEmitter.event;
-    }
-
-    public get onTraceLevelChange() {
-        return this.onTraceLevelChangeEmitter.event;
     }
 
     public logAlways(message: string) {
@@ -130,8 +131,8 @@ ${error.stack}`;
     }
 
     private processTraceLevel() {
-        this.verboseEnabled = this.logLevel <= LogLevel.Debug;
-        this.messageEnabled = this.logLevel <= LogLevel.Information;
+        this.verboseEnabled = this.outputChannel.logLevel >= vscode.LogLevel.Trace;
+        this.messageEnabled = this.outputChannel.logLevel >= vscode.LogLevel.Info;
     }
 }
 
@@ -153,4 +154,24 @@ function findInDirectoryOrAncestor(dir: string, filename: string) {
     }
 
     throw new Error(vscode.l10n.t("Could not find '{0}' in or above '{1}'.", filename, dir));
+}
+
+// Matches src\Razor\src\Microsoft.CodeAnalysis.Razor.Workspaces\Logging\LogLevel.cs
+function convertLogLevel(logLevel: vscode.LogLevel): number {
+    switch (logLevel) {
+        case vscode.LogLevel.Off:
+            return 0;
+        case vscode.LogLevel.Trace:
+            return 1;
+        case vscode.LogLevel.Debug:
+            return 2;
+        case vscode.LogLevel.Info:
+            return 3;
+        case vscode.LogLevel.Warning:
+            return 4;
+        case vscode.LogLevel.Error:
+            return 5;
+        default:
+            throw new Error('Unexpected log level value. Do not know how to convert');
+    }
 }

@@ -12,7 +12,6 @@ import { CompletionHandler } from './completion/completionHandler';
 import { RazorCodeActionRunner } from './codeActions/razorCodeActionRunner';
 import { RazorCodeLensProvider } from './codeLens/razorCodeLensProvider';
 import { ColorPresentationHandler } from './colorPresentation/colorPresentationHandler';
-import { listenToConfigurationChanges } from './configurationChangeListener';
 import { RazorCSharpFeature } from './csharp/razorCSharpFeature';
 import { RazorDefinitionProvider } from './definition/razorDefinitionProvider';
 import { ReportIssueCommand } from './diagnostics/reportIssueCommand';
@@ -125,6 +124,7 @@ export async function activate(
             razorTelemetryReporter,
             platformInfo
         );
+
         const documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
         reportTelemetryForDocuments(documentManager, razorTelemetryReporter);
         const languageConfiguration = new RazorLanguageConfiguration();
@@ -269,7 +269,6 @@ export async function activate(
                 htmlFeature.register(),
                 documentSynchronizer.register(),
                 reportIssueCommand.register(),
-                listenToConfigurationChanges(languageServerClient),
                 razorCodeActionRunner.register()
             );
 

@@ -56,12 +56,6 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         return this.client.initializeResult;
     }
 
-    public updateTraceLevel() {
-        const languageServerLogLevel = resolveRazorLanguageServerLogLevel(this.vscodeType);
-        this.setupLanguageServer();
-        this.logger.setTraceLevel(languageServerLogLevel);
-    }
-
     public onStarted(listener: () => Promise<any>) {
         this.onStartedListeners.push(listener);
     }
@@ -111,10 +105,14 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         );
 
         try {
-            this.logger.logMessage('Starting Razor Language Server...');
+            this.logger.logWarning('Starting Razor Language Server...');
             await this.client.start();
             this.logger.logMessage('Server started, waiting for client to be ready...');
             this.isStarted = true;
+
+            // Server is ready, hook up so logging changes can be reported
+            this.logger.languageServerClient = this;
+
             for (const listener of this.onStartListeners) {
                 await listener();
             }
@@ -123,6 +121,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             resolve();
 
             this.logger.logMessage('Server ready!');
+
             for (const listener of this.onStartedListeners) {
                 await listener();
             }
