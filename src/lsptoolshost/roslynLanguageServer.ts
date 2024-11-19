@@ -76,6 +76,7 @@ import {
 } from '../shared/observers/utils/showMessage';
 import { registerSourceGeneratedFilesContentProvider } from './sourceGeneratedFilesContentProvider';
 import { registerMiscellaneousFileNotifier } from './miscellaneousFileNotifier';
+import { TelemetryEventNames } from '../shared/telemetryEventNames';
 
 let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -574,12 +575,13 @@ export class RoslynLanguageServer {
         telemetryReporter: TelemetryReporter,
         additionalExtensionPaths: string[]
     ): Promise<MessageTransports> {
+        telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ClientServerStart);
         const serverPath = getServerPath(platformInfo);
 
         const dotnetInfo = await hostExecutableResolver.getHostExecutableInfo();
         const dotnetExecutablePath = dotnetInfo.path;
-
         _channel.info('Dotnet path: ' + dotnetExecutablePath);
+        telemetryReporter.sendTelemetryEvent(TelemetryEventNames.AcquiredRuntime);
 
         let args: string[] = [];
 
@@ -684,6 +686,8 @@ export class RoslynLanguageServer {
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
 
+        telemetryReporter.sendTelemetryEvent(TelemetryEventNames.LaunchedServer);
+
         // Record the stdout and stderr streams from the server process.
         childProcess.stdout.on('data', (data: { toString: (arg0: any) => any }) => {
             const result: string = isString(data) ? data : data.toString(RoslynLanguageServer.encoding);
@@ -755,6 +759,8 @@ export class RoslynLanguageServer {
         if (socket === undefined) {
             throw new Error('Timeout. Client cound not connect to server via named pipe');
         }
+
+        telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ClientConnected);
 
         return {
             reader: new SocketMessageReader(socket, RoslynLanguageServer.encoding),
@@ -1071,6 +1077,8 @@ export async function activateRoslynLanguageServer(
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
     // The trace channel verbosity is controlled by the _channel verbosity.
     _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'));
+
+    reporter.sendTelemetryEvent(TelemetryEventNames.ClientInitialize);
 
     const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
         platformInfo,

@@ -104,15 +104,18 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
      * @returns The path to the .NET runtime
      */
     private async acquireRuntime(): Promise<IDotnetAcquireResult> {
+        // We have to use '8.0' here because the runtme extension doesn't support acquiring patch versions.
+        // The acquisition will always acquire the latest however, so it will be at least 8.0.10.
+        const dotnetAcquireVersion = '8.0';
         let status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquireStatus', {
-            version: DotNetRuntimeVersion,
+            version: dotnetAcquireVersion,
             requestingExtensionId: CSharpExtensionId,
         });
         if (status === undefined) {
             await vscode.commands.executeCommand('dotnet.showAcquisitionLog');
 
             status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquire', {
-                version: DotNetRuntimeVersion,
+                version: dotnetAcquireVersion,
                 requestingExtensionId: CSharpExtensionId,
             });
             if (!status) {

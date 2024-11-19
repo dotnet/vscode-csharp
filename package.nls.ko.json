@@ -122,6 +122,7 @@
   "configuration.razor.languageServer.directory": "Razor 언어 서버 디렉터리의 경로를 재정의합니다.",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(실험적) Razor 파일에 대해 결합된 디자인 타임/런타임 코드 생성 사용",
   "configuration.razor.languageServer.suppressLspErrorToasts": "서버에서 복구 가능한 오류가 발생하는 경우 오류 알림이 표시되지 않도록 합니다.",
+  "configuration.razor.languageServer.useRoslynTokenizer": "(실험적) IDE에서 Razor 파일에 C# 토큰화기를 사용합니다. Visual Studio Code에서 열린 Razor 파일에서 보간된 문자열 및 원시 문자열과 같은 몇 가지 새로운 C# 기능을 사용하도록 설정합니다. 이는 명령줄 빌드의 '.csproj' 파일에서 '<features>use-roslyn-tokenizer</feature>'를 사용하여 일치하며, 이 옵션과 프로젝트 파일이 일치하지 않으면 불일치가 발생할 수 있습니다.",
   "configuration.razor.server.trace": "Razor 서버에 사용할 로깅 수준을 지정합니다.",
   "debuggers.coreclr.configurationSnippets.description.attach": "실행 중인 프로세스에 .NET 디버거(coreclr)를 연결합니다. 이 작업은 'Attach to a .NET 5+ or .NET Core process' 명령을 사용하여 수행할 수도 있습니다.",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "이 코드 조각은 Blazor WebAssembly 디버거(blazorwasm) 아래에서 새 프로세스를 시작하는 데 사용되며, 실행 파일의 경로를 지정합니다. 대부분의 경우 \".NET: Launch C# project\" 코드 조각이 더 나은 선택이지만, 이 코드 조각을 사용하면 모든 시작 옵션을 완전히 제어할 수 있습니다. 이 코드 조각은 파일을 처리할 백 엔드 ASP.NET Core 앱이 있는 프로젝트인 호스트된 Blazor 프로젝트용입니다.",

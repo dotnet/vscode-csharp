@@ -13,5 +13,6 @@ export interface RazorLanguageServerOptions {
     logLevel: LogLevel;
     usingOmniSharp: boolean;
     forceRuntimeCodeGeneration: boolean;
+    useRoslynTokenizer: boolean;
     suppressErrorToasts: boolean;
 }

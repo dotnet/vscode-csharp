@@ -1,10 +1,12 @@
 parameters:
-  - name: installDotNet
-    type: boolean
+  - name: dotnetVersion
+    type: string
   - name: installAdditionalLinuxDependencies
     type: boolean
     default: false
   - name: npmCommand
+    type: string
+  - name: testVSCodeVersion
     type: string
 
 steps:
@@ -16,7 +18,7 @@ steps:
 
 - template: prereqs.yml
   parameters:
-    installDotNet: ${{ parameters.installDotNet }}
+    dotnetVersion: ${{ parameters.dotnetVersion }}
 
 - ${{ if eq(parameters.installAdditionalLinuxDependencies, true) }}:
   - template: test-linux-docker-prereqs.yml
@@ -29,6 +31,7 @@ steps:
   displayName: 🧪 Run $(Agent.JobName)
   env:
     DISPLAY: :99.0
+    CODE_VERSION: ${{ parameters.testVSCodeVersion }}
 
 - task: PublishTestResults@2
   condition: succeededOrFailed()

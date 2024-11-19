@@ -1,3 +1,9 @@
+parameters:
+  - name: dotnetVersion
+    type: string
+  - name: testVSCodeVersion
+    type: string
+
 steps:
 - checkout: self
   clean: true
@@ -6,6 +12,8 @@ steps:
   fetchDepth: 1
 
 - template: prereqs.yml
+  parameters:
+    dotnetVersion: ${{ parameters.dotnetVersion }}
 
 - template: test-prereqs.yml
 
@@ -13,6 +21,7 @@ steps:
   displayName: 🧪 Run unit and integration tests
   env:
     DISPLAY: :99.0
+    CODE_VERSION: ${{ parameters.testVSCodeVersion }}
 
 - task: PublishTestResults@2
   condition: succeededOrFailed()
