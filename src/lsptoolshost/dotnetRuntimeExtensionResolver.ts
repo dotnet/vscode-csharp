@@ -14,7 +14,10 @@ import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { readFile } from 'fs/promises';
 import { IDotnetAcquireResult, IDotnetFindPathContext } from './dotnetRuntimeExtensionApi';
 
-export const DotNetRuntimeVersion = '8.0.10';
+const DotNetMajorVersion = '8';
+const DotNetMinorVersion = '0';
+const DotNetPatchVersion = '10';
+export const DotNetRuntimeVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}.${DotNetPatchVersion}`;
 
 /**
  * Resolves the dotnet runtime for a server executable from given options and the dotnet runtime VSCode extension.
@@ -104,9 +107,9 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
      * @returns The path to the .NET runtime
      */
     private async acquireRuntime(): Promise<IDotnetAcquireResult> {
-        // We have to use '8.0' here because the runtme extension doesn't support acquiring patch versions.
-        // The acquisition will always acquire the latest however, so it will be at least 8.0.10.
-        const dotnetAcquireVersion = '8.0';
+        // The runtime extension doesn't support specifying a patch versions in the acquire API, so we only use major.minor here.
+        // That is generally OK, as acquisition will always acquire the latest patch version.
+        const dotnetAcquireVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}`;
         let status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquireStatus', {
             version: dotnetAcquireVersion,
             requestingExtensionId: CSharpExtensionId,

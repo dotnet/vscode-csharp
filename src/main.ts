@@ -84,7 +84,7 @@ export async function activate(
     }
 
     const dotnetRuntimeExtensionId = 'ms-dotnettools.vscode-dotnet-runtime';
-    const requiredDotnetRuntimeExtensionVersion = '2.2.2';
+    const requiredDotnetRuntimeExtensionVersion = '2.2.3';
 
     const dotnetRuntimeExtension = vscode.extensions.getExtension(dotnetRuntimeExtensionId);
     const dotnetRuntimeExtensionVersion = dotnetRuntimeExtension?.packageJSON.version;
