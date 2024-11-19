@@ -17,7 +17,7 @@ pr:
   paths:
     exclude:
     - ./*.md 
-    - .github/policies/resourceManagement.yml
+    - .github/*
 
 # Run a scheduled build every night on main to run tests against insiders VSCode.
 # The variable testVSCodeVersion is set to insiders based on the build reason.
