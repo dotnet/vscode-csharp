@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.58.x
+* Update Razor to 9.0.0-preview.24569.4 (PR: []())
+  * Allow logging level to be changed in rzls (#11228) (PR: [#11228](https://github.com/dotnet/razor/pull/11228))
+  * [Fuse] bind-Value:attribute support (#11214) (PR: [#11214](https://github.com/dotnet/razor/pull/11214))
+  * Handle skipped trivia in the C# tokenizer (#11207) (PR: [#11207](https://github.com/dotnet/razor/pull/11207))
 
 # 2.57.x
 * Update Razor to 9.0.0-preview.24565.1 (PR: [#7793])(https://github.com/dotnet/vscode-csharp/pull/7793)
