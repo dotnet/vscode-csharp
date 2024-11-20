@@ -38,7 +38,7 @@ export class RazorLogger implements vscodeAdapter.Disposable {
 
     /**
      * Gets the log level in numeric form that matches what is expected in rzls.
-     * Matches src\Razor\src\Microsoft.CodeAnalysis.Razor.Workspaces\Logging\LogLevel.cs
+     * Matches https://github.com/dotnet/razor/blob/7390745dcd9c8831d4459437ed2e9e94125f3dd3/src/Razor/src/Microsoft.CodeAnalysis.Razor.Workspaces/Logging/LogLevel.cs#L6
      */
     public get logLevelForRZLS(): number {
         switch (this.logLevel) {
