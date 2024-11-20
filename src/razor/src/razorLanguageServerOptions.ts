@@ -4,13 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { LogLevel } from './logLevel';
 
 export interface RazorLanguageServerOptions {
     serverPath: string;
     outputChannel?: vscode.OutputChannel;
     debug?: boolean;
-    logLevel: LogLevel;
     usingOmniSharp: boolean;
     forceRuntimeCodeGeneration: boolean;
     useRoslynTokenizer: boolean;
