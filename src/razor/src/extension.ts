@@ -6,7 +6,6 @@
 import * as vscode from 'vscode';
 import * as vscodeapi from 'vscode';
 import { ExtensionContext } from 'vscode';
-import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
 import { CodeActionsHandler } from './codeActions/codeActionsHandler';
 import { CompletionHandler } from './completion/completionHandler';
 import { RazorCodeActionRunner } from './codeActions/razorCodeActionRunner';
@@ -32,7 +31,6 @@ import { ProposedApisFeature } from './proposedApisFeature';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageConfiguration } from './razorLanguageConfiguration';
 import { RazorLanguageServerClient } from './razorLanguageServerClient';
-import { resolveRazorLanguageServerLogLevel } from './razorLanguageServerTraceResolver';
 import { RazorLanguageServiceClient } from './razorLanguageServiceClient';
 import { RazorLogger } from './razorLogger';
 import { RazorReferenceProvider } from './reference/razorReferenceProvider';
@@ -70,14 +68,12 @@ export async function activate(
         create: <T>() => new vscode.EventEmitter<T>(),
     };
 
-    const languageServerLogLevel = resolveRazorLanguageServerLogLevel(vscodeType);
-    const logger = new RazorLogger(eventEmitterFactory, languageServerLogLevel);
+    const logger = new RazorLogger(eventEmitterFactory);
 
     try {
         const razorOptions: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
             vscodeType,
             languageServerDir,
-            languageServerLogLevel,
             logger
         );
 
@@ -298,9 +294,6 @@ export async function activate(
             localRegistrations.forEach((r) => r.dispose());
             localRegistrations.length = 0;
         });
-
-        const provider = new BlazorDebugConfigurationProvider(logger, vscodeType);
-        context.subscriptions.push(vscodeType.debug.registerDebugConfigurationProvider('blazorwasm', provider));
 
         languageServerClient.onStarted(async () => {
             await documentManager.initialize();

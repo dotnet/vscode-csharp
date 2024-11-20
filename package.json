@@ -1505,22 +1505,6 @@
             "description": "%configuration.razor.languageServer.debug%",
             "order": 90
           },
-          "razor.server.trace": {
-            "scope": "window",
-            "type": "string",
-            "enum": [
-              "Trace",
-              "Debug",
-              "Information",
-              "Warning",
-              "Error",
-              "Critical",
-              "None"
-            ],
-            "order": 90,
-            "default": "Information",
-            "description": "%configuration.razor.server.trace%"
-          },
           "razor.languageServer.forceRuntimeCodeGeneration": {
             "type": "boolean",
             "scope": "machine-overridable",
