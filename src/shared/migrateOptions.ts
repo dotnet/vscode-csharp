@@ -3,8 +3,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as fs from 'fs';
+import * as path from 'path';
 import { types } from 'util';
 import { ConfigurationTarget, vscode, WorkspaceConfiguration } from '../vscodeAdapter';
+import { CSharpExtensionId } from '../constants/csharpExtensionId';
+import { commonOptions } from './options';
+
+export interface IDotnetAcquisitionExistingPaths {
+    extensionId: string;
+    path: string;
+}
+
+export const dotnetPathOption = 'dotnet.dotnetPath';
+export const dotnetAcquisitionExtensionOption = 'dotnetAcquisitionExtension.existingDotnetPath';
 
 // Option in the array should be identical to each other, except the name.
 export const migrateOptions = [
@@ -111,6 +123,96 @@ export async function MigrateOptions(vscode: vscode): Promise<void> {
             await MoveOptionsValue(oldName, newName, configuration);
         }
     }
+
+    await migrateDotnetPathOption(vscode);
+}
+
+async function migrateDotnetPathOption(vscode: vscode): Promise<void> {
+    const configuration = vscode.workspace.getConfiguration();
+
+    if (commonOptions.useOmnisharpServer) {
+        // Migrate to O# specific option.
+        await MoveOptionsValue(dotnetPathOption, 'omnisharp.dotnetPath', configuration);
+    } else {
+        const oldOptionInspect = configuration.inspect<string>(dotnetPathOption);
+        if (
+            !oldOptionInspect ||
+            (!oldOptionInspect.globalValue &&
+                !oldOptionInspect.workspaceValue &&
+                !oldOptionInspect.workspaceFolderValue)
+        ) {
+            // No value is set, nothing to migrate.
+            return;
+        }
+
+        const newOptionInspect = configuration.inspect<IDotnetAcquisitionExistingPaths[]>(
+            dotnetAcquisitionExtensionOption
+        );
+
+        if (oldOptionInspect.globalValue) {
+            await migrateSingleDotnetPathValue(
+                dotnetPathOption,
+                oldOptionInspect.globalValue,
+                dotnetAcquisitionExtensionOption,
+                newOptionInspect?.globalValue,
+                configuration,
+                ConfigurationTarget.Global
+            );
+        }
+
+        if (oldOptionInspect.workspaceValue) {
+            await migrateSingleDotnetPathValue(
+                dotnetPathOption,
+                oldOptionInspect.workspaceValue,
+                dotnetAcquisitionExtensionOption,
+                newOptionInspect?.workspaceValue,
+                configuration,
+                ConfigurationTarget.Workspace
+            );
+        }
+
+        if (oldOptionInspect.workspaceFolderValue) {
+            await migrateSingleDotnetPathValue(
+                dotnetPathOption,
+                oldOptionInspect.workspaceFolderValue,
+                dotnetAcquisitionExtensionOption,
+                newOptionInspect?.workspaceFolderValue,
+                configuration,
+                ConfigurationTarget.WorkspaceFolder
+            );
+        }
+    }
+}
+
+async function migrateSingleDotnetPathValue(
+    oldOptionName: string,
+    oldValue: string,
+    newOptionName: string,
+    currentNewValue: IDotnetAcquisitionExistingPaths[] | undefined,
+    configuration: WorkspaceConfiguration,
+    configurationTarget: ConfigurationTarget
+): Promise<void> {
+    // Migrate to .NET install tool specific option.
+    // This requires some adjustments as the .NET install tool expects the full path to the exe and can already have a value set (e.g. a diff extension).
+    const extension = process.platform === 'win32' ? '.exe' : '';
+    const newValue = path.join(oldValue, `dotnet${extension}`);
+
+    if (!fs.existsSync(newValue)) {
+        // If the existing option points to a location that doesn't exist, we'll just remove the old value.
+        configuration.update(oldOptionName, undefined, configurationTarget);
+        return;
+    }
+
+    currentNewValue = currentNewValue ?? [];
+    if (currentNewValue && currentNewValue.filter((p) => p.extensionId === CSharpExtensionId).length !== 0) {
+        // There's already a dotnet path set for this extension, we don't want to overwrite it.  Just delete the old one.
+        await configuration.update(oldOptionName, undefined, configurationTarget);
+        return;
+    }
+
+    currentNewValue.push({ extensionId: CSharpExtensionId, path: newValue });
+    await configuration.update(newOptionName, currentNewValue, configurationTarget);
+    await configuration.update(oldOptionName, undefined, configurationTarget);
 }
 
 function shouldMove(newOptionValue: unknown, defaultInspectValueOfNewOption: unknown): boolean {

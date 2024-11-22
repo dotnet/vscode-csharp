@@ -7,6 +7,9 @@
     // Set the context to the workspace folder to allow us to copy files from it.
     "context": ".."
   },
+  "mounts": [
+    "type=volume,target=${containerWorkspaceFolder}/node_modules"
+  ],
   "customizations": {
     "vscode": {
       "settings": {
@@ -37,7 +40,8 @@
         "powershell.integratedConsole.showOnStartup": false,
         "powershell.startAutomatically": false,
         // ms-azure-devops.azure-pipelines settings
-        "azure-pipelines.customSchemaFile": ".vscode/dnceng-schema.json"
+        "azure-pipelines.customSchemaFile": ".vscode/dnceng-schema.json",
+        "jest.jestCommandLine": "./node_modules/.bin/jest"
       },
       "extensions": [
         "ms-dotnettools.csharp",
@@ -52,5 +56,5 @@
       ]
     }
   },
-  "postCreateCommand": "npm ci && npx gulp installDependencies"
+  "postCreateCommand": "npm i && npx gulp installDependencies && npm i -g gulp"
 }
