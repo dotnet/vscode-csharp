@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 * Bump xamltools to 17.13.35521.31 (PR: [#7814](https://github.com/dotnet/vscode-csharp/pull/7814))
 
+# 2.59.x
+
 # 2.58.x
 * Update Razor to 9.0.0-preview.24569.4 (PR: [#7805](https://github.com/dotnet/vscode-csharp/pull/7805))
   * Allow logging level to be changed in rzls (#11228) (PR: [#11228](https://github.com/dotnet/razor/pull/11228))
