@@ -37,11 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.13.0-2.24565.3",
+    "roslyn": "4.13.0-2.24569.1",
     "omniSharp": "1.39.11",
-    "razor": "9.0.0-preview.24565.1",
+    "razor": "9.0.0-preview.24569.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.13.35513.19"
+    "xamlTools": "17.13.35521.31"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1504,22 +1504,6 @@
             "default": false,
             "description": "%configuration.razor.languageServer.debug%",
             "order": 90
-          },
-          "razor.server.trace": {
-            "scope": "window",
-            "type": "string",
-            "enum": [
-              "Trace",
-              "Debug",
-              "Information",
-              "Warning",
-              "Error",
-              "Critical",
-              "None"
-            ],
-            "order": 90,
-            "default": "Information",
-            "description": "%configuration.razor.server.trace%"
           },
           "razor.languageServer.forceRuntimeCodeGeneration": {
             "type": "boolean",
