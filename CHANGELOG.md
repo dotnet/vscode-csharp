@@ -2,6 +2,18 @@
 
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
+* Bump xamltools to 17.13.35521.31 (PR: [#7814](https://github.com/dotnet/vscode-csharp/pull/7814))
+
+# 2.58.x
+* Update Razor to 9.0.0-preview.24569.4 (PR: [#7805](https://github.com/dotnet/vscode-csharp/pull/7805))
+  * Allow logging level to be changed in rzls (#11228) (PR: [#11228](https://github.com/dotnet/razor/pull/11228))
+  * [Fuse] bind-Value:attribute support (#11214) (PR: [#11214](https://github.com/dotnet/razor/pull/11214))
+  * Handle skipped trivia in the C# tokenizer (#11207) (PR: [#11207](https://github.com/dotnet/razor/pull/11207))
+* Add support for refreshing opened source generated files (PR: [#7791](https://github.com/dotnet/vscode-csharp/pull/7791))
+* Update Roslyn to 4.13.0-2.24569.1 (PR: [#7791](https://github.com/dotnet/vscode-csharp/pull/7791))
+  * Support unbound generic types in 'nameof' operator. (PR: [#75368](https://github.com/dotnet/roslyn/pull/75368))
+  * Include list of processes that lock file in `can't write file` error message (PR: [#75946](https://github.com/dotnet/roslyn/pull/75946))
+  * Add server side support for refreshing source generated files (PR: [#75939](https://github.com/dotnet/roslyn/pull/75939))
 
 # 2.57.x
 * Update Razor to 9.0.0-preview.24565.1 (PR: [#7793])(https://github.com/dotnet/vscode-csharp/pull/7793)
