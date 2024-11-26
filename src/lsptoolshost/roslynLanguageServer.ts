@@ -78,6 +78,7 @@ import {
 import { registerSourceGeneratedFilesContentProvider } from './sourceGeneratedFilesContentProvider';
 import { registerMiscellaneousFileNotifier } from './miscellaneousFileNotifier';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
+import { RazorDynamicFileChangedParams } from '../razor/src/dynamicFile/dynamicFileUpdatedParams';
 
 let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -788,6 +789,11 @@ export class RoslynLanguageServer {
             RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
             async (notification) =>
                 vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification)
+        );
+        vscode.commands.registerCommand(
+            DynamicFileInfoHandler.dynamicFileUpdatedCommand,
+            async (notification: RazorDynamicFileChangedParams) =>
+                this.sendNotification<RazorDynamicFileChangedParams>('razor/dynamicFileInfoChanged', notification)
         );
     }
 

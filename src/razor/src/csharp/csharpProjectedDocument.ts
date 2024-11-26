@@ -19,6 +19,7 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     private resolveProvisionalEditAt: number | undefined;
     private ProvisionalDotPosition: Position | undefined;
     private hostDocumentVersion: number | null = null;
+    private edits: ServerTextChange[] | null = null;
 
     public constructor(public readonly uri: vscode.Uri) {
         this.path = getUriPath(uri);
@@ -37,21 +38,38 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     }
 
     public update(edits: ServerTextChange[], hostDocumentVersion: number) {
+        // Apply any stored edits if needed
+        if (this.edits) {
+            edits = this.edits.concat(edits);
+            this.edits = null;
+        }
+
         this.removeProvisionalDot();
 
         this.hostDocumentVersion = hostDocumentVersion;
 
-        if (edits.length === 0) {
-            return;
+        this.updateContent(edits);
+    }
+
+    public storeEdits(edits: ServerTextChange[], hostDocumentVersion: number) {
+        this.hostDocumentVersion = hostDocumentVersion;
+        if (this.edits) {
+            this.edits = this.edits.concat(edits);
+        } else {
+            this.edits = edits;
+        }
+    }
+
+    public getAndApplyEdits() {
+        const edits = this.edits;
+
+        // Make sure the internal representation of the content is updated
+        if (edits) {
+            this.updateContent(edits);
         }
 
-        let content = this.content;
-        for (const edit of edits.reverse()) {
-            // TODO: Use a better data structure to represent the content, string concatenation is slow.
-            content = this.getEditedContent(edit.newText, edit.span.start, edit.span.start + edit.span.length, content);
-        }
-
-        this.setContent(content);
+        this.edits = null;
+        return edits;
     }
 
     public getContent() {
@@ -149,5 +167,19 @@ export class CSharpProjectedDocument implements IProjectedDocument {
 
     private setContent(content: string) {
         this.content = content;
+    }
+
+    private updateContent(edits: ServerTextChange[]) {
+        if (edits.length === 0) {
+            return;
+        }
+
+        let content = this.content;
+        for (const edit of edits.reverse()) {
+            // TODO: Use a better data structure to represent the content, string concatenation is slow.
+            content = this.getEditedContent(edit.newText, edit.span.start, edit.span.start + edit.span.length, content);
+        }
+
+        this.setContent(content);
     }
 }
