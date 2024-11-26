@@ -56,5 +56,5 @@
       ]
     }
   },
-  "postCreateCommand": "npm i && npx gulp installDependencies && npm i -g gulp"
+  "postCreateCommand": "npm ci && npx gulp installDependencies && npm i -g gulp"
 }
