@@ -8,7 +8,6 @@ import { DocumentSelector } from 'vscode-languageserver-protocol';
 import * as path from 'path';
 
 export interface CommonOptions {
-    readonly dotnetPath: string;
     readonly waitForDebugger: boolean;
     readonly serverPath: string;
     readonly useOmnisharpServer: boolean;
@@ -66,6 +65,7 @@ export interface OmnisharpServerOptions {
     readonly maxProjectFileCountForDiagnosticAnalysis: number;
     readonly suppressDotnetRestoreNotification: boolean;
     readonly enableLspDriver?: boolean | null;
+    readonly dotnetPath: string;
 }
 
 export interface LanguageServerOptions {
@@ -90,9 +90,6 @@ export interface RazorOptions {
 }
 
 class CommonOptionsImpl implements CommonOptions {
-    public get dotnetPath() {
-        return readOption<string>('dotnet.dotnetPath', '', 'omnisharp.dotnetPath');
-    }
     public get waitForDebugger() {
         return readOption<boolean>('dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger');
     }
@@ -375,6 +372,9 @@ class OmnisharpOptionsImpl implements OmnisharpServerOptions {
     public get enableLspDriver() {
         return readOption<boolean>('omnisharp.enableLspDriver', false);
     }
+    public get dotnetPath() {
+        return readOption<string>('omnisharp.dotnetPath', '');
+    }
 }
 
 class LanguageServerOptionsImpl implements LanguageServerOptions {
@@ -471,13 +471,13 @@ function readOption<T>(option: string, defaultValue: T, ...backCompatOptionNames
 }
 
 export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
-    'dotnetPath',
     'waitForDebugger',
     'serverPath',
     'useOmnisharpServer',
 ];
 
 export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOptions> = [
+    'dotnetPath',
     'enableMsBuildLoadProjectsOnDemand',
     'loggingLevel',
     'enableEditorConfigSupport',

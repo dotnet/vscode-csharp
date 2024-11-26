@@ -61,21 +61,65 @@ export const getNullTelemetryReporter = (): ITelemetryReporter => {
 };
 
 export const getWorkspaceConfiguration = (): vscode.WorkspaceConfiguration => {
-    const values: { [key: string]: any } = {};
+    const values: { [key: string]: { globalValue: any; workspaceValue: any; workspaceFolderValue: any } } = {};
 
     const configuration: vscode.WorkspaceConfiguration = {
         get<T>(section: string, defaultValue?: T): T | undefined {
-            const result = <T>values[section];
-            return result ?? defaultValue;
+            const result = values[section];
+            if (result?.globalValue !== undefined) {
+                return result.globalValue;
+            } else if (result?.workspaceValue !== undefined) {
+                return result.workspaceValue;
+            } else if (result?.workspaceFolderValue !== undefined) {
+                return result.workspaceFolderValue;
+            } else {
+                return defaultValue;
+            }
         },
         has: (section: string) => {
             return values[section] !== undefined;
         },
-        inspect: () => {
-            throw new Error('Not Implemented');
+        inspect<T>(
+            section: string
+        ):
+            | { key: string; defaultValue?: T; globalValue?: T; workspaceValue?: T; workspaceFolderValue?: T }
+            | undefined {
+            const result = values[section];
+            if (!result) {
+                return undefined;
+            }
+            return {
+                key: section,
+                globalValue: result.globalValue,
+                defaultValue: undefined,
+                workspaceValue: result.workspaceValue,
+                workspaceFolderValue: result.workspaceFolderValue,
+            };
         },
         update: async (section: string, value: any, _configurationTarget?: vscode.ConfigurationTarget | boolean) => {
-            values[section] = value;
+            const existing = values[section] ?? {
+                globalValue: undefined,
+                workspaceValue: undefined,
+                workspaceFolderValue: undefined,
+            };
+
+            switch (_configurationTarget) {
+                case vscode.ConfigurationTarget.Global:
+                    existing.globalValue = value;
+                    break;
+                case vscode.ConfigurationTarget.Workspace:
+                    existing.workspaceValue = value;
+                    break;
+                case vscode.ConfigurationTarget.WorkspaceFolder:
+                    existing.workspaceFolderValue = value;
+                    break;
+                case undefined:
+                    existing.globalValue = value;
+                    break;
+            }
+
+            values[section] = existing;
+
             return Promise.resolve();
         },
     };

@@ -1405,11 +1405,6 @@
             "default": false,
             "description": "%configuration.dotnet.preferCSharpExtension%"
           },
-          "dotnet.dotnetPath": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.dotnet.dotnetPath%"
-          },
           "dotnet.server.path": {
             "type": "string",
             "scope": "machine-overridable",
@@ -1535,6 +1530,11 @@
             "default": false,
             "description": "%configuration.omnisharp.dotnet.server.useOmnisharp%",
             "order": 0
+          },
+          "omnisharp.dotnetPath": {
+            "type": "string",
+            "scope": "machine-overridable",
+            "description": "%configuration.omnisharp.dotnetPath%"
           },
           "csharp.format.enable": {
             "type": "boolean",
