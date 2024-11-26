@@ -2,7 +2,6 @@
 
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
-* Bump xamltools to 17.13.35521.31 (PR: [#7814](https://github.com/dotnet/vscode-csharp/pull/7814))
 
 # 2.59.x
 
@@ -16,6 +15,8 @@
   * Support unbound generic types in 'nameof' operator. (PR: [#75368](https://github.com/dotnet/roslyn/pull/75368))
   * Include list of processes that lock file in `can't write file` error message (PR: [#75946](https://github.com/dotnet/roslyn/pull/75946))
   * Add server side support for refreshing source generated files (PR: [#75939](https://github.com/dotnet/roslyn/pull/75939))
+* Bump xamltools to 17.13.35521.31 (PR: [#7814](https://github.com/dotnet/vscode-csharp/pull/7814))
+
 
 # 2.57.x
 * Update Razor to 9.0.0-preview.24565.1 (PR: [#7793])(https://github.com/dotnet/vscode-csharp/pull/7793)
