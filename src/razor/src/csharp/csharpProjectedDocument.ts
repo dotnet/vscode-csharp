@@ -19,7 +19,7 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     private resolveProvisionalEditAt: number | undefined;
     private ProvisionalDotPosition: Position | undefined;
     private hostDocumentVersion: number | null = null;
-    private edits: ServerTextChange[] | null = null;
+    private updates: Update[] | null = null;
 
     public constructor(public readonly uri: vscode.Uri) {
         this.path = getUriPath(uri);
@@ -38,38 +38,45 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     }
 
     public update(edits: ServerTextChange[], hostDocumentVersion: number) {
-        // Apply any stored edits if needed
-        if (this.edits) {
-            edits = this.edits.concat(edits);
-            this.edits = null;
-        }
-
         this.removeProvisionalDot();
 
-        this.hostDocumentVersion = hostDocumentVersion;
+        // Apply any stored edits if needed
+        if (this.updates) {
+            for (const update of this.updates) {
+                this.updateContent(update.changes);
+            }
 
+            this.updates = null;
+        }
+
+        this.hostDocumentVersion = hostDocumentVersion;
         this.updateContent(edits);
     }
 
     public storeEdits(edits: ServerTextChange[], hostDocumentVersion: number) {
         this.hostDocumentVersion = hostDocumentVersion;
-        if (this.edits) {
-            this.edits = this.edits.concat(edits);
+        if (this.updates) {
+            this.updates = this.updates.concat(new Update(edits));
         } else {
-            this.edits = edits;
+            this.updates = [new Update(edits)];
         }
     }
 
     public getAndApplyEdits() {
-        const edits = this.edits;
+        const updates = this.updates;
+        this.updates = null;
 
-        // Make sure the internal representation of the content is updated
-        if (edits) {
-            this.updateContent(edits);
+        if (updates) {
+            let changes: ServerTextChange[] = [];
+            for (const update of updates) {
+                this.updateContent(update.changes);
+                changes = changes.concat(update.changes);
+            }
+
+            return changes;
         }
 
-        this.edits = null;
-        return edits;
+        return null;
     }
 
     public getContent() {
@@ -158,8 +165,8 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     }
 
     private getEditedContent(newText: string, start: number, end: number, content: string) {
-        const before = content.substr(0, start);
-        const after = content.substr(end);
+        const before = content.substring(0, start);
+        const after = content.substring(end);
         content = `${before}${newText}${after}`;
 
         return content;
@@ -182,4 +189,8 @@ export class CSharpProjectedDocument implements IProjectedDocument {
 
         this.setContent(content);
     }
+}
+
+class Update {
+    constructor(public readonly changes: ServerTextChange[]) {}
 }
