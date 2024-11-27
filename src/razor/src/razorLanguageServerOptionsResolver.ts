@@ -10,13 +10,11 @@ import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { RazorLogger } from './razorLogger';
-import { LogLevel } from './logLevel';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 export function resolveRazorLanguageServerOptions(
     vscodeApi: vscodeAdapter.api,
     languageServerDir: string,
-    logLevel: LogLevel,
     logger: RazorLogger
 ) {
     const languageServerExecutablePath = findLanguageServerExecutable(languageServerDir);
@@ -31,7 +29,6 @@ export function resolveRazorLanguageServerOptions(
     return {
         serverPath: languageServerExecutablePath,
         debug: debugLanguageServer,
-        logLevel: logLevel,
         outputChannel: logger.outputChannel,
         usingOmniSharp,
         forceRuntimeCodeGeneration,

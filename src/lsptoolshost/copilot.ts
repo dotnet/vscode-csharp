@@ -51,12 +51,22 @@ export function registerCopilotExtension(languageServer: RoslynLanguageServer, c
         };
 
         relatedAPI.registerRelatedFilesProvider(id, async (uri, _, token) => {
-            const buildResult = (reports: CopilotRelatedDocumentsReport[], builder?: vscode.Uri[]) => {
+            const buildResult = (
+                activeDocumentUri: vscode.Uri,
+                reports: CopilotRelatedDocumentsReport[],
+                builder: vscode.Uri[]
+            ) => {
                 if (reports) {
                     for (const report of reports) {
                         if (report._vs_file_paths) {
                             for (const filePath of report._vs_file_paths) {
-                                builder?.push(vscode.Uri.file(filePath));
+                                // The Roslyn related document service would return the active document as related file to itself
+                                // if the code contains reference to the types defined in the same document. Skip it so the active file
+                                // won't be used as additonal context.
+                                const relatedUri = vscode.Uri.file(filePath);
+                                if (relatedUri.fsPath !== activeDocumentUri.fsPath) {
+                                    builder.push(relatedUri);
+                                }
                             }
                         }
                     }
@@ -75,7 +85,7 @@ export function registerCopilotExtension(languageServer: RoslynLanguageServer, c
                             character: 0,
                         },
                     },
-                    async (r) => buildResult(r, relatedFiles),
+                    async (r) => buildResult(uri, r, relatedFiles),
                     token
                 );
             } catch (e) {
