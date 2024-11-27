@@ -41,7 +41,7 @@
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24569.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.13.35521.31"
+    "xamlTools": "17.13.35527.19"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -1405,11 +1405,6 @@
             "default": false,
             "description": "%configuration.dotnet.preferCSharpExtension%"
           },
-          "dotnet.dotnetPath": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.dotnet.dotnetPath%"
-          },
           "dotnet.server.path": {
             "type": "string",
             "scope": "machine-overridable",
@@ -1535,6 +1530,11 @@
             "default": false,
             "description": "%configuration.omnisharp.dotnet.server.useOmnisharp%",
             "order": 0
+          },
+          "omnisharp.dotnetPath": {
+            "type": "string",
+            "scope": "machine-overridable",
+            "description": "%configuration.omnisharp.dotnetPath%"
           },
           "csharp.format.enable": {
             "type": "boolean",

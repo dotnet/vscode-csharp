@@ -47,6 +47,8 @@ import { TelemetryEventNames } from './shared/telemetryEventNames';
 export async function activate(
     context: vscode.ExtensionContext
 ): Promise<CSharpExtensionExports | OmnisharpExtensionExports | null> {
+    const csharpChannel = vscode.window.createOutputChannel('C#', { log: true });
+
     await MigrateOptions(vscode);
     const optionStream = createOptionStream(vscode);
 
@@ -67,7 +69,6 @@ export async function activate(
     // ensure it gets properly disposed. Upon disposal the events will be flushed.
     context.subscriptions.push(reporter);
 
-    const csharpChannel = vscode.window.createOutputChannel('C#', { log: true });
     const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
     const csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
     eventStream.subscribe(csharpchannelObserver.post);
