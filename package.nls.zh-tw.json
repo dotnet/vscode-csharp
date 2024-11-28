@@ -93,7 +93,7 @@
   "configuration.omnisharp.disableMSBuildDiagnosticWarning": "指定如果 OmniSharp 在載入專案時遇到警告或錯誤，是否應該顯示通知。請注意，這些警告/錯誤一律會發出至 OmniSharp 記錄",
   "configuration.omnisharp.dotNetCliPaths": "用於執行任何使用者程式碼的 .NET CLI 的本機下載路徑。",
   "configuration.omnisharp.dotnet.server.useOmnisharp": "啟用時，切換為使用 Omnisharp 伺服器的語言功能 (需要重新啟動)。安裝 C# 開發套件時，將不會使用此選項。",
-  "configuration.omnisharp.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the OmniSharp server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
+  "configuration.omnisharp.dotnetPath": "指定要使用的 dotnet 安裝目錄路徑，而非系統預設的路徑。這只會影響用來裝載 OmniSharp 伺服器本身的 dotnet 安裝。範例: \"/home/username/mycustomdotnetdirectory”。",
   "configuration.omnisharp.enableAsyncCompletion": "(實驗性) 啟用解決非同步完成編輯的支援。這可加速顯示完成清單的時間，特別是覆寫和部分方法完成清單，但插入完成項目後會有稍微延遲。大部分的完成項目對此功能沒有明顯的影響，但在插入取代或部分方法完成之後，於插入完成之前立即輸入，可能會產生無法預期的結果。",
   "configuration.omnisharp.enableDecompilationSupport": "啟用針對外部參考的反向組譯支援，而不是檢視中繼資料。",
   "configuration.omnisharp.enableEditorConfigSupport": "啟用從 .editorconfig 讀取程式碼樣式、命名慣例及分析器設定的支援。",
