@@ -37,11 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.13.0-2.24557.6",
+    "roslyn": "4.13.0-2.24569.1",
     "omniSharp": "1.39.11",
-    "razor": "9.0.0-preview.24557.10",
+    "razor": "9.0.0-preview.24569.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.13.35431.11"
+    "xamlTools": "17.13.35521.31"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -65,6 +65,7 @@
     "compile": "tsc -p ./ && npx eslint ./ && npm run l10nDevGenerateLocalizationBundle && npm run compile:razorTextMate",
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
     "compileDev": "tsc -p ./ && npx eslint ./ && webpack --mode development && npm run l10nDevGenerateLocalizationBundle",
+    "compileTest": "tsc -p ./ && webpack --mode development",
     "watch": "tsc -watch -p ./",
     "test": "tsc -p ./ && gulp test",
     "test:withoutDevKit": "tsc -p ./ && gulp test:withoutDevKit",
@@ -1432,7 +1433,7 @@
           "dotnet.server.startTimeout": {
             "type": "number",
             "scope": "machine-overridable",
-            "default": 30000,
+            "default": 120000,
             "description": "%configuration.dotnet.server.startTimeout%"
           },
           "dotnet.server.waitForDebugger": {
@@ -1504,27 +1505,18 @@
             "description": "%configuration.razor.languageServer.debug%",
             "order": 90
           },
-          "razor.server.trace": {
-            "scope": "window",
-            "type": "string",
-            "enum": [
-              "Trace",
-              "Debug",
-              "Information",
-              "Warning",
-              "Error",
-              "Critical",
-              "None"
-            ],
-            "order": 90,
-            "default": "Information",
-            "description": "%configuration.razor.server.trace%"
-          },
           "razor.languageServer.forceRuntimeCodeGeneration": {
             "type": "boolean",
             "scope": "machine-overridable",
             "default": false,
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
+            "order": 90
+          },
+          "razor.languageServer.useRoslynTokenizer": {
+            "type": "boolean",
+            "scope": "machine-overridable",
+            "default": false,
+            "markdownDescription": "%configuration.razor.languageServer.useRoslynTokenizer%",
             "order": 90
           },
           "razor.languageServer.suppressLspErrorToasts": {
@@ -1898,7 +1890,7 @@
         "command": "dotnet.restartServer",
         "title": "%command.dotnet.restartServer%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext != 'OmniSharp'"
+        "enablement": "dotnet.server.activationContext == 'Roslyn'"
       }
     ],
     "keybindings": [

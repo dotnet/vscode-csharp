@@ -4,6 +4,8 @@ parameters:
   default: 'default'
 - name: isOfficial
   type: boolean
+- name: dotnetVersion
+  type: string
 - name: channel
   values:
   - release
@@ -96,6 +98,7 @@ stages:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}
       platform: linux
       isOfficial: ${{ parameters.isOfficial }}
+      dotnetVersion: ${{ parameters.dotnetVersion }}
       pool:
         ${{ if eq(parameters.isOfficial, true) }}:
           name: netcore1espool-internal
@@ -109,6 +112,7 @@ stages:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}
       platform: windows
       isOfficial: ${{ parameters.isOfficial }}
+      dotnetVersion: ${{ parameters.dotnetVersion }}
       pool:
         ${{ if eq(parameters.isOfficial, true) }}:
           name: netcore1espool-internal
@@ -122,6 +126,7 @@ stages:
       versionNumberOverride: ${{ parameters.versionNumberOverride }}
       platform: darwin
       isOfficial: ${{ parameters.isOfficial }}
+      dotnetVersion: ${{ parameters.dotnetVersion }}
       pool:
         name: Azure Pipelines
         ${{ if eq(parameters.isOfficial, true) }}:

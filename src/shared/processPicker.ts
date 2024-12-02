@@ -222,7 +222,7 @@ export class RemoteAttachPicker {
     ): Promise<AttachItem | undefined> {
         // Create remote attach output channel for errors.
         if (RemoteAttachPicker._channel === undefined) {
-            RemoteAttachPicker._channel = vscode.window.createOutputChannel('remote-attach');
+            RemoteAttachPicker._channel = vscode.window.createOutputChannel(vscode.l10n.t('remote-attach'));
         } else {
             RemoteAttachPicker._channel.clear();
         }
