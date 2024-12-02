@@ -10,7 +10,7 @@ import { promisify } from 'util';
 import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { PlatformInformation } from '../shared/platform';
-import { commonOptions } from '../shared/options';
+import { omnisharpOptions } from '../shared/options';
 
 export class DotnetResolver implements IHostExecutableResolver {
     private readonly minimumDotnetVersion = '6.0.100';
@@ -21,7 +21,7 @@ export class DotnetResolver implements IHostExecutableResolver {
         const dotnet = this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
         const env = { ...process.env };
 
-        const dotnetPathOption = commonOptions.dotnetPath;
+        const dotnetPathOption = omnisharpOptions.dotnetPath;
         if (dotnetPathOption.length > 0) {
             env['PATH'] = dotnetPathOption + path.delimiter + env['PATH'];
         }
