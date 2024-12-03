@@ -20,6 +20,9 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     private ProvisionalDotPosition: Position | undefined;
     private hostDocumentVersion: number | null = null;
     private updates: Update[] | null = null;
+    private _checksum: Uint8Array = new Uint8Array();
+    private _checksumAlgorithm: number = 0;
+    private _encodingCodePage: number | null = null;
 
     public constructor(public readonly uri: vscode.Uri) {
         this.path = getUriPath(uri);
@@ -33,33 +36,55 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         return this.content.length;
     }
 
+    public get checksum(): Uint8Array {
+        return this._checksum;
+    }
+
+    public get checksumAlgorithm(): number {
+        return this._checksumAlgorithm;
+    }
+
+    public get encodingCodePage(): number | null {
+        return this._encodingCodePage;
+    }
+
     public clear() {
         this.setContent('');
     }
 
-    public update(edits: ServerTextChange[], hostDocumentVersion: number) {
-        this.removeProvisionalDot();
+    public update(
+        hostDocumentIsOpen: boolean,
+        edits: ServerTextChange[],
+        hostDocumentVersion: number,
+        checksum: Uint8Array,
+        checksumAlgorithm: number,
+        encodingCodePage: number | null
+    ) {
+        if (hostDocumentIsOpen) {
+            this.removeProvisionalDot();
 
-        // Apply any stored edits if needed
-        if (this.updates) {
-            for (const update of this.updates) {
-                this.updateContent(update.changes);
+            // Apply any stored edits if needed
+            if (this.updates) {
+                for (const update of this.updates) {
+                    this.updateContent(update.changes);
+                }
+
+                this.updates = null;
             }
 
-            this.updates = null;
-        }
-
-        this.hostDocumentVersion = hostDocumentVersion;
-        this.updateContent(edits);
-    }
-
-    public storeEdits(edits: ServerTextChange[], hostDocumentVersion: number) {
-        this.hostDocumentVersion = hostDocumentVersion;
-        if (this.updates) {
-            this.updates = this.updates.concat(new Update(edits));
+            this.updateContent(edits);
         } else {
-            this.updates = [new Update(edits)];
+            if (this.updates) {
+                this.updates = this.updates.concat(new Update(edits));
+            } else {
+                this.updates = [new Update(edits)];
+            }
         }
+
+        this._checksum = checksum;
+        this._checksumAlgorithm = checksumAlgorithm;
+        this._encodingCodePage = encodingCodePage;
+        this.hostDocumentVersion = hostDocumentVersion;
     }
 
     public getAndApplyEdits() {

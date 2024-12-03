@@ -258,17 +258,14 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 csharpProjectedDocument.clear();
             }
 
-            if (document.isOpen) {
-                // Make sure the document is open, because updating will cause a didChange event to fire.
-                await vscode.workspace.openTextDocument(document.csharpDocument.uri);
-
-                csharpProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
-            } else {
-                csharpProjectedDocument.storeEdits(
-                    updateBufferRequest.changes,
-                    updateBufferRequest.hostDocumentVersion
-                );
-            }
+            csharpProjectedDocument.update(
+                document.isOpen,
+                updateBufferRequest.changes,
+                updateBufferRequest.hostDocumentVersion,
+                updateBufferRequest.checksum,
+                updateBufferRequest.checksumAlgorithm,
+                updateBufferRequest.encodingCodePage
+            );
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
         } else {
@@ -311,7 +308,13 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 htmlProjectedDocument.clear();
             }
 
-            htmlProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
+            htmlProjectedDocument.update(
+                updateBufferRequest.changes,
+                updateBufferRequest.hostDocumentVersion,
+                updateBufferRequest.checksum,
+                updateBufferRequest.checksumAlgorithm,
+                updateBufferRequest.encodingCodePage
+            );
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.htmlChanged);
         } else {

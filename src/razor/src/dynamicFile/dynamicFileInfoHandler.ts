@@ -75,14 +75,26 @@ export class DynamicFileInfoHandler {
             if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
                 // Open documents have didOpen/didChange to update the csharp buffer. Razor
                 // does not send edits and instead lets vscode handle them.
-                return new ProvideDynamicFileResponse({ uri: virtualCsharpUri }, null);
+                return new ProvideDynamicFileResponse(
+                    { uri: virtualCsharpUri },
+                    null,
+                    razorDocument.csharpDocument.checksum,
+                    razorDocument.csharpDocument.checksumAlgorithm,
+                    razorDocument.csharpDocument.encodingCodePage
+                );
             } else {
                 // Closed documents provide edits since the last time they were requested since
                 // there is no open buffer in vscode corresponding to the csharp content.
                 const csharpDocument = razorDocument.csharpDocument as CSharpProjectedDocument;
                 const edits = csharpDocument.getAndApplyEdits();
 
-                return new ProvideDynamicFileResponse({ uri: virtualCsharpUri }, edits ?? null);
+                return new ProvideDynamicFileResponse(
+                    { uri: virtualCsharpUri },
+                    edits ?? null,
+                    razorDocument.csharpDocument.checksum,
+                    razorDocument.csharpDocument.checksumAlgorithm,
+                    razorDocument.csharpDocument.encodingCodePage
+                );
             }
         } catch (error) {
             this.logger.logWarning(`${DynamicFileInfoHandler.provideDynamicFileInfoCommand} failed with ${error}`);

@@ -11,4 +11,7 @@ export interface IProjectedDocument {
     readonly hostDocumentSyncVersion: number | null;
     readonly length: number;
     getContent(): string;
+    checksum: Uint8Array;
+    checksumAlgorithm: number;
+    encodingCodePage: number | null;
 }

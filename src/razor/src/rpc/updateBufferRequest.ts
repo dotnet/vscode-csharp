@@ -10,6 +10,9 @@ export class UpdateBufferRequest {
         public readonly hostDocumentVersion: number,
         public readonly hostDocumentFilePath: string,
         public readonly changes: ServerTextChange[],
-        public readonly previousWasEmpty: boolean
+        public readonly previousWasEmpty: boolean,
+        public readonly checksum: Uint8Array,
+        public readonly checksumAlgorithm: number,
+        public readonly encodingCodePage: number | null
     ) {}
 }

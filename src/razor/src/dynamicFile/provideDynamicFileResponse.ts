@@ -10,6 +10,9 @@ import { ServerTextChange } from '../rpc/serverTextChange';
 export class ProvideDynamicFileResponse {
     constructor(
         public readonly csharpDocument: TextDocumentIdentifier | null,
-        public readonly edits: ServerTextChange[] | null
+        public readonly edits: ServerTextChange[] | null,
+        public readonly checksum: Uint8Array,
+        public readonly checksumAlgorithm: number,
+        public readonly encodingCodePage: number | null
     ) {}
 }
