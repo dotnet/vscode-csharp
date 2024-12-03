@@ -2,9 +2,18 @@
 
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
-* Bump xamltools to 17.13.35521.31 (PR: [#7814](https://github.com/dotnet/vscode-csharp/pull/7814))
+
+# 2.60.x
 
 # 2.59.x
+* Update Roslyn to 4.13.0-3.24577.4 (PR: [#7833](https://github.com/dotnet/vscode-csharp/pull/7833))
+  * Fix issue where suppressors could not correctly suppress built in analyzers (PR: [#75684](https://github.com/dotnet/roslyn/pull/75684))
+  * Implement find all references to preprocessing symbols (PR: [#66425](https://github.com/dotnet/roslyn/pull/66425))
+  * Postpone respecting the code-style analysis config rule until NET10 (PR: [#75978](https://github.com/dotnet/roslyn/pull/75978))
+* Delete `dotnet.dotnetPath` setting and support automatic migration to replacements (PR: [#7825](https://github.com/dotnet/vscode-csharp/pull/7825))
+  * Existing `dotnet.dotnetPath` values will be migrated to the .NET Install Tool extension's `dotnetAcquisitionExtension.existingDotnetPath` setting.  See [this page](https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-extension/README.md#i-already-have-a-net-runtime-or-sdk-installed-and-i-want-to-use-it) for more details on configuring the .NET Install Tool.
+  * The OmniSharp version of `dotnet.dotnetPath` has been migrated to `omnisharp.dotnetPath`
+* Bump xamltools to 17.13.35527.19 (PR: [#7831](https://github.com/dotnet/vscode-csharp/pull/7831))
 
 # 2.58.x
 * Update Razor to 9.0.0-preview.24569.4 (PR: [#7805](https://github.com/dotnet/vscode-csharp/pull/7805))
