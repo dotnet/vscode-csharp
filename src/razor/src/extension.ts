@@ -50,6 +50,7 @@ import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHan
 import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
 import { getComponentPaths } from '../../lsptoolshost/builtInComponents';
+import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -294,6 +295,9 @@ export async function activate(
             localRegistrations.forEach((r) => r.dispose());
             localRegistrations.length = 0;
         });
+
+        const provider = new BlazorDebugConfigurationProvider(logger, vscodeType);
+        context.subscriptions.push(vscodeType.debug.registerDebugConfigurationProvider('blazorwasm', provider));
 
         languageServerClient.onStarted(async () => {
             await documentManager.initialize();
