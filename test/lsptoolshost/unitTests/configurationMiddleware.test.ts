@@ -263,7 +263,7 @@ const testData = [
     },
     {
         serverOption: 'csharp|auto_insert.dotnet_enable_auto_insert',
-        vsCodeConfigurtation: 'dotnet.autoInsert.enableAutoInsert',
+        vsCodeConfiguration: 'dotnet.autoInsert.enableAutoInsert',
         declareInPackageJson: true,
         section: editorBehaviorSection,
     },
