@@ -10,7 +10,7 @@ import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
 import { ServerState } from '../../../src/lsptoolshost/serverStateChange';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { EOL } from 'os';
+import { EOL, platform } from 'os';
 import { describe, expect, test } from '@jest/globals';
 
 export async function activateCSharpExtension(): Promise<void> {
@@ -102,7 +102,7 @@ export async function restartLanguageServer(): Promise<void> {
 }
 
 export function isRazorWorkspace(workspace: typeof vscode.workspace) {
-    return isGivenSln(workspace, 'BasicRazorApp2_1');
+    return isGivenSln(workspace, 'RazorApp');
 }
 
 export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
@@ -133,6 +133,34 @@ export async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
 
         return a.command!.title.localeCompare(b.command!.command);
     });
+}
+
+export async function navigate(
+    originalPosition: vscode.Position,
+    definitionLocations: vscode.Location[],
+    expectedFileName: string
+): Promise<void> {
+    const windowChanged = new Promise<void>((resolve, _) => {
+        vscode.window.onDidChangeActiveTextEditor((_e) => {
+            if (_e?.document.fileName.includes(expectedFileName)) {
+                resolve();
+            }
+        });
+    });
+
+    await vscode.commands.executeCommand(
+        'editor.action.goToLocations',
+        vscode.window.activeTextEditor!.document.uri,
+        originalPosition,
+        definitionLocations,
+        'goto',
+        'Failed to navigate'
+    );
+
+    // Navigation happens asynchronously when a different file is opened, so we need to wait for the window to change.
+    await windowChanged;
+
+    expect(vscode.window.activeTextEditor?.document.fileName).toContain(expectedFileName);
 }
 
 export function sortLocations(locations: vscode.Location[]): vscode.Location[] {
@@ -201,8 +229,12 @@ export async function expectText(document: vscode.TextDocument, expectedLines: s
 
 export const describeIfCSharp = describeIf(!usingDevKit());
 export const describeIfDevKit = describeIf(usingDevKit());
+export const describeIfNotMacOS = describeIf(!isMacOS());
+export const describeIfWindows = describeIf(isWindows());
 export const testIfCSharp = testIf(!usingDevKit());
 export const testIfDevKit = testIf(usingDevKit());
+export const testIfNotMacOS = testIf(!isMacOS());
+export const testIfWindows = testIf(isWindows());
 
 function describeIf(condition: boolean) {
     return condition ? describe : describe.skip;
@@ -210,4 +242,14 @@ function describeIf(condition: boolean) {
 
 function testIf(condition: boolean) {
     return condition ? test : test.skip;
+}
+
+function isMacOS() {
+    const currentPlatform = platform();
+    return currentPlatform === 'darwin';
+}
+
+function isWindows() {
+    const currentPlatform = platform();
+    return currentPlatform === 'win32';
 }

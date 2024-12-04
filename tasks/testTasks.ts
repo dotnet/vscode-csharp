@@ -75,7 +75,7 @@ function createIntegrationTestSubTasks() {
         gulp.series(integrationTestProjects.map((projectName) => `test:integration:devkit:${projectName}`))
     );
 
-    const razorIntegrationTestProjects = ['BasicRazorApp2_1'];
+    const razorIntegrationTestProjects = ['RazorApp'];
     for (const projectName of razorIntegrationTestProjects) {
         gulp.task(`test:razorintegration:${projectName}`, async () =>
             runIntegrationTest(

@@ -1,8 +1,8 @@
 {
-  "hydrated": true,
+  "hydrated": false,
   "properties": {
     "helpUri": "https://eng.ms/docs/microsoft-security/security/azure-security/cloudai-security-fundamentals-engineering/security-integration/guardian-wiki/microsoft-guardian/general/baselines",
-    "hydrationStatus": "This file contains identifying data. It is **NOT** safe to check into your repo. To dehydrate this file, run `guardian dehydrate --help` and follow the guidance."
+    "hydrationStatus": "This file does not contain identifying data. It is safe to check into your repo. To hydrate this file with identifying data, run `guardian hydrate --help` and follow the guidance."
   },
   "version": "1.0.0",
   "baselines": {
@@ -16,13 +16,9 @@
     "26445e3e484940d2d58c2ffc32ab3895fca4b1589d66e2f2dee2fa01f2c479fb": {
       "signature": "26445e3e484940d2d58c2ffc32ab3895fca4b1589d66e2f2dee2fa01f2c479fb",
       "alternativeSignatures": [],
-      "target": "test/omnisharp/omnisharpUnitTests/testAssets/private.pem",
-      "line": 1,
       "memberOf": [
         "default"
       ],
-      "tool": "credscan",
-      "ruleId": "CSCAN-GENERAL0020",
       "createdDate": "2024-09-09 19:35:36Z"
     }
   }

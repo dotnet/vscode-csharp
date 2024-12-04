@@ -6,13 +6,11 @@
 import * as vscode from 'vscode';
 import * as vscodeapi from 'vscode';
 import { ExtensionContext } from 'vscode';
-import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
 import { CodeActionsHandler } from './codeActions/codeActionsHandler';
 import { CompletionHandler } from './completion/completionHandler';
 import { RazorCodeActionRunner } from './codeActions/razorCodeActionRunner';
 import { RazorCodeLensProvider } from './codeLens/razorCodeLensProvider';
 import { ColorPresentationHandler } from './colorPresentation/colorPresentationHandler';
-import { listenToConfigurationChanges } from './configurationChangeListener';
 import { RazorCSharpFeature } from './csharp/razorCSharpFeature';
 import { RazorDefinitionProvider } from './definition/razorDefinitionProvider';
 import { ReportIssueCommand } from './diagnostics/reportIssueCommand';
@@ -33,7 +31,6 @@ import { ProposedApisFeature } from './proposedApisFeature';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageConfiguration } from './razorLanguageConfiguration';
 import { RazorLanguageServerClient } from './razorLanguageServerClient';
-import { resolveRazorLanguageServerLogLevel } from './razorLanguageServerTraceResolver';
 import { RazorLanguageServiceClient } from './razorLanguageServiceClient';
 import { RazorLogger } from './razorLogger';
 import { RazorReferenceProvider } from './reference/razorReferenceProvider';
@@ -53,6 +50,7 @@ import { RazorFormatNewFileHandler } from './formatNewFile/razorFormatNewFileHan
 import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
 import { getComponentPaths } from '../../lsptoolshost/builtInComponents';
+import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -71,14 +69,12 @@ export async function activate(
         create: <T>() => new vscode.EventEmitter<T>(),
     };
 
-    const languageServerLogLevel = resolveRazorLanguageServerLogLevel(vscodeType);
-    const logger = new RazorLogger(eventEmitterFactory, languageServerLogLevel);
+    const logger = new RazorLogger(eventEmitterFactory);
 
     try {
         const razorOptions: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
             vscodeType,
             languageServerDir,
-            languageServerLogLevel,
             logger
         );
 
@@ -125,6 +121,7 @@ export async function activate(
             razorTelemetryReporter,
             platformInfo
         );
+
         const documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
         reportTelemetryForDocuments(documentManager, razorTelemetryReporter);
         const languageConfiguration = new RazorLanguageConfiguration();
@@ -269,7 +266,6 @@ export async function activate(
                 htmlFeature.register(),
                 documentSynchronizer.register(),
                 reportIssueCommand.register(),
-                listenToConfigurationChanges(languageServerClient),
                 razorCodeActionRunner.register()
             );
 

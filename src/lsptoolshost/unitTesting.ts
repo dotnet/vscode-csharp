@@ -12,12 +12,14 @@ import { RunTestsParams, RunTestsPartialResult, RunTestsRequest, TestProgress } 
 import { commonOptions } from '../shared/options';
 import { UriConverter } from './uriConverter';
 import { showErrorMessage } from '../shared/observers/utils/showMessage';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
-export function registerUnitTestingCommands(
-    context: vscode.ExtensionContext,
-    languageServer: RoslynLanguageServer,
-    dotnetTestChannel: vscode.OutputChannel
-) {
+export function registerUnitTestingCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
+    if (getCSharpDevKit()) {
+        // If using C# devkit, we don't need to register any test commands.
+        return;
+    }
+    const dotnetTestChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET Test Log'));
     context.subscriptions.push(
         vscode.commands.registerCommand(
             'dotnet.test.run',

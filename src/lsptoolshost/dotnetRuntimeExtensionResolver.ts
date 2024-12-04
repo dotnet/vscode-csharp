@@ -5,22 +5,19 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as semver from 'semver';
 import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { PlatformInformation } from '../shared/platform';
-import { commonOptions, languageServerOptions } from '../shared/options';
+import { languageServerOptions } from '../shared/options';
 import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
-import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { readFile } from 'fs/promises';
-import { RuntimeInfo } from '../shared/utils/dotnetInfo';
+import { IDotnetAcquireResult, IDotnetFindPathContext } from './dotnetRuntimeExtensionApi';
 
-export const DotNetRuntimeVersion = '8.0';
-
-interface IDotnetAcquireResult {
-    dotnetPath: string;
-}
+const DotNetMajorVersion = '8';
+const DotNetMinorVersion = '0';
+const DotNetPatchVersion = '10';
+export const DotNetRuntimeVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}.${DotNetPatchVersion}`;
 
 /**
  * Resolves the dotnet runtime for a server executable from given options and the dotnet runtime VSCode extension.
@@ -39,38 +36,41 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
     private hostInfo: HostExecutableInformation | undefined;
 
     async getHostExecutableInfo(): Promise<HostExecutableInformation> {
-        let dotnetRuntimePath = commonOptions.dotnetPath;
-        const serverPath = this.getServerPath(this.platformInfo);
-
-        // Check if we can find a valid dotnet from dotnet --version on the PATH.
-        if (!dotnetRuntimePath) {
-            const dotnetPath = await this.findDotnetFromPath();
-            if (dotnetPath) {
-                return {
-                    version: '' /* We don't need to know the version - we've already verified its high enough */,
-                    path: dotnetPath,
-                    env: this.getEnvironmentVariables(dotnetPath),
-                };
-            }
+        if (this.hostInfo) {
+            return this.hostInfo;
         }
 
-        // We didn't find it on the path, see if we can install the correct runtime using the runtime extension.
-        if (!dotnetRuntimePath) {
-            const dotnetInfo = await this.acquireDotNetProcessDependencies(serverPath);
-            dotnetRuntimePath = path.dirname(dotnetInfo.path);
+        this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
+        const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
+        const findPathRequest: IDotnetFindPathContext = {
+            acquireContext: {
+                version: DotNetRuntimeVersion,
+                requestingExtensionId: CSharpExtensionId,
+                architecture: extensionArchitecture,
+                mode: 'runtime',
+            },
+            versionSpecRequirement: 'greater_than_or_equal',
+        };
+        let acquireResult = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
+            'dotnet.findPath',
+            findPathRequest
+        );
+        if (acquireResult === undefined) {
+            this.channel.appendLine(
+                `Did not find .NET ${DotNetRuntimeVersion} on path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime`
+            );
+            acquireResult = await this.acquireDotNetProcessDependencies();
         }
 
-        const dotnetExecutableName = this.getDotnetExecutableName();
-        const dotnetExecutablePath = path.join(dotnetRuntimePath, dotnetExecutableName);
-        if (!existsSync(dotnetExecutablePath)) {
-            throw new Error(`Cannot find dotnet path '${dotnetExecutablePath}'`);
-        }
+        const dotnetExecutablePath = acquireResult.dotnetPath;
 
-        return {
+        const hostInfo = {
             version: '' /* We don't need to know the version - we've already downloaded the correct one */,
             path: dotnetExecutablePath,
             env: this.getEnvironmentVariables(dotnetExecutablePath),
         };
+        this.hostInfo = hostInfo;
+        return hostInfo;
     }
 
     private getEnvironmentVariables(dotnetExecutablePath: string): NodeJS.ProcessEnv {
@@ -100,122 +100,44 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
      * Acquires the .NET runtime if it is not already present.
      * @returns The path to the .NET runtime
      */
-    private async acquireRuntime(): Promise<HostExecutableInformation> {
-        if (this.hostInfo) {
-            return this.hostInfo;
-        }
-
+    private async acquireRuntime(): Promise<IDotnetAcquireResult> {
+        // The runtime extension doesn't support specifying a patch versions in the acquire API, so we only use major.minor here.
+        // That is generally OK, as acquisition will always acquire the latest patch version.
+        const dotnetAcquireVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}`;
         let status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquireStatus', {
-            version: DotNetRuntimeVersion,
+            version: dotnetAcquireVersion,
             requestingExtensionId: CSharpExtensionId,
         });
         if (status === undefined) {
             await vscode.commands.executeCommand('dotnet.showAcquisitionLog');
 
             status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquire', {
-                version: DotNetRuntimeVersion,
+                version: dotnetAcquireVersion,
                 requestingExtensionId: CSharpExtensionId,
             });
-            if (!status?.dotnetPath) {
+            if (!status) {
                 throw new Error('Could not resolve the dotnet path!');
             }
         }
 
-        return (this.hostInfo = {
-            version: DotNetRuntimeVersion,
-            path: status.dotnetPath,
-            env: process.env,
-        });
+        return status;
     }
 
     /**
      * Acquires the .NET runtime and any other dependencies required to spawn a particular .NET executable.
      * @param path The path to the entrypoint assembly. Typically a .dll.
      */
-    private async acquireDotNetProcessDependencies(path: string): Promise<HostExecutableInformation> {
-        const dotnetInfo = await this.acquireRuntime();
+    private async acquireDotNetProcessDependencies(): Promise<IDotnetAcquireResult> {
+        const acquireResult = await this.acquireRuntime();
 
-        const args = [path];
+        const args = [this.getServerPath(this.platformInfo)];
         // This will install any missing Linux dependencies.
         await vscode.commands.executeCommand('dotnet.ensureDotnetDependencies', {
-            command: dotnetInfo.path,
+            command: acquireResult.dotnetPath,
             arguments: args,
         });
 
-        return dotnetInfo;
-    }
-
-    /**
-     * Checks dotnet --version to see if the value on the path is greater than the minimum required version.
-     * This is adapated from similar O# server logic and should be removed when we have a stable acquisition extension.
-     * @returns true if the dotnet version is greater than the minimum required version, false otherwise.
-     */
-    private async findDotnetFromPath(): Promise<string | undefined> {
-        try {
-            const dotnetInfo = await getDotnetInfo([]);
-
-            const extensionArchitecture = await this.getArchitectureFromTargetPlatform();
-            const dotnetArchitecture = dotnetInfo.Architecture;
-
-            // If the extension arhcitecture is defined, we check that it matches the dotnet architecture.
-            // If its undefined we likely have a platform neutral server and assume it can run on any architecture.
-            if (extensionArchitecture && extensionArchitecture !== dotnetArchitecture) {
-                throw new Error(
-                    `The architecture of the .NET runtime (${dotnetArchitecture}) does not match the architecture of the extension (${extensionArchitecture}).`
-                );
-            }
-
-            // Verify that the dotnet we found includes a runtime version that is compatible with our requirement.
-            const requiredRuntimeVersion = semver.parse(`${DotNetRuntimeVersion}.0`);
-            if (!requiredRuntimeVersion) {
-                throw new Error(`Unable to parse minimum required version ${DotNetRuntimeVersion}`);
-            }
-
-            const coreRuntimeVersions = dotnetInfo.Runtimes['Microsoft.NETCore.App'];
-            let matchingRuntime: RuntimeInfo | undefined = undefined;
-            for (const runtime of coreRuntimeVersions) {
-                // We consider a match if the runtime is greater than or equal to the required version since we roll forward.
-                if (semver.gte(runtime.Version, requiredRuntimeVersion)) {
-                    matchingRuntime = runtime;
-                    break;
-                }
-            }
-
-            if (!matchingRuntime) {
-                throw new Error(
-                    `No compatible .NET runtime found. Minimum required version is ${DotNetRuntimeVersion}.`
-                );
-            }
-
-            // The .NET install layout is a well known structure on all platforms.
-            // See https://github.com/dotnet/designs/blob/main/accepted/2020/install-locations.md#net-core-install-layout
-            //
-            // Therefore we know that the runtime path is always in <install root>/shared/<runtime name>
-            // and the dotnet executable is always at <install root>/dotnet(.exe).
-            //
-            // Since dotnet --list-runtimes will always use the real assembly path to output the runtime folder (no symlinks!)
-            // we know the dotnet executable will be two folders up in the install root.
-            const runtimeFolderPath = matchingRuntime.Path;
-            const installFolder = path.dirname(path.dirname(runtimeFolderPath));
-            const dotnetExecutablePath = path.join(installFolder, this.getDotnetExecutableName());
-            if (!existsSync(dotnetExecutablePath)) {
-                throw new Error(
-                    `dotnet executable path does not exist: ${dotnetExecutablePath}, dotnet installation may be corrupt.`
-                );
-            }
-
-            this.channel.appendLine(`Using dotnet configured on PATH`);
-            return dotnetExecutablePath;
-        } catch (e) {
-            this.channel.appendLine(
-                'Failed to find dotnet info from path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime'
-            );
-            if (e instanceof Error) {
-                this.channel.appendLine(e.message);
-            }
-        }
-
-        return undefined;
+        return acquireResult;
     }
 
     private async getArchitectureFromTargetPlatform(): Promise<string | undefined> {
@@ -257,9 +179,5 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             default:
                 throw new Error(`Unknown extension target platform: ${targetPlatform}`);
         }
-    }
-
-    private getDotnetExecutableName(): string {
-        return this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
     }
 }

@@ -8,52 +8,69 @@ import * as path from 'path';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 import { IEventEmitterFactory } from './IEventEmitterFactory';
-import { LogLevel } from './logLevel';
+import { RazorLanguageServerClient } from './razorLanguageServerClient';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';
-    public static readonly verbositySetting = 'razor.server.trace';
     public verboseEnabled!: boolean;
     public messageEnabled!: boolean;
-    public readonly outputChannel: vscode.OutputChannel;
+    public readonly outputChannel: vscode.LogOutputChannel;
+    public languageServerClient: RazorLanguageServerClient | undefined;
 
     private readonly onLogEmitter: vscodeAdapter.EventEmitter<string>;
-    private readonly onTraceLevelChangeEmitter: vscodeAdapter.EventEmitter<LogLevel>;
 
-    constructor(eventEmitterFactory: IEventEmitterFactory, public logLevel: LogLevel) {
-        this.processTraceLevel();
+    constructor(eventEmitterFactory: IEventEmitterFactory) {
+        this.outputChannel = vscode.window.createOutputChannel(vscode.l10n.t('Razor Log'), { log: true });
         this.onLogEmitter = eventEmitterFactory.create<string>();
-        this.onTraceLevelChangeEmitter = eventEmitterFactory.create<LogLevel>();
+        this.processTraceLevel();
 
-        this.outputChannel = vscode.window.createOutputChannel(RazorLogger.logName);
+        this.outputChannel.onDidChangeLogLevel(async () => {
+            await this.updateLogLevelAsync();
+        });
 
         this.logRazorInformation();
         this.setupToStringOverrides();
     }
 
-    public setTraceLevel(trace: LogLevel) {
-        this.logLevel = trace;
-        this.processTraceLevel();
-        this.logMessage(`Updated log level to: ${LogLevel[this.logLevel]}`);
-        this.onTraceLevelChangeEmitter.fire(this.logLevel);
+    public get logLevel(): vscode.LogLevel {
+        return this.outputChannel.logLevel;
+    }
+
+    /**
+     * Gets the log level in numeric form that matches what is expected in rzls.
+     * Matches https://github.com/dotnet/razor/blob/7390745dcd9c8831d4459437ed2e9e94125f3dd3/src/Razor/src/Microsoft.CodeAnalysis.Razor.Workspaces/Logging/LogLevel.cs#L6
+     */
+    public get logLevelForRZLS(): number {
+        switch (this.logLevel) {
+            case vscode.LogLevel.Off:
+                return 0;
+            case vscode.LogLevel.Trace:
+                return 1;
+            case vscode.LogLevel.Debug:
+                return 2;
+            case vscode.LogLevel.Info:
+                return 3;
+            case vscode.LogLevel.Warning:
+                return 4;
+            case vscode.LogLevel.Error:
+                return 5;
+            default:
+                throw new Error('Unexpected log level value. Do not know how to convert');
+        }
     }
 
     public get onLog() {
         return this.onLogEmitter.event;
     }
 
-    public get onTraceLevelChange() {
-        return this.onTraceLevelChangeEmitter.event;
-    }
-
     public logAlways(message: string) {
-        this.logWithMarker(message);
+        this.outputChannel.info(message);
+        this.onLogEmitter.fire(message);
     }
 
     public logWarning(message: string) {
-        // Always log warnings
-        const warningPrefixedMessage = `(Warning) ${message}`;
-        this.logAlways(warningPrefixedMessage);
+        this.outputChannel.warn(message);
+        this.onLogEmitter.fire(message);
     }
 
     public logError(message: string, error: unknown) {
@@ -67,13 +84,15 @@ export class RazorLogger implements vscodeAdapter.Disposable {
 
     public logMessage(message: string) {
         if (this.messageEnabled) {
-            this.logWithMarker(message);
+            this.outputChannel.info(message);
+            this.onLogEmitter.fire(message);
         }
     }
 
     public logVerbose(message: string) {
         if (this.verboseEnabled) {
-            this.logWithMarker(message);
+            this.outputChannel.trace(message);
+            this.onLogEmitter.fire(message);
         }
     }
 
@@ -81,42 +100,40 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         this.outputChannel.dispose();
     }
 
+    private async updateLogLevelAsync() {
+        this.processTraceLevel();
+
+        if (this.languageServerClient) {
+            await this.languageServerClient.sendNotification('razor/updateLogLevel', {
+                logLevel: this.logLevelForRZLS,
+            });
+        }
+    }
+
     private logErrorInternal(message: string, error: Error) {
         // Always log errors
-        const errorPrefixedMessage = `(Error) ${message}
+        const errorPrefixedMessage = `${message}
 ${error.message}
 Stack Trace:
 ${error.stack}`;
-        this.logAlways(errorPrefixedMessage);
-    }
-
-    private logWithMarker(message: string) {
-        const timeString = new Date().toLocaleTimeString();
-        const markedMessage = `[Client - ${timeString}] ${message}`;
-
-        this.log(markedMessage);
-    }
-
-    private log(message: string) {
-        this.outputChannel.appendLine(message);
-
+        this.outputChannel.error(errorPrefixedMessage);
         this.onLogEmitter.fire(message);
     }
 
     private logRazorInformation() {
         const packageJsonContents = readOwnPackageJson();
 
-        this.log('--------------------------------------------------------------------------------');
-        this.log(`Razor.VSCode version ${packageJsonContents.defaults.razor}`);
-        this.log('--------------------------------------------------------------------------------');
-        this.log(`Razor's log level is currently set to '${LogLevel[this.logLevel]}'`);
-        this.log(" - To change Razor's log level set 'razor.server.trace' and then restart VSCode.");
-        this.log(" - To report issues invoke the 'Report a Razor issue' command via the command palette.");
-        this.log(
+        this.logAlways('--------------------------------------------------------------------------------');
+        this.logAlways(`Razor.VSCode version ${packageJsonContents.defaults.razor}`);
+        this.logAlways('--------------------------------------------------------------------------------');
+        this.logAlways(`Razor's log level is currently set to '${vscode.LogLevel[this.logLevel]}'`);
+        this.logAlways(" - To change Razor's log level use the gear icon on the output window");
+        this.logAlways(" - To report issues invoke the 'Report a Razor issue' command via the command palette.");
+        this.logAlways(
             '-----------------------------------------------------------------------' +
                 '------------------------------------------------------'
         );
-        this.log('');
+        this.logAlways('');
     }
 
     private setupToStringOverrides() {
@@ -130,8 +147,8 @@ ${error.stack}`;
     }
 
     private processTraceLevel() {
-        this.verboseEnabled = this.logLevel <= LogLevel.Debug;
-        this.messageEnabled = this.logLevel <= LogLevel.Information;
+        this.verboseEnabled = this.outputChannel.logLevel >= vscode.LogLevel.Trace;
+        this.messageEnabled = this.outputChannel.logLevel >= vscode.LogLevel.Info;
     }
 }
 

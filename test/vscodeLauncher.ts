@@ -15,7 +15,13 @@ export async function prepareVSCodeAndExecuteTests(
     userDataDir: string,
     env: NodeJS.ProcessEnv
 ): Promise<number> {
-    const vscodeExecutablePath = await downloadAndUnzipVSCode('stable');
+    let vscodeVersion = 'stable';
+    if (process.env.CODE_VERSION) {
+        console.log(`VSCode version overriden to ${process.env.CODE_VERSION}.`);
+        vscodeVersion = process.env.CODE_VERSION;
+    }
+
+    const vscodeExecutablePath = await downloadAndUnzipVSCode(vscodeVersion);
     const [cli, ...args] = resolveCliArgsFromVSCodeExecutablePath(vscodeExecutablePath);
 
     console.log('Display: ' + env.DISPLAY);
@@ -54,7 +60,7 @@ export async function prepareVSCodeAndExecuteTests(
         extensionDevelopmentPath: extensionDevelopmentPath,
         extensionTestsPath: extensionTestsPath,
         // Launch with info logging as anything else is way too verbose and will hide test results.
-        launchArgs: [workspacePath, '-n', '--log', 'info', '--user-data-dir', userDataDir],
+        launchArgs: [workspacePath, '-n', '--user-data-dir', userDataDir, '--log', 'ms-dotnettools.csharp:trace'],
         extensionTestsEnv: env,
     });
 

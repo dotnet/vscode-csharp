@@ -11,7 +11,7 @@ import { ITestAssetWorkspace } from '../../../lsptoolshost/integrationTests/test
 import singleCsproj from '../../../lsptoolshost/integrationTests/testAssets/singleCsproj';
 import slnWithCsproj from '../../../lsptoolshost/integrationTests/testAssets/slnWithCsproj';
 import slnFilterWithCsproj from '../../../lsptoolshost/integrationTests/testAssets/slnFilterWithCsproj';
-import BasicRazorApp2_1 from '../../../lsptoolshost/integrationTests/testAssets/basicRazorApp21';
+import BasicRazorApp2_1 from '../../../lsptoolshost/integrationTests/testAssets/razorApp';
 import slnWithGenerator from '../../../lsptoolshost/integrationTests/testAssets/slnWithGenerator';
 import { OmnisharpTestAssetWorkspace } from './omnisharpTestAssetWorkspace';
 

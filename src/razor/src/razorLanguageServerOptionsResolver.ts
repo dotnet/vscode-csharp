@@ -10,13 +10,11 @@ import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { RazorLogger } from './razorLogger';
-import { LogLevel } from './logLevel';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 export function resolveRazorLanguageServerOptions(
     vscodeApi: vscodeAdapter.api,
     languageServerDir: string,
-    logLevel: LogLevel,
     logger: RazorLogger
 ) {
     const languageServerExecutablePath = findLanguageServerExecutable(languageServerDir);
@@ -25,14 +23,17 @@ export function resolveRazorLanguageServerOptions(
     const usingOmniSharp =
         !getCSharpDevKit() && vscodeApi.workspace.getConfiguration().get<boolean>('dotnet.server.useOmnisharp');
     const forceRuntimeCodeGeneration = serverConfig.get<boolean>('forceRuntimeCodeGeneration');
+    const useRoslynTokenizer = serverConfig.get<boolean>('useRoslynTokenizer');
+    const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
 
     return {
         serverPath: languageServerExecutablePath,
         debug: debugLanguageServer,
-        logLevel: logLevel,
         outputChannel: logger.outputChannel,
         usingOmniSharp,
         forceRuntimeCodeGeneration,
+        useRoslynTokenizer,
+        suppressErrorToasts,
     } as RazorLanguageServerOptions;
 }
 

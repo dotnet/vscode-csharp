@@ -27,6 +27,9 @@ parameters:
   - auto
   default: auto
 
+variables:
+  defaultDotnetVersion: '8.0.403'
+
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -50,6 +53,10 @@ extends:
       tsa:
         enabled: true
         configFile: '$(Build.SourcesDirectory)/.config/guardian/TSAConfig.gdntsa'
+      codeSignValidation:
+        # VCTools dlls are signed with the Phone cert, which isn't accepted by the CodeSign policy.
+        # Can be removed once https://dev.azure.com/devdiv/DevDiv/_workitems/edit/2093995 is fixed.
+        additionalTargetsGlobPattern: '-|**\msdia140.dll;-|**\msvc*.dll;-|**\vcruntime*.dll'
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -59,3 +66,4 @@ extends:
         isOfficial: true
         channel: ${{ parameters.channel }}
         signType: ${{ parameters.signType }}
+        dotnetVersion: $(defaultDotnetVersion)

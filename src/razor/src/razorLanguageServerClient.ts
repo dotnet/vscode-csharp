@@ -8,16 +8,16 @@ import { EventEmitter } from 'events';
 import * as vscode from 'vscode';
 import { RequestHandler, RequestType } from 'vscode-jsonrpc';
 import { GenericNotificationHandler, InitializeResult, LanguageClientOptions, State } from 'vscode-languageclient';
-import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
+import { ServerOptions } from 'vscode-languageclient/node';
 import { RazorLanguage } from './razorLanguage';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
-import { resolveRazorLanguageServerLogLevel } from './razorLanguageServerTraceResolver';
 import { RazorLogger } from './razorLogger';
 import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { randomUUID } from 'crypto';
 import { showErrorMessage } from '../../shared/observers/utils/showMessage';
+import { RazorLanguageClient } from './razorLanguageClient';
 
 const events = {
     ServerStop: 'ServerStop',
@@ -26,7 +26,7 @@ const events = {
 export class RazorLanguageServerClient implements vscode.Disposable {
     private clientOptions!: LanguageClientOptions;
     private serverOptions!: ServerOptions;
-    private client!: LanguageClient;
+    private client!: RazorLanguageClient;
     private onStartListeners: Array<() => Promise<any>> = [];
     private onStartedListeners: Array<() => Promise<any>> = [];
     private eventBus: EventEmitter;
@@ -53,12 +53,6 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
     public get initializeResult(): InitializeResult | undefined {
         return this.client.initializeResult;
-    }
-
-    public updateTraceLevel() {
-        const languageServerLogLevel = resolveRazorLanguageServerLogLevel(this.vscodeType);
-        this.setupLanguageServer();
-        this.logger.setTraceLevel(languageServerLogLevel);
     }
 
     public onStarted(listener: () => Promise<any>) {
@@ -114,6 +108,10 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             await this.client.start();
             this.logger.logMessage('Server started, waiting for client to be ready...');
             this.isStarted = true;
+
+            // Server is ready, hook up so logging changes can be reported
+            this.logger.languageServerClient = this;
+
             for (const listener of this.onStartListeners) {
                 await listener();
             }
@@ -122,6 +120,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             resolve();
 
             this.logger.logMessage('Server ready!');
+
             for (const listener of this.onStartedListeners) {
                 await listener();
             }
@@ -222,18 +221,16 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     }
 
     public async connectNamedPipe(pipeName: string): Promise<void> {
-        await this.startHandle;
+        await this.start();
 
         // Params must match https://github.com/dotnet/razor/blob/92005deac54f3e9d1a4d1d8f04389379cccfa354/src/Razor/src/Microsoft.CodeAnalysis.Razor.Workspaces/Protocol/RazorNamedPipeConnectParams.cs#L9
         await this.sendNotification('razor/namedPipeConnect', { pipeName: pipeName });
     }
 
     private setupLanguageServer() {
-        const languageServerTrace = resolveRazorLanguageServerLogLevel(this.vscodeType);
         const options: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
             this.vscodeType,
             this.languageServerDir,
-            languageServerTrace,
             this.logger
         );
         this.clientOptions = {
@@ -246,8 +243,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         this.logger.logMessage(`Razor language server path: ${options.serverPath}`);
 
         args.push('--logLevel');
-        args.push(options.logLevel.toString());
-        this.razorTelemetryReporter.reportTraceLevel(options.logLevel);
+        args.push(this.logger.logLevelForRZLS.toString());
+        this.razorTelemetryReporter.reportTraceLevel(this.logger.logLevel);
 
         if (options.debug) {
             this.razorTelemetryReporter.reportDebugLanguageServer();
@@ -267,6 +264,11 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
             if (options.forceRuntimeCodeGeneration) {
                 args.push('--ForceRuntimeCodeGeneration');
+                args.push('true');
+            }
+
+            if (options.useRoslynTokenizer) {
+                args.push('--UseRoslynTokenizer');
                 args.push('true');
             }
 
@@ -299,11 +301,12 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         this.serverOptions = childProcess;
 
-        this.client = new LanguageClient(
+        this.client = new RazorLanguageClient(
             'razorLanguageServer',
             'Razor Language Server',
             this.serverOptions,
-            this.clientOptions
+            this.clientOptions,
+            options
         );
     }
 }

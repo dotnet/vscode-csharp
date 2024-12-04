@@ -8,7 +8,6 @@ import { DocumentSelector } from 'vscode-languageserver-protocol';
 import * as path from 'path';
 
 export interface CommonOptions {
-    readonly dotnetPath: string;
     readonly waitForDebugger: boolean;
     readonly serverPath: string;
     readonly useOmnisharpServer: boolean;
@@ -66,10 +65,10 @@ export interface OmnisharpServerOptions {
     readonly maxProjectFileCountForDiagnosticAnalysis: number;
     readonly suppressDotnetRestoreNotification: boolean;
     readonly enableLspDriver?: boolean | null;
+    readonly dotnetPath: string;
 }
 
 export interface LanguageServerOptions {
-    readonly logLevel: string;
     readonly documentSelector: DocumentSelector;
     readonly extensionsPaths: string[] | null;
     readonly preferCSharpExtension: boolean;
@@ -80,6 +79,7 @@ export interface LanguageServerOptions {
     readonly componentPaths: { [key: string]: string } | null;
     readonly enableXamlTools: boolean;
     readonly suppressLspErrorToasts: boolean;
+    readonly suppressMiscellaneousFilesToasts: boolean;
     readonly useServerGC: boolean;
 }
 
@@ -90,9 +90,6 @@ export interface RazorOptions {
 }
 
 class CommonOptionsImpl implements CommonOptions {
-    public get dotnetPath() {
-        return readOption<string>('dotnet.dotnetPath', '', 'omnisharp.dotnetPath');
-    }
     public get waitForDebugger() {
         return readOption<boolean>('dotnet.server.waitForDebugger', false, 'omnisharp.waitForDebugger');
     }
@@ -375,12 +372,12 @@ class OmnisharpOptionsImpl implements OmnisharpServerOptions {
     public get enableLspDriver() {
         return readOption<boolean>('omnisharp.enableLspDriver', false);
     }
+    public get dotnetPath() {
+        return readOption<string>('omnisharp.dotnetPath', '');
+    }
 }
 
 class LanguageServerOptionsImpl implements LanguageServerOptions {
-    public get logLevel() {
-        return readOption<string>('dotnet.server.trace', 'Information');
-    }
     public get documentSelector() {
         return readOption<DocumentSelector>('dotnet.server.documentSelector', ['csharp']);
     }
@@ -410,6 +407,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get suppressLspErrorToasts() {
         return readOption<boolean>('dotnet.server.suppressLspErrorToasts', false);
+    }
+    public get suppressMiscellaneousFilesToasts() {
+        return readOption<boolean>('dotnet.server.suppressMiscellaneousFilesToasts', false);
     }
     public get useServerGC() {
         return readOption<boolean>('dotnet.server.useServerGC', true);
@@ -471,13 +471,13 @@ function readOption<T>(option: string, defaultValue: T, ...backCompatOptionNames
 }
 
 export const CommonOptionsThatTriggerReload: ReadonlyArray<keyof CommonOptions> = [
-    'dotnetPath',
     'waitForDebugger',
     'serverPath',
     'useOmnisharpServer',
 ];
 
 export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpServerOptions> = [
+    'dotnetPath',
     'enableMsBuildLoadProjectsOnDemand',
     'loggingLevel',
     'enableEditorConfigSupport',
@@ -507,7 +507,6 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
 ];
 
 export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof LanguageServerOptions> = [
-    'logLevel',
     'documentSelector',
     'preferCSharpExtension',
     'componentPaths',

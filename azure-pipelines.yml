@@ -16,13 +16,33 @@ pr:
     - main
   paths:
     exclude:
-    - ./*.md
+    - ./*.md 
+    - .github/*
+
+# Run a scheduled build every night on main to run tests against insiders VSCode.
+# The variable testVSCodeVersion is set to insiders based on the build reason.
+schedules:
+  - cron: "0 0 * * *"
+    displayName: Daily Insiders Build
+    branches:
+      include:
+        - main
+
+variables:
+- name: defaultDotnetVersion
+  value: '8.0.403'
+- name: testVSCodeVersion
+  ${{ if eq( variables['Build.Reason'], 'Schedule' ) }}: 
+    value: insiders
+  ${{ else }}: 
+    value: stable
 
 stages:
 - template: azure-pipelines/build-all.yml
   parameters:
     isOfficial: false
     signType: test
+    dotnetVersion: $(defaultDotnetVersion)
 
 - stage:
   displayName: Test Linux (.NET 6)
@@ -31,7 +51,8 @@ stages:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       # Prefer the dotnet from the container.
-      installDotNet: false
+      dotnetVersion: ''
+      testVSCodeVersion: $(testVSCodeVersion)
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
@@ -45,7 +66,8 @@ stages:
   - template: azure-pipelines/test-matrix.yml
     parameters:
       # Prefer the dotnet from the container.
-      installDotNet: false
+      dotnetVersion: ''
+      testVSCodeVersion: $(testVSCodeVersion)
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
@@ -58,7 +80,8 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
-      installDotNet: true
+      dotnetVersion: $(defaultDotnetVersion)
+      testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals 1es-windows-2022-open
@@ -69,7 +92,8 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
-      installDotNet: true
+      dotnetVersion: $(defaultDotnetVersion)
+      testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: Azure Pipelines
         vmImage: macOS-13
@@ -90,3 +114,6 @@ stages:
       demands: ImageOverride -equals $(demandsName)
     steps:
     - template: azure-pipelines/test-omnisharp.yml
+      parameters:
+        dotnetVersion: $(defaultDotnetVersion)
+        testVSCodeVersion: $(testVSCodeVersion)
