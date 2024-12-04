@@ -12,9 +12,6 @@ export class HtmlProjectedDocument implements IProjectedDocument {
     public readonly path: string;
     private content = '';
     private hostDocumentVersion: number | null = null;
-    private _checksum: Uint8Array = new Uint8Array();
-    private _checksumAlgorithm: number = 0;
-    private _encodingCodePage: number | null = null;
 
     public constructor(public readonly uri: vscode.Uri) {
         this.path = getUriPath(uri);
@@ -32,13 +29,7 @@ export class HtmlProjectedDocument implements IProjectedDocument {
         this.setContent('');
     }
 
-    public update(
-        edits: ServerTextChange[],
-        hostDocumentVersion: number,
-        checksum: Uint8Array,
-        checksumAlgorithm: number,
-        encodingCodePage: number | null
-    ) {
+    public update(edits: ServerTextChange[], hostDocumentVersion: number) {
         this.hostDocumentVersion = hostDocumentVersion;
 
         if (edits.length === 0) {
@@ -52,25 +43,10 @@ export class HtmlProjectedDocument implements IProjectedDocument {
         }
 
         this.setContent(content);
-        this._checksum = checksum;
-        this._checksumAlgorithm = checksumAlgorithm;
-        this._encodingCodePage = encodingCodePage;
     }
 
     public getContent() {
         return this.content;
-    }
-
-    public get checksum(): Uint8Array {
-        return this._checksum;
-    }
-
-    public get checksumAlgorithm(): number {
-        return this._checksumAlgorithm;
-    }
-
-    public get encodingCodePage(): number | null {
-        return this._encodingCodePage;
     }
 
     private getEditedContent(newText: string, start: number, end: number, content: string) {

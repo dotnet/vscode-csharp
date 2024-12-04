@@ -308,13 +308,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 htmlProjectedDocument.clear();
             }
 
-            htmlProjectedDocument.update(
-                updateBufferRequest.changes,
-                updateBufferRequest.hostDocumentVersion,
-                updateBufferRequest.checksum,
-                updateBufferRequest.checksumAlgorithm,
-                updateBufferRequest.encodingCodePage
-            );
+            htmlProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.htmlChanged);
         } else {

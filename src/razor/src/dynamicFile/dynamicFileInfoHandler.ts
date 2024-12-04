@@ -14,6 +14,7 @@ import { CSharpProjectedDocument } from '../csharp/csharpProjectedDocument';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
 import { RazorDynamicFileChangedParams } from './dynamicFileUpdatedParams';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
+import { ServerTextChange } from '../rpc/serverTextChange';
 
 // Handles Razor generated doc communication between the Roslyn workspace and Razor.
 // didChange behavior for Razor generated docs is handled in the RazorDocumentManager.
@@ -70,6 +71,27 @@ export class DynamicFileInfoHandler {
                 return null;
             }
 
+            const csharpDocument = razorDocument.csharpDocument as CSharpProjectedDocument;
+            if (request.fullText) {
+                // The server asked for a full replace so the newtext is the important
+                // thing here, the span doesn't matter.
+                const change: ServerTextChange = {
+                    newText: razorDocument.csharpDocument.getContent(),
+                    span: {
+                        start: 0,
+                        length: 0,
+                    },
+                };
+
+                return new ProvideDynamicFileResponse(
+                    request.razorDocument,
+                    [change],
+                    csharpDocument.checksum,
+                    csharpDocument.checksumAlgorithm,
+                    csharpDocument.encodingCodePage
+                );
+            }
+
             const virtualCsharpUri = UriConverter.serialize(razorDocument.csharpDocument.uri);
 
             if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
@@ -78,22 +100,22 @@ export class DynamicFileInfoHandler {
                 return new ProvideDynamicFileResponse(
                     { uri: virtualCsharpUri },
                     null,
-                    razorDocument.csharpDocument.checksum,
-                    razorDocument.csharpDocument.checksumAlgorithm,
-                    razorDocument.csharpDocument.encodingCodePage
+                    csharpDocument.checksum,
+                    csharpDocument.checksumAlgorithm,
+                    csharpDocument.encodingCodePage
                 );
             } else {
                 // Closed documents provide edits since the last time they were requested since
                 // there is no open buffer in vscode corresponding to the csharp content.
-                const csharpDocument = razorDocument.csharpDocument as CSharpProjectedDocument;
-                const edits = csharpDocument.getAndApplyEdits();
+                const response = csharpDocument.applyEdits();
+                const changes = response.edits?.map((e) => e.changes).reduce((a, b) => a.concat(b)) ?? null;
 
                 return new ProvideDynamicFileResponse(
                     { uri: virtualCsharpUri },
-                    edits ?? null,
-                    razorDocument.csharpDocument.checksum,
-                    razorDocument.csharpDocument.checksumAlgorithm,
-                    razorDocument.csharpDocument.encodingCodePage
+                    changes,
+                    response.originalChecksum,
+                    response.originalChecksumAlgorithm,
+                    response.originalEncodingCodePage
                 );
             }
         } catch (error) {

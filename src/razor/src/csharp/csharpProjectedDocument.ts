@@ -19,9 +19,9 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     private resolveProvisionalEditAt: number | undefined;
     private ProvisionalDotPosition: Position | undefined;
     private hostDocumentVersion: number | null = null;
-    private updates: Update[] | null = null;
-    private _checksum: Uint8Array = new Uint8Array();
-    private _checksumAlgorithm: number = 0;
+    private updates: CSharpDocumentUpdate[] | null = null;
+    private _checksum: string = '';
+    private _checksumAlgorithm: number = 1; // Default to Sha1
     private _encodingCodePage: number | null = null;
 
     public constructor(public readonly uri: vscode.Uri) {
@@ -36,7 +36,11 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         return this.content.length;
     }
 
-    public get checksum(): Uint8Array {
+    public clear() {
+        this.setContent('');
+    }
+
+    public get checksum(): string {
         return this._checksum;
     }
 
@@ -48,15 +52,11 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         return this._encodingCodePage;
     }
 
-    public clear() {
-        this.setContent('');
-    }
-
     public update(
         hostDocumentIsOpen: boolean,
         edits: ServerTextChange[],
         hostDocumentVersion: number,
-        checksum: Uint8Array,
+        checksum: string,
         checksumAlgorithm: number,
         encodingCodePage: number | null
     ) {
@@ -73,35 +73,45 @@ export class CSharpProjectedDocument implements IProjectedDocument {
             }
 
             this.updateContent(edits);
+            this._checksum = checksum;
+            this._checksumAlgorithm = checksumAlgorithm;
+            this._encodingCodePage = encodingCodePage;
         } else {
+            const update = new CSharpDocumentUpdate(edits, checksum, checksumAlgorithm, encodingCodePage);
+
             if (this.updates) {
-                this.updates = this.updates.concat(new Update(edits));
+                this.updates = this.updates.concat(update);
             } else {
-                this.updates = [new Update(edits)];
+                this.updates = [update];
             }
         }
 
-        this._checksum = checksum;
-        this._checksumAlgorithm = checksumAlgorithm;
-        this._encodingCodePage = encodingCodePage;
         this.hostDocumentVersion = hostDocumentVersion;
     }
 
-    public getAndApplyEdits() {
+    public applyEdits(): ApplyEditsResponse {
         const updates = this.updates;
         this.updates = null;
 
+        const originalChecksum = this._checksum;
+        const originalChecksumAlgorithm = this._checksumAlgorithm;
+        const originalEncodingCodePage = this._encodingCodePage;
+
         if (updates) {
-            let changes: ServerTextChange[] = [];
             for (const update of updates) {
                 this.updateContent(update.changes);
-                changes = changes.concat(update.changes);
+                this._checksum = update.checksum;
+                this._checksumAlgorithm = update.checksumAlgorithm;
+                this._encodingCodePage = update.encodingCodePage;
             }
-
-            return changes;
         }
 
-        return null;
+        return {
+            edits: updates,
+            originalChecksum: originalChecksum,
+            originalChecksumAlgorithm: originalChecksumAlgorithm,
+            originalEncodingCodePage: originalEncodingCodePage,
+        };
     }
 
     public getContent() {
@@ -216,6 +226,18 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     }
 }
 
-class Update {
-    constructor(public readonly changes: ServerTextChange[]) {}
+export class CSharpDocumentUpdate {
+    constructor(
+        public readonly changes: ServerTextChange[],
+        public readonly checksum: string,
+        public readonly checksumAlgorithm: number,
+        public readonly encodingCodePage: number | null
+    ) {}
+}
+
+export interface ApplyEditsResponse {
+    edits: CSharpDocumentUpdate[] | null;
+    originalChecksum: string;
+    originalChecksumAlgorithm: number;
+    originalEncodingCodePage: number | null;
 }

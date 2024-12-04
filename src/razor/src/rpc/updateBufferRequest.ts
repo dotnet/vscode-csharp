@@ -11,7 +11,7 @@ export class UpdateBufferRequest {
         public readonly hostDocumentFilePath: string,
         public readonly changes: ServerTextChange[],
         public readonly previousWasEmpty: boolean,
-        public readonly checksum: Uint8Array,
+        public readonly checksum: string,
         public readonly checksumAlgorithm: number,
         public readonly encodingCodePage: number | null
     ) {}
