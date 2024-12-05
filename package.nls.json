@@ -23,6 +23,7 @@
   "command.dotnet.test.runTestsInContext": "Run Tests in Context",
   "command.dotnet.test.debugTestsInContext": "Debug Tests in Context",
   "command.dotnet.restartServer": "Restart Language Server",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic insertion of documentation comments.",
   "configuration.dotnet.defaultSolution.description": "The path of the default solution to be opened in the workspace, or set to 'disable' to skip it. (Previously `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.server.path": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used. (Previously `omnisharp.path`)",
   "configuration.dotnet.server.componentPaths": "Allows overriding the folder path for built in components of the language server (for example, override the .roslynDevKit path in the extension directory to use locally built components)",

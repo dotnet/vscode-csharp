@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.13.0-3.24577.4",
+    "roslyn": "4.13.0-3.24604.4",
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24569.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -733,6 +733,11 @@
         "title": "Text Editor",
         "order": 1,
         "properties": {
+          "dotnet.autoInsert.enableAutoInsert": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.autoInsert.enableAutoInsert%"
+          },
           "dotnet.typeMembers.memberInsertionLocation": {
             "type": "string",
             "enum": [
