@@ -8,7 +8,7 @@ import { UriConverter } from '../../../lsptoolshost/uriConverter';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLogger } from '../razorLogger';
 import { ProvideDynamicFileParams } from './provideDynamicFileParams';
-import { ProvideDynamicFileResponse } from './provideDynamicFileResponse';
+import { ProvideDynamicFileResponse, DynamicFileUpdate } from './provideDynamicFileResponse';
 import { RemoveDynamicFileParams } from './removeDynamicFileParams';
 import { CSharpProjectedDocument } from '../csharp/csharpProjectedDocument';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
@@ -83,9 +83,11 @@ export class DynamicFileInfoHandler {
                     },
                 };
 
+                const update = new DynamicFileUpdate([change]);
+
                 return new ProvideDynamicFileResponse(
                     request.razorDocument,
-                    [change],
+                    [update],
                     csharpDocument.checksum,
                     csharpDocument.checksumAlgorithm,
                     csharpDocument.encodingCodePage
@@ -108,11 +110,11 @@ export class DynamicFileInfoHandler {
                 // Closed documents provide edits since the last time they were requested since
                 // there is no open buffer in vscode corresponding to the csharp content.
                 const response = csharpDocument.applyEdits();
-                const changes = response.edits?.map((e) => e.changes).reduce((a, b) => a.concat(b)) ?? null;
+                const updates = response.edits?.map((e) => new DynamicFileUpdate(e.changes)) ?? null;
 
                 return new ProvideDynamicFileResponse(
                     { uri: virtualCsharpUri },
-                    changes,
+                    updates,
                     response.originalChecksum,
                     response.originalChecksumAlgorithm,
                     response.originalEncodingCodePage
