@@ -31,6 +31,8 @@ integrationHelpers.describeIfWindows(`Razor Completion ${testAssetWorkspace.desc
             return;
         }
 
+        const insertPosition = new vscode.Position(4, 4);
+        await insertText(insertPosition, '<te');
         const completionList = await getCompletionsAsync(new vscode.Position(4, 7), 'e');
         expect(completionList.items.length).toBeGreaterThan(0);
         const textTagCompletionItem = completionList.items.find((item) => item.label === 'text');
@@ -59,5 +61,16 @@ integrationHelpers.describeIfWindows(`Razor Completion ${testAssetWorkspace.desc
             position,
             triggerCharacter
         );
+    }
+
+    async function insertText(position: vscode.Position, text: string): Promise<void> {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (!activeEditor) {
+            throw new Error('No active editor');
+        }
+
+        await activeEditor.edit((builder) => {
+            builder.insert(position, text);
+        });
     }
 });
