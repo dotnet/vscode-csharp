@@ -38,7 +38,7 @@
   "More Information": "More Information",
   "Security Warning": "Security Warning",
   "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?": "The selected launch configuration is configured to launch a web browser but no trusted development certificate was found. Create a trusted self-signed certificate?",
-  "Self-signed certificate sucessfully {0}": "Self-signed certificate sucessfully {0}",
+  "Self-signed certificate successfully {0}": "Self-signed certificate successfully {0}",
   "Couldn't create self-signed certificate. {0}\ncode: {1}\nstdout: {2}": "Couldn't create self-signed certificate. {0}\ncode: {1}\nstdout: {2}",
   "Show Output": "Show Output",
   "Couldn't create self-signed certificate. See output for more information.": "Couldn't create self-signed certificate. See output for more information.",

@@ -144,7 +144,7 @@
   "Select project": "選取專案",
   "Select the process to attach to": "選取要附加至的目標處理序",
   "Select the project to launch": "選取要啟動的專案",
-  "Self-signed certificate sucessfully {0}": "自我簽署憑證已成功 {0}",
+  "Self-signed certificate successfully {0}": "自我簽署憑證已成功 {0}",
   "Sending request": "正在傳送要求",
   "Server failed to start after retrying 5 times.": "伺服器在重試 5 次之後無法啟動。",
   "Server stopped": "伺服器已停止",

@@ -144,7 +144,7 @@
   "Select project": "Sélectionner un projet",
   "Select the process to attach to": "Sélectionner le processus à attacher",
   "Select the project to launch": "Sélectionner le projet à lancer",
-  "Self-signed certificate sucessfully {0}": "Certificat auto-signé {0}",
+  "Self-signed certificate successfully {0}": "Certificat auto-signé {0}",
   "Sending request": "Envoi de la demande",
   "Server failed to start after retrying 5 times.": "Le serveur n’a pas pu démarrer après 5 tentatives.",
   "Server stopped": "Serveur arrêté",
