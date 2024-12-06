@@ -144,7 +144,7 @@
   "Select project": "プロジェクトの選択",
   "Select the process to attach to": "アタッチするプロセスを選択する",
   "Select the project to launch": "開始するプロジェクトを選択する",
-  "Self-signed certificate sucessfully {0}": "自己署名証明書が正常に {0} されました",
+  "Self-signed certificate successfully {0}": "自己署名証明書が正常に {0} されました",
   "Sending request": "要求を送信しています",
   "Server failed to start after retrying 5 times.": "5 回再試行した後、サーバーを起動できませんでした。",
   "Server stopped": "サーバーが停止しました",
