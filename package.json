@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.13.0-3.24605.1",
+    "roslyn": "4.13.0-3.24605.12",
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24605.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
