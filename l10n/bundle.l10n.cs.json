@@ -204,7 +204,7 @@
   "You must first start the data collection before stopping.": "Před zastavením je zapotřebí nejdříve spustit shromažďování dat.",
   "Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.": "Váš pracovní prostor má více souborů řešení Visual Studio. Vyberte prosím jednu, abyste získali úplnou technologii IntelliSense.",
   "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'": "[CHYBA] Ladicí program nelze nainstalovat. Ladicí program není pro {0} podporován.",
-  "[ERROR] The debugger cannot be installed. The debugger requires macOS 13 (Ventura) or newer.": "[CHYBA] Ladicí program nelze nainstalovat. Ladicí program vyžaduje macOS 13 (Ventura) nebo novější.",
+  "[ERROR] The debugger cannot be installed. The debugger requires {0} or newer.": "[CHYBA] Ladicí program nelze nainstalovat. Ladicí program vyžaduje {0} nebo novější.",
   "[ERROR] The debugger cannot be installed. Unknown platform.": "[CHYBA] Ladicí program nelze nainstalovat. Neznámá platforma.",
   "[ERROR]: C# Extension failed to install the debugger package.": "[CHYBA]: Rozšíření jazyka C# se nepodařilo nainstalovat balíček ladicího programu.",
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[UPOZORNĚNÍ]: Ladicí program .NET nepodporuje systém Windows pro platformu x86. Ladění nebude k dispozici.",

@@ -204,7 +204,7 @@
   "You must first start the data collection before stopping.": "停止する前に、まずデータ収集を開始する必要があります。",
   "Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.": "ワークスペースに複数の Visual Studio ソリューション ファイルがあります。完全な IntelliSense を入手するには、ファイルを 1 つ選択してください。",
   "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'": "[エラー] デバッガーをインストールできません。デバッガーは '{0}' でサポートされていません",
-  "[ERROR] The debugger cannot be installed. The debugger requires macOS 13 (Ventura) or newer.": "[エラー] デバッガーをインストールできません。デバッガーには macOS 13 (Ventura) 以降が必要です。",
+  "[ERROR] The debugger cannot be installed. The debugger requires {0} or newer.": "[エラー] デバッガーをインストールできません。デバッガーには {0} 以降が必要です。",
   "[ERROR] The debugger cannot be installed. Unknown platform.": "[エラー] デバッガーをインストールできません。不明なプラットフォームです。",
   "[ERROR]: C# Extension failed to install the debugger package.": "[エラー]: C# 拡張機能でデバッガー パッケージをインストールできませんでした。",
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[警告]: x86 Windows は .NET デバッガーではサポートされていません。デバッグは使用できません。",

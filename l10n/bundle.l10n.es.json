@@ -204,7 +204,7 @@
   "You must first start the data collection before stopping.": "Primero debe iniciar la recopilación de datos antes de detenerse.",
   "Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.": "El área de trabajo tiene varios archivos de solución de Visual Studio; seleccione uno para obtener IntelliSense completo.",
   "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'": "[ERROR] No se puede instalar el depurador. El depurador no se admite en '{0}'",
-  "[ERROR] The debugger cannot be installed. The debugger requires macOS 13 (Ventura) or newer.": "[ERROR] No se puede instalar el depurador. El depurador requiere macOS 12 (Monterey) o una versión más reciente.",
+  "[ERROR] The debugger cannot be installed. The debugger requires {0} or newer.": "[ERROR] No se puede instalar el depurador. El depurador requiere macOS 12 (Monterey) o una versión más reciente.",
   "[ERROR] The debugger cannot be installed. Unknown platform.": "[ERROR] No se puede instalar el depurador. Plataforma desconocida.",
   "[ERROR]: C# Extension failed to install the debugger package.": "[ERROR]: la extensión de C# no pudo instalar el paquete del depurador.",
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[ADVERTENCIA]: El depurador de .NET no admite Windows x86. La depuración no estará disponible.",
