@@ -28,7 +28,7 @@
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Dizin oluşturucular için ipuçlarını göster",
   "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "Lambda parametre türleri için ipuçlarını göster",
   "configuration.csharp.inlayHints.enableInlayHintsForTypes": "Satır içi tür ipuçlarını göster",
-  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic insertion of documentation comments.",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "Belge açıklamalarının otomatik olarak eklenmesini etkinleştirin.",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "Şunun için arka plan kodu analizini çalıştırın: (Daha önce `omnisharp.enableRoslynAnalyzers`)",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "Tüm çözüm",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "Yok",

@@ -28,7 +28,7 @@
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "显示索引器的提示",
   "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "显示 lambda 参数类型的提示",
   "configuration.csharp.inlayHints.enableInlayHintsForTypes": "显示内联类型提示",
-  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic insertion of documentation comments.",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "启用文档注释的自动插入。",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "运行以下项的后台代码分析: (之前为 \"omnisharp.enableRoslynAnalyzers\")",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "整个解决方案",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "无",
