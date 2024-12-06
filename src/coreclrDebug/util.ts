@@ -83,9 +83,9 @@ export class CoreClrDebugUtil {
     }
 
     public static isMacOSSupported(): boolean {
-        // .NET 8 requires macOS 12 (Monterey), which is Darwin 21.0+
+        // .NET 8 requires macOS 13 (Ventura), which is Darwin 22.0+
         // Darwin version chart: https://en.wikipedia.org/wiki/Darwin_(operating_system)
-        return semver.gte(os.release(), '21.0.0');
+        return semver.gte(os.release(), '22.0.0');
     }
 
     public static existsSync(path: string): boolean {

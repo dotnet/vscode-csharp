@@ -142,7 +142,7 @@ async function checkIsValidArchitecture(
                 eventStream.post(
                     new DebuggerPrerequisiteFailure(
                         vscode.l10n.t(
-                            '[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.'
+                            '[ERROR] The debugger cannot be installed. The debugger requires macOS 13 (Ventura) or newer.'
                         )
                     )
                 );

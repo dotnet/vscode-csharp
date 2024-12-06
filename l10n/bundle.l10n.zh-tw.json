@@ -204,7 +204,7 @@
   "You must first start the data collection before stopping.": "您必須先啟動資料收集，才能停止。",
   "Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.": "您的工作區有多個 Visual Studio 解決方案檔案；請選取一個檔案以取得完整的 IntelliSense。",
   "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'": "[ERROR] 無法安裝偵錯工具。'{0}' 不支援偵錯工具",
-  "[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.": "[ERROR] 無法安裝偵錯工具。偵錯工具需要 macOS 12 (Monterey) 或更新版本。",
+  "[ERROR] The debugger cannot be installed. The debugger requires macOS 13 (Ventura) or newer.": "[ERROR] 無法安裝偵錯工具。偵錯工具需要 macOS 13 (Ventura) 或更新版本。",
   "[ERROR] The debugger cannot be installed. Unknown platform.": "[錯誤] 無法安裝偵錯工具。未知的平台。",
   "[ERROR]: C# Extension failed to install the debugger package.": "[錯誤]: C# 延伸模組無法安裝偵錯工具套件。",
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[警告]: .NET 偵錯工具不支援 x86 Windows。偵錯將無法使用。",

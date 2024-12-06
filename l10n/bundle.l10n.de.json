@@ -204,7 +204,7 @@
   "You must first start the data collection before stopping.": "Sie müssen zuerst die Datensammlung starten, bevor Sie sie beenden.",
   "Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.": "Ihr Arbeitsbereich umfasst mehrere Visual Studio-Projektmappendateien. Wählen Sie eine aus, um vollständiges IntelliSense zu erhalten.",
   "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'": "[FEHLER] Der Debugger kann nicht installiert werden. Der Debugger wird für „{0}“ nicht unterstützt.",
-  "[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.": "[FEHLER] Der Debugger kann nicht installiert werden. Der Debugger erfordert macOS 12 (Monterey) oder höher.",
+  "[ERROR] The debugger cannot be installed. The debugger requires macOS 13 (Ventura) or newer.": "[FEHLER] Der Debugger kann nicht installiert werden. Der Debugger erfordert macOS 13 (Ventura) oder höher.",
   "[ERROR] The debugger cannot be installed. Unknown platform.": "[FEHLER] Der Debugger kann nicht installiert werden. Unbekannte Plattform.",
   "[ERROR]: C# Extension failed to install the debugger package.": "[FEHLER]: Fehler beim Installieren des Debuggerpakets durch die C#-Erweiterung.",
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[WARNUNG]: x86 Windows wird vom .NET-Debugger nicht unterstützt. Debuggen ist nicht verfügbar.",
