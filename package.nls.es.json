@@ -28,7 +28,7 @@
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Mostrar sugerencias para indizadores",
   "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "Mostrar sugerencias para los tipos de parámetros lambda",
   "configuration.csharp.inlayHints.enableInlayHintsForTypes": "Mostrar sugerencias de tipo insertado",
-  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic insertion of documentation comments.",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "Habilite la inserción automática de comentarios de documentación.",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "Ejecutar análisis de código en segundo plano para: (anteriormente \"omnisharp.enableRoslynAnalyzers\")",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "Toda la solución",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "Ninguno",
