@@ -28,7 +28,7 @@
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "인덱서에 대한 힌트 표시",
   "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "람다 매개 변수 형식에 대한 힌트 표시",
   "configuration.csharp.inlayHints.enableInlayHintsForTypes": "인라인 유형 힌트 표시",
-  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic insertion of documentation comments.",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "문서 주석 자동 삽입을 사용하도록 설정합니다.",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "다음에 대한 백그라운드 코드 분석 실행: (이전의 `omnisharp.enableRoslynAnalyzers`)",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "전체 솔루션",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "없음",
