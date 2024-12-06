@@ -204,7 +204,7 @@
   "You must first start the data collection before stopping.": "Перед остановкой необходимо запустить сбор данных.",
   "Your workspace has multiple Visual Studio Solution files; please select one to get full IntelliSense.": "Ваша рабочая область содержит несколько файлов решения Visual Studio. Выберите один из них для получения полного IntelliSense.",
   "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'": "[ОШИБКА] Невозможно установить отладчик. Отладчик не поддерживается в \"{0}\"",
-  "[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.": "[ОШИБКА] Невозможно установить отладчик. Для отладчика требуется macOS 12 (Monterey) или более новая версия.",
+  "[ERROR] The debugger cannot be installed. The debugger requires {0} or newer.": "[ОШИБКА] Невозможно установить отладчик. Для отладчика требуется {0} или более новая версия.",
   "[ERROR] The debugger cannot be installed. Unknown platform.": "[ОШИБКА] Невозможно установить отладчик. Неизвестная платформа.",
   "[ERROR]: C# Extension failed to install the debugger package.": "[ОШИБКА]: расширению C# не удалось установить пакет отладчика.",
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[ВНИМАНИЕ!] x86 Windows не поддерживается отладчиком .NET. Отладка будет недоступна.",

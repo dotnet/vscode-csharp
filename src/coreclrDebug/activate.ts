@@ -6,7 +6,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as common from '../common';
-import { CoreClrDebugUtil, getTargetArchitecture } from './util';
+import { CoreClrDebugUtil, getTargetArchitecture, MINIMUM_SUPPORT_MACOS_DISPLAY_NAME } from './util';
 import { PlatformInformation } from '../shared/platform';
 import {
     DebuggerPrerequisiteWarning,
@@ -142,7 +142,8 @@ async function checkIsValidArchitecture(
                 eventStream.post(
                     new DebuggerPrerequisiteFailure(
                         vscode.l10n.t(
-                            '[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.'
+                            '[ERROR] The debugger cannot be installed. The debugger requires {0} or newer.',
+                            MINIMUM_SUPPORT_MACOS_DISPLAY_NAME
                         )
                     )
                 );

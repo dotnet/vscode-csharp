@@ -205,7 +205,7 @@
   "Could not find a process id to attach.": "Could not find a process id to attach.",
   "Unable to launch Attach to Process dialog: ": "Unable to launch Attach to Process dialog: ",
   "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'": "[ERROR] The debugger cannot be installed. The debugger is not supported on '{0}'",
-  "[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.": "[ERROR] The debugger cannot be installed. The debugger requires macOS 12 (Monterey) or newer.",
+  "[ERROR] The debugger cannot be installed. The debugger requires {0} or newer.": "[ERROR] The debugger cannot be installed. The debugger requires {0} or newer.",
   "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.": "[WARNING]: x86 Windows is not supported by the .NET debugger. Debugging will not be available.",
   "[ERROR] The debugger cannot be installed. Unknown platform.": "[ERROR] The debugger cannot be installed. Unknown platform.",
   "Failed to complete the installation of the C# extension. Please see the error in the output window below.": "Failed to complete the installation of the C# extension. Please see the error in the output window below.",
