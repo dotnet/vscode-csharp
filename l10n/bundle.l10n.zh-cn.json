@@ -144,7 +144,7 @@
   "Select project": "选择项目",
   "Select the process to attach to": "选择要附加到的进程",
   "Select the project to launch": "选择要启动的项目",
-  "Self-signed certificate successfully {0}": "自签名证书成功 {0}",
+  "Self-signed certificate successfully {0}": "Self-signed certificate successfully {0}",
   "Sending request": "正在发送请求",
   "Server failed to start after retrying 5 times.": "重试 5 次后服务器启动失败。",
   "Server stopped": "已停止服务器",

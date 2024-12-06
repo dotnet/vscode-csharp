@@ -28,7 +28,7 @@
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Zobrazit tipy pro indexery",
   "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "Zobrazit nápovědy pro typy parametrů lambda",
   "configuration.csharp.inlayHints.enableInlayHintsForTypes": "Zobrazovat vložené nápovědy k typům",
-  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic insertion of documentation comments.",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "Povolí automatické vkládání komentářů k dokumentaci.",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "Spustit analýzu kódu na pozadí pro: (Dříve omnisharp.enableRoslynAnalyzers)",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "Celé řešení",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "Žádné",

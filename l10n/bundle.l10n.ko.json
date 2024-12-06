@@ -144,7 +144,7 @@
   "Select project": "프로젝트 선택",
   "Select the process to attach to": "연결할 프로세스 선택",
   "Select the project to launch": "시작할 프로젝트 선택",
-  "Self-signed certificate successfully {0}": "자체 서명된 인증서 성공적으로 {0}",
+  "Self-signed certificate successfully {0}": "Self-signed certificate successfully {0}",
   "Sending request": "요청을 보내는 중",
   "Server failed to start after retrying 5 times.": "5번 다시 시도했지만 서버를 시작하지 못했습니다.",
   "Server stopped": "서버가 중지됨",
