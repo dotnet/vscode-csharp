@@ -266,7 +266,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                         const message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
                         showInformationMessage(
                             vscode,
-                            vscode.l10n.t('Self-signed certificate sucessfully {0}', message)
+                            vscode.l10n.t('Self-signed certificate successfully {0}', message)
                         );
 
                         result = true;
