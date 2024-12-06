@@ -41,7 +41,7 @@
     "omniSharp": "1.39.11",
     "razor": "9.0.0-preview.24569.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.13.35604.65"
+    "xamlTools": "17.13.35606.23"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",

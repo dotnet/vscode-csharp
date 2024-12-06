@@ -27,7 +27,7 @@
   * When converting to raw strings, do not change \r\n sequences if not explicitly requested by the user (PR: [#76120](https://github.com/dotnet/roslyn/pull/76120))
   * Exclude starting symbol when going to implementations if we find implementations (PR: [#76125](https://github.com/dotnet/roslyn/pull/76125))
 * Add option to disable auto insertion of documentation comments (PR: [#7381](https://github.com/dotnet/vscode-csharp/pull/7381))
-* Bump xamltools to 17.13.35604.65 (PR: [#7848](https://github.com/dotnet/vscode-csharp/pull/7848))
+* Bump xamltools to 17.13.35606.23 (PR: [#7856](https://github.com/dotnet/vscode-csharp/pull/7856))
 
 # 2.59.x
 * Update Roslyn to 4.13.0-3.24577.4 (PR: [#7833](https://github.com/dotnet/vscode-csharp/pull/7833))
