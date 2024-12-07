@@ -35,16 +35,13 @@ describe(`Go To Implementation Tests`, () => {
         const requestPosition = new vscode.Position(4, 22);
         const implementationList = await getImplementations(requestPosition);
 
-        expect(implementationList).toHaveLength(3);
+        expect(implementationList).toHaveLength(2);
 
         expect(implementationList[0].uri.path).toContain('BaseClassImplementation.cs');
         expect(implementationList[0].range).toStrictEqual(new vscode.Range(2, 17, 2, 40));
 
         expect(implementationList[1].uri.path).toContain('implementation.cs');
-        expect(implementationList[1].range).toStrictEqual(new vscode.Range(4, 17, 4, 26));
-
-        expect(implementationList[2].uri.path).toContain('implementation.cs');
-        expect(implementationList[2].range).toStrictEqual(new vscode.Range(5, 17, 5, 26));
+        expect(implementationList[1].range).toStrictEqual(new vscode.Range(5, 17, 5, 26));
     });
 });
 
