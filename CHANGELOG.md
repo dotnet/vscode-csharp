@@ -4,7 +4,21 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.60.x
-* Update Roslyn to 4.13.0-3.24604.4 (PR: [#7381](https://github.com/dotnet/vscode-csharp/pull/7381))
+* Improve performance of razor/blazor component discovery (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
+* Update Razor to 9.0.0-preview.24605.1 (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
+  * New Code Action! Add a code action to promote a using directive (#11241) (PR: [#11241](https://github.com/dotnet/razor/pull/11241))
+  * Add more information to dynamic file publish (#11267) (PR: [#11267](https://github.com/dotnet/razor/pull/11267))
+  * Remove C#s using snippet from completion (#11272) (PR: [#11272](https://github.com/dotnet/razor/pull/11272))
+  * Fix extract component whitespace handling (#11262) (PR: [#11262](https://github.com/dotnet/razor/pull/11262))
+  * Handle aliased usings in RazorEditHelper (#11208) (PR: [#11208](https://github.com/dotnet/razor/pull/11208))
+* Update Debugger Packages and move macOS requirement to macOS 13 (PR: [#7854](https://github.com/dotnet/vscode-csharp/pull/7854))
+* Fix spelling of successfully (PR: [#7853](https://github.com/dotnet/vscode-csharp/pull/7853))
+* Update Roslyn to 4.13.0-3.24605.12 (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
+  * Fix go-to-def on an abstract explicit impl of an interface method (PR: [#76238](https://github.com/dotnet/roslyn/pull/76238))
+  * Fix parameter completion item icon (PR: [#76292](https://github.com/dotnet/roslyn/pull/76292))
+  * Enable LSP go to definition on string literals (PR: [#76291](https://github.com/dotnet/roslyn/pull/76291))
+  * Use named pipes to connect to the BuildHost process. (PR: [#76259](https://github.com/dotnet/roslyn/pull/76259))
+  * Improve Razor DynamicFile Provider (PR: [#76050](https://github.com/dotnet/roslyn/pull/76050))
   * Add option to disable LSP-based auto insert (PR: [#75224](https://github.com/dotnet/roslyn/pull/75224))
   * Report errors processing messages in the build host (PR: [#76252](https://github.com/dotnet/roslyn/pull/76252))
   * Update FAR and Go to Def to work on indexers (PR: [#76220](https://github.com/dotnet/roslyn/pull/76220))
@@ -28,6 +42,7 @@
   * Exclude starting symbol when going to implementations if we find implementations (PR: [#76125](https://github.com/dotnet/roslyn/pull/76125))
 * Add option to disable auto insertion of documentation comments (PR: [#7381](https://github.com/dotnet/vscode-csharp/pull/7381))
 * Bump xamltools to 17.13.35606.23 (PR: [#7856](https://github.com/dotnet/vscode-csharp/pull/7856))
+* Restore WASM debug hook (#7843) (PR: [#7844](https://github.com/dotnet/vscode-csharp/pull/7844))
 
 # 2.59.x
 * Update Roslyn to 4.13.0-3.24577.4 (PR: [#7833](https://github.com/dotnet/vscode-csharp/pull/7833))
