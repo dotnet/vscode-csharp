@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.61.x
+* Bump xamltools to 17.13.35611.21 (PR: [#7872](https://github.com/dotnet/vscode-csharp/pull/7872))
 
 # 2.60.x
 * Improve performance of razor/blazor component discovery (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
@@ -43,7 +44,7 @@
   * When converting to raw strings, do not change \r\n sequences if not explicitly requested by the user (PR: [#76120](https://github.com/dotnet/roslyn/pull/76120))
   * Exclude starting symbol when going to implementations if we find implementations (PR: [#76125](https://github.com/dotnet/roslyn/pull/76125))
 * Add option to disable auto insertion of documentation comments (PR: [#7381](https://github.com/dotnet/vscode-csharp/pull/7381))
-* Bump xamltools to 17.13.35611.21 (PR: [#7872](https://github.com/dotnet/vscode-csharp/pull/7872))
+* Bump xamltools to 17.13.35606.23 (PR: [#7856](https://github.com/dotnet/vscode-csharp/pull/7856))
 * Restore WASM debug hook (#7843) (PR: [#7844](https://github.com/dotnet/vscode-csharp/pull/7844))
 
 # 2.59.x
