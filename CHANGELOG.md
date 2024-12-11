@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.61.x
+* Bump xamltools to 17.13.35611.21 (PR: [#7872](https://github.com/dotnet/vscode-csharp/pull/7872))
 
 # 2.60.x
 * Improve performance of razor/blazor component discovery (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
