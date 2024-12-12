@@ -22,7 +22,19 @@ export function resolveRazorLanguageServerOptions(
     const debugLanguageServer = serverConfig.get<boolean>('debug');
     const usingOmniSharp =
         !getCSharpDevKit() && vscodeApi.workspace.getConfiguration().get<boolean>('dotnet.server.useOmnisharp');
-    const forceRuntimeCodeGeneration = serverConfig.get<boolean>('forceRuntimeCodeGeneration');
+
+    const hotReload = vscodeApi.workspace.getConfiguration('csharp.experimental.debug').get<boolean>('hotReload');
+
+    let forceRuntimeCodeGeneration = serverConfig.get<boolean | null>('forceRuntimeCodeGeneration');
+
+    if (forceRuntimeCodeGeneration === null && hotReload) {
+        logger.logMessage(
+            'Hot Reload is enabled so treating "razor.languageServer.forceRuntimeCodeGeneration" as true. To override this set "razor.languageServer.forceRuntimeCodeGeneration" to true or false.'
+        );
+
+        forceRuntimeCodeGeneration = hotReload;
+    }
+
     const useRoslynTokenizer = serverConfig.get<boolean>('useRoslynTokenizer');
     const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
 
