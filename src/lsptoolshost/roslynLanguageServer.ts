@@ -797,7 +797,7 @@ export class RoslynLanguageServer {
                 if (this.isRunning()) {
                     this.sendNotification<RazorDynamicFileChangedParams>('razor/dynamicFileInfoChanged', notification)
                 } else {
-                    _channel.debug('Tried to send razor/dynamicFileInfoChanged while server is not running');
+                    _channel.warn('Tried to send razor/dynamicFileInfoChanged while server is not running');
                 }
             }
         );
