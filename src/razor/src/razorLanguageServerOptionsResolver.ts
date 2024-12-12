@@ -25,9 +25,9 @@ export function resolveRazorLanguageServerOptions(
 
     const hotReload = vscodeApi.workspace.getConfiguration('csharp.experimental.debug').get<boolean>('hotReload');
 
-    let forceRuntimeCodeGeneration = serverConfig.get<boolean | undefined>('forceRuntimeCodeGeneration');
+    let forceRuntimeCodeGeneration = serverConfig.get<boolean | null>('forceRuntimeCodeGeneration');
 
-    if (forceRuntimeCodeGeneration === undefined && hotReload) {
+    if (forceRuntimeCodeGeneration === null && hotReload) {
         logger.logMessage(
             'Hot Reload is enabled so treating "razor.languageServer.forceRuntimeCodeGeneration" as true. To override this set "razor.languageServer.forceRuntimeCodeGeneration" to true or false.'
         );
