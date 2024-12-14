@@ -173,7 +173,7 @@ export class AssetGenerator {
                     }
 
                     // Override console option with user option.
-                    if (forDotnetConfiguration && programLaunchType === ProgramLaunchType.Console && key == 'console') {
+                    if (forDotnetConfiguration && key == 'console') {
                         const consoleOption: string | undefined = AssetGenerator.getConsoleDebugOption();
                         if (consoleOption) {
                             configuration.console = consoleOption;
@@ -370,6 +370,7 @@ export function createWebLaunchConfiguration(programPath: string, workingDirecto
         program: `${util.convertNativePathToPosix(programPath)}`,
         args: Array(0),
         cwd: `${util.convertNativePathToPosix(workingDirectory)}`,
+        console: 'internalConsole',
         stopAtEntry: false,
         'OS-COMMENT5': vscode.l10n.t(
             'Enable launching a web browser when ASP.NET Core starts. For more information: {0}',
@@ -402,6 +403,7 @@ export function createBlazorWebAssemblyHostedLaunchConfiguration(
         'OS-COMMENT1': vscode.l10n.t('If you have changed target frameworks, make sure to update the program path.'),
         program: `${util.convertNativePathToPosix(programPath)}`,
         cwd: `${util.convertNativePathToPosix(workingDirectory)}`,
+        console: 'internalConsole',
     };
 
     return JSON.stringify(configuration);
@@ -413,6 +415,7 @@ export function createBlazorWebAssemblyStandaloneLaunchConfiguration(workingDire
         type: 'blazorwasm',
         request: 'launch',
         cwd: `${util.convertNativePathToPosix(workingDirectory)}`,
+        console: 'internalConsole',
     };
 
     return JSON.stringify(configuration);

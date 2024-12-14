@@ -80,6 +80,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         const program = configuration.hosted ? configuration.program : 'dotnet';
         const cwd = configuration.cwd || '${workspaceFolder}';
         const args = configuration.hosted ? [] : ['run'];
+        const console = configuration.console;
 
         const app = {
             name: SERVER_APP_NAME,
@@ -96,6 +97,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             launchBrowser: {
                 enabled: false,
             },
+            console: console,
             ...configuration.dotNetConfig,
         };
 
