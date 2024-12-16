@@ -421,7 +421,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -436,7 +436,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -450,7 +450,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -469,7 +469,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -487,7 +487,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -505,7 +505,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -523,7 +523,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-linux-musl-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -541,7 +541,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-linux-musl-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-linux-musl-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -559,7 +559,7 @@
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger.azureedge.net/coreclr-debug-2-60-0/coreclr-debug-linux-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-60-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
