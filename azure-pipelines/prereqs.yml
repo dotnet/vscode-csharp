@@ -7,6 +7,9 @@ parameters:
 
 steps:
 
+# The server package is downloaded from NuGet
+- task: NuGetAuthenticate@1
+
 - template: /azure-pipelines/install-node.yml@self
 
 # Some tests use predefined docker images with a specific version of .NET installed.
@@ -20,7 +23,7 @@ steps:
 - script: dotnet --info
   displayName: Display dotnet info
 
-- script: dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
+- script: dotnet tool install --version 3.7.112 --tool-path $(Agent.BuildDirectory) nbgv
   displayName: Install nbgv
 
 # If we want to override the version, update the version.json here - vsix packaging will see this value
