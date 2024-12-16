@@ -792,10 +792,12 @@ export class RoslynLanguageServer {
         );
         vscode.commands.registerCommand(
             DynamicFileInfoHandler.dynamicFileUpdatedCommand,
-            async (notification: RazorDynamicFileChangedParams) =>
-            {
+            async (notification: RazorDynamicFileChangedParams) => {
                 if (this.isRunning()) {
-                    this.sendNotification<RazorDynamicFileChangedParams>('razor/dynamicFileInfoChanged', notification)
+                    await this.sendNotification<RazorDynamicFileChangedParams>(
+                        'razor/dynamicFileInfoChanged',
+                        notification
+                    );
                 } else {
                     _channel.warn('Tried to send razor/dynamicFileInfoChanged while server is not running');
                 }
