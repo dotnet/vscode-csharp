@@ -7,11 +7,6 @@ parameters:
 
 steps:
 
-# The server package is downloaded from NuGet
-- task: NuGetAuthenticate@1
-  inputs:
-    nuGetServiceConnections: azure-public/vside
-
 - template: /azure-pipelines/install-node.yml@self
 
 # Some tests use predefined docker images with a specific version of .NET installed.
