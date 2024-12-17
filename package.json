@@ -68,6 +68,7 @@
     "compileTest": "tsc -p ./ && webpack --mode development",
     "watch": "tsc -watch -p ./",
     "test": "tsc -p ./ && gulp test",
+    "test:unit": "tsc -p ./ && gulp test:unit",
     "test:withoutDevKit": "tsc -p ./ && gulp test:withoutDevKit",
     "test:integration:devkit": "tsc -p ./ && gulp test:integration:devkit",
     "test:razor": "tsc -p ./ && npm run compile:razorTextMate && gulp test:razor",
