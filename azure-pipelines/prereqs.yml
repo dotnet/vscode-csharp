@@ -23,7 +23,7 @@ steps:
 - script: dotnet --info
   displayName: Display dotnet info
 
-- script: dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
+- script: dotnet tool install --version 3.6.146 --tool-path $(Agent.BuildDirectory) nbgv
   displayName: Install nbgv
 
 # If we want to override the version, update the version.json here - vsix packaging will see this value
