@@ -1509,7 +1509,7 @@
           "razor.languageServer.forceRuntimeCodeGeneration": {
             "type": "boolean",
             "scope": "machine-overridable",
-            "default": false,
+            "default": null,
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
             "order": 90
           },
