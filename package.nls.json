@@ -52,6 +52,12 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Perform automatic object name completion for the members that you have recently selected.",
   "configuration.dotnet.completion.provideRegexCompletions": "Show regular expressions in completion list.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
+  "configuration.dotnet.diagnostics.renderSuggestionsAsHints": {
+    "message": "Render diagnostics configured with `suggestion` severity as `Hint` diagnostics in the editor.  `Hint` diagnostics are rendered with an ellipse beneath the text instead of a squiggle and are not shown in the Problems pane.  When turned off, suggestions are rendered as `Information` diagnostics with a blue squiggle and shown in the Problems pane.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "Run background code analysis for: (Previously `omnisharp.enableRoslynAnalyzers`)",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.openFiles": "Open documents",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "Entire solution",

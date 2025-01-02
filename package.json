@@ -801,6 +801,12 @@
             "description": "%configuration.dotnet.completion.triggerCompletionInArgumentLists%",
             "order": 20
           },
+          "dotnet.diagnostics.renderSuggestionsAsHints": {
+            "type": "boolean",
+            "default": "true",
+            "markdownDescription": "%configuration.dotnet.diagnostics.renderSuggestionsAsHints%",
+            "order": 30
+          },
           "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": {
             "type": "string",
             "enum": [
