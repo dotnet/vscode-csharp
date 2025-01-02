@@ -118,6 +118,35 @@ export async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
     // The number of code lens items to resolve.  Set to a high number so we get pretty much everything in the document.
     const resolvedItemCount = 100;
 
+    let tryCount = 0;
+    const maxRetryCount = 3;
+    do {
+        try {
+            const result = await executeCodeLensProviderAsync(activeEditor, resolvedItemCount);
+            return result;
+        } catch (e) {
+            tryCount++;
+            // It is totally possible that the code lens request is cancelled due to the server returning a content modified error.
+            // This is not an error condition - it just means that the server snapshot has moved on and we need to retry the request.
+            //
+            // This error is not thrown as an error type that matches ours, so we'll check the name of the error to determine if it was a cancellation.
+            if (Object.prototype.hasOwnProperty.call(e, 'name') && (e as any).name === 'Canceled') {
+                console.log('CodeLens provider was cancelled, retrying in 1 second');
+                await sleep(1000);
+            } else {
+                console.log('CodeLens provider encountered unexpected error');
+                console.log(JSON.stringify(e));
+                throw e;
+            }
+        }
+    } while (tryCount < maxRetryCount);
+    throw new Error(`Failed to get code lenses after ${maxRetryCount} retries`);
+}
+
+async function executeCodeLensProviderAsync(
+    activeEditor: vscode.TextEditor,
+    resolvedItemCount: number
+): Promise<vscode.CodeLens[]> {
     const codeLenses = <vscode.CodeLens[]>(
         await vscode.commands.executeCommand(
             'vscode.executeCodeLensProvider',
@@ -130,7 +159,6 @@ export async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {
         if (rangeCompare !== 0) {
             return rangeCompare;
         }
-
         return a.command!.title.localeCompare(b.command!.command);
     });
 }
