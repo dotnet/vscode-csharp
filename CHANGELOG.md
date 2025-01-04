@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.62.x
+
 # 2.61.x
 * Update Roslyn to 4.13.0-3.25051.1 (PR: [#7895](https://github.com/dotnet/vscode-csharp/pull/7895))
   * Prefix 'unmerged changes' with 'TODO' (PR: [#62319](https://github.com/dotnet/roslyn/pull/62319))
