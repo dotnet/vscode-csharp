@@ -38,7 +38,7 @@
     * Fix inlay hints lambdas parameter type null reference exception (PR: [omnisharp-roslyn/#2604](https://github.com/OmniSharp/omnisharp-roslyn/pull/2604))
     * Update SDKs and Roslyn (PR: [omnisharp-roslyn/#2603](https://github.com/OmniSharp/omnisharp-roslyn/pull/2603))
     * Pass project path when performing a restore (PR: [omnisharp-roslyn/#2593](https://github.com/OmniSharp/omnisharp-roslyn/pull/2593))
-* Bump xamltools to 17.13.35618.13 (PR: [#7884](https://github.com/dotnet/vscode-csharp/pull/7884))
+* Bump xamltools to 17.13.35703.12 (PR: [#7893](https://github.com/dotnet/vscode-csharp/pull/7893))
 * Don't try to send dynamicInfoChanged if the server isn't running (PR: [#7875](https://github.com/dotnet/vscode-csharp/pull/7875))
 
 # 2.60.x
