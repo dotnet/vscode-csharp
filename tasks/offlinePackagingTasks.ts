@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as cp from 'child_process';
-import * as del from 'del';
+import del from 'del';
 import * as fs from 'fs';
 import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
@@ -31,7 +31,7 @@ import {
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync, generateVsixManifest } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
-import path = require('path');
+import path from 'path';
 import { CancellationToken } from 'vscode';
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires

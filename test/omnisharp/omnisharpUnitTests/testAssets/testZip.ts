@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as archiver from 'archiver';
+import archiver from 'archiver';
 import { TestFile } from './testFile';
 
 export default class TestZip {

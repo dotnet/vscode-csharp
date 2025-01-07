@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import assert = require('node:assert');
+import assert from 'node:assert';
 
 export function convertServerOptionNameToClientConfigurationName(section: string): string | null {
     // Server name would be in format {languageName}|{grouping}.{name} or
