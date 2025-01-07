@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.61.x
+* Update Razor to 9.0.0-preview.25052.3 (#)(PR: [#]())
+  * Offer generate handler for `@bind-XX:after` and `:set` (#11350) (PR: [#11350](https://github.com/dotnet/razor/pull/11350))
+  * Support "Generate Event Handler" on event callbacks (ie `ValueChanged` and friends) (#11347) (PR: [#11347](https://github.com/dotnet/razor/pull/11347))
+  * Fix completion at end of document (#11343) (PR: [#11343](https://github.com/dotnet/razor/pull/11343))
+  * Fix completion in an empty document (#11344) (PR: [#11344](https://github.com/dotnet/razor/pull/11344))
+  * Only show element hover information when hovering over an element in a `.razor` file (#11336) (PR: [#11336](https://github.com/dotnet/razor/pull/11336))
+  * Don't format collection expressions, because Roslyn doesn't either (#11326) (PR: [#11326](https://github.com/dotnet/razor/pull/11326))
+  * Update telemetry to 17.13.28 (#11315) (PR: [#11315](https://github.com/dotnet/razor/pull/11315))
+  * Filter out CSS002 when it appears in an "@@" (#11313) (PR: [#11313](https://github.com/dotnet/razor/pull/11313))
+  * Improve Find All Refs results (#11279) (PR: [#11279](https://github.com/dotnet/razor/pull/11279))
 * Update Roslyn to 4.13.0-3.25051.1 (PR: [#7895](https://github.com/dotnet/vscode-csharp/pull/7895))
   * Prefix 'unmerged changes' with 'TODO' (PR: [#62319](https://github.com/dotnet/roslyn/pull/62319))
   * Fix crash when classifying embedded test classifications (PR: [#76576](https://github.com/dotnet/roslyn/pull/76576))
