@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.61.x
-* Update Razor to 9.0.0-preview.25052.3 (#)(PR: [#]())
+* Update Razor to 9.0.0-preview.25052.3 (PR: [#7904](https://github.com/dotnet/vscode-csharp/pull/7904))
   * Offer generate handler for `@bind-XX:after` and `:set` (#11350) (PR: [#11350](https://github.com/dotnet/razor/pull/11350))
   * Support "Generate Event Handler" on event callbacks (ie `ValueChanged` and friends) (#11347) (PR: [#11347](https://github.com/dotnet/razor/pull/11347))
   * Fix completion at end of document (#11343) (PR: [#11343](https://github.com/dotnet/razor/pull/11343))
