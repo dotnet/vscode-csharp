@@ -1,13 +1,15 @@
 {
     "compilerOptions": {
+        "esModuleInterop": true,
         "target": "ES2022",
-        "module": "Preserve",
+        "module": "CommonJS",
         "outDir": "out",
         "lib": [
             "ES2021"
         ],
         "sourceMap": true,
-        "moduleResolution": "bundler",
+        "moduleDetection": "force",
+        "moduleResolution": "node",
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
