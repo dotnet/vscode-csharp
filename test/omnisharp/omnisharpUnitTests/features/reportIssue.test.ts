@@ -62,7 +62,7 @@ describe(`${reportIssue.name}`, () => {
             issueBody = rest[0].issueBody;
             return {} as any;
         });
-        jest.replaceProperty(vscode.extensions, "all", [extension1, extension2] as readonly vscode.Extension<any>[]);
+        jest.replaceProperty(vscode.extensions, 'all', [extension1, extension2] as readonly vscode.Extension<any>[]);
 
         fakeMonoResolver = new FakeMonoResolver();
         fakeDotnetResolver = new FakeDotnetResolver();
