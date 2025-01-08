@@ -8,8 +8,8 @@
             "ES2021"
         ],
         "sourceMap": true,
-        "moduleDetection": "force",
         "moduleResolution": "node",
+        "moduleDetection": "force",
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,

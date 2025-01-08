@@ -18,6 +18,8 @@ import { getVSCodeWithConfig } from '../../fakes';
 import { CSharpExtensionId } from '../../../src/constants/csharpExtensionId';
 import { ConfigurationTarget } from '../../../src/vscodeAdapter';
 
+jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));
+
 describe('Migrate configurations', () => {
     const packageJson = JSON.parse(fs.readFileSync('package.json').toString());
     const configuration = packageJson.contributes.configuration;
