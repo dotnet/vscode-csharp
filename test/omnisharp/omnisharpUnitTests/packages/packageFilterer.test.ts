@@ -11,6 +11,9 @@ import { MockedFunction } from 'jest-mock';
 import * as fs from 'fs';
 import { join } from 'path';
 
+// Necessary when spying on module members.
+jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));
+
 describe(`${getNotInstalledPackagesForPlatform.name}`, () => {
     let absolutePathPackages: AbsolutePathPackage[];
     const extensionPath = '/ExtensionPath';
