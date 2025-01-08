@@ -8,7 +8,7 @@ import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } fr
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting, BuildDiagnosticsService } from '../../../src/lsptoolshost/buildDiagnosticsService';
 import * as integrationHelpers from './integrationHelpers';
-import path = require('path');
+import path from 'path';
 describe(`Build and live diagnostics dedupe`, () => {
     beforeAll(async () => {
         await integrationHelpers.activateCSharpExtension();

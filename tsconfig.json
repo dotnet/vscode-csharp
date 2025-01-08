@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "ES2022",
+        "module": "CommonJS",
         "outDir": "out",
         "lib": [
             "ES2021"
@@ -20,7 +21,6 @@
         "src",
         "tasks",
         "test",
-        "omnisharptest",
         "typings",
         "__mocks__",
         "jest.config.ts",
