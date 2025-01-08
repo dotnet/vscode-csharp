@@ -18,6 +18,7 @@ import { getVSCodeWithConfig } from '../../fakes';
 import { CSharpExtensionId } from '../../../src/constants/csharpExtensionId';
 import { ConfigurationTarget } from '../../../src/vscodeAdapter';
 
+// Necessary when spying on module members.
 jest.mock('fs', () => ({ __esModule: true, ...(<any>jest.requireActual('fs')) }));
 
 describe('Migrate configurations', () => {
