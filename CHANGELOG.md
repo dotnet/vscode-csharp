@@ -3,10 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# Latest
-  * Bump xamlTools to 17.13.35709.178 (PR: [#7914](https://github.com/dotnet/vscode-csharp/pull/7914))
-
 # 2.62.x
+  * Bump xamlTools to 17.13.35709.178 (PR: [#7914](https://github.com/dotnet/vscode-csharp/pull/7914))
 
 # 2.61.x
 * Update Razor to 9.0.0-preview.25052.3 (PR: [#7904](https://github.com/dotnet/vscode-csharp/pull/7904))
