@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { HostExecutableInformation } from '../shared/constants/hostExecutableInformation';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { PlatformInformation } from '../shared/platform';
-import { commonOptions, languageServerOptions } from '../shared/options';
+import { languageServerOptions } from '../shared/options';
 import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { readFile } from 'fs/promises';
@@ -36,39 +36,33 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
     private hostInfo: HostExecutableInformation | undefined;
 
     async getHostExecutableInfo(): Promise<HostExecutableInformation> {
-        let dotnetExecutablePath: string;
-        if (commonOptions.dotnetPath) {
-            const dotnetExecutableName = this.getDotnetExecutableName();
-            dotnetExecutablePath = path.join(commonOptions.dotnetPath, dotnetExecutableName);
-        } else {
-            if (this.hostInfo) {
-                return this.hostInfo;
-            }
-
-            this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
-            const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
-            const findPathRequest: IDotnetFindPathContext = {
-                acquireContext: {
-                    version: DotNetRuntimeVersion,
-                    requestingExtensionId: CSharpExtensionId,
-                    architecture: extensionArchitecture,
-                    mode: 'runtime',
-                },
-                versionSpecRequirement: 'greater_than_or_equal',
-            };
-            let acquireResult = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
-                'dotnet.findPath',
-                findPathRequest
-            );
-            if (acquireResult === undefined) {
-                this.channel.appendLine(
-                    `Did not find .NET ${DotNetRuntimeVersion} on path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime`
-                );
-                acquireResult = await this.acquireDotNetProcessDependencies();
-            }
-
-            dotnetExecutablePath = acquireResult.dotnetPath;
+        if (this.hostInfo) {
+            return this.hostInfo;
         }
+
+        this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
+        const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
+        const findPathRequest: IDotnetFindPathContext = {
+            acquireContext: {
+                version: DotNetRuntimeVersion,
+                requestingExtensionId: CSharpExtensionId,
+                architecture: extensionArchitecture,
+                mode: 'runtime',
+            },
+            versionSpecRequirement: 'greater_than_or_equal',
+        };
+        let acquireResult = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
+            'dotnet.findPath',
+            findPathRequest
+        );
+        if (acquireResult === undefined) {
+            this.channel.appendLine(
+                `Did not find .NET ${DotNetRuntimeVersion} on path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime`
+            );
+            acquireResult = await this.acquireDotNetProcessDependencies();
+        }
+
+        const dotnetExecutablePath = acquireResult.dotnetPath;
 
         const hostInfo = {
             version: '' /* We don't need to know the version - we've already downloaded the correct one */,
@@ -185,9 +179,5 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             default:
                 throw new Error(`Unknown extension target platform: ${targetPlatform}`);
         }
-    }
-
-    private getDotnetExecutableName(): string {
-        return this.platformInfo.isWindows() ? 'dotnet.exe' : 'dotnet';
     }
 }

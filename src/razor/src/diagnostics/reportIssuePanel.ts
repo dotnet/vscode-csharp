@@ -120,7 +120,7 @@ export class ReportIssuePanel {
         }
 
         let panelBodyContent = '';
-        if (this.logger.logLevel <= vscode.LogLevel.Debug) {
+        if (this.logger.logLevel <= vscode.LogLevel.Debug && this.logger.logLevel != vscode.LogLevel.Off) {
             const startButtonLabel = vscode.l10n.t('Start');
             const startButton = `<button onclick="startIssue()">${startButtonLabel}</button>`;
             const firstLine = vscode.l10n.t('Press {0}', startButton);
