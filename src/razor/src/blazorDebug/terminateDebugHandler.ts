@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as psList from 'ps-list';
+import psList from 'ps-list';
 import { DebugSession } from 'vscode';
 import { RazorLogger } from '../razorLogger';
 import { JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';

@@ -37,11 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.13.0-3.25051.1",
+    "roslyn": "4.14.0-1.25060.2",
     "omniSharp": "1.39.12",
     "razor": "9.0.0-preview.25052.3",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.13.35703.12"
+    "xamlTools": "17.13.35709.178"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -96,7 +96,7 @@
     "@vscode/extension-telemetry": "^0.9.0",
     "@vscode/js-debug-browsers": "^1.1.0",
     "async-file": "2.0.2",
-    "cross-spawn": "6.0.5",
+    "cross-spawn": "6.0.6",
     "execa": "4.0.0",
     "fs-extra": "9.1.0",
     "http-proxy-agent": "7.0.0",
@@ -136,8 +136,8 @@
     "@types/uuid": "^9.0.1",
     "@types/vscode": "1.93.0",
     "@types/yauzl": "2.10.0",
-    "@typescript-eslint/eslint-plugin": "^8.5.0",
-    "@typescript-eslint/parser": "^8.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.19.0",
+    "@typescript-eslint/parser": "^8.19.0",
     "@vscode/l10n-dev": "^0.0.35",
     "@vscode/test-electron": "2.3.8",
     "@vscode/vsce": "3.0.0",

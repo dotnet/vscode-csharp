@@ -35,8 +35,8 @@ Follow these steps to build, run, and test the repository:
 
 #### Building
 
-1. Run `npm i` - This command installs the project dependencies.
-2. Run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
+1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
+2. Run `npm i` - This command installs the project dependencies.
 3. Run `npm i -g gulp` - This command installs Gulp globally.
 4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
 5. Run `code .` - This command opens the project in Visual Studio Code.

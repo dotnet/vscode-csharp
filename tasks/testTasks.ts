@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
+import fs from 'fs';
 import * as gulp from 'gulp';
 import * as path from 'path';
 import { codeExtensionPath, rootPath, outPath } from './projectPaths';
