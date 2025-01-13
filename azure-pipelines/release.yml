@@ -39,20 +39,17 @@ extends:
           name: netcore1espool-internal
           image: 1es-ubuntu-2204
           os: linux
+        templateContext:
+          type: releaseJob
+          isProduction: true
+          inputs:
+          - input: pipelineArtifact
+            pipeline: officialBuildCI
+            destinationPath: $(Pipeline.Workspace)
         strategy:
           runOnce:
             deploy:
               steps:
-              - download: 'none'
-              - task: DownloadPipelineArtifact@2
-                displayName: '📦 Download artifacts from build pipeline.'
-                inputs:
-                  buildType: 'specific'
-                  project: 'internal'
-                  definition: 1264
-                  buildVersionToDownload: 'specific'
-                  buildId: '$(resources.pipeline.officialBuildCI.runID)'
-                  branchName: '$(resources.pipeline.officialBuildCI.sourceBranch)'
               - template: /azure-pipelines/install-node.yml@self
               - pwsh: |
                   npm install --global @vscode/vsce
