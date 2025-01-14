@@ -45,6 +45,7 @@ extends:
           inputs:
           - input: pipelineArtifact
             pipeline: officialBuildCI
+            artifactName: Packages
             destinationPath: $(Pipeline.Workspace)
         strategy:
           runOnce:
