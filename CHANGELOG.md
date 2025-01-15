@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.63.x
+* Update Roslyn to ...
+* Update Razor to 9.0.0-preview.25064.4
+  * Wire up the UseRoslynTokenizer feature properly (#11386) (PR: [#11386](https://github.com/dotnet/razor/pull/11386))
+  * New Razor document formatting engine (#11364) (PR: [#11364](https://github.com/dotnet/razor/pull/11364))
+  * Fix a couple of exceptions encountered when formatting documents with preprocessor directives (#11373) (PR: [#11373](https://github.com/dotnet/razor/pull/11373))
+  * Allow RazorProjectEngine.Process to be cancelled (#11334) (PR: [#11334](https://github.com/dotnet/razor/pull/11334))
+  * Further refactoring of Razor tooling project system (#11320) (PR: [#11320](https://github.com/dotnet/razor/pull/11320))
 
 # 2.62.x
 * Update Roslyn to 4.14.0-1.25060.2 (PR: [#7916](https://github.com/dotnet/vscode-csharp/pull/7916))
