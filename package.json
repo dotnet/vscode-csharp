@@ -1513,17 +1513,15 @@
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
             "order": 90
           },
-          "razor.languageServer.useRoslynTokenizer": {
-            "type": "boolean",
-            "scope": "machine-overridable",
-            "default": false,
-            "markdownDescription": "%configuration.razor.languageServer.useRoslynTokenizer%",
-            "order": 90
-          },
           "razor.languageServer.suppressLspErrorToasts": {
             "type": "boolean",
             "default": true,
             "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
+          },
+          "razor.languageServer.useNewFormattingEngine": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.razor.languageServer.useNewFormattingEngine%"
           }
         }
       },

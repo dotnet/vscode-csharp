@@ -267,8 +267,8 @@ export class RazorLanguageServerClient implements vscode.Disposable {
                 args.push('true');
             }
 
-            if (options.useRoslynTokenizer) {
-                args.push('--UseRoslynTokenizer');
+            if (options.useNewFormattingEngine) {
+                args.push('--UseNewFormattingEngine');
                 args.push('true');
             }
 
