@@ -377,7 +377,7 @@ export class CompletionHandler {
         projectedPosition: Position,
         triggerCharacter: string | undefined
     ) {
-        // The following characters are defnied as trigger characters in Razor language server,
+        // The following characters are defined as trigger characters in Razor language server,
         // but are not normally trigger characters for VS Code HTML language server. We will
         // explicitely ignore them to avoid unexpected completion coming up. VS HTML language server
         // simply returns nothign when completion is not appropriate. VS Code HTML completion is much
