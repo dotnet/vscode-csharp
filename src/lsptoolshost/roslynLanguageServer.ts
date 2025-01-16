@@ -29,6 +29,7 @@ import {
     CancellationToken,
     RequestHandler,
     ResponseError,
+    NotificationHandler0,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -77,6 +78,7 @@ import {
 import { registerSourceGeneratedFilesContentProvider } from './sourceGeneratedFilesContentProvider';
 import { registerMiscellaneousFileNotifier } from './miscellaneousFileNotifier';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
+import { RazorDynamicFileChangedParams } from '../razor/src/dynamicFile/dynamicFileUpdatedParams';
 
 let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -421,6 +423,10 @@ export class RoslynLanguageServer {
         handler: RequestHandler<Params, Result, Error>
     ) {
         this._languageClient.addDisposable(this._languageClient.onRequest(type, handler));
+    }
+
+    public registerOnNotification(method: string, handler: NotificationHandler0) {
+        this._languageClient.addDisposable(this._languageClient.onNotification(method, handler));
     }
 
     public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {
@@ -783,6 +789,19 @@ export class RoslynLanguageServer {
             RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
             async (notification) =>
                 vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification)
+        );
+        vscode.commands.registerCommand(
+            DynamicFileInfoHandler.dynamicFileUpdatedCommand,
+            async (notification: RazorDynamicFileChangedParams) => {
+                if (this.isRunning()) {
+                    await this.sendNotification<RazorDynamicFileChangedParams>(
+                        'razor/dynamicFileInfoChanged',
+                        notification
+                    );
+                } else {
+                    _channel.warn('Tried to send razor/dynamicFileInfoChanged while server is not running');
+                }
+            }
         );
     }
 

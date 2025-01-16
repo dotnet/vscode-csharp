@@ -17,7 +17,7 @@ jobs:
   strategy:
     matrix:
       CSharpTests:
-        npmCommand: 'test:withoutDevKit'
+        npmCommand: test:withoutDevKit
       DevKitTests:
         npmCommand: test:integration:devkit
   pool: ${{ parameters.pool }}

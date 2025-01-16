@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'async-file';
-import * as getPort from 'get-port';
+import getPort from 'get-port';
 
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires

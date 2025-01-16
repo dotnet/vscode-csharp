@@ -19,6 +19,10 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     private resolveProvisionalEditAt: number | undefined;
     private ProvisionalDotPosition: Position | undefined;
     private hostDocumentVersion: number | null = null;
+    private updates: CSharpDocumentUpdate[] | null = null;
+    private _checksum: string = '';
+    private _checksumAlgorithm: number = 1; // Default to Sha1
+    private _encodingCodePage: number | null = null;
 
     public constructor(public readonly uri: vscode.Uri) {
         this.path = getUriPath(uri);
@@ -36,22 +40,78 @@ export class CSharpProjectedDocument implements IProjectedDocument {
         this.setContent('');
     }
 
-    public update(edits: ServerTextChange[], hostDocumentVersion: number) {
-        this.removeProvisionalDot();
+    public get checksum(): string {
+        return this._checksum;
+    }
+
+    public get checksumAlgorithm(): number {
+        return this._checksumAlgorithm;
+    }
+
+    public get encodingCodePage(): number | null {
+        return this._encodingCodePage;
+    }
+
+    public update(
+        hostDocumentIsOpen: boolean,
+        edits: ServerTextChange[],
+        hostDocumentVersion: number,
+        checksum: string,
+        checksumAlgorithm: number,
+        encodingCodePage: number | null
+    ) {
+        if (hostDocumentIsOpen) {
+            this.removeProvisionalDot();
+
+            // Apply any stored edits if needed
+            if (this.updates) {
+                for (const update of this.updates) {
+                    this.updateContent(update.changes);
+                }
+
+                this.updates = null;
+            }
+
+            this.updateContent(edits);
+            this._checksum = checksum;
+            this._checksumAlgorithm = checksumAlgorithm;
+            this._encodingCodePage = encodingCodePage;
+        } else {
+            const update = new CSharpDocumentUpdate(edits, checksum, checksumAlgorithm, encodingCodePage);
+
+            if (this.updates) {
+                this.updates = this.updates.concat(update);
+            } else {
+                this.updates = [update];
+            }
+        }
 
         this.hostDocumentVersion = hostDocumentVersion;
+    }
 
-        if (edits.length === 0) {
-            return;
+    public applyEdits(): ApplyEditsResponse {
+        const updates = this.updates;
+        this.updates = null;
+
+        const originalChecksum = this._checksum;
+        const originalChecksumAlgorithm = this._checksumAlgorithm;
+        const originalEncodingCodePage = this._encodingCodePage;
+
+        if (updates) {
+            for (const update of updates) {
+                this.updateContent(update.changes);
+                this._checksum = update.checksum;
+                this._checksumAlgorithm = update.checksumAlgorithm;
+                this._encodingCodePage = update.encodingCodePage;
+            }
         }
 
-        let content = this.content;
-        for (const edit of edits.reverse()) {
-            // TODO: Use a better data structure to represent the content, string concatenation is slow.
-            content = this.getEditedContent(edit.newText, edit.span.start, edit.span.start + edit.span.length, content);
-        }
-
-        this.setContent(content);
+        return {
+            edits: updates,
+            originalChecksum: originalChecksum,
+            originalChecksumAlgorithm: originalChecksumAlgorithm,
+            originalEncodingCodePage: originalEncodingCodePage,
+        };
     }
 
     public getContent() {
@@ -140,8 +200,8 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     }
 
     private getEditedContent(newText: string, start: number, end: number, content: string) {
-        const before = content.substr(0, start);
-        const after = content.substr(end);
+        const before = content.substring(0, start);
+        const after = content.substring(end);
         content = `${before}${newText}${after}`;
 
         return content;
@@ -150,4 +210,34 @@ export class CSharpProjectedDocument implements IProjectedDocument {
     private setContent(content: string) {
         this.content = content;
     }
+
+    private updateContent(edits: ServerTextChange[]) {
+        if (edits.length === 0) {
+            return;
+        }
+
+        let content = this.content;
+        for (const edit of edits.reverse()) {
+            // TODO: Use a better data structure to represent the content, string concatenation is slow.
+            content = this.getEditedContent(edit.newText, edit.span.start, edit.span.start + edit.span.length, content);
+        }
+
+        this.setContent(content);
+    }
+}
+
+export class CSharpDocumentUpdate {
+    constructor(
+        public readonly changes: ServerTextChange[],
+        public readonly checksum: string,
+        public readonly checksumAlgorithm: number,
+        public readonly encodingCodePage: number | null
+    ) {}
+}
+
+export interface ApplyEditsResponse {
+    edits: CSharpDocumentUpdate[] | null;
+    originalChecksum: string;
+    originalChecksumAlgorithm: number;
+    originalEncodingCodePage: number | null;
 }

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import execa = require('execa');
+import execa from 'execa';
 import { promises, readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';

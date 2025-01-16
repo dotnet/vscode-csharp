@@ -5,7 +5,6 @@
 
 import * as vscode from 'vscode';
 import { RazorLogger } from '../razorLogger';
-import { LogLevel } from '../logLevel';
 import { ReportIssueCreator } from './reportIssueCreator';
 import { ReportIssueDataCollector } from './reportIssueDataCollector';
 import { ReportIssueDataCollectorFactory } from './reportIssueDataCollectorFactory';
@@ -105,7 +104,7 @@ export class ReportIssuePanel {
             }
         });
 
-        this.traceLevelChange = this.logger.onTraceLevelChange(async () => this.update());
+        this.traceLevelChange = this.logger.outputChannel.onDidChangeLogLevel(async () => this.update());
 
         this.panel.onDidDispose(() => {
             if (this.traceLevelChange) {
@@ -121,7 +120,7 @@ export class ReportIssuePanel {
         }
 
         let panelBodyContent = '';
-        if (this.logger.logLevel.valueOf() <= LogLevel.Debug) {
+        if (this.logger.logLevel <= vscode.LogLevel.Debug && this.logger.logLevel != vscode.LogLevel.Off) {
             const startButtonLabel = vscode.l10n.t('Start');
             const startButton = `<button onclick="startIssue()">${startButtonLabel}</button>`;
             const firstLine = vscode.l10n.t('Press {0}', startButton);
@@ -159,9 +158,9 @@ ${privacyAnchor}
 
 <button onclick="copyIssue()">${copyIssueContentLabel}</button>`;
         } else {
-            const verbositySettingName = `<strong><em>${RazorLogger.verbositySetting}</em></strong>`;
-            const currentVerbositySettingValue = `<strong><em>${LogLevel[this.logger.logLevel]}</em></strong>`;
-            const neededVerbositySettingValue = `<strong><em>${LogLevel[LogLevel.Debug]}</em></strong>`;
+            const verbositySettingName = `<strong><em>Razor Logging Level</em></strong>`;
+            const currentVerbositySettingValue = `<strong><em>${vscode.LogLevel[this.logger.logLevel]}</em></strong>`;
+            const neededVerbositySettingValue = `<strong><em>${vscode.LogLevel[vscode.LogLevel.Debug]}</em></strong>`;
 
             panelBodyContent =
                 '<p>' +

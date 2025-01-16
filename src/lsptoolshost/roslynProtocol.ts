@@ -233,10 +233,12 @@ export interface CopilotRelatedDocumentsReport {
 
 export interface SourceGeneratorGetRequestParams {
     textDocument: lsp.TextDocumentIdentifier;
+    resultId?: string;
 }
 
 export interface SourceGeneratedDocumentText {
-    text: string;
+    text?: string;
+    resultId?: string;
 }
 
 export namespace WorkspaceDebugConfigurationRequest {
@@ -365,4 +367,10 @@ export namespace SourceGeneratorGetTextRequest {
     export const method = 'sourceGeneratedDocument/_roslyn_getText';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
     export const type = new lsp.RequestType<SourceGeneratorGetRequestParams, SourceGeneratedDocumentText, void>(method);
+}
+
+export namespace RefreshSourceGeneratedDocumentNotification {
+    export const method = 'workspace/refreshSourceGeneratedDocument';
+    export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.serverToClient;
+    export const type = new lsp.NotificationType(method);
 }

@@ -3,12 +3,151 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# 2.57.x
+# 2.63.x
+
+# 2.62.x
+* Update Roslyn to 4.14.0-1.25060.2 (PR: [#7916](https://github.com/dotnet/vscode-csharp/pull/7916))
+  * Support Extracting method with complex flow control cosntructs in them. (PR: [#76686](https://github.com/dotnet/roslyn/pull/76686))
+  * Classify the langword attribute value in DocComments (PR: [#76678](https://github.com/dotnet/roslyn/pull/76678))
+  * Fix FAR/rename with method type parameters (PR: [#76652](https://github.com/dotnet/roslyn/pull/76652))
+  * Fix assembly load when file path contains URI reserved chars (PR: [#76617](https://github.com/dotnet/roslyn/pull/76617))
+  * Reduce allocations during checksum creation. (PR: [#76524](https://github.com/dotnet/roslyn/pull/76524))
+* Bump xamlTools to 17.13.35709.178 (PR: [#7914](https://github.com/dotnet/vscode-csharp/pull/7914))
+
+
+# 2.61.x
+* Update Razor to 9.0.0-preview.25052.3 (PR: [#7904](https://github.com/dotnet/vscode-csharp/pull/7904))
+  * Offer generate handler for `@bind-XX:after` and `:set` (#11350) (PR: [#11350](https://github.com/dotnet/razor/pull/11350))
+  * Support "Generate Event Handler" on event callbacks (ie `ValueChanged` and friends) (#11347) (PR: [#11347](https://github.com/dotnet/razor/pull/11347))
+  * Fix completion at end of document (#11343) (PR: [#11343](https://github.com/dotnet/razor/pull/11343))
+  * Fix completion in an empty document (#11344) (PR: [#11344](https://github.com/dotnet/razor/pull/11344))
+  * Only show element hover information when hovering over an element in a `.razor` file (#11336) (PR: [#11336](https://github.com/dotnet/razor/pull/11336))
+  * Don't format collection expressions, because Roslyn doesn't either (#11326) (PR: [#11326](https://github.com/dotnet/razor/pull/11326))
+  * Update telemetry to 17.13.28 (#11315) (PR: [#11315](https://github.com/dotnet/razor/pull/11315))
+  * Filter out CSS002 when it appears in an "@@" (#11313) (PR: [#11313](https://github.com/dotnet/razor/pull/11313))
+  * Improve Find All Refs results (#11279) (PR: [#11279](https://github.com/dotnet/razor/pull/11279))
+* Update Roslyn to 4.13.0-3.25051.1 (PR: [#7895](https://github.com/dotnet/vscode-csharp/pull/7895))
+  * Prefix 'unmerged changes' with 'TODO' (PR: [#62319](https://github.com/dotnet/roslyn/pull/62319))
+  * Fix crash when classifying embedded test classifications (PR: [#76576](https://github.com/dotnet/roslyn/pull/76576))
+  * Ensure 'remove unnecessary using' shows up before 'convert to program-main style program' (PR: [#76543](https://github.com/dotnet/roslyn/pull/76543))
+  * Fixup OmniSharp fallback AnalyzerConfigOption updater (PR: [#76542](https://github.com/dotnet/roslyn/pull/76542))
+  * Expose NotificationService to OmniSharp (PR: [#76541](https://github.com/dotnet/roslyn/pull/76541))
+  * Do not offer inline hints for parameters that already named (PR: [#76532](https://github.com/dotnet/roslyn/pull/76532))
+  * Have inline hints display aliases if appropriate (PR: [#76530](https://github.com/dotnet/roslyn/pull/76530))
+  * Allow OmniSharp to provide ImplementType Options (PR: [#75312](https://github.com/dotnet/roslyn/pull/75312))
+  * Update telemetry to 17.13.28 (PR: [#76480](https://github.com/dotnet/roslyn/pull/76480))
+  * feat(lsp): add --pipe parameter (PR: [#76351](https://github.com/dotnet/roslyn/pull/76351))
+  * Slightly reduce allocations in SymbolCompletionItem.AddSymbolInfo (PR: [#76418](https://github.com/dotnet/roslyn/pull/76418))
+  * Small reduction in allocations in DateAndTimeLanguageDetector (PR: [#76393](https://github.com/dotnet/roslyn/pull/76393))
+  * Cache the compilation states in compilation order to avoid recalculation (PR: [#76380](https://github.com/dotnet/roslyn/pull/76380))
+  * Razor synchronize loader (PR: [#76357](https://github.com/dotnet/roslyn/pull/76357))
+  * Reduce allocations from doing repeated adds into an ImmutableDictionary in SolutionCompilationState.ComputeFrozenSnapshot (PR: [#76361](https://github.com/dotnet/roslyn/pull/76361))
+  * Reduce allocations in WithUsingNamespacesAndTypesBinder.GetForwardedToAssemblyInUsingNamespaces (PR: [#76370](https://github.com/dotnet/roslyn/pull/76370))
+  * Remove an enumerator allocation in SymbolCompletionItem.CreateWorker (PR: [#76375](https://github.com/dotnet/roslyn/pull/76375))
+  * Reduce allocations in ProjectState's ctor (PR: [#76369](https://github.com/dotnet/roslyn/pull/76369))
+  * Reduce allocations in CompletionItem.GetEntireDisplayText (PR: [#76373](https://github.com/dotnet/roslyn/pull/76373))
+  * Reduce allocations in AbstractSymbolCompletionProvider.UnionSymbols (PR: [#76368](https://github.com/dotnet/roslyn/pull/76368))
+  * Reduce allocations in AbstractRecommendationServiceBasedCompletionProvider.GetSymbolsAsync (PR: [#76365](https://github.com/dotnet/roslyn/pull/76365))
+  * Cache the MEF composition in the Roslyn LSP. (PR: [#76276](https://github.com/dotnet/roslyn/pull/76276))
+* Fix Razor Report An Issue (PR: [#7894](https://github.com/dotnet/vscode-csharp/pull/7894))
+* Hot Reload = Fuse On (PR: [#7873](https://github.com/dotnet/vscode-csharp/pull/7873))
+* Update Debugger Package Download Endpoints to AzureFrontDoor URL (PR: [#7879](https://github.com/dotnet/vscode-csharp/pull/7879))
+* Update OmniSharp to 1.39.12 (PR: [#7445](https://github.com/dotnet/vscode-csharp/pull/7445))
+    * Update .NET SDKs (PR: [omnisharp-roslyn/#2621](https://github.com/OmniSharp/omnisharp-roslyn/pull/2621))
+    * Update Roslyn to 4.12.0-1.24358.3 (PR: [omnisharp-roslyn/#2619](https://github.com/OmniSharp/omnisharp-roslyn/pull/2619))
+    * Fix code fix construction (PR: [omnisharp-roslyn/#2620](https://github.com/OmniSharp/omnisharp-roslyn/pull/2620))
+    * Remove NuGet.Packaging.Core, as it's an assembly that only contains forwarders  (PR: [omnisharp-roslyn/#2610](https://github.com/OmniSharp/omnisharp-roslyn/pull/2610))
+    * Fix inlay hints lambdas parameter type null reference exception (PR: [omnisharp-roslyn/#2604](https://github.com/OmniSharp/omnisharp-roslyn/pull/2604))
+    * Update SDKs and Roslyn (PR: [omnisharp-roslyn/#2603](https://github.com/OmniSharp/omnisharp-roslyn/pull/2603))
+    * Pass project path when performing a restore (PR: [omnisharp-roslyn/#2593](https://github.com/OmniSharp/omnisharp-roslyn/pull/2593))
+* Bump xamltools to 17.13.35703.12 (PR: [#7893](https://github.com/dotnet/vscode-csharp/pull/7893))
+* Don't try to send dynamicInfoChanged if the server isn't running (PR: [#7875](https://github.com/dotnet/vscode-csharp/pull/7875))
+
+# 2.60.x
+* Improve performance of razor/blazor component discovery (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
+* Update Razor to 9.0.0-preview.24605.1 (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
+  * New Code Action! Add a code action to promote a using directive (#11241) (PR: [#11241](https://github.com/dotnet/razor/pull/11241))
+  * Add more information to dynamic file publish (#11267) (PR: [#11267](https://github.com/dotnet/razor/pull/11267))
+  * Remove C#s using snippet from completion (#11272) (PR: [#11272](https://github.com/dotnet/razor/pull/11272))
+  * Fix extract component whitespace handling (#11262) (PR: [#11262](https://github.com/dotnet/razor/pull/11262))
+  * Handle aliased usings in RazorEditHelper (#11208) (PR: [#11208](https://github.com/dotnet/razor/pull/11208))
+* Update Debugger Packages and move macOS requirement to macOS 13 (PR: [#7854](https://github.com/dotnet/vscode-csharp/pull/7854))
+* Fix spelling of successfully (PR: [#7853](https://github.com/dotnet/vscode-csharp/pull/7853))
+* Update Roslyn to 4.13.0-3.24605.12 (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
+  * Fix go-to-def on an abstract explicit impl of an interface method (PR: [#76238](https://github.com/dotnet/roslyn/pull/76238))
+  * Fix parameter completion item icon (PR: [#76292](https://github.com/dotnet/roslyn/pull/76292))
+  * Enable LSP go to definition on string literals (PR: [#76291](https://github.com/dotnet/roslyn/pull/76291))
+  * Use named pipes to connect to the BuildHost process. (PR: [#76259](https://github.com/dotnet/roslyn/pull/76259))
+  * Improve Razor DynamicFile Provider (PR: [#76050](https://github.com/dotnet/roslyn/pull/76050))
+  * Add option to disable LSP-based auto insert (PR: [#75224](https://github.com/dotnet/roslyn/pull/75224))
+  * Report errors processing messages in the build host (PR: [#76252](https://github.com/dotnet/roslyn/pull/76252))
+  * Update FAR and Go to Def to work on indexers (PR: [#76220](https://github.com/dotnet/roslyn/pull/76220))
+  * Fix NFW thrown when refreshing source generated files (PR: [#76240](https://github.com/dotnet/roslyn/pull/76240))
+  * Update find-refs to find references to Dispose in a using-statement (PR: [#76221](https://github.com/dotnet/roslyn/pull/76221))
+  * Add support for 'find refs' finding references to 'dynamic' (PR: [#76118](https://github.com/dotnet/roslyn/pull/76118))
+  * Support implementing protected members in implement interface (PR: [#76178](https://github.com/dotnet/roslyn/pull/76178))
+  * Do not treat Task.Run methods as 'apparent' for 'use var' (PR: [#76229](https://github.com/dotnet/roslyn/pull/76229))
+  * Support introduce variable at the top level (PR: [#76218](https://github.com/dotnet/roslyn/pull/76218))
+  * Fix switch indentation for list patterns (PR: [#75953](https://github.com/dotnet/roslyn/pull/75953))
+  * Keep member bodies when converting DIM property to method (PR: [#76186](https://github.com/dotnet/roslyn/pull/76186))
+  * Have go-to-def flip between partial definition and implementation (PR: [#76187](https://github.com/dotnet/roslyn/pull/76187))
+  * Disable 'use coalesce expression' when statements cross a PP boundary (PR: [#76173](https://github.com/dotnet/roslyn/pull/76173))
+  * Support name completion on generic types (PR: [#76170](https://github.com/dotnet/roslyn/pull/76170))
+  * Improve extract-local-function in the presence of pp directives (PR: [#76169](https://github.com/dotnet/roslyn/pull/76169))
+  * Fix issue trying to generate fields/properties from a top level program (PR: [#76161](https://github.com/dotnet/roslyn/pull/76161))
+  * Update 'introduce using' to support expression statements (PR: [#76147](https://github.com/dotnet/roslyn/pull/76147))
+  * Use implicit initializer if present to generate type properties (PR: [#76162](https://github.com/dotnet/roslyn/pull/76162))
+  * Fix issue with explicit interface completion and static interface members (PR: [#76150](https://github.com/dotnet/roslyn/pull/76150))
+  * When converting to raw strings, do not change \r\n sequences if not explicitly requested by the user (PR: [#76120](https://github.com/dotnet/roslyn/pull/76120))
+  * Exclude starting symbol when going to implementations if we find implementations (PR: [#76125](https://github.com/dotnet/roslyn/pull/76125))
+* Add option to disable auto insertion of documentation comments (PR: [#7381](https://github.com/dotnet/vscode-csharp/pull/7381))
+* Bump xamltools to 17.13.35606.23 (PR: [#7856](https://github.com/dotnet/vscode-csharp/pull/7856))
+* Restore WASM debug hook (#7843) (PR: [#7844](https://github.com/dotnet/vscode-csharp/pull/7844))
+
+# 2.59.14
+* Update Roslyn to 4.13.0-3.24577.4 (PR: [#7833](https://github.com/dotnet/vscode-csharp/pull/7833))
+  * Fix issue where suppressors could not correctly suppress built in analyzers (PR: [#75684](https://github.com/dotnet/roslyn/pull/75684))
+  * Implement find all references to preprocessing symbols (PR: [#66425](https://github.com/dotnet/roslyn/pull/66425))
+  * Postpone respecting the code-style analysis config rule until NET10 (PR: [#75978](https://github.com/dotnet/roslyn/pull/75978))
+* Delete `dotnet.dotnetPath` setting and support automatic migration to replacements (PR: [#7825](https://github.com/dotnet/vscode-csharp/pull/7825))
+  * Existing `dotnet.dotnetPath` values will be migrated to the .NET Install Tool extension's `dotnetAcquisitionExtension.existingDotnetPath` setting.  See [this page](https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-extension/README.md#i-already-have-a-net-runtime-or-sdk-installed-and-i-want-to-use-it) for more details on configuring the .NET Install Tool.
+  * The OmniSharp version of `dotnet.dotnetPath` has been migrated to `omnisharp.dotnetPath`
+* Bump xamltools to 17.13.35527.19 (PR: [#7831](https://github.com/dotnet/vscode-csharp/pull/7831))
+
+# 2.58.20
+* Update Razor to 9.0.0-preview.24569.4 (PR: [#7805](https://github.com/dotnet/vscode-csharp/pull/7805))
+  * Allow logging level to be changed in rzls (#11228) (PR: [#11228](https://github.com/dotnet/razor/pull/11228))
+  * [Fuse] bind-Value:attribute support (#11214) (PR: [#11214](https://github.com/dotnet/razor/pull/11214))
+  * Handle skipped trivia in the C# tokenizer (#11207) (PR: [#11207](https://github.com/dotnet/razor/pull/11207))
+* Add support for refreshing opened source generated files (PR: [#7791](https://github.com/dotnet/vscode-csharp/pull/7791))
+* Update Roslyn to 4.13.0-2.24569.1 (PR: [#7791](https://github.com/dotnet/vscode-csharp/pull/7791))
+  * Support unbound generic types in 'nameof' operator. (PR: [#75368](https://github.com/dotnet/roslyn/pull/75368))
+  * Include list of processes that lock file in `can't write file` error message (PR: [#75946](https://github.com/dotnet/roslyn/pull/75946))
+  * Add server side support for refreshing source generated files (PR: [#75939](https://github.com/dotnet/roslyn/pull/75939))
+
+# 2.57.28
+* Update Razor to 9.0.0-preview.24565.1 (PR: [#7793])(https://github.com/dotnet/vscode-csharp/pull/7793)
+  * Fine tuning of what types of project update affect what state (#11213) (PR: [#11213](https://github.com/dotnet/razor/pull/11213))
+  * Fix request duration logging (#11198) (PR: [#11198](https://github.com/dotnet/razor/pull/11198))
+  * Update ProjectWorkspaceState and HostProject at the same time (#11191) (PR: [#11191](https://github.com/dotnet/razor/pull/11191))
+* Update Roslyn to 4.13.0-2.24565.3 (PR: [#7792](https://github.com/dotnet/vscode-csharp/pull/7792))
+  * Add support for go to type definition (PR: [#75819](https://github.com/dotnet/roslyn/pull/75819))
+  * Reduce formatting allocations when scrolling (PR: [#75912](https://github.com/dotnet/roslyn/pull/75912))
+  * Improve go-to-impl with error conditions (PR: [#75913](https://github.com/dotnet/roslyn/pull/75913))
+  * Update 'use simple using statement' to support global statements (PR: [#75921](https://github.com/dotnet/roslyn/pull/75921))
+  * Fix case where we were erroneously offering to convert a dictionary to use a collection expression. (PR: [#75897](https://github.com/dotnet/roslyn/pull/75897))
+  * Recover better when a user uses commas in a for-statement instead of semicolons (PR: [#75632](https://github.com/dotnet/roslyn/pull/75632))
+  * Do not run 'remove unnecessary imports' on generated code (PR: [#74762](https://github.com/dotnet/roslyn/pull/74762))
+  * improve goto-def on an invalid override (PR: [#75901](https://github.com/dotnet/roslyn/pull/75901))
+  * Fix formatting of simplify-linq-expression (PR: [#75860](https://github.com/dotnet/roslyn/pull/75860))
+  * Add new line before 'where' constraints in Quick Info (PR: [#60545](https://github.com/dotnet/roslyn/pull/60545))
+* Increase default server start timeout to 2minutes (PR: [#7788](https://github.com/dotnet/vscode-csharp/pull/7788))
 * Update Razor to 9.0.0-preview.24561.3 (PR: [#7748](https://github.com/dotnet/vscode-csharp/pull/7748))
   * Add feature flag to turn on the new Roslyn tokenizer (PR: [#11185](https://github.com/dotnet/razor/pull/11185))
+* Fix Razor preview panel button colors to have more visible contrast ratio (PR: [#7766](https://github.com/dotnet/vscode-csharp/pull/7766))
 * Bump xamltools to 17.13.35513.19 (PR: [#7777](https://github.com/dotnet/vscode-csharp/pull/7777))
 
-# 2.56.x
+# 2.56.31
 * Update Roslyn to 4.13.0-2.24561.3 (PR: [#7765](https://github.com/dotnet/vscode-csharp/pull/7765))
   * Update Razor to fix serialization issue loading projects (PR: [#75794](https://github.com/dotnet/roslyn/pull/75794))
 * Update Razor to 9.0.0-preview.24557.11 (PR: [#7756](https://github.com/dotnet/vscode-csharp/pull/7756))
@@ -33,7 +172,7 @@
 * Bump xamltools to 17.13.35507.225 (PR: [#7755](https://github.com/dotnet/vscode-csharp/pull/7755))
   * XAML IntelliseSense completions for Image.Source
 
-# 2.55.x
+# 2.55.29
 * Update Razor to 9.0.0-preview.24557.10 (PR: [#7757](https://github.com/dotnet/vscode-csharp/pull/7757))
   * Update VSTelemetryAPI version (#11181) (PR: [#11181](https://github.com/dotnet/razor/pull/11181))
 * Update Roslyn to 4.13.0-2.24557.6 (PR: [#7751](https://github.com/dotnet/vscode-csharp/pull/7751))
@@ -65,7 +204,7 @@
       * XAML IntelliseSense completions for ResourceDictionary.Source
       * XAML IntelliseSense completions for name properties like Setter.TargetName
 
-# 2.54.x
+# 2.54.20
 * Update debugger packages to v2.54.0 (PR: [#7691](https://github.com/dotnet/vscode-csharp/pull/7691))
 * Only show misc files warning toast after delay. (PR: [#7689](https://github.com/dotnet/vscode-csharp/pull/7689))
 * Update Roslyn to 4.13.0-1.24525.2 (PR: [#7694](https://github.com/dotnet/vscode-csharp/pull/7694))
@@ -87,7 +226,7 @@
   * Including @using for Out-of-Scope Razor Component References (#10651) (PR: [#10651](https://github.com/dotnet/razor/pull/10651))
 * Make checkDevCert a modal dialogue (PR: [#7704](https://github.com/dotnet/vscode-csharp/pull/7704))
 
-# 2.53.x
+# 2.53.17
 * Update Roslyn to 4.13.0-1.24518.1 (PR: [#7670](https://github.com/dotnet/vscode-csharp/pull/7670))
   * Fix issue where server sometimes crashed when saving new C# file for the first time (PR: [#75509](https://github.com/dotnet/roslyn/pull/75509))
   * Report LSP loading telemetry (PR: [#75402](https://github.com/dotnet/roslyn/pull/75402))
@@ -108,7 +247,7 @@
     * Don't throw if we get an old/bad Inlay Hint request (PR: [#10968](https://github.com/dotnet/razor/pull/10968))
     * Fix on type formatting (PR: [#10949](https://github.com/dotnet/razor/pull/10949))
 
-# 2.52.x
+# 2.52.24
 * Add  miscellaneous file open notifications  (PR: [#7652](https://github.com/dotnet/vscode-csharp/pull/7652))
 * Require at least version 8.0.10 of the .net runtime (PR: [#7651](https://github.com/dotnet/vscode-csharp/pull/7651))
 * Warn when the active file is not part of the open workspace (PR: [#7628](https://github.com/dotnet/vscode-csharp/pull/7628))

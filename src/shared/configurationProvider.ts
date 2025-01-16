@@ -16,7 +16,6 @@ import {
 } from '../shared/processPicker';
 import { PlatformInformation } from './platform';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
-import { commonOptions } from './options';
 import {
     ActionOption,
     showErrorMessageWithOptions,
@@ -150,7 +149,7 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             }
 
             if (debugConfiguration.checkForDevCert) {
-                if (!(await this.checkForDevCerts(commonOptions.dotnetPath))) {
+                if (!(await this.checkForDevCerts())) {
                     return undefined;
                 }
             }
@@ -235,11 +234,11 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         }
     }
 
-    private async checkForDevCerts(dotnetPath: string): Promise<boolean> {
+    private async checkForDevCerts(): Promise<boolean> {
         let result: boolean | undefined = undefined;
 
         while (result === undefined) {
-            const returnData = await hasDotnetDevCertsHttps(dotnetPath);
+            const returnData = await hasDotnetDevCertsHttps();
             const errorCode = returnData.error?.code;
             if (
                 errorCode === CertToolStatusCodes.CertificateNotTrusted ||
@@ -261,13 +260,13 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                 );
 
                 if (dialogResult === labelYes) {
-                    const returnData = await createSelfSignedCert(dotnetPath);
+                    const returnData = await createSelfSignedCert();
                     if (returnData.error === null) {
                         // if the process returns 0, returnData.error is null, otherwise the return code can be accessed in returnData.error.code
                         const message = errorCode === CertToolStatusCodes.CertificateNotTrusted ? 'trusted' : 'created';
                         showInformationMessage(
                             vscode,
-                            vscode.l10n.t('Self-signed certificate sucessfully {0}', message)
+                            vscode.l10n.t('Self-signed certificate successfully {0}', message)
                         );
 
                         result = true;

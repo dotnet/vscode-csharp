@@ -11,4 +11,5 @@ export interface IRazorDocument {
     readonly uri: vscode.Uri;
     readonly csharpDocument: IProjectedDocument;
     readonly htmlDocument: IProjectedDocument;
+    readonly isOpen: boolean;
 }
