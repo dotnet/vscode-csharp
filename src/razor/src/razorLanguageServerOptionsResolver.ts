@@ -35,8 +35,8 @@ export function resolveRazorLanguageServerOptions(
         forceRuntimeCodeGeneration = hotReload;
     }
 
-    const useRoslynTokenizer = serverConfig.get<boolean>('useRoslynTokenizer');
     const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
+    const useNewFormattingEngine = serverConfig.get<boolean>('useNewFormattingEngine');
 
     return {
         serverPath: languageServerExecutablePath,
@@ -44,8 +44,8 @@ export function resolveRazorLanguageServerOptions(
         outputChannel: logger.outputChannel,
         usingOmniSharp,
         forceRuntimeCodeGeneration,
-        useRoslynTokenizer,
         suppressErrorToasts,
+        useNewFormattingEngine,
     } as RazorLanguageServerOptions;
 }
 
