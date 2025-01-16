@@ -4,8 +4,22 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.63.x
-* Update Roslyn to ...
-* Update Razor to 9.0.0-preview.25064.4
+* Update Roslyn to 4.14.0-1.25065.8 (PR: [#7927](https://github.com/dotnet/vscode-csharp/pull/7927))
+  * Remove explicit recursion in the json detection analyzer (#76764) (PR: [#76764](https://github.com/dotnet/roslyn/pull/76764))
+  * Consider silly cyclic assignment in scoped variance (#76261) (PR: [#76261](https://github.com/dotnet/roslyn/pull/76261))
+  * Fix ordering of 'params' vs 'scoped' in metadata as source (#76745) (PR: [#76745](https://github.com/dotnet/roslyn/pull/76745))
+  * Change partial keyword recommender to better handle partial member syntax (#76744) (PR: [#76744](https://github.com/dotnet/roslyn/pull/76744))
+  * Ensure unconverted elements are converted when on LHS (#76675) (PR: [#76675](https://github.com/dotnet/roslyn/pull/76675))
+  * Proffer CssVisualDiagnosticsService brokered service from C# DevKit to C# Extension (#76737) (PR: [#76737](https://github.com/dotnet/roslyn/pull/76737))
+  * Disable extract class/interface to a new file when unsupported by the workspace. (#76717) (PR: [#76717](https://github.com/dotnet/roslyn/pull/76717))
+  * Fix issue parsing regex category (#76735) (PR: [#76735](https://github.com/dotnet/roslyn/pull/76735))
+  * Properly simplify pattern when converting to pattern matching (#76734) (PR: [#76734](https://github.com/dotnet/roslyn/pull/76734))
+  * Do not lift type parameters in extract method declared within the selected region (#76724) (PR: [#76724](https://github.com/dotnet/roslyn/pull/76724))
+  * Always use .OriginalDefinition uniformly in the unread-members analyzer (#76698) (PR: [#76698](https://github.com/dotnet/roslyn/pull/76698))
+  * Adding checks for mutable structs. (#76711) (PR: [#76711](https://github.com/dotnet/roslyn/pull/76711))
+  * Stash and restore original culture in CultureNormalizer (#76713) (PR: [#76713](https://github.com/dotnet/roslyn/pull/76713))
+  * Add option for choosing stdio as the LSP communication channel (#76437) (PR: [#76437](https://github.com/dotnet/roslyn/pull/76437))
+* Update Razor to 9.0.0-preview.25064.4 (PR: [#7927](https://github.com/dotnet/vscode-csharp/pull/7927))
   * Wire up the UseRoslynTokenizer feature properly (#11386) (PR: [#11386](https://github.com/dotnet/razor/pull/11386))
   * New Razor document formatting engine (#11364) (PR: [#11364](https://github.com/dotnet/razor/pull/11364))
   * Fix a couple of exceptions encountered when formatting documents with preprocessor directives (#11373) (PR: [#11373](https://github.com/dotnet/razor/pull/11373))
