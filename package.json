@@ -37,9 +37,9 @@
     }
   },
   "defaults": {
-    "roslyn": "4.14.0-1.25060.2",
+    "roslyn": "4.14.0-1.25065.8",
     "omniSharp": "1.39.12",
-    "razor": "9.0.0-preview.25052.3",
+    "razor": "9.0.0-preview.25064.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "17.13.35709.178"
   },
@@ -1513,17 +1513,15 @@
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
             "order": 90
           },
-          "razor.languageServer.useRoslynTokenizer": {
-            "type": "boolean",
-            "scope": "machine-overridable",
-            "default": false,
-            "markdownDescription": "%configuration.razor.languageServer.useRoslynTokenizer%",
-            "order": 90
-          },
           "razor.languageServer.suppressLspErrorToasts": {
             "type": "boolean",
             "default": true,
             "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
+          },
+          "razor.languageServer.useNewFormattingEngine": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.razor.languageServer.useNewFormattingEngine%"
           }
         }
       },
