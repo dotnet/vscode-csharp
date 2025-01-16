@@ -67,26 +67,32 @@ jobs:
       env:
         SignType: $(signType)
 
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '$(Build.SourcesDirectory)/vsix'
+      TargetFolder: '$(Build.SourcesDirectory)/Packages/VSIX_$(channel)'
+
   - ${{ if eq(parameters.isOfficial, true) }}:
     - task: 1ES.PublishBuildArtifacts@1
       condition: succeeded()
       displayName: 'Publish VSIXs'
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)/vsix'
-        ArtifactName: 'VSIX_$(channel)'
+        PathtoPublish: '$(Build.SourcesDirectory)/Packages'
+        ArtifactName: 'Packages'
     - task: 1ES.PublishBuildArtifacts@1
       condition: succeededOrFailed()
       displayName: 'Publish Signing Logs'
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/out/logs'
         ArtifactName: '${{ parameters.platform }} Signing Logs'
+
   - ${{ else }}:
     - task: PublishBuildArtifacts@1
       condition: succeeded()
       displayName: 'Publish VSIXs'
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)/vsix'
-        ArtifactName: 'VSIX_$(channel)'
+        PathtoPublish: '$(Build.SourcesDirectory)/Packages'
+        ArtifactName: 'Packages'
 
   - script: npm run test:artifacts
     displayName: 'Run artifacts tests'

@@ -12,7 +12,7 @@ import {
     RestoreRequest,
     ProjectNeedsRestoreRequest,
 } from './roslynProtocol';
-import path = require('path');
+import path from 'path';
 import { showErrorMessage } from '../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 
