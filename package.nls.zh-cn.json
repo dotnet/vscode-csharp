@@ -123,7 +123,7 @@
   "configuration.razor.languageServer.directory": "重写 Razor 语言服务器目录的路径。",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(试验性)为 Razor 文件启用组合设计时/运行时代码生成",
   "configuration.razor.languageServer.suppressLspErrorToasts": "当服务器遇到可恢复错误时，禁止显示错误 toast。",
-  "configuration.razor.languageServer.useNewFormattingEngine": "Use the new Razor formatting engine.",
+  "configuration.razor.languageServer.useNewFormattingEngine": "使用新的 Razor 格式化引擎。",
   "configuration.razor.server.trace": "指定要用于 Razor 服务器的日志记录级别。",
   "debuggers.coreclr.configurationSnippets.description.attach": "将 .NET 调试器 (coreclr) 附加到正在运行的进程。也可以使用“附加到 .NET 5+ 或 .NET Core 进程”命令完成此操作。",
   "debuggers.coreclr.configurationSnippets.description.blazor-hosted": "此代码片段用于在 Blazor WebAssembly 调试器 (blazorwasm) 下启动新进程，指定要启动的可执行文件的路径。在大多数情况下，“.NET: 启动 C# 项目”代码片段是更好的选择，但此代码片段可用于完全控制所有启动选项。此代码片段适用于托管的 Blazor 项目，该项目具有后端 ASP.NET 核心应用以提供其文件。",
