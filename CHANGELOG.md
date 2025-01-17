@@ -3,10 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# Latest
-  * Bump xamlTools to 17.14.35716.216 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7932))
-
 # 2.63.x
+* Bump xamlTools to 17.14.35716.216 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7932))
 * Update Roslyn to 4.14.0-1.25065.8 (PR: [#7927](https://github.com/dotnet/vscode-csharp/pull/7927))
   * Remove explicit recursion in the json detection analyzer (#76764) (PR: [#76764](https://github.com/dotnet/roslyn/pull/76764))
   * Consider silly cyclic assignment in scoped variance (#76261) (PR: [#76261](https://github.com/dotnet/roslyn/pull/76261))
