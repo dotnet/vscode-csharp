@@ -739,6 +739,11 @@
             "default": true,
             "description": "%configuration.dotnet.autoInsert.enableAutoInsert%"
           },
+          "dotnet.formatting.organizeImportsOnFormat": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.formatting.organizeImportsOnFormat%"
+          },
           "dotnet.typeMembers.memberInsertionLocation": {
             "type": "string",
             "enum": [
@@ -1695,11 +1700,6 @@
             "type": "boolean",
             "default": false,
             "description": "%configuration.omnisharp.enableLspDriver%"
-          },
-          "omnisharp.organizeImportsOnFormat": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.organizeImportsOnFormat%"
           },
           "omnisharp.enableAsyncCompletion": {
             "type": "boolean",

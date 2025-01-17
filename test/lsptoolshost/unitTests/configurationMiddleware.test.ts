@@ -267,6 +267,12 @@ const testData = [
         declareInPackageJson: true,
         section: editorBehaviorSection,
     },
+    {
+        serverOption: 'csharp|formatting.dotnet_formatting_sort_imports',
+        vsCodeConfiguration: 'dotnet.formatting.organizeImportsOnFormat',
+        declareInPackageJson: true,
+        section: editorBehaviorSection,
+    },
 ];
 
 describe('Server option name to vscode configuration name test', () => {
