@@ -268,7 +268,7 @@ const testData = [
         section: editorBehaviorSection,
     },
     {
-        serverOption: 'csharp|formatting.dotnet_formatting_sort_imports',
+        serverOption: 'csharp|formatting.dotnet_organize_imports_on_format',
         vsCodeConfiguration: 'dotnet.formatting.organizeImportsOnFormat',
         declareInPackageJson: true,
         section: editorBehaviorSection,
