@@ -12,7 +12,7 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "Launch Current File slnWithCsproj Integration Tests",
+            "name": "[Roslyn] Launch Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -39,7 +39,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "[DevKit] Launch Current File slnWithCsproj Integration Tests",
+            "name": "[DevKit] Run Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -93,7 +93,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Omnisharp: Launch Current File Integration Tests",
+            "name": "[O#] Run Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -115,10 +115,10 @@
             "sourceMaps": true,
             "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
-            "preLaunchTask": "buildDev"
+            "preLaunchTask": "buildTest"
         },
         {
-            "name": "Omnisharp: Launch Current File Integration Tests [LSP]",
+            "name": "[O# LSP] Run Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
@@ -140,7 +140,7 @@
             "sourceMaps": true,
             "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
             "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
-            "preLaunchTask": "buildDev"
+            "preLaunchTask": "buildTest"
         },
         {
             "type": "node",
