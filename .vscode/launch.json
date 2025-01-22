@@ -12,7 +12,7 @@
             "preLaunchTask": "buildDev"
         },
         {
-            "name": "[Roslyn] Launch Current File Integration Tests",
+            "name": "[Roslyn] Run Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",

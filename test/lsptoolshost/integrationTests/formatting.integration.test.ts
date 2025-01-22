@@ -12,16 +12,14 @@ import {
     expectText,
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
-import { describe, beforeAll, beforeEach, afterAll, test, afterEach } from '@jest/globals';
+import { describe, beforeEach, afterAll, test, afterEach } from '@jest/globals';
 import { formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers';
 
 describe(`Formatting Tests`, () => {
-    beforeAll(async () => {
-        await activateCSharpExtension();
-    });
-
     beforeEach(async () => {
         await setOrganizeImportsOnFormat(undefined);
+        await activateCSharpExtension();
+
         await openFileInWorkspaceAsync(path.join('src', 'app', 'Formatting.cs'));
     });
 
