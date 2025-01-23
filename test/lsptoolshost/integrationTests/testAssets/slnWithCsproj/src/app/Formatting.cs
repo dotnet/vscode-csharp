@@ -1,3 +1,5 @@
+using Options;
+using System;
 namespace Formatting;
 class DocumentFormatting
 {

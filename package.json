@@ -37,7 +37,7 @@
     }
   },
   "defaults": {
-    "roslyn": "4.14.0-1.25065.8",
+    "roslyn": "4.14.0-1.25072.1",
     "omniSharp": "1.39.12",
     "razor": "9.0.0-preview.25064.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -738,6 +738,11 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.autoInsert.enableAutoInsert%"
+          },
+          "dotnet.formatting.organizeImportsOnFormat": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.formatting.organizeImportsOnFormat%"
           },
           "dotnet.typeMembers.memberInsertionLocation": {
             "type": "string",
@@ -1695,11 +1700,6 @@
             "type": "boolean",
             "default": false,
             "description": "%configuration.omnisharp.enableLspDriver%"
-          },
-          "omnisharp.organizeImportsOnFormat": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.organizeImportsOnFormat%"
           },
           "omnisharp.enableAsyncCompletion": {
             "type": "boolean",
