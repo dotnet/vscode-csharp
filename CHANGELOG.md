@@ -4,8 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.63.x
-  * Bump xamlTools to 17.14.35723.260 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
-  * Update Roslyn to 4.14.0-1.25072.1 (PR: [#7935](https://github.com/dotnet/vscode-csharp/pull/7935))
+* Bump xamlTools to 17.14.35723.260 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
+* Update Roslyn to 4.14.0-1.25072.1 (PR: [#7935](https://github.com/dotnet/vscode-csharp/pull/7935))
   * Remove explicit recursion in the json detection analyzer (#76764) (PR: [#76764](https://github.com/dotnet/roslyn/pull/76764))
   * Consider silly cyclic assignment in scoped variance (#76261) (PR: [#76261](https://github.com/dotnet/roslyn/pull/76261))
   * Fix ordering of 'params' vs 'scoped' in metadata as source (#76745) (PR: [#76745](https://github.com/dotnet/roslyn/pull/76745))
