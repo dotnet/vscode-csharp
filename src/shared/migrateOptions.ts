@@ -100,6 +100,10 @@ export const migrateOptions = [
         oldName: 'dotnet.implementType.propertyGenerationBehavior',
         newName: 'dotnet.typeMembers.propertyGenerationBehavior',
     },
+    {
+        oldName: 'omnisharp.organizeImportsOnFormat',
+        newName: 'dotnet.formatting.organizeImportsOnFormat',
+    },
 ];
 
 export async function MigrateOptions(vscode: vscode): Promise<void> {

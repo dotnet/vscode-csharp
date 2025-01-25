@@ -77,5 +77,18 @@ export function RunSwitchStatementSuite() {
 </div>`
             );
         });
+
+        it('comment in HTML text node', async () => {
+            await assertMatchesSnapshot(
+                `@switch (true)
+{
+    case true:
+    {
+        <p>this is a text https://example.org<h3>Test</h3></p>
+    }
+        break;
+}`
+            );
+        });
     });
 }

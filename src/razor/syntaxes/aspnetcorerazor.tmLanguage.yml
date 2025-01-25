@@ -816,6 +816,7 @@ repository:
       1: { name: 'punctuation.curlybrace.open.cs' }
     patterns:
       - include: 'source.cs#switch-label'
+      - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
     end: '(\})'
     endCaptures:
