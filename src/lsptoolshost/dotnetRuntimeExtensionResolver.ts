@@ -14,9 +14,9 @@ import { CSharpExtensionId } from '../constants/csharpExtensionId';
 import { readFile } from 'fs/promises';
 import { IDotnetAcquireResult, IDotnetFindPathContext } from './dotnetRuntimeExtensionApi';
 
-const DotNetMajorVersion = '8';
+const DotNetMajorVersion = '9';
 const DotNetMinorVersion = '0';
-const DotNetPatchVersion = '10';
+const DotNetPatchVersion = '1';
 export const DotNetRuntimeVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}.${DotNetPatchVersion}`;
 
 /**
