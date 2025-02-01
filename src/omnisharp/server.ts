@@ -458,7 +458,7 @@ export class OmniSharpServer {
             args.push('FormattingOptions:EnableEditorConfigSupport=true');
         }
 
-        if (omnisharpOptions.organizeImportsOnFormat === true) {
+        if (commonOptions.organizeImportsOnFormat === true) {
             args.push('FormattingOptions:OrganizeImports=true');
         }
 

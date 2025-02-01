@@ -11,6 +11,6 @@ export interface RazorLanguageServerOptions {
     debug?: boolean;
     usingOmniSharp: boolean;
     forceRuntimeCodeGeneration: boolean;
-    useRoslynTokenizer: boolean;
     suppressErrorToasts: boolean;
+    useNewFormattingEngine: boolean;
 }

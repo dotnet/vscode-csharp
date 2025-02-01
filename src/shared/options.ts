@@ -17,6 +17,7 @@ export interface CommonOptions {
     readonly defaultSolution: string;
     readonly unitTestDebuggingOptions: object;
     readonly runSettingsPath: string;
+    readonly organizeImportsOnFormat: boolean;
 }
 
 export interface OmnisharpServerOptions {
@@ -34,7 +35,6 @@ export interface OmnisharpServerOptions {
     readonly enableImportCompletion: boolean;
     readonly enableAsyncCompletion: boolean;
     readonly analyzeOpenDocumentsOnly: boolean;
-    readonly organizeImportsOnFormat: boolean;
     readonly disableMSBuildDiagnosticWarning: boolean;
     readonly showOmnisharpLogOnError: boolean;
     readonly minFindSymbolsFilterLength: number;
@@ -157,6 +157,9 @@ class CommonOptionsImpl implements CommonOptions {
     public get runSettingsPath() {
         return readOption<string>('dotnet.unitTests.runSettingsPath', '', 'omnisharp.testRunSettings');
     }
+    public get organizeImportsOnFormat() {
+        return readOption<boolean>('dotnet.formatting.organizeImportsOnFormat', false);
+    }
 }
 
 class OmnisharpOptionsImpl implements OmnisharpServerOptions {
@@ -226,9 +229,6 @@ class OmnisharpOptionsImpl implements OmnisharpServerOptions {
         );
         const analyzeOpenDocumentsOnlyNewOption = diagnosticAnalysisScope == 'openFiles';
         return analyzeOpenDocumentsOnlyLegacyOption || analyzeOpenDocumentsOnlyNewOption;
-    }
-    public get organizeImportsOnFormat() {
-        return readOption<boolean>('omnisharp.organizeImportsOnFormat', false);
     }
     public get disableMSBuildDiagnosticWarning() {
         return readOption<boolean>('omnisharp.disableMSBuildDiagnosticWarning', false);
@@ -483,7 +483,6 @@ export const OmnisharpOptionsThatTriggerReload: ReadonlyArray<keyof OmnisharpSer
     'enableEditorConfigSupport',
     'enableDecompilationSupport',
     'enableImportCompletion',
-    'organizeImportsOnFormat',
     'enableAsyncCompletion',
     'useModernNet',
     'enableLspDriver',
