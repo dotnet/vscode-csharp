@@ -45,7 +45,7 @@
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Mostrar automáticamente la lista de finalización en las listas de argumentos",
   "configuration.dotnet.defaultSolution.description": "Ruta de acceso de la solución predeterminada que se va a abrir en el área de trabajo o se establece en \"deshabilitar\" para omitirla. (Anteriormente \"omnisharp.defaultLaunchSolution\")",
   "configuration.dotnet.enableXamlTools": "Habilita las herramientas XAML al usar el Kit de desarrollo de C#",
-  "configuration.dotnet.formatting.organizeImportsOnFormat": "Specifies whether 'using' directives should be grouped and sorted during document formatting. (Previously `omnisharp.organizeImportsOnFormat`)",
+  "configuration.dotnet.formatting.organizeImportsOnFormat": "Especifica si las directivas \"using\" deben agruparse y ordenarse durante el formato del documento. (Anteriormente \"omnisharp.organizeImportsOnFormat\")",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Resaltar los componentes JSON relacionados bajo el cursor.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Resaltar los componentes de expresiones regulares relacionados bajo el cursor.",
   "configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters": "Mostrar sugerencias para los literales",
