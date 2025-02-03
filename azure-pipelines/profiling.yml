@@ -1,0 +1,28 @@
+trigger: none
+pr: none
+schedules:
+- cron: '18 1 * * *' # every day at 1:18 AM
+  displayName: Periodic profiling run
+  branches:
+    include:
+    - main
+
+variables:
+- name: TRACE_DROP_LOCATION
+  value: $(Build.ArtifactStagingDirectory)/traces/
+- name: MERGED_TRACE_LOCATION
+  value: $(Build.ArtifactStagingDirectory)/mergedtrace/
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: AzurePipelines-EO
+      image: 1ESPT-Ubuntu20.04
+      os: Linux
+    stages:
+    - stage: run
+      jobs:
+      - job: run
+        steps:
+        - pwsh: echo "Profiling"
