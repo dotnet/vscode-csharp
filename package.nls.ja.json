@@ -45,7 +45,7 @@
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "引数リストに入力候補一覧を自動的に表示する",
   "configuration.dotnet.defaultSolution.description": "ワークスペースで開く既定のソリューションのパス。スキップするには 'disable' に設定します。(以前の `omnisharp.defaultLaunchSolution`)",
   "configuration.dotnet.enableXamlTools": "C# 開発キットを使用するときに XAML ツールを有効にします",
-  "configuration.dotnet.formatting.organizeImportsOnFormat": "Specifies whether 'using' directives should be grouped and sorted during document formatting. (Previously `omnisharp.organizeImportsOnFormat`)",
+  "configuration.dotnet.formatting.organizeImportsOnFormat": "ドキュメントの書式設定中に 'using' ディレクティブをグループ化して並べ替える必要があるかどうかを指定します。(以前の 'omnisharp.organizeImportsOnFormat')",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "カーソルの下にある関連する JSON コンポーネントをハイライトします。",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "カーソルの下にある関連する正規表現コンポーネントをハイライトします。",
   "configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters": "リテラルのヒントを表示する",
