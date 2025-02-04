@@ -3,9 +3,26 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.65.x
+
+# 2.64.x
+* Bump xamlTools to 17.14.35730.156 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
+
 # 2.63.x
-* Bump xamlTools to 17.14.35716.216 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7932))
-* Update Roslyn to 4.14.0-1.25072.1 (PR: [#7935](https://github.com/dotnet/vscode-csharp/pull/7935))
+* Bump xamlTools to 17.14.35723.260 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
+  * CSS Hot Reload for MAUI Blazor Hybrid is now in preview. It's enabled when C# Hot Reload is enabled. 
+* Update Roslyn to 4.14.0-1.25074.7 (PR: [#7942](https://github.com/dotnet/vscode-csharp/pull/7942))
+  * Enable extract refactorings in LSP (PR: [#76718](https://github.com/dotnet/roslyn/pull/76718))
+  * Speed up 'fix all' for 'use auto prop' by running in parallel (PR: [#76905](https://github.com/dotnet/roslyn/pull/76905))
+  * Add support for converting an auto-prop to a field-backed property. (PR: [#76900](https://github.com/dotnet/roslyn/pull/76900))
+  * Fix throw in generator comparer (PR: [#76769](https://github.com/dotnet/roslyn/pull/76769))
+  * Do not offer the containing type when offering completion in teh base-list (PR: [#76891](https://github.com/dotnet/roslyn/pull/76891))
+  * Improve handling bad metadata in EE (PR: [#76878](https://github.com/dotnet/roslyn/pull/76878))
+  * Record completion of "Simple lambda parameters with modifiers" feature (PR: [#76884](https://github.com/dotnet/roslyn/pull/76884))
+  * Reduce work in ConversionsBase.AddUserDefinedConversionsToExplicitCandidateSet (PR: [#76835](https://github.com/dotnet/roslyn/pull/76835))
+  * Update formatOnType handler to support formatting on NewLine (PR: [#76876](https://github.com/dotnet/roslyn/pull/76876))
+  * Fix new document formatting (PR: [#76736](https://github.com/dotnet/roslyn/pull/76736))
+  * Initial work to collapse comments at the end of a block (PR: [#76865](https://github.com/dotnet/roslyn/pull/76865))
   * Remove explicit recursion in the json detection analyzer (#76764) (PR: [#76764](https://github.com/dotnet/roslyn/pull/76764))
   * Consider silly cyclic assignment in scoped variance (#76261) (PR: [#76261](https://github.com/dotnet/roslyn/pull/76261))
   * Fix ordering of 'params' vs 'scoped' in metadata as source (#76745) (PR: [#76745](https://github.com/dotnet/roslyn/pull/76745))
@@ -18,7 +35,6 @@
   * Do not lift type parameters in extract method declared within the selected region (#76724) (PR: [#76724](https://github.com/dotnet/roslyn/pull/76724))
   * Always use .OriginalDefinition uniformly in the unread-members analyzer (#76698) (PR: [#76698](https://github.com/dotnet/roslyn/pull/76698))
   * Adding checks for mutable structs. (#76711) (PR: [#76711](https://github.com/dotnet/roslyn/pull/76711))
-  * Stash and restore original culture in CultureNormalizer (#76713) (PR: [#76713](https://github.com/dotnet/roslyn/pull/76713))
   * Add option for choosing stdio as the LSP communication channel (#76437) (PR: [#76437](https://github.com/dotnet/roslyn/pull/76437))
   * Support organizing imports as part of LSP document formatting  (PR: [#76806](https://github.com/dotnet/roslyn/pull/76806))
   * Improve collapsing of members followed by pp directives (PR: [#76837](https://github.com/dotnet/roslyn/pull/76837))
