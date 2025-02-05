@@ -14,10 +14,16 @@
     "26445e3e484940d2d58c2ffc32ab3895fca4b1589d66e2f2dee2fa01f2c479fb": {
       "signature": "26445e3e484940d2d58c2ffc32ab3895fca4b1589d66e2f2dee2fa01f2c479fb",
       "alternativeSignatures": [],
+      "target": "test/omnisharp/omnisharpUnitTests/testAssets/private.pem",
+      "line": 1,
       "memberOf": [
         "default"
       ],
-      "createdDate": "2024-09-09 19:35:36Z"
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0020",
+      "createdDate": "2025-02-05 00:31:10Z",
+      "expirationDate": "2025-07-25 00:50:30Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2025-02-05 00:50:30Z"
     }
   }
 }
