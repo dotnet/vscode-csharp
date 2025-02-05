@@ -29,8 +29,7 @@ schedules:
         - main
 
 variables:
-- name: defaultDotnetVersion
-  value: '8.0.403'
+- template: /azure-pipelines/dotnet-variables.yml@self
 - name: testVSCodeVersion
   ${{ if eq( variables['Build.Reason'], 'Schedule' ) }}: 
     value: insiders

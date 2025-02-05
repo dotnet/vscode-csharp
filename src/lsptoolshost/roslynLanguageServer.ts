@@ -79,6 +79,7 @@ import { registerSourceGeneratedFilesContentProvider } from './sourceGeneratedFi
 import { registerMiscellaneousFileNotifier } from './miscellaneousFileNotifier';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { RazorDynamicFileChangedParams } from '../razor/src/dynamicFile/dynamicFileUpdatedParams';
+import { getProfilingEnvVars } from './profiling';
 
 let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -664,18 +665,23 @@ export class RoslynLanguageServer {
 
         args.push('--extensionLogDirectory', context.logUri.fsPath);
 
-        const env = dotnetInfo.env;
+        let env = dotnetInfo.env;
         if (!languageServerOptions.useServerGC) {
             // The server by default uses serverGC, if the user opts out we need to set the environment variable to disable it.
             env.DOTNET_gcServer = '0';
             _channel.debug('ServerGC disabled');
         }
 
+        const profilingEnvVars = getProfilingEnvVars(_channel);
+        env = { ...env, ...profilingEnvVars };
+
+        _channel.trace(`Profiling environment variables: ${JSON.stringify(profilingEnvVars)}`);
+
         let childProcess: cp.ChildProcessWithoutNullStreams;
         const cpOptions: cp.SpawnOptionsWithoutStdio = {
             detached: true,
             windowsHide: true,
-            env: dotnetInfo.env,
+            env: env,
         };
 
         if (serverPath.endsWith('.dll')) {
