@@ -5,7 +5,7 @@
 
 import * as path from 'path';
 import { commandLineOptions } from './commandLineArguments';
-import { componentInfo } from '../src/lsptoolshost/builtInComponents';
+import { componentInfo } from '../src/lsptoolshost/extensions/builtInComponents';
 
 export const rootPath = path.resolve(__dirname, '..');
 

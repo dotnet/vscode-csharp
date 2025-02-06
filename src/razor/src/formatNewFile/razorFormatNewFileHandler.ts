@@ -12,7 +12,7 @@ import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
 import { SerializableFormatNewFileParams } from './serializableFormatNewFileParams';
-import { roslynFormatNewFileCommand } from '../../../lsptoolshost/razorCommands';
+import { roslynFormatNewFileCommand } from '../../../lsptoolshost/razor/razorCommands';
 
 export class RazorFormatNewFileHandler extends RazorLanguageFeatureBase {
     private static readonly razorFormatNewFileCommand = 'razor/formatNewFile';
