@@ -6,7 +6,7 @@
   - Windows: .NET Framework along with [MSBuild Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
   - MacOS/Linux: [Mono with MSBuild](https://www.mono-project.com/download/stable/)
 
-See [OmniSharp Options](https://github.com/OmniSharp/omnisharp-vscode/blob/master/test-plan.md#omnisharpusemodernnet-all-platforms) for more details.
+See [OmniSharp Options](https://github.com/dotnet/vscode-csharp/blob/main/test-plan.md#omnisharpusemodernnet-all-platforms) for more details.
 
 ### Validation
 
@@ -159,7 +159,7 @@ void Foo(){
 ```
 
 ##### C# Diagnostics
-* Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file. NOTE: This error squiggly will be misaligned due to known issues.
+* Typing `@ThisDoesNotExist` results in an error being created and squiggled in the .cshtml file.
 
 ##### TagHelper Quick Info
 * Typing `<environment></environment>` then hovering the mouse over the opening tag results in a window about that TagHelper that should read something like `EnvironmentTagHelper ITagHelper implementation targeting <environment> elements that conditionally renders content based on the current value of IHostingEnvironment.EnvironmentName...`.
@@ -216,7 +216,7 @@ To setup a test project to verify on you can do:
 * Typing `@layout MainLayout` prompts for completion for the `layout` symbol and the `MainLayout` symbol.
 
 ##### C# Signature Help
-* Typing `@SetParameters()` prompts for signature help inside of the `()`.
+* Typing `@SetParametersAsync()` prompts for signature help inside of the `()`.
 
 ##### C# Rename
 * Renaming "someVariable" in `@{var someVariable = true;} @someVariable` results in both locations being changed.
@@ -463,8 +463,10 @@ Verify each of the test projects above's `project.razor.json` file (ASP.NET Core
 
 #### Report a Razor issue
 Perform the following in any of the above Razor projects.
-* Run the `Report a Razor issue` command while `razor.trace` is set to `Off`. Ensure that you get a dialog stating that `razor.trace` must be set to `Verbose`.
-* Run the `Report a Razor issue` command while `razor.trace` is set to `Verbose`. Follow the instructions, type a little bit in a .cshtml file when it's recording. Once you stop the recording ensure that the content copied to your clipboard has the following information:
+
+- Run the `Report a Razor issue` command while `razor.server.trace` is set to `None`. Ensure that you get a dialog stating that `razor.server.trace` must be set to `Debug`.
+
+- Run the `Report a Razor issue` command while `razor.server.trace` is set to `Debug`. Follow the instructions, type a little bit in a .cshtml file when it's recording. Once you stop the recording ensure that the content copied to your clipboard has the following information:
   - Razor log output under the **Logs** section
   - The Razor document content under the **Workspace information** section
   - Projected CSharp document under the **Workspace information** section
@@ -474,15 +476,12 @@ Perform the following in any of the above Razor projects.
 
 #### Razor Options
 
-##### razor.disabled
-This option can be set to `true` to disable the above described C# experiences.
-
-##### razor.trace
+##### razor.server.trace
 This option should always be displayed in the View --> Output --> Razor Log window
 This option can be set to any of the following values:
-  * "Off" - Will launch Razor Language server with its log output set to 'Off'. The header in the Razor Log output window will be shown but no other content will be shown.
-  * "Messages" - Will launch Razor Language server with its log output set to 'Messages'. Limited messages will be shown such as "Opening document xyz in project abc".
-  * "Verbose" - Will launch Razor Language server with its log output set to 'Verbose'. All logging messages will be shown such as "123 - Synchronizing documentxyz currently ...."
+  * "None" - Will launch Razor Language server with its log output set to 'Off'. The header in the Razor Log output window will be shown but no other content will be shown.
+  - "Information" - Will launch Razor Language server with its log output set to 'Information'. Limited messages will be shown such as "Opening document xyz in project abc".
+  - "Debug" - Will launch Razor Language server with its log output set to 'Debug'. All logging messages will be shown such as "123 - Synchronizing documentxyz currently ...."
 Changing this option should result in a notification message at the bottom right of the window, prompting for a restart of the Razor Language Server.
 
 #### OmniSharp Options

@@ -1,0 +1,60 @@
+parameters:
+  - name: dotnetVersion
+    type: string
+  - name: installAdditionalLinuxDependencies
+    type: boolean
+    default: false
+  - name: npmCommand
+    type: string
+  - name: testVSCodeVersion
+    type: string
+
+steps:
+- checkout: self
+  clean: true
+  submodules: true
+  fetchTags: false
+  fetchDepth: 1
+
+- template: prereqs.yml
+  parameters:
+    dotnetVersion: ${{ parameters.dotnetVersion }}
+
+- ${{ if eq(parameters.installAdditionalLinuxDependencies, true) }}:
+  - template: test-linux-docker-prereqs.yml
+
+- template: test-prereqs.yml
+  parameters:
+    installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
+
+- script: npm run ${{ parameters.npmCommand }}
+  displayName: 🧪 Run $(Agent.JobName)
+  env:
+    DISPLAY: :99.0
+    CODE_VERSION: ${{ parameters.testVSCodeVersion }}
+
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  displayName: 'Publish Test Results'
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '*junit.xml'
+    searchFolder: '$(Build.SourcesDirectory)/out'
+    publishRunAttachments: true
+    mergeTestResults: true
+    testRunTitle: $(System.StageDisplayName) $(Agent.JobName) (Attempt $(System.JobAttempt))
+
+- ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  - task: 1ES.PublishPipelineArtifact@1
+    condition: failed()
+    displayName: 'Upload integration test logs'
+    inputs:
+      path: '$(Build.SourcesDirectory)/out/logs'
+      artifact: 'Test Logs ($(System.StageDisplayName)-$(Agent.JobName)-$(System.JobAttempt))'
+- ${{ else }}: 
+  - task: PublishPipelineArtifact@1
+    condition: failed()
+    displayName: 'Upload integration test logs'
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)/out/logs'
+      artifactName: 'Test Logs ($(System.StageDisplayName)-$(Agent.JobName)-$(System.JobAttempt))'

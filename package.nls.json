@@ -1,0 +1,499 @@
+{
+  "command.o.restart": "Restart OmniSharp",
+  "command.o.pickProjectAndStart": "Select Project",
+  "command.dotnet.openSolution": "Open Solution",
+  "command.o.fixAll.solution": "Fix all occurrences of a code issue within solution",
+  "command.o.fixAll.project": "Fix all occurrences of a code issue within project",
+  "command.o.fixAll.document": "Fix all occurrences of a code issue within document",
+  "command.o.reanalyze.allProjects": "Analyze all projects",
+  "command.o.reanalyze.currentProject": "Analyze current project",
+  "command.dotnet.generateAssets.currentProject": "Generate Assets for Build and Debug",
+  "command.dotnet.restore.project": "Restore Project",
+  "command.dotnet.restore.all": "Restore All Projects",
+  "command.csharp.downloadDebugger": "Download .NET Core Debugger",
+  "command.csharp.listProcess": "List process for attach",
+  "command.csharp.listRemoteProcess": "List processes on remote connection for attach",
+  "command.csharp.listRemoteDockerProcess": "List processes on Docker connection",
+  "command.csharp.attachToProcess": "Attach to a .NET 5+ or .NET Core process",
+  "command.csharp.reportIssue": "Report an issue",
+  "command.csharp.showDecompilationTerms": "Show the decompiler terms agreement",
+  "command.extension.showRazorCSharpWindow": "Show Razor CSharp",
+  "command.extension.showRazorHtmlWindow": "Show Razor Html",
+  "command.razor.reportIssue": "Report a Razor issue",
+  "command.dotnet.test.runTestsInContext": "Run Tests in Context",
+  "command.dotnet.test.debugTestsInContext": "Debug Tests in Context",
+  "command.dotnet.restartServer": "Restart Language Server",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic insertion of documentation comments.",
+  "configuration.dotnet.formatting.organizeImportsOnFormat": "Specifies whether 'using' directives should be grouped and sorted during document formatting. (Previously `omnisharp.organizeImportsOnFormat`)",
+  "configuration.dotnet.defaultSolution.description": "The path of the default solution to be opened in the workspace, or set to 'disable' to skip it. (Previously `omnisharp.defaultLaunchSolution`)",
+  "configuration.dotnet.server.path": "Specifies the absolute path to the server (LSP or O#) executable. When left empty the version pinned to the C# Extension is used. (Previously `omnisharp.path`)",
+  "configuration.dotnet.server.componentPaths": "Allows overriding the folder path for built in components of the language server (for example, override the .roslynDevKit path in the extension directory to use locally built components)",
+  "configuration.dotnet.server.componentPaths.roslynDevKit": "Overrides the folder path for the .roslynDevKit component of the language server",
+  "configuration.dotnet.server.componentPaths.xamlTools": "Overrides the folder path for the .xamlTools component of the language server",
+  "configuration.dotnet.server.startTimeout": "Specifies a timeout (in ms) for the client to successfully start and connect to the language server.",
+  "configuration.dotnet.server.waitForDebugger": "Passes the --debug flag when launching the server to allow a debugger to be attached. (Previously `omnisharp.waitForDebugger`)",
+  "configuration.dotnet.server.extensionPaths": "Override for path to language server --extension arguments",
+  "configuration.dotnet.server.crashDumpPath": "Sets a folder path where crash dumps are written to if the language server crashes.  Must be writeable by the user.",
+  "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
+  "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suppress warning toasts from showing up if the active document is outside the open workspace.",
+  "configuration.dotnet.server.useServerGC": "Configure the language server to use .NET server garbage collection.  Server garbage collection generally provides better performance at the expensive of higher memory consumption.",
+  "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
+  "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
+  "configuration.dotnet.projects.binaryLogPath": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors.",
+  "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
+  "configuration.dotnet.typeMembers.memberInsertionLocation": "The insertion location of properties, events, and methods When implement interface or abstract class.",
+  "configuration.dotnet.typeMembers.memberInsertionLocation.withOtherMembersOfTheSameKind": "Place them with other members of the same kind.",
+  "configuration.dotnet.typeMembers.memberInsertionLocation.atTheEnd": "Place them at the end.",
+  "configuration.dotnet.typeMembers.propertyGenerationBehavior": "Generation behavior of properties when implement interface or abstract class.",
+  "configuration.dotnet.typeMembers.propertyGenerationBehavior.preferThrowingProperties": "Prefer throwing properties.",
+  "configuration.dotnet.typeMembers.propertyGenerationBehavior.preferAutoProperties": "Prefer auto properties.",
+  "configuration.dotnet.codeLens.enableReferencesCodeLens": "Specifies whether the references CodeLens should be shown. (Previously `csharp.referencesCodeLens.enabled`)",
+  "configuration.dotnet.codeLens.enableTestsCodeLens": "Specifies whether the run and debug test CodeLens should be shown. (Previously `csharp.testsCodeLens.enabled`)",
+  "configuration.dotnet.completion.showCompletionItemsFromUnimportedNamespaces": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file. (Previously `omnisharp.enableImportCompletion`)",
+  "configuration.dotnet.completion.showNameCompletionSuggestions": "Perform automatic object name completion for the members that you have recently selected.",
+  "configuration.dotnet.completion.provideRegexCompletions": "Show regular expressions in completion list.",
+  "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automatically show completion list in argument lists",
+  "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "Run background code analysis for: (Previously `omnisharp.enableRoslynAnalyzers`)",
+  "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.openFiles": "Open documents",
+  "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "Entire solution",
+  "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "None",
+  "configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope": "Show compiler errors and warnings for:",
+  "configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.openFiles": "Open documents",
+  "configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.fullSolution": "Entire solution",
+  "configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.none": "None",
+  "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Highlight related regular expression components under cursor.",
+  "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Highlight related JSON components under cursor.",
+  "configuration.csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": "Show hints for implicit object creation",
+  "configuration.csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": "Show hints for variables with inferred types",
+  "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "Show hints for lambda parameter types",
+  "configuration.csharp.inlayHints.enableInlayHintsForTypes": "Display inline type hints",
+  "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Show hints for indexers",
+  "configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters": "Show hints for literals",
+  "configuration.dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": "Show hints for 'new' expressions",
+  "configuration.dotnet.inlayHints.enableInlayHintsForOtherParameters": "Show hints for everything else",
+  "configuration.dotnet.inlayHints.enableInlayHintsForParameters": "Display inline parameter name hints",
+  "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": "Suppress hints when parameter names differ only by suffix",
+  "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": "Suppress hints when argument matches parameter name",
+  "configuration.dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": "Suppress hints when parameter name matches the method's intent",
+  "configuration.dotnet.navigation.navigateToDecompiledSources": "Enable navigation to decomplied sources.",
+  "configuration.dotnet.navigation.navigateToSourceLinkAndEmbeddedSources": "Enable navigation to source link and embedded sources.",
+  "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Show remarks information when display symbol.",
+  "configuration.dotnet.symbolSearch.searchReferenceAssemblies": "Search symbols in reference assemblies. It affects features requires symbol searching, such as add imports.",
+  "configuration.dotnet.unitTestDebuggingOptions": "Options to use with the debugger when launching for unit test debugging. (Previously `csharp.unitTestDebuggingOptions`)",
+  "configuration.dotnet.unitTests.runSettingsPath": {
+    "message": "Path to the .runsettings file which should be used when running unit tests. (Previously `omnisharp.testRunSettings`)",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "configuration.omnisharp.dotnet.server.useOmnisharp": "Switches to use the Omnisharp server for language features when enabled (requires restart). This option will not be honored with C# Dev Kit installed.",
+  "configuration.omnisharp.dotnetPath": "Specifies the path to a dotnet installation directory to use instead of the default system one. This only influences the dotnet installation to use for hosting the OmniSharp server itself. Example: \"/home/username/mycustomdotnetdirectory\".",
+  "configuration.omnisharp.csharp.format.enable": "Enable/disable default C# formatter (requires restart).",
+  "configuration.omnisharp.csharp.suppressDotnetInstallWarning": "Suppress the warning that the .NET Core SDK is not on the path.",
+  "configuration.omnisharp.csharp.suppressDotnetRestoreNotification": "Suppress the notification window to perform a 'dotnet restore' when dependencies can't be resolved.",
+  "configuration.omnisharp.csharp.suppressProjectJsonWarning": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications",
+  "configuration.omnisharp.csharp.suppressBuildAssetsNotification": "Suppress the notification window to add missing assets to build or debug the application.",
+  "configuration.omnisharp.csharp.suppressHiddenDiagnostics": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane.",
+  "configuration.omnisharp.csharp.referencesCodeLens.filteredSymbols": "Array of custom symbol names for which CodeLens should be disabled.",
+  "configuration.omnisharp.csharp.maxProjectFileCountForDiagnosticAnalysis": "Specifies the maximum number of files for which diagnostics are reported for the whole workspace. If this limit is exceeded, diagnostics will be shown for currently opened files only. Specify 0 or less to disable the limit completely.",
+  "configuration.omnisharp.csharp.semanticHighlighting.enabled": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect.",
+  "configuration.omnisharp.csharp.showOmnisharpLogOnError": "Shows the OmniSharp log in the Output pane when OmniSharp reports an error.",
+  "configuration.omnisharp.useModernNet.title": "Use .NET 6 build of OmniSharp",
+  "configuration.omnisharp.useModernNet.description": "Use OmniSharp build for .NET 6. This version _does not_ support non-SDK-style .NET Framework projects, including Unity. SDK-style Framework, .NET Core, and .NET 5+ projects should see significant performance improvements.",
+  "configuration.omnisharp.sdkPath": "Specifies the path to a .NET SDK installation to use for project loading instead of the highest version installed. Applies when \"useModernNet\" is set to true. Example: /home/username/dotnet/sdks/6.0.300.",
+  "configuration.omnisharp.sdkVersion": "Specifies the version of the .NET SDK to use for project loading instead of the highest version installed. Applies when \"useModernNet\" is set to true. Example: 6.0.300.",
+  "configuration.omnisharp.sdkIncludePrereleases": "Specifies whether to include preview versions of the .NET SDK when determining which version to use for project loading. Applies when \"useModernNet\" is set to true.",
+  "configuration.omnisharp.monoPath": "Specifies the path to a mono installation to use when \"useModernNet\" is set to false, instead of the default system one. Example: \"/Library/Frameworks/Mono.framework/Versions/Current\"",
+  "configuration.omnisharp.loggingLevel": "Specifies the level of logging output from the OmniSharp server.",
+  "configuration.omnisharp.autoStart": "Specifies whether the OmniSharp server will be automatically started or not. If false, OmniSharp can be started with the 'Restart OmniSharp' command",
+  "configuration.omnisharp.projectFilesExcludePattern": "The exclude pattern used by OmniSharp to find all project files.",
+  "configuration.omnisharp.projectLoadTimeout": "The time Visual Studio Code will wait for the OmniSharp server to start. Time is expressed in seconds.",
+  "configuration.omnisharp.maxProjectResults": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250).",
+  "configuration.omnisharp.useEditorFormattingSettings": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size).",
+  "configuration.omnisharp.minFindSymbolsFilterLength": "The minimum number of characters to enter before 'Go to Symbol in Workspace' operation shows any results.",
+  "configuration.omnisharp.maxFindSymbolsItems": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The limit is applied only when a positive number is specified here.",
+  "configuration.omnisharp.disableMSBuildDiagnosticWarning": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log",
+  "configuration.omnisharp.enableMsBuildLoadProjectsOnDemand": "If true, MSBuild project system will only load projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. With this setting enabled OmniSharp may load fewer projects and may thus display incomplete reference lists for symbols.",
+  "configuration.omnisharp.enableEditorConfigSupport": "Enables support for reading code style, naming convention and analyzer settings from .editorconfig.",
+  "configuration.omnisharp.enableDecompilationSupport": "Enables support for decompiling external references instead of viewing metadata.",
+  "configuration.omnisharp.enableLspDriver": "Enables support for the experimental language protocol based engine (requires reload to setup bindings correctly)",
+  "configuration.omnisharp.enableAsyncCompletion": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results.",
+  "configuration.omnisharp.dotNetCliPaths": "Paths to a local download of the .NET CLI to use for running any user code.",
+  "configuration.omnisharp.razor.plugin.path": "Overrides the path to the Razor plugin dll.",
+  "configuration.omnisharp.razor.devmode": "Forces the extension to run in a mode that enables local Razor.VSCode development.",
+  "configuration.omnisharp.razor.format.enable": "Enable/disable default Razor formatter.",
+  "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Forces the open brace after an @code or @functions directive to be on the following line.",
+  "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Specifies whether to commit tag helper and component elements with a space.",
+  "configuration.razor.languageServer.directory": "Overrides the path to the Razor Language Server directory.",
+  "configuration.razor.languageServer.debug": "Specifies whether to wait for debug attach when launching the language server.",
+  "configuration.razor.server.trace": "Specifies the logging level to use for the Razor server.",
+  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(EXPERIMENTAL) Enable combined design time/runtime code generation for Razor files",
+  "configuration.razor.languageServer.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
+  "configuration.razor.languageServer.useNewFormattingEngine": "Use the new Razor formatting engine.",
+  "debuggers.coreclr.configurationSnippets.label.console-local": ".NET: Launch Executable file (Console)",
+  "debuggers.coreclr.configurationSnippets.label.web-local": ".NET: Launch Executable file (Web)",
+  "debuggers.coreclr.configurationSnippets.label.attach-local": ".NET: Attach to a .NET process",
+  "debuggers.coreclr.configurationSnippets.label.console-remote": ".NET: Remote debugging - Launch Executable file (Console)",
+  "debuggers.coreclr.configurationSnippets.label.attach-remote": ".NET: Remote debugging - Attach to a .NET process",
+  "debuggers.coreclr.configurationSnippets.label.blazor-hosted": ".NET: Web Assembly - Launch hosted Blazor project",
+  "debuggers.coreclr.configurationSnippets.label.blazor-standalone": ".NET: Web Assembly - Launch standalone Blazor project",
+  "debuggers.coreclr.configurationSnippets.description.console-local": {
+    "message": "This snippet is used to launch a new process under the .NET debugger (coreclr), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice. This snippet is useful when the project was built outside this VS Code instance or you want to host your .NET Code in a custom executable, such as a specific version of 'dotnet.exe'/'dotnet' or the .NET Code is hosted by a native application. This snippet is for console applications.",
+    "comment": [
+      "'coreclr' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(coreclr)'}"
+    ]
+  },
+  "debuggers.coreclr.configurationSnippets.description.web-local": {
+    "message": "This snippet is used to launch a new process under the .NET debugger (coreclr), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice. This snippet is useful when the project was built outside this VS Code instance or you want to host your .NET Code in a custom executable, such as a specific version of 'dotnet.exe'/'dotnet' or the .NET Code is hosted by a native application. This snippet is for web (ASP.NET Core) applications.",
+    "comment": [
+      "'coreclr' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(coreclr)'}"
+    ]
+  },
+  "debuggers.coreclr.configurationSnippets.description.attach": {
+    "message": "Attach the .NET debugger (coreclr) to a running process. This can also be done using the 'Attach to a .NET 5+ or .NET Core process' command.",
+    "comment": [
+      "'coreclr' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(coreclr)'}"
+    ]
+  },
+  "debuggers.coreclr.configurationSnippets.description.remote": "This snippet shows how to remote debug .NET Code **without** using VS Code remoting. It should be used in cases where you want to build your project locally but run it on another computer.",
+  "debuggers.coreclr.configurationSnippets.description.blazor-hosted": {
+    "message": "This snippet is used to launch a new process under the Blazor WebAssembly debugger (blazorwasm), specifying the path to the executable to launch. In most cases, the \".NET: Launch C# project\" snippet is a better choice, but this snippet can be used to have full control over all launch options. This snippet is for hosted Blazor projects, which is a project that has a backend ASP.NET Core app to serve its files.",
+    "comment": [
+      "'blazorwasm' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(blazorwasm)'}"
+    ]
+  },
+  "debuggers.coreclr.configurationSnippets.description.blazor-standalone": {
+    "message": "This snippet is used to launch a new process under the Blazor WebAssembly debugger (blazorwasm). In most cases, the \".NET: Launch C# project\" snippet is a better choice, but this snippet can be used to have full control over all launch options. This snippet is for standalone Blazor projects, which is a project that does not have a backend ASP.NET Core app to serve its files.",
+    "comment": [
+      "'blazorwasm' is the name of the debugger 'type', and should not be localized",
+      "{Locked='(blazorwasm)'}"
+    ]
+  },
+  "debuggers.dotnet.launch.projectPath.description": "Path to the .csproj file.",
+  "debuggers.dotnet.launch.launchConfigurationId.description": "The launch configuration id to use. Empty string will use the current active configuration.",
+  "debuggers.dotnet.configurationSnippets.label": ".NET: Launch C# project",
+  "debuggers.dotnet.configurationSnippets.description": "This snippet configures VS Code to debug a C# project. Debug options (example: arguments to the executable) can be configured through the '<project-directory>/Properties/launchSettings.json' file.",
+  "viewsWelcome.debug.contents": {
+    "message": "[Generate C# Assets for Build and Debug](command:dotnet.generateAssets)\n\nTo learn more about launch.json, see [Configuring launch.json for C# debugging](https://aka.ms/VSCode-CS-LaunchJson).",
+    "comment": [
+      "Do not translate 'command:dotnet.generateAssets' and 'https://aka.ms/VSCode-CS-LaunchJson'"
+    ]
+  },
+  "generateOptionsSchema.program.markdownDescription": {
+    "message": "Path to the application dll or .NET Core host executable to launch.\nThis property normally takes the form: `${workspaceFolder}/bin/Debug/(target-framework)/(project-name.dll)`\n\nExample: `${workspaceFolder}/bin/Debug/netcoreapp1.1/MyProject.dll`\n\nWhere:\n`(target-framework)` is the framework that the debugged project is being built for. This is normally found in the project file as the `TargetFramework` property.\n\n`(project-name.dll)` is the name of debugged project's build output dll. This is normally the same as the project file name but with a '.dll' extension.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.cwd.description": "Path to the working directory of the program being debugged. Default is the current workspace.",
+  "generateOptionsSchema.args.0.description": "Command line arguments passed to the program.",
+  "generateOptionsSchema.args.1.description": "Stringified version of command line arguments passed to the program.",
+  "generateOptionsSchema.stopAtEntry.markdownDescription": {
+    "message": "If true, the debugger should stop at the entry point of the target. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.launchBrowser.description": "Describes options to launch a web browser as part of launch",
+  "generateOptionsSchema.launchBrowser.enabled.description": {
+    "message": "Whether web browser launch is enabled. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.launchBrowser.args.description": {
+    "message": "The arguments to pass to the command to open the browser. This is used only if the platform-specific element (`osx`, `linux` or `windows`) doesn't specify a value for `args`. Use ${auto-detect-url} to automatically use the address the server is listening to.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.launchBrowser.osx.description": {
+    "message": "OSX-specific web launch configuration options. By default, this will start the browser using `open`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.launchBrowser.osx.command.description": "The executable which will start the web browser.",
+  "generateOptionsSchema.launchBrowser.osx.args.description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
+  "generateOptionsSchema.launchBrowser.linux.description": {
+    "message": "Linux-specific web launch configuration options. By default, this will start the browser using `xdg-open`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.launchBrowser.linux.command.description": "The executable which will start the web browser.",
+  "generateOptionsSchema.launchBrowser.linux.args.description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
+  "generateOptionsSchema.launchBrowser.windows.description": {
+    "message": "Windows-specific web launch configuration options. By default, this will start the browser using `cmd /c start`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.launchBrowser.windows.command.description": "The executable which will start the web browser.",
+  "generateOptionsSchema.launchBrowser.windows.args.description": "The arguments to pass to the command to open the browser. Use ${auto-detect-url} to automatically use the address the server is listening to.",
+  "generateOptionsSchema.env.description": "Environment variables passed to the program.",
+  "generateOptionsSchema.envFile.markdownDescription": {
+    "message": "Environment variables passed to the program by a file. E.g. `${workspaceFolder}/.env`",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.console.markdownDescription": "Indicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
+  "generateOptionsSchema.console.settingsDescription": {
+    "message": "**Note:** _This option is only used for console projects launched with the `dotnet` debug configuration type_.\n\nIndicates which console the target program should be launched into. See https://aka.ms/VSCode-CS-LaunchJson-Console for more information.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.console.internalConsole.enumDescription": "The target process's console input (stdin) and output (stdout/stderr) are routed through the VS Code Debug Console.",
+  "generateOptionsSchema.console.integratedTerminal.enumDescription": "The target process will run inside VS Code's integrated terminal.",
+  "generateOptionsSchema.console.externalTerminal.enumDescription": "The target process will run inside its own external terminal. When using this mode, you will need to switch focus between Visual Studio Code and the external terminal window.",
+  "generateOptionsSchema.externalConsole.markdownDescription": {
+    "message": "Attribute `externalConsole` is deprecated, use `console` instead. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.launchSettingsFilePath.markdownDescription": {
+    "message": "The path to a launchSettings.json file. If this isn't set, the debugger will search in `{cwd}/Properties/launchSettings.json`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.launchSettingsProfile.description": "If specified, indicates the name of the profile in launchSettings.json to use. This is ignored if launchSettings.json is not found. launchSettings.json will be read from the path specified should be the 'launchSettingsFilePath' property, or {cwd}/Properties/launchSettings.json if that isn't set. If this is set to null or an empty string then launchSettings.json is ignored. If this value is not specified the first 'Project' profile will be used.",
+  "generateOptionsSchema.sourceFileMap.markdownDescription": {
+    "message": "Maps build-time paths to local source locations. All instances of build-time path will be replaced with the local source path.\n\nExample:\n\n`{\"<build-path>\":\"<local-source-path>\"}`",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.justMyCode.markdownDescription": "When enabled (the default), the debugger only displays and steps into user code (\"My Code\"), ignoring system code and other code that is optimized or that does not have debugging symbols. [More information](https://aka.ms/VSCode-CS-LaunchJson-JustMyCode)",
+  "generateOptionsSchema.requireExactSource.markdownDescription": {
+    "message": "Flag to require current source code to match the pdb. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.enableStepFiltering.markdownDescription": {
+    "message": "Flag to enable stepping over Properties and Operators. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.description": "Flags to determine what types of messages should be logged to the output window.",
+  "generateOptionsSchema.logging.exceptions.markdownDescription": {
+    "message": "Flag to determine whether exception messages should be logged to the output window. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.moduleLoad.markdownDescription": {
+    "message": "Flag to determine whether module load events should be logged to the output window. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.programOutput.markdownDescription": {
+    "message": "Flag to determine whether program output should be logged to the output window when not using an external console. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.browserStdOut.markdownDescription": {
+    "message": "Flag to determine if stdout text from the launching the web browser should be logged to the output window. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.elapsedTiming.markdownDescription": {
+    "message": "If true, protocol message logging will include `adapterElapsedTime` and `engineElapsedTime` properties to indicate the amount of time, in microseconds, that a request took. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.threadExit.markdownDescription": {
+    "message": "Controls if a message is logged when a thread in the target process exits. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.processExit.markdownDescription": {
+    "message": "Controls if a message is logged when the target process exits, or debugging is stopped. This option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.engineLogging.deprecationMessage": "The setting 'logging.engineLogging' has been deprecated in favor of 'logging.diagnosticsLog.protocolMessages'.",
+  "generateOptionsSchema.logging.diagnosticsLog.description": "Settings to control which messages are printed to the output window from the debugger's diagnostics log. This log is meant to help troubleshoot problems with the debugger.",
+  "generateOptionsSchema.logging.diagnosticsLog.protocolMessages.markdownDescription": {
+    "message": "Flag to determine whether DAP protocol messages exchanged between the C# debugger and the UI should be logged to the output window. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.markdownDescription": {
+    "message": "Controls which messages are printed to the output window from the debugger's dispatcher. If not specified, this will default to `none` unless one of the verbose log settings are enabled (`debugEngineAPITracing`, `debugRuntimeEventTracing`, `expressionEvaluationTracing` or `startDebuggingTracing`), in which case the default changes to `normal`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.none.enumDescription": "Do not print additional diagnostic messages.",
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.error.enumDescription": "Print error-level diagnostic messages.",
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.important.enumDescription": "Print important diagnostic messages.",
+  "generateOptionsSchema.logging.diagnosticsLog.dispatcherMessages.normal.enumDescription": "Print all non-verbose diagnostic messages.",
+  "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.markdownDescription": {
+    "message": "Controls if API calls to Microsoft.VisualStudio.Debugger.Engine/vsdebugeng.h should be printed to the output window. This option defaults to `none`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.none.enumDescription": "Disable tracing API calls",
+  "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.error.enumDescription": "Print failures from debugger API calls.",
+  "generateOptionsSchema.logging.diagnosticsLog.debugEngineAPITracing.all.enumDescription": "Print all debugger API calls. This is very verbose.",
+  "generateOptionsSchema.logging.diagnosticsLog.debugRuntimeEventTracing.markdownDescription": {
+    "message": "Flag to determine whether verbose tracing for events raised by the underlying runtime should be enabled. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.expressionEvaluationTracing.markdownDescription": {
+    "message": "Flag to determine whether verbose tracing for expression evaluation should be enabled. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.diagnosticsLog.startDebuggingTracing.markdownDescription": {
+    "message": "Flag to determine whether verbose tracing for start debugging should be enabled. This option defaults to `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.logging.consoleUsageMessage.description": "Controls if a message is logged when the target process calls a 'Console.Read*' API and stdin is redirected to the console.",
+  "generateOptionsSchema.pipeTransport.description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
+  "generateOptionsSchema.pipeTransport.pipeCwd.description": "The fully qualified path to the working directory for the pipe program.",
+  "generateOptionsSchema.pipeTransport.pipeProgram.description": "The fully qualified pipe command to execute.",
+  "generateOptionsSchema.pipeTransport.pipeArgs.0.description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+  "generateOptionsSchema.pipeTransport.pipeArgs.1.description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+  "generateOptionsSchema.pipeTransport.debuggerPath.description": "The full path to the debugger on the target machine.",
+  "generateOptionsSchema.pipeTransport.pipeEnv.description": "Environment variables passed to the pipe program.",
+  "generateOptionsSchema.pipeTransport.quoteArgs.description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
+  "generateOptionsSchema.pipeTransport.windows.description": "Windows-specific pipe launch configuration options",
+  "generateOptionsSchema.pipeTransport.windows.pipeCwd.description": "The fully qualified path to the working directory for the pipe program.",
+  "generateOptionsSchema.pipeTransport.windows.pipeProgram.description": "The fully qualified pipe command to execute.",
+  "generateOptionsSchema.pipeTransport.windows.pipeArgs.0.description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+  "generateOptionsSchema.pipeTransport.windows.pipeArgs.1.description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+  "generateOptionsSchema.pipeTransport.windows.quoteArgs.description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
+  "generateOptionsSchema.pipeTransport.windows.pipeEnv.description": "Environment variables passed to the pipe program.",
+  "generateOptionsSchema.pipeTransport.osx.description": "OSX-specific pipe launch configuration options",
+  "generateOptionsSchema.pipeTransport.osx.pipeCwd.description": "The fully qualified path to the working directory for the pipe program.",
+  "generateOptionsSchema.pipeTransport.osx.pipeProgram.description": "The fully qualified pipe command to execute.",
+  "generateOptionsSchema.pipeTransport.osx.pipeArgs.0.description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+  "generateOptionsSchema.pipeTransport.osx.pipeArgs.1.description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+  "generateOptionsSchema.pipeTransport.osx.quoteArgs.description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
+  "generateOptionsSchema.pipeTransport.osx.pipeEnv.description": "Environment variables passed to the pipe program.",
+  "generateOptionsSchema.pipeTransport.linux.description": "Linux-specific pipe launch configuration options",
+  "generateOptionsSchema.pipeTransport.linux.pipeCwd.description": "The fully qualified path to the working directory for the pipe program.",
+  "generateOptionsSchema.pipeTransport.linux.pipeProgram.description": "The fully qualified pipe command to execute.",
+  "generateOptionsSchema.pipeTransport.linux.pipeArgs.0.description": "Command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+  "generateOptionsSchema.pipeTransport.linux.pipeArgs.1.description": "Stringified version of command line arguments passed to the pipe program. Token ${debuggerCommand} in pipeArgs will get replaced by the full debugger command, this token can be specified inline with other arguments. If ${debuggerCommand} isn't used in any argument, the full debugger command will be instead be added to the end of the argument list.",
+  "generateOptionsSchema.pipeTransport.linux.quoteArgs.description": "Should arguments that contain characters that need to be quoted (example: spaces) be quoted? Defaults to 'true'. If set to false, the debugger command will no longer be automatically quoted.",
+  "generateOptionsSchema.pipeTransport.linux.pipeEnv.description": "Environment variables passed to the pipe program.",
+  "generateOptionsSchema.suppressJITOptimizations.markdownDescription": "If true, when an optimized module (.dll compiled in the Release configuration) loads in the target process, the debugger will ask the Just-In-Time compiler to generate code with optimizations disabled. [More information](https://aka.ms/VSCode-CS-LaunchJson-SuppressJITOptimizations)",
+  "generateOptionsSchema.symbolOptions.description": "Options to control how symbols (.pdb files) are found and loaded.",
+  "generateOptionsSchema.symbolOptions.searchPaths.description": {
+    "message": "Array of symbol server URLs (example: http\u200b://MyExampleSymbolServer) or directories (example: /build/symbols) to search for .pdb files. These directories will be searched in addition to the default locations -- next to the module and the path where the pdb was originally dropped to.",
+    "comment": [
+      "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL.",
+      "{Locked='http\u200b://MyExampleSymbolServer'}"
+    ]
+  },
+  "generateOptionsSchema.symbolOptions.searchMicrosoftSymbolServer.description": {
+    "message": "If 'true' the Microsoft Symbol server (https\u200b://msdl.microsoft.com\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+    "comment": [
+      "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL.",
+      "{Locked='(https\u200b://msdl.microsoft.com\u200b/download/symbols)'}"
+    ]
+  },
+  "generateOptionsSchema.symbolOptions.searchNuGetOrgSymbolServer.description": {
+    "message": "If 'true' the NuGet.org symbol server (https\u200b://symbols.nuget.org\u200b/download/symbols) is added to the symbols search path. If unspecified, this option defaults to 'false'.",
+    "comment": [
+      "We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. Please do not translate or localized the URL.",
+      "{Locked='(https\u200b://symbols.nuget.org\u200b/download/symbols)'}"
+    ]
+  },
+  "generateOptionsSchema.symbolOptions.cachePath.description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.description": "Provides options to control which modules (.dll files) the debugger will attempt to load symbols (.pdb files) for.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.mode.description": "Controls which of the two basic operating modes the module filter operates in.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadAllButExcluded.enumDescription": "Load symbols for all modules unless the module is in the 'excludedModules' array.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.mode.loadOnlyIncluded.enumDescription": "Do not attempt to load symbols for ANY module unless it is in the 'includedModules' array, or it is included through the 'includeSymbolsNextToModules' setting.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.excludedModules.description": "Array of modules that the debugger should NOT load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadAllButExcluded'.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.includedModules.description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsNextToModules.description": "If true, for any module NOT in the 'includedModules' array, the debugger will still check next to the module itself and the launching executable, but it will not check paths on the symbol search list. This option defaults to 'true'.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
+  "generateOptionsSchema.symbolOptions.moduleFilter.includeSymbolsOnDemand.description": "If true, for any module NOT in the 'includedModules' array, the debugger will attempt to download symbols when it detects symbols are needed, such as when trying to step into the module. This option defaults to 'true'.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
+  "generateOptionsSchema.sourceLinkOptions.markdownDescription": "Options to control how Source Link connects to web servers. [More information](https://aka.ms/VSCode-DotNet-SourceLink)",
+  "generateOptionsSchema.sourceLinkOptions.additionalItems.enabled.markdownDescription": {
+    "message": "Is Source Link enabled for this URL? If unspecified, this option defaults to `true`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.expressionEvaluationOptions.description": "Options to control how the debugger evaluates expressions in data tips, the debug view's 'Watch' and 'Variables' sections, or in the Debug Console.",
+  "generateOptionsSchema.expressionEvaluationOptions.allowImplicitFuncEval.description": {
+    "message": "When true (the default state), the debugger will automatically call property `get` methods and other implicit function calls.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.expressionEvaluationOptions.allowToString.markdownDescription": {
+    "message": "When true (the default state), the debugger will automatically call `ToString` to format objects. This option has no effect if `allowImplicitFuncEval` is `false`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.expressionEvaluationOptions.allowFastEvaluate.description": "When true (the default state), the debugger will attempt faster evaluation by simulating execution of simple properties and methods.",
+  "generateOptionsSchema.expressionEvaluationOptions.showRawValues.description": "When true, the debugger will show raw structure of objects in variables windows.",
+  "generateOptionsSchema.targetOutputLogPath.description": "When set, text that the target application writes to stdout and stderr (ex: Console.WriteLine) will be saved to the specified file. This option is ignored if console is set to something other than internalConsole. E.g. '${workspaceFolder}/out.txt'",
+  "generateOptionsSchema.targetArchitecture.markdownDescription": {
+    "message": "[Only supported in local macOS debugging]\n\nThe architecture of the debuggee. This will automatically be detected unless this parameter is set. Allowed values are `x86_64` or `arm64`.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.type.markdownDescription": {
+    "message": "Type type of code to debug. Can be either `coreclr` for .NET Core debugging, or `clr` for Desktop .NET Framework. `clr` only works on Windows as the Desktop framework is Windows-only.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.debugServer.description": {
+    "message": "For debug extension development only: if a port is specified VS Code tries to connect to a debug adapter running in server mode"
+  },
+  "generateOptionsSchema.checkForDevCert.description": {
+    "message": "If you are launching a web project on Windows or macOS and this is enabled, the debugger will check if the computer has a self-signed HTTPS certificate used to develop web servers running on https endpoints. If unspecified, defaults to true when `serverReadyAction` is set. This option does nothing on Linux, VS Code remote, and VS Code Web UI scenarios. If the HTTPS certificate is not found or isn't trusted, the user will be prompted to install/trust it.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.processName.markdownDescription": {
+    "message": "The process name to attach to. If this is used, `processId` should not be used.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.processId.0.markdownDescription": {
+    "message": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  },
+  "generateOptionsSchema.processId.1.markdownDescription": {
+    "message": "The process id to attach to. Use \"\" to get a list of running processes to attach to. If `processId` used, `processName` should not be used.",
+    "comment": [
+      "Markdown text between `` should not be translated or localized (they represent literal text) and the capitalization, spacing, and punctuation (including the ``) should not be altered."
+    ]
+  }
+}

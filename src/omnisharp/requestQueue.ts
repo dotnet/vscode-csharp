@@ -4,8 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as prioritization from './prioritization';
-import { OmnisharpServerProcessRequestComplete, OmnisharpServerProcessRequestStart, OmnisharpServerDequeueRequest, OmnisharpServerEnqueueRequest } from './loggingEvents';
-import { EventStream } from '../EventStream';
+import {
+    OmnisharpServerProcessRequestComplete,
+    OmnisharpServerProcessRequestStart,
+    OmnisharpServerDequeueRequest,
+    OmnisharpServerEnqueueRequest,
+} from './omnisharpLoggingEvents';
+import { EventStream } from '../eventStream';
 
 export interface Request {
     command: string;
@@ -29,8 +34,8 @@ class RequestQueue {
         private _name: string,
         private _maxSize: number,
         private eventStream: EventStream,
-        private _makeRequest: (request: Request) => number) {
-    }
+        private _makeRequest: (request: Request) => number
+    ) {}
 
     /**
      * Enqueue a new request.
@@ -48,20 +53,20 @@ class RequestQueue {
 
         if (request) {
             this._waiting.delete(id);
-            this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, "waiting", request.command, id));
+            this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, 'waiting', request.command, id));
         }
 
         return request;
     }
 
     public cancelRequest(request: Request) {
-        let index = this._pending.indexOf(request);
+        const index = this._pending.indexOf(request);
         if (index !== -1) {
             this._pending.splice(index, 1);
-            this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, "pending", request.command));
+            this.eventStream.post(new OmnisharpServerDequeueRequest(this._name, 'pending', request.command));
         }
 
-        if (request.id){
+        if (request.id) {
             this.dequeue(request.id);
         }
     }
@@ -112,33 +117,32 @@ export class RequestQueueCollection {
     private _normalQueue: RequestQueue;
     private _deferredQueue: RequestQueue;
 
-    public constructor(
-        eventStream: EventStream,
-        concurrency: number,
-        makeRequest: (request: Request) => number
-    ) {
+    public constructor(eventStream: EventStream, concurrency: number, makeRequest: (request: Request) => number) {
         this._isProcessing = false;
         this._priorityQueue = new RequestQueue('Priority', 1, eventStream, makeRequest);
         this._normalQueue = new RequestQueue('Normal', concurrency, eventStream, makeRequest);
-        this._deferredQueue = new RequestQueue('Deferred', Math.max(Math.floor(concurrency / 4), 2), eventStream, makeRequest);
+        this._deferredQueue = new RequestQueue(
+            'Deferred',
+            Math.max(Math.floor(concurrency / 4), 2),
+            eventStream,
+            makeRequest
+        );
     }
 
     private getQueue(command: string) {
         if (prioritization.isPriorityCommand(command)) {
             return this._priorityQueue;
-        }
-        else if (prioritization.isNormalCommand(command)) {
+        } else if (prioritization.isNormalCommand(command)) {
             return this._normalQueue;
-        }
-        else {
+        } else {
             return this._deferredQueue;
         }
     }
 
     public isEmpty() {
-        return !this._deferredQueue.hasPending()
-            && !this._normalQueue.hasPending()
-            && !this._priorityQueue.hasPending();
+        return (
+            !this._deferredQueue.hasPending() && !this._normalQueue.hasPending() && !this._priorityQueue.hasPending()
+        );
     }
 
     public enqueue(request: Request) {

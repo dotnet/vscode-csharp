@@ -3,7 +3,7 @@
         "prefix": "attribute",
         "body": [
             "[System.AttributeUsage(System.AttributeTargets.${1:All}, Inherited = ${2:false}, AllowMultiple = ${3:true})]",
-            "sealed class ${$TM_FILENAME_BASE}Attribute : System.Attribute",
+            "sealed class ${4:$TM_FILENAME_BASE}Attribute : System.Attribute",
             "{",
             "\t// See the attribute guidelines at",
             "\t//  http://go.microsoft.com/fwlink/?LinkId=85236",

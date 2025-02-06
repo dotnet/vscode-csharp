@@ -27,7 +27,7 @@
         "cachePath": {
           "type": "string",
           "description": "Directory where symbols downloaded from symbol servers should be cached. If unspecified, on Windows the debugger will default to %TEMP%\\SymbolCache, and on Linux and macOS the debugger will default to ~/.dotnet/symbolcache.",
-          "default": "~/.dotnet/symbolcache"
+          "default": ""
         },
         "moduleFilter": {
           "$ref": "#/definitions/VSSymbolOptionsModuleFilter",
@@ -61,7 +61,7 @@
             "type": "string"
           },
           "description": "Array of modules that the debugger should NOT load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadAllButExcluded'.",
-          "default": [ "MyExampleModule.dll" ]
+          "default": [ ]
         },
         "includedModules": {
           "type": "array",
@@ -69,11 +69,16 @@
             "type": "string"
           },
           "description": "Array of modules that the debugger should load symbols for. Wildcards (example: MyCompany.*.dll) are supported.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
-          "default": [ "MyExampleModule.dll" ]
+          "default": [ ]
         },
         "includeSymbolsNextToModules": {
           "type": "boolean",
           "description": "If true, for any module NOT in the 'includedModules' array, the debugger will still check next to the module itself and the launching executable, but it will not check paths on the symbol search list. This option defaults to 'true'.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
+          "default": true
+        },
+        "includeSymbolsOnDemand": {
+          "type": "boolean",
+          "description": "If true, for any module NOT in the 'includedModules' array, the debugger will attempt to download symbols when it detects symbols are needed, such as when trying to step into the module. This option defaults to 'true'.\n\nThis property is ignored unless 'mode' is set to 'loadOnlyIncluded'.",
           "default": true
         }
       }

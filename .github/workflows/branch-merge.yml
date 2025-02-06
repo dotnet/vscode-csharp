@@ -1,22 +1,18 @@
-name: Merge master into feature/lsp-engine
+# Merges any changes from release/prerelease to main (e.g. servicing changes)
+
+name: Flow release/prerelease changes to main
 on:
-  schedule:
-    - cron:  '0 */3 * * *'
-  workflow_dispatch:
+  push:
+   branches:
+     - 'release'
+     - 'prerelease'
+
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  Create-Merge-PR:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: feature/lsp-engine
-      - name: Get changes from master
-        run: |
-          git remote add upstream https://github.com/OmniSharp/omnisharp-vscode.git
-          git fetch upstream master:upstream-master
-          git reset --hard upstream-master
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          title: Merge master into feature/lsp-engine
-          branch: merge-master-to-feature-lsp-engine
+  check-script:
+    uses: dotnet/arcade/.github/workflows/inter-branch-merge-base.yml@main
+    with:
+      configuration_file_path: '.config/branch-merge.json'

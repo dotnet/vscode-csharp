@@ -1,71 +1,50 @@
 {
-	"version": "2.0.0",
-	"presentation": {
-		"echo": true,
-		"reveal": "always",
-		"focus": false,
-		"panel": "shared"
-	},
-	"tasks": [
-		{
-			"label": "build",
-			"command": "npm",
-			"type": "shell",
-			"args": [
-				"run",
-				"compile"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		},
-		{
-			"label": "buildDev",
-			"command": "npm",
-			"type": "shell",
-			"args": [
-				"run",
-				"compileDev"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		},
-		{
-			"label": "test",
-			"command": "echo",
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			},
-			"args": [
-				"Run tests in VS Code by launching the debugger with the 'Launch Tests' configuration."
-			]
-		},
-		{
-			"label": "tslint",
-			"command": "gulp",
-			"type": "shell",
-			"args": [
-				"tslint"
-			],
-			"problemMatcher": {
-				"owner": "tslint",
-				"fileLocation": [
-					"relative",
-					"${workspaceFolder}"
-				],
-				"severity": "warning",
-				"pattern": {
-					"regexp": "^\\[tslint\\] (.*):(\\d+):(\\d+):\\s+(.*)$",
-					"file": 1,
-					"line": 2,
-					"column": 3,
-					"message": 4
-				}
-			}
-		}
-	]
+    "version": "2.0.0",
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+    },
+    "tasks": [
+        {
+            "label": "build",
+            "command": "npm",
+            "type": "shell",
+            "args": ["run", "compile"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "buildDev",
+            "command": "npm",
+            "type": "shell",
+            "args": ["run", "compileDev"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "buildTest",
+            "command": "npm",
+            "type": "shell",
+            "args": ["run", "compileTest"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "test",
+            "command": "echo",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "args": ["Run tests in VS Code by launching the debugger with the 'Launch Tests' configuration."]
+        }
+    ]
 }

@@ -1,13 +1,15 @@
 {
     "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "ES2022",
+        "module": "CommonJS",
         "outDir": "out",
         "lib": [
             "ES2021"
         ],
         "sourceMap": true,
         "moduleResolution": "node",
+        "moduleDetection": "force",
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
@@ -19,6 +21,9 @@
         "src",
         "tasks",
         "test",
-        "typings"
+        "typings",
+        "__mocks__",
+        "jest.config.ts",
+        "baseJestConfig.ts",
     ]
 }

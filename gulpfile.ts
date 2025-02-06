@@ -3,24 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as gulp from 'gulp';
-import * as optionsSchemaGenerator from './src/tools/GenerateOptionsSchema';
-import * as packageDependencyUpdater from './src/tools/UpdatePackageDependencies';
-
 require('./tasks/testTasks');
-require('./tasks/onlinePackagingTasks');
 require('./tasks/offlinePackagingTasks');
 require('./tasks/backcompatTasks');
-
-// Disable warning about wanting an async function
-// tslint:disable-next-line
-gulp.task('generateOptionsSchema', (): Promise<void> => {
-    optionsSchemaGenerator.GenerateOptionsSchema();
-    return Promise.resolve();
-});
-
-// Disable warning about wanting an async function
-// tslint:disable-next-line
-gulp.task('updatePackageDependencies', (): Promise<void> => {
-    return packageDependencyUpdater.updatePackageDependencies();
-});
+require('./tasks/localizationTasks');
+require('./tasks/createTagsTasks');
+require('./tasks/debuggerTasks');
+require('./tasks/snapTasks');
+require('./tasks/signingTasks');
+require('./tasks/profilingTasks');

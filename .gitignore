@@ -2,12 +2,20 @@ bin
 obj
 node_modules
 out
+.roslyn/
+.roslynDevKit/
+.xamlTools/
 .omnisharp/
 .omnisharp-*/
 .vs/
 .debugger/
 .razor/
+.razoromnisharp/
+.razortelemetry/
+.razorDevKit/
 .vscode-test/
+msbuild/signing/signJs/*.log
+msbuild/signing/signVsix/*.log
 dist/
 *.razor.json
 
@@ -26,5 +34,3 @@ coverage/
 
 \.DS_Store
 vsix/
-
-\.vscodeignore

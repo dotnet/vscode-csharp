@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 export interface OutputChannel {
-
     /**
      * The human-readable name of this output channel.
      */
@@ -67,11 +66,10 @@ export enum ViewColumn {
     /**
      * The right most editor column.
      */
-    Three = 3
+    Three = 3,
 }
 
 export interface WorkspaceConfiguration {
-
     /**
      * Return a value from this configuration.
      *
@@ -114,7 +112,9 @@ export interface WorkspaceConfiguration {
      * @param section Configuration name, supports _dotted_ names.
      * @return Information about a configuration setting or `undefined`.
      */
-    inspect<T>(section: string): { key: string; defaultValue?: T; globalValue?: T; workspaceValue?: T, workspaceFolderValue?: T } | undefined;
+    inspect<T>(
+        section: string
+    ): { key: string; defaultValue?: T; globalValue?: T; workspaceValue?: T; workspaceFolderValue?: T } | undefined;
 
     /**
      * Update a configuration value. The updated configuration values are persisted.
@@ -164,7 +164,7 @@ export interface WorkspaceConfiguration {
 export enum ConfigurationTarget {
     /**
      * Global configuration
-    */
+     */
     Global = 1,
 
     /**
@@ -175,14 +175,13 @@ export enum ConfigurationTarget {
     /**
      * Workspace folder configuration
      */
-    WorkspaceFolder = 3
+    WorkspaceFolder = 3,
 }
 
 /**
  * Represents the alignment of status bar items.
  */
 export enum StatusBarAlignment {
-
     /**
      * Aligned to the left side.
      */
@@ -191,7 +190,7 @@ export enum StatusBarAlignment {
     /**
      * Aligned to the right side.
      */
-    Right = 2
+    Right = 2,
 }
 
 /**
@@ -236,7 +235,6 @@ declare class ThemeColor {
 }
 
 export interface StatusBarItem {
-
     /**
      * The alignment of this item.
      */
@@ -292,7 +290,6 @@ export interface StatusBarItem {
 }
 
 export interface Event<T> {
-
     /**
      * A function that represents an event to which you subscribe by calling it with
      * a listener function as argument.
@@ -312,9 +309,7 @@ export interface Disposable {
     dispose(): any;
 }
 
-
 export interface CancellationToken {
-
     /**
      * Is `true` when the token has been cancelled, `false` otherwise.
      */
@@ -326,9 +321,7 @@ export interface CancellationToken {
     onCancellationRequested: Event<any>;
 }
 
-
 export interface DocumentFilter {
-
     /**
      * A language id, like `typescript`.
      */
@@ -351,7 +344,6 @@ export type GlobPattern = string;
 export type DocumentSelector = string | DocumentFilter | (string | DocumentFilter)[];
 
 export interface MessageOptions {
-
     /**
      * Indicates that this message should be modal.
      */
@@ -359,7 +351,6 @@ export interface MessageOptions {
 }
 
 export interface TextEditor {
-
     /**
      * The document associated with this text editor. The document will be the same for the entire lifetime of this text editor.
      */
@@ -367,11 +358,10 @@ export interface TextEditor {
 }
 
 /**
-	 * A universal resource identifier representing either a file on disk
-	 * or another resource, like untitled resources.
-	 */
+ * A universal resource identifier representing either a file on disk
+ * or another resource, like untitled resources.
+ */
 export interface Uri {
-
     /**
      * Create an URI from a file system path. The [scheme](#Uri.scheme)
      * will be `file`.
@@ -459,7 +449,6 @@ export interface Uri {
 }
 
 export interface Clipboard {
-
     /**
      * Read the current clipboard contents as text.
      * @returns A thenable that resolves to a string.
@@ -474,7 +463,6 @@ export interface Clipboard {
 }
 
 export interface MessageItem {
-
     /**
      * A short title like 'Retry', 'Open Log' etc.
      */
@@ -492,7 +480,6 @@ export interface MessageItem {
  * [lines](#TextLine) and knowledge about an underlying resource like a file.
  */
 export interface TextDocument {
-
     /**
      * The associated URI for this document. Most documents have the __file__-scheme, indicating that they
      * represent files on disk. However, some documents may have other schemes indicating that they are not
@@ -651,7 +638,7 @@ export enum EndOfLine {
     /**
      * The carriage return line feed `\r\n` sequence.
      */
-    CRLF = 2
+    CRLF = 2,
 }
 
 /**
@@ -663,7 +650,6 @@ export enum EndOfLine {
  * from an existing position.
  */
 export interface Position {
-
     /**
      * The zero-based line value.
      */
@@ -751,7 +737,7 @@ export interface Position {
      * @return A position that reflects the given delta. Will return `this` position if the change
      * is not changing anything.
      */
-    translate(change: { lineDelta?: number; characterDelta?: number; }): Position;
+    translate(change: { lineDelta?: number; characterDelta?: number }): Position;
 
     /**
      * Create a new position derived from this position.
@@ -769,11 +755,10 @@ export interface Position {
      * @return A position that reflects the given change. Will return `this` position if the change
      * is not changing anything.
      */
-    with(change: { line?: number; character?: number; }): Position;
+    with(change: { line?: number; character?: number }): Position;
 }
 
 export interface Range {
-
     /**
      * The start position. It is before or equal to [end](#Range.end).
      */
@@ -847,7 +832,7 @@ export interface Range {
      * @return A range that reflects the given change. Will return `this` range if the change
      * is not changing anything.
      */
-    with(change: { start?: Position, end?: Position }): Range;
+    with(change: { start?: Position; end?: Position }): Range;
 }
 
 /**
@@ -857,7 +842,6 @@ export interface Range {
  * previously retrieved lines will not represent the latest state.
  */
 export interface TextLine {
-
     /**
      * The zero-based line number.
      */
@@ -892,7 +876,6 @@ export interface TextLine {
 }
 
 export interface FileSystemWatcher extends Disposable {
-
     /**
      * true if this file system watcher has been created such that
      * it ignores creation file system events.
@@ -927,8 +910,13 @@ export interface FileSystemWatcher extends Disposable {
     onDidDelete: Event<Uri>;
 }
 
-export interface ConfigurationChangeEvent {
+export interface WorkspaceFolder {
+    index: number;
+    name: string;
+    uri: Uri;
+}
 
+export interface ConfigurationChangeEvent {
     /**
      * Returns `true` if the given section for the given resource (if provided) is affected.
      *
@@ -939,7 +927,6 @@ export interface ConfigurationChangeEvent {
     affectsConfiguration(section: string, resource?: Uri): boolean;
 }
 
-
 /**
  * Thenable is a common denominator between ES6 promises, Q, jquery.Deferred, WinJS.Promise,
  * and others. This API makes no assumption about what promise libary is being used which
@@ -948,18 +935,25 @@ export interface ConfigurationChangeEvent {
  */
 interface Thenable<T> {
     /**
-	* Attaches callbacks for the resolution and/or rejection of the Promise.
-	* @param onfulfilled The callback to execute when the Promise is resolved.
-	* @param onrejected The callback to execute when the Promise is rejected.
-	* @returns A Promise for the completion of which ever callback is executed.
-	*/
-    then<TResult>(onfulfilled?: (value: T) => TResult | Thenable<TResult>, onrejected?: (reason: any) => TResult | Thenable<TResult>): Thenable<TResult>;
-    then<TResult>(onfulfilled?: (value: T) => TResult | Thenable<TResult>, onrejected?: (reason: any) => void): Thenable<TResult>;
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult>(
+        onfulfilled?: (value: T) => TResult | Thenable<TResult>,
+        onrejected?: (reason: any) => TResult | Thenable<TResult>
+    ): Thenable<TResult>;
+    then<TResult>(
+        onfulfilled?: (value: T) => TResult | Thenable<TResult>,
+        onrejected?: (reason: any) => void
+    ): Thenable<TResult>;
 }
 
-export interface Extension<T> {
+export interface Extension<_T> {
     readonly id: string;
     readonly packageJSON: any;
+    readonly extensionPath: string;
 }
 
 export interface vscode {
@@ -971,20 +965,42 @@ export interface vscode {
     };
     window: {
         activeTextEditor: TextEditor | undefined;
-        showInformationMessage: <T extends MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>;
-        showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>;
-        showErrorMessage(message: string, ...items: string[]): Thenable<string | undefined>;
+        showInformationMessage<T extends string>(message: string, ...items: T[]): Thenable<T | undefined>;
+        showInformationMessage<T extends string>(
+            message: string,
+            options: MessageOptions,
+            ...items: T[]
+        ): Thenable<T | undefined>;
+        showWarningMessage<T extends string>(message: string, ...items: T[]): Thenable<T | undefined>;
+        showWarningMessage<T extends string>(
+            message: string,
+            options: MessageOptions,
+            ...items: T[]
+        ): Thenable<T | undefined>;
+        showErrorMessage<T extends string>(message: string, ...items: T[]): Thenable<T | undefined>;
+        showErrorMessage<T extends string>(
+            message: string,
+            options: MessageOptions,
+            ...items: T[]
+        ): Thenable<T | undefined>;
     };
     workspace: {
         getConfiguration: (section?: string, resource?: Uri) => WorkspaceConfiguration;
         asRelativePath: (pathOrUri: string | Uri, includeWorkspaceFolder?: boolean) => string;
-        createFileSystemWatcher(globPattern: GlobPattern, ignoreCreateEvents?: boolean, ignoreChangeEvents?: boolean, ignoreDeleteEvents?: boolean): FileSystemWatcher;
+        createFileSystemWatcher(
+            globPattern: GlobPattern,
+            ignoreCreateEvents?: boolean,
+            ignoreChangeEvents?: boolean,
+            ignoreDeleteEvents?: boolean
+        ): FileSystemWatcher;
         onDidChangeConfiguration: Event<ConfigurationChangeEvent>;
+        workspaceFolders: readonly WorkspaceFolder[] | undefined;
     };
     extensions: {
         all: ReadonlyArray<Extension<any>>;
     };
     Uri: {
+        file(f: string): Uri;
         parse(value: string): Uri;
     };
 
@@ -998,5 +1014,17 @@ export interface vscode {
         machineId: string;
         sessionId: string;
         openExternal(target: Uri): Thenable<boolean>;
+    };
+
+    l10n: {
+        t(message: string, ...args: Array<string | number | boolean>): string;
+        t(message: string, args: Record<string, any>): string;
+        t(options: {
+            message: string;
+            args?: Array<string | number | boolean> | Record<string, any>;
+            comment: string | string[];
+        }): string;
+        bundle: { [key: string]: string } | undefined;
+        uri: Uri | undefined;
     };
 }

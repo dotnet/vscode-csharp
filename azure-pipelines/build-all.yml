@@ -1,0 +1,136 @@
+parameters:
+- name: versionNumberOverride
+  type: string
+  default: 'default'
+- name: isOfficial
+  type: boolean
+- name: dotnetVersion
+  type: string
+- name: channel
+  values:
+  - release
+  - prerelease
+  - auto
+  default: auto
+- name: signType
+  values:
+  - test
+  - real
+  - auto
+  default: auto
+
+stages:
+- stage: Build
+  displayName: 'Build VSIXs'
+  dependsOn: []
+  jobs:
+  - job: SetRunVariables
+    displayName: 'Set Run Variables'
+    pool:
+      ${{ if eq(parameters.isOfficial, true) }}:
+        name: netcore1espool-internal
+        image: 1es-ubuntu-2204
+      ${{ else }}:
+        name: Azure Pipelines
+        vmImage: ubuntu-latest
+      os: linux
+    steps:
+    - pwsh: |
+        $isPrerelease = $true
+        if ("${{ parameters.channel }}" -eq "release") {
+          Write-Host "Channel override set to release, using release channel."
+          $isPrerelease = $false
+        } elseif ("${{ parameters.channel }}" -eq "prerelease") {
+          Write-Host "Channel override set to prerelease, using prerelease channel."
+          $isPrerelease = $true
+        } else {
+          Write-Host "Channel override is ${{ parameters.channel }}, using branch configuration to determine release channel."
+          Write-Host "Detected branch $(Build.SourceBranchName)"
+          if ("$(Build.SourceBranchName)" -eq "release") {
+            Write-Host "Branch is release, using release channel."
+            $isPrerelease = $false
+          } else {
+            Write-Host "Branch is not release, using prerelease channel."
+            $isPrerelease = $true
+          }
+        }
+
+        if ( $isPrerelease ) {
+          Write-Host "Setting pipeline channel variable to Prerelease."
+          Write-Host "##vso[task.setvariable variable=channel;isoutput=true]Prerelease"
+        } else {
+          Write-Host "Setting pipeline channel variable to Release."
+          Write-Host "##vso[task.setvariable variable=channel;isoutput=true]Release"
+        }
+      name: passChannel
+      displayName: Set Channel Variable
+
+    - pwsh: |
+        $signType = "test"
+        if ("${{ parameters.isOfficial }}" -ne "true") {
+          Write-Host "Not an official build, test signing"
+          $signType = "test"
+        } elseif ("${{ parameters.signType }}"  -eq "test") {
+          Write-Host "Sign type override set to ${{ parameters.signType }}"
+          $signType = "test"
+        } elseif ("${{ parameters.signType }}"  -eq "real") {
+          Write-Host "Sign type override set to ${{ parameters.signType }}"
+          $signType = "real"
+        } else {
+          Write-Host "Sign type override is ${{ parameters.signType }}, using branch configuration to determine sign type"
+          Write-Host "Detected branch $(Build.SourceBranchName)"
+          if ( ("$(Build.SourceBranchName)" -eq "release") -or ("$(Build.SourceBranchName)" -eq "prerelease")) {
+            Write-Host "Branch is a release branch, using real sign type."
+            $signType = 'real'
+          } else {
+            Write-Host "Branch is test branch, using test sign type."
+            $signType = 'test'
+          }
+        }
+
+        Write-Host "Setting pipeline signType variable to " $signType
+        Write-Host "##vso[task.setvariable variable=signType;isoutput=true]$signType"
+      name: passSignType
+      displayName: Set Sign Type
+
+  - template: /azure-pipelines/build.yml@self
+    parameters:
+      versionNumberOverride: ${{ parameters.versionNumberOverride }}
+      platform: linux
+      isOfficial: ${{ parameters.isOfficial }}
+      dotnetVersion: ${{ parameters.dotnetVersion }}
+      pool:
+        ${{ if eq(parameters.isOfficial, true) }}:
+          name: netcore1espool-internal
+          image: 1es-ubuntu-2204
+        ${{ else }}:
+          name: Azure Pipelines
+          vmImage: ubuntu-latest
+        os: linux
+  - template: /azure-pipelines/build.yml@self
+    parameters:
+      versionNumberOverride: ${{ parameters.versionNumberOverride }}
+      platform: windows
+      isOfficial: ${{ parameters.isOfficial }}
+      dotnetVersion: ${{ parameters.dotnetVersion }}
+      pool:
+        ${{ if eq(parameters.isOfficial, true) }}:
+          name: netcore1espool-internal
+          image: 1es-windows-2022
+        ${{ else }}:
+          name: Azure Pipelines
+          vmImage: windows-latest
+        os: windows
+  - template: /azure-pipelines/build.yml@self
+    parameters:
+      versionNumberOverride: ${{ parameters.versionNumberOverride }}
+      platform: darwin
+      isOfficial: ${{ parameters.isOfficial }}
+      dotnetVersion: ${{ parameters.dotnetVersion }}
+      pool:
+        name: Azure Pipelines
+        ${{ if eq(parameters.isOfficial, true) }}:
+          image: macOS-latest
+        ${{ else }}:
+          vmImage: macOS-latest
+        os: macOS
