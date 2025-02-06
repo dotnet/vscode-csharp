@@ -29,11 +29,11 @@ export function readEquivalentVsCodeConfiguration(serverSideOptionName: string):
 }
 
 function readTabSize(configuration: WorkspaceConfiguration): string {
-    return readValueIfDetectIndentationIsOff(configuration, 'editor.tabSize', '4');
+    return readVsCodeConfigurations<string>(configuration, 'editor.tabSize');
 }
 
 function readIndentSize(configuration: WorkspaceConfiguration): string {
-    const indentSize = readValueIfDetectIndentationIsOff<string>(configuration, 'editor.indentSize', '4');
+    const indentSize = readVsCodeConfigurations<string>(configuration, 'editor.indentSize');
     // indent size could be a number or 'tabSize'. If it is 'tabSize', read the 'tabSize' section from config.
     if (indentSize == 'tabSize') {
         return readTabSize(configuration);
@@ -43,7 +43,7 @@ function readIndentSize(configuration: WorkspaceConfiguration): string {
 }
 
 function readInsertSpaces(configuration: WorkspaceConfiguration): string {
-    const insertSpace = readValueIfDetectIndentationIsOff<boolean>(configuration, 'editor.insertSpaces', true);
+    const insertSpace = readVsCodeConfigurations<boolean>(configuration, 'editor.insertSpaces');
     return insertSpace ? 'space' : 'tab';
 }
 
@@ -60,21 +60,6 @@ function readEol(configuration: WorkspaceConfiguration): string {
 
 function readInsertFinalNewline(configuration: WorkspaceConfiguration): string {
     return readVsCodeConfigurations<string>(configuration, 'files.insertFinalNewline');
-}
-
-function readValueIfDetectIndentationIsOff<T>(
-    configuration: WorkspaceConfiguration,
-    vscodeConfigName: string,
-    defaultValue: T
-): T {
-    // If detectIndentation is on, tabSize, indentSize and insertSpaces would be overridden by vscode based on the file's content.
-    // The values in settings become meaningless, so ask the server to fall back to default value.
-    // TODO: Both 'editor.detectIndentation' and.editorconfig provided the same functions here, we need to find a graceful way to handle them.
-    if (configuration.get<boolean>('editor.detectIndentation')) {
-        return defaultValue;
-    }
-
-    return readVsCodeConfigurations(configuration, vscodeConfigName);
 }
 
 function readVsCodeConfigurations<T>(configuration: WorkspaceConfiguration, vscodeConfigName: string): T {
