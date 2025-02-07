@@ -4,6 +4,19 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.65.x
+* Update Roslyn to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
+* Update Roslyn to 4.14.0-2.25106.12 (PR: [#7969](https://github.com/dotnet/vscode-csharp/pull/7969))
+  * Maintain whitespace when converting to switch expression (PR: [#77083](https://github.com/dotnet/roslyn/pull/77083))
+  * Fix extra whitespace insertion for completion text edits (PR: [#77071](https://github.com/dotnet/roslyn/pull/77071))
+  * Realize less of the syntax tree during AbstractSemanticModelReuseLanguageService.GetPreviousBodyNode (PR: [#77032](https://github.com/dotnet/roslyn/pull/77032))
+  * Fix issue loading project with relative path globs (PR: [#76961](https://github.com/dotnet/roslyn/pull/76961))
+  * Fix: Ensure DOTNET_ROOT is reset user defined value during test execution (PR: [#76819](https://github.com/dotnet/roslyn/pull/76819))
+  * Update Roslyn LSP server to target .NET 9 (PR: [#76938](https://github.com/dotnet/roslyn/pull/76938))
+  * Update ICSharpCode.Decompiler to 8.2.0.7535 (PR: [#71837](https://github.com/dotnet/roslyn/pull/71837))
+  * Reduce CPU costs under AnalyzerExecutor.ExecuteSyntaxNodeActions (PR: [#76894](https://github.com/dotnet/roslyn/pull/76894))
+* Add code snippets for C# expression-bodied properties (PR: [#5683](https://github.com/dotnet/vscode-csharp/pull/5683))
+* Sync whitespace options even when detectIndentation is on (PR: [#7965](https://github.com/dotnet/vscode-csharp/pull/7965))
+* Bump Razor (PR: [#7940](https://github.com/dotnet/vscode-csharp/pull/7940))
 
 # 2.64.x
 * Bump xamlTools to 17.14.35730.156 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
