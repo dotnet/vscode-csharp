@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.65.x
-* Update Roslyn to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
+* Update Roslyn LSP to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
 * Update Roslyn to 4.14.0-2.25106.12 (PR: [#7969](https://github.com/dotnet/vscode-csharp/pull/7969))
   * Maintain whitespace when converting to switch expression (PR: [#77083](https://github.com/dotnet/roslyn/pull/77083))
   * Fix extra whitespace insertion for completion text edits (PR: [#77071](https://github.com/dotnet/roslyn/pull/77071))
