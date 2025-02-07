@@ -17,6 +17,7 @@
 * Add code snippets for C# expression-bodied properties (PR: [#5683](https://github.com/dotnet/vscode-csharp/pull/5683))
 * Sync whitespace options even when detectIndentation is on (PR: [#7965](https://github.com/dotnet/vscode-csharp/pull/7965))
 * Bump Razor (PR: [#7940](https://github.com/dotnet/vscode-csharp/pull/7940))
+Bump xamltools to 17.14.35807.11(PR: [#7976]( https://github.com/dotnet/vscode-csharp/pull/7976))
 
 # 2.64.x
 * Bump xamlTools to 17.14.35730.156 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
