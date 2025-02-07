@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { AnalysisSetting } from '../../../src/lsptoolshost/buildDiagnosticsService';
+import { AnalysisSetting } from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService';
 import { getCode, setBackgroundAnalysisScopes, waitForExpectedDiagnostics } from './diagnosticsHelpers';
 import { activateCSharpExtension, describeIfCSharp } from './integrationHelpers';
 

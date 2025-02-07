@@ -18,7 +18,7 @@ import {
     RequestType,
     TextEdit,
 } from 'vscode-languageclient';
-import { provideCompletionsCommand, resolveCompletionsCommand } from '../../../lsptoolshost/razorCommands';
+import { provideCompletionsCommand, resolveCompletionsCommand } from '../../../lsptoolshost/razor/razorCommands';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
@@ -26,7 +26,7 @@ import { RazorLogger } from '../razorLogger';
 import { SerializableDelegatedCompletionParams } from './serializableDelegatedCompletionParams';
 import { SerializableDelegatedCompletionItemResolveParams } from './serializableDelegatedCompletionItemResolveParams';
 import { LanguageKind } from '../rpc/languageKind';
-import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
 import { SerializableTextEdit } from '../rpc/serializableTextEdit';
 import { CSharpProjectedDocument } from '../csharp/csharpProjectedDocument';
 import { IProjectedDocument } from '../projection/IProjectedDocument';

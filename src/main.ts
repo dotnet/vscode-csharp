@@ -22,27 +22,27 @@ import IInstallDependencies from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { getDotnetPackApi } from './dotnetPack';
-import { RoslynLanguageServer, activateRoslynLanguageServer } from './lsptoolshost/roslynLanguageServer';
+import { RoslynLanguageServer } from './lsptoolshost/server/roslynLanguageServer';
 import { MigrateOptions } from './shared/migrateOptions';
-import { getBrokeredServiceContainer } from './lsptoolshost/services/brokeredServicesHosting';
+import { getBrokeredServiceContainer } from './lsptoolshost/serviceBroker/brokeredServicesHosting';
 import { CSharpDevKitExports } from './csharpDevKitExports';
-import Descriptors from './lsptoolshost/services/descriptors';
+import Descriptors from './lsptoolshost/solutionSnapshot/descriptors';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
 import { CSharpExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
 import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
 import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
-import { RoslynLanguageServerExport } from './lsptoolshost/roslynLanguageServerExportChannel';
-import { RoslynLanguageServerEvents } from './lsptoolshost/languageServerEvents';
-import { ServerState } from './lsptoolshost/serverStateChange';
-import { SolutionSnapshotProvider } from './lsptoolshost/services/solutionSnapshotProvider';
+import { SolutionSnapshotProvider } from './lsptoolshost/solutionSnapshot/solutionSnapshotProvider';
 import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from './shared/options';
-import { BuildResultDiagnostics } from './lsptoolshost/services/buildResultReporterService';
+import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultReporterService';
 import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
-import { getComponentFolder } from './lsptoolshost/builtInComponents';
 import { activateOmniSharpLanguageServer, ActivationResult } from './omnisharp/omnisharpLanguageServer';
 import { ActionOption, showErrorMessage } from './shared/observers/utils/showMessage';
 import { lt } from 'semver';
 import { TelemetryEventNames } from './shared/telemetryEventNames';
+import { RoslynLanguageServerEvents, ServerState } from './lsptoolshost/server/languageServerEvents';
+import { activateRoslynLanguageServer } from './lsptoolshost/activate';
+import { RoslynLanguageServerExport } from './lsptoolshost/extensions/roslynLanguageServerExportChannel';
+import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
 
 export async function activate(
     context: vscode.ExtensionContext

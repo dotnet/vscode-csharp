@@ -7,13 +7,13 @@ import * as fs from 'fs-extra';
 import * as vscode from 'vscode';
 import { IWorkspaceDebugInformationProvider, ProjectDebugInformation } from './IWorkspaceDebugInformationProvider';
 import { AssetGenerator, AssetOperations, addTasksJsonIfNecessary, getBuildOperations } from './assets';
-import { getServiceBroker } from '../lsptoolshost/services/brokeredServicesHosting';
-import Descriptors from '../lsptoolshost/services/descriptors';
+import { getServiceBroker } from '../lsptoolshost/serviceBroker/brokeredServicesHosting';
+import Descriptors from '../lsptoolshost/solutionSnapshot/descriptors';
 import {
     DotnetDebugConfigurationServiceErrorKind,
     IDotnetDebugConfigurationService,
     IDotnetDebugConfigurationServiceResult,
-} from '../lsptoolshost/services/IDotnetDebugConfigurationService';
+} from '../lsptoolshost/debugger/IDotnetDebugConfigurationService';
 import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider';
 
 // User errors that can be shown to the user.
