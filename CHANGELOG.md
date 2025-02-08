@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.66.x
+
 # 2.65.x
 * Update Roslyn LSP to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
 * Update Roslyn to 4.14.0-2.25106.12 (PR: [#7969](https://github.com/dotnet/vscode-csharp/pull/7969))
