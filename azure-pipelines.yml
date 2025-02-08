@@ -29,8 +29,7 @@ schedules:
         - main
 
 variables:
-- name: defaultDotnetVersion
-  value: '8.0.403'
+- template: /azure-pipelines/dotnet-variables.yml@self
 - name: testVSCodeVersion
   ${{ if eq( variables['Build.Reason'], 'Schedule' ) }}: 
     value: insiders
@@ -43,21 +42,6 @@ stages:
     isOfficial: false
     signType: test
     dotnetVersion: $(defaultDotnetVersion)
-
-- stage:
-  displayName: Test Linux (.NET 6)
-  dependsOn: []
-  jobs:
-  - template: azure-pipelines/test-matrix.yml
-    parameters:
-      # Prefer the dotnet from the container.
-      dotnetVersion: ''
-      testVSCodeVersion: $(testVSCodeVersion)
-      installAdditionalLinuxDependencies: true
-      pool:
-        name: NetCore-Public
-        demands: ImageOverride -equals 1es-ubuntu-2004-open
-      containerName: mcr.microsoft.com/dotnet/sdk:6.0
 
 - stage:
   displayName: Test Linux (.NET 8)
@@ -73,6 +57,21 @@ stages:
         name: NetCore-Public
         demands: ImageOverride -equals 1es-ubuntu-2004-open
       containerName: mcr.microsoft.com/dotnet/sdk:8.0
+
+- stage:
+  displayName: Test Linux (.NET 9)
+  dependsOn: []
+  jobs:
+  - template: azure-pipelines/test-matrix.yml
+    parameters:
+      # Prefer the dotnet from the container.
+      dotnetVersion: ''
+      testVSCodeVersion: $(testVSCodeVersion)
+      installAdditionalLinuxDependencies: true
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals 1es-ubuntu-2004-open
+      containerName: mcr.microsoft.com/dotnet/sdk:9.0
 
 - stage: Test_Windows_Stage
   displayName: Test Windows

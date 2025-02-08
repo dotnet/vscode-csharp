@@ -45,7 +45,7 @@
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automaticky zobrazovat seznam dokončení v seznamech argumentů",
   "configuration.dotnet.defaultSolution.description": "Cesta výchozího řešení, které se má otevřít v pracovním prostoru. Můžete přeskočit nastavením na „zakázat“. (Dříve omnisharp.defaultLaunchSolution)",
   "configuration.dotnet.enableXamlTools": "Povolí nástroje XAML při použití sady C# Dev Kit",
-  "configuration.dotnet.formatting.organizeImportsOnFormat": "Specifies whether 'using' directives should be grouped and sorted during document formatting. (Previously `omnisharp.organizeImportsOnFormat`)",
+  "configuration.dotnet.formatting.organizeImportsOnFormat": "Určuje, zda mají být během formátování dokumentu seskupeny a seřazeny direktivy using. (dříve omnisharp.organizeImportsOnFormat)",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Zvýrazněte související komponenty JSON pod kurzorem.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "Zvýraznit související komponenty regulárního výrazu pod kurzorem.",
   "configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters": "Zobrazit nápovědy pro literály",

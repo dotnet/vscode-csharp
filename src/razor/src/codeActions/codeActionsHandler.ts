@@ -10,10 +10,10 @@ import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';
 import { SerializableDelegatedCodeActionParams } from './serializableDelegatedCodeActionParams';
 import { LanguageKind } from '../rpc/languageKind';
-import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
 import { SerializableRazorResolveCodeActionParams } from './serializableRazorResolveCodeActionParams';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
-import { provideCodeActionsCommand, resolveCodeActionCommand } from '../../../lsptoolshost/razorCommands';
+import { provideCodeActionsCommand, resolveCodeActionCommand } from '../../../lsptoolshost/razor/razorCommands';
 
 export class CodeActionsHandler {
     private static readonly provideCodeActionsEndpoint = 'razor/provideCodeActions';

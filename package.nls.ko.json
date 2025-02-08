@@ -45,7 +45,7 @@
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "인수 목록에 자동으로 완성 목록 표시",
   "configuration.dotnet.defaultSolution.description": "작업 영역에서 열릴 기본 솔루션의 경로, 건너뛰려면 '비활성화'로 설정하세요(이전 `omnisharp.defaultLaunchSolution`).",
   "configuration.dotnet.enableXamlTools": "C# 개발자 키트를 사용할 때 XAML 도구 사용",
-  "configuration.dotnet.formatting.organizeImportsOnFormat": "Specifies whether 'using' directives should be grouped and sorted during document formatting. (Previously `omnisharp.organizeImportsOnFormat`)",
+  "configuration.dotnet.formatting.organizeImportsOnFormat": "문서 서식을 지정하는 동안 'using' 지시문을 그룹화하고 정렬할지 여부를 지정합니다. (Previously `omnisharp.organizeImportsOnFormat`)",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "커서 아래에서 관련 JSON 구성 요소를 강조 표시합니다.",
   "configuration.dotnet.highlighting.highlightRelatedRegexComponents": "커서 아래의 관련 정규식 구성 요소를 강조 표시합니다.",
   "configuration.dotnet.inlayHints.enableInlayHintsForLiteralParameters": "리터럴에 대한 힌트 표시",

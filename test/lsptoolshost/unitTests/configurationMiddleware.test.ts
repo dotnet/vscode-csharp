@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { readFileSync } from 'fs';
-import { convertServerOptionNameToClientConfigurationName } from '../../../src/lsptoolshost/optionNameConverter';
+import { convertServerOptionNameToClientConfigurationName } from '../../../src/lsptoolshost/options/optionNameConverter';
 import { describe, test, expect } from '@jest/globals';
 
 const editorBehaviorSection = 1;
