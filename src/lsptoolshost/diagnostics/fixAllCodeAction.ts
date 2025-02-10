@@ -58,7 +58,7 @@ export async function getFixAllResponse(
 
                 if (response.edit) {
                     const uriConverter: URIConverter = (value: string): vscode.Uri => UriConverter.deserialize(value);
-                    const protocolConverter = createConverter(uriConverter, true, true);
+                    const protocolConverter = createConverter(uriConverter, true, true, true);
                     const fixAllEdit = await protocolConverter.asWorkspaceEdit(response.edit);
                     if (!(await vscode.workspace.applyEdit(fixAllEdit))) {
                         const componentName = '[roslyn.client.fixAllCodeAction]';

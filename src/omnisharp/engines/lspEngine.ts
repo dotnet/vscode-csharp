@@ -19,14 +19,9 @@ import { Events, OmniSharpServer } from '../server';
 import { IEngine } from './IEngine';
 import { PlatformInformation } from '../../shared/platform';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
-import {
-    Command,
-    DynamicFeature,
-    LanguageClientOptions,
-    RequestType,
-    StaticFeature,
-    Trace,
-} from 'vscode-languageclient';
+import { Command } from 'vscode-languageserver-protocol';
+import { DynamicFeature, LanguageClientOptions, StaticFeature } from 'vscode-languageclient';
+import { RequestType, Trace } from 'vscode-jsonrpc';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { SelectionRangeFeature } from 'vscode-languageclient/lib/common/selectionRange';
 import { ColorProviderFeature } from 'vscode-languageclient/lib/common/colorProvider';
@@ -405,7 +400,7 @@ export class LspEngine implements IEngine {
                     registrations: true,
                 };
             },
-            dispose() {
+            clear() {
                 /* empty */
             },
             fillClientCapabilities(_) {
@@ -426,7 +421,9 @@ export class LspEngine implements IEngine {
 
                     const eventName = `o#/${event}`.replace(/\/\//g, '/').toLowerCase();
 
-                    client.onNotification(eventName, (eventBody: any) => this.eventBus.emit(event, eventBody));
+                    client.onNotification(eventName, (eventBody: any) => {
+                        this.eventBus.emit(event, eventBody);
+                    });
                 }
             },
         };
