@@ -19,6 +19,7 @@ import TelemetryReporter from '@vscode/extension-telemetry';
 import { randomUUID } from 'crypto';
 import { showErrorMessage } from '../../shared/observers/utils/showMessage';
 import { RazorLanguageClient } from './razorLanguageClient';
+import { provideDiagnostics, provideWorkspaceDiagnostics } from '../../lsptoolshost/diagnostics/diagnosticMiddleware';
 
 const events = {
     ServerStop: 'ServerStop',
@@ -237,6 +238,10 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         this.clientOptions = {
             outputChannel: options.outputChannel,
             documentSelector: [{ language: RazorLanguage.id, pattern: RazorLanguage.globbingPattern }],
+            middleware: {
+                provideDiagnostics,
+                provideWorkspaceDiagnostics,
+            },
         };
 
         const args: string[] = [];
