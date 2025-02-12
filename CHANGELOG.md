@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.66.x
+* Update Roslyn to (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
+  * Return LSP diagnostics with their reported severity. (PR: [#77145](https://github.com/dotnet/roslyn/pull/77145))
+  * Fix syntax generation of explict checked operator from symbol (PR: [#77102](https://github.com/dotnet/roslyn/pull/77102))
+* Manage information diagnostic severity on the client-side (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
 
 # 2.65.x
 * Update Roslyn LSP to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
@@ -26,7 +30,7 @@ Bump xamltools to 17.14.35807.11(PR: [#7976]( https://github.com/dotnet/vscode-c
 
 # 2.63.x
 * Bump xamlTools to 17.14.35723.260 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
-  * CSS Hot Reload for MAUI Blazor Hybrid is now in preview. It's enabled when C# Hot Reload is enabled. 
+  * CSS Hot Reload for MAUI Blazor Hybrid is now in preview. It's enabled when C# Hot Reload is enabled.
 * Update Roslyn to 4.14.0-1.25074.7 (PR: [#7942](https://github.com/dotnet/vscode-csharp/pull/7942))
   * Enable extract refactorings in LSP (PR: [#76718](https://github.com/dotnet/roslyn/pull/76718))
   * Speed up 'fix all' for 'use auto prop' by running in parallel (PR: [#76905](https://github.com/dotnet/roslyn/pull/76905))
