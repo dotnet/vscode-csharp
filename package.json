@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "42.42.42-placeholder",
+  "version": "0.0.0-placeholder",
   "description": "Base language support for C#",
   "displayName": "C#",
   "author": "Microsoft Corporation",
@@ -699,6 +699,7 @@
     "onDebugResolve:coreclr",
     "onDebugResolve:clr",
     "onDebugResolve:monovsdbg",
+    "onDebugResolve:remotecoreclr",
     "onDebugResolve:dotnet",
     "onLanguage:csharp",
     "onCommand:o.showOutput",
@@ -4746,6 +4747,15 @@
       },
       {
         "type": "monovsdbg",
+        "label": ".NET Core using Mono Runtime",
+        "hiddenWhen": "true",
+        "languages": [
+          "csharp"
+        ],
+        "aiKey": "0c6ae279ed8443289764825290e4f9e2-1a736e7c-1324-4338-be46-fc2a58ae4d14-7255"
+      },
+      {
+        "type": "remotecoreclr",
         "label": ".NET Core using Mono Runtime",
         "hiddenWhen": "true",
         "languages": [
