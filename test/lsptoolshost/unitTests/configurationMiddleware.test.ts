@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { readFileSync } from 'fs';
-import { convertServerOptionNameToClientConfigurationName } from '../../../src/lsptoolshost/optionNameConverter';
+import { convertServerOptionNameToClientConfigurationName } from '../../../src/lsptoolshost/options/optionNameConverter';
 import { describe, test, expect } from '@jest/globals';
 
 const editorBehaviorSection = 1;
@@ -264,6 +264,12 @@ const testData = [
     {
         serverOption: 'csharp|auto_insert.dotnet_enable_auto_insert',
         vsCodeConfiguration: 'dotnet.autoInsert.enableAutoInsert',
+        declareInPackageJson: true,
+        section: editorBehaviorSection,
+    },
+    {
+        serverOption: 'csharp|formatting.dotnet_organize_imports_on_format',
+        vsCodeConfiguration: 'dotnet.formatting.organizeImportsOnFormat',
         declareInPackageJson: true,
         section: editorBehaviorSection,
     },

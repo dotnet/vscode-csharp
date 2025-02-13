@@ -17,7 +17,7 @@ import { IRazorDocumentChangeEvent } from './IRazorDocumentChangeEvent';
 import { IRazorDocumentManager } from './IRazorDocumentManager';
 import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
-import { razorInitializeCommand } from '../../../lsptoolshost/razorCommands';
+import { razorInitializeCommand } from '../../../lsptoolshost/razor/razorCommands';
 import { PlatformInformation } from '../../../shared/platform';
 import { generateUuid } from 'vscode-languageclient/lib/common/utils/uuid';
 

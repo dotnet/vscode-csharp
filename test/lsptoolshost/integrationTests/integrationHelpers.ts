@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
-import { ServerState } from '../../../src/lsptoolshost/serverStateChange';
+import { ServerState } from '../../../src/lsptoolshost/server/languageServerEvents';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL, platform } from 'os';
 import { describe, expect, test } from '@jest/globals';

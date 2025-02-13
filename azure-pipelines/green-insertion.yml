@@ -1,12 +1,12 @@
 trigger: none # We only want to trigger manually or based on resources
 pr: none
 
-schedules:
-- cron: "0 6 * * *" # Daily @ 10 PM PST
-  displayName: Daily vs-green insertion
-  branches:
-    include:
-    - feature/lsp_tools_host
+#schedules:
+#- cron: "0 6 * * *" # Daily @ 10 PM PST
+#  displayName: Daily vs-green insertion
+#  branches:
+#    include:
+#    - feature/lsp_tools_host
 
 parameters:
   - name: InsertTargetBranch

@@ -37,11 +37,11 @@
     }
   },
   "defaults": {
-    "roslyn": "4.14.0-1.25065.8",
+    "roslyn": "4.14.0-2.25106.12",
     "omniSharp": "1.39.12",
-    "razor": "9.0.0-preview.25064.4",
+    "razor": "9.0.0-preview.25073.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.14.35716.216"
+    "xamlTools": "17.14.35807.11"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -73,6 +73,7 @@
     "test:integration:devkit": "tsc -p ./ && gulp test:integration:devkit",
     "test:razor": "tsc -p ./ && npm run compile:razorTextMate && gulp test:razor",
     "test:razorintegration": "tsc -p ./ && gulp test:razorintegration",
+    "profiling": "tsc -p ./ && gulp profiling",
     "test:artifacts": "tsc -p ./ && gulp test:artifacts",
     "omnisharptest": "tsc -p ./ && gulp omnisharptest",
     "omnisharptest:unit": "tsc -p ./ && gulp omnisharptest:unit",
@@ -739,6 +740,11 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.autoInsert.enableAutoInsert%"
+          },
+          "dotnet.formatting.organizeImportsOnFormat": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.formatting.organizeImportsOnFormat%"
           },
           "dotnet.typeMembers.memberInsertionLocation": {
             "type": "string",
@@ -1696,11 +1702,6 @@
             "type": "boolean",
             "default": false,
             "description": "%configuration.omnisharp.enableLspDriver%"
-          },
-          "omnisharp.organizeImportsOnFormat": {
-            "type": "boolean",
-            "default": false,
-            "description": "%configuration.omnisharp.organizeImportsOnFormat%"
           },
           "omnisharp.enableAsyncCompletion": {
             "type": "boolean",
