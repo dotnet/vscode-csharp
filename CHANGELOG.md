@@ -6,7 +6,7 @@
 # 2.66.x
 
 # 2.65.x
-* Update Razor to 9.0.0-preview.25113.1 (#) (PR: []())
+* Update Razor to 9.0.0-preview.25113.1 (PR: [#7989](https://github.com/dotnet/vscode-csharp/pull/7989))
   * Update Telemetry package (#11468) (PR: [#11468](https://github.com/dotnet/razor/pull/11468))
   * Don't hold onto Roslyn projects longer than necessary (#11458) (PR: [#11458](https://github.com/dotnet/razor/pull/11458))
   * Fix formatting of escaped at signs (#11462) (PR: [#11462](https://github.com/dotnet/razor/pull/11462))
