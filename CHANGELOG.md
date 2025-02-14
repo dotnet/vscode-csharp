@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.66.x
+* Update Razor to 9.0.0-preview.25113.1 (PR: [#7989](https://github.com/dotnet/vscode-csharp/pull/7989))
+  * Update Telemetry package (#11468) (PR: [#11468](https://github.com/dotnet/razor/pull/11468))
+  * Don't hold onto Roslyn projects longer than necessary (#11458) (PR: [#11458](https://github.com/dotnet/razor/pull/11458))
+  * Fix formatting of escaped at signs (#11462) (PR: [#11462](https://github.com/dotnet/razor/pull/11462))
+  * Code action to offer to wrap Html attributes (#11422) (PR: [#11422](https://github.com/dotnet/razor/pull/11422))
+  * Make sure we go through GetAbsolutePosition to handle LSP edge cases (#11441) (PR: [#11441](https://github.com/dotnet/razor/pull/11441))
+  * Make log levels match LogLevel.cs (#11436) (PR: [#11436](https://github.com/dotnet/razor/pull/11436))
+  * Fix on type formatting line delta calculations (#11435) (PR: [#11435](https://github.com/dotnet/razor/pull/11435))
+  * Clean up and rationalize imports in the compiler (#11409) (PR: [#11409](https://github.com/dotnet/razor/pull/11409))
+  * Fix typo in setting description (#11423) (PR: [#11423](https://github.com/dotnet/razor/pull/11423))
 
 # 2.65.x
 * Update Roslyn LSP to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
