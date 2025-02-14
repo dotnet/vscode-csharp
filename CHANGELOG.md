@@ -14,6 +14,7 @@
   * Fix on type formatting line delta calculations (#11435) (PR: [#11435](https://github.com/dotnet/razor/pull/11435))
   * Clean up and rationalize imports in the compiler (#11409) (PR: [#11409](https://github.com/dotnet/razor/pull/11409))
   * Fix typo in setting description (#11423) (PR: [#11423](https://github.com/dotnet/razor/pull/11423))
+  * Bump xamlTools to 17.14.35813.246 (PR: [#7993](https://github.com/dotnet/vscode-csharp/pull/7993))
 
 # 2.65.x
 * Update Roslyn LSP to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
