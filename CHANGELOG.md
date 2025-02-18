@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.67.x
+
 # 2.66.x
 * Update Razor to 9.0.0-preview.25113.1 (PR: [#7989](https://github.com/dotnet/vscode-csharp/pull/7989))
   * Update Telemetry package (#11468) (PR: [#11468](https://github.com/dotnet/razor/pull/11468))
