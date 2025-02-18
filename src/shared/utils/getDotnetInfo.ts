@@ -62,7 +62,7 @@ async function parseDotnetInfo(dotnetInfo: string, dotnetExecutablePath: string 
             let match: RegExpMatchArray | null;
             if ((match = /^\s*Version:\s*([^\s].*)$/.exec(line))) {
                 version = match[1];
-            } else if ((match = /^ RID:\s*([\w\-.]+)$/.exec(line))) {
+            } else if ((match = /^\s*RID:\s*([\w\-.]+)$/.exec(line))) {
                 runtimeId = match[1];
             } else if ((match = /^\s*Architecture:\s*(.*)/.exec(line))) {
                 architecture = match[1];
