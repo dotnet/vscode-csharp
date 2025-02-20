@@ -9,6 +9,7 @@
 !.razoromnisharp/**
 .rpt2_cache/**
 .config/**
+.devcontainer/**
 .github/**
 .vscode/**
 .vscode-test/**

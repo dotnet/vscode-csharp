@@ -1412,7 +1412,7 @@
         "order": 9,
         "properties": {
           "dotnet.preferCSharpExtension": {
-            "scope": "resource",
+            "scope": "machine-overridable",
             "type": "boolean",
             "default": false,
             "description": "%configuration.dotnet.preferCSharpExtension%"
