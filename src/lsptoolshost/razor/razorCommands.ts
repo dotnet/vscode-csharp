@@ -27,7 +27,7 @@ import {
     InlayHintResolveRequest,
     InlayHintParams,
     InlayHintRequest,
-} from 'vscode-languageclient/node';
+} from 'vscode-languageclient';
 import SerializableSimplifyMethodParams from '../../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
 import { SerializableFormatNewFileParams } from '../../razor/src/formatNewFile/serializableFormatNewFileParams';

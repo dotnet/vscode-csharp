@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType } from 'vscode-languageclient';
+import { RequestType } from 'vscode-jsonrpc';
 import { IRazorDocument } from '../document/IRazorDocument';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';

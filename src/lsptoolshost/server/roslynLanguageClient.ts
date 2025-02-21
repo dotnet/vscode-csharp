@@ -3,13 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {
-    CancellationToken,
-    LanguageClient,
-    LanguageClientOptions,
-    MessageSignature,
-    ServerOptions,
-} from 'vscode-languageclient/node';
+import { CancellationToken, MessageSignature } from 'vscode-jsonrpc';
+import { LanguageClient } from 'vscode-languageclient/node';
+import { LanguageClientOptions, ServerOptions } from 'vscode-languageclient';
 import CompositeDisposable from '../../compositeDisposable';
 import { IDisposable } from '../../disposable';
 import { languageServerOptions } from '../../shared/options';

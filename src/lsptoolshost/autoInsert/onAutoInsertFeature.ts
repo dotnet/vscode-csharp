@@ -56,7 +56,7 @@ export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAuto
             this._registrations.delete(id);
         }
     }
-    dispose(): void {
+    clear(): void {
         this._registrations.clear();
     }
 
