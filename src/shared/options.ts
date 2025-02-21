@@ -416,7 +416,7 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
         return readOption<boolean>('dotnet.server.useServerGC', true);
     }
     public get reportInformationAsHint() {
-        return readOption<boolean>('dotnet.diagnostics.reportInformationAsHint', false);
+        return readOption<boolean>('dotnet.diagnostics.reportInformationAsHint', true);
     }
 }
 

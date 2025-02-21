@@ -843,7 +843,7 @@
           },
           "dotnet.diagnostics.reportInformationAsHint": {
             "type": "boolean",
-            "default": false,
+            "default": true,
             "description": "%configuration.dotnet.diagnostics.reportInformationAsHint%",
             "order": 30
           },
