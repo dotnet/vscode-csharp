@@ -25,5 +25,5 @@
         "__mocks__",
         "jest.config.ts",
         "baseJestConfig.ts",
-    ]
+    ],
 }
