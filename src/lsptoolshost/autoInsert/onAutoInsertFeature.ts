@@ -22,7 +22,7 @@ import {
 } from 'vscode-languageserver-protocol';
 
 import * as RoslynProtocol from '../server/roslynProtocol';
-import { generateUuid } from 'vscode-languageclient/lib/common/utils/uuid';
+import { generateUuid } from 'vscode-languageclient/uuid';
 
 export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAutoInsertRegistrationOptions> {
     private readonly _client: LanguageClient;
