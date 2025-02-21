@@ -6,7 +6,33 @@
 # 2.67.x
 * Bump xamlTools to 17.14.35813.246 (PR: [#8001](https://github.com/dotnet/vscode-csharp/pull/8001))
 
-# 2.66.x
+* Update Roslyn to 4.14.0-2.25120.5 (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
+  * Switch TextDocumentState.GetTextVersionAsync to ValueTask to reduce allocations. (PR: [#77213](https://github.com/dotnet/roslyn/pull/77213))
+  * Add an option to ignore aliases when moving using directives outside a namespace (PR: [#77291](https://github.com/dotnet/roslyn/pull/77291))
+  * Fill some gaps in the LSP (PR: [#77289](https://github.com/dotnet/roslyn/pull/77289))
+  * Ensure diagnostics refresh when source generators run in balanced mode (PR: [#77271](https://github.com/dotnet/roslyn/pull/77271))
+  * Fix override completion when attribute below (PR: [#77242](https://github.com/dotnet/roslyn/pull/77242))
+  * Fix crash in 'introduce variable' when converting an object creation expression to an implicit object creation expression (PR: [#77279](https://github.com/dotnet/roslyn/pull/77279))
+  * Fix Quick Info nullability display for backing fields (PR: [#77240](https://github.com/dotnet/roslyn/pull/77240))
+  * Properly pass progress object along in fix all provider (PR: [#77243](https://github.com/dotnet/roslyn/pull/77243))
+  * Remove need to use semantics in the 'move type' code refactoring provider. (PR: [#77244](https://github.com/dotnet/roslyn/pull/77244))
+  * Do not offer primary constructor parameters when offering to generate Equals/GetHashCode (PR: [#77235](https://github.com/dotnet/roslyn/pull/77235))
+  * Rename feature to 'Add or remove accessibility modifiers' (PR: [#77234](https://github.com/dotnet/roslyn/pull/77234))
+  * Have distinct messages for adding vs. removing accessibility modifiers (PR: [#77188](https://github.com/dotnet/roslyn/pull/77188))
+  * Update 'use interpolated string' refactoring to support fix all (PR: [#77209](https://github.com/dotnet/roslyn/pull/77209))
+  * Reduce allocations in SymbolCompletionItem.GetSupportedPlatforms (PR: [#77168](https://github.com/dotnet/roslyn/pull/77168))
+  * Classify string fields with embedded languages if we can see their values passed to a StringSyntax api (PR: [#77199](https://github.com/dotnet/roslyn/pull/77199))
+  * Add analyzer redirecting API (PR: [#74820](https://github.com/dotnet/roslyn/pull/74820))
+  * Fix race during shutdown of the BuildHost server (PR: [#77151](https://github.com/dotnet/roslyn/pull/77151))
+  * Fix workspace command execution (PR: [#77152](https://github.com/dotnet/roslyn/pull/77152))
+  * Add Microsoft.CodeAnalysis.Contracts source package (PR: [#76997](https://github.com/dotnet/roslyn/pull/76997))
+  * Detect data section string literal hash collisions (PR: [#77061](https://github.com/dotnet/roslyn/pull/77061))
+  * Return LSP diagnostics with their reported severity. (PR: [#77145](https://github.com/dotnet/roslyn/pull/77145))
+  * Fix syntax generation of explict checked operator from symbol (PR: [#77102](https://github.com/dotnet/roslyn/pull/77102))
+  * Add new workspace event that gives handlers the opportunity to be processed immediately (PR: [#76932](https://github.com/dotnet/roslyn/pull/76932))
+  * Optimize DiagnosticService on NetCore (PR: [#77126](https://github.com/dotnet/roslyn/pull/77126))
+  * Simplify caching api between CodeAnalysisService and DiagnosticAnalysisService (PR: [#77094](https://github.com/dotnet/roslyn/pull/77094))
+* Manage information diagnostic severity on the client-side (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
 * Update Razor to 9.0.0-preview.25113.1 (PR: [#7989](https://github.com/dotnet/vscode-csharp/pull/7989))
   * Update Telemetry package (#11468) (PR: [#11468](https://github.com/dotnet/razor/pull/11468))
   * Don't hold onto Roslyn projects longer than necessary (#11458) (PR: [#11458](https://github.com/dotnet/razor/pull/11458))
@@ -33,14 +59,14 @@
 * Add code snippets for C# expression-bodied properties (PR: [#5683](https://github.com/dotnet/vscode-csharp/pull/5683))
 * Sync whitespace options even when detectIndentation is on (PR: [#7965](https://github.com/dotnet/vscode-csharp/pull/7965))
 * Bump Razor (PR: [#7940](https://github.com/dotnet/vscode-csharp/pull/7940))
-Bump xamltools to 17.14.35807.11(PR: [#7976]( https://github.com/dotnet/vscode-csharp/pull/7976))
+* Bump xamltools to 17.14.35807.11(PR: [#7976]( https://github.com/dotnet/vscode-csharp/pull/7976))
 
 # 2.64.x
 * Bump xamlTools to 17.14.35730.156 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
 
 # 2.63.x
 * Bump xamlTools to 17.14.35723.260 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
-  * CSS Hot Reload for MAUI Blazor Hybrid is now in preview. It's enabled when C# Hot Reload is enabled. 
+  * CSS Hot Reload for MAUI Blazor Hybrid is now in preview. It's enabled when C# Hot Reload is enabled.
 * Update Roslyn to 4.14.0-1.25074.7 (PR: [#7942](https://github.com/dotnet/vscode-csharp/pull/7942))
   * Enable extract refactorings in LSP (PR: [#76718](https://github.com/dotnet/roslyn/pull/76718))
   * Speed up 'fix all' for 'use auto prop' by running in parallel (PR: [#76905](https://github.com/dotnet/roslyn/pull/76905))

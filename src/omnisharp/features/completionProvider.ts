@@ -23,11 +23,8 @@ import {
 import AbstractProvider from './abstractProvider';
 import * as protocol from '../protocol';
 import * as serverUtils from '../utils';
-import {
-    CancellationToken,
-    CompletionTriggerKind as LspCompletionTriggerKind,
-    InsertTextFormat,
-} from 'vscode-languageserver-protocol';
+import { CancellationToken } from 'vscode-jsonrpc';
+import { CompletionTriggerKind as LspCompletionTriggerKind, InsertTextFormat } from 'vscode-languageserver-protocol';
 import { createRequest } from '../typeConversion';
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
 import { OmniSharpServer } from '../server';

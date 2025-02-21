@@ -17,7 +17,7 @@ import {
     Range,
     RequestType,
     TextEdit,
-} from 'vscode-languageclient';
+} from 'vscode-languageserver-protocol';
 import { provideCompletionsCommand, resolveCompletionsCommand } from '../../../lsptoolshost/razor/razorCommands';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';

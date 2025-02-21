@@ -7,6 +7,14 @@
         "lib": [
             "ES2021"
         ],
+        "paths": {
+          "vscode-languageclient": ["./node_modules/vscode-languageclient/lib/common/api"],
+          "vscode-languageclient/node": ["./node_modules/vscode-languageclient/lib/node/main"],
+          "vscode-languageserver-protocol": ["./node_modules/vscode-languageserver-protocol/lib/common/api"],
+          "vscode-languageserver-protocol/node": ["./node_modules/vscode-languageserver-protocol/lib/node/main"],
+          "vscode-jsonrpc": ["./node_modules/vscode-jsonrpc/lib/common/api"],
+          "vscode-jsonrpc/node": ["./node_modules/vscode-jsonrpc/lib/node/main"]
+        },
         "sourceMap": true,
         "moduleResolution": "node",
         "moduleDetection": "force",

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { FoldingRange } from 'vscode-languageclient';
+import { FoldingRange } from 'vscode-languageserver-protocol';
 
 export class SerializableFoldingRangeResponse {
     constructor(public htmlRanges: FoldingRange[], public csharpRanges: FoldingRange[]) {}
