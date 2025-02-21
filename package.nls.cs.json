@@ -44,6 +44,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Pro členy, které jste nedávno vybrali, proveďte automatické dokončování názvů objektů.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Automaticky zobrazovat seznam dokončení v seznamech argumentů",
   "configuration.dotnet.defaultSolution.description": "Cesta výchozího řešení, které se má otevřít v pracovním prostoru. Můžete přeskočit nastavením na „zakázat“. (Dříve omnisharp.defaultLaunchSolution)",
+  "configuration.dotnet.diagnostics.reportInformationAsHint": "Enable this setting to reduce visual distractions in your editor. Information problems will be reported as hints and only be visible when the code actions popup is open.",
   "configuration.dotnet.enableXamlTools": "Povolí nástroje XAML při použití sady C# Dev Kit",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Určuje, zda mají být během formátování dokumentu seskupeny a seřazeny direktivy using. (dříve omnisharp.organizeImportsOnFormat)",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Zvýrazněte související komponenty JSON pod kurzorem.",

@@ -44,6 +44,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "Führen Sie die automatische Vervollständigung des Objektnamens für die Elemente aus, die Sie kürzlich ausgewählt haben.",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "Vervollständigungsliste in Argumentlisten automatisch anzeigen",
   "configuration.dotnet.defaultSolution.description": "Der Pfad der Standardlösung, die im Arbeitsbereich geöffnet werden soll, oder auf \"deaktivieren\" festlegen, um sie zu überspringen. (Zuvor \"omnisharp.defaultLaunchSolution\")",
+  "configuration.dotnet.diagnostics.reportInformationAsHint": "Enable this setting to reduce visual distractions in your editor. Information problems will be reported as hints and only be visible when the code actions popup is open.",
   "configuration.dotnet.enableXamlTools": "Aktiviert XAML-Tools bei Verwendung des C#-Dev Kit",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "Gibt an, ob „using“-Anweisungen während der Dokumentformatierung gruppiert und sortiert werden sollen. (Zuvor „omnisharp.organizeImportsOnFormat“)",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "Zugehörige JSON-Komponenten unter dem Cursor markieren.",
