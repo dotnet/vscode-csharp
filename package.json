@@ -1408,7 +1408,7 @@
         "order": 9,
         "properties": {
           "dotnet.preferCSharpExtension": {
-            "scope": "machine-overridable",
+            "scope": "window",
             "type": "boolean",
             "default": false,
             "description": "%configuration.dotnet.preferCSharpExtension%"
