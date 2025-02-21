@@ -4,8 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.67.x
-* Bump xamlTools to 17.14.35813.246 (PR: [#8001](https://github.com/dotnet/vscode-csharp/pull/8001))
-
+* Bump xamlTools to 17.14.35821.62 (PR: [#8001](https://github.com/dotnet/vscode-csharp/pull/8001))
 * Update Roslyn to 4.14.0-2.25120.5 (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
   * Switch TextDocumentState.GetTextVersionAsync to ValueTask to reduce allocations. (PR: [#77213](https://github.com/dotnet/roslyn/pull/77213))
   * Add an option to ignore aliases when moving using directives outside a namespace (PR: [#77291](https://github.com/dotnet/roslyn/pull/77291))
@@ -44,6 +43,8 @@
   * Clean up and rationalize imports in the compiler (#11409) (PR: [#11409](https://github.com/dotnet/razor/pull/11409))
   * Fix typo in setting description (#11423) (PR: [#11423](https://github.com/dotnet/razor/pull/11423))
 * Bump xamlTools to 17.14.35813.246 (PR: [#7993](https://github.com/dotnet/vscode-csharp/pull/7993))
+* Update the debugger to 2.66.0 (PR: [#7988](https://github.com/dotnet/vscode-csharp/pull/7988))
+* Fix the regular expression to read RID value. (PR: [#7994](https://github.com/dotnet/vscode-csharp/pull/7994))
 
 # 2.65.x
 * Update Roslyn LSP to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
