@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.67.x
+* Bump xamlTools to 17.14.35813.246 (PR: [#8001](https://github.com/dotnet/vscode-csharp/pull/8001))
 
 # 2.66.x
 * Update Razor to 9.0.0-preview.25113.1 (PR: [#7989](https://github.com/dotnet/vscode-csharp/pull/7989))
