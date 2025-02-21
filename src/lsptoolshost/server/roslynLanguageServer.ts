@@ -181,6 +181,7 @@ export class RoslynLanguageServer {
                     state: ServerState.Started,
                     workspaceLabel: this.workspaceDisplayName(),
                 });
+                this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ClientServerReady);
             } else if (state.newState === State.Stopped) {
                 this._languageServerEvents.onServerStateChangeEmitter.fire({
                     state: ServerState.Stopped,
@@ -338,7 +339,7 @@ export class RoslynLanguageServer {
      * Returns whether or not the underlying LSP server is running or not.
      */
     public isRunning(): boolean {
-        return this._languageClient.state === State.Running;
+        return this._languageClient.isRunning();
     }
 
     /**

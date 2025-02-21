@@ -3,11 +3,23 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# 2.66.x
+# 2.67.x
+
 * Update Roslyn to (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
   * Return LSP diagnostics with their reported severity. (PR: [#77145](https://github.com/dotnet/roslyn/pull/77145))
   * Fix syntax generation of explict checked operator from symbol (PR: [#77102](https://github.com/dotnet/roslyn/pull/77102))
 * Manage information diagnostic severity on the client-side (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
+* Update Razor to 9.0.0-preview.25113.1 (PR: [#7989](https://github.com/dotnet/vscode-csharp/pull/7989))
+  * Update Telemetry package (#11468) (PR: [#11468](https://github.com/dotnet/razor/pull/11468))
+  * Don't hold onto Roslyn projects longer than necessary (#11458) (PR: [#11458](https://github.com/dotnet/razor/pull/11458))
+  * Fix formatting of escaped at signs (#11462) (PR: [#11462](https://github.com/dotnet/razor/pull/11462))
+  * Code action to offer to wrap Html attributes (#11422) (PR: [#11422](https://github.com/dotnet/razor/pull/11422))
+  * Make sure we go through GetAbsolutePosition to handle LSP edge cases (#11441) (PR: [#11441](https://github.com/dotnet/razor/pull/11441))
+  * Make log levels match LogLevel.cs (#11436) (PR: [#11436](https://github.com/dotnet/razor/pull/11436))
+  * Fix on type formatting line delta calculations (#11435) (PR: [#11435](https://github.com/dotnet/razor/pull/11435))
+  * Clean up and rationalize imports in the compiler (#11409) (PR: [#11409](https://github.com/dotnet/razor/pull/11409))
+  * Fix typo in setting description (#11423) (PR: [#11423](https://github.com/dotnet/razor/pull/11423))
+* Bump xamlTools to 17.14.35813.246 (PR: [#7993](https://github.com/dotnet/vscode-csharp/pull/7993))
 
 # 2.65.x
 * Update Roslyn LSP to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
@@ -23,7 +35,7 @@
 * Add code snippets for C# expression-bodied properties (PR: [#5683](https://github.com/dotnet/vscode-csharp/pull/5683))
 * Sync whitespace options even when detectIndentation is on (PR: [#7965](https://github.com/dotnet/vscode-csharp/pull/7965))
 * Bump Razor (PR: [#7940](https://github.com/dotnet/vscode-csharp/pull/7940))
-Bump xamltools to 17.14.35807.11(PR: [#7976]( https://github.com/dotnet/vscode-csharp/pull/7976))
+* Bump xamltools to 17.14.35807.11(PR: [#7976]( https://github.com/dotnet/vscode-csharp/pull/7976))
 
 # 2.64.x
 * Bump xamlTools to 17.14.35730.156 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
