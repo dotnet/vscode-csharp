@@ -1,5 +1,5 @@
 ---
-name: 🐞 Bug report
+name: "\U0001F41E Bug report"
 about: Create a report to help us improve
 title: ''
 labels: ''
@@ -20,8 +20,10 @@ If the `CSharp: Report an issue` command doesn't appear, make sure that you have
 VS Code version:
 C# Extension version:
 
-## OmniSharp log
+## C# logs
+C# output window contents:
 
+See [this page](https://github.com/dotnet/vscode-csharp/blob/main/SUPPORT.md#collecting-general-logs) for collecting more detailed logs
 
 ## Steps to reproduce
 
