@@ -25,19 +25,58 @@ const config = {
         '@opentelemetry/tracing': 'commonjs @opentelemetry/tracing', // optional
     },
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
+        exportsFields: [],
+        alias: [
+            {
+                name: 'vscode-jsonrpc',
+                alias: 'vscode-jsonrpc/lib/common/api',
+                onlyModule: true
+            },
+            {
+                name: 'vscode-jsonrpc/node',
+                alias: 'vscode-jsonrpc/lib/node/main',
+                onlyModule: true
+            },
+            {
+                name: 'vscode-languageserver-protocol',
+                alias: 'vscode-languageserver-protocol/lib/common/api',
+                onlyModule: true
+            },
+            {
+                name: 'vscode-languageserver-protocol/node',
+                alias: 'vscode-languageserver-protocol/lib/node/main',
+                onlyModule: true
+            },
+            {
+                name: 'vscode-languageclient',
+                alias: 'vscode-languageclient/lib/common/api',
+                onlyModule: true
+            },
+            {
+                name: 'vscode-languageclient/node',
+                alias: 'vscode-languageclient/lib/node/main',
+                onlyModule: true
+            }
+        ]
     },
     node: {
         __dirname: false //preserve the default node.js behavior for __dirname
     },
     module: {
-        rules: [{
-            test: /\.ts$/,
-            exclude: /node_modules/,
-            use: [{
-                loader: 'ts-loader',
-            }]
-        }]
+        rules: [
+            {
+                test: /\.ts$/,
+                exclude: /node_modules/,
+                use: [{
+                    loader: 'ts-loader',
+                }],
+            },
+            {
+                test: /node_modules[\\|/](vscode-languageserver-types|vscode-languageserver-textdocument)/,
+                use: "umd-compat-loader",
+            },
+        ]
     },
 };
 

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { CompletionItem } from 'vscode-languageclient';
+import { CompletionItem } from 'vscode-languageserver-protocol';
 import { LanguageKind } from '../rpc/languageKind';
 import { SerializableTextDocumentIdentifierAndVersion } from '../simplify/serializableTextDocumentIdentifierAndVersion';
 

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
+import { RequestType, TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';

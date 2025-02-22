@@ -8,23 +8,20 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as net from 'net';
+import { LanguageClientOptions, MessageTransports, ProtocolRequestType, ServerOptions } from 'vscode-languageclient';
 import {
-    LanguageClientOptions,
-    ServerOptions,
-    State,
     Trace,
     RequestType,
     RequestType0,
-    PartialResultParams,
-    ProtocolRequestType,
-    SocketMessageWriter,
-    SocketMessageReader,
-    MessageTransports,
     RAL,
     CancellationToken,
     RequestHandler,
     ResponseError,
     NotificationHandler0,
+    PartialResultParams,
+    State,
+    SocketMessageReader,
+    SocketMessageWriter,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../../shared/platform';
 import { readConfigurations } from '../options/configurationMiddleware';
@@ -42,6 +39,7 @@ import {
 import { randomUUID } from 'crypto';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
+import { provideDiagnostics, provideWorkspaceDiagnostics } from '../diagnostics/diagnosticMiddleware';
 import { reportProjectConfigurationEvent } from '../../shared/projectConfiguration';
 import { getDotnetInfo } from '../../shared/utils/getDotnetInfo';
 import { DotnetInfo } from '../../shared/utils/dotnetInfo';
@@ -183,6 +181,7 @@ export class RoslynLanguageServer {
                     state: ServerState.Started,
                     workspaceLabel: this.workspaceDisplayName(),
                 });
+                this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ClientServerReady);
             } else if (state.newState === State.Stopped) {
                 this._languageServerEvents.onServerStateChangeEmitter.fire({
                     state: ServerState.Stopped,
@@ -284,6 +283,8 @@ export class RoslynLanguageServer {
                 protocol2Code: UriConverter.deserialize,
             },
             middleware: {
+                provideDiagnostics,
+                provideWorkspaceDiagnostics,
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },
@@ -338,7 +339,7 @@ export class RoslynLanguageServer {
      * Returns whether or not the underlying LSP server is running or not.
      */
     public isRunning(): boolean {
-        return this._languageClient.state === State.Running;
+        return this._languageClient.isRunning();
     }
 
     /**
