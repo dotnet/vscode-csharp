@@ -32,7 +32,7 @@
   * Optimize DiagnosticService on NetCore (PR: [#77126](https://github.com/dotnet/roslyn/pull/77126))
   * Simplify caching api between CodeAnalysisService and DiagnosticAnalysisService (PR: [#77094](https://github.com/dotnet/roslyn/pull/77094))
 * Manage information diagnostic severity on the client-side (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
-* Update Razor to 9.0.0-preview.25121.2 (PR: [#7989](https://github.com/dotnet/vscode-csharp/pull/7989))
+* Update Razor to 9.0.0-preview.25121.2 (PR: [#8010](https://github.com/dotnet/vscode-csharp/pull/8010))
   * Fix formatting of multi-line expressions in Html attributes (#11528) (PR: [#11528](https://github.com/dotnet/razor/pull/11528))
   * Stop attribute name parsing at transition (#11520) (PR: [#11520](https://github.com/dotnet/razor/pull/11520))
   * Use different completion trigger character set for VSCode (#11446) (PR: [#11446](https://github.com/dotnet/razor/pull/11446))
