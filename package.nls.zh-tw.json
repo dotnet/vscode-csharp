@@ -44,7 +44,7 @@
   "configuration.dotnet.completion.showNameCompletionSuggestions": "為您最近選取的成員執行自動物件名稱完成。",
   "configuration.dotnet.completion.triggerCompletionInArgumentLists": "自動在引數清單中顯示自動完成清單",
   "configuration.dotnet.defaultSolution.description": "要在工作區中開啟的預設解決方案路徑，或設為 [停用] 以略過它。(先前為 `omnisharp.defaultLaunchSolution`)",
-  "configuration.dotnet.diagnostics.reportInformationAsHint": "Enable this setting to reduce visual distractions in your editor. Information problems will be reported as hints and only be visible when the code actions popup is open.",
+  "configuration.dotnet.diagnostics.reportInformationAsHint": "啟用此設定以減少您編輯器中的視覺干擾。資訊問題將以提示的形式回報，並且僅在程式碼動作快顯視窗開啟時顯示。",
   "configuration.dotnet.enableXamlTools": "使用 C# 開發套件時啟用 XAML 工具",
   "configuration.dotnet.formatting.organizeImportsOnFormat": "指定在文件格式化期間，是否應該將 'using' 指示詞分組和排序。(先前為 'omnisharp.organizeImportsOnFormat')",
   "configuration.dotnet.highlighting.highlightRelatedJsonComponents": "反白資料指標下的相關 JSON 元件。",
