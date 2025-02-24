@@ -13,6 +13,7 @@ import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../../constants/csharpExtensionId';
 import { readFile } from 'fs/promises';
 import { IDotnetAcquireResult, IDotnetFindPathContext } from './dotnetRuntimeExtensionApi';
+import { DotNetRuntimeExtensionId } from '../../checkDotNetRuntimeExtensionVersion';
 
 const DotNetMajorVersion = '9';
 const DotNetMinorVersion = '0';
@@ -57,7 +58,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         );
         if (acquireResult === undefined) {
             this.channel.appendLine(
-                `Did not find .NET ${DotNetRuntimeVersion} on path, falling back to acquire runtime via ms-dotnettools.vscode-dotnet-runtime`
+                `Did not find .NET ${DotNetRuntimeVersion} on path, falling back to acquire runtime via ${DotNetRuntimeExtensionId}`
             );
             acquireResult = await this.acquireDotNetProcessDependencies();
         }
