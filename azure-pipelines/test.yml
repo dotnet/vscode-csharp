@@ -8,8 +8,8 @@ parameters:
     type: string
   - name: testVSCodeVersion
     type: string
-  - name: isIntegrationTest
-    type: boolean
+  - name: isIntegration
+    type: string
 
 steps:
 - checkout: self
@@ -46,7 +46,7 @@ steps:
     mergeTestResults: true
     testRunTitle: $(System.StageDisplayName) $(Agent.JobName) (Attempt $(System.JobAttempt))
 
-- ${{ if eq(parameters.isIntegrationTest, true) }}:
+- ${{ if eq(parameters.isIntegration, 'true') }}:
   - powershell: |
       $tempPath = [System.IO.Path]::GetTempPath()
       echo "Temp Path: $tempPath"
