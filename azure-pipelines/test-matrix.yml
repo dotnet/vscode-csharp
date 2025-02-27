@@ -31,6 +31,7 @@ jobs:
   - template: /azure-pipelines/test.yml@self
     parameters:
       dotnetVersion: ${{ parameters.dotnetVersion }}
-      installAdditionalLinuxDependencies: true
+      installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
       npmCommand: $(npmCommand)
       testVSCodeVersion: ${{ parameters.testVSCodeVersion }}
+      isIntegrationTest: $[ startsWith(variables.npmCommand, 'test:integration') ]
