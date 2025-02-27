@@ -9,7 +9,7 @@ parameters:
   - name: testVSCodeVersion
     type: string
   - name: isIntegration
-    type: boolean
+    type: string
 
 steps:
 - checkout: self
