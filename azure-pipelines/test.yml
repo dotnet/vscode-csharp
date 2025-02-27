@@ -47,25 +47,25 @@ steps:
     testRunTitle: $(System.StageDisplayName) $(Agent.JobName) (Attempt $(System.JobAttempt))
 
 - powershell: |
-    Write-Host "##vso[task.setvariable variable=isIntegration;]${{ parameters.isIntegration }}"
+    Write-Host "##vso[task.setvariable variable=isIntegrationVar;]${{ parameters.isIntegration }}"
     
 - powershell: |
     $tempPath = [System.IO.Path]::GetTempPath()
     echo "Temp Path: $tempPath"
     Get-ChildItem -Path $tempPath -Filter *.cpuprofile | Copy-Item -Destination "$(Build.SourcesDirectory)/out/logs"
   displayName: 'Copy .cpuprofile files to out/logs'
-  condition: eq(variables.isIntegration, true)
+  condition: eq(variables.isIntegrationVar, true)
 
 - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
   - task: 1ES.PublishPipelineArtifact@1
-    condition: eq(variables.isIntegration, true)
+    condition: eq(variables.isIntegrationVar, true)
     displayName: 'Upload integration test logs'
     inputs:
       path: '$(Build.SourcesDirectory)/out/logs'
       artifact: 'Test Logs ($(System.StageDisplayName)-$(Agent.JobName)-$(System.JobAttempt))'
 - ${{ else }}: 
   - task: PublishPipelineArtifact@1
-    condition: eq(variables.isIntegration, true)
+    condition: eq(variables.isIntegrationVar, true)
     displayName: 'Upload integration test logs'
     inputs:
       targetPath: '$(Build.SourcesDirectory)/out/logs'
