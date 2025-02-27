@@ -18,7 +18,7 @@ steps:
   fetchTags: false
   fetchDepth: 1
 
-- script: echo eq(${{ parameters.isIntegration }}, 'true') evaluates to ${{ eq(parameters.isIntegration, 'true)' }}
+- script: echo eq(${{ parameters.isIntegration }}, 'true') evaluates to ${{ eq(parameters.isIntegration, 'true') }}
 
 - template: prereqs.yml
   parameters:
