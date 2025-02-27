@@ -18,12 +18,16 @@ jobs:
     matrix:
       UnitTests:
         npmCommand: test:unit
+        integration: false
       CSharpIntegrationTests:
         npmCommand: test:integration:csharp
+        integration: true
       DevKitTests:
         npmCommand: test:integration:devkit
+        integration: true
       RazorTests:
         npmCommand: test:integration:razor
+        integration: true
   pool: ${{ parameters.pool }}
   ${{ if parameters.containerName }}:
     container: ${{ parameters.containerName }}
@@ -34,4 +38,4 @@ jobs:
       installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
       npmCommand: $(npmCommand)
       testVSCodeVersion: ${{ parameters.testVSCodeVersion }}
-      isIntegrationTest: ${{ startsWith(variables.npmCommand, 'test:integration') }}
+      isIntegrationTest: ${{ eq(variables.integration, 'true') }}
