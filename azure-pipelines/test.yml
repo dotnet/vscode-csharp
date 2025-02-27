@@ -48,6 +48,8 @@ steps:
 
 - powershell: |
     Write-Host "##vso[task.setvariable variable=isIntegrationVar;]${{ parameters.isIntegration }}"
+  displayName: 'Set IsIntegration Variable'
+  condition: succeededOrFailed()
     
 - powershell: |
     $tempPath = [System.IO.Path]::GetTempPath()
