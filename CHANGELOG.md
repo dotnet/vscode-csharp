@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.67.x
+* Update Razor to 9.0.0-preview.25125.9 (PR: [#8027](https://github.com/dotnet/vscode-csharp/pull/8027))
+  * Don't send invalid ranges for diagnostics if they do not map (#11555) (PR: [#11555](https://github.com/dotnet/razor/pull/11555))
+  * Fix file path service, and integration tests (#11556) (PR: [#11556](https://github.com/dotnet/razor/pull/11556))
+  * Add ParserOptions and CodeGenerationOptions properties to RazorCodeDocument and rationalize options configuration (#11526) (PR: [#11526](https://github.com/dotnet/razor/pull/11526))
+  * Fix parsing of quotes in attribute names (#11543) (PR: [#11543](https://github.com/dotnet/razor/pull/11543))
 * Bump xamlTools to 17.14.35821.62 (PR: [#8001](https://github.com/dotnet/vscode-csharp/pull/8001))
 * Update Roslyn to 4.14.0-2.25120.5 (PR: [#7984](https://github.com/dotnet/vscode-csharp/pull/7984))
   * Switch TextDocumentState.GetTextVersionAsync to ValueTask to reduce allocations. (PR: [#77213](https://github.com/dotnet/roslyn/pull/77213))
