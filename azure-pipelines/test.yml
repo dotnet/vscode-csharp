@@ -46,7 +46,7 @@ steps:
     mergeTestResults: true
     testRunTitle: $(System.StageDisplayName) $(Agent.JobName) (Attempt $(System.JobAttempt))
 
-- ${{ if parameters.isIntegration }}:
+- ${{ if eq(parameters.isIntegration, true) }}:
   - powershell: |
       $tempPath = [System.IO.Path]::GetTempPath()
       echo "Temp Path: $tempPath"
