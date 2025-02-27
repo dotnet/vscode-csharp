@@ -11,15 +11,14 @@ parameters:
   - name: isIntegration
     type: string
 
-variables:
-  isIntegration: ${{ parameters.isIntegration }}
-
 steps:
 - checkout: self
   clean: true
   submodules: true
   fetchTags: false
   fetchDepth: 1
+
+- script: echo eq(${{ parameters.isIntegration }}, 'true') evaluates to ${{ eq(parameters.isIntegration, 'true)' }}
 
 - template: prereqs.yml
   parameters:
@@ -54,18 +53,18 @@ steps:
     echo "Temp Path: $tempPath"
     Get-ChildItem -Path $tempPath -Filter *.cpuprofile | Copy-Item -Destination "$(Build.SourcesDirectory)/out/logs"
   displayName: 'Copy .cpuprofile files to out/logs'
-  condition: eq(variables['isIntegration'], 'true')
+  condition: ${{ eq(parameters.isIntegration, 'true') }}
 
 - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
   - task: 1ES.PublishPipelineArtifact@1
-    condition: eq(variables['isIntegration'], 'true')
+    condition: ${{ eq(parameters.isIntegration, 'true') }}
     displayName: 'Upload integration test logs'
     inputs:
       path: '$(Build.SourcesDirectory)/out/logs'
       artifact: 'Test Logs ($(System.StageDisplayName)-$(Agent.JobName)-$(System.JobAttempt))'
 - ${{ else }}: 
   - task: PublishPipelineArtifact@1
-    condition: eq(variables['isIntegration'], 'true')
+    condition: ${{ eq(parameters.isIntegration, 'true') }}
     displayName: 'Upload integration test logs'
     inputs:
       targetPath: '$(Build.SourcesDirectory)/out/logs'
