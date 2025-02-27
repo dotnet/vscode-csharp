@@ -34,4 +34,4 @@ jobs:
       installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
       npmCommand: $(npmCommand)
       testVSCodeVersion: ${{ parameters.testVSCodeVersion }}
-      isIntegrationTest: $[ eq(startsWith(variables.npmCommand, 'test:integration'), true) ]
+      isIntegrationTest: ${{ startsWith(variables.npmCommand, 'test:integration') }}
