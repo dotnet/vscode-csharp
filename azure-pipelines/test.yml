@@ -51,18 +51,18 @@ steps:
     echo "Temp Path: $tempPath"
     Get-ChildItem -Path $tempPath -Filter *.cpuprofile | Copy-Item -Destination "$(Build.SourcesDirectory)/out/logs"
   displayName: 'Copy .cpuprofile files to out/logs'
-  condition: eq(parameters.isIntegration, 'true')
+  condition: ${{ eq(parameters.isIntegration, 'true') }}
 
 - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
   - task: 1ES.PublishPipelineArtifact@1
-    condition: eq(parameters.isIntegration, 'true')
+    condition: ${{ eq(parameters.isIntegration, 'true') }}
     displayName: 'Upload integration test logs'
     inputs:
       path: '$(Build.SourcesDirectory)/out/logs'
       artifact: 'Test Logs ($(System.StageDisplayName)-$(Agent.JobName)-$(System.JobAttempt))'
 - ${{ else }}: 
   - task: PublishPipelineArtifact@1
-    condition: eq(parameters.isIntegration, 'true')
+    condition: ${{ eq(parameters.isIntegration, 'true') }}
     displayName: 'Upload integration test logs'
     inputs:
       targetPath: '$(Build.SourcesDirectory)/out/logs'
