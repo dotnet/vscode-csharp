@@ -33,12 +33,13 @@ steps:
     DISPLAY: :99.0
     CODE_VERSION: ${{ parameters.testVSCodeVersion }}
 
-- powershell: |
-    $tempPath = [System.IO.Path]::GetTempPath()
-    echo "Temp Path: $tempPath"
-    Get-ChildItem -Path $tempPath -Filter *.cpuprofile | Copy-Item -Destination "$(Build.SourcesDirectory)/out/logs"
-  displayName: 'Copy .cpuprofile files to out/logs'
-  condition: succeededOrFailed()
+- ${{ if contains(parameters.npmCommand, ':integration') }}:
+  - powershell: |
+      $tempPath = [System.IO.Path]::GetTempPath()
+      echo "Temp Path: $tempPath"
+      Get-ChildItem -Path $tempPath -Filter *.cpuprofile | Copy-Item -Destination "$(Build.SourcesDirectory)/out/logs"
+    displayName: 'Copy .cpuprofile files to out/logs'
+    condition: succeededOrFailed()
 
 - task: PublishTestResults@2
   condition: succeededOrFailed()
