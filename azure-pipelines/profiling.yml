@@ -57,3 +57,4 @@ extends:
             dotnetVersion: $(defaultDotnetVersion)
             npmCommand: profiling
             testVSCodeVersion: stable
+            isIntegration: true
