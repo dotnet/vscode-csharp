@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.69.x
+
 # 2.68.x
 * Update Razor to 9.0.0-preview.25125.9 (PR: [#8027](https://github.com/dotnet/vscode-csharp/pull/8027))
   * Don't send invalid ranges for diagnostics if they do not map (#11555) (PR: [#11555](https://github.com/dotnet/razor/pull/11555))
