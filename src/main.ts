@@ -83,6 +83,8 @@ export async function activate(
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) =>
         downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
 
+    // Fine to do this as part of activate as it is always a no-op in Roslyn mode (the debugger and Razor are shipped in-box)
+    // Only actually downloads files in O# mode or local development.
     const runtimeDependenciesExist = await installRuntimeDependencies(
         context.extension.packageJSON,
         context.extension.extensionPath,
