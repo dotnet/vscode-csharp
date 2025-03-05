@@ -16,7 +16,7 @@ configuration:
       - payloadType: Pull_Request
       - isPullRequest
       - isActivitySender:
-          user: github-actions
+          user: github-actions[bot]
           issueAuthor: False
       - or:
         - titleContains:
