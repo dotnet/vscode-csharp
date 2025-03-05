@@ -26,7 +26,7 @@ configuration:
             pattern: "[automated] Update main version"
             isRegex: False
       - isAction:
-        action: Opened
+          action: Opened
       then:
       - approvePullRequest:
           comment: Auto-approve
