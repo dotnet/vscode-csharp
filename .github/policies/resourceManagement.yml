@@ -16,22 +16,22 @@ configuration:
       - payloadType: Pull_Request
       - isPullRequest
       - isActivitySender:
-        user: github-actions
-        issueAuthor: False
+          user: github-actions
+          issueAuthor: False
       - or:
         - titleContains:
-          pattern: "[automated] Merge branch"
-          isRegex: False
+            pattern: "[automated] Merge branch"
+            isRegex: False
         - titleContains:
-          pattern: "[automated] Update main version"
-          isRegex: False
+            pattern: "[automated] Update main version"
+            isRegex: False
       - isAction:
         action: Opened
       then:
       - approvePullRequest:
-        comment: Auto-approve
+          comment: Auto-approve
       - enableAutoMerge:
-        mergeMethod: merge
+          mergeMethod: merge
 
     - description: Add "untriaged" label to issues when opened
       triggerOnOwnActions: false
@@ -39,10 +39,10 @@ configuration:
       - payloadType: Issues
       - or:
         - isAction:
-          action: Opened
+            action: Opened
       then:
       - addLabel:
-        label: untriaged
+          label: untriaged
 
 onFailure: 
 onSuccess:
