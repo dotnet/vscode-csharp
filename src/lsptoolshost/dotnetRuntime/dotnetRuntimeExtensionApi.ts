@@ -5,13 +5,20 @@
 
 // Contains APIs defined by the vscode-dotnet-runtime extension
 
+/**
+ * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/IDotnetAcquireResult.ts
+ */
 export interface IDotnetAcquireResult {
     dotnetPath: string;
 }
 
+/**
+ * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/IDotnetFindPathContext.ts
+ */
 export interface IDotnetFindPathContext {
     acquireContext: IDotnetAcquireContext;
     versionSpecRequirement: DotnetVersionSpecRequirement;
+    rejectPreviews?: boolean;
 }
 
 /**

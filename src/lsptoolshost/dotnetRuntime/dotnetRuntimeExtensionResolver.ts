@@ -51,6 +51,8 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 mode: 'runtime',
             },
             versionSpecRequirement: 'greater_than_or_equal',
+            // Reject previews because we are not setting `DOTNET_ROLL_FORWARD_TO_PRERELEASE` when starting the server.
+            rejectPreviews: true,
         };
         let acquireResult = await vscode.commands.executeCommand<IDotnetAcquireResult | undefined>(
             'dotnet.findPath',
