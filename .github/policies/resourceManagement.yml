@@ -10,16 +10,39 @@ configuration:
 
     eventResponderTasks:
 
+    - description: Auto-approve/merge automated merge PRs
+      triggerOnOwnActions: false
+      if:
+      - payloadType: Pull_Request
+      - isPullRequest
+      - isActivitySender:
+        user: github-actions
+        issueAuthor: False
+      - or:
+        - titleContains:
+          pattern: "[automated] Merge branch"
+          isRegex: False
+        - titleContains:
+          pattern: "[automated] Update main version"
+          isRegex: False
+      - isAction:
+        action: Opened
+      then:
+      - approvePullRequest:
+        comment: Auto-approve
+      - enableAutoMerge:
+        mergeMethod: merge
+
     - description: Add "untriaged" label to issues when opened
       triggerOnOwnActions: false
       if:
       - payloadType: Issues
       - or:
         - isAction:
-            action: Opened
+          action: Opened
       then:
       - addLabel:
-          label: untriaged
+        label: untriaged
 
 onFailure: 
 onSuccess:
