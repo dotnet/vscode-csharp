@@ -8,7 +8,6 @@
   * Enable FUSE by default
   * Improve solution load performance (#11591) (PR: [#11591](https://github.com/dotnet/razor/pull/11591))
   * Make logging fall into the pit of success (#11581) (PR: [#11581](https://github.com/dotnet/razor/pull/11581))
-  * Fix code actions appearing for the wrong context when invoked from light bulb (#11537) (PR: [#11537](https://github.com/dotnet/razor/pull/11537))
 * Bump xamlTools to 17.14.35904.287 (PR: [#8042](https://github.com/dotnet/vscode-csharp/pull/8042))
 
 # 2.68.x
