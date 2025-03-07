@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.69.x
-* Bump razor to 9.0.0-preview.25156.2 (PR: []())
+* Bump razor to 9.0.0-preview.25156.2 (PR: [#8047](https://github.com/dotnet/vscode-csharp/pull/8047))
   * Enable FUSE by default
   * Improve solution load performance (#11591) (PR: [#11591](https://github.com/dotnet/razor/pull/11591))
   * Make logging fall into the pit of success (#11581) (PR: [#11581](https://github.com/dotnet/razor/pull/11581))
