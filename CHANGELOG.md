@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.70.x
+
 # 2.69.x
 * Bump razor to 9.0.0-preview.25156.2 (PR: [#8047](https://github.com/dotnet/vscode-csharp/pull/8047))
   * Enable FUSE by default
