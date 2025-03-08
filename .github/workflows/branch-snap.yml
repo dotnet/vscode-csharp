@@ -31,5 +31,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update main version
-          title: 'Update main version'
+          title: '[automated] Update main version'
           branch: merge/update-main-version
