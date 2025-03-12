@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.70.x
+* Bump razor to 9.0.0-preview.25161.2 (PR: [#8058](https://github.com/dotnet/vscode-csharp/pull/8058))
+  * Move VS Code To Pull Diagnostics (#11602) (PR: [#11602](https://github.com/dotnet/razor/pull/11602))
+  * Upgrade to net9 (#11535) (PR: [#11535](https://github.com/dotnet/razor/pull/11535))
+  * Cleanup CompletionTriggerAndCommitCharacters (#11600) (PR: [#11600](https://github.com/dotnet/razor/pull/11600))
+  * Add constraints to CaptureParameters method (#11530) (PR: [#11530](https://github.com/dotnet/razor/pull/11530))
+  * [main] Update dependencies from dotnet/source-build-reference-packages (#11598) (PR: [#11598](https://github.com/dotnet/razor/pull/11598))
+  * [FUSE] Layout mapping (#11567) (PR: [#11567](https://github.com/dotnet/razor/pull/11567))
+  * Stop running cohosting tests with and without FUSE (#11592) (PR: [#11592](https://github.com/dotnet/razor/pull/11592))
 
 # 2.69.x
 * Bump razor to 9.0.0-preview.25156.2 (PR: [#8047](https://github.com/dotnet/vscode-csharp/pull/8047))
