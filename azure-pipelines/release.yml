@@ -10,12 +10,6 @@ variables:
 # This is expected to provide pat to tag release.
 - group: DncEng-Partners-Tokens
 
-- name: NamePrefix
-  ${{ if eq(parameters.test, true) }}:
-    value: 'Test publish'
-  ${{ else }}:
-    value: 'Publish'
-
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -26,9 +20,6 @@ resources:
   - pipeline: officialBuildCI
     source: dotnet-vscode-csharp
     branch: main
-
-name: '$(NamePrefix) $(resources.pipeline.officialBuildCI.sourceBranch) build $(resources.pipeline.officialBuildCI.runName)'
-
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
@@ -60,6 +51,23 @@ extends:
           runOnce:
             deploy:
               steps:
+              - pwsh: |
+                  $buildNumberName = "$(resources.pipeline.officialBuildCI.sourceBranch) build $(resources.pipeline.officialBuildCI.runName)"
+                  if ('${{ parameters.test }}' -eq 'true') {
+                    $buildNumberName = "# Test publishing " + $buildNumberName
+                  }
+                  else {
+                    $buildNumberName = "# Publishing " + $buildNumberName
+                  }
+                  $buildNumberName = $buildNumberName -replace '["/:<>\|?@*]','_'
+                  # Maximum buildnumber length is 255 chars and we are going to append to the end to ensure we have space.
+                  if ($buildNumberName.Length -GT 253) {
+                    $buildNumberName = $buildNumberName.Substring(0, 253)
+                  }
+                  # Avoid ever ending the BuildNumber with a `.` by always appending to it.
+                  $buildNumberName += ' #'
+                  Write-Host "##vso[task.setvariable variable=BuildNumber;isoutput=true;isreadonly=true]$buildNumberName"
+                displayName: Setting BuildNumber
               - template: /azure-pipelines/install-node.yml@self
               - pwsh: |
                   npm install --global @vscode/vsce
@@ -122,6 +130,7 @@ extends:
                       Write-Host "##[command]vsce $publishArgs"
                       vsce @publishArgs
                     }
+
     - stage: 'TagRelease'
       displayName: 'Tag release of vscode-csharp'
       dependsOn: 'PublishStage'
