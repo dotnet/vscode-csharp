@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { DocumentDiagnosticReport, RequestType } from 'vscode-languageserver-protocol';
+import { DocumentDiagnosticParams, DocumentDiagnosticReport, RequestType } from 'vscode-languageserver-protocol';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
@@ -21,7 +21,7 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
         new RequestType(RazorDiagnosticHandler.razorPullDiagnosticsCommand);
 
     constructor(
-        protected documentSynchronizer: RazorDocumentSynchronizer,
+        protected readonly documentSynchronizer: RazorDocumentSynchronizer,
         protected readonly serverClient: RazorLanguageServerClient,
         protected readonly serviceClient: RazorLanguageServiceClient,
         protected readonly documentManager: RazorDocumentManager,
@@ -64,10 +64,17 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
         }
 
         const virtualCSharpUri = razorDocument.csharpDocument.uri;
-        request.identifier.textDocumentIdentifier.uri = UriConverter.serialize(virtualCSharpUri);
+
+        const roslynRequest: DocumentDiagnosticParams = 
+        {
+            textDocument: {
+                uri: UriConverter.serialize(virtualCSharpUri)
+            },
+        };
+
         const response: DocumentDiagnosticReport = await vscode.commands.executeCommand(
             roslynPullDiagnosticCommand,
-            request
+            roslynRequest
         );
 
         return response;
