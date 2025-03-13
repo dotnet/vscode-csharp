@@ -56,7 +56,7 @@ extends:
                   $artifactBranchName = '$(resources.pipeline.officialBuildCI.sourceBranch)' -replace 'refs/heads/',''
                   
                   # Set the BuildNumber in the form `# Publish prerelease v2.69.22 #` to improve readability in AzDO
-                  $buildNumberName = 'Publish $(artifactBranchName) $(artifactBranchName)'
+                  $buildNumberName = "Publish $artifactBranchName $artifactBranchName"
                   if ('${{ parameters.test }}' -eq 'true') {
                     $buildNumberName = 'Test ' + $buildNumberName
                   }
