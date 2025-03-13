@@ -16,8 +16,6 @@ variables:
   ${{ else }}:
     value: 'Publish'
 
-name: '$(NamePrefix) $(resources.pipeline.officialBuildCI.sourceBranch) build $(resources.pipeline.officialBuildCI.runName)'
-
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -28,6 +26,9 @@ resources:
   - pipeline: officialBuildCI
     source: dotnet-vscode-csharp
     branch: main
+
+name: '$(NamePrefix) $(resources.pipeline.officialBuildCI.sourceBranch) build $(resources.pipeline.officialBuildCI.runName)'
+
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
