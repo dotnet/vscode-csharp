@@ -65,10 +65,9 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
 
         const virtualCSharpUri = razorDocument.csharpDocument.uri;
 
-        const roslynRequest: DocumentDiagnosticParams = 
-        {
+        const roslynRequest: DocumentDiagnosticParams = {
             textDocument: {
-                uri: UriConverter.serialize(virtualCSharpUri)
+                uri: UriConverter.serialize(virtualCSharpUri),
             },
         };
 
