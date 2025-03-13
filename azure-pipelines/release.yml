@@ -113,6 +113,35 @@ extends:
                       Write-Host "##[command]vsce $publishArgs"
                       vsce @publishArgs
                     }
+
+    - stage: 'SetBuildNumber'
+      displayName: 'Set BuildNumbder'
+      jobs:
+      - job: 'Set'
+        pool:
+          name: netcore1espool-internal
+          image: 1es-ubuntu-2204
+          os: linux
+        steps:
+        - checkout: none
+        - pwsh: |
+            $buildNumberName = "$(resources.pipeline.officialBuildCI.sourceBranch) build $(resources.pipeline.officialBuildCI.runName)"
+            if ('${{ parameters.test }}' -eq 'true') {
+              $buildNumberName = "# Test publishing " + $buildNumberName
+            }
+            else {
+              $buildNumberName = "# Publishing " + $buildNumberName
+            }
+            $buildNumberName = $buildNumberName -replace '["/:<>\|?@*]','_'
+            # Maximum buildnumber length is 255 chars and we are going to append to the end to ensure we have space.
+            if ($buildNumberName.Length -GT 253) {
+              $buildNumberName = $buildNumberName.Substring(0, 253)
+            }
+            # Avoid ever ending the BuildNumber with a `.` by always appending to it.
+            $buildNumberName += ' #'
+            Write-Host "##vso[task.setvariable variable=BuildNumber;isoutput=true;isreadonly=true]$buildNumberName"
+          displayName: Setting BuildNumber
+
     - stage: 'TagRelease'
       displayName: 'Tag release of vscode-csharp'
       dependsOn: 'PublishStage'
