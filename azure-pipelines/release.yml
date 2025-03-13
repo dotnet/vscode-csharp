@@ -52,22 +52,26 @@ extends:
             deploy:
               steps:
               - pwsh: |
-                  $buildNumberName = "$(resources.pipeline.officialBuildCI.sourceBranch) build $(resources.pipeline.officialBuildCI.runName)"
+                  # Set the BuildNumber in the form `# Publish prerelease v2.69.22 #` to improve readability in AzDO
+                  $buildNumberName = "$(resources.pipeline.officialBuildCI.sourceBranch) $(resources.pipeline.officialBuildCI.runName)"
                   if ('${{ parameters.test }}' -eq 'true') {
-                    $buildNumberName = "# Test publishing " + $buildNumberName
+                    $buildNumberName = "Test publish " + $buildNumberName
                   }
                   else {
-                    $buildNumberName = "# Publishing " + $buildNumberName
+                    $buildNumberName = "Publish " + $buildNumberName
                   }
+
+                  # Replace invalid characters
                   $buildNumberName = $buildNumberName -replace '["/:<>\|?@*]','_'
-                  # Maximum buildnumber length is 255 chars and we are going to append to the end to ensure we have space.
-                  if ($buildNumberName.Length -GT 253) {
-                    $buildNumberName = $buildNumberName.Substring(0, 253)
+                  # Maximum buildnumber length is 255 chars and we are going to add a prefix and suffix so ensure we have space.
+                  if ($buildNumberName.Length -GT 251) {
+                    $buildNumberName = $buildNumberName.Substring(0, 251)
                   }
                   # Avoid ever ending the BuildNumber with a `.` by always appending to it.
-                  $buildNumberName += ' #'
-                  Write-Host "##vso[task.setvariable variable=BuildNumber;isoutput=true;isreadonly=true]$buildNumberName"
-                displayName: Setting BuildNumber
+                  $buildNumberName = '# ' + $buildNumberName + ' #'
+                  
+                  Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
+                displayName: Set BuildNumber
               - template: /azure-pipelines/install-node.yml@self
               - pwsh: |
                   npm install --global @vscode/vsce
