@@ -52,24 +52,24 @@ extends:
             deploy:
               steps:
               - pwsh: |
+                  $artifactVersion = '$(resources.pipeline.officialBuildCI.runName)'
+                  $artifactBranchName = '$(resources.pipeline.officialBuildCI.sourceBranch)' -replace 'refs/heads/',''
+                  
                   # Set the BuildNumber in the form `# Publish prerelease v2.69.22 #` to improve readability in AzDO
-                  $buildNumberName = "$(resources.pipeline.officialBuildCI.sourceBranch) $(resources.pipeline.officialBuildCI.runName)"
+                  $buildNumberName = 'Publish $(artifactBranchName) $(artifactBranchName)'
                   if ('${{ parameters.test }}' -eq 'true') {
-                    $buildNumberName = "Test publish " + $buildNumberName
-                  }
-                  else {
-                    $buildNumberName = "Publish " + $buildNumberName
+                    $buildNumberName = 'Test ' + $buildNumberName
                   }
 
                   # Replace invalid characters
                   $buildNumberName = $buildNumberName -replace '["/:<>\|?@*]','_'
                   # Maximum buildnumber length is 255 chars and we are going to add a prefix and suffix so ensure we have space.
-                  if ($buildNumberName.Length -GT 251) {
-                    $buildNumberName = $buildNumberName.Substring(0, 251)
+                  if ($buildNumberName.Length -GT 252) {
+                    $buildNumberName = $buildNumberName.Substring(0, 252)
                   }
                   # Avoid ever ending the BuildNumber with a `.` by always appending to it.
-                  $buildNumberName = '# ' + $buildNumberName + ' #'
-                  
+                  $buildNumberName = ' ' + $buildNumberName + ' #'
+
                   Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
                 displayName: Set BuildNumber
               - template: /azure-pipelines/install-node.yml@self
