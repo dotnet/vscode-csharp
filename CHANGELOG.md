@@ -10,7 +10,7 @@
   * Cleanup CompletionTriggerAndCommitCharacters (#11600) (PR: [#11600](https://github.com/dotnet/razor/pull/11600))
   * Add constraints to CaptureParameters method (#11530) (PR: [#11530](https://github.com/dotnet/razor/pull/11530))
   * [FUSE] Layout mapping (#11567) (PR: [#11567](https://github.com/dotnet/razor/pull/11567))
-* Bump xamlTools to 17.14.35913.250 (PR: )
+* Bump xamlTools to 17.14.35913.250 (PR: [#8062](https://github.com/dotnet/vscode-csharp/pull/8062))
 
 # 2.69.x
 * Bump razor to 9.0.0-preview.25156.2 (PR: [#8047](https://github.com/dotnet/vscode-csharp/pull/8047))
