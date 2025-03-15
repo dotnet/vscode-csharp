@@ -3,6 +3,15 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.70.x
+* Bump razor to 9.0.0-preview.25161.2 (PR: [#8058](https://github.com/dotnet/vscode-csharp/pull/8058))
+  * Move VS Code To Pull Diagnostics (#11602) (PR: [#11602](https://github.com/dotnet/razor/pull/11602))
+  * Upgrade to net9 (#11535) (PR: [#11535](https://github.com/dotnet/razor/pull/11535))
+  * Cleanup CompletionTriggerAndCommitCharacters (#11600) (PR: [#11600](https://github.com/dotnet/razor/pull/11600))
+  * Add constraints to CaptureParameters method (#11530) (PR: [#11530](https://github.com/dotnet/razor/pull/11530))
+  * [FUSE] Layout mapping (#11567) (PR: [#11567](https://github.com/dotnet/razor/pull/11567))
+* Bump xamlTools to 17.14.35913.250 (PR: [#8062](https://github.com/dotnet/vscode-csharp/pull/8062))
+
 # 2.69.x
 * Bump razor to 9.0.0-preview.25156.2 (PR: [#8047](https://github.com/dotnet/vscode-csharp/pull/8047))
   * Enable FUSE by default

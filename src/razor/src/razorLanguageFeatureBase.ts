@@ -14,7 +14,7 @@ import { getUriPath } from './uriPaths';
 
 export class RazorLanguageFeatureBase {
     constructor(
-        private readonly documentSynchronizer: RazorDocumentSynchronizer,
+        protected readonly documentSynchronizer: RazorDocumentSynchronizer,
         protected readonly documentManager: RazorDocumentManager,
         protected readonly serviceClient: RazorLanguageServiceClient,
         protected readonly logger: RazorLogger

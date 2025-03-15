@@ -51,6 +51,27 @@ extends:
           runOnce:
             deploy:
               steps:
+              - pwsh: |
+                  $artifactVersion = '$(resources.pipeline.officialBuildCI.runName)'
+                  $artifactBranchName = '$(resources.pipeline.officialBuildCI.sourceBranch)' -replace 'refs/heads/',''
+                  
+                  # Set the BuildNumber in the form `# Publish prerelease v2.69.22 #` to improve readability in AzDO
+                  $buildNumberName = "Publish $artifactBranchName $artifactVersion"
+                  if ('${{ parameters.test }}' -eq 'true') {
+                    $buildNumberName = 'Test ' + $buildNumberName
+                  }
+
+                  # Replace invalid characters
+                  $buildNumberName = $buildNumberName -replace '["/:<>\|?@*]','_'
+                  # Maximum buildnumber length is 255 chars and we are going to add a prefix and suffix so ensure we have space.
+                  if ($buildNumberName.Length -GT 252) {
+                    $buildNumberName = $buildNumberName.Substring(0, 252)
+                  }
+                  # Avoid ever ending the BuildNumber with a `.` by always appending to it.
+                  $buildNumberName = ' ' + $buildNumberName + ' #'
+
+                  Write-Host "##vso[build.updatebuildnumber]$buildNumberName"
+                displayName: Set BuildNumber
               - template: /azure-pipelines/install-node.yml@self
               - pwsh: |
                   npm install --global @vscode/vsce
@@ -113,6 +134,7 @@ extends:
                       Write-Host "##[command]vsce $publishArgs"
                       vsce @publishArgs
                     }
+
     - stage: 'TagRelease'
       displayName: 'Tag release of vscode-csharp'
       dependsOn: 'PublishStage'

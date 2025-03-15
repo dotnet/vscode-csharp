@@ -39,9 +39,9 @@
   "defaults": {
     "roslyn": "4.14.0-3.25156.1",
     "omniSharp": "1.39.12",
-    "razor": "9.0.0-preview.25156.2",
+    "razor": "9.0.0-preview.25161.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.14.35904.287"
+    "xamlTools": "17.14.35913.250"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
