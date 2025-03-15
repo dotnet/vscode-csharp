@@ -38,7 +38,7 @@
   * Change override completion to select text after updating the buffer. (PR: [#76983](https://github.com/dotnet/roslyn/pull/76983))
   * Fix false positive 'Unnecessary assignment of a value' (PR: [#77297](https://github.com/dotnet/roslyn/pull/77297))
 
-# 2.68.x
+# 2.68.46
 * Update Razor to 9.0.0-preview.25125.9 (PR: [#8027](https://github.com/dotnet/vscode-csharp/pull/8027))
   * Don't send invalid ranges for diagnostics if they do not map (PR: [#11555](https://github.com/dotnet/razor/pull/11555))
   * Fix file path service, and integration tests (PR: [#11556](https://github.com/dotnet/razor/pull/11556))
@@ -47,7 +47,7 @@
 * Bump xamlTools to 17.14.35828.13 (PR: [#8032](https://github.com/dotnet/vscode-csharp/pull/8032))
 * Ignore preview versions when locating the .NET runtime (PR: [#8043](https://github.com/dotnet/vscode-csharp/pull/8043))
 
-# 2.67.x
+# 2.67.20
 * Update Razor to 9.0.0-preview.25125.9 (PR: [#8027](https://github.com/dotnet/vscode-csharp/pull/8027))
   * Don't send invalid ranges for diagnostics if they do not map (PR: [#11555](https://github.com/dotnet/razor/pull/11555))
   * Fix file path service, and integration tests (PR: [#11556](https://github.com/dotnet/razor/pull/11556))
@@ -98,7 +98,7 @@
 * Update the debugger to 2.66.0 (PR: [#7988](https://github.com/dotnet/vscode-csharp/pull/7988))
 * Fix the regular expression to read RID value. (PR: [#7994](https://github.com/dotnet/vscode-csharp/pull/7994))
 
-# 2.65.x
+# 2.65.29
 * Update Roslyn LSP to run on .NET 9 (PR: [#7946](https://github.com/dotnet/vscode-csharp/pull/7946))
 * Update Roslyn to 4.14.0-2.25106.12 (PR: [#7969](https://github.com/dotnet/vscode-csharp/pull/7969))
   * Maintain whitespace when converting to switch expression (PR: [#77083](https://github.com/dotnet/roslyn/pull/77083))
@@ -114,10 +114,10 @@
 * Bump Razor (PR: [#7940](https://github.com/dotnet/vscode-csharp/pull/7940))
 * Bump xamltools to 17.14.35807.11(PR: [#7976]( https://github.com/dotnet/vscode-csharp/pull/7976))
 
-# 2.64.x
+# 2.64.7
 * Bump xamlTools to 17.14.35730.156 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
 
-# 2.63.x
+# 2.63.32
 * Bump xamlTools to 17.14.35723.260 (PR: [#7932](https://github.com/dotnet/vscode-csharp/pull/7941))
   * CSS Hot Reload for MAUI Blazor Hybrid is now in preview. It's enabled when C# Hot Reload is enabled.
 * Update Roslyn to 4.14.0-1.25074.7 (PR: [#7942](https://github.com/dotnet/vscode-csharp/pull/7942))
@@ -185,7 +185,7 @@
   * Handful of performance fixes (PR: [#11399](https://github.com/dotnet/razor/pull/11399))
   * Use the overload that takes an immutable array in serailization (PR: [#11393](https://github.com/dotnet/razor/pull/11393))
 
-# 2.62.x
+# 2.62.18
 * Update Roslyn to 4.14.0-1.25060.2 (PR: [#7916](https://github.com/dotnet/vscode-csharp/pull/7916))
   * Support Extracting method with complex flow control cosntructs in them. (PR: [#76686](https://github.com/dotnet/roslyn/pull/76686))
   * Classify the langword attribute value in DocComments (PR: [#76678](https://github.com/dotnet/roslyn/pull/76678))
@@ -195,7 +195,7 @@
 * Bump xamlTools to 17.13.35709.178 (PR: [#7914](https://github.com/dotnet/vscode-csharp/pull/7914))
 
 
-# 2.61.x
+# 2.61.28
 * Update Razor to 9.0.0-preview.25052.3 (PR: [#7904](https://github.com/dotnet/vscode-csharp/pull/7904))
   * Offer generate handler for `@bind-XX:after` and `:set` (PR: [#11350](https://github.com/dotnet/razor/pull/11350))
   * Support "Generate Event Handler" on event callbacks (ie `ValueChanged` and friends) (PR: [#11347](https://github.com/dotnet/razor/pull/11347))
@@ -243,7 +243,7 @@
 * Bump xamltools to 17.13.35703.12 (PR: [#7893](https://github.com/dotnet/vscode-csharp/pull/7893))
 * Don't try to send dynamicInfoChanged if the server isn't running (PR: [#7875](https://github.com/dotnet/vscode-csharp/pull/7875))
 
-# 2.60.x
+# 2.60.26
 * Improve performance of razor/blazor component discovery (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
 * Update Razor to 9.0.0-preview.24605.1 (PR: [#7826](https://github.com/dotnet/vscode-csharp/pull/7826))
   * New Code Action! Add a code action to promote a using directive (PR: [#11241](https://github.com/dotnet/razor/pull/11241))
@@ -459,7 +459,7 @@
   * Fix `FormattingContext` disposal (PR: [#10887](https://github.com/dotnet/razor/pull/10887))
   * Fix #10891 - Formatting does not respect indentation within Razor comment blocks (PR: [#10893](https://github.com/dotnet/razor/pull/10893))
 
-# 2.50.25
+# 2.50.27
 * Update Roslyn to 4.13.0-1.24477.2 (PR: [#<>](https://github.com/dotnet/vscode-csharp/pull/<>))
   * Use MSBuild globs to determine which file changes are relevant (PR: [#75139](https://github.com/dotnet/roslyn/pull/75139))
   * Allow `<code>` in DocComments to render as a block in Hover response (PR: [#75215](https://github.com/dotnet/roslyn/pull/75215))
