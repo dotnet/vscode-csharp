@@ -5,7 +5,7 @@
 
 import { timeout } from 'rxjs/operators';
 import { from as observableFrom, Subject, BehaviorSubject } from 'rxjs';
-import { registerLanguageServerOptionChanges } from '../../../src/lsptoolshost/optionChanges';
+import { registerLanguageServerOptionChanges } from '../../../src/lsptoolshost/options/optionChanges';
 
 import { describe, beforeEach, test, expect } from '@jest/globals';
 import * as vscode from 'vscode';

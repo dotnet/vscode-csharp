@@ -43,10 +43,15 @@ export async function waitForExpectedDiagnostics(
     );
 }
 
-export async function setBackgroundAnalysisScopes(scopes: { compiler: string; analyzer: string }): Promise<void> {
+export async function setDiagnosticSettings(options: {
+    compilerScope: string;
+    analyzerScope: string;
+    reportInformationAsHint: boolean;
+}): Promise<void> {
     const dotnetConfig = vscode.workspace.getConfiguration('dotnet');
-    await dotnetConfig.update('backgroundAnalysis.compilerDiagnosticsScope', scopes.compiler);
-    await dotnetConfig.update('backgroundAnalysis.analyzerDiagnosticsScope', scopes.analyzer);
+    await dotnetConfig.update('backgroundAnalysis.compilerDiagnosticsScope', options.compilerScope);
+    await dotnetConfig.update('backgroundAnalysis.analyzerDiagnosticsScope', options.analyzerScope);
+    await dotnetConfig.update('diagnostics.reportInformationAsHint', options.reportInformationAsHint);
 
     // Restart the language server to ensure diagnostics are reported with the correct configuration.
     // While in normal user scenarios it isn't necessary to restart the server to pickup diagnostic config changes,

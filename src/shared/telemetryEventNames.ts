@@ -11,9 +11,17 @@ export enum TelemetryEventNames {
     CSharpActivated = 'CSharpActivated',
 
     // Events related to the roslyn language server.
+
+    // Roslyn client has started initialization process.
     ClientInitialize = 'roslyn/clientInitialize',
+    // Roslyn client has started the server initialization process.
     ClientServerStart = 'roslyn/clientServerInitialize',
+    // Roslyn client has acquired the runtime needed to start the server.
     AcquiredRuntime = 'roslyn/acquiredRuntime',
+    // Roslyn client has successfully started the server process.
     LaunchedServer = 'roslyn/launchedServer',
+    // Roslyn client has connected to the server process named pipe.
     ClientConnected = 'roslyn/clientConnected',
+    // Roslyn client and server have fully initialized via LSP.
+    ClientServerReady = 'roslyn/clientServerReady',
 }

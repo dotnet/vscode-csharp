@@ -19,25 +19,20 @@ import { Events, OmniSharpServer } from '../server';
 import { IEngine } from './IEngine';
 import { PlatformInformation } from '../../shared/platform';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
-import {
-    Command,
-    DynamicFeature,
-    LanguageClientOptions,
-    RequestType,
-    StaticFeature,
-    Trace,
-} from 'vscode-languageclient';
+import { Command } from 'vscode-languageserver-protocol';
+import { DynamicFeature, LanguageClientOptions, StaticFeature } from 'vscode-languageclient';
+import { RequestType, Trace } from 'vscode-jsonrpc';
 import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
-import { SelectionRangeFeature } from 'vscode-languageclient/lib/common/selectionRange';
-import { ColorProviderFeature } from 'vscode-languageclient/lib/common/colorProvider';
-import { WorkspaceFoldersFeature } from 'vscode-languageclient/lib/common/workspaceFolder';
-import { DeclarationFeature } from 'vscode-languageclient/lib/common/declaration';
-import { DocumentLinkFeature } from 'vscode-languageclient/lib/common/documentLink';
-import { InlineValueFeature } from 'vscode-languageclient/lib/common/inlineValue';
-import { DiagnosticFeature } from 'vscode-languageclient/lib/common/diagnostic';
-import { NotebookDocumentSyncFeature } from 'vscode-languageclient/lib/common/notebook';
-import { TypeHierarchyFeature } from 'vscode-languageclient/lib/common/typeHierarchy';
-import { CallHierarchyFeature } from 'vscode-languageclient/lib/common/callHierarchy';
+import { SelectionRangeFeature } from 'vscode-languageclient/selectionRange';
+import { ColorProviderFeature } from 'vscode-languageclient/colorProvider';
+import { WorkspaceFoldersFeature } from 'vscode-languageclient/workspaceFolder';
+import { DeclarationFeature } from 'vscode-languageclient/declaration';
+import { DocumentLinkFeature } from 'vscode-languageclient/documentLink';
+import { InlineValueFeature } from 'vscode-languageclient/inlineValue';
+import { DiagnosticFeature } from 'vscode-languageclient/diagnostic';
+import { NotebookDocumentSyncFeature } from 'vscode-languageclient/notebook';
+import { TypeHierarchyFeature } from 'vscode-languageclient/typeHierarchy';
+import { CallHierarchyFeature } from 'vscode-languageclient/callHierarchy';
 import { Advisor } from '../features/diagnosticsProvider';
 import dotnetTest from '../features/dotnetTest';
 
@@ -405,7 +400,7 @@ export class LspEngine implements IEngine {
                     registrations: true,
                 };
             },
-            dispose() {
+            clear() {
                 /* empty */
             },
             fillClientCapabilities(_) {
@@ -426,7 +421,9 @@ export class LspEngine implements IEngine {
 
                     const eventName = `o#/${event}`.replace(/\/\//g, '/').toLowerCase();
 
-                    client.onNotification(eventName, (eventBody: any) => this.eventBus.emit(event, eventBody));
+                    client.onNotification(eventName, (eventBody: any) => {
+                        this.eventBus.emit(event, eventBody);
+                    });
                 }
             },
         };

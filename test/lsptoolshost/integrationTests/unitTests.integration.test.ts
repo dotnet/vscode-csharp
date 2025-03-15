@@ -14,7 +14,7 @@ import {
     getCodeLensesAsync,
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
-import { TestProgress } from '../../../src/lsptoolshost/roslynProtocol';
+import { TestProgress } from '../../../src/lsptoolshost/server/roslynProtocol';
 
 describeIfCSharp(`Unit Testing Tests`, () => {
     beforeAll(async () => {

@@ -79,10 +79,12 @@ describe(`Code Actions Tests`, () => {
     test('Add accessibility modifiers applied', async () => {
         const actions = await getCodeActions(new vscode.Range(6, 16, 6, 19), 10);
 
-        expect(actions[0].title).toBe('Add accessibility modifiers');
-        expect(actions[0].edit).toBeDefined();
+        const action = actions.find((a) => a.title === 'Add accessibility modifiers');
 
-        await vscode.workspace.applyEdit(actions[0].edit!);
+        expect(action).toBeDefined();
+        expect(action!.edit).toBeDefined();
+
+        await vscode.workspace.applyEdit(action!.edit!);
 
         await expectText(vscode.window.activeTextEditor!.document, [
             'using System;',

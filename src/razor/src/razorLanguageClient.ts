@@ -3,13 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import {
-    CancellationToken,
-    LanguageClient,
-    LanguageClientOptions,
-    MessageSignature,
-    ServerOptions,
-} from 'vscode-languageclient/node';
+import { CancellationToken, LanguageClientOptions, MessageSignature } from 'vscode-languageclient';
+import { LanguageClient, ServerOptions } from 'vscode-languageclient/node';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 
 export class RazorLanguageClient extends LanguageClient {

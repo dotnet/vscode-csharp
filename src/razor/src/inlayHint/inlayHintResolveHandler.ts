@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { InlayHint, RequestType } from 'vscode-languageclient';
+import { InlayHint, RequestType } from 'vscode-languageserver-protocol';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';
 import { SerializableInlayHintResolveParams } from './serializableInlayHintResolveParams';
-import { resolveInlayHintCommand } from '../../../lsptoolshost/razorCommands';
+import { resolveInlayHintCommand } from '../../../lsptoolshost/razor/razorCommands';
 
 export class InlayHintResolveHandler {
     private static readonly resolveInlayHint = 'razor/inlayHintResolve';

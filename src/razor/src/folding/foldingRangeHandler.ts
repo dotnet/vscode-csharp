@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { FoldingRange, FoldingRangeKind, RequestType } from 'vscode-languageclient';
+import { FoldingRange, FoldingRangeKind, RequestType } from 'vscode-languageserver-protocol';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';

@@ -36,6 +36,7 @@ Follow these steps to build, run, and test the repository:
 #### Building
 
 1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
+   a.  If you have already authenticated before, but the token expired, you may need to run `vsts-npm-auth -config .npmrc -f` instead.
 2. Run `npm i` - This command installs the project dependencies.
 3. Run `npm i -g gulp` - This command installs Gulp globally.
 4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
@@ -51,7 +52,8 @@ After completing the build steps:
 
 #### Testing
 
-To run all tests, execute `npm run test`.
+To run all unit tests, execute `npm run test:unit`.
+To run all integration tests execute `npm run test:integration`
 
 To debug unit tests locally, press <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration selected.
 
@@ -73,7 +75,7 @@ This section shows how to set up local Razor or Roslyn language servers for debu
 1. Clone the [Roslyn repository](https://github.com/dotnet/roslyn). This repository contains the Roslyn server implementation.
 2. Follow the build instructions provided in the repository.
 
-The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net8.0/Microsoft.CodeAnalysis.LanguageServer.dll`, but this may vary based on the built configuration.
+The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll`, but this may vary based on the built configuration.
 
 #### Razor
 
@@ -116,7 +118,7 @@ In your workspace `settings.json` file, add the following lines:
 
 ```json
 "dotnet.server.waitForDebugger": true,
-"dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net8.0/Microsoft.CodeAnalysis.LanguageServer.dll"
+"dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll"
 ```
 
 Replace <roslynRepoRoot> with the actual path to your Roslyn repository.

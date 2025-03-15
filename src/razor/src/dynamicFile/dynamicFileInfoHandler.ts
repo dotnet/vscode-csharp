@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLogger } from '../razorLogger';
 import { ProvideDynamicFileParams } from './provideDynamicFileParams';

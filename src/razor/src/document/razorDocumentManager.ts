@@ -17,9 +17,9 @@ import { IRazorDocumentChangeEvent } from './IRazorDocumentChangeEvent';
 import { IRazorDocumentManager } from './IRazorDocumentManager';
 import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
-import { razorInitializeCommand } from '../../../lsptoolshost/razorCommands';
+import { razorInitializeCommand } from '../../../lsptoolshost/razor/razorCommands';
 import { PlatformInformation } from '../../../shared/platform';
-import { generateUuid } from 'vscode-languageclient/lib/common/utils/uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -168,7 +168,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // a Razor file.
         if (this.roslynActivated && !this.razorDocumentGenerationInitialized) {
             this.razorDocumentGenerationInitialized = true;
-            const pipeName = generateUuid();
+            const pipeName = uuidv4();
 
             await vscode.commands.executeCommand(razorInitializeCommand, pipeName);
             await this.serverClient.connectNamedPipe(pipeName);

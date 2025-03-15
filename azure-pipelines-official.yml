@@ -28,7 +28,7 @@ parameters:
   default: auto
 
 variables:
-  defaultDotnetVersion: '8.0.403'
+- template: /azure-pipelines/dotnet-variables.yml@self
 
 resources:
   repositories:

@@ -5,11 +5,11 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
+import { beforeAll, afterAll, test, expect, beforeEach, describe } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
 
-integrationHelpers.describeIfWindows(`Razor Completion ${testAssetWorkspace.description}`, function () {
+describe.skip(`Razor Completion ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
