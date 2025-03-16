@@ -56,5 +56,10 @@
       ]
     }
   },
-  "postCreateCommand": "npm ci && npx gulp installDependencies && npm i -g gulp"
+  "postCreateCommand": "npm ci && npx gulp installDependencies && npm i -g gulp",
+  "tasks": {
+    "build": "npm install -g vsts-npm-auth && vsts-npm-auth -config .npmrc && npm i && npm install -g gulp && gulp installDependencies",
+    "test": "npm install && npm run test:unit && npm run test:integration:csharp && npm run test:integration:razor && npm run test:integration:devkit",
+    "launch": "npm run watch && code ."
+  }
 }
