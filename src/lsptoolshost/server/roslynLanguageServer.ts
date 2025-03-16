@@ -67,6 +67,7 @@ import { getProfilingEnvVars } from '../profiling/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
+import { AnalysisScope } from '../diagnostics/buildDiagnosticsService'; // P1085
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -348,7 +349,8 @@ export class RoslynLanguageServer {
     public async sendRequest<Params, Response, Error>(
         type: RequestType<Params, Response, Error>,
         params: Params,
-        token: vscode.CancellationToken
+        token: vscode.CancellationToken,
+        scope: AnalysisScope // P1085
     ): Promise<Response> {
         if (!this.isRunning()) {
             throw new Error('Tried to send request while server is not started.');
@@ -408,7 +410,7 @@ export class RoslynLanguageServer {
     /**
      * Sends an LSP notification to the server with a given method and parameters.
      */
-    public async sendNotification<Params>(method: string, params: Params): Promise<any> {
+    public async sendNotification<Params>(method: string, params: Params, scope: AnalysisScope): Promise<any> { // P1085
         if (!this.isRunning()) {
             throw new Error('Tried to send request while server is not started.');
         }
@@ -437,19 +439,19 @@ export class RoslynLanguageServer {
         throw new Error('Unable to retrieve current solution.');
     }
 
-    public async openSolution(solutionFile: vscode.Uri): Promise<void> {
+    public async openSolution(solutionFile: vscode.Uri, scope: AnalysisScope): Promise<void> { // Pc16a
         this._solutionFile = solutionFile;
         this._projectFiles = [];
         await this.sendOpenSolutionAndProjectsNotifications();
     }
 
-    public async openProjects(projectFiles: vscode.Uri[]): Promise<void> {
+    public async openProjects(projectFiles: vscode.Uri[], scope: AnalysisScope): Promise<void> { // Pc16a
         this._solutionFile = undefined;
         this._projectFiles = projectFiles;
         await this.sendOpenSolutionAndProjectsNotifications();
     }
 
-    private async sendOpenSolutionAndProjectsNotifications(): Promise<void> {
+    private async sendOpenSolutionAndProjectsNotifications(): Promise<void> { // P77f3
         if (this._languageClient.isRunning()) {
             if (this._solutionFile !== undefined) {
                 const protocolUri = this._languageClient.clientOptions.uriConverters!.code2Protocol(this._solutionFile);

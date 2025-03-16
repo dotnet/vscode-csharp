@@ -5,11 +5,13 @@
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { CancellationToken } from 'vscode-jsonrpc';
 import * as vscode from 'vscode';
+import { AnalysisScope } from './buildDiagnosticsService';
 
 interface IBuildResultDiagnostics {
     buildStarted(cancellationToken?: CancellationToken): Promise<void>;
     reportBuildResult(
         buildDiagnostics: { [uri: string]: vscode.Diagnostic[] },
+        scope: AnalysisScope,
         cancellationToken?: CancellationToken
     ): Promise<void>;
 }
@@ -22,9 +24,12 @@ export class BuildResultDiagnostics implements IBuildResultDiagnostics {
         langServer._buildDiagnosticService.clearDiagnostics();
     }
 
-    public async reportBuildResult(buildDiagnostics: { [uri: string]: vscode.Diagnostic[] }): Promise<void> {
+    public async reportBuildResult(
+        buildDiagnostics: { [uri: string]: vscode.Diagnostic[] },
+        scope: AnalysisScope
+    ): Promise<void> {
         const langServer: RoslynLanguageServer = await this._languageServerPromise;
         const buildOnlyIds: string[] = await langServer.getBuildOnlyDiagnosticIds(CancellationToken.None);
-        await langServer._buildDiagnosticService.setBuildDiagnostics(buildDiagnostics, buildOnlyIds);
+        await langServer._buildDiagnosticService.setBuildDiagnostics(buildDiagnostics, buildOnlyIds, scope);
     }
 }

@@ -11,6 +11,12 @@ export enum AnalysisSetting {
     None = 'none',
 }
 
+export enum AnalysisScope {
+    Solution = 'solution',
+    Project = 'project',
+    None = 'none',
+}
+
 export class BuildDiagnosticsService {
     /** All the build results sent by the DevKit extension. */
     private _allBuildDiagnostics: { [uri: string]: vscode.Diagnostic[] } = {};
@@ -27,7 +33,11 @@ export class BuildDiagnosticsService {
         this._diagnosticsReportedByBuild.clear();
     }
 
-    public async setBuildDiagnostics(buildDiagnostics: { [uri: string]: vscode.Diagnostic[] }, buildOnlyIds: string[]) {
+    public async setBuildDiagnostics(
+        buildDiagnostics: { [uri: string]: vscode.Diagnostic[] },
+        buildOnlyIds: string[],
+        scope: AnalysisScope
+    ) {
         this._allBuildDiagnostics = buildDiagnostics;
         const displayedBuildDiagnostics = new Array<[vscode.Uri, vscode.Diagnostic[]]>();
         const allDocuments = vscode.workspace.textDocuments;
@@ -41,7 +51,7 @@ export class BuildDiagnosticsService {
             // Show the build-only diagnostics
             displayedBuildDiagnostics.push([
                 uri,
-                BuildDiagnosticsService.filterDiagnosticsFromBuild(diagnosticList, buildOnlyIds, isDocumentOpen),
+                BuildDiagnosticsService.filterDiagnosticsFromBuild(diagnosticList, buildOnlyIds, isDocumentOpen, scope),
             ]);
         }
 
@@ -62,7 +72,8 @@ export class BuildDiagnosticsService {
             const buildDiagnostics = BuildDiagnosticsService.filterDiagnosticsFromBuild(
                 currentFileBuildDiagnostics,
                 buildOnlyIds,
-                true
+                true,
+                AnalysisScope.None
             );
             this._diagnosticsReportedByBuild.set(uri, buildDiagnostics);
         }
@@ -71,7 +82,8 @@ export class BuildDiagnosticsService {
     public static filterDiagnosticsFromBuild(
         diagnosticList: vscode.Diagnostic[],
         buildOnlyIds: string[],
-        isDocumentOpen: boolean
+        isDocumentOpen: boolean,
+        scope: AnalysisScope
     ): vscode.Diagnostic[] {
         const analyzerDiagnosticScope = languageServerOptions.analyzerDiagnosticScope as AnalysisSetting;
         const compilerDiagnosticScope = languageServerOptions.compilerDiagnosticScope as AnalysisSetting;
@@ -103,7 +115,9 @@ export class BuildDiagnosticsService {
         // If FSA is on, then this is a no-op as FSA will report all analyzer diagnostics
         if (
             analyzerDiagnosticScope === AnalysisSetting.None ||
-            (analyzerDiagnosticScope === AnalysisSetting.OpenFiles && !isDocumentOpen)
+            (analyzerDiagnosticScope === AnalysisSetting.OpenFiles && !isDocumentOpen) ||
+            scope === AnalysisScope.Solution ||
+            scope === AnalysisScope.Project
         ) {
             const analyzerDiagnostics = diagnosticList.filter(
                 // Needs to be analyzer diagnostics and not already reported as "build only"
@@ -117,7 +131,9 @@ export class BuildDiagnosticsService {
         // If FSA is on, then this is a no-op as FSA will report all compiler diagnostics
         if (
             compilerDiagnosticScope === AnalysisSetting.None ||
-            (compilerDiagnosticScope === AnalysisSetting.OpenFiles && !isDocumentOpen)
+            (compilerDiagnosticScope === AnalysisSetting.OpenFiles && !isDocumentOpen) ||
+            scope === AnalysisScope.Solution ||
+            scope === AnalysisScope.Project
         ) {
             const compilerDiagnostics = diagnosticList.filter(
                 // Needs to be analyzer diagnostics and not already reported as "build only"

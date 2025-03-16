@@ -6,15 +6,17 @@
 import * as vscode from 'vscode';
 import { ProvideDiagnosticSignature, ProvideWorkspaceDiagnosticSignature, vsdiag } from 'vscode-languageclient/node';
 import { languageServerOptions } from '../../shared/options';
+import { AnalysisScope } from './buildDiagnosticsService';
 
 export async function provideDiagnostics(
     document: vscode.TextDocument | vscode.Uri,
     previousResultId: string | undefined,
     token: vscode.CancellationToken,
-    next: ProvideDiagnosticSignature
+    next: ProvideDiagnosticSignature,
+    scope: AnalysisScope
 ) {
     const result = await next(document, previousResultId, token);
-    tryUpdateInformationDiagnostics(result);
+    tryUpdateInformationDiagnostics(result, scope);
     return result;
 }
 
@@ -22,16 +24,20 @@ export async function provideWorkspaceDiagnostics(
     resultIds: vsdiag.PreviousResultId[],
     token: vscode.CancellationToken,
     resultReporter: vsdiag.ResultReporter,
-    next: ProvideWorkspaceDiagnosticSignature
+    next: ProvideWorkspaceDiagnosticSignature,
+    scope: AnalysisScope
 ) {
     const result = await next(resultIds, token, (chunk) => {
-        chunk?.items.forEach(tryUpdateInformationDiagnostics);
+        chunk?.items.forEach((item) => tryUpdateInformationDiagnostics(item, scope));
         resultReporter(chunk);
     });
     return result;
 }
 
-function tryUpdateInformationDiagnostics(report: vsdiag.DocumentDiagnosticReport | null | undefined) {
+function tryUpdateInformationDiagnostics(
+    report: vsdiag.DocumentDiagnosticReport | null | undefined,
+    scope: AnalysisScope
+) {
     if (report?.kind === vsdiag.DocumentDiagnosticReportKind.full && languageServerOptions.reportInformationAsHint) {
         report.items.forEach((item) => {
             if (item.severity === vscode.DiagnosticSeverity.Information) {
