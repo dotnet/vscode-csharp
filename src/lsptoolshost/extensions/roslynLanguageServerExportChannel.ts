@@ -21,8 +21,14 @@ export class RoslynLanguageServerExport {
         const newType = new RequestType<Params, Response, Error>(type.method);
         return await server.sendRequest(newType, params, token);
     }
-    
-    public async sendRequestWithProgress<Params extends PartialResultParams, Response, PartialResult, Error, RegistrationOptions>(
+
+    public async sendRequestWithProgress<
+        Params extends PartialResultParams,
+        Response,
+        PartialResult,
+        Error,
+        RegistrationOptions
+    >(
         type: ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>,
         params: Params,
         onProgress: (p: PartialResult) => Promise<any>,
@@ -31,7 +37,9 @@ export class RoslynLanguageServerExport {
         const server = await this._serverInitialized;
         // We need to recreate the type parameter to ensure that the prototypes line up. The `ProtocolRequestType` we receive could have been
         // from a different version.
-        const newType = new ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>(type.method);
+        const newType = new ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>(
+            type.method
+        );
         return await server.sendRequestWithProgress(newType, params, onProgress, token);
     }
 }

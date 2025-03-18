@@ -34,11 +34,17 @@ export interface CSharpExtensionExperimentalExports {
         params: Params,
         token: vscode.CancellationToken
     ) => Promise<Response>;
-    sendServerRequestWithProgress<Params extends PartialResultParams, Response, PartialResult, Error, RegistrationOptions>(
+    sendServerRequestWithProgress<
+        Params extends PartialResultParams,
+        Response,
+        PartialResult,
+        Error,
+        RegistrationOptions
+    >(
         type: ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>,
         params: Params,
         onProgress: (p: PartialResult) => Promise<any>,
         token?: vscode.CancellationToken
-        ): Promise<Response>; 
+    ): Promise<Response>;
     languageServerEvents: LanguageServerEvents;
 }
