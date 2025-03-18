@@ -39,6 +39,96 @@ export function activateRoslyn(
     const roslynLanguageServerEvents = new RoslynLanguageServerEvents();
     context.subscriptions.push(roslynLanguageServerEvents);
 
+    // Setup a listener for project initialization complete before we start the server.
+    const projectInitializationCompletePromise = new Promise<void>((resolve, _) => {
+        roslynLanguageServerEvents.onServerStateChange(async (e) => {
+            if (e.state === ServerState.ProjectInitializationComplete) {
+                resolve();
+            }
+        });
+    });
+
+    // Start the language server but do not wait for it to avoid blocking the extension activation.
+    const roslynLanguageServerStartedPromise = getLanguageServerPromise(
+        context,
+        platformInfo,
+        optionStream,
+        eventStream,
+        csharpChannel,
+        reporter,
+        csharpDevkitExtension,
+        roslynLanguageServerEvents,
+        getCoreClrDebugPromise
+    );
+
+    const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerStartedPromise);
+    const exports: CSharpExtensionExports = {
+        initializationFinished: async () => {
+            await roslynLanguageServerStartedPromise;
+            await projectInitializationCompletePromise;
+        },
+        profferBrokeredServices: (container) =>
+            profferBrokeredServices(context, container, roslynLanguageServerStartedPromise!),
+        logDirectory: context.logUri.fsPath,
+        determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
+        experimental: {
+            sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
+            languageServerEvents: roslynLanguageServerEvents,
+        },
+        getComponentFolder: (componentName) => {
+            return getComponentFolder(componentName, languageServerOptions);
+        },
+    };
+
+    return exports;
+}
+
+async function getLanguageServerPromise(
+    context: vscode.ExtensionContext,
+    platformInfo: PlatformInformation,
+    optionStream: Observable<void>,
+    eventStream: EventStream,
+    csharpChannel: vscode.LogOutputChannel,
+    reporter: TelemetryReporter,
+    csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
+    roslynLanguageServerEvents: RoslynLanguageServerEvents,
+    getCoreClrDebugPromise: (languageServerStarted: Promise<any>) => Promise<void>
+): Promise<RoslynLanguageServer> {
+    // It is possible we're getting asked to activate due to dev kit activating to create a new project.
+    // We do not want to slow down devkit activation by taking up time on the extension host main thread.
+    // So we can avoid starting the server until there is a workspace or file we can work with.
+    const waitForWorkspaceOrFilePromise = new Promise<void>((resolve, _) => {
+        // check if there is a workspace opened or a csharp file opened and resolve the promise.
+        // if neither are true, subscribe to vscode events to resolve the promise when a workspace or csharp file is opened.
+        if (
+            vscode.workspace.workspaceFolders ||
+            vscode.workspace.textDocuments.some((doc) => doc.languageId === 'csharp')
+        ) {
+            resolve();
+        } else {
+            csharpChannel.info('Waiting for a workspace or C# file to be opened to activate the server.');
+            // Subscribe to VS Code events to resolve the promise when a workspace or C# file is opened.
+            const onDidOpenTextDocument = vscode.workspace.onDidOpenTextDocument((doc) => {
+                if (doc.languageId === 'csharp') {
+                    resolve();
+                    onDidOpenTextDocument.dispose();
+                }
+            });
+
+            const onDidChangeWorkspaceFolders = vscode.workspace.onDidChangeWorkspaceFolders((event) => {
+                if (event.added.length > 0) {
+                    resolve();
+                    onDidChangeWorkspaceFolders.dispose();
+                }
+            });
+
+            context.subscriptions.push(onDidOpenTextDocument, onDidChangeWorkspaceFolders);
+        }
+    });
+
+    // Delay startup of language servers until there is something we can actually work with.
+    await waitForWorkspaceOrFilePromise;
+
     // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
     // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
     //
@@ -57,16 +147,6 @@ export function activateRoslyn(
         /* useOmnisharpServer */ false
     );
 
-    // Setup a listener for project initialization complete before we start the server.
-    const projectInitializationCompletePromise = new Promise<void>((resolve, _) => {
-        roslynLanguageServerEvents.onServerStateChange(async (e) => {
-            if (e.state === ServerState.ProjectInitializationComplete) {
-                resolve();
-            }
-        });
-    });
-
-    // Start the server, but do not await the completion to avoid blocking activation.
     const roslynLanguageServerStartedPromise = activateRoslynLanguageServer(
         context,
         platformInfo,
@@ -76,32 +156,12 @@ export function activateRoslyn(
         roslynLanguageServerEvents
     );
 
+    const coreClrDebugPromise = getCoreClrDebugPromise(roslynLanguageServerStartedPromise);
     debugSessionTracker.initializeDebugSessionHandlers(context);
     tryGetCSharpDevKitExtensionExports(csharpDevkitExtension, csharpChannel);
-    const coreClrDebugPromise = getCoreClrDebugPromise(roslynLanguageServerStartedPromise);
 
-    const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerStartedPromise);
-    const exports: CSharpExtensionExports = {
-        initializationFinished: async () => {
-            await coreClrDebugPromise;
-            await razorLanguageServerStartedPromise;
-            await roslynLanguageServerStartedPromise;
-            await projectInitializationCompletePromise;
-        },
-        profferBrokeredServices: (container) =>
-            profferBrokeredServices(context, container, roslynLanguageServerStartedPromise!),
-        logDirectory: context.logUri.fsPath,
-        determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
-        experimental: {
-            sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
-            languageServerEvents: roslynLanguageServerEvents,
-        },
-        getComponentFolder: (componentName) => {
-            return getComponentFolder(componentName, languageServerOptions);
-        },
-    };
-
-    return exports;
+    await Promise.all([razorLanguageServerStartedPromise, roslynLanguageServerStartedPromise, coreClrDebugPromise]);
+    return roslynLanguageServerStartedPromise;
 }
 
 /**
