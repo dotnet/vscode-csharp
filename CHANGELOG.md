@@ -13,6 +13,10 @@
   * Add constraints to CaptureParameters method (PR: [#11530](https://github.com/dotnet/razor/pull/11530))
   * [FUSE] Layout mapping (PR: [#11567](https://github.com/dotnet/razor/pull/11567))
 * Bump xamlTools to 17.14.35913.250 (PR: [#8062](https://github.com/dotnet/vscode-csharp/pull/8062))
+* Bump Roslyn to 4.14.0-3.25164.3 (PR: [#8070](https://github.com/dotnet/vscode-csharp/pull/8070))
+  * Filter down the list of files we need to examing when looking for a `:base(...)` call in find refs (PR: [#77610](https://github.com/dotnet/roslyn/pull/77610))
+  * Fix run code analysis on solution not reporting results (PR: [#77501](https://github.com/dotnet/roslyn/pull/77501))
+  * Fix NFW due to invoking Workspace.RaiseEventForHandlers in the CA process (PR: [#77546](https://github.com/dotnet/roslyn/pull/77546))
 
 # 2.69.x
 * Bump razor to 9.0.0-preview.25156.2 (PR: [#8047](https://github.com/dotnet/vscode-csharp/pull/8047))
