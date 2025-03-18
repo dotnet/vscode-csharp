@@ -94,6 +94,8 @@ export function activateRoslyn(
         determineBrowserType: BlazorDebugConfigurationProvider.determineBrowserType,
         experimental: {
             sendServerRequest: async (t, p, ct) => await languageServerExport.sendRequest(t, p, ct),
+            sendServerRequestWithProgress: async (t, p, pr, ct) =>
+                await languageServerExport.sendRequestWithProgress(t, p, pr, ct),
             languageServerEvents: roslynLanguageServerEvents,
         },
         getComponentFolder: (componentName) => {
