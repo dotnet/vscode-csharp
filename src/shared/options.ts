@@ -88,6 +88,9 @@ export interface RazorOptions {
     readonly razorDevMode: boolean;
     readonly razorPluginPath: string;
     readonly razorServerPath: string;
+
+    // Folder that contains Microsoft.VisualStudioCode.RazorExtension.dll
+    readonly razorExtensionPath: string;
 }
 
 class CommonOptionsImpl implements CommonOptions {
@@ -429,6 +432,9 @@ class RazorOptionsImpl implements RazorOptions {
     }
     public get razorServerPath() {
         return readOption<string>('razor.languageServer.directory', '');
+    }
+    public get razorExtensionPath() {
+        return readOption<string>('razor.extension.path', '');
     }
 }
 
