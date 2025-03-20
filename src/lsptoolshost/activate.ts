@@ -21,13 +21,13 @@ import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction
 import { commonOptions, languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
 import { registerRestoreCommands } from './projectRestore/restore';
-import { registerCopilotExtension } from './copilot/copilot';
 import { registerSourceGeneratedFilesContentProvider } from './generators/sourceGeneratedFilesContentProvider';
 import { registerMiscellaneousFileNotifier } from './workspace/miscellaneousFileNotifier';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
 import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
+import { registerCopilotExtensions } from './copilot/copilot';
 
 let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -59,13 +59,14 @@ export async function activateRoslynLanguageServer(
         context.extensionPath
     );
     const additionalExtensionPaths = scanExtensionPlugins();
+    const copilotExtensionPath = getCopilotPluginPath();
 
     const languageServer = await RoslynLanguageServer.initializeAsync(
         platformInfo,
         hostExecutableResolver,
         context,
         reporter,
-        additionalExtensionPaths,
+        additionalExtensionPaths.concat(copilotExtensionPath ? [copilotExtensionPath] : []),
         languageServerEvents,
         _channel,
         _traceChannel
@@ -73,7 +74,7 @@ export async function activateRoslynLanguageServer(
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);
-    registerCopilotExtension(languageServer, _channel);
+    registerCopilotExtensions(context, languageServer, copilotExtensionPath, _channel);
 
     // Register any commands that need to be handled by the extension.
     registerCommands(context, languageServer, hostExecutableResolver, _channel);
@@ -116,6 +117,16 @@ export async function activateRoslynLanguageServer(
         });
         const extensionsFromOptions = languageServerOptions.extensionsPaths ?? [];
         return extensionsFromPackageJson.concat(extensionsFromOptions);
+    }
+
+    function getCopilotPluginPath(): string | undefined {
+        const copilotLoadPath = getCSharpDevKit()?.packageJSON.contributes?.['csharpCopilotExtensionLoadPath'];
+        if (copilotLoadPath) {
+            _channel.trace(`CSharp DevKit contributes csharpCopilotExtensionLoadPath: ${copilotLoadPath}`);
+            return path.join(getCSharpDevKit()!.extensionPath, copilotLoadPath);
+        }
+
+        return undefined;
     }
 }
 
