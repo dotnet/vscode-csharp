@@ -14,5 +14,4 @@ export interface CSharpDevKitExports {
     hasServerProcessLoaded: () => boolean;
     serverProcessLoaded: vscode.Event<void>;
     setupTelemetryEnvironmentAsync: (env: NodeJS.ProcessEnv) => Promise<string | undefined>;
-    copilotCapabilities?: Map<string, string>;
 }
