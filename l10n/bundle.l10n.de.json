@@ -25,7 +25,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET-Debugkonfigurationen können nicht erstellt werden. Der Server wird noch initialisiert oder wurde unerwartet beendet.",
   "Cannot load Razor language server because the directory was not found: '{0}'": "Der Razor-Sprachserver kann nicht geladen werden, weil das Verzeichnis nicht gefunden wurde: \"{0}\"",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET-Debugkonfigurationen können nicht aufgelöst werden. Der Server wird noch initialisiert oder wurde unerwartet beendet.",
-  "Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.": "Das Sammeln von Razor-Protokollen kann nicht gestartet werden, wenn {0} auf {1} festgelegt ist. Legen Sie {0} auf {2} fest, laden Sie dann Ihre VSCode-Umgebung neu, und führen Sie den Befehl \"Razor-Problem melden\" erneut aus.",
+  "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".",
   "Cannot stop Razor Language Server as it is already stopped.": "Der Razor-Sprachserver kann nicht beendet werden, da er bereits beendet wurde.",
   "Choose": "Auswählen",
   "Choose and set default": "Standard auswählen und festlegen",

@@ -8,7 +8,7 @@ import { Advisor } from './omnisharp/features/diagnosticsProvider';
 import { EventStream } from './eventStream';
 import TestManager from './omnisharp/features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
-import { RequestType } from 'vscode-languageclient/node';
+import { PartialResultParams, ProtocolRequestType, RequestType } from 'vscode-languageclient/node';
 import { LanguageServerEvents } from './lsptoolshost/server/languageServerEvents';
 
 export interface OmnisharpExtensionExports {
@@ -34,5 +34,17 @@ export interface CSharpExtensionExperimentalExports {
         params: Params,
         token: vscode.CancellationToken
     ) => Promise<Response>;
+    sendServerRequestWithProgress<
+        Params extends PartialResultParams,
+        Response,
+        PartialResult,
+        Error,
+        RegistrationOptions
+    >(
+        type: ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>,
+        params: Params,
+        onProgress: (p: PartialResult) => Promise<any>,
+        token?: vscode.CancellationToken
+    ): Promise<Response>;
     languageServerEvents: LanguageServerEvents;
 }
