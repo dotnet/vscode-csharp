@@ -25,7 +25,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET hata ayıklama yapılandırmaları oluşturulamıyor. Sunucu hala başlatılıyor veya beklenmedik şekilde çıkıldı.",
   "Cannot load Razor language server because the directory was not found: '{0}'": "'{0}' dizini bulunamadığından Razor dil sunucusu yüklenemiyor.",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET hata ayıklama yapılandırmaları çözümlenemiyor. Sunucu hala başlatılıyor veya beklenmedik şekilde çıkıldı.",
-  "Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.": "Razor günlükleri toplama işlemi {0}, {1} olarak ayarlandığında başlatılamıyor. Lütfen {0} ayarını {2} olarak ayarlayın ve VSCode ortamınızı yeniden yükleyin ve Razor sorunu bildir komutunu yeniden çalıştırın.",
+  "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".",
   "Cannot stop Razor Language Server as it is already stopped.": "Razor Dil Sunucusu zaten durdurulmuş olduğundan durdurulamıyor.",
   "Choose": "Seç",
   "Choose and set default": "Varsayılanı seç ve ayarla",
