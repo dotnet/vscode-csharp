@@ -92,6 +92,7 @@ export function registerCopilotRelatedFilesProvider(
                             channel.appendLine(e.message);
                         }
                     }
+                    channel.trace(`Copilot related files provider returned ${relatedFiles.length} items`);
                     return { entries: relatedFiles };
                 })
             );

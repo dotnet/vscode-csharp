@@ -7,7 +7,13 @@ import * as vscode from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { CSharpExtensionId } from '../../constants/csharpExtensionId';
-import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import path from 'path';
+import { readJsonSync } from 'fs-extra';
+
+export const copilotLanguageServerExtensionComponentName = '@microsoft/visualstudio.copilot.roslyn.languageserver';
+export const copilotLanguageServerExtensionAssemblyName = 'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll';
+const copilotLanguageServerExtensionCapabilitiesFileName = 'capabilities.json';
 
 export interface DocumentContext {
     textDocument: lsp.TextDocumentIdentifier;
@@ -63,30 +69,54 @@ export function registerCopilotContextProviders(
     languageServer: RoslynLanguageServer,
     channel: vscode.LogOutputChannel
 ) {
-    const copilotApi = vscode.extensions.getExtension<CopilotApi>('github.copilot');
-    if (!copilotApi) {
-        channel.debug(
-            'Failed to find comnpatible version of GitHub Copilot extension installed. Skip registeration of Copilot context provider.'
-        );
+    const devkit = getCSharpDevKit();
+    if (!devkit) {
         return;
     }
 
-    copilotApi.activate().then(async (api) => {
+    devkit.activate().then(async (devKitExports) => {
         try {
+            // Check if the Copilot Language Server extension is installed and has the correct capabilities
+            let hasCapabilities = false;
+            const copilotServerExtensionfolder = devKitExports.components[copilotLanguageServerExtensionComponentName];
+            if (copilotServerExtensionfolder) {
+                const capabilitiesFilePath = path.join(
+                    copilotServerExtensionfolder,
+                    copilotLanguageServerExtensionCapabilitiesFileName
+                );
+                const capabilitiesContent = await readJsonSync(capabilitiesFilePath);
+                if (
+                    capabilitiesContent?.capabilities?.find(
+                        (capability: any) =>
+                            capability?.method === resolveContextMethodName &&
+                            capability?.version === resolveContextMethodSupportedVersion
+                    )
+                ) {
+                    hasCapabilities = true;
+                }
+            }
+
+            if (!hasCapabilities) {
+                channel.debug(
+                    `Failed to find compatible version of context provider from installed version of ${csharpDevkitExtensionId}.`
+                );
+                return;
+            }
+
+            const copilotApi = vscode.extensions.getExtension<CopilotApi>('github.copilot');
+            if (!copilotApi) {
+                channel.debug(
+                    'Failed to find compatible version of GitHub Copilot extension installed. Skip registeration of Copilot context provider.'
+                );
+                return;
+            }
+
+            const api = await copilotApi.activate();
             const contextProviderApi = await api.getContextProviderAPI('v1');
 
             if (!contextProviderApi) {
                 channel.debug(
                     'Incompatible GitHub Copilot extension installed. Skip registeration of C# context providers.'
-                );
-                return;
-            }
-
-            const devkitExports = await getCSharpDevKit()?.activate();
-            const contextResolveVersion = devkitExports?.copilotCapabilities?.get(resolveContextMethodName);
-            if (contextResolveVersion === undefined || contextResolveVersion !== resolveContextMethodSupportedVersion) {
-                channel.debug(
-                    'Unsupported resolveContext method version. Skip registration of Copilot context provider.'
                 );
                 return;
             }
@@ -101,12 +131,13 @@ export function registerCopilotContextProviders(
                             if (!contextResolveParam) {
                                 return [];
                             }
-                            const traits = await languageServer.sendRequest(
+                            const items = await languageServer.sendRequest(
                                 resolveContextRequest,
                                 contextResolveParam,
                                 token
                             );
-                            return traits;
+                            channel.trace(`Copilot context provider resolved ${items.length} items`);
+                            return items;
                         },
                     },
                 })

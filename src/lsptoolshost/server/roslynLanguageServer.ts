@@ -67,6 +67,10 @@ import { getProfilingEnvVars } from '../profiling/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
+import {
+    copilotLanguageServerExtensionAssemblyName,
+    copilotLanguageServerExtensionComponentName,
+} from '../copilot/contextProviders';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -1028,16 +1032,15 @@ export class RoslynLanguageServer {
             await exports.setupTelemetryEnvironmentAsync(env);
         }
 
-        const copilotServerExtensionfolder =
-            exports.components['@microsoft/visualstudio.copilot.roslyn.languageserver'];
+        const copilotServerExtensionfolder = exports.components[copilotLanguageServerExtensionComponentName];
         if (copilotServerExtensionfolder) {
             const copilotServerExtensionFullPath = path.join(
                 copilotServerExtensionfolder,
-                'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll'
+                copilotLanguageServerExtensionAssemblyName
             );
             additionalExtensionPaths.push(copilotServerExtensionFullPath);
             channel.trace(
-                `CSharp DevKit contributes csharpCopilotExtensionLoadPath: ${copilotServerExtensionFullPath}`
+                `CSharp DevKit contributes Copilot langauge server extension: ${copilotServerExtensionFullPath}`
             );
         }
     }
