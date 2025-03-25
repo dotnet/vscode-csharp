@@ -7,6 +7,7 @@
 !.razor/**
 !.razorDevKit/**
 !.razoromnisharp/**
+!.razorExtension/** */
 .rpt2_cache/**
 .config/**
 .devcontainer/**
