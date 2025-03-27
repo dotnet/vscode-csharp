@@ -25,7 +25,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "無法建立 .NET 偵錯設定。伺服器仍在初始化或已意外結束。",
   "Cannot load Razor language server because the directory was not found: '{0}'": "無法載入 Razor 語言伺服器，因為找不到目錄: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "無法解析 .NET 偵錯設定。伺服器仍在初始化或已意外結束。",
-  "Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.": "{0} 設為 {1} 時，無法開始收集 Razor 記錄。請將 {0} 設為 {2}，然後重新載入您的 VSCode 環境，並重新執行報告 Razor 問題命令。",
+  "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "當 {0} 設定為 {1} 時，無法開始收集 Razor 記錄。請開啟輸出視窗，選擇「Razor 記錄」，並使用齒輪圖示確保記錄層級設定為「偵錯」或「追蹤」。",
   "Cannot stop Razor Language Server as it is already stopped.": "無法停止 Razor 語言伺服器，因為它已停止。",
   "Choose": "選擇",
   "Choose and set default": "選擇並設定預設值",
