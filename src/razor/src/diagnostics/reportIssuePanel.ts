@@ -165,7 +165,7 @@ ${privacyAnchor}
             panelBodyContent =
                 '<p>' +
                 vscode.l10n.t(
-                    'Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.',
+                    'Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the "Razor Log", and use the gear icon to ensure the log level is set to "Debug" or "Trace".',
                     verbositySettingName,
                     currentVerbositySettingValue,
                     neededVerbositySettingValue

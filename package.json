@@ -41,7 +41,7 @@
     "omniSharp": "1.39.12",
     "razor": "9.0.0-preview.25177.4",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.14.35913.250"
+    "xamlTools": "17.14.35920.284"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -87,6 +87,7 @@
     "ms-dotnettools.vscode-dotnet-runtime"
   ],
   "dependencies": {
+    "@github/copilot-language-server": "1.290.0",
     "@microsoft/servicehub-framework": "4.2.99-beta",
     "@octokit/rest": "^20.0.1",
     "@types/cross-spawn": "6.0.2",
@@ -1519,7 +1520,7 @@
           "razor.languageServer.forceRuntimeCodeGeneration": {
             "type": "boolean",
             "scope": "machine-overridable",
-            "default": true,
+            "default": null,
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
             "order": 90
           },
@@ -1823,7 +1824,8 @@
       {
         "command": "dotnet.generateAssets",
         "title": "%command.dotnet.generateAssets.currentProject%",
-        "category": ".NET"
+        "category": ".NET",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.restore.project",

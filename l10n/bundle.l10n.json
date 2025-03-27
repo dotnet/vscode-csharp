@@ -99,7 +99,7 @@
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.",
   "Privacy Alert! The contents copied to your clipboard may contain personal data. Prior to posting to GitHub, please remove any personal data which should not be publicly viewable.": "Privacy Alert! The contents copied to your clipboard may contain personal data. Prior to posting to GitHub, please remove any personal data which should not be publicly viewable.",
   "Copy issue content again": "Copy issue content again",
-  "Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.": "Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.",
+  "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".",
   "Non Razor file as active document": "Non Razor file as active document",
   "Could not determine CSharp content": "Could not determine CSharp content",
   "Could not determine Html content": "Could not determine Html content",
