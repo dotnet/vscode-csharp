@@ -92,13 +92,6 @@ export class DynamicFileInfoHandler {
             if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
                 // Open documents have didOpen/didChange to update the csharp buffer. Razor
                 // does not send edits and instead lets vscode handle them.
-                // return new ProvideDynamicFileResponse(
-                //     { uri: virtualCsharpUri },
-                //     null,
-                //     csharpDocument.checksum,
-                //     csharpDocument.checksumAlgorithm,
-                //     csharpDocument.encodingCodePage
-                // );
                 return null;
             } else {
                 // Closed documents provide edits since the last time they were requested since
