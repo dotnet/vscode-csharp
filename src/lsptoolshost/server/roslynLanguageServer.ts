@@ -615,12 +615,9 @@ export class RoslynLanguageServer {
             path.join(razorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
         );
 
-        const razorExtensionPath =
-            razorOptions.razorExtensionPath === ''
-                ? path.join(context.extension.extensionPath, '.razorExtension')
-                : razorOptions.razorExtensionPath;
-
-        additionalExtensionPaths.push(path.join(razorExtensionPath, 'Microsoft.VisualStudioCode.RazorExtension.dll'));
+        getComponentPaths('razorExtension', languageServerOptions).forEach((path) =>
+            additionalExtensionPaths.push(path)
+        );
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
         // We explicitly call this in the LSP server start action instead of awaiting it
@@ -969,6 +966,7 @@ export class RoslynLanguageServer {
                 additionalExtensionPaths.push(path)
             );
         }
+
         return args;
     }
 
