@@ -20,6 +20,7 @@ export const devKitDependenciesDirectory = path.join(rootPath, componentInfo.ros
 export const xamlToolsDirectory = path.join(rootPath, componentInfo.xamlTools.defaultFolderName);
 export const razorLanguageServerDirectory = path.join(rootPath, '.razor');
 export const razorDevKitDirectory = path.join(rootPath, componentInfo.razorDevKit.defaultFolderName);
+export const razorExtensionDirectory = path.join(rootPath, componentInfo.razorExtension.defaultFolderName);
 
 export const codeExtensionPath = commandLineOptions.codeExtensionPath || rootPath;
 

@@ -13,6 +13,7 @@ out
 .razoromnisharp/
 .razortelemetry/
 .razorDevKit/
+.razorExtension/
 .vscode-test/
 msbuild/signing/signJs/*.log
 msbuild/signing/signVsix/*.log
