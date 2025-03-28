@@ -32,7 +32,7 @@ export async function prepareVSCodeAndExecuteTests(
     const extensionsToInstall = [
         'ms-dotnettools.vscode-dotnet-runtime',
         'ms-dotnettools.csharp',
-        'ms-dotnettools.csdevkit@1.16.6',
+        'ms-dotnettools.csdevkit',
     ];
 
     await installExtensions(extensionsToInstall, cli, args);
