@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.72.x
+* Bump xamlTools to 17.14.35927.264 (PR: [#]())
 
 # 2.71.x
 * Bump xamlTools to 17.14.35920.284 (PR: [#8083](https://github.com/dotnet/vscode-csharp/pull/8083))
