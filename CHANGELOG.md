@@ -4,6 +4,16 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.72.x
+* Update Roslyn to 4.14.0-3.25178.1 (PR: [#8103](https://github.com/dotnet/vscode-csharp/pull/8103))
+  * Merge `null conditional assignment` to main (PR: [#77867](https://github.com/dotnet/roslyn/pull/77867))
+  * Merge `features/extensions` into `main` (PR: [#77851](https://github.com/dotnet/roslyn/pull/77851))
+  * Set the default namespace for the project and proper folders for documents (PR: [#77787](https://github.com/dotnet/roslyn/pull/77787))
+  * Fix move to namespace offering for primary constructor (PR: [#77751](https://github.com/dotnet/roslyn/pull/77751))
+  * Rework analyzer assembly loading (PR: [#77004](https://github.com/dotnet/roslyn/pull/77004))
+  * Improve raw string completion (PR: [#77742](https://github.com/dotnet/roslyn/pull/77742))
+  * Avoid adding duplicate suppressors to the host analyzer arrays (PR: [#77062](https://github.com/dotnet/roslyn/pull/77062))
+  * Cleanup and make semantic token processing and testing code more consistent (PR: [#77684](https://github.com/dotnet/roslyn/pull/77684))
+  * Fix generation of attribute with array constant (PR: [#77661](https://github.com/dotnet/roslyn/pull/77661))
 
 # 2.71.x
 * Bump xamlTools to 17.14.35920.284 (PR: [#8083](https://github.com/dotnet/vscode-csharp/pull/8083))
