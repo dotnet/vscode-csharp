@@ -15,6 +15,11 @@
   * Avoid adding duplicate suppressors to the host analyzer arrays (PR: [#77062](https://github.com/dotnet/roslyn/pull/77062))
   * Cleanup and make semantic token processing and testing code more consistent (PR: [#77684](https://github.com/dotnet/roslyn/pull/77684))
   * Fix generation of attribute with array constant (PR: [#77661](https://github.com/dotnet/roslyn/pull/77661))
+* Bump Razor to (PR: [#8096](https://github.com/dotnet/vscode-csharp/pull/8096))
+  * Some code actions ordering and cleanup (#11659) (PR: [#11659](https://github.com/dotnet/razor/pull/11659))
+  * Emit pragmas for empty @ expressions in MVC (#11653) (PR: [#11653](https://github.com/dotnet/razor/pull/11653))
+  * Couple of small code actions tweaks (#11630) (PR: [#11630](https://github.com/dotnet/razor/pull/11630))
+  * Fix text area formatting in the new formatting engine (#11624) (PR: [#11624](https://github.com/dotnet/razor/pull/11624))
 
 # 2.71.x
 * Bump xamlTools to 17.14.35920.284 (PR: [#8083](https://github.com/dotnet/vscode-csharp/pull/8083))
