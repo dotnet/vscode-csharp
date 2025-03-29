@@ -5,6 +5,27 @@
 
 # 2.72.x
 * Bump xamlTools to 17.14.35927.264 (PR: [#8100](https://github.com/dotnet/vscode-csharp/pull/8100))
+* Bump Roslyn to 4.14.0-3.25175.12 (PR: [#8096](https://github.com/dotnet/vscode-csharp/pull/8096))
+  * Generate Documentation - Add remarks if available (#77783) (PR: [#77783](https://github.com/dotnet/roslyn/pull/77783))
+  * Fix issue with disappearing newlines after multiline documentation comment (#77521) (PR: [#77521](https://github.com/dotnet/roslyn/pull/77521))
+  * Set the default namespace for the project and proper folders for documents (#77787) (PR: [#77787](https://github.com/dotnet/roslyn/pull/77787))
+  * Do not allow System.CommandLine to swallow all unhandled exceptions in LSP server (#77786) (PR: [#77786](https://github.com/dotnet/roslyn/pull/77786))
+  * Fix move to namespace offering for primary constructor (#77751) (PR: [#77751](https://github.com/dotnet/roslyn/pull/77751))
+  * Fix handling of partial definition deletes (#77735) (PR: [#77735](https://github.com/dotnet/roslyn/pull/77735))
+  * Fix updating committed solution with insignificant changes (#77648) (PR: [#77648](https://github.com/dotnet/roslyn/pull/77648))
+  * Avoid adding duplicate suppressors to the host analyzer arrays (#77062) (PR: [#77062](https://github.com/dotnet/roslyn/pull/77062))
+  * Upgrade from VSTelemetryApi 17.14.2 to 17.14.8 (#77683) (PR: [#77683](https://github.com/dotnet/roslyn/pull/77683))
+  * Fix bug where exact path match would throw for additional files (#77583) (PR: [#77583](https://github.com/dotnet/roslyn/pull/77583))
+  * Support textDocument/semanticTokens/full (#77665) (PR: [#77665](https://github.com/dotnet/roslyn/pull/77665))
+  * Generate Documentation - Bug Fixes (#77641) (PR: [#77641](https://github.com/dotnet/roslyn/pull/77641))
+  * Fix generation of attribute with array constant (#77661) (PR: [#77661](https://github.com/dotnet/roslyn/pull/77661))
+  * Change vs deps flow (#77651) (PR: [#77651](https://github.com/dotnet/roslyn/pull/77651))
+  * On-the-fly-docs Pass along additional context (#77510) (PR: [#77510](https://github.com/dotnet/roslyn/pull/77510))
+* Bump Razor to (PR: [#8096](https://github.com/dotnet/vscode-csharp/pull/8096))
+  * Some code actions ordering and cleanup (#11659) (PR: [#11659](https://github.com/dotnet/razor/pull/11659))
+  * Emit pragmas for empty @ expressions in MVC (#11653) (PR: [#11653](https://github.com/dotnet/razor/pull/11653))
+  * Couple of small code actions tweaks (#11630) (PR: [#11630](https://github.com/dotnet/razor/pull/11630))
+  * Fix text area formatting in the new formatting engine (#11624) (PR: [#11624](https://github.com/dotnet/razor/pull/11624))
 
 # 2.71.x
 * Bump xamlTools to 17.14.35920.284 (PR: [#8083](https://github.com/dotnet/vscode-csharp/pull/8083))
