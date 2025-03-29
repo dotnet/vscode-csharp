@@ -32,6 +32,11 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         optionName: 'razorDevKit',
         componentDllPaths: ['Microsoft.VisualStudio.DevKit.Razor.dll'],
     },
+    razorExtension: {
+        defaultFolderName: '.razorExtension',
+        optionName: 'razorExtension',
+        componentDllPaths: ['Microsoft.VisualStudioCode.RazorExtension.dll'],
+    },
 };
 
 export function getComponentPaths(componentName: string, options: LanguageServerOptions | undefined): string[] {

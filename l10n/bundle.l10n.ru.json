@@ -25,7 +25,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Не удается создать конфигурации отладки .NET. Сервер все еще инициализируется или неожиданно завершил работу.",
   "Cannot load Razor language server because the directory was not found: '{0}'": "Не удалось загрузить языковой сервер Razor, поскольку не найден каталог \"{0}\"",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Не удается разрешить конфигурации отладки .NET. Сервер все еще инициализируется или неожиданно завершил работу.",
-  "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".",
+  "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Невозможно начать сбор журналов Razor, когда для {0} присвоено значение {1}. Откройте окно вывода, выберите \"Журнал Razor\" и используйте значок шестеренки, чтобы убедиться, что уровню ведения журнала присвоено значение \"Отладка\" или \"Трассировка\".",
   "Cannot stop Razor Language Server as it is already stopped.": "Не удалось остановить языковой сервер Razor, поскольку он уже остановлен.",
   "Choose": "Выбрать",
   "Choose and set default": "Выберите и задайте значение по умолчанию",
