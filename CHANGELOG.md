@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.73.x
+
 # 2.72.x
 * Bump xamlTools to 17.14.35927.264 (PR: [#8100](https://github.com/dotnet/vscode-csharp/pull/8100))
 * Update Roslyn to 4.14.0-3.25178.1 (PR: [#8103](https://github.com/dotnet/vscode-csharp/pull/8103))
