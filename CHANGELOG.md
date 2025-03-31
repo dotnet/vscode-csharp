@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.72.x
-* Bump xamlTools to 17.14.35927.264 (PR: [#8100](https://github.com/dotnet/vscode-csharp/pull/8100))
+* Revert xamlTools to 17.14.35913.250 (PR: [#8100](https://github.com/dotnet/vscode-csharp/pull/8100))
 * Update Roslyn to 4.14.0-3.25178.1 (PR: [#8103](https://github.com/dotnet/vscode-csharp/pull/8103))
   * Merge `null conditional assignment` to main (PR: [#77867](https://github.com/dotnet/roslyn/pull/77867))
   * Merge `features/extensions` into `main` (PR: [#77851](https://github.com/dotnet/roslyn/pull/77851))
