@@ -15,6 +15,8 @@ export const copilotLanguageServerExtensionComponentName = '@microsoft/visualstu
 export const copilotLanguageServerExtensionAssemblyName = 'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll';
 const copilotLanguageServerExtensionCapabilitiesFileName = 'capabilities.json';
 
+type ActiveExperiments = { [name: string]: string | number | boolean | string[] };
+
 export interface DocumentContext {
     textDocument: lsp.TextDocumentIdentifier;
     position: lsp.Position;
@@ -25,6 +27,7 @@ export interface ContextResolveParam {
     completionId: string;
     timeBudget: number;
     data?: any;
+    activeExperiments: ActiveExperiments;
 }
 
 const resolveContextMethodName = 'roslyn/resolveContext';
@@ -60,6 +63,8 @@ function createContextResolveParam(request: ResolveRequest): ContextResolveParam
         },
         completionId: request.completionId,
         timeBudget: request.timeBudget,
+        data: request.data,
+        activeExperiments: Object.fromEntries(request.activeExperiments),
     };
     return contextResolveParam;
 }
