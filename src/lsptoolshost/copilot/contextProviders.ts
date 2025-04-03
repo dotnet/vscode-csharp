@@ -30,10 +30,16 @@ export interface ContextResolveParam {
     activeExperiments: ActiveExperiments;
 }
 
-const resolveContextMethodName = 'roslyn/resolveContext';
-const resolveContextMethodSupportedVersion = '1';
-const resolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
-    resolveContextMethodName,
+const oldResolveContextMethodName = 'roslyn/resolveContext';
+const oldresolveContextMethodSupportedVersion = '1';
+const newResolveContextMethodName = 'roslyn/resolveContext@2';
+const newResolveContextMethodSupportedVersion = '1';
+const oldResolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
+    oldResolveContextMethodName,
+    lsp.ParameterStructures.auto
+);
+const newResolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
+    newResolveContextMethodName,
     lsp.ParameterStructures.auto
 );
 
@@ -82,7 +88,8 @@ export function registerCopilotContextProviders(
     devkit.activate().then(async (devKitExports) => {
         try {
             // Check if the Copilot Language Server extension is installed and has the correct capabilities
-            let hasCapabilities = false;
+            // 0 means not support, 1 means old version, 2 means new version
+            let hasCapabilities = 0;
             const copilotServerExtensionfolder = devKitExports.components[copilotLanguageServerExtensionComponentName];
             if (copilotServerExtensionfolder) {
                 const capabilitiesFilePath = path.join(
@@ -90,18 +97,26 @@ export function registerCopilotContextProviders(
                     copilotLanguageServerExtensionCapabilitiesFileName
                 );
                 const capabilitiesContent = await readJsonSync(capabilitiesFilePath);
-                if (
-                    capabilitiesContent?.capabilities?.find(
-                        (capability: any) =>
-                            capability?.method === resolveContextMethodName &&
-                            capability?.version === resolveContextMethodSupportedVersion
-                    )
-                ) {
-                    hasCapabilities = true;
+                for (const capability of capabilitiesContent?.capabilities ?? []) {
+                    if (
+                        capability.method === oldResolveContextMethodName &&
+                        capability.version === oldresolveContextMethodSupportedVersion
+                    ) {
+                        hasCapabilities = 1;
+                        channel.debug(`supported 'roslyn/resolveContext' method found in capabilities.json`);
+                        break;
+                    } else if (
+                        capability.method === newResolveContextMethodName &&
+                        capability.version === newResolveContextMethodSupportedVersion
+                    ) {
+                        hasCapabilities = 2;
+                        channel.debug(`supported 'roslyn/resolveContext@2' method found in capabilities.json`);
+                        break;
+                    }
                 }
             }
 
-            if (!hasCapabilities) {
+            if (hasCapabilities === 0) {
                 channel.debug(
                     `Failed to find compatible version of context provider from installed version of ${csharpDevkitExtensionId}.`
                 );
@@ -136,11 +151,18 @@ export function registerCopilotContextProviders(
                             if (!contextResolveParam) {
                                 return [];
                             }
-                            const items = await languageServer.sendRequest(
-                                resolveContextRequest,
-                                contextResolveParam,
-                                token
-                            );
+                            const items =
+                                hasCapabilities === 1
+                                    ? await languageServer.sendRequest(
+                                          oldResolveContextRequest,
+                                          contextResolveParam,
+                                          token
+                                      )
+                                    : await languageServer.sendRequest(
+                                          newResolveContextRequest,
+                                          contextResolveParam,
+                                          token
+                                      );
                             channel.trace(`Copilot context provider resolved ${items.length} items`);
                             return items;
                         },
