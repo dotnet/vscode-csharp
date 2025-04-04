@@ -59,7 +59,6 @@ describe(`Formatting With EditorConfig Tests`, () => {
 
         const expectedText = [
             'namespace Formatting;',
-            '',
             'class DocumentFormattingWithEditorConfig',
             '{',
             '    public int Property1 {',
@@ -83,7 +82,6 @@ describe(`Formatting With EditorConfig Tests`, () => {
 
         const expectedText = [
             'namespace Formatting;',
-            '',
             'class DocumentFormattingWithEditorConfig',
             '{',
             '    public int Property1',
