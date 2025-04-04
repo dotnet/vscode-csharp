@@ -5,6 +5,7 @@
 
 # 2.73.x
 * Bump Roslyn to 5.0.0-1.25204.1 (PR: [#8138](https://github.com/dotnet/vscode-csharp/pull/8138))
+  * [View Complete Diff of Changes](https://github.com/dotnet/roslyn/compare/1a06295e3cd3e57be2c79953f16db724db119a4f...ad1c386da419e0d6fe9f25a1f41e5cc2368964e7?w=1)
 * Don't show duplicate toast if C# Dev Kit fails to activate (PR: [#8135](https://github.com/dotnet/vscode-csharp/pull/8135))
 * Bump xamlTools to 17.14.36004.3 (PR: [#8134](https://github.com/dotnet/vscode-csharp/pull/8134))
 * Acquire aspnetcore runtime when using Dev Kit to avoid double acquisition (PR: [#8132](https://github.com/dotnet/vscode-csharp/pull/8132))
