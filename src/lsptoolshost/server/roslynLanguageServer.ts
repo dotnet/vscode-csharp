@@ -255,6 +255,11 @@ export class RoslynLanguageServer {
         channel: vscode.LogOutputChannel,
         traceChannel: vscode.OutputChannel
     ): Promise<RoslynLanguageServer> {
+        const devKit = getCSharpDevKit();
+        if (devKit) {
+            await devKit.activate();
+        }
+
         const serverOptions: ServerOptions = async () => {
             return await this.startServer(
                 platformInfo,
