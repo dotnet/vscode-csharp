@@ -82,7 +82,7 @@ The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnal
 1. Clone the [Razor repository](https://github.com/dotnet/razor). This repository contains the Razor server implementation.
 2. Follow the build instructions provided in the repository.
 
-The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net8.0`.
+The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net9.0`.
 
 ### Debugging Local Language Servers
 
@@ -135,7 +135,7 @@ In your workspace settings.json file, add the following lines:
 
 ```json
 "razor.languageServer.debug": true,
-"razor.languageServer.directory": "<razorRepoRoot>/artifacts/bin/rzls/Debug/net8.0",
+"razor.languageServer.directory": "<razorRepoRoot>/artifacts/bin/rzls/Debug/net9.0",
 "razor.server.trace": "Debug"
 ```
 

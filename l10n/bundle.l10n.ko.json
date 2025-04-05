@@ -25,7 +25,7 @@
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET 디버그 구성을 생성할 수 없습니다. 서버가 아직 초기화 중이거나 예기치 않게 종료되었습니다.",
   "Cannot load Razor language server because the directory was not found: '{0}'": "디렉터리를 찾을 수 없어 Razor 언어 서버를 로드할 수 없습니다: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET 디버그 구성을 확인할 수 없습니다. 서버가 아직 초기화 중이거나 예기치 않게 종료되었습니다.",
-  "Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.": "{0}이(가) {1}(으)로 설정되면 Razor 로그 수집을 시작할 수 없습니다. {0}을(를) {2}(으)로 설정한 다음 VSCode 환경을 다시 로드하고 Razor 문제 보고서 명령을 다시 실행하세요.",
+  "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "{0}이(가) {1}(으)로 설정되면 Razor 로그 수집을 시작할 수 없습니다. 출력 창을 열고 \"Razor 로그\"를 선택한 다음 기어 아이콘을 사용하여 로그 수준이 \"디버그\" 또는 \"추적\"으로 설정되어 있는지 확인하세요.",
   "Cannot stop Razor Language Server as it is already stopped.": "이미 중지되어 있으므로 Razor 언어 서버를 중지할 수 없습니다.",
   "Choose": "선택",
   "Choose and set default": "기본값 선택 및 설정",

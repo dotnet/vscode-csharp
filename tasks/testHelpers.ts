@@ -125,14 +125,12 @@ export async function runJestIntegrationTest(
         }
 
         return result;
-    } catch (err) {
-        // If we hit an error, copy the logs VSCode produced to a directory that CI can find.
+    } finally {
+        // Copy the logs VSCode produced to a directory that CI can find.
         const vscodeLogs = path.join(userDataDir, 'logs');
         const logOutputPath = path.join(outPath, 'logs', logName);
         console.log(`Copying logs from ${vscodeLogs} to ${logOutputPath}`);
         fs.cpSync(vscodeLogs, logOutputPath, { recursive: true, force: true });
-
-        throw err;
     }
 }
 

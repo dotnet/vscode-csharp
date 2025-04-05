@@ -33,6 +33,25 @@ configuration:
       - enableAutoMerge:
           mergeMethod: merge
 
+    - description: Auto-approve/merge automated localization PRs
+      triggerOnOwnActions: false
+      if:
+      - payloadType: Pull_Request
+      - isPullRequest
+      - isActivitySender:
+          user: dotnet-bot
+          issueAuthor: False
+      - titleContains:
+          pattern: "Localization result based on"
+          isRegex: False
+      - isAction:
+          action: Opened
+      then:
+      - approvePullRequest:
+          comment: Auto-approve
+      - enableAutoMerge:
+          mergeMethod: merge
+
     - description: Add "untriaged" label to issues when opened
       triggerOnOwnActions: false
       if:

@@ -5,12 +5,13 @@
 
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { ServerTextChange } from '../rpc/serverTextChange';
+import { razorTextChange } from './razorTextChange';
 
 // matches https://github.com/dotnet/roslyn/blob/9e91ca6590450e66e0041ee3135bbf044ac0687a/src/LanguageServer/Microsoft.CodeAnalysis.LanguageServer/HostWorkspace/RazorDynamicFileInfoProvider.cs#L28
 export class ProvideDynamicFileResponse {
     constructor(
         public readonly csharpDocument: TextDocumentIdentifier | null,
-        public readonly updates: DynamicFileUpdate[] | null,
+        public readonly edits: razorTextChange[],
         public readonly checksum: string,
         public readonly checksumAlgorithm: number,
         public readonly encodingCodePage: number | null
