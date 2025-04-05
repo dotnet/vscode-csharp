@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.74.x
+
 # 2.73.x
 * Bump Roslyn to 5.0.0-1.25204.1 (PR: [#8138](https://github.com/dotnet/vscode-csharp/pull/8138))
   * [View Complete Diff of Changes](https://github.com/dotnet/roslyn/compare/1a06295e3cd3e57be2c79953f16db724db119a4f...ad1c386da419e0d6fe9f25a1f41e5cc2368964e7?w=1)
