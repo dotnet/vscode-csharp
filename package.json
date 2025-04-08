@@ -36,6 +36,9 @@
       "supported": false
     }
   },
+  "extensionKind": [
+    "workspace"
+  ],
   "defaults": {
     "roslyn": "5.0.0-1.25204.1",
     "omniSharp": "1.39.12",
