@@ -40,7 +40,7 @@ export class DynamicFileInfoHandler {
             }
         );
         this.documentManager.onChange(async (e) => {
-            if (e.kind == RazorDocumentChangeKind.csharpChanged && !e.document.isOpen) {
+            if (e.kind == RazorDocumentChangeKind.csharpChanged && !e.document.isOpen && e.changes.length > 0) {
                 const uriString = UriConverter.serialize(e.document.uri);
                 const identifier = TextDocumentIdentifier.create(uriString);
                 await vscode.commands.executeCommand(
