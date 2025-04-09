@@ -5590,6 +5590,9 @@
     "configurationDefaults": {
       "[xaml]": {
         "editor.wordBasedSuggestions": "off"
+      },
+      "[csharp]": {
+        "editor.formatOnType": true
       }
     }
   }
