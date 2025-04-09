@@ -237,6 +237,16 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             );
         }
 
+        if (updateBufferRequest.changes.length === 0 && !updateBufferRequest.previousWasEmpty) {
+            if (this.logger.verboseEnabled) {
+                this.logger.logVerbose(
+                    `Update for '${updateBufferRequest.hostDocumentFilePath}' was empty. This shouldn't happen because it means the language server is doing extra work.`
+                );
+            }
+
+            return;
+        }
+
         const hostDocumentUri = vscode.Uri.file(updateBufferRequest.hostDocumentFilePath);
         const document = this._getDocument(hostDocumentUri);
         const projectedDocument = document.csharpDocument;
