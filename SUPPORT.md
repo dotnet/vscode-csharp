@@ -25,7 +25,7 @@ The template has a section to include the `C#` output window logs.  These logs a
 3.  In the `C#` output window, select all (e.g. `cntrl+a`) and copy paste into the issue template under the 'C# Log' section.  If you need to redact file paths and other information, please do so at this time.
 4.  Once the logs are collected, reset the window log level to `Info`
 
-If the issue only reproduces on extension startup, you can set `Trace` as the default (see screenshot above), reload the window, and trace logs will be captured on startup.
+If the issue only reproduces on extension startup, you can set `Trace` as the default (see screenshot above), restart VSCode, and trace logs will be captured on startup.
 
 ##### C# LSP Trace Logs
 Sometimes we need to know exactly what requests were sent to the Roslyn language server.  To capture these logs:
@@ -38,6 +38,15 @@ Sometimes we need to know exactly what requests were sent to the Roslyn language
 ##### Other ways to set the log level
 1.  When launching VSCode from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
 2.  Invoke the `Developer: Set Log Level` command from the VSCode command palette, find the `C#` entry and set the level.
+
+##### Collecting Razor logs
+For issues with Razor, the Razor Log output window can contain useful information.
+
+1.  Find the `Razor Log` output window (`View` -> `Output`) and set the log level to `Trace`
+    ![razor log output window showing trace option](./docs/razor_logs.png)
+2.  Reproduce the issue
+3.  Select all contents of the window (e.g. `cntrl+a`) and paste into the GitHub issue when requested.
+4.  Once the logs are collected, reset the window log level to `Info`
 
 #### Project loading problems
 
