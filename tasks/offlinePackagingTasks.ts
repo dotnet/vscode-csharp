@@ -60,7 +60,7 @@ export const platformSpecificPackages: VSIXPlatformInfo[] = [
     { vsceTarget: 'darwin-arm64', rid: 'osx-arm64', platformInfo: new PlatformInformation('darwin', 'arm64') },
 ];
 
-interface NugetPackageInfo {
+export interface NugetPackageInfo {
     getPackageName: (platformInfo: VSIXPlatformInfo | undefined) => string;
     packageJsonName: string;
     getPackageContentPath: (platformInfo: VSIXPlatformInfo | undefined) => string;

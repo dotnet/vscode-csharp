@@ -7,6 +7,9 @@ import * as gulp from 'gulp';
 import * as fs from 'fs';
 import minimist from 'minimist';
 import { Octokit } from '@octokit/rest';
+import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from './offlinePackagingTasks';
+import { PlatformInformation } from '../src/shared/platform';
+import path from 'path';
 
 interface Options {
     releaseVersion: string;
@@ -15,16 +18,65 @@ interface Options {
     dryRun: string;
 }
 
-gulp.task('createTags', async (): Promise<void> => {
+gulp.task('createTags', gulp.series('createTags:roslyn', 'createTags:razor', 'createTags:vscode-csharp'));
+
+gulp.task('createTags:roslyn', async (): Promise<void> => {
     const options = minimist<Options>(process.argv.slice(2));
+
+    return createTagsAsync(
+        options,
+        'dotnet',
+        'roslyn',
+        async () => getCommitFromNugetAsync(allNugetPackages.roslyn),
+        (releaseVersion: string): [string, string] => [
+            `v${releaseVersion}`,
+            `${releaseVersion} VSCode C# extension release`,
+        ]
+    );
+});
+
+gulp.task('createTags:razor', async (): Promise<void> => {
+    const options = minimist<Options>(process.argv.slice(2));
+
+    return createTagsAsync(
+        options,
+        'dotnet',
+        'razor',
+        async () => getCommitFromNugetAsync(allNugetPackages.razor),
+        (releaseVersion: string): [string, string] => [
+            `VSCode-CSharp-${releaseVersion}`,
+            `${releaseVersion} VSCode C# extension release`,
+        ]
+    );
+});
+
+gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
+    const options = minimist<Options>(process.argv.slice(2));
+
+    return createTagsAsync(
+        options,
+        'dotnet',
+        'vscode-csharp',
+        async () => options.releaseCommit,
+        (releaseVersion: string): [string, string] => [`v${releaseVersion}`, releaseVersion]
+    );
+});
+
+async function createTagsAsync(
+    options: Options,
+    owner: string,
+    repo: string,
+    getCommit: () => Promise<string | null>,
+    getTagAndMessage: (releaseVersion: string) => [string, string]
+): Promise<void> {
     console.log(`releaseVersion: ${options.releaseVersion}`);
     console.log(`releaseCommit: ${options.releaseCommit}`);
     const dryRun = options.dryRun.toLocaleLowerCase() === 'true';
     console.log(`dry run: ${dryRun}`);
 
-    const roslynCommit = await findRoslynCommitAsync();
-    if (!roslynCommit) {
-        logError('Failed to find roslyn commit.');
+    const commit = await getCommit();
+    if (!commit) {
+        logError('Failed to find commit.');
         return;
     }
 
@@ -33,68 +85,16 @@ gulp.task('createTags', async (): Promise<void> => {
         console.log('Tagging is skipped in dry run mode.');
         return;
     } else {
-        const tagCreatedInRoslyn = await tagRepoAsync(
-            'dotnet',
-            'roslyn',
-            roslynCommit,
-            `VSCode-CSharp-${options.releaseVersion}`,
-            `${options.releaseVersion} VSCode C# extension release`
-        );
+        const [tag, message] = getTagAndMessage(options.releaseVersion);
+        const tagCreated = await tagRepoAsync(owner, repo, commit, tag, message);
 
-        if (!tagCreatedInRoslyn) {
-            logError('Failed to tag roslyn');
+        if (!tagCreated) {
+            logError(`Failed to tag '${owner}/${repo}'`);
             return;
         }
 
-        console.log('tag created in roslyn');
-
-        const tagCreatedInVsCodeCsharp = await tagRepoAsync(
-            'dotnet',
-            'vscode-csharp',
-            options.releaseCommit,
-            `v${options.releaseVersion}`,
-            options.releaseVersion
-        );
-
-        if (!tagCreatedInVsCodeCsharp) {
-            logError('Failed to tag vscode-csharp');
-            return;
-        }
-
-        console.log('tag created in vscode-csharp');
+        console.log(`tag created in '${owner}/${repo}'`);
     }
-});
-
-async function findRoslynCommitAsync(): Promise<string | null> {
-    const packageJsonString = fs.readFileSync('./package.json').toString();
-    const packageJson = JSON.parse(packageJsonString);
-    const roslynVersion = packageJson['defaults']['roslyn'];
-    if (!roslynVersion) {
-        logError("Can't find roslyn version in package.json");
-        return null;
-    }
-
-    console.log(`Roslyn version is ${roslynVersion}`);
-    // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
-    const nuspecFile = fs
-        .readFileSync(
-            `out/.nuget/microsoft.codeanalysis.languageserver.linux-x64/${roslynVersion}/microsoft.codeanalysis.languageserver.linux-x64.nuspec`
-        )
-        .toString();
-    const results = /commit="(.*)"/.exec(nuspecFile);
-    if (results == null || results.length == 0) {
-        logError('Failed to find commit number from nuspec file');
-        return null;
-    }
-
-    if (results.length != 2) {
-        logError('Unexpected regex match result from nuspec file.');
-        return null;
-    }
-
-    const commitNumber = results[1];
-    console.log(`commitNumber is ${commitNumber}`);
-    return commitNumber;
 }
 
 async function tagRepoAsync(
@@ -143,4 +143,51 @@ async function tagRepoAsync(
 
 function logError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
+}
+async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<string | null> {
+    const packageJsonString = fs.readFileSync('./package.json').toString();
+    const packageJson = JSON.parse(packageJsonString);
+    const packageVersion = packageJson['defaults'][packageInfo.packageJsonName];
+    if (!packageVersion) {
+        logError("Can't find razor version in package.json");
+        return null;
+    }
+
+    const platform = await PlatformInformation.GetCurrent();
+    const vsixPlatformInfo = platformSpecificPackages.find(
+        (p) => p.platformInfo.platform === platform.platform && p.platformInfo.architecture === platform.architecture
+    )!;
+
+    const packageName = packageInfo.getPackageName(vsixPlatformInfo);
+    console.log(`${packageName} version is ${packageVersion}`);
+
+    // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
+    const packageDir = path.join('out', '.nuget', packageName, packageVersion);
+    const nuspecFiles = fs.readdirSync(packageDir).filter((file) => file.endsWith('.nuspec'));
+
+    if (nuspecFiles.length === 0) {
+        logError(`No .nuspec file found in ${packageDir}`);
+        return null;
+    }
+
+    if (nuspecFiles.length > 1) {
+        logError(`Multiple .nuspec files found in ${packageDir}`);
+        return null;
+    }
+
+    const nuspecFile = fs.readFileSync(nuspecFiles[0]).toString();
+    const results = /commit="(.*)"/.exec(nuspecFile);
+    if (results == null || results.length == 0) {
+        logError('Failed to find commit number from nuspec file');
+        return null;
+    }
+
+    if (results.length != 2) {
+        logError('Unexpected regex match result from nuspec file.');
+        return null;
+    }
+
+    const commitNumber = results[1];
+    console.log(`commitNumber is ${commitNumber}`);
+    return commitNumber;
 }
