@@ -78,7 +78,7 @@ async function promptForDevKitDebugConfigurations(): Promise<boolean> {
                 {
                     modal: true,
                     detail: vscode.l10n.t(
-                        `The '{0}' command is not reccomended to be used when C# Dev Kit extension is installed. Would you like build and debug using a dynamic configuration instead?`,
+                        `The '{0}' command is not recommended to be used when C# Dev Kit extension is installed. Would you like build and debug using a dynamic configuration instead?`,
                         title
                     ),
                 },
