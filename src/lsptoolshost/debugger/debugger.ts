@@ -69,6 +69,7 @@ async function promptForDevKitDebugConfigurations(): Promise<boolean> {
 
         while (result === undefined) {
             const labelYes = vscode.l10n.t('Yes');
+            const labelNo = vscode.l10n.t('No');
             const labelMoreInfo = vscode.l10n.t('More Information');
             const title: string = vscode.l10n.t('.NET: Generate Assets for Build and Debug');
 
@@ -82,18 +83,22 @@ async function promptForDevKitDebugConfigurations(): Promise<boolean> {
                     ),
                 },
                 labelYes,
+                labelNo,
                 labelMoreInfo
             );
 
             if (dialogResult === labelYes) {
                 await vscode.commands.executeCommand('workbench.action.debug.selectandstart', 'dotnet');
                 result = false;
+            } else if (dialogResult === labelNo) {
+                // User cancelled dialog and wishes to continue generating assets.
+                result = true;
             } else if (dialogResult === labelMoreInfo) {
                 const launchjsonDescriptionURL = 'https://aka.ms/VSCode-CS-DynamicDebugConfig';
                 await vscode.env.openExternal(vscode.Uri.parse(launchjsonDescriptionURL));
             } else if (dialogResult === undefined) {
-                // User cancelled dialog and wishes to continue generating assets.
-                result = true;
+                // Do nothing, user closed the dialog.
+                result = false;
             }
         }
 
