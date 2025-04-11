@@ -4,12 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.74.x
-* Bump xamlTools to 17.14.36008.108 (PR: [#8159](https://github.com/dotnet/vscode-csharp/pull/8159))
+* Bump xamlTools to 17.14.36010.33 (PR: [#8178](https://github.com/dotnet/vscode-csharp/pull/8178))
 * Bump razor to 10.0.0-preview.25210.3 (PR: [#8171](https://github.com/dotnet/vscode-csharp/pull/8171))
   * Allow graceful handling of ArgumentException when trying to apply changes to SourceText in LspTextChangesLoader (PR: [#11727](https://github.com/dotnet/razor/pull/11727))
   * Tweak a log message (PR: [#11705](https://github.com/dotnet/razor/pull/11705))
   * Improve performance and memory usage of TagHelperBinder (PR: [#11671](https://github.com/dotnet/razor/pull/11671))
-  
 
 # 2.73.x
 * Bump Roslyn to 5.0.0-1.25204.1 (PR: [#8138](https://github.com/dotnet/vscode-csharp/pull/8138))
