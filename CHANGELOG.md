@@ -5,6 +5,10 @@
 
 # 2.74.x
 * Bump xamlTools to 17.14.36008.108 (PR: [#8159](https://github.com/dotnet/vscode-csharp/pull/8159))
+* Bump razor to 10.0.0-preview.25210.3 (PR: []())
+  * Allow graceful handling of ArgumentException when trying to apply changes to SourceText in LspTextChangesLoader (PR: [#11727](https://github.com/dotnet/razor/pull/11727))
+  * TagHelper resolution should fallback from out-of-proc to in-proc on failure (PR: [#11684](https://github.com/dotnet/razor/pull/11684))
+  
 
 # 2.73.x
 * Bump Roslyn to 5.0.0-1.25204.1 (PR: [#8138](https://github.com/dotnet/vscode-csharp/pull/8138))
