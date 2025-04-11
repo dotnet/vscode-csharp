@@ -4,9 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.72.x
-* Bump razor to 10.0.0-preview.25210.3 (PR: []())
+* Bump razor to 10.0.0-preview.25210.3 (PR: [#8171](https://github.com/dotnet/vscode-csharp/pull/8171))
   * Allow graceful handling of ArgumentException when trying to apply changes to SourceText in LspTextChangesLoader (PR: [#11727](https://github.com/dotnet/razor/pull/11727))
-  * TagHelper resolution should fallback from out-of-proc to in-proc on failure (PR: [#11684](https://github.com/dotnet/razor/pull/11684))
+  * Tweak a log message (PR: [#11705](https://github.com/dotnet/razor/pull/11705))
+  * Improve performance and memory usage of TagHelperBinder (PR: [#11671](https://github.com/dotnet/razor/pull/11671))
 * Revert xamlTools to 17.14.35913.250 (PR: [#8121](https://github.com/dotnet/vscode-csharp/pull/8121))
 * Update Roslyn to 4.14.0-3.25178.1 (PR: [#8103](https://github.com/dotnet/vscode-csharp/pull/8103))
   * Merge `null conditional assignment` to main (PR: [#77867](https://github.com/dotnet/roslyn/pull/77867))
