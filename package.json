@@ -1828,7 +1828,7 @@
         "command": "dotnet.generateAssets",
         "title": "%command.dotnet.generateAssets.currentProject%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "dotnet.server.activationContext == 'RoslynDevKit' || dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.restore.project",
