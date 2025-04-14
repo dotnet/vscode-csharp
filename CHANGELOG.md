@@ -3,7 +3,25 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.75.x
+
+# 2.74.x
+* Bump xamlTools to 17.14.36010.33 (PR: [#8178](https://github.com/dotnet/vscode-csharp/pull/8178))
+* Bump razor to 10.0.0-preview.25210.3 (PR: [#8171](https://github.com/dotnet/vscode-csharp/pull/8171))
+  * Allow graceful handling of ArgumentException when trying to apply changes to SourceText in LspTextChangesLoader (PR: [#11727](https://github.com/dotnet/razor/pull/11727))
+  * Tweak a log message (PR: [#11705](https://github.com/dotnet/razor/pull/11705))
+  * Improve performance and memory usage of TagHelperBinder (PR: [#11671](https://github.com/dotnet/razor/pull/11671))
+
 # 2.73.x
+* Bump Roslyn to 5.0.0-1.25204.1 (PR: [#8138](https://github.com/dotnet/vscode-csharp/pull/8138))
+  * Ensure that newline is inserted after file scoped namespace declarations (PR: [#77821](https://github.com/dotnet/roslyn/pull/77821))
+  * Allow modification of source generated documents (PR: [#77587](https://github.com/dotnet/roslyn/pull/77587))
+  * Simplify the code for getting source generator diagnostics into the diagnostics service. (PR: [#77898](https://github.com/dotnet/roslyn/pull/77898))
+  * Make GlobalOptionService initialization synchronous. (PR: [#77823](https://github.com/dotnet/roslyn/pull/77823))
+  * Change keys for import caching (PR: [#77627](https://github.com/dotnet/roslyn/pull/77627))
+* Don't show duplicate toast if C# Dev Kit fails to activate (PR: [#8135](https://github.com/dotnet/vscode-csharp/pull/8135))
+* Bump xamlTools to 17.14.36004.3 (PR: [#8134](https://github.com/dotnet/vscode-csharp/pull/8134))
+* Acquire aspnetcore runtime when using Dev Kit to avoid double acquisition (PR: [#8132](https://github.com/dotnet/vscode-csharp/pull/8132))
 
 # 2.72.x
 * Revert xamlTools to 17.14.35913.250 (PR: [#8121](https://github.com/dotnet/vscode-csharp/pull/8121))
@@ -18,18 +36,18 @@
   * Cleanup and make semantic token processing and testing code more consistent (PR: [#77684](https://github.com/dotnet/roslyn/pull/77684))
   * Fix generation of attribute with array constant (PR: [#77661](https://github.com/dotnet/roslyn/pull/77661))
 * Bump Razor to (PR: [#8096](https://github.com/dotnet/vscode-csharp/pull/8096))
-  * Some code actions ordering and cleanup (#11659) (PR: [#11659](https://github.com/dotnet/razor/pull/11659))
-  * Emit pragmas for empty @ expressions in MVC (#11653) (PR: [#11653](https://github.com/dotnet/razor/pull/11653))
-  * Couple of small code actions tweaks (#11630) (PR: [#11630](https://github.com/dotnet/razor/pull/11630))
-  * Fix text area formatting in the new formatting engine (#11624) (PR: [#11624](https://github.com/dotnet/razor/pull/11624))
+  * Some code actions ordering and cleanup (PR: [#11659](https://github.com/dotnet/razor/pull/11659))
+  * Emit pragmas for empty @ expressions in MVC (PR: [#11653](https://github.com/dotnet/razor/pull/11653))
+  * Couple of small code actions tweaks (PR: [#11630](https://github.com/dotnet/razor/pull/11630))
+  * Fix text area formatting in the new formatting engine (PR: [#11624](https://github.com/dotnet/razor/pull/11624))
 
 # 2.71.x
 * Bump xamlTools to 17.14.35920.284 (PR: [#8083](https://github.com/dotnet/vscode-csharp/pull/8083))
 * Localization (PR: [#8084](https://github.com/dotnet/vscode-csharp/pull/8084))
-* Update wording on Razor Report Issue(PR: [#8081](https://github.com/dotnet/vscode-csharp/pull/8081))
-* Use the new SDK install experience when available.(PR: [#8080](https://github.com/dotnet/vscode-csharp/pull/8080))
-* Only enable Generate Assets command when the extension is activated.(PR: [#8079](https://github.com/dotnet/vscode-csharp/pull/8079))
-* Expose `sendRequestWithProgress` as experimental API(PR: [#8074](https://github.com/dotnet/vscode-csharp/pull/8074))
+* Update wording on Razor Report Issue (PR: [#8081](https://github.com/dotnet/vscode-csharp/pull/8081))
+* Use the new SDK install experience when available. (PR: [#8080](https://github.com/dotnet/vscode-csharp/pull/8080))
+* Only enable Generate Assets command when the extension is activated. (PR: [#8079](https://github.com/dotnet/vscode-csharp/pull/8079))
+* Expose `sendRequestWithProgress` as experimental API (PR: [#8074](https://github.com/dotnet/vscode-csharp/pull/8074))
 
 # 2.70.x
 * Bump razor to 9.0.0-preview.25161.2 (PR: [#8058](https://github.com/dotnet/vscode-csharp/pull/8058))

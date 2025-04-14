@@ -40,7 +40,9 @@ export class DynamicFileInfoHandler {
             }
         );
         this.documentManager.onChange(async (e) => {
-            if (e.kind == RazorDocumentChangeKind.csharpChanged && !e.document.isOpen) {
+            // Ignore any updates without text changes. This is important for perf since sending an update to roslyn does
+            // a round trip for producing nothing new and causes a lot of churn in solution updates.
+            if (e.kind == RazorDocumentChangeKind.csharpChanged && !e.document.isOpen && e.changes.length > 0) {
                 const uriString = UriConverter.serialize(e.document.uri);
                 const identifier = TextDocumentIdentifier.create(uriString);
                 await vscode.commands.executeCommand(

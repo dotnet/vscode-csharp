@@ -255,6 +255,11 @@ export class RoslynLanguageServer {
         channel: vscode.LogOutputChannel,
         traceChannel: vscode.OutputChannel
     ): Promise<RoslynLanguageServer> {
+        const devKit = getCSharpDevKit();
+        if (devKit) {
+            await devKit.activate();
+        }
+
         const serverOptions: ServerOptions = async () => {
             return await this.startServer(
                 platformInfo,
@@ -890,6 +895,9 @@ export class RoslynLanguageServer {
         // When a file is opened process any build diagnostics that may be shown
         this._languageClient.addDisposable(
             vscode.workspace.onDidOpenTextDocument(async (event) => {
+                if (event.languageId !== 'csharp') {
+                    return;
+                }
                 try {
                     const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
                     await this._buildDiagnosticService._onFileOpened(event, buildIds);

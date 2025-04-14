@@ -24,7 +24,7 @@ export interface IDotnetFindPathContext {
 /**
  * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/IDotnetAcquireContext.ts
  */
-interface IDotnetAcquireContext {
+export interface IDotnetAcquireContext {
     version: string;
     requestingExtensionId?: string;
     errorConfiguration?: AcquireErrorConfiguration;
@@ -49,7 +49,7 @@ enum AcquireErrorConfiguration {
 /**
  * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/Acquisition/DotnetInstallMode.ts
  */
-type DotnetInstallMode = 'sdk' | 'runtime' | 'aspnetcore';
+export type DotnetInstallMode = 'sdk' | 'runtime' | 'aspnetcore';
 
 /**
  * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/DotnetVersionSpecRequirement.ts

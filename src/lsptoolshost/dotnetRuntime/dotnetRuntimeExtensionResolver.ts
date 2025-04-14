@@ -12,8 +12,14 @@ import { languageServerOptions } from '../../shared/options';
 import { existsSync } from 'fs';
 import { CSharpExtensionId } from '../../constants/csharpExtensionId';
 import { readFile } from 'fs/promises';
-import { IDotnetAcquireResult, IDotnetFindPathContext } from './dotnetRuntimeExtensionApi';
+import {
+    DotnetInstallMode,
+    IDotnetAcquireContext,
+    IDotnetAcquireResult,
+    IDotnetFindPathContext,
+} from './dotnetRuntimeExtensionApi';
 import { DotNetRuntimeExtensionId } from '../../checkDotNetRuntimeExtensionVersion';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 const DotNetMajorVersion = '9';
 const DotNetMinorVersion = '0';
@@ -41,6 +47,10 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             return this.hostInfo;
         }
 
+        const usingDevkit = getCSharpDevKit() !== undefined;
+        // If we're using devkit, acquire aspnetcore as well - this avoids two separate acquisitions (devkit requires aspnetcore).
+        const runtimeMode: DotnetInstallMode = usingDevkit ? 'aspnetcore' : 'runtime';
+
         this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
         const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
         const findPathRequest: IDotnetFindPathContext = {
@@ -48,7 +58,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
                 version: DotNetRuntimeVersion,
                 requestingExtensionId: CSharpExtensionId,
                 architecture: extensionArchitecture,
-                mode: 'runtime',
+                mode: runtimeMode,
             },
             versionSpecRequirement: 'greater_than_or_equal',
             // Reject previews because we are not setting `DOTNET_ROLL_FORWARD_TO_PRERELEASE` when starting the server.
@@ -62,7 +72,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             this.channel.appendLine(
                 `Did not find .NET ${DotNetRuntimeVersion} on path, falling back to acquire runtime via ${DotNetRuntimeExtensionId}`
             );
-            acquireResult = await this.acquireDotNetProcessDependencies();
+            acquireResult = await this.acquireDotNetProcessDependencies(runtimeMode);
         }
 
         const dotnetExecutablePath = acquireResult.dotnetPath;
@@ -103,21 +113,22 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
      * Acquires the .NET runtime if it is not already present.
      * @returns The path to the .NET runtime
      */
-    private async acquireRuntime(): Promise<IDotnetAcquireResult> {
+    private async acquireRuntime(mode: DotnetInstallMode): Promise<IDotnetAcquireResult> {
         // The runtime extension doesn't support specifying a patch versions in the acquire API, so we only use major.minor here.
         // That is generally OK, as acquisition will always acquire the latest patch version.
         const dotnetAcquireVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}`;
-        let status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquireStatus', {
+
+        const acquireContext: IDotnetAcquireContext = {
             version: dotnetAcquireVersion,
             requestingExtensionId: CSharpExtensionId,
-        });
+            mode: mode,
+        };
+
+        let status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquireStatus', acquireContext);
         if (status === undefined) {
             await vscode.commands.executeCommand('dotnet.showAcquisitionLog');
 
-            status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquire', {
-                version: dotnetAcquireVersion,
-                requestingExtensionId: CSharpExtensionId,
-            });
+            status = await vscode.commands.executeCommand<IDotnetAcquireResult>('dotnet.acquire', acquireContext);
             if (!status) {
                 throw new Error('Could not resolve the dotnet path!');
             }
@@ -130,8 +141,8 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
      * Acquires the .NET runtime and any other dependencies required to spawn a particular .NET executable.
      * @param path The path to the entrypoint assembly. Typically a .dll.
      */
-    private async acquireDotNetProcessDependencies(): Promise<IDotnetAcquireResult> {
-        const acquireResult = await this.acquireRuntime();
+    private async acquireDotNetProcessDependencies(mode: DotnetInstallMode): Promise<IDotnetAcquireResult> {
+        const acquireResult = await this.acquireRuntime(mode);
 
         const args = [this.getServerPath(this.platformInfo)];
         // This will install any missing Linux dependencies.
