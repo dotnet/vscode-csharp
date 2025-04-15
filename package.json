@@ -1,7 +1,7 @@
 {
   "name": "csharp",
   "publisher": "ms-dotnettools",
-  "version": "0.0.0-placeholder",
+  "version": "42.42.42-placeholder",
   "description": "Base language support for C#",
   "displayName": "C#",
   "author": "Microsoft Corporation",
