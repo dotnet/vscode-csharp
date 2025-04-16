@@ -33,7 +33,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     public razorDocumentGenerationInitialized = false;
 
     constructor(
-        private readonly serverClient: RazorLanguageServerClient,
+        private readonly serverClient: RazorLanguageServerClient | undefined,
         private readonly logger: RazorLogger,
         private readonly telemetryReporter: TelemetryReporter,
         private readonly platformInfo: PlatformInformation
@@ -128,13 +128,16 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
             this.closeDocument(document.uri);
         });
-        this.serverClient.onNotification('razor/updateCSharpBuffer', async (updateBufferRequest) =>
-            this.updateCSharpBuffer(updateBufferRequest)
-        );
 
-        this.serverClient.onNotification('razor/updateHtmlBuffer', async (updateBufferRequest) =>
-            this.updateHtmlBuffer(updateBufferRequest)
-        );
+        if (this.serverClient !== undefined) {
+            this.serverClient.onNotification('razor/updateCSharpBuffer', async (updateBufferRequest) =>
+                this.updateCSharpBuffer(updateBufferRequest)
+            );
+
+            this.serverClient.onNotification('razor/updateHtmlBuffer', async (updateBufferRequest) =>
+                this.updateHtmlBuffer(updateBufferRequest)
+            );
+        }
 
         return vscode.Disposable.from(watcher, didCreateRegistration, didOpenRegistration, didCloseRegistration);
     }
@@ -163,6 +166,10 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     public async ensureRazorInitialized() {
+        if (this.serverClient === undefined) {
+            return;
+        }
+
         // Kick off the generation of all Razor documents so that components are
         // discovered correctly. We need to do this even if a Razor file isn't
         // open yet to handle the scenario where the user opens a C# file before

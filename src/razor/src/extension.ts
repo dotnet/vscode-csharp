@@ -78,6 +78,13 @@ export async function activate(
             logger
         );
 
+        if (razorOptions.cohostingEnabled) {
+            // TODO: We still need a document manager for Html, so need to do _some_ of the below, just not sure what yet,
+            // and it needs to be able to take a roslynLanguageServerClient instead of a razorLanguageServerClient I guess.
+
+            return;
+        }
+
         const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
             platformInfo,
             () => razorOptions.serverPath,

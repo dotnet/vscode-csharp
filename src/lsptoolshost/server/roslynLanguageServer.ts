@@ -617,15 +617,23 @@ export class RoslynLanguageServer {
                 ? path.join(context.extension.extensionPath, '.razor')
                 : razorOptions.razorServerPath;
 
-        args.push('--razorSourceGenerator', path.join(razorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
+        let razorComponentPath = '';
+        getComponentPaths('razorExtension', languageServerOptions).forEach((extPath) => {
+            additionalExtensionPaths.push(extPath);
+            razorComponentPath = path.dirname(extPath);
+        });
+
+        // If cohosting is enabled we get the source generator from the razor component path
+        const razorSourceGeneratorPath = razorOptions.cohostingEnabled ? razorComponentPath : razorPath;
+
+        args.push(
+            '--razorSourceGenerator',
+            path.join(razorSourceGeneratorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
+        );
 
         args.push(
             '--razorDesignTimePath',
             path.join(razorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
-        );
-
-        getComponentPaths('razorExtension', languageServerOptions).forEach((path) =>
-            additionalExtensionPaths.push(path)
         );
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
