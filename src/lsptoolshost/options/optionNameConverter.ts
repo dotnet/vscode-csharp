@@ -3,14 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import assert from 'node:assert';
+
 export function convertServerOptionNameToClientConfigurationName(section: string): string | null {
     // Server name would be in format {languageName}|{grouping}.{name} or
-    // {grouping}.{name} if this option can be applied to multiple languages or
-    // just {name} if this option is not in a group.
+    // {grouping}.{name} if this option can be applied to multiple languages.
     const languageNameIndex = section.indexOf('|');
     if (languageNameIndex == -1 || section.substring(0, languageNameIndex) == 'csharp') {
         // 1. locate the last dot to find the {name} part.
         const lastDotIndex = section.lastIndexOf('.');
+        assert(lastDotIndex !== -1, `There is no . in ${section}.`);
         const optionName = section.substring(lastDotIndex + 1);
 
         // 2. Get {grouping} part.
@@ -23,7 +25,7 @@ export function convertServerOptionNameToClientConfigurationName(section: string
         // Example:
         // Grouping: implement_type
         // Name: dotnet_insertion_behavior
-        // Expect result is: dotnet.implementType.insertionBehavior
+        // Expect result is: dotnet.implmentType.insertionBehavior
         const prefixes = ['dotnet', 'csharp'];
         const optionNamePrefix = getPrefix(optionName, prefixes);
 
@@ -32,11 +34,9 @@ export function convertServerOptionNameToClientConfigurationName(section: string
         // Finally, convert everything to camel case and put them together.
         const camelCaseGroupName = convertToCamelCase(optionGroupName, '_');
         const camelCaseFeatureName = convertToCamelCase(featureName, '_');
-        const camelCasePrefixName = convertToCamelCase(optionNamePrefix, '_');
-
-        // Concatenate the three parts together, with dots as separators, but only if they are not empty.
-        const parts = [camelCasePrefixName, camelCaseGroupName, camelCaseFeatureName].filter((part) => part !== '');
-        return parts.join('.');
+        return optionNamePrefix == ''
+            ? camelCaseGroupName.concat('.', camelCaseFeatureName)
+            : convertToCamelCase(optionNamePrefix, '_').concat('.', camelCaseGroupName, '.', camelCaseFeatureName);
     }
 
     return null;
