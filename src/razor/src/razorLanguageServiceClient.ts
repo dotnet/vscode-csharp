@@ -11,6 +11,7 @@ import { LanguageQueryResponse } from './rpc/languageQueryResponse';
 import { RazorMapToDocumentRangesRequest } from './rpc/razorMapToDocumentRangesRequest';
 import { RazorMapToDocumentRangesResponse } from './rpc/razorMapToDocumentRangesResponse';
 import { convertRangeFromSerializable, convertRangeToSerializable } from './rpc/serializableRange';
+import { MappingBehavior } from './rpc/mappingBehavior';
 
 export class RazorLanguageServiceClient {
     constructor(private readonly serverClient: RazorLanguageServerClient) {}
@@ -33,7 +34,12 @@ export class RazorLanguageServiceClient {
             serializableRanges.push(serializableRange);
         }
 
-        const request = new RazorMapToDocumentRangesRequest(languageKind, serializableRanges, uri);
+        const request = new RazorMapToDocumentRangesRequest(
+            languageKind,
+            serializableRanges,
+            uri,
+            MappingBehavior.Inclusive
+        );
         const response = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>(
             'razor/mapToDocumentRanges',
             request
