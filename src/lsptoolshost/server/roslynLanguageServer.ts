@@ -8,7 +8,14 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as net from 'net';
-import { LanguageClientOptions, MessageTransports, ProtocolRequestType, ServerOptions } from 'vscode-languageclient';
+import {
+    LanguageClientOptions,
+    LogMessageParams,
+    MessageTransports,
+    NotificationType,
+    ProtocolRequestType,
+    ServerOptions,
+} from 'vscode-languageclient';
 import {
     Trace,
     RequestType,
@@ -71,6 +78,7 @@ import {
     copilotLanguageServerExtensionAssemblyName,
     copilotLanguageServerExtensionComponentName,
 } from '../copilot/contextProviders';
+import { RazorLogger } from '../../razor/src/razorLogger';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -80,6 +88,7 @@ export class RoslynLanguageServer {
     // These are notifications we will get from the LSP server and will forward to the Razor extension.
     private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
     private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
+    private static readonly razorLogMessageMethodName: string = 'razor/log';
 
     /**
      * The encoding to use when writing to and from the stream.
@@ -119,7 +128,8 @@ export class RoslynLanguageServer {
         private _context: vscode.ExtensionContext,
         private _telemetryReporter: TelemetryReporter,
         private _languageServerEvents: RoslynLanguageServerEvents,
-        private _channel: vscode.LogOutputChannel
+        private _channel: vscode.LogOutputChannel,
+        logger: RazorLogger
     ) {
         this.registerSetTrace();
         this.registerSendOpenSolution();
@@ -138,6 +148,7 @@ export class RoslynLanguageServer {
 
         // Register Razor dynamic file info handling
         this.registerDynamicFileInfo();
+        this.registerRazorLogger(logger);
 
         this.registerDebuggerAttach();
 
@@ -253,7 +264,8 @@ export class RoslynLanguageServer {
         additionalExtensionPaths: string[],
         languageServerEvents: RoslynLanguageServerEvents,
         channel: vscode.LogOutputChannel,
-        traceChannel: vscode.OutputChannel
+        traceChannel: vscode.OutputChannel,
+        razorlogger: RazorLogger
     ): Promise<RoslynLanguageServer> {
         const devKit = getCSharpDevKit();
         if (devKit) {
@@ -316,7 +328,8 @@ export class RoslynLanguageServer {
             context,
             telemetryReporter,
             languageServerEvents,
-            channel
+            channel,
+            razorlogger
         );
 
         client.registerFeature(server._onAutoInsertFeature);
@@ -828,6 +841,19 @@ export class RoslynLanguageServer {
                 } else {
                     this._channel.warn('Tried to send razor/dynamicFileInfoChanged while server is not running');
                 }
+            }
+        );
+    }
+
+    private RazorLoggerNotification: NotificationType<LogMessageParams> = new NotificationType(
+        RoslynLanguageServer.razorLogMessageMethodName
+    );
+
+    private registerRazorLogger(logger: RazorLogger) {
+        this._languageClient.onNotification<LogMessageParams>(
+            this.RazorLoggerNotification,
+            (params: LogMessageParams) => {
+                logger.log(params.message, params.type);
             }
         );
     }

@@ -29,6 +29,7 @@ import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
 import { registerCopilotRelatedFilesProvider } from './copilot/relatedFilesProvider';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
+import { RazorLogger } from '../razor/src/razorLogger';
 
 let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -43,7 +44,8 @@ export async function activateRoslynLanguageServer(
     optionObservable: Observable<void>,
     outputChannel: vscode.LogOutputChannel,
     reporter: TelemetryReporter,
-    languageServerEvents: RoslynLanguageServerEvents
+    languageServerEvents: RoslynLanguageServerEvents,
+    razorLogger: RazorLogger
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
@@ -69,7 +71,8 @@ export async function activateRoslynLanguageServer(
         additionalExtensionPaths,
         languageServerEvents,
         _channel,
-        _traceChannel
+        _traceChannel,
+        razorLogger
     );
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
