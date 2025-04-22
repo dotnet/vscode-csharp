@@ -30,6 +30,7 @@ import { RoslynLanguageServer } from './server/roslynLanguageServer';
 import { registerCopilotRelatedFilesProvider } from './copilot/relatedFilesProvider';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
+import { registerRazorEndpoints } from './razor/razorEndpoints';
 
 let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -71,8 +72,7 @@ export async function activateRoslynLanguageServer(
         additionalExtensionPaths,
         languageServerEvents,
         _channel,
-        _traceChannel,
-        razorLogger
+        _traceChannel
     );
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
@@ -86,6 +86,7 @@ export async function activateRoslynLanguageServer(
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
     registerRazorCommands(context, languageServer);
+    registerRazorEndpoints(context, languageServer, razorLogger);
 
     registerUnitTestingCommands(context, languageServer);
 
