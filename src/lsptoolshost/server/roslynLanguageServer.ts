@@ -8,7 +8,14 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as net from 'net';
-import { LanguageClientOptions, MessageTransports, ProtocolRequestType, ServerOptions } from 'vscode-languageclient';
+import {
+    LanguageClientOptions,
+    MessageTransports,
+    NotificationHandler,
+    NotificationType,
+    ProtocolRequestType,
+    ServerOptions,
+} from 'vscode-languageclient';
 import {
     Trace,
     RequestType,
@@ -435,6 +442,13 @@ export class RoslynLanguageServer {
 
     public registerOnNotification(method: string, handler: NotificationHandler0) {
         this._languageClient.addDisposable(this._languageClient.onNotification(method, handler));
+    }
+
+    public registerOnNotificationWithParams<Params>(
+        type: NotificationType<Params>,
+        handler: NotificationHandler<Params>
+    ) {
+        this._languageClient.addDisposable(this._languageClient.onNotification(type, handler));
     }
 
     public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {

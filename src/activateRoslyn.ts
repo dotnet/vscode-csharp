@@ -25,6 +25,7 @@ import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework'
 import { SolutionSnapshotProvider } from './lsptoolshost/solutionSnapshot/solutionSnapshotProvider';
 import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultReporterService';
 import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
+import { RazorLogger } from './razor/src/razorLogger';
 
 export function activateRoslyn(
     context: vscode.ExtensionContext,
@@ -38,6 +39,8 @@ export function activateRoslyn(
 ): CSharpExtensionExports {
     const roslynLanguageServerEvents = new RoslynLanguageServerEvents();
     context.subscriptions.push(roslynLanguageServerEvents);
+
+    const razorLogger = new RazorLogger();
 
     // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
     // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
@@ -54,7 +57,8 @@ export function activateRoslyn(
         reporter,
         csharpDevkitExtension,
         platformInfo,
-        /* useOmnisharpServer */ false
+        /* useOmnisharpServer */ false,
+        razorLogger
     );
 
     // Setup a listener for project initialization complete before we start the server.
@@ -73,7 +77,8 @@ export function activateRoslyn(
         optionStream,
         csharpChannel,
         reporter,
-        roslynLanguageServerEvents
+        roslynLanguageServerEvents,
+        razorLogger
     );
 
     debugSessionTracker.initializeDebugSessionHandlers(context);
