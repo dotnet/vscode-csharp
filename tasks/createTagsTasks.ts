@@ -151,7 +151,7 @@ async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<s
     const packageJson = JSON.parse(packageJsonString);
     const packageVersion = packageJson['defaults'][packageInfo.packageJsonName];
     if (!packageVersion) {
-        logError("Can't find razor version in package.json");
+        logError(`Can't find ${packageInfo.packageJsonName} version in package.json`);
         return null;
     }
 
