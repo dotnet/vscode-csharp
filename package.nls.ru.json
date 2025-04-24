@@ -120,6 +120,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Указывает, следует ли OmniSharp использовать параметры редактора VS Code для форматирования кода C# (использование вкладок, размер отступа).",
   "configuration.omnisharp.useModernNet.description": "Используйте сборку OmniSharp для .NET 6. Эта версия _не_ поддерживает проекты .NET Framework не в стиле SDK, в том числе Unity. Проекты .NET Core, .NET 5+ и платформы .NET Framework в стиле SDK должны значительно повысить производительность.",
   "configuration.omnisharp.useModernNet.title": "Использовать сборку .NET 6 для OmniSharp",
+  "configuration.razor.languageServer.cohostingEnabled": "(ЭКСПЕРИМЕНТАЛЬНАЯ ФУНКЦИЯ) Включить совместное размещение Razor.",
   "configuration.razor.languageServer.debug": "Указывает, следует ли ожидать подключения отладки при запуске языкового сервера.",
   "configuration.razor.languageServer.directory": "Переопределяет путь к каталогу языкового сервера Razor.",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(ЭКСПЕРИМЕНТАЛЬНАЯ ФУНКЦИЯ) Включение комбинированной генерации кода во время разработки и во время выполнения для файлов Razor",

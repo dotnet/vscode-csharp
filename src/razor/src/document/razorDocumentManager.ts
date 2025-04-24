@@ -20,6 +20,7 @@ import { createDocument } from './razorDocumentFactory';
 import { razorInitializeCommand } from '../../../lsptoolshost/razor/razorCommands';
 import { PlatformInformation } from '../../../shared/platform';
 import { v4 as uuidv4 } from 'uuid';
+import { ServerTextChange } from '../rpc/serverTextChange';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -32,7 +33,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     public razorDocumentGenerationInitialized = false;
 
     constructor(
-        private readonly serverClient: RazorLanguageServerClient,
+        private readonly serverClient: RazorLanguageServerClient | undefined,
         private readonly logger: RazorLogger,
         private readonly telemetryReporter: TelemetryReporter,
         private readonly platformInfo: PlatformInformation
@@ -127,13 +128,16 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
             this.closeDocument(document.uri);
         });
-        this.serverClient.onNotification('razor/updateCSharpBuffer', async (updateBufferRequest) =>
-            this.updateCSharpBuffer(updateBufferRequest)
-        );
 
-        this.serverClient.onNotification('razor/updateHtmlBuffer', async (updateBufferRequest) =>
-            this.updateHtmlBuffer(updateBufferRequest)
-        );
+        if (this.serverClient !== undefined) {
+            this.serverClient.onNotification('razor/updateCSharpBuffer', async (updateBufferRequest) =>
+                this.updateCSharpBuffer(updateBufferRequest)
+            );
+
+            this.serverClient.onNotification('razor/updateHtmlBuffer', async (updateBufferRequest) =>
+                this.updateHtmlBuffer(updateBufferRequest)
+            );
+        }
 
         return vscode.Disposable.from(watcher, didCreateRegistration, didOpenRegistration, didCloseRegistration);
     }
@@ -158,10 +162,14 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
         const document = this._getDocument(uri);
 
-        this.notifyDocumentChange(document, RazorDocumentChangeKind.opened);
+        this.notifyDocumentChange(document, RazorDocumentChangeKind.opened, []);
     }
 
     public async ensureRazorInitialized() {
+        if (this.serverClient === undefined) {
+            return;
+        }
+
         // Kick off the generation of all Razor documents so that components are
         // discovered correctly. We need to do this even if a Razor file isn't
         // open yet to handle the scenario where the user opens a C# file before
@@ -189,7 +197,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             }
         }
 
-        this.notifyDocumentChange(document, RazorDocumentChangeKind.closed);
+        this.notifyDocumentChange(document, RazorDocumentChangeKind.closed, []);
     }
 
     private addDocument(uri: vscode.Uri): IRazorDocument {
@@ -203,7 +211,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         document = createDocument(uri);
         this.razorDocuments[document.path] = document;
 
-        this.notifyDocumentChange(document, RazorDocumentChangeKind.added);
+        this.notifyDocumentChange(document, RazorDocumentChangeKind.added, []);
 
         return document;
     }
@@ -212,7 +220,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const document = this._getDocument(uri);
         delete this.razorDocuments[document.path];
 
-        this.notifyDocumentChange(document, RazorDocumentChangeKind.removed);
+        this.notifyDocumentChange(document, RazorDocumentChangeKind.removed, []);
     }
 
     private findDocument(path: string) {
@@ -267,7 +275,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 updateBufferRequest.encodingCodePage
             );
 
-            this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
+            this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged, updateBufferRequest.changes);
         } else {
             this.logger.logWarning(
                 'Failed to update the C# document buffer. This is unexpected and may result in incorrect C# interactions.'
@@ -310,7 +318,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
             htmlProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
 
-            this.notifyDocumentChange(document, RazorDocumentChangeKind.htmlChanged);
+            this.notifyDocumentChange(document, RazorDocumentChangeKind.htmlChanged, updateBufferRequest.changes);
         } else {
             this.logger.logWarning(
                 'Failed to update the HTML document buffer. This is unexpected and may result in incorrect HTML interactions.'
@@ -318,16 +326,19 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         }
     }
 
-    private notifyDocumentChange(document: IRazorDocument, kind: RazorDocumentChangeKind) {
+    private notifyDocumentChange(document: IRazorDocument, kind: RazorDocumentChangeKind, changes: ServerTextChange[]) {
         if (this.logger.verboseEnabled) {
             this.logger.logVerbose(
-                `Notifying document '${getUriPath(document.uri)}' changed '${RazorDocumentChangeKind[kind]}'`
+                `Notifying document '${getUriPath(document.uri)}' changed '${RazorDocumentChangeKind[kind]}' with '${
+                    changes.length
+                }' changes.`
             );
         }
 
         const args: IRazorDocumentChangeEvent = {
             document,
             kind,
+            changes,
         };
 
         this.onChangeEmitter.fire(args);

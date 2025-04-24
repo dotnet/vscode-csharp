@@ -120,6 +120,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "OmniSharp'ın C# kod biçimlendirmesi için VS Code düzenleyici ayarlarını kullanıp kullanmayacağını belirtir (sekme kullanımı, girinti boyutu).",
   "configuration.omnisharp.useModernNet.description": ".NET 6 için OmniSharp derlemesini kullanın. Bu sürüm Unity dahil SDK stili olmayan .NET Framework projelerini desteklemiyor. SDK stili Framework, .NET Core ve .NET 5+ projeleri önemli performans iyileştirmeleri görüyor olmalıdır.",
   "configuration.omnisharp.useModernNet.title": "OmniSharp'ın .NET 6 derlemesi kullanın",
+  "configuration.razor.languageServer.cohostingEnabled": "(DENEYSEL) Razor ile birlikte barındırmayı etkinleştir.",
   "configuration.razor.languageServer.debug": "Dil sunucusunu başlatırken hata ayıklama eklemesinin beklenip beklenmeyeceğini belirtir.",
   "configuration.razor.languageServer.directory": "Razor Dil Sunucusu dizininin yolunu geçersiz kılıyor.",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(DENEYSEL) Razor dosyaları için birleşik tasarım zamanı/çalışma zamanı kodu oluşturmayı etkinleştirin",

@@ -62,6 +62,7 @@ export async function activate(
     vscodeTelemetryReporter: TelemetryReporter,
     csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
     platformInfo: PlatformInformation,
+    logger: RazorLogger,
     enableProposedApis = false
 ) {
     const razorTelemetryReporter = new RazorTelemetryReporter(eventStream);
@@ -69,14 +70,23 @@ export async function activate(
         create: <T>() => new vscode.EventEmitter<T>(),
     };
 
-    const logger = new RazorLogger(eventEmitterFactory);
-
     try {
         const razorOptions: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
             vscodeType,
             languageServerDir,
             logger
         );
+
+        if (razorOptions.cohostingEnabled) {
+            // TODO: We still need a document manager for Html, so need to do _some_ of the below, just not sure what yet,
+            // and it needs to be able to take a roslynLanguageServerClient instead of a razorLanguageServerClient I guess.
+
+            logger.logVerbose(
+                'Razor cohosting is enabled, skipping language server activation. No rzls process will be created.'
+            );
+
+            return;
+        }
 
         const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
             platformInfo,
