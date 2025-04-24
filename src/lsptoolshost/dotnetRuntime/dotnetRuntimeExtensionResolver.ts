@@ -19,7 +19,6 @@ import {
     IDotnetFindPathContext,
 } from './dotnetRuntimeExtensionApi';
 import { DotNetRuntimeExtensionId } from '../../checkDotNetRuntimeExtensionVersion';
-import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 const DotNetMajorVersion = '9';
 const DotNetMinorVersion = '0';
@@ -47,9 +46,10 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             return this.hostInfo;
         }
 
-        const usingDevkit = getCSharpDevKit() !== undefined;
+        //const usingDevkit = getCSharpDevKit() !== undefined;
         // If we're using devkit, acquire aspnetcore as well - this avoids two separate acquisitions (devkit requires aspnetcore).
-        const runtimeMode: DotnetInstallMode = usingDevkit ? 'aspnetcore' : 'runtime';
+        //const runtimeMode: DotnetInstallMode = usingDevkit ? 'aspnetcore' : 'runtime';
+        const runtimeMode = 'runtime';
 
         this.channel.info(`Locating .NET runtime version ${DotNetRuntimeVersion} with mode ${runtimeMode}`);
         const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
