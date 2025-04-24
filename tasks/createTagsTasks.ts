@@ -28,7 +28,7 @@ gulp.task('createTags:roslyn', async (): Promise<void> => {
         'roslyn',
         async () => getCommitFromNugetAsync(allNugetPackages.roslyn),
         (releaseVersion: string): [string, string] => [
-            `v${releaseVersion}`,
+            `VSCode-CSharp-${releaseVersion}`,
             `${releaseVersion} VSCode C# extension release`,
         ]
     );
