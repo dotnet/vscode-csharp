@@ -18,8 +18,6 @@ interface Options {
     dryRun: string;
 }
 
-gulp.task('createTags', gulp.series('createTags:roslyn', 'createTags:razor', 'createTags:vscode-csharp'));
-
 gulp.task('createTags:roslyn', async (): Promise<void> => {
     const options = minimist<Options>(process.argv.slice(2));
 
@@ -61,6 +59,8 @@ gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
         (releaseVersion: string): [string, string] => [`v${releaseVersion}`, releaseVersion]
     );
 });
+
+gulp.task('createTags', gulp.series('createTags:roslyn', 'createTags:razor', 'createTags:vscode-csharp'));
 
 async function createTagsAsync(
     options: Options,
