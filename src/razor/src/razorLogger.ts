@@ -7,8 +7,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
-import { IEventEmitterFactory } from './IEventEmitterFactory';
 import { RazorLanguageServerClient } from './razorLanguageServerClient';
+import { MessageType } from 'vscode-languageserver-protocol';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';
@@ -19,9 +19,9 @@ export class RazorLogger implements vscodeAdapter.Disposable {
 
     private readonly onLogEmitter: vscodeAdapter.EventEmitter<string>;
 
-    constructor(eventEmitterFactory: IEventEmitterFactory) {
+    constructor() {
         this.outputChannel = vscode.window.createOutputChannel(vscode.l10n.t('Razor Log'), { log: true });
-        this.onLogEmitter = eventEmitterFactory.create<string>();
+        this.onLogEmitter = new vscode.EventEmitter<string>();
         this.processTraceLevel();
 
         this.outputChannel.onDidChangeLogLevel(async () => {
@@ -93,6 +93,24 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         if (this.verboseEnabled) {
             this.outputChannel.trace(message);
             this.onLogEmitter.fire(message);
+        }
+    }
+
+    public log(message: string, level: MessageType) {
+        switch (level) {
+            case MessageType.Error:
+                this.logError(message, new Error(message));
+                break;
+            case MessageType.Warning:
+                this.logWarning(message);
+                break;
+            case MessageType.Info:
+                this.logMessage(message);
+                break;
+            case MessageType.Debug:
+            case MessageType.Log:
+            default:
+                this.logVerbose(message);
         }
     }
 

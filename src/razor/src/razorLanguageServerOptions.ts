@@ -13,4 +13,5 @@ export interface RazorLanguageServerOptions {
     forceRuntimeCodeGeneration: boolean;
     suppressErrorToasts: boolean;
     useNewFormattingEngine: boolean;
+    cohostingEnabled: boolean;
 }

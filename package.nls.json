@@ -131,6 +131,7 @@
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(EXPERIMENTAL) Enable combined design time/runtime code generation for Razor files",
   "configuration.razor.languageServer.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.razor.languageServer.useNewFormattingEngine": "Use the new Razor formatting engine.",
+  "configuration.razor.languageServer.cohostingEnabled": "(EXPERIMENTAL) Enable Razor cohosting.",
   "debuggers.coreclr.configurationSnippets.label.console-local": ".NET: Launch Executable file (Console)",
   "debuggers.coreclr.configurationSnippets.label.web-local": ".NET: Launch Executable file (Web)",
   "debuggers.coreclr.configurationSnippets.label.attach-local": ".NET: Attach to a .NET process",
