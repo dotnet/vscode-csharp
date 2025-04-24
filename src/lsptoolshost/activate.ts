@@ -86,7 +86,7 @@ export async function activateRoslynLanguageServer(
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
     registerRazorCommands(context, languageServer);
-    registerRazorEndpoints(context, languageServer, razorLogger);
+    registerRazorEndpoints(context, languageServer, razorLogger, platformInfo);
 
     registerUnitTestingCommands(context, languageServer);
 
