@@ -36,7 +36,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
          * This is a function instead of a string because the server path can change while the extension is active (when the option changes).
          */
         private getServerPath: (platform: PlatformInformation) => string,
-        private channel: vscode.OutputChannel,
+        private channel: vscode.LogOutputChannel,
         private extensionPath: string
     ) {}
 
@@ -51,7 +51,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         // If we're using devkit, acquire aspnetcore as well - this avoids two separate acquisitions (devkit requires aspnetcore).
         const runtimeMode: DotnetInstallMode = usingDevkit ? 'aspnetcore' : 'runtime';
 
-        this.channel.appendLine(`Locating .NET runtime version ${DotNetRuntimeVersion}`);
+        this.channel.info(`Locating .NET runtime version ${DotNetRuntimeVersion} with mode ${runtimeMode}`);
         const extensionArchitecture = (await this.getArchitectureFromTargetPlatform()) ?? process.arch;
         const findPathRequest: IDotnetFindPathContext = {
             acquireContext: {
@@ -69,7 +69,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             findPathRequest
         );
         if (acquireResult === undefined) {
-            this.channel.appendLine(
+            this.channel.info(
                 `Did not find .NET ${DotNetRuntimeVersion} on path, falling back to acquire runtime via ${DotNetRuntimeExtensionId}`
             );
             acquireResult = await this.acquireDotNetProcessDependencies(runtimeMode);
@@ -158,7 +158,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         const vsixManifestFile = path.join(this.extensionPath, '.vsixmanifest');
         if (!existsSync(vsixManifestFile)) {
             // This is not an error as normal development F5 builds do not generate a .vsixmanifest file.
-            this.channel.appendLine(
+            this.channel.warn(
                 `Unable to find extension target platform - no vsix manifest file exists at ${vsixManifestFile}`
             );
             return undefined;
