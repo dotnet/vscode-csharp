@@ -81,12 +81,15 @@ async function createTagsAsync(
         return;
     }
 
+    const [tag, message] = getTagAndMessage(options.releaseVersion);
+    console.log(`tag: ${tag}`);
+    console.log(`message: ${message}`);
+
     // The compiled option value in js type is 'any' type.
     if (dryRun) {
         console.log('Tagging is skipped in dry run mode.');
         return;
     } else {
-        const [tag, message] = getTagAndMessage(options.releaseVersion);
         const tagCreated = await tagRepoAsync(owner, repo, commit, tag, message, options.githubPAT);
 
         if (!tagCreated) {
