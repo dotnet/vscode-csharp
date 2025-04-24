@@ -175,7 +175,8 @@ async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<s
         return null;
     }
 
-    const nuspecFile = fs.readFileSync(nuspecFiles[0]).toString();
+    const nuspecFilePath = path.join(packageDir, nuspecFiles[0]);
+    const nuspecFile = fs.readFileSync(nuspecFilePath).toString();
     const results = /commit="(.*)"/.exec(nuspecFile);
     if (results == null || results.length == 0) {
         logError('Failed to find commit number from nuspec file');
