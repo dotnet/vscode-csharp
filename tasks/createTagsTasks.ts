@@ -16,6 +16,7 @@ interface Options {
     releaseCommit: string;
     // Even it is specified as boolean, it would still be parsed as string in compiled js.
     dryRun: string;
+    githubPAT: string | null;
 }
 
 gulp.task('createTags:roslyn', async (): Promise<void> => {
@@ -71,7 +72,7 @@ async function createTagsAsync(
 ): Promise<void> {
     console.log(`releaseVersion: ${options.releaseVersion}`);
     console.log(`releaseCommit: ${options.releaseCommit}`);
-    const dryRun = options.dryRun.toLocaleLowerCase() === 'true';
+    const dryRun = options.dryRun ? options.dryRun.toLocaleLowerCase() === 'true' : false;
     console.log(`dry run: ${dryRun}`);
 
     const commit = await getCommit();
@@ -86,7 +87,7 @@ async function createTagsAsync(
         return;
     } else {
         const [tag, message] = getTagAndMessage(options.releaseVersion);
-        const tagCreated = await tagRepoAsync(owner, repo, commit, tag, message);
+        const tagCreated = await tagRepoAsync(owner, repo, commit, tag, message, options.githubPAT);
 
         if (!tagCreated) {
             logError(`Failed to tag '${owner}/${repo}'`);
@@ -102,11 +103,12 @@ async function tagRepoAsync(
     repo: string,
     commit: string,
     releaseTag: string,
-    tagMessage: string
+    tagMessage: string,
+    githubPAT: string | null
 ): Promise<boolean> {
-    const pat = process.env['GitHubPAT'];
+    const pat = githubPAT ?? process.env['GitHubPAT'];
     if (!pat) {
-        throw 'No GitHub Pat found.';
+        throw 'No GitHub Pat found. Specify with --githubPAT or set GitHubPAT environment variable.';
     }
 
     console.log(`Start to tag ${owner}/${repo}. Commit: ${commit}, tag: ${releaseTag}, message: ${tagMessage}`);
