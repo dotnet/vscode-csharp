@@ -11,9 +11,16 @@ import { LanguageQueryResponse } from './rpc/languageQueryResponse';
 import { RazorMapToDocumentRangesRequest } from './rpc/razorMapToDocumentRangesRequest';
 import { RazorMapToDocumentRangesResponse } from './rpc/razorMapToDocumentRangesResponse';
 import { convertRangeFromSerializable, convertRangeToSerializable } from './rpc/serializableRange';
+import { RazorMapSpansParams } from './mapping/razorMapSpansParams';
+import { RazorMapSpansResponse } from './mapping/razorMapSpansResponse';
+import { UriConverter } from '../../lsptoolshost/utils/uriConverter';
+import { RazorDocumentManager } from './document/razorDocumentManager';
 
 export class RazorLanguageServiceClient {
-    constructor(private readonly serverClient: RazorLanguageServerClient) {}
+    constructor(
+        private readonly serverClient: RazorLanguageServerClient,
+        private readonly documentManager: RazorDocumentManager
+    ) {}
 
     public async languageQuery(position: vscode.Position, uri: vscode.Uri) {
         await this.ensureStarted();
@@ -48,6 +55,49 @@ export class RazorLanguageServiceClient {
 
         response.ranges = responseRanges;
         return response;
+    }
+
+    public async mapSpans(params: RazorMapSpansParams): Promise<RazorMapSpansResponse> {
+        const csharpUri = UriConverter.deserialize(params.csharpDocument.uri);
+
+        const request = new RazorMapToDocumentRangesRequest(
+            LanguageKind.CSharp,
+            params.ranges.map(
+                (r) =>
+                    new vscode.Range(
+                        new vscode.Position(r.start.line, r.start.character),
+                        new vscode.Position(r.end.line, r.end.character)
+                    )
+            ),
+            csharpUri
+        );
+
+        const result = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>(
+            'razor/mapToDocumentRanges',
+            request
+        );
+
+        if (!result) {
+            return RazorMapSpansResponse.empty;
+        }
+
+        const document = await this.documentManager.getDocumentForCSharpUri(csharpUri);
+        if (!document) {
+            return RazorMapSpansResponse.empty;
+        }
+
+        return new RazorMapSpansResponse(
+            result.ranges.map((r) => {
+                return {
+                    start: { line: r.start.line, character: r.start.character },
+                    end: { line: r.end.line, character: r.end.character },
+                };
+            }),
+            result.spans,
+            {
+                uri: UriConverter.serialize(document.uri),
+            }
+        );
     }
 
     private async ensureStarted() {

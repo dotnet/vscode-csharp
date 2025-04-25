@@ -27,15 +27,18 @@ import { ColorPresentation } from 'vscode-html-languageservice';
 import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileInfoHandler';
 import { ProvideDynamicFileParams } from '../../razor/src/dynamicFile/provideDynamicFileParams';
 import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideDynamicFileResponse';
+import { RazorMapSpansParams } from '../../razor/src/mapping/razorMapSpansParams';
+import { RazorMapSpansResponse } from '../../razor/src/mapping/razorMapSpansResponse';
+import { MappingHandler } from '../../razor/src/mapping/mappingHandler';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
-    languageServer: RoslynLanguageServer,
+    roslynLanguageServer: RoslynLanguageServer,
     razorLogger: RazorLogger,
     platformInfo: PlatformInformation
 ) {
     const logNotificationType = new NotificationType<LogMessageParams>('razor/log');
-    languageServer.registerOnNotificationWithParams(logNotificationType, (params) =>
+    roslynLanguageServer.registerOnNotificationWithParams(logNotificationType, (params) =>
         razorLogger.log(params.message, params.type)
     );
 
@@ -78,8 +81,6 @@ export function registerRazorEndpoints(
     }
 
     function registerNonCohostingEndpoints() {
-        // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
-        // a command.
         registerRequestHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
             'razor/provideDynamicFileInfo',
             async (params) =>
@@ -91,12 +92,15 @@ export function registerRazorEndpoints(
             async (params) =>
                 vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
         );
+        registerRequestHandler<RazorMapSpansParams, RazorMapSpansResponse>('razor/mapSpans', async (params) => {
+            return await vscode.commands.executeCommand<RazorMapSpansResponse>(MappingHandler.MapSpansCommand, params);
+        });
     }
 
     // Helper method that registers a request handler, and logs errors to the Razor logger.
     function registerRequestHandler<Params, Result>(method: string, invocation: (params: Params) => Promise<Result>) {
         const requestType = new RequestType<Params, Result, Error>(method);
-        languageServer.registerOnRequest(requestType, async (params) => {
+        roslynLanguageServer.registerOnRequest(requestType, async (params) => {
             try {
                 return await invocation(params);
             } catch (error) {
