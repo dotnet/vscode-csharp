@@ -25,11 +25,20 @@ export class HtmlDocumentManager {
 
     public register() {
         const didCloseRegistration = vscode.workspace.onDidCloseTextDocument(async (document) => {
-            if (document.languageId !== 'html') {
+            // We log when a virtual document is closed just in case it helps track down future bugs
+            if (document.uri.scheme === HtmlDocumentContentProvider.scheme) {
+                this.logger.logVerbose(`Virtual document '${document.uri}' timed out.`);
                 return;
             }
 
-            await this.closeDocument(document.uri);
+            // When a Razor document is closed, only then can we be sure its okay to remove the virtual document.
+            if (document.languageId === 'aspnetcorerazor') {
+                this.logger.logVerbose(`Document '${document.uri}' was closed.`);
+
+                await this.closeDocument(document.uri);
+
+                // TODO: Send a notification back to the server so it can cancel any pending sync requests and clear its cache.
+            }
         });
 
         const providerRegistration = vscode.workspace.registerTextDocumentContentProvider(
@@ -51,10 +60,10 @@ export class HtmlDocumentManager {
     }
 
     private async closeDocument(uri: vscode.Uri) {
-        const document = await this.getDocument(uri);
+        const document = await this.findDocument(uri);
 
         if (document) {
-            this.logger.logVerbose(`Document '${document.uri}' was closed. Removing from the document manager.`);
+            this.logger.logVerbose(`Removing '${document.uri}' from the document manager.`);
 
             delete this.htmlDocuments[document.path];
         }
