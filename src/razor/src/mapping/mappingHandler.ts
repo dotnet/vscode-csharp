@@ -9,11 +9,21 @@ import { RazorMapSpansParams } from './razorMapSpansParams';
 
 export class MappingHandler {
     public static readonly MapSpansCommand = 'razor.mapSpansCommand';
+    public static readonly MapChangesCommand = 'razor.mapChangesCommand';
+
     constructor(private readonly languageServiceClient: RazorLanguageServiceClient) {}
 
-    public async register(): Promise<void> {
-        vscode.commands.registerCommand(MappingHandler.MapSpansCommand, async (params: RazorMapSpansParams) => {
-            return this.languageServiceClient.mapSpans(params);
-        });
+    public async register(): Promise<vscode.Disposable> {
+        return vscode.Disposable.from(
+            ...[
+                vscode.commands.registerCommand(MappingHandler.MapSpansCommand, async (params: RazorMapSpansParams) => {
+                    return this.languageServiceClient.mapSpans(params);
+                }),
+                vscode.commands.registerCommand(
+                    MappingHandler.MapChangesCommand,
+                    async (params: RazorMapSpansParams) => {}
+                ),
+            ]
+        );
     }
 }

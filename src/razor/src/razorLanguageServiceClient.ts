@@ -15,6 +15,10 @@ import { RazorMapSpansParams } from './mapping/razorMapSpansParams';
 import { RazorMapSpansResponse } from './mapping/razorMapSpansResponse';
 import { UriConverter } from '../../lsptoolshost/utils/uriConverter';
 import { RazorDocumentManager } from './document/razorDocumentManager';
+import { RazorMapTextChangesParams } from './mapping/RazorMapTextChangesParams';
+import { RazorMapTextChangesResponse } from './mapping/RazorMapTextChangesResponse';
+import { RazorMapToDocumentEditsParams } from './mapping/RazorMapToDocumentEditsParams';
+import { RazorMapToDocumentEditsResponse } from './mapping/RazorMapToDocumentEditsResponse';
 
 export class RazorLanguageServiceClient {
     constructor(
@@ -97,6 +101,31 @@ export class RazorLanguageServiceClient {
             {
                 uri: UriConverter.serialize(document.uri),
             }
+        );
+    }
+
+    async mapTextChanges(params: RazorMapTextChangesParams): Promise<RazorMapTextChangesResponse> {
+        const csharpUri = UriConverter.deserialize(params.csharpDocument.uri);
+        const document = await this.documentManager.getDocumentForCSharpUri(csharpUri);
+        if (!document) {
+            return RazorMapTextChangesResponse.empty;
+        }
+
+        const request = new RazorMapToDocumentEditsParams(LanguageKind.CSharp, document.uri, params.textChanges);
+        const response = await this.serverClient.sendRequest<RazorMapToDocumentEditsResponse>(
+            'razor/mapToDocumentEdits',
+            request
+        );
+
+        if (!response) {
+            return RazorMapTextChangesResponse.empty;
+        }
+
+        return new RazorMapTextChangesResponse(
+            {
+                uri: UriConverter.serialize(document.uri),
+            },
+            response.textChanges
         );
     }
 

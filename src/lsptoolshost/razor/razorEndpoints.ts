@@ -30,6 +30,8 @@ import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideD
 import { RazorMapSpansParams } from '../../razor/src/mapping/razorMapSpansParams';
 import { RazorMapSpansResponse } from '../../razor/src/mapping/razorMapSpansResponse';
 import { MappingHandler } from '../../razor/src/mapping/mappingHandler';
+import { RazorMapTextChangesParams } from '../../razor/src/mapping/RazorMapTextChangesParams';
+import { RazorMapTextChangesResponse } from '../../razor/src/mapping/RazorMapTextChangesResponse';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -95,6 +97,15 @@ export function registerRazorEndpoints(
         registerRequestHandler<RazorMapSpansParams, RazorMapSpansResponse>('razor/mapSpans', async (params) => {
             return await vscode.commands.executeCommand<RazorMapSpansResponse>(MappingHandler.MapSpansCommand, params);
         });
+        registerRequestHandler<RazorMapTextChangesParams, RazorMapTextChangesResponse>(
+            'razor/mapTextChanges',
+            async (params) => {
+                return await vscode.commands.executeCommand<RazorMapTextChangesResponse>(
+                    MappingHandler.MapChangesCommand,
+                    params
+                );
+            }
+        );
     }
 
     // Helper method that registers a request handler, and logs errors to the Razor logger.
