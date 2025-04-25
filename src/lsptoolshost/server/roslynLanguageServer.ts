@@ -32,7 +32,6 @@ import {
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../../shared/platform';
 import { readConfigurations } from '../options/configurationMiddleware';
-import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileInfoHandler';
 import * as RoslynProtocol from './roslynProtocol';
 import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider';
@@ -60,8 +59,6 @@ import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService'
 import { getComponentPaths } from '../extensions/builtInComponents';
 import { OnAutoInsertFeature } from '../autoInsert/onAutoInsertFeature';
 import { ProjectContextService } from '../projectContext/projectContextService';
-import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideDynamicFileResponse';
-import { ProvideDynamicFileParams } from '../../razor/src/dynamicFile/provideDynamicFileParams';
 import {
     ActionOption,
     CommandOption,
@@ -69,7 +66,6 @@ import {
     showInformationMessage,
 } from '../../shared/observers/utils/showMessage';
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
-import { RazorDynamicFileChangedParams } from '../../razor/src/dynamicFile/dynamicFileUpdatedParams';
 import { getProfilingEnvVars } from '../profiling/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
@@ -84,10 +80,6 @@ import {
 let _wasActivatedWithCSharpDevkit: boolean | undefined;
 
 export class RoslynLanguageServer {
-    // These are notifications we will get from the LSP server and will forward to the Razor extension.
-    private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
-    private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
-
     /**
      * The encoding to use when writing to and from the stream.
      */
@@ -142,10 +134,6 @@ export class RoslynLanguageServer {
         this.registerDocumentOpenForDiagnostics();
 
         this._projectContextService = new ProjectContextService(this, this._languageServerEvents);
-
-        // Register Razor dynamic file info handling
-        this.registerDynamicFileInfo();
-
         this.registerDebuggerAttach();
 
         registerShowToastNotification(this._languageClient);
@@ -813,37 +801,6 @@ export class RoslynLanguageServer {
             reader: new SocketMessageReader(socket, RoslynLanguageServer.encoding),
             writer: new SocketMessageWriter(socket, RoslynLanguageServer.encoding),
         };
-    }
-
-    private ProvideDyanmicFileInfoType: RequestType<ProvideDynamicFileParams, ProvideDynamicFileResponse, any> =
-        new RequestType(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName);
-
-    private registerDynamicFileInfo() {
-        // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
-        // a command.
-        this._languageClient.onRequest<ProvideDynamicFileParams, ProvideDynamicFileResponse, any>(
-            this.ProvideDyanmicFileInfoType,
-            async (request) =>
-                vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
-        );
-        this._languageClient.onNotification(
-            RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
-            async (notification) =>
-                vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification)
-        );
-        vscode.commands.registerCommand(
-            DynamicFileInfoHandler.dynamicFileUpdatedCommand,
-            async (notification: RazorDynamicFileChangedParams) => {
-                if (this.isRunning()) {
-                    await this.sendNotification<RazorDynamicFileChangedParams>(
-                        'razor/dynamicFileInfoChanged',
-                        notification
-                    );
-                } else {
-                    this._channel.warn('Tried to send razor/dynamicFileInfoChanged while server is not running');
-                }
-            }
-        );
     }
 
     // eslint-disable-next-line @typescript-eslint/promise-function-async

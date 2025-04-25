@@ -24,6 +24,9 @@ import { DocumentColorHandler } from '../../razor/src/documentColor/documentColo
 import { razorOptions } from '../../shared/options';
 import { ColorPresentationHandler } from '../../razor/src/colorPresentation/colorPresentationHandler';
 import { ColorPresentation } from 'vscode-html-languageservice';
+import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileInfoHandler';
+import { ProvideDynamicFileParams } from '../../razor/src/dynamicFile/provideDynamicFileParams';
+import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideDynamicFileResponse';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -36,34 +39,59 @@ export function registerRazorEndpoints(
         razorLogger.log(params.message, params.type)
     );
 
-    if (!razorOptions.cohostingEnabled) {
-        return;
+    if (razorOptions.cohostingEnabled) {
+        registerCohostingEndpoints();
+    } else {
+        registerNonCohostingEndpoints();
     }
 
-    const documentManager = new HtmlDocumentManager(platformInfo, razorLogger);
-    context.subscriptions.push(documentManager.register());
+    return;
 
-    registerRequestHandler<HtmlUpdateParameters, void>('razor/updateHtml', async (params) => {
-        const uri = UriConverter.deserialize(params.textDocument.uri);
-        await documentManager.updateDocumentText(uri, params.text);
-    });
+    //
+    // Local Functions
+    //
+    function registerCohostingEndpoints() {
+        const documentManager = new HtmlDocumentManager(platformInfo, razorLogger);
+        context.subscriptions.push(documentManager.register());
 
-    registerRequestHandler<DocumentColorParams, ColorInformation[]>(DocumentColorRequest.method, async (params) => {
-        const uri = UriConverter.deserialize(params.textDocument.uri);
-        const document = await documentManager.getDocument(uri);
+        registerRequestHandler<HtmlUpdateParameters, void>('razor/updateHtml', async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            await documentManager.updateDocumentText(uri, params.text);
+        });
 
-        return await DocumentColorHandler.doDocumentColorRequest(document.uri);
-    });
-
-    registerRequestHandler<ColorPresentationParams, ColorPresentation[]>(
-        ColorPresentationRequest.method,
-        async (params) => {
+        registerRequestHandler<DocumentColorParams, ColorInformation[]>(DocumentColorRequest.method, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri);
 
-            return await ColorPresentationHandler.doColorPresentationRequest(document.uri, params);
-        }
-    );
+            return await DocumentColorHandler.doDocumentColorRequest(document.uri);
+        });
+
+        registerRequestHandler<ColorPresentationParams, ColorPresentation[]>(
+            ColorPresentationRequest.method,
+            async (params) => {
+                const uri = UriConverter.deserialize(params.textDocument.uri);
+                const document = await documentManager.getDocument(uri);
+
+                return await ColorPresentationHandler.doColorPresentationRequest(document.uri, params);
+            }
+        );
+    }
+
+    function registerNonCohostingEndpoints() {
+        // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
+        // a command.
+        registerRequestHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
+            'razor/provideDynamicFileInfo',
+            async (params) =>
+                vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
+        );
+
+        registerRequestHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
+            'razor/removeDynamicFileInfo',
+            async (params) =>
+                vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
+        );
+    }
 
     // Helper method that registers a request handler, and logs errors to the Razor logger.
     function registerRequestHandler<Params, Result>(method: string, invocation: (params: Params) => Promise<Result>) {

@@ -31,6 +31,10 @@ import {
 import SerializableSimplifyMethodParams from '../../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
 import { SerializableFormatNewFileParams } from '../../razor/src/formatNewFile/serializableFormatNewFileParams';
+import { RazorLogger } from '../../razor/src/razorLogger';
+import { RazorDynamicFileChangedParams } from '../../razor/src/dynamicFile/dynamicFileUpdatedParams';
+import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileInfoHandler';
+import { razorOptions } from '../../shared/options';
 
 // These are commands that are invoked by the Razor extension, and are used to send LSP requests to the Roslyn LSP server
 export const roslynDidChangeCommand = 'roslyn.changeRazorCSharp';
@@ -47,7 +51,11 @@ export const razorInitializeCommand = 'razor.initialize';
 export const provideInlayHintsCommand = 'roslyn.provideInlayHints';
 export const resolveInlayHintCommand = 'roslyn.resolveInlayHint';
 
-export function registerRazorCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
+export function registerRazorCommands(
+    context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
+    razorLogger: RazorLogger
+) {
     // Razor will call into us (via command) for generated file didChange/didClose notifications. We'll then forward these
     // notifications along to Roslyn. didOpen notifications are handled separately via the vscode.openTextDocument method.
     context.subscriptions.push(
@@ -138,4 +146,25 @@ export function registerRazorCommands(context: vscode.ExtensionContext, language
             await languageServer.sendNotification('razor/initialize', { pipeName: pipeName });
         })
     );
+
+    if (!razorOptions.cohostingEnabled) {
+        // Dynamic files are only handled when cohosting is disabled.
+        context.subscriptions.push(
+            vscode.commands.registerCommand(
+                DynamicFileInfoHandler.dynamicFileUpdatedCommand,
+                async (notification: RazorDynamicFileChangedParams) => {
+                    if (languageServer.isRunning()) {
+                        await languageServer.sendNotification<RazorDynamicFileChangedParams>(
+                            'razor/dynamicFileInfoChanged',
+                            notification
+                        );
+                    } else {
+                        razorLogger.logVerbose(
+                            'Tried to send razor/dynamicFileInfoChanged while server is not running'
+                        );
+                    }
+                }
+            )
+        );
+    }
 }
