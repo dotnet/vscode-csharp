@@ -120,6 +120,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Určuje, jestli má server OmniSharp používat nastavení editoru VS Code pro formátování kódu C# (použití tabulátorů, velikost odsazení).",
   "configuration.omnisharp.useModernNet.description": "Použijte build serveru OmniSharp pro .NET 6. Tato verze _nepodporuje_ projekty .NET Framework, které nejsou ve stylu sady SDK, včetně Unity. U projektů Framework, .NET Core a .NET 5+, které jsou ve stylu sady SDK, byste měli zaznamenat výrazné zlepšení výkonu.",
   "configuration.omnisharp.useModernNet.title": "Použít build serveru OmniSharp pro .NET 6",
+  "configuration.razor.languageServer.cohostingEnabled": "(EXPERIMENTÁLNÍ) Povolte spoluhostování Razoru.",
   "configuration.razor.languageServer.debug": "Určuje, jestli se má při spouštění jazykového serveru čekat na připojení ladění.",
   "configuration.razor.languageServer.directory": "Přepíše cestu k adresáři jazykového serveru Razor.",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(EXPERIMENTÁLNÍ) Povolit kombinované generování kódu v době návrhu / za běhu pro soubory Razor",

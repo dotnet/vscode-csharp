@@ -120,6 +120,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "OmniSharp で C# コードの書式設定 (タブ、インデント サイズの使用) に VS Code エディター設定を使用するかどうかを指定します。",
   "configuration.omnisharp.useModernNet.description": ".NET 6 用の OmniSharp ビルドを使用します。このバージョンは、Unity を含む SDK スタイルではない .NET Framework プロジェクトを _サポートしていません_。SDK スタイルの Framework、.NET Core、および .NET 5+ のプロジェクトでは、パフォーマンスが大幅に向上します。",
   "configuration.omnisharp.useModernNet.title": "OmniSharp の .NET 6 ビルドを使用する",
+  "configuration.razor.languageServer.cohostingEnabled": "(試験段階) Razor の共同ホスティングを有効にします。",
   "configuration.razor.languageServer.debug": "言語サーバーの起動時にデバッグ アタッチを待機するかどうかを指定します。",
   "configuration.razor.languageServer.directory": "Razor Language Server ディレクトリへのパスをオーバーライドします。",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(試験段階) Razor ファイルのデザイン時間/ランタイム コード生成の併用を有効にする",

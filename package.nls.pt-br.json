@@ -120,6 +120,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "Especifica se o OmniSharp deve usar as configurações do editor VS Code para formatar o código C# (uso de tabulações, tamanho do recuo).",
   "configuration.omnisharp.useModernNet.description": "Use a compilação OmniSharp para .NET 6. Esta versão _não_ suporta projetos que não sejam do estilo SDK .NET Framework, incluindo Unity. Projetos do Framework no estilo SDK, .NET Core e .NET 5+ devem ver melhorias significativas de desempenho.",
   "configuration.omnisharp.useModernNet.title": "Usar a compilação do .NET 6 da OmniSharp",
+  "configuration.razor.languageServer.cohostingEnabled": "(EXPERIMENTAL) Habilite a co-hospedagem do Razor.",
   "configuration.razor.languageServer.debug": "Especifica se é preciso aguardar o anexo de depuração ao iniciar o servidor de linguagem.",
   "configuration.razor.languageServer.directory": "Substitui o caminho para o diretório do Servidor de Linguagem Razor.",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(EXPERIMENTAL) Habilitar geração de código de tempo de design/tempo de execução combinado para arquivos Razor",

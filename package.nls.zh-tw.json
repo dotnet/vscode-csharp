@@ -120,6 +120,7 @@
   "configuration.omnisharp.useEditorFormattingSettings": "指定 OmniSharp 是否應該針對 C# 程式碼格式設定 (使用 Tab、縮排大小) 使用 VS Code 編輯器設定。",
   "configuration.omnisharp.useModernNet.description": "使用適用於 .NET 6 的 OmniSharp 組建。此版本不支援非 SDK 樣式的 .NET Framework 專案，包括 Unity。SDK 樣式的 Framework、.NET Core 和 .NET 5+ 專案應該會大幅提升效能。",
   "configuration.omnisharp.useModernNet.title": "使用 OmniSharp 的 .NET 6 版本",
+  "configuration.razor.languageServer.cohostingEnabled": "(實驗性) 啟用 Razor 共同托管。",
   "configuration.razor.languageServer.debug": "指定啟動語言伺服器時，是否要等候偵錯附加。",
   "configuration.razor.languageServer.directory": "覆寫 Razor 語言伺服器目錄的路徑。",
   "configuration.razor.languageServer.forceRuntimeCodeGeneration": "(實驗性) 啟用適用於 Razor 檔案的合併設計階段/執行階段程式碼產生",
