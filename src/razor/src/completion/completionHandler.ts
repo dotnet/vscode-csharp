@@ -137,7 +137,7 @@ export class CompletionHandler {
             }
 
             // HTML completion - provided via vscode command
-            return this.provideVscodeCompletions(
+            return CompletionHandler.provideVscodeCompletions(
                 virtualDocument.uri,
                 delegatedCompletionParams.projectedPosition,
                 modifiedTriggerCharacter
@@ -372,7 +372,7 @@ export class CompletionHandler {
 
     // Provide completions using standard vscode executeCompletionItemProvider command
     // Used in HTML context
-    private async provideVscodeCompletions(
+    public static async provideVscodeCompletions(
         virtualDocumentUri: vscode.Uri,
         projectedPosition: Position,
         triggerCharacter: string | undefined
