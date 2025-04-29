@@ -3,6 +3,52 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.76.x
+
+# 2.75.x
+* Bump Roslyn to 5.0.0-1.25224.9 (PR: [#8211](https://github.com/dotnet/vscode-csharp/pull/8211))
+  * Update ICSharpCode.Decompiler to 9.1.0.7988(PR: [#78270](https://github.com/dotnet/roslyn/pull/78270))
+  * Reduce allocations in NamespaceSymbol.GetExtensionContainers(PR: [#78243](https://github.com/dotnet/roslyn/pull/78243))
+  * Allow Razor files to be additional documents in a misc files project(PR: [#78267](https://github.com/dotnet/roslyn/pull/78267))
+  * Hook up IDocumentServiceProvider in VS Code(PR: [#78266](https://github.com/dotnet/roslyn/pull/78266))
+  * Allow Razor cohosting to run in VS Code, and fix it in VS(PR: [#78167](https://github.com/dotnet/roslyn/pull/78167))
+  * Fix razor analyzer loading(PR: [#78116](https://github.com/dotnet/roslyn/pull/78116))
+  * Fix crash when converting primary constructor to normal constructor(PR: [#78234](https://github.com/dotnet/roslyn/pull/78234))
+  * Reduce LOH allocations in MetadataWriter(PR: [#78245](https://github.com/dotnet/roslyn/pull/78245))
+  * Support empty root namespaces in ResxSourceGenerator(PR: [#78233](https://github.com/dotnet/roslyn/pull/78233))
+  * Allocate slightly less in ImmutableArrayExtensions.ConditionallyDeOrder(PR: [#78235](https://github.com/dotnet/roslyn/pull/78235))
+  * Ensure FindSourceDefinitionAsync works in frozen compilation cases(PR: [#78195](https://github.com/dotnet/roslyn/pull/78195))
+  * Fix quick info for pp symbols(PR: [#78173](https://github.com/dotnet/roslyn/pull/78173))
+  * Fix issue where we were inappropriately suggesting we remove a ref-field(PR: [#78191](https://github.com/dotnet/roslyn/pull/78191))
+  * System.CommandLine update (PR: [#78142](https://github.com/dotnet/roslyn/pull/78142))
+  * Ensure LSP uses actual signature help trigger characters(PR: [#78076](https://github.com/dotnet/roslyn/pull/78076))
+  * Do not return metadata names for document symbols(PR: [#78077](https://github.com/dotnet/roslyn/pull/78077))
+  * Improve detection of code whose updates may not have effect(PR: [#78009](https://github.com/dotnet/roslyn/pull/78009))
+  * Fix crash in backing field nullability cycle scenario(PR: [#77993](https://github.com/dotnet/roslyn/pull/77993))
+  * Fix EA layering for Razor.ExternalAccess(PR: [#77927](https://github.com/dotnet/roslyn/pull/77927))
+  * Simplify workspace initialization in the LSP server(PR: [#78010](https://github.com/dotnet/roslyn/pull/78010))
+* Support Html requests in cohosting(PR: [#8210](https://github.com/dotnet/vscode-csharp/pull/8210))
+* Allow the Roslyn client to log messages from Razor(PR: [#8201](https://github.com/dotnet/vscode-csharp/pull/8201))
+* Add cohost option to Razor(PR: [#8189](https://github.com/dotnet/vscode-csharp/pull/8189))
+
+# 2.74.x
+* Bump xamlTools to 17.14.36010.33 (PR: [#8178](https://github.com/dotnet/vscode-csharp/pull/8178))
+* Bump razor to 10.0.0-preview.25210.3 (PR: [#8171](https://github.com/dotnet/vscode-csharp/pull/8171))
+  * Allow graceful handling of ArgumentException when trying to apply changes to SourceText in LspTextChangesLoader (PR: [#11727](https://github.com/dotnet/razor/pull/11727))
+  * Tweak a log message (PR: [#11705](https://github.com/dotnet/razor/pull/11705))
+  * Improve performance and memory usage of TagHelperBinder (PR: [#11671](https://github.com/dotnet/razor/pull/11671))
+
+# 2.73.x
+* Bump Roslyn to 5.0.0-1.25204.1 (PR: [#8138](https://github.com/dotnet/vscode-csharp/pull/8138))
+  * Ensure that newline is inserted after file scoped namespace declarations (PR: [#77821](https://github.com/dotnet/roslyn/pull/77821))
+  * Allow modification of source generated documents (PR: [#77587](https://github.com/dotnet/roslyn/pull/77587))
+  * Simplify the code for getting source generator diagnostics into the diagnostics service. (PR: [#77898](https://github.com/dotnet/roslyn/pull/77898))
+  * Make GlobalOptionService initialization synchronous. (PR: [#77823](https://github.com/dotnet/roslyn/pull/77823))
+  * Change keys for import caching (PR: [#77627](https://github.com/dotnet/roslyn/pull/77627))
+* Don't show duplicate toast if C# Dev Kit fails to activate (PR: [#8135](https://github.com/dotnet/vscode-csharp/pull/8135))
+* Bump xamlTools to 17.14.36004.3 (PR: [#8134](https://github.com/dotnet/vscode-csharp/pull/8134))
+* Acquire aspnetcore runtime when using Dev Kit to avoid double acquisition (PR: [#8132](https://github.com/dotnet/vscode-csharp/pull/8132))
+
 # 2.72.x
 * Revert xamlTools to 17.14.35913.250 (PR: [#8121](https://github.com/dotnet/vscode-csharp/pull/8121))
 * Update Roslyn to 4.14.0-3.25178.1 (PR: [#8103](https://github.com/dotnet/vscode-csharp/pull/8103))
@@ -16,18 +62,18 @@
   * Cleanup and make semantic token processing and testing code more consistent (PR: [#77684](https://github.com/dotnet/roslyn/pull/77684))
   * Fix generation of attribute with array constant (PR: [#77661](https://github.com/dotnet/roslyn/pull/77661))
 * Bump Razor to (PR: [#8096](https://github.com/dotnet/vscode-csharp/pull/8096))
-  * Some code actions ordering and cleanup (#11659) (PR: [#11659](https://github.com/dotnet/razor/pull/11659))
-  * Emit pragmas for empty @ expressions in MVC (#11653) (PR: [#11653](https://github.com/dotnet/razor/pull/11653))
-  * Couple of small code actions tweaks (#11630) (PR: [#11630](https://github.com/dotnet/razor/pull/11630))
-  * Fix text area formatting in the new formatting engine (#11624) (PR: [#11624](https://github.com/dotnet/razor/pull/11624))
+  * Some code actions ordering and cleanup (PR: [#11659](https://github.com/dotnet/razor/pull/11659))
+  * Emit pragmas for empty @ expressions in MVC (PR: [#11653](https://github.com/dotnet/razor/pull/11653))
+  * Couple of small code actions tweaks (PR: [#11630](https://github.com/dotnet/razor/pull/11630))
+  * Fix text area formatting in the new formatting engine (PR: [#11624](https://github.com/dotnet/razor/pull/11624))
 
 # 2.71.x
 * Bump xamlTools to 17.14.35920.284 (PR: [#8083](https://github.com/dotnet/vscode-csharp/pull/8083))
 * Localization (PR: [#8084](https://github.com/dotnet/vscode-csharp/pull/8084))
-* Update wording on Razor Report Issue(PR: [#8081](https://github.com/dotnet/vscode-csharp/pull/8081))
-* Use the new SDK install experience when available.(PR: [#8080](https://github.com/dotnet/vscode-csharp/pull/8080))
-* Only enable Generate Assets command when the extension is activated.(PR: [#8079](https://github.com/dotnet/vscode-csharp/pull/8079))
-* Expose `sendRequestWithProgress` as experimental API(PR: [#8074](https://github.com/dotnet/vscode-csharp/pull/8074))
+* Update wording on Razor Report Issue (PR: [#8081](https://github.com/dotnet/vscode-csharp/pull/8081))
+* Use the new SDK install experience when available. (PR: [#8080](https://github.com/dotnet/vscode-csharp/pull/8080))
+* Only enable Generate Assets command when the extension is activated. (PR: [#8079](https://github.com/dotnet/vscode-csharp/pull/8079))
+* Expose `sendRequestWithProgress` as experimental API (PR: [#8074](https://github.com/dotnet/vscode-csharp/pull/8074))
 
 # 2.70.x
 * Bump razor to 9.0.0-preview.25161.2 (PR: [#8058](https://github.com/dotnet/vscode-csharp/pull/8058))

@@ -8,7 +8,14 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as net from 'net';
-import { LanguageClientOptions, MessageTransports, ProtocolRequestType, ServerOptions } from 'vscode-languageclient';
+import {
+    LanguageClientOptions,
+    MessageTransports,
+    NotificationHandler,
+    NotificationType,
+    ProtocolRequestType,
+    ServerOptions,
+} from 'vscode-languageclient';
 import {
     Trace,
     RequestType,
@@ -437,6 +444,13 @@ export class RoslynLanguageServer {
         this._languageClient.addDisposable(this._languageClient.onNotification(method, handler));
     }
 
+    public registerOnNotificationWithParams<Params>(
+        type: NotificationType<Params>,
+        handler: NotificationHandler<Params>
+    ) {
+        this._languageClient.addDisposable(this._languageClient.onNotification(type, handler));
+    }
+
     public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {
         const response = await this.sendRequest0(RoslynProtocol.RegisterSolutionSnapshotRequest.type, token);
         if (response) {
@@ -617,15 +631,23 @@ export class RoslynLanguageServer {
                 ? path.join(context.extension.extensionPath, '.razor')
                 : razorOptions.razorServerPath;
 
-        args.push('--razorSourceGenerator', path.join(razorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
+        let razorComponentPath = '';
+        getComponentPaths('razorExtension', languageServerOptions).forEach((extPath) => {
+            additionalExtensionPaths.push(extPath);
+            razorComponentPath = path.dirname(extPath);
+        });
+
+        // If cohosting is enabled we get the source generator from the razor component path
+        const razorSourceGeneratorPath = razorOptions.cohostingEnabled ? razorComponentPath : razorPath;
+
+        args.push(
+            '--razorSourceGenerator',
+            path.join(razorSourceGeneratorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
+        );
 
         args.push(
             '--razorDesignTimePath',
             path.join(razorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
-        );
-
-        getComponentPaths('razorExtension', languageServerOptions).forEach((path) =>
-            additionalExtensionPaths.push(path)
         );
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -895,6 +917,9 @@ export class RoslynLanguageServer {
         // When a file is opened process any build diagnostics that may be shown
         this._languageClient.addDisposable(
             vscode.workspace.onDidOpenTextDocument(async (event) => {
+                if (event.languageId !== 'csharp') {
+                    return;
+                }
                 try {
                     const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
                     await this._buildDiagnosticService._onFileOpened(event, buildIds);

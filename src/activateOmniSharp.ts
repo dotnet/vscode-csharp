@@ -13,6 +13,7 @@ import { activateOmniSharpLanguageServer } from './omnisharp/omnisharpLanguageSe
 import { EventStream } from './eventStream';
 import { razorOptions } from './shared/options';
 import { activateRazorExtension } from './razor/razor';
+import { RazorLogger } from './razor/src/razorLogger';
 
 export function activateOmniSharp(
     context: vscode.ExtensionContext,
@@ -39,6 +40,7 @@ export function activateOmniSharp(
         reporter
     );
 
+    const razorLogger = new RazorLogger();
     let omnisharpRazorPromise: Promise<void> | undefined = undefined;
     if (!razorOptions.razorDevMode) {
         omnisharpRazorPromise = activateRazorExtension(
@@ -48,7 +50,8 @@ export function activateOmniSharp(
             reporter,
             undefined,
             platformInfo,
-            /* useOmnisharpServer */ true
+            /* useOmnisharpServer */ true,
+            razorLogger
         );
     }
 
