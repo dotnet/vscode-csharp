@@ -30,8 +30,8 @@ import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideD
 import { RazorMapSpansParams } from '../../razor/src/mapping/razorMapSpansParams';
 import { RazorMapSpansResponse } from '../../razor/src/mapping/razorMapSpansResponse';
 import { MappingHandler } from '../../razor/src/mapping/mappingHandler';
-import { RazorMapTextChangesParams } from '../../razor/src/mapping/RazorMapTextChangesParams';
-import { RazorMapTextChangesResponse } from '../../razor/src/mapping/RazorMapTextChangesResponse';
+import { RazorMapTextChangesParams } from '../../razor/src/mapping/razorMapTextChangesParams';
+import { RazorMapTextChangesResponse } from '../../razor/src/mapping/razorMapTextChangesResponse';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,

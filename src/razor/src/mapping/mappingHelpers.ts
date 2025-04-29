@@ -11,7 +11,6 @@ import { RazorLogger } from '../razorLogger';
 
 export class MappingHelpers {
     public static readonly language = 'Razor';
-    public static readonly MapSpansCommand = 'razor.mapSpansCommand';
 
     public static async remapGeneratedFileWorkspaceEdit(
         workspaceEdit: vscode.WorkspaceEdit,

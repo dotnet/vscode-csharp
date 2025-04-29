@@ -16,6 +16,7 @@ import { RazorDynamicFileChangedParams } from './dynamicFileUpdatedParams';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { razorTextChange } from './razorTextChange';
 import { razorTextSpan } from './razorTextSpan';
+import { razorOptions } from '../../../shared/options';
 
 // Handles Razor generated doc communication between the Roslyn workspace and Razor.
 // didChange behavior for Razor generated docs is handled in the RazorDocumentManager.
@@ -39,18 +40,21 @@ export class DynamicFileInfoHandler {
                 await this.removeDynamicFileInfo(request);
             }
         );
-        this.documentManager.onChange(async (e) => {
-            // Ignore any updates without text changes. This is important for perf since sending an update to roslyn does
-            // a round trip for producing nothing new and causes a lot of churn in solution updates.
-            if (e.kind == RazorDocumentChangeKind.csharpChanged && !e.document.isOpen && e.changes.length > 0) {
-                const uriString = UriConverter.serialize(e.document.uri);
-                const identifier = TextDocumentIdentifier.create(uriString);
-                await vscode.commands.executeCommand(
-                    DynamicFileInfoHandler.dynamicFileUpdatedCommand,
-                    new RazorDynamicFileChangedParams(identifier)
-                );
-            }
-        });
+
+        if (!razorOptions.cohostingEnabled) {
+            this.documentManager.onChange(async (e) => {
+                // Ignore any updates without text changes. This is important for perf since sending an update to roslyn does
+                // a round trip for producing nothing new and causes a lot of churn in solution updates.
+                if (e.kind == RazorDocumentChangeKind.csharpChanged && !e.document.isOpen && e.changes.length > 0) {
+                    const uriString = UriConverter.serialize(e.document.uri);
+                    const identifier = TextDocumentIdentifier.create(uriString);
+                    await vscode.commands.executeCommand(
+                        DynamicFileInfoHandler.dynamicFileUpdatedCommand,
+                        new RazorDynamicFileChangedParams(identifier)
+                    );
+                }
+            });
+        }
     }
 
     // Given Razor document URIs, returns associated generated doc URIs

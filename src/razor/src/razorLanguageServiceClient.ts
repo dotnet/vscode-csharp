@@ -15,10 +15,10 @@ import { RazorMapSpansParams } from './mapping/razorMapSpansParams';
 import { RazorMapSpansResponse } from './mapping/razorMapSpansResponse';
 import { UriConverter } from '../../lsptoolshost/utils/uriConverter';
 import { RazorDocumentManager } from './document/razorDocumentManager';
-import { RazorMapTextChangesParams } from './mapping/RazorMapTextChangesParams';
-import { RazorMapTextChangesResponse } from './mapping/RazorMapTextChangesResponse';
-import { RazorMapToDocumentEditsParams } from './mapping/RazorMapToDocumentEditsParams';
-import { RazorMapToDocumentEditsResponse } from './mapping/RazorMapToDocumentEditsResponse';
+import { RazorMapTextChangesParams } from './mapping/razorMapTextChangesParams';
+import { RazorMapTextChangesResponse } from './mapping/razorMapTextChangesResponse';
+import { RazorMapToDocumentEditsParams } from './mapping/razorMapToDocumentEditsParams';
+import { RazorMapToDocumentEditsResponse } from './mapping/razorMapToDocumentEditsResponse';
 
 export class RazorLanguageServiceClient {
     constructor(
@@ -63,30 +63,19 @@ export class RazorLanguageServiceClient {
 
     public async mapSpans(params: RazorMapSpansParams): Promise<RazorMapSpansResponse> {
         const csharpUri = UriConverter.deserialize(params.csharpDocument.uri);
+        const document = await this.documentManager.getDocumentForCSharpUri(csharpUri);
 
-        const request = new RazorMapToDocumentRangesRequest(
-            LanguageKind.CSharp,
-            params.ranges.map(
-                (r) =>
-                    new vscode.Range(
-                        new vscode.Position(r.start.line, r.start.character),
-                        new vscode.Position(r.end.line, r.end.character)
-                    )
-            ),
-            csharpUri
-        );
+        if (!document) {
+            return RazorMapSpansResponse.empty;
+        }
 
+        const request = new RazorMapToDocumentRangesRequest(LanguageKind.CSharp, params.ranges, document.uri);
         const result = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>(
             'razor/mapToDocumentRanges',
             request
         );
 
         if (!result) {
-            return RazorMapSpansResponse.empty;
-        }
-
-        const document = await this.documentManager.getDocumentForCSharpUri(csharpUri);
-        if (!document) {
             return RazorMapSpansResponse.empty;
         }
 

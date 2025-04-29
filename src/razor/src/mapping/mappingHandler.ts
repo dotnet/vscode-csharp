@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { RazorMapSpansParams } from './razorMapSpansParams';
+import { RazorMapTextChangesParams } from './razorMapTextChangesParams';
 
 export class MappingHandler {
     public static readonly MapSpansCommand = 'razor.mapSpansCommand';
@@ -21,7 +22,9 @@ export class MappingHandler {
                 }),
                 vscode.commands.registerCommand(
                     MappingHandler.MapChangesCommand,
-                    async (params: RazorMapSpansParams) => {}
+                    async (params: RazorMapTextChangesParams) => {
+                        return this.languageServiceClient.mapTextChanges(params);
+                    }
                 ),
             ]
         );

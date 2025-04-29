@@ -57,12 +57,14 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     public async getDocumentForCSharpUri(csharpUri: vscode.Uri): Promise<IRazorDocument | undefined> {
+        const csharpPath = csharpUri.fsPath ?? csharpUri.path;
+
         return this.documents.find((document) => {
             if (this.platformInfo.isLinux()) {
-                return document.csharpDocument.path === csharpUri.path;
+                return document.csharpDocument.path === csharpPath;
             }
 
-            return document.csharpDocument.path.localeCompare(csharpUri.path, undefined, { sensitivity: 'base' }) === 0;
+            return document.csharpDocument.path.localeCompare(csharpPath, undefined, { sensitivity: 'base' }) === 0;
         });
     }
 
