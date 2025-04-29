@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.76.x
+
 # 2.75.x
 * Bump Razor to 10.0.0-preview.25228.4 (PR: [#8225](https://github.com/dotnet/vscode-csharp/pull/8225))
   * Don't return null if we couldn't sync the document for breakpoint validation (PR: [#11790](https://github.com/dotnet/razor/pull/11790))
@@ -29,6 +31,9 @@
   * Fix crash in backing field nullability cycle scenario(PR: [#77993](https://github.com/dotnet/roslyn/pull/77993))
   * Fix EA layering for Razor.ExternalAccess(PR: [#77927](https://github.com/dotnet/roslyn/pull/77927))
   * Simplify workspace initialization in the LSP server(PR: [#78010](https://github.com/dotnet/roslyn/pull/78010))
+* Support Html requests in cohosting(PR: [#8210](https://github.com/dotnet/vscode-csharp/pull/8210))
+* Allow the Roslyn client to log messages from Razor(PR: [#8201](https://github.com/dotnet/vscode-csharp/pull/8201))
+* Add cohost option to Razor(PR: [#8189](https://github.com/dotnet/vscode-csharp/pull/8189))
 
 # 2.74.x
 * Bump xamlTools to 17.14.36010.33 (PR: [#8178](https://github.com/dotnet/vscode-csharp/pull/8178))
