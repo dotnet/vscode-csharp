@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.75.x
+* Bump Razor to 10.0.0-preview.25228.4 (PR: [#8225](https://github.com/dotnet/vscode-csharp/pull/8225))
+  * Don't return null if we couldn't sync the document for breakpoint validation (PR: [#11790](https://github.com/dotnet/razor/pull/11790))
+  * Add VS Code IMappingService (PR: [#11760](https://github.com/dotnet/razor/pull/11760))
+  * Fix cases where there is a space in the URI (PR: [#11745](https://github.com/dotnet/razor/pull/11745))
 * Bump Roslyn to 5.0.0-1.25224.9 (PR: [#8211](https://github.com/dotnet/vscode-csharp/pull/8211))
   * Update ICSharpCode.Decompiler to 9.1.0.7988(PR: [#78270](https://github.com/dotnet/roslyn/pull/78270))
   * Reduce allocations in NamespaceSymbol.GetExtensionContainers(PR: [#78243](https://github.com/dotnet/roslyn/pull/78243))
