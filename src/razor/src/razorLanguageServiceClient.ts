@@ -26,6 +26,8 @@ export class RazorLanguageServiceClient {
         private readonly documentManager: RazorDocumentManager
     ) {}
 
+    private static readonly MapToDocumentRangesEndpoint = 'razor/mapToDocumentRanges';
+
     public async languageQuery(position: vscode.Position, uri: vscode.Uri) {
         await this.ensureStarted();
 
@@ -46,7 +48,7 @@ export class RazorLanguageServiceClient {
 
         const request = new RazorMapToDocumentRangesRequest(languageKind, serializableRanges, uri);
         const response = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>(
-            'razor/mapToDocumentRanges',
+            RazorLanguageServiceClient.MapToDocumentRangesEndpoint,
             request
         );
         const responseRanges = [];
@@ -71,7 +73,7 @@ export class RazorLanguageServiceClient {
 
         const request = new RazorMapToDocumentRangesRequest(LanguageKind.CSharp, params.ranges, document.uri);
         const result = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>(
-            'razor/mapToDocumentRanges',
+            RazorLanguageServiceClient.MapToDocumentRangesEndpoint,
             request
         );
 
