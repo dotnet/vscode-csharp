@@ -51,6 +51,7 @@ import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
 import { getComponentPaths } from '../../lsptoolshost/extensions/builtInComponents';
 import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
+import { MappingHandler } from './mapping/mappingHandler';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -123,14 +124,14 @@ export async function activate(
             logger
         );
 
-        const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
-
         const documentManager = new RazorDocumentManager(
             languageServerClient,
             logger,
             razorTelemetryReporter,
             platformInfo
         );
+
+        const languageServiceClient = new RazorLanguageServiceClient(languageServerClient, documentManager);
 
         const documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
         reportTelemetryForDocuments(documentManager, razorTelemetryReporter);
@@ -261,6 +262,8 @@ export async function activate(
                 logger
             );
 
+            const mappingHandler = new MappingHandler(languageServiceClient);
+
             localRegistrations.push(
                 languageConfiguration.register(),
                 vscodeType.languages.registerSignatureHelpProvider(RazorLanguage.id, signatureHelpProvider, '(', ','),
@@ -298,6 +301,7 @@ export async function activate(
                 completionHandler.register(),
                 razorSimplifyMethodHandler.register(),
                 razorFormatNewFileHandler.register(),
+                mappingHandler.register(),
             ]);
         });
 

@@ -10,7 +10,7 @@ import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { RazorLogger } from '../razorLogger';
 
 export class MappingHelpers {
-    public readonly language = 'Razor';
+    public static readonly language = 'Razor';
 
     public static async remapGeneratedFileWorkspaceEdit(
         workspaceEdit: vscode.WorkspaceEdit,
