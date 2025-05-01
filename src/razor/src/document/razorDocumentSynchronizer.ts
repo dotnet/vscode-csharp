@@ -37,9 +37,9 @@ export class RazorDocumentSynchronizer {
         const logId = ++this.synchronizationIdentifier;
 
         const documentKey = getUriPath(projectedDocument.uri);
-        if (this.logger.verboseEnabled) {
+        if (this.logger.traceEnabled) {
             const ehdv = expectedHostDocumentVersion;
-            this.logger.logVerbose(
+            this.logger.logTrace(
                 `${logId} - Synchronizing '${documentKey}':
     Currently at ${projectedDocument.hostDocumentSyncVersion}, synchronizing to version '${ehdv}'.'`
             );
@@ -55,8 +55,8 @@ export class RazorDocumentSynchronizer {
 
         try {
             if (projectedDocument.hostDocumentSyncVersion !== expectedHostDocumentVersion) {
-                if (this.logger.verboseEnabled) {
-                    this.logger.logVerbose(
+                if (this.logger.traceEnabled) {
+                    this.logger.logTrace(
                         `${logId} - Projected document not in sync with host document, waiting for update...
     Current host document sync version: ${projectedDocument.hostDocumentSyncVersion}`
                     );
@@ -64,8 +64,8 @@ export class RazorDocumentSynchronizer {
                 await context.onProjectedDocumentSynchronized;
             }
 
-            if (this.logger.verboseEnabled) {
-                this.logger.logVerbose(`${logId} - Projected document in sync with host document`);
+            if (this.logger.traceEnabled) {
+                this.logger.logTrace(`${logId} - Projected document in sync with host document`);
             }
 
             // Projected document is the one we expect.
@@ -73,8 +73,8 @@ export class RazorDocumentSynchronizer {
             const projectedTextDocument = await vscode.workspace.openTextDocument(projectedDocument.uri);
             const projectedTextDocumentVersion = this.getProjectedTextDocumentVersion(projectedTextDocument);
             if (projectedDocument.hostDocumentSyncVersion !== projectedTextDocumentVersion) {
-                if (this.logger.verboseEnabled) {
-                    this.logger.logVerbose(
+                if (this.logger.traceEnabled) {
+                    this.logger.logTrace(
                         `${logId} - Projected text document not in sync with data type, waiting for update...
     Current projected text document sync version: ${projectedTextDocumentVersion}`
                     );
@@ -82,16 +82,16 @@ export class RazorDocumentSynchronizer {
                 await context.onProjectedTextDocumentSynchronized;
             }
 
-            if (this.logger.verboseEnabled) {
-                this.logger.logVerbose(`${logId} - Projected text document in sync with data type`);
+            if (this.logger.traceEnabled) {
+                this.logger.logTrace(`${logId} - Projected text document in sync with data type`);
             }
 
             // Projected text document is the one we expect
         } catch (cancellationReason) {
             this.removeSynchronization(context);
 
-            if (this.logger.verboseEnabled) {
-                this.logger.logVerbose(`${logId} - Synchronization failed: ${cancellationReason}`);
+            if (this.logger.traceEnabled) {
+                this.logger.logTrace(`${logId} - Synchronization failed: ${cancellationReason}`);
             }
 
             return false;
@@ -99,8 +99,8 @@ export class RazorDocumentSynchronizer {
 
         this.removeSynchronization(context);
 
-        if (this.logger.verboseEnabled) {
-            this.logger.logVerbose(`${logId} - Synchronization successful!`);
+        if (this.logger.traceEnabled) {
+            this.logger.logTrace(`${logId} - Synchronization successful!`);
         }
 
         return true;
@@ -198,10 +198,10 @@ export class RazorDocumentSynchronizer {
 
         for (const context of synchronizationContexts) {
             if (context.projectedDocument.hostDocumentSyncVersion === projectedTextDocumentVersion) {
-                if (this.logger.verboseEnabled) {
+                if (this.logger.traceEnabled) {
                     const li = context.logIdentifier;
                     const ptdv = projectedTextDocumentVersion;
-                    this.logger.logVerbose(`${li} - Projected text document synchronized to ${ptdv}.`);
+                    this.logger.logTrace(`${li} - Projected text document synchronized to ${ptdv}.`);
                 }
                 context.projectedTextDocumentSynchronized();
             }

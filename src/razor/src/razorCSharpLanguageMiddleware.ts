@@ -65,7 +65,7 @@ export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
                 } else {
                     const remappedEdit = new vscode.TextEdit(remappedResponse.ranges[0], edit.newText);
 
-                    this.logger.logVerbose(
+                    this.logger.logTrace(
                         `Re-mapping text ${edit.newText} at ${edit.range} in ${uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`
                     );
 
@@ -105,7 +105,7 @@ export class RazorCSharpLanguageMiddleware implements LanguageMiddleware {
             const newLocation = new vscode.Location(documentUri, remappedResponse.ranges[0]);
             result.push(newLocation);
 
-            this.logger.logVerbose(
+            this.logger.logTrace(
                 `Re-mapping location ${location.range} in ${location.uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`
             );
         }

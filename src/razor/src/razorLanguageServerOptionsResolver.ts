@@ -28,7 +28,7 @@ export function resolveRazorLanguageServerOptions(
     let forceRuntimeCodeGeneration = serverConfig.get<boolean | null>('forceRuntimeCodeGeneration');
 
     if (forceRuntimeCodeGeneration === null && hotReload) {
-        logger.logMessage(
+        logger.logInfo(
             'Hot Reload is enabled so treating "razor.languageServer.forceRuntimeCodeGeneration" as true. To override this set "razor.languageServer.forceRuntimeCodeGeneration" to true or false.'
         );
 

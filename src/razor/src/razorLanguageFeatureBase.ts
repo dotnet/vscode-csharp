@@ -39,8 +39,8 @@ export class RazorLanguageFeatureBase {
                 if (languageResponse.hostDocumentVersion === undefined) {
                     // There should always be a document version attached to an open document.
                     // Log it and move on as if it was synchronized.
-                    if (this.logger.verboseEnabled) {
-                        this.logger.logVerbose(
+                    if (this.logger.traceEnabled) {
+                        this.logger.logTrace(
                             `Could not find a document version associated with the document '${getUriPath(
                                 document.uri
                             )}'.`
