@@ -9,7 +9,7 @@ import { beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
 
-integrationHelpers.describeIfWindows(`Razor Definition ${testAssetWorkspace.description}`, function () {
+integrationHelpers.describeIfWindows(`Razor References ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
@@ -110,5 +110,32 @@ integrationHelpers.describeIfWindows(`Razor Definition ${testAssetWorkspace.desc
         expect(definitionLocation.range.start.character).toBe(10);
         expect(definitionLocation.range.end.line).toBe(23);
         expect(definitionLocation.range.end.character).toBe(19);
+    });
+
+    test('Find All References - CSharp', async () => {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
+        await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'References.razor.cs'));
+
+        const position = new vscode.Position(4, 20);
+
+        await integrationHelpers.waitForExpectedResult<vscode.Location[]>(
+            async () =>
+                await vscode.commands.executeCommand(
+                    'vscode.executeReferenceProvider',
+                    vscode.window.activeTextEditor!.document.uri,
+                    position
+                ),
+            10000,
+            100,
+            (locations) => {
+                expect(locations.length).toBe(3);
+                expect(locations[0].uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+                expect(locations[1].uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+                expect(locations[2].uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+            }
+        );
     });
 });
