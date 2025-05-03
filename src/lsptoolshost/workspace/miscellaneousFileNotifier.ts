@@ -20,6 +20,7 @@ export function registerMiscellaneousFileNotifier(
     languageServer._projectContextService.onActiveFileContextChanged((e) => {
         // Only warn for C# miscellaneous files when the workspace is fully initialized.
         if (
+            e.uri.scheme !== 'file' ||
             e.languageId !== 'csharp' ||
             !e.isVerified ||
             !e.context._vs_is_miscellaneous ||

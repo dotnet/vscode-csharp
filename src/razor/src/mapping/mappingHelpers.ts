@@ -10,7 +10,7 @@ import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { RazorLogger } from '../razorLogger';
 
 export class MappingHelpers {
-    public readonly language = 'Razor';
+    public static readonly language = 'Razor';
 
     public static async remapGeneratedFileWorkspaceEdit(
         workspaceEdit: vscode.WorkspaceEdit,
@@ -79,7 +79,7 @@ export class MappingHelpers {
         } else {
             const remappedEdit = new vscode.TextEdit(remappedResponse.ranges[0], textEdit.newText);
 
-            logger.logVerbose(
+            logger.logTrace(
                 `Re-mapping text ${textEdit.newText} at ${textEdit.range} in ${uri.path} to ${remappedResponse.ranges[0]} in ${uri.path}`
             );
 
@@ -112,7 +112,7 @@ export class MappingHelpers {
             return;
         }
 
-        logger.logVerbose(
+        logger.logTrace(
             `Re-mapping location ${location.range} in ${location.uri.path} to ${remappedResponse.ranges[0]} in ${documentUri.path}`
         );
 

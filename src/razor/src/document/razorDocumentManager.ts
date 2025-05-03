@@ -56,6 +56,18 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         return document;
     }
 
+    public async getDocumentForCSharpUri(csharpUri: vscode.Uri): Promise<IRazorDocument | undefined> {
+        const csharpPath = csharpUri.fsPath ?? csharpUri.path;
+
+        return this.documents.find((document) => {
+            if (this.platformInfo.isLinux()) {
+                return document.csharpDocument.path === csharpPath;
+            }
+
+            return document.csharpDocument.path.localeCompare(csharpPath, undefined, { sensitivity: 'base' }) === 0;
+        });
+    }
+
     public async getActiveDocument(): Promise<IRazorDocument | null> {
         if (!vscode.window.activeTextEditor) {
             return null;
@@ -148,7 +160,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
 
         // This might happen in the case that a file is opened outside the workspace
         if (!document) {
-            this.logger.logMessage(
+            this.logger.logInfo(
                 `File '${path}' didn't exist in the Razor document list. This is likely because it's from outside the workspace.`
             );
             document = this.addDocument(uri);
@@ -204,7 +216,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         const path = getUriPath(uri);
         let document = this.findDocument(path);
         if (document) {
-            this.logger.logMessage(`Skipping document creation for '${path}' because it already exists.`);
+            this.logger.logInfo(`Skipping document creation for '${path}' because it already exists.`);
             return document;
         }
 
@@ -238,8 +250,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private async updateCSharpBuffer(updateBufferRequest: UpdateBufferRequest) {
-        if (this.logger.verboseEnabled) {
-            this.logger.logVerbose(
+        if (this.logger.traceEnabled) {
+            this.logger.logTrace(
                 `Updating the C# document for Razor file '${updateBufferRequest.hostDocumentFilePath}' ` +
                     `(${updateBufferRequest.hostDocumentVersion})`
             );
@@ -284,8 +296,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private async updateHtmlBuffer(updateBufferRequest: UpdateBufferRequest) {
-        if (this.logger.verboseEnabled) {
-            this.logger.logVerbose(
+        if (this.logger.traceEnabled) {
+            this.logger.logTrace(
                 `Updating the HTML document for Razor file '${updateBufferRequest.hostDocumentFilePath}' ` +
                     `(${updateBufferRequest.hostDocumentVersion})`
             );
@@ -327,8 +339,8 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     }
 
     private notifyDocumentChange(document: IRazorDocument, kind: RazorDocumentChangeKind, changes: ServerTextChange[]) {
-        if (this.logger.verboseEnabled) {
-            this.logger.logVerbose(
+        if (this.logger.traceEnabled) {
+            this.logger.logTrace(
                 `Notifying document '${getUriPath(document.uri)}' changed '${RazorDocumentChangeKind[kind]}' with '${
                     changes.length
                 }' changes.`

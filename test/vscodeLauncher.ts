@@ -30,7 +30,7 @@ export async function prepareVSCodeAndExecuteTests(
     // Rather than having to uninstall Dev Kit between different test runs, we use workspace settings
     // to control which extensions are active - and we always install Dev Kit.
     const extensionsToInstall = [
-        'ms-dotnettools.vscode-dotnet-runtime',
+        'ms-dotnettools.vscode-dotnet-runtime@2.3.2',
         'ms-dotnettools.csharp',
         'ms-dotnettools.csdevkit@1.16.6',
     ];

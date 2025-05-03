@@ -28,7 +28,7 @@ export class HtmlDocumentContentProvider implements vscode.TextDocumentContentPr
         if (!document) {
             // Document was removed from the document manager, meaning there's no more content for this
             // file. Report an empty document.
-            this.logger.logVerbose(
+            this.logger.logTrace(
                 `Could not find document '${getUriPath(
                     uri
                 )}' when updating the HTML buffer. This typically happens when a document is removed.`

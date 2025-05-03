@@ -27,13 +27,13 @@ export class HtmlDocumentManager {
         const didCloseRegistration = vscode.workspace.onDidCloseTextDocument(async (document) => {
             // We log when a virtual document is closed just in case it helps track down future bugs
             if (document.uri.scheme === HtmlDocumentContentProvider.scheme) {
-                this.logger.logVerbose(`Virtual document '${document.uri}' timed out.`);
+                this.logger.logTrace(`Virtual document '${document.uri}' timed out.`);
                 return;
             }
 
             // When a Razor document is closed, only then can we be sure its okay to remove the virtual document.
             if (document.languageId === 'aspnetcorerazor') {
-                this.logger.logVerbose(`Document '${document.uri}' was closed.`);
+                this.logger.logTrace(`Document '${document.uri}' was closed.`);
 
                 await this.closeDocument(document.uri);
 
@@ -52,7 +52,7 @@ export class HtmlDocumentManager {
     public async updateDocumentText(uri: vscode.Uri, text: string) {
         const document = await this.getDocument(uri);
 
-        this.logger.logVerbose(`New content for '${uri}', updating '${document.path}'.`);
+        this.logger.logTrace(`New content for '${uri}', updating '${document.path}'.`);
 
         document.setContent(text);
 
@@ -63,7 +63,7 @@ export class HtmlDocumentManager {
         const document = await this.findDocument(uri);
 
         if (document) {
-            this.logger.logVerbose(`Removing '${document.uri}' from the document manager.`);
+            this.logger.logTrace(`Removing '${document.uri}' from the document manager.`);
 
             delete this.htmlDocuments[document.path];
         }
@@ -74,7 +74,7 @@ export class HtmlDocumentManager {
 
         // This might happen in the case that a file is opened outside the workspace
         if (!document) {
-            this.logger.logMessage(
+            this.logger.logInfo(
                 `File '${uri}' didn't exist in the Razor document list. This is likely because it's from outside the workspace.`
             );
             document = this.addDocument(uri);
@@ -88,7 +88,7 @@ export class HtmlDocumentManager {
     private addDocument(uri: vscode.Uri): HtmlDocument {
         let document = this.findDocument(uri);
         if (document) {
-            this.logger.logMessage(`Skipping document creation for '${document.path}' because it already exists.`);
+            this.logger.logInfo(`Skipping document creation for '${document.path}' because it already exists.`);
             return document;
         }
 
