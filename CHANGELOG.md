@@ -4,6 +4,27 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.76.x
+* Bump Razor to 10.0.0-preview.25252.1 (PR: [#8239](https://github.com/dotnet/vscode-csharp/pull/8239))
+  * If SupportDiagnostics is false then dynamic files don't report diagnostics... (PR: #11807)
+  * Client settings tweaks, and implement VS Code configuration monitoring (PR: #11800)
+  * [main] [PRERELEASE] If SupportDiagnostics then dynamic files don't report diagnostics... (PR: #11810)
+  * Update RazorSyntaxGenerator to reduce generated syntax code (PR: #11806)
+  * Improve initialization, logging, and add more features to cohosting in VS Code (PR: #11788)
+* Bump Roslyn to 5.0.0-1.25252.3 (PR: [#8239](https://github.com/dotnet/vscode-csharp/pull/8239))
+  * Extract base LanguageServerProjectLoader from LanguageServerProjectSystem(PR: [#78329](https://github.com/dotnet/roslyn/pull/78329))
+  * Edit & Continue support for field access in auto-properties(PR: [#78289](https://github.com/dotnet/roslyn/pull/78289))
+  * Allow Razor cohosting to hook into configuration change notifications(PR: [#78364](https://github.com/dotnet/roslyn/pull/78364))
+  * Insert missing space in XML documentation(PR: [#78361](https://github.com/dotnet/roslyn/pull/78361))
+  * Do not offer 'remove unnecessary parens' when it would change a collection initializer(PR: [#78336](https://github.com/dotnet/roslyn/pull/78336))
+  * Do not offer use-expr-body for properties with initializers(PR: [#78360](https://github.com/dotnet/roslyn/pull/78360))
+  * Add BuildHost APIs for loading an in-memory project(PR: [#78303](https://github.com/dotnet/roslyn/pull/78303))
+  * Allow Razor logs to be directed to the right output window in VS Code(PR: [#78334](https://github.com/dotnet/roslyn/pull/78334))
+  * Switch Project data structures from ImmutableDictionary => Dictionary and lock(PR: [#78287](https://github.com/dotnet/roslyn/pull/78287))
+* Only show MiscFile toast when the uri scheme is file(PR: [#8240](https://github.com/dotnet/vscode-csharp/pull/8240))
+* Support more things in VS Code cohosting(PR: [#8218](https://github.com/dotnet/vscode-csharp/pull/8218))
+* Add SpanMapping for VS Code(PR: [#8225](https://github.com/dotnet/vscode-csharp/pull/8225))
+* [main] Update Razor to Fix Missing DLL(PR: [#8224](https://github.com/dotnet/vscode-csharp/pull/8224))
+* [release] Ignore updates with no changes for csharp files(PR: [#8170](https://github.com/dotnet/vscode-csharp/pull/8170))
 
 # 2.75.x
 * Bump Razor to 10.0.0-preview.25228.4 (PR: [#8225](https://github.com/dotnet/vscode-csharp/pull/8225))
