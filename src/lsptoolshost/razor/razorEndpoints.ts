@@ -12,22 +12,37 @@ import {
     CompletionList,
     CompletionParams,
     CompletionRequest,
+    DefinitionParams,
+    DefinitionRequest,
     DocumentColorParams,
     DocumentColorRequest,
+    DocumentFormattingParams,
+    DocumentFormattingRequest,
     DocumentHighlight,
     DocumentHighlightKind,
     DocumentHighlightParams,
     DocumentHighlightRequest,
+    DocumentOnTypeFormattingParams,
+    DocumentOnTypeFormattingRequest,
     FoldingRange,
     FoldingRangeParams,
     FoldingRangeRequest,
     Hover,
     HoverParams,
     HoverRequest,
+    ImplementationParams,
+    ImplementationRequest,
+    Location,
     LogMessageParams,
     MarkupKind,
     NotificationType,
+    ReferenceParams,
+    ReferencesRequest,
     RequestType,
+    SignatureHelp,
+    SignatureHelpParams,
+    SignatureHelpRequest,
+    TextEdit,
 } from 'vscode-languageclient';
 import { RazorLogger } from '../../razor/src/razorLogger';
 import { HtmlUpdateParameters } from './htmlUpdateParameters';
@@ -37,7 +52,7 @@ import { HtmlDocumentManager } from './htmlDocumentManager';
 import { DocumentColorHandler } from '../../razor/src/documentColor/documentColorHandler';
 import { razorOptions } from '../../shared/options';
 import { ColorPresentationHandler } from '../../razor/src/colorPresentation/colorPresentationHandler';
-import { ColorPresentation } from 'vscode-html-languageservice';
+import { ColorPresentation, MarkupContent } from 'vscode-html-languageservice';
 import { convertRangeToSerializable } from '../../razor/src/rpc/serializableRange';
 import { FoldingRangeHandler } from '../../razor/src/folding/foldingRangeHandler';
 import { CompletionHandler } from '../../razor/src/completion/completionHandler';
@@ -49,6 +64,7 @@ import { RazorMapSpansResponse } from '../../razor/src/mapping/razorMapSpansResp
 import { MappingHandler } from '../../razor/src/mapping/mappingHandler';
 import { RazorMapTextChangesParams } from '../../razor/src/mapping/razorMapTextChangesParams';
 import { RazorMapTextChangesResponse } from '../../razor/src/mapping/razorMapTextChangesResponse';
+import { FormattingHandler } from '../../razor/src/formatting/formattingHandler';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -150,6 +166,99 @@ export function registerRazorEndpoints(
                 params.context?.triggerCharacter
             );
         });
+
+        registerRequestHandler<ReferenceParams, Location[]>(ReferencesRequest.method, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri);
+
+            const results = await vscode.commands.executeCommand<vscode.Location[]>(
+                'vscode.executeReferenceProvider',
+                document.uri,
+                params.position
+            );
+
+            return rewriteLocations(results);
+        });
+
+        registerRequestHandler<ImplementationParams, Location[]>(ImplementationRequest.method, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri);
+
+            const results = await vscode.commands.executeCommand<vscode.Location[]>(
+                'vscode.executeImplementationProvider',
+                document.uri,
+                params.position
+            );
+
+            return rewriteLocations(results);
+        });
+
+        registerRequestHandler<DefinitionParams, Location[]>(DefinitionRequest.method, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri);
+
+            const results = await vscode.commands.executeCommand<vscode.Location[]>(
+                'vscode.executeDefinitionProvider',
+                document.uri,
+                params.position
+            );
+
+            return rewriteLocations(results);
+        });
+
+        registerRequestHandler<SignatureHelpParams, SignatureHelp | undefined>(
+            SignatureHelpRequest.method,
+            async (params) => {
+                const uri = UriConverter.deserialize(params.textDocument.uri);
+                const document = await documentManager.getDocument(uri);
+
+                const results = await vscode.commands.executeCommand<vscode.SignatureHelp>(
+                    'vscode.executeSignatureHelpProvider',
+                    document.uri,
+                    params.position
+                );
+
+                if (!results) {
+                    return undefined;
+                }
+
+                return rewriteSignatureHelp(results);
+            }
+        );
+
+        registerRequestHandler<DocumentFormattingParams, TextEdit[] | undefined>(
+            DocumentFormattingRequest.method,
+            async (params) => {
+                const uri = UriConverter.deserialize(params.textDocument.uri);
+                const document = await documentManager.getDocument(uri);
+
+                const content = document.getContent();
+                const options = <vscode.FormattingOptions>params.options;
+
+                const response = await FormattingHandler.getHtmlFormattingResult(document.uri, content, options);
+                return response?.edits;
+            }
+        );
+
+        registerRequestHandler<DocumentOnTypeFormattingParams, TextEdit[] | undefined>(
+            DocumentOnTypeFormattingRequest.method,
+            async (params) => {
+                const uri = UriConverter.deserialize(params.textDocument.uri);
+                const document = await documentManager.getDocument(uri);
+
+                const content = document.getContent();
+                const options = <vscode.FormattingOptions>params.options;
+
+                const response = await FormattingHandler.getHtmlOnTypeFormattingResult(
+                    document.uri,
+                    content,
+                    params.position,
+                    params.ch,
+                    options
+                );
+                return response?.edits;
+            }
+        );
     }
 
     function registerNonCohostingEndpoints() {
@@ -234,4 +343,48 @@ function convertHighlightKind(kind: vscode.DocumentHighlightKind | undefined): D
         default:
             return undefined;
     }
+}
+
+function rewriteLocations(locations: vscode.Location[]): Location[] {
+    return locations.map((location) => {
+        return {
+            uri: UriConverter.serialize(location.uri),
+            range: convertRangeToSerializable(location.range),
+        };
+    });
+}
+
+function rewriteSignatureHelp(signatureHelp: vscode.SignatureHelp): SignatureHelp {
+    return {
+        activeParameter: signatureHelp.activeParameter ?? undefined,
+        activeSignature: signatureHelp.activeSignature ?? undefined,
+        signatures: signatureHelp.signatures.map((signature) => {
+            return {
+                label: signature.label,
+                documentation: rewriteMarkdownString(signature.documentation),
+                parameters: signature.parameters.map((parameter) => {
+                    return {
+                        label: parameter.label,
+                        documentation: rewriteMarkdownString(parameter.documentation),
+                    };
+                }),
+            };
+        }),
+    };
+}
+
+function rewriteMarkdownString(documentation: string | vscode.MarkdownString | undefined): MarkupContent | undefined {
+    if (!documentation) {
+        return undefined;
+    }
+
+    if ((documentation as vscode.MarkdownString).value) {
+        const markdownString = documentation as vscode.MarkdownString;
+        return {
+            kind: MarkupKind.Markdown,
+            value: markdownString.value,
+        };
+    }
+
+    return { kind: MarkupKind.PlainText, value: <string>documentation };
 }
