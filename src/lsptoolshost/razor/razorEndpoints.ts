@@ -6,43 +6,28 @@
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import {
-    ColorInformation,
-    ColorPresentationParams,
     ColorPresentationRequest,
-    CompletionList,
-    CompletionParams,
     CompletionRequest,
-    DefinitionParams,
     DefinitionRequest,
-    DocumentColorParams,
     DocumentColorRequest,
-    DocumentFormattingParams,
     DocumentFormattingRequest,
     DocumentHighlight,
     DocumentHighlightKind,
-    DocumentHighlightParams,
     DocumentHighlightRequest,
-    DocumentOnTypeFormattingParams,
     DocumentOnTypeFormattingRequest,
-    FoldingRange,
-    FoldingRangeParams,
     FoldingRangeRequest,
     Hover,
-    HoverParams,
     HoverRequest,
-    ImplementationParams,
     ImplementationRequest,
     Location,
     LogMessageParams,
     MarkupKind,
+    MarkupContent,
     NotificationType,
-    ReferenceParams,
     ReferencesRequest,
     RequestType,
     SignatureHelp,
-    SignatureHelpParams,
     SignatureHelpRequest,
-    TextEdit,
 } from 'vscode-languageclient';
 import { RazorLogger } from '../../razor/src/razorLogger';
 import { HtmlUpdateParameters } from './htmlUpdateParameters';
@@ -52,7 +37,6 @@ import { HtmlDocumentManager } from './htmlDocumentManager';
 import { DocumentColorHandler } from '../../razor/src/documentColor/documentColorHandler';
 import { razorOptions } from '../../shared/options';
 import { ColorPresentationHandler } from '../../razor/src/colorPresentation/colorPresentationHandler';
-import { ColorPresentation, MarkupContent } from 'vscode-html-languageservice';
 import { convertRangeToSerializable } from '../../razor/src/rpc/serializableRange';
 import { FoldingRangeHandler } from '../../razor/src/folding/foldingRangeHandler';
 import { CompletionHandler } from '../../razor/src/completion/completionHandler';
