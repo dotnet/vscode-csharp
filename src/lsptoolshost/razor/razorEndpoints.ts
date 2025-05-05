@@ -92,29 +92,26 @@ export function registerRazorEndpoints(
         const documentManager = new HtmlDocumentManager(platformInfo, razorLogger);
         context.subscriptions.push(documentManager.register());
 
-        registerRequestHandler<HtmlUpdateParameters, void>('razor/updateHtml', async (params) => {
+        registerMethodHandler<HtmlUpdateParameters, void>('razor/updateHtml', async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             await documentManager.updateDocumentText(uri, params.text);
         });
 
-        registerRequestHandler<DocumentColorParams, ColorInformation[]>(DocumentColorRequest.method, async (params) => {
+        registerRequestHandler(DocumentColorRequest.type, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri);
 
             return await DocumentColorHandler.doDocumentColorRequest(document.uri);
         });
 
-        registerRequestHandler<ColorPresentationParams, ColorPresentation[]>(
-            ColorPresentationRequest.method,
-            async (params) => {
-                const uri = UriConverter.deserialize(params.textDocument.uri);
-                const document = await documentManager.getDocument(uri);
+        registerRequestHandler(ColorPresentationRequest.type, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri);
 
-                return await ColorPresentationHandler.doColorPresentationRequest(document.uri, params);
-            }
-        );
+            return await ColorPresentationHandler.doColorPresentationRequest(document.uri, params);
+        });
 
-        registerRequestHandler<FoldingRangeParams, FoldingRange[]>(FoldingRangeRequest.method, async (params) => {
+        registerRequestHandler(FoldingRangeRequest.type, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri);
 
@@ -126,7 +123,7 @@ export function registerRazorEndpoints(
             return FoldingRangeHandler.convertFoldingRanges(results, razorLogger);
         });
 
-        registerRequestHandler<HoverParams, Hover | undefined>(HoverRequest.method, async (params) => {
+        registerRequestHandler(HoverRequest.type, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri);
 
@@ -140,23 +137,20 @@ export function registerRazorEndpoints(
             return rewriteHover(applicableHover);
         });
 
-        registerRequestHandler<DocumentHighlightParams, DocumentHighlight[]>(
-            DocumentHighlightRequest.method,
-            async (params) => {
-                const uri = UriConverter.deserialize(params.textDocument.uri);
-                const document = await documentManager.getDocument(uri);
+        registerRequestHandler(DocumentHighlightRequest.type, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri);
 
-                const results = await vscode.commands.executeCommand<vscode.DocumentHighlight[]>(
-                    'vscode.executeDocumentHighlights',
-                    document.uri,
-                    params.position
-                );
+            const results = await vscode.commands.executeCommand<vscode.DocumentHighlight[]>(
+                'vscode.executeDocumentHighlights',
+                document.uri,
+                params.position
+            );
 
-                return rewriteHighlight(results);
-            }
-        );
+            return rewriteHighlight(results);
+        });
 
-        registerRequestHandler<CompletionParams, CompletionList>(CompletionRequest.method, async (params) => {
+        registerRequestHandler(CompletionRequest.type, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri);
 
@@ -167,7 +161,7 @@ export function registerRazorEndpoints(
             );
         });
 
-        registerRequestHandler<ReferenceParams, Location[]>(ReferencesRequest.method, async (params) => {
+        registerRequestHandler(ReferencesRequest.type, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri);
 
@@ -180,7 +174,7 @@ export function registerRazorEndpoints(
             return rewriteLocations(results);
         });
 
-        registerRequestHandler<ImplementationParams, Location[]>(ImplementationRequest.method, async (params) => {
+        registerRequestHandler(ImplementationRequest.type, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri);
 
@@ -193,7 +187,7 @@ export function registerRazorEndpoints(
             return rewriteLocations(results);
         });
 
-        registerRequestHandler<DefinitionParams, Location[]>(DefinitionRequest.method, async (params) => {
+        registerRequestHandler(DefinitionRequest.type, async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
             const document = await documentManager.getDocument(uri);
 
@@ -206,77 +200,68 @@ export function registerRazorEndpoints(
             return rewriteLocations(results);
         });
 
-        registerRequestHandler<SignatureHelpParams, SignatureHelp | undefined>(
-            SignatureHelpRequest.method,
-            async (params) => {
-                const uri = UriConverter.deserialize(params.textDocument.uri);
-                const document = await documentManager.getDocument(uri);
+        registerRequestHandler(SignatureHelpRequest.type, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri);
 
-                const results = await vscode.commands.executeCommand<vscode.SignatureHelp>(
-                    'vscode.executeSignatureHelpProvider',
-                    document.uri,
-                    params.position
-                );
+            const results = await vscode.commands.executeCommand<vscode.SignatureHelp>(
+                'vscode.executeSignatureHelpProvider',
+                document.uri,
+                params.position
+            );
 
-                if (!results) {
-                    return undefined;
-                }
-
-                return rewriteSignatureHelp(results);
+            if (!results) {
+                return undefined;
             }
-        );
 
-        registerRequestHandler<DocumentFormattingParams, TextEdit[] | undefined>(
-            DocumentFormattingRequest.method,
-            async (params) => {
-                const uri = UriConverter.deserialize(params.textDocument.uri);
-                const document = await documentManager.getDocument(uri);
+            return rewriteSignatureHelp(results);
+        });
 
-                const content = document.getContent();
-                const options = <vscode.FormattingOptions>params.options;
+        registerRequestHandler(DocumentFormattingRequest.type, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri);
 
-                const response = await FormattingHandler.getHtmlFormattingResult(document.uri, content, options);
-                return response?.edits;
-            }
-        );
+            const content = document.getContent();
+            const options = <vscode.FormattingOptions>params.options;
 
-        registerRequestHandler<DocumentOnTypeFormattingParams, TextEdit[] | undefined>(
-            DocumentOnTypeFormattingRequest.method,
-            async (params) => {
-                const uri = UriConverter.deserialize(params.textDocument.uri);
-                const document = await documentManager.getDocument(uri);
+            const response = await FormattingHandler.getHtmlFormattingResult(document.uri, content, options);
+            return response?.edits;
+        });
 
-                const content = document.getContent();
-                const options = <vscode.FormattingOptions>params.options;
+        registerRequestHandler(DocumentOnTypeFormattingRequest.type, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri);
 
-                const response = await FormattingHandler.getHtmlOnTypeFormattingResult(
-                    document.uri,
-                    content,
-                    params.position,
-                    params.ch,
-                    options
-                );
-                return response?.edits;
-            }
-        );
+            const content = document.getContent();
+            const options = <vscode.FormattingOptions>params.options;
+
+            const response = await FormattingHandler.getHtmlOnTypeFormattingResult(
+                document.uri,
+                content,
+                params.position,
+                params.ch,
+                options
+            );
+            return response?.edits;
+        });
     }
 
     function registerNonCohostingEndpoints() {
-        registerRequestHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
+        registerMethodHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
             'razor/provideDynamicFileInfo',
             async (params) =>
                 vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
         );
 
-        registerRequestHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
+        registerMethodHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
             'razor/removeDynamicFileInfo',
             async (params) =>
                 vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
         );
-        registerRequestHandler<RazorMapSpansParams, RazorMapSpansResponse>('razor/mapSpans', async (params) => {
+        registerMethodHandler<RazorMapSpansParams, RazorMapSpansResponse>('razor/mapSpans', async (params) => {
             return await vscode.commands.executeCommand<RazorMapSpansResponse>(MappingHandler.MapSpansCommand, params);
         });
-        registerRequestHandler<RazorMapTextChangesParams, RazorMapTextChangesResponse>(
+        registerMethodHandler<RazorMapTextChangesParams, RazorMapTextChangesResponse>(
             'razor/mapTextChanges',
             async (params) => {
                 return await vscode.commands.executeCommand<RazorMapTextChangesResponse>(
@@ -288,7 +273,14 @@ export function registerRazorEndpoints(
     }
 
     // Helper method that registers a request handler, and logs errors to the Razor logger.
-    function registerRequestHandler<Params, Result>(method: string, invocation: (params: Params) => Promise<Result>) {
+    function registerRequestHandler<Params, Result, Error>(
+        type: RequestType<Params, Result, Error>,
+        invocation: (params: Params) => Promise<Result>
+    ) {
+        return registerMethodHandler<Params, Result>(type.method, invocation);
+    }
+
+    function registerMethodHandler<Params, Result>(method: string, invocation: (params: Params) => Promise<Result>) {
         const requestType = new RequestType<Params, Result, Error>(method);
         roslynLanguageServer.registerOnRequest(requestType, async (params) => {
             try {
