@@ -63,8 +63,10 @@ export function registerRazorEndpoints(
     );
 
     if (razorOptions.cohostingEnabled) {
+        vscode.commands.executeCommand('setContext', 'razor.mode', 'cohosting');
         registerCohostingEndpoints();
     } else {
+        vscode.commands.executeCommand('setContext', 'razor.mode', 'lsp');
         registerNonCohostingEndpoints();
     }
 
