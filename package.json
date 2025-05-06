@@ -1525,7 +1525,10 @@
             "scope": "machine-overridable",
             "default": null,
             "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
-            "order": 90
+            "order": 90,
+            "tags": [
+              "experimental"
+            ]
           },
           "razor.languageServer.suppressLspErrorToasts": {
             "type": "boolean",
@@ -1540,7 +1543,10 @@
           "razor.languageServer.cohostingEnabled": {
             "type": "boolean",
             "default": false,
-            "description": "%configuration.razor.languageServer.cohostingEnabled%"
+            "description": "%configuration.razor.languageServer.cohostingEnabled%",
+            "tags": [
+              "experimental"
+            ]
           }
         }
       },
@@ -1713,12 +1719,18 @@
           "omnisharp.enableLspDriver": {
             "type": "boolean",
             "default": false,
-            "description": "%configuration.omnisharp.enableLspDriver%"
+            "description": "%configuration.omnisharp.enableLspDriver%",
+            "tags": [
+              "experimental"
+            ]
           },
           "omnisharp.enableAsyncCompletion": {
             "type": "boolean",
             "default": false,
-            "description": "%configuration.omnisharp.enableAsyncCompletion%"
+            "description": "%configuration.omnisharp.enableAsyncCompletion%",
+            "tags": [
+              "experimental"
+            ]
           },
           "omnisharp.dotNetCliPaths": {
             "type": "array",
