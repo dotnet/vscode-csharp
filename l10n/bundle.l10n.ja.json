@@ -30,6 +30,7 @@
   "Choose": "選択",
   "Choose and set default": "既定の選択と設定",
   "Click {0}. This will copy all relevant issue information.": "{0} をクリックします。 これにより、関連する問題情報がすべてコピーされます。",
+  "Cohosting is on, client has no access to CSharp content": "Cohosting is on, client has no access to CSharp content",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "launch.json の構成 \"{0}\" に、リモート プロセスの一覧に {2} を持つ {1} 引数がありません。",
   "Copy C#": "C# をコピーする",
   "Copy Html": "HTML のコピー",

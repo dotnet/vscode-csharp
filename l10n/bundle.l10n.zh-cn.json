@@ -30,6 +30,7 @@
   "Choose": "选择",
   "Choose and set default": "选择并设置默认值",
   "Click {0}. This will copy all relevant issue information.": "单击 {0}。这将复制所有相关问题信息。",
+  "Cohosting is on, client has no access to CSharp content": "Cohosting is on, client has no access to CSharp content",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "launch.json 中的配置 \"{0}\" 没有具有远程进程列表 {2} 的 {1} 参数。",
   "Copy C#": "复制 C#",
   "Copy Html": "复制 HTML",

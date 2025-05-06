@@ -30,6 +30,7 @@
   "Choose": "Zvolit",
   "Choose and set default": "Zvolit a nastavit výchozí",
   "Click {0}. This will copy all relevant issue information.": "Klikněte na {0}. Zkopírují se tím všechny relevantní informace o problému.",
+  "Cohosting is on, client has no access to CSharp content": "Cohosting is on, client has no access to CSharp content",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "Konfigurace „{0}“ v souboru launch.json nemá argument {1} s {2} pro výpis vzdáleného procesu.",
   "Copy C#": "Kopírovat kód C#",
   "Copy Html": "Kopírovat HTML",
