@@ -10,15 +10,9 @@
   * Fix some hardcoded values in cohosting (#11817) (PR: [#11817](https://github.com/dotnet/razor/pull/11817))
   * Add new shared SelectXXXAsArray helpers (#11796) (PR: [#11796](https://github.com/dotnet/razor/pull/11796))
 * Bump Roslyn to 5.0.0-1.25255.4 (PR: [#8249](https://github.com/dotnet/vscode-csharp/pull/8249))
-  * Move RestoreUseStaticGraphEvaluation setting inside repo (#78429) (PR: [#78429](https://github.com/dotnet/roslyn/pull/78429))
-  * Adjust LocalBinderFactory.VisitInvocationExpression to handle attributes on extension parameter (#78399) (PR: [#78399](https://github.com/dotnet/roslyn/pull/78399))
-  * Exclude EditorFeatures from rebuild check (#78437) (PR: [#78437](https://github.com/dotnet/roslyn/pull/78437))
   * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation (#78405) (PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
   * Change O(n) + O(lg n) search in SolutionState.SortedProjectStates to just O(lg n) (#78427) (PR: [#78427](https://github.com/dotnet/roslyn/pull/78427))
   * Fix syntax tree creation when modifying source generated documents (#78343) (PR: [#78343](https://github.com/dotnet/roslyn/pull/78343))
-  * Revert back to scouting queue (#78424) (PR: [#78424](https://github.com/dotnet/roslyn/pull/78424))
-  * Precursor work to merge EditorFeatures.WPF into EditorFeatures. (#78308) (PR: [#78308](https://github.com/dotnet/roslyn/pull/78308))
-  * Implement workaround for missing ValueTuple in remote debugger (#78393) (PR: [#78393](https://github.com/dotnet/roslyn/pull/78393))
 
 # 2.76.x
 * Bump Razor to 10.0.0-preview.25252.1 (PR: [#8239](https://github.com/dotnet/vscode-csharp/pull/8239))
