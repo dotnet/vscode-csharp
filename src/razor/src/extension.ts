@@ -82,7 +82,7 @@ export async function activate(
             // TODO: We still need a document manager for Html, so need to do _some_ of the below, just not sure what yet,
             // and it needs to be able to take a roslynLanguageServerClient instead of a razorLanguageServerClient I guess.
 
-            logger.logVerbose(
+            logger.logTrace(
                 'Razor cohosting is enabled, skipping language server activation. No rzls process will be created.'
             );
 

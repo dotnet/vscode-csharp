@@ -12,8 +12,9 @@ import { MessageType } from 'vscode-languageserver-protocol';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';
-    public verboseEnabled!: boolean;
-    public messageEnabled!: boolean;
+    public traceEnabled!: boolean;
+    public debugEnabled!: boolean;
+    public infoEnabled!: boolean;
     public readonly outputChannel: vscode.LogOutputChannel;
     public languageServerClient: RazorLanguageServerClient | undefined;
 
@@ -82,15 +83,22 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         }
     }
 
-    public logMessage(message: string) {
-        if (this.messageEnabled) {
+    public logInfo(message: string) {
+        if (this.infoEnabled) {
             this.outputChannel.info(message);
             this.onLogEmitter.fire(message);
         }
     }
 
-    public logVerbose(message: string) {
-        if (this.verboseEnabled) {
+    public logDebug(message: string) {
+        if (this.debugEnabled) {
+            this.outputChannel.debug(message);
+            this.onLogEmitter.fire(message);
+        }
+    }
+
+    public logTrace(message: string) {
+        if (this.traceEnabled) {
             this.outputChannel.trace(message);
             this.onLogEmitter.fire(message);
         }
@@ -105,12 +113,14 @@ export class RazorLogger implements vscodeAdapter.Disposable {
                 this.logWarning(message);
                 break;
             case MessageType.Info:
-                this.logMessage(message);
+                this.logInfo(message);
                 break;
             case MessageType.Debug:
+                this.logDebug(message);
+                break;
             case MessageType.Log:
             default:
-                this.logVerbose(message);
+                this.logTrace(message);
         }
     }
 
@@ -165,8 +175,9 @@ ${error.stack}`;
     }
 
     private processTraceLevel() {
-        this.verboseEnabled = this.outputChannel.logLevel >= vscode.LogLevel.Trace;
-        this.messageEnabled = this.outputChannel.logLevel >= vscode.LogLevel.Info;
+        this.traceEnabled = this.outputChannel.logLevel <= vscode.LogLevel.Trace;
+        this.debugEnabled = this.outputChannel.logLevel <= vscode.LogLevel.Debug;
+        this.infoEnabled = this.outputChannel.logLevel <= vscode.LogLevel.Info;
     }
 }
 
