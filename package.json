@@ -1507,6 +1507,11 @@
             "default": true,
             "description": "%configuration.dotnet.projects.enableAutomaticRestore%"
           },
+          "dotnet.projects.enableFileBasedPrograms": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.projects.enableFileBasedPrograms%"
+          },
           "razor.languageServer.directory": {
             "type": "string",
             "scope": "machine-overridable",
