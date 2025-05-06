@@ -13,7 +13,19 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL, platform } from 'os';
 import { describe, expect, test } from '@jest/globals';
 
-export async function activateCSharpExtension(): Promise<void> {
+export async function activateRazorExtension(): Promise<void> {
+    // Razor requires statefulness in the extension and server to communicate
+    // properly with CSharp. That means allowing a restart of the CSharp server
+    // will improperly break that state. This will be fixed in cohosting and
+    // could be potentially fixed now but I timeboxed to unblock adding more tests.
+    // Without this the symptoms in a test will be that all razor files are considered
+    // in the misc workspace.
+    await activateCSharpExtension(false);
+}
+
+export async function activateCSharpExtension(allowRestart?: boolean): Promise<void> {
+    allowRestart = allowRestart ?? true;
+
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
         throw new Error('Failed to find installation of ms-dotnettools.csharp');
@@ -50,7 +62,7 @@ export async function activateCSharpExtension(): Promise<void> {
     console.log('ms-dotnettools.csharp activated');
     console.log(`Extension Log Directory: ${csharpExtension.exports.logDirectory}`);
 
-    if (shouldRestart) {
+    if (shouldRestart && allowRestart) {
         await restartLanguageServer();
     }
 }
@@ -60,15 +72,19 @@ export function usingDevKit(): boolean {
 }
 
 export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<vscode.Uri> {
+    const uri = getFilePath(relativeFilePath);
+    await vscode.commands.executeCommand('vscode.open', uri);
+    return uri;
+}
+
+export function getFilePath(relativeFilePath: string): vscode.Uri {
     const root = vscode.workspace.workspaceFolders![0].uri.fsPath;
     const filePath = path.join(root, relativeFilePath);
     if (!existsSync(filePath)) {
         throw new Error(`File ${filePath} does not exist`);
     }
 
-    const uri = vscode.Uri.file(filePath);
-    await vscode.commands.executeCommand('vscode.open', uri);
-    return uri;
+    return vscode.Uri.file(filePath);
 }
 
 export async function closeAllEditorsAsync(): Promise<void> {

@@ -1,11 +1,13 @@
-namespace RazorApp.Pages;
-
-public partial class References 
+namespace RazorApp.Pages
 {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    public partial class References
     {
-        currentCount++;
+
+        private int currentCount = 0;
+
+        private void IncrementCount()
+        {
+            currentCount++;
+        }
     }
 }

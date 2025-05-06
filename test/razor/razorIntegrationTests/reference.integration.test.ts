@@ -15,7 +15,7 @@ integrationHelpers.describeIfWindows(`Razor References ${testAssetWorkspace.desc
             return;
         }
 
-        await integrationHelpers.activateCSharpExtension();
+        await integrationHelpers.activateRazorExtension();
     });
 
     beforeEach(async function () {
@@ -32,22 +32,27 @@ integrationHelpers.describeIfWindows(`Razor References ${testAssetWorkspace.desc
         }
 
         const position = new vscode.Position(6, 41);
-        const locations = <vscode.Location[]>(
-            await vscode.commands.executeCommand(
-                'vscode.executeDefinitionProvider',
-                vscode.window.activeTextEditor!.document.uri,
-                position
-            )
+
+        await integrationHelpers.waitForExpectedResult<vscode.Location[]>(
+            async () =>
+                await vscode.commands.executeCommand(
+                    'vscode.executeDefinitionProvider',
+                    vscode.window.activeTextEditor!.document.uri,
+                    position
+                ),
+            1000,
+            100,
+            (locations) => {
+                expect(locations.length).toBe(1);
+                const definitionLocation = locations[0];
+
+                expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+                expect(definitionLocation.range.start.line).toBe(11);
+                expect(definitionLocation.range.start.character).toBe(16);
+                expect(definitionLocation.range.end.line).toBe(11);
+                expect(definitionLocation.range.end.character).toBe(28);
+            }
         );
-
-        expect(locations.length).toBe(1);
-        const definitionLocation = locations[0];
-
-        expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
-        expect(definitionLocation.range.start.line).toBe(11);
-        expect(definitionLocation.range.start.character).toBe(16);
-        expect(definitionLocation.range.end.line).toBe(11);
-        expect(definitionLocation.range.end.character).toBe(28);
     });
 
     test('Find All References', async () => {
@@ -56,36 +61,40 @@ integrationHelpers.describeIfWindows(`Razor References ${testAssetWorkspace.desc
         }
 
         const position = new vscode.Position(6, 41);
-        const locations = <vscode.Location[]>(
-            await vscode.commands.executeCommand(
-                'vscode.executeReferenceProvider',
-                vscode.window.activeTextEditor!.document.uri,
-                position
-            )
+        await integrationHelpers.waitForExpectedResult<vscode.Location[]>(
+            async () =>
+                await vscode.commands.executeCommand(
+                    'vscode.executeReferenceProvider',
+                    vscode.window.activeTextEditor!.document.uri,
+                    position
+                ),
+            1000,
+            100,
+            (locations) => {
+                expect(locations.length).toBe(3);
+
+                let definitionLocation = locations[0];
+                expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+                expect(definitionLocation.range.start.line).toBe(6);
+                expect(definitionLocation.range.start.character).toBe(33);
+                expect(definitionLocation.range.end.line).toBe(6);
+                expect(definitionLocation.range.end.character).toBe(45);
+
+                definitionLocation = locations[1];
+                expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+                expect(definitionLocation.range.start.line).toBe(11);
+                expect(definitionLocation.range.start.character).toBe(16);
+                expect(definitionLocation.range.end.line).toBe(11);
+                expect(definitionLocation.range.end.character).toBe(28);
+
+                definitionLocation = locations[2];
+                expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+                expect(definitionLocation.range.start.line).toBe(15);
+                expect(definitionLocation.range.start.character).toBe(8);
+                expect(definitionLocation.range.end.line).toBe(15);
+                expect(definitionLocation.range.end.character).toBe(20);
+            }
         );
-
-        expect(locations.length).toBe(3);
-
-        let definitionLocation = locations[0];
-        expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
-        expect(definitionLocation.range.start.line).toBe(6);
-        expect(definitionLocation.range.start.character).toBe(33);
-        expect(definitionLocation.range.end.line).toBe(6);
-        expect(definitionLocation.range.end.character).toBe(45);
-
-        definitionLocation = locations[1];
-        expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
-        expect(definitionLocation.range.start.line).toBe(11);
-        expect(definitionLocation.range.start.character).toBe(16);
-        expect(definitionLocation.range.end.line).toBe(11);
-        expect(definitionLocation.range.end.character).toBe(28);
-
-        definitionLocation = locations[2];
-        expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
-        expect(definitionLocation.range.start.line).toBe(15);
-        expect(definitionLocation.range.start.character).toBe(8);
-        expect(definitionLocation.range.end.line).toBe(15);
-        expect(definitionLocation.range.end.character).toBe(20);
     });
 
     test('Go To Implementation', async () => {
@@ -94,47 +103,57 @@ integrationHelpers.describeIfWindows(`Razor References ${testAssetWorkspace.desc
         }
 
         const position = new vscode.Position(18, 18);
-        const locations = <vscode.Location[]>(
-            await vscode.commands.executeCommand(
-                'vscode.executeImplementationProvider',
-                vscode.window.activeTextEditor!.document.uri,
-                position
-            )
+
+        await integrationHelpers.waitForExpectedResult<vscode.Location[]>(
+            async () =>
+                await vscode.commands.executeCommand(
+                    'vscode.executeImplementationProvider',
+                    vscode.window.activeTextEditor!.document.uri,
+                    position
+                ),
+            1000,
+            100,
+            (locations) => {
+                expect(locations.length).toBe(1);
+                const definitionLocation = locations[0];
+
+                expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+                expect(definitionLocation.range.start.line).toBe(23);
+                expect(definitionLocation.range.start.character).toBe(10);
+                expect(definitionLocation.range.end.line).toBe(23);
+                expect(definitionLocation.range.end.character).toBe(19);
+            }
         );
-
-        expect(locations.length).toBe(1);
-        const definitionLocation = locations[0];
-
-        expect(definitionLocation.uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
-        expect(definitionLocation.range.start.line).toBe(23);
-        expect(definitionLocation.range.start.character).toBe(10);
-        expect(definitionLocation.range.end.line).toBe(23);
-        expect(definitionLocation.range.end.character).toBe(19);
     });
 
     test('Find All References - CSharp', async () => {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }
-
+        const position = new vscode.Position(5, 28);
         await integrationHelpers.openFileInWorkspaceAsync(path.join('Pages', 'References.razor.cs'));
 
-        const position = new vscode.Position(4, 20);
-
         await integrationHelpers.waitForExpectedResult<vscode.Location[]>(
-            async () =>
-                await vscode.commands.executeCommand(
+            async () => {
+                return await vscode.commands.executeCommand(
                     'vscode.executeReferenceProvider',
                     vscode.window.activeTextEditor!.document.uri,
                     position
-                ),
-            10000,
+                );
+            },
+            1000,
             100,
             (locations) => {
                 expect(locations.length).toBe(3);
-                expect(locations[0].uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
-                expect(locations[1].uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
-                expect(locations[2].uri.path).toBe(vscode.window.activeTextEditor!.document.uri.path);
+
+                const sortedLocations = integrationHelpers.sortLocations(locations);
+
+                const razorFile = integrationHelpers.getFilePath(path.join('Pages', 'References.razor'));
+                const csharpFile = integrationHelpers.getFilePath(path.join('Pages', 'References.razor.cs'));
+
+                expect(sortedLocations[0].uri.path).toBe(razorFile.path);
+                expect(sortedLocations[1].uri.path).toBe(csharpFile.path);
+                expect(sortedLocations[2].uri.path).toBe(csharpFile.path);
             }
         );
     });
