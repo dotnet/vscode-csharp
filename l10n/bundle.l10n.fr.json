@@ -30,6 +30,7 @@
   "Choose": "Choisir",
   "Choose and set default": "Choisir et définir la valeur par défaut",
   "Click {0}. This will copy all relevant issue information.": "Cliquez sur {0}. Cette opération copie toutes les informations pertinentes sur le problème.",
+  "Cohosting is on, client has no access to CSharp content": "Cohosting is on, client has no access to CSharp content",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "La configuration « {0} » dans launch.json n’a pas d’argument {1} avec {2} pour la liste des processus distants.",
   "Copy C#": "Copier C#",
   "Copy Html": "Copier du code HTML",

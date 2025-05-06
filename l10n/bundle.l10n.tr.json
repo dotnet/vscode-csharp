@@ -30,6 +30,7 @@
   "Choose": "Seç",
   "Choose and set default": "Varsayılanı seç ve ayarla",
   "Click {0}. This will copy all relevant issue information.": "{0} tıklayın. Bu işlem, ilgili tüm sorun bilgilerini kopyalar.",
+  "Cohosting is on, client has no access to CSharp content": "Cohosting is on, client has no access to CSharp content",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "launch.json dosyasındaki \"{0}\" yapılandırması uzaktan süreç listeleme için {2} ile {1} bağımsız değişkenine sahip değil.",
   "Copy C#": "Kopya C#",
   "Copy Html": "HTML'yi Kopyala",

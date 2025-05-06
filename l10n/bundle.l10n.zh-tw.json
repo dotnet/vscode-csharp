@@ -30,6 +30,7 @@
   "Choose": "選擇",
   "Choose and set default": "選擇並設定預設值",
   "Click {0}. This will copy all relevant issue information.": "按一下 [{0}]。這會複製所有相關的問題資訊。",
+  "Cohosting is on, client has no access to CSharp content": "Cohosting is on, client has no access to CSharp content",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "launch.json 中的設定 \"{0}\" 沒有具有遠端處理序清單 {2} 的 {1} 引數。",
   "Copy C#": "複製 C#",
   "Copy Html": "複製 HTML",
