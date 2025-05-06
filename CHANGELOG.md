@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.77.x
+* Bump Razor to 10.0.0-preview.25255.4 (PR: [#8249](https://github.com/dotnet/vscode-csharp/pull/8249))
+  * Port remaining cohosting endpoints to VS Code (#11815) (PR: [#11815](https://github.com/dotnet/razor/pull/11815))
+  * Fix cohost semantic tokens in VS Code (#11816) (PR: [#11816](https://github.com/dotnet/razor/pull/11816))
+  * Fix some hardcoded values in cohosting (#11817) (PR: [#11817](https://github.com/dotnet/razor/pull/11817))
+  * Add new shared SelectXXXAsArray helpers (#11796) (PR: [#11796](https://github.com/dotnet/razor/pull/11796))
+* Bump Roslyn to 5.0.0-1.25255.4 (PR: [#8249](https://github.com/dotnet/vscode-csharp/pull/8249))
+  * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation (#78405) (PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
+  * Change O(n) + O(lg n) search in SolutionState.SortedProjectStates to just O(lg n) (#78427) (PR: [#78427](https://github.com/dotnet/roslyn/pull/78427))
+  * Fix syntax tree creation when modifying source generated documents (#78343) (PR: [#78343](https://github.com/dotnet/roslyn/pull/78343))
 
 # 2.76.x
 * Bump Razor to 10.0.0-preview.25252.1 (PR: [#8239](https://github.com/dotnet/vscode-csharp/pull/8239))

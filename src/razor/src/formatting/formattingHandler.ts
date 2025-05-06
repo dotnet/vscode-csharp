@@ -5,7 +5,6 @@
 
 import * as vscode from 'vscode';
 import { RequestType } from 'vscode-jsonrpc';
-import { IRazorDocument } from '../document/IRazorDocument';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
@@ -14,6 +13,7 @@ import { convertTextEditToSerializable, SerializableTextEdit } from '../rpc/seri
 import { SerializableFormattingParams } from './serializableFormattingParams';
 import { SerializableFormattingResponse } from './serializableFormattingResponse';
 import { SerializableOnTypeFormattingParams } from './serializableOnTypeFormattingParams';
+import { SerializablePosition } from '../rpc/serializablePosition';
 
 export class FormattingHandler {
     private static readonly provideFormattingEndpoint = 'razor/htmlFormatting';
@@ -25,7 +25,7 @@ export class FormattingHandler {
         SerializableFormattingResponse,
         any
     > = new RequestType(FormattingHandler.provideOnTypeFormattingEndpoint);
-    private emptyFormattingResponse = new SerializableFormattingResponse();
+    private static emptyFormattingResponse = new SerializableFormattingResponse();
 
     constructor(
         private readonly documentManager: RazorDocumentManager,
@@ -54,7 +54,7 @@ export class FormattingHandler {
             const razorDocumentUri = vscode.Uri.parse(formattingParams.textDocument.uri);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
             if (razorDocument === undefined) {
-                return this.emptyFormattingResponse;
+                return FormattingHandler.emptyFormattingResponse;
             }
 
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
@@ -65,41 +65,77 @@ export class FormattingHandler {
                 cancellationToken
             );
             if (!synchronized) {
-                return this.emptyFormattingResponse;
+                return FormattingHandler.emptyFormattingResponse;
             }
 
             const virtualHtmlUri = razorDocument.htmlDocument.uri;
-
-            // This is a workaround for https://github.com/microsoft/vscode/issues/191395.
-            // We need to call the HTML range formatter instead of document formattter since
-            // the latter does not respect HTML settings.
             const htmlDocContent = razorDocument.htmlDocument.getContent();
-            const zeroBasedNumLinesHtmlDoc = this.countLines(htmlDocContent);
-            const lastLineLengthHtmlDoc = this.getLastLineLength(htmlDocContent);
-            const range = new vscode.Range(
-                new vscode.Position(0, 0),
-                new vscode.Position(zeroBasedNumLinesHtmlDoc, lastLineLengthHtmlDoc)
-            );
 
-            const textEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
-                'vscode.executeFormatRangeProvider',
+            return await FormattingHandler.getHtmlFormattingResult(
                 virtualHtmlUri,
-                range,
+                htmlDocContent,
                 formattingParams.options
             );
-
-            if (textEdits === undefined) {
-                return this.emptyFormattingResponse;
-            }
-
-            const serializableTextEdits = this.sanitizeTextEdits(razorDocument, textEdits);
-
-            return new SerializableFormattingResponse(serializableTextEdits);
         } catch (error) {
             this.logger.logWarning(`${FormattingHandler.provideFormattingEndpoint} failed with ${error}`);
         }
 
-        return this.emptyFormattingResponse;
+        return FormattingHandler.emptyFormattingResponse;
+    }
+
+    public static async getHtmlFormattingResult(
+        virtualHtmlUri: vscode.Uri,
+        htmlDocContent: string,
+        options: vscode.FormattingOptions
+    ): Promise<SerializableFormattingResponse> {
+        // This is a workaround for https://github.com/microsoft/vscode/issues/191395.
+        // We need to call the HTML range formatter instead of document formattter since
+        // the latter does not respect HTML settings.
+        const zeroBasedNumLinesHtmlDoc = FormattingHandler.countLines(htmlDocContent);
+        const lastLineLengthHtmlDoc = FormattingHandler.getLastLineLength(htmlDocContent);
+        const range = new vscode.Range(
+            new vscode.Position(0, 0),
+            new vscode.Position(zeroBasedNumLinesHtmlDoc, lastLineLengthHtmlDoc)
+        );
+
+        const textEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
+            'vscode.executeFormatRangeProvider',
+            virtualHtmlUri,
+            range,
+            options
+        );
+
+        if (textEdits === undefined) {
+            return FormattingHandler.emptyFormattingResponse;
+        }
+
+        const serializableTextEdits = FormattingHandler.sanitizeTextEdits(htmlDocContent, textEdits);
+
+        return new SerializableFormattingResponse(serializableTextEdits);
+    }
+
+    public static async getHtmlOnTypeFormattingResult(
+        virtualHtmlUri: vscode.Uri,
+        htmlDocContent: string,
+        position: SerializablePosition,
+        ch: string,
+        options: vscode.FormattingOptions
+    ): Promise<SerializableFormattingResponse> {
+        const textEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
+            'vscode.executeFormatOnTypeProvider',
+            virtualHtmlUri,
+            position,
+            ch,
+            options
+        );
+
+        if (textEdits === undefined) {
+            return FormattingHandler.emptyFormattingResponse;
+        }
+
+        const serializableTextEdits = FormattingHandler.sanitizeTextEdits(htmlDocContent, textEdits);
+
+        return new SerializableFormattingResponse(serializableTextEdits);
     }
 
     private async provideOnTypeFormatting(
@@ -110,7 +146,7 @@ export class FormattingHandler {
             const razorDocumentUri = vscode.Uri.parse(formattingParams.textDocument.uri);
             const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
             if (razorDocument === undefined) {
-                return this.emptyFormattingResponse;
+                return FormattingHandler.emptyFormattingResponse;
             }
 
             const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
@@ -121,43 +157,35 @@ export class FormattingHandler {
                 cancellationToken
             );
             if (!synchronized) {
-                return this.emptyFormattingResponse;
+                return FormattingHandler.emptyFormattingResponse;
             }
 
             const virtualHtmlUri = razorDocument.htmlDocument.uri;
+            const htmlDocContent = razorDocument.htmlDocument.getContent();
 
-            const textEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
-                'vscode.executeFormatOnTypeProvider',
+            return await FormattingHandler.getHtmlOnTypeFormattingResult(
                 virtualHtmlUri,
+                htmlDocContent,
                 formattingParams.position,
                 formattingParams.ch,
                 formattingParams.options
             );
-
-            if (textEdits === undefined) {
-                return this.emptyFormattingResponse;
-            }
-
-            const serializableTextEdits = this.sanitizeTextEdits(razorDocument, textEdits);
-
-            return new SerializableFormattingResponse(serializableTextEdits);
         } catch (error) {
             this.logger.logWarning(`${FormattingHandler.provideFormattingEndpoint} failed with ${error}`);
         }
 
-        return this.emptyFormattingResponse;
+        return FormattingHandler.emptyFormattingResponse;
     }
 
-    private sanitizeTextEdits(razorDocument: IRazorDocument, textEdits: vscode.TextEdit[]) {
-        const htmlDocText = razorDocument.htmlDocument.getContent();
-        const zeroBasedLineCount = this.countLines(htmlDocText);
+    private static sanitizeTextEdits(htmlDocText: string, textEdits: vscode.TextEdit[]) {
+        const zeroBasedLineCount = FormattingHandler.countLines(htmlDocText);
         const serializableTextEdits = Array<SerializableTextEdit>();
         for (let textEdit of textEdits) {
             // The below workaround is needed due to a bug on the HTML side where
             // they'll sometimes send us an end position that exceeds the length
             // of the document. Tracked by https://github.com/microsoft/vscode/issues/175298.
             if (textEdit.range.end.line > zeroBasedLineCount || textEdit.range.start.line > zeroBasedLineCount) {
-                const lastLineLength = this.getLastLineLength(htmlDocText);
+                const lastLineLength = FormattingHandler.getLastLineLength(htmlDocText);
                 const updatedPosition = new vscode.Position(zeroBasedLineCount, lastLineLength);
 
                 let start = textEdit.range.start;
@@ -180,7 +208,7 @@ export class FormattingHandler {
         return serializableTextEdits;
     }
 
-    private countLines(text: string) {
+    private static countLines(text: string) {
         let lineCount = 0;
         for (const i of text) {
             if (i === '\n') {
@@ -191,7 +219,7 @@ export class FormattingHandler {
         return lineCount;
     }
 
-    private getLastLineLength(text: string) {
+    private static getLastLineLength(text: string) {
         let currentLineLength = 0;
         for (let i = 0; i < text.length; i++) {
             // Take into account different line ending types ('\r\n' vs. '\n')
