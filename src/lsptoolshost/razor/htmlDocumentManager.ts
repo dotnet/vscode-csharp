@@ -10,12 +10,22 @@ import { getUriPath } from '../../razor/src/uriPaths';
 import { virtualHtmlSuffix } from '../../razor/src/razorConventions';
 import { HtmlDocumentContentProvider } from './htmlDocumentContentProvider';
 import { HtmlDocument } from './htmlDocument';
+import { RoslynLanguageServer } from '../server/roslynLanguageServer';
+import { RequestType, TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 
 export class HtmlDocumentManager {
     private readonly htmlDocuments: { [hostDocumentPath: string]: HtmlDocument } = {};
     private readonly contentProvider: HtmlDocumentContentProvider;
 
-    constructor(private readonly platformInfo: PlatformInformation, private readonly logger: RazorLogger) {
+    private readonly razorDocumentClosedRequest: RequestType<TextDocumentIdentifier, void, Error> = new RequestType(
+        'razor/documentClosed'
+    );
+
+    constructor(
+        private readonly platformInfo: PlatformInformation,
+        private readonly roslynLanguageServer: RoslynLanguageServer,
+        private readonly logger: RazorLogger
+    ) {
         this.contentProvider = new HtmlDocumentContentProvider(this, this.logger);
     }
 
@@ -37,7 +47,13 @@ export class HtmlDocumentManager {
 
                 await this.closeDocument(document.uri);
 
-                // TODO: Send a notification back to the server so it can cancel any pending sync requests and clear its cache.
+                // We don't care about the response, but Razor cohosting can't currently do notifications with documents
+                // so making it a request means the logs end up in the right place.
+                await this.roslynLanguageServer.sendRequest(
+                    this.razorDocumentClosedRequest,
+                    TextDocumentIdentifier.create(getUriPath(document.uri)),
+                    new vscode.CancellationTokenSource().token
+                );
             }
         });
 

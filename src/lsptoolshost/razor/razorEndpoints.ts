@@ -76,7 +76,7 @@ export function registerRazorEndpoints(
     // Local Functions
     //
     function registerCohostingEndpoints() {
-        const documentManager = new HtmlDocumentManager(platformInfo, razorLogger);
+        const documentManager = new HtmlDocumentManager(platformInfo, roslynLanguageServer, razorLogger);
         const reportIssueCommand = new ReportIssueCommand(vscode, undefined, documentManager, razorLogger);
         context.subscriptions.push(documentManager.register());
         context.subscriptions.push(reportIssueCommand.register());
