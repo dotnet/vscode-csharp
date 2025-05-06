@@ -37,9 +37,12 @@ export class ReportIssueCreator {
                 csharpContent = await this.getProjectedCSharp(razorDocument);
                 htmlContent = await this.getProjectedHtml(razorDocument);
             } else if (this.cohostingDocumentManager) {
-                const htmlDocument = await this.cohostingDocumentManager.getDocument(collectionResult.document.uri);
                 csharpContent = vscode.l10n.t('Cohosting is on, client has no access to CSharp content');
-                htmlContent = htmlDocument.getContent();
+
+                const htmlDocument = await this.cohostingDocumentManager.getDocument(collectionResult.document.uri);
+                if (htmlDocument) {
+                    htmlContent = htmlDocument.getContent();
+                }
             }
         }
 

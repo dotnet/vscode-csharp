@@ -65,12 +65,22 @@ export class HtmlDocumentManager {
         return vscode.Disposable.from(didCloseRegistration, providerRegistration);
     }
 
-    public async updateDocumentText(uri: vscode.Uri, text: string) {
-        const document = await this.getDocument(uri);
+    public async updateDocumentText(uri: vscode.Uri, checksum: string, text: string) {
+        // We don't pass the checksum in here, because we'd be comparing the new one against the old one.
+        let document = await this.findDocument(uri);
 
-        this.logger.logTrace(`New content for '${uri}', updating '${document.path}'.`);
+        if (!document) {
+            this.logger.logTrace(
+                `File '${uri}' didn't exist in the Razor document list, so adding it with checksum '${checksum}'.`
+            );
+            document = this.addDocument(uri, checksum);
+        }
 
-        document.setContent(text);
+        this.logger.logTrace(`New content for '${uri}', updating '${document.path}', checksum '${checksum}'.`);
+
+        await vscode.workspace.openTextDocument(document.uri);
+
+        document.setContent(checksum, text);
 
         this.contentProvider.fireDidChange(document.uri);
     }
@@ -85,30 +95,36 @@ export class HtmlDocumentManager {
         }
     }
 
-    public async getDocument(uri: vscode.Uri): Promise<HtmlDocument> {
-        let document = this.findDocument(uri);
+    public async getDocument(uri: vscode.Uri, checksum?: string): Promise<HtmlDocument | undefined> {
+        const document = this.findDocument(uri);
 
-        // This might happen in the case that a file is opened outside the workspace
         if (!document) {
-            this.logger.logInfo(
-                `File '${uri}' didn't exist in the Razor document list. This is likely because it's from outside the workspace.`
-            );
-            document = this.addDocument(uri);
+            this.logger.logTrace(`File '${uri}' didn't exist in the Razor document list. Doing nothing.`);
+            return undefined;
         }
+
+        if (checksum && document.getChecksum() !== checksum) {
+            this.logger.logInfo(
+                `Found '${uri}' in the Razor document list, but the checksum '${document.getChecksum()}' doesn't match '${checksum}'.`
+            );
+            return undefined;
+        }
+
+        // No checksum, just give them the latest document and hope they know what to do with it.
 
         await vscode.workspace.openTextDocument(document.uri);
 
-        return document!;
+        return document;
     }
 
-    private addDocument(uri: vscode.Uri): HtmlDocument {
+    private addDocument(uri: vscode.Uri, checksum: string): HtmlDocument {
         let document = this.findDocument(uri);
         if (document) {
             this.logger.logInfo(`Skipping document creation for '${document.path}' because it already exists.`);
             return document;
         }
 
-        document = this.createDocument(uri);
+        document = this.createDocument(uri, checksum);
         this.htmlDocuments[document.path] = document;
 
         return document;
@@ -131,12 +147,12 @@ export class HtmlDocumentManager {
         );
     }
 
-    private createDocument(uri: vscode.Uri) {
+    private createDocument(uri: vscode.Uri, checksum: string) {
         uri = uri.with({
             scheme: HtmlDocumentContentProvider.scheme,
             path: `${uri.path}${virtualHtmlSuffix}`,
         });
-        const projectedDocument = new HtmlDocument(uri);
+        const projectedDocument = new HtmlDocument(uri, checksum);
 
         return projectedDocument;
     }
