@@ -49,6 +49,7 @@ import { MappingHandler } from '../../razor/src/mapping/mappingHandler';
 import { RazorMapTextChangesParams } from '../../razor/src/mapping/razorMapTextChangesParams';
 import { RazorMapTextChangesResponse } from '../../razor/src/mapping/razorMapTextChangesResponse';
 import { FormattingHandler } from '../../razor/src/formatting/formattingHandler';
+import { ReportIssueCommand } from '../../razor/src/diagnostics/reportIssueCommand';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -62,8 +63,10 @@ export function registerRazorEndpoints(
     );
 
     if (razorOptions.cohostingEnabled) {
+        vscode.commands.executeCommand('setContext', 'razor.mode', 'cohosting');
         registerCohostingEndpoints();
     } else {
+        vscode.commands.executeCommand('setContext', 'razor.mode', 'lsp');
         registerNonCohostingEndpoints();
     }
 
@@ -74,7 +77,9 @@ export function registerRazorEndpoints(
     //
     function registerCohostingEndpoints() {
         const documentManager = new HtmlDocumentManager(platformInfo, razorLogger);
+        const reportIssueCommand = new ReportIssueCommand(vscode, undefined, documentManager, razorLogger);
         context.subscriptions.push(documentManager.register());
+        context.subscriptions.push(reportIssueCommand.register());
 
         registerMethodHandler<HtmlUpdateParameters, void>('razor/updateHtml', async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);

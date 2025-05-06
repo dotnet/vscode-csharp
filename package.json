@@ -1881,12 +1881,14 @@
       {
         "command": "extension.showRazorCSharpWindow",
         "title": "%command.extension.showRazorCSharpWindow%",
-        "category": "Razor"
+        "category": "Razor",
+        "enablement": "razor.mode == 'lsp'"
       },
       {
         "command": "extension.showRazorHtmlWindow",
         "title": "%command.extension.showRazorHtmlWindow%",
-        "category": "Razor"
+        "category": "Razor",
+        "enablement": "razor.mode == 'lsp'"
       },
       {
         "command": "razor.reportIssue",

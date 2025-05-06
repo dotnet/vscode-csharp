@@ -103,6 +103,7 @@
   "Non Razor file as active document": "Non Razor file as active document",
   "Could not determine CSharp content": "Could not determine CSharp content",
   "Could not determine Html content": "Could not determine Html content",
+  "Cohosting is on, client has no access to CSharp content": "Cohosting is on, client has no access to CSharp content",
   "A valid dotnet installation could not be found: {0}": "A valid dotnet installation could not be found: {0}",
   "Is this a Bug or Feature request?": "Is this a Bug or Feature request?",
   "Bug": "Bug",
