@@ -35,8 +35,8 @@ export class CSharpProjectedDocumentContentProvider implements vscode.TextDocume
             // Document was removed from the document manager, meaning there's no more content for this
             // file. Report an empty document.
 
-            if (this.logger.verboseEnabled) {
-                this.logger.logVerbose(
+            if (this.logger.traceEnabled) {
+                this.logger.logTrace(
                     `Could not find document '${getUriPath(
                         uri
                     )}' when updating the C# buffer. This typically happens when a document is removed.`

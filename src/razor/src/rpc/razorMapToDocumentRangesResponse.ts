@@ -4,8 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { razorTextSpan } from '../dynamicFile/razorTextSpan';
 
 export interface RazorMapToDocumentRangesResponse {
     ranges: vscode.Range[];
     hostDocumentVersion: number;
+    spans: razorTextSpan[];
 }

@@ -67,24 +67,27 @@ export class DocumentColorHandler {
             }
 
             const virtualHtmlUri = razorDocument.htmlDocument.uri;
-
-            const colorInformation = await vscode.commands.executeCommand<vscode.ColorInformation[]>(
-                'vscode.executeDocumentColorProvider',
-                virtualHtmlUri
-            );
-
-            const serializableColorInformation = new Array<SerializableColorInformation>();
-            for (const color of colorInformation) {
-                const serializableRange = convertRangeToSerializable(color.range);
-                const serializableColor = new SerializableColorInformation(serializableRange, color.color);
-                serializableColorInformation.push(serializableColor);
-            }
-
-            return serializableColorInformation;
+            return await DocumentColorHandler.doDocumentColorRequest(virtualHtmlUri);
         } catch (error) {
             this.logger.logWarning(`${DocumentColorHandler.provideHtmlDocumentColorEndpoint} failed with ${error}`);
         }
 
         return this.emptyColorInformationResponse;
+    }
+
+    public static async doDocumentColorRequest(virtualHtmlUri: vscode.Uri) {
+        const colorInformation = await vscode.commands.executeCommand<vscode.ColorInformation[]>(
+            'vscode.executeDocumentColorProvider',
+            virtualHtmlUri
+        );
+
+        const serializableColorInformation = new Array<SerializableColorInformation>();
+        for (const color of colorInformation) {
+            const serializableRange = convertRangeToSerializable(color.range);
+            const serializableColor = new SerializableColorInformation(serializableRange, color.color);
+            serializableColorInformation.push(serializableColor);
+        }
+
+        return serializableColorInformation;
     }
 }

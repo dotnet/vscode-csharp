@@ -54,22 +54,9 @@ export class ColorPresentationHandler {
                 return this.emptyColorInformationResponse;
             }
 
-            const color = new vscode.Color(
-                colorPresentationParams.color.red,
-                colorPresentationParams.color.green,
-                colorPresentationParams.color.blue,
-                colorPresentationParams.color.alpha
-            );
             const virtualHtmlUri = razorDocument.htmlDocument.uri;
 
-            const colorPresentations = await vscode.commands.executeCommand<vscode.ColorPresentation[]>(
-                'vscode.executeColorPresentationProvider',
-                color,
-                new ColorPresentationContext(virtualHtmlUri, colorPresentationParams.range)
-            );
-
-            const serializableColorPresentations = this.SerializeColorPresentations(colorPresentations);
-            return serializableColorPresentations;
+            return await ColorPresentationHandler.doColorPresentationRequest(virtualHtmlUri, colorPresentationParams);
         } catch (error) {
             this.logger.logWarning(`${ColorPresentationHandler.provideHtmlColorPresentation} failed with ${error}`);
         }
@@ -77,7 +64,28 @@ export class ColorPresentationHandler {
         return this.emptyColorInformationResponse;
     }
 
-    private SerializeColorPresentations(colorPresentations: vscode.ColorPresentation[]) {
+    public static async doColorPresentationRequest(
+        virtualHtmlUri: vscode.Uri,
+        colorPresentationParams: SerializableColorPresentationParams
+    ) {
+        const color = new vscode.Color(
+            colorPresentationParams.color.red,
+            colorPresentationParams.color.green,
+            colorPresentationParams.color.blue,
+            colorPresentationParams.color.alpha
+        );
+
+        const colorPresentations = await vscode.commands.executeCommand<vscode.ColorPresentation[]>(
+            'vscode.executeColorPresentationProvider',
+            color,
+            new ColorPresentationContext(virtualHtmlUri, colorPresentationParams.range)
+        );
+
+        const serializableColorPresentations = ColorPresentationHandler.SerializeColorPresentations(colorPresentations);
+        return serializableColorPresentations;
+    }
+
+    private static SerializeColorPresentations(colorPresentations: vscode.ColorPresentation[]) {
         const serializableColorPresentations = new Array<SerializableColorPresentation>();
         for (const colorPresentation of colorPresentations) {
             let serializedTextEdit: any = null;

@@ -63,11 +63,11 @@ export class FoldingRangeHandler {
             const convertedHtmlFoldingRanges =
                 htmlFoldingRanges === undefined
                     ? new Array<FoldingRange>()
-                    : this.convertFoldingRanges(htmlFoldingRanges);
+                    : FoldingRangeHandler.convertFoldingRanges(htmlFoldingRanges, this.logger);
             const convertedCSharpFoldingRanges =
                 csharpFoldingRanges === undefined
                     ? new Array<FoldingRange>()
-                    : this.convertFoldingRanges(csharpFoldingRanges);
+                    : FoldingRangeHandler.convertFoldingRanges(csharpFoldingRanges, this.logger);
 
             const response = new SerializableFoldingRangeResponse(
                 convertedHtmlFoldingRanges,
@@ -81,7 +81,7 @@ export class FoldingRangeHandler {
         return this.emptyFoldingRangeReponse;
     }
 
-    private convertFoldingRanges(foldingRanges: vscode.FoldingRange[]) {
+    public static convertFoldingRanges(foldingRanges: vscode.FoldingRange[], logger: RazorLogger) {
         const convertedFoldingRanges = new Array<FoldingRange>();
         foldingRanges.forEach((foldingRange) => {
             const convertedFoldingRange: FoldingRange = {
@@ -89,7 +89,10 @@ export class FoldingRangeHandler {
                 startCharacter: 0,
                 endLine: foldingRange.end,
                 endCharacter: 0,
-                kind: foldingRange.kind === undefined ? undefined : this.convertFoldingRangeKind(foldingRange.kind),
+                kind:
+                    foldingRange.kind === undefined
+                        ? undefined
+                        : FoldingRangeHandler.convertFoldingRangeKind(foldingRange.kind, logger),
             };
 
             convertedFoldingRanges.push(convertedFoldingRange);
@@ -98,7 +101,7 @@ export class FoldingRangeHandler {
         return convertedFoldingRanges;
     }
 
-    private convertFoldingRangeKind(kind: vscode.FoldingRangeKind) {
+    private static convertFoldingRangeKind(kind: vscode.FoldingRangeKind, logger: RazorLogger) {
         if (kind === vscode.FoldingRangeKind.Comment) {
             return FoldingRangeKind.Comment;
         } else if (kind === vscode.FoldingRangeKind.Imports) {
@@ -106,7 +109,7 @@ export class FoldingRangeHandler {
         } else if (kind === vscode.FoldingRangeKind.Region) {
             return FoldingRangeKind.Region;
         } else {
-            this.logger.logWarning(`Unexpected FoldingRangeKind ${kind}`);
+            logger.logWarning(`Unexpected FoldingRangeKind ${kind}`);
             return undefined;
         }
     }

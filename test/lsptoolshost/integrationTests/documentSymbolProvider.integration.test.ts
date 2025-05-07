@@ -71,11 +71,6 @@ describe(`Document Symbol Tests`, () => {
         expect(symbols[0].children[12].detail).toBe('implicit operator C(int i)');
         expect(symbols[0].children[12].kind).toBe(vscode.SymbolKind.Operator);
 
-        // implicit operator int(C c1)
-        expect(symbols[0].children[12].name).toBe('implicit operator C');
-        expect(symbols[0].children[12].detail).toBe('implicit operator C(int i)');
-        expect(symbols[0].children[12].kind).toBe(vscode.SymbolKind.Operator);
-
         // Method M1
         expect(symbols[0].children[13].name).toBe('M1');
         expect(symbols[0].children[13].detail).toBe('M1(int i, string s, params object[] args)');
