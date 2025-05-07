@@ -31,7 +31,7 @@
   "Choose": "선택",
   "Choose and set default": "기본값 선택 및 설정",
   "Click {0}. This will copy all relevant issue information.": "{0}을(를) 클릭하세요. 모든 관련 문제 정보가 복사됩니다.",
-  "Cohosting is on, client has no access to CSharp content": "Cohosting is on, client has no access to CSharp content",
+  "Cohosting is on, client has no access to CSharp content": "공동 호스팅이 켜져 있고 클라이언트가 CSharp 콘텐츠에 액세스할 수 없습니다.",
   "Configuration \"{0}\" in launch.json does not have a {1} argument with {2} for remote process listing.": "launch.json의 \"{0}\" 구성에 원격 프로세스 목록에 대한 {2}이(가) 있는 {1} 인수가 없습니다.",
   "Copy C#": "C# 복사",
   "Copy Html": "HTML 복사",
