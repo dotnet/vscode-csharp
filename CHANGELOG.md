@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.77.x
+* Bump xamlTools to 17.14.36106.43 (PR: [#8260](https://github.com/dotnet/vscode-csharp/pull/8260))
 * Bump Razor to 10.0.0-preview.25256.6 (PR: [#8259](https://github.com/dotnet/vscode-csharp/pull/8259))
   * Improve document handling in VS Code and cohosting (#11825) (PR: [#11825](https://github.com/dotnet/razor/pull/11825))
   * Use new select and order method (#11826) (PR: [#11826](https://github.com/dotnet/razor/pull/11826))

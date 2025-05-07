@@ -15,6 +15,8 @@ export const copilotLanguageServerExtensionComponentName = '@microsoft/visualstu
 export const copilotLanguageServerExtensionAssemblyName = 'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll';
 const copilotLanguageServerExtensionCapabilitiesFileName = 'capabilities.json';
 
+type ActiveExperiments = { [name: string]: string | number | boolean | string[] };
+
 export interface DocumentContext {
     textDocument: lsp.TextDocumentIdentifier;
     position: lsp.Position;
@@ -25,12 +27,19 @@ export interface ContextResolveParam {
     completionId: string;
     timeBudget: number;
     data?: any;
+    activeExperiments: ActiveExperiments;
 }
 
-const resolveContextMethodName = 'roslyn/resolveContext';
-const resolveContextMethodSupportedVersion = '1';
-const resolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
-    resolveContextMethodName,
+const oldResolveContextMethodName = 'roslyn/resolveContext';
+const oldresolveContextMethodSupportedVersion = '1';
+const newResolveContextMethodName = 'roslyn/resolveContext@2';
+const newResolveContextMethodSupportedVersion = '1';
+const oldResolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
+    oldResolveContextMethodName,
+    lsp.ParameterStructures.auto
+);
+const newResolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
+    newResolveContextMethodName,
     lsp.ParameterStructures.auto
 );
 
@@ -60,6 +69,8 @@ function createContextResolveParam(request: ResolveRequest): ContextResolveParam
         },
         completionId: request.completionId,
         timeBudget: request.timeBudget,
+        data: request.data,
+        activeExperiments: Object.fromEntries(request.activeExperiments),
     };
     return contextResolveParam;
 }
@@ -76,8 +87,8 @@ export function registerCopilotContextProviders(
 
     devkit.activate().then(async (devKitExports) => {
         try {
-            // Check if the Copilot Language Server extension is installed and has the correct capabilities
-            let hasCapabilities = false;
+            let resolveMethod: lsp.RequestType<ContextResolveParam, SupportedContextItem[], void> | undefined =
+                undefined;
             const copilotServerExtensionfolder = devKitExports.components[copilotLanguageServerExtensionComponentName];
             if (copilotServerExtensionfolder) {
                 const capabilitiesFilePath = path.join(
@@ -85,18 +96,26 @@ export function registerCopilotContextProviders(
                     copilotLanguageServerExtensionCapabilitiesFileName
                 );
                 const capabilitiesContent = await readJsonSync(capabilitiesFilePath);
-                if (
-                    capabilitiesContent?.capabilities?.find(
-                        (capability: any) =>
-                            capability?.method === resolveContextMethodName &&
-                            capability?.version === resolveContextMethodSupportedVersion
-                    )
-                ) {
-                    hasCapabilities = true;
+                for (const capability of capabilitiesContent?.capabilities ?? []) {
+                    if (
+                        capability.method === oldResolveContextMethodName &&
+                        capability.version === oldresolveContextMethodSupportedVersion
+                    ) {
+                        resolveMethod = oldResolveContextRequest;
+                        channel.debug(`supported 'roslyn/resolveContext' method found in capabilities.json`);
+                        break;
+                    } else if (
+                        capability.method === newResolveContextMethodName &&
+                        capability.version === newResolveContextMethodSupportedVersion
+                    ) {
+                        resolveMethod = newResolveContextRequest;
+                        channel.debug(`supported 'roslyn/resolveContext@2' method found in capabilities.json`);
+                        break;
+                    }
                 }
             }
 
-            if (!hasCapabilities) {
+            if (!resolveMethod) {
                 channel.debug(
                     `Failed to find compatible version of context provider from installed version of ${csharpDevkitExtensionId}.`
                 );
@@ -131,11 +150,7 @@ export function registerCopilotContextProviders(
                             if (!contextResolveParam) {
                                 return [];
                             }
-                            const items = await languageServer.sendRequest(
-                                resolveContextRequest,
-                                contextResolveParam,
-                                token
-                            );
+                            const items = await languageServer.sendRequest(resolveMethod, contextResolveParam, token);
                             channel.trace(`Copilot context provider resolved ${items.length} items`);
                             return items;
                         },
