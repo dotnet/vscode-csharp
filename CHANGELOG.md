@@ -15,6 +15,9 @@
   * Fix syntax tree creation when modifying source generated documents (#78343) (PR: [#78343](https://github.com/dotnet/roslyn/pull/78343))
 
 # 2.76.x
+* Bump Roslyn to 5.0.0-1.25256.5 (PR: [#8254](https://github.com/dotnet/vscode-csharp/pull/8254))
+  * Do not parse URIs during LSP serialization/deserialization(PR: [#76691](https://github.com/dotnet/roslyn/pull/76691))
+  * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation(PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
 * Bump Razor to 10.0.0-preview.25252.1 (PR: [#8239](https://github.com/dotnet/vscode-csharp/pull/8239))
   * If SupportDiagnostics is false then dynamic files don't report diagnostics... (PR: #11807)
   * Client settings tweaks, and implement VS Code configuration monitoring (PR: #11800)
