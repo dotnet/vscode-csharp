@@ -5,20 +5,21 @@
 
 # 2.77.x
 * Bump xamlTools to 17.14.36106.43 (PR: [#8260](https://github.com/dotnet/vscode-csharp/pull/8260))
-* Bump Razor to 10.0.0-preview.25255.4 (PR: [#8249](https://github.com/dotnet/vscode-csharp/pull/8249))
+* Bump Razor to 10.0.0-preview.25256.6 (PR: [#8259](https://github.com/dotnet/vscode-csharp/pull/8259))
+  * Improve document handling in VS Code and cohosting (#11825) (PR: [#11825](https://github.com/dotnet/razor/pull/11825))
+  * Use new select and order method (#11826) (PR: [#11826](https://github.com/dotnet/razor/pull/11826))
+  * Make it so validation happens after filtering and normalization (#11811) (PR: [#11811](https://github.com/dotnet/razor/pull/11811))
   * Port remaining cohosting endpoints to VS Code (#11815) (PR: [#11815](https://github.com/dotnet/razor/pull/11815))
   * Fix cohost semantic tokens in VS Code (#11816) (PR: [#11816](https://github.com/dotnet/razor/pull/11816))
   * Fix some hardcoded values in cohosting (#11817) (PR: [#11817](https://github.com/dotnet/razor/pull/11817))
   * Add new shared SelectXXXAsArray helpers (#11796) (PR: [#11796](https://github.com/dotnet/razor/pull/11796))
-* Bump Roslyn to 5.0.0-1.25255.4 (PR: [#8249](https://github.com/dotnet/vscode-csharp/pull/8249))
-  * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation (#78405) (PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
-  * Change O(n) + O(lg n) search in SolutionState.SortedProjectStates to just O(lg n) (#78427) (PR: [#78427](https://github.com/dotnet/roslyn/pull/78427))
-  * Fix syntax tree creation when modifying source generated documents (#78343) (PR: [#78343](https://github.com/dotnet/roslyn/pull/78343))
 
 # 2.76.x
 * Bump Roslyn to 5.0.0-1.25256.5 (PR: [#8254](https://github.com/dotnet/vscode-csharp/pull/8254))
   * Do not parse URIs during LSP serialization/deserialization(PR: [#76691](https://github.com/dotnet/roslyn/pull/76691))
   * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation(PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
+  * Change O(n) + O(lg n) search in SolutionState.SortedProjectStates to just O(lg n) (#78427) (PR: [#78427](https://github.com/dotnet/roslyn/pull/78427))
+  * Fix syntax tree creation when modifying source generated documents (#78343) (PR: [#78343](https://github.com/dotnet/roslyn/pull/78343))
 * Bump Razor to 10.0.0-preview.25252.1 (PR: [#8239](https://github.com/dotnet/vscode-csharp/pull/8239))
   * If SupportDiagnostics is false then dynamic files don't report diagnostics... (PR: #11807)
   * Client settings tweaks, and implement VS Code configuration monitoring (PR: #11800)

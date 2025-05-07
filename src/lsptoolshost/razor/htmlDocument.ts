@@ -9,16 +9,23 @@ import { getUriPath } from '../../razor/src/uriPaths';
 export class HtmlDocument {
     public readonly path: string;
     private content = '';
+    private checksum = '';
 
-    public constructor(public readonly uri: vscode.Uri) {
+    public constructor(public readonly uri: vscode.Uri, checksum: string) {
         this.path = getUriPath(uri);
+        this.checksum = checksum;
     }
 
     public getContent() {
         return this.content;
     }
 
-    public setContent(content: string) {
+    public getChecksum() {
+        return this.checksum;
+    }
+
+    public setContent(checksum: string, content: string) {
+        this.checksum = checksum;
         this.content = content;
     }
 }
