@@ -4,7 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.77.x
-* Bump Razor to 10.0.0-preview.25255.4 (PR: [#8249](https://github.com/dotnet/vscode-csharp/pull/8249))
+* Bump Razor to 10.0.0-preview.25256.6 (PR: [#8259](https://github.com/dotnet/vscode-csharp/pull/8259))
+  * Improve document handling in VS Code and cohosting (#11825) (PR: [#11825](https://github.com/dotnet/razor/pull/11825))
+  * Use new select and order method (#11826) (PR: [#11826](https://github.com/dotnet/razor/pull/11826))
+  * Make it so validation happens after filtering and normalization (#11811) (PR: [#11811](https://github.com/dotnet/razor/pull/11811))
   * Port remaining cohosting endpoints to VS Code (#11815) (PR: [#11815](https://github.com/dotnet/razor/pull/11815))
   * Fix cohost semantic tokens in VS Code (#11816) (PR: [#11816](https://github.com/dotnet/razor/pull/11816))
   * Fix some hardcoded values in cohosting (#11817) (PR: [#11817](https://github.com/dotnet/razor/pull/11817))
