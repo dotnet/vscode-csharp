@@ -1510,7 +1510,10 @@
           "dotnet.projects.enableFileBasedPrograms": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.projects.enableFileBasedPrograms%"
+            "description": "%configuration.dotnet.projects.enableFileBasedPrograms%",
+            "tags": [
+              "preview"
+            ]
           },
           "razor.languageServer.directory": {
             "type": "string",
