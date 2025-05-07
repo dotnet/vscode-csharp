@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { HtmlDocumentManager } from '../../../lsptoolshost/razor/htmlDocumentManager';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLogger } from '../razorLogger';
 import { api } from '../vscodeAdapter';
@@ -16,9 +17,14 @@ export class ReportIssueCommand {
     private readonly issueCreator: ReportIssueCreator;
     private readonly dataCollectorFactory: ReportIssueDataCollectorFactory;
 
-    constructor(private readonly vscodeApi: api, documentManager: RazorDocumentManager, logger: RazorLogger) {
+    constructor(
+        private readonly vscodeApi: api,
+        documentManager: RazorDocumentManager | undefined,
+        cohostingDocumentManager: HtmlDocumentManager | undefined,
+        logger: RazorLogger
+    ) {
         this.dataCollectorFactory = new ReportIssueDataCollectorFactory(logger);
-        this.issueCreator = new ReportIssueCreator(this.vscodeApi, documentManager);
+        this.issueCreator = new ReportIssueCreator(this.vscodeApi, documentManager, cohostingDocumentManager);
         this.issuePanel = new ReportIssuePanel(this.dataCollectorFactory, this.issueCreator, logger);
     }
 
