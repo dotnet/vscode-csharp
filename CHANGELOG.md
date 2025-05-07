@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.77.x
+* Bump xamlTools to 17.14.36106.43 (PR: [#8260](https://github.com/dotnet/vscode-csharp/pull/8260))
 * Bump Razor to 10.0.0-preview.25255.4 (PR: [#8249](https://github.com/dotnet/vscode-csharp/pull/8249))
   * Port remaining cohosting endpoints to VS Code (#11815) (PR: [#11815](https://github.com/dotnet/razor/pull/11815))
   * Fix cohost semantic tokens in VS Code (#11816) (PR: [#11816](https://github.com/dotnet/razor/pull/11816))
