@@ -91,7 +91,7 @@
   "More Information": "Další informace",
   "Name not defined in current configuration.": "Název není v aktuální konfiguraci definován.",
   "Nested Code Action": "Akce vnořeného kódu",
-  "No": "No",
+  "No": "Ne",
   "No executable projects": "Žádné spustitelné projekty",
   "No launchable target found for '{0}'": "Pro „{0}“ se nenašel žádný spustitelný cíl",
   "No launchable target found.": "Nenašel se žádný spustitelný cíl.",
