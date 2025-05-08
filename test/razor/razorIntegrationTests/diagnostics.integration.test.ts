@@ -22,7 +22,7 @@ integrationHelpers.describeIfDevKit(`Razor Diagnostics ${testAssetWorkspace.desc
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test('CSharp Diagnostics', async () => {
+    test('CSharp and Razor Diagnostics', async () => {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }
@@ -54,6 +54,15 @@ integrationHelpers.describeIfDevKit(`Razor Diagnostics ${testAssetWorkspace.desc
                         expect(diagnostics[1].severity).toBe(vscode.DiagnosticSeverity.Error);
                         expect(diagnostics[1].range).toStrictEqual(new vscode.Range(6, 9, 6, 16));
                         expect(diagnostics[1].source).toBe(undefined);
+                        const diag1Code = diagnostics[1].code as {
+                            value: string | number;
+                            target: vscode.Uri;
+                        };
+                        expect(diag1Code).toBeDefined();
+                        expect(diag1Code.value).toBe('CS0103');
+                        expect(diag1Code.target.toString()).toBe(
+                            'https://msdn.microsoft.com/query/roslyn.query?appId%3Droslyn%26k%3Dk%28CS0103%29'
+                        );
 
                         expect(diagnostics[2].message).toBe(
                             "The type or namespace name 'TypeDoesNotExist' could not be found (are you missing a using directive or an assembly reference?)"
@@ -61,6 +70,15 @@ integrationHelpers.describeIfDevKit(`Razor Diagnostics ${testAssetWorkspace.desc
                         expect(diagnostics[2].severity).toBe(vscode.DiagnosticSeverity.Error);
                         expect(diagnostics[2].range).toStrictEqual(new vscode.Range(15, 20, 15, 36));
                         expect(diagnostics[2].source).toBe(undefined);
+                        const diag2Code = diagnostics[2].code as {
+                            value: string | number;
+                            target: vscode.Uri;
+                        };
+                        expect(diag2Code).toBeDefined();
+                        expect(diag2Code.value).toBe('CS0103');
+                        expect(diag2Code.target.toString()).toBe(
+                            'https://msdn.microsoft.com/query/roslyn.query?appId%3Droslyn%26k%3Dk%28CS0246%29'
+                        );
                     }
                 );
 
