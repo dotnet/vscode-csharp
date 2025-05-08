@@ -6,9 +6,6 @@
     ],
     "settings": {
         "dotnet.defaultSolution": "RazorApp.sln",
-        "dotnet.server.useOmnisharp": false,
-        "omnisharp.enableLspDriver": false,
-        "razor.server.trace": "Trace",
         "dotnet.preferCSharpExtension": true
     }
 }
