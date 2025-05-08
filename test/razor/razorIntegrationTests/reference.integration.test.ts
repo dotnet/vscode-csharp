@@ -9,13 +9,13 @@ import { beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
 
-integrationHelpers.describeIfWindows(`Razor References ${testAssetWorkspace.description}`, function () {
+integrationHelpers.describeIfDevKit(`Razor References ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }
 
-        await integrationHelpers.activateRazorExtension();
+        await integrationHelpers.activateCSharpExtension();
     });
 
     beforeEach(async function () {
@@ -151,9 +151,9 @@ integrationHelpers.describeIfWindows(`Razor References ${testAssetWorkspace.desc
                 const razorFile = integrationHelpers.getFilePath(path.join('Pages', 'References.razor'));
                 const csharpFile = integrationHelpers.getFilePath(path.join('Pages', 'References.razor.cs'));
 
-                expect(sortedLocations[0].uri.path).toBe(razorFile.path);
-                expect(sortedLocations[1].uri.path).toBe(csharpFile.path);
-                expect(sortedLocations[2].uri.path).toBe(csharpFile.path);
+                integrationHelpers.expectPath(razorFile, sortedLocations[0].uri);
+                integrationHelpers.expectPath(csharpFile, sortedLocations[1].uri);
+                integrationHelpers.expectPath(csharpFile, sortedLocations[2].uri);
             }
         );
     });

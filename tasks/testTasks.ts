@@ -76,7 +76,10 @@ function createIntegrationTestSubTasks() {
 
     for (const projectName of razorIntegrationTestProjects) {
         gulp.task(`test:integration:razor:${projectName}`, async () =>
-            runIntegrationTest(
+            // Run DevKit tests because razor doesn't gracefully handle roslyn restarting
+            // in tests. DevKit prevents that behavior by handling project restore without
+            // requiring it.
+            runDevKitIntegrationTests(
                 projectName,
                 path.join('razor', 'razorIntegrationTests'),
                 `Razor Test Integration ${projectName}`
