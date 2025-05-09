@@ -68,7 +68,7 @@ export class RazorLanguageServiceClient {
         const document = await this.documentManager.getDocumentForCSharpUri(csharpUri);
 
         if (!document) {
-            return RazorMapSpansResponse.empty;
+            throw new Error(`Unable to find razor document for ${csharpUri}`);
         }
 
         const request = new RazorMapToDocumentRangesRequest(LanguageKind.CSharp, params.ranges, document.uri);
@@ -78,7 +78,11 @@ export class RazorLanguageServiceClient {
         );
 
         if (!result) {
-            return RazorMapSpansResponse.empty;
+            throw new Error(`Failed mapping spans`);
+        }
+
+        if (result.spans.length !== params.ranges.length) {
+            throw new Error(`Expected ${params.ranges.length} mapped spans but got ${result.spans.length}`);
         }
 
         return new RazorMapSpansResponse(
