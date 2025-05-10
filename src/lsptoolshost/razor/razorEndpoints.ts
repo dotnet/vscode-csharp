@@ -6,28 +6,28 @@
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import {
-    ColorInformation,
-    ColorPresentationParams,
     ColorPresentationRequest,
-    CompletionList,
-    CompletionParams,
     CompletionRequest,
-    DocumentColorParams,
+    DefinitionRequest,
     DocumentColorRequest,
+    DocumentFormattingRequest,
     DocumentHighlight,
     DocumentHighlightKind,
-    DocumentHighlightParams,
     DocumentHighlightRequest,
-    FoldingRange,
-    FoldingRangeParams,
+    DocumentOnTypeFormattingRequest,
     FoldingRangeRequest,
     Hover,
-    HoverParams,
     HoverRequest,
+    ImplementationRequest,
+    Location,
     LogMessageParams,
     MarkupKind,
+    MarkupContent,
     NotificationType,
+    ReferencesRequest,
     RequestType,
+    SignatureHelp,
+    SignatureHelpRequest,
 } from 'vscode-languageclient';
 import { RazorLogger } from '../../razor/src/razorLogger';
 import { HtmlUpdateParameters } from './htmlUpdateParameters';
@@ -37,7 +37,6 @@ import { HtmlDocumentManager } from './htmlDocumentManager';
 import { DocumentColorHandler } from '../../razor/src/documentColor/documentColorHandler';
 import { razorOptions } from '../../shared/options';
 import { ColorPresentationHandler } from '../../razor/src/colorPresentation/colorPresentationHandler';
-import { ColorPresentation } from 'vscode-html-languageservice';
 import { convertRangeToSerializable } from '../../razor/src/rpc/serializableRange';
 import { FoldingRangeHandler } from '../../razor/src/folding/foldingRangeHandler';
 import { CompletionHandler } from '../../razor/src/completion/completionHandler';
@@ -49,6 +48,10 @@ import { RazorMapSpansResponse } from '../../razor/src/mapping/razorMapSpansResp
 import { MappingHandler } from '../../razor/src/mapping/mappingHandler';
 import { RazorMapTextChangesParams } from '../../razor/src/mapping/razorMapTextChangesParams';
 import { RazorMapTextChangesResponse } from '../../razor/src/mapping/razorMapTextChangesResponse';
+import { FormattingHandler } from '../../razor/src/formatting/formattingHandler';
+import { ReportIssueCommand } from '../../razor/src/diagnostics/reportIssueCommand';
+import { HtmlDocument } from './htmlDocument';
+import { HtmlForwardedRequest } from './htmlForwardedRequest';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -62,8 +65,10 @@ export function registerRazorEndpoints(
     );
 
     if (razorOptions.cohostingEnabled) {
+        vscode.commands.executeCommand('setContext', 'razor.mode', 'cohosting');
         registerCohostingEndpoints();
     } else {
+        vscode.commands.executeCommand('setContext', 'razor.mode', 'lsp');
         registerNonCohostingEndpoints();
     }
 
@@ -73,35 +78,25 @@ export function registerRazorEndpoints(
     // Local Functions
     //
     function registerCohostingEndpoints() {
-        const documentManager = new HtmlDocumentManager(platformInfo, razorLogger);
+        const documentManager = new HtmlDocumentManager(platformInfo, roslynLanguageServer, razorLogger);
+        const reportIssueCommand = new ReportIssueCommand(vscode, undefined, documentManager, razorLogger);
         context.subscriptions.push(documentManager.register());
+        context.subscriptions.push(reportIssueCommand.register());
 
-        registerRequestHandler<HtmlUpdateParameters, void>('razor/updateHtml', async (params) => {
+        registerMethodHandler<HtmlUpdateParameters, void>('razor/updateHtml', async (params) => {
             const uri = UriConverter.deserialize(params.textDocument.uri);
-            await documentManager.updateDocumentText(uri, params.text);
+            await documentManager.updateDocumentText(uri, params.checksum, params.text);
         });
 
-        registerRequestHandler<DocumentColorParams, ColorInformation[]>(DocumentColorRequest.method, async (params) => {
-            const uri = UriConverter.deserialize(params.textDocument.uri);
-            const document = await documentManager.getDocument(uri);
-
+        registerCohostHandler(DocumentColorRequest.type, documentManager, async (document) => {
             return await DocumentColorHandler.doDocumentColorRequest(document.uri);
         });
 
-        registerRequestHandler<ColorPresentationParams, ColorPresentation[]>(
-            ColorPresentationRequest.method,
-            async (params) => {
-                const uri = UriConverter.deserialize(params.textDocument.uri);
-                const document = await documentManager.getDocument(uri);
+        registerCohostHandler(ColorPresentationRequest.type, documentManager, async (document, params) => {
+            return await ColorPresentationHandler.doColorPresentationRequest(document.uri, params);
+        });
 
-                return await ColorPresentationHandler.doColorPresentationRequest(document.uri, params);
-            }
-        );
-
-        registerRequestHandler<FoldingRangeParams, FoldingRange[]>(FoldingRangeRequest.method, async (params) => {
-            const uri = UriConverter.deserialize(params.textDocument.uri);
-            const document = await documentManager.getDocument(uri);
-
+        registerCohostHandler(FoldingRangeRequest.type, documentManager, async (document) => {
             const results = await vscode.commands.executeCommand<vscode.FoldingRange[]>(
                 'vscode.executeFoldingRangeProvider',
                 document.uri
@@ -110,10 +105,7 @@ export function registerRazorEndpoints(
             return FoldingRangeHandler.convertFoldingRanges(results, razorLogger);
         });
 
-        registerRequestHandler<HoverParams, Hover | undefined>(HoverRequest.method, async (params) => {
-            const uri = UriConverter.deserialize(params.textDocument.uri);
-            const document = await documentManager.getDocument(uri);
-
+        registerCohostHandler(HoverRequest.type, documentManager, async (document, params) => {
             const results = await vscode.commands.executeCommand<vscode.Hover[]>(
                 'vscode.executeHoverProvider',
                 document.uri,
@@ -124,50 +116,107 @@ export function registerRazorEndpoints(
             return rewriteHover(applicableHover);
         });
 
-        registerRequestHandler<DocumentHighlightParams, DocumentHighlight[]>(
-            DocumentHighlightRequest.method,
-            async (params) => {
-                const uri = UriConverter.deserialize(params.textDocument.uri);
-                const document = await documentManager.getDocument(uri);
+        registerCohostHandler(DocumentHighlightRequest.type, documentManager, async (document, params) => {
+            const results = await vscode.commands.executeCommand<vscode.DocumentHighlight[]>(
+                'vscode.executeDocumentHighlights',
+                document.uri,
+                params.position
+            );
 
-                const results = await vscode.commands.executeCommand<vscode.DocumentHighlight[]>(
-                    'vscode.executeDocumentHighlights',
-                    document.uri,
-                    params.position
-                );
+            return rewriteHighlight(results);
+        });
 
-                return rewriteHighlight(results);
-            }
-        );
-
-        registerRequestHandler<CompletionParams, CompletionList>(CompletionRequest.method, async (params) => {
-            const uri = UriConverter.deserialize(params.textDocument.uri);
-            const document = await documentManager.getDocument(uri);
-
+        registerCohostHandler(CompletionRequest.type, documentManager, async (document, params) => {
             return CompletionHandler.provideVscodeCompletions(
                 document.uri,
                 params.position,
                 params.context?.triggerCharacter
             );
         });
+
+        registerCohostHandler(ReferencesRequest.type, documentManager, async (document, params) => {
+            const results = await vscode.commands.executeCommand<vscode.Location[]>(
+                'vscode.executeReferenceProvider',
+                document.uri,
+                params.position
+            );
+
+            return rewriteLocations(results);
+        });
+
+        registerCohostHandler(ImplementationRequest.type, documentManager, async (document, params) => {
+            const results = await vscode.commands.executeCommand<vscode.Location[]>(
+                'vscode.executeImplementationProvider',
+                document.uri,
+                params.position
+            );
+
+            return rewriteLocations(results);
+        });
+
+        registerCohostHandler(DefinitionRequest.type, documentManager, async (document, params) => {
+            const results = await vscode.commands.executeCommand<vscode.Location[]>(
+                'vscode.executeDefinitionProvider',
+                document.uri,
+                params.position
+            );
+
+            return rewriteLocations(results);
+        });
+
+        registerCohostHandler(SignatureHelpRequest.type, documentManager, async (document, params) => {
+            const results = await vscode.commands.executeCommand<vscode.SignatureHelp>(
+                'vscode.executeSignatureHelpProvider',
+                document.uri,
+                params.position
+            );
+
+            if (!results) {
+                return undefined;
+            }
+
+            return rewriteSignatureHelp(results);
+        });
+
+        registerCohostHandler(DocumentFormattingRequest.type, documentManager, async (document, params) => {
+            const content = document.getContent();
+            const options = <vscode.FormattingOptions>params.options;
+
+            const response = await FormattingHandler.getHtmlFormattingResult(document.uri, content, options);
+            return response?.edits;
+        });
+
+        registerCohostHandler(DocumentOnTypeFormattingRequest.type, documentManager, async (document, params) => {
+            const content = document.getContent();
+            const options = <vscode.FormattingOptions>params.options;
+
+            const response = await FormattingHandler.getHtmlOnTypeFormattingResult(
+                document.uri,
+                content,
+                params.position,
+                params.ch,
+                options
+            );
+            return response?.edits;
+        });
     }
 
     function registerNonCohostingEndpoints() {
-        registerRequestHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
+        registerMethodHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
             'razor/provideDynamicFileInfo',
             async (params) =>
                 vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
         );
 
-        registerRequestHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
+        registerMethodHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
             'razor/removeDynamicFileInfo',
             async (params) =>
                 vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
         );
-        registerRequestHandler<RazorMapSpansParams, RazorMapSpansResponse>('razor/mapSpans', async (params) => {
+        registerMethodHandler<RazorMapSpansParams, RazorMapSpansResponse>('razor/mapSpans', async (params) => {
             return await vscode.commands.executeCommand<RazorMapSpansResponse>(MappingHandler.MapSpansCommand, params);
         });
-        registerRequestHandler<RazorMapTextChangesParams, RazorMapTextChangesResponse>(
+        registerMethodHandler<RazorMapTextChangesParams, RazorMapTextChangesResponse>(
             'razor/mapTextChanges',
             async (params) => {
                 return await vscode.commands.executeCommand<RazorMapTextChangesResponse>(
@@ -179,7 +228,24 @@ export function registerRazorEndpoints(
     }
 
     // Helper method that registers a request handler, and logs errors to the Razor logger.
-    function registerRequestHandler<Params, Result>(method: string, invocation: (params: Params) => Promise<Result>) {
+    function registerCohostHandler<Params, Result, Error>(
+        type: RequestType<Params, Result, Error>,
+        documentManager: HtmlDocumentManager,
+        invocation: (document: HtmlDocument, request: Params) => Promise<Result>
+    ) {
+        return registerMethodHandler<HtmlForwardedRequest<Params>, Result | undefined>(type.method, async (params) => {
+            const uri = UriConverter.deserialize(params.textDocument.uri);
+            const document = await documentManager.getDocument(uri, params.checksum);
+
+            if (!document) {
+                return undefined;
+            }
+
+            return invocation(document, params.request);
+        });
+    }
+
+    function registerMethodHandler<Params, Result>(method: string, invocation: (params: Params) => Promise<Result>) {
         const requestType = new RequestType<Params, Result, Error>(method);
         roslynLanguageServer.registerOnRequest(requestType, async (params) => {
             try {
@@ -234,4 +300,48 @@ function convertHighlightKind(kind: vscode.DocumentHighlightKind | undefined): D
         default:
             return undefined;
     }
+}
+
+function rewriteLocations(locations: vscode.Location[]): Location[] {
+    return locations.map((location) => {
+        return {
+            uri: UriConverter.serialize(location.uri),
+            range: convertRangeToSerializable(location.range),
+        };
+    });
+}
+
+function rewriteSignatureHelp(signatureHelp: vscode.SignatureHelp): SignatureHelp {
+    return {
+        activeParameter: signatureHelp.activeParameter ?? undefined,
+        activeSignature: signatureHelp.activeSignature ?? undefined,
+        signatures: signatureHelp.signatures.map((signature) => {
+            return {
+                label: signature.label,
+                documentation: rewriteMarkdownString(signature.documentation),
+                parameters: signature.parameters.map((parameter) => {
+                    return {
+                        label: parameter.label,
+                        documentation: rewriteMarkdownString(parameter.documentation),
+                    };
+                }),
+            };
+        }),
+    };
+}
+
+function rewriteMarkdownString(documentation: string | vscode.MarkdownString | undefined): MarkupContent | undefined {
+    if (!documentation) {
+        return undefined;
+    }
+
+    if ((documentation as vscode.MarkdownString).value) {
+        const markdownString = documentation as vscode.MarkdownString;
+        return {
+            kind: MarkupKind.Markdown,
+            value: markdownString.value,
+        };
+    }
+
+    return { kind: MarkupKind.PlainText, value: <string>documentation };
 }
