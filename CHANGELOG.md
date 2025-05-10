@@ -79,6 +79,8 @@
 * Acquire aspnetcore runtime when using Dev Kit to avoid double acquisition (PR: [#8132](https://github.com/dotnet/vscode-csharp/pull/8132))
 
 # 2.72.x
+* Bump Razor to 9.0.0-preview.25211.4 (PR: [#8181](https://github.com/dotnet/vscode-csharp/pull/8181))
+  * Allow graceful handling of ArgumentException when trying to apply changes to SourceText in LspTextChangesLoader (PR: [#11727](https://github.com/dotnet/razor/pull/11727))
 * Revert xamlTools to 17.14.35913.250 (PR: [#8121](https://github.com/dotnet/vscode-csharp/pull/8121))
 * Update Roslyn to 4.14.0-3.25178.1 (PR: [#8103](https://github.com/dotnet/vscode-csharp/pull/8103))
   * Merge `null conditional assignment` to main (PR: [#77867](https://github.com/dotnet/roslyn/pull/77867))
