@@ -50,11 +50,11 @@ describe(`Document Symbol Tests`, () => {
         expect(symbols[0].children[0].kind).toBe(vscode.SymbolKind.Field);
 
         // Finalize
-        expect(symbols[0].children[3].name).toBe('Finalize');
+        expect(symbols[0].children[3].name).toBe('~C');
         expect(symbols[0].children[3].kind).toBe(vscode.SymbolKind.Method);
 
         // Ctor
-        expect(symbols[0].children[4].name).toBe('.ctor');
+        expect(symbols[0].children[4].name).toBe('C');
         expect(symbols[0].children[4].kind).toBe(vscode.SymbolKind.Method);
 
         // EventHandler E1
@@ -62,17 +62,12 @@ describe(`Document Symbol Tests`, () => {
         expect(symbols[0].children[5].kind).toBe(vscode.SymbolKind.Event);
 
         // explicit operator int(C c1)
-        expect(symbols[0].children[11].name).toBe('op_Explicit');
+        expect(symbols[0].children[11].name).toBe('explicit operator Int32');
         expect(symbols[0].children[11].detail).toBe('explicit operator int(C c1)');
         expect(symbols[0].children[11].kind).toBe(vscode.SymbolKind.Operator);
 
         // implicit operator int(C c1)
-        expect(symbols[0].children[12].name).toBe('op_Implicit');
-        expect(symbols[0].children[12].detail).toBe('implicit operator C(int i)');
-        expect(symbols[0].children[12].kind).toBe(vscode.SymbolKind.Operator);
-
-        // implicit operator int(C c1)
-        expect(symbols[0].children[12].name).toBe('op_Implicit');
+        expect(symbols[0].children[12].name).toBe('implicit operator C');
         expect(symbols[0].children[12].detail).toBe('implicit operator C(int i)');
         expect(symbols[0].children[12].kind).toBe(vscode.SymbolKind.Operator);
 
@@ -82,7 +77,7 @@ describe(`Document Symbol Tests`, () => {
         expect(symbols[0].children[13].kind).toBe(vscode.SymbolKind.Method);
 
         // operator !=
-        expect(symbols[0].children[14].name).toBe('op_Inequality');
+        expect(symbols[0].children[14].name).toBe('operator !=');
         expect(symbols[0].children[14].detail).toBe('operator !=(C c1, int i)');
         expect(symbols[0].children[14].kind).toBe(vscode.SymbolKind.Operator);
 

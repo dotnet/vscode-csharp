@@ -12,6 +12,7 @@ import { EventStream } from '../eventStream';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { PlatformInformation } from '../shared/platform';
 import { showWarningMessage } from '../shared/observers/utils/showMessage';
+import { RazorLogger } from './src/razorLogger';
 
 export async function activateRazorExtension(
     context: vscode.ExtensionContext,
@@ -20,7 +21,8 @@ export async function activateRazorExtension(
     vscodeTelemetryReporter: TelemetryReporter,
     csharpDevkitExtension: vscode.Extension<any> | undefined,
     platformInfo: PlatformInformation,
-    useOmnisharpServer: boolean
+    useOmnisharpServer: boolean,
+    logger: RazorLogger
 ) {
     const razorConfig = vscode.workspace.getConfiguration('razor');
     const configuredLanguageServerDir = razorConfig.get<string>('languageServer.directory', '');
@@ -49,6 +51,7 @@ export async function activateRazorExtension(
                 vscodeTelemetryReporter,
                 csharpDevkitExtension,
                 platformInfo,
+                logger,
                 /* enableProposedApis: */ false
             );
         }

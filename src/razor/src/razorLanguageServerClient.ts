@@ -106,9 +106,9 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         );
 
         try {
-            this.logger.logMessage('Starting Razor Language Server...');
+            this.logger.logInfo('Starting Razor Language Server...');
             await this.client.start();
-            this.logger.logMessage('Server started, waiting for client to be ready...');
+            this.logger.logInfo('Server started, waiting for client to be ready...');
             this.isStarted = true;
 
             // Server is ready, hook up so logging changes can be reported
@@ -121,7 +121,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             // Succesfully started, notify listeners.
             resolve();
 
-            this.logger.logMessage('Server ready!');
+            this.logger.logInfo('Server ready!');
 
             for (const listener of this.onStartedListeners) {
                 await listener();
@@ -178,7 +178,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
     }
 
     public dispose() {
-        this.logger.logMessage('Disposing Razor Language Server.');
+        this.logger.logInfo('Disposing Razor Language Server.');
 
         this.isStarted = false;
         this.startHandle = undefined;
@@ -198,7 +198,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             reject(new Error(vscode.l10n.t('Cannot stop Razor Language Server as it is already stopped.')));
         }
 
-        this.logger.logMessage('Stopping Razor Language Server.');
+        this.logger.logInfo('Stopping Razor Language Server.');
 
         try {
             if (this.client) {
@@ -246,7 +246,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
 
         const args: string[] = [];
 
-        this.logger.logMessage(`Razor language server path: ${options.serverPath}`);
+        this.logger.logInfo(`Razor language server path: ${options.serverPath}`);
 
         args.push('--logLevel');
         args.push(this.logger.logLevelForRZLS.toString());
@@ -255,7 +255,7 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         if (options.debug) {
             this.razorTelemetryReporter.reportDebugLanguageServer();
 
-            this.logger.logMessage('Debug flag set for Razor Language Server.');
+            this.logger.logInfo('Debug flag set for Razor Language Server.');
             args.push('--debug');
         }
 
@@ -293,12 +293,12 @@ export class RazorLanguageServerClient implements vscode.Disposable {
         if (options.serverPath.endsWith('.dll')) {
             // If we were given a path to a dll, launch that via dotnet.
             const argsWithPath = [options.serverPath].concat(args);
-            this.logger.logMessage(`Server arguments ${argsWithPath.join(' ')}`);
+            this.logger.logInfo(`Server arguments ${argsWithPath.join(' ')}`);
 
             childProcess = async () => cp.spawn(this.dotnetExecutablePath, argsWithPath, cpOptions);
         } else {
             // Otherwise assume we were given a path to an executable.
-            this.logger.logMessage(`Server arguments ${args.join(' ')}`);
+            this.logger.logInfo(`Server arguments ${args.join(' ')}`);
 
             childProcess = async () => cp.spawn(options.serverPath, args, cpOptions);
         }

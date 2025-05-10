@@ -28,7 +28,7 @@ export function resolveRazorLanguageServerOptions(
     let forceRuntimeCodeGeneration = serverConfig.get<boolean | null>('forceRuntimeCodeGeneration');
 
     if (forceRuntimeCodeGeneration === null && hotReload) {
-        logger.logMessage(
+        logger.logInfo(
             'Hot Reload is enabled so treating "razor.languageServer.forceRuntimeCodeGeneration" as true. To override this set "razor.languageServer.forceRuntimeCodeGeneration" to true or false.'
         );
 
@@ -37,6 +37,7 @@ export function resolveRazorLanguageServerOptions(
 
     const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
     const useNewFormattingEngine = serverConfig.get<boolean>('useNewFormattingEngine');
+    const cohostingEnabled = serverConfig.get<boolean>('cohostingEnabled');
 
     return {
         serverPath: languageServerExecutablePath,
@@ -46,6 +47,7 @@ export function resolveRazorLanguageServerOptions(
         forceRuntimeCodeGeneration,
         suppressErrorToasts,
         useNewFormattingEngine,
+        cohostingEnabled,
     } as RazorLanguageServerOptions;
 }
 
