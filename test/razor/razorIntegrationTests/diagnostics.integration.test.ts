@@ -75,7 +75,7 @@ integrationHelpers.describeIfDevKit(`Razor Diagnostics ${testAssetWorkspace.desc
                             target: vscode.Uri;
                         };
                         expect(diag2Code).toBeDefined();
-                        expect(diag2Code.value).toBe('CS0103');
+                        expect(diag2Code.value).toBe('CS0246');
                         expect(diag2Code.target.toString()).toBe(
                             'https://msdn.microsoft.com/query/roslyn.query?appId%3Droslyn%26k%3Dk%28CS0246%29'
                         );
