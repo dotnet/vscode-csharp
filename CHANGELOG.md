@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.78.x
+* Bump Razor to 10.0.0-preview.25262.1(PR: [#8283](https://github.com/dotnet/vscode-csharp/pull/8283))
+  * Compiler: Replace SyntaxListBuilder with PooledArrayBuilder<T> and miscellaneous performance tweaks (PR: [#11841](https://github.com/dotnet/razor/pull/11841))
+  * Allow html requests to be properly cancelled (PR: [#11829](https://github.com/dotnet/razor/pull/11829))
+  * Fuse/typeparamintellisense (PR: [#11795](https://github.com/dotnet/razor/pull/11795))
+  * Port auto insert to VS Code (PR: [#11828](https://github.com/dotnet/razor/pull/11828))
 
 # 2.77.x
 * Bump xamlTools to 17.14.36106.43 (PR: [#8260](https://github.com/dotnet/vscode-csharp/pull/8260))
