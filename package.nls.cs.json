@@ -61,6 +61,7 @@
   "configuration.dotnet.preferCSharpExtension": "Vynutí načtení projektů pouze s rozšířením jazyka C#.  To může být užitečné při použití starších typů projektů, které jazyk C# Dev Kit nepodporuje. (Vyžaduje opětovné načtení okna)",
   "configuration.dotnet.projects.binaryLogPath": "Nastaví cestu, do které se při načítání projektů zapisují binární protokoly MSBuildu, aby se usnadnil diagnostika chyb načítání.",
   "configuration.dotnet.projects.enableAutomaticRestore": "Povolí automatické obnovení balíčku NuGet, pokud rozšíření zjistí, že chybí prostředky.",
+  "configuration.dotnet.projects.enableFileBasedPrograms": "Enables the preview \"file-based programs\" (dotnet run app.cs) experience.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Zobrazit informace o poznámkách při zobrazení symbolu.",
   "configuration.dotnet.server.componentPaths": "Umožňuje přepsat cestu ke složce pro integrované komponenty jazykového serveru (například přepsat cestu .roslynDevKit v adresáři rozšíření tak, aby používala místně sestavené komponenty).",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Přepíše cestu ke složce pro komponentu .roslynDevKit jazykového serveru.",
