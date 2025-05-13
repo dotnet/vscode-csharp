@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.78.x
-* Bump Razor to 10.0.0-preview.25262.1(PR: []())
+* Bump Razor to 10.0.0-preview.25262.1(PR: [#8283](https://github.com/dotnet/vscode-csharp/pull/8283))
   * Compiler: Replace SyntaxListBuilder with PooledArrayBuilder<T> and miscellaneous performance tweaks (PR: [#11841](https://github.com/dotnet/razor/pull/11841))
   * Allow html requests to be properly cancelled (PR: [#11829](https://github.com/dotnet/razor/pull/11829))
   * Fuse/typeparamintellisense (PR: [#11795](https://github.com/dotnet/razor/pull/11795))
