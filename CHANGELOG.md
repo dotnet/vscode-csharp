@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.76.x
-* Bump Roslyn to 5.0.0-1.25257.6 (PR: [#8264](https://github.com/dotnet/vscode-csharp/pull/8264))
+* Bump Roslyn to 5.0.0-1.25263.2 (PR: [#8286](https://github.com/dotnet/vscode-csharp/pull/8286))
+  * [release/vscode] Gracefully handle span mapping failing(PR: [#78562](https://github.com/dotnet/roslyn/pull/78562))
   * Fix razor redirect(PR: [#78448](https://github.com/dotnet/roslyn/pull/78448))
   * Do not parse URIs during LSP serialization/deserialization(PR: [#76691](https://github.com/dotnet/roslyn/pull/76691))
   * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation(PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
