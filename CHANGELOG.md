@@ -3,6 +3,23 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.78.x
+* Bump Roslyn to 5.0.0-1.25263.3 (PR: [#8287](https://github.com/dotnet/vscode-csharp/pull/8287))
+  * File based programs IDE support(PR: [#78488](https://github.com/dotnet/roslyn/pull/78488))
+  * Gracefully handle span mapping failing(PR: [#78520](https://github.com/dotnet/roslyn/pull/78520))
+  * Cancel running requests when the connection terminates(PR: [#78525](https://github.com/dotnet/roslyn/pull/78525))
+  * Cache extension method import info per project ID(PR: [#78542](https://github.com/dotnet/roslyn/pull/78542))
+  * Fix crash in 'introduce variable' on top-level statements(PR: [#78507](https://github.com/dotnet/roslyn/pull/78507))
+  * Fix information logs getting logged as debug in VSCode(PR: [#78522](https://github.com/dotnet/roslyn/pull/78522))
+  * Shorten log category name(PR: [#78526](https://github.com/dotnet/roslyn/pull/78526))
+  * Reduce allocations during SourceGeneration(PR: [#78403](https://github.com/dotnet/roslyn/pull/78403))
+  * Fix razor redirect(PR: [#78448](https://github.com/dotnet/roslyn/pull/78448))
+* Bump Razor to 10.0.0-preview.25262.1(PR: [#8283](https://github.com/dotnet/vscode-csharp/pull/8283))
+  * Compiler: Replace SyntaxListBuilder with PooledArrayBuilder<T> and miscellaneous performance tweaks (PR: [#11841](https://github.com/dotnet/razor/pull/11841))
+  * Allow html requests to be properly cancelled (PR: [#11829](https://github.com/dotnet/razor/pull/11829))
+  * Fuse/typeparamintellisense (PR: [#11795](https://github.com/dotnet/razor/pull/11795))
+  * Port auto insert to VS Code (PR: [#11828](https://github.com/dotnet/razor/pull/11828))
+
 # 2.77.x
 * Bump xamlTools to 17.14.36106.43 (PR: [#8260](https://github.com/dotnet/vscode-csharp/pull/8260))
 * Bump Razor to 10.0.0-preview.25256.6 (PR: [#8259](https://github.com/dotnet/vscode-csharp/pull/8259))
