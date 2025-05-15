@@ -76,7 +76,7 @@
                 // The profile can be found under /test/csharp-test-profile.
                 "--profile",
                 "csharp-test-profile",
-                "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/RazorApp/.vscode/RazorApp.code-workspace",
+                "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/RazorApp/.vscode/devkit_RazorApp.code-workspace",
                 "--extensionDevelopmentPath=${workspaceRoot}",
                 "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests",
                 "--log",
