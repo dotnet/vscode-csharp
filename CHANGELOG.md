@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.79.x
+* Bump Roslyn to 5.0.0-1.25266.2 (PR: [#8298](https://github.com/dotnet/vscode-csharp/pull/8298))
+  * hotfix to fix restore and stop including bin/obj artifacts in directory with loose files(PR: [#78615](https://github.com/dotnet/roslyn/pull/78615))
+  * Ensure we pass unique binlog paths to each BuildHost(PR: [#78599](https://github.com/dotnet/roslyn/pull/78599))
+  * Fix embedded language classification inside multi-line string(PR: [#78588](https://github.com/dotnet/roslyn/pull/78588))
 
 # 2.78.x
 * Bump Roslyn to 5.0.0-1.25263.3 (PR: [#8287](https://github.com/dotnet/vscode-csharp/pull/8287))
