@@ -61,7 +61,7 @@
   "configuration.dotnet.preferCSharpExtension": "Projeleri yalnızca C# uzantısıyla yüklenmeye zorlar.  Bu, C# Dev Kit tarafından desteklenmeyen eski proje türlerini kullanırken yararlı olabilir. (Pencerenin yeniden yüklenmesi gerekir)",
   "configuration.dotnet.projects.binaryLogPath": "Yükleme hatalarını teşhis etmeye yardımcı olmak için projeler yüklenirken MSBuild ikili günlüklerinin yazılacağı bir yol belirler.",
   "configuration.dotnet.projects.enableAutomaticRestore": "Uzantı varlıkların eksik olduğunu algılarsa otomatik NuGet geri yükleme işlemini etkinleştirir.",
-  "configuration.dotnet.projects.enableFileBasedPrograms": "Enables the preview \"file-based programs\" (dotnet run app.cs) experience.",
+  "configuration.dotnet.projects.enableFileBasedPrograms": "\"Dosya tabanlı programlar\" (dotnet run app.cs) önizleme deneyimini etkinleştirir.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Simge görüntülendiğinde açıklama bilgilerini göster.",
   "configuration.dotnet.server.componentPaths": "Dil sunucusundaki yerleşik bileşenlerin klasör yolunu geçersiz kılmaya olanak tanır (örneğin, yerel olarak oluşturulan bileşenleri kullanmak için uzantı dizinindeki .roslynDevKit yolunu geçersiz kılın)",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Dil sunucusundaki .roslynDevKit bileşeninin klasör yolunu geçersiz kılar",
