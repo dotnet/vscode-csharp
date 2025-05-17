@@ -61,6 +61,7 @@
   "configuration.dotnet.preferCSharpExtension": "強制專案僅以 C# 延伸模組載入。使用 C# 開發人員套件不支援的舊版專案類型時，這會很有用。(需要重新載入視窗)",
   "configuration.dotnet.projects.binaryLogPath": "設定載入專案時，寫入 MSBuild 二進位記錄的路徑，以協助診斷載入錯誤。",
   "configuration.dotnet.projects.enableAutomaticRestore": "如果延伸模組偵測到資產遺失，則啟用自動 NuGet 還原。",
+  "configuration.dotnet.projects.enableFileBasedPrograms": "Enables the preview \"file-based programs\" (dotnet run app.cs) experience.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "顯示符號時顯示備註資訊。",
   "configuration.dotnet.server.componentPaths": "允許覆寫語言伺服器內建元件的資料夾路徑 (例如，覆寫延伸模組目錄中的 .roslynDevKit 路徑，以使用本機建置的元件)",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "覆寫語言伺服器 .roslynDevKit 元件的資料夾路徑",
