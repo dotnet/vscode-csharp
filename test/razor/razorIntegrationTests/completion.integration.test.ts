@@ -44,6 +44,8 @@ integrationHelpers.describeIfDevKit(`Razor Hover ${testAssetWorkspace.descriptio
             vscode.CompletionItemKind.TypeParameter,
             'text'
         );
+
+        await clearLine(4);
     });
 
     test('Div Tag', async () => {
@@ -65,7 +67,127 @@ integrationHelpers.describeIfDevKit(`Razor Hover ${testAssetWorkspace.descriptio
             'div',
             expectedDocumentation
         );
+
+        await clearLine(6);
     }, 30000);
+
+    test('Disabled Attribute', async () => {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
+        await insertText(new vscode.Position(6, 0), '<button dis');
+
+        await waitForExpectedCompletionItemAsync(
+            new vscode.Position(6, 11),
+            undefined,
+            undefined,
+            'disabled',
+            vscode.CompletionItemKind.Value,
+            'disabled'
+        );
+
+        await clearLine(6);
+    }, 30000);
+
+    test('Dir Attribute', async () => {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
+        await insertText(new vscode.Position(6, 0), '<div dir=');
+
+        await waitForExpectedCompletionItemAsync(
+            new vscode.Position(6, 9),
+            undefined,
+            undefined,
+            'auto',
+            vscode.CompletionItemKind.Unit,
+            '"auto"'
+        );
+
+        await clearLine(6);
+    }, 30000);
+
+    test('C# String Type', async () => {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
+        await insertText(new vscode.Position(8, 0), 'str');
+
+        await waitForExpectedCompletionItemAsync(
+            new vscode.Position(8, 3),
+            undefined,
+            undefined,
+            'string',
+            vscode.CompletionItemKind.Keyword,
+            'string'
+        );
+
+        await clearLine(8);
+    }, 30000);
+
+    test('C# Override', async () => {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
+        await insertText(new vscode.Position(8, 0), 'override OnA');
+
+        await waitForExpectedCompletionItemAsync(
+            new vscode.Position(8, 12),
+            undefined,
+            undefined,
+            'OnAfterRender(bool firstRender)',
+            vscode.CompletionItemKind.Method,
+            // This is not correct - filed https://github.com/dotnet/vscode-csharp/issues/8310
+            'OnA'
+        );
+
+        await clearLine(8);
+    }, 30000);
+
+    async function insertText(position: vscode.Position, text: string): Promise<void> {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (!activeEditor) {
+            throw new Error('No active editor');
+        }
+
+        try {
+            await activeEditor.edit((builder) => {
+                builder.insert(position, text);
+            });
+        } catch (error) {
+            if (error instanceof vscode.CancellationError) {
+                return;
+            }
+
+            throw error;
+        }
+    }
+
+    async function clearLine(lineNumber: number): Promise<void> {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            return;
+        }
+
+        const lineObj = editor.document.lineAt(lineNumber);
+        const textRange = new vscode.Range(lineObj.range.start, lineObj.range.end);
+
+        try {
+            await editor.edit((editBuilder) => {
+                editBuilder.delete(textRange);
+            });
+        } catch (error) {
+            if (error instanceof vscode.CancellationError) {
+                return;
+            }
+
+            throw error;
+        }
+    }
 
     async function getCompletionsAsync(
         position: vscode.Position,
@@ -117,7 +239,13 @@ integrationHelpers.describeIfDevKit(`Razor Hover ${testAssetWorkspace.descriptio
                 }
                 expect(completionItem).toBeDefined();
                 expect(completionItem!.kind).toEqual(expectedKind);
-                expect(completionItem!.insertText).toBe(expectedInsertText);
+
+                const insertText =
+                    completionItem.insertText instanceof vscode.SnippetString
+                        ? completionItem.insertText.value
+                        : completionItem.insertText;
+                expect(insertText).toBe(expectedInsertText);
+
                 if (expectedDocumentation) {
                     const documentation = completionItem!.documentation as vscode.MarkdownString;
                     expect(documentation.value).toBe(expectedDocumentation);
