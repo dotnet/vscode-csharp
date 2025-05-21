@@ -50,7 +50,7 @@ Alternatively, you could visit https://github.com/dotnet/vscode-csharp/issues an
 
 Copyright © .NET Foundation, and contributors.
 
-The Microsoft C# extension is subject to [these license terms](RuntimeLicenses/license.txt).
+The Microsoft C# extension is subject to [these license terms](https://github.com/dotnet/vscode-csharp/blob/main/RuntimeLicenses/license.txt).
 The source code to this extension is available on [https://github.com/dotnet/vscode-csharp](https://github.com/dotnet/vscode-csharp) and licensed under the [MIT license](LICENSE.txt).
 
 ### Code of Conduct
