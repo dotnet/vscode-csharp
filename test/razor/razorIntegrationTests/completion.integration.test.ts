@@ -154,17 +154,9 @@ integrationHelpers.describeIfDevKit(`Razor Hover ${testAssetWorkspace.descriptio
             throw new Error('No active editor');
         }
 
-        try {
-            await activeEditor.edit((builder) => {
-                builder.insert(position, text);
-            });
-        } catch (error) {
-            if (error instanceof vscode.CancellationError) {
-                return;
-            }
-
-            throw error;
-        }
+        await activeEditor.edit((builder) => {
+            builder.insert(position, text);
+        });
     }
 
     async function clearLine(lineNumber: number): Promise<void> {
@@ -176,17 +168,9 @@ integrationHelpers.describeIfDevKit(`Razor Hover ${testAssetWorkspace.descriptio
         const lineObj = editor.document.lineAt(lineNumber);
         const textRange = new vscode.Range(lineObj.range.start, lineObj.range.end);
 
-        try {
-            await editor.edit((editBuilder) => {
-                editBuilder.delete(textRange);
-            });
-        } catch (error) {
-            if (error instanceof vscode.CancellationError) {
-                return;
-            }
-
-            throw error;
-        }
+        await editor.edit((editBuilder) => {
+            editBuilder.delete(textRange);
+        });
     }
 
     async function getCompletionsAsync(

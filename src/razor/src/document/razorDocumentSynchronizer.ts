@@ -128,15 +128,26 @@ export class RazorDocumentSynchronizer {
         token: vscode.CancellationToken
     ) {
         const rejectionsForCancel: Array<(reason: string) => void> = [];
+        function isTokenCancellationRequestedError(err: unknown): boolean {
+            return typeof err === 'string' && err === 'Token cancellation requested: {0}';
+        }
         let projectedDocumentSynchronized: () => void = Function;
         const onProjectedDocumentSynchronized = new Promise<void>((resolve, reject) => {
             projectedDocumentSynchronized = resolve;
             rejectionsForCancel.push(reject);
+        }).catch((err) => {
+            if (!isTokenCancellationRequestedError(err)) {
+                throw err;
+            }
         });
         let projectedTextDocumentSynchronized: () => void = Function;
         const onProjectedTextDocumentSynchronized = new Promise<void>((resolve, reject) => {
             projectedTextDocumentSynchronized = resolve;
             rejectionsForCancel.push(reject);
+        }).catch((err) => {
+            if (!isTokenCancellationRequestedError(err)) {
+                throw err;
+            }
         });
 
         token.onCancellationRequested((reason) => {
