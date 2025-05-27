@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.80.x
+
 # 2.79.x
 * Bump Roslyn to 5.0.0-1.25266.2 (PR: [#8298](https://github.com/dotnet/vscode-csharp/pull/8298))
   * hotfix to fix restore and stop including bin/obj artifacts in directory with loose files(PR: [#78615](https://github.com/dotnet/roslyn/pull/78615))
