@@ -1899,6 +1899,12 @@
         "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
+        "command": "csharp.recordTrace",
+        "title": "%command.csharp.recordTrace%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
+      },
+      {
         "command": "extension.showRazorCSharpWindow",
         "title": "%command.extension.showRazorCSharpWindow%",
         "category": "Razor",
