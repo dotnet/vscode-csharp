@@ -33,7 +33,7 @@ import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
 
 let _channel: vscode.LogOutputChannel;
-let _traceChannel: vscode.OutputChannel;
+let _traceChannel: vscode.LogOutputChannel;
 
 /**
  * Creates and activates the Roslyn language server.
@@ -51,8 +51,7 @@ export async function activateRoslynLanguageServer(
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
-    // The trace channel verbosity is controlled by the _channel verbosity.
-    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'));
+    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'), { log: true });
 
     reporter.sendTelemetryEvent(TelemetryEventNames.ClientInitialize);
 
