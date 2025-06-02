@@ -34,7 +34,7 @@ extends:
       jobs:
       - deployment: PublishToMarketplace
         displayName: PublishToMarketplace
-        environment: vscode-csharp-release
+        environment: vscode-csharp-release-approvals
         pool:
           name: netcore1espool-internal
           image: 1es-ubuntu-2204
