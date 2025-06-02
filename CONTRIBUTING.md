@@ -172,13 +172,15 @@ To update the version of the roslyn server used by the extension do the followin
 ## Snapping for releases
 Extension releases on the marketplace are done from the prerelease and release branches (corresponding to the prerelease or release version of the extension).  Code flows from main -> prerelease -> release.  Every week we snap main -> prerelease.  Monthly, we snap prerelease -> release.
 
+### Snap main -> prerelease
 The snap is done via the "Branch snap" github action.  To run the snap from main -> prerelease, run the action via "Run workflow" and choose main as the base branch.
 ![branch snap action](./docs/main_snap.png)
 
 This will generate two PRs that must be merged.  One merging the main branch into prerelease, and the other bumps the version in main.
 ![generated prs](./docs/generated_prs.png)
 
-To snap from prerelease to main, run the same action but use **prerelease** as the workflow branch.  This will generate a single PR merging from prerelease to release.
+### Snap prerelease -> release
+To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a single PR merging from prerelease to release.
 
 ### Marketplace release
 The marketplace release is managed by an internal AzDo pipeline.  On the pipeline page, hit run pipeline.  This will bring up the pipeline parameters to fill out:
