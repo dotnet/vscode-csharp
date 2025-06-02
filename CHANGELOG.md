@@ -3,12 +3,54 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.80.x
+* Fix license link in marketplace (PR: [#8318](https://github.com/dotnet/vscode-csharp/pull/8318))
+* Localization (PR: [#8309](https://github.com/dotnet/vscode-csharp/pull/8309))
+* Re-enabling and stabilizing completion tests (PR: [#8306](https://github.com/dotnet/vscode-csharp/pull/8306))
+
+# 2.79.x
+* Bump Roslyn to 5.0.0-1.25266.2 (PR: [#8298](https://github.com/dotnet/vscode-csharp/pull/8298))
+  * hotfix to fix restore and stop including bin/obj artifacts in directory with loose files(PR: [#78615](https://github.com/dotnet/roslyn/pull/78615))
+  * Ensure we pass unique binlog paths to each BuildHost(PR: [#78599](https://github.com/dotnet/roslyn/pull/78599))
+  * Fix embedded language classification inside multi-line string(PR: [#78588](https://github.com/dotnet/roslyn/pull/78588))
+
+# 2.78.x
+* Bump Roslyn to 5.0.0-1.25263.3 (PR: [#8287](https://github.com/dotnet/vscode-csharp/pull/8287))
+  * File based programs IDE support(PR: [#78488](https://github.com/dotnet/roslyn/pull/78488))
+  * Gracefully handle span mapping failing(PR: [#78520](https://github.com/dotnet/roslyn/pull/78520))
+  * Cancel running requests when the connection terminates(PR: [#78525](https://github.com/dotnet/roslyn/pull/78525))
+  * Cache extension method import info per project ID(PR: [#78542](https://github.com/dotnet/roslyn/pull/78542))
+  * Fix crash in 'introduce variable' on top-level statements(PR: [#78507](https://github.com/dotnet/roslyn/pull/78507))
+  * Fix information logs getting logged as debug in VSCode(PR: [#78522](https://github.com/dotnet/roslyn/pull/78522))
+  * Shorten log category name(PR: [#78526](https://github.com/dotnet/roslyn/pull/78526))
+  * Reduce allocations during SourceGeneration(PR: [#78403](https://github.com/dotnet/roslyn/pull/78403))
+  * Fix razor redirect(PR: [#78448](https://github.com/dotnet/roslyn/pull/78448))
+* Bump Razor to 10.0.0-preview.25262.1(PR: [#8283](https://github.com/dotnet/vscode-csharp/pull/8283))
+  * Compiler: Replace SyntaxListBuilder with PooledArrayBuilder<T> and miscellaneous performance tweaks (PR: [#11841](https://github.com/dotnet/razor/pull/11841))
+  * Allow html requests to be properly cancelled (PR: [#11829](https://github.com/dotnet/razor/pull/11829))
+  * Fuse/typeparamintellisense (PR: [#11795](https://github.com/dotnet/razor/pull/11795))
+  * Port auto insert to VS Code (PR: [#11828](https://github.com/dotnet/razor/pull/11828))
+
+# 2.77.x
+* Bump xamlTools to 17.14.36106.43 (PR: [#8260](https://github.com/dotnet/vscode-csharp/pull/8260))
+* Bump Razor to 10.0.0-preview.25256.6 (PR: [#8259](https://github.com/dotnet/vscode-csharp/pull/8259))
+  * Improve document handling in VS Code and cohosting (#11825) (PR: [#11825](https://github.com/dotnet/razor/pull/11825))
+  * Use new select and order method (#11826) (PR: [#11826](https://github.com/dotnet/razor/pull/11826))
+  * Make it so validation happens after filtering and normalization (#11811) (PR: [#11811](https://github.com/dotnet/razor/pull/11811))
+  * Port remaining cohosting endpoints to VS Code (#11815) (PR: [#11815](https://github.com/dotnet/razor/pull/11815))
+  * Fix cohost semantic tokens in VS Code (#11816) (PR: [#11816](https://github.com/dotnet/razor/pull/11816))
+  * Fix some hardcoded values in cohosting (#11817) (PR: [#11817](https://github.com/dotnet/razor/pull/11817))
+  * Add new shared SelectXXXAsArray helpers (#11796) (PR: [#11796](https://github.com/dotnet/razor/pull/11796))
+
 # 2.76.x
 * Bump Roslyn to 5.0.0-1.25263.2 (PR: [#8286](https://github.com/dotnet/vscode-csharp/pull/8286))
   * [release/vscode] Gracefully handle span mapping failing(PR: [#78562](https://github.com/dotnet/roslyn/pull/78562))
   * Fix razor redirect(PR: [#78448](https://github.com/dotnet/roslyn/pull/78448))
+* Bump Roslyn to 5.0.0-1.25257.6 (PR: [#8264](https://github.com/dotnet/vscode-csharp/pull/8264))
   * Do not parse URIs during LSP serialization/deserialization(PR: [#76691](https://github.com/dotnet/roslyn/pull/76691))
   * Ensure hover markdown for supported platforms uses non-breaking spaces for indentation(PR: [#78405](https://github.com/dotnet/roslyn/pull/78405))
+  * Change O(n) + O(lg n) search in SolutionState.SortedProjectStates to just O(lg n) (#78427) (PR: [#78427](https://github.com/dotnet/roslyn/pull/78427))
+  * Fix syntax tree creation when modifying source generated documents (#78343) (PR: [#78343](https://github.com/dotnet/roslyn/pull/78343))
 * Bump Razor to 10.0.0-preview.25252.1 (PR: [#8239](https://github.com/dotnet/vscode-csharp/pull/8239))
   * If SupportDiagnostics is false then dynamic files don't report diagnostics... (PR: #11807)
   * Client settings tweaks, and implement VS Code configuration monitoring (PR: #11800)

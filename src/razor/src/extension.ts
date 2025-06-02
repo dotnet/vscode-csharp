@@ -139,7 +139,7 @@ export async function activate(
         const csharpFeature = new RazorCSharpFeature(documentManager, eventEmitterFactory, logger);
         const htmlFeature = new RazorHtmlFeature(documentManager, languageServiceClient, eventEmitterFactory, logger);
         const localRegistrations: vscode.Disposable[] = [];
-        const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, logger);
+        const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, undefined, logger);
         const razorCodeActionRunner = new RazorCodeActionRunner(languageServerClient, logger);
         const codeActionsHandler = new CodeActionsHandler(
             documentManager,
