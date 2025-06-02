@@ -167,7 +167,8 @@ async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<s
     console.log(`${packageName} version is ${packageVersion}`);
 
     // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
-    const packageDir = path.join('out', '.nuget', packageName, packageVersion);
+    // Package names are always lower case in the .nuget folder.
+    const packageDir = path.join('out', '.nuget', packageName.toLowerCase(), packageVersion);
     const nuspecFiles = fs.readdirSync(packageDir).filter((file) => file.endsWith('.nuspec'));
 
     if (nuspecFiles.length === 0) {

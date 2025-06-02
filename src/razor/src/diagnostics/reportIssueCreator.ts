@@ -11,11 +11,13 @@ import { IRazorDocument } from '../document/IRazorDocument';
 import { IRazorDocumentManager } from '../document/IRazorDocumentManager';
 import { razorExtensionId } from '../razorExtensionId';
 import { IReportIssueDataCollectionResult } from './IReportIssueDataCollectionResult';
+import { HtmlDocumentManager } from '../../../lsptoolshost/razor/htmlDocumentManager';
 
 export class ReportIssueCreator {
     constructor(
         private readonly vscodeApi: vscodeAdapter.api,
-        private readonly documentManager: IRazorDocumentManager
+        private readonly documentManager?: IRazorDocumentManager,
+        private readonly cohostingDocumentManager?: HtmlDocumentManager
     ) {}
 
     public async create(collectionResult: IReportIssueDataCollectionResult) {
@@ -23,16 +25,25 @@ export class ReportIssueCreator {
         let csharpContent: string;
         let htmlContent: string;
 
+        razorContent = vscode.l10n.t('Non Razor file as active document');
+        csharpContent = vscode.l10n.t('Could not determine CSharp content');
+        htmlContent = vscode.l10n.t('Could not determine Html content');
+
         if (collectionResult.document) {
             razorContent = await this.getRazor(collectionResult.document);
 
-            const razorDocument = await this.documentManager.getDocument(collectionResult.document.uri);
-            csharpContent = await this.getProjectedCSharp(razorDocument);
-            htmlContent = await this.getProjectedHtml(razorDocument);
-        } else {
-            razorContent = vscode.l10n.t('Non Razor file as active document');
-            csharpContent = vscode.l10n.t('Could not determine CSharp content');
-            htmlContent = vscode.l10n.t('Could not determine Html content');
+            if (this.documentManager) {
+                const razorDocument = await this.documentManager.getDocument(collectionResult.document.uri);
+                csharpContent = await this.getProjectedCSharp(razorDocument);
+                htmlContent = await this.getProjectedHtml(razorDocument);
+            } else if (this.cohostingDocumentManager) {
+                csharpContent = vscode.l10n.t('Cohosting is on, client has no access to CSharp content');
+
+                const htmlDocument = await this.cohostingDocumentManager.getDocument(collectionResult.document.uri);
+                if (htmlDocument) {
+                    htmlContent = htmlDocument.getContent();
+                }
+            }
         }
 
         const razorExtensionVersion = this.getExtensionVersion();
