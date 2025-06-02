@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.82.x
+
+# 2.82.x
 * Bump Razor to 10.0.0-preview.25279.1 (PR: [#8336](https://github.com/dotnet/vscode-csharp/pull/8336))
   * Don't produce RazorSourceDocuments for imports with incorrect file paths (#11897) (PR: [#11897](https://github.com/dotnet/razor/pull/11897))
   * Fixes one of the cases in directive attribute completion (#11896) (PR: [#11896](https://github.com/dotnet/razor/pull/11896))
