@@ -3,9 +3,21 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.82.x
+* Bump Razor to 10.0.0-preview.25279.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Don't produce RazorSourceDocuments for imports with incorrect file paths (#11897) (PR: [#11897](https://github.com/dotnet/razor/pull/11897))
+  * Fixes one of the cases in directive attribute completion (#11896) (PR: [#11896](https://github.com/dotnet/razor/pull/11896))
+  * Reduce costs in ComponentDirectiveVisitor.VisitRazorDirective (#11881) (PR: [#11881](https://github.com/dotnet/razor/pull/11881))
+  * Compiler: Rationalize nodes, tokens, visitors, walkers, and rewriters, oh my! (#11853) (PR: [#11853](https://github.com/dotnet/razor/pull/11853))
+  * Reduce allocations in TagHelperParseTreeRewriter.Rewrite (#11882) (PR: [#11882](https://github.com/dotnet/razor/pull/11882))
+  * Propagate DynamicallyAccessedMembersAttribute to type inference method (#11856) (PR: [#11856](https://github.com/dotnet/razor/pull/11856))
+  * Tooling: Don't throw exceptions when generating code for file rooted outside of project (#11864) (PR: [#11864](https://github.com/dotnet/razor/pull/11864))
+  * Ensure @model types have a mapping in razor pages (#11844) (PR: [#11844](https://github.com/dotnet/razor/pull/11844))
+  * Fix aligned buffer write (#11861) (PR: [#11861](https://github.com/dotnet/razor/pull/11861))
+
 # 2.81.x
-* Update Debugger Packages to v2.81.0(PR: [#8329](https://github.com/dotnet/vscode-csharp/pull/8329))                                           
-* Localization changes (PR: [#8327](https://github.com/dotnet/vscode-csharp/pull/8327))         
+* Update Debugger Packages to v2.81.0(PR: [#8329](https://github.com/dotnet/vscode-csharp/pull/8329))
+* Localization changes (PR: [#8327](https://github.com/dotnet/vscode-csharp/pull/8327))
 
 # 2.80.x
 * Fix license link in marketplace (PR: [#8318](https://github.com/dotnet/vscode-csharp/pull/8318))
@@ -29,7 +41,7 @@
   * Shorten log category name(PR: [#78526](https://github.com/dotnet/roslyn/pull/78526))
   * Reduce allocations during SourceGeneration(PR: [#78403](https://github.com/dotnet/roslyn/pull/78403))
   * Fix razor redirect(PR: [#78448](https://github.com/dotnet/roslyn/pull/78448))
-* Bump Razor to 10.0.0-preview.25262.1(PR: [#8283](https://github.com/dotnet/vscode-csharp/pull/8283))
+* Bump Razor to 10.0.0-preview.25262.1 (PR: [#8283](https://github.com/dotnet/vscode-csharp/pull/8283))
   * Compiler: Replace SyntaxListBuilder with PooledArrayBuilder<T> and miscellaneous performance tweaks (PR: [#11841](https://github.com/dotnet/razor/pull/11841))
   * Allow html requests to be properly cancelled (PR: [#11829](https://github.com/dotnet/razor/pull/11829))
   * Fuse/typeparamintellisense (PR: [#11795](https://github.com/dotnet/razor/pull/11795))
