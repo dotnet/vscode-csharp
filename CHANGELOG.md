@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.82.x
+
+# 2.81.x
 * Bump Razor to 10.0.0-preview.25279.1 (PR: [#8336](https://github.com/dotnet/vscode-csharp/pull/8336))
   * Don't produce RazorSourceDocuments for imports with incorrect file paths (#11897) (PR: [#11897](https://github.com/dotnet/razor/pull/11897))
   * Fixes one of the cases in directive attribute completion (#11896) (PR: [#11896](https://github.com/dotnet/razor/pull/11896))
@@ -14,8 +16,6 @@
   * Tooling: Don't throw exceptions when generating code for file rooted outside of project (#11864) (PR: [#11864](https://github.com/dotnet/razor/pull/11864))
   * Ensure @model types have a mapping in razor pages (#11844) (PR: [#11844](https://github.com/dotnet/razor/pull/11844))
   * Fix aligned buffer write (#11861) (PR: [#11861](https://github.com/dotnet/razor/pull/11861))
-
-# 2.81.x
 * Update Debugger Packages to v2.81.0(PR: [#8329](https://github.com/dotnet/vscode-csharp/pull/8329))
 * Localization changes (PR: [#8327](https://github.com/dotnet/vscode-csharp/pull/8327))
 
