@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.82.x
-* Bump Roslyn to 5.0.0-1.25302.4 (PR: [#8340](https://github.com/dotnet/vscode-csharp/pull/8340))
+* Bump Roslyn to 5.0.0-1.25302.10 (PR: [#8347](https://github.com/dotnet/vscode-csharp/pull/8347))
+  * Directly create virtual project when dotnet run-api is missing for now(PR: [#78788](https://github.com/dotnet/roslyn/pull/78788))
   * Ensure sln load uses project absolute paths(PR: [#78772](https://github.com/dotnet/roslyn/pull/78772))
   * Switch return to continue(PR: [#78781](https://github.com/dotnet/roslyn/pull/78781))
   * Fix cast before we unsubscribe(PR: [#78776](https://github.com/dotnet/roslyn/pull/78776))
