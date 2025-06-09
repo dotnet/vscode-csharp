@@ -3,6 +3,19 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.82.x
+* Bump Roslyn to 5.0.0-1.25302.10 (PR: [#8347](https://github.com/dotnet/vscode-csharp/pull/8347))
+  * Directly create virtual project when dotnet run-api is missing for now(PR: [#78788](https://github.com/dotnet/roslyn/pull/78788))
+  * Ensure sln load uses project absolute paths(PR: [#78772](https://github.com/dotnet/roslyn/pull/78772))
+  * Switch return to continue(PR: [#78781](https://github.com/dotnet/roslyn/pull/78781))
+  * Fix cast before we unsubscribe(PR: [#78776](https://github.com/dotnet/roslyn/pull/78776))
+  * Don't refresh dynamic files under a lock(PR: [#78775](https://github.com/dotnet/roslyn/pull/78775))
+  * Invoke `dotnet run-api` to obtain virtual project(PR: [#78648](https://github.com/dotnet/roslyn/pull/78648))
+  * Always log language server PID(PR: [#78722](https://github.com/dotnet/roslyn/pull/78722))
+  * LSP: Fix batch builds for file-based programs and fix `"dotnet.projects.binaryLogPath"` throwing an exception(PR: [#78644](https://github.com/dotnet/roslyn/pull/78644))
+  * Support local functions in outline/breadcrumbs(PR: [#78605](https://github.com/dotnet/roslyn/pull/78605))
+  * Fix angle brackets in generics in hover(PR: [#78621](https://github.com/dotnet/roslyn/pull/78621))
+
 # 2.81.x
 * Bump Razor to 10.0.0-preview.25279.1 (PR: [#8336](https://github.com/dotnet/vscode-csharp/pull/8336))
   * Don't produce RazorSourceDocuments for imports with incorrect file paths (#11897) (PR: [#11897](https://github.com/dotnet/razor/pull/11897))
