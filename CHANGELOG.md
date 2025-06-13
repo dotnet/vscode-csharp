@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.83.x
+* Bump Roslyn to 5.0.0-1.25312.6 (PR: [#8364](https://github.com/dotnet/vscode-csharp/pull/8364))
+  * Fix deadlock if an MSBuild task is writing to stdout(PR: [#78927](https://github.com/dotnet/roslyn/pull/78927))
+  * Add more ETW events to trace assembly loading(PR: [#78840](https://github.com/dotnet/roslyn/pull/78840))
+  * Switch behavior of "Go to definition" and "Go to implementation" for partial members(PR: [#78857](https://github.com/dotnet/roslyn/pull/78857))
+  * Fix await completion in an async iterator(PR: [#78823](https://github.com/dotnet/roslyn/pull/78823))
+  * Add a fallback path when launching the BuildHost(PR: [#78826](https://github.com/dotnet/roslyn/pull/78826))
+  * Fix LSP references for using alias(PR: [#78819](https://github.com/dotnet/roslyn/pull/78819))
 
 # 2.82.x
 * Bump Roslyn to 5.0.0-1.25302.10 (PR: [#8347](https://github.com/dotnet/vscode-csharp/pull/8347))
