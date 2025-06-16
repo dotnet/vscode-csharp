@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.84.x
-* Bump Razor to 10.0.0-preview.25313.2 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Bump Razor to 10.0.0-preview.25313.2 (PR: [#8368](https://github.com/dotnet/vscode-csharp/pull/8368))
   * Optimize allocations under RuntimeNodeWriter.WriteHtmlContent (#11945) (PR: [#11945](https://github.com/dotnet/razor/pull/11945))
   * Compiler: (Finally!) Remove ItemCollection (#11939) (PR: [#11939](https://github.com/dotnet/razor/pull/11939))
   * Simply the code that generates edits to insert using directives (#11948) (PR: [#11948](https://github.com/dotnet/razor/pull/11948))
