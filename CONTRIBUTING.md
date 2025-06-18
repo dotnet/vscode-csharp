@@ -115,23 +115,28 @@ This section provides instructions on how to debug locally built Roslyn and Razo
 
 #### Configuring Roslyn Language Server
 
-In your workspace `settings.json` file, add the following lines:
+In your `settings.json` file, add the following lines:
 
 ```json
 "dotnet.server.waitForDebugger": true,
 "dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll"
+```
+
+Replace <roslynRepoRoot> with the actual path to your Roslyn repository.
+
+If using C# Dev Kit, you can also override the Roslyn DevKit component in your `settings.json`:
+```json
 "dotnet.server.componentPaths": {
     "roslynDevKit": "<roslynRepoRoot>/artifacts/bin/Microsoft.VisualStudio.LanguageServices.DevKit/Debug/net9.0"
 },
 ```
-
-Replace <roslynRepoRoot> with the actual path to your Roslyn repository.
 
 Or, in VSCode settings (`Ctrl+,`):
 
 1. Search for `dotnet server`.
 2. Set `dotnet.server.path` to the path of your Roslyn DLL.
 3. Enable `dotnet.server.waitForDebugger`.
+4. (Optional) - add the component to `dotnet.server.componentPaths` (see above).
 
 #### Configuring Razor Language Server
 
