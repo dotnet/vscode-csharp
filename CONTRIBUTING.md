@@ -121,7 +121,7 @@ In your workspace `settings.json` file, add the following lines:
 "dotnet.server.waitForDebugger": true,
 "dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll"
 "dotnet.server.componentPaths": {
-    "roslynDevKit": "<roslynRepoRoot>/artifacts/bin/Microsoft.VisualStudio.LanguageServices.DevKit/Debug/net9.0
+    "roslynDevKit": "<roslynRepoRoot>/artifacts/bin/Microsoft.VisualStudio.LanguageServices.DevKit/Debug/net9.0"
 },
 ```
 
