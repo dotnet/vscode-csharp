@@ -186,6 +186,49 @@
   "Sending request": "Sending request",
   "C# Project Context Status": "C# Project Context Status",
   "Active File Context": "Active File Context",
+  "Initializing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
+    "message": "Initializing dotnet-trace...",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "Failed to execute dotnet-trace command: {0}/dotnet-trace is a command name and should not be localized": {
+    "message": "Failed to execute dotnet-trace command: {0}",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
+  "Select Trace Folder": "Select Trace Folder",
+  "Select Folder to Save Trace File": "Select Folder to Save Trace File",
+  "Folder for trace file {0} does not exist": "Folder for trace file {0} does not exist",
+  "Enter dotnet-trace arguments/dotnet-trace is a command name and should not be localized": {
+    "message": "Enter dotnet-trace arguments",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "You can modify the default arguments if needed": "You can modify the default arguments if needed",
+  "Recording trace...": "Recording trace...",
+  "Install": "Install",
+  "dotnet-trace not found, run \"{0}\" to install it?/dotnet-trace is a command name and should not be localized": {
+    "message": "dotnet-trace not found, run \"{0}\" to install it?",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "Installing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
+    "message": "Installing dotnet-trace...",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "Failed to install dotnet-trace, it may need to be manually installed. See C# output for details./dotnet-trace is a command name and should not be localized": {
+    "message": "Failed to install dotnet-trace, it may need to be manually installed. See C# output for details.",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
   "Generated document not found": "Generated document not found",
   "Nested Code Action": "Nested Code Action",

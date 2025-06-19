@@ -31,6 +31,7 @@ import { registerCopilotRelatedFilesProvider } from './copilot/relatedFilesProvi
 import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
+import { registerTraceCommand } from './profiling/profiling';
 
 let _channel: vscode.LogOutputChannel;
 let _traceChannel: vscode.OutputChannel;
@@ -74,6 +75,8 @@ export async function activateRoslynLanguageServer(
         _channel,
         _traceChannel
     );
+
+    registerTraceCommand(context, languageServer, outputChannel);
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);
