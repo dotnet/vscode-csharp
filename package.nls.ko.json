@@ -4,6 +4,7 @@
   "command.csharp.listProcess": "연결 프로세스 나열",
   "command.csharp.listRemoteDockerProcess": "Docker 연결에 프로세스 나열",
   "command.csharp.listRemoteProcess": "첨부할 원격 연결의 프로세스 나열",
+  "command.csharp.recordTrace": "Record a performance trace of the C# Language Server",
   "command.csharp.reportIssue": "문제 신고",
   "command.csharp.showDecompilationTerms": "디컴파일러 계약 표시",
   "command.dotnet.generateAssets.currentProject": "빌드 및 디버그에 대한 자산 생성",
