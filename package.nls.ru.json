@@ -4,6 +4,7 @@
   "command.csharp.listProcess": "Перечислить процесс для вложения",
   "command.csharp.listRemoteDockerProcess": "Список процессов подключения к Docker",
   "command.csharp.listRemoteProcess": "Список процессов при удаленном подключении для вложения",
+  "command.csharp.recordTrace": "Record a performance trace of the C# Language Server",
   "command.csharp.reportIssue": "Сообщить о проблеме",
   "command.csharp.showDecompilationTerms": "Показать соглашение об условиях декомпиляции",
   "command.dotnet.generateAssets.currentProject": "Создание ресурсов для сборки и отладки",

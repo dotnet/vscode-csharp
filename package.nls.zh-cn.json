@@ -4,6 +4,7 @@
   "command.csharp.listProcess": "列出要附加的进程",
   "command.csharp.listRemoteDockerProcess": "列出 Docker 连接上的进程",
   "command.csharp.listRemoteProcess": "列出远程连接上要附加的进程",
+  "command.csharp.recordTrace": "Record a performance trace of the C# Language Server",
   "command.csharp.reportIssue": "报告问题",
   "command.csharp.showDecompilationTerms": "显示反编译程序条款协议",
   "command.dotnet.generateAssets.currentProject": "生成用于生成和调试的资产",
