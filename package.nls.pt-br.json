@@ -4,7 +4,7 @@
   "command.csharp.listProcess": "Listar processo para anexar",
   "command.csharp.listRemoteDockerProcess": "Listar processos na conexão Docker",
   "command.csharp.listRemoteProcess": "Listar processos em conexão remota para anexar",
-  "command.csharp.recordTrace": "Record a performance trace of the C# Language Server",
+  "command.csharp.recordTrace": "Gravar um rastreamento de desempenho do Servidor de Linguagem C#",
   "command.csharp.reportIssue": "Relatar um problema",
   "command.csharp.showDecompilationTerms": "Mostrar o contrato de termos do descompilador",
   "command.dotnet.generateAssets.currentProject": "Gerar Ativos para Compilação e Depuração",
