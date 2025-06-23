@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.84.x
-* Bump Roslyn to 5.0.0-1.25319.11 (PR: [#8364](https://github.com/dotnet/vscode-csharp/pull/8364))
+* Bump Roslyn to 5.0.0-1.25319.11 (PR: [#8380](https://github.com/dotnet/vscode-csharp/pull/8380))
   * Preserve trailing directives when converting a Program.Main program to top level statements. (#79062) (PR: [#79062](https://github.com/dotnet/roslyn/pull/79062))
   * Do not offer add parameter on a type that cannot become a parameter (#79060) (PR: [#79060](https://github.com/dotnet/roslyn/pull/79060))
   * Razor assembly redirector (#78852) (PR: [#78852](https://github.com/dotnet/roslyn/pull/78852))
@@ -16,7 +16,7 @@
   * Fix locating startup objects (#78972) (PR: [#78972](https://github.com/dotnet/roslyn/pull/78972))
   * Do not make unnecessarily simplification changes in sync-namespace. (#78969) (PR: [#78969](https://github.com/dotnet/roslyn/pull/78969))
   * Add a layer of constraint filtering for 'add import for extension methods' completion. (#78923) (PR: [#78923](https://github.com/dotnet/roslyn/pull/78923))
-* Bump Razor to 10.0.0-preview.25322.1 (PR: [#8368](https://github.com/dotnet/vscode-csharp/pull/8368))
+* Bump Razor to 10.0.0-preview.25322.1 (PR: [#8380](https://github.com/dotnet/vscode-csharp/pull/8380))
   * Make completion capabilities checks more robust (#11964) (PR: [#11964](https://github.com/dotnet/razor/pull/11964))
   * Fix overly aggressive delegated completion (#11965) (PR: [#11965](https://github.com/dotnet/razor/pull/11965))
   * Simply the code that generates edits to insert using directives (#11948) (PR: [#11948](https://github.com/dotnet/razor/pull/11948))
