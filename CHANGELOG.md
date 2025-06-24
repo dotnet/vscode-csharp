@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.85.x
+
 # 2.84.x
 * Bump Roslyn to 5.0.0-1.25319.11 (PR: [#8380](https://github.com/dotnet/vscode-csharp/pull/8380))
   * Preserve trailing directives when converting a Program.Main program to top level statements. (#79062) (PR: [#79062](https://github.com/dotnet/roslyn/pull/79062))
