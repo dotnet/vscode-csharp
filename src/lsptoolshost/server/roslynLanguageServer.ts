@@ -104,6 +104,11 @@ export class RoslynLanguageServer {
     private static _stopTimeout = 10000;
 
     /**
+     * The process Id of the currently running language server process.
+     */
+    private static _processId: number | undefined;
+
+    /**
      * The solution file previously opened; we hold onto this so we can send this back over if the server were to be relaunched for any reason, like some other configuration
      * change that required the server to restart, or some other catastrophic failure that completely took down the process. In the case that the process is crashing because
      * of trying to load this solution file, we'll rely on VS Code's support to eventually stop relaunching the LSP server entirely.
@@ -159,6 +164,10 @@ export class RoslynLanguageServer {
         return this._state;
     }
 
+    public get processId(): number | undefined {
+        return RoslynLanguageServer._processId;
+    }
+
     private registerSetTrace() {
         // Set the language client trace level based on the log level option.
         // setTrace only works after the client is already running.
@@ -198,6 +207,7 @@ export class RoslynLanguageServer {
                     state: ServerState.Stopped,
                     workspaceLabel: vscode.l10n.t('Server stopped'),
                 });
+                RoslynLanguageServer._processId = undefined;
             }
         });
     }
@@ -732,6 +742,8 @@ export class RoslynLanguageServer {
 
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
+
+        RoslynLanguageServer._processId = childProcess.pid;
 
         telemetryReporter.sendTelemetryEvent(TelemetryEventNames.LaunchedServer);
 
