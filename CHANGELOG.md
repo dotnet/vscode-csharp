@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.85.x
-* Bump Roslyn to 5.0.0-1.25326.2 (PR: pending)
+* Bump Roslyn to 5.0.0-1.25326.2 (PR: [#8386](https://github.com/dotnet/vscode-csharp/pull/8386))
   * Fix nullable oblivious quick info (PR: [#79102](https://github.com/dotnet/roslyn/pull/79102))
   * Sort usings (PR: [#79044](https://github.com/dotnet/roslyn/pull/79044))
   * Use ProjectReferences in source build (PR: [#79119](https://github.com/dotnet/roslyn/pull/79119))
