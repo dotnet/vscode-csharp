@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.85.x
+* Bump Razor to 10.0.0-preview.25329.6 (PR: [#8387](https://github.com/dotnet/vscode-csharp/pull/8387))
+  * Fix formatting issue with code block opening braces (PR: [#11969](https://github.com/dotnet/razor/pull/11969))
 
 # 2.84.x
 * Bump Roslyn to 5.0.0-1.25319.11 (PR: [#8380](https://github.com/dotnet/vscode-csharp/pull/8380))
