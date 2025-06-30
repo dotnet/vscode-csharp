@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.85.x
+* Bump Roslyn to 5.0.0-1.25326.2 (PR: [#8386](https://github.com/dotnet/vscode-csharp/pull/8386))
+  * Fix nullable oblivious quick info (PR: [#79102](https://github.com/dotnet/roslyn/pull/79102))
+  * Clear provider on disposal (PR: [#79128](https://github.com/dotnet/roslyn/pull/79128))
+  * Improve performance of fix all that only changes syntax (PR: [#79108](https://github.com/dotnet/roslyn/pull/79108))
+  * Convert to regular constructor for partial types (PR: [#79092](https://github.com/dotnet/roslyn/pull/79092))
+  * Fix roslyn test modifiers in semantic tokens (PR: [#79070](https://github.com/dotnet/roslyn/pull/79070))
+  * Fix restore for 'dotnet run app.cs' in IDE (PR: [#78990](https://github.com/dotnet/roslyn/pull/78990))
 
 # 2.84.x
 * Bump Roslyn to 5.0.0-1.25319.11 (PR: [#8380](https://github.com/dotnet/vscode-csharp/pull/8380))
