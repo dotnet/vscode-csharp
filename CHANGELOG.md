@@ -11,6 +11,8 @@
   * Convert to regular constructor for partial types (PR: [#79092](https://github.com/dotnet/roslyn/pull/79092))
   * Fix roslyn test modifiers in semantic tokens (PR: [#79070](https://github.com/dotnet/roslyn/pull/79070))
   * Fix restore for 'dotnet run app.cs' in IDE (PR: [#78990](https://github.com/dotnet/roslyn/pull/78990))
+* Bump Razor to 10.0.0-preview.25329.6 (PR: [#8392](https://github.com/dotnet/vscode-csharp/pull/8392))
+  * Fix formatting issue with code block opening braces (PR: [#11969](https://github.com/dotnet/razor/pull/11969))
 
 # 2.84.x
 * Bump Roslyn to 5.0.0-1.25319.11 (PR: [#8380](https://github.com/dotnet/vscode-csharp/pull/8380))
