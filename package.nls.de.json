@@ -4,6 +4,7 @@
   "command.csharp.listProcess": "Prozess zum Anfügen auflisten",
   "command.csharp.listRemoteDockerProcess": "Prozesse für Docker-Verbindung auflisten",
   "command.csharp.listRemoteProcess": "Prozesse für Remoteverbindung zum Anfügen auflisten",
+  "command.csharp.recordTrace": "Leistungsablaufverfolgung des C#-Sprachservers aufzeichnen",
   "command.csharp.reportIssue": "Ein Problem melden",
   "command.csharp.showDecompilationTerms": "Vereinbarung zu den Decompilerbedingungen anzeigen",
   "command.dotnet.generateAssets.currentProject": "Ressourcen für Build und Debuggen generieren",
