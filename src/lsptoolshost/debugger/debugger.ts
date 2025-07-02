@@ -105,5 +105,5 @@ async function promptForDevKitDebugConfigurations(): Promise<boolean> {
         return result;
     }
 
-    return false;
+    return true;
 }
