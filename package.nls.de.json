@@ -125,7 +125,6 @@
   "configuration.razor.languageServer.cohostingEnabled": "Razor-Cohosting aktivieren.",
   "configuration.razor.languageServer.debug": "Gibt an, ob beim Starten des Sprachservers auf die Debuganfügung gewartet werden soll.",
   "configuration.razor.languageServer.directory": "Überschreibt den Pfad zum Razor-Sprachserver-Verzeichnis.",
-  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "Kombinierte Entwurfszeit-/Runtime-Codegenerierung für Razor-Dateien aktivieren",
   "configuration.razor.languageServer.suppressLspErrorToasts": "Unterdrückt, dass Fehler-Popups angezeigt werden, wenn auf dem Server ein wiederherstellbarer Fehler auftritt.",
   "configuration.razor.languageServer.useNewFormattingEngine": "Verwenden Sie das neue Razor-Formatierungsmodul.",
   "configuration.razor.server.trace": "Gibt den Protokolliergrad an, der für den Razor-Server verwendet werden soll.",
