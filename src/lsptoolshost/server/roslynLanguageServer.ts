@@ -270,7 +270,7 @@ export class RoslynLanguageServer {
         additionalExtensionPaths: string[],
         languageServerEvents: RoslynLanguageServerEvents,
         channel: vscode.LogOutputChannel,
-        traceChannel: vscode.OutputChannel
+        traceChannel: vscode.LogOutputChannel
     ): Promise<RoslynLanguageServer> {
         const devKit = getCSharpDevKit();
         if (devKit) {

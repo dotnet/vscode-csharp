@@ -15,7 +15,8 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": "$tsc-watch",
         },
         {
             "label": "buildDev",
@@ -25,7 +26,8 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": "$tsc-watch",
         },
         {
             "label": "package",
@@ -35,7 +37,8 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": "$tsc-watch",
         },
         {
             "label": "packageDev",
@@ -45,7 +48,8 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": "$tsc-watch",
         },
         {
             "label": "test",
