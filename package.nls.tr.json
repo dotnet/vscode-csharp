@@ -125,7 +125,6 @@
   "configuration.razor.languageServer.cohostingEnabled": "Razor ile birlikte barındırmayı etkinleştirin.",
   "configuration.razor.languageServer.debug": "Dil sunucusunu başlatırken hata ayıklama eklemesinin beklenip beklenmeyeceğini belirtir.",
   "configuration.razor.languageServer.directory": "Razor Dil Sunucusu dizininin yolunu geçersiz kılıyor.",
-  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "Razor dosyaları için birleşik tasarım zamanı/çalışma zamanı kodu oluşturmayı etkinleştirin",
   "configuration.razor.languageServer.suppressLspErrorToasts": "Sunucu kurtarılabilir bir hatayla karşılaştığında hata bildirimlerinin görünmesini engeller.",
   "configuration.razor.languageServer.useNewFormattingEngine": "Yeni Razor biçimlendirme altyapısını kullanın.",
   "configuration.razor.server.trace": "Razor sunucusu için kullanılacak günlük kaydı düzeyini belirtir.",

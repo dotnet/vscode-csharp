@@ -125,7 +125,6 @@
   "configuration.razor.languageServer.cohostingEnabled": "Habilite el cohospedaje de Razor.",
   "configuration.razor.languageServer.debug": "Especifica si se debe esperar a que se adjunte la depuración al iniciar el servidor de lenguaje.",
   "configuration.razor.languageServer.directory": "Invalida la ruta de acceso al directorio del servidor de lenguaje Razor.",
-  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "Habilitar la generación de código de runtime y tiempo de diseño combinado para archivos de Razor",
   "configuration.razor.languageServer.suppressLspErrorToasts": "Suprime la visualización de notificaciones del sistema de error si el servidor encuentra un error recuperable.",
   "configuration.razor.languageServer.useNewFormattingEngine": "Use el nuevo motor de formato razor.",
   "configuration.razor.server.trace": "Especifica el nivel de registro que se va a usar para el servidor Razor.",
