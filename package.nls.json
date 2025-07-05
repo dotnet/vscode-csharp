@@ -17,7 +17,7 @@
   "command.csharp.attachToProcess": "Attach to a .NET 5+ or .NET Core process",
   "command.csharp.reportIssue": "Report an issue",
   "command.csharp.showDecompilationTerms": "Show the decompiler terms agreement",
-  "command.csharp.recordTrace": "Record a performance trace of the C# Language Server",
+  "command.csharp.recordLanguageServerTrace": "Record a performance trace of the C# Language Server",
   "command.extension.showRazorCSharpWindow": "Show Razor CSharp",
   "command.extension.showRazorHtmlWindow": "Show Razor Html",
   "command.razor.reportIssue": "Report a Razor issue",

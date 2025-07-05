@@ -1889,8 +1889,8 @@
         "enablement": "dotnet.server.activationContext == 'OmniSharp'"
       },
       {
-        "command": "csharp.recordTrace",
-        "title": "%command.csharp.recordTrace%",
+        "command": "csharp.recordLanguageServerTrace",
+        "title": "%command.csharp.recordLanguageServerTrace%",
         "category": "CSharp",
         "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
       },
