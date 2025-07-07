@@ -1528,16 +1528,6 @@
             "description": "%configuration.razor.languageServer.debug%",
             "order": 90
           },
-          "razor.languageServer.forceRuntimeCodeGeneration": {
-            "type": "boolean",
-            "scope": "machine-overridable",
-            "default": true,
-            "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
-            "order": 90,
-            "tags": [
-              "experimental"
-            ]
-          },
           "razor.languageServer.suppressLspErrorToasts": {
             "type": "boolean",
             "default": true,
