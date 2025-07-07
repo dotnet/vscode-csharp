@@ -36,12 +36,15 @@ Follow these steps to build, run, and test the repository:
 
 #### Building
 
+If you have the ability to run powershell, you can invoke "build.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
+
 1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
    a.  If you have already authenticated before, but the token expired, you may need to run `vsts-npm-auth -config .npmrc -f` instead.
 2. Run `npm i` - This command installs the project dependencies.
 3. Run `npm i -g gulp` - This command installs Gulp globally.
 4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
-5. Run `code .` - This command opens the project in Visual Studio Code.
+
+You can now run `code .` - This command opens the project in Visual Studio Code.
 
 #### Running
 
@@ -168,7 +171,7 @@ To package this extension, we need to create VSIX Packages. The VSIX packages ca
 
 ## Updating the `Roslyn` Language Server Version
 
-In order to pull in new packages from upstreams into the msft_consumption feed we use for restoring, you will need to be a member of the 'CSharp VS Code Extension contributors' group in the [Azure Devops instance](https://dev.azure.com/azure-public/vside/_settings/teams).  
+In order to pull in new packages from upstreams into the msft_consumption feed we use for restoring, you will need to be a member of the 'CSharp VS Code Extension contributors' group in the [Azure Devops instance](https://dev.azure.com/azure-public/vside/_settings/teams).
 
 To update the version of the roslyn server used by the extension do the following:
 1.  Find the the Roslyn signed build you want from [here](https://dnceng.visualstudio.com/internal/_build?definitionId=327&_a=summary).  Typically the latest successful build of main is fine.
@@ -195,5 +198,5 @@ The marketplace release is managed by an internal AzDo pipeline.  On the pipelin
 1.  The branch will **always** be main, no matter if release a build from prerelease or release.
 2.  Uncheck the "test" option.
 3.  In "Resources", choose "dotnet-vscode-csharp [officialBuildCI]", then check only the build that should be released, and then confirm with "Use selected run".  Based on the selected build, it will automatically determine if it is prerelease or release. ![release pipeline image](./docs/release_pipeline.png)
-4.  The pipeline parameters should then look something like the following image.  Hit "Run". ![release pipeline parameters image](./docs/release_pipeline_params.png) 
+4.  The pipeline parameters should then look something like the following image.  Hit "Run". ![release pipeline parameters image](./docs/release_pipeline_params.png)
 5.  After a bit, the pipeline will request approval from an authorized approver before it actually uploads to the marketplace.  Hit approve and it will continue.
