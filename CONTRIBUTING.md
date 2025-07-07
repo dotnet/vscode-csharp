@@ -36,7 +36,7 @@ Follow these steps to build, run, and test the repository:
 
 #### Building
 
-If you have the ability to run powershell, you can invoke "build.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
+If you have the ability to run powershell, you can invoke "init.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
 
 1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
    a.  If you have already authenticated before, but the token expired, you may need to run `vsts-npm-auth -config .npmrc -f` instead.
