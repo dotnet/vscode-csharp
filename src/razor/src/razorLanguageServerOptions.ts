@@ -10,7 +10,6 @@ export interface RazorLanguageServerOptions {
     outputChannel?: vscode.OutputChannel;
     debug?: boolean;
     usingOmniSharp: boolean;
-    forceRuntimeCodeGeneration: boolean;
     suppressErrorToasts: boolean;
     useNewFormattingEngine: boolean;
     cohostingEnabled: boolean;

@@ -40,9 +40,9 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.0.0-1.25312.6",
+    "roslyn": "5.0.0-1.25326.2",
     "omniSharp": "1.39.12",
-    "razor": "10.0.0-preview.25313.2",
+    "razor": "10.0.0-preview.25329.6",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "17.14.36106.43"
   },
@@ -1527,16 +1527,6 @@
             "default": false,
             "description": "%configuration.razor.languageServer.debug%",
             "order": 90
-          },
-          "razor.languageServer.forceRuntimeCodeGeneration": {
-            "type": "boolean",
-            "scope": "machine-overridable",
-            "default": true,
-            "description": "%configuration.razor.languageServer.forceRuntimeCodeGeneration%",
-            "order": 90,
-            "tags": [
-              "experimental"
-            ]
           },
           "razor.languageServer.suppressLspErrorToasts": {
             "type": "boolean",
