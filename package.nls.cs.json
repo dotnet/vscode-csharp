@@ -125,7 +125,6 @@
   "configuration.razor.languageServer.cohostingEnabled": "Povolte společné hostování Razor.",
   "configuration.razor.languageServer.debug": "Určuje, jestli se má při spouštění jazykového serveru čekat na připojení ladění.",
   "configuration.razor.languageServer.directory": "Přepíše cestu k adresáři jazykového serveru Razor.",
-  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "Povolit kombinované generování kódu v době návrhu / za běhu pro soubory Razor",
   "configuration.razor.languageServer.suppressLspErrorToasts": "Potlačí zobrazování informačních zpráv o chybách, pokud na serveru dojde k chybě, ze které se dá zotavit.",
   "configuration.razor.languageServer.useNewFormattingEngine": "Použijte nový modul formátování Razor.",
   "configuration.razor.server.trace": "Určuje úroveň protokolování, která se má použít pro server Razor.",

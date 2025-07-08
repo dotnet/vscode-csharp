@@ -130,7 +130,6 @@
   "configuration.razor.languageServer.directory": "Overrides the path to the Razor Language Server directory.",
   "configuration.razor.languageServer.debug": "Specifies whether to wait for debug attach when launching the language server.",
   "configuration.razor.server.trace": "Specifies the logging level to use for the Razor server.",
-  "configuration.razor.languageServer.forceRuntimeCodeGeneration": "Enable combined design time/runtime code generation for Razor files",
   "configuration.razor.languageServer.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.razor.languageServer.useNewFormattingEngine": "Use the new Razor formatting engine.",
   "configuration.razor.languageServer.cohostingEnabled": "Enable Razor cohosting.",
