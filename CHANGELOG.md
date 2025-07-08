@@ -4,6 +4,27 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.86.x
+* Bump Roslyn to 5.0.0-1.25358.1 (PR: [#8402](https://github.com/dotnet/vscode-csharp/pull/8402))
+  * Initial support for adding obsolete attributes to primary constructors(PR: [#79271](https://github.com/dotnet/roslyn/pull/79271))
+  * Allow the Razor extension to report telemetry (and initialize)(PR: [#79254](https://github.com/dotnet/roslyn/pull/79254))
+  * Use same location for 'use implicit object' as we do for 'use collection expression'.(PR: [#79265](https://github.com/dotnet/roslyn/pull/79265))
+  * Use the miscellaneous files project name for rich misc projects(PR: [#79267](https://github.com/dotnet/roslyn/pull/79267))
+  * Razor: Don't double register for document sync(PR: [#79241](https://github.com/dotnet/roslyn/pull/79241))
+  * Allow LanguageServerProjectSystems to load into more than one workspace(PR: [#78975](https://github.com/dotnet/roslyn/pull/78975))
+  * Improve diagnostic for ambiguous predefined type(PR: [#79196](https://github.com/dotnet/roslyn/pull/79196))
+  * Fix renaming constructor via alias(PR: [#79175](https://github.com/dotnet/roslyn/pull/79175))
+  * Speed up performance of remove-unused-imports fix all(PR: [#79173](https://github.com/dotnet/roslyn/pull/79173))
+  * Improve performance in metadata-to-project-reference conversion(PR: [#79163](https://github.com/dotnet/roslyn/pull/79163))
+  * Fix issue where we offered to use a collection expression when teh user didn't have a viable Add method(PR: [#79157](https://github.com/dotnet/roslyn/pull/79157))
+  * Don't load the razor redirector unless it could actually be a razor assembly(PR: [#79154](https://github.com/dotnet/roslyn/pull/79154))
+  * Tweak clarity rules for parentheses where ?? is involved(PR: [#79159](https://github.com/dotnet/roslyn/pull/79159))
+  * Avoid hitting object pool when not needed(PR: [#79158](https://github.com/dotnet/roslyn/pull/79158))
+  * Merge 'extension operators' into 'main'(PR: [#79151](https://github.com/dotnet/roslyn/pull/79151))
+  * Extensions: interceptors(PR: [#79010](https://github.com/dotnet/roslyn/pull/79010))
+  * Small but trivial allocation improvement in FileWatchedReferenceFactory.StopWatchingReference(PR: [#79140](https://github.com/dotnet/roslyn/pull/79140))
+  * Slight allocation reduction in CommandLineParser.FlattenArgs(PR: [#79139](https://github.com/dotnet/roslyn/pull/79139))
+* Fix promptForDevKitDebugConfigurations without CDK installed(PR: [#8390](https://github.com/dotnet/vscode-csharp/pull/8390))
+* Remove Razor ForceRuntimeCodeGeneration flag(PR: [#8398](https://github.com/dotnet/vscode-csharp/pull/8398))
 
 # 2.85.x
 * Bump Roslyn to 5.0.0-1.25326.2 (PR: [#8386](https://github.com/dotnet/vscode-csharp/pull/8386))
