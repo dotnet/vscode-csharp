@@ -8,6 +8,7 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as net from 'net';
+import * as util from '../../common';
 import {
     LanguageClientOptions,
     MessageTransports,
@@ -74,10 +75,6 @@ import { getProfilingEnvVars } from '../profiling/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
-import {
-    copilotLanguageServerExtensionAssemblyName,
-    copilotLanguageServerExtensionComponentName,
-} from '../copilot/contextProviders';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -107,6 +104,13 @@ export class RoslynLanguageServer {
      * The process Id of the currently running language server process.
      */
     private static _processId: number | undefined;
+
+    /**
+     * The folder name for the Roslyn Copilot language server extension.
+     */
+    private static readonly _copilotLanguageServerExtensionDirName = '.roslyncopilotlanguageserver';
+    private static readonly _copilotLanguageServerExtensionAssemblyName =
+        'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll';
 
     /**
      * The solution file previously opened; we hold onto this so we can send this back over if the server were to be relaunched for any reason, like some other configuration
@@ -1079,11 +1083,15 @@ export class RoslynLanguageServer {
             await exports.setupTelemetryEnvironmentAsync(env);
         }
 
-        const copilotServerExtensionfolder = exports.components[copilotLanguageServerExtensionComponentName];
+        const copilotServerExtensionfolder = path.join(
+            util.getExtensionPath(),
+            RoslynLanguageServer._copilotLanguageServerExtensionDirName
+        );
+
         if (copilotServerExtensionfolder) {
             const copilotServerExtensionFullPath = path.join(
                 copilotServerExtensionfolder,
-                copilotLanguageServerExtensionAssemblyName
+                RoslynLanguageServer._copilotLanguageServerExtensionAssemblyName
             );
             additionalExtensionPaths.push(copilotServerExtensionFullPath);
             channel.trace(
