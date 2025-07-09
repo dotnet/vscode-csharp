@@ -13,7 +13,7 @@ import * as ObservableEvents from '../omnisharpLoggingEvents';
 import { EventStream } from '../../eventStream';
 import CompositeDisposable from '../../compositeDisposable';
 import Disposable from '../../disposable';
-import { ExtensionContext, CancellationTokenSource, OutputChannel, Location, CodeLens, Uri } from 'vscode';
+import { ExtensionContext, CancellationTokenSource, LogOutputChannel, Location, CodeLens, Uri } from 'vscode';
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
 import { Events, OmniSharpServer } from '../server';
 import { IEngine } from './IEngine';
@@ -42,7 +42,7 @@ export class LspEngine implements IEngine {
         private eventBus: EventEmitter,
         private eventStream: EventStream,
         private context: ExtensionContext,
-        private outputChannel: OutputChannel,
+        private outputChannel: LogOutputChannel,
         private disposables: CompositeDisposable,
         private languageMiddlewareFeature: LanguageMiddlewareFeature,
         private platformInfo: PlatformInformation,
