@@ -120,9 +120,9 @@ If the language server crashes, general logs are often helpful for diagnosing th
 
 When investigating performance issues, we may request a performance trace of the language server to diagnose what is causing the problem.  These are typically taken via [dotnet-trace](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace) (a cross platform tool to collect performance traces of .NET processes)
 
-The C# extension has a built in command, `csharp.recordTrace` to help with trace collection.  This command will install `dotnet-trace` as a global tool and invoke it against the language server.
+The C# extension has a built in command, `csharp.recordLanguageServerTrace` to help with trace collection.  This command will install `dotnet-trace` as a global tool and invoke it against the language server.
 
-1.  Invoke the `csharp.recordTrace` command
+1.  Invoke the record language server trace command
 ![alt text](docs/recordTraceCommand.png)
 2.  Select the folder to save the trace.
 3.  Accept the default trace arguments, or change them if requested
