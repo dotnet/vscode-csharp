@@ -68,7 +68,7 @@ For issues with Razor, the Razor Log output window can contain useful informatio
 4. **Reset the Log Level**:
    - Once the logs are collected, reset the log level to `Info`.
 
-#### Project Loading Problems
+### Project Loading Problems
 
 Missing language features are often caused by a failure to load the project(s) or solution. To diagnose and resolve these issues, follow these steps:
 
@@ -86,7 +86,7 @@ Missing language features are often caused by a failure to load the project(s) o
    - If you are using C# Dev Kit, check the Solution Explorer to ensure the project is displayed with the expected references.
    - If the references or structure are not as expected, include the contents of the `Projects` output window in your issue report.
 
-#### Colorization problems
+### Colorization problems
 If you encounter issues with document classification (e.g., incorrect syntax highlighting or colorization), please provide the following information to help us diagnose the problem:
 
 1. **Theme in Use**:
@@ -101,7 +101,7 @@ If you encounter issues with document classification (e.g., incorrect syntax hig
 
      ![Inspect Tokens and Scopes Output](./docs/inspect_tokens.png)
 
-#### Diagnostics problems
+### Diagnostics problems
 
 For issues with diagnostics, please provide values of the background analysis scope options, `dotnet.backgroundAnalysis.analyzerDiagnosticsScope` and `dotnet.backgroundAnalysis.compilerDiagnosticsScope`
 ![background analysis settings](./docs/background_analysis.png)
@@ -115,6 +115,21 @@ If the language server crashes, general logs are often helpful for diagnosing th
 
 > [!WARNING]
 > The dump can contain detailed information on the project - generally we will provide an email so that it can be shared privately
+
+#### Recording a language server trace
+
+When investigating performance issues, we may request a performance trace of the language server to diagnose what is causing the problem.  These are typically taken via [dotnet-trace](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace) (a cross platform tool to collect performance traces of .NET processes)
+
+The C# extension has a built in command, `csharp.recordTrace` to help with trace collection.  This command will install `dotnet-trace` as a global tool and invoke it against the language server.
+
+1.  Invoke the `csharp.recordTrace` command
+![alt text](docs/recordTraceCommand.png)
+2.  Select the folder to save the trace.
+3.  Accept the default trace arguments, or change them if requested
+![alt text](docs/recordTraceArgs.png)
+4.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the peformance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace
+![alt text](docs/recordTraceTerminal.png)
+5.  Share the trace.  Note that the trace may contain PII, so generally we will provide an email or other confidential way to share the trace with us.
 
 ## Microsoft Support Policy
 
