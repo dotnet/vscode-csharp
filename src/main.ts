@@ -78,7 +78,7 @@ export async function activate(
         requiredPackageIds.push('OmniSharp');
     }
     if (csharpDevkitExtension) {
-        requiredPackageIds.push('RoslynCopilotLanguageServer');
+        requiredPackageIds.push('RoslynCopilot');
     }
 
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);

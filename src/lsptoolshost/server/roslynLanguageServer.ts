@@ -8,6 +8,7 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as net from 'net';
+import * as fs from 'fs';
 import * as util from '../../common';
 import {
     LanguageClientOptions,
@@ -106,11 +107,10 @@ export class RoslynLanguageServer {
     private static _processId: number | undefined;
 
     /**
-     * The folder name for the Roslyn Copilot language server extension.
+     * The folder name for the Roslyn Copilot language server dll.
      */
-    private static readonly _copilotLanguageServerExtensionDirName = '.roslyncopilotlanguageserver';
-    private static readonly _copilotLanguageServerExtensionAssemblyName =
-        'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll';
+    private static readonly _copilotLanguageServerDllDirName = '.roslyncopilot';
+    private static readonly _copilotLanguageServerDllName = 'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll';
 
     /**
      * The solution file previously opened; we hold onto this so we can send this back over if the server were to be relaunched for any reason, like some other configuration
@@ -1083,20 +1083,19 @@ export class RoslynLanguageServer {
             await exports.setupTelemetryEnvironmentAsync(env);
         }
 
-        const copilotServerExtensionfolder = path.join(
+        const copilotServerExtensionFullPath = path.join(
             util.getExtensionPath(),
-            RoslynLanguageServer._copilotLanguageServerExtensionDirName
+            RoslynLanguageServer._copilotLanguageServerDllDirName,
+            RoslynLanguageServer._copilotLanguageServerDllName
         );
 
-        if (copilotServerExtensionfolder) {
-            const copilotServerExtensionFullPath = path.join(
-                copilotServerExtensionfolder,
-                RoslynLanguageServer._copilotLanguageServerExtensionAssemblyName
-            );
+        if (fs.existsSync(copilotServerExtensionFullPath)) {
             additionalExtensionPaths.push(copilotServerExtensionFullPath);
             channel.trace(
-                `CSharp DevKit contributes Copilot langauge server extension: ${copilotServerExtensionFullPath}`
+                `CSharp DevKit contributes Copilot language server extension: ${copilotServerExtensionFullPath}`
             );
+        } else {
+            channel.debug(`Copilot language server extension not found at: ${copilotServerExtensionFullPath}`);
         }
     }
 

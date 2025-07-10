@@ -423,10 +423,10 @@
       "integrity": "9944EBD6EE06BD595BCADD3057CD9BEF4105C3A3952DAE03E54F3114E2E6661F"
     },
     {
-      "id": "RoslynCopilotLanguageServer",
+      "id": "RoslynCopilot",
       "description": "Language server for Roslyn Copilot integration (Windows)",
       "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-musl-arm64-net6.0-1.39.12.zip",
-      "installPath": ".roslyncopilotlanguageserver",
+      "installPath": ".roslyncopilot",
       "platforms": [
         "win32",
         "linux",
@@ -437,7 +437,7 @@
         "x86_64",
         "arm64"
       ],
-      "installTestPath": "./.roslyncopilotlanguageserver/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
+      "installTestPath": "./.roslyncopilot/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
       "integrity": "9944EBD6EE06BD595BCADD3057CD9BEF4105C3A3952DAE03E54F3114E2E6661F"
     },
     {
