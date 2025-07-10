@@ -7,13 +7,7 @@ import * as vscode from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { CSharpExtensionId } from '../../constants/csharpExtensionId';
-import { csharpDevkitExtensionId, getCSharpDevKit } from '../../utils/getCSharpDevKit';
-import path from 'path';
-import { readJsonSync } from 'fs-extra';
-
-export const copilotLanguageServerExtensionComponentName = '@microsoft/visualstudio.copilot.roslyn.languageserver';
-export const copilotLanguageServerExtensionAssemblyName = 'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll';
-const copilotLanguageServerExtensionCapabilitiesFileName = 'capabilities.json';
+import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 type ActiveExperiments = { [name: string]: string | number | boolean | string[] };
 
@@ -29,17 +23,9 @@ export interface ContextResolveParam {
     data?: any;
     activeExperiments: ActiveExperiments;
 }
-
-const oldResolveContextMethodName = 'roslyn/resolveContext';
-const oldresolveContextMethodSupportedVersion = '1';
-const newResolveContextMethodName = 'roslyn/resolveContext@2';
-const newResolveContextMethodSupportedVersion = '1';
-const oldResolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
-    oldResolveContextMethodName,
-    lsp.ParameterStructures.auto
-);
-const newResolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
-    newResolveContextMethodName,
+const resolveContextMethodName = 'roslyn/resolveContext@2';
+const resolveContextRequest = new lsp.RequestType<ContextResolveParam, SupportedContextItem[], void>(
+    resolveContextMethodName,
     lsp.ParameterStructures.auto
 );
 
@@ -85,43 +71,8 @@ export function registerCopilotContextProviders(
         return;
     }
 
-    devkit.activate().then(async (devKitExports) => {
+    devkit.activate().then(async () => {
         try {
-            let resolveMethod: lsp.RequestType<ContextResolveParam, SupportedContextItem[], void> | undefined =
-                undefined;
-            const copilotServerExtensionfolder = devKitExports.components[copilotLanguageServerExtensionComponentName];
-            if (copilotServerExtensionfolder) {
-                const capabilitiesFilePath = path.join(
-                    copilotServerExtensionfolder,
-                    copilotLanguageServerExtensionCapabilitiesFileName
-                );
-                const capabilitiesContent = await readJsonSync(capabilitiesFilePath);
-                for (const capability of capabilitiesContent?.capabilities ?? []) {
-                    if (
-                        capability.method === oldResolveContextMethodName &&
-                        capability.version === oldresolveContextMethodSupportedVersion
-                    ) {
-                        resolveMethod = oldResolveContextRequest;
-                        channel.debug(`supported 'roslyn/resolveContext' method found in capabilities.json`);
-                        break;
-                    } else if (
-                        capability.method === newResolveContextMethodName &&
-                        capability.version === newResolveContextMethodSupportedVersion
-                    ) {
-                        resolveMethod = newResolveContextRequest;
-                        channel.debug(`supported 'roslyn/resolveContext@2' method found in capabilities.json`);
-                        break;
-                    }
-                }
-            }
-
-            if (!resolveMethod) {
-                channel.debug(
-                    `Failed to find compatible version of context provider from installed version of ${csharpDevkitExtensionId}.`
-                );
-                return;
-            }
-
             const copilotApi = vscode.extensions.getExtension<CopilotApi>('github.copilot');
             if (!copilotApi) {
                 channel.debug(
@@ -150,7 +101,11 @@ export function registerCopilotContextProviders(
                             if (!contextResolveParam) {
                                 return [];
                             }
-                            const items = await languageServer.sendRequest(resolveMethod, contextResolveParam, token);
+                            const items = await languageServer.sendRequest(
+                                resolveContextRequest,
+                                contextResolveParam,
+                                token
+                            );
                             channel.trace(`Copilot context provider resolved ${items.length} items`);
                             return items;
                         },
