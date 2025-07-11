@@ -112,8 +112,10 @@ extends:
                     If ( $uploadPrerelease ) {
                       $basePublishArgs += "--pre-release"
                       Write-Host "Publish to pre-release channel."
+                      Write-Host "##vso[task.setvariable variable=isPrerelease]true"
                     } Else {
                       Write-Host "Publish to release channel."
+                      Write-Host "##vso[task.setvariable variable=isPrerelease]false"
                     }
                     $basePublishArgs += '--azure-credential'
                     $basePublishArgs += '--packagePath'
@@ -167,3 +169,9 @@ extends:
           env:
             GitHubPAT: $(BotAccount-dotnet-bot-content-rw-grained-pat)
           displayName: 'Create release tags'
+
+        - pwsh: |
+            gulp createRelease:vscode-csharp --githubPAT $(BotAccount-dotnet-bot-content-rw-grained-pat) --prerelease $(isPrerelease) --dryRun ${{ parameters.test }} --releaseVersion $(resources.pipeline.officialBuildCI.runName)
+          env:
+            GitHubPAT: $(BotAccount-dotnet-bot-content-rw-grained-pat)
+          displayName: 'Create GitHub Release'
