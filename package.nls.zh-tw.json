@@ -4,7 +4,7 @@
   "command.csharp.listProcess": "列出連結的程序",
   "command.csharp.listRemoteDockerProcess": "列出 Docker 連線上的程序",
   "command.csharp.listRemoteProcess": "列出遠端連線上連結的程序",
-  "command.csharp.recordLanguageServerTrace": "Record a performance trace of the C# Language Server",
+  "command.csharp.recordLanguageServerTrace": "記錄 C# 語言伺服器的效能追蹤",
   "command.csharp.reportIssue": "回報問題",
   "command.csharp.showDecompilationTerms": "顯示解編程式條款合約",
   "command.dotnet.generateAssets.currentProject": "產生用於建置和偵錯的資產",
