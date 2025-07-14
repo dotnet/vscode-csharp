@@ -25,7 +25,7 @@
   * Slight allocation reduction in CommandLineParser.FlattenArgs (PR: [#79139](https://github.com/dotnet/roslyn/pull/79139))
 * Fix promptForDevKitDebugConfigurations without CDK installed (PR: [#8390](https://github.com/dotnet/vscode-csharp/pull/8390))
 * Remove Razor ForceRuntimeCodeGeneration flag (PR: [#8398](https://github.com/dotnet/vscode-csharp/pull/8398))
-* Bump Razor to 10.0.0-preview.25329.6 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Bump Razor to 10.0.0-preview.25329.6 (PR: [#8413](https://github.com/dotnet/vscode-csharp/pull/8413))
   * Use snippet InsertText in directive attributes to insert equals and quotes (PR: [#12010](https://github.com/dotnet/razor/pull/12010))
   * Fix edit mapping for Html documents (PR: [#12027](https://github.com/dotnet/razor/pull/12027))
   * Don't show HTML snippets in style, script, or html comment blocks (PR: [#12021](https://github.com/dotnet/razor/pull/12021))
