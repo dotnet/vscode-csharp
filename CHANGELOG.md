@@ -4,7 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.86.x
-* Bump Roslyn to 5.0.0-1.25358.1 (PR: [#8402](https://github.com/dotnet/vscode-csharp/pull/8402))
+* Bump Roslyn to 5.0.0-1.25361.2 (PR: [#8416](https://github.com/dotnet/vscode-csharp/pull/8416))
+  * Fix issue with diagnostics when renaming a file (case change only) (PR: [#79298](https://github.com/dotnet/roslyn/pull/79298))
+  * Allow rename to (optionally) process source generated documents(PR: [#78984](https://github.com/dotnet/roslyn/pull/78984))
   * Initial support for adding obsolete attributes to primary constructors(PR: [#79271](https://github.com/dotnet/roslyn/pull/79271))
   * Allow the Razor extension to report telemetry (and initialize)(PR: [#79254](https://github.com/dotnet/roslyn/pull/79254))
   * Use same location for 'use implicit object' as we do for 'use collection expression'.(PR: [#79265](https://github.com/dotnet/roslyn/pull/79265))
