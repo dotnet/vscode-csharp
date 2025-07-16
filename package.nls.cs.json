@@ -4,7 +4,7 @@
   "command.csharp.listProcess": "Vypsat proces pro připojení",
   "command.csharp.listRemoteDockerProcess": "Výpis procesů v připojení Dockeru",
   "command.csharp.listRemoteProcess": "Vypsat procesy pro připojení na vzdáleném připojení",
-  "command.csharp.recordLanguageServerTrace": "Record a performance trace of the C# Language Server",
+  "command.csharp.recordLanguageServerTrace": "Záznam trasování výkonu jazykového serveru C#",
   "command.csharp.reportIssue": "Nahlásit problém",
   "command.csharp.showDecompilationTerms": "Zobrazit smlouvu o podmínkách dekompilátoru",
   "command.dotnet.generateAssets.currentProject": "Generovat prostředky pro sestavení a ladění",

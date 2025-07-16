@@ -4,7 +4,7 @@
   "command.csharp.listProcess": "アタッチのプロセスをリスト表示する",
   "command.csharp.listRemoteDockerProcess": "Docker 接続のプロセスをリスト表示する",
   "command.csharp.listRemoteProcess": "アタッチ用のリモート接続のプロセスをリスト表示する",
-  "command.csharp.recordLanguageServerTrace": "Record a performance trace of the C# Language Server",
+  "command.csharp.recordLanguageServerTrace": "C# 言語サーバーのパフォーマンス トレースを記録する",
   "command.csharp.reportIssue": "問題の報告",
   "command.csharp.showDecompilationTerms": "逆コンパイラの使用契約条件を表示する",
   "command.dotnet.generateAssets.currentProject": "ビルド用およびデバッグ用の資産を生成する",
