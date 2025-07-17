@@ -21,7 +21,8 @@ let _restoreInProgress = false;
 export function registerRestoreCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
     if (getCSharpDevKit()) {
         // We do not need to register restore commands if using C# devkit.
-        return;
+        // TODO: restore commands for FBPs still need to run, even if devkit is being used.
+        // return;
     }
     const restoreChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET NuGet Restore'));
     context.subscriptions.push(
