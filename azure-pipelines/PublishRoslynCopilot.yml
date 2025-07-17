@@ -21,7 +21,7 @@ extends:
     stages:
     - stage: Upload
       jobs:
-      - deployment: Upload to server
+      - job: UploadToServer
         displayName: Upload to server
         pool:
           name: netcore1espool-internal
@@ -30,7 +30,7 @@ extends:
         steps:
         - checkout: none
 
-        - download: current
+        - download: CI
           artifact: deployables-Windows
           displayName: 'Download official build CI artifact'
 
