@@ -15,8 +15,8 @@ extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     pool:
-      name: netcore1espool-internal
-      image: 1es-windows-2022
+      name: AzurePipelines-EO
+      image: AzurePipelinesWindows2022compliantGPT
       os: windows
     stages:
     - stage: Upload
