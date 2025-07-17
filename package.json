@@ -425,7 +425,7 @@
     {
       "id": "RoslynCopilot",
       "description": "Language server for Roslyn Copilot integration (Windows)",
-      "url": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-musl-arm64-net6.0-1.39.12.zip",
+      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-17.0.460-alpha-g8013717149",
       "installPath": ".roslyncopilot",
       "platforms": [
         "win32",

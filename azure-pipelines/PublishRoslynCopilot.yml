@@ -1,0 +1,53 @@
+trigger: none
+pr: none
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+  pipelines:
+  - pipeline: CI
+    source: VisualStudio.Conversations (unofficial)
+    branch: dev/aajohn/roslynrelease
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: netcore1espool-internal
+      image: 1es-windows-2022
+      os: windows
+    stages:
+    - stage: Upload
+      jobs:
+      - deployment: Upload to server
+        displayName: Upload to server
+        pool:
+          name: netcore1espool-internal
+          image: 1es-ubuntu-2204
+          os: linux
+        steps:
+        - checkout: none
+
+        - download: current
+          artifact: deployables-Windows
+          displayName: 'Download official build CI artifact'
+
+        - task: CopyFiles@2
+          displayName: 'Copy files from Zip folder to staging directory'
+          inputs:
+            SourceFolder: '$(Pipeline.Workspace)/deployables-Windows/Zip'
+            Contents: '**/*Roslyn.LanguageServer*.zip'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)/staging'
+            CleanTargetFolder: true
+
+        - task: AzureFileCopy@6
+          displayName: "Copy the zip to Azure Storage"
+          inputs:
+            SourcePath: '$(Build.ArtifactStagingDirectory)/staging'
+            azureSubscription: "RoslynDeploy"
+            Destination: "AzureBlob"
+            storage: "roslyn"
+            ContainerName: "releases"
+
