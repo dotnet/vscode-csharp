@@ -24,9 +24,9 @@ extends:
       - job: UploadToServer
         displayName: Upload to server
         pool:
-          name: netcore1espool-internal
-          image: 1es-ubuntu-2204
-          os: linux
+          name: AzurePipelines-EO
+          image: AzurePipelinesWindows2022compliantGPT
+          os: windows
         steps:
         - checkout: none
 
