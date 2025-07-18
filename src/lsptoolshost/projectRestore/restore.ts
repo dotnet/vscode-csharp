@@ -23,7 +23,10 @@ export function registerRestoreCommands(context: vscode.ExtensionContext, langua
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
             if (getCSharpDevKit()) {
-                appendLineWithTimestamp(restoreChannel, "Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it.");
+                appendLineWithTimestamp(
+                    restoreChannel,
+                    "Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it."
+                );
                 return;
             }
 
@@ -33,7 +36,10 @@ export function registerRestoreCommands(context: vscode.ExtensionContext, langua
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
             if (getCSharpDevKit()) {
-                appendLineWithTimestamp(restoreChannel, "Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it.");
+                appendLineWithTimestamp(
+                    restoreChannel,
+                    "Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it."
+                );
                 return;
             }
 
@@ -47,10 +53,13 @@ export function registerRestoreCommands(context: vscode.ExtensionContext, langua
             // Only restore '.cs' files (file-based apps) if CDK is loaded.
             const csharpFiles = [];
             for (const path of projectFilePaths) {
-                if (path.endsWith(".cs")) {
+                if (path.endsWith('.cs')) {
                     csharpFiles.push(path);
                 } else {
-                    appendLineWithTimestamp(restoreChannel, `Not restoring '${path}' from C# extension, because C# Dev Kit is expected to handle restore for it.`);
+                    appendLineWithTimestamp(
+                        restoreChannel,
+                        `Not restoring '${path}' from C# extension, because C# Dev Kit is expected to handle restore for it.`
+                    );
                 }
             }
 
