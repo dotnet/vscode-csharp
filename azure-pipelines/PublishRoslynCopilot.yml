@@ -9,7 +9,7 @@ resources:
     ref: refs/tags/release
   pipelines:
   - pipeline: CI
-    source: VisualStudio.Conversations (unofficial)
+    source: VisualStudio.Conversations
     branch: dev/aajohn/roslynrelease
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
@@ -31,13 +31,13 @@ extends:
         - checkout: none
 
         - download: CI
-          artifact: deployables-Windows
+          artifact: partnerDeployables-Windows
           displayName: 'Download official build CI artifact'
 
         - task: CopyFiles@2
           displayName: 'Copy files from Zip folder to staging directory'
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/deployables-Windows/Zip'
+            SourceFolder: '$(Pipeline.Workspace)/partnerDeployables-Windows/'
             Contents: '**/*Roslyn.LanguageServer*.zip'
             TargetFolder: '$(Build.ArtifactStagingDirectory)/staging'
             CleanTargetFolder: true
