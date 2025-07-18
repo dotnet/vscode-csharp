@@ -423,6 +423,24 @@
       "integrity": "9944EBD6EE06BD595BCADD3057CD9BEF4105C3A3952DAE03E54F3114E2E6661F"
     },
     {
+      "id": "RoslynCopilot",
+      "description": "Language server for Roslyn Copilot integration (Windows)",
+      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-17.0.460-alpha-g8013717149",
+      "installPath": ".roslyncopilot",
+      "platforms": [
+        "win32",
+        "linux",
+        "linux-musl",
+        "darwin"
+      ],
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "installTestPath": "./.roslyncopilot/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
+      "integrity": "9944EBD6EE06BD595BCADD3057CD9BEF4105C3A3952DAE03E54F3114E2E6661F"
+    },
+    {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
       "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-win7-x64.zip",
