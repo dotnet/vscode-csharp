@@ -9,8 +9,9 @@ resources:
     ref: refs/tags/release
   pipelines:
   - pipeline: CI
+    project: DevDiv
     source: VisualStudio.Conversations
-    branch: dev/aajohn/roslynrelease
+    branch: main
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
