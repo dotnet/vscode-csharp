@@ -11,15 +11,12 @@ const CommonCommands = [
     'csharp.listRemoteDockerProcess',
     'csharp.attachToProcess',
     'csharp.reportIssue',
+    'dotnet.restore.project',
+    'dotnet.restore.all',
 ];
 
 // Commands used by both O# and Roslyn standalone activation contexts.
-const CommonStandaloneCommands = [
-    'dotnet.restore.project',
-    'dotnet.restore.all',
-    'dotnet.test.runTestsInContext',
-    'dotnet.test.debugTestsInContext',
-];
+const CommonStandaloneCommands = ['dotnet.test.runTestsInContext', 'dotnet.test.debugTestsInContext'];
 
 // Commands used only in an O# activation context.
 const OmniSharpOnlyCommands = [
