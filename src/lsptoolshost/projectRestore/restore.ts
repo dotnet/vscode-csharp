@@ -19,26 +19,54 @@ import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 let _restoreInProgress = false;
 
 export function registerRestoreCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
-    if (getCSharpDevKit()) {
-        // We do not need to register restore commands if using C# devkit.
-        // TODO: restore commands for FBPs still need to run, even if devkit is being used.
-        // return;
-    }
     const restoreChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET NuGet Restore'));
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
+            if (getCSharpDevKit()) {
+                appendLineWithTimestamp(restoreChannel, "Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it.");
+                return;
+            }
+
             return chooseProjectAndRestore(languageServer, restoreChannel);
         })
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
+            if (getCSharpDevKit()) {
+                appendLineWithTimestamp(restoreChannel, "Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it.");
+                return;
+            }
+
             return restore(languageServer, restoreChannel, [], true);
         })
     );
 
     languageServer.registerOnRequest(ProjectNeedsRestoreRequest.type, async (params) => {
-        await restore(languageServer, restoreChannel, params.projectFilePaths, false);
+        let projectFilePaths = params.projectFilePaths;
+        if (getCSharpDevKit()) {
+            // Only restore '.cs' files (file-based apps) if CDK is loaded.
+            const csharpFiles = [];
+            for (const path of projectFilePaths) {
+                if (path.endsWith(".cs")) {
+                    csharpFiles.push(path);
+                } else {
+                    appendLineWithTimestamp(restoreChannel, `Not restoring '${path}' from C# extension, because C# Dev Kit is expected to handle restore for it.`);
+                }
+            }
+
+            projectFilePaths = csharpFiles;
+        }
+
+        if (projectFilePaths.length > 0) {
+            await restore(languageServer, restoreChannel, params.projectFilePaths, false);
+        }
     });
+}
+
+function appendLineWithTimestamp(outputChannel: vscode.OutputChannel, line: string) {
+    // Match the timestamp format used in the language server
+    const dateString = new Date().toISOString().replace('T', ' ').replace('Z', '');
+    outputChannel.appendLine(`${dateString} ${line}`);
 }
 
 async function chooseProjectAndRestore(
@@ -102,7 +130,7 @@ export async function restore(
             async (progress, token) => {
                 const writeOutput = (output: RestorePartialResult) => {
                     if (output.message) {
-                        restoreChannel.appendLine(output.message);
+                        appendLineWithTimestamp(restoreChannel, output.message);
                     }
 
                     progress.report({ message: output.stage });
@@ -118,7 +146,7 @@ export async function restore(
 
                 await responsePromise.then(
                     (result) => result.forEach((r) => writeOutput(r)),
-                    (err) => restoreChannel.appendLine(err)
+                    (err) => appendLineWithTimestamp(restoreChannel, err)
                 );
             }
         )
