@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.87.x
-* Bump Razor to 10.0.0-preview.25368.1 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Bump Razor to 10.0.0-preview.25368.1 (PR: [#8430](https://github.com/dotnet/vscode-csharp/pull/8430))
   * Fixing override completion in VSCode when LSP is enabled (PR: [#12039](https://github.com/dotnet/razor/pull/12039))
   * [Cohost] Fix rename and unskip test (PR: [#11952](https://github.com/dotnet/razor/pull/11952))
   * Ensure unique file paths for non-file Uris (PR: [#12037](https://github.com/dotnet/razor/pull/12037))
