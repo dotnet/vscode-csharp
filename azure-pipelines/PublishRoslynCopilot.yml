@@ -28,13 +28,17 @@ extends:
           name: AzurePipelines-EO
           image: 1ESPT-Windows2022
           os: windows
+        templateContext:
+          type: releaseJob
+          isProduction: false #change this
+          inputs:
+          - input: pipelineArtifact
+            pipeline: CI
+            artifactName: partnerDeployables-Windows
+            destinationPath: $(Pipeline.Workspace)/artifacts
+
         steps:
         - checkout: none
-
-        - download: CI
-          artifact: partnerDeployables-Windows
-          displayName: 'Download official build CI artifact'
-          targetPath: '$(Pipeline.Workspace)/artifacts'
 
         - task: CopyFiles@2
           displayName: 'Copy files from Zip folder to staging directory'
