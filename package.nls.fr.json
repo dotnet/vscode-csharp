@@ -4,7 +4,7 @@
   "command.csharp.listProcess": "Processus de liste pour la pièce jointe",
   "command.csharp.listRemoteDockerProcess": "Répertorier les processus sur la connexion Docker",
   "command.csharp.listRemoteProcess": "Répertorier les processus sur la connexion à distance pour la pièce jointe",
-  "command.csharp.recordTrace": "Enregistrer une trace de performance du serveur de langage C#",
+  "command.csharp.recordLanguageServerTrace": "Enregistrer une trace de performance du serveur de langage C#",
   "command.csharp.reportIssue": "Signaler un problème",
   "command.csharp.showDecompilationTerms": "Afficher l'accord sur les termes du décompilateur",
   "command.dotnet.generateAssets.currentProject": "Générer des actifs pour la construction et le débogage",

@@ -4,7 +4,7 @@
   "command.csharp.listProcess": "Ekleme işlemini listele",
   "command.csharp.listRemoteDockerProcess": "Docker bağlantısındaki işlemleri listeleme",
   "command.csharp.listRemoteProcess": "Eklemek için uzak bağlantıdaki işlemleri listeleyin",
-  "command.csharp.recordTrace": "C# Dil Sunucusunun performans izlemesini kaydet",
+  "command.csharp.recordLanguageServerTrace": "C# Dil Sunucusunun performans izlemesini kaydet",
   "command.csharp.reportIssue": "Bir sorun bildirin",
   "command.csharp.showDecompilationTerms": "Derleyici koşulları sözleşmesini göster",
   "command.dotnet.generateAssets.currentProject": "Derleme ve Hata Ayıklama için Varlıklar Oluşturun",
