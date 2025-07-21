@@ -18,32 +18,35 @@ import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 let _restoreInProgress = false;
 
-export function registerRestoreCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
-    const restoreChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET NuGet Restore'));
+export function registerRestoreCommands(
+    context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
+    csharpOutputChannel: vscode.LogOutputChannel
+) {
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
             if (getCSharpDevKit()) {
                 appendLineWithTimestamp(
-                    restoreChannel,
+                    csharpOutputChannel,
                     "Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it."
                 );
                 return;
             }
 
-            return chooseProjectAndRestore(languageServer, restoreChannel);
+            return chooseProjectAndRestore(languageServer, csharpOutputChannel);
         })
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
             if (getCSharpDevKit()) {
                 appendLineWithTimestamp(
-                    restoreChannel,
+                    csharpOutputChannel,
                     "Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it."
                 );
                 return;
             }
 
-            return restore(languageServer, restoreChannel, [], true);
+            return restore(languageServer, csharpOutputChannel, [], true);
         })
     );
 
@@ -57,7 +60,7 @@ export function registerRestoreCommands(context: vscode.ExtensionContext, langua
                     csharpFiles.push(path);
                 } else {
                     appendLineWithTimestamp(
-                        restoreChannel,
+                        csharpOutputChannel,
                         `Not restoring '${path}' from C# extension, because C# Dev Kit is expected to handle restore for it.`
                     );
                 }
@@ -67,7 +70,7 @@ export function registerRestoreCommands(context: vscode.ExtensionContext, langua
         }
 
         if (projectFilePaths.length > 0) {
-            await restore(languageServer, restoreChannel, params.projectFilePaths, false);
+            await restore(languageServer, csharpOutputChannel, params.projectFilePaths, false);
         }
     });
 }
@@ -80,7 +83,7 @@ function appendLineWithTimestamp(outputChannel: vscode.OutputChannel, line: stri
 
 async function chooseProjectAndRestore(
     languageServer: RoslynLanguageServer,
-    restoreChannel: vscode.OutputChannel
+    outputChannel: vscode.OutputChannel
 ): Promise<void> {
     let projects: string[];
     try {
@@ -110,12 +113,12 @@ async function chooseProjectAndRestore(
         return;
     }
 
-    await restore(languageServer, restoreChannel, [pickedItem.description!], true);
+    await restore(languageServer, outputChannel, [pickedItem.description!], true);
 }
 
 export async function restore(
     languageServer: RoslynLanguageServer,
-    restoreChannel: vscode.OutputChannel,
+    outputChannel: vscode.OutputChannel,
     projectFiles: string[],
     showOutput: boolean
 ): Promise<void> {
@@ -125,7 +128,7 @@ export async function restore(
     }
     _restoreInProgress = true;
     if (showOutput) {
-        restoreChannel.show(true);
+        outputChannel.show(true);
     }
 
     const request: RestoreParams = { projectFilePaths: projectFiles };
@@ -139,7 +142,7 @@ export async function restore(
             async (progress, token) => {
                 const writeOutput = (output: RestorePartialResult) => {
                     if (output.message) {
-                        appendLineWithTimestamp(restoreChannel, output.message);
+                        appendLineWithTimestamp(outputChannel, output.message);
                     }
 
                     progress.report({ message: output.stage });
@@ -155,7 +158,7 @@ export async function restore(
 
                 await responsePromise.then(
                     (result) => result.forEach((r) => writeOutput(r)),
-                    (err) => appendLineWithTimestamp(restoreChannel, err)
+                    (err) => appendLineWithTimestamp(outputChannel, err)
                 );
             }
         )
