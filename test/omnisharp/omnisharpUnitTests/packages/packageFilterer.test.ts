@@ -55,6 +55,24 @@ describe(`${getNotInstalledPackagesForPlatform.name}`, () => {
             architectures: ['architecture2'],
             installPath: 'path3',
         },
+        {
+            description: 'neutral platform and architecture uninstalled package',
+            platforms: ['neutral'],
+            architectures: ['neutral'],
+            installPath: 'path6',
+        },
+        {
+            description: 'neutral platform but specific architecture package',
+            platforms: ['neutral'],
+            architectures: ['architecture1'],
+            installPath: 'path7',
+        },
+        {
+            description: 'specific platform but neutral architecture package',
+            platforms: ['linux'],
+            architectures: ['neutral'],
+            installPath: 'path8',
+        },
     ];
 
     beforeEach(async () => {
@@ -79,18 +97,46 @@ describe(`${getNotInstalledPackagesForPlatform.name}`, () => {
     test('Filters the packages based on Platform Information', async () => {
         const platformInfo = new PlatformInformation('win32', 'architecture2');
         const filteredPackages = await getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
-        expect(filteredPackages.length).toEqual(1);
+        expect(filteredPackages.length).toEqual(2);
         expect(filteredPackages[0].description).toEqual('win32-Architecture2 uninstalled package');
         expect(filteredPackages[0].platforms[0]).toEqual('win32');
         expect(filteredPackages[0].architectures[0]).toEqual('architecture2');
+
+        expect(filteredPackages[1].description).toEqual('neutral platform and architecture uninstalled package');
+        expect(filteredPackages[1].platforms[0]).toEqual('neutral');
+        expect(filteredPackages[1].architectures[0]).toEqual('neutral');
     });
 
     test('Returns only the packages where install.Lock is not present', async () => {
         const platformInfo = new PlatformInformation('linux', 'architecture1');
         const filteredPackages = await getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
+        // Should include linux-Architecture1 package + neutral package (both uninstalled)
+        expect(filteredPackages.length).toEqual(4);
+
+        const descriptions = filteredPackages.map((pkg) => pkg.description);
+        expect(descriptions).toContain('linux-Architecture1 uninstalled package');
+        expect(descriptions).toContain('neutral platform and architecture uninstalled package');
+        expect(descriptions).toContain('neutral platform but specific architecture package');
+        expect(descriptions).toContain('specific platform but neutral architecture package');
+    });
+
+    test('Returns only neutral packages when no platform-specific packages match', async () => {
+        const platformInfo = new PlatformInformation('darwin', 'arm64'); // Non-existent platform/arch combo
+        const filteredPackages = await getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
+
+        // Should only include neutral package (uninstalled one)
         expect(filteredPackages.length).toEqual(1);
-        expect(filteredPackages[0].description).toEqual('linux-Architecture1 uninstalled package');
-        expect(filteredPackages[0].platforms[0]).toEqual('linux');
-        expect(filteredPackages[0].architectures[0]).toEqual('architecture1');
+        expect(filteredPackages[0].description).toEqual('neutral platform and architecture uninstalled package');
+        expect(filteredPackages[0].platforms[0]).toEqual('neutral');
+        expect(filteredPackages[0].architectures[0]).toEqual('neutral');
+    });
+
+    test('Filters out installed neutral packages', async () => {
+        const platformInfo = new PlatformInformation('darwin', 'arm64'); // Only neutral packages should match
+        const filteredPackages = await getNotInstalledPackagesForPlatform(absolutePathPackages, platformInfo);
+
+        // Should only return uninstalled neutral package, not the installed one
+        expect(filteredPackages.length).toEqual(1);
+        expect(filteredPackages[0].description).toEqual('neutral platform and architecture uninstalled package');
     });
 });

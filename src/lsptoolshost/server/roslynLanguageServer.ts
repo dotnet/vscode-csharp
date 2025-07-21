@@ -8,8 +8,6 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as uuid from 'uuid';
 import * as net from 'net';
-import * as fs from 'fs';
-import * as util from '../../common';
 import {
     LanguageClientOptions,
     MessageTransports,
@@ -687,7 +685,7 @@ export class RoslynLanguageServer {
             const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths);
             args = args.concat(csharpDevKitArgs);
 
-            await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, additionalExtensionPaths, channel);
+            await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, additionalExtensionPaths);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             channel.info('Activating C# standalone...');
@@ -1066,8 +1064,7 @@ export class RoslynLanguageServer {
     private static async setupDevKitEnvironment(
         env: NodeJS.ProcessEnv,
         csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>,
-        additionalExtensionPaths: string[],
-        channel: vscode.LogOutputChannel
+        additionalExtensionPaths: string[]
     ): Promise<void> {
         const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
 

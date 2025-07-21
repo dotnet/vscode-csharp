@@ -424,18 +424,14 @@
     },
     {
       "id": "RoslynCopilot",
-      "description": "Language server for Roslyn Copilot integration (Windows)",
+      "description": "Language server for Roslyn Copilot integration",
       "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-17.0.460-alpha-g8013717149",
       "installPath": ".roslynCopilot",
       "platforms": [
-        "win32",
-        "linux",
-        "linux-musl",
-        "darwin"
+        "neutral"
       ],
       "architectures": [
-        "x86_64",
-        "arm64"
+        "neutral"
       ],
       "installTestPath": "./.roslynCopilot/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
       "integrity": "9944EBD6EE06BD595BCADD3057CD9BEF4105C3A3952DAE03E54F3114E2E6661F"
