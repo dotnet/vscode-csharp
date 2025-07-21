@@ -107,12 +107,6 @@ export class RoslynLanguageServer {
     private static _processId: number | undefined;
 
     /**
-     * The folder name for the Roslyn Copilot language server dll.
-     */
-    private static readonly _copilotLanguageServerDllDirName = '.roslyncopilot';
-    private static readonly _copilotLanguageServerDllName = 'Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll';
-
-    /**
      * The solution file previously opened; we hold onto this so we can send this back over if the server were to be relaunched for any reason, like some other configuration
      * change that required the server to restart, or some other catastrophic failure that completely took down the process. In the case that the process is crashing because
      * of trying to load this solution file, we'll rely on VS Code's support to eventually stop relaunching the LSP server entirely.
@@ -1083,20 +1077,9 @@ export class RoslynLanguageServer {
             await exports.setupTelemetryEnvironmentAsync(env);
         }
 
-        const copilotServerExtensionFullPath = path.join(
-            util.getExtensionPath(),
-            RoslynLanguageServer._copilotLanguageServerDllDirName,
-            RoslynLanguageServer._copilotLanguageServerDllName
-        );
-
-        if (fs.existsSync(copilotServerExtensionFullPath)) {
-            additionalExtensionPaths.push(copilotServerExtensionFullPath);
-            channel.trace(
-                `CSharp DevKit contributes Copilot language server extension: ${copilotServerExtensionFullPath}`
-            );
-        } else {
-            channel.debug(`Copilot language server extension not found at: ${copilotServerExtensionFullPath}`);
-        }
+        getComponentPaths('roslynCopilot', languageServerOptions).forEach((extPath) => {
+            additionalExtensionPaths.push(extPath);
+        });
     }
 
     /**

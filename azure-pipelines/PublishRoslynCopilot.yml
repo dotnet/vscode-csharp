@@ -17,7 +17,7 @@ extends:
   parameters:
     pool:
       name: AzurePipelines-EO
-      image: AzurePipelinesWindows2022compliantGPT
+      image: 1ESPT-Windows2022
       os: windows
     stages:
     - stage: Upload
@@ -26,7 +26,7 @@ extends:
         displayName: Upload to server
         pool:
           name: AzurePipelines-EO
-          image: AzurePipelinesWindows2022compliantGPT
+          image: 1ESPT-Windows2022
           os: windows
         steps:
         - checkout: none
@@ -34,11 +34,12 @@ extends:
         - download: CI
           artifact: partnerDeployables-Windows
           displayName: 'Download official build CI artifact'
+          targetPath: '$(Pipeline.Workspace)/artifacts'
 
         - task: CopyFiles@2
           displayName: 'Copy files from Zip folder to staging directory'
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/partnerDeployables-Windows/'
+            SourceFolder: '$(Pipeline.Workspace)/artifacts/'
             Contents: '**/*Roslyn.LanguageServer*.zip'
             TargetFolder: '$(Build.ArtifactStagingDirectory)/staging'
             CleanTargetFolder: true
