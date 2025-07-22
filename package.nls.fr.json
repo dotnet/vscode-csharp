@@ -65,6 +65,7 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "Active l’expérience de prévisualisation des « programmes basés sur des fichiers » (dotnet run app.cs).",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Afficher les informations sur les remarques lors de l’affichage du symbole.",
   "configuration.dotnet.server.componentPaths": "Permet de remplacer le chemin d’accès au dossier des composants intégrés du serveur de langage (par exemple, remplacer le chemin d’accès .roslynDevKit dans le répertoire d’extension pour utiliser les composants générés localement).",
+  "configuration.dotnet.server.componentPaths.roslynCopilot": "Overrides the folder path for the .roslynCopilot component of the language server",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Remplace le chemin d’accès au dossier du composant .roslynDevKit du serveur de langage",
   "configuration.dotnet.server.componentPaths.xamlTools": "Remplace le chemin d’accès du dossier pour le composant .xamlTools du serveur de langage",
   "configuration.dotnet.server.crashDumpPath": "Définit un chemin de dossier dans lequel les vidages sur incident sont écrits en cas de panne du serveur de langue.  Doit être accessible en écriture par l'utilisateur.",
