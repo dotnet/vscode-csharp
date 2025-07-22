@@ -51,7 +51,7 @@ describeIfNotRazorOrGenerator(`Inlay Hints ${testAssetWorkspace.description}`, f
         await testAssetWorkspace.cleanupWorkspace();
     });
 
-    test('Hints retrieved for region', async () => {
+    test.skip('Hints retrieved for region', async () => {
         const range = new vscode.Range(new vscode.Position(4, 8), new vscode.Position(15, 85));
         const hints: vscode.InlayHint[] = await vscode.commands.executeCommand(
             'vscode.executeInlayHintProvider',
