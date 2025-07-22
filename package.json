@@ -73,6 +73,7 @@
     "test:unit": "npm run compileDev && gulp test:unit",
     "test:integration:csharp": "npm run package && gulp test:integration:csharp",
     "test:integration:razor": "npm run package && gulp test:integration:razor",
+    "test:integration:razor:cohost": "npm run package && gulp test:integration:razor:cohost",
     "test:integration:devkit": "npm run package && gulp test:integration:devkit",
     "profiling": "npm run package && gulp profiling",
     "test:artifacts": "npm run compileDev && gulp test:artifacts",

@@ -5,11 +5,11 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { beforeAll, afterAll, test, expect, beforeEach } from '@jest/globals';
+import { beforeAll, afterAll, test, expect, beforeEach, describe } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
 
-integrationHelpers.describeIfDevKit(`Razor References ${testAssetWorkspace.description}`, function () {
+describe(`Razor References ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
@@ -127,6 +127,11 @@ integrationHelpers.describeIfDevKit(`Razor References ${testAssetWorkspace.descr
     });
 
     test('Find All References - CSharp', async () => {
+        if (!integrationHelpers.usingDevKit()) {
+            // If we're not using devkit, then it means we are testing cohosting, and FAR from C# doesn't currently work in cohosting.
+            return;
+        }
+
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }

@@ -28,6 +28,9 @@ jobs:
       RazorTests:
         npmCommand: test:integration:razor
         isIntegration: true
+      RazorCohostTests:
+        npmCommand: test:integration:razor:cohost
+        isIntegration: true
   pool: ${{ parameters.pool }}
   ${{ if parameters.containerName }}:
     container: ${{ parameters.containerName }}
