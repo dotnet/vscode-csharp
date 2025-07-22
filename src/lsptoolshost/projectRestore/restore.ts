@@ -26,10 +26,7 @@ export function registerRestoreCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
             if (getCSharpDevKit()) {
-                appendLineWithTimestamp(
-                    csharpOutputChannel,
-                    "Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it."
-                );
+                csharpOutputChannel.debug("[.NET Restore] Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it.");
                 return;
             }
 
@@ -39,10 +36,7 @@ export function registerRestoreCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
             if (getCSharpDevKit()) {
-                appendLineWithTimestamp(
-                    csharpOutputChannel,
-                    "Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it."
-                );
+                csharpOutputChannel.debug("[.NET Restore] Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it.");
                 return;
             }
 
@@ -59,9 +53,8 @@ export function registerRestoreCommands(
                 if (path.endsWith('.cs')) {
                     csharpFiles.push(path);
                 } else {
-                    appendLineWithTimestamp(
-                        csharpOutputChannel,
-                        `Not restoring '${path}' from C# extension, because C# Dev Kit is expected to handle restore for it.`
+                    csharpOutputChannel.debug(
+                        `[.NET Restore] Not restoring '${path}' from C# extension, because C# Dev Kit is expected to handle restore for it.`
                     );
                 }
             }
@@ -75,15 +68,9 @@ export function registerRestoreCommands(
     });
 }
 
-function appendLineWithTimestamp(outputChannel: vscode.OutputChannel, line: string) {
-    // Match the timestamp format used in the language server
-    const dateString = new Date().toISOString().replace('T', ' ').replace('Z', '');
-    outputChannel.appendLine(`${dateString} ${line}`);
-}
-
 async function chooseProjectAndRestore(
     languageServer: RoslynLanguageServer,
-    outputChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ): Promise<void> {
     let projects: string[];
     try {
@@ -118,7 +105,7 @@ async function chooseProjectAndRestore(
 
 export async function restore(
     languageServer: RoslynLanguageServer,
-    outputChannel: vscode.OutputChannel,
+    outputChannel: vscode.LogOutputChannel,
     projectFiles: string[],
     showOutput: boolean
 ): Promise<void> {
@@ -142,7 +129,7 @@ export async function restore(
             async (progress, token) => {
                 const writeOutput = (output: RestorePartialResult) => {
                     if (output.message) {
-                        appendLineWithTimestamp(outputChannel, output.message);
+                        outputChannel.debug(`[.NET Restore] ${output.message}`);
                     }
 
                     progress.report({ message: output.stage });
@@ -158,7 +145,7 @@ export async function restore(
 
                 await responsePromise.then(
                     (result) => result.forEach((r) => writeOutput(r)),
-                    (err) => appendLineWithTimestamp(outputChannel, err)
+                    (err) => outputChannel.error(`[.NET Restore] ${err}`)
                 );
             }
         )
