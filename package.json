@@ -33,7 +33,7 @@
   "capabilities": {
     "virtualWorkspaces": false,
     "untrustedWorkspaces": {
-      "supported": false
+      "supported": "limited"
     }
   },
   "extensionKind": [

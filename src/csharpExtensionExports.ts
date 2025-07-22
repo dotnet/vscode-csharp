@@ -11,7 +11,12 @@ import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework'
 import { PartialResultParams, ProtocolRequestType, RequestType } from 'vscode-languageclient/node';
 import { LanguageServerEvents } from './lsptoolshost/server/languageServerEvents';
 
+export interface LimitedExtensionExports {
+    isLimitedActivation: true;
+}
+
 export interface OmnisharpExtensionExports {
+    isLimitedActivation: false;
     initializationFinished: () => Promise<void>;
     getAdvisor: () => Promise<Advisor>;
     getTestManager: () => Promise<TestManager>;
@@ -20,6 +25,7 @@ export interface OmnisharpExtensionExports {
 }
 
 export interface CSharpExtensionExports {
+    isLimitedActivation: false;
     initializationFinished: () => Promise<void>;
     logDirectory: string;
     profferBrokeredServices: (container: GlobalBrokeredServiceContainer) => void;
