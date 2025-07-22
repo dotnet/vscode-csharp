@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.87.x
-* Bump Roslyn to 5.0.0-2.25368.8 (PR: [#8431](https://github.com/dotnet/vscode-csharp/pull/8431))
+* Bump Roslyn to 5.0.0-2.25371.17 (PR: [#8436](https://github.com/dotnet/vscode-csharp/pull/8436))
+  * Fix exception in additional file diagnostics (PR: [#79501](https://github.com/dotnet/roslyn/pull/79501))
   * Simplify stale project handling in hot reload(PR: [#79386](https://github.com/dotnet/roslyn/pull/79386))
   * Fix static extension method not showing up on enum type(PR: [#79454](https://github.com/dotnet/roslyn/pull/79454))
   * Update 'use auto property' to respect user options around `this.` for property access.(PR: [#79405](https://github.com/dotnet/roslyn/pull/79405))
