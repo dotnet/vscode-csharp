@@ -23,7 +23,8 @@ export function registerRestoreCommands(
     languageServer: RoslynLanguageServer,
     csharpOutputChannel: vscode.LogOutputChannel
 ) {
-    if (getCSharpDevKit()) {
+    // We do not need to register restore commands if using C# devkit.
+    if (!getCSharpDevKit()) {
         context.subscriptions.push(
             vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
                 return chooseProjectAndRestore(languageServer, csharpOutputChannel);
