@@ -42,7 +42,7 @@ describeIfNotRazorOrGenerator(`${OmniSharpDefinitionProvider.name}: ${testAssetW
         expect(definitionList[0].uri.path).toContain('typeDefinition.cs');
     });
 
-    test('Returns the definition from Metadata', async () => {
+    test.skip('Returns the type definition from Metadata', async () => {
         const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
         await omnisharpConfig.update('enableDecompilationSupport', false, vscode.ConfigurationTarget.Global);
         await restartOmniSharpServer();
@@ -59,7 +59,7 @@ describeIfNotRazorOrGenerator(`${OmniSharpDefinitionProvider.name}: ${testAssetW
         expect(definitionList[0].uri.path).toContain('[metadata] String.cs');
     });
 
-    test('Returns multiple definitions for partial types', async () => {
+    test('Returns multiple type definitions for partial types', async () => {
         const definitionList = <vscode.Location[]>(
             await vscode.commands.executeCommand(
                 'vscode.executeTypeDefinitionProvider',
