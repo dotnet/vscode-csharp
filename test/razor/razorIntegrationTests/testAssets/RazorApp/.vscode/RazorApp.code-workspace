@@ -9,6 +9,9 @@
         "dotnet.server.useOmnisharp": false,
         "omnisharp.enableLspDriver": false,
         "razor.server.trace": "Trace",
-        "dotnet.preferCSharpExtension": true
+        "dotnet.preferCSharpExtension": true,
+        "razor.languageServer.cohostingEnabled": true,
+        "razor.format.enable": true,
+        "html.format.enable": true
     }
 }
