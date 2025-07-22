@@ -43,7 +43,7 @@ extends:
         - task: CopyFiles@2
           displayName: 'Copy files from Zip folder to staging directory'
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/artifacts/'
+            SourceFolder: '$(Pipeline.Workspace)/'
             Contents: '**/*Roslyn.LanguageServer*.zip'
             TargetFolder: '$(Build.ArtifactStagingDirectory)/staging'
             CleanTargetFolder: true
