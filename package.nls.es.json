@@ -65,6 +65,7 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "Habilita la experiencia de vista previa de \"programas basados en archivos\" (dotnet run app.cs).",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Mostrar información de comentarios cuando se muestra el símbolo.",
   "configuration.dotnet.server.componentPaths": "Permite invalidar la ruta de acceso de carpeta para los componentes integrados del servidor de lenguaje (por ejemplo, invalidar la ruta de acceso .roslynDevKit en el directorio de extensión para usar componentes compilados localmente).",
+  "configuration.dotnet.server.componentPaths.roslynCopilot": "Overrides the folder path for the .roslynCopilot component of the language server",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Invalida la ruta de acceso de la carpeta para el componente .roslynDevKit del servidor de lenguaje.",
   "configuration.dotnet.server.componentPaths.xamlTools": "Invalida la ruta de acceso de la carpeta para el componente .xamlTools del servidor de lenguaje.",
   "configuration.dotnet.server.crashDumpPath": "Establece una ruta de acceso de carpeta en la que se escriben los volcados de memoria si el servidor de lenguaje se bloquea.  El usuario debe poder escribir en él.",

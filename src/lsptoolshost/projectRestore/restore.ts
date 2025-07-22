@@ -18,31 +18,52 @@ import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 let _restoreInProgress = false;
 
-export function registerRestoreCommands(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
-    if (getCSharpDevKit()) {
-        // We do not need to register restore commands if using C# devkit.
-        return;
+export function registerRestoreCommands(
+    context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
+    csharpOutputChannel: vscode.LogOutputChannel
+) {
+    // We do not need to register restore commands if using C# devkit.
+    if (!getCSharpDevKit()) {
+        context.subscriptions.push(
+            vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
+                return chooseProjectAndRestore(languageServer, csharpOutputChannel);
+            })
+        );
+        context.subscriptions.push(
+            vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
+                return restore(languageServer, csharpOutputChannel, [], true);
+            })
+        );
     }
-    const restoreChannel = vscode.window.createOutputChannel(vscode.l10n.t('.NET NuGet Restore'));
-    context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
-            return chooseProjectAndRestore(languageServer, restoreChannel);
-        })
-    );
-    context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
-            return restore(languageServer, restoreChannel, [], true);
-        })
-    );
 
     languageServer.registerOnRequest(ProjectNeedsRestoreRequest.type, async (params) => {
-        await restore(languageServer, restoreChannel, params.projectFilePaths, false);
+        let projectFilePaths = params.projectFilePaths;
+        if (getCSharpDevKit()) {
+            // Only restore '.cs' files (file-based apps) if CDK is loaded.
+            const csharpFiles = [];
+            for (const path of projectFilePaths) {
+                if (path.endsWith('.cs')) {
+                    csharpFiles.push(path);
+                } else {
+                    csharpOutputChannel.debug(
+                        `[.NET Restore] Not restoring '${path}' from C# extension, because C# Dev Kit is expected to handle restore for it.`
+                    );
+                }
+            }
+
+            projectFilePaths = csharpFiles;
+        }
+
+        if (projectFilePaths.length > 0) {
+            await restore(languageServer, csharpOutputChannel, params.projectFilePaths, false);
+        }
     });
 }
 
 async function chooseProjectAndRestore(
     languageServer: RoslynLanguageServer,
-    restoreChannel: vscode.OutputChannel
+    outputChannel: vscode.LogOutputChannel
 ): Promise<void> {
     let projects: string[];
     try {
@@ -72,12 +93,12 @@ async function chooseProjectAndRestore(
         return;
     }
 
-    await restore(languageServer, restoreChannel, [pickedItem.description!], true);
+    await restore(languageServer, outputChannel, [pickedItem.description!], true);
 }
 
 export async function restore(
     languageServer: RoslynLanguageServer,
-    restoreChannel: vscode.OutputChannel,
+    outputChannel: vscode.LogOutputChannel,
     projectFiles: string[],
     showOutput: boolean
 ): Promise<void> {
@@ -87,7 +108,7 @@ export async function restore(
     }
     _restoreInProgress = true;
     if (showOutput) {
-        restoreChannel.show(true);
+        outputChannel.show(true);
     }
 
     const request: RestoreParams = { projectFilePaths: projectFiles };
@@ -101,7 +122,7 @@ export async function restore(
             async (progress, token) => {
                 const writeOutput = (output: RestorePartialResult) => {
                     if (output.message) {
-                        restoreChannel.appendLine(output.message);
+                        outputChannel.debug(`[.NET Restore] ${output.message}`);
                     }
 
                     progress.report({ message: output.stage });
@@ -117,7 +138,7 @@ export async function restore(
 
                 await responsePromise.then(
                     (result) => result.forEach((r) => writeOutput(r)),
-                    (err) => restoreChannel.appendLine(err)
+                    (err) => outputChannel.error(`[.NET Restore] ${err}`)
                 );
             }
         )

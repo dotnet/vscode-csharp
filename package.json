@@ -40,7 +40,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.0.0-2.25368.8",
+    "roslyn": "5.0.0-2.25371.17",
     "omniSharp": "1.39.12",
     "razor": "10.0.0-preview.25368.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -73,6 +73,7 @@
     "test:unit": "npm run compileDev && gulp test:unit",
     "test:integration:csharp": "npm run package && gulp test:integration:csharp",
     "test:integration:razor": "npm run package && gulp test:integration:razor",
+    "test:integration:razor:cohost": "npm run package && gulp test:integration:razor:cohost",
     "test:integration:devkit": "npm run package && gulp test:integration:devkit",
     "profiling": "npm run package && gulp profiling",
     "test:artifacts": "npm run compileDev && gulp test:artifacts",
@@ -421,6 +422,20 @@
       "platformId": "linux-musl-arm64",
       "isFramework": false,
       "integrity": "9944EBD6EE06BD595BCADD3057CD9BEF4105C3A3952DAE03E54F3114E2E6661F"
+    },
+    {
+      "id": "RoslynCopilot",
+      "description": "Language server for Roslyn Copilot integration",
+      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.479-alpha.zip",
+      "installPath": ".roslynCopilot",
+      "platforms": [
+        "neutral"
+      ],
+      "architectures": [
+        "neutral"
+      ],
+      "installTestPath": "./.roslynCopilot/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
+      "integrity": "1D16E555AEFB581F6090D66A20FA5B3DD367EFA0D33BC97EF176285F60E02FEF"
     },
     {
       "id": "Debugger",
@@ -1440,6 +1455,10 @@
               },
               "xamlTools": {
                 "description": "%configuration.dotnet.server.componentPaths.xamlTools%",
+                "type": "string"
+              },
+              "roslynCopilot": {
+                "description": "%configuration.dotnet.server.componentPaths.roslynCopilot%",
                 "type": "string"
               }
             },

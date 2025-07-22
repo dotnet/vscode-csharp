@@ -93,6 +93,33 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "[Razor Cohost] Run Current File Integration Test",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                // Launch VSCode using a specific profile to ensure that user settings are not used.
+                // This profile must be imported into vscode before running this launch configuration.
+                // The profile can be found under /test/csharp-test-profile.
+                "--profile",
+                "csharp-test-profile",
+                "${workspaceRoot}/test/razor/razorIntegrationTests/testAssets/RazorApp/.vscode/RazorApp.code-workspace",
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/razor/razorIntegrationTests",
+                "--log",
+                "ms-dotnettools.csharp:trace"
+            ],
+            "env": {
+                "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+                "TEST_FILE_FILTER": "${file}"
+            },
+            "sourceMaps": true,
+            "outFiles": ["${workspaceRoot}/dist/*.js", "${workspaceRoot}/out/test/**/*.js"],
+            "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
+            "preLaunchTask": "packageDev",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "[O#] Run Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",
@@ -196,6 +223,15 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
             "args": ["test:integration:razor"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Razor Cohost integration tests",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": ["test:integration:razor:cohost"],
             "cwd": "${workspaceFolder}"
         }
     ],

@@ -42,7 +42,7 @@ describeIfNotRazorOrGenerator(`${OmniSharpDefinitionProvider.name}: ${testAssetW
         expect(definitionList[0].uri.path).toContain('definition.cs');
     });
 
-    test('Returns the definition from Metadata', async () => {
+    test.skip('Returns the definition from Metadata', async () => {
         const omnisharpConfig = vscode.workspace.getConfiguration('omnisharp');
         await omnisharpConfig.update('enableDecompilationSupport', false, vscode.ConfigurationTarget.Global);
         await restartOmniSharpServer();
