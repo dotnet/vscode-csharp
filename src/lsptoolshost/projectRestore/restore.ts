@@ -26,7 +26,9 @@ export function registerRestoreCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
             if (getCSharpDevKit()) {
-                csharpOutputChannel.debug("[.NET Restore] Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it.");
+                csharpOutputChannel.debug(
+                    "[.NET Restore] Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it."
+                );
                 return;
             }
 
@@ -36,7 +38,9 @@ export function registerRestoreCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
             if (getCSharpDevKit()) {
-                csharpOutputChannel.debug("[.NET Restore] Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it.");
+                csharpOutputChannel.debug(
+                    "[.NET Restore] Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it."
+                );
                 return;
             }
 
