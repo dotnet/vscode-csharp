@@ -423,6 +423,20 @@
       "integrity": "9944EBD6EE06BD595BCADD3057CD9BEF4105C3A3952DAE03E54F3114E2E6661F"
     },
     {
+      "id": "RoslynCopilot",
+      "description": "Language server for Roslyn Copilot integration",
+      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.479-alpha.zip",
+      "installPath": ".roslynCopilot",
+      "platforms": [
+        "neutral"
+      ],
+      "architectures": [
+        "neutral"
+      ],
+      "installTestPath": "./.roslynCopilot/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
+      "integrity": "1D16E555AEFB581F6090D66A20FA5B3DD367EFA0D33BC97EF176285F60E02FEF"
+    },
+    {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
       "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-win7-x64.zip",
@@ -1440,6 +1454,10 @@
               },
               "xamlTools": {
                 "description": "%configuration.dotnet.server.componentPaths.xamlTools%",
+                "type": "string"
+              },
+              "roslynCopilot": {
+                "description": "%configuration.dotnet.server.componentPaths.roslynCopilot%",
                 "type": "string"
               }
             },

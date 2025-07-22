@@ -37,6 +37,11 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         optionName: 'razorExtension',
         componentDllPaths: ['Microsoft.VisualStudioCode.RazorExtension.dll'],
     },
+    roslynCopilot: {
+        defaultFolderName: '.roslynCopilot',
+        optionName: 'roslynCopilot',
+        componentDllPaths: ['Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll'],
+    },
 };
 
 export function getComponentPaths(componentName: string, options: LanguageServerOptions | undefined): string[] {
