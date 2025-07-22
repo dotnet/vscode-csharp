@@ -1849,13 +1849,13 @@
         "command": "dotnet.restore.project",
         "title": "%command.dotnet.restore.project%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'RoslynDevKit' || dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.restore.all",
         "title": "%command.dotnet.restore.all%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'RoslynDevKit' || dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "csharp.listProcess",

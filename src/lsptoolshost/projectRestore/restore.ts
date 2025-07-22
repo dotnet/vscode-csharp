@@ -23,30 +23,18 @@ export function registerRestoreCommands(
     languageServer: RoslynLanguageServer,
     csharpOutputChannel: vscode.LogOutputChannel
 ) {
-    context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
-            if (getCSharpDevKit()) {
-                csharpOutputChannel.debug(
-                    "[.NET Restore] Not handling command 'dotnet.restore.project' from C# extension, because C# Dev Kit is expected to handle it."
-                );
-                return;
-            }
-
-            return chooseProjectAndRestore(languageServer, csharpOutputChannel);
-        })
-    );
-    context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
-            if (getCSharpDevKit()) {
-                csharpOutputChannel.debug(
-                    "[.NET Restore] Not handling command 'dotnet.restore.all' from C# extension, because C# Dev Kit is expected to handle it."
-                );
-                return;
-            }
-
-            return restore(languageServer, csharpOutputChannel, [], true);
-        })
-    );
+    if (getCSharpDevKit()) {
+        context.subscriptions.push(
+            vscode.commands.registerCommand('dotnet.restore.project', async (_request): Promise<void> => {
+                return chooseProjectAndRestore(languageServer, csharpOutputChannel);
+            })
+        );
+        context.subscriptions.push(
+            vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
+                return restore(languageServer, csharpOutputChannel, [], true);
+            })
+        );
+    }
 
     languageServer.registerOnRequest(ProjectNeedsRestoreRequest.type, async (params) => {
         let projectFilePaths = params.projectFilePaths;
