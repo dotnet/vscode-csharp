@@ -65,6 +65,7 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "Umožňuje využívat prostředí „programů založených na souborech“ (dotnet run app.cs) ve verzi Preview.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Zobrazit informace o poznámkách při zobrazení symbolu.",
   "configuration.dotnet.server.componentPaths": "Umožňuje přepsat cestu ke složce pro integrované komponenty jazykového serveru (například přepsat cestu .roslynDevKit v adresáři rozšíření tak, aby používala místně sestavené komponenty).",
+  "configuration.dotnet.server.componentPaths.roslynCopilot": "Overrides the folder path for the .roslynCopilot component of the language server",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Přepíše cestu ke složce pro komponentu .roslynDevKit jazykového serveru.",
   "configuration.dotnet.server.componentPaths.xamlTools": "Přepíše cestu ke složce pro komponentu .xamlTools jazykového serveru.",
   "configuration.dotnet.server.crashDumpPath": "Nastaví cestu ke složce, do které se zapisují výpisy stavu systému, pokud dojde k chybovému ukončení jazykového serveru.  Musí být zapisovatelný uživatelem.",
