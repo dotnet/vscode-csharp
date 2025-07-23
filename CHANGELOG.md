@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.88.x
+
 # 2.87.x
 * Bump Roslyn to 5.0.0-2.25371.17 (PR: [#8436](https://github.com/dotnet/vscode-csharp/pull/8436))
   * Fix exception in additional file diagnostics (PR: [#79501](https://github.com/dotnet/roslyn/pull/79501))
