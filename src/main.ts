@@ -97,63 +97,66 @@ export async function activate(
         requiredPackageIds
     );
 
-    const getCoreClrDebugPromise = async (languageServerStartedPromise: Promise<void>) => {
-        let coreClrDebugPromise = Promise.resolve();
-        if (runtimeDependenciesExist) {
-            // activate coreclr-debug
-            coreClrDebugPromise = coreclrdebug.activate(
-                context.extension,
-                context,
-                platformInfo,
-                eventStream,
-                csharpChannel,
-                languageServerStartedPromise
-            );
-        }
-
-        return coreClrDebugPromise;
-    };
-
     let activationEvent = TelemetryEventNames.CSharpActivated;
     let exports: CSharpExtensionExports | OmnisharpExtensionExports | LimitedExtensionExports;
     if (vscode.workspace.isTrusted !== true) {
         activationEvent = TelemetryEventNames.CSharpLimitedActivation;
+        await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Limited');
         exports = { isLimitedActivation: true };
-        csharpChannel.trace('C# Extension activated in limited mode due to workspace trust not being granted.');
+        csharpChannel.info('C# Extension activated in limited mode due to workspace trust not being granted.');
         context.subscriptions.push(
             vscode.workspace.onDidGrantWorkspaceTrust(() => {
                 const reloadTitle: CommandOption = {
-                    title: vscode.l10n.t('Reload Window'),
-                    command: 'workbench.action.reloadWindow',
+                    title: vscode.l10n.t('Reload C# Extension'),
+                    command: 'workbench.action.restartExtensionHost',
                 };
                 const message = vscode.l10n.t(
-                    'Workspace trust has changed. Would you like to reload the window to activate the C# extension?'
+                    'Workspace trust has changed. Would you like to reload the C# extension?'
                 );
                 showInformationMessage(vscode, message, reloadTitle);
             })
         );
-    } else if (!useOmnisharpServer) {
-        exports = activateRoslyn(
-            context,
-            platformInfo,
-            optionStream,
-            eventStream,
-            csharpChannel,
-            reporter,
-            csharpDevkitExtension,
-            getCoreClrDebugPromise
-        );
     } else {
-        exports = activateOmniSharp(
-            context,
-            platformInfo,
-            optionStream,
-            networkSettingsProvider,
-            eventStream,
-            csharpChannel,
-            reporter,
-            getCoreClrDebugPromise
-        );
+        const getCoreClrDebugPromise = async (languageServerStartedPromise: Promise<void>) => {
+            let coreClrDebugPromise = Promise.resolve();
+            if (runtimeDependenciesExist) {
+                // activate coreclr-debug
+                coreClrDebugPromise = coreclrdebug.activate(
+                    context.extension,
+                    context,
+                    platformInfo,
+                    eventStream,
+                    csharpChannel,
+                    languageServerStartedPromise
+                );
+            }
+
+            return coreClrDebugPromise;
+        };
+
+        if (!useOmnisharpServer) {
+            exports = activateRoslyn(
+                context,
+                platformInfo,
+                optionStream,
+                eventStream,
+                csharpChannel,
+                reporter,
+                csharpDevkitExtension,
+                getCoreClrDebugPromise
+            );
+        } else {
+            exports = activateOmniSharp(
+                context,
+                platformInfo,
+                optionStream,
+                networkSettingsProvider,
+                eventStream,
+                csharpChannel,
+                reporter,
+                getCoreClrDebugPromise
+            );
+        }
     }
 
     const timeTaken = process.hrtime(startActivation);

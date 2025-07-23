@@ -1,6 +1,6 @@
 {
-  "Reload Window": "Reload Window",
-  "Workspace trust has changed. Would you like to reload the window to activate the C# extension?": "Workspace trust has changed. Would you like to reload the window to activate the C# extension?",
+  "Reload C# Extension": "Reload C# Extension",
+  "Workspace trust has changed. Would you like to reload the C# extension?": "Workspace trust has changed. Would you like to reload the C# extension?",
   "How to setup Remote Debugging": "How to setup Remote Debugging",
   "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.": "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.",
   "The C# extension for Visual Studio Code is incompatible on {0} {1}.": "The C# extension for Visual Studio Code is incompatible on {0} {1}.",
@@ -148,6 +148,7 @@
   "OmniSharp requires a complete install of Mono (including MSBuild) to provide language services when `omnisharp.useModernNet` is disabled in Settings. Please install the latest Mono and restart.": "OmniSharp requires a complete install of Mono (including MSBuild) to provide language services when `omnisharp.useModernNet` is disabled in Settings. Please install the latest Mono and restart.",
   "Download Mono": "Download Mono",
   "Open settings": "Open settings",
+  "Reload Window": "Reload Window",
   "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change": "dotnet.server.useOmnisharp option has changed. Please reload the window to apply the change",
   "C# configuration has changed. Would you like to relaunch the Language Server with your changes?": "C# configuration has changed. Would you like to relaunch the Language Server with your changes?",
   "Restart Language Server": "Restart Language Server",
