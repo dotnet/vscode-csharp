@@ -12,6 +12,38 @@
             "preLaunchTask": "packageDev"
         },
         {
+          "name": "[Untrusted] Run Integration Test",
+          "type": "extensionHost",
+          "request": "launch",
+          "runtimeExecutable": "${execPath}",
+          "args": [
+            // Launch VSCode using a specific profile to ensure that user settings are not used.
+            // This profile must be imported into vscode before running this launch configuration.
+            // The profile can be found under /test/csharp-test-profile.
+            "--profile",
+            "csharp-test-profile",
+            "${workspaceRoot}/test/untrustedWorkspace/integrationTests/testAssets/empty/.vscode/empty.code-workspace",
+            "--extensionDevelopmentPath=${workspaceRoot}",
+            "--extensionTestsPath=${workspaceRoot}/out/test/untrustedWorkspace/integrationTests",
+            "--log",
+            "ms-dotnettools.csharp:trace"
+          ],
+          "env": {
+            "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+          },
+          "sourceMaps": true,
+          "outFiles": [
+            "${workspaceRoot}/dist/*.js",
+            "${workspaceRoot}/out/test/**/*.js"
+          ],
+          "resolveSourceMapLocations": [
+            "${workspaceFolder}/**",
+            "!**/node_modules/**"
+          ],
+          "preLaunchTask": "packageDev",
+          "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "[Roslyn] Run Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",

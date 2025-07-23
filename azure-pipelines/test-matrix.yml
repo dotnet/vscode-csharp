@@ -31,6 +31,9 @@ jobs:
       RazorCohostTests:
         npmCommand: test:integration:razor:cohost
         isIntegration: true
+      UntrustedWorkspaceTest:
+        npmCommand: test:integration:untrusted
+        isIntegration: true
   pool: ${{ parameters.pool }}
   ${{ if parameters.containerName }}:
     container: ${{ parameters.containerName }}
