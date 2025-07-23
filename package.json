@@ -75,6 +75,7 @@
     "test:integration:razor": "npm run package && gulp test:integration:razor",
     "test:integration:razor:cohost": "npm run package && gulp test:integration:razor:cohost",
     "test:integration:devkit": "npm run package && gulp test:integration:devkit",
+    "test:integration:untrusted": "npm run package && gulp test:integration:untrusted",
     "profiling": "npm run package && gulp profiling",
     "test:artifacts": "npm run compileDev && gulp test:artifacts",
     "omnisharptest": "npm run package && gulp omnisharptest",
