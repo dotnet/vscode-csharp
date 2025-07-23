@@ -85,11 +85,25 @@ function createIntegrationTestSubTasks() {
                 `Razor Test Integration ${projectName}`
             )
         );
+
+        gulp.task(`test:integration:razor:cohost:${projectName}`, async () =>
+            // Register each test again, but as a regular test, which will run with cohosting on
+            runIntegrationTest(
+                projectName,
+                path.join('razor', 'razorIntegrationTests'),
+                `Razor Test Integration ${projectName}`
+            )
+        );
     }
 
     gulp.task(
         'test:integration:razor',
         gulp.series(razorIntegrationTestProjects.map((projectName) => `test:integration:razor:${projectName}`))
+    );
+
+    gulp.task(
+        'test:integration:razor:cohost',
+        gulp.series(razorIntegrationTestProjects.map((projectName) => `test:integration:razor:cohost:${projectName}`))
     );
 
     gulp.task(

@@ -7,6 +7,8 @@ import { PlatformInformation } from '../shared/platform';
 import * as util from '../common';
 import { AbsolutePathPackage } from './absolutePathPackage';
 
+const NEUTRAL = 'neutral';
+
 export async function getNotInstalledPackagesForPlatform(
     packages: AbsolutePathPackage[],
     platformInfo: PlatformInformation
@@ -17,7 +19,11 @@ export async function getNotInstalledPackagesForPlatform(
 
 export function filterPlatformPackages(packages: AbsolutePathPackage[], platformInfo: PlatformInformation) {
     return packages.filter(
-        (pkg) => pkg.architectures.includes(platformInfo.architecture) && pkg.platforms.includes(platformInfo.platform)
+        (pkg) =>
+            // Match architecture, packages declared neutral are included as well.
+            (pkg.architectures.includes(NEUTRAL) || pkg.architectures.includes(platformInfo.architecture)) &&
+            // Match platform, packages declared neutral are included as well.
+            (pkg.platforms.includes(NEUTRAL) || pkg.platforms.includes(platformInfo.platform))
     );
 }
 
