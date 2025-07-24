@@ -33,7 +33,7 @@
   "capabilities": {
     "virtualWorkspaces": false,
     "untrustedWorkspaces": {
-      "supported": false
+      "supported": "limited"
     }
   },
   "extensionKind": [
@@ -75,6 +75,7 @@
     "test:integration:razor": "npm run package && gulp test:integration:razor",
     "test:integration:razor:cohost": "npm run package && gulp test:integration:razor:cohost",
     "test:integration:devkit": "npm run package && gulp test:integration:devkit",
+    "test:integration:untrusted": "npm run package && gulp test:integration:untrusted",
     "profiling": "npm run package && gulp profiling",
     "test:artifacts": "npm run compileDev && gulp test:artifacts",
     "omnisharptest": "npm run package && gulp omnisharptest",
@@ -1814,139 +1815,145 @@
         "command": "o.restart",
         "title": "%command.o.restart%",
         "category": "OmniSharp",
-        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.pickProjectAndStart",
         "title": "%command.o.pickProjectAndStart%",
         "category": "OmniSharp",
-        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.openSolution",
         "title": "%command.dotnet.openSolution%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'Roslyn'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "o.fixAll.solution",
         "title": "%command.o.fixAll.solution%",
         "category": "OmniSharp",
-        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.fixAll.project",
         "title": "%command.o.fixAll.project%",
         "category": "OmniSharp",
-        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.fixAll.document",
         "title": "%command.o.fixAll.document%",
         "category": "OmniSharp",
-        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.reanalyze.allProjects",
         "title": "%command.o.reanalyze.allProjects%",
         "category": "OmniSharp",
-        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "o.reanalyze.currentProject",
         "title": "%command.o.reanalyze.currentProject%",
         "category": "OmniSharp",
-        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "dotnet.generateAssets",
         "title": "%command.dotnet.generateAssets.currentProject%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'RoslynDevKit' || dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'RoslynDevKit' || dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
       },
       {
         "command": "dotnet.restore.project",
         "title": "%command.dotnet.restore.project%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
       },
       {
         "command": "dotnet.restore.all",
         "title": "%command.dotnet.restore.all%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
       },
       {
         "command": "csharp.listProcess",
         "title": "%command.csharp.listProcess%",
-        "category": "CSharp"
+        "category": "CSharp",
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "csharp.listRemoteProcess",
         "title": "%command.csharp.listRemoteProcess%",
-        "category": "CSharp"
+        "category": "CSharp",
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "csharp.listRemoteDockerProcess",
         "title": "%command.csharp.listRemoteDockerProcess%",
-        "category": "CSharp"
+        "category": "CSharp",
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "csharp.attachToProcess",
         "title": "%command.csharp.attachToProcess%",
-        "category": "Debug"
+        "category": "Debug",
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "csharp.reportIssue",
         "title": "%command.csharp.reportIssue%",
-        "category": "CSharp"
+        "category": "CSharp",
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "csharp.showDecompilationTerms",
         "title": "%command.csharp.showDecompilationTerms%",
         "category": "CSharp",
-        "enablement": "dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'OmniSharp'"
       },
       {
         "command": "csharp.recordLanguageServerTrace",
         "title": "%command.csharp.recordLanguageServerTrace%",
         "category": "CSharp",
-        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')"
       },
       {
         "command": "extension.showRazorCSharpWindow",
         "title": "%command.extension.showRazorCSharpWindow%",
         "category": "Razor",
-        "enablement": "razor.mode == 'lsp'"
+        "enablement": "isWorkspaceTrusted && razor.mode == 'lsp'"
       },
       {
         "command": "extension.showRazorHtmlWindow",
         "title": "%command.extension.showRazorHtmlWindow%",
         "category": "Razor",
-        "enablement": "razor.mode == 'lsp'"
+        "enablement": "isWorkspaceTrusted && razor.mode == 'lsp'"
       },
       {
         "command": "razor.reportIssue",
         "title": "%command.razor.reportIssue%",
-        "category": "Razor"
+        "category": "Razor",
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "dotnet.test.runTestsInContext",
         "title": "%command.dotnet.test.runTestsInContext%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
       },
       {
         "command": "dotnet.test.debugTestsInContext",
         "title": "%command.dotnet.test.debugTestsInContext%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
+        "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
       },
       {
         "command": "dotnet.restartServer",
         "title": "%command.dotnet.restartServer%",
         "category": ".NET",
-        "enablement": "dotnet.server.activationContext == 'Roslyn'"
+        "enablement": "isWorkspaceTrusted && dotnet.server.activationContext == 'Roslyn'"
       }
     ],
     "keybindings": [

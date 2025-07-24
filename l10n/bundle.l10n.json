@@ -1,4 +1,6 @@
 {
+  "Reload C# Extension": "Reload C# Extension",
+  "Workspace trust has changed. Would you like to reload the C# extension?": "Workspace trust has changed. Would you like to reload the C# extension?",
   "How to setup Remote Debugging": "How to setup Remote Debugging",
   "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.": "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.",
   "The C# extension for Visual Studio Code is incompatible on {0} {1}.": "The C# extension for Visual Studio Code is incompatible on {0} {1}.",

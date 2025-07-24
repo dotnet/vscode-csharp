@@ -58,6 +58,7 @@ export function activateOmniSharp(
     const coreClrDebugPromise = getCoreClrDebugPromise(omnisharpLangServicePromise);
 
     const exports: OmnisharpExtensionExports = {
+        isLimitedActivation: false,
         initializationFinished: async () => {
             const langService = await omnisharpLangServicePromise;
             await langService!.server.waitForInitialize();
