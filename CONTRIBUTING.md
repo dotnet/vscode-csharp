@@ -118,21 +118,23 @@ This section provides instructions on how to debug locally built Roslyn and Razo
 
 #### Configuring Roslyn Language Server
 
-In your `settings.json` file, add the following lines:
+Add the following lines to your `settings.json`. Replace `<roslynRepoRoot>` with the actual path to your Roslyn repository.
 
 ```json
 "dotnet.server.waitForDebugger": true,
 "dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll"
 ```
 
-Replace <roslynRepoRoot> with the actual path to your Roslyn repository.
+---
 
-If using C# Dev Kit, you can also override the Roslyn DevKit component in your `settings.json`:
+**If using C# Dev Kit**, you also need to override the Roslyn DevKit component in your `settings.json`. This step is not necessary if you are not loading the Dev Kit extension.
 ```json
 "dotnet.server.componentPaths": {
     "roslynDevKit": "<roslynRepoRoot>/artifacts/bin/Microsoft.VisualStudio.LanguageServices.DevKit/Debug/net9.0"
 },
 ```
+
+---
 
 Or, in VSCode settings (`Ctrl+,`):
 
@@ -143,7 +145,7 @@ Or, in VSCode settings (`Ctrl+,`):
 
 #### Configuring Razor Language Server
 
-In your workspace settings.json file, add the following lines:
+Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with the actual path to your Razor repository.
 
 ```json
 "razor.languageServer.debug": true,
@@ -151,7 +153,7 @@ In your workspace settings.json file, add the following lines:
 "razor.server.trace": "Debug"
 ```
 
-Replace `$razorRepoRoot` with your actual values.
+---
 
 Or, in VSCode settings (`Ctrl+,`):
 
