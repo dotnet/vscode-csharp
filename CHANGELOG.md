@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.88.x
-* Bump Razor to 10.0.0-preview.25377.4 (PR: [#???](https://github.com/dotnet/vscode-csharp/pull/???))
+* Bump Razor to 10.0.0-preview.25377.4 (PR: [#8459](https://github.com/dotnet/vscode-csharp/pull/8459))
   * Cache MEF composition in OOP and VS Code (PR: [#12041](https://github.com/dotnet/razor/pull/12041))
 
 # 2.87.x
