@@ -4,6 +4,26 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.88.x
+* Bump Roslyn to 5.0.0-2.25375.9 (PR: [#8463](https://github.com/dotnet/vscode-csharp/pull/8463))
+  * Add diagnostic provider for clients without dynamic registration(PR: [#77984](https://github.com/dotnet/roslyn/pull/77984))
+  * Fix eol handling on the last token in a file when formatting code actions(PR: [#79602](https://github.com/dotnet/roslyn/pull/79602))
+  * Reduce allocations during CommonCompletionItem.Create(PR: [#79591](https://github.com/dotnet/roslyn/pull/79591))
+  * Add metadata documents to the MAS workspace upfront(PR: [#78886](https://github.com/dotnet/roslyn/pull/78886))
+  * Update debugger contracts to 18.0.0-beta.25353.1(PR: [#79277](https://github.com/dotnet/roslyn/pull/79277))
+  * Include comments written above local variables when getting quick info for them.(PR: [#79580](https://github.com/dotnet/roslyn/pull/79580))
+  * Modify LSP folding ranges to account for AutoCollapse(PR: [#79551](https://github.com/dotnet/roslyn/pull/79551))
+  * Have 'use explicit type' add usings as necessary to minimally qualify the type(PR: [#79574](https://github.com/dotnet/roslyn/pull/79574))
+  * Fix issue where we weren't properly adding elastic trivia to newly generated members(PR: [#79571](https://github.com/dotnet/roslyn/pull/79571))
+  * Properly handle optional arguments when converting a local function to a method.(PR: [#79531](https://github.com/dotnet/roslyn/pull/79531))
+  * Fix issue with 'use explicit type' and nullable tuples(PR: [#79544](https://github.com/dotnet/roslyn/pull/79544))
+  * Fix name qualification when moving a using alias outside of a file scoped namespace(PR: [#79540](https://github.com/dotnet/roslyn/pull/79540))
+  * Allow add using to work on Razor generated documents(PR: [#79530](https://github.com/dotnet/roslyn/pull/79530))
+  * Fix 'this' keyword not being recomended where allowed(PR: [#79514](https://github.com/dotnet/roslyn/pull/79514))
+  * Fix 'switch' keyword recomendations after an expression(PR: [#79515](https://github.com/dotnet/roslyn/pull/79515))
+  * Suggest proper 'Async'-suffixed name for Task-returning symbols(PR: [#79518](https://github.com/dotnet/roslyn/pull/79518))
+* Fix issue acquiring components when using proxies (PR: [#8457](https://github.com/dotnet/vscode-csharp/pull/8457))
+* Support activating the extension with limited support in untrusted workspaces (PR: [#8435](https://github.com/dotnet/vscode-csharp/pull/8435))
+* Report specific c# settings in issue template (PR: [#8433](https://github.com/dotnet/vscode-csharp/pull/8433))
 
 # 2.87.x
 * Bump Roslyn to 5.0.0-2.25371.17 (PR: [#8436](https://github.com/dotnet/vscode-csharp/pull/8436))
