@@ -16,7 +16,6 @@ import {
 } from '../shared/processPicker';
 import { PlatformInformation } from './platform';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
-import { commonOptions } from './options';
 import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider';
 import {
     ActionOption,

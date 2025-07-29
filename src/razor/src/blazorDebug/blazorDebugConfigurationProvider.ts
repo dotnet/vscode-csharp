@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import execa from 'execa';
-import { promises, readFileSync } from 'fs';
+import { promises, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
@@ -12,14 +12,12 @@ import { ChromeBrowserFinder, EdgeBrowserFinder } from '@vscode/js-debug-browser
 import { RazorLogger } from '../razorLogger';
 import { ONLY_JS_DEBUG_NAME, MANAGED_DEBUG_NAME, JS_DEBUG_NAME, SERVER_APP_NAME } from './constants';
 import { onDidTerminateDebugSession } from './terminateDebugHandler';
-import showInformationMessage from '../../../shared/observers/utils/showInformationMessage';
-import showErrorMessage from '../../../observers/utils/showErrorMessage';
 import path = require('path');
 import * as cp from 'child_process';
 import { getExtensionPath } from '../../../common';
 import { debugSessionTracker } from '../../../coreclrDebug/provisionalDebugSessionTracker';
 import { getCSharpDevKit } from '../../../utils/getCSharpDevKit';
-import Descriptors from '../../../lsptoolshost/services/descriptors';
+import Descriptors from '../../../lsptoolshost/solutionSnapshot/descriptors';
 import { CancellationToken } from 'vscode';
 import { IDisposable, IObserver } from '@microsoft/servicehub-framework';
 import { EventEmitter } from 'events';
