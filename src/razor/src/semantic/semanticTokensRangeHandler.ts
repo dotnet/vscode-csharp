@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { RequestType } from 'vscode-languageclient';
+import { RequestType } from 'vscode-jsonrpc';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { ProvideSemanticTokensResponse } from './provideSemanticTokensResponse';
 import { SerializableSemanticTokensParams } from './serializableSemanticTokensParams';

@@ -7,8 +7,10 @@
 !.razor/**
 !.razorDevKit/**
 !.razoromnisharp/**
+!.razorExtension/**
 .rpt2_cache/**
 .config/**
+.devcontainer/**
 .github/**
 .vscode/**
 .vscode-test/**
@@ -51,8 +53,7 @@ package.json
 tsconfig.json
 version.json
 wallaby.js
-webpack.config.js
-
+esbuild.js
 !src/razor/language-configuration.json
 !src/razor/syntaxes/*
 

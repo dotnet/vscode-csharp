@@ -4,7 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { DocumentSelector } from 'vscode-languageserver-protocol/lib/common/protocol';
 
-export function combineDocumentSelectors(...selectors: vscode.DocumentSelector[]): vscode.DocumentSelector {
-    return selectors.reduce<(string | vscode.DocumentFilter)[]>((acc, selector) => acc.concat(selector), []);
+export function combineDocumentSelectors(
+    ...selectors: (DocumentSelector | vscode.DocumentSelector)[]
+): vscode.DocumentSelector {
+    return selectors.reduce<(string | vscode.DocumentFilter)[]>((acc, selector) => acc.concat(<any>selector), []);
 }

@@ -23,29 +23,18 @@ export function resolveRazorLanguageServerOptions(
     const usingOmniSharp =
         !getCSharpDevKit() && vscodeApi.workspace.getConfiguration().get<boolean>('dotnet.server.useOmnisharp');
 
-    const hotReload = vscodeApi.workspace.getConfiguration('csharp.experimental.debug').get<boolean>('hotReload');
-
-    let forceRuntimeCodeGeneration = serverConfig.get<boolean | null>('forceRuntimeCodeGeneration');
-
-    if (forceRuntimeCodeGeneration === null && hotReload) {
-        logger.logMessage(
-            'Hot Reload is enabled so treating "razor.languageServer.forceRuntimeCodeGeneration" as true. To override this set "razor.languageServer.forceRuntimeCodeGeneration" to true or false.'
-        );
-
-        forceRuntimeCodeGeneration = hotReload;
-    }
-
     const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
     const useNewFormattingEngine = serverConfig.get<boolean>('useNewFormattingEngine');
+    const cohostingEnabled = serverConfig.get<boolean>('cohostingEnabled');
 
     return {
         serverPath: languageServerExecutablePath,
         debug: debugLanguageServer,
         outputChannel: logger.outputChannel,
         usingOmniSharp,
-        forceRuntimeCodeGeneration,
         suppressErrorToasts,
         useNewFormattingEngine,
+        cohostingEnabled,
     } as RazorLanguageServerOptions;
 }
 

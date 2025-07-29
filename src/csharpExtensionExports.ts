@@ -8,10 +8,15 @@ import { Advisor } from './omnisharp/features/diagnosticsProvider';
 import { EventStream } from './eventStream';
 import TestManager from './omnisharp/features/dotnetTest';
 import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
-import { RequestType } from 'vscode-languageclient/node';
+import { PartialResultParams, ProtocolRequestType, RequestType } from 'vscode-languageclient/node';
 import { LanguageServerEvents } from './lsptoolshost/server/languageServerEvents';
 
+export interface LimitedExtensionExports {
+    isLimitedActivation: true;
+}
+
 export interface OmnisharpExtensionExports {
+    isLimitedActivation: false;
     initializationFinished: () => Promise<void>;
     getAdvisor: () => Promise<Advisor>;
     getTestManager: () => Promise<TestManager>;
@@ -20,6 +25,7 @@ export interface OmnisharpExtensionExports {
 }
 
 export interface CSharpExtensionExports {
+    isLimitedActivation: false;
     initializationFinished: () => Promise<void>;
     logDirectory: string;
     profferBrokeredServices: (container: GlobalBrokeredServiceContainer) => void;
@@ -35,5 +41,17 @@ export interface CSharpExtensionExperimentalExports {
         params: Params,
         token: vscode.CancellationToken
     ) => Promise<Response>;
+    sendServerRequestWithProgress<
+        Params extends PartialResultParams,
+        Response,
+        PartialResult,
+        Error,
+        RegistrationOptions
+    >(
+        type: ProtocolRequestType<Params, Response, PartialResult, Error, RegistrationOptions>,
+        params: Params,
+        onProgress: (p: PartialResult) => Promise<any>,
+        token?: vscode.CancellationToken
+    ): Promise<Response>;
     languageServerEvents: LanguageServerEvents;
 }

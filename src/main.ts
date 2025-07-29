@@ -15,46 +15,43 @@ import { PlatformInformation } from './shared/platform';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { vscodeNetworkSettingsProvider } from './networkSettings';
 import createOptionStream from './shared/observables/createOptionStream';
-import { activateRazorExtension } from './razor/razor';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
 import { downloadAndInstallPackages } from './packageManager/downloadAndInstallPackages';
 import IInstallDependencies from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
-import { getDotnetPackApi } from './dotnetPack';
-import { RoslynLanguageServer } from './lsptoolshost/server/roslynLanguageServer';
 import { MigrateOptions } from './shared/migrateOptions';
-import { getBrokeredServiceContainer } from './lsptoolshost/serviceBroker/brokeredServicesHosting';
-import { CSharpDevKitExports } from './csharpDevKitExports';
-import Descriptors from './lsptoolshost/solutionSnapshot/descriptors';
-import { GlobalBrokeredServiceContainer } from '@microsoft/servicehub-framework';
-import { CSharpExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
-import { csharpDevkitExtensionId, getCSharpDevKit } from './utils/getCSharpDevKit';
-import { BlazorDebugConfigurationProvider } from './razor/src/blazorDebug/blazorDebugConfigurationProvider';
-import { SolutionSnapshotProvider } from './lsptoolshost/solutionSnapshot/solutionSnapshotProvider';
-import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from './shared/options';
-import { BuildResultDiagnostics } from './lsptoolshost/diagnostics/buildResultReporterService';
-import { debugSessionTracker } from './coreclrDebug/provisionalDebugSessionTracker';
-import { activateOmniSharpLanguageServer, ActivationResult } from './omnisharp/omnisharpLanguageServer';
-import { ActionOption, showErrorMessage } from './shared/observers/utils/showMessage';
-import { lt } from 'semver';
+import { CSharpExtensionExports, LimitedExtensionExports, OmnisharpExtensionExports } from './csharpExtensionExports';
+import { getCSharpDevKit } from './utils/getCSharpDevKit';
+import { commonOptions, omnisharpOptions } from './shared/options';
 import { TelemetryEventNames } from './shared/telemetryEventNames';
-import { RoslynLanguageServerEvents, ServerState } from './lsptoolshost/server/languageServerEvents';
-import { activateRoslynLanguageServer } from './lsptoolshost/activate';
-import { RoslynLanguageServerExport } from './lsptoolshost/extensions/roslynLanguageServerExportChannel';
-import { getComponentFolder } from './lsptoolshost/extensions/builtInComponents';
+import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensionVersion';
+import { checkIsSupportedPlatform } from './checkSupportedPlatform';
+import { activateOmniSharp } from './activateOmniSharp';
+import { activateRoslyn } from './activateRoslyn';
+import { CommandOption, showInformationMessage } from './shared/observers/utils/showMessage';
 
 export async function activate(
     context: vscode.ExtensionContext
-): Promise<CSharpExtensionExports | OmnisharpExtensionExports | null> {
+): Promise<CSharpExtensionExports | OmnisharpExtensionExports | LimitedExtensionExports | null> {
+    // Start measuring the activation time
+    const startActivation = process.hrtime();
+
     const csharpChannel = vscode.window.createOutputChannel('C#', { log: true });
-
-    await MigrateOptions(vscode);
-    const optionStream = createOptionStream(vscode);
-
-    const eventStream = new EventStream();
+    csharpChannel.trace('Activating C# Extension');
 
     util.setExtensionPath(context.extension.extensionPath);
+
+    const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
+    const reporter = new TelemetryReporter(aiKey);
+    // ensure it gets properly disposed. Upon disposal the events will be flushed.
+    context.subscriptions.push(reporter);
+
+    const eventStream = new EventStream();
+    const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
+    const csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
+    eventStream.subscribe(csharpchannelObserver.post);
+    eventStream.subscribe(csharpLogObserver.post);
 
     let platformInfo: PlatformInformation;
     try {
@@ -64,19 +61,17 @@ export async function activate(
         throw error;
     }
 
-    const aiKey = context.extension.packageJSON.contributes.debuggers[0].aiKey;
-    const reporter = new TelemetryReporter(aiKey);
-    // ensure it gets properly disposed. Upon disposal the events will be flushed.
-    context.subscriptions.push(reporter);
+    // Verify that the current platform is supported by the extension and inform the user if not.
+    if (!checkIsSupportedPlatform(context, platformInfo)) {
+        return null;
+    }
 
-    const csharpchannelObserver = new CsharpChannelObserver(csharpChannel);
-    const csharpLogObserver = new CsharpLoggerObserver(csharpChannel);
-    eventStream.subscribe(csharpchannelObserver.post);
-    eventStream.subscribe(csharpLogObserver.post);
+    await checkDotNetRuntimeExtensionVersion(context);
 
-    const requiredPackageIds: string[] = ['Debugger'];
+    await MigrateOptions(vscode);
+    const optionStream = createOptionStream(vscode);
 
-    requiredPackageIds.push('Razor');
+    const requiredPackageIds: string[] = ['Debugger', 'Razor'];
 
     const csharpDevkitExtension = getCSharpDevKit();
     const useOmnisharpServer = !csharpDevkitExtension && commonOptions.useOmnisharpServer;
@@ -112,68 +107,43 @@ export async function activate(
                 )
             );
         }
+    if (csharpDevkitExtension) {
+        requiredPackageIds.push('RoslynCopilot');
     }
-
-    // If the dotnet bundle is installed, this will ensure the dotnet CLI is on the path.
-    await initializeDotnetPath();
 
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = useOmnisharpServer && omnisharpOptions.useModernNet !== true;
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) =>
         downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
-    const runtimeDependenciesExist = await ensureRuntimeDependencies(
-        context.extension,
+
+    const runtimeDependenciesExist = await installRuntimeDependencies(
+        context.extension.packageJSON,
+        context.extension.extensionPath,
+        installDependencies,
         eventStream,
         platformInfo,
-        installDependencies,
         useFramework,
         requiredPackageIds
     );
 
-    let omnisharpLangServicePromise: Promise<ActivationResult> | undefined = undefined;
-    let omnisharpRazorPromise: Promise<void> | undefined = undefined;
-    const roslynLanguageServerEvents = new RoslynLanguageServerEvents();
-    context.subscriptions.push(roslynLanguageServerEvents);
-    let roslynLanguageServerStartedPromise: Promise<RoslynLanguageServer> | undefined = undefined;
-    let razorLanguageServerStartedPromise: Promise<void> | undefined = undefined;
-    let projectInitializationCompletePromise: Promise<void> | undefined = undefined;
-
-    if (!useOmnisharpServer) {
-        // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
-        // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
-        //
-        // Flow:
-        // Razor starts up and registers dynamic file info commands ->
-        // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
-        //     for dynamic file info once project system is ready ->
-        // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-        razorLanguageServerStartedPromise = activateRazorExtension(
-            context,
-            context.extension.extensionPath,
-            eventStream,
-            reporter,
-            csharpDevkitExtension,
-            platformInfo,
-            /* useOmnisharpServer */ false
-        );
-
-        // Setup a listener for project initialization complete before we start the server.
-        projectInitializationCompletePromise = new Promise((resolve, _) => {
-            roslynLanguageServerEvents.onServerStateChange(async (e) => {
-                if (e.state === ServerState.ProjectInitializationComplete) {
-                    resolve();
-                }
-            });
-        });
-
-        // Start the server, but do not await the completion to avoid blocking activation.
-        roslynLanguageServerStartedPromise = activateRoslynLanguageServer(
-            context,
-            platformInfo,
-            optionStream,
-            csharpChannel,
-            reporter,
-            roslynLanguageServerEvents
+    let activationEvent = TelemetryEventNames.CSharpActivated;
+    let exports: CSharpExtensionExports | OmnisharpExtensionExports | LimitedExtensionExports;
+    if (vscode.workspace.isTrusted !== true) {
+        activationEvent = TelemetryEventNames.CSharpLimitedActivation;
+        await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Limited');
+        exports = { isLimitedActivation: true };
+        csharpChannel.info('C# Extension activated in limited mode due to workspace trust not being granted.');
+        context.subscriptions.push(
+            vscode.workspace.onDidGrantWorkspaceTrust(() => {
+                const reloadTitle: CommandOption = {
+                    title: vscode.l10n.t('Reload C# Extension'),
+                    command: 'workbench.action.restartExtensionHost',
+                };
+                const message = vscode.l10n.t(
+                    'Workspace trust has changed. Would you like to reload the C# extension?'
+                );
+                showInformationMessage(vscode, message, reloadTitle);
+            })
         );
     } else {
         // activate language services
@@ -334,75 +304,56 @@ function tryGetCSharpDevKitExtensionExports(csharpLogObserver: CsharpLoggerObser
             } else {
                 csharpLogObserver.logger.appendLine(
                     `[ERROR] '${csharpDevkitExtensionId}' activated but did not return expected Exports.`
+        const getCoreClrDebugPromise = async (languageServerStartedPromise: Promise<void>) => {
+            let coreClrDebugPromise = Promise.resolve();
+            if (runtimeDependenciesExist) {
+                // activate coreclr-debug
+                coreClrDebugPromise = coreclrdebug.activate(
+                    context.extension,
+                    context,
+                    platformInfo,
+                    eventStream,
+                    csharpChannel,
+                    languageServerStartedPromise
                 );
             }
-        },
-        () => {
-            csharpLogObserver.logger.appendLine(`[ERROR] Failed to activate '${csharpDevkitExtensionId}'`);
+
+            return coreClrDebugPromise;
+        };
+
+        if (!useOmnisharpServer) {
+            exports = activateRoslyn(
+                context,
+                platformInfo,
+                optionStream,
+                eventStream,
+                csharpChannel,
+                reporter,
+                csharpDevkitExtension,
+                getCoreClrDebugPromise
+            );
+        } else {
+            exports = activateOmniSharp(
+                context,
+                platformInfo,
+                optionStream,
+                networkSettingsProvider,
+                eventStream,
+                csharpChannel,
+                reporter,
+                getCoreClrDebugPromise
+            );
         }
-    );
-}
-
-function profferBrokeredServices(
-    context: vscode.ExtensionContext,
-    serviceContainer: GlobalBrokeredServiceContainer,
-    languageServerPromise: Promise<RoslynLanguageServer>
-) {
-    context.subscriptions.push(
-        serviceContainer.profferServiceFactory(
-            Descriptors.solutionSnapshotProviderRegistration,
-            (_mk, _op, _sb) => new SolutionSnapshotProvider(languageServerPromise)
-        ),
-        serviceContainer.profferServiceFactory(
-            Descriptors.csharpExtensionBuildResultService,
-            (_mk, _op, _sb) => new BuildResultDiagnostics(languageServerPromise)
-        )
-    );
-}
-
-function isSupportedPlatform(platform: PlatformInformation): boolean {
-    if (platform.isWindows()) {
-        return platform.architecture === 'x86_64' || platform.architecture === 'arm64';
     }
 
-    if (platform.isMacOS()) {
-        return true;
-    }
+    const timeTaken = process.hrtime(startActivation);
+    const timeTakenStr = (timeTaken[0] * 1000 + timeTaken[1] / 1000000).toFixed(3);
+    csharpChannel.trace('C# Extension activated in ' + timeTakenStr + 'ms.');
+    const activationProperties: { [key: string]: string } = {
+        serverKind: useOmnisharpServer ? 'OmniSharp' : 'Roslyn',
+        timeTaken: timeTakenStr,
+    };
+    reporter.sendTelemetryEvent(activationEvent, activationProperties);
 
-    if (platform.isLinux()) {
-        return (
-            platform.architecture === 'x86_64' ||
-            platform.architecture === 'x86' ||
-            platform.architecture === 'i686' ||
-            platform.architecture === 'arm64'
-        );
-    }
-
-    return false;
-}
-
-async function ensureRuntimeDependencies(
-    extension: vscode.Extension<CSharpExtensionExports>,
-    eventStream: EventStream,
-    platformInfo: PlatformInformation,
-    installDependencies: IInstallDependencies,
-    useFramework: boolean,
-    requiredPackageIds: string[]
-): Promise<boolean> {
-    return installRuntimeDependencies(
-        extension.packageJSON,
-        extension.extensionPath,
-        installDependencies,
-        eventStream,
-        platformInfo,
-        useFramework,
-        requiredPackageIds
-    );
-}
-
-async function initializeDotnetPath(): Promise<void> {
-    const dotnetPackApi = await getDotnetPackApi();
-    if (dotnetPackApi !== undefined) {
-        await dotnetPackApi.getDotnetPath();
-    }
+    return exports;
 }

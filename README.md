@@ -30,19 +30,7 @@ For more information you can:
 If you don’t want to take advantage of the great Language Server features, you can revert back to using OmniSharp by going to the Extension settings and setting `dotnet.server.useOmnisharp` to true. Next, uninstall or disable C# Dev Kit. Finally, restart VS Code for this to take effect.
 
 ## Found a Bug?
-To file a new issue:
-
-1. Open the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Open Settings (UI)", and press Enter.
-2. Search for "trace" in the search bar. Under "Dotnet > Server: Trace" select "Trace" from the drop down. This will provide more output information.
-3. Reload the window by opening the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type "Reload Window", and press Enter.
-4. Next, check the C# logs in the Output Window by opening it with Ctrl+Shift+U (Cmd+Shift+U on macOS), and select C# from the dropdown.
-5. Select and copy all the text in the log, and then report the issue through VS Code.
-6. Open the Command Palette with Ctrl+Shift+P (Cmd+Shift+P on macOS), type “CSharp: Report an issue”, and press Enter.
-7. This will open a window with all the necessary information related to the C# extension, dotnet version, mono version, etc.
-8. Paste the previously copied C# log into the “Steps to Reproduce” field. Please also include a description of what you were doing/attempting to do at the time the problem occurred.
-9. Click the “Preview on GitHub” button, and then file the issue.
-
-Alternatively, you could visit https://github.com/dotnet/vscode-csharp/issues and file a new issue there.
+To file a new issue, follow the instructions at https://github.com/dotnet/vscode-csharp/blob/main/SUPPORT.md.
 
 ## Contributing
 
@@ -50,14 +38,14 @@ Alternatively, you could visit https://github.com/dotnet/vscode-csharp/issues an
 
 Copyright © .NET Foundation, and contributors.
 
-The Microsoft C# extension is subject to [these license terms](RuntimeLicenses/license.txt).
+The Microsoft C# extension is subject to [these license terms](https://github.com/dotnet/vscode-csharp/blob/main/RuntimeLicenses/license.txt).
 The source code to this extension is available on [https://github.com/dotnet/vscode-csharp](https://github.com/dotnet/vscode-csharp) and licensed under the [MIT license](LICENSE.txt).
 
 ### Code of Conduct
 
 This project has adopted the code of conduct defined by the [Contributor Covenant](http://contributor-covenant.org/)
 to clarify expected behavior in our community.
-For more information see the [.NET Foundation Code of Conduct](http://www.dotnetfoundation.org/code-of-conduct).
+For more information see the [.NET Foundation Code of Conduct](https://www.dotnetfoundation.org/code-of-conduct).
 
 ### Contribution License Agreement
 

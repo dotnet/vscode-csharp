@@ -13,6 +13,7 @@
     - [Configuring Razor Language Server](#configuring-razor-language-server)
 - [Creating VSIX Packages for the Extension](#creating-vsix-packages-for-the-extension)
 - [Updating the `Roslyn` Language Server Version](#updating-the-roslyn-language-server-version)
+- [Snapping for releases](#snapping-for-releases)
 
 ## Setting Up Local Development Environment
 
@@ -35,11 +36,15 @@ Follow these steps to build, run, and test the repository:
 
 #### Building
 
+If you have the ability to run powershell, you can invoke "init.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
+
 1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
+   a.  If you have already authenticated before, but the token expired, you may need to run `vsts-npm-auth -config .npmrc -f` instead.
 2. Run `npm i` - This command installs the project dependencies.
 3. Run `npm i -g gulp` - This command installs Gulp globally.
 4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
-5. Run `code .` - This command opens the project in Visual Studio Code.
+
+You can now run `code .` - This command opens the project in Visual Studio Code.
 
 #### Running
 
@@ -51,7 +56,8 @@ After completing the build steps:
 
 #### Testing
 
-To run all tests, execute `npm run test`.
+To run all unit tests, execute `npm run test:unit`.
+To run all integration tests execute `npm run test:integration`
 
 To debug unit tests locally, press <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration selected.
 
@@ -80,7 +86,7 @@ The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnal
 1. Clone the [Razor repository](https://github.com/dotnet/razor). This repository contains the Razor server implementation.
 2. Follow the build instructions provided in the repository.
 
-The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net8.0`.
+The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net9.0`.
 
 ### Debugging Local Language Servers
 
@@ -112,32 +118,42 @@ This section provides instructions on how to debug locally built Roslyn and Razo
 
 #### Configuring Roslyn Language Server
 
-In your workspace `settings.json` file, add the following lines:
+Add the following lines to your `settings.json`. Replace `<roslynRepoRoot>` with the actual path to your Roslyn repository.
 
 ```json
 "dotnet.server.waitForDebugger": true,
 "dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll"
 ```
 
-Replace <roslynRepoRoot> with the actual path to your Roslyn repository.
+---
+
+**If using C# Dev Kit**, you also need to override the Roslyn DevKit component in your `settings.json`. This step is not necessary if you are not loading the Dev Kit extension.
+```json
+"dotnet.server.componentPaths": {
+    "roslynDevKit": "<roslynRepoRoot>/artifacts/bin/Microsoft.VisualStudio.LanguageServices.DevKit/Debug/net9.0"
+},
+```
+
+---
 
 Or, in VSCode settings (`Ctrl+,`):
 
 1. Search for `dotnet server`.
 2. Set `dotnet.server.path` to the path of your Roslyn DLL.
 3. Enable `dotnet.server.waitForDebugger`.
+4. (Optional) - add the component to `dotnet.server.componentPaths` (see above).
 
 #### Configuring Razor Language Server
 
-In your workspace settings.json file, add the following lines:
+Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with the actual path to your Razor repository.
 
 ```json
 "razor.languageServer.debug": true,
-"razor.languageServer.directory": "<razorRepoRoot>/artifacts/bin/rzls/Debug/net8.0",
+"razor.languageServer.directory": "<razorRepoRoot>/artifacts/bin/rzls/Debug/net9.0",
 "razor.server.trace": "Debug"
 ```
 
-Replace `$razorRepoRoot` with your actual values.
+---
 
 Or, in VSCode settings (`Ctrl+,`):
 
@@ -157,7 +173,7 @@ To package this extension, we need to create VSIX Packages. The VSIX packages ca
 
 ## Updating the `Roslyn` Language Server Version
 
-In order to pull in new packages from upstreams into the msft_consumption feed we use for restoring, you will need to be a member of the 'CSharp VS Code Extension contributors' group in the [Azure Devops instance](https://dev.azure.com/azure-public/vside/_settings/teams).  
+In order to pull in new packages from upstreams into the msft_consumption feed we use for restoring, you will need to be a member of the 'CSharp VS Code Extension contributors' group in the [Azure Devops instance](https://dev.azure.com/azure-public/vside/_settings/teams).
 
 To update the version of the roslyn server used by the extension do the following:
 1.  Find the the Roslyn signed build you want from [here](https://dnceng.visualstudio.com/internal/_build?definitionId=327&_a=summary).  Typically the latest successful build of main is fine.
@@ -165,3 +181,24 @@ To update the version of the roslyn server used by the extension do the followin
 3.  In the [package.json](package.json) inside the `defaults` section update the `roslyn` key to point to the version number you found above in step 2.
 4.  Ensure that version of the package is in the proper feeds by running `gulp updateRoslynVersion`. Note: you may need to install the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
 5.  Build and test the change. If everything looks good, submit a PR.
+
+## Snapping for releases
+Extension releases on the marketplace are done from the prerelease and release branches (corresponding to the prerelease or release version of the extension).  Code flows from main -> prerelease -> release.  Every week we snap main -> prerelease.  Monthly, we snap prerelease -> release.
+
+### Snap main -> prerelease
+The snap is done via the "Branch snap" github action.  To run the snap from main -> prerelease, run the action via "Run workflow" and choose main as the base branch.
+![branch snap action](./docs/main_snap.png)
+
+This will generate two PRs that must be merged.  One merging the main branch into prerelease, and the other bumps the version in main.
+![generated prs](./docs/generated_prs.png)
+
+### Snap prerelease -> release
+To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a single PR merging from prerelease to release.
+
+### Marketplace release
+The marketplace release is managed by an internal AzDo pipeline.  On the pipeline page, hit run pipeline.  This will bring up the pipeline parameters to fill out:
+1.  The branch will **always** be main, no matter if release a build from prerelease or release.
+2.  Uncheck the "test" option.
+3.  In "Resources", choose "dotnet-vscode-csharp [officialBuildCI]", then check only the build that should be released, and then confirm with "Use selected run".  Based on the selected build, it will automatically determine if it is prerelease or release. ![release pipeline image](./docs/release_pipeline.png)
+4.  The pipeline parameters should then look something like the following image.  Hit "Run". ![release pipeline parameters image](./docs/release_pipeline_params.png)
+5.  After a bit, the pipeline will request approval from an authorized approver before it actually uploads to the marketplace.  Hit approve and it will continue.

@@ -51,6 +51,7 @@ import { InlayHintHandler } from './inlayHint/inlayHintHandler';
 import { InlayHintResolveHandler } from './inlayHint/inlayHintResolveHandler';
 import { getComponentPaths } from '../../lsptoolshost/extensions/builtInComponents';
 import { BlazorDebugConfigurationProvider } from './blazorDebug/blazorDebugConfigurationProvider';
+import { MappingHandler } from './mapping/mappingHandler';
 
 // We specifically need to take a reference to a particular instance of the vscode namespace,
 // otherwise providers attempt to operate on the null extension.
@@ -62,6 +63,7 @@ export async function activate(
     vscodeTelemetryReporter: TelemetryReporter,
     csharpDevkitExtension: vscode.Extension<CSharpDevKitExports> | undefined,
     platformInfo: PlatformInformation,
+    logger: RazorLogger,
     enableProposedApis = false
 ) {
     const razorTelemetryReporter = new RazorTelemetryReporter(eventStream);
@@ -69,14 +71,23 @@ export async function activate(
         create: <T>() => new vscode.EventEmitter<T>(),
     };
 
-    const logger = new RazorLogger(eventEmitterFactory);
-
     try {
         const razorOptions: RazorLanguageServerOptions = resolveRazorLanguageServerOptions(
             vscodeType,
             languageServerDir,
             logger
         );
+
+        if (razorOptions.cohostingEnabled) {
+            // TODO: We still need a document manager for Html, so need to do _some_ of the below, just not sure what yet,
+            // and it needs to be able to take a roslynLanguageServerClient instead of a razorLanguageServerClient I guess.
+
+            logger.logTrace(
+                'Razor cohosting is enabled, skipping language server activation. No rzls process will be created.'
+            );
+
+            return;
+        }
 
         const hostExecutableResolver = new DotnetRuntimeExtensionResolver(
             platformInfo,
@@ -113,8 +124,6 @@ export async function activate(
             logger
         );
 
-        const languageServiceClient = new RazorLanguageServiceClient(languageServerClient);
-
         const documentManager = new RazorDocumentManager(
             languageServerClient,
             logger,
@@ -122,13 +131,15 @@ export async function activate(
             platformInfo
         );
 
+        const languageServiceClient = new RazorLanguageServiceClient(languageServerClient, documentManager);
+
         const documentSynchronizer = new RazorDocumentSynchronizer(documentManager, logger);
         reportTelemetryForDocuments(documentManager, razorTelemetryReporter);
         const languageConfiguration = new RazorLanguageConfiguration();
         const csharpFeature = new RazorCSharpFeature(documentManager, eventEmitterFactory, logger);
         const htmlFeature = new RazorHtmlFeature(documentManager, languageServiceClient, eventEmitterFactory, logger);
         const localRegistrations: vscode.Disposable[] = [];
-        const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, logger);
+        const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, undefined, logger);
         const razorCodeActionRunner = new RazorCodeActionRunner(languageServerClient, logger);
         const codeActionsHandler = new CodeActionsHandler(
             documentManager,
@@ -251,6 +262,8 @@ export async function activate(
                 logger
             );
 
+            const mappingHandler = new MappingHandler(languageServiceClient);
+
             localRegistrations.push(
                 languageConfiguration.register(),
                 vscodeType.languages.registerSignatureHelpProvider(RazorLanguage.id, signatureHelpProvider, '(', ','),
@@ -288,6 +301,7 @@ export async function activate(
                 completionHandler.register(),
                 razorSimplifyMethodHandler.register(),
                 razorFormatNewFileHandler.register(),
+                mappingHandler.register(),
             ]);
         });
 

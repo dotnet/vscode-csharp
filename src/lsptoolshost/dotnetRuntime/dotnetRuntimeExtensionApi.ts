@@ -5,19 +5,26 @@
 
 // Contains APIs defined by the vscode-dotnet-runtime extension
 
+/**
+ * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/IDotnetAcquireResult.ts
+ */
 export interface IDotnetAcquireResult {
     dotnetPath: string;
 }
 
+/**
+ * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/IDotnetFindPathContext.ts
+ */
 export interface IDotnetFindPathContext {
     acquireContext: IDotnetAcquireContext;
     versionSpecRequirement: DotnetVersionSpecRequirement;
+    rejectPreviews?: boolean;
 }
 
 /**
  * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/IDotnetAcquireContext.ts
  */
-interface IDotnetAcquireContext {
+export interface IDotnetAcquireContext {
     version: string;
     requestingExtensionId?: string;
     errorConfiguration?: AcquireErrorConfiguration;
@@ -42,7 +49,7 @@ enum AcquireErrorConfiguration {
 /**
  * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/Acquisition/DotnetInstallMode.ts
  */
-type DotnetInstallMode = 'sdk' | 'runtime' | 'aspnetcore';
+export type DotnetInstallMode = 'sdk' | 'runtime' | 'aspnetcore';
 
 /**
  * https://github.com/dotnet/vscode-dotnet-runtime/blob/main/vscode-dotnet-runtime-library/src/DotnetVersionSpecRequirement.ts

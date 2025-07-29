@@ -27,6 +27,7 @@ import {
     xamlToolsDirectory,
     razorLanguageServerDirectory,
     razorDevKitDirectory,
+    razorExtensionDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
 import { createPackageAsync, generateVsixManifest } from '../tasks/vsceTasks';
@@ -59,7 +60,7 @@ export const platformSpecificPackages: VSIXPlatformInfo[] = [
     { vsceTarget: 'darwin-arm64', rid: 'osx-arm64', platformInfo: new PlatformInformation('darwin', 'arm64') },
 ];
 
-interface NugetPackageInfo {
+export interface NugetPackageInfo {
     getPackageName: (platformInfo: VSIXPlatformInfo | undefined) => string;
     packageJsonName: string;
     getPackageContentPath: (platformInfo: VSIXPlatformInfo | undefined) => string;
@@ -97,6 +98,12 @@ export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
         packageJsonName: 'razor',
         getPackageContentPath: (_platformInfo) => 'content',
         vsixOutputPath: razorDevKitDirectory,
+    },
+    razorExtension: {
+        getPackageName: (_platformInfo) => 'Microsoft.VisualStudioCode.RazorExtension',
+        packageJsonName: 'razor',
+        getPackageContentPath: (_platformInfo) => 'content',
+        vsixOutputPath: razorExtensionDirectory,
     },
 };
 
@@ -185,6 +192,9 @@ gulp.task(
 
         // Also pull in the Razor DevKit dependencies nuget package.
         await acquireNugetPackage(allNugetPackages.razorDevKit, undefined, getPackageJSON(), true);
+
+        // Pull in the .razorExtension code that gets loaded in the roslyn language server
+        await acquireNugetPackage(allNugetPackages.razorExtension, undefined, getPackageJSON(), true);
     }, 'installDependencies')
 );
 

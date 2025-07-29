@@ -6,7 +6,7 @@
 import { IProjectedDocument } from '../projection/IProjectedDocument';
 import { ServerTextChange } from '../rpc/serverTextChange';
 import { getUriPath } from '../uriPaths';
-import { Position } from 'vscode-languageclient';
+import { Position } from 'vscode-languageserver-protocol';
 import * as vscode from '../vscodeAdapter';
 
 export class CSharpProjectedDocument implements IProjectedDocument {

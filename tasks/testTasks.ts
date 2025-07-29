@@ -33,13 +33,6 @@ gulp.task('test:artifacts', async () => {
 // Overall test command that runs everything except O# tests.
 gulp.task('test', gulp.series('test:unit', 'test:integration'));
 
-// Bit of a special task for CI.  We want to generally combine test runs to save preparation time.
-// However the Dev Kit integration tests are much slower than everything else (VSCode restarts on each test file).
-// So we can have one run for all of the general C# extension tests, and then another for Dev Kit integration tests.
-gulp.task('test:withoutDevKit', gulp.series('test:unit', 'test:integration:csharp', 'test:razorintegration'));
-
-gulp.task('test:razor', gulp.series('test:unit:razor', 'test:razorintegration'));
-
 // OmniSharp tests are run separately in CI, so we have separate tasks for these.
 // TODO: Enable lsp integration tests once tests for unimplemented features are disabled.
 gulp.task('omnisharptest', gulp.series('omnisharptest:unit', 'omnisharptest:integration:stdio'));
@@ -81,8 +74,24 @@ function createIntegrationTestSubTasks() {
         gulp.series(integrationTestProjects.map((projectName) => `test:integration:devkit:${projectName}`))
     );
 
+    gulp.task('test:integration:untrusted', async () =>
+        runIntegrationTest('empty', path.join('untrustedWorkspace', 'integrationTests'), `[C#][empty]`)
+    );
+
     for (const projectName of razorIntegrationTestProjects) {
-        gulp.task(`test:razorintegration:${projectName}`, async () =>
+        gulp.task(`test:integration:razor:${projectName}`, async () =>
+            // Run DevKit tests because razor doesn't gracefully handle roslyn restarting
+            // in tests. DevKit prevents that behavior by handling project restore without
+            // requiring it.
+            runDevKitIntegrationTests(
+                projectName,
+                path.join('razor', 'razorIntegrationTests'),
+                `Razor Test Integration ${projectName}`
+            )
+        );
+
+        gulp.task(`test:integration:razor:cohost:${projectName}`, async () =>
+            // Register each test again, but as a regular test, which will run with cohosting on
             runIntegrationTest(
                 projectName,
                 path.join('razor', 'razorIntegrationTests'),
@@ -92,13 +101,23 @@ function createIntegrationTestSubTasks() {
     }
 
     gulp.task(
-        'test:razorintegration',
-        gulp.series(razorIntegrationTestProjects.map((projectName) => `test:razorintegration:${projectName}`))
+        'test:integration:razor',
+        gulp.series(razorIntegrationTestProjects.map((projectName) => `test:integration:razor:${projectName}`))
+    );
+
+    gulp.task(
+        'test:integration:razor:cohost',
+        gulp.series(razorIntegrationTestProjects.map((projectName) => `test:integration:razor:cohost:${projectName}`))
     );
 
     gulp.task(
         'test:integration',
-        gulp.series('test:integration:csharp', 'test:integration:devkit', 'test:razorintegration')
+        gulp.series(
+            'test:integration:csharp',
+            'test:integration:devkit',
+            'test:integration:razor',
+            'test:integration:untrusted'
+        )
     );
 }
 

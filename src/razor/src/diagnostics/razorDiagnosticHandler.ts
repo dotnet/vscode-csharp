@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { DocumentDiagnosticReport, DocumentDiagnosticParams, RequestType } from 'vscode-languageclient';
+import { DocumentDiagnosticParams, DocumentDiagnosticReport, RequestType } from 'vscode-languageserver-protocol';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
@@ -13,14 +13,15 @@ import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
 import { roslynPullDiagnosticCommand } from '../../../lsptoolshost/razor/razorCommands';
+import { SerializableTextDocumentIdentifierAndVersion } from '../simplify/serializableTextDocumentIdentifierAndVersion';
 
 export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
     private static readonly razorPullDiagnosticsCommand = 'razor/csharpPullDiagnostics';
-    private diagnosticRequestType: RequestType<DocumentDiagnosticParams, DocumentDiagnosticReport, any> =
+    private diagnosticRequestType: RequestType<DelegatedDiagnosticParams, DocumentDiagnosticReport, any> =
         new RequestType(RazorDiagnosticHandler.razorPullDiagnosticsCommand);
 
     constructor(
-        documentSynchronizer: RazorDocumentSynchronizer,
+        protected readonly documentSynchronizer: RazorDocumentSynchronizer,
         protected readonly serverClient: RazorLanguageServerClient,
         protected readonly serviceClient: RazorLanguageServiceClient,
         protected readonly documentManager: RazorDocumentManager,
@@ -31,31 +32,55 @@ export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
 
     public async register() {
         await this.serverClient.onRequestWithParams<
-            DocumentDiagnosticParams,
+            DelegatedDiagnosticParams,
             DocumentDiagnosticReport | undefined,
             any
-        >(this.diagnosticRequestType, async (request: DocumentDiagnosticParams, token: vscode.CancellationToken) =>
+        >(this.diagnosticRequestType, async (request: DelegatedDiagnosticParams, token: vscode.CancellationToken) =>
             this.getDiagnostic(request, token)
         );
     }
 
     private async getDiagnostic(
-        request: DocumentDiagnosticParams,
-        _: vscode.CancellationToken
+        request: DelegatedDiagnosticParams,
+        token: vscode.CancellationToken
     ): Promise<DocumentDiagnosticReport | undefined> {
         if (!this.documentManager.roslynActivated) {
             return undefined;
         }
 
-        const razorDocumentUri = vscode.Uri.parse(request.textDocument.uri, true);
+        const razorDocumentUri = vscode.Uri.parse(request.identifier.textDocumentIdentifier.uri, true);
+        const textDocument = await vscode.workspace.openTextDocument(razorDocumentUri);
         const razorDocument = await this.documentManager.getDocument(razorDocumentUri);
+
+        const synchronized = await this.documentSynchronizer.trySynchronizeProjectedDocument(
+            textDocument,
+            razorDocument.csharpDocument,
+            request.identifier.version,
+            token
+        );
+
+        if (!synchronized) {
+            return undefined;
+        }
+
         const virtualCSharpUri = razorDocument.csharpDocument.uri;
-        request.textDocument.uri = UriConverter.serialize(virtualCSharpUri);
+
+        const roslynRequest: DocumentDiagnosticParams = {
+            textDocument: {
+                uri: UriConverter.serialize(virtualCSharpUri),
+            },
+        };
+
         const response: DocumentDiagnosticReport = await vscode.commands.executeCommand(
             roslynPullDiagnosticCommand,
-            request
+            roslynRequest
         );
 
         return response;
     }
+}
+
+interface DelegatedDiagnosticParams {
+    identifier: SerializableTextDocumentIdentifierAndVersion;
+    correlationId: string;
 }

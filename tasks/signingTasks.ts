@@ -41,11 +41,17 @@ async function installSignPlugin(): Promise<void> {
 
 async function signJs(): Promise<void> {
     const logPath = getLogPath();
-    if (process.env.SignType === 'test' && process.platform !== 'win32') {
+    const signType = process.env.SignType;
+    if (!signType) {
+        console.warn('SignType environment variable is not set, skipping JS signing');
+        return;
+    }
+
+    if (signType === 'test' && process.platform !== 'win32') {
         console.log('Test signing is not supported on non-windows platforms. Skipping JS signing.');
         return;
     }
-    console.log(`Signing JS as ${process.env.SignType}`);
+    console.log(`Signing JS as ${signType}`);
     await execDotnet([
         'build',
         path.join(rootPath, 'msbuild', 'signing', 'signJs'),
@@ -56,11 +62,17 @@ async function signJs(): Promise<void> {
 
 async function signVsix(): Promise<void> {
     const logPath = getLogPath();
-    if (process.env.SignType === 'test' && process.platform !== 'win32') {
+    const signType = process.env.SignType;
+    if (!signType) {
+        console.warn('SignType environment variable is not set, skipping VSIX signing');
+        return;
+    }
+
+    if (signType === 'test' && process.platform !== 'win32') {
         console.log('Test signing is not supported on non-windows platforms. Skipping VSIX signing.');
         return;
     }
-    console.log(`Signing VSIX as ${process.env.SignType}`);
+    console.log(`Signing VSIX as ${signType}`);
     await execDotnet([
         'build',
         path.join(rootPath, 'msbuild', 'signing', 'signVsix'),

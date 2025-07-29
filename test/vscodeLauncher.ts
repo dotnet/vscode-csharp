@@ -15,7 +15,7 @@ export async function prepareVSCodeAndExecuteTests(
     userDataDir: string,
     env: NodeJS.ProcessEnv
 ): Promise<number> {
-    let vscodeVersion = 'stable';
+    let vscodeVersion = 'insiders';
     if (process.env.CODE_VERSION) {
         console.log(`VSCode version overriden to ${process.env.CODE_VERSION}.`);
         vscodeVersion = process.env.CODE_VERSION;
@@ -30,9 +30,9 @@ export async function prepareVSCodeAndExecuteTests(
     // Rather than having to uninstall Dev Kit between different test runs, we use workspace settings
     // to control which extensions are active - and we always install Dev Kit.
     const extensionsToInstall = [
-        'ms-dotnettools.vscode-dotnet-runtime',
+        'ms-dotnettools.vscode-dotnet-runtime@2.3.4',
         'ms-dotnettools.csharp',
-        'ms-dotnettools.csdevkit',
+        'ms-dotnettools.csdevkit@1.16.6',
     ];
 
     await installExtensions(extensionsToInstall, cli, args);
@@ -84,7 +84,7 @@ async function installExtensions(extensionIds: string[], vscodeCli: string, vsco
         shell: true,
     });
     if (result.error || result.status !== 0) {
-        throw new Error(`Failed to install the runtime extension: ${JSON.stringify(result)}`);
+        throw new Error(`Failed to install extensions: ${JSON.stringify(result)}`);
     }
 
     console.log();

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CodeAction, RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
+import { CodeAction, RequestType, TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';

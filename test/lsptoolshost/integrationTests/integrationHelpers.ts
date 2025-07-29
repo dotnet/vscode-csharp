@@ -60,15 +60,19 @@ export function usingDevKit(): boolean {
 }
 
 export async function openFileInWorkspaceAsync(relativeFilePath: string): Promise<vscode.Uri> {
+    const uri = getFilePath(relativeFilePath);
+    await vscode.commands.executeCommand('vscode.open', uri);
+    return uri;
+}
+
+export function getFilePath(relativeFilePath: string): vscode.Uri {
     const root = vscode.workspace.workspaceFolders![0].uri.fsPath;
     const filePath = path.join(root, relativeFilePath);
     if (!existsSync(filePath)) {
         throw new Error(`File ${filePath} does not exist`);
     }
 
-    const uri = vscode.Uri.file(filePath);
-    await vscode.commands.executeCommand('vscode.open', uri);
-    return uri;
+    return vscode.Uri.file(filePath);
 }
 
 export async function closeAllEditorsAsync(): Promise<void> {
@@ -255,6 +259,16 @@ export async function expectText(document: vscode.TextDocument, expectedLines: s
     expect(document.getText()).toBe(expectedText);
 }
 
+export function expectPath(expected: vscode.Uri, actual: vscode.Uri) {
+    if (isLinux()) {
+        expect(actual.path).toBe(expected.path);
+    } else {
+        const actualPath = actual.path.toLowerCase();
+        const expectedPath = expected.path.toLocaleLowerCase();
+        expect(actualPath).toBe(expectedPath);
+    }
+}
+
 export const describeIfCSharp = describeIf(!usingDevKit());
 export const describeIfDevKit = describeIf(usingDevKit());
 export const describeIfNotMacOS = describeIf(!isMacOS());
@@ -280,4 +294,8 @@ function isMacOS() {
 function isWindows() {
     const currentPlatform = platform();
     return currentPlatform === 'win32';
+}
+
+function isLinux() {
+    return !(isMacOS() || isWindows());
 }

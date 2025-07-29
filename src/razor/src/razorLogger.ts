@@ -7,21 +7,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
-import { IEventEmitterFactory } from './IEventEmitterFactory';
 import { RazorLanguageServerClient } from './razorLanguageServerClient';
+import { MessageType } from 'vscode-languageserver-protocol';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
     public static readonly logName = 'Razor Log';
-    public verboseEnabled!: boolean;
-    public messageEnabled!: boolean;
+    public traceEnabled!: boolean;
+    public debugEnabled!: boolean;
+    public infoEnabled!: boolean;
     public readonly outputChannel: vscode.LogOutputChannel;
     public languageServerClient: RazorLanguageServerClient | undefined;
 
     private readonly onLogEmitter: vscodeAdapter.EventEmitter<string>;
 
-    constructor(eventEmitterFactory: IEventEmitterFactory) {
+    constructor() {
         this.outputChannel = vscode.window.createOutputChannel(vscode.l10n.t('Razor Log'), { log: true });
-        this.onLogEmitter = eventEmitterFactory.create<string>();
+        this.onLogEmitter = new vscode.EventEmitter<string>();
         this.processTraceLevel();
 
         this.outputChannel.onDidChangeLogLevel(async () => {
@@ -82,17 +83,44 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         }
     }
 
-    public logMessage(message: string) {
-        if (this.messageEnabled) {
+    public logInfo(message: string) {
+        if (this.infoEnabled) {
             this.outputChannel.info(message);
             this.onLogEmitter.fire(message);
         }
     }
 
-    public logVerbose(message: string) {
-        if (this.verboseEnabled) {
+    public logDebug(message: string) {
+        if (this.debugEnabled) {
+            this.outputChannel.debug(message);
+            this.onLogEmitter.fire(message);
+        }
+    }
+
+    public logTrace(message: string) {
+        if (this.traceEnabled) {
             this.outputChannel.trace(message);
             this.onLogEmitter.fire(message);
+        }
+    }
+
+    public log(message: string, level: MessageType) {
+        switch (level) {
+            case MessageType.Error:
+                this.logError(message, new Error(message));
+                break;
+            case MessageType.Warning:
+                this.logWarning(message);
+                break;
+            case MessageType.Info:
+                this.logInfo(message);
+                break;
+            case MessageType.Debug:
+                this.logDebug(message);
+                break;
+            case MessageType.Log:
+            default:
+                this.logTrace(message);
         }
     }
 
@@ -147,8 +175,9 @@ ${error.stack}`;
     }
 
     private processTraceLevel() {
-        this.verboseEnabled = this.outputChannel.logLevel >= vscode.LogLevel.Trace;
-        this.messageEnabled = this.outputChannel.logLevel >= vscode.LogLevel.Info;
+        this.traceEnabled = this.outputChannel.logLevel <= vscode.LogLevel.Trace;
+        this.debugEnabled = this.outputChannel.logLevel <= vscode.LogLevel.Debug;
+        this.infoEnabled = this.outputChannel.logLevel <= vscode.LogLevel.Info;
     }
 }
 

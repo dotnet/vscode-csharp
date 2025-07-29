@@ -10,21 +10,25 @@ import * as uuid from 'uuid';
 import * as net from 'net';
 import {
     LanguageClientOptions,
+    MessageTransports,
+    NotificationHandler,
+    NotificationType,
+    ProtocolRequestType,
     ServerOptions,
-    State,
+} from 'vscode-languageclient';
+import {
     Trace,
     RequestType,
     RequestType0,
-    PartialResultParams,
-    ProtocolRequestType,
-    SocketMessageWriter,
-    SocketMessageReader,
-    MessageTransports,
     RAL,
     CancellationToken,
     RequestHandler,
     ResponseError,
     NotificationHandler0,
+    PartialResultParams,
+    State,
+    SocketMessageReader,
+    SocketMessageWriter,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../../shared/platform';
 import { readConfigurations } from '../options/configurationMiddleware';
@@ -42,6 +46,7 @@ import {
 import { randomUUID } from 'crypto';
 import { IHostExecutableResolver } from '../../shared/constants/IHostExecutableResolver';
 import { RoslynLanguageClient } from './roslynLanguageClient';
+import { provideDiagnostics, provideWorkspaceDiagnostics } from '../diagnostics/diagnosticMiddleware';
 import { reportProjectConfigurationEvent } from '../../shared/projectConfiguration';
 import { getDotnetInfo } from '../../shared/utils/getDotnetInfo';
 import { DotnetInfo } from '../../shared/utils/dotnetInfo';
@@ -93,6 +98,11 @@ export class RoslynLanguageServer {
      * The timeout for stopping the language server (in ms).
      */
     private static _stopTimeout = 10000;
+
+    /**
+     * The process Id of the currently running language server process.
+     */
+    private static _processId: number | undefined;
 
     /**
      * The solution file previously opened; we hold onto this so we can send this back over if the server were to be relaunched for any reason, like some other configuration
@@ -150,6 +160,10 @@ export class RoslynLanguageServer {
         return this._state;
     }
 
+    public get processId(): number | undefined {
+        return RoslynLanguageServer._processId;
+    }
+
     private registerSetTrace() {
         // Set the language client trace level based on the log level option.
         // setTrace only works after the client is already running.
@@ -183,11 +197,13 @@ export class RoslynLanguageServer {
                     state: ServerState.Started,
                     workspaceLabel: this.workspaceDisplayName(),
                 });
+                this._telemetryReporter.sendTelemetryEvent(TelemetryEventNames.ClientServerReady);
             } else if (state.newState === State.Stopped) {
                 this._languageServerEvents.onServerStateChangeEmitter.fire({
                     state: ServerState.Stopped,
                     workspaceLabel: vscode.l10n.t('Server stopped'),
                 });
+                RoslynLanguageServer._processId = undefined;
             }
         });
     }
@@ -252,6 +268,11 @@ export class RoslynLanguageServer {
         channel: vscode.LogOutputChannel,
         traceChannel: vscode.OutputChannel
     ): Promise<RoslynLanguageServer> {
+        const devKit = getCSharpDevKit();
+        if (devKit) {
+            await devKit.activate();
+        }
+
         const serverOptions: ServerOptions = async () => {
             return await this.startServer(
                 platformInfo,
@@ -284,6 +305,8 @@ export class RoslynLanguageServer {
                 protocol2Code: UriConverter.deserialize,
             },
             middleware: {
+                provideDiagnostics,
+                provideWorkspaceDiagnostics,
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },
@@ -338,7 +361,7 @@ export class RoslynLanguageServer {
      * Returns whether or not the underlying LSP server is running or not.
      */
     public isRunning(): boolean {
-        return this._languageClient.state === State.Running;
+        return this._languageClient.isRunning();
     }
 
     /**
@@ -425,6 +448,13 @@ export class RoslynLanguageServer {
 
     public registerOnNotification(method: string, handler: NotificationHandler0) {
         this._languageClient.addDisposable(this._languageClient.onNotification(method, handler));
+    }
+
+    public registerOnNotificationWithParams<Params>(
+        type: NotificationType<Params>,
+        handler: NotificationHandler<Params>
+    ) {
+        this._languageClient.addDisposable(this._languageClient.onNotification(type, handler));
     }
 
     public async registerSolutionSnapshot(token: vscode.CancellationToken): Promise<SolutionSnapshotId> {
@@ -607,7 +637,19 @@ export class RoslynLanguageServer {
                 ? path.join(context.extension.extensionPath, '.razor')
                 : razorOptions.razorServerPath;
 
-        args.push('--razorSourceGenerator', path.join(razorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
+        let razorComponentPath = '';
+        getComponentPaths('razorExtension', languageServerOptions).forEach((extPath) => {
+            additionalExtensionPaths.push(extPath);
+            razorComponentPath = path.dirname(extPath);
+        });
+
+        // If cohosting is enabled we get the source generator from the razor component path
+        const razorSourceGeneratorPath = razorOptions.cohostingEnabled ? razorComponentPath : razorPath;
+
+        args.push(
+            '--razorSourceGenerator',
+            path.join(razorSourceGeneratorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
+        );
 
         args.push(
             '--razorDesignTimePath',
@@ -643,7 +685,7 @@ export class RoslynLanguageServer {
             const csharpDevKitArgs = this.getCSharpDevKitExportArgs(additionalExtensionPaths);
             args = args.concat(csharpDevKitArgs);
 
-            await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension);
+            await this.setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, additionalExtensionPaths);
         } else {
             // C# Dev Kit is not installed - continue C#-only activation.
             channel.info('Activating C# standalone...');
@@ -696,6 +738,8 @@ export class RoslynLanguageServer {
 
             childProcess = cp.spawn(serverPath, args, cpOptions);
         }
+
+        RoslynLanguageServer._processId = childProcess.pid;
 
         telemetryReporter.sendTelemetryEvent(TelemetryEventNames.LaunchedServer);
 
@@ -881,6 +925,9 @@ export class RoslynLanguageServer {
         // When a file is opened process any build diagnostics that may be shown
         this._languageClient.addDisposable(
             vscode.workspace.onDidOpenTextDocument(async (event) => {
+                if (event.languageId !== 'csharp') {
+                    return;
+                }
                 try {
                     const buildIds = await this.getBuildOnlyDiagnosticIds(CancellationToken.None);
                     await this._buildDiagnosticService._onFileOpened(event, buildIds);
@@ -961,6 +1008,7 @@ export class RoslynLanguageServer {
                 additionalExtensionPaths.push(path)
             );
         }
+
         return args;
     }
 
@@ -1015,17 +1063,20 @@ export class RoslynLanguageServer {
 
     private static async setupDevKitEnvironment(
         env: NodeJS.ProcessEnv,
-        csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>
+        csharpDevkitExtension: vscode.Extension<CSharpDevKitExports>,
+        additionalExtensionPaths: string[]
     ): Promise<void> {
         const exports: CSharpDevKitExports = await csharpDevkitExtension.activate();
 
         // setupTelemetryEnvironmentAsync was a later addition to devkit (not in preview 1)
         // so it may not exist in whatever version of devkit the user has installed
-        if (!exports.setupTelemetryEnvironmentAsync) {
-            return;
+        if (exports.setupTelemetryEnvironmentAsync) {
+            await exports.setupTelemetryEnvironmentAsync(env);
         }
 
-        await exports.setupTelemetryEnvironmentAsync(env);
+        getComponentPaths('roslynCopilot', languageServerOptions).forEach((extPath) => {
+            additionalExtensionPaths.push(extPath);
+        });
     }
 
     /**

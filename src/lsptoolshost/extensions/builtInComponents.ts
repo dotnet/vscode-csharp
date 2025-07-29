@@ -32,6 +32,16 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         optionName: 'razorDevKit',
         componentDllPaths: ['Microsoft.VisualStudio.DevKit.Razor.dll'],
     },
+    razorExtension: {
+        defaultFolderName: '.razorExtension',
+        optionName: 'razorExtension',
+        componentDllPaths: ['Microsoft.VisualStudioCode.RazorExtension.dll'],
+    },
+    roslynCopilot: {
+        defaultFolderName: '.roslynCopilot',
+        optionName: 'roslynCopilot',
+        componentDllPaths: ['Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll'],
+    },
 };
 
 export function getComponentPaths(componentName: string, options: LanguageServerOptions | undefined): string[] {

@@ -22,7 +22,7 @@ import {
 } from 'vscode-languageserver-protocol';
 
 import * as RoslynProtocol from '../server/roslynProtocol';
-import { generateUuid } from 'vscode-languageclient/lib/common/utils/uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAutoInsertRegistrationOptions> {
     private readonly _client: LanguageClient;
@@ -56,7 +56,7 @@ export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAuto
             this._registrations.delete(id);
         }
     }
-    dispose(): void {
+    clear(): void {
         this._registrations.clear();
     }
 
@@ -92,7 +92,7 @@ export class OnAutoInsertFeature implements DynamicFeature<RoslynProtocol.OnAuto
             return;
         }
         this.register({
-            id: generateUuid(),
+            id: uuidv4(),
             registerOptions: options,
         });
     }

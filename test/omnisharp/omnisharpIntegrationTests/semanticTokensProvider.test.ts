@@ -56,6 +56,7 @@ describeIfNotRazorOrGenerator(`SemanticTokensProvider: ${testAssetWorkspace.desc
 
     beforeAll(async function () {
         const activation = await activateCSharpExtension();
+        await testAssetWorkspace.restore();
 
         const fileName = 'semantictokens.cs';
         const projectDirectory = testAssetWorkspace.projects[0].projectDirectoryPath;

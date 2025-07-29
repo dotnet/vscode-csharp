@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { CodeAction, CodeActionResolveRequest, LSPAny } from 'vscode-languageserver-protocol';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { URIConverter, createConverter } from 'vscode-languageclient/lib/common/protocolConverter';
+import { URIConverter, createConverter } from 'vscode-languageclient/protocolConverter';
 import { UriConverter } from '../utils/uriConverter';
 import { getFixAllResponse } from './fixAllCodeAction';
 
@@ -75,7 +75,7 @@ async function registerNestedResolveCodeAction(
 
                         const uriConverter: URIConverter = (value: string): vscode.Uri =>
                             UriConverter.deserialize(value);
-                        const protocolConverter = createConverter(uriConverter, true, true);
+                        const protocolConverter = createConverter(uriConverter, true, true, true);
                         const fixAllEdit = await protocolConverter.asWorkspaceEdit(response.edit);
                         if (!(await vscode.workspace.applyEdit(fixAllEdit))) {
                             const componentName = '[roslyn.client.nestedCodeAction]';

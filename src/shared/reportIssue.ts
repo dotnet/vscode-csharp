@@ -8,7 +8,7 @@ import { IHostExecutableResolver } from '../shared/constants/IHostExecutableReso
 import { basename, dirname } from 'path';
 import { DotnetInfo } from './utils/dotnetInfo';
 import { CSharpExtensionId } from '../constants/csharpExtensionId';
-import { commonOptions } from './options';
+import { commonOptions, LanguageServerOptions, languageServerOptions } from './options';
 
 export default async function reportIssue(
     csharpExtVersion: string,
@@ -61,6 +61,9 @@ ${fullDotnetInfo}</details>
 <details><summary>Visual Studio Code Extensions</summary>
 ${generateExtensionTable(extensions)}
 </details>
+<details><summary>C# Settings</summary>
+${generateOptionsTable()}
+</details>
 `;
 
     await vscode.commands.executeCommand('workbench.action.openIssueReporter', {
@@ -99,6 +102,31 @@ ${tableHeader}\n${table};
 `;
 
     return extensionTable;
+}
+
+function generateOptionsTable() {
+    const tableHeader = `|Setting|Value|\n|---|---|`;
+    const relevantOptions = [
+        getLanguageServerOptionData('preferCSharpExtension'),
+        getLanguageServerOptionData('compilerDiagnosticScope'),
+        getLanguageServerOptionData('analyzerDiagnosticScope'),
+        getLanguageServerOptionData('enableXamlTools'),
+        getLanguageServerOptionData('useServerGC'),
+    ];
+    const table = relevantOptions.map((e) => `|${e.name}|${e.value}|`).join('\n');
+
+    const extensionTable = `
+${tableHeader}\n${table};
+`;
+
+    return extensionTable;
+}
+
+function getLanguageServerOptionData(k: keyof LanguageServerOptions): { name: string; value: string | undefined } {
+    return {
+        name: k,
+        value: languageServerOptions[k]?.toString(),
+    };
 }
 
 async function getMonoIfPlatformValid(monoResolver: IHostExecutableResolver): Promise<string> {
