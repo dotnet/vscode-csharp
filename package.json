@@ -693,7 +693,7 @@
     {
       "id": "VSWebAssemblyBridge",
       "description": "VSWebAssemblyBridge (Platform Agnostic)",
-      "url": "https://vsdebugger.blob.core.windows.net/vswebassemblybridge-8-0-532005/vswebassemblybridge.zip",
+      "url": "https://vsdebugger.blob.core.windows.net/vswebassemblybridge-9-0-637901/vswebassemblybridge.zip",
       "installPath": ".vswebassemblybridge",
       "platforms": [
         "win32",
