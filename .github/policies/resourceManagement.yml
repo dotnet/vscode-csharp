@@ -1,0 +1,25 @@
+id: 
+name: GitOps.PullRequestIssueManagement
+description: GitOps.PullRequestIssueManagement primitive
+owner: 
+resource: repository
+disabled: false
+where: 
+configuration:
+  resourceManagementConfiguration:
+
+    eventResponderTasks:
+
+    - description: Add "untriaged" label to issues when opened
+      triggerOnOwnActions: false
+      if:
+      - payloadType: Issues
+      - or:
+        - isAction:
+            action: Opened
+      then:
+      - addLabel:
+          label: untriaged
+
+onFailure: 
+onSuccess:

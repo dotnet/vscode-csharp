@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscodeAdapter from '../src/vscodeAdapter';
-import { getFakeVsCode } from '../test/unitTests/fakes';
+import { getFakeVsCode } from '../test/fakes';
 
 // This module creates a manual mock for the vscode module for running in unit tests.
 // Jest will automatically pick this up as it is in the __mocks__ directory next to node_modules.

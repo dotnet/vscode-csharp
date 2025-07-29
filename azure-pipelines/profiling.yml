@@ -1,0 +1,59 @@
+trigger: none
+pr: none
+schedules:
+- cron: '18 1 * * *' # every day at 1:18 AM
+  displayName: Periodic profiling run
+  branches:
+    include:
+    - main
+
+variables:
+- name: TRACE_DROP_LOCATION
+  value: $(Build.SourcesDirectory)/out/profiling/
+- name: MERGED_TRACE_LOCATION
+  value: $(Build.SourcesDirectory)/out/profiling/merged/
+- name: LOGS_DIRECTORY
+  value: $(Build.SourcesDirectory)/out/logs/
+- template: /azure-pipelines/dotnet-variables.yml@self
+
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    sdl:
+      sourceAnalysisPool:
+        name: netcore1espool-internal
+        image: 1es-windows-2022
+        os: windows
+    stages:
+    - stage: Run_Profiling
+      displayName: Run Profiling
+      jobs:
+      - job: Profile
+        pool:
+          name: netcore1espool-internal
+          image: 1es-ubuntu-2204
+          os: linux
+        templateContext:
+          outputs:
+          - output: pipelineArtifact
+            targetPath: $(TRACE_DROP_LOCATION)
+            artifactName: traces
+            displayName: 📢 Publish intermediate trace files
+            condition: failed()
+          - output: pipelineArtifact
+            targetPath: $(MERGED_TRACE_LOCATION)
+            artifactName: merged mibc
+            displayName: 📢 Publish merged MIBC
+        steps:
+        - template: /azure-pipelines/test.yml@self
+          parameters:
+            dotnetVersion: $(defaultDotnetVersion)
+            npmCommand: profiling
+            testVSCodeVersion: stable

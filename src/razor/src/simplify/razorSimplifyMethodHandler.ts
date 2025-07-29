@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { RequestType, TextDocumentIdentifier } from 'vscode-languageclient';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
-import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
 import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
@@ -15,7 +15,7 @@ import { RazorLogger } from '../razorLogger';
 import { SerializableDelegatedSimplifyMethodParams } from './serializableDelegatedSimplifyMethodParams';
 import SerializableSimplifyMethodParams from './serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
-import { roslynSimplifyMethodCommand } from '../../../lsptoolshost/razorCommands';
+import { roslynSimplifyMethodCommand } from '../../../lsptoolshost/razor/razorCommands';
 
 export class RazorSimplifyMethodHandler extends RazorLanguageFeatureBase {
     private static readonly razorSimplifyMethodCommand = 'razor/simplifyMethod';

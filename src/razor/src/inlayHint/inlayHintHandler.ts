@@ -9,8 +9,8 @@ import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorLogger } from '../razorLogger';
 import { SerializableInlayHintParams } from './serializableInlayHintParams';
-import { provideInlayHintsCommand } from '../../../lsptoolshost/razorCommands';
-import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { provideInlayHintsCommand } from '../../../lsptoolshost/razor/razorCommands';
+import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 
 export class InlayHintHandler {

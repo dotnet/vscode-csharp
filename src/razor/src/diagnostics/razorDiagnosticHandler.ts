@@ -7,12 +7,12 @@ import * as vscode from 'vscode';
 import { DocumentDiagnosticReport, DocumentDiagnosticParams, RequestType } from 'vscode-languageclient';
 import { RazorLanguageServerClient } from '../razorLanguageServerClient';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
-import { UriConverter } from '../../../lsptoolshost/uriConverter';
+import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
 import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { RazorLanguageFeatureBase } from '../razorLanguageFeatureBase';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
-import { roslynPullDiagnosticCommand } from '../../../lsptoolshost/razorCommands';
+import { roslynPullDiagnosticCommand } from '../../../lsptoolshost/razor/razorCommands';
 
 export class RazorDiagnosticHandler extends RazorLanguageFeatureBase {
     private static readonly razorPullDiagnosticsCommand = 'razor/csharpPullDiagnostics';

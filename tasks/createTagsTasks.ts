@@ -5,7 +5,7 @@
 
 import * as gulp from 'gulp';
 import * as fs from 'fs';
-import * as minimist from 'minimist';
+import minimist from 'minimist';
 import { Octokit } from '@octokit/rest';
 
 interface Options {

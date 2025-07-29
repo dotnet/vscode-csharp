@@ -13,9 +13,9 @@ import { vscePath } from './projectPaths';
 export async function createPackageAsync(
     outputFolder: string,
     prerelease: boolean,
-    packageName?: string,
+    packageName: string,
     vscodePlatformId?: string
-) {
+): Promise<string> {
     const vsceArgs = [];
     let packagePath = undefined;
 
@@ -31,13 +31,8 @@ export async function createPackageAsync(
     }
 
     vsceArgs.push('-o');
-    if (packageName !== undefined) {
-        //if we have specified an output folder then put the files in that output folder
-        packagePath = path.join(outputFolder, packageName);
-        vsceArgs.push(packagePath);
-    } else {
-        vsceArgs.push(outputFolder);
-    }
+    packagePath = path.join(outputFolder, packageName);
+    vsceArgs.push(packagePath);
 
     if (vscodePlatformId !== undefined) {
         vsceArgs.push('--target');
@@ -59,5 +54,31 @@ export async function createPackageAsync(
         if (!(await util.fileExists(packagePath))) {
             throw new Error(`vsce failed to create: '${packagePath}'`);
         }
+    }
+
+    return packagePath;
+}
+
+export async function generateVsixManifest(vsixPath: string) {
+    const vsceArgs = [];
+    if (!(await util.fileExists(vscePath))) {
+        throw new Error(`vsce does not exist at expected location: '${vscePath}'`);
+    }
+
+    vsceArgs.push(vscePath);
+    vsceArgs.push('generate-manifest');
+    vsceArgs.push('--packagePath');
+    vsceArgs.push(vsixPath);
+
+    const parsed = path.parse(vsixPath);
+    const outputFolder = parsed.dir;
+    const vsixNameWithoutExtension = parsed.name;
+
+    vsceArgs.push('-o');
+    vsceArgs.push(path.join(outputFolder, `${vsixNameWithoutExtension}.manifest`));
+
+    const spawnResult = await spawnNode(vsceArgs);
+    if (spawnResult.code != 0) {
+        throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
     }
 }

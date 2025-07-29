@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import execa = require('execa');
-import { promises, readFileSync, existsSync } from 'fs';
+import execa from 'execa';
+import { promises, readFileSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import * as vscode from 'vscode';
@@ -69,6 +69,7 @@ export interface IQueryExecutionService {
         cancellationToken?: CancellationToken
     ): Promise<IDisposable>;
 }
+import { ActionOption, showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage';
 
 export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     private static readonly autoDetectUserNotice: string = vscode.l10n.t(
@@ -257,14 +258,15 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             const message = vscode.l10n.t(
                 'There was an unexpected error while launching your debugging session. Check the console for helpful logs and visit the debugging docs for more info.'
             );
-            const viewDebugDocsButton = vscode.l10n.t('View Debug Docs');
-            const ignoreButton = vscode.l10n.t('Ignore');
-            this.vscodeType.window.showErrorMessage(message, viewDebugDocsButton, ignoreButton).then(async (result) => {
-                if (result === viewDebugDocsButton) {
+            const viewDebugDocsButton: ActionOption = {
+                title: vscode.l10n.t('View Debug Docs'),
+                action: async () => {
                     const debugDocsUri = 'https://aka.ms/blazorwasmcodedebug';
                     await this.vscodeType.commands.executeCommand(`vcode.open`, debugDocsUri);
-                }
-            });
+                },
+            };
+            const ignoreButton = vscode.l10n.t('Ignore');
+            showErrorMessage(this.vscodeType, message, viewDebugDocsButton, ignoreButton);
         }
     }
 

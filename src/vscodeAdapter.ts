@@ -965,9 +965,24 @@ export interface vscode {
     };
     window: {
         activeTextEditor: TextEditor | undefined;
-        showInformationMessage: <T extends MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>;
-        showWarningMessage: <T extends MessageItem>(message: string, ...items: T[]) => Thenable<T | undefined>;
-        showErrorMessage(message: string, ...items: string[]): Thenable<string | undefined>;
+        showInformationMessage<T extends string>(message: string, ...items: T[]): Thenable<T | undefined>;
+        showInformationMessage<T extends string>(
+            message: string,
+            options: MessageOptions,
+            ...items: T[]
+        ): Thenable<T | undefined>;
+        showWarningMessage<T extends string>(message: string, ...items: T[]): Thenable<T | undefined>;
+        showWarningMessage<T extends string>(
+            message: string,
+            options: MessageOptions,
+            ...items: T[]
+        ): Thenable<T | undefined>;
+        showErrorMessage<T extends string>(message: string, ...items: T[]): Thenable<T | undefined>;
+        showErrorMessage<T extends string>(
+            message: string,
+            options: MessageOptions,
+            ...items: T[]
+        ): Thenable<T | undefined>;
     };
     workspace: {
         getConfiguration: (section?: string, resource?: Uri) => WorkspaceConfiguration;

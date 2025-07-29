@@ -22,7 +22,7 @@ Setting up your local development environment for the vscode-csharp repository i
 
 Before you start, make sure you have the following software installed on your machine:
 
-* Node.js v18 ([v18.17.0 LTS](https://nodejs.org/en/blog/release/v18.17.0)).
+* Node.js v20 ([v20.17.0 LTS](https://nodejs.org/en/blog/release/v20.17.0)).
   * Note - Building with higher major versions of Node.js is not advised - it may work but we do not test it.
 * Npm (The version shipped with node is fine)
 * .NET 8.0 SDK (dotnet should be on your path)
@@ -35,10 +35,11 @@ Follow these steps to build, run, and test the repository:
 
 #### Building
 
-1. Run `npm i` - This command installs the project dependencies.
-2. Run `npm i -g gulp` - This command installs Gulp globally.
-3. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
-4. Run `code .` - This command opens the project in Visual Studio Code.
+1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
+2. Run `npm i` - This command installs the project dependencies.
+3. Run `npm i -g gulp` - This command installs Gulp globally.
+4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
+5. Run `code .` - This command opens the project in Visual Studio Code.
 
 #### Running
 
@@ -50,12 +51,16 @@ After completing the build steps:
 
 #### Testing
 
-To run tests:
+To run all tests, execute `npm run test`.
 
-1. Execute `npm run test` or press <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration selected.
-2. For integration tests, select either of the two 'current file' integration tests (one for roslyn and one for razor), from the drop-down and press <kbd>F5</kbd> to start debugging:
-- For Roslyn Server: `Launch Current File slnWithCsproj Integration Tests`
-- For Razor Server:  `Launch Current File BasicRazorApp2_1 Integration Tests`
+To debug unit tests locally, press <kbd>F5</kbd> in VS Code with the "Launch Tests" debug configuration selected.
+
+To debug integration tests
+1.  Import the `csharp-test-profile.code-profile` in VSCode to setup a clean profile in which to run integration tests.  This must be imported at least once to use the launch configurations (ensure the extensions are updated in the profile).
+2.  Open any integration test file and <kbd>F5</kbd> launch with the correct launch configuration selected.
+    - For integration tests inside `test/lsptoolshost`, use either `Launch Current File slnWithCsproj Integration Tests` or `[DevKit] Launch Current File slnWithCsproj Integration Tests` (to run tests using C# + C# Dev Kit)
+    - For integration tests inside `test/razor`, use `[Razor] Run Current File Integration Test`
+    - For integration tests inside `test/omnisharp`, use one of the `Omnisharp:` current file profiles
 
 These will allow you to actually debug the test, but the 'Razor integration tests' configuration does not.
 
@@ -68,7 +73,7 @@ This section shows how to set up local Razor or Roslyn language servers for debu
 1. Clone the [Roslyn repository](https://github.com/dotnet/roslyn). This repository contains the Roslyn server implementation.
 2. Follow the build instructions provided in the repository.
 
-The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net8.0/Microsoft.CodeAnalysis.LanguageServer.dll`, but this may vary based on the built configuration.
+The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll`, but this may vary based on the built configuration.
 
 #### Razor
 
@@ -111,7 +116,7 @@ In your workspace `settings.json` file, add the following lines:
 
 ```json
 "dotnet.server.waitForDebugger": true,
-"dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net8.0/Microsoft.CodeAnalysis.LanguageServer.dll"
+"dotnet.server.path": "<roslynRepoRoot>/artifacts/bin/Microsoft.CodeAnalysis.LanguageServer/Debug/net9.0/Microsoft.CodeAnalysis.LanguageServer.dll"
 ```
 
 Replace <roslynRepoRoot> with the actual path to your Roslyn repository.
@@ -140,6 +145,11 @@ Or, in VSCode settings (`Ctrl+,`):
 2. Set `razor.languageServer.directory` to the path of your Razor DLL.
 3. Enable `razor.languageServer.debug`.
 4. Set `razor.server.trace` to `Debug`. This gives you more detailed log messages in the output window.
+
+### Updating NPM packages
+We use the .NET eng AzDo artifacts feed https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet-public-npm/npm/registry/ with upstreams to the public npm registry.
+Auth is required in order to pull new packages from the upstream.  This can be done by running `vsts-npm-auth -config .npmrc`.
+If you need to renew authorization, you can force it via `vsts-npm-auth -config .npmrc -F`
 
 ## Creating VSIX Packages for the Extension
 

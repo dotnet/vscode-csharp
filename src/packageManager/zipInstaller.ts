@@ -8,7 +8,7 @@ import { mkdirp } from 'async-file';
 import * as path from 'path';
 import * as yauzl from 'yauzl';
 import { EventStream } from '../eventStream';
-import { InstallationStart, ZipError } from '../omnisharp/loggingEvents';
+import { InstallationStart, ZipError } from '../shared/loggingEvents';
 import { NestedError } from '../nestedError';
 import { AbsolutePath } from './absolutePath';
 
@@ -43,10 +43,7 @@ export async function InstallZip(
                     } catch (err) {
                         const error = err as NodeJS.ErrnoException; // Hack for TypeScript to type err correctly
                         return reject(
-                            new NestedError(
-                                'Error creating directory for zip directory entry:' + error.code ?? '',
-                                error
-                            )
+                            new NestedError('Error creating directory for zip directory entry:' + error.code, error)
                         );
                     }
                 } else {

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as cp from 'child_process';
-import * as del from 'del';
+import del from 'del';
 import * as fs from 'fs';
 import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
@@ -29,9 +29,9 @@ import {
     razorDevKitDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
-import { createPackageAsync } from '../tasks/vsceTasks';
+import { createPackageAsync, generateVsixManifest } from '../tasks/vsceTasks';
 import { isValidDownload } from '../src/packageManager/isValidDownload';
-import path = require('path');
+import path from 'path';
 import { CancellationToken } from 'vscode';
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -149,7 +149,7 @@ gulp.task('installDependencies', async () => {
     )!;
 
     try {
-        acquireAndInstallAllNugetPackages(vsixPlatformInfo, packageJSON, true);
+        await acquireAndInstallAllNugetPackages(vsixPlatformInfo, packageJSON, true);
     } catch (err) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
         // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
@@ -292,7 +292,7 @@ async function restoreNugetPackage(packageName: string, packageVersion: string, 
 
     const dotnetArgs = [
         'restore',
-        path.join(rootPath, 'server'),
+        path.join(rootPath, 'msbuild', 'server'),
         `/p:PackageName=${packageName}`,
         `/p:PackageVersion=${packageVersion}`,
     ];
@@ -380,7 +380,8 @@ async function buildVsix(packageJSON: any, outputFolder: string, prerelease: boo
     }
 
     const packageFileName = getPackageName(packageJSON, platformInfo?.vsceTarget);
-    await createPackageAsync(outputFolder, prerelease, packageFileName, platformInfo?.vsceTarget);
+    const packagePath = await createPackageAsync(outputFolder, prerelease, packageFileName, platformInfo?.vsceTarget);
+    await generateVsixManifest(packagePath);
 }
 
 function getPackageName(packageJSON: any, vscodePlatformId?: string) {

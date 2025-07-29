@@ -10,4 +10,5 @@ export interface ProjectionResult {
     uri: vscode.Uri;
     position: vscode.Position;
     languageKind: LanguageKind;
+    hostDocumentVersion: number;
 }

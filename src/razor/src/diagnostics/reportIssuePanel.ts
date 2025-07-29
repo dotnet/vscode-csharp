@@ -5,10 +5,10 @@
 
 import * as vscode from 'vscode';
 import { RazorLogger } from '../razorLogger';
-import { LogLevel } from '../logLevel';
 import { ReportIssueCreator } from './reportIssueCreator';
 import { ReportIssueDataCollector } from './reportIssueDataCollector';
 import { ReportIssueDataCollectorFactory } from './reportIssueDataCollectorFactory';
+import { showErrorMessage, showInformationMessage } from '../../../shared/observers/utils/showMessage';
 
 export class ReportIssuePanel {
     public static readonly viewType = 'razorReportIssue';
@@ -52,9 +52,7 @@ export class ReportIssuePanel {
 
     private attachToCurrentPanel() {
         if (!this.panel) {
-            vscode.window.showErrorMessage(
-                vscode.l10n.t('Unexpected error when attaching to report Razor issue window.')
-            );
+            showErrorMessage(vscode, vscode.l10n.t('Unexpected error when attaching to report Razor issue window.'));
             return;
         }
 
@@ -63,7 +61,8 @@ export class ReportIssuePanel {
                 case 'copyIssue':
                     if (!this.issueContent) {
                         if (!this.dataCollector) {
-                            vscode.window.showErrorMessage(
+                            showErrorMessage(
+                                vscode,
                                 vscode.l10n.t('You must first start the data collection before copying.')
                             );
                             return;
@@ -74,7 +73,7 @@ export class ReportIssuePanel {
                     }
 
                     await vscode.env.clipboard.writeText(this.issueContent);
-                    vscode.window.showInformationMessage(vscode.l10n.t('Razor issue copied to clipboard'));
+                    showInformationMessage(vscode, vscode.l10n.t('Razor issue copied to clipboard'));
                     return;
                 case 'startIssue':
                     if (this.dataCollector) {
@@ -83,26 +82,29 @@ export class ReportIssuePanel {
                     }
                     this.issueContent = undefined;
                     this.dataCollector = this.dataCollectorFactory.create();
-                    vscode.window.showInformationMessage(
+                    showInformationMessage(
+                        vscode,
                         vscode.l10n.t('Razor issue data collection started. Reproduce the issue then press "Stop"')
                     );
                     return;
                 case 'stopIssue':
                     if (!this.dataCollector) {
-                        vscode.window.showErrorMessage(
+                        showErrorMessage(
+                            vscode,
                             vscode.l10n.t('You must first start the data collection before stopping.')
                         );
                         return;
                     }
                     this.dataCollector.stop();
-                    vscode.window.showInformationMessage(
+                    showInformationMessage(
+                        vscode,
                         vscode.l10n.t('Razor issue data collection stopped. Copying issue content...')
                     );
                     return;
             }
         });
 
-        this.traceLevelChange = this.logger.onTraceLevelChange(async () => this.update());
+        this.traceLevelChange = this.logger.outputChannel.onDidChangeLogLevel(async () => this.update());
 
         this.panel.onDidDispose(() => {
             if (this.traceLevelChange) {
@@ -118,7 +120,7 @@ export class ReportIssuePanel {
         }
 
         let panelBodyContent = '';
-        if (this.logger.logLevel.valueOf() <= LogLevel.Debug) {
+        if (this.logger.logLevel <= vscode.LogLevel.Debug && this.logger.logLevel != vscode.LogLevel.Off) {
             const startButtonLabel = vscode.l10n.t('Start');
             const startButton = `<button onclick="startIssue()">${startButtonLabel}</button>`;
             const firstLine = vscode.l10n.t('Press {0}', startButton);
@@ -156,9 +158,9 @@ ${privacyAnchor}
 
 <button onclick="copyIssue()">${copyIssueContentLabel}</button>`;
         } else {
-            const verbositySettingName = `<strong><em>${RazorLogger.verbositySetting}</em></strong>`;
-            const currentVerbositySettingValue = `<strong><em>${LogLevel[this.logger.logLevel]}</em></strong>`;
-            const neededVerbositySettingValue = `<strong><em>${LogLevel[LogLevel.Debug]}</em></strong>`;
+            const verbositySettingName = `<strong><em>Razor Logging Level</em></strong>`;
+            const currentVerbositySettingValue = `<strong><em>${vscode.LogLevel[this.logger.logLevel]}</em></strong>`;
+            const neededVerbositySettingValue = `<strong><em>${vscode.LogLevel[vscode.LogLevel.Debug]}</em></strong>`;
 
             panelBodyContent =
                 '<p>' +

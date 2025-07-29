@@ -8,8 +8,8 @@ import { LaunchTarget } from '../../shared/launchTarget';
 import Disposable from '../../disposable';
 import { OmniSharpServer } from '../server';
 import { LanguageMiddlewareFeature } from '../languageMiddlewareFeature';
-import { Advisor } from '../../features/diagnosticsProvider';
-import TestManager from '../../features/dotnetTest';
+import { Advisor } from '../features/diagnosticsProvider';
+import TestManager from '../features/dotnetTest';
 import { EventStream } from '../../eventStream';
 
 export interface IEngine {

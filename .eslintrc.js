@@ -4,7 +4,7 @@ module.exports = {
     },
     extends: [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
     ],
     parser: "@typescript-eslint/parser",
     parserOptions: {
@@ -21,7 +21,7 @@ module.exports = {
     rules: {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/semi": ["error", "always"],
+        "@typescript-eslint/no-require-imports": "off",
         // Allow unused vars if prefixed by _
         "@typescript-eslint/no-unused-vars": [
             "warn",
@@ -33,6 +33,7 @@ module.exports = {
         ],
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/promise-function-async": "error",
+        "@typescript-eslint/no-floating-promises": "error",
         "prefer-promise-reject-errors": "error",
         "curly": "error",
         "prettier/prettier": [ "error", { "endOfLine": "auto" } ],

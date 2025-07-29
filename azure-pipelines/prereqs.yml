@@ -2,32 +2,28 @@ parameters:
   - name: versionNumberOverride
     type: string
     default: 'default'
-  - name: installDotNet
-    type: boolean
-    default: true
+  - name: dotnetVersion
+    type: string
 
 steps:
 
 # The server package is downloaded from NuGet
 - task: NuGetAuthenticate@1
 
-- task: NodeTool@0
-  displayName: 'Install Node.js 18.x'
-  inputs:
-    versionSpec: '18.x'
+- template: /azure-pipelines/install-node.yml@self
 
 # Some tests use predefined docker images with a specific version of .NET installed.
 # So we avoid installing .NET in those cases.
-- ${{ if eq(parameters.installDotNet, true) }}:
+- ${{ if parameters.dotnetVersion }}:
   - task: UseDotNet@2
-    displayName: 'Install .NET Core SDKs'
+    displayName: 'Install .NET SDK'
     inputs:
-      version: '8.x'
+      version: ${{ parameters.dotnetVersion }}
 
 - script: dotnet --info
   displayName: Display dotnet info
 
-- script: dotnet tool install --tool-path $(Agent.BuildDirectory) nbgv
+- script: dotnet tool install --version 3.6.146 --tool-path $(Agent.BuildDirectory) nbgv
   displayName: Install nbgv
 
 # If we want to override the version, update the version.json here - vsix packaging will see this value

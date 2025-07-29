@@ -1,0 +1,4 @@
+{
+    "dotnet.server.useOmnisharp": true,
+    "dotnet.preferCSharpExtension": true,
+}

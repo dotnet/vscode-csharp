@@ -1635,6 +1635,9 @@
           "include": "source.cs#switch-label"
         },
         {
+          "include": "#csharp-code-block"
+        },
+        {
           "include": "#razor-codeblock-body"
         }
       ],

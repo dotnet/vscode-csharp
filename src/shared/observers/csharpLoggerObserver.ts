@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { BaseLoggerObserver } from '../../observers/baseLoggerObserver';
-import * as Event from '../../omnisharp/loggingEvents';
+import { BaseLoggerObserver } from './baseLoggerObserver';
+import * as Event from '../../shared/loggingEvents';
 import { PackageError } from '../../packageManager/packageError';
-import { EventType } from '../../omnisharp/eventType';
+import { EventType } from '../eventType';
 
 export class CsharpLoggerObserver extends BaseLoggerObserver {
     private dots = 0;
@@ -44,22 +44,11 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
             case EventType.DebuggerPrerequisiteWarning:
                 this.handleEventWithMessage(<Event.EventWithMessage>event);
                 break;
-            case EventType.ProjectJsonDeprecatedWarning:
-                this.logger.appendLine(
-                    "Warning: project.json is no longer a supported project format for .NET Core applications. Update to the latest version of .NET Core (https://aka.ms/netcoredownload) and use 'dotnet migrate' to upgrade your project (see https://aka.ms/netcoremigrate for details)."
-                );
-                break;
             case EventType.DownloadFallBack:
                 this.handleDownloadFallback(<Event.DownloadFallBack>event);
                 break;
             case EventType.DownloadSizeObtained:
                 this.handleDownloadSizeObtained(<Event.DownloadSizeObtained>event);
-                break;
-            case EventType.DocumentSynchronizationFailure:
-                this.handleDocumentSynchronizationFailure(<Event.DocumentSynchronizationFailure>event);
-                break;
-            case EventType.LatestBuildDownloadStart:
-                this.logger.appendLine('Getting latest OmniSharp version information');
                 break;
             case EventType.IntegrityCheckFailure:
                 this.handleIntegrityCheckFailure(<Event.IntegrityCheckFailure>event);
@@ -142,9 +131,5 @@ export class CsharpLoggerObserver extends BaseLoggerObserver {
     private handleInstallationStart(event: Event.InstallationStart) {
         this.logger.appendLine(`Installing package '${event.packageDescription}'`);
         this.logger.appendLine();
-    }
-
-    private handleDocumentSynchronizationFailure(event: Event.DocumentSynchronizationFailure) {
-        this.logger.appendLine(`Failed to synchronize document '${event.documentPath}': ${event.errorMessage}`);
     }
 }

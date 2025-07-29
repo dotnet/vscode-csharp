@@ -11,18 +11,12 @@ import { HtmlProjectedDocumentContentProvider } from '../html/htmlProjectedDocum
 import { virtualCSharpSuffix, virtualHtmlSuffix } from '../razorConventions';
 import { getUriPath } from '../uriPaths';
 import { IRazorDocument } from './IRazorDocument';
+import { RazorDocument } from './razorDocument';
 
-export function createDocument(uri: vscode.Uri) {
+export function createDocument(uri: vscode.Uri): IRazorDocument {
     const csharpDocument = createProjectedCSharpDocument(uri);
     const htmlDocument = createProjectedHtmlDocument(uri);
-    const path = getUriPath(uri);
-
-    const document: IRazorDocument = {
-        uri,
-        path,
-        csharpDocument,
-        htmlDocument,
-    };
+    const document = new RazorDocument(uri, csharpDocument, htmlDocument);
 
     return document;
 }

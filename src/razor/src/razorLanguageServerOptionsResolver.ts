@@ -10,13 +10,11 @@ import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
 import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { RazorLogger } from './razorLogger';
-import { LogLevel } from './logLevel';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
 export function resolveRazorLanguageServerOptions(
     vscodeApi: vscodeAdapter.api,
     languageServerDir: string,
-    logLevel: LogLevel,
     logger: RazorLogger
 ) {
     const languageServerExecutablePath = findLanguageServerExecutable(languageServerDir);
@@ -24,15 +22,30 @@ export function resolveRazorLanguageServerOptions(
     const debugLanguageServer = serverConfig.get<boolean>('debug');
     const usingOmniSharp =
         !getCSharpDevKit() && vscodeApi.workspace.getConfiguration().get<boolean>('dotnet.server.useOmnisharp');
-    const forceRuntimeCodeGeneration = serverConfig.get<boolean>('forceRuntimeCodeGeneration');
+
+    const hotReload = vscodeApi.workspace.getConfiguration('csharp.experimental.debug').get<boolean>('hotReload');
+
+    let forceRuntimeCodeGeneration = serverConfig.get<boolean | null>('forceRuntimeCodeGeneration');
+
+    if (forceRuntimeCodeGeneration === null && hotReload) {
+        logger.logMessage(
+            'Hot Reload is enabled so treating "razor.languageServer.forceRuntimeCodeGeneration" as true. To override this set "razor.languageServer.forceRuntimeCodeGeneration" to true or false.'
+        );
+
+        forceRuntimeCodeGeneration = hotReload;
+    }
+
+    const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
+    const useNewFormattingEngine = serverConfig.get<boolean>('useNewFormattingEngine');
 
     return {
         serverPath: languageServerExecutablePath,
         debug: debugLanguageServer,
-        logLevel: logLevel,
         outputChannel: logger.outputChannel,
         usingOmniSharp,
         forceRuntimeCodeGeneration,
+        suppressErrorToasts,
+        useNewFormattingEngine,
     } as RazorLanguageServerOptions;
 }
 
@@ -54,12 +67,13 @@ function findLanguageServerExecutable(withinDir: string) {
     }
 
     let pathWithExtension = `${fileName}${extension}`;
-    if (!fs.existsSync(pathWithExtension)) {
+    let fullPath = path.join(withinDir, pathWithExtension);
+
+    if (!fs.existsSync(fullPath)) {
         // We might be running a platform neutral vsix which has no executable, instead we run the dll directly.
         pathWithExtension = `${fileName}.dll`;
+        fullPath = path.join(withinDir, pathWithExtension);
     }
-
-    const fullPath = path.join(withinDir, pathWithExtension);
 
     if (!fs.existsSync(fullPath)) {
         throw new Error(

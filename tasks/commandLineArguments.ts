@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as minimist from 'minimist';
+import minimist from 'minimist';
 import * as path from 'path';
 
 const argv = minimist(process.argv.slice(2));

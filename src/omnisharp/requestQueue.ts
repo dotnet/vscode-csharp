@@ -9,7 +9,7 @@ import {
     OmnisharpServerProcessRequestStart,
     OmnisharpServerDequeueRequest,
     OmnisharpServerEnqueueRequest,
-} from './loggingEvents';
+} from './omnisharpLoggingEvents';
 import { EventStream } from '../eventStream';
 
 export interface Request {

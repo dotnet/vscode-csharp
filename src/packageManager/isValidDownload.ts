@@ -5,7 +5,7 @@
 
 import * as crypto from 'crypto';
 import { EventStream } from '../eventStream';
-import { IntegrityCheckSuccess, DownloadValidation } from '../omnisharp/loggingEvents';
+import { IntegrityCheckSuccess, DownloadValidation } from '../shared/loggingEvents';
 
 export interface DownloadValidator {
     (buffer: Buffer, integrity: string | undefined, eventStream: EventStream): boolean;

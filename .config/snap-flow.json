@@ -1,0 +1,20 @@
+// ONLY THE VERSION OF THIS FILE IN THE MAIN BRANCH IS USED!
+{
+    "merge-flow-configurations": {
+        // format of this section is
+        // "source-branch-name": {
+        //    "MergeToBranch": "target-branch-name"
+        // },
+        "main": {
+            // The MergeToBranch property should be presented in the object in order the merge flow to work
+            "MergeToBranch": "prerelease",
+            // ExtraSwitches is an optional parameter which is accepted by the script: https://github.com/dotnet/arcade/blob/main/.github/workflows/inter-branch-merge-base.yml. Accepted values are similar to the values from the version file: https://github.com/dotnet/versions/blob/main/Maestro/subscriptions.json
+            "ExtraSwitches": "-QuietComments"
+        },
+        "prerelease": {
+            "MergeToBranch": "release",
+            // ExtraSwitches is an optional parameter which is accepted by the script: https://github.com/dotnet/arcade/blob/main/.github/workflows/inter-branch-merge-base.yml. Accepted values are similar to the values from the version file: https://github.com/dotnet/versions/blob/main/Maestro/subscriptions.json
+            "ExtraSwitches": "-QuietComments"
+        }
+    }
+}

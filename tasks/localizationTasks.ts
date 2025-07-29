@@ -5,7 +5,7 @@
 
 import * as gulp from 'gulp';
 import * as process from 'node:process';
-import * as minimist from 'minimist';
+import minimist from 'minimist';
 import { spawnSync } from 'node:child_process';
 import * as path from 'path';
 import * as util from 'node:util';

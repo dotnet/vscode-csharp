@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Url } from 'url';
-import HttpProxyAgent = require('http-proxy-agent');
-import HttpsProxyAgent = require('https-proxy-agent');
+import HttpProxyAgent from 'http-proxy-agent';
+import HttpsProxyAgent from 'https-proxy-agent';
 import { Agent } from 'http';
 
 function getSystemProxyURL(requestURL: Url): string | undefined {

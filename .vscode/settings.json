@@ -20,5 +20,5 @@
     "editor.formatOnSave": false,
     "eslint.lintTask.enable": true,
     "dotnet.defaultSolution": "disable",
-    "jest.autoRun": "off"
+    "jest.autoRun": "off",
 }

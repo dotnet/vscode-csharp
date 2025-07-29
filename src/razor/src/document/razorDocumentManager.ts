@@ -17,8 +17,9 @@ import { IRazorDocumentChangeEvent } from './IRazorDocumentChangeEvent';
 import { IRazorDocumentManager } from './IRazorDocumentManager';
 import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
-import { razorInitializeCommand } from '../../../lsptoolshost/razorCommands';
+import { razorInitializeCommand } from '../../../lsptoolshost/razor/razorCommands';
 import { PlatformInformation } from '../../../shared/platform';
+import { generateUuid } from 'vscode-languageclient/lib/common/utils/uuid';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
     public roslynActivated = false;
@@ -49,21 +50,12 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         return Object.values(this.razorDocuments);
     }
 
-    public async getDocument(uri: vscode.Uri) {
+    public async getDocument(uri: vscode.Uri): Promise<IRazorDocument> {
         const document = this._getDocument(uri);
-
-        // VS Code closes virtual documents after some timeout if they are not open in the IDE. Since our generated C# and Html
-        // documents are never open in the IDE, we need to ensure that VS Code considers them open so that requests against them
-        // succeed. Without this, even a simple diagnostics request will fail in Roslyn if the user just opens a .razor document
-        // and leaves it open past the timeout.
-        if (this.razorDocumentGenerationInitialized) {
-            await this.ensureDocumentAndProjectedDocumentsOpen(document);
-        }
-
         return document;
     }
 
-    public async getActiveDocument() {
+    public async getActiveDocument(): Promise<IRazorDocument | null> {
         if (!vscode.window.activeTextEditor) {
             return null;
         }
@@ -146,7 +138,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         return vscode.Disposable.from(watcher, didCreateRegistration, didOpenRegistration, didCloseRegistration);
     }
 
-    private _getDocument(uri: vscode.Uri) {
+    private _getDocument(uri: vscode.Uri): IRazorDocument {
         const path = getUriPath(uri);
         let document = this.findDocument(path);
 
@@ -158,7 +150,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
             document = this.addDocument(uri);
         }
 
-        return document;
+        return document!;
     }
 
     private async openDocument(uri: vscode.Uri) {
@@ -176,10 +168,10 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // a Razor file.
         if (this.roslynActivated && !this.razorDocumentGenerationInitialized) {
             this.razorDocumentGenerationInitialized = true;
-            vscode.commands.executeCommand(razorInitializeCommand);
-            for (const document of this.documents) {
-                await this.ensureDocumentAndProjectedDocumentsOpen(document);
-            }
+            const pipeName = generateUuid();
+
+            await vscode.commands.executeCommand(razorInitializeCommand, pipeName);
+            await this.serverClient.connectNamedPipe(pipeName);
 
             this.onRazorInitializedEmitter.fire();
         }
@@ -188,17 +180,19 @@ export class RazorDocumentManager implements IRazorDocumentManager {
     private closeDocument(uri: vscode.Uri) {
         const document = this._getDocument(uri);
 
-        // Files outside of the workspace will return undefined from getWorkspaceFolder
-        const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-        if (!workspaceFolder) {
-            // Out of workspace files should be removed once they're closed
-            this.removeDocument(uri);
+        // Documents that are files should be removed if they are outside the workspace folder
+        if (uri.scheme === 'file') {
+            // Files outside of the workspace will return undefined from getWorkspaceFolder
+            const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+            if (!workspaceFolder) {
+                this.removeDocument(uri);
+            }
         }
 
         this.notifyDocumentChange(document, RazorDocumentChangeKind.closed);
     }
 
-    private addDocument(uri: vscode.Uri) {
+    private addDocument(uri: vscode.Uri): IRazorDocument {
         const path = getUriPath(uri);
         let document = this.findDocument(path);
         if (document) {
@@ -254,10 +248,6 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         ) {
             // We allow re-setting of the updated content from the same doc sync version in the case
             // of project or file import changes.
-
-            // Make sure the document is open, because updating will cause a didChange event to fire.
-            await vscode.workspace.openTextDocument(document.csharpDocument.uri);
-
             const csharpProjectedDocument = projectedDocument as CSharpProjectedDocument;
 
             // If the language server is telling us that the previous document was empty, then we should clear
@@ -268,7 +258,14 @@ export class RazorDocumentManager implements IRazorDocumentManager {
                 csharpProjectedDocument.clear();
             }
 
-            csharpProjectedDocument.update(updateBufferRequest.changes, updateBufferRequest.hostDocumentVersion);
+            csharpProjectedDocument.update(
+                document.isOpen,
+                updateBufferRequest.changes,
+                updateBufferRequest.hostDocumentVersion,
+                updateBufferRequest.checksum,
+                updateBufferRequest.checksumAlgorithm,
+                updateBufferRequest.encodingCodePage
+            );
 
             this.notifyDocumentChange(document, RazorDocumentChangeKind.csharpChanged);
         } else {
@@ -334,23 +331,5 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         };
 
         this.onChangeEmitter.fire(args);
-    }
-
-    private async ensureDocumentAndProjectedDocumentsOpen(document: IRazorDocument) {
-        // vscode.workspace.openTextDocument may send a textDocument/didOpen
-        // request to the C# language server. We need to keep track of
-        // this to make sure we don't send a duplicate request later on.
-        const razorUri = vscode.Uri.file(document.path);
-        if (!this.isRazorDocumentOpenInCSharpWorkspace(razorUri)) {
-            this.didOpenRazorCSharpDocument(razorUri);
-
-            // Need to tell the Razor server that the document is open, or it won't generate C# code
-            // for it, and our projected document will always be empty, until the user manually
-            // opens the razor file.
-            await vscode.workspace.openTextDocument(razorUri);
-        }
-
-        await vscode.workspace.openTextDocument(document.csharpDocument.uri);
-        await vscode.workspace.openTextDocument(document.htmlDocument.uri);
     }
 }

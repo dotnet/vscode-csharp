@@ -15,7 +15,7 @@ import { RazorLanguageServiceClient } from '../razorLanguageServiceClient';
 import { LanguageKind } from '../rpc/languageKind';
 
 export class HtmlTagCompletionProvider {
-    private timeout: NodeJS.Timer | undefined = void 0;
+    private timeout: NodeJS.Timeout | undefined = void 0;
     private enabled = false;
     private htmlLanguageService: HtmlLanguageService | undefined;
 
@@ -166,12 +166,12 @@ export class HtmlTagCompletionProvider {
 
             const selections = activeEditor.selections;
             if (selections.length && selections.some((s) => s.active.isEqual(position))) {
-                activeEditor.insertSnippet(
+                await activeEditor.insertSnippet(
                     new vscode.SnippetString(tagCompletion),
                     selections.map((s) => s.active)
                 );
             } else {
-                activeEditor.insertSnippet(new vscode.SnippetString(tagCompletion), position);
+                await activeEditor.insertSnippet(new vscode.SnippetString(tagCompletion), position);
             }
         }, 75);
     }

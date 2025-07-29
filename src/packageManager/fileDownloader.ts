@@ -12,7 +12,7 @@ import {
     DownloadFailure,
     DownloadProgress,
     DownloadSizeObtained,
-} from '../omnisharp/loggingEvents';
+} from '../shared/loggingEvents';
 import { NestedError } from '../nestedError';
 import { parse as parseUrl } from 'url';
 import { getProxyAgent } from './proxy';
@@ -43,7 +43,7 @@ export async function DownloadFile(
                 const buffer = await downloadFile(description, fallbackUrl, eventStream, networkSettingsProvider);
                 eventStream.post(new DownloadSuccess(' Done!'));
                 return buffer;
-            } catch (fallbackUrlError) {
+            } catch (_) {
                 throw primaryUrlError;
             }
         } else {

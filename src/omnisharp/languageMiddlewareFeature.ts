@@ -79,7 +79,7 @@ export class LanguageMiddlewareFeature implements IDisposable {
             }
 
             return remapped;
-        } catch (error) {
+        } catch (_) {
             // Something happened while remapping. Return the original.
             return original;
         }
