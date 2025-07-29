@@ -18,12 +18,25 @@ export interface ServerStateChangeEvent {
     workspaceLabel: string;
 }
 
+export interface ProjectsRestoredEvent {
+    success: boolean;
+}
+
+export interface ProjectReloadStartedEvent {
+}
+
+export interface ProjectReloadCompletedEvent {
+}
+
 /**
  * Defines events that are fired by the language server.
  * These events can be consumed to wait for the server to reach a certain state.
  */
 export interface LanguageServerEvents {
     readonly onServerStateChange: vscode.Event<ServerStateChangeEvent>;
+    readonly onProjectsRestored: vscode.Event<ProjectsRestoredEvent>;
+    readonly onProjectReloadStarted: vscode.Event<ProjectReloadStartedEvent>;
+    readonly onProjectReloadCompleted: vscode.Event<ProjectReloadCompletedEvent>;
 }
 
 /**
@@ -33,12 +46,30 @@ export interface LanguageServerEvents {
  */
 export class RoslynLanguageServerEvents implements LanguageServerEvents, IDisposable {
     public readonly onServerStateChangeEmitter = new vscode.EventEmitter<ServerStateChangeEvent>();
+    public readonly onProjectsRestoredEmitter = new vscode.EventEmitter<ProjectsRestoredEvent>();
+    public readonly onProjectReloadStartedEmitter = new vscode.EventEmitter<ProjectReloadStartedEvent>();
+    public readonly onProjectReloadCompletedEmitter = new vscode.EventEmitter<ProjectReloadCompletedEvent>();
 
     public get onServerStateChange(): vscode.Event<ServerStateChangeEvent> {
         return this.onServerStateChangeEmitter.event;
     }
 
+    public get onProjectsRestored(): vscode.Event<ProjectsRestoredEvent> {
+        return this.onProjectsRestoredEmitter.event;
+    }
+
+    public get onProjectReloadStarted(): vscode.Event<ProjectReloadStartedEvent> {
+        return this.onProjectReloadStartedEmitter.event;
+    }
+
+    public get onProjectReloadCompleted(): vscode.Event<ProjectReloadCompletedEvent> {
+        return this.onProjectReloadCompletedEmitter.event;
+    }
+
     dispose(): void {
         this.onServerStateChangeEmitter.dispose();
+        this.onProjectsRestoredEmitter.dispose();
+        this.onProjectReloadStartedEmitter.dispose();
+        this.onProjectReloadCompletedEmitter.dispose();
     }
 }

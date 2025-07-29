@@ -13,7 +13,7 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL, platform } from 'os';
 import { describe, expect, test } from '@jest/globals';
 
-export async function activateCSharpExtension(): Promise<void> {
+export async function activateCSharpExtension(): Promise<CSharpExtensionExports> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
     if (!csharpExtension) {
         throw new Error('Failed to find installation of ms-dotnettools.csharp');
@@ -53,6 +53,8 @@ export async function activateCSharpExtension(): Promise<void> {
     if (shouldRestart) {
         await restartLanguageServer();
     }
+
+    return csharpExtension.exports;
 }
 
 export function usingDevKit(): boolean {
@@ -111,6 +113,25 @@ export function isRazorWorkspace(workspace: typeof vscode.workspace) {
 
 export function isSlnWithGenerator(workspace: typeof vscode.workspace) {
     return isGivenSln(workspace, 'slnWithGenerator');
+}
+
+export async function getCompletionsAsync(
+    position: vscode.Position,
+    triggerCharacter: string | undefined,
+    completionsToResolve: number
+): Promise<vscode.CompletionList> {
+    const activeEditor = vscode.window.activeTextEditor;
+    if (!activeEditor) {
+        throw new Error('No active editor');
+    }
+
+    return await vscode.commands.executeCommand(
+        'vscode.executeCompletionItemProvider',
+        activeEditor.document.uri,
+        position,
+        triggerCharacter,
+        completionsToResolve
+    );
 }
 
 export async function getCodeLensesAsync(): Promise<vscode.CodeLens[]> {

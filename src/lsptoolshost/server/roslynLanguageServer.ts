@@ -132,6 +132,8 @@ export class RoslynLanguageServer {
         this.registerSetTrace();
         this.registerSendOpenSolution();
         this.registerProjectInitialization();
+        this.registerProjectReloadStarted();
+        this.registerProjectReloadCompleted();
         this.registerServerStateChanged();
         this.registerServerStateTracking();
         this.registerReportProjectConfiguration();
@@ -208,6 +210,10 @@ export class RoslynLanguageServer {
         });
     }
 
+    public fireProjectsRestoredEvent(eventArgs: { success: boolean }) {
+        this._languageServerEvents.onProjectsRestoredEmitter.fire(eventArgs);
+    }
+
     private registerServerStateTracking() {
         this._languageServerEvents.onServerStateChange((e) => {
             this._state = e.state;
@@ -232,6 +238,20 @@ export class RoslynLanguageServer {
             this._languageServerEvents.onServerStateChangeEmitter.fire({
                 state: ServerState.ProjectInitializationComplete,
                 workspaceLabel: this.workspaceDisplayName(),
+            });
+        });
+    }
+
+    private registerProjectReloadStarted() {
+        this._languageClient.onNotification(RoslynProtocol.ProjectReloadStartedNotification.type, () => {
+            this._languageServerEvents.onProjectReloadStartedEmitter.fire({
+            });
+        });
+    }
+
+    private registerProjectReloadCompleted() {
+        this._languageClient.onNotification(RoslynProtocol.ProjectReloadCompletedNotification.type, () => {
+            this._languageServerEvents.onProjectReloadCompletedEmitter.fire({
             });
         });
     }

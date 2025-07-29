@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import { activateCSharpExtension, closeAllEditorsAsync, getCompletionsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 
 describe(`Completion Tests`, () => {
     beforeAll(async () => {
@@ -70,23 +70,4 @@ describe(`Completion Tests`, () => {
         expect(methodOverrideLine).toContain('override void Method(NeedsImport n)');
         expect(methodOverrideImplLine).toContain('base.Method(n);');
     });
-
-    async function getCompletionsAsync(
-        position: vscode.Position,
-        triggerCharacter: string | undefined,
-        completionsToResolve: number
-    ): Promise<vscode.CompletionList> {
-        const activeEditor = vscode.window.activeTextEditor;
-        if (!activeEditor) {
-            throw new Error('No active editor');
-        }
-
-        return await vscode.commands.executeCommand(
-            'vscode.executeCompletionItemProvider',
-            activeEditor.document.uri,
-            position,
-            triggerCharacter,
-            completionsToResolve
-        );
-    }
 });

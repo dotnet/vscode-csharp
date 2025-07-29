@@ -288,6 +288,18 @@ export namespace ProjectInitializationCompleteNotification {
     export const type = new NotificationType(method);
 }
 
+export namespace ProjectReloadStartedNotification {
+    export const method = 'workspace/projectReloadStarted';
+    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
+    export const type = new NotificationType(method);
+}
+
+export namespace ProjectReloadCompletedNotification {
+    export const method = 'workspace/projectReloadCompleted';
+    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
+    export const type = new NotificationType(method);
+}
+
 export namespace ProjectConfigurationNotification {
     export const method = 'workspace/projectConfigurationTelemetry';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
