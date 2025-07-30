@@ -1560,7 +1560,7 @@
           },
           "razor.languageServer.cohostingEnabled": {
             "type": "boolean",
-            "default": false,
+            "default": true,
             "description": "%configuration.razor.languageServer.cohostingEnabled%",
             "tags": [
               "experimental"

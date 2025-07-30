@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.88.x
+* Enable Razor Cohosting "on" by default (PR: [#8469](https://github.com/dotnet/vscode-csharp/pull/8469))
 * Bump Roslyn to 5.0.0-2.25375.9 (PR: [#8463](https://github.com/dotnet/vscode-csharp/pull/8463))
   * Add diagnostic provider for clients without dynamic registration(PR: [#77984](https://github.com/dotnet/roslyn/pull/77984))
   * Fix eol handling on the last token in a file when formatting code actions(PR: [#79602](https://github.com/dotnet/roslyn/pull/79602))
