@@ -962,7 +962,7 @@ export class RoslynLanguageServer {
                 };
                 if (csharpDevkitExtension && !_wasActivatedWithCSharpDevkit) {
                     // We previously started without C# Dev Kit and it's now installed.
-                    // Offer a prompt to restart the server to use C# Dev Kit.
+                    // Offer a prompt to restart extensions in order to use C# Dev Kit.
                     this._channel.info(`Detected new installation of ${csharpDevkitExtensionId}`);
                     const message = `Detected installation of C# Dev Kit. Please reload the C# extension to continue.`;
                     showInformationMessage(vscode, message, title);
