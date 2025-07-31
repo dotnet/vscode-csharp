@@ -23,9 +23,11 @@ export interface ProjectsRestoredEvent {
 }
 
 export interface ProjectReloadStartedEvent {
+    projectFilePaths: string[];
 }
 
 export interface ProjectReloadCompletedEvent {
+    projectFilePaths: string[];
 }
 
 /**

@@ -243,16 +243,14 @@ export class RoslynLanguageServer {
     }
 
     private registerProjectReloadStarted() {
-        this._languageClient.onNotification(RoslynProtocol.ProjectReloadStartedNotification.type, () => {
-            this._languageServerEvents.onProjectReloadStartedEmitter.fire({
-            });
+        this._languageClient.onNotification(RoslynProtocol.ProjectReloadStartedNotification.type, params => {
+            this._languageServerEvents.onProjectReloadStartedEmitter.fire(params);
         });
     }
 
     private registerProjectReloadCompleted() {
-        this._languageClient.onNotification(RoslynProtocol.ProjectReloadCompletedNotification.type, () => {
-            this._languageServerEvents.onProjectReloadCompletedEmitter.fire({
-            });
+        this._languageClient.onNotification(RoslynProtocol.ProjectReloadCompletedNotification.type, params => {
+            this._languageServerEvents.onProjectReloadCompletedEmitter.fire(params);
         });
     }
 

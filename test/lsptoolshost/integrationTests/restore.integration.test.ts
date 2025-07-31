@@ -46,9 +46,11 @@ describe(`Restore Tests`, () => {
         await vscode.window.activeTextEditor!.document.save();
 
         let designTimeBuildFinished = false;
-        exports.experimental.languageServerEvents.onProjectsRestored(() => {
+        exports.experimental.languageServerEvents.onProjectsRestored(args => {
+            expect(args.success).toBe(true);
             // Restore has finished. Now subscribe to the next design time build.
-            exports.experimental.languageServerEvents.onProjectReloadCompleted(() => {
+            exports.experimental.languageServerEvents.onProjectReloadCompleted(args => {
+                expect(args.projectFilePaths).toContain(vscode.window.activeTextEditor!.document.uri.fsPath);
                 designTimeBuildFinished = true;
             });
         });
