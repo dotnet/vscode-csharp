@@ -18,8 +18,6 @@ import {
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 
-const timeout = 15*60*1000;
-
 describe(`Restore Tests`, () => {
     let exports: CSharpExtensionExports;
 
@@ -50,7 +48,6 @@ describe(`Restore Tests`, () => {
         let designTimeBuildFinished = false;
         exports.experimental.languageServerEvents.onProjectsRestored(() => {
             // Restore has finished. Now subscribe to the next design time build.
-            // TODO: seems racy.
             exports.experimental.languageServerEvents.onProjectReloadCompleted(() => {
                 designTimeBuildFinished = true;
             });
@@ -58,14 +55,17 @@ describe(`Restore Tests`, () => {
 
         await waitForExpectedResult<boolean>(
             () => designTimeBuildFinished,
-            timeout,
+            10*1000,
             100,
             (designTimeBuildFinished) => expect(designTimeBuildFinished).toBe(true)
         );
 
-        // we restored, then completed a design-time build.
-        const completionItems = await getCompletionsAsync(new vscode.Position(1, "using Newton".length), undefined, 10);
-
-        expect(completionItems.items.map(item => item.label)).toContain("Newtonsoft");
-    }, timeout);
+        const position = new vscode.Position(1, "using Newton".length);
+        await waitForExpectedResult<vscode.CompletionList>(
+            () => getCompletionsAsync(position, undefined, 10),
+            10*1000,
+            100,
+            (completionItems) => expect(completionItems.items.map(item => item.label)).toContain("Newtonsoft")
+        );
+    });
 });
