@@ -957,17 +957,17 @@ export class RoslynLanguageServer {
                 }
 
                 const title: CommandOption = {
-                    title: vscode.l10n.t('Restart Language Server'),
-                    command: 'dotnet.restartServer',
+                    title: vscode.l10n.t('Reload C# Extension'),
+                    command: 'workbench.action.restartExtensionHost',
                 };
                 if (csharpDevkitExtension && !_wasActivatedWithCSharpDevkit) {
-                    // We previously started without C# Dev Kit and its now installed.
+                    // We previously started without C# Dev Kit and it's now installed.
                     // Offer a prompt to restart the server to use C# Dev Kit.
                     this._channel.info(`Detected new installation of ${csharpDevkitExtensionId}`);
-                    const message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
+                    const message = `Detected installation of C# Dev Kit. Please reload the C# extension to continue.`;
                     showInformationMessage(vscode, message, title);
                 } else {
-                    // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
+                    // Any other change to extensions is irrelevant - an uninstall requires the extension host to restart
                     // which will automatically restart this extension too.
                 }
             })
