@@ -112,6 +112,7 @@ export async function activate(
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('coreclr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('clr', factory));
     disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('monovsdbg', factory));
+    disposables.add(vscode.debug.registerDebugAdapterDescriptorFactory('monovsdbg_wasm', factory));
 
     context.subscriptions.push(disposables);
 }

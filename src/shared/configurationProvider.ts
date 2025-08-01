@@ -16,7 +16,6 @@ import {
 } from '../shared/processPicker';
 import { PlatformInformation } from './platform';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
-import { DotnetWorkspaceConfigurationProvider } from './workspaceConfigurationProvider';
 import {
     ActionOption,
     showErrorMessageWithOptions,
@@ -156,11 +155,10 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
             }
         }
         if (
-            debugConfiguration.type === 'monovsdbg' &&
+            debugConfiguration.type === 'monovsdbg_wasm' &&
             debugConfiguration.monoDebuggerOptions.platform === 'browser' &&
-            this instanceof DotnetWorkspaceConfigurationProvider
-        ) {
-            const configProvider = this as DotnetWorkspaceConfigurationProvider;
+            this.isDotnetWorkspaceConfigurationProvider()) {
+            const configProvider = this;
             if (folder && debugConfiguration.monoDebuggerOptions.assetsPath == null) {
                 const csharpDevKitExtension = getCSharpDevKit();
                 if (csharpDevKitExtension === undefined) {
@@ -328,5 +326,16 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         }
 
         return result;
+    }
+    async getAssetsPathAndProgram(folder: vscode.WorkspaceFolder): Promise<[string, string]> {
+        return ['', ''];
+    }
+
+    async isDotNet9OrNewer(folder: vscode.WorkspaceFolder): Promise<boolean> {
+        return false;
+    }
+
+    isDotnetWorkspaceConfigurationProvider(): boolean {
+        return false;
     }
 }

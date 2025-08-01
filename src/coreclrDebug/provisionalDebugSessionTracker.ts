@@ -40,7 +40,7 @@ export class ProvisionalDebugSessionTracker {
      * @param session Debug session.
      */
     onDidStartDebugSession(session: vscode.DebugSession): void {
-        if (session.type !== 'coreclr' && session.type !== 'monovsdbg') {
+        if (session.type !== 'coreclr' && session.type !== 'monovsdbg' && session.type !== 'monovsdbg_wasm') {
             return;
         }
 

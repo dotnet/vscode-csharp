@@ -155,7 +155,7 @@ export async function activate(
                 eventStream,
                 csharpChannel,
                 reporter,
-                getCoreClrDebugPromise,
+                getCoreClrDebugPromise
             );
         }
     }

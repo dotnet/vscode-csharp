@@ -226,7 +226,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
             browser.port = portBrowserDebug;
         }
 
-        const monovsdbgSession = debugSessionTracker.getDebugSessionByType('monovsdbg');
+        const monovsdbgSession = debugSessionTracker.getDebugSessionByType('monovsdbg_wasm');
         if (useVSDbg) {
             //means that we don't have c#devkit installed so we get information from configSettings
             if (monovsdbgSession === undefined && getCSharpDevKit() === undefined) {
@@ -280,7 +280,7 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
         const args = configuration.hosted ? [] : ['run'];
         const app = {
             name: MANAGED_DEBUG_NAME,
-            type: 'monovsdbg',
+            type: 'monovsdbg_wasm',
             request: 'launch',
             args,
             cwd,

@@ -118,4 +118,8 @@ export class DotnetWorkspaceConfigurationProvider extends BaseVsDbgConfiguration
         const generator = new AssetGenerator(info, folder);
         return generator.isDotNet9OrNewer();
     }
+
+    isDotnetWorkspaceConfigurationProvider(): boolean {
+        return true;
+    }
 }
