@@ -22,7 +22,7 @@
   * Fix 'this' keyword not being recomended where allowed(PR: [#79514](https://github.com/dotnet/roslyn/pull/79514))
   * Fix 'switch' keyword recomendations after an expression(PR: [#79515](https://github.com/dotnet/roslyn/pull/79515))
   * Suggest proper 'Async'-suffixed name for Task-returning symbols(PR: [#79518](https://github.com/dotnet/roslyn/pull/79518))
-* Bump Razor to 10.0.0-preview.25403.1 (PR: [#8459](https://github.com/dotnet/vscode-csharp/pull/8459))
+* Bump Razor to 10.0.0-preview.25403.1 (PR: [#8485](https://github.com/dotnet/vscode-csharp/pull/8485))
   * Cache MEF composition in OOP and VS Code (PR: [#12041](https://github.com/dotnet/razor/pull/12041))
   * Make cohost formatting honour C# formatting options (PR: [#12042](https://github.com/dotnet/razor/pull/12042))
   * Correctly set the Html document uri for diagnostics requests (PR: [#12061](https://github.com/dotnet/razor/pull/12061))
