@@ -157,16 +157,16 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         if (
             debugConfiguration.type === 'monovsdbg_wasm' &&
             debugConfiguration.monoDebuggerOptions.platform === 'browser' &&
-            this.isDotnetWorkspaceConfigurationProvider()) {
-            const configProvider = this;
+            this.isDotnetWorkspaceConfigurationProvider()
+        ) {
             if (folder && debugConfiguration.monoDebuggerOptions.assetsPath == null) {
                 const csharpDevKitExtension = getCSharpDevKit();
                 if (csharpDevKitExtension === undefined) {
-                    if (!(await configProvider.isDotNet9OrNewer(folder))) {
+                    if (!(await this.isDotNet9OrNewer(folder))) {
                         return undefined;
                     }
                 }
-                const [assetsPath, programName] = await configProvider.getAssetsPathAndProgram(folder);
+                const [assetsPath, programName] = await this.getAssetsPathAndProgram(folder);
                 debugConfiguration.monoDebuggerOptions.assetsPath = assetsPath;
                 debugConfiguration.program = programName;
                 if (debugConfiguration.program == null) {
@@ -327,11 +327,11 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
 
         return result;
     }
-    async getAssetsPathAndProgram(folder: vscode.WorkspaceFolder): Promise<[string, string]> {
+    async getAssetsPathAndProgram(_: vscode.WorkspaceFolder): Promise<[string, string]> {
         return ['', ''];
     }
 
-    async isDotNet9OrNewer(folder: vscode.WorkspaceFolder): Promise<boolean> {
+    async isDotNet9OrNewer(_: vscode.WorkspaceFolder): Promise<boolean> {
         return false;
     }
 
