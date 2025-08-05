@@ -5642,6 +5642,14 @@
       },
       "[csharp]": {
         "editor.formatOnType": true
+      },
+      "explorer.fileNesting.patterns": {
+        "*.cs": "${capture}.designer.cs,${capture}.g.cs,${capture}.generated.cs,${capture}.run.json,${capture}.settings.json,${capture}.settings.*.json",
+        "*.csproj": "${capture}.csproj.user",
+        "*.json": "${capture}.Development.json",
+        "*.cshtml": "${capture}.cshtml.cs,${capture}.cshtml.css",
+        "*.razor": "${capture}.razor.cs,${capture}.razor.css",
+        "*.xaml": "${capture}.xaml.cs"
       }
     }
   }
