@@ -5650,8 +5650,7 @@
         "*.cshtml": "${capture}.cshtml.cs,${capture}.cshtml.css",
         "*.razor": "${capture}.razor.cs,${capture}.razor.css",
         "*.xaml": "${capture}.xaml.cs"
-      },
-      "explorer.fileNesting.enabled": true
+      }
     }
   }
 }
