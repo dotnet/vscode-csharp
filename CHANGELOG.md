@@ -5,7 +5,7 @@
 
 # 2.88.x
 * Enable Razor Cohosting "on" by default (PR: [#8469](https://github.com/dotnet/vscode-csharp/pull/8469))
-* Bump Roslyn to 5.0.0-2.25404.8 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Bump Roslyn to 5.0.0-2.25405.5 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
   * Fix file-based programs getting stuck in the host workspace(PR: [#79730](https://github.com/dotnet/roslyn/pull/79730))
   * Fixed irregular spacing between list items(PR: [#79388](https://github.com/dotnet/roslyn/pull/79388))
   * Introduce helper to ensure span mapping is consistent everywhere(PR: [#79729](https://github.com/dotnet/roslyn/pull/79729))
@@ -34,6 +34,7 @@
   * Fix 'this' keyword not being recomended where allowed(PR: [#79514](https://github.com/dotnet/roslyn/pull/79514))
   * Fix 'switch' keyword recomendations after an expression(PR: [#79515](https://github.com/dotnet/roslyn/pull/79515))
   * Suggest proper 'Async'-suffixed name for Task-returning symbols(PR: [#79518](https://github.com/dotnet/roslyn/pull/79518))
+  * Locate usable MSBuild when launching .NET Core BuildHost (PR: [#79494](https://github.com/dotnet/roslyn/pull/79494)
 * Bump Razor to 10.0.0-preview.25403.1 (PR: [#8485](https://github.com/dotnet/vscode-csharp/pull/8485))
   * Cache MEF composition in OOP and VS Code (PR: [#12041](https://github.com/dotnet/razor/pull/12041))
   * Make cohost formatting honour C# formatting options (PR: [#12042](https://github.com/dotnet/razor/pull/12042))
