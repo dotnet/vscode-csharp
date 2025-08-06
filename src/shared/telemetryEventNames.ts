@@ -9,6 +9,7 @@
 export enum TelemetryEventNames {
     // Common extension events
     CSharpActivated = 'CSharpActivated',
+    CSharpLimitedActivation = 'CSharpLimitedActivation',
 
     // Events related to the roslyn language server.
 

@@ -127,9 +127,10 @@ export class RoslynLanguageServer {
         private _context: vscode.ExtensionContext,
         private _telemetryReporter: TelemetryReporter,
         private _languageServerEvents: RoslynLanguageServerEvents,
-        private _channel: vscode.LogOutputChannel
+        private _channel: vscode.LogOutputChannel,
+        private _traceChannel: vscode.LogOutputChannel
     ) {
-        this.registerSetTrace();
+        this.registerOutputChannelsChangeHandlers();
         this.registerSendOpenSolution();
         this.registerProjectInitialization();
         this.registerServerStateChanged();
@@ -164,29 +165,41 @@ export class RoslynLanguageServer {
         return RoslynLanguageServer._processId;
     }
 
-    private registerSetTrace() {
-        // Set the language client trace level based on the log level option.
-        // setTrace only works after the client is already running.
+    private registerOutputChannelsChangeHandlers() {
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
-                await this.updateLogLevel();
+                await this.updateOutputChannelLogLevel();
+                await this.updateTraceChannelLogLevel();
             }
         });
         // Register for changes to the log level.
         this._channel.onDidChangeLogLevel(async () => {
-            await this.updateLogLevel();
+            await this.updateOutputChannelLogLevel();
+        });
+        this._traceChannel.onDidChangeLogLevel(async () => {
+            // The LSP client also responds to didChangeLogLevel and sets its own logic; we want to override that so do a small delay
+            setTimeout(async () => {
+                await this.updateTraceChannelLogLevel();
+            }, 1);
         });
     }
 
-    private async updateLogLevel(): Promise<void> {
+    private async updateOutputChannelLogLevel(): Promise<void> {
         if (this._languageClient.state === State.Running) {
-            const languageClientTraceLevel = RoslynLanguageServer.GetTraceLevel(this._channel.logLevel);
             // Update the server's log level.
             await this.sendNotification('roslyn/updateLogLevel', {
                 logLevel: RoslynLanguageServer.GetServerLogLevel(this._channel.logLevel),
             });
-            // Update the trace level that the client uses to log trace messages.
-            await this._languageClient.setTrace(languageClientTraceLevel);
+        }
+    }
+
+    private async updateTraceChannelLogLevel(): Promise<void> {
+        if (this._languageClient.state === State.Running) {
+            await this._languageClient.setTrace(
+                // If the logLevel is set to trace, we want to have verbose tracing. All tracing from the LSP client is done at 'trace' level,
+                // so we can't show tracing at any other output window levels, since it just gets filtered away.
+                this._traceChannel.logLevel == vscode.LogLevel.Trace ? Trace.Verbose : Trace.Off
+            );
         }
     }
 
@@ -266,7 +279,7 @@ export class RoslynLanguageServer {
         additionalExtensionPaths: string[],
         languageServerEvents: RoslynLanguageServerEvents,
         channel: vscode.LogOutputChannel,
-        traceChannel: vscode.OutputChannel
+        traceChannel: vscode.LogOutputChannel
     ): Promise<RoslynLanguageServer> {
         const devKit = getCSharpDevKit();
         if (devKit) {
@@ -329,7 +342,8 @@ export class RoslynLanguageServer {
             context,
             telemetryReporter,
             languageServerEvents,
-            channel
+            channel,
+            traceChannel
         );
 
         client.registerFeature(server._onAutoInsertFeature);
@@ -957,17 +971,17 @@ export class RoslynLanguageServer {
                 }
 
                 const title: CommandOption = {
-                    title: vscode.l10n.t('Restart Language Server'),
-                    command: 'dotnet.restartServer',
+                    title: vscode.l10n.t('Reload C# Extension'),
+                    command: 'workbench.action.restartExtensionHost',
                 };
                 if (csharpDevkitExtension && !_wasActivatedWithCSharpDevkit) {
-                    // We previously started without C# Dev Kit and its now installed.
-                    // Offer a prompt to restart the server to use C# Dev Kit.
+                    // We previously started without C# Dev Kit and it's now installed.
+                    // Offer a prompt to restart extensions in order to use C# Dev Kit.
                     this._channel.info(`Detected new installation of ${csharpDevkitExtensionId}`);
-                    const message = `Detected installation of ${csharpDevkitExtensionId}. Would you like to relaunch the language server for added features?`;
+                    const message = `Detected installation of C# Dev Kit. Please reload the C# extension to continue.`;
                     showInformationMessage(vscode, message, title);
                 } else {
-                    // Any other change to extensions is irrelevant - an uninstall requires a reload of the window
+                    // Any other change to extensions is irrelevant - an uninstall requires the extension host to restart
                     // which will automatically restart this extension too.
                 }
             })
@@ -1097,25 +1111,6 @@ export class RoslynLanguageServer {
                 return 'Error';
             case vscode.LogLevel.Off:
                 return 'None';
-            default:
-                throw new Error(`Invalid log level ${logLevel}`);
-        }
-    }
-
-    private static GetTraceLevel(logLevel: vscode.LogLevel): Trace {
-        switch (logLevel) {
-            case vscode.LogLevel.Trace:
-                return Trace.Verbose;
-            case vscode.LogLevel.Debug:
-                return Trace.Messages;
-            case vscode.LogLevel.Info:
-                return Trace.Off;
-            case vscode.LogLevel.Warning:
-                return Trace.Off;
-            case vscode.LogLevel.Error:
-                return Trace.Off;
-            case vscode.LogLevel.Off:
-                return Trace.Off;
             default:
                 throw new Error(`Invalid log level ${logLevel}`);
         }

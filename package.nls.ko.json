@@ -65,7 +65,7 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "미리 보기 \"파일 기반 프로그램\"(dotnet run app.cs) 환경을 활성화합니다.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "기호를 표시할 때 설명 정보를 표시합니다.",
   "configuration.dotnet.server.componentPaths": "언어 서버의 기본 제공 구성 요소에 대한 폴더 경로를 재정의할 수 있습니다(예: 로컬로 빌드된 구성 요소를 사용하도록 확장 디렉터리의 .roslynDevKit 경로 재정의).",
-  "configuration.dotnet.server.componentPaths.roslynCopilot": "Overrides the folder path for the .roslynCopilot component of the language server",
+  "configuration.dotnet.server.componentPaths.roslynCopilot": "언어 서버의 .roslynCopilot 구성 요소에 대한 폴더 경로를 덮어씁니다.",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "언어 서버의 .roslynDevKit 구성 요소에 대한 폴더 경로를 재정의합니다.",
   "configuration.dotnet.server.componentPaths.xamlTools": "언어 서버의 .xamlTools 구성 요소에 대한 폴더 경로를 재정의합니다.",
   "configuration.dotnet.server.crashDumpPath": "언어 서버가 충돌하는 경우 크래시 덤프가 기록되는 폴더 경로를 설정합니다.  사용자가 쓸 수 있어야 합니다.",

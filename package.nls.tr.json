@@ -65,7 +65,7 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "\"Dosya tabanlı programlar\" (dotnet run app.cs) önizleme deneyimini etkinleştirir.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Simge görüntülendiğinde açıklama bilgilerini göster.",
   "configuration.dotnet.server.componentPaths": "Dil sunucusundaki yerleşik bileşenlerin klasör yolunu geçersiz kılmaya olanak tanır (örneğin, yerel olarak oluşturulan bileşenleri kullanmak için uzantı dizinindeki .roslynDevKit yolunu geçersiz kılın)",
-  "configuration.dotnet.server.componentPaths.roslynCopilot": "Overrides the folder path for the .roslynCopilot component of the language server",
+  "configuration.dotnet.server.componentPaths.roslynCopilot": "Dil sunucusunun .roslynCopilot bileşeninin klasör yolunu geçersiz kılar",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Dil sunucusundaki .roslynDevKit bileşeninin klasör yolunu geçersiz kılar",
   "configuration.dotnet.server.componentPaths.xamlTools": "Dil sunucusundaki .xamlTools bileşeninin klasör yolunu geçersiz kılar",
   "configuration.dotnet.server.crashDumpPath": "Dil sunucusunun çökmesi durumunda kilitlenme dökümlerinin yazılacağı klasör yolunu ayarlar.  Kullanıcı tarafından yazılabilir olmalıdır.",

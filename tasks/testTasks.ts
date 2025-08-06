@@ -74,6 +74,10 @@ function createIntegrationTestSubTasks() {
         gulp.series(integrationTestProjects.map((projectName) => `test:integration:devkit:${projectName}`))
     );
 
+    gulp.task('test:integration:untrusted', async () =>
+        runIntegrationTest('empty', path.join('untrustedWorkspace', 'integrationTests'), `[C#][empty]`)
+    );
+
     for (const projectName of razorIntegrationTestProjects) {
         gulp.task(`test:integration:razor:${projectName}`, async () =>
             // Run DevKit tests because razor doesn't gracefully handle roslyn restarting
@@ -108,7 +112,12 @@ function createIntegrationTestSubTasks() {
 
     gulp.task(
         'test:integration',
-        gulp.series('test:integration:csharp', 'test:integration:devkit', 'test:integration:razor')
+        gulp.series(
+            'test:integration:csharp',
+            'test:integration:devkit',
+            'test:integration:razor',
+            'test:integration:untrusted'
+        )
     );
 }
 

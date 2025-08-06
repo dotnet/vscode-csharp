@@ -87,6 +87,7 @@ export function activateRoslyn(
 
     const languageServerExport = new RoslynLanguageServerExport(roslynLanguageServerStartedPromise);
     const exports: CSharpExtensionExports = {
+        isLimitedActivation: false,
         initializationFinished: async () => {
             await coreClrDebugPromise;
             await razorLanguageServerStartedPromise;
