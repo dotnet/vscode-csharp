@@ -17,6 +17,7 @@ pr:
   paths:
     exclude:
     - '*.md'
+    - 'version.json'
     - .github/*
     - azure-pipelines/release.yml
     - CHANGELOG.

@@ -96,7 +96,7 @@ export async function activateRoslynLanguageServer(
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
 
-    registerRestoreCommands(context, languageServer);
+    registerRestoreCommands(context, languageServer, _channel);
 
     registerSourceGeneratedFilesContentProvider(context, languageServer);
 

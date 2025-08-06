@@ -37,7 +37,7 @@ export function registerTraceCommand(
     outputChannel: vscode.LogOutputChannel
 ): void {
     context.subscriptions.push(
-        vscode.commands.registerCommand('csharp.recordTrace', async () => {
+        vscode.commands.registerCommand('csharp.recordLanguageServerTrace', async () => {
             await vscode.window.withProgress(
                 {
                     location: vscode.ProgressLocation.Notification,
@@ -86,9 +86,9 @@ async function executeDotNetTraceCommand(
         throw new Error(vscode.l10n.t('Language server process not found, ensure the server is running.'));
     }
 
-    let traceFolder: string | undefined = '';
+    let traceFolderUri: vscode.Uri | undefined;
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders?.length >= 1) {
-        traceFolder = vscode.workspace.workspaceFolders[0].uri.fsPath;
+        traceFolderUri = vscode.workspace.workspaceFolders[0].uri;
     }
 
     // Prompt the user for the folder to save the trace file
@@ -97,7 +97,7 @@ async function executeDotNetTraceCommand(
         canSelectFiles: false,
         canSelectFolders: true,
         canSelectMany: false,
-        defaultUri: traceFolder ? vscode.Uri.file(traceFolder) : undefined,
+        defaultUri: traceFolderUri ? traceFolderUri : undefined,
         openLabel: vscode.l10n.t('Select Trace Folder'),
         title: vscode.l10n.t('Select Folder to Save Trace File'),
     });
@@ -107,7 +107,7 @@ async function executeDotNetTraceCommand(
         return;
     }
 
-    traceFolder = uris[0].fsPath;
+    const traceFolder = uris[0].fsPath;
 
     if (!fs.existsSync(traceFolder)) {
         throw new Error(vscode.l10n.t(`Folder for trace file {0} does not exist`, traceFolder));
@@ -129,13 +129,13 @@ async function executeDotNetTraceCommand(
         return;
     }
 
-    const terminal = await getOrCreateTerminal(traceFolder, outputChannel);
-
     const dotnetTraceInstalled = await verifyOrAcquireDotnetTrace(traceFolder, progress, outputChannel);
     if (!dotnetTraceInstalled) {
         // Cancelled or unable to install dotnet-trace
         return;
     }
+
+    const terminal = await getOrCreateTerminal(traceFolder, outputChannel);
 
     const args = ['collect', ...userArgs.split(' ')];
 
