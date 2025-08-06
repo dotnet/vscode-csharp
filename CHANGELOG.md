@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.89.x
+
 # 2.88.x
 * Enable Razor Cohosting "on" by default (PR: [#8469](https://github.com/dotnet/vscode-csharp/pull/8469))
 * Bump Roslyn to 5.0.0-2.25405.5 (PR: [#8493](https://github.com/dotnet/vscode-csharp/pull/8493))
