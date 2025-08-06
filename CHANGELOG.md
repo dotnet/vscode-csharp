@@ -5,7 +5,7 @@
 
 # 2.88.x
 * Enable Razor Cohosting "on" by default (PR: [#8469](https://github.com/dotnet/vscode-csharp/pull/8469))
-* Bump Roslyn to 5.0.0-2.25405.5 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Bump Roslyn to 5.0.0-2.25405.5 (PR: [#8493](https://github.com/dotnet/vscode-csharp/pull/8493))
   * Fix file-based programs getting stuck in the host workspace(PR: [#79730](https://github.com/dotnet/roslyn/pull/79730))
   * Fixed irregular spacing between list items(PR: [#79388](https://github.com/dotnet/roslyn/pull/79388))
   * Introduce helper to ensure span mapping is consistent everywhere(PR: [#79729](https://github.com/dotnet/roslyn/pull/79729))
