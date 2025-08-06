@@ -42,6 +42,8 @@
 * Fix issue acquiring components when using proxies (PR: [#8457](https://github.com/dotnet/vscode-csharp/pull/8457))
 * Support activating the extension with limited support in untrusted workspaces (PR: [#8435](https://github.com/dotnet/vscode-csharp/pull/8435))
 * Report specific c# settings in issue template (PR: [#8433](https://github.com/dotnet/vscode-csharp/pull/8433))
+* Update OmniSharp to 1.39.14 (PR: [#8492](https://github.com/dotnet/vscode-csharp/pull/8492))
+  * Update Roslyn to 4.14.0-3.25168.13 (PR: [omnisharp-roslyn/#2664](https://github.com/OmniSharp/omnisharp-roslyn/pull/2664))
 
 # 2.87.x
 * Bump Roslyn to 5.0.0-2.25371.17 (PR: [#8436](https://github.com/dotnet/vscode-csharp/pull/8436))
