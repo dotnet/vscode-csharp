@@ -41,12 +41,6 @@ Copyright © .NET Foundation, and contributors.
 The Microsoft C# extension is subject to [these license terms](https://github.com/dotnet/vscode-csharp/blob/main/RuntimeLicenses/license.txt).
 The source code to this extension is available on [https://github.com/dotnet/vscode-csharp](https://github.com/dotnet/vscode-csharp) and licensed under the [MIT license](LICENSE.txt).
 
-### Code of Conduct
-
-This project has adopted the code of conduct defined by the [Contributor Covenant](http://contributor-covenant.org/)
-to clarify expected behavior in our community.
-For more information see the [.NET Foundation Code of Conduct](https://www.dotnetfoundation.org/code-of-conduct).
-
 ### Contribution License Agreement
 
 By signing the [CLA](https://cla.dotnetfoundation.org/), the community is free to use your contribution to [.NET Foundation](http://www.dotnetfoundation.org) projects.
