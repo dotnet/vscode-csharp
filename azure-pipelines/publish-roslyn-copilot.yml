@@ -51,7 +51,7 @@ extends:
         - task: AzureFileCopy@6
           displayName: "Copy the zip to Azure Storage"
           inputs:
-            SourcePath: '$(Build.ArtifactStagingDirectory)/staging'
+            SourcePath: '$(Build.ArtifactStagingDirectory)/staging/*'
             azureSubscription: "$(AzSubscription)"
             Destination: "AzureBlob"
             storage: "$(AzStorage)"
