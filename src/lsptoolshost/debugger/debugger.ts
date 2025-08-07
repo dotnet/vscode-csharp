@@ -53,8 +53,8 @@ export function registerDebugger(
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => {
-            if (!(await promptForDevKitDebugConfigurations())) {
+        vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex, skipPrompt = false) => {
+            if (!(await promptForDevKitDebugConfigurations(skipPrompt))) {
                 return;
             }
 
@@ -63,8 +63,13 @@ export function registerDebugger(
     );
 }
 
-async function promptForDevKitDebugConfigurations(): Promise<boolean> {
+async function promptForDevKitDebugConfigurations(skipPrompt: boolean = false): Promise<boolean> {
     if (getCSharpDevKit()) {
+        // If skipPrompt is true, proceed with generating assets without showing the dialog
+        if (skipPrompt) {
+            return true;
+        }
+
         let result: boolean | undefined = undefined;
 
         while (result === undefined) {
