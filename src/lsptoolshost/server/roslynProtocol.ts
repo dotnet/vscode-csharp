@@ -239,20 +239,6 @@ export interface ProjectNeedsRestoreName {
     projectFilePaths: string[];
 }
 
-export interface ProjectReloadStartedName {
-    /**
-     * The set of projects whose reload started.
-     */
-    projectFilePaths: string[];
-}
-
-export interface ProjectReloadCompletedName {
-    /**
-     * The set of projects whose reload completed.
-     */
-    projectFilePaths: string[];
-}
-
 export interface CopilotRelatedDocumentsParams extends WorkDoneProgressParams, PartialResultParams {
     _vs_textDocument: TextDocumentIdentifier;
     position: Position;
@@ -300,18 +286,6 @@ export namespace ProjectInitializationCompleteNotification {
     export const method = 'workspace/projectInitializationComplete';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
     export const type = new NotificationType(method);
-}
-
-export namespace ProjectReloadStartedNotification {
-    export const method = 'workspace/projectReloadStarted';
-    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
-    export const type = new NotificationType<ProjectReloadStartedName>(method);
-}
-
-export namespace ProjectReloadCompletedNotification {
-    export const method = 'workspace/projectReloadCompleted';
-    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
-    export const type = new NotificationType<ProjectReloadCompletedName>(method);
 }
 
 export namespace ProjectConfigurationNotification {

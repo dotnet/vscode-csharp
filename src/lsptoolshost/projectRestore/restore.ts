@@ -137,14 +137,8 @@ export async function restore(
                 );
 
                 await responsePromise.then(
-                    (result) => {
-                        result.forEach((r) => writeOutput(r))
-                        languageServer.fireProjectsRestoredEvent({ success: true });
-                    },
-                    (err) => {
-                        outputChannel.error(`[.NET Restore] ${err}`)
-                        languageServer.fireProjectsRestoredEvent({ success: false });
-                    }
+                    (result) => result.forEach((r) => writeOutput(r)),
+                    (err) => outputChannel.error(`[.NET Restore] ${err}`)
                 );
             }
         )
