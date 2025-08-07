@@ -12,6 +12,7 @@ import { RoslynWorkspaceDebugInformationProvider } from '../debugger/roslynWorks
 import { PlatformInformation } from '../../shared/platform';
 import { DotnetConfigurationResolver } from '../../shared/dotnetConfigurationProvider';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { hasContainerToolsExtension } from '../../utils/getContainerTools';
 import { RoslynLanguageServerEvents, ServerState } from '../server/languageServerEvents';
 
 export function registerDebugger(
@@ -65,6 +66,17 @@ export function registerDebugger(
 
 async function promptForDevKitDebugConfigurations(): Promise<boolean> {
     if (getCSharpDevKit()) {
+        // Skip the modal if container tools are present, as they require static debugging configurations
+        if (hasContainerToolsExtension()) {
+            return true;
+        }
+
+        // Skip the modal if user has explicitly disabled it via configuration
+        const config = vscode.workspace.getConfiguration('dotnet.server');
+        if (config.get<boolean>('suppressGenerateAssetsWarning')) {
+            return true;
+        }
+
         let result: boolean | undefined = undefined;
 
         while (result === undefined) {
