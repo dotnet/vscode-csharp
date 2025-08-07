@@ -3,9 +3,23 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.89.x
+
 # 2.88.x
 * Enable Razor Cohosting "on" by default (PR: [#8469](https://github.com/dotnet/vscode-csharp/pull/8469))
-* Bump Roslyn to 5.0.0-2.25375.9 (PR: [#8463](https://github.com/dotnet/vscode-csharp/pull/8463))
+* Bump Roslyn to 5.0.0-2.25405.5 (PR: [#8493](https://github.com/dotnet/vscode-csharp/pull/8493))
+  * Fix file-based programs getting stuck in the host workspace(PR: [#79730](https://github.com/dotnet/roslyn/pull/79730))
+  * Fixed irregular spacing between list items(PR: [#79388](https://github.com/dotnet/roslyn/pull/79388))
+  * Introduce helper to ensure span mapping is consistent everywhere(PR: [#79729](https://github.com/dotnet/roslyn/pull/79729))
+  * Fix formatting in use-auto-prop when attributes are present(PR: [#79735](https://github.com/dotnet/roslyn/pull/79735))
+  * Razor span mapping in LSP for cohosting(PR: [#79677](https://github.com/dotnet/roslyn/pull/79677))
+  * Handle concurrent requests to update workspace contents and workspace SG info.(PR: [#79628](https://github.com/dotnet/roslyn/pull/79628))
+  * Update debugger.contracts to 18.0.0-beta.25379.1(PR: [#79661](https://github.com/dotnet/roslyn/pull/79661))
+  * Fix logging when item counts change in LoadedProject(PR: [#79640](https://github.com/dotnet/roslyn/pull/79640))
+  * File-based program directive diagnostics in editor(PR: [#79421](https://github.com/dotnet/roslyn/pull/79421))
+  * Fixup quick info for suppressed nullable operations.(PR: [#79636](https://github.com/dotnet/roslyn/pull/79636))
+  * Rename Razor source generated documents in all scenarios, and map edits(PR: [#79604](https://github.com/dotnet/roslyn/pull/79604))
+  * Fix formatting of CDATA sections in quick info(PR: [#79627](https://github.com/dotnet/roslyn/pull/79627))
   * Add diagnostic provider for clients without dynamic registration(PR: [#77984](https://github.com/dotnet/roslyn/pull/77984))
   * Fix eol handling on the last token in a file when formatting code actions(PR: [#79602](https://github.com/dotnet/roslyn/pull/79602))
   * Reduce allocations during CommonCompletionItem.Create(PR: [#79591](https://github.com/dotnet/roslyn/pull/79591))
@@ -22,11 +36,16 @@
   * Fix 'this' keyword not being recomended where allowed(PR: [#79514](https://github.com/dotnet/roslyn/pull/79514))
   * Fix 'switch' keyword recomendations after an expression(PR: [#79515](https://github.com/dotnet/roslyn/pull/79515))
   * Suggest proper 'Async'-suffixed name for Task-returning symbols(PR: [#79518](https://github.com/dotnet/roslyn/pull/79518))
-* Bump Razor to 10.0.0-preview.25377.4 (PR: [#8459](https://github.com/dotnet/vscode-csharp/pull/8459))
+  * Locate usable MSBuild when launching .NET Core BuildHost (PR: [#79494](https://github.com/dotnet/roslyn/pull/79494)
+* Bump Razor to 10.0.0-preview.25403.1 (PR: [#8485](https://github.com/dotnet/vscode-csharp/pull/8485))
   * Cache MEF composition in OOP and VS Code (PR: [#12041](https://github.com/dotnet/razor/pull/12041))
+  * Make cohost formatting honour C# formatting options (PR: [#12042](https://github.com/dotnet/razor/pull/12042))
+  * Correctly set the Html document uri for diagnostics requests (PR: [#12061](https://github.com/dotnet/razor/pull/12061))
 * Fix issue acquiring components when using proxies (PR: [#8457](https://github.com/dotnet/vscode-csharp/pull/8457))
 * Support activating the extension with limited support in untrusted workspaces (PR: [#8435](https://github.com/dotnet/vscode-csharp/pull/8435))
 * Report specific c# settings in issue template (PR: [#8433](https://github.com/dotnet/vscode-csharp/pull/8433))
+* Update OmniSharp to 1.39.14 (PR: [#8492](https://github.com/dotnet/vscode-csharp/pull/8492))
+  * Update Roslyn to 4.14.0-3.25168.13 (PR: [omnisharp-roslyn/#2664](https://github.com/OmniSharp/omnisharp-roslyn/pull/2664))
 
 # 2.87.x
 * Bump Roslyn to 5.0.0-2.25371.17 (PR: [#8436](https://github.com/dotnet/vscode-csharp/pull/8436))
