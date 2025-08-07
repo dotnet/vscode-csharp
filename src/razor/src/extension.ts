@@ -310,8 +310,7 @@ export async function activate(
             localRegistrations.length = 0;
         });
 
-        const provider = new BlazorDebugConfigurationProvider(logger, vscodeType);
-        context.subscriptions.push(vscodeType.debug.registerDebugConfigurationProvider('blazorwasm', provider));
+        context.subscriptions.push(BlazorDebugConfigurationProvider.register(logger, vscodeType));
 
         languageServerClient.onStarted(async () => {
             await documentManager.initialize();

@@ -52,6 +52,7 @@ import { FormattingHandler } from '../../razor/src/formatting/formattingHandler'
 import { ReportIssueCommand } from '../../razor/src/diagnostics/reportIssueCommand';
 import { HtmlDocument } from './htmlDocument';
 import { HtmlForwardedRequest } from './htmlForwardedRequest';
+import { BlazorDebugConfigurationProvider } from '../../razor/src/blazorDebug/blazorDebugConfigurationProvider';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -67,6 +68,8 @@ export function registerRazorEndpoints(
     if (razorOptions.cohostingEnabled) {
         vscode.commands.executeCommand('setContext', 'razor.mode', 'cohosting');
         registerCohostingEndpoints();
+
+        context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
     } else {
         vscode.commands.executeCommand('setContext', 'razor.mode', 'lsp');
         registerNonCohostingEndpoints();

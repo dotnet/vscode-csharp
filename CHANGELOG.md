@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.89.x
+* Register Blazor WASM debugger in Razor Cohosting (PR: [#8511](https://github.com/dotnet/vscode-csharp/pull/8511))
 
 # 2.88.x
 * Enable Razor Cohosting "on" by default (PR: [#8469](https://github.com/dotnet/vscode-csharp/pull/8469))
