@@ -13,6 +13,7 @@ import {
     openFileInWorkspaceAsync,
     revertActiveFile,
     sleep,
+    waitForAllAsyncOperationsAsync,
     waitForExpectedResult,
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
@@ -44,23 +45,7 @@ describe(`Restore Tests`, () => {
             editBuilder.insert(new vscode.Position(0, 0), '#:package Newtonsoft.Json@13.0.3');
         });
         await vscode.window.activeTextEditor!.document.save();
-
-        let designTimeBuildFinished = false;
-        exports.experimental.languageServerEvents.onProjectsRestored(args => {
-            expect(args.success).toBe(true);
-            // Restore has finished. Now subscribe to the next design time build.
-            exports.experimental.languageServerEvents.onProjectReloadCompleted(args => {
-                expect(args.projectFilePaths).toContain(vscode.window.activeTextEditor!.document.uri.fsPath);
-                designTimeBuildFinished = true;
-            });
-        });
-
-        await waitForExpectedResult<boolean>(
-            () => designTimeBuildFinished,
-            10*1000,
-            100,
-            (designTimeBuildFinished) => expect(designTimeBuildFinished).toBe(true)
-        );
+        await waitForAllAsyncOperationsAsync(exports);
 
         const position = new vscode.Position(1, "using Newton".length);
         await waitForExpectedResult<vscode.CompletionList>(

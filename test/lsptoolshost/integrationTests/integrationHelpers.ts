@@ -12,6 +12,7 @@ import { ServerState } from '../../../src/lsptoolshost/server/languageServerEven
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { EOL, platform } from 'os';
 import { describe, expect, test } from '@jest/globals';
+import { WaitForAsyncOperationsRequest } from './testHooks';
 
 export async function activateCSharpExtension(): Promise<CSharpExtensionExports> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
@@ -319,4 +320,9 @@ function isWindows() {
 
 function isLinux() {
     return !(isMacOS() || isWindows());
+}
+
+export async function waitForAllAsyncOperationsAsync(exports: CSharpExtensionExports): Promise<void> {
+    const source = new vscode.CancellationTokenSource();
+    await exports.experimental.sendServerRequest(WaitForAsyncOperationsRequest.type, { operations: [] }, source.token);
 }
