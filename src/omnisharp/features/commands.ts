@@ -35,7 +35,8 @@ export default function registerCommands(
     eventStream: EventStream,
     monoResolver: IHostExecutableResolver,
     dotnetResolver: IHostExecutableResolver,
-    workspaceInformationProvider: IWorkspaceDebugInformationProvider
+    workspaceInformationProvider: IWorkspaceDebugInformationProvider,
+    outputChannel: vscode.OutputChannel
 ): CompositeDisposable {
     const disposable = new CompositeDisposable();
     disposable.add(vscode.commands.registerCommand('o.restart', async () => restartOmniSharp(context, server)));
@@ -66,18 +67,29 @@ export default function registerCommands(
     );
 
     disposable.add(
-        vscode.commands.registerCommand('csharp.reportIssue', async () =>
-            reportIssue(
-                context.extension.packageJSON.version,
+        vscode.commands.registerCommand('csharp.reportIssue', async () => {
+            const logOutputChannel = isLogOutputChannel(outputChannel);
+            return reportIssue(
+                context,
                 getDotnetInfo,
                 platformInfo.isValidPlatformForMono(),
+                logOutputChannel ? [logOutputChannel] : [],
                 dotnetResolver,
                 monoResolver
-            )
-        )
+            );
+        })
     );
 
     return new CompositeDisposable(disposable);
+}
+
+function isLogOutputChannel(channel: vscode.OutputChannel): vscode.LogOutputChannel | undefined {
+    const anyChannel = channel as any;
+    if (anyChannel.logLevel) {
+        return channel as vscode.LogOutputChannel;
+    } else {
+        return undefined;
+    }
 }
 
 async function restartOmniSharp(context: vscode.ExtensionContext, server: OmniSharpServer) {

@@ -5627,6 +5627,11 @@
           "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
           "group": "2_dotnet@2"
         }
+      ],
+      "issue/reporter": [
+        {
+          "command": "csharp.reportIssue"
+        }
       ]
     },
     "viewsWelcome": [
