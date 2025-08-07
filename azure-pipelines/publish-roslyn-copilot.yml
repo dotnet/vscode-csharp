@@ -52,7 +52,7 @@ extends:
           displayName: "Copy the zip to Azure Storage"
           inputs:
             SourcePath: '$(Build.ArtifactStagingDirectory)/staging'
-            azureSubscription: "RoslynDeploy"
+            azureSubscription: "$(AzSubscription)"
             Destination: "AzureBlob"
-            storage: "roslyn"
-            ContainerName: "releases"
+            storage: "$(AzStorage)"
+            ContainerName: "$(AzContainerName)"
