@@ -12,14 +12,11 @@ export interface WaitForAsyncOperationsParams {
     operations: string[];
 }
 
+export interface WaitForAsyncOperationsResponse {
+}
+
 export namespace WaitForAsyncOperationsRequest {
     export const method = 'workspace/waitForAsyncOperations';
     export const messageDirection: lsp.MessageDirection = lsp.MessageDirection.clientToServer;
-    export const type = new lsp.RequestType<
-        WaitForAsyncOperationsParams,
-        {
-            /* empty */
-        },
-        void
-    >(method);
+    export const type = new lsp.RequestType<WaitForAsyncOperationsParams, WaitForAsyncOperationsResponse, void>(method);
 }
