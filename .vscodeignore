@@ -62,3 +62,4 @@ esbuild.js
 
 +RuntimeLicenses/dependencies/*
 coreclr-debug/install.log
+!.vswebassemblybridge/**
