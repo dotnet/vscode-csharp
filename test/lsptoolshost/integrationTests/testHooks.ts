@@ -12,8 +12,7 @@ export interface WaitForAsyncOperationsParams {
     operations: string[];
 }
 
-export interface WaitForAsyncOperationsResponse {
-}
+export interface WaitForAsyncOperationsResponse {} // eslint-disable-line @typescript-eslint/no-empty-object-type
 
 export namespace WaitForAsyncOperationsRequest {
     export const method = 'workspace/waitForAsyncOperations';

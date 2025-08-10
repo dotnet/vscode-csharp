@@ -49,7 +49,7 @@ describe(`Restore Tests`, () => {
 
         const position = new vscode.Position(1, 'using Newton'.length);
         await waitForExpectedResult<vscode.CompletionList>(
-            () => getCompletionsAsync(position, undefined, 10),
+            async () => getCompletionsAsync(position, undefined, 10),
             10 * 1000,
             100,
             (completionItems) => expect(completionItems.items.map((item) => item.label)).toContain('Newtonsoft')
