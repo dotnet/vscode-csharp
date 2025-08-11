@@ -66,7 +66,7 @@ export function registerDebugger(
 async function promptForDevKitDebugConfigurations(skipPrompt: boolean = false): Promise<boolean> {
     if (getCSharpDevKit()) {
         // If skipPrompt is true, proceed with generating assets without showing the dialog
-        if (skipPrompt) {
+        if (options.skipPrompt) {
             return true;
         }
 
