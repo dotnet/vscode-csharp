@@ -53,7 +53,7 @@ export function registerDebugger(
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex, skipPrompt = false) => {
+        vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex: number, options: { skipPrompt?: boolean } = {}) => {
             if (!(await promptForDevKitDebugConfigurations(skipPrompt))) {
                 return;
             }
