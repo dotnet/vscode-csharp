@@ -5,6 +5,7 @@
 
 # 2.89.x
 * Bump Razor to 10.0.0-preview.25408.2 (PR: [#8512](https://github.com/dotnet/vscode-csharp/pull/8512))
+  * Fix null reference exception in formatting (PR: [#12097](https://github.com/dotnet/razor/pull/12097))
   * Fix cohost override setting (PR: [#12082](https://github.com/dotnet/razor/pull/12082))
   * Cohost span mapping (PR: [#12055](https://github.com/dotnet/razor/pull/12055))
   * Explicitly deny certain Roslyn formatting options (PR: [#12064](https://github.com/dotnet/razor/pull/12064))
