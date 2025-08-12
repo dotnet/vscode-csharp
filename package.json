@@ -1505,6 +1505,11 @@
             "default": false,
             "description": "%configuration.dotnet.server.suppressMiscellaneousFilesToasts%"
           },
+          "dotnet.server.suppressGenerateAssetsWarning": {
+            "type": "boolean",
+            "default": false,
+            "description": "%configuration.dotnet.server.suppressGenerateAssetsWarning%"
+          },
           "dotnet.server.useServerGC": {
             "type": "boolean",
             "default": true,
