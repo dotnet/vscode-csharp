@@ -19,7 +19,6 @@ steps:
     displayName: 'Install .NET SDK'
     inputs:
       version: ${{ parameters.dotnetVersion }}
-      includePreviewVersions: true
 
 - script: dotnet --info
   displayName: Display dotnet info
