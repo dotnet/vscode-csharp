@@ -127,11 +127,6 @@ describe(`Razor References ${testAssetWorkspace.description}`, function () {
     });
 
     test('Find All References - CSharp', async () => {
-        if (!integrationHelpers.usingDevKit()) {
-            // If we're not using devkit, then it means we are testing cohosting, and FAR from C# doesn't currently work in cohosting.
-            return;
-        }
-
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
         }
