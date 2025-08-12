@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.89.x
-* Bump Razor to 10.0.0-preview.25408.2 (PR: [#8512](https://github.com/dotnet/vscode-csharp/pull/8512))
+* Bump Razor to 10.0.0-preview.25411.5 (PR: [#8512](https://github.com/dotnet/vscode-csharp/pull/8512))
+  * Fix VS Code cohosting completion when Razor and C# are valid (PR: [#12096](https://github.com/dotnet/razor/pull/12096))
   * Fix null reference exception in formatting (PR: [#12097](https://github.com/dotnet/razor/pull/12097))
   * Fix cohost override setting (PR: [#12082](https://github.com/dotnet/razor/pull/12082))
   * Cohost span mapping (PR: [#12055](https://github.com/dotnet/razor/pull/12055))
