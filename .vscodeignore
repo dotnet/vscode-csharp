@@ -29,6 +29,7 @@ typings/**
 vsix/**
 node_modules
 azure-pipelines
+init.ps1
 
 **/*.map
 *.vsix
