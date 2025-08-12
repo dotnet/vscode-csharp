@@ -1,0 +1,170 @@
+name: Release Comment Handler
+
+on:
+  issues:
+    types:
+      - labeled
+
+jobs:
+  comment_on_label:
+    if: github.event.label.name == 'prerelease' || github.event.label.name == 'fixed'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Gather participants
+        id: participants
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log("=== WORKFLOW START ===");
+            const issue_number = context.payload.issue.number;
+            const repo = context.repo;
+
+            console.log(`Processing issue #${issue_number} in ${repo.owner}/${repo.repo}`);
+
+            // Get issue details (for author)
+            const issue = context.payload.issue;
+            const author = issue.user.login;
+            console.log(`Issue author: ${author}`);
+
+            // Use a Set to track all unique participants (normalized to lowercase for deduplication)
+            const all_participants = new Set();
+            
+            // Add the issue author
+            all_participants.add(author.toLowerCase());
+            console.log(`Added author to participants: ${author.toLowerCase()}`);
+
+            // Get all comments and add commenters
+            console.log("=== FETCHING COMMENTS ===");
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { ...repo, issue_number }
+            );
+            console.log(`Found ${comments.length} comments`);
+            
+            if (comments.length === 0) {
+              console.log("❌ NO COMMENTS FOUND - This might be why no users are tagged");
+            }
+            
+            comments.forEach((c, index) => {
+              const commenter = c.user.login.toLowerCase();
+              all_participants.add(commenter);
+              console.log(`Comment #${index + 1}: Added commenter: ${commenter} (original: ${c.user.login})`);
+            });
+
+            // Get all reactions from comments
+            let totalCommentReactions = 0;
+            for (const comment of comments) {
+              const reactions = await github.paginate(
+                github.rest.reactions.listForIssueComment,
+                { ...repo, comment_id: comment.id }
+              );
+              totalCommentReactions += reactions.length;
+              reactions.forEach(r => {
+                const reactor = r.user.login.toLowerCase();
+                all_participants.add(reactor);
+                console.log(`Added comment reactor: ${reactor}`);
+              });
+            }
+            console.log(`Processed ${totalCommentReactions} reactions from comments`);
+            
+            // Get reactions on main issue body
+            const issue_reactions = await github.paginate(
+              github.rest.reactions.listForIssue,
+              { ...repo, issue_number }
+            );
+            console.log(`Found ${issue_reactions.length} reactions on issue body`);
+            
+            issue_reactions.forEach(r => {
+              const reactor = r.user.login.toLowerCase();
+              all_participants.add(reactor);
+              console.log(`Added issue reactor: ${reactor}`);
+            });
+
+            console.log(`Total unique participants before bot filtering: ${all_participants.size}`);
+            console.log(`Participants: ${Array.from(all_participants).join(', ')}`);
+
+            // Filter out bot users
+            const isBotUser = (username) => {
+              const lowerUsername = username.toLowerCase();
+              return lowerUsername.endsWith('[bot]') || 
+                lowerUsername === 'dependabot' || 
+                lowerUsername === 'renovate' || 
+                lowerUsername === 'greenkeeper' || 
+                lowerUsername === 'codecov' || 
+                lowerUsername === 'coveralls' ||
+                lowerUsername.startsWith('dependabot[') ||
+                lowerUsername.includes('-bot') ||
+                lowerUsername.includes('_bot');
+            };
+
+            // Convert Set to array and filter out bots
+            const all_users = Array.from(all_participants).filter(user => !isBotUser(user));
+            
+            const filteredBots = Array.from(all_participants).filter(user => isBotUser(user));
+            console.log(`Filtered out ${filteredBots.length} bot users: ${filteredBots.join(', ')}`);
+            console.log(`Final participants count: ${all_users.length}`);
+            console.log(`Final participants: ${all_users.join(', ')}`);
+
+            if (all_users.length === 0) {
+              console.log("No participants to mention after filtering");
+              const fs = require('fs');
+              fs.appendFileSync(process.env.GITHUB_ENV, 'MENTIONS=\n');
+              return;
+            }
+
+            const mentions = all_users.map(u => `@${u}`).join(' ');
+            console.log(`Generated mentions: ${mentions}`);
+            console.log(`Setting environment variable 'MENTIONS' to: "${mentions}"`);
+
+            const fs = require('fs');
+            fs.appendFileSync(process.env.GITHUB_ENV, `MENTIONS=${mentions}\n`);
+            return { mentions: mentions };
+          result-encoding: string
+
+      - name: Add label comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log("=== STEP 2: ADD COMMENT ===");
+            console.log("Environment variable access:");
+            console.log("process.env.MENTIONS:", process.env.MENTIONS);
+            
+            const mentions = process.env.MENTIONS || '';
+            const labelName = context.payload.label.name;
+            
+            console.log(`Processing label: ${labelName}`);
+            console.log(`Mentions received: "${mentions}"`);
+            console.log(`Mentions length: ${mentions.length}`);
+            console.log(`Mentions trimmed length: ${mentions.trim().length}`);
+            
+            let message;
+            
+            if (labelName === 'prerelease') {
+              console.log("Processing prerelease label");
+              if (mentions.trim() === "") {
+                console.log("No participants to mention for prerelease. Skipping comment creation.");
+                return;
+              }
+              message = `${mentions}\n\nA fix for this issue is now available in the next pre-releases of C#DK/C#. If you'd like to try out the fix, please see [these instructions](https://github.com/microsoft/vscode-dotnettools/wiki/Installing-and-updating-pre%E2%80%90release-versions-of-C%23-Dev-Kit-and-C%23-Extension) to update or try pre-release versions.`;
+              console.log("Generated prerelease message");
+            } else if (labelName === 'fixed') {
+              console.log("Processing fixed label");
+              message = mentions.trim() !== ""
+                ? `${mentions}\n\nThis issue has been fixed! Please update to the latest versions of VS Code, C# Dev Kit, and the C# extension.`
+                : `This issue has been fixed! Please update to the latest versions of VS Code, C# Dev Kit, and the C# extension.`;
+              console.log(`Generated fixed message ${mentions.trim() !== "" ? "with" : "without"} mentions`);
+            }
+
+            console.log(`Final message length: ${message.length}`);
+            console.log(`Creating comment on issue #${context.payload.issue.number}`);
+
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.issue.number,
+              body: message
+            });
+            
+            console.log("Comment created successfully");

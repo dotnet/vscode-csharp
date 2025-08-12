@@ -240,7 +240,8 @@ async function activate(
             eventStream,
             omnisharpMonoResolver,
             omnisharpDotnetResolver,
-            workspaceInformationProvider
+            workspaceInformationProvider,
+            outputChannel
         )
     );
 
