@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.89.x
+* Register Blazor WASM debugger in Razor Cohosting (PR: [#8511](https://github.com/dotnet/vscode-csharp/pull/8511))
 * Bump Razor to 10.0.0-preview.25411.5 (PR: [#8512](https://github.com/dotnet/vscode-csharp/pull/8512))
   * Fix VS Code cohosting completion when Razor and C# are valid (PR: [#12096](https://github.com/dotnet/razor/pull/12096))
   * Fix null reference exception in formatting (PR: [#12097](https://github.com/dotnet/razor/pull/12097))
