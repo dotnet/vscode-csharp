@@ -23,6 +23,7 @@ describe(`Restore Tests`, () => {
     let exports: CSharpExtensionExports;
 
     beforeAll(async () => {
+        process.env.RoslynWaiterEnabled = "true";
         exports = await activateCSharpExtension();
     });
 
