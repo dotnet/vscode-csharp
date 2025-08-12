@@ -19,7 +19,8 @@ import {
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 
-describe(`Restore Tests`, () => {
+const doRunSuite = process.env.RoslynTestFileBasedPrograms == 'true';
+(doRunSuite ? describe : describe.skip)(`Restore Tests`, () => {
     let exports: CSharpExtensionExports;
 
     beforeAll(async () => {
