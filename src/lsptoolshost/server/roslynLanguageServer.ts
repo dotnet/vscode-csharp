@@ -6,7 +6,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as cp from 'child_process';
-import * as uuid from 'uuid';
 import * as net from 'net';
 import {
     LanguageClientOptions,
@@ -424,7 +423,7 @@ export class RoslynLanguageServer {
         cancellationToken?: vscode.CancellationToken
     ): Promise<R> {
         // Generate a UUID for our partial result token and apply it to our request.
-        const partialResultToken: string = uuid.v4();
+        const partialResultToken: string = randomUUID();
         params.partialResultToken = partialResultToken;
         // Register the callback for progress events.
         const disposable = this._languageClient.onProgress(type, partialResultToken, async (partialResult) => {

@@ -19,7 +19,7 @@ import { RazorDocumentChangeKind } from './razorDocumentChangeKind';
 import { createDocument } from './razorDocumentFactory';
 import { razorInitializeCommand } from '../../../lsptoolshost/razor/razorCommands';
 import { PlatformInformation } from '../../../shared/platform';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { ServerTextChange } from '../rpc/serverTextChange';
 
 export class RazorDocumentManager implements IRazorDocumentManager {
@@ -188,7 +188,7 @@ export class RazorDocumentManager implements IRazorDocumentManager {
         // a Razor file.
         if (this.roslynActivated && !this.razorDocumentGenerationInitialized) {
             this.razorDocumentGenerationInitialized = true;
-            const pipeName = uuidv4();
+            const pipeName = randomUUID();
 
             await vscode.commands.executeCommand(razorInitializeCommand, pipeName);
             await this.serverClient.connectNamedPipe(pipeName);
