@@ -52,6 +52,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: linux
       # Prefer the dotnet from the container.
       dotnetVersion: ''
       testVSCodeVersion: $(testVSCodeVersion)
@@ -67,6 +68,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: linux
       # Prefer the dotnet from the container.
       dotnetVersion: ''
       testVSCodeVersion: $(testVSCodeVersion)
@@ -82,6 +84,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: windows
       dotnetVersion: $(defaultDotnetVersion)
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
@@ -94,6 +97,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: macos
       dotnetVersion: $(defaultDotnetVersion)
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
