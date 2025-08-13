@@ -3,6 +3,25 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.89.x
+* Bump Roslyn to 5.0.0-2.25412.5 (PR: [#8527](https://github.com/dotnet/vscode-csharp/pull/8527))
+  * Don't try to load file based projects unless we get a .cs file(PR: [#79844](https://github.com/dotnet/roslyn/pull/79844))
+  * Workaround VSCode's lack of support for case sorting in completion(PR: [#79772](https://github.com/dotnet/roslyn/pull/79772))
+  * Add messages for when design time builds begin and complete(PR: [#79669](https://github.com/dotnet/roslyn/pull/79669))
+  * Fix renaming of locals in source generated documents(PR: [#79838](https://github.com/dotnet/roslyn/pull/79838))
+  * Allow Razor to call into codelens(PR: [#79795](https://github.com/dotnet/roslyn/pull/79795))
+  * Do not report 'no-effect' warning when active top-level code is updated(PR: [#79746](https://github.com/dotnet/roslyn/pull/79746))
+* Register Blazor WASM debugger in Razor Cohosting (PR: [#8511](https://github.com/dotnet/vscode-csharp/pull/8511))
+* Bump Razor to 10.0.0-preview.25411.5 (PR: [#8512](https://github.com/dotnet/vscode-csharp/pull/8512))
+  * Fix VS Code cohosting completion when Razor and C# are valid (PR: [#12096](https://github.com/dotnet/razor/pull/12096))
+  * Fix null reference exception in formatting (PR: [#12097](https://github.com/dotnet/razor/pull/12097))
+  * Fix cohost override setting (PR: [#12082](https://github.com/dotnet/razor/pull/12082))
+  * Cohost span mapping (PR: [#12055](https://github.com/dotnet/razor/pull/12055))
+  * Explicitly deny certain Roslyn formatting options (PR: [#12064](https://github.com/dotnet/razor/pull/12064))
+  * Don't use `requestContext` in document closed endpoint (PR: [#12080](https://github.com/dotnet/razor/pull/12080))
+* Support `projectPath: '${file}'` (PR: [#8472](https://github.com/dotnet/vscode-csharp/pull/8472))
+* Include logs when reporting an issue (PR: [#8503](https://github.com/dotnet/vscode-csharp/pull/8503))
+
 # 2.88.x
 * Enable Razor Cohosting "on" by default (PR: [#8469](https://github.com/dotnet/vscode-csharp/pull/8469))
 * Bump Roslyn to 5.0.0-2.25405.5 (PR: [#8493](https://github.com/dotnet/vscode-csharp/pull/8493))
