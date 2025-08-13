@@ -12,10 +12,9 @@ import {
     findRangeOfString,
     navigate,
     openFileInWorkspaceAsync,
-    testIfCSharp,
-    testIfDevKit,
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { testIfCSharp, testIfDevKit } from '../../jestHelpers';
 
 describe(`Go To Definition Tests`, () => {
     beforeAll(async () => {
