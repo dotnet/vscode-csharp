@@ -21,7 +21,7 @@ jobs:
       UnitTests:
         npmCommand: test:unit
         isIntegration: false
-      - ${{ if ne(parameters.os, 'windows') }}:
+      ${{ if ne(parameters.os, 'windows') }}:
         CSharpIntegrationTests:
           npmCommand: test:integration:csharp
           isIntegration: true
