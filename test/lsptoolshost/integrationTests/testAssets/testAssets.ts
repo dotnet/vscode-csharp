@@ -4,10 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'async-file';
+import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import spawnGit from './spawnGit';
 import { execChildProcess } from '../../../../src/common';
+import { expect } from '@jest/globals';
 
 export class TestAssetProject {
     constructor(project: ITestAssetProject) {
@@ -49,10 +51,31 @@ export class TestAssetWorkspace {
 
     async cleanupWorkspace(): Promise<void> {
         const workspaceRootPath = vscode.workspace.workspaceFolders![0].uri.fsPath;
+        let didCopy = false;
         const cleanUpRoutine = async () => {
             await vscode.commands.executeCommand('workbench.action.closeAllEditors');
             await spawnGit(['clean', '-xdf', '.'], { cwd: workspaceRootPath });
             await spawnGit(['checkout', '--', '.'], { cwd: workspaceRootPath });
+
+            if (!didCopy) {
+                const exports = vscode.extensions.getExtension('ms-dotnettools.csharp')?.exports;
+                if (!exports) {
+                    throw new Error('Failed to get C# extension exports for cleanup');
+                }
+
+                if (!exports.logDirectory) {
+                    console.warn(`Failed to get log directory from C# extension exports`);
+                    return;
+                }
+
+                const targetLogDir = path.join(
+                    path.dirname(exports.logDirectory),
+                    `${expect.getState().currentTestName ?? 'unknown'}_${path.basename(exports.logDirectory)}`
+                );
+                await fsExtra.copy(exports.logDirectory, targetLogDir);
+                console.log(`Copied extension logs from ${exports.logDirectory} to ${targetLogDir}`);
+                didCopy = true;
+            }
         };
 
         const sleep = async () => new Promise((resolve) => setTimeout(resolve, 2 * 1000));
