@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Integration tests need to cleanup artifacts between runs. Putting the artifacts under 'testAssets' will ensure this happens when assets are overwritten after test run. -->
+    <ArtifactsPath>$(MSBuildThisFileDirectory)</ArtifactsPath>
+  </PropertyGroup>
+</Project>
