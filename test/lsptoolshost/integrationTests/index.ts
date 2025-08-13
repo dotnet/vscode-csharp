@@ -36,9 +36,9 @@ export async function run() {
             file = file.replace(/[\\/]out[\\/]/, path.sep);
             file = workingDirectory[0] + file.substring(1);
 
-            console.log();
+            console.log('');
             console.log(`-- Running integration tests for ${path.basename(file)} --`);
-            console.log();
+            console.log('');
 
             process.env.TEST_FILE_FILTER = file;
 
@@ -70,4 +70,6 @@ async function moveLogs(name: string) {
     );
     await fsExtra.copy(exports.logDirectory, targetLogDir);
     console.log(`Copied extension logs from ${exports.logDirectory} to ${targetLogDir}`);
+
+    await new Promise((resolve) => fsExtra.rm(path.join(exports.logDirectory, '*.log'), resolve));
 }
