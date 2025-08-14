@@ -40,10 +40,14 @@ variables:
     value: stable
 
 stages:
-- template: azure-pipelines/build-all.yml
+- template: azure-pipelines/build-vsix.yml
   parameters:
     isOfficial: false
     signType: test
+    dotnetVersion: $(defaultDotnetVersion)
+
+- template: azure-pipelines/validate-build.yml
+  parameters:
     dotnetVersion: $(defaultDotnetVersion)
 
 - stage:

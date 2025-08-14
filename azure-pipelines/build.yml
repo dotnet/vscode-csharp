@@ -1,118 +1,17 @@
 parameters:
-- name: versionNumberOverride
-  type: string
-  default: 'default'
-- name: platform
-  type: string
-- name: pool
-  type: object
-- name: isOfficial
-  type: boolean
 - name: dotnetVersion
   type: string
 
-jobs:
-- job: 'Build_${{ parameters.platform }}_vsixs'
-  pool: ${{ parameters.pool }}
-  displayName: 'Build ${{ parameters.platform }} vsixs'
-  dependsOn: SetRunVariables
-  variables:
-    channel: $[ dependencies.SetRunVariables.outputs['passChannel.channel'] ]
-    signType: $[ dependencies.SetRunVariables.outputs['passSignType.signType'] ]
-    teamName: DotNetCore
-  steps:
-  - checkout: self
-    clean: true
-    submodules: true
-    fetchTags: false
-    fetchDepth: 0
-  - template: /azure-pipelines/prereqs.yml@self
-    parameters:
-      versionNumberOverride: ${{ parameters.versionNumberOverride }}
-      dotnetVersion: ${{ parameters.dotnetVersion}}
+steps:
+- checkout: self
+  clean: true
+  submodules: true
+  fetchTags: false
+  fetchDepth: 0
+- template: /azure-pipelines/prereqs.yml@self
+  parameters:
+    dotnetVersion: ${{ parameters.dotnetVersion}}
 
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.11'
-    inputs:
-      versionSpec: 3.11
-
-  # Non-windows signing requires .NET 8 installed on the machine.
-  - ${{ if ne(parameters.platform, 'windows') }}:
-    - task: UseDotNet@2  
-      displayName: Use .NET Core sdk 8.0.x  
-      inputs:  
-        version: 8.0.x
-
-  # If we're in an official build, install the signing plugin
-  - ${{ if eq(parameters.isOfficial, true) }}:
-    - task: MicroBuildSigningPlugin@4
-      displayName: 🔧 Install MicroBuild Signing Plugin
-      inputs:
-        signType: $(signType)
-        zipSources: false
-        feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
-        azureSubscription: 'MicroBuild Signing Task (DevDiv)'
-        # ConnectedPMEServiceName is only required for CI builds.  Windows has a different pme service name from non-windows.
-        # THis service name is dependent on the AzDo org as well.
-        ${{ if eq(variables['Build.Reason'], 'IndividualCI') }}:
-          ${{ if ne(parameters.platform, 'windows') }}:
-            ConnectedPMEServiceName: c24de2a5-cc7a-493d-95e4-8e5ff5cad2bc
-          ${{ else }}:
-            ConnectedPMEServiceName: 248d384a-b39b-46e3-8ad5-c2c210d5e7ca
-      env:
-        SignType: $(signType)
-        TeamName: $(teamName)
-
-  - pwsh: |
-      Write-Host "Building VSIXs for platform ${{ parameters.platform }} and channel $(channel)"
-      if ("$(channel)" -eq "Release") {
-        gulp vsix:release:package:${{ parameters.platform }}
-      } else {
-        gulp vsix:release:package:${{ parameters.platform }} --prerelease
-      }
-    displayName: 'Build VSIXs'
-    env:
-      SignType: $(signType)
-      # Non-windows signing requires this token to be passed with signing step.
-      ${{ if ne(parameters.platform, 'windows') }}:
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-
-  - ${{ if eq(parameters.isOfficial, true) }}:
-    - script: gulp signVsix
-      condition: succeeded()
-      displayName: 'Sign VSIXs'
-      env:
-        # Non-windows signing requires this token to be passed with signing step.
-        SignType: $(signType)
-        ${{ if ne(parameters.platform, 'windows') }}:
-          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: '$(Build.SourcesDirectory)/vsix'
-      TargetFolder: '$(Build.SourcesDirectory)/Packages/VSIX_$(channel)'
-
-  - ${{ if eq(parameters.isOfficial, true) }}:
-    - task: 1ES.PublishBuildArtifacts@1
-      condition: succeeded()
-      displayName: 'Publish VSIXs'
-      inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)/Packages'
-        ArtifactName: 'Packages'
-    - task: 1ES.PublishBuildArtifacts@1
-      condition: succeededOrFailed()
-      displayName: 'Publish Signing Logs'
-      inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)/out/logs'
-        ArtifactName: '${{ parameters.platform }} Signing Logs'
-
-  - ${{ else }}:
-    - task: PublishBuildArtifacts@1
-      condition: succeeded()
-      displayName: 'Publish VSIXs'
-      inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)/Packages'
-        ArtifactName: 'Packages'
-
-  - script: npm run test:artifacts
-    displayName: 'Run artifacts tests'
+- pwsh: npm run package
+  displayName: 'Build'
+  

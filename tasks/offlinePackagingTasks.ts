@@ -136,12 +136,7 @@ gulp.task('vsix:release:package:neutral', async () => {
 
 gulp.task(
     'vsix:release:package',
-    gulp.series(
-        'vsix:release:package:windows',
-        'vsix:release:package:linux',
-        'vsix:release:package:darwin',
-        'vsix:release:package:neutral'
-    )
+    gulp.series('vsix:release:package:windows', 'vsix:release:package:linux', 'vsix:release:package:darwin')
 );
 
 // Downloads dependencies for local development.
