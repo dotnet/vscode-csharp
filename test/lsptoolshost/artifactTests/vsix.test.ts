@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import * as fs from 'async-file';
+import * as fs from 'fs-extra';
 import * as glob from 'glob-promise';
 import * as path from 'path';
 

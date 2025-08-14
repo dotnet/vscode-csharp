@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'async-file';
+import * as fs from 'fs-extra';
 import getPort from 'get-port';
 
 // There are no typings for this library.
