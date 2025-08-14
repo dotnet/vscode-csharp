@@ -111,8 +111,6 @@
     "rxjs": "6.6.7",
     "semver": "7.5.4",
     "stream": "0.0.2",
-    "strip-bom": "5.0.0",
-    "strip-bom-buf": "2.0.0",
     "tmp": "0.2.4",
     "vscode-html-languageservice": "^5.3.1",
     "vscode-jsonrpc": "9.0.0-next.8",
