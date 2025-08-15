@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as cp from 'child_process';
-import del from 'del';
 import * as fs from 'fs';
 import * as fsextra from 'fs-extra';
 import * as gulp from 'gulp';
@@ -373,7 +372,9 @@ async function cleanAsync() {
         directoriesToDelete.push(allNugetPackages[key].vsixOutputPath);
     }
 
-    await del(directoriesToDelete);
+    for (const directory of directoriesToDelete) {
+        await fsextra.remove(directory);
+    }
 }
 
 async function buildVsix(packageJSON: any, outputFolder: string, prerelease: boolean, platformInfo?: VSIXPlatformInfo) {
