@@ -107,7 +107,6 @@
     "nerdbank-gitversioning": "^3.6.79-alpha",
     "node-machine-id": "1.1.12",
     "ps-list": "7.2.0",
-    "request-light": "0.7.0",
     "rxjs": "6.6.7",
     "semver": "7.5.4",
     "stream": "0.0.2",
