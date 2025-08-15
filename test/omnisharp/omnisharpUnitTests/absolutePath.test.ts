@@ -5,7 +5,7 @@
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
 import { AbsolutePath } from '../../../src/packageManager/absolutePath';
-import { TmpAsset, CreateTmpFile } from '../../../src/createTmpAsset';
+import { TmpAsset, CreateTmpFile } from '../../createTmpAsset';
 import { join } from 'path';
 
 describe(AbsolutePath.name, () => {
