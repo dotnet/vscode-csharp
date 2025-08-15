@@ -1,0 +1,18 @@
+name: Create GitHub Release
+on:
+  push:
+    tags:
+      - 'v2.*'
+
+permissions:
+  contents: write
+
+jobs:
+  # This job runs against the yaml defined in the tag we were triggered on.
+  # So we can modify the release creation without having to wait for the change to flow into the commit
+  # that we're tagging, we call a reusable workflow from main
+  create-release:
+    uses: dotnet/vscode-csharp/.github/workflows/release-reusable.yml@main
+    with:
+      tag: ${{ github.ref_name }}
+    secrets: inherit
