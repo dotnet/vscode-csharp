@@ -13,7 +13,7 @@ import { OmnisharpDownloader } from '../../../src/omnisharp/omnisharpDownloader'
 import NetworkSettings from '../../../src/networkSettings';
 import { EventStream } from '../../../src/eventStream';
 import { testPackageJSON } from './testAssets/testAssets';
-import { TmpAsset, CreateTmpDir, CreateTmpFile } from '../../../src/createTmpAsset';
+import { TmpAsset, CreateTmpDir, CreateTmpFile } from '../../createTmpAsset';
 import * as path from 'path';
 import * as util from '../../../src/common';
 import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator';
