@@ -144,7 +144,7 @@ extends:
       condition: succeeded('PublishStage')
       variables:
       - name: isPrerelease
-        value: $[ stageDependencies.PublishStage.PublishToMarketplace.outputs['PublishToMarketplaceStep.isPrerelease'] ]
+        value: $[ stageDependencies.PublishStage.PublishToMarketplace.outputs['PublishToMarketplace.PublishToMarketplaceStep.isPrerelease'] ]
       jobs:
       - job: 'Tag'
         pool:

@@ -92,6 +92,8 @@ async function createTagsAsync(
     }
 
     const prerelease = getFlag('prerelease', options);
+    console.log(`prerelease: ${prerelease}`);
+
     const [tag, message] = getTagAndMessage(options.releaseVersion, prerelease);
     console.log(`tag: ${tag}`);
     console.log(`message: ${message}`);
