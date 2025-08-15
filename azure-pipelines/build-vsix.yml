@@ -134,9 +134,9 @@ stages:
         versionSpec: 3.11
 
     # Non-windows signing requires .NET 8 installed on the machine.
-    - task: UseDotNet@2  
-      displayName: Use .NET Core sdk 8.0.x  
-      inputs:  
+    - task: UseDotNet@2
+      displayName: Use .NET Core sdk 8.0.x
+      inputs:
         version: 8.0.x
 
     # If we're in an official build, install the signing plugin
@@ -175,6 +175,12 @@ stages:
           # Non-windows signing requires this token to be passed with signing step.
           SignType: $(signType)
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+    - ${{ if eq(parameters.isOfficial, true) }}:
+      - script: gulp verifyVsix
+        condition: and( succeeded(), eq('$(SignType)', 'Real'))
+        displayName: 🔑 Verify VSIX Signature Files
+        workingDirectory: '$(Build.SourcesDirectory)/vsix'
 
     - task: CopyFiles@2
       inputs:

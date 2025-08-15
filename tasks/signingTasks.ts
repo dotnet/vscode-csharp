@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as gulp from 'gulp';
 import { rootPath } from './projectPaths';
 import path from 'path';
+import { verifySignature } from './vsceTasks';
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 //const argv = require('yargs').argv;
@@ -18,6 +19,10 @@ gulp.task('signJs', async () => {
 
 gulp.task('signVsix', async () => {
     await signVsix();
+});
+
+gulp.task('verifyVsix', async () => {
+    await verifyVsix();
 });
 
 // Development task to install the signing plugin locally.
@@ -43,7 +48,7 @@ async function signJs(): Promise<void> {
     const logPath = getLogPath();
     const signType = process.env.SignType;
     if (!signType) {
-        console.warn('SignType environment variable is not set, skipping JS signing');
+        console.warn('SignType environment variable is not set, skipping JS signing.');
         return;
     }
 
@@ -64,7 +69,7 @@ async function signVsix(): Promise<void> {
     const logPath = getLogPath();
     const signType = process.env.SignType;
     if (!signType) {
-        console.warn('SignType environment variable is not set, skipping VSIX signing');
+        console.warn('SignType environment variable is not set, skipping VSIX signing.');
         return;
     }
 
@@ -78,6 +83,25 @@ async function signVsix(): Promise<void> {
         path.join(rootPath, 'msbuild', 'signing', 'signVsix'),
         `-bl:${path.join(logPath, 'signVsix.binlog')}`,
     ]);
+}
+
+async function verifyVsix(): Promise<void> {
+    const signType = process.env.SignType;
+    if (!signType) {
+        console.warn('SignType environment variable is not set, skipping VSIX verification.');
+        return;
+    }
+
+    if (signType === 'test') {
+        console.log('Test signing verification is not supported. Skipping VSIX verification.');
+        return;
+    }
+
+    const vsixs = fs.readdirSync('.').filter((file) => path.extname(file) === '.vsix');
+    for (const vsixFile in vsixs) {
+        console.log(`Verifying signature of ${vsixFile}`);
+        await verifySignature(vsixFile);
+    }
 }
 
 function getLogPath(): string {
