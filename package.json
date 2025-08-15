@@ -128,7 +128,6 @@
     "@types/node": "20.14.8",
     "@types/semver": "7.3.13",
     "@types/tmp": "0.0.33",
-    "@types/unzipper": "^0.9.1",
     "@types/uuid": "^9.0.1",
     "@types/vscode": "1.93.0",
     "@types/yauzl": "2.10.0",
@@ -168,7 +167,6 @@
     "ts-node": "9.1.1",
     "typescript": "5.6.2",
     "umd-compat-loader": "2.1.2",
-    "unzipper": "0.10.11",
     "vscode-oniguruma": "^1.6.1",
     "vscode-textmate": "^6.0.0",
     "vscode-uri": "^3.0.7"
