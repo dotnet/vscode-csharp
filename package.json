@@ -153,7 +153,6 @@
     "mock-http-server": "1.4.2",
     "octokit": "^3.1.0",
     "prettier": "2.8.8",
-    "source-map-support": "^0.5.21",
     "tmp": "0.2.4",
     "ts-jest": "^29.1.1",
     "ts-loader": "9.0.0",
