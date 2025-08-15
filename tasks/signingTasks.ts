@@ -92,8 +92,8 @@ async function verifyVsix(): Promise<void> {
         return;
     }
 
-    if (signType === 'test') {
-        console.log('Test signing verification is not supported. Skipping VSIX verification.');
+    if (signType.toLowerCase() !== 'real') {
+        console.log('Signing verification is only supported for real signing. Skipping VSIX verification.');
         return;
     }
 
