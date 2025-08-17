@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.90.x
+* Bump Razor to 10.0.0-preview.25416.1 (PR: [#8557](https://github.com/dotnet/vscode-csharp/pull/8557))
+  * Support Go To Def for Mvc tag helpers in cohosting (PR: [#12102](https://github.com/dotnet/razor/pull/12102))
+  * Add missing `global::` prefix in a `@ref` scenario (PR: [#12107](https://github.com/dotnet/razor/pull/12107))
 
 # 2.89.x
 * Bump Roslyn to 5.0.0-2.25412.5 (PR: [#8527](https://github.com/dotnet/vscode-csharp/pull/8527))
