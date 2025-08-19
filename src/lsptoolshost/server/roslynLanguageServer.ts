@@ -706,6 +706,15 @@ export class RoslynLanguageServer {
             // Set command enablement to use roslyn standalone commands.
             await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
+
+            if (razorOptions.cohostingEnabled) {
+                // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
+                // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
+                args.push(
+                    '--csharpDesignTimePath',
+                    path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')
+                );
+            }
         }
 
         for (const extensionPath of additionalExtensionPaths) {
