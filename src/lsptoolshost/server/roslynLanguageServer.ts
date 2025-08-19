@@ -666,7 +666,7 @@ export class RoslynLanguageServer {
 
         args.push(
             '--razorDesignTimePath',
-            path.join(razorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
+            path.join(razorSourceGeneratorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
         );
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
