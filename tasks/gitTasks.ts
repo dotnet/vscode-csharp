@@ -4,8 +4,30 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { spawnSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Octokit } from '@octokit/rest';
+import { NugetPackageInfo, platformSpecificPackages } from './offlinePackagingTasks';
+import { PlatformInformation } from '../src/shared/platform';
 import { EOL } from 'os';
+
+export interface GitOptions {
+    commitSha: string;
+    targetRemoteRepo: string;
+    baseBranch: string;
+}
+
+export interface PullRequestOptions extends GitOptions {
+    githubPAT: string;
+    dryRun: boolean;
+    newBranchName: string;
+    userName?: string;
+    email?: string;
+}
+
+export function logError(message: string): void {
+    console.log(`##vso[task.logissue type=error]${message}`);
+}
 
 /**
  * Execute a git command with optional logging
@@ -56,7 +78,7 @@ export async function createCommit(branch: string, files: string[], commitMessag
  * Check if a branch exists on the remote repository
  */
 export async function doesBranchExist(remoteAlias: string, branch: string): Promise<boolean> {
-    const lsRemote = await git(['ls-remote', remoteAlias, 'refs/head/' + branch]);
+    const lsRemote = await git(['ls-remote', remoteAlias, 'refs/heads/' + branch]);
     return lsRemote.trim() !== '';
 }
 
@@ -146,6 +168,114 @@ export async function createPullRequest(
         console.warn('Failed to create PR via Octokit:', e);
         return null;
     }
+}
+
+async function getPackageVersionFromGitHub(packageName: string, releaseCommit: string, githubPAT: string) {
+    // Fetch package.json from dotnet/vscode-csharp GitHub repo at the specific commit
+    const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/vscode-csharp/${releaseCommit}/package.json`;
+
+    console.log(`Fetching package.json from ${packageJsonUrl}`);
+
+    let packageJson: { defaults?: { [key: string]: string } };
+    try {
+        const response = await fetch(packageJsonUrl, {
+            headers: {
+                Authorization: `token ${githubPAT}`,
+                Accept: 'application/vnd.github.v3.raw',
+            },
+        });
+        if (!response.ok) {
+            logError(`Failed to fetch package.json from ${packageJsonUrl}: ${response.status} ${response.statusText}`);
+            return null;
+        }
+        const packageJsonString = await response.text();
+        packageJson = JSON.parse(packageJsonString);
+    } catch (error) {
+        logError(`Error fetching package.json from GitHub: ${error}`);
+        return null;
+    }
+
+    const packageVersion = packageJson.defaults?.[packageName];
+    if (!packageVersion) {
+        logError(`Can't find ${packageName} version in package.json from commit ${releaseCommit}`);
+        return null;
+    }
+
+    return packageVersion;
+}
+
+async function getPackageVersionFromRepo(packageName: string): Promise<string | null> {
+    console.log(`Fetching package.json from './package.json'`);
+
+    let packageJson: { defaults?: { [key: string]: string } };
+    try {
+        const packageJsonString = fs.readFileSync('./package.json').toString();
+        packageJson = JSON.parse(packageJsonString);
+    } catch (error) {
+        logError(`Error reading package.json: ${error}`);
+        return null;
+    }
+
+    const packageVersion = packageJson.defaults?.[packageName];
+    if (!packageVersion) {
+        logError(`Can't find ${packageName} version in package.json`);
+        return null;
+    }
+    return packageVersion;
+}
+
+export async function getCommitFromNugetAsync(
+    packageInfo: NugetPackageInfo,
+    releaseCommit?: string | undefined,
+    githubPAT?: string | undefined
+): Promise<string | null> {
+    const packageVersion =
+        releaseCommit && githubPAT
+            ? await getPackageVersionFromGitHub(packageInfo.packageJsonName, releaseCommit, githubPAT)
+            : await getPackageVersionFromRepo(packageInfo.packageJsonName);
+    if (!packageVersion) {
+        return null;
+    }
+
+    const platform = await PlatformInformation.GetCurrent();
+    const vsixPlatformInfo = platformSpecificPackages.find(
+        (p) => p.platformInfo.platform === platform.platform && p.platformInfo.architecture === platform.architecture
+    )!;
+
+    const packageName = packageInfo.getPackageName(vsixPlatformInfo);
+    console.log(`${packageName} version is ${packageVersion}`);
+
+    // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
+    // Package names are always lower case in the .nuget folder.
+    const packageDir = path.join('out', '.nuget', packageName.toLowerCase(), packageVersion);
+    const nuspecFiles = fs.readdirSync(packageDir).filter((file) => file.endsWith('.nuspec'));
+
+    if (nuspecFiles.length === 0) {
+        logError(`No .nuspec file found in ${packageDir}`);
+        return null;
+    }
+
+    if (nuspecFiles.length > 1) {
+        logError(`Multiple .nuspec files found in ${packageDir}`);
+        return null;
+    }
+
+    const nuspecFilePath = path.join(packageDir, nuspecFiles[0]);
+    const nuspecFile = fs.readFileSync(nuspecFilePath).toString();
+    const results = /commit="(.*?)"/.exec(nuspecFile);
+    if (results == null || results.length === 0) {
+        logError('Failed to find commit number from nuspec file');
+        return null;
+    }
+
+    if (results.length !== 2) {
+        logError('Unexpected regex match result from nuspec file.');
+        return null;
+    }
+
+    const commitNumber = results[1];
+    console.log(`commitNumber is ${commitNumber}`);
+    return commitNumber;
 }
 
 /**

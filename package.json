@@ -128,6 +128,7 @@
     "@types/tmp": "0.0.33",
     "@types/uuid": "^9.0.1",
     "@types/vscode": "1.98.0",
+    "@types/xml2js": "^0.4.11",
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
