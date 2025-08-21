@@ -108,6 +108,9 @@ export async function verifySignature(vsixPath: string) {
     if (spawnResult.code != 0) {
         throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
     } else if (spawnResult.stdout != 'Signature verification result: Success') {
+        // This is a brittle check but the command does not return a non-zero exit code for failed validation.
+        // Opened https://github.com/microsoft/vscode-vsce/issues/1192 to track this.
+
         console.log(spawnResult.stdout);
         throw new Error(`Signature verification failed - '${vsceArgs.join(' ')}'.`);
     }
