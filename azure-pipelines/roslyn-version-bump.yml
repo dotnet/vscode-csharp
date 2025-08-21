@@ -1,0 +1,355 @@
+trigger: none
+
+parameters:
+  - name: createPullRequest
+    displayName: Create Pull Request
+    type: boolean
+    default: true
+  - name: targetBranch
+    displayName: Target Branch for PR
+    type: string
+    default: main
+
+resources:
+  pipelines:
+    - pipeline: officialBuildCI
+      source: 327
+      project: internal
+      branch: refs/heads/main
+      trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - name: RoslynStartSHA
+    value: ""
+  - name: RoslynEndSHA
+    value: $(resources.pipeline.officialBuildCI.sourceCommit)
+  - name: RoslynBuildNumber
+    value: $(resources.pipeline.officialBuildCI.runName)
+  - name: RoslynBuildId
+    value: $(resources.pipeline.officialBuildCI.runID)
+  - name: RoslynVersion
+    value: ""
+
+stages:
+  - stage: BumpRoslyn
+    displayName: Bump Roslyn Version
+    jobs:
+      - job: ProcessBump
+        displayName: Process Roslyn Bump
+        steps:
+          - checkout: self
+            persistCredentials: true
+
+          - download: officialBuildCI
+            artifact: AssetManifests
+            displayName: Download AssetManifests from Roslyn build
+
+          - task: UseDotNet@2
+            displayName: Install .NET SDK
+            inputs:
+              version: 9.0.x
+
+          - task: Bash@3
+            displayName: Install tools
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                # Install roslyn-tools
+                FEED="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json"
+                dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source "$FEED"
+                echo "##vso[task.prependpath]$HOME/.dotnet/tools"
+                
+                # Install jq for JSON parsing
+                sudo apt-get update && sudo apt-get install -y jq
+
+          - task: Bash@3
+            displayName: Extract Roslyn version from AssetManifests
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                
+                # The AssetManifests artifact is downloaded to this location
+                ASSET_MANIFEST_PATH="$(Pipeline.Workspace)/officialBuildCI/AssetManifests"
+                
+                # Find OfficialBuild.xml
+                XML_FILE="$ASSET_MANIFEST_PATH/OfficialBuild.xml"
+                
+                if [ ! -f "$XML_FILE" ]; then
+                  echo "Error: OfficialBuild.xml not found at $XML_FILE"
+                  ls -la "$ASSET_MANIFEST_PATH" || echo "AssetManifests directory not found"
+                  exit 1
+                fi
+                
+                # Extract version for Microsoft.CodeAnalysis package
+                VERSION=$(grep -oP 'Id="Microsoft\.CodeAnalysis"[^>]*Version="\K[^"]+' "$XML_FILE" | head -n1)
+                
+                if [ -z "$VERSION" ]; then
+                  # Try Microsoft.CodeAnalysis.Common
+                  VERSION=$(grep -oP 'Id="Microsoft\.CodeAnalysis\.Common"[^>]*Version="\K[^"]+' "$XML_FILE" | head -n1)
+                fi
+                
+                if [ -n "$VERSION" ]; then
+                  echo "##vso[task.setvariable variable=RoslynVersion]$VERSION"
+                  echo "Latest Roslyn version from AssetManifest: $VERSION"
+                else
+                  echo "Error: Could not extract version from AssetManifest"
+                  exit 1
+                fi
+                
+                # Also extract and verify commit from Build element
+                COMMIT=$(grep -oP '<Build[^>]*Commit="\K[^"]+' "$XML_FILE" | head -n1)
+                if [ -n "$COMMIT" ]; then
+                  echo "Commit from AssetManifest: $COMMIT"
+                  echo "Pipeline sourceCommit: $(RoslynEndSHA)"
+                fi
+
+          - task: Bash@3
+            displayName: Get current Roslyn SHA from package
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                
+                # Read current version from package.json
+                CURRENT_VERSION=$(jq -r '.defaults.roslyn // empty' package.json)
+                
+                if [ -z "$CURRENT_VERSION" ]; then
+                  echo "No roslyn version in package.json, this is first run"
+                  echo "##vso[task.setvariable variable=RoslynStartSHA]0000000000000000000000000000000000000000"
+                  exit 0
+                fi
+                
+                echo "Current Roslyn version: $CURRENT_VERSION"
+                
+                # Download and extract commit SHA from NuGet package
+                TEMP_DIR=$(mktemp -d)
+                cd "$TEMP_DIR"
+                
+                PACKAGE_NAME="microsoft.codeanalysis.common"
+                DOTNET_TOOLS_FEED="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/flat2"
+                PACKAGE_URL="$DOTNET_TOOLS_FEED/$PACKAGE_NAME/$CURRENT_VERSION/$PACKAGE_NAME.$CURRENT_VERSION.nupkg"
+                
+                if curl -f -L -o package.nupkg "$PACKAGE_URL" 2>/dev/null; then
+                  unzip -q package.nupkg
+                  NUSPEC_FILE=$(find . -name "*.nuspec" -type f | head -n1)
+                  if [ -n "$NUSPEC_FILE" ]; then
+                    START_SHA=$(grep -oP 'repository[^>]*commit="\K[a-f0-9]{40}' "$NUSPEC_FILE" | head -n1 || echo "")
+                    if [ -n "$START_SHA" ]; then
+                      echo "##vso[task.setvariable variable=RoslynStartSHA]$START_SHA"
+                      echo "Current Roslyn SHA: $START_SHA"
+                    fi
+                  fi
+                fi
+                
+                cd - >/dev/null
+                rm -rf "$TEMP_DIR"
+
+          - task: Bash@3
+            displayName: Get latest Roslyn build and version
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                
+                echo "Getting latest Roslyn version from NuGet feed..."
+                
+                # Get the latest version from the dotnet-tools feed
+                PACKAGE_NAME="microsoft.codeanalysis.common"
+                PACKAGE_INDEX="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/flat2/$PACKAGE_NAME/index.json"
+                
+                # Get all versions and pick the latest
+                VERSIONS=$(curl -s "$PACKAGE_INDEX" | jq -r '.versions[]' 2>/dev/null || echo "")
+                
+                if [ -z "$VERSIONS" ]; then
+                  # Try dotnet8 feed as fallback
+                  PACKAGE_INDEX="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet8/nuget/v3/flat2/$PACKAGE_NAME/index.json"
+                  VERSIONS=$(curl -s "$PACKAGE_INDEX" | jq -r '.versions[]' 2>/dev/null || echo "")
+                fi
+                
+                # Get the latest prerelease version
+                VERSION=$(echo "$VERSIONS" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+-' | tail -n1)
+                
+                if [ -z "$VERSION" ]; then
+                  echo "Error: Could not find any Roslyn versions in feed"
+                  exit 1
+                fi
+                
+                echo "Latest version from feed: $VERSION"
+                echo "##vso[task.setvariable variable=RoslynVersion]$VERSION"
+                
+                # Download the package to get commit SHA
+                TEMP_DIR=$(mktemp -d)
+                cd "$TEMP_DIR"
+                
+                DOTNET_TOOLS_FEED="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/flat2"
+                PACKAGE_URL="$DOTNET_TOOLS_FEED/$PACKAGE_NAME/$VERSION/$PACKAGE_NAME.$VERSION.nupkg"
+                
+                if curl -f -L -o package.nupkg "$PACKAGE_URL" 2>/dev/null; then
+                  unzip -q package.nupkg
+                  NUSPEC_FILE=$(find . -name "*.nuspec" -type f | head -n1)
+                  if [ -n "$NUSPEC_FILE" ]; then
+                    END_SHA=$(grep -oP 'repository[^>]*commit="\K[a-f0-9]{40}' "$NUSPEC_FILE" | head -n1 || echo "")
+                    if [ -n "$END_SHA" ]; then
+                      echo "##vso[task.setvariable variable=RoslynEndSHA]$END_SHA"
+                      echo "Latest Roslyn SHA: $END_SHA"
+                    fi
+                  fi
+                fi
+                
+                cd - >/dev/null
+                rm -rf "$TEMP_DIR"
+                
+                # If we couldn't get SHA, use GitHub as fallback
+                if [ -z "$END_SHA" ]; then
+                  echo "Getting latest commit from GitHub..."
+                  END_SHA=$(curl -s "https://api.github.com/repos/dotnet/roslyn/commits/main" | jq -r '.sha // empty')
+                  echo "##vso[task.setvariable variable=RoslynEndSHA]$END_SHA"
+                fi
+
+          - task: Bash@3
+            displayName: Check if update needed
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                
+                if [ "$(RoslynStartSHA)" = "$(RoslynEndSHA)" ]; then
+                  echo "No new commits to process"
+                  echo "##vso[task.setvariable variable=SkipUpdate]true"
+                else
+                  echo "Update needed: $(RoslynStartSHA)..$(RoslynEndSHA)"
+                  echo "##vso[task.setvariable variable=SkipUpdate]false"
+                fi
+
+          - task: Bash@3
+            displayName: Clone Roslyn repository
+            condition: ne(variables['SkipUpdate'], 'true')
+            inputs:
+              targetType: inline
+              script: |
+                git clone --no-tags --filter=blob:none --depth=500 https://github.com/dotnet/roslyn.git roslyn
+
+          - task: Bash@3
+            displayName: Setup auth for roslyn-tools
+            condition: ne(variables['SkipUpdate'], 'true')
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                mkdir -p "$HOME/.roslyn-tools"
+                JSON=$(printf '{"GitHubToken":"$(System.AccessToken)","DevDivAzureDevOpsToken":"","DncEngAzureDevOpsToken":""}')
+                printf '%s' "$JSON" | base64 | tr -d '\n' > "$HOME/.roslyn-tools/settings"
+
+          - task: Bash@3
+            displayName: Generate PR list
+            condition: ne(variables['SkipUpdate'], 'true')
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                cd roslyn
+                
+                # Run pr-finder with VSCode label
+                OUTPUT=$(roslyn-tools pr-finder \
+                  -s "$(RoslynStartSHA)" \
+                  -e "$(RoslynEndSHA)" \
+                  --format changelog \
+                  --label VSCode 2>/dev/null || echo "")
+                
+                if [ -z "$OUTPUT" ]; then
+                  echo "(no PRs with required labels)" > ../pr-changelog.txt
+                else
+                  printf "%s\n" "$OUTPUT" > ../pr-changelog.txt
+                fi
+                
+                cd ..
+                cat pr-changelog.txt
+
+          - task: Bash@3
+            displayName: Update CHANGELOG and package.json
+            condition: ne(variables['SkipUpdate'], 'true')
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                
+                # Update package.json
+                jq --arg ver "$(RoslynVersion)" '.defaults.roslyn = $ver' package.json > package.json.tmp
+                mv package.json.tmp package.json
+                
+                # Update CHANGELOG.md
+                PR_LIST=$(cat pr-changelog.txt | sed 's/^/  /')
+                
+                # Read the current CHANGELOG
+                CHANGELOG_CONTENT=$(cat CHANGELOG.md)
+                
+                # Find and update the Roslyn bump line
+                # This is a simplified version - you may need to adjust based on your CHANGELOG format
+                echo "$CHANGELOG_CONTENT" | awk -v version="$(RoslynVersion)" -v prs="$PR_LIST" '
+                  /^\* Bump Roslyn to/ {
+                    print "* Bump Roslyn to " version " (PR: [#TBD](TBD))"
+                    if (prs != "  (no PRs with required labels)") {
+                      print prs
+                    }
+                    next
+                  }
+                  /^  \*/ && prev ~ /^\* Bump Roslyn to/ {
+                    next
+                  }
+                  {
+                    prev = $0
+                    print
+                  }
+                ' > CHANGELOG.md.tmp
+                
+                mv CHANGELOG.md.tmp CHANGELOG.md
+
+          - task: Bash@3
+            displayName: Create and push branch
+            condition: ne(variables['SkipUpdate'], 'true')
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                
+                # Configure git
+                git config user.name "Azure Pipelines"
+                git config user.email "azuredevops@microsoft.com"
+                
+                # Create branch
+                BRANCH_NAME="roslyn-bump/$(RoslynEndSHA)"
+                git checkout -b "$BRANCH_NAME"
+                
+                # Commit changes
+                git add package.json CHANGELOG.md
+                git commit -m "Bump Roslyn to $(RoslynVersion)"
+                
+                # Push branch
+                git push origin "$BRANCH_NAME"
+                
+                echo "##vso[task.setvariable variable=PrBranch]$BRANCH_NAME"
+
+          - task: Bash@3
+            displayName: Create Pull Request
+            condition: and(ne(variables['SkipUpdate'], 'true'), eq('${{ parameters.createPullRequest }}', 'true'))
+            inputs:
+              targetType: inline
+              script: |
+                set -euo pipefail
+                
+                # Create PR using Azure DevOps REST API
+                PR_TITLE="Bump Roslyn to $(RoslynVersion)"
+                PR_DESCRIPTION="Manual Roslyn version bump triggered by $(Build.RequestedFor).\n\n**Version:** \`$(RoslynVersion)\`\n**Commit Range:** \`$(RoslynStartSHA)...$(RoslynEndSHA)\`\n**Azure DevOps Build:** [$(RoslynBuildNumber)](https://dev.azure.com/dnceng/internal/_build/results?buildId=$(resources.pipeline.officialBuildCI.runID))\n\nSee CHANGELOG.md for included PRs."
+                
+                # You would need to use Azure DevOps REST API or GitHub API here
+                # This is a placeholder for the actual PR creation
+                echo "Pull request would be created with:"
+                echo "Title: $PR_TITLE"
+                echo "Branch: $(PrBranch)"
+                echo "Target: ${{ parameters.targetBranch }}"
+                echo "Description: $PR_DESCRIPTION"
