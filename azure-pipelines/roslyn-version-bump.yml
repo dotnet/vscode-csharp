@@ -19,9 +19,9 @@ resources:
     ref: refs/tags/release
   pipelines:
     - pipeline: officialBuildCI
-      source: 327
+      source: dotnet-roslyn-official
       project: internal
-      branch: refs/heads/main
+      branch: main
       trigger: none
 
 variables:
