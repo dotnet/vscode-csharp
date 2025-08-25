@@ -4,7 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.90.x
-* Bump Razor to 10.0.0-preview.25416.1 (PR: [#8557](https://github.com/dotnet/vscode-csharp/pull/8557))
+* Bump Razor to 10.0.0-preview.25424.9 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
+  * Allow Razor cohosting to work with non-Razor SDK projects (PR: [#12118](https://github.com/dotnet/razor/pull/12118))
+  * Allow the source generator to produce results for miscellaneous files (PR: [#12106](https://github.com/dotnet/razor/pull/12106))
   * Fix range formatting in the presence of K&R braces (PR: [#12121](https://github.com/dotnet/razor/pull/12121))
   * Add codelens endpoints and services for cohosting (PR: [#12078](https://github.com/dotnet/razor/pull/12078))
   * Support Go To Def for Mvc tag helpers in cohosting (PR: [#12102](https://github.com/dotnet/razor/pull/12102))
