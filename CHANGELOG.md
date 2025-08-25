@@ -5,16 +5,11 @@
 
 # 2.90.x
 * Bump Roslyn to 5.0.0-2.25424.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
-  * Don't cache known-broken compositions (PR: [#80021](https://github.com/dotnet/roslyn/pull/80021))
   * Generate `init` accessor for required properties inside `readonly struct`s (PR: [#80004](https://github.com/dotnet/roslyn/pull/80004))
   * Allow Razor cohosting to work with non-Razor SDK projects (PR: [#79953](https://github.com/dotnet/roslyn/pull/79953))
-  * Update 'use expr body' to be a purely syntactic analyzer (PR: [#79979](https://github.com/dotnet/roslyn/pull/79979))
-  * ResxSourceGenerator: Added XML comment summary to the generated classes and properties to avoid warning CS1591 if they are public (PR: [#79940](https://github.com/dotnet/roslyn/pull/79940))                                                                                                                                     
-  * Implement "Simplify property accessor" feature (PR: [#79754](https://github.com/dotnet/roslyn/pull/79754))
-  * ResxSourceGenerator: Changed the access modifier of the generated format methods from "internal" to "public" as it is with the generated properties. (PR: [#79941](https://github.com/dotnet/roslyn/pull/79941))                                                                                                                  
+  * Update 'use expr body' to be a purely syntactic analyzer (PR: [#79979](https://github.com/dotnet/roslyn/pull/79979))                                                                                                                                 
+  * Implement "Simplify property accessor" feature (PR: [#79754](https://github.com/dotnet/roslyn/pull/79754))                                                                                                               
   * Allow Razor to hook up the source generator in misc files (PR: [#79891](https://github.com/dotnet/roslyn/pull/79891))
-  * Block ENC for extension blocks (PR: [#79883](https://github.com/dotnet/roslyn/pull/79883))
-  * Fix ref safety of implicit calls that might capture refs in the receiver (PR: [#76657](https://github.com/dotnet/roslyn/pull/76657))
 * Bump Razor to 10.0.0-preview.25424.9 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
   * Allow Razor cohosting to work with non-Razor SDK projects (PR: [#12118](https://github.com/dotnet/razor/pull/12118))
   * Allow the source generator to produce results for miscellaneous files (PR: [#12106](https://github.com/dotnet/razor/pull/12106))
