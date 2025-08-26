@@ -81,6 +81,11 @@ extends:
                   gulp installDependencies
                 displayName: 'Install npm dependencies and gulp'
 
+              - script: |
+                  echo "Cloning Roslyn repository..."
+                  git clone --no-tags --filter=blob:none --depth=500 https://github.com/dotnet/roslyn.git $(Pipeline.Workspace)/roslyn
+                displayName: 'Clone Roslyn repository'
+
               - task: Npm@1
                 displayName: Run Roslyn insertion
                 env:
@@ -88,6 +93,6 @@ extends:
                   GitHubPAT: $(System.AccessToken)
                 inputs:
                   command: custom
-                  customCommand: 'run gulp -- insertion:roslyn --assetManifestPath=$(Pipeline.Workspace)/AssetManifests --roslynEndSHA=$(RoslynEndSHA) --roslynBuildNumber=$(RoslynBuildNumber) --roslynBuildId=$(RoslynBuildId) --createPullRequest=${{ parameters.createPullRequest }} --targetBranch=${{ parameters.targetBranch }} --githubPAT=$(System.AccessToken) --dryRun=false'
+                  customCommand: 'run gulp -- insertion:roslyn --assetManifestPath=$(Pipeline.Workspace)/AssetManifests --roslynRepoPath=$(Pipeline.Workspace)/roslyn --roslynEndSHA=$(RoslynEndSHA) --roslynBuildNumber=$(RoslynBuildNumber) --roslynBuildId=$(RoslynBuildId) --createPullRequest=${{ parameters.createPullRequest }} --targetBranch=${{ parameters.targetBranch }} --githubPAT=$(System.AccessToken) --dryRun=false'
 
 

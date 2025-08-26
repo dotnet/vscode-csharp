@@ -6,24 +6,32 @@
 import * as gulp from 'gulp';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 import minimist from 'minimist';
-import { Octokit } from '@octokit/rest';
+
+function logWarning(message: string): void {
+    console.log(`##vso[task.logissue type=warning]${message}`);
+}
+
+function logError(message: string): void {
+    console.log(`##vso[task.logissue type=error]${message}`);
+}
+
+import minimist from 'minimist';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import fetch from 'node-fetch';
-import * as xml2js from 'xml2js';
 import * as AdmZip from 'adm-zip';
 
 const execAsync = promisify(exec);
 
 interface InsertionOptions {
     roslynVersion?: string;
-    roslynStartSHA?: string;
     roslynEndSHA?: string;
     roslynBuildId?: string;
     roslynBuildNumber?: string;
     assetManifestPath?: string;
-    createPullRequest?: boolean;
+    roslynRepoPath?: string;
     targetBranch?: string;
     githubPAT?: string;
     dryRun?: boolean;
@@ -50,51 +58,47 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         
         // Step 2: Get current SHA from package
         const currentSHA = await getCurrentRoslynSHA();
-        options.roslynStartSHA = currentSHA || '0000000000000000000000000000000000000000';
-        console.log(`Current Roslyn SHA: ${options.roslynStartSHA}`);
+        if (!currentSHA) {
+            throw new Error('Could not determine current Roslyn SHA from package');
+        }
+        console.log(`Current Roslyn SHA: ${currentSHA}`);
         
         // Step 3: Check if update needed
         if (!options.roslynEndSHA) {
             throw new Error('roslynEndSHA is required');
         }
         
-        if (options.roslynStartSHA === options.roslynEndSHA) {
+        if (currentSHA === options.roslynEndSHA) {
             console.log('No new commits to process - versions are identical');
             return;
         }
         
-        console.log(`Update needed: ${options.roslynStartSHA}..${options.roslynEndSHA}`);
+        console.log(`Update needed: ${currentSHA}..${options.roslynEndSHA}`);
         
-        // Step 4: Clone Roslyn repo and generate PR list
-        await cloneRoslynRepo();
-        const prList = await generatePRList(options.roslynStartSHA, options.roslynEndSHA);
+        // Step 4: Verify Roslyn repo exists
+        if (!options.roslynRepoPath) {
+            throw new Error('roslynRepoPath is required');
+        }
+        await verifyRoslynRepo(options.roslynRepoPath);
+        
+        // Step 5: Generate PR list
+        const prList = await generatePRList(currentSHA, options.roslynEndSHA, options.roslynRepoPath, options);
         console.log('PR List generated:', prList);
         
-        // Step 5: Update files
+        // Step 6: Update files
         await updatePackageJson(options.roslynVersion);
         await updateChangelog(options.roslynVersion, prList, options.roslynBuildNumber, options.roslynBuildId);
         
-        // Step 6: Create branch and PR if not dry run
-        if (!options.dryRun) {
-            const branchName = await createBranch(options.roslynEndSHA, options.roslynVersion);
-            console.log(`Branch created: ${branchName}`);
-            
-            if (options.createPullRequest) {
-                await createPullRequest(branchName, options);
-                console.log('Pull request created successfully');
-            }
-        } else {
-            console.log('Dry run mode - skipping branch and PR creation');
-        }
+        // Step 6: Create branch and PR
+        await createBranchAndPR(options.roslynVersion, options.roslynEndSHA, options);
         
     } catch (error) {
-        console.error('Insertion failed:', error);
-        throw error;
-    } finally {
-        // Cleanup
-        if (fs.existsSync('roslyn')) {
-            await execAsync('rm -rf roslyn');
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logError(`Insertion failed: ${errorMessage}`);
+        if (error instanceof Error && error.stack) {
+            console.log(`##[debug]${error.stack}`);
         }
+        throw error;
     }
 });
 
@@ -102,7 +106,7 @@ async function extractRoslynVersionFromManifest(manifestPath: string): Promise<s
     const xmlFile = path.join(manifestPath, 'OfficialBuild.xml');
     
     if (!fs.existsSync(xmlFile)) {
-        console.error(`OfficialBuild.xml not found at ${xmlFile}`);
+        logError(`OfficialBuild.xml not found at ${xmlFile}`);
         return null;
     }
     
@@ -114,7 +118,7 @@ async function extractRoslynVersionFromManifest(manifestPath: string): Promise<s
     const packages = result?.Build?.Package || [];
     for (const pkg of packages) {
         const attrs = pkg.$;
-        if (attrs?.Id === 'Microsoft.CodeAnalysis' || attrs?.Id === 'Microsoft.CodeAnalysis.Common') {
+        if (attrs?.Id === 'Microsoft.CodeAnalysis.Common') {
             return attrs.Version;
         }
     }
@@ -134,48 +138,57 @@ async function getCurrentRoslynSHA(): Promise<string | null> {
     
     console.log(`Current Roslyn version: ${currentVersion}`);
     
-    // Download and extract commit SHA from NuGet package
-    const packageName = 'microsoft.codeanalysis.common';
-    const feed = 'https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/flat2';
-    const packageUrl = `${feed}/${packageName}/${currentVersion}/${packageName}.${currentVersion}.nupkg`;
-    
     try {
-        const response = await fetch(packageUrl);
-        if (!response.ok) {
-            console.error(`Failed to download package: ${response.statusText}`);
+        const packageName = 'microsoft.codeanalysis.common';
+        // Package names are always lower case in the .nuget folder.
+        const packageDir = path.join('out', '.nuget', packageName.toLowerCase(), currentVersion);
+        const nuspecFiles = fs.readdirSync(packageDir).filter((file) => file.endsWith('.nuspec'));
+
+        if (nuspecFiles.length === 0) {
+            logError(`No .nuspec file found in ${packageDir}`);
             return null;
         }
-        
-        const buffer = await response.buffer();
-        const tempFile = path.join(process.cwd(), 'temp-package.nupkg');
-        fs.writeFileSync(tempFile, buffer);
-        
-        const zip = new AdmZip(tempFile);
-        const entries = zip.getEntries();
-        
-        for (const entry of entries) {
-            if (entry.entryName.endsWith('.nuspec')) {
-                const nuspecContent = zip.readAsText(entry);
-                const shaMatch = nuspecContent.match(/repository[^>]*commit="([a-f0-9]{40})"/);
-                fs.unlinkSync(tempFile);
-                return shaMatch ? shaMatch[1] : null;
-            }
+
+        if (nuspecFiles.length > 1) {
+            logError(`Multiple .nuspec files found in ${packageDir}`);
+            return null;
         }
+
+        const nuspecFilePath = path.join(packageDir, nuspecFiles[0]);
+        const nuspecFile = fs.readFileSync(nuspecFilePath).toString();
+        const results = /commit="(.*?)"/.exec(nuspecFile);
+        if (results == null || results.length === 0) {
+            logError('Failed to find commit number from nuspec file');
+            return null;
+        }
+
+        if (results.length !== 2) {
+            logError('Unexpected regex match result from nuspec file.');
+            return null;
+        }
+
+        const commitNumber = results[1];
+        console.log(`Found commit SHA: ${commitNumber}`);
+        return commitNumber;
         
-        fs.unlinkSync(tempFile);
     } catch (error) {
-        console.error('Error getting current SHA:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logError(`Error getting current SHA: ${errorMessage}`);
+        if (error instanceof Error && error.stack) {
+            console.log(`##[debug]${error.stack}`);
+        }
+        return null;
     }
-    
-    return null;
 }
 
-async function cloneRoslynRepo(): Promise<void> {
-    console.log('Cloning Roslyn repository...');
-    await execAsync('git clone --no-tags --filter=blob:none --depth=500 https://github.com/dotnet/roslyn.git roslyn');
+async function verifyRoslynRepo(roslynRepoPath: string): Promise<void> {
+    if (!fs.existsSync(roslynRepoPath)) {
+        throw new Error(`Roslyn repository not found at ${roslynRepoPath}`);
+    }
+    console.log(`Using Roslyn repository at ${roslynRepoPath}`);
 }
 
-async function generatePRList(startSHA: string, endSHA: string): Promise<string> {
+async function generatePRList(startSHA: string, endSHA: string, roslynRepoPath: string, options: InsertionOptions): Promise<string> {
     console.log(`Generating PR list from ${startSHA} to ${endSHA}...`);
     
     // Setup auth for roslyn-tools
@@ -186,7 +199,7 @@ async function generatePRList(startSHA: string, endSHA: string): Promise<string>
     }
     
     const authJson = {
-        GitHubToken: process.env.GITHUB_TOKEN || '',
+        GitHubToken: options.githubPAT || '',
         DevDivAzureDevOpsToken: '',
         DncEngAzureDevOpsToken: ''
     };
@@ -195,12 +208,16 @@ async function generatePRList(startSHA: string, endSHA: string): Promise<string>
     
     try {
         const { stdout } = await execAsync(
-            `cd roslyn && roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format changelog --label VSCode`,
+            `cd "${roslynRepoPath}" && roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format changelog --label VSCode`,
             { maxBuffer: 10 * 1024 * 1024 } // 10MB buffer
         );
         return stdout || '(no PRs with required labels)';
     } catch (error) {
-        console.warn('PR finder failed, using empty list:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logWarning(`PR finder failed, using empty list: ${errorMessage}`);
+        if (error instanceof Error && error.stack) {
+            console.log(`##[debug]${error.stack}`);
+        }
         return '(no PRs with required labels)';
     }
 }
@@ -209,9 +226,9 @@ async function updatePackageJson(newVersion: string): Promise<void> {
     console.log(`Updating package.json with Roslyn version ${newVersion}...`);
     const packageJsonPath = 'package.json';
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    
+
     if (!packageJson.defaults) {
-        packageJson.defaults = {};
+        throw new Error('Could not find defaults section in package.json');
     }
     packageJson.defaults.roslyn = newVersion;
     
@@ -224,10 +241,10 @@ async function updateChangelog(version: string, prList: string, buildNumber?: st
     let changelogContent = fs.readFileSync(changelogPath, 'utf8');
     
     // Format PR list with proper indentation
-    const formattedPRList = prList.split('\n').map(line => `  ${line}`).join('\n');
+    const formattedPRList = prList.split('\n').map(line => `  ${line}`).join(os.EOL);
     
     // Find and update the Roslyn bump line
-    const lines = changelogContent.split('\n');
+    const lines = changelogContent.split(/\r?\n/);
     const newLines: string[] = [];
     let skipNext = false;
     
@@ -254,55 +271,101 @@ async function updateChangelog(version: string, prList: string, buildNumber?: st
     fs.writeFileSync(changelogPath, newLines.join('\n'));
 }
 
-async function createBranch(endSHA: string, version: string): Promise<string> {
-    console.log('Creating and pushing branch...');
-    
-    await execAsync('git config user.name "Azure Pipelines"');
-    await execAsync('git config user.email "azuredevops@microsoft.com"');
-    
-    const shortSHA = endSHA.substring(0, 8);
-    const branchName = `roslyn-bump/${shortSHA}`;
-    
-    await execAsync(`git checkout -b ${branchName}`);
-    await execAsync('git add package.json CHANGELOG.md');
-    await execAsync(`git commit -m "Bump Roslyn to ${version}"`);
-    await execAsync(`git push origin ${branchName}`);
-    
-    return branchName;
-}
-
-async function createPullRequest(branchName: string, options: InsertionOptions): Promise<void> {
-    console.log('Creating pull request...');
-    
-    if (!options.githubPAT) {
-        console.warn('No GitHub PAT provided, skipping PR creation');
-        return;
-    }
-    
-    const octokit = new Octokit({ auth: options.githubPAT });
-    
-    const prTitle = `Bump Roslyn to ${options.roslynVersion}`;
-    const prBody = `Automated Roslyn version bump.
-
-**Version:** \`${options.roslynVersion}\`
-**Commit Range:** \`${options.roslynStartSHA}...${options.roslynEndSHA}\`
-**Azure DevOps Build:** [${options.roslynBuildNumber}](https://dev.azure.com/dnceng/internal/_build/results?buildId=${options.roslynBuildId})
-
-See CHANGELOG.md for included PRs.`;
-    
+async function createBranchAndPR(version: string, endSHA: string, options: InsertionOptions): Promise<void> {
     try {
-        const { data } = await octokit.pulls.create({
+        console.log('Creating and pushing branch...');
+        
+        // Configure git user
+        await git(['config', '--local', 'user.name', 'Azure Pipelines']);
+        await git(['config', '--local', 'user.email', 'azuredevops@microsoft.com']);
+        
+        // Check for changes
+        const changedFiles = await git(['diff', '--name-only', 'HEAD']);
+        if (!changedFiles) {
+            console.log('No files changed, skipping branch creation');
+            return;
+        }
+        
+        console.log(`Changed files: ${changedFiles}`);
+        
+        // Create and checkout new branch
+        const shortSHA = endSHA.substring(0, 8);
+        const branchName = `insertion/${shortSHA}`;
+        await git(['checkout', '-b', branchName]);
+        
+        // Stage and commit changes
+        await git(['add', 'package.json', 'CHANGELOG.md']);
+        await git(['commit', '-m', `Bump Roslyn to ${version} (${shortSHA})`]);
+        
+        // Configure remote with PAT for authentication
+        const pat = options.githubPAT;
+        if (!pat) {
+            throw new Error('GitHub PAT is required to push changes');
+        }
+        
+        const remoteRepoAlias = 'targetRepo';
+        await git(
+            [
+                'remote',
+                'add',
+                remoteRepoAlias,
+                `https://${pat}@github.com/dotnet/vscode-csharp.git`,
+            ],
+            false // Don't log the command to avoid exposing the PAT
+        );
+        
+        // Check if branch already exists
+        const lsRemote = await git(['ls-remote', '--heads', remoteRepoAlias, branchName]);
+        if (lsRemote.trim() !== '') {
+            console.log(`##vso[task.logissue type=warning]${branchName} already exists. Skipping push.`);
+            return;
+        }
+        
+        // Push the branch
+        await git(['push', '-u', remoteRepoAlias, branchName]);
+        
+        // Create PR if not in dry run mode
+        if (options.dryRun) {
+            console.log('Dry run: Would create PR for branch', branchName);
+            return;
+        }
+        
+        console.log('Creating pull request...');
+        const octokit = new Octokit({ auth: pat });
+        const title = `Bump Roslyn to ${version} (${shortSHA})`;
+        
+        // Check if PR already exists
+        const listPullRequest = await octokit.rest.pulls.list({
             owner: 'dotnet',
             repo: 'vscode-csharp',
-            title: prTitle,
-            body: prBody,
-            head: branchName,
-            base: options.targetBranch || 'main'
+            head: `dotnet:${branchName}`,
+            state: 'open'
         });
         
-        console.log(`Pull request created: ${data.html_url}`);
+        if (listPullRequest.data.length > 0) {
+            console.log(`Pull request already exists: ${listPullRequest.data[0].html_url}`);
+            return;
+        }
+        
+        // Create the PR
+        const pr = await octokit.rest.pulls.create({
+            owner: 'dotnet',
+            repo: 'vscode-csharp',
+            title: title,
+            head: branchName,
+            base: options.targetBranch || 'main',
+            body: `This is an automated PR to update the Roslyn version to ${version} (${shortSHA})`,
+            maintainer_can_modify: true
+        });
+        
+        console.log(`Created pull request: ${pr.data.html_url}`);
+        
     } catch (error) {
-        console.error('Failed to create PR:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logError(`Failed to create branch/PR: ${errorMessage}`);
+        if (error instanceof Error && error.stack) {
+            console.log(`##[debug]${error.stack}`);
+        }
         throw error;
     }
 }
