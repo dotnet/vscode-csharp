@@ -1,7 +1,7 @@
 If Visual Studio code displays "Debug adapter process has terminated unexpectedly", and the debug console doesn't have information about why, this generally means that the debugger process (vsdbg-ui) crashed. Here is some information you can provide us to diagnose what went wrong.
 
 ### Common
-On all OSs, it can be useful to have [logging enabled](https://github.com/OmniSharp/omnisharp-vscode/wiki/Enabling-C%23-debugger-logging), and to provide the last bit of the event log.
+On all OSs, it can be useful to have [logging enabled](https://github.com/dotnet/vscode-csharp/wiki/Enabling-C%23-debugger-logging), and to provide the last bit of the event log.
 
 ### macOS
 
@@ -66,8 +66,8 @@ Faulting application start time: 0x01d2cf58f1e7031e
 Faulting application path: C:\Users\greggm\.vscode\extensions\ms-dotnettools.csharp-1.21.18\.debugger\vsdbg-ui.exe
 Faulting module path: C:\Users\greggm\.vscode\extensions\ms-dotnettools.csharp-1.21.18\.debugger\vsdbg.DLL
 Report Id: 694807aa-44e0-42d3-8129-437f457a5efd
-Faulting package full name: 
-Faulting package-relative application ID: 
+Faulting package full name:
+Faulting package-relative application ID:
 ```
 
 ### Linux

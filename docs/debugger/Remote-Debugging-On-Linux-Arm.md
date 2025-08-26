@@ -2,11 +2,11 @@ The extension supports remote debugging netcoreapp 2.1 or newer on `linux-arm`. 
 
 As of netcoreapp 3.0, `linux-arm64` is also supported. When following these instructions for arm64, be sure to replace `linux-arm` with `linux-arm64`.
 
-If you run into any problems, please file an [issue](https://github.com/omnisharp/omnisharp-vscode) and note in the text that this is related to `linux-arm`. 
+If you run into any problems, please file an [issue](https://github.com/dotnet/vscode-csharp) and note in the text that this is related to `linux-arm`.
 
 Choose **one** of the following deployment methods:
 
-* [Framework Dependent Deployment](#framework-dependent-deployment): Compile the application locally. Deploy the binary to `linux-arm`. **Requires the .NET Core Runtime to be installed on `linux-arm`.** 
+* [Framework Dependent Deployment](#framework-dependent-deployment): Compile the application locally. Deploy the binary to `linux-arm`. **Requires the .NET Core Runtime to be installed on `linux-arm`.**
 
 * [Self Contained Deployment](#self-contained-deployment): Compile and publish the application locally. Deploy the standalone application to `linux-arm`.
 
@@ -31,7 +31,7 @@ Framework-dependent deployments are when the application is deployed without a c
 
     *Example (installs to ~/dotnet):*
     ```
-    mkdir ~/dotnet & curl -sSL https://dotnetcli.blob.core.windows.net/dotnet/Runtime/2.1.3/dotnet-runtime-2.1.3-linux-arm.tar.gz | 
+    mkdir ~/dotnet & curl -sSL https://dotnetcli.blob.core.windows.net/dotnet/Runtime/2.1.3/dotnet-runtime-2.1.3-linux-arm.tar.gz |
     tar xvzf /dev/stdin -C ~/dotnet
     ```
 
@@ -49,9 +49,9 @@ On the IDE computer:
         ```
 
 ## Remotely debug your application
-Reference the sample `launch.json` below. 
+Reference the sample `launch.json` below.
 * The `"program"` field is set to the `dotnet` executable and the first `"args"` item is the  application `.dll` relative to the current working directory (`"cwd"`) on `linux-arm`.
-* Update the fields under `"pipeArgs"` to include the IP address of the `linux-arm` device and the ssh keyfile. 
+* Update the fields under `"pipeArgs"` to include the IP address of the `linux-arm` device and the ssh keyfile.
 * The `"debuggerPath"` points to the location where you installed the debugger to on `linux-arm`.
 
 ### Sample `launch.json` - macOS and Linux
@@ -119,7 +119,7 @@ Self-contained deployments are when all of an applications' dependencies are car
 ## Create a new console project
 On the IDE computer:
 * Run `dotnet new console -n MyConsoleApp`. This will create a new netcoreapp console application called `MyConsoleApp`.
- 
+
 ## Build and Deploy
 On the IDE computer:
 * Run `dotnet publish -r linux-arm`
@@ -132,7 +132,7 @@ On the IDE computer:
 ## Remotely debug your standalone application executable
 Reference the sample `launch.json` below.
 * The `"program"` field is the standalone executable relative to the current working directory (`"cwd"`) on `linux-arm`.
-* Update the fields under `"pipeArgs"` to include the IP address of the `linux-arm` device and the ssh keyfile. 
+* Update the fields under `"pipeArgs"` to include the IP address of the `linux-arm` device and the ssh keyfile.
 * The `"debuggerPath"` points to the location where you installed the debugger to on `linux-arm`.
 
 ### Sample `launch.json` -- macOS and Linux

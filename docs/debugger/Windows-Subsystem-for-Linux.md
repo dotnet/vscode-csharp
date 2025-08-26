@@ -5,8 +5,8 @@ This page will walk you through the steps required to debug a .NET core applicat
 ## Prerequisites
 * Windows 10 Creators Update or newer with [Windows Subsystem for Linux](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) and Bash installed.
 * .NET Core on WSL
-* Visual Studio Code 
-* Microsoft C# extension for VSCode. 
+* Visual Studio Code
+* Microsoft C# extension for VSCode.
 
 Go to [.NET Core SDK Linux install instructions](https://dotnet.microsoft.com/learn/dotnet/hello-world-tutorial/install?initial-os=linux) for steps to install the .NET Core SDK into WSL. Change the 'Linux Distribution' drop down to the version you have installed.
 
@@ -74,11 +74,11 @@ The rest of this page will provide examples of how launch.json and tasks.json sh
 }
 ```
 
-The sample application shown here was created in the Windows path `C:\temp\dotnetapps\wslApp`. WSL by default allows windows paths to be accessible through `/mnt/<driveletter>/<path>`, so the path above is accessible as `/mnt/c/temp/dotnetapps/wslApp` from WSL. 
+The sample application shown here was created in the Windows path `C:\temp\dotnetapps\wslApp`. WSL by default allows windows paths to be accessible through `/mnt/<driveletter>/<path>`, so the path above is accessible as `/mnt/c/temp/dotnetapps/wslApp` from WSL.
 
 Notes:
 1. `preLaunchTask` executes ```dotnet publish```, which builds the project on Windows. Since coreclr is cross-platform, the binary can be executed on WSL without any extra work.
-2. `pipeProgram` is set to bash.exe. 
+2. `pipeProgram` is set to bash.exe.
 3. `debuggerPath` points to vsdbg, the coreclr debugger.
 4. This will not support programs that want to read from the console.
 
@@ -99,13 +99,13 @@ Notes:
            }
        }
 ```
-Notes: 
-1. `"processId": "${command:pickRemoteProcess}"` lists the processes running on WSL using the pipe program. 
-2. `quoteArgs` will quote any arguments and debugger commands with spaces if set to `true`. 
+Notes:
+1. `"processId": "${command:pickRemoteProcess}"` lists the processes running on WSL using the pipe program.
+2. `quoteArgs` will quote any arguments and debugger commands with spaces if set to `true`.
 3. Use `sourceFileMap` to map sources if they are available in a different location than where they were built. If you build your project in Linux, make sure to add a map from the /mnt drive letters. Example: `"sourceFileMap": { "/mnt/c/": "c:\\" }`
 4. File and paths are case sensitive in Linux.
 
 ## Also see
-[Configuring C# Launch.json](https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md)
+[Configuring C# Launch.json](https://github.com/dotnet/vscode-csharp/blob/master/debugger-launchjson.md)
 
 [C++ debugging in WSL with VSCode C++ Extensions.](https://github.com/Microsoft/vscode-cpptools/blob/master/Documentation/Debugger/gdb/Windows%20Subsystem%20for%20Linux.md)

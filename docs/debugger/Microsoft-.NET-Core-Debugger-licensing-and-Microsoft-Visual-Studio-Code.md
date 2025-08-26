@@ -10,4 +10,4 @@ The C# extension for Visual Studio Code includes the Microsoft .NET Core Debugge
 
 If you installed the OSS version of VS Code, you can uninstall it and reinstall the Microsoft version from [https://code.visualstudio.com/download](https://code.visualstudio.com/download).
 
-If you believe you have the Microsoft version installed and you are still seeing this problem, you can [open an issue](https://github.com/omnisharp/omnisharp-vscode/issues) in this repo.
+If you believe you have the Microsoft version installed and you are still seeing this problem, you can [open an issue](https://github.com/dotnet/vscode-csharp/issues) in this repo.

@@ -1,4 +1,4 @@
-The C# extension supports limited full .NET framework debugging. It can only debug 64-bit applications with [portable PDBs](https://github.com/OmniSharp/omnisharp-vscode/wiki/Portable-PDBs).
+The C# extension supports limited full .NET framework debugging. It can only debug 64-bit applications with [portable PDBs](https://github.com/dotnet/vscode-csharp/wiki/Portable-PDBs).
 
 To enable the Desktop CLR debugger, change the configuration type in launch.json to be "clr" instead of "coreclr" and program should be pointing at the exe (**NOT** a .dll).
 
@@ -6,7 +6,7 @@ For unit tests, this can be done thusly:
 1. File->Preferences->Settings
 2. Open "CSharp: Unit Test Debugging Options"
 3. Set the 'type' to 'clr' (see settings.json example below)
-4. NOTE: For MSTest projects, also see [Forcing MSTest projects to use a 64-bit worker](https://github.com/OmniSharp/omnisharp-vscode/wiki/Desktop-.NET-Framework#forcing-mstest-projects-to-use-a-64-bit-worker) section.
+4. NOTE: For MSTest projects, also see [Forcing MSTest projects to use a 64-bit worker](https://github.com/dotnet/vscode-csharp/wiki/Desktop-.NET-Framework#forcing-mstest-projects-to-use-a-64-bit-worker) section.
 
 ## launch.json example
 
