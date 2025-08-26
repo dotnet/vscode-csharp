@@ -8,6 +8,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import minimist from 'minimist';
+import { exec, spawnSync} from 'child_process';
+import { promisify } from 'util';
+import * as xml2js from 'xml2js';
+import { Octokit } from '@octokit/rest';
+import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from './offlinePackagingTasks';
+import { PlatformInformation } from '../src/shared/platform';
+
+const execAsync = promisify(exec);
 
 function logWarning(message: string): void {
     console.log(`##vso[task.logissue type=warning]${message}`);
@@ -17,13 +25,26 @@ function logError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
 }
 
-import minimist from 'minimist';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import fetch from 'node-fetch';
-import * as AdmZip from 'adm-zip';
+async function git(args: string[], printCommand = true): Promise<string> {
+    if (printCommand) {
+        console.log(`git ${args.join(' ')}`);
+    }
 
-const execAsync = promisify(exec);
+    const git = spawnSync('git', args);
+    if (git.status != 0) {
+        const err = git.stderr.toString();
+        if (printCommand) {
+            console.log(`Failed to execute git ${args.join(' ')}.`);
+        }
+        throw err;
+    }
+
+    const stdout = git.stdout.toString();
+    if (printCommand) {
+        console.log(stdout);
+    }
+    return stdout;
+}
 
 interface InsertionOptions {
     roslynVersion?: string;
@@ -57,7 +78,7 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         console.log(`New Roslyn version: ${newVersion}`);
         
         // Step 2: Get current SHA from package
-        const currentSHA = await getCurrentRoslynSHA();
+        const currentSHA = await getCommitFromNugetAsync(allNugetPackages.roslyn);
         if (!currentSHA) {
             throw new Error('Could not determine current Roslyn SHA from package');
         }
@@ -126,59 +147,54 @@ async function extractRoslynVersionFromManifest(manifestPath: string): Promise<s
     return null;
 }
 
-async function getCurrentRoslynSHA(): Promise<string | null> {
-    const packageJsonContent = fs.readFileSync('package.json', 'utf8');
-    const packageJson = JSON.parse(packageJsonContent);
-    const currentVersion = packageJson.defaults?.roslyn;
-    
-    if (!currentVersion) {
-        console.log('No roslyn version in package.json, this is first run');
+async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<string | null> {
+    const packageJsonString = fs.readFileSync('./package.json').toString();
+    const packageJson = JSON.parse(packageJsonString);
+    const packageVersion = packageJson['defaults'][packageInfo.packageJsonName];
+    if (!packageVersion) {
+        logError(`Can't find ${packageInfo.packageJsonName} version in package.json`);
         return null;
     }
-    
-    console.log(`Current Roslyn version: ${currentVersion}`);
-    
-    try {
-        const packageName = 'microsoft.codeanalysis.common';
-        // Package names are always lower case in the .nuget folder.
-        const packageDir = path.join('out', '.nuget', packageName.toLowerCase(), currentVersion);
-        const nuspecFiles = fs.readdirSync(packageDir).filter((file) => file.endsWith('.nuspec'));
 
-        if (nuspecFiles.length === 0) {
-            logError(`No .nuspec file found in ${packageDir}`);
-            return null;
-        }
+    const platform = await PlatformInformation.GetCurrent();
+    const vsixPlatformInfo = platformSpecificPackages.find(
+        (p) => p.platformInfo.platform === platform.platform && p.platformInfo.architecture === platform.architecture
+    )!;
 
-        if (nuspecFiles.length > 1) {
-            logError(`Multiple .nuspec files found in ${packageDir}`);
-            return null;
-        }
+    const packageName = packageInfo.getPackageName(vsixPlatformInfo);
+    console.log(`${packageName} version is ${packageVersion}`);
 
-        const nuspecFilePath = path.join(packageDir, nuspecFiles[0]);
-        const nuspecFile = fs.readFileSync(nuspecFilePath).toString();
-        const results = /commit="(.*?)"/.exec(nuspecFile);
-        if (results == null || results.length === 0) {
-            logError('Failed to find commit number from nuspec file');
-            return null;
-        }
+    // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
+    // Package names are always lower case in the .nuget folder.
+    const packageDir = path.join('out', '.nuget', packageName.toLowerCase(), packageVersion);
+    const nuspecFiles = fs.readdirSync(packageDir).filter((file) => file.endsWith('.nuspec'));
 
-        if (results.length !== 2) {
-            logError('Unexpected regex match result from nuspec file.');
-            return null;
-        }
-
-        const commitNumber = results[1];
-        console.log(`Found commit SHA: ${commitNumber}`);
-        return commitNumber;
-        
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        logError(`Error getting current SHA: ${errorMessage}`);
-        if (error instanceof Error && error.stack) {
-            console.log(`##[debug]${error.stack}`);
-        }
+    if (nuspecFiles.length === 0) {
+        logError(`No .nuspec file found in ${packageDir}`);
         return null;
     }
+
+    if (nuspecFiles.length > 1) {
+        logError(`Multiple .nuspec files found in ${packageDir}`);
+        return null;
+    }
+
+    const nuspecFilePath = path.join(packageDir, nuspecFiles[0]);
+    const nuspecFile = fs.readFileSync(nuspecFilePath).toString();
+    const results = /commit="(.*)"/.exec(nuspecFile);
+    if (results == null || results.length == 0) {
+        logError('Failed to find commit number from nuspec file');
+        return null;
+    }
+
+    if (results.length != 2) {
+        logError('Unexpected regex match result from nuspec file.');
+        return null;
+    }
+
+    const commitNumber = results[1];
+    console.log(`commitNumber is ${commitNumber}`);
+    return commitNumber;
 }
 
 async function verifyRoslynRepo(roslynRepoPath: string): Promise<void> {

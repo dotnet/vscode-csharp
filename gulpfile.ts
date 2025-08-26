@@ -12,3 +12,4 @@ require('./tasks/debuggerTasks');
 require('./tasks/snapTasks');
 require('./tasks/signingTasks');
 require('./tasks/profilingTasks');
+require('./tasks/insertionTasks');
