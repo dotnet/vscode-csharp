@@ -107,12 +107,10 @@ export async function activate(
         context.subscriptions.push(
             vscode.workspace.onDidGrantWorkspaceTrust(() => {
                 const reloadTitle: CommandOption = {
-                    title: vscode.l10n.t('Reload C# Extension'),
+                    title: vscode.l10n.t('Reload Extensions'),
                     command: 'workbench.action.restartExtensionHost',
                 };
-                const message = vscode.l10n.t(
-                    'Workspace trust has changed. Would you like to reload the C# extension?'
-                );
+                const message = vscode.l10n.t('Workspace trust has changed. Would you like to reload extensions?');
                 showInformationMessage(vscode, message, reloadTitle);
             })
         );
