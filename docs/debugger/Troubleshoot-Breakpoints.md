@@ -2,7 +2,7 @@
 
 When debugging, a breakpoint has two possible visual states: a solid red circle and a hollow grey circle. If the debugger is able to successfully set a breakpoint in the target process, it will stay a solid red circle. If the breakpoint is a hollow circle a warning has occurred when trying to set the breakpoint. To see the warning, hover over the breakpoint in the debug view:
 
-![Breakpoints Window](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/breakpoints-window.png)
+![Breakpoints Window](../images/breakpoints-window.png)
 
 The following two sections describe prominent warnings and how to fix them.
 
@@ -16,7 +16,7 @@ If the line exists, did symbols load?
 
 * If symbols are not loaded:
   * Did the debugger provide additional information in the log lines around this?
-  * If the dll is being loaded from a different directory from where it was originally built, you may need to add an additional directory through the symbol search path -- in your launch.json file, add a "symbolsOptions/searchPaths" section ([documentation](https://github.com/dotnet/vscode-csharp/blob/master/debugger-launchjson.md#symbol-options)).
+  * If the dll is being loaded from a different directory from where it was originally built, you may need to add an additional directory through the symbol search path -- in your launch.json file, add a "symbolsOptions/searchPaths" section ([documentation](../../debugger-launchjson.md#symbol-options)).
 * If symbols are loaded, the PDB does not contain information about your source files. These are a few possible causes:
   * If your source files were recently added, confirm that an up-to-date version of the module is being loaded.
   * The PDB file is partially corrupted. Delete the file and perform a clean build of the module to try to resolve the issue.

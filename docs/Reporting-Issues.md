@@ -11,5 +11,5 @@ The extension supports the command that populates the necessary information from
     * In the output pane on the right, you should see an "OmniSharp log" in the drop-down
     * Paste the output from here to the "OmniSharp log" section
 
-    ![OmniSharp log](images/omnisharp_log.png)
+    ![OmniSharp log](./images/omnisharp_log.png)
     * The C# log can also be found in the same window.

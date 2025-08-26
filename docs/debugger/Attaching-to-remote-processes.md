@@ -91,7 +91,7 @@ Last, to be able to debug obviously the application must somehow be runnable on 
 
 There are two special concerns in this area when it comes to debugging:
 
-1. Debug vs. Release Configuration: If you are going to be debugging, the experience is going to be much better if the debug configuration of your application is running instead of the release configuration. If this isn't possible, one can debug release code. To do this, disable [justMyCode](https://github.com/dotnet/vscode-csharp/blob/release/debugger.md#just-my-code) in launch.json.
+1. Debug vs. Release Configuration: If you are going to be debugging, the experience is going to be much better if the debug configuration of your application is running instead of the release configuration. If this isn't possible, one can debug release code. To do this, disable [justMyCode](../../debugger.md#just-my-code) in launch.json.
 2. PDB files: In order for VSDBG to be able to be able to map executable code back to its source code (or vice versa) VSDBG needs to have PDB files. If you are already building your application on the target server, this is taken care of for you. If you are building it somewhere else, you need to make sure to copy the PDB files next to their associated dll or set the DebugType to 'embedded' so that the PDB data is kept inside of the compiled dll.
 
 ### Configuring Docker attach with launch.json
@@ -156,7 +156,7 @@ If vsdbg is crashing or being aborted a few additional troubleshooting steps:
 
 #### 1: Check for libicu compatibility
 
-See the [Testing libicu compatibility on Linux](https://github.com/dotnet/vscode-csharp/wiki/Testing-libicu-compatibility-on-Linux) page for more information.
+See the [Testing libicu compatibility on Linux](./Testing-libicu-compatibility-on-Linux.md) page for more information.
 
 #### 2: Save a coredump of a possible vsdbg crash
 

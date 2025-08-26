@@ -106,6 +106,6 @@ Notes:
 4. File and paths are case sensitive in Linux.
 
 ## Also see
-[Configuring C# Launch.json](https://github.com/dotnet/vscode-csharp/blob/master/debugger-launchjson.md)
+[Configuring C# Launch.json](../../debugger-launchjson.md)
 
 [C++ debugging in WSL with VSCode C++ Extensions.](https://github.com/Microsoft/vscode-cpptools/blob/master/Documentation/Debugger/gdb/Windows%20Subsystem%20for%20Linux.md)

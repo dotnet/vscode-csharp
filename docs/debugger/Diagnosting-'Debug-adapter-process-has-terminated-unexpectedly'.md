@@ -1,7 +1,7 @@
 If Visual Studio code displays "Debug adapter process has terminated unexpectedly", and the debug console doesn't have information about why, this generally means that the debugger process (vsdbg-ui) crashed. Here is some information you can provide us to diagnose what went wrong.
 
 ### Common
-On all OSs, it can be useful to have [logging enabled](https://github.com/dotnet/vscode-csharp/wiki/Enabling-C%23-debugger-logging), and to provide the last bit of the event log.
+On all OSs, it can be useful to have [logging enabled](Enabling-C#-debugger-logging.md), and to provide the last bit of the event log.
 
 ### macOS
 
@@ -10,7 +10,7 @@ On all OSs, it can be useful to have [logging enabled](https://github.com/dotnet
 3. Copy paste the 'Exception Type', 'Exception Codes' and 'Exception Note' section into the GitHub issue.
 4. Also look at the 'Crashed Thread', then find the call stack for that thread, and send that too (see example below).
 
-![macOS console screen shot](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/OSXConsoleUtility.png)
+![macOS console screen shot](../images/OSXConsoleUtility.png)
 
 ```
 Thread 9 Crashed:
