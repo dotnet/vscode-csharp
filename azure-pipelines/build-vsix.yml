@@ -114,9 +114,11 @@ stages:
           - output: pipelineArtifact
             path: $(Build.SourcesDirectory)/Packages
             artifact: Packages
+            condition: always()
           - output: pipelineArtifact
             path: $(Build.SourcesDirectory)/out/logs
             artifact: SigningLogs
+            condition: always()
     steps:
     - checkout: self
       clean: true
@@ -176,16 +178,16 @@ stages:
           SignType: $(signType)
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
-    - ${{ if eq(parameters.isOfficial, true) }}:
-      - script: gulp verifyVsix
-        condition: and( succeeded(), eq('$(SignType)', 'Real'))
-        displayName: 🔑 Verify VSIX Signature Files
-        workingDirectory: '$(Build.SourcesDirectory)/vsix'
-
     - task: CopyFiles@2
       inputs:
         SourceFolder: '$(Build.SourcesDirectory)/vsix'
         TargetFolder: '$(Build.SourcesDirectory)/Packages/VSIX_$(channel)'
+
+    - ${{ if eq(parameters.isOfficial, true) }}:
+      - script: gulp verifyVsix
+        condition: and( succeeded(), eq('$(SignType)', 'Real'))
+        displayName: 🔑 Verify VSIX Signature Files
+        workingDirectory: '$(Build.SourcesDirectory)/Packages/VSIX_$(channel)'
 
     - ${{ if ne(parameters.isOfficial, true) }}:
       - task: PublishPipelineArtifact@1
