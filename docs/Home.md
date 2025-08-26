@@ -1,1 +1,0 @@
-Welcome to the omnisharp-vscode wiki! There isn't much content here yet, but see the [project readme](https://github.com/OmniSharp/omnisharp-vscode/blob/master/README.md) to get started.
