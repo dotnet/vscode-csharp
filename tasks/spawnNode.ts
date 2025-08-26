@@ -10,6 +10,7 @@ export default async function spawnNode(args?: string[], options?: SpawnSyncOpti
     if (!options) {
         options = {
             env: {},
+            stdio: 'inherit',
         };
     }
 
@@ -20,31 +21,7 @@ export default async function spawnNode(args?: string[], options?: SpawnSyncOpti
             ...process.env,
             ...options.env,
         },
-        stdio: 'inherit',
-    };
-
-    console.log(`starting ${nodePath} ${args ? args.join(' ') : ''}`);
-
-    const buffer = spawnSync(nodePath, args, optionsWithFullEnvironment);
-
-    return { code: buffer.status, signal: buffer.signal, stdout: buffer.stdout };
-}
-
-export async function spawnNodeWithOutput(args?: string[], options?: SpawnSyncOptions) {
-    if (!options) {
-        options = {
-            env: {},
-        };
-    }
-
-    const optionsWithFullEnvironment: SpawnSyncOptions = {
-        cwd: rootPath,
-        ...options,
-        env: {
-            ...process.env,
-            ...options.env,
-        },
-        stdio: 'pipe',
+        stdio: options.stdio ?? 'inherit',
     };
 
     console.log(`starting ${nodePath} ${args ? args.join(' ') : ''}`);

@@ -6,7 +6,7 @@
 import * as path from 'path';
 import * as util from '../src/common';
 import * as fs from 'fs';
-import spawnNode, { spawnNodeWithOutput } from '../tasks/spawnNode';
+import spawnNode from '../tasks/spawnNode';
 import { vscePath } from './projectPaths';
 
 /// Packaging (VSIX) Tasks
@@ -104,7 +104,7 @@ export async function verifySignature(vsixPath: string) {
     vsceArgs.push('--signaturePath');
     vsceArgs.push(path.join(outputFolder, `${vsixNameWithoutExtension}.signature.p7s`));
 
-    const spawnResult = await spawnNodeWithOutput(vsceArgs);
+    const spawnResult = await spawnNode(vsceArgs, { stdio: 'pipe' });
     if (spawnResult.code != 0) {
         throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
     } else if (spawnResult.stdout != 'Signature verification result: Success') {
