@@ -8,7 +8,7 @@ import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { languageServerOptions } from '../../shared/options';
 import { RazorLanguage } from '../../razor/src/razorLanguage';
 import { ServerState } from '../server/languageServerEvents';
-import { combineDocumentSelectors } from '../utils/combineDocumentSelectors';
+import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';
 
 export class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
