@@ -2,10 +2,6 @@ trigger: none
 pr: none
 
 parameters:
-  - name: createPullRequest
-    displayName: Create Pull Request
-    type: boolean
-    default: true
   - name: targetBranch
     displayName: Target Branch for PR
     type: string
@@ -93,6 +89,6 @@ extends:
                   GitHubPAT: $(System.AccessToken)
                 inputs:
                   command: custom
-                  customCommand: 'run gulp -- insertion:roslyn --assetManifestPath=$(Pipeline.Workspace)/AssetManifests --roslynRepoPath=$(Pipeline.Workspace)/roslyn --roslynEndSHA=$(RoslynEndSHA) --roslynBuildNumber=$(RoslynBuildNumber) --roslynBuildId=$(RoslynBuildId) --createPullRequest=${{ parameters.createPullRequest }} --targetBranch=${{ parameters.targetBranch }} --githubPAT=$(System.AccessToken) --dryRun=false'
+                  customCommand: 'run gulp -- insertion:roslyn --assetManifestPath=$(Pipeline.Workspace)/AssetManifests --roslynRepoPath=$(Pipeline.Workspace)/roslyn --roslynEndSHA=$(RoslynEndSHA) --roslynBuildNumber=$(RoslynBuildNumber) --roslynBuildId=$(RoslynBuildId) --targetBranch=${{ parameters.targetBranch }} --githubPAT=$(System.AccessToken) --dryRun=false'
 
 
