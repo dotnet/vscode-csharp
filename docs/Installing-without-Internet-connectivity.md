@@ -2,7 +2,7 @@ Some environments may not have access to the Internet and thus the marketplace t
 
 > NOTE: It is important that if extensions offer platform-specific versions, that you ensure you are downloading/installing the matching platform pieces. Failure to do so could put your VS Code environment in a non-functional state.
 
-* Download and install the required .NET 9.0.1 runtime from https://dot.net/downloads
+* Download and install the required ASP.NET Core 9.0.8 runtime from https://dot.net/downloads
 * Download the following VS Code extensions **for your specific platform**:
   * [.NET Install Tool](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.vscode-dotnet-runtime)
   * [C# language extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp)

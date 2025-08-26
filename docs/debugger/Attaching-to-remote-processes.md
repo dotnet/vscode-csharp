@@ -81,7 +81,7 @@ Here is what these options do:
 
 Once this is all setup, then switch to the debug tab in VS Code, open the configuration drop down and select your new configuration ('.NET Core Remote Attach'). You may need to restart VS Code to have your new configuration show up in the list.
 
-![Debug launch configuration](https://raw.githubusercontent.com/wiki/OmniSharp/omnisharp-vscode/images/debug-launch-configurations-remote-attach.png)
+![Debug launch configuration](../images/debug-launch-configurations-remote-attach.png)
 
 Once the configuration is selected. Press the play button (F5) to bring up the process selection UI and start debugging.
 
@@ -195,7 +195,7 @@ If the process failed to attach and there is a similar event to the following:
 }
 ```
 
-and if you are on VsCode, you should see the stderr message: 
+and if you are on VsCode, you should see the stderr message:
 ``` vmmap[6174]: [fatal] unable to ask for permission to examine process; run tool using sudo, or without redirecting stdin and stderr. ```
 
 Most likely that Developer Mode is not enabled on your mac machine. You can enable it by typing ```sudo DevToolsSecurity --enable```
