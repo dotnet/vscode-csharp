@@ -5,7 +5,7 @@
 * [How to get support](../SUPPORT.md)
 * [Installing without internet connectivity](./Installing-without-Internet-connectivity.md)
 * [How to run and debug unit tests](./How-to-run-and-debug-unit-tests.md)
-* [Troubleshooting: 'The .NET Core SDK cannot be located.' errors](./Troubleshooting:-'The-.NET-Core-SDK-cannot-be-located.'-errors.md)
+* [Troubleshooting: 'The .NET Core SDK cannot be located.' errors](./Troubleshooting-'The-.NET-Core-SDK-cannot-be-located.'-errors.md)
 * [Linux Support](./C#-Extension-support-for-new-Linux-Distros-with-.NET-Core.md)
 
 **Debugger**
