@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { RoslynLanguageServerEvents, ServerState } from '../server/languageServerEvents';
-import { combineDocumentSelectors } from '../utils/combineDocumentSelectors';
+import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';
 import { languageServerOptions } from '../../shared/options';
 
 export class WorkspaceStatus {

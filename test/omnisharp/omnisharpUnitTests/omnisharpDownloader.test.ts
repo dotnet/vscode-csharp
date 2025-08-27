@@ -8,7 +8,7 @@ import { OmnisharpDownloader } from '../../../src/omnisharp/omnisharpDownloader'
 import NetworkSettings from '../../../src/networkSettings';
 import { EventStream } from '../../../src/eventStream';
 import { PlatformInformation } from '../../../src/shared/platform';
-import { CreateTmpDir, TmpAsset } from '../../../src/createTmpAsset';
+import { CreateTmpDir, TmpAsset } from '../../createTmpAsset';
 import * as util from '../../../src/common';
 import * as path from 'path';
 import MockHttpsServer from './testAssets/mockHttpsServer';

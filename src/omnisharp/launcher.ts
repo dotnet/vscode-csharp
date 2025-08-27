@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { spawn } from 'cross-spawn';
+import { spawn } from 'child_process';
 import { ChildProcessWithoutNullStreams } from 'child_process';
 
 import { PlatformInformation } from '../shared/platform';

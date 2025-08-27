@@ -6,7 +6,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as cp from 'child_process';
-import * as uuid from 'uuid';
 import * as net from 'net';
 import {
     LanguageClientOptions,
@@ -424,7 +423,7 @@ export class RoslynLanguageServer {
         cancellationToken?: vscode.CancellationToken
     ): Promise<R> {
         // Generate a UUID for our partial result token and apply it to our request.
-        const partialResultToken: string = uuid.v4();
+        const partialResultToken: string = randomUUID();
         params.partialResultToken = partialResultToken;
         // Register the callback for progress events.
         const disposable = this._languageClient.onProgress(type, partialResultToken, async (partialResult) => {
@@ -667,7 +666,7 @@ export class RoslynLanguageServer {
 
         args.push(
             '--razorDesignTimePath',
-            path.join(razorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
+            path.join(razorSourceGeneratorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
         );
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -707,6 +706,15 @@ export class RoslynLanguageServer {
             // Set command enablement to use roslyn standalone commands.
             await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
+
+            if (razorOptions.cohostingEnabled) {
+                // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
+                // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
+                args.push(
+                    '--csharpDesignTimePath',
+                    path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')
+                );
+            }
         }
 
         for (const extensionPath of additionalExtensionPaths) {
