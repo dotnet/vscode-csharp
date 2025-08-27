@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.91.x
+
 # 2.90.x
 * Bump Roslyn to 5.0.0-2.25424.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
   * Generate `init` accessor for required properties inside `readonly struct`s (PR: [#80004](https://github.com/dotnet/roslyn/pull/80004))
