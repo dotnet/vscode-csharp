@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import { beforeAll, afterAll, test, expect, beforeEach, describe } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
+import * as jestHelpers from '../../jestHelpers';
 
 describe(`Razor References ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {
@@ -151,9 +152,9 @@ describe(`Razor References ${testAssetWorkspace.description}`, function () {
                 const razorFile = integrationHelpers.getFilePath(path.join('Pages', 'References.razor'));
                 const csharpFile = integrationHelpers.getFilePath(path.join('Pages', 'References.razor.cs'));
 
-                integrationHelpers.expectPath(razorFile, sortedLocations[0].uri);
-                integrationHelpers.expectPath(csharpFile, sortedLocations[1].uri);
-                integrationHelpers.expectPath(csharpFile, sortedLocations[2].uri);
+                jestHelpers.expectPath(razorFile, sortedLocations[0].uri);
+                jestHelpers.expectPath(csharpFile, sortedLocations[1].uri);
+                jestHelpers.expectPath(csharpFile, sortedLocations[2].uri);
             }
         );
     });

@@ -10,11 +10,11 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import {
     activateCSharpExtension,
     closeAllEditorsAsync,
-    describeIfCSharp,
     getCodeLensesAsync,
     openFileInWorkspaceAsync,
 } from './integrationHelpers';
 import { TestProgress } from '../../../src/lsptoolshost/server/roslynProtocol';
+import { describeIfCSharp } from '../../jestHelpers';
 
 describeIfCSharp(`Unit Testing Tests`, () => {
     beforeAll(async () => {

@@ -6,14 +6,10 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import {
-    activateCSharpExtension,
-    closeAllEditorsAsync,
-    expectText,
-    openFileInWorkspaceAsync,
-} from './integrationHelpers';
+import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, afterEach } from '@jest/globals';
 import { formatDocumentAsync, formatOnTypeAsync, formatRangeAsync } from './formattingTestHelpers';
+import { expectText } from '../../jestHelpers';
 
 describe(`Formatting With EditorConfig Tests`, () => {
     beforeAll(async () => {
