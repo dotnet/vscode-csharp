@@ -14,8 +14,7 @@ export function checkIsSupportedPlatform(context: vscode.ExtensionContext, platf
             const setupButton: ActionOption = {
                 title: vscode.l10n.t('How to setup Remote Debugging'),
                 action: async () => {
-                    const remoteDebugInfoURL =
-                        'https://aka.ms/VSCode-DotNet-RemoteDebuggingOnLinuxArm';
+                    const remoteDebugInfoURL = 'https://aka.ms/VSCode-DotNet-RemoteDebuggingOnLinuxArm';
                     await vscode.env.openExternal(vscode.Uri.parse(remoteDebugInfoURL));
                 },
             };
