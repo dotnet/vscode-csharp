@@ -4,7 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.90.x
-* Bump Roslyn to 5.0.0-2.25424.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
+* Register the CSharp context provider with Copilot Chat as well. (PR: [#8565](https://github.com/dotnet/vscode-csharp/pull/8565))
+* Improve the limited activation experience (PR: [#8564](https://github.com/dotnet/vscode-csharp/pull/8564))
+* Bump Roslyn to 5.0.0-2.25428.10 (PR: [#8576](https://github.com/dotnet/vscode-csharp/pull/8576))
+  * Fix issue reporting workspace diagnostics in Razor files (PR: [#80071](https://github.com/dotnet/roslyn/pull/80071))
+  * Cache project analyzers (PR: [#80050](https://github.com/dotnet/roslyn/pull/80050))
+  * Cache diagnostic analyzer computation (PR: [#80045](https://github.com/dotnet/roslyn/pull/80045))
   * Generate `init` accessor for required properties inside `readonly struct`s (PR: [#80004](https://github.com/dotnet/roslyn/pull/80004))
   * Allow Razor cohosting to work with non-Razor SDK projects (PR: [#79953](https://github.com/dotnet/roslyn/pull/79953))
   * Update 'use expr body' to be a purely syntactic analyzer (PR: [#79979](https://github.com/dotnet/roslyn/pull/79979))                                                                                                                                 
