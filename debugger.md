@@ -65,7 +65,7 @@ Your project is now all set. Set a breakpoint or two where you want to stop, cli
 If your code was built on a different computer from where you would like to run in there are a few things to keep in mind --
 
 * **Source Maps**: Unless your local source code is at exactly the same path as where the code was originally built you will need to add a [sourceFileMap](https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md#source-file-map) to launch.json.
-* **Portable PDBs**: If the code was built on Windows, it might have been built using Windows PDBs instead of portable PDBs, but the C# extension only supports portable PDBs. See the [portable PDB documentation](https://github.com/dotnet/vscode-csharp/wiki/Portable-PDBs#how-to-generate-portable-pdbs) for more information.
+* **Portable PDBs**: If the code was built on Windows, it might have been built using Windows PDBs instead of portable PDBs, but the C# extension only supports portable PDBs. See the [portable PDB documentation](./docs/debugger/Portable-PDBs.md#how-to-generate-portable-pdbs) for more information.
 * **Debug vs. Release**: It is much easier to debug code which has been compiled in the `Debug` configuration. So unless the issue you are looking at only reproduces with optimizations, it is much better to use Debug bits. If you do need to debug optimized code, you will need to disable [justMyCode](https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md#just-my-code) in launch.json.
 
 #### [Configurating launch.json for C# Debugging](debugger-launchjson.md)
@@ -76,7 +76,7 @@ See the [official documentation](https://code.visualstudio.com/docs/csharp/debug
 
 #### Remote Debugging
 
-The debugger supports remotely launching or attaching to processes. See [Attaching to remote processes](https://github.com/dotnet/vscode-csharp/wiki/Attaching-to-remote-processes) in the wiki for more information.
+The debugger supports remotely launching or attaching to processes. See [Attaching to remote processes](./docs/debugger/Attaching-to-remote-processes.md) in the wiki for more information.
 
 #### Exception Settings
 
