@@ -1531,11 +1531,6 @@
             "default": true,
             "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
           },
-          "razor.languageServer.useNewFormattingEngine": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.razor.languageServer.useNewFormattingEngine%"
-          },
           "razor.languageServer.cohostingEnabled": {
             "type": "boolean",
             "default": true,
