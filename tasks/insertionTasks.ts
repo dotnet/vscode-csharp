@@ -6,45 +6,15 @@
 import * as gulp from 'gulp';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as os from 'os';
 import minimist from 'minimist';
-import { exec, spawnSync} from 'child_process';
+import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as xml2js from 'xml2js';
-import { Octokit } from '@octokit/rest';
-import { allNugetPackages, NugetPackageInfo, platformSpecificPackages } from './offlinePackagingTasks';
-import { PlatformInformation } from '../src/shared/platform';
+import { allNugetPackages} from './offlinePackagingTasks';
+import {getCommitFromNugetAsync, logWarning, logError, createBranchAndPR } from './gitHelpers';
+import * as os from 'os';
 
 const execAsync = promisify(exec);
-
-function logWarning(message: string): void {
-    console.log(`##vso[task.logissue type=warning]${message}`);
-}
-
-function logError(message: string): void {
-    console.log(`##vso[task.logissue type=error]${message}`);
-}
-
-async function git(args: string[], printCommand = true): Promise<string> {
-    if (printCommand) {
-        console.log(`git ${args.join(' ')}`);
-    }
-
-    const git = spawnSync('git', args);
-    if (git.status != 0) {
-        const err = git.stderr.toString();
-        if (printCommand) {
-            console.log(`Failed to execute git ${args.join(' ')}.`);
-        }
-        throw err;
-    }
-
-    const stdout = git.stdout.toString();
-    if (printCommand) {
-        console.log(stdout);
-    }
-    return stdout;
-}
 
 interface InsertionOptions {
     roslynVersion?: string;
@@ -62,7 +32,6 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
     const options = minimist<InsertionOptions>(process.argv.slice(2));
     
     console.log('Starting Roslyn insertion process...');
-    console.log(`Options: ${JSON.stringify(options, null, 2)}`);
     
     try {
         // Step 1: Extract Roslyn version from AssetManifest
@@ -106,12 +75,30 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         const prList = await generatePRList(currentSHA, options.roslynEndSHA, options.roslynRepoPath, options);
         console.log('PR List generated:', prList);
         
+        // Check if PR list is empty or contains no meaningful PRs
+        if (!prList || prList === '(no PRs with required labels)') {
+            console.log('No PRs with required labels found. Skipping insertion.');
+            logWarning('No PRs with VSCode label found between the commits. Skipping insertion.');
+            return;
+        }
+        
         // Step 6: Update files
         await updatePackageJson(options.roslynVersion);
         await updateChangelog(options.roslynVersion, prList, options.roslynBuildNumber, options.roslynBuildId);
         
-        // Step 6: Create branch and PR
-        await createBranchAndPR(options.roslynVersion, options.roslynEndSHA, options);
+        // Step 7: Create branch and PR
+        const prTitle = `Bump Roslyn to ${options.roslynVersion} (${options.roslynEndSHA?.substring(0, 8)})`;
+        const prBody = `This PR updates Roslyn to version ${options.roslynVersion} (${options.roslynEndSHA}).\n\n${prList}`;
+        
+        await createBranchAndPR({
+            ...options,
+            commitSha: options.roslynEndSHA!,
+            targetRemoteRepo: 'vscode-csharp',
+            baseBranch: options.targetBranch || 'main',
+            branchPrefix: 'insertion',
+            githubPAT: options.githubPAT!,
+            dryRun: options.dryRun
+        }, prTitle, prBody);
         
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -135,7 +122,6 @@ async function extractRoslynVersionFromManifest(manifestPath: string): Promise<s
     const parser = new xml2js.Parser();
     const result = await parser.parseStringPromise(xmlContent);
     
-    // Navigate the XML structure to find Microsoft.CodeAnalysis package
     const packages = result?.Build?.Package || [];
     for (const pkg of packages) {
         const attrs = pkg.$;
@@ -145,56 +131,6 @@ async function extractRoslynVersionFromManifest(manifestPath: string): Promise<s
     }
     
     return null;
-}
-
-async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<string | null> {
-    const packageJsonString = fs.readFileSync('./package.json').toString();
-    const packageJson = JSON.parse(packageJsonString);
-    const packageVersion = packageJson['defaults'][packageInfo.packageJsonName];
-    if (!packageVersion) {
-        logError(`Can't find ${packageInfo.packageJsonName} version in package.json`);
-        return null;
-    }
-
-    const platform = await PlatformInformation.GetCurrent();
-    const vsixPlatformInfo = platformSpecificPackages.find(
-        (p) => p.platformInfo.platform === platform.platform && p.platformInfo.architecture === platform.architecture
-    )!;
-
-    const packageName = packageInfo.getPackageName(vsixPlatformInfo);
-    console.log(`${packageName} version is ${packageVersion}`);
-
-    // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
-    // Package names are always lower case in the .nuget folder.
-    const packageDir = path.join('out', '.nuget', packageName.toLowerCase(), packageVersion);
-    const nuspecFiles = fs.readdirSync(packageDir).filter((file) => file.endsWith('.nuspec'));
-
-    if (nuspecFiles.length === 0) {
-        logError(`No .nuspec file found in ${packageDir}`);
-        return null;
-    }
-
-    if (nuspecFiles.length > 1) {
-        logError(`Multiple .nuspec files found in ${packageDir}`);
-        return null;
-    }
-
-    const nuspecFilePath = path.join(packageDir, nuspecFiles[0]);
-    const nuspecFile = fs.readFileSync(nuspecFilePath).toString();
-    const results = /commit="(.*)"/.exec(nuspecFile);
-    if (results == null || results.length == 0) {
-        logError('Failed to find commit number from nuspec file');
-        return null;
-    }
-
-    if (results.length != 2) {
-        logError('Unexpected regex match result from nuspec file.');
-        return null;
-    }
-
-    const commitNumber = results[1];
-    console.log(`commitNumber is ${commitNumber}`);
-    return commitNumber;
 }
 
 async function verifyRoslynRepo(roslynRepoPath: string): Promise<void> {
@@ -252,136 +188,155 @@ async function updatePackageJson(newVersion: string): Promise<void> {
 }
 
 async function updateChangelog(version: string, prList: string, buildNumber?: string, buildId?: string): Promise<void> {
-    console.log('Updating CHANGELOG.md...');
-    const changelogPath = 'CHANGELOG.md';
-    let changelogContent = fs.readFileSync(changelogPath, 'utf8');
-    
-    // Format PR list with proper indentation
-    const formattedPRList = prList.split('\n').map(line => `  ${line}`).join(os.EOL);
-    
-    // Find and update the Roslyn bump line
-    const lines = changelogContent.split(/\r?\n/);
-    const newLines: string[] = [];
-    let skipNext = false;
-    
-    for (let i = 0; i < lines.length; i++) {
-        if (skipNext && lines[i].startsWith('  *')) {
-            continue;
-        }
-        skipNext = false;
-        
-        if (lines[i].match(/^\* Bump Roslyn to/)) {
-            const prLink = buildNumber && buildId 
-                ? `[${buildNumber}](https://dev.azure.com/dnceng/internal/_build/results?buildId=${buildId})`
-                : '[#TBD](TBD)';
-            newLines.push(`* Bump Roslyn to ${version} (PR: ${prLink})`);
-            if (prList !== '(no PRs with required labels)') {
-                newLines.push(formattedPRList);
-            }
-            skipNext = true;
-        } else {
-            newLines.push(lines[i]);
-        }
-    }
-    
-    fs.writeFileSync(changelogPath, newLines.join('\n'));
-}
+	console.log('Updating CHANGELOG.md...');
+	const changelogPath = 'CHANGELOG.md';
+	const orig = fs.readFileSync(changelogPath, 'utf8');
 
-async function createBranchAndPR(version: string, endSHA: string, options: InsertionOptions): Promise<void> {
-    try {
-        console.log('Creating and pushing branch...');
-        
-        // Configure git user
-        await git(['config', '--local', 'user.name', 'Azure Pipelines']);
-        await git(['config', '--local', 'user.email', 'azuredevops@microsoft.com']);
-        
-        // Check for changes
-        const changedFiles = await git(['diff', '--name-only', 'HEAD']);
-        if (!changedFiles) {
-            console.log('No files changed, skipping branch creation');
-            return;
-        }
-        
-        console.log(`Changed files: ${changedFiles}`);
-        
-        // Create and checkout new branch
-        const shortSHA = endSHA.substring(0, 8);
-        const branchName = `insertion/${shortSHA}`;
-        await git(['checkout', '-b', branchName]);
-        
-        // Stage and commit changes
-        await git(['add', 'package.json', 'CHANGELOG.md']);
-        await git(['commit', '-m', `Bump Roslyn to ${version} (${shortSHA})`]);
-        
-        // Configure remote with PAT for authentication
-        const pat = options.githubPAT;
-        if (!pat) {
-            throw new Error('GitHub PAT is required to push changes');
-        }
-        
-        const remoteRepoAlias = 'targetRepo';
-        await git(
-            [
-                'remote',
-                'add',
-                remoteRepoAlias,
-                `https://${pat}@github.com/dotnet/vscode-csharp.git`,
-            ],
-            false // Don't log the command to avoid exposing the PAT
-        );
-        
-        // Check if branch already exists
-        const lsRemote = await git(['ls-remote', '--heads', remoteRepoAlias, branchName]);
-        if (lsRemote.trim() !== '') {
-            console.log(`##vso[task.logissue type=warning]${branchName} already exists. Skipping push.`);
-            return;
-        }
-        
-        // Push the branch
-        await git(['push', '-u', remoteRepoAlias, branchName]);
-        
-        // Create PR if not in dry run mode
-        if (options.dryRun) {
-            console.log('Dry run: Would create PR for branch', branchName);
-            return;
-        }
-        
-        console.log('Creating pull request...');
-        const octokit = new Octokit({ auth: pat });
-        const title = `Bump Roslyn to ${version} (${shortSHA})`;
-        
-        // Check if PR already exists
-        const listPullRequest = await octokit.rest.pulls.list({
-            owner: 'dotnet',
-            repo: 'vscode-csharp',
-            head: `dotnet:${branchName}`,
-            state: 'open'
-        });
-        
-        if (listPullRequest.data.length > 0) {
-            console.log(`Pull request already exists: ${listPullRequest.data[0].html_url}`);
-            return;
-        }
-        
-        // Create the PR
-        const pr = await octokit.rest.pulls.create({
-            owner: 'dotnet',
-            repo: 'vscode-csharp',
-            title: title,
-            head: branchName,
-            base: options.targetBranch || 'main',
-            body: `This is an automated PR to update the Roslyn version to ${version} (${shortSHA})`,
-            maintainer_can_modify: true
-        });
-        
-        console.log(`Created pull request: ${pr.data.html_url}`);
-        
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        logError(`Failed to create branch/PR: ${errorMessage}`);
-        if (error instanceof Error && error.stack) {
-            console.log(`##[debug]${error.stack}`);
-        }
-        throw error;
-    }
+	// Preserve original line endings
+	const originalHasCRLF = orig.indexOf('\r\n') !== -1;
+	const NL = os.EOL; 
+
+	// Normalize for processing
+	const text = orig.replace(/\r\n/g, NL);
+
+	// Prepare PR list (filter out 'View Complete Diff' lines)
+	const formattedPRList =
+		prList
+			? prList
+					.split(/\r?\n/)
+					.filter((l) => l.trim() && !l.includes('View Complete Diff'))
+					.map((line) => `  ${line}`)
+					.join(NL)
+			: '';
+
+	// Find the first top-level header "# ..."
+	const topHeaderRegex = /^# .*/m;
+	const headerMatch = topHeaderRegex.exec(text);
+	if (!headerMatch) {
+		const prLink = buildNumber && buildId
+			? `[#${buildNumber}](https://dev.azure.com/dnceng/internal/_build/results?buildId=${buildId})`
+			: '[#TBD](TBD)';
+		let roslynBlock = `* Bump Roslyn to ${version} (PR: ${prLink})`;
+		if (formattedPRList && prList && prList !== '(no PRs with required labels)') {
+			roslynBlock += NL + formattedPRList;
+		}
+		roslynBlock += NL;
+		const out = originalHasCRLF ? (roslynBlock + text).replace(/\n/g, '\r\n') : roslynBlock + text;
+		fs.writeFileSync(changelogPath, out, 'utf8');
+		console.log('CHANGELOG.md updated successfully');
+		return;
+	}
+
+	const headerStart = headerMatch.index;
+	const headerLineEnd = text.indexOf(NL, headerStart);
+	const headerLineEndIndex = headerLineEnd === -1 ? text.length : headerLineEnd;
+
+	// Find end of this header section (next top-level header or EOF)
+	const nextTopHeaderRegex = /^# .*/gm;
+	nextTopHeaderRegex.lastIndex = headerLineEndIndex + 1;
+	const nextHeaderMatch = nextTopHeaderRegex.exec(text);
+	const sectionEndIndex = nextHeaderMatch ? nextHeaderMatch.index : text.length;
+
+	const body = text.substring(headerLineEndIndex + 1, sectionEndIndex);
+
+	// Split body into leading content + top-level bullet blocks (each starts with "* ")
+	const bulletStartRegex = /^\* /gm;
+	const starts: number[] = [];
+	let m: RegExpExecArray | null;
+	while ((m = bulletStartRegex.exec(body)) !== null) {
+		starts.push(m.index);
+	}
+
+	let leading = '';
+	let blocks: string[] = [];
+	if (starts.length === 0) {
+		leading = body;
+		blocks = [];
+	} else {
+		leading = body.slice(0, starts[0]);
+		for (let i = 0; i < starts.length; i++) {
+			const s = starts[i];
+			const e = i + 1 < starts.length ? starts[i + 1] : body.length;
+			blocks.push(body.slice(s, e));
+		}
+	}
+
+	// Locate Roslyn and Razor blocks
+	let roslynIndex = -1;
+	let razorIndex = -1;
+	for (let i = 0; i < blocks.length; i++) {
+		const firstLine = blocks[i].split(NL, 1)[0].trim();
+		if (/^\*\s*Bump\s+Roslyn\s+to/i.test(firstLine)) {
+			roslynIndex = i;
+		} else if (/^\*\s*Bump\s+Razor\s+to/i.test(firstLine)) {
+			razorIndex = i;
+		}
+	}
+
+	// Prepare new Roslyn block + optional PR list
+	const prLink = buildNumber && buildId
+		? `[#${buildNumber}](https://dev.azure.com/dnceng/internal/_build/results?buildId=${buildId})`
+		: '[#TBD](TBD)';
+	let newRoslynBlock = `* Bump Roslyn to ${version} (PR: ${prLink})`;
+	if (formattedPRList && prList && prList !== '(no PRs with required labels)') {
+		newRoslynBlock += NL + formattedPRList;
+	}
+	if (!newRoslynBlock.endsWith(NL)) {
+		newRoslynBlock += NL;
+	}
+
+	// Rebuild blocks according to the rules
+	const newBlocks: string[] = [];
+	let roslynInserted = false;
+
+	for (let i = 0; i < blocks.length; i++) {
+		if (i === roslynIndex) {
+			// Update version and PR link in place (preserving any existing bullet contents)
+			let updated = blocks[i].replace(
+				/^(\* Bump Roslyn to\s+)([^\s(]+)(?:\s*\(PR:[^)]+\))?/i,
+				`$1${version} (PR: ${prLink})`
+			);
+
+			// If we have a PR list and the existing block has no indented PR items, append it
+			if (formattedPRList && prList && prList !== '(no PRs with required labels)') {
+				if (!/\n\s{2}\*/.test(blocks[i]) && !updated.includes(formattedPRList)) {
+					if (!updated.endsWith(NL)) updated += NL;
+					updated += formattedPRList + NL;
+				}
+			}
+
+			newBlocks.push(updated);
+			roslynInserted = true;
+		} else if (i === razorIndex) {
+			// Insert Roslyn before Razor if not already inserted
+			if (!roslynInserted) {
+				newBlocks.push(newRoslynBlock);
+				roslynInserted = true;
+			}
+			newBlocks.push(blocks[i]);
+		} else {
+			newBlocks.push(blocks[i]);
+		}
+	}
+
+	// If Roslyn not inserted yet, place it at the top of the first section (after leading)
+	if (!roslynInserted) {
+		if (newBlocks.length > 0) {
+			newBlocks.unshift(newRoslynBlock);
+		} else {
+			// No bullet blocks found; append into leading
+			leading = leading + newRoslynBlock;
+		}
+	}
+
+	// Assemble new body and full text
+	const rebuiltBlocks = newBlocks.join(NL);
+	const newBody = leading + rebuiltBlocks;
+	const newTextNormalized = text.slice(0, headerLineEndIndex + 1) + newBody + text.slice(sectionEndIndex);
+
+	// Restore original newline style (normalize any newline to the original style)
+	const finalText = newTextNormalized.replace(/\r\n|\r|\n/g, originalHasCRLF ? '\r\n' : '\n');
+	fs.writeFileSync(changelogPath, finalText, 'utf8');
+
+	console.log('CHANGELOG.md updated successfully');
 }
