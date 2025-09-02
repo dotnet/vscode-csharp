@@ -200,19 +200,21 @@ async function updateChangelog(version: string, prList: string, buildNumber?: st
 	const text = orig.replace(/\r\n/g, NL);
 
 	// Prepare PR list (filter out 'View Complete Diff' lines)
-	const formattedPRList =
-		prList
-			? prList
-					.split(/\r?\n/)
-					.filter((l) => l.trim() && !l.includes('View Complete Diff'))
-					.map((line) => `  ${line}`)
-					.join(NL)
-			: '';
+	// Normalize each PR line (trim) so we don't accidentally double-indent when inserting.
+	const prLines = prList
+		? prList
+				.split(/\r?\n/)
+				.filter((l) => l.trim() && !l.includes('View Complete Diff'))
+				.map((line) => line.trim())
+		: [];
+
+	const formattedPRList = prLines.length > 0 ? prLines.map((line) => `  ${line}`).join(NL) : '';
 
 	// Find the first top-level header "# ..."
 	const topHeaderRegex = /^# .*/m;
 	const headerMatch = topHeaderRegex.exec(text);
 	if (!headerMatch) {
+		// No top-level header; prepend a Roslyn bump
 		const prLink = buildNumber && buildId
 			? `[#${buildNumber}](https://dev.azure.com/dnceng/internal/_build/results?buildId=${buildId})`
 			: '[#TBD](TBD)';
@@ -297,11 +299,25 @@ async function updateChangelog(version: string, prList: string, buildNumber?: st
 				`$1${version} (PR: ${prLink})`
 			);
 
-			// If we have a PR list and the existing block has no indented PR items, append it
-			if (formattedPRList && prList && prList !== '(no PRs with required labels)') {
-				if (!/\n\s{2}\*/.test(blocks[i]) && !updated.includes(formattedPRList)) {
-					if (!updated.endsWith(NL)) updated += NL;
-					updated += formattedPRList + NL;
+			// If we have a PR list and the existing block does not already contain it, insert it before existing PR bullets.
+			if (prLines.length > 0 && prList && prList !== '(no PRs with required labels)') {
+				const firstPR = prLines[0];
+
+				// If the first PR is not already present in the block, insert our formatted PR list.
+				if (!updated.includes(firstPR)) {
+					// Try to locate the first existing PR bullet (lines like "\n  * ...")
+					const prBulletIndex = updated.indexOf(NL + '  * ');
+					if (prBulletIndex !== -1) {
+						// Insert formatted PR list before the first existing PR bullet.
+						const insertPos = prBulletIndex + NL.length; // position just before the bullet line
+						const prefix = updated.slice(0, insertPos);
+						const suffix = updated.slice(insertPos);
+						updated = prefix + formattedPRList + NL + suffix;
+					} else {
+						// If no existing bullets found, append as before.
+						if (!updated.endsWith(NL)) updated += NL;
+						updated += formattedPRList + NL;
+					}
 				}
 			}
 
