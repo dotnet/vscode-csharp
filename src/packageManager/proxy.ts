@@ -21,7 +21,7 @@ function getSystemProxyURL(requestURL: Url): string | undefined {
 export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean): Agent | undefined {
     const proxyURL = proxy.length > 0 ? proxy : getSystemProxyURL(requestURL);
 
-    if (proxyURL === undefined) {
+    if (proxyURL === undefined || proxyURL.length === 0) {
         return undefined;
     }
 
