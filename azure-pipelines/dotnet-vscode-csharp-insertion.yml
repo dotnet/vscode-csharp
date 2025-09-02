@@ -82,6 +82,14 @@ extends:
                   git clone --no-tags --filter=blob:none --depth=500 https://github.com/dotnet/roslyn.git $(Pipeline.Workspace)/roslyn
                 displayName: 'Clone Roslyn repository'
 
+              - script: |
+                  echo "Installing roslyn-tools..."
+                  dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+                  echo "Verifying roslyn-tools installation..."
+                  dotnet tool list -g
+                  roslyn-tools --help
+                displayName: 'Install roslyn-tools CLI'
+
               - task: Npm@1
                 displayName: Run Roslyn insertion
                 env:
