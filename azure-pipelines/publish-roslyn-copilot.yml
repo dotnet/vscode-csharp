@@ -60,11 +60,13 @@ extends:
             storage: "$(AzStorage)"
             ContainerName: "$(AzContainerName)"
 
-        - script: npm ci
-          displayName: 'Install npm dependencies'
+        - pwsh: | 
+            npm install
+            npm install -g gulp
+          displayName: 'Install tools'
 
-        - script: npx gulp 'publish roslyn copilot' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org
-          displayName: 'Run gulp task to update package.json and create PR'
+        - pwsh: gulp 'publish roslyn copilot' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org
+          displayName: 'Create component update PR'
           env:
             GITHUB_TOKEN: $(GitHubToken)
             STAGING_DIRECTORY: $(Build.ArtifactStagingDirectory)/staging
