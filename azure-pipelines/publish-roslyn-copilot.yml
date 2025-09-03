@@ -29,7 +29,6 @@ extends:
           image: 1ESPT-Windows2022
           os: windows
         templateContext:
-          type: releaseJob
           isProduction: false #change this
           inputs:
           - input: pipelineArtifact
