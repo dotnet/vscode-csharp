@@ -38,7 +38,11 @@ extends:
             destinationPath: $(Pipeline.Workspace)/artifacts
 
         steps:
-        - checkout: none
+        - checkout: self
+          clean: true
+          submodules: true
+          fetchTags: false
+          fetchDepth: 0
 
         - task: CopyFiles@2
           displayName: 'Copy files from Zip folder to staging directory'
@@ -56,9 +60,6 @@ extends:
             Destination: "AzureBlob"
             storage: "$(AzStorage)"
             ContainerName: "$(AzContainerName)"
-
-        - checkout: self
-          persistCredentials: true
 
         - script: npm ci
           displayName: 'Install npm dependencies'
