@@ -6,6 +6,7 @@
 # 2.90.x
 * Register the CSharp context provider with Copilot Chat as well. (PR: [#8565](https://github.com/dotnet/vscode-csharp/pull/8565))
 * Improve the limited activation experience (PR: [#8564](https://github.com/dotnet/vscode-csharp/pull/8564))
+* Do not create a proxy agent if proxy url is empty string. (PR: [#8564](https://github.com/dotnet/vscode-csharp/pull/8581))
 * Bump Roslyn to 5.0.0-2.25428.10 (PR: [#8576](https://github.com/dotnet/vscode-csharp/pull/8576))
   * Fix issue reporting workspace diagnostics in Razor files (PR: [#80071](https://github.com/dotnet/roslyn/pull/80071))
   * Cache project analyzers (PR: [#80050](https://github.com/dotnet/roslyn/pull/80050))
