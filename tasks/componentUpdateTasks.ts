@@ -37,7 +37,7 @@ function git(args: string[], printCommand = true): Promise<string> {
     return Promise.resolve(stdout);
 }
 
-gulp.task('publish-roslyn-copilot', async () => {
+gulp.task('publish roslyn copilot', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
     
     // Get staging directory from environment variable passed from pipeline
