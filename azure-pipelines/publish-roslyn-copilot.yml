@@ -56,3 +56,15 @@ extends:
             Destination: "AzureBlob"
             storage: "$(AzStorage)"
             ContainerName: "$(AzContainerName)"
+
+        - checkout: self
+          persistCredentials: true
+
+        - script: npm ci
+          displayName: 'Install npm dependencies'
+
+        - script: npx gulp 'publish-roslyn-copilot' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org
+          displayName: 'Run gulp task to update package.json and create PR'
+          env:
+            GITHUB_TOKEN: $(GitHubToken)
+            STAGING_DIRECTORY: $(Build.ArtifactStagingDirectory)/staging
