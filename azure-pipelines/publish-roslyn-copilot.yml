@@ -68,5 +68,5 @@ extends:
         - pwsh: gulp 'publish roslyn copilot' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org
           displayName: 'Create component update PR'
           env:
-            GITHUB_TOKEN: $(GitHubToken)
+            GitHubPAT: $(GitHubPAT)
             STAGING_DIRECTORY: $(Build.ArtifactStagingDirectory)/staging
