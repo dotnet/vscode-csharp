@@ -405,7 +405,7 @@
     {
       "id": "RoslynCopilot",
       "description": "Language server for Roslyn Copilot integration",
-      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.479-alpha.zip",
+      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.687-alpha.zip",
       "installPath": ".roslynCopilot",
       "platforms": [
         "neutral"
