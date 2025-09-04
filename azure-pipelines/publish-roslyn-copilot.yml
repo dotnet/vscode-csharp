@@ -65,7 +65,7 @@ extends:
             npm install -g gulp
           displayName: 'Install tools'
 
-        - pwsh: gulp 'publish roslyn copilot' --userName abhitejjohn --email aajohn@microsoft.com
+        - pwsh: gulp 'publish roslyn copilot' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org 
           displayName: 'Create component update PR'
           env:
             GitHubPAT: $(GitHubPAT)
