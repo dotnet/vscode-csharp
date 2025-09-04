@@ -25,7 +25,7 @@ interface InsertionOptions {
     roslynRepoPath?: string;
     targetBranch?: string;
     githubPAT?: string;
-    dryRun?: boolean;
+    dryRun: boolean;
 }
 
 gulp.task('insertion:roslyn', async (): Promise<void> => {
@@ -76,7 +76,7 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         console.log('PR List generated:', prList);
 
         // Check if PR list is empty or contains no meaningful PRs
-        if (!prList || prList === '(no PRs with required labels)') {
+        if (!prList || prList === '(failed to generate PR list, see pipeline for details)') {
             console.log('No PRs with required labels found. Skipping insertion.');
             logWarning('No PRs with VSCode label found between the commits. Skipping insertion.');
             return;
@@ -146,21 +146,6 @@ async function verifyRoslynRepo(roslynRepoPath: string): Promise<void> {
 async function generatePRList(startSHA: string, endSHA: string, roslynRepoPath: string, options: InsertionOptions): Promise<string> {
     console.log(`Generating PR list from ${startSHA} to ${endSHA}...`);
 
-    // Setup auth for roslyn-tools
-    const homeDir = process.env.HOME || process.env.USERPROFILE;
-    const settingsDir = path.join(homeDir!, '.roslyn-tools');
-    if (!fs.existsSync(settingsDir)) {
-        fs.mkdirSync(settingsDir, { recursive: true });
-    }
-
-    const authJson = {
-        GitHubToken: options.githubPAT || '',
-        DevDivAzureDevOpsToken: '',
-        DncEngAzureDevOpsToken: ''
-    };
-    const settingsFile = path.join(settingsDir, 'settings');
-    fs.writeFileSync(settingsFile, Buffer.from(JSON.stringify(authJson)).toString('base64'));
-
     try {
         const { stdout } = await execAsync(
             `cd "${roslynRepoPath}" && roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format changelog --label VSCode`,
@@ -204,7 +189,14 @@ async function updateChangelog(version: string, prList: string, buildNumber?: st
             .map((line) => line.trim())
         : [];
 
-    const formattedPRList = prLines.length > 0 ? prLines.map((line) => `  ${line}`).join(NL) : '';
+    // Format PR list as sub-items with proper indentation
+    const formattedPRList = prLines.length > 0
+        ? prLines.map((line) => {
+            // If the line already starts with *, keep it, otherwise add it
+            const cleanLine = line.startsWith('*') ? line.substring(1).trim() : line;
+            return `  * ${cleanLine}`;
+          }).join(NL)
+        : '';
 
     // Find the first top-level header "# ..."
     const topHeaderRegex = /^(# .*?)(\r?\n|$)/m;
@@ -221,18 +213,20 @@ async function updateChangelog(version: string, prList: string, buildNumber?: st
         : '[#TBD](TBD)';
 
     let newRoslynBlock = `* Bump Roslyn to ${version} (PR: ${prLink})`;
-    const shouldSkipPRList = prList === '(failed to generate PR list, see pipeline for details)';
+
+    // Add PR list as sub-items if available and valid
+    const shouldSkipPRList = !prList || prList === '(failed to generate PR list, see pipeline for details)';
 
     if (!shouldSkipPRList && formattedPRList) {
         newRoslynBlock += NL + formattedPRList;
     }
-    newRoslynBlock += NL; // Ensure there's always a newline at the end
 
     // Insert the new block right after the header
     const newText =
         text.slice(0, headerEndLineIndex) +
         NL + NL + // Add two newlines after the header
         newRoslynBlock +
+        NL + // Add a newline after the block
         (text.length > headerEndLineIndex ? NL + text.slice(headerEndLineIndex) : '');
 
     // Write the updated content back to the file
