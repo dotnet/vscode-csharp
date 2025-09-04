@@ -143,10 +143,34 @@ gulp.task('publish roslyn copilot', async () => {
     );
     await git(['fetch', remoteRepoAlias]);
 
+    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + branch]);
+    if (lsRemote.trim() !== '') {
+        // If the localization branch of this commit already exists, don't try to create another one.
+        console.log(
+            `##vso[task.logissue type=error]${branch} already exists in dotnet/vscode-csharp. Skip pushing.`
+        );
+    } else {
+        await git(['push', '-u', remoteRepoAlias]);
+    }
+
     // Create PR via Octokit
     try {
         const octokit = new Octokit({ auth: pat });
-        const title = `chore: update RoslynCopilot url to ${version}`;
+        const listPullRequest = await octokit.rest.pulls.list({
+            owner: 'dotnet',
+            repo:   'vscode-csharp',
+        });
+
+        if (listPullRequest.status != 200) {
+            throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
+        }
+
+        const title = `Update RoslynCopilot url to ${version}`;
+        if (listPullRequest.data.some((pr) => pr.title === title)) {
+            console.log('Pull request with the same name already exists. Skip creation.');
+            return;
+        }
+
         const body = `Automated update of RoslynCopilot url to ${version}`;
 
         console.log(`Creating PR against dotnet/vscode-csharp...`);
