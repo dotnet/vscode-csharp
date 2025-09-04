@@ -10,7 +10,7 @@ import { spawnSync } from 'node:child_process';
 import * as path from 'path';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
-import { Octokit } from '@octokit/rest';
+import { createBranchAndPR } from './gitHelpers';
 
 type Options = {
     userName?: string;
@@ -76,70 +76,29 @@ gulp.task('publish localization content', async () => {
     }
     console.log(`Changed files going to be staged: ${diff}`);
 
-    const newBranchName = `localization/${parsedArgs.commitSha}`;
-    // Make this optional so it can be tested locally by using dev's information. In real CI user name and email are always supplied.
-    if (parsedArgs.userName) {
-        await git(['config', '--local', 'user.name', parsedArgs.userName]);
-    }
-    if (parsedArgs.email) {
-        await git(['config', '--local', 'user.email', parsedArgs.email]);
-    }
-
-    await git(['checkout', '-b', newBranchName]);
-    await git(['commit', '-m', `Localization result of ${parsedArgs.commitSha}.`]);
-
+    const title = `Localization result based on ${parsedArgs.commitSha}`;
+    const commitMessage = `Localization result of ${parsedArgs.commitSha}`;
     const pat = process.env['GitHubPAT'];
     if (!pat) {
         throw 'No GitHub Pat found.';
     }
-
-    const remoteRepoAlias = 'targetRepo';
-    await git(
-        [
-            'remote',
-            'add',
-            remoteRepoAlias,
-            `https://${parsedArgs.userName}:${pat}@github.com/dotnet/${parsedArgs.targetRemoteRepo}.git`,
-        ],
-        // Note: don't print PAT to console
-        false
-    );
-    await git(['fetch', remoteRepoAlias]);
-
-    const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + newBranchName]);
-    if (lsRemote.trim() !== '') {
-        // If the localization branch of this commit already exists, don't try to create another one.
-        console.log(
-            `##vso[task.logissue type=error]${newBranchName} already exists in ${parsedArgs.targetRemoteRepo}. Skip pushing.`
+    try {
+        await createBranchAndPR(
+            {
+                commitSha: parsedArgs.commitSha,
+                targetRemoteRepo: parsedArgs.targetRemoteRepo,
+                baseBranch: parsedArgs.baseBranch,
+                githubPAT: process.env['GitHubPAT'] || '',
+                dryRun: false,
+                newBranchName: `localization/${parsedArgs.commitSha}`,
+                userName: parsedArgs.userName,
+                email: parsedArgs.email
+            },
+            title,
+            commitMessage
         );
-    } else {
-        await git(['push', '-u', remoteRepoAlias]);
+    } catch (error) {
+        console.error('Error creating branch and PR:', error);
+        throw error;
     }
-
-    const octokit = new Octokit({ auth: pat });
-    const listPullRequest = await octokit.rest.pulls.list({
-        owner: 'dotnet',
-        repo: parsedArgs.targetRemoteRepo,
-    });
-
-    if (listPullRequest.status != 200) {
-        throw `Failed get response from GitHub, http status code: ${listPullRequest.status}`;
-    }
-
-    const title = `Localization result based on ${parsedArgs.commitSha}`;
-    if (listPullRequest.data.some((pr) => pr.title === title)) {
-        console.log('Pull request with the same name already exists. Skip creation.');
-        return;
-    }
-
-    const pullRequest = await octokit.rest.pulls.create({
-        body: title,
-        owner: 'dotnet',
-        repo: parsedArgs.targetRemoteRepo,
-        title: title,
-        head: newBranchName,
-        base: parsedArgs.baseBranch,
-    });
-
-    console.log(`Created pull request: ${pullRequest.data.html_url}.`);
 });

@@ -12,8 +12,6 @@ import { PlatformInformation } from '../src/shared/platform';
 import { platformSpecificPackages } from './offlinePackagingTasks';
 
 export interface GitOptions {
-    userName?: string;
-    email?: string;
     commitSha: string;
     targetRemoteRepo: string;
     baseBranch: string;
@@ -21,8 +19,10 @@ export interface GitOptions {
 
 export interface BranchAndPROptions extends GitOptions {
     githubPAT: string;
-    dryRun?: boolean;
-    branchPrefix?: string; // optional prefix for branch names (defaults to 'localization')
+    dryRun: boolean;
+    newBranchName: string;
+    userName?: string;
+    email?: string;
 }
 
 // Logging utilities
@@ -116,17 +116,18 @@ export async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Pr
 export async function createBranchAndPR(
     options: BranchAndPROptions,
     title: string,
+    commitMessage: string,
     body?: string
 ): Promise<void> {
-    const { githubPAT, targetRemoteRepo, baseBranch, dryRun } = options;
+    const { githubPAT, targetRemoteRepo, baseBranch, dryRun, userName, email, newBranchName } = options;
     const remoteRepoAlias = 'target';
-    const branchPrefix = options.branchPrefix || 'localization';
-    const newBranchName = `${branchPrefix}/${options.commitSha}`;
 
-    // Configure git user
-    if (options.userName && options.email) {
-        await git(['config', 'user.name', options.userName]);
-        await git(['config', 'user.email', options.email]);
+    // Set git user configuration if provided in options
+    if (userName) {
+        await git(['config', '--local', 'user.name', userName]);
+    }
+    if (email) {
+        await git(['config', '--local', 'user.email', email]);
     }
 
     // Create and checkout new branch
@@ -134,7 +135,7 @@ export async function createBranchAndPR(
 
     // Add and commit changes
     await git(['add', '.']);
-    await git(['commit', '-m', title]);
+    await git(['commit', '-m', commitMessage]);
 
     // Add remote and push
     await git(
@@ -191,6 +192,6 @@ export async function createBranchAndPR(
         });
         console.log(`Created pull request: ${pullRequest.data.html_url}.`);
     } else {
-        console.log(`[DRY RUN] Would have created PR with title: ${title}`);
+        console.log(`[DRY RUN] Would have created PR with title: "${title}" and body: "${body || title}"`);
     }
 }

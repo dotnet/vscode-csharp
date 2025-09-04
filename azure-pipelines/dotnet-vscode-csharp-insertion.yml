@@ -27,13 +27,14 @@ variables:
     value: $(resources.pipeline.officialBuildCI.runName)
   - name: RoslynBuildId
     value: $(resources.pipeline.officialBuildCI.runID)
+  - template: dotnet-variables.yml
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     pool:
-      name: AzurePipelines-EO
-      image: AzurePipelinesUbuntu22.04compliant
+      name: netcore1espool-internal
+      image: 1es-ubuntu-2204
       os: linux
     stages:
       - stage: BumpRoslyn
@@ -42,8 +43,8 @@ extends:
           - job: ProcessBump
             displayName: Process Roslyn Bump
             pool:
-              name: AzurePipelines-EO
-              image: AzurePipelinesUbuntu22.04compliant
+              name: netcore1espool-internal
+              image: 1es-ubuntu-2204
               os: linux
             steps:
               - checkout: self
@@ -52,12 +53,9 @@ extends:
               - task: UseDotNet@2
                 displayName: Install .NET SDK
                 inputs:
-                  version: 9.0.x
+                  version: $(defaultDotnetVersion)
 
-              - task: NodeTool@0
-                displayName: Install Node.js
-                inputs:
-                  versionSpec: '20.x'
+              - template: install-node.yml
 
               - task: DownloadPipelineArtifact@2
                 displayName: Download Asset Manifests
