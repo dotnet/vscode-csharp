@@ -153,10 +153,10 @@ gulp.task('publish roslyn copilot', async () => {
         const pullRequest = await octokit.rest.pulls.create({
             owner: 'dotnet',
             repo: 'vscode-csharp',
-            title,
+            title: title,
             head: branch,
-            base: 'main', 
-            body 
+            base: 'main',
+            body: body
         });
         console.log(`Created pull request: ${pullRequest.data.html_url}`);
     } catch (e) {
