@@ -29,7 +29,6 @@ extends:
           image: 1ESPT-Windows2022
           os: windows
         templateContext:
-          type: releaseJob
           isProduction: false #change this
           inputs:
           - input: pipelineArtifact
@@ -38,7 +37,11 @@ extends:
             destinationPath: $(Pipeline.Workspace)/artifacts
 
         steps:
-        - checkout: none
+        - checkout: self
+          clean: true
+          submodules: true
+          fetchTags: false
+          fetchDepth: 0
 
         - task: CopyFiles@2
           displayName: 'Copy files from Zip folder to staging directory'
@@ -56,3 +59,14 @@ extends:
             Destination: "AzureBlob"
             storage: "$(AzStorage)"
             ContainerName: "$(AzContainerName)"
+
+        - pwsh: | 
+            npm install
+            npm install -g gulp
+          displayName: 'Install tools'
+
+        - pwsh: gulp 'publish roslyn copilot' --userName abhitejjohn --email aajohn@microsoft.com
+          displayName: 'Create component update PR'
+          env:
+            GitHubPAT: $(GitHubPAT)
+            STAGING_DIRECTORY: $(Build.ArtifactStagingDirectory)/staging
