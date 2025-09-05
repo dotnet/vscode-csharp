@@ -7,12 +7,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import {
-    activateCSharpExtension,
-    closeAllEditorsAsync,
-    expectText,
-    openFileInWorkspaceAsync,
-} from './integrationHelpers';
+import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import { expectText } from '../../jestHelpers';
 
 describe(`Code Actions Tests`, () => {
     beforeAll(async () => {
