@@ -1,5 +1,6 @@
 /*---------------------------------------------------------------------------------------------
- *  Component update tasks (moved from publishRoslynCopilot.ts)
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as gulp from 'gulp';
@@ -16,7 +17,7 @@ type Options = {
     email?: string;
 };
 
-function git(args: string[], printCommand = true): Promise<string> {
+async function git(args: string[], printCommand = true): Promise<string> {
     if (printCommand) {
         console.log(`git ${args.join(' ')}`);
     }
@@ -39,7 +40,7 @@ function git(args: string[], printCommand = true): Promise<string> {
 
 gulp.task('publish roslyn copilot', async () => {
     const parsedArgs = minimist<Options>(process.argv.slice(2));
-    
+
     // Get staging directory from environment variable passed from pipeline
     const stagingDir = process.env['STAGING_DIRECTORY'];
     if (!stagingDir) {
@@ -54,8 +55,8 @@ gulp.task('publish roslyn copilot', async () => {
 
     // Find the Roslyn zip file in the staging directory (we know it was copied here)
     const files = fs.readdirSync(stagingDir);
-    const zipFile = files.find(file => /Roslyn\.LanguageServer.*\.zip$/i.test(file));
-    
+    const zipFile = files.find((file) => /Roslyn\.LanguageServer.*\.zip$/i.test(file));
+
     if (!zipFile) {
         console.log(`No Roslyn LanguageServer zip file found in ${stagingDir}; skipping package.json update.`);
         return;
@@ -88,7 +89,10 @@ gulp.task('publish roslyn copilot', async () => {
             const dep = pkg.runtimeDependencies[i];
             if (dep && dep.id === 'RoslynCopilot') {
                 const oldUrl = dep.url as string;
-                const newUrl = oldUrl.replace(/Microsoft\.VisualStudio\.Copilot\.Roslyn\.LanguageServer-[^/]+?\.zip/, `Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-${version}.zip`);
+                const newUrl = oldUrl.replace(
+                    /Microsoft\.VisualStudio\.Copilot\.Roslyn\.LanguageServer-[^/]+?\.zip/,
+                    `Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-${version}.zip`
+                );
                 if (oldUrl !== newUrl) {
                     pkg.runtimeDependencies[i].url = newUrl;
                     updated = true;
@@ -132,12 +136,7 @@ gulp.task('publish roslyn copilot', async () => {
 
     const remoteRepoAlias = 'targetRepo';
     await git(
-        [
-            'remote',
-            'add',
-            remoteRepoAlias,
-            `https://${parsedArgs.userName}:${pat}@github.com/dotnet/vscode-csharp.git`,
-        ],
+        ['remote', 'add', remoteRepoAlias, `https://${parsedArgs.userName}:${pat}@github.com/dotnet/vscode-csharp.git`],
         // Note: don't print PAT to console
         false
     );
@@ -146,9 +145,7 @@ gulp.task('publish roslyn copilot', async () => {
     const lsRemote = await git(['ls-remote', remoteRepoAlias, 'refs/head/' + branch]);
     if (lsRemote.trim() !== '') {
         // If the localization branch of this commit already exists, don't try to create another one.
-        console.log(
-            `##vso[task.logissue type=error]${branch} already exists in dotnet/vscode-csharp. Skip pushing.`
-        );
+        console.log(`##vso[task.logissue type=error]${branch} already exists in dotnet/vscode-csharp. Skip pushing.`);
     } else {
         await git(['push', '-u', remoteRepoAlias]);
     }
@@ -158,7 +155,7 @@ gulp.task('publish roslyn copilot', async () => {
         const octokit = new Octokit({ auth: pat });
         const listPullRequest = await octokit.rest.pulls.list({
             owner: 'dotnet',
-            repo:   'vscode-csharp',
+            repo: 'vscode-csharp',
         });
 
         if (listPullRequest.status != 200) {
@@ -180,7 +177,7 @@ gulp.task('publish roslyn copilot', async () => {
             title: title,
             head: branch,
             base: 'main',
-            body: body
+            body: body,
         });
         console.log(`Created pull request: ${pullRequest.data.html_url}`);
     } catch (e) {
