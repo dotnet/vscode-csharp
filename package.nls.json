@@ -132,7 +132,6 @@
   "configuration.razor.languageServer.debug": "Specifies whether to wait for debug attach when launching the language server.",
   "configuration.razor.server.trace": "Specifies the logging level to use for the Razor server.",
   "configuration.razor.languageServer.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
-  "configuration.razor.languageServer.useNewFormattingEngine": "Use the new Razor formatting engine.",
   "configuration.razor.languageServer.cohostingEnabled": "Enable Razor cohosting.",
   "debuggers.coreclr.configurationSnippets.label.console-local": ".NET: Launch Executable file (Console)",
   "debuggers.coreclr.configurationSnippets.label.web-local": ".NET: Launch Executable file (Web)",
