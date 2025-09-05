@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.91.x
+* Bump Razor to 10.0.0-preview.25429.2 (PR: [#8579](https://github.com/dotnet/vscode-csharp/pull/8579))
+  * Remove UseNewRazorFormattingEngine feature flag (PR: [#12160](https://github.com/dotnet/razor/pull/12160))                                                                                                                
+  * Allow for weird Uris as file paths (PR: [#12155](https://github.com/dotnet/razor/pull/12155))                                                                                                                             
+  * Remove the feature flag for precise semantic tokens (PR: [#12149](https://github.com/dotnet/razor/pull/12149))                                                                                                            
 
 # 2.90.x
 * Bump Roslyn to 5.0.0-2.25424.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
