@@ -68,4 +68,4 @@ extends:
         - pwsh: gulp 'publish roslyn copilot' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
           displayName: 'Create component update PR'
           env:
-            GitHubPAT: $(GitHubPAT)
+            GitHubPAT: $(BotAccount-dotnet-bot-repo-PAT)
