@@ -128,7 +128,7 @@
     "@types/semver": "7.3.13",
     "@types/tmp": "0.0.33",
     "@types/uuid": "^9.0.1",
-    "@types/vscode": "1.93.0",
+    "@types/vscode": "1.98.0",
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
@@ -688,7 +688,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.93.0"
+    "vscode": "^1.98.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
