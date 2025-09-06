@@ -5,7 +5,12 @@
 
 import * as vscode from 'vscode';
 
-import { FormattingOptions, LanguageClient, TextDocumentIdentifier } from 'vscode-languageclient/node';
+import {
+    FormattingOptions,
+    InsertTextFormat,
+    LanguageClient,
+    TextDocumentIdentifier,
+} from 'vscode-languageclient/node';
 import * as RoslynProtocol from '../server/roslynProtocol';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 
@@ -50,7 +55,13 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer, langu
         }
 
         // Regular expression to match all whitespace characters except the newline character
-        const changeTrimmed = change.text.replace(/[^\S\n]+/g, '');
+        let changeTrimmed = change.text.replace(/[^\S\n]+/g, '');
+        // When hitting enter between braces, we can end up with two new lines added (one to move the cursor down to an empty line,
+        // and another to move the close brace to a new line below that).  We still want to trigger on auto insert here, so remove
+        // duplicates before we check if the change matches a trigger character.
+        if (changeTrimmed.length > 1) {
+            changeTrimmed = [...new Set(changeTrimmed)].join('');
+        }
 
         if (!vsTriggerCharacters.includes(changeTrimmed)) {
             return;
@@ -98,12 +109,22 @@ async function applyAutoInsertEdit(
         const textEdit = response._vs_textEdit;
         const startPosition = new vscode.Position(textEdit.range.start.line, textEdit.range.start.character);
         const endPosition = new vscode.Position(textEdit.range.end.line, textEdit.range.end.character);
-        const docComment = new vscode.SnippetString(textEdit.newText);
-        const code: any = vscode;
-        const textEdits = [new code.SnippetTextEdit(new vscode.Range(startPosition, endPosition), docComment)];
+
+        //const editor = vscode.window.activeTextEditor?.insertSnippet();
+
+        let textEdits: (vscode.TextEdit | vscode.SnippetTextEdit)[] = [];
+        if (response._vs_textEditFormat === InsertTextFormat.Snippet) {
+            const docComment = new vscode.SnippetString(textEdit.newText);
+            const edit = vscode.SnippetTextEdit.replace(new vscode.Range(startPosition, endPosition), docComment);
+            // Roslyn already formats the snippet correctly - we don't want the client to try and change the whitespace.
+            edit.keepWhitespace = true;
+            textEdits = [edit];
+        } else {
+            textEdits = [vscode.TextEdit.replace(new vscode.Range(startPosition, endPosition), textEdit.newText)];
+        }
+
         const edit = new vscode.WorkspaceEdit();
         edit.set(uri, textEdits);
-
         const applied = vscode.workspace.applyEdit(edit);
         if (!applied) {
             throw new Error('Tried to apply an edit but an error occurred.');
