@@ -32,6 +32,7 @@
   * Ensure unique file paths for non-file Uris (PR: [#12037](https://github.com/dotnet/razor/pull/12037))
   * Fix completion of hyphenated items (PR: [#12035](https://github.com/dotnet/razor/pull/12035))
   * Allow completion items to add using directives (PR: [#12034](https://github.com/dotnet/razor/pull/12034))
+* Default `dotnet.projects.enableFileBasedPrograms` to `true` (PR: [#8587](https://github.com/dotnet/vscode-csharp/pull/8587)
 
 # 2.86.x
 * Bump Roslyn to 5.0.0-1.25361.2 (PR: [#8416](https://github.com/dotnet/vscode-csharp/pull/8416))
