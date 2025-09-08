@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.91.x
-* Bump Roslyn to 5.0.0-2.25458.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
+* Bump Roslyn to 5.0.0-2.25458.1 (PR: [#8593](https://github.com/dotnet/vscode-csharp/pull/8593))
   * Store client's version for open docs (PR: [#80064](https://github.com/dotnet/roslyn/pull/80064))
   * Pass global properties and the binary log path via RPC to BuildHost (PR: [#80094](https://github.com/dotnet/roslyn/pull/80094))
   * Don't switch runtime / design time solutions if cohosting is on (PR: [#80065](https://github.com/dotnet/roslyn/pull/80065))
@@ -17,6 +17,9 @@
   * Remove UseNewRazorFormattingEngine feature flag (PR: [#12160](https://github.com/dotnet/razor/pull/12160))
   * Allow for weird Uris as file paths (PR: [#12155](https://github.com/dotnet/razor/pull/12155))
   * Remove the feature flag for precise semantic tokens (PR: [#12149](https://github.com/dotnet/razor/pull/12149))
+* Do not create a proxy agent if proxy url is empty string.  (PR: [#8580](https://github.com/dotnet/vscode-csharp/pull/8580))
+* Use aka.ms link for ARM32 Linux help page (PR: [#8574](https://github.com/dotnet/vscode-csharp/pull/8574))
+* Update Debugger to 2.90.0 (PR: [#8572](https://github.com/dotnet/vscode-csharp/pull/8572))
 
 # 2.90.x
 * Bump Roslyn to 5.0.0-2.25424.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
