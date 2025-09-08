@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.91.x
-* Bump Razor to 10.0.0-preview.25454.5 (PR: [#8589](https://github.com/dotnet/vscode-csharp/pull/8589))
+* Bump Razor to 10.0.0-preview.25454.5 (PR: [#8590](https://github.com/dotnet/vscode-csharp/pull/8590))
   * Fix extra character insertion during attribute completion in VS Code (PR: [#12177](https://github.com/dotnet/razor/pull/12177))
   * Remove UseNewRazorFormattingEngine feature flag (PR: [#12160](https://github.com/dotnet/razor/pull/12160))
   * Allow for weird Uris as file paths (PR: [#12155](https://github.com/dotnet/razor/pull/12155))
