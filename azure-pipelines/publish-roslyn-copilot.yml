@@ -1,6 +1,10 @@
 trigger: none
 pr: none
 
+variables:
+# Variable group contains PAT for bot account.
+- group: dotnet-vscode-insertion-variables
+
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -68,4 +72,4 @@ extends:
         - pwsh: gulp 'publish roslyn copilot' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
           displayName: 'Create component update PR'
           env:
-            GitHubPAT: $(BotAccount-dotnet-bot-repo-PAT)
+            GitHubPAT: $(BotAccount-dotnet-maestro-bot-PAT)
