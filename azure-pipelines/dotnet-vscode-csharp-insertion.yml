@@ -86,7 +86,7 @@ extends:
                   dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
                   echo "Verifying roslyn-tools installation..."
                   dotnet tool list -g
-                  roslyn-tools --help
+                  roslyn-tools --version
                 displayName: 'Install roslyn-tools CLI'
 
               - task: Npm@1
