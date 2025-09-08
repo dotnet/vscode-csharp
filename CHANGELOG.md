@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.91.x
+* Bump Roslyn to 5.0.0-2.25458.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
+  * Store client's version for open docs (PR: [#80064](https://github.com/dotnet/roslyn/pull/80064))
+  * Pass global properties and the binary log path via RPC to BuildHost (PR: [#80094](https://github.com/dotnet/roslyn/pull/80094))
+  * Don't switch runtime / design time solutions if cohosting is on (PR: [#80065](https://github.com/dotnet/roslyn/pull/80065))
+  * Allow Razor to get task list items for a document (PR: [#80102](https://github.com/dotnet/roslyn/pull/80102))
+  * Update debugger packages, move to PortableInterop IMetadataImport (PR: [#80063](https://github.com/dotnet/roslyn/pull/80063))
+  * Fix issue reporting diagnostic in additional file when diagnostic produced by a source generator (PR: [#80071](https://github.com/dotnet/roslyn/pull/80071))
+  * Always run the razor generator even in balanced mode (PR: [#79510](https://github.com/dotnet/roslyn/pull/79510))
 * Bump Razor to 10.0.0-preview.25454.5 (PR: [#8590](https://github.com/dotnet/vscode-csharp/pull/8590))
   * Fix extra character insertion during attribute completion in VS Code (PR: [#12177](https://github.com/dotnet/razor/pull/12177))
   * Remove UseNewRazorFormattingEngine feature flag (PR: [#12160](https://github.com/dotnet/razor/pull/12160))
