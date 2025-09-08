@@ -11,7 +11,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as xml2js from 'xml2js';
 import { allNugetPackages} from './offlinePackagingTasks';
-import {getCommitFromNugetAsync, logWarning, logError, createBranchAndPR, git } from './gitHelpers';
+import {getCommitFromNugetAsync, createBranchAndPR, git } from './gitHelpers';
 import * as os from 'os';
 
 const execAsync = promisify(exec);
@@ -26,6 +26,20 @@ interface InsertionOptions {
     targetBranch?: string;
     githubPAT?: string;
     dryRun: boolean;
+}
+
+function logWarning(message: string, error?: unknown): void {
+    console.log(`##vso[task.logissue type=warning]${message}`);
+    if (error instanceof Error && error.stack) {
+        console.log(`##[debug]${error.stack}`);
+    }
+}
+
+function logError(message: string, error?: unknown): void {
+    console.log(`##vso[task.logissue type=error]${message}`);
+    if (error instanceof Error && error.stack) {
+        console.log(`##[debug]${error.stack}`);
+    }
 }
 
 gulp.task('insertion:roslyn', async (): Promise<void> => {
@@ -135,11 +149,7 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         }
 
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        logError(`Insertion failed: ${errorMessage}`);
-        if (error instanceof Error && error.stack) {
-            console.log(`##[debug]${error.stack}`);
-        }
+        logError(`Insertion failed: ${error instanceof Error ? error.message : String(error)}`, error);
         throw error;
     }
 });
@@ -185,11 +195,7 @@ async function generatePRList(startSHA: string, endSHA: string, roslynRepoPath: 
         );
         return stdout && stdout.trim() ? stdout : null;
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        logWarning(`PR finder failed: ${errorMessage}`);
-        if (error instanceof Error && error.stack) {
-            console.log(`##[debug]${error.stack}`);
-        }
+        logWarning(`PR finder failed: ${error instanceof Error ? error.message : String(error)}`, error);
         return null;
     }
 }
@@ -249,9 +255,7 @@ async function updateChangelog(version: string, prList: string | null, prNumber?
     // Insert the new block right after the header
     const newText =
         text.slice(0, headerEndLineIndex) +
-        NL + NL + // Add two newlines after the header
         newRoslynBlock +
-        NL + // Add a newline after the block
         (text.length > headerEndLineIndex ? NL + text.slice(headerEndLineIndex) : '');
 
     // Write the updated content back to the file

@@ -24,11 +24,6 @@ export interface BranchAndPROptions extends GitOptions {
     email?: string;
 }
 
-// Logging utilities
-export function logWarning(message: string): void {
-    console.log(`##vso[task.logissue type=warning]${message}`);
-}
-
 export function logError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
 }
