@@ -13,6 +13,9 @@ resources:
     type: git
     name: 1ESPipelineTemplates/1ESPipelineTemplates
     ref: refs/tags/release
+  - repository: RoslynMirror
+    type: git
+    name: internal/dotnet-roslyn
   pipelines:
     - pipeline: officialBuildCI
       source: dotnet-roslyn-official
@@ -74,11 +77,9 @@ extends:
                   npm install -g gulp
                   gulp installDependencies
                 displayName: 'Install npm dependencies and gulp'
-
-              - script: |
-                  echo "Cloning Roslyn repository..."
-                  git clone --no-tags --filter=blob:none --depth=500 https://github.com/dotnet/roslyn.git $(Pipeline.Workspace)/roslyn
-                displayName: 'Clone Roslyn repository'
+              - checkout: RoslynMirror
+                displayName: 'Checkout Roslyn repository'
+                path: roslyn
 
               - script: |
                   echo "Installing roslyn-tools..."

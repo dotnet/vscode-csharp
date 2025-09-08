@@ -11,7 +11,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as xml2js from 'xml2js';
 import { allNugetPackages} from './offlinePackagingTasks';
-import {getCommitFromNugetAsync, logWarning, logError, createBranchAndPR } from './gitHelpers';
+import {getCommitFromNugetAsync, logWarning, logError, createBranchAndPR, git } from './gitHelpers';
 import * as os from 'os';
 
 const execAsync = promisify(exec);
@@ -29,7 +29,12 @@ interface InsertionOptions {
 }
 
 gulp.task('insertion:roslyn', async (): Promise<void> => {
-    const options = minimist<InsertionOptions>(process.argv.slice(2));
+    const options = minimist<InsertionOptions>(process.argv.slice(2), {
+        boolean: ['dryRun'],
+        default: {
+            dryRun: false,
+        },
+    });
 
     console.log('Starting Roslyn insertion process...');
 
@@ -75,23 +80,34 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         const prList = await generatePRList(currentSHA, options.roslynEndSHA, options.roslynRepoPath, options);
         console.log('PR List generated:', prList);
 
-        // Check if PR list is empty or contains no meaningful PRs
-        if (!prList || prList === '(failed to generate PR list, see pipeline for details)') {
-            console.log('No PRs with required labels found. Skipping insertion.');
-            logWarning('No PRs with VSCode label found between the commits. Skipping insertion.');
+        // Check if PR list is null or empty (generation failed or no matching PRs)
+        if (!prList) {
+            console.log('No PRs with required labels found or PR list generation failed. Skipping insertion.');
+            logWarning('No PRs with VSCode label found between the commits or PR list generation failed. Skipping insertion.');
             return;
         }
 
         // Step 6: Update files
         await updatePackageJson(options.roslynVersion);
-        await updateChangelog(options.roslynVersion, prList, options.roslynBuildNumber, options.roslynBuildId);
 
         // Step 7: Create branch and PR
         const prTitle = `Bump Roslyn to ${options.roslynVersion} (${options.roslynEndSHA?.substring(0, 8)})`;
-        const prBody = `This PR updates Roslyn to version ${options.roslynVersion} (${options.roslynEndSha}).\n\n${prList}`;
-        const commitMessage = `Bump Roslyn to ${options.roslynVersion} (${options.roslynEndSha?.substring(0, 8)})`;
 
-        await createBranchAndPR({
+        // Include build information in the PR description
+        let prBody = `This PR updates Roslyn to version ${options.roslynVersion} (${options.roslynEndSHA}).\n\n`;
+
+        // Add build link if build information is available
+        if (options.roslynBuildNumber && options.roslynBuildId) {
+            prBody += `Build: [#${options.roslynBuildNumber}](https://dev.azure.com/dnceng/internal/_build/results?buildId=${options.roslynBuildId})\n\n`;
+        }
+
+        // Add PR list
+        prBody += prList;
+
+        const commitMessage = `Bump Roslyn to ${options.roslynVersion} (${options.roslynEndSHA?.substring(0, 8)})`;
+
+        // Create the PR
+        const prNumber = await createBranchAndPR({
             ...options,
             commitSha: options.roslynEndSHA!,
             targetRemoteRepo: 'vscode-csharp',
@@ -102,6 +118,21 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
             userName: options.userName,
             email: options.email
         }, prTitle, commitMessage, prBody);
+
+        // If PR was created and we're not in dry run mode, update the changelog with the PR number
+        if (prNumber && !options.dryRun) {
+            console.log(`PR #${prNumber} created. Updating changelog with PR link...`);
+
+            // Update changelog with PR number (single call)
+            await updateChangelog(options.roslynVersion, prList, prNumber);
+
+            // Create a second commit to include the updated changelog and push to update the PR
+            await git(['add', 'CHANGELOG.md']);
+            await git(['commit', '-m', `Update changelog with PR #${prNumber}`]);
+            await git(['push', 'target', `insertion/${options.roslynEndSHA}`]);
+
+            console.log(`Changelog updated with PR #${prNumber} link.`);
+        }
 
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -133,6 +164,7 @@ async function extractRoslynVersionFromManifest(manifestPath: string): Promise<s
         }
     }
 
+    logError('Microsoft.CodeAnalysis.Common package not found in the asset manifest.');
     return null;
 }
 
@@ -143,7 +175,7 @@ async function verifyRoslynRepo(roslynRepoPath: string): Promise<void> {
     console.log(`Using Roslyn repository at ${roslynRepoPath}`);
 }
 
-async function generatePRList(startSHA: string, endSHA: string, roslynRepoPath: string, options: InsertionOptions): Promise<string> {
+async function generatePRList(startSHA: string, endSHA: string, roslynRepoPath: string, _options: InsertionOptions): Promise<string | null> {
     console.log(`Generating PR list from ${startSHA} to ${endSHA}...`);
 
     try {
@@ -151,14 +183,14 @@ async function generatePRList(startSHA: string, endSHA: string, roslynRepoPath: 
             `cd "${roslynRepoPath}" && roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format changelog --label VSCode`,
             { maxBuffer: 10 * 1024 * 1024 } // 10MB buffer
         );
-        return stdout || '(failed to generate PR list, see pipeline for details)';
+        return stdout && stdout.trim() ? stdout : null;
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        logWarning(`PR finder failed, using empty list: ${errorMessage}`);
+        logWarning(`PR finder failed: ${errorMessage}`);
         if (error instanceof Error && error.stack) {
             console.log(`##[debug]${error.stack}`);
         }
-        return '(failed to generate PR list, see pipeline for details)';
+        return null;
     }
 }
 
@@ -175,28 +207,11 @@ async function updatePackageJson(newVersion: string): Promise<void> {
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
 }
 
-async function updateChangelog(version: string, prList: string, buildNumber?: string, buildId?: string): Promise<void> {
+async function updateChangelog(version: string, prList: string | null, prNumber?: number): Promise<void> {
     console.log('Updating CHANGELOG.md...');
     const changelogPath = 'CHANGELOG.md';
     const text = fs.readFileSync(changelogPath, 'utf8');
     const NL = os.EOL;
-
-    // Prepare PR list (filter out 'View Complete Diff' lines)
-    const prLines = prList
-        ? prList
-            .split(/\r?\n/)
-            .filter((l) => l.trim() && !l.includes('View Complete Diff'))
-            .map((line) => line.trim())
-        : [];
-
-    // Format PR list as sub-items with proper indentation
-    const formattedPRList = prLines.length > 0
-        ? prLines.map((line) => {
-            // If the line already starts with *, keep it, otherwise add it
-            const cleanLine = line.startsWith('*') ? line.substring(1).trim() : line;
-            return `  * ${cleanLine}`;
-          }).join(NL)
-        : '';
 
     // Find the first top-level header "# ..."
     const topHeaderRegex = /^(# .*?)(\r?\n|$)/m;
@@ -208,17 +223,27 @@ async function updateChangelog(version: string, prList: string, buildNumber?: st
     const headerEndLineIndex = headerMatch.index + headerMatch[0].length;
 
     // Prepare new Roslyn block
-    const prLink = buildNumber && buildId
-        ? `[#${buildNumber}](https://dev.azure.com/dnceng/internal/_build/results?buildId=${buildId})`
-        : '[#TBD](TBD)';
+    let newRoslynBlock = `* Bump Roslyn to ${version}`;
 
-    let newRoslynBlock = `* Bump Roslyn to ${version} (PR: ${prLink})`;
+    // Add PR number if available
+    if (prNumber) {
+        newRoslynBlock = `* Bump Roslyn to ${version} (PR: [#${prNumber}](https://github.com/dotnet/vscode-csharp/pull/${prNumber}))`;
+    }
 
-    // Add PR list as sub-items if available and valid
-    const shouldSkipPRList = !prList || prList === '(failed to generate PR list, see pipeline for details)';
+    // Add PR list as sub-items if available
+    if (prList) {
+        const prLines = prList
+            .split(/\r?\n/)
+            .filter((l) => l.trim() && !l.includes('View Complete Diff'))
+            .map((line) => line.trim());
 
-    if (!shouldSkipPRList && formattedPRList) {
-        newRoslynBlock += NL + formattedPRList;
+        const formattedPRList = prLines.length > 0
+            ? prLines.map((line) => `  ${line}`).join(NL)
+            : '';
+
+        if (formattedPRList) {
+            newRoslynBlock += NL + formattedPRList;
+        }
     }
 
     // Insert the new block right after the header
