@@ -69,7 +69,7 @@ extends:
             npm install -g gulp
           displayName: 'Install tools'
 
-        - pwsh: gulp 'publish roslyn copilot' --userName dotnet-bot --email dotnet-bot@dotnetfoundation.org --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
+        - pwsh: gulp 'publish roslyn copilot' --userName dotnet-maestro-bot --email dotnet-maestro-bot@microsoft.com --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
           displayName: 'Create component update PR'
           env:
             GitHubPAT: $(BotAccount-dotnet-maestro-bot-PAT)
