@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.91.x
-* Bump Roslyn to 5.0.0-2.25458.1 (PR: [#8593](https://github.com/dotnet/vscode-csharp/pull/8593))
+* Bump Roslyn to 5.0.0-2.25458.10 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
   * Store client's version for open docs (PR: [#80064](https://github.com/dotnet/roslyn/pull/80064))
   * Pass global properties and the binary log path via RPC to BuildHost (PR: [#80094](https://github.com/dotnet/roslyn/pull/80094))
   * Don't switch runtime / design time solutions if cohosting is on (PR: [#80065](https://github.com/dotnet/roslyn/pull/80065))
