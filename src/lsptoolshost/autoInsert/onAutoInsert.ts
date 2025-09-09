@@ -56,10 +56,11 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer, langu
 
         // Regular expression to match all whitespace characters except the newline character
         let changeTrimmed = change.text.replace(/[^\S\n]+/g, '');
+
         // When hitting enter between braces, we can end up with two new lines added (one to move the cursor down to an empty line,
-        // and another to move the close brace to a new line below that).  We still want to trigger on auto insert here, so remove
-        // duplicates before we check if the change matches a trigger character.
-        if (changeTrimmed.length > 1) {
+        // and another to move the close brace to a new line below that).  We still want to trigger on auto insert here, so if we
+        // have a whitespace only edit (meaning its new lines only) with multiple characters, we reduce it to a single newline.
+        if (changeTrimmed.length > 1 && changeTrimmed.trim() === '') {
             changeTrimmed = [...new Set(changeTrimmed)].join('');
         }
 
