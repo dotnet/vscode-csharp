@@ -99,7 +99,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
             // Enable dump collection
             env.DOTNET_DbgEnableMiniDump = '1';
             // Collect heap dump
-            env.DOTNET_DbgMiniDumpType = '2';
+            env.DOTNET_DbgMiniDumpType = '4';
             // Collect crashreport.json with additional thread and stack frame information.
             env.DOTNET_EnableCrashReport = '1';
             // The dump file name format is <executable>.<pid>.dmp
