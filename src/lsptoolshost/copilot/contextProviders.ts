@@ -157,7 +157,14 @@ async function getCopilotChatApi(): Promise<CopilotApi | undefined> {
 
     let exports: CopilotChatApi | undefined;
     try {
-        exports = await extension.activate();
+        exports = await Promise.race([
+            extension.activate(),
+            new Promise<undefined>((resolve) => {
+                setTimeout(() => {
+                    resolve(undefined);
+                }, 3000);
+            }),
+        ]);
     } catch {
         return undefined;
     }
