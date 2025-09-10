@@ -10,8 +10,8 @@ import minimist from 'minimist';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as xml2js from 'xml2js';
-import { allNugetPackages} from './offlinePackagingTasks';
-import {getCommitFromNugetAsync, createBranchAndPR, git } from './gitTasks';
+import { allNugetPackages } from './offlinePackagingTasks';
+import { getCommitFromNugetAsync, createBranchAndPR, git } from './gitTasks';
 import * as os from 'os';
 
 const execAsync = promisify(exec);
@@ -97,7 +97,9 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         // Check if PR list is null or empty (generation failed or no matching PRs)
         if (!prList) {
             console.log('No PRs with required labels found or PR list generation failed. Skipping insertion.');
-            logWarning('No PRs with VSCode label found between the commits or PR list generation failed. Skipping insertion.');
+            logWarning(
+                'No PRs with VSCode label found between the commits or PR list generation failed. Skipping insertion.'
+            );
             return;
         }
 
@@ -121,17 +123,22 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         const commitMessage = `Bump Roslyn to ${options.roslynVersion} (${options.roslynEndSHA?.substring(0, 8)})`;
 
         // Create the PR
-        const prNumber = await createBranchAndPR({
-            ...options,
-            commitSha: options.roslynEndSHA!,
-            targetRemoteRepo: 'vscode-csharp',
-            baseBranch: options.targetBranch || 'main',
-            newBranchName: `insertion/${options.roslynEndSHA}`,
-            githubPAT: options.githubPAT!,
-            dryRun: options.dryRun,
-            userName: options.userName,
-            email: options.email
-        }, prTitle, commitMessage, prBody);
+        const prNumber = await createBranchAndPR(
+            {
+                ...options,
+                commitSha: options.roslynEndSHA!,
+                targetRemoteRepo: 'vscode-csharp',
+                baseBranch: options.targetBranch || 'main',
+                newBranchName: `insertion/${options.roslynEndSHA}`,
+                githubPAT: options.githubPAT!,
+                dryRun: options.dryRun,
+                userName: options.userName,
+                email: options.email,
+            },
+            prTitle,
+            commitMessage,
+            prBody
+        );
 
         // If PR was created and we're not in dry run mode, update the changelog with the PR number
         if (prNumber && !options.dryRun) {
@@ -143,11 +150,10 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
             // Create a second commit to include the updated changelog and push to update the PR
             await git(['add', 'CHANGELOG.md']);
             await git(['commit', '-m', `Update changelog with PR #${prNumber}`]);
-            await git(['push', 'target', `insertion/${options.roslynEndSHA}`]);
+            await git(['push', 'targetRepo', `insertion/${options.roslynEndSHA}`]);
 
             console.log(`Changelog updated with PR #${prNumber} link.`);
         }
-
     } catch (error) {
         logError(`Insertion failed: ${error instanceof Error ? error.message : String(error)}`, error);
         throw error;
@@ -185,7 +191,12 @@ async function verifyRoslynRepo(roslynRepoPath: string): Promise<void> {
     console.log(`Using Roslyn repository at ${roslynRepoPath}`);
 }
 
-async function generatePRList(startSHA: string, endSHA: string, roslynRepoPath: string, _options: InsertionOptions): Promise<string | null> {
+async function generatePRList(
+    startSHA: string,
+    endSHA: string,
+    roslynRepoPath: string,
+    _options: InsertionOptions
+): Promise<string | null> {
     console.log(`Generating PR list from ${startSHA} to ${endSHA}...`);
 
     try {
@@ -243,9 +254,7 @@ async function updateChangelog(version: string, prList: string | null, prNumber?
             .filter((l) => l.trim() && !l.includes('View Complete Diff'))
             .map((line) => line.trim());
 
-        const formattedPRList = prLines.length > 0
-            ? prLines.map((line) => `  ${line}`).join(NL)
-            : '';
+        const formattedPRList = prLines.length > 0 ? prLines.map((line) => `  ${line}`).join(NL) : '';
 
         if (formattedPRList) {
             newRoslynBlock += NL + formattedPRList;
