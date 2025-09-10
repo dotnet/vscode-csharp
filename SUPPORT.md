@@ -40,10 +40,11 @@ The template has a section to include the `C#` output window logs. These logs ar
 
 ##### C# LSP Trace Logs
 - To capture detailed requests sent to the Roslyn language server:
-  1. Set the `C#` output window log level to `Trace` (as described above).
-  2. Open the `C# LSP Trace Logs` output window.
+  1. Open the `C# LSP Trace Logs` output window.
+  2. Set the output window log level to `Trace`.
   3. Reproduce the issue.
   4. Copy the contents of the `C# LSP Trace Logs` output window.
+  5.  After collecting the logs, reset the log level to `Info`.
 
 
 ##### Other Ways to Set the Log Level

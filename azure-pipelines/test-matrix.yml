@@ -1,4 +1,6 @@
 parameters:
+  - name: os
+    type: string
   - name: pool
     type: object
   - name: containerName
@@ -19,9 +21,10 @@ jobs:
       UnitTests:
         npmCommand: test:unit
         isIntegration: false
-      CSharpIntegrationTests:
-        npmCommand: test:integration:csharp
-        isIntegration: true
+      ${{ if ne(parameters.os, 'windows') }}:
+        CSharpIntegrationTests:
+          npmCommand: test:integration:csharp
+          isIntegration: true
       DevKitTests:
         npmCommand: test:integration:devkit
         isIntegration: true
@@ -30,6 +33,9 @@ jobs:
         isIntegration: true
       RazorCohostTests:
         npmCommand: test:integration:razor:cohost
+        isIntegration: true
+      UntrustedWorkspaceTest:
+        npmCommand: test:integration:untrusted
         isIntegration: true
   pool: ${{ parameters.pool }}
   ${{ if parameters.containerName }}:

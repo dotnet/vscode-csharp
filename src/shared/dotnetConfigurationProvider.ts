@@ -30,18 +30,24 @@ class InternalServiceError extends Error {}
 class UnavaliableLaunchServiceError extends Error {}
 
 const workspaceFolderToken = '${workspaceFolder}';
+const fileToken = '${file}';
+
 /**
- * Replaces '${workspaceFolder}' with the current folder while keeping path separators consistent.
+ * Replaces some '${variable}' tokens.
  *
  * @param projectPath The expected path to the .csproj
  * @param folderPath The current workspace folder
  * @returns A fully resolved path to the .csproj
  */
-function resolveWorkspaceFolderToken(projectPath: string, folderPath: string): string {
+function resolveVariableTokens(projectPath: string, folderPath: string): string {
+    if (projectPath === fileToken) {
+        return vscode.window.activeTextEditor?.document.fileName ?? projectPath;
+    }
+
     if (projectPath.startsWith(workspaceFolderToken)) {
         const relativeProjectPath: string = projectPath.substring(workspaceFolderToken.length);
 
-        // Keep the path seperate consistant
+        // Keep the path separators consistent
         if (relativeProjectPath.startsWith('/')) {
             folderPath = folderPath.replace(/[\\/]+/g, '/');
         } else {
@@ -91,7 +97,7 @@ export class DotnetConfigurationResolver implements vscode.DebugConfigurationPro
         let projectPath: string | undefined = debugConfiguration.projectPath;
         if (folder) {
             if (projectPath) {
-                projectPath = resolveWorkspaceFolderToken(projectPath, folder.uri.fsPath);
+                projectPath = resolveVariableTokens(projectPath, folder.uri.fsPath);
             }
 
             const dotnetDebugServiceProxy = await getServiceBroker()?.getProxy<IDotnetDebugConfigurationService>(

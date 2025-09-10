@@ -89,7 +89,13 @@ export async function activateOmniSharpLanguageServer(
     eventStream.subscribe(dotnetTestChannelObserver.post);
     eventStream.subscribe(dotnetTestLoggerObserver.post);
 
-    const omnisharpChannel = vscode.window.createOutputChannel(vscode.l10n.t('OmniSharp Log'));
+    // If we're in LSP mode, we can create a LogOutputChannel since that's what the LSP client now supports.
+    // If we're not in LSP mode, we'll create a regular OutputChannel since the log formatting expects to be able to write
+    // it's own formatted outputs which gets mixed up with LogOutputChannels.s
+    const omnisharpChannel = omnisharpOptions.enableLspDriver
+        ? vscode.window.createOutputChannel(vscode.l10n.t('OmniSharp Log'), { log: true })
+        : vscode.window.createOutputChannel(vscode.l10n.t('OmniSharp Log'));
+
     const omnisharpLogObserver = new OmnisharpLoggerObserver(omnisharpChannel, platformInfo);
     const omnisharpChannelObserver = new OmnisharpChannelObserver(omnisharpChannel);
     eventStream.subscribe(omnisharpLogObserver.post);
@@ -234,7 +240,8 @@ async function activate(
             eventStream,
             omnisharpMonoResolver,
             omnisharpDotnetResolver,
-            workspaceInformationProvider
+            workspaceInformationProvider,
+            outputChannel
         )
     );
 

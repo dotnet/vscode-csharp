@@ -259,10 +259,7 @@ function getLowercaseFileNameFromUrl(url: string): string {
     let fileName = url.substr(index + 1).toLowerCase();
 
     if (fileName.startsWith('omnisharp')) {
-        // Omnisharp versions are always after the last '-'.
-        // e.g. we want omnisharp-win-x86 from omnisharp-win-x86-1.39.3.zip
-        const lastDash = fileName.lastIndexOf('-');
-        fileName = fileName.substr(0, lastDash);
+        // Omnisharp versions are not contained in the file name.
         return fileName;
     } else if (fileName.startsWith('coreclr-debug')) {
         // Debugger versions are not contained in the file name.

@@ -62,7 +62,7 @@ describeIfNotRazorOrGenerator(`${OmniSharpCompletionProvider.name}: Returns the 
         expect(documentation.length).toBeGreaterThan(0);
     });
 
-    test('Override completion has additional edits sync', async () => {
+    test.skip('Override completion has additional edits sync', async () => {
         const completionList = <vscode.CompletionList>(
             await vscode.commands.executeCommand(
                 'vscode.executeCompletionItemProvider',

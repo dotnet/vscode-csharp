@@ -34,7 +34,7 @@ import { registerRazorEndpoints } from './razor/razorEndpoints';
 import { registerTraceCommand } from './profiling/profiling';
 
 let _channel: vscode.LogOutputChannel;
-let _traceChannel: vscode.OutputChannel;
+let _traceChannel: vscode.LogOutputChannel;
 
 /**
  * Creates and activates the Roslyn language server.
@@ -52,8 +52,7 @@ export async function activateRoslynLanguageServer(
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
-    // The trace channel verbosity is controlled by the _channel verbosity.
-    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'));
+    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'), { log: true });
 
     reporter.sendTelemetryEvent(TelemetryEventNames.ClientInitialize);
 
@@ -84,7 +83,7 @@ export async function activateRoslynLanguageServer(
     registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
-    registerCommands(context, languageServer, hostExecutableResolver, _channel);
+    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel);
     registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 

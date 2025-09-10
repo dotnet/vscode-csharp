@@ -1,0 +1,19 @@
+name: branch_classification
+description: Branch classification configuration for repository
+resource: repository
+disabled: false
+where:
+configuration:
+  branchClassificationSettings:
+    defaultClassification: nonproduction
+    ruleset:
+    - name: prod-branches
+      branchNames:
+      - main
+      - prerelease
+      - release
+      classification: production
+    - name: nonprod-branches
+      branchNames:
+      - feature
+      classification: nonproduction

@@ -82,3 +82,38 @@ export async function generateVsixManifest(vsixPath: string) {
         throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
     }
 }
+
+export async function verifySignature(vsixPath: string) {
+    const vsceArgs = [];
+    if (!(await util.fileExists(vscePath))) {
+        throw new Error(`vsce does not exist at expected location: '${vscePath}'`);
+    }
+
+    vsceArgs.push(vscePath);
+    vsceArgs.push('verify-signature');
+    vsceArgs.push('--packagePath');
+    vsceArgs.push(vsixPath);
+
+    const parsed = path.parse(vsixPath);
+    const outputFolder = parsed.dir;
+    const vsixNameWithoutExtension = parsed.name;
+
+    vsceArgs.push('--manifestPath');
+    vsceArgs.push(path.join(outputFolder, `${vsixNameWithoutExtension}.manifest`));
+
+    vsceArgs.push('--signaturePath');
+    vsceArgs.push(path.join(outputFolder, `${vsixNameWithoutExtension}.signature.p7s`));
+
+    const spawnResult = await spawnNode(vsceArgs, { stdio: 'pipe' });
+    if (spawnResult.code != 0) {
+        throw new Error(`'${vsceArgs.join(' ')}' failed with code ${spawnResult.code}.`);
+    } else if (spawnResult.stdout != 'Signature verification result: Success') {
+        // This is a brittle check but the command does not return a non-zero exit code for failed validation.
+        // Opened https://github.com/microsoft/vscode-vsce/issues/1192 to track this.
+
+        console.log(spawnResult.stdout);
+        throw new Error(`Signature verification failed - '${vsceArgs.join(' ')}'.`);
+    }
+
+    console.log(`Signature verification succeeded for ${vsixPath}`);
+}

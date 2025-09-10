@@ -12,6 +12,38 @@
             "preLaunchTask": "packageDev"
         },
         {
+          "name": "[Untrusted] Run Integration Test",
+          "type": "extensionHost",
+          "request": "launch",
+          "runtimeExecutable": "${execPath}",
+          "args": [
+            // Launch VSCode using a specific profile to ensure that user settings are not used.
+            // This profile must be imported into vscode before running this launch configuration.
+            // The profile can be found under /test/csharp-test-profile.
+            "--profile",
+            "csharp-test-profile",
+            "${workspaceRoot}/test/untrustedWorkspace/integrationTests/testAssets/empty/.vscode/empty.code-workspace",
+            "--extensionDevelopmentPath=${workspaceRoot}",
+            "--extensionTestsPath=${workspaceRoot}/out/test/untrustedWorkspace/integrationTests",
+            "--log",
+            "ms-dotnettools.csharp:trace"
+          ],
+          "env": {
+            "CODE_EXTENSIONS_PATH": "${workspaceRoot}",
+          },
+          "sourceMaps": true,
+          "outFiles": [
+            "${workspaceRoot}/dist/*.js",
+            "${workspaceRoot}/out/test/**/*.js"
+          ],
+          "resolveSourceMapLocations": [
+            "${workspaceFolder}/**",
+            "!**/node_modules/**"
+          ],
+          "preLaunchTask": "packageDev",
+          "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "[Roslyn] Run Current File Integration Tests",
             "type": "extensionHost",
             "request": "launch",
@@ -187,9 +219,9 @@
             "args": ["updatePackageDependencies"],
             "env": {
                 "NEW_DEPS_ID": "OmniSharp",
-                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-x64-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-x86-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-arm64-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-osx-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-win-x64-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-win-arm64-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-musl-x64-net6.0-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-musl-arm64-net6.0-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-x64-net6.0-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-linux-arm64-net6.0-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-osx-x64-net6.0-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-osx-arm64-net6.0-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-win-x64-net6.0-1.39.12.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.12/omnisharp-win-arm64-net6.0-1.39.12.zip",
-                "OLD_DEPS_VERSION": "1.39.11",
-                "NEW_DEPS_VERSION": "1.39.12"
+                "NEW_DEPS_URLS": "https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x86.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-musl-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-linux-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-osx-arm64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-x64-net6.0.zip,https://roslynomnisharp.blob.core.windows.net/releases/1.39.14/omnisharp-win-arm64-net6.0.zip",
+                "OLD_DEPS_VERSION": "1.39.12",
+                "NEW_DEPS_VERSION": "1.39.14"
             },
             "cwd": "${workspaceFolder}"
         },
