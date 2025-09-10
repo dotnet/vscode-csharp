@@ -57,11 +57,18 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer, langu
         // Regular expression to match all whitespace characters except the newline character
         let changeTrimmed = change.text.replace(/[^\S\n]+/g, '');
 
+        // If the change is empty after removing whitespace, we don't need to process it.
+        if (changeTrimmed.length === 0) {
+            return;
+        }
+
         // When hitting enter between braces, we can end up with two new lines added (one to move the cursor down to an empty line,
-        // and another to move the close brace to a new line below that).  We still want to trigger on auto insert here, so if we
-        // have a whitespace only edit (meaning its new lines only) with multiple characters, we reduce it to a single newline.
-        if (changeTrimmed.length > 1 && changeTrimmed.trim() === '') {
-            changeTrimmed = [...new Set(changeTrimmed)].join('');
+        // and another to move the close brace to a new line below that).  We want to detect that edit as a single new line trigger.
+        //
+        // Since we already removed all whitespace except new lines above, we can just trim the string to remove new lines as well
+        // and check if there is anything left.  If not, we know the change is just whitespace and new lines and can set the trigger to the new line character.
+        if (changeTrimmed.trim() === '') {
+            changeTrimmed = '\n';
         }
 
         if (!vsTriggerCharacters.includes(changeTrimmed)) {
