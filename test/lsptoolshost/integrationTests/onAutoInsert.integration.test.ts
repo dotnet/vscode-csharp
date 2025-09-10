@@ -15,6 +15,7 @@ import {
     waitForExpectedResult,
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { EOL } from 'os';
 
 describe(`OnAutoInsert Tests`, () => {
     beforeAll(async () => {
@@ -69,6 +70,43 @@ describe(`OnAutoInsert Tests`, () => {
                 expect(normalizeNewlines(input)).toContain(
                     '/// <summary>\n    /// \n\n    /// </summary>\n    void M2() {}'
                 );
+            }
+        );
+    });
+
+    test('Enter inside braces fixes brace lines', async () => {
+        await vscode.window.activeTextEditor!.edit((editBuilder) => {
+            editBuilder.insert(new vscode.Position(11, 15), '\n');
+        });
+
+        // OnAutoInsert is triggered by the change event but completes asynchronously, so wait for the buffer to be updated.
+
+        const expectedLines = [
+            'class DocComments',
+            '{',
+            '    //',
+            '    string M(int param1, string param2)',
+            '    {',
+            '        return null;',
+            '    }',
+            '',
+            '    /// <summary>',
+            '',
+            '    /// </summary>',
+            '    void M2()',
+            '    {',
+            '        ',
+            '    }',
+            '}',
+            '',
+        ];
+
+        await waitForExpectedResult<string | undefined>(
+            async () => vscode.window.activeTextEditor?.document.getText(),
+            10000,
+            100,
+            (input) => {
+                expect(input).toBe(expectedLines.join(EOL));
             }
         );
     });
