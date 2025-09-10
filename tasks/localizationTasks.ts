@@ -10,7 +10,7 @@ import { spawnSync } from 'node:child_process';
 import * as path from 'path';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
-import { createBranchAndPR } from './gitHelpers';
+import { createBranchAndPR } from './gitTasks';
 
 type Options = {
     userName?: string;

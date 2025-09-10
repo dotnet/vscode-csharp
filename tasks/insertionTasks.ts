@@ -11,7 +11,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as xml2js from 'xml2js';
 import { allNugetPackages} from './offlinePackagingTasks';
-import {getCommitFromNugetAsync, createBranchAndPR, git } from './gitHelpers';
+import {getCommitFromNugetAsync, createBranchAndPR, git } from './gitTasks';
 import * as os from 'os';
 
 const execAsync = promisify(exec);

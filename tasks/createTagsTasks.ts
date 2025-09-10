@@ -7,7 +7,7 @@ import * as gulp from 'gulp';
 import minimist from 'minimist';
 import { Octokit } from '@octokit/rest';
 import { allNugetPackages } from './offlinePackagingTasks';
-import { getCommitFromNugetAsync } from './gitHelpers';
+import { getCommitFromNugetAsync } from './gitTasks';
 
 interface CreateTagsOptions {
     releaseVersion: string;

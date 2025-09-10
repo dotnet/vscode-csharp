@@ -4,7 +4,29 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { spawnSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Octokit } from '@octokit/rest';
+import { NugetPackageInfo, platformSpecificPackages } from './offlinePackagingTasks';
+import { PlatformInformation } from '../src/shared/platform';
+
+export interface GitOptions {
+    commitSha: string;
+    targetRemoteRepo: string;
+    baseBranch: string;
+}
+
+export interface BranchAndPROptions extends GitOptions {
+    githubPAT: string;
+    dryRun: boolean;
+    newBranchName: string;
+    userName?: string;
+    email?: string;
+}
+
+export function logError(message: string): void {
+    console.log(`##vso[task.logissue type=error]${message}`);
+}
 
 /**
  * Execute a git command with optional logging
@@ -55,7 +77,7 @@ export async function createCommit(branch: string, files: string[], commitMessag
  * Check if a branch exists on the remote repository
  */
 export async function doesBranchExist(remoteAlias: string, branch: string): Promise<boolean> {
-    const lsRemote = await git(['ls-remote', remoteAlias, 'refs/head/' + branch]);
+    const lsRemote = await git(['ls-remote', remoteAlias, 'refs/heads/' + branch]);
     return lsRemote.trim() !== '';
 }
 
@@ -143,6 +165,116 @@ export async function createPullRequest(
         return pullRequest.data.html_url;
     } catch (e) {
         console.warn('Failed to create PR via Octokit:', e);
+        return null;
+    }
+}
+
+export async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<string | null> {
+    try {
+        const packageJsonString = fs.readFileSync('./package.json').toString();
+        const packageJson = JSON.parse(packageJsonString);
+        const packageVersion = packageJson['defaults'][packageInfo.packageJsonName];
+        if (!packageVersion) {
+            logError(`Can't find ${packageInfo.packageJsonName} version in package.json`);
+            return null;
+        }
+
+        const platform = await PlatformInformation.GetCurrent();
+        const vsixPlatformInfo = platformSpecificPackages.find(
+            (p) => p.platformInfo.platform === platform.platform && p.platformInfo.architecture === platform.architecture
+        )!;
+
+        const packageName = packageInfo.getPackageName(vsixPlatformInfo);
+        console.log(`${packageName} version is ${packageVersion}`);
+
+        // Nuget package should exist under out/.nuget/ since we have run the install dependencies task.
+        // Package names are always lower case in the .nuget folder.
+        const packageDir = path.join('out', '.nuget', packageName.toLowerCase(), packageVersion);
+        const nuspecFiles = fs.readdirSync(packageDir).filter((file) => file.endsWith('.nuspec'));
+
+        if (nuspecFiles.length === 0) {
+            logError(`No .nuspec file found in ${packageDir}`);
+            return null;
+        }
+
+        if (nuspecFiles.length > 1) {
+            logError(`Multiple .nuspec files found in ${packageDir}`);
+            return null;
+        }
+
+        const nuspecFilePath = path.join(packageDir, nuspecFiles[0]);
+        const nuspecFile = fs.readFileSync(nuspecFilePath).toString();
+        const results = /commit="(.*?)"/.exec(nuspecFile);
+        if (results == null || results.length === 0) {
+            logError('Failed to find commit number from nuspec file');
+            return null;
+        }
+
+        if (results.length !== 2) {
+            logError('Unexpected regex match result from nuspec file.');
+            return null;
+        }
+
+        const commitNumber = results[1];
+        console.log(`commitNumber is ${commitNumber}`);
+        return commitNumber;
+    } catch (error) {
+        logError(`Error getting commit from NuGet package: ${error}`);
+        if (error instanceof Error && error.stack) {
+            console.log(`##[debug]${error.stack}`);
+        }
+        throw error;
+    }
+}
+
+export async function createBranchAndPR(
+    options: BranchAndPROptions,
+    title: string,
+    commitMessage: string,
+    body?: string
+): Promise<number | null> {
+    const { githubPAT, targetRemoteRepo, baseBranch, dryRun, userName, email, newBranchName } = options;
+
+    // Configure git user credentials
+    await configureGitUser(userName, email);
+
+    // Create branch and commit changes
+    await createCommit(newBranchName, ['.'], commitMessage);
+
+    if (dryRun !== true) {
+        // Push branch to remote
+        await pushBranch(newBranchName, githubPAT, 'dotnet', targetRemoteRepo);
+    } else {
+        console.log('[DRY RUN] Would have pushed branch to remote');
+    }
+
+    // Check for existing PR and create new one if needed
+    const existingPRUrl = await findPRByTitle(githubPAT, 'dotnet', targetRemoteRepo, title);
+    if (existingPRUrl) {
+        console.log('Pull request with the same name already exists. Skip creation.');
+        return null;
+    }
+
+    if (dryRun !== true) {
+        const prUrl = await createPullRequest(
+            githubPAT,
+            'dotnet',
+            targetRemoteRepo,
+            newBranchName,
+            title,
+            body || title,
+            baseBranch
+        );
+        
+        if (prUrl) {
+            console.log(`Created pull request: ${prUrl}.`);
+            // Extract PR number from URL (format: https://github.com/owner/repo/pull/123)
+            const prNumberMatch = prUrl.match(/\/pull\/(\d+)$/);
+            return prNumberMatch ? parseInt(prNumberMatch[1], 10) : null;
+        }
+        return null;
+    } else {
+        console.log(`[DRY RUN] Would have created PR with title: "${title}" and body: "${body || title}"`);
         return null;
     }
 }
