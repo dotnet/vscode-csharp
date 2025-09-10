@@ -98,7 +98,7 @@ export class DotnetRuntimeExtensionResolver implements IHostExecutableResolver {
         if (languageServerOptions.crashDumpPath) {
             // Enable dump collection
             env.DOTNET_DbgEnableMiniDump = '1';
-            // Collect heap dump
+            // Create a full dump with as much info as possible (all memory including module images)
             env.DOTNET_DbgMiniDumpType = '4';
             // Collect crashreport.json with additional thread and stack frame information.
             env.DOTNET_EnableCrashReport = '1';
