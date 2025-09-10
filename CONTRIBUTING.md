@@ -182,6 +182,17 @@ To update the version of the roslyn server used by the extension do the followin
 4.  Ensure that version of the package is in the proper feeds by running `gulp updateRoslynVersion`. Note: you may need to install the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
 5.  Build and test the change. If everything looks good, submit a PR.
 
+## Updating the `Roslyn` Copilot Language Server version
+
+In order to pull in the latest version of Roslyn Copilot bits from the VS Conversations repo, follow these steps:
+1. Trigger [this pipeline](https://devdiv.visualstudio.com/DevDiv/_build?definitionId=27222) which should automatically publish bits to the storage account and then create an insertion PR like [this](https://github.com/dotnet/vscode-csharp/pull/8597)
+2. Build and test the change to ensure the roslyn copilot language server bits are downloaded correctly. You'll see log entries like the below in the Output->C# pane:
+```
+[info] Installing package 'Language server for Roslyn Copilot integration'
+[info] Finished
+```
+More details for this are [here] (https://devdiv.visualstudio.com/DevDiv/_git/VisualStudio.Conversations?path=/src/Copilot.Roslyn.LanguageServer/README.md)
+
 ## Snapping for releases
 Extension releases on the marketplace are done from the prerelease and release branches (corresponding to the prerelease or release version of the extension).  Code flows from main -> prerelease -> release.  Every week we snap main -> prerelease.  Monthly, we snap prerelease -> release.
 
