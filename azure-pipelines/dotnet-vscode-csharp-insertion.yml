@@ -92,10 +92,9 @@ extends:
               - task: Npm@1
                 displayName: Run Roslyn insertion
                 env:
-                  GITHUB_TOKEN: $(System.AccessToken)
-                  GitHubPAT: $(System.AccessToken)
+                  GitHubPAT: $(BotAccount-dotnet-bot-repo-PAT)
                 inputs:
                   command: custom
-                  customCommand: 'run gulp -- insertion:roslyn --assetManifestPath=$(Pipeline.Workspace)/AssetManifests --roslynRepoPath=$(Pipeline.Workspace)/roslyn --roslynEndSHA=$(RoslynEndSHA) --roslynBuildNumber=$(RoslynBuildNumber) --roslynBuildId=$(RoslynBuildId) --targetBranch=${{ parameters.targetBranch }} --githubPAT=$(System.AccessToken) --dryRun=false'
+                  customCommand: 'run gulp -- insertion:roslyn --assetManifestPath=$(Pipeline.Workspace)/AssetManifests --roslynRepoPath=$(Pipeline.Workspace)/roslyn --roslynEndSHA=$(RoslynEndSHA) --roslynBuildNumber=$(RoslynBuildNumber) --roslynBuildId=$(RoslynBuildId) --targetBranch=${{ parameters.targetBranch }} --githubPAT=$(BotAccount-dotnet-bot-repo-PAT) --dryRun=false'
 
 
