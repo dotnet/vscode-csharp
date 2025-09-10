@@ -24,7 +24,6 @@ export function resolveRazorLanguageServerOptions(
         !getCSharpDevKit() && vscodeApi.workspace.getConfiguration().get<boolean>('dotnet.server.useOmnisharp');
 
     const suppressErrorToasts = serverConfig.get<boolean>('suppressLspErrorToasts');
-    const useNewFormattingEngine = serverConfig.get<boolean>('useNewFormattingEngine');
     const cohostingEnabled = serverConfig.get<boolean>('cohostingEnabled');
 
     return {
@@ -33,7 +32,6 @@ export function resolveRazorLanguageServerOptions(
         outputChannel: logger.outputChannel,
         usingOmniSharp,
         suppressErrorToasts,
-        useNewFormattingEngine,
         cohostingEnabled,
     } as RazorLanguageServerOptions;
 }
