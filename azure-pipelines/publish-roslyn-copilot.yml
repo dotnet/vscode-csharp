@@ -33,7 +33,7 @@ extends:
           image: 1ESPT-Windows2022
           os: windows
         templateContext:
-          isProduction: false #change this
+          isProduction: true
           inputs:
           - input: pipelineArtifact
             pipeline: CI
