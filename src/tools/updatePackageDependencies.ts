@@ -270,6 +270,12 @@ function getLowercaseFileNameFromUrl(url: string): string {
         const secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
         fileName = fileName.substr(0, secondToLastDash);
         return fileName;
+    } else if (fileName.startsWith('microsoft.visualstudio.copilot.roslyn.languageserver')) {
+        // Copilot versions are everything after the second to last dash.
+        // e.g. we want microsoft.visualstudio.copilot.roslyn.languageserver from microsoft.visualstudio.copilot.roslyn.languageserver-18.0.479-alpha.zip
+        const secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
+        fileName = fileName.substr(0, secondToLastDash);
+        return fileName;
     } else {
         throw new Error(`Unexpected dependency file name '${fileName}'`);
     }

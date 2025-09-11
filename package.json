@@ -40,9 +40,9 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.0.0-2.25428.10",
+    "roslyn": "5.0.0-2.25458.10",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.25424.9",
+    "razor": "10.0.0-preview.25454.5",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "17.14.36106.43"
   },
@@ -128,7 +128,7 @@
     "@types/semver": "7.3.13",
     "@types/tmp": "0.0.33",
     "@types/uuid": "^9.0.1",
-    "@types/vscode": "1.93.0",
+    "@types/vscode": "1.98.0",
     "@types/yauzl": "2.10.0",
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
@@ -405,7 +405,7 @@
     {
       "id": "RoslynCopilot",
       "description": "Language server for Roslyn Copilot integration",
-      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.479-alpha.zip",
+      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.701-alpha.zip",
       "installPath": ".roslynCopilot",
       "platforms": [
         "neutral"
@@ -414,12 +414,12 @@
         "neutral"
       ],
       "installTestPath": "./.roslynCopilot/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
-      "integrity": "1D16E555AEFB581F6090D66A20FA5B3DD367EFA0D33BC97EF176285F60E02FEF"
+      "integrity": "4609A58D1BA337B4917391FFEF70FEF7DD04EF97F1B0A72B4F73114635A54918"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-win7-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-win7-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "win32"
@@ -429,12 +429,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui.exe",
-      "integrity": "F181A56719DC6583DEE351DC48F3A3EECB7FD12ABAD4173FC5E9F3D36395E806"
+      "integrity": "C25E19B3DBAE55DBBBD7384561E34064CDB92633A816FFB862E68635221A63EC"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (Windows / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-win10-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-win10-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "win32"
@@ -443,12 +443,12 @@
         "arm64"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui.exe",
-      "integrity": "0B8DBE9293B631EFE26A37A4DC5BA8A8E3EB5CAE921A1874AAC0D37DB648ABB1"
+      "integrity": "F8F9DE062D0678CFF808B8BC9AADC59C7C39253B1249DE2F9CF3037163D8049F"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-osx-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-osx-x64.zip",
       "installPath": ".debugger/x86_64",
       "platforms": [
         "darwin"
@@ -462,12 +462,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/x86_64/vsdbg-ui",
-      "integrity": "EDEF8448DEA1FFC6B2D1B5E32E24F05E79F61631CE3E6D03D7B1B57410E54AA1"
+      "integrity": "D1817389B6A1254BDDD8798AD866D6E1AC47740D05E138C060C387C0A53A7925"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (macOS / arm64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-osx-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-osx-arm64.zip",
       "installPath": ".debugger/arm64",
       "platforms": [
         "darwin"
@@ -480,12 +480,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/arm64/vsdbg-ui",
-      "integrity": "745FBE904342DF1AF1B2DC009AABE678D770C5A30D2702F266FFD3FF777364E1"
+      "integrity": "089C742676FD1627ECCF3AAF1643ECCFC654FCED9C0D1E803780CB9C2E1FE355"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-linux-arm.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-arm.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -498,12 +498,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "17A127F74A557A47B5A1C4B2ED611E4E3F013D8517F9E1F1B4DFB626337146E3"
+      "integrity": "64DF1D83556A3E33664122B10D94787AF10E54129362D6E8A63F8AA3B47035D3"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-linux-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -516,12 +516,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "4C6A2442DD754DE995B5945FF1784105956C39156F4C2D0A9D4432BC59311118"
+      "integrity": "578A61AE844470B7D1814AA8A0A49E21069F68CA16F661648AF85F68DC08BC9D"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-linux-musl-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-musl-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -534,12 +534,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "0041AE1ACEEF9240769C12F5A384484CE1120479BAC9F8310EED46757408337E"
+      "integrity": "5636C90B08D2849C13E198036B467F73080694CC9D5BF7422B04EA25B27633F9"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux musl / ARM64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-linux-musl-arm64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-musl-arm64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux-musl"
@@ -552,12 +552,12 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "C1D4A57E755323D87BA83721BEDEAD65D33F72EAD863A64EB7C1960203FEF81F"
+      "integrity": "BF668378285B814949F39718D559D976C7ED0C1575A248370F282210AF513B2E"
     },
     {
       "id": "Debugger",
       "description": ".NET Core Debugger (linux / x64)",
-      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-86-0/coreclr-debug-linux-x64.zip",
+      "url": "https://vsdebugger-cyg0dxb6czfafzaz.b01.azurefd.net/coreclr-debug-2-90-0/coreclr-debug-linux-x64.zip",
       "installPath": ".debugger",
       "platforms": [
         "linux"
@@ -570,7 +570,7 @@
         "./vsdbg"
       ],
       "installTestPath": "./.debugger/vsdbg-ui",
-      "integrity": "B948CAE3A8CB86A4831FCD3D2E2EE4BC7445C0C7914783F14001294E91056BA5"
+      "integrity": "085CDC403578B24F8335BAFA1B7D62E48FFFEE80419DFA41C6D48D8DBADF95D7"
     },
     {
       "id": "RazorOmnisharp",
@@ -688,7 +688,7 @@
     }
   ],
   "engines": {
-    "vscode": "^1.93.0"
+    "vscode": "^1.98.0"
   },
   "activationEvents": [
     "onDebugInitialConfigurations",
@@ -1530,11 +1530,6 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
-          },
-          "razor.languageServer.useNewFormattingEngine": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.razor.languageServer.useNewFormattingEngine%"
           },
           "razor.languageServer.cohostingEnabled": {
             "type": "boolean",

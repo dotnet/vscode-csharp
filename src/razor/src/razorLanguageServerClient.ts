@@ -268,11 +268,6 @@ export class RazorLanguageServerClient implements vscode.Disposable {
             args.push('--SingleServerCompletionSupport');
             args.push('true');
 
-            if (options.useNewFormattingEngine) {
-                args.push('--UseNewFormattingEngine');
-                args.push('true');
-            }
-
             if (this.telemetryExtensionDllPath.length > 0) {
                 args.push('--telemetryLevel', this.vscodeTelemetryReporter.telemetryLevel);
                 args.push('--sessionId', getSessionId());

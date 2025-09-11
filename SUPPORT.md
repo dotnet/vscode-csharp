@@ -13,7 +13,7 @@ For help and questions about using this project, please see the [README](https:/
 ### How to file an issue
 
 We highly recommend using the C# extension's built-in command, `CSharp: Report an issue` (`csharp.reportIssue`) to create a pre-filled issue template.  This will include helpful details such as local dotnet installations, installed extensions, and other information.
-![csharp.reportIssue command](./docs/report_issue.png)
+![csharp.reportIssue command](./docs/images/report_issue.png)
 
 #### Collecting General Logs
 
@@ -22,8 +22,8 @@ The template has a section to include the `C#` output window logs. These logs ar
 1. **Set the Log Level to Trace**:
    - Open the `C#` output window (`View` -> `Output`).
    - Set the log level to `Trace`.
-     
-     ![c# output window showing trace option](./docs/csharp_trace.png)
+
+     ![c# output window showing trace option](./docs/images/csharp_trace.png)
 
 2. **Reproduce the Issue**:
    - Perform the actions that reproduce the issue.
@@ -57,8 +57,8 @@ For issues with Razor, the Razor Log output window can contain useful informatio
 1. **Set the Log Level to Trace**:
    - Open the `Razor Logs` output window (`View` -> `Output`).
    - Set the log level to `Trace`.
-     
-     ![razor log output window showing trace option](./docs/razor_logs.png)
+
+     ![razor log output window showing trace option](./docs/images/razor_logs.png)
 
 2. **Reproduce the Issue**:
    - Perform the actions that reproduce the issue.
@@ -81,7 +81,7 @@ Missing language features are often caused by a failure to load the project(s) o
    - This information is displayed in the bottom-right corner of the VSCode window in the language status section.
    - You can pin this item using the pin icon to keep it visible at all times.
 
-     ![language status bar showing file active project context](./docs/language_status.png)
+     ![language status bar showing file active project context](./docs/images/language_status.png)
 
 3. **Verify the Solution Explorer (C# Dev Kit)**:
    - If you are using C# Dev Kit, check the Solution Explorer to ensure the project is displayed with the expected references.
@@ -100,12 +100,12 @@ If you encounter issues with document classification (e.g., incorrect syntax hig
      3. Click on the word or section with incorrect colorization to display the token and scope information.
    - Take a screenshot of the output and include it in your issue report.
 
-     ![Inspect Tokens and Scopes Output](./docs/inspect_tokens.png)
+     ![Inspect Tokens and Scopes Output](./docs/images/inspect_tokens.png)
 
 ### Diagnostics problems
 
 For issues with diagnostics, please provide values of the background analysis scope options, `dotnet.backgroundAnalysis.analyzerDiagnosticsScope` and `dotnet.backgroundAnalysis.compilerDiagnosticsScope`
-![background analysis settings](./docs/background_analysis.png)
+![background analysis settings](./docs/images/background_analysis.png)
 
 #### Language server crashing
 
@@ -124,12 +124,12 @@ When investigating performance issues, we may request a performance trace of the
 The C# extension has a built in command, `csharp.recordLanguageServerTrace` to help with trace collection.  This command will install `dotnet-trace` as a global tool and invoke it against the language server.
 
 1.  Invoke the record language server trace command
-![alt text](docs/recordTraceCommand.png)
+![alt text](docs/images/recordTraceCommand.png)
 2.  Select the folder to save the trace.
 3.  Accept the default trace arguments, or change them if requested
-![alt text](docs/recordTraceArgs.png)
+![alt text](docs/images/recordTraceArgs.png)
 4.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the peformance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace
-![alt text](docs/recordTraceTerminal.png)
+![alt text](docs/images/recordTraceTerminal.png)
 5.  Share the trace.  Note that the trace may contain PII, so generally we will provide an email or other confidential way to share the trace with us.
 
 ## Microsoft Support Policy
