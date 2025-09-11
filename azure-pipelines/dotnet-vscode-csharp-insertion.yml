@@ -31,6 +31,7 @@ variables:
   - name: RoslynBuildId
     value: $(resources.pipeline.officialBuildCI.runID)
   - template: dotnet-variables.yml
+  - group: dotnet-vscode-insertion-variables
 
 extends:
   template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
