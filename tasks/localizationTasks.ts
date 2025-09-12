@@ -10,7 +10,7 @@ import { spawnSync } from 'node:child_process';
 import * as path from 'path';
 import * as util from 'node:util';
 import { EOL } from 'node:os';
-import { createBranchAndPR } from './gitTasks';
+import { configureGitUser, createCommit, pushBranch, createPullRequest } from './gitTasks';
 
 type Options = {
     userName?: string;
@@ -82,21 +82,33 @@ gulp.task('publish localization content', async () => {
     if (!pat) {
         throw 'No GitHub Pat found.';
     }
+
+    const newBranchName = `localization/${parsedArgs.commitSha}`;
+
     try {
-        await createBranchAndPR(
-            {
-                commitSha: parsedArgs.commitSha,
-                targetRemoteRepo: parsedArgs.targetRemoteRepo,
-                baseBranch: parsedArgs.baseBranch,
-                githubPAT: process.env['GitHubPAT'] || '',
-                dryRun: false,
-                newBranchName: `localization/${parsedArgs.commitSha}`,
-                userName: parsedArgs.userName,
-                email: parsedArgs.email
-            },
+        // Configure git user credentials
+        await configureGitUser(parsedArgs.userName, parsedArgs.email);
+
+        // Create branch and commit changes
+        await createCommit(newBranchName, ['.'], commitMessage);
+
+        // Push branch to remote
+        await pushBranch(newBranchName, pat, 'dotnet', parsedArgs.targetRemoteRepo);
+
+        // Create pull request
+        const prUrl = await createPullRequest(
+            pat,
+            'dotnet',
+            parsedArgs.targetRemoteRepo,
+            newBranchName,
             title,
-            commitMessage
+            title, // Using title as body as well
+            parsedArgs.baseBranch
         );
+
+        if (prUrl) {
+            console.log(`Created pull request: ${prUrl}`);
+        }
     } catch (error) {
         console.error('Error creating branch and PR:', error);
         throw error;

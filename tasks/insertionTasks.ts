@@ -11,7 +11,14 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as xml2js from 'xml2js';
 import { allNugetPackages } from './offlinePackagingTasks';
-import { getCommitFromNugetAsync, createBranchAndPR, git } from './gitTasks';
+import {
+    getCommitFromNugetAsync,
+    git,
+    configureGitUser,
+    createCommit,
+    pushBranch,
+    createPullRequest,
+} from './gitTasks';
 import * as os from 'os';
 
 const execAsync = promisify(exec);
@@ -121,27 +128,44 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
         prBody += prList;
 
         const commitMessage = `Bump Roslyn to ${options.roslynVersion} (${options.roslynEndSHA?.substring(0, 8)})`;
+        const newBranchName = `insertion/${options.roslynEndSHA}`;
 
-        // Create the PR
-        const prNumber = await createBranchAndPR(
-            {
-                ...options,
-                commitSha: options.roslynEndSHA!,
-                targetRemoteRepo: 'vscode-csharp',
-                baseBranch: options.targetBranch || 'main',
-                newBranchName: `insertion/${options.roslynEndSHA}`,
-                githubPAT: options.githubPAT!,
-                dryRun: options.dryRun,
-                userName: options.userName,
-                email: options.email,
-            },
-            prTitle,
-            commitMessage,
-            prBody
-        );
+        // Configure git user credentials
+        await configureGitUser(options.userName, options.email);
+
+        // Create branch and commit changes
+        await createCommit(newBranchName, ['.'], commitMessage);
+
+        let prNumber: number | null = null;
+
+        if (options.dryRun !== true) {
+            // Push branch to remote
+            await pushBranch(newBranchName, options.githubPAT!, 'deepakrathore33', 'vscode-csharp');
+
+            // Create pull request
+            const prUrl = await createPullRequest(
+                options.githubPAT!,
+                'deepakrathore33',
+                'vscode-csharp',
+                newBranchName,
+                prTitle,
+                prBody,
+                options.targetBranch || 'main'
+            );
+
+            if (prUrl) {
+                console.log(`Created pull request: ${prUrl}.`);
+                // Extract PR number from URL (format: https://github.com/owner/repo/pull/123)
+                const prNumberMatch = prUrl.match(/\/pull\/(\d+)$/);
+                prNumber = prNumberMatch ? parseInt(prNumberMatch[1], 10) : null;
+            }
+        } else {
+            console.log('[DRY RUN] Would have pushed branch to remote');
+            console.log(`[DRY RUN] Would have created PR with title: "${prTitle}" and body: "${prBody}"`);
+        }
 
         // If PR was created and we're not in dry run mode, update the changelog with the PR number
-        if (prNumber && !options.dryRun) {
+        if (prNumber && options.dryRun !== true) {
             console.log(`PR #${prNumber} created. Updating changelog with PR link...`);
 
             // Update changelog with PR number (single call)
@@ -150,7 +174,7 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
             // Create a second commit to include the updated changelog and push to update the PR
             await git(['add', 'CHANGELOG.md']);
             await git(['commit', '-m', `Update changelog with PR #${prNumber}`]);
-            await git(['push', 'targetRepo', `insertion/${options.roslynEndSHA}`]);
+            await git(['push', 'targetRepo', newBranchName]);
 
             console.log(`Changelog updated with PR #${prNumber} link.`);
         }

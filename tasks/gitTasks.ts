@@ -181,7 +181,8 @@ export async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Pr
 
         const platform = await PlatformInformation.GetCurrent();
         const vsixPlatformInfo = platformSpecificPackages.find(
-            (p) => p.platformInfo.platform === platform.platform && p.platformInfo.architecture === platform.architecture
+            (p) =>
+                p.platformInfo.platform === platform.platform && p.platformInfo.architecture === platform.architecture
         )!;
 
         const packageName = packageInfo.getPackageName(vsixPlatformInfo);
@@ -224,57 +225,5 @@ export async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Pr
             console.log(`##[debug]${error.stack}`);
         }
         throw error;
-    }
-}
-
-export async function createBranchAndPR(
-    options: BranchAndPROptions,
-    title: string,
-    commitMessage: string,
-    body?: string
-): Promise<number | null> {
-    const { githubPAT, targetRemoteRepo, baseBranch, dryRun, userName, email, newBranchName } = options;
-
-    // Configure git user credentials
-    await configureGitUser(userName, email);
-
-    // Create branch and commit changes
-    await createCommit(newBranchName, ['.'], commitMessage);
-
-    if (dryRun !== true) {
-        // Push branch to remote
-        await pushBranch(newBranchName, githubPAT, 'dotnet', targetRemoteRepo);
-    } else {
-        console.log('[DRY RUN] Would have pushed branch to remote');
-    }
-
-    // Check for existing PR and create new one if needed
-    const existingPRUrl = await findPRByTitle(githubPAT, 'dotnet', targetRemoteRepo, title);
-    if (existingPRUrl) {
-        console.log('Pull request with the same name already exists. Skip creation.');
-        return null;
-    }
-
-    if (dryRun !== true) {
-        const prUrl = await createPullRequest(
-            githubPAT,
-            'dotnet',
-            targetRemoteRepo,
-            newBranchName,
-            title,
-            body || title,
-            baseBranch
-        );
-        
-        if (prUrl) {
-            console.log(`Created pull request: ${prUrl}.`);
-            // Extract PR number from URL (format: https://github.com/owner/repo/pull/123)
-            const prNumberMatch = prUrl.match(/\/pull\/(\d+)$/);
-            return prNumberMatch ? parseInt(prNumberMatch[1], 10) : null;
-        }
-        return null;
-    } else {
-        console.log(`[DRY RUN] Would have created PR with title: "${title}" and body: "${body || title}"`);
-        return null;
     }
 }
