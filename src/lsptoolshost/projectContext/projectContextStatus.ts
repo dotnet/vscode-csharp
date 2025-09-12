@@ -37,8 +37,8 @@ export class ProjectContextStatus {
 
             item.detail = e.context._vs_is_miscellaneous
                 ? vscode.l10n.t(
-                    'The active document is not part of the open workspace. Not all language features will be available.'
-                )
+                      'The active document is not part of the open workspace. Not all language features will be available.'
+                  )
                 : vscode.l10n.t('Active File Context');
         });
 
