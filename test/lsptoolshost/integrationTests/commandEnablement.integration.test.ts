@@ -5,7 +5,7 @@
 
 import { expect, beforeAll, afterAll, describe } from '@jest/globals';
 import * as vscode from 'vscode';
-import { activateCSharpExtension, testIfCSharp, testIfDevKit } from './integrationHelpers';
+import { activateCSharpExtension } from './integrationHelpers';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import {
     RoslynDevKitCommands,
@@ -13,6 +13,7 @@ import {
     UnexpectedRoslynDevKitCommands,
     UnexpectedRoslynStandaloneCommands,
 } from './expectedCommands';
+import { testIfCSharp, testIfDevKit } from '../../jestHelpers';
 
 describe(`Command Enablement Tests`, () => {
     beforeAll(async () => {
