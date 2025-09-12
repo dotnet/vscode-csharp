@@ -11,9 +11,7 @@ import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSele
 
 export class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
-        const documentSelector = combineDocumentSelectors(
-            languageServerOptions.documentSelector
-        );
+        const documentSelector = combineDocumentSelectors(languageServerOptions.documentSelector);
         const projectContextService = languageServer._projectContextService;
 
         const item = vscode.languages.createLanguageStatusItem('csharp.projectContextStatus', documentSelector);
