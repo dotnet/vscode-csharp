@@ -6,16 +6,12 @@
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { languageServerOptions } from '../../shared/options';
-import { RazorLanguage } from '../../razor/src/razorLanguage';
 import { ServerState } from '../server/languageServerEvents';
 import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';
 
 export class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
-        const documentSelector = combineDocumentSelectors(
-            languageServerOptions.documentSelector,
-            RazorLanguage.documentSelector
-        );
+        const documentSelector = combineDocumentSelectors(languageServerOptions.documentSelector);
         const projectContextService = languageServer._projectContextService;
 
         const item = vscode.languages.createLanguageStatusItem('csharp.projectContextStatus', documentSelector);
