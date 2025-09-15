@@ -82,6 +82,7 @@ extends:
                   npm install -g gulp
                   gulp installDependencies
                 displayName: 'Install npm dependencies and gulp'
+
               - checkout: RoslynMirror
                 displayName: 'Checkout Roslyn repository'
                 path: roslyn
