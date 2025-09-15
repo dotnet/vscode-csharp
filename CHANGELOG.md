@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.92.x
-* Bump Razor to 10.0.0-preview.25464.2 (PR: [#8626](https://github.com/dotnet/vscode-csharp/pull/8626))
+* Bump Razor to 10.0.0-preview.25464.2 (PR: [#8628](https://github.com/dotnet/vscode-csharp/pull/8628))
   * Improve go to definition for mvc tag helpers (PR: [#12216](https://github.com/dotnet/razor/pull/12216))                                                                                                               
   * Filter CSS024 when caused by C# code in an attribute (PR: [#12209](https://github.com/dotnet/razor/pull/12209))
   * Provide more specific information in cohosting failures (PR: [#12193](https://github.com/dotnet/razor/pull/12193))
