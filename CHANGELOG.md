@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.92.x
+* Bump Razor to 10.0.0-preview.25464.2 (PR: [#8626](https://github.com/dotnet/vscode-csharp/pull/8626))
+  * Improve go to definition for mvc tag helpers (PR: [#12216](https://github.com/dotnet/razor/pull/12216))                                                                                                               
+  * Filter CSS024 when caused by C# code in an attribute (PR: [#12209](https://github.com/dotnet/razor/pull/12209))
+  * Provide more specific information in cohosting failures (PR: [#12193](https://github.com/dotnet/razor/pull/12193))
+  * Fix renaming file (PR: [#12196](https://github.com/dotnet/razor/pull/12196))
 
 # 2.91.x
 * Bump Roslyn to 5.0.0-2.25458.10 (PR: [#8588](https://github.com/dotnet/vscode-csharp/pull/8588))
@@ -17,12 +22,10 @@
   * Allow Razor to get task list items for a document (PR: [#80102](https://github.com/dotnet/roslyn/pull/80102))
   * Update debugger packages, move to PortableInterop IMetadataImport (PR: [#80063](https://github.com/dotnet/roslyn/pull/80063))
   * Fix issue reporting diagnostic in additional file when diagnostic produced by a source generator (PR: [#80071](https://github.com/dotnet/roslyn/pull/80071))
-  * Always run the razor generator even in balanced mode (PR: [#79510](https://github.com/dotnet/roslyn/pull/79510))
 * Bump Razor to 10.0.0-preview.25454.5 (PR: [#8590](https://github.com/dotnet/vscode-csharp/pull/8590))
   * Fix extra character insertion during attribute completion in VS Code (PR: [#12177](https://github.com/dotnet/razor/pull/12177))
   * Remove UseNewRazorFormattingEngine feature flag (PR: [#12160](https://github.com/dotnet/razor/pull/12160))
   * Allow for weird Uris as file paths (PR: [#12155](https://github.com/dotnet/razor/pull/12155))
-  * Remove the feature flag for precise semantic tokens (PR: [#12149](https://github.com/dotnet/razor/pull/12149))
 * Do not create a proxy agent if proxy url is empty string.  (PR: [#8580](https://github.com/dotnet/vscode-csharp/pull/8580))
 * Use aka.ms link for ARM32 Linux help page (PR: [#8574](https://github.com/dotnet/vscode-csharp/pull/8574))
 * Update Debugger to 2.90.0 (PR: [#8572](https://github.com/dotnet/vscode-csharp/pull/8572))
