@@ -12,6 +12,7 @@ import { HtmlDocumentContentProvider } from './htmlDocumentContentProvider';
 import { HtmlDocument } from './htmlDocument';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { RequestType, TextDocumentIdentifier } from 'vscode-languageserver-protocol';
+import { UriConverter } from '../utils/uriConverter';
 
 export class HtmlDocumentManager {
     private readonly htmlDocuments: { [hostDocumentPath: string]: HtmlDocument } = {};
@@ -51,7 +52,7 @@ export class HtmlDocumentManager {
                 // so making it a request means the logs end up in the right place.
                 await this.roslynLanguageServer.sendRequest(
                     this.razorDocumentClosedRequest,
-                    TextDocumentIdentifier.create(getUriPath(document.uri)),
+                    TextDocumentIdentifier.create(UriConverter.serialize(document.uri)),
                     new vscode.CancellationTokenSource().token
                 );
             }
