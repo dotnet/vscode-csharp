@@ -86,6 +86,7 @@ extends:
                 workingDirectory: $(Build.SourcesDirectory)/dotnet-vscode-csharp
 
               - checkout: RoslynMirror
+                fetchTags: false
                 displayName: 'Checkout Roslyn repository'
                 path: roslyn
 
