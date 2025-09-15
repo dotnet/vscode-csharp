@@ -56,6 +56,7 @@ extends:
               os: linux
             steps:
               - checkout: self
+                fetchTags: false
                 persistCredentials: true
 
               - task: UseDotNet@2
