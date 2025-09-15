@@ -140,12 +140,12 @@ gulp.task('insertion:roslyn', async (): Promise<void> => {
 
         if (options.dryRun !== true) {
             // Push branch to remote
-            await pushBranch(newBranchName, options.githubPAT!, 'deepakrathore33', 'vscode-csharp');
+            await pushBranch(newBranchName, options.githubPAT!, 'dotnet', 'vscode-csharp');
 
             // Create pull request
             const prUrl = await createPullRequest(
                 options.githubPAT!,
-                'deepakrathore33',
+                'dotnet',
                 'vscode-csharp',
                 newBranchName,
                 prTitle,
