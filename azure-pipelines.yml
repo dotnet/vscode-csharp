@@ -15,24 +15,32 @@ pr:
     - prerelease
     - main
   paths:
+    # Exclude paths and files which do not cause functional changes to the C# extension and do not impact CI.
     exclude:
-    - '**.md'
+    # Changes to these configuration files are not functional changes.
     - .azuredevops/*
     - .config/*
     - .devcontainer/*
     - .github/*
     - .vscode/*
+    # The following pipelines are not run for PRs and changes should be validated by a separate run of the pipeline.
     - azure-pipelines/dotnet-vscode-csharp-insertion.yml
     - azure-pipelines/loc.yml
     - azure-pipelines/release.yml
     - azure-pipelines/profiling.yml
     - azure-pipelines/publish-roslyn-copilot.yml
+    # Changes to documentation are not functional changes.
     - docs/*
     - images/*
     - RuntimeLicenses/*
+    # Changes to language bundles are not functional changes. We still run CI when `l10n/bundle.l10n.json` itself is changed.
     - 'l10n/bundle.l10n.*.json'
+    # Changes to the color themes are not functional changes.
     - themes/*
+    # Changes to documentation are not functional changes.
+    - '**.md'
     - CODEOWNERS
+    # Changes to the vesion is not a functional change. The extension version is updated by the branch-snap GH action.
     - 'version.json'
 
 # Run a scheduled build every night on main to run tests against insiders VSCode.
