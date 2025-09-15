@@ -69,22 +69,25 @@ export async function prepareVSCodeAndExecuteTests(
 
 async function installExtensions(extensionIds: string[], vscodeCli: string, vscodeArgs: string[]): Promise<void> {
     for (const extensionId of extensionIds) {
-        vscodeArgs.push('--install-extension', extensionId);
-    }
+        const argsWithExtension = [...vscodeArgs, '--install-extension', extensionId];
 
-    // Since we're using shell execute, spaces in the CLI path will get interpeted as args
-    // Therefore we wrap the CLI path in quotes as on MacOS the path can contain spaces.
-    const cliWrapped = `"${vscodeCli}"`;
-    console.log(`${cliWrapped} ${vscodeArgs}`);
+        // Since we're using shell execute, spaces in the CLI path will get interpeted as args
+        // Therefore we wrap the CLI path in quotes as on MacOS the path can contain spaces.
+        const cliWrapped = `"${vscodeCli}"`;
+        console.log(`${cliWrapped} ${argsWithExtension}`);
 
-    const result = cp.spawnSync(cliWrapped, vscodeArgs, {
-        encoding: 'utf-8',
-        stdio: 'inherit',
-        // Workaround as described in https://github.com/nodejs/node/issues/52554
-        shell: true,
-    });
-    if (result.error || result.status !== 0) {
-        throw new Error(`Failed to install extensions: ${JSON.stringify(result)}`);
+        const result = cp.spawnSync(cliWrapped, argsWithExtension, {
+            encoding: 'utf-8',
+            stdio: 'inherit',
+            // Workaround as described in https://github.com/nodejs/node/issues/52554
+            shell: true,
+        });
+        if (result.error || result.status !== 0) {
+            throw new Error(`Failed to install extensions: ${JSON.stringify(result)}`);
+        }
+
+        // Workaround for https://github.com/microsoft/vscode/issues/256031 to install extensions one at a time with a delay.
+        await new Promise((resolve) => setTimeout(resolve, 2000));
     }
 
     console.log();
