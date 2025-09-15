@@ -59,7 +59,7 @@ extends:
                 inputs:
                   version: $(defaultDotnetVersion)
 
-              - template: install-node.yml
+              - template: /azure-pipelines/install-node.yml@self
 
               - task: DownloadPipelineArtifact@2
                 displayName: Download Asset Manifests
