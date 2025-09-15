@@ -38,8 +38,12 @@ extends:
   parameters:
     pool:
       name: netcore1espool-internal
-      image: 1es-ubuntu-2204
-      os: linux
+      image: 1es-windows-2022
+      os: windows
+    sdl:
+      sourceRepositoriesToScan:
+        exclude:
+        - repository: RoslynMirror
     stages:
       - stage: BumpRoslyn
         displayName: Bump Roslyn Version
