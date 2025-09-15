@@ -83,6 +83,7 @@ extends:
                   npm install -g gulp
                   gulp installDependencies
                 displayName: 'Install npm dependencies and gulp'
+                workingDirectory: $(Build.SourcesDirectory)/dotnet-vscode-csharp
 
               - checkout: RoslynMirror
                 displayName: 'Checkout Roslyn repository'
