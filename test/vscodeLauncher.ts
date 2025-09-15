@@ -69,28 +69,36 @@ export async function prepareVSCodeAndExecuteTests(
 
 async function installExtensions(extensionIds: string[], vscodeCli: string, vscodeArgs: string[]): Promise<void> {
     for (const extensionId of extensionIds) {
-        const argsWithExtension = [...vscodeArgs, '--install-extension', extensionId];
-
-        // Since we're using shell execute, spaces in the CLI path will get interpeted as args
-        // Therefore we wrap the CLI path in quotes as on MacOS the path can contain spaces.
-        const cliWrapped = `"${vscodeCli}"`;
-        console.log(`${cliWrapped} ${argsWithExtension}`);
-
-        const result = cp.spawnSync(cliWrapped, argsWithExtension, {
-            encoding: 'utf-8',
-            stdio: 'inherit',
-            // Workaround as described in https://github.com/nodejs/node/issues/52554
-            shell: true,
-        });
-        if (result.error || result.status !== 0) {
-            throw new Error(`Failed to install extensions: ${JSON.stringify(result)}`);
+        try {
+            await installExtension(extensionId, vscodeCli, vscodeArgs);
+        } catch (error) {
+            console.warn(`Failed to install extension; retrying ${extensionId}: ${error}`);
+            // Workaround for https://github.com/microsoft/vscode/issues/256031 to install extensions one at a time with a delay.
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await installExtension(extensionId, vscodeCli, vscodeArgs);
         }
-
-        // Workaround for https://github.com/microsoft/vscode/issues/256031 to install extensions one at a time with a delay.
-        await new Promise((resolve) => setTimeout(resolve, 2000));
     }
 
     console.log();
+}
+
+async function installExtension(extensionId: string, vscodeCli: string, vscodeArgs: string[]): Promise<void> {
+    const argsWithExtension = [...vscodeArgs, '--install-extension', extensionId];
+
+    // Since we're using shell execute, spaces in the CLI path will get interpeted as args
+    // Therefore we wrap the CLI path in quotes as on MacOS the path can contain spaces.
+    const cliWrapped = `"${vscodeCli}"`;
+    console.log(`${cliWrapped} ${argsWithExtension}`);
+
+    const result = cp.spawnSync(cliWrapped, argsWithExtension, {
+        encoding: 'utf-8',
+        stdio: 'inherit',
+        // Workaround as described in https://github.com/nodejs/node/issues/52554
+        shell: true,
+    });
+    if (result.error || result.status !== 0) {
+        throw new Error(`Failed to install extensions: ${JSON.stringify(result)}`);
+    }
 }
 
 function getSln(workspacePath: string): string | undefined {
