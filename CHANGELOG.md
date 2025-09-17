@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.93.x
+
 # 2.92.x
 * Bump Razor to 10.0.0-preview.25464.2 (PR: [#8628](https://github.com/dotnet/vscode-csharp/pull/8628))
   * Improve go to definition for mvc tag helpers (PR: [#12216](https://github.com/dotnet/razor/pull/12216))                                                                                                               
