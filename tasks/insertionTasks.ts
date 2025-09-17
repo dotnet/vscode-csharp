@@ -225,7 +225,7 @@ async function generatePRList(
 
     try {
         const { stdout } = await execAsync(
-            `cd "${roslynRepoPath}" && roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format changelog --label VSCode`,
+            `cd "${roslynRepoPath}" && roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format changelog --label VSCode --github-token "${_options.githubPAT}"`,
             { maxBuffer: 10 * 1024 * 1024 } // 10MB buffer
         );
         return stdout && stdout.trim() ? stdout : null;
