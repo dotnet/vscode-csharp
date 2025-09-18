@@ -12,12 +12,16 @@ import { IRazorDocumentManager } from '../document/IRazorDocumentManager';
 import { razorExtensionId } from '../razorExtensionId';
 import { IReportIssueDataCollectionResult } from './IReportIssueDataCollectionResult';
 import { HtmlDocumentManager } from '../../../lsptoolshost/razor/htmlDocumentManager';
+import { ShowGeneratedDocumentCommand } from '../../../lsptoolshost/razor/showGeneratedDocumentCommand';
+import { GeneratedDocumentKind } from '../../../lsptoolshost/razor/generatedDocumentKind';
+import { RoslynLanguageServer } from '../../../lsptoolshost/server/roslynLanguageServer';
 
 export class ReportIssueCreator {
     constructor(
         private readonly vscodeApi: vscodeAdapter.api,
         private readonly documentManager?: IRazorDocumentManager,
-        private readonly cohostingDocumentManager?: HtmlDocumentManager
+        private readonly cohostingDocumentManager?: HtmlDocumentManager,
+        private readonly roslynLanguageServer?: RoslynLanguageServer
     ) {}
 
     public async create(collectionResult: IReportIssueDataCollectionResult) {
@@ -37,7 +41,15 @@ export class ReportIssueCreator {
                 csharpContent = await this.getProjectedCSharp(razorDocument);
                 htmlContent = await this.getProjectedHtml(razorDocument);
             } else if (this.cohostingDocumentManager) {
-                csharpContent = vscode.l10n.t('Cohosting is on, client has no access to CSharp content');
+                try {
+                    csharpContent = await ShowGeneratedDocumentCommand.getGeneratedDocumentContent(
+                        collectionResult.document.uri,
+                        GeneratedDocumentKind.CSharp,
+                        this.roslynLanguageServer!
+                    );
+                } catch (e: any) {
+                    csharpContent = vscode.l10n.t('Could not determine CSharp content: {0}', e.toString());
+                }
 
                 const htmlDocument = await this.cohostingDocumentManager.getDocument(collectionResult.document.uri);
                 if (htmlDocument) {

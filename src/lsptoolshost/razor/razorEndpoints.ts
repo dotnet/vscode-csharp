@@ -53,6 +53,7 @@ import { ReportIssueCommand } from '../../razor/src/diagnostics/reportIssueComma
 import { HtmlDocument } from './htmlDocument';
 import { HtmlForwardedRequest } from './htmlForwardedRequest';
 import { BlazorDebugConfigurationProvider } from '../../razor/src/blazorDebug/blazorDebugConfigurationProvider';
+import { ShowGeneratedDocumentCommand } from './showGeneratedDocumentCommand';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -70,6 +71,7 @@ export function registerRazorEndpoints(
         registerCohostingEndpoints();
 
         context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
+        context.subscriptions.push(ShowGeneratedDocumentCommand.register(roslynLanguageServer));
     } else {
         vscode.commands.executeCommand('setContext', 'razor.mode', 'lsp');
         registerNonCohostingEndpoints();
@@ -82,7 +84,13 @@ export function registerRazorEndpoints(
     //
     function registerCohostingEndpoints() {
         const documentManager = new HtmlDocumentManager(platformInfo, roslynLanguageServer, razorLogger);
-        const reportIssueCommand = new ReportIssueCommand(vscode, undefined, documentManager, razorLogger);
+        const reportIssueCommand = new ReportIssueCommand(
+            vscode,
+            undefined,
+            documentManager,
+            roslynLanguageServer,
+            razorLogger
+        );
         context.subscriptions.push(documentManager.register());
         context.subscriptions.push(reportIssueCommand.register());
 
