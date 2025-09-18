@@ -8,7 +8,8 @@ import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting } from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService';
 import { getCode, setDiagnosticSettings, waitForExpectedDiagnostics } from './diagnosticsHelpers';
-import { activateCSharpExtension, describeIfCSharp } from './integrationHelpers';
+import { activateCSharpExtension } from './integrationHelpers';
+import { describeIfCSharp } from '../../jestHelpers';
 
 // Restarting the server is required for these tests, but not supported with C# Dev Kit.
 describeIfCSharp(`Workspace Diagnostic Tests`, () => {
