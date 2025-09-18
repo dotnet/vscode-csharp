@@ -1896,13 +1896,13 @@
         "command": "extension.showRazorCSharpWindow",
         "title": "%command.extension.showRazorCSharpWindow%",
         "category": "Razor",
-        "enablement": "isWorkspaceTrusted && razor.mode == 'lsp'"
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "extension.showRazorHtmlWindow",
         "title": "%command.extension.showRazorHtmlWindow%",
         "category": "Razor",
-        "enablement": "isWorkspaceTrusted && razor.mode == 'lsp'"
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "razor.reportIssue",
