@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.93.x
+* Bump Razor to 10.0.0-preview.25469.5 (PR: [#8642](https://github.com/dotnet/vscode-csharp/pull/8642))
+  * Support view components in Go To Def (PR: [#12222](https://github.com/dotnet/razor/pull/12222))                                                                                                                           
+  * Redirect the older named assembly too (PR: [#12239](https://github.com/dotnet/razor/pull/12239))                                                                                                                          
 
 # 2.92.x
 * Bump Razor to 10.0.0-preview.25464.2 (PR: [#8628](https://github.com/dotnet/vscode-csharp/pull/8628))
