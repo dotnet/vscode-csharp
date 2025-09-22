@@ -5627,6 +5627,7 @@
         "*.json": "${capture}.Development.json",
         "*.cshtml": "${capture}.cshtml.cs,${capture}.cshtml.css",
         "*.razor": "${capture}.razor.cs,${capture}.razor.css",
+        "*.resx": "${capture}.Designer.cs",
         "*.xaml": "${capture}.xaml.cs"
       }
     }
