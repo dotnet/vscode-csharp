@@ -4,6 +4,14 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.93.x
+* Bump Roslyn to 5.0.0-2.25472.11 (PR: [#8646](https://github.com/dotnet/vscode-csharp/pull/8646))
+  * Fix handling edits in types nested in reloadable types(PR: [#80360](https://github.com/dotnet/roslyn/pull/80360))
+  * Remove CS1998 warning entirely and remove dependent C# code fix providers(PR: [#80144](https://github.com/dotnet/roslyn/pull/80144))
+  * Only restore based on assets file changes if the actual content changed(PR: [#80341](https://github.com/dotnet/roslyn/pull/80341))
+  * Fix issue where build artifacts were added in source tree (PR: [#80324](https://github.com/dotnet/roslyn/pull/80324))
+  * Allow clients to send range ending at the line after the last line in the document(PR: [#80310](https://github.com/dotnet/roslyn/pull/80310))
+  * Don't show Razor diagnostics in Full Solution Analysis(PR: [#80296](https://github.com/dotnet/roslyn/pull/80296))
+  * Log project context in which document was found(PR: [#80202](https://github.com/dotnet/roslyn/pull/80202))
 * Bump Razor to 10.0.0-preview.25469.5 (PR: [#8642](https://github.com/dotnet/vscode-csharp/pull/8642))
   * Support view components in Go To Def (PR: [#12222](https://github.com/dotnet/razor/pull/12222))                                                                                                                           
   * Redirect the older named assembly too (PR: [#12239](https://github.com/dotnet/razor/pull/12239))                                                                                                                          
