@@ -42,7 +42,7 @@
   "defaults": {
     "roslyn": "5.0.0-2.25472.11",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.25469.5",
+    "razor": "10.0.0-preview.25472.6",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "17.14.36106.43"
   },
@@ -1896,13 +1896,13 @@
         "command": "extension.showRazorCSharpWindow",
         "title": "%command.extension.showRazorCSharpWindow%",
         "category": "Razor",
-        "enablement": "isWorkspaceTrusted && razor.mode == 'lsp'"
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "extension.showRazorHtmlWindow",
         "title": "%command.extension.showRazorHtmlWindow%",
         "category": "Razor",
-        "enablement": "isWorkspaceTrusted && razor.mode == 'lsp'"
+        "enablement": "isWorkspaceTrusted"
       },
       {
         "command": "razor.reportIssue",

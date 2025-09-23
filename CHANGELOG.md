@@ -12,9 +12,10 @@
   * Allow clients to send range ending at the line after the last line in the document(PR: [#80310](https://github.com/dotnet/roslyn/pull/80310))
   * Don't show Razor diagnostics in Full Solution Analysis(PR: [#80296](https://github.com/dotnet/roslyn/pull/80296))
   * Log project context in which document was found(PR: [#80202](https://github.com/dotnet/roslyn/pull/80202))
-* Bump Razor to 10.0.0-preview.25469.5 (PR: [#8642](https://github.com/dotnet/vscode-csharp/pull/8642))
-  * Support view components in Go To Def (PR: [#12222](https://github.com/dotnet/razor/pull/12222))                                                                                                                           
-  * Redirect the older named assembly too (PR: [#12239](https://github.com/dotnet/razor/pull/12239))                                                                                                                          
+* Bump Razor to 10.0.0-preview.25472.6 (PR: [#8639](https://github.com/dotnet/vscode-csharp/pull/8639))
+  * Support view components in Go To Def (PR: [#12222](https://github.com/dotnet/razor/pull/12222))
+  * Redirect the older named assembly too (PR: [#12239](https://github.com/dotnet/razor/pull/12239))
+  * Restore "Show Html/C#" VS Code commands (PR: [#12234](https://github.com/dotnet/razor/pull/12234))
 
 # 2.92.x
 * Bump Razor to 10.0.0-preview.25464.2 (PR: [#8628](https://github.com/dotnet/vscode-csharp/pull/8628))
