@@ -40,9 +40,9 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.0.0-2.25458.10",
+    "roslyn": "5.0.0-2.25472.11",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.25464.2",
+    "razor": "10.0.0-preview.25469.5",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "17.14.36106.43"
   },
@@ -5627,6 +5627,7 @@
         "*.json": "${capture}.Development.json",
         "*.cshtml": "${capture}.cshtml.cs,${capture}.cshtml.css",
         "*.razor": "${capture}.razor.cs,${capture}.razor.css",
+        "*.resx": "${capture}.Designer.cs",
         "*.xaml": "${capture}.xaml.cs"
       }
     }
