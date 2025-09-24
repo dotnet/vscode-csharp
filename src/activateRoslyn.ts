@@ -9,7 +9,7 @@ import { activateRazorExtension } from './razor/razor';
 import { PlatformInformation } from './shared/platform';
 import { Observable } from 'rxjs';
 import { EventStream } from './eventStream';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { RoslynLanguageServer } from './lsptoolshost/server/roslynLanguageServer';
 import { CSharpDevKitExports } from './csharpDevKitExports';
 import { RoslynLanguageServerEvents, ServerState } from './lsptoolshost/server/languageServerEvents';

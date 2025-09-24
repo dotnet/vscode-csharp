@@ -15,7 +15,7 @@ import { RazorLanguageServerOptions } from './razorLanguageServerOptions';
 import { resolveRazorLanguageServerOptions } from './razorLanguageServerOptionsResolver';
 import { RazorLogger } from './razorLogger';
 import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { randomUUID } from 'crypto';
 import { showErrorMessage } from '../../shared/observers/utils/showMessage';
 import { RazorLanguageClient } from './razorLanguageClient';
