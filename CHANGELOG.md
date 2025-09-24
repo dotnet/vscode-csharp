@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.94.x
+
 # 2.93.x
 * Bump Roslyn to 5.0.0-2.25472.11 (PR: [#8646](https://github.com/dotnet/vscode-csharp/pull/8646))
   * Fix handling edits in types nested in reloadable types(PR: [#80360](https://github.com/dotnet/roslyn/pull/80360))
