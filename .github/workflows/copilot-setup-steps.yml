@@ -1,0 +1,45 @@
+# GitHub Copilot setup steps for the C# VS Code extension
+# This file configures the environment for the GitHub Copilot coding agent
+
+name: "Copilot Setup Steps"
+
+# Automatically run the setup steps when they are changed to allow for easy validation, and
+# allow manual testing through the repository's "Actions" tab
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read  # Read access to the repository contents (required for checkout)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      # Install Node.js (required for TypeScript compilation and npm packages)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Install .NET SDK (required for some build components and MSBuild tasks)
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Install npm dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Install gulp globally (required for build tasks)
+      - name: Install gulp
+        run: npm install -g gulp
