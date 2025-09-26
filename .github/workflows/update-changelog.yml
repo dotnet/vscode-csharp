@@ -1,10 +1,9 @@
 name: Update CHANGELOG
 on:
-  workflow_dispatch
-
-schedule:
-  # Runs every Tuesday at 9 PM Pacific Time (5 AM UTC Wednesday)
-  - cron: '0 5 * * 3'
+  workflow_dispatch:
+  schedule:
+    # Runs every Tuesday at 9 PM Pacific Time (5 AM UTC Wednesday)
+    - cron: '0 5 * * 3'
 
 permissions:
   contents: write
@@ -16,6 +15,9 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
       - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
