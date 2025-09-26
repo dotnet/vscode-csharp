@@ -88,18 +88,18 @@ gulp.task('updateChangelog', async (): Promise<void> => {
     // Find all the headers in the changelog (and their line numbers)
     const [currentHeaderLine, currentVersion] = findNextVersionHeaderLine(changelogLines);
     if (currentHeaderLine === -1) {
-        throw new Error('Could not find the current header in the changelog.');
+        throw new Error('Could not find the current header in the CHANGELOG');
     }
 
     console.log(`Adding PRs for ${currentVersion} to CHANGELOG`);
 
     const [previousHeaderLine, previousVersion] = findNextVersionHeaderLine(changelogLines, currentHeaderLine + 1);
     if (previousHeaderLine === -1) {
-        throw new Error('Could not find the previous header in the changelog.');
+        throw new Error('Could not find the previous header in the CHANGELOG');
     }
 
     const presentPrIds = getPrIdsBetweenHeaders(changelogLines, currentHeaderLine, previousHeaderLine);
-    console.log(`PRs [#${presentPrIds.join(', #')}] already in the changelog.`);
+    console.log(`PRs [#${presentPrIds.join(', #')}] already in the CHANGELOG`);
 
     const versionTags = await findTagsByVersion(previousVersion!);
     if (versionTags.length === 0) {
@@ -110,7 +110,7 @@ gulp.task('updateChangelog', async (): Promise<void> => {
     const versionTag = versionTags.pop();
     console.log(`Using tag ${versionTag} for previous version ${previousVersion}`);
 
-    console.log(`Generating PR list from ${versionTag} to HEAD...`);
+    console.log(`Generating PR list from ${versionTag} to HEAD`);
     const currentPrs = await generatePRList(versionTag!, 'HEAD');
 
     const newPrs = [];
@@ -122,13 +122,20 @@ gulp.task('updateChangelog', async (): Promise<void> => {
 
         const prId = match[1];
         if (presentPrIds.includes(prId)) {
-            console.log(`PR #${prId} is already present in the changelog.`);
+            console.log(`PR #${prId} is already present in the CHANGELOG`);
             continue;
         }
 
-        console.log(`Adding new PR to changelog: ${pr}`);
+        console.log(`Adding new PR to CHANGELOG: ${pr}`);
         newPrs.push(pr);
     }
+
+    if (newPrs.length === 0) {
+        console.log('No new PRs to add to the CHANGELOG');
+        return;
+    }
+
+    console.log(`Writing ${newPrs.length} new PRs to the CHANGELOG`);
 
     changelogLines.splice(currentHeaderLine + 1, 0, ...newPrs);
     fs.writeFileSync(changelogPath, changelogLines.join(os.EOL));
