@@ -183,6 +183,6 @@ async function generatePRList(startSHA: string, endSHA: string): Promise<string[
         return stdout.split(os.EOL).filter((pr) => pr.length > 0);
     } catch (error) {
         logWarning(`PR finder failed: ${error instanceof Error ? error.message : error}`, error);
-        return [];
+        throw error;
     }
 }
