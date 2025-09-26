@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.94.x
+* Install roslyn-tools (PR: [#8663](https://github.com/dotnet/vscode-csharp/pull/8663))
+* Bump tar-fs from 2.1.3 to 2.1.4 (PR: [#8661](https://github.com/dotnet/vscode-csharp/pull/8661))
+* Add copilot setup steps (PR: [#8655](https://github.com/dotnet/vscode-csharp/pull/8655))
+* Update pipeline and packaging excludes (PR: [#8654](https://github.com/dotnet/vscode-csharp/pull/8654))
 
 # 2.93.x
 * Bump Roslyn to 5.0.0-2.25472.11 (PR: [#8646](https://github.com/dotnet/vscode-csharp/pull/8646))
