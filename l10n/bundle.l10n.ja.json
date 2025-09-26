@@ -37,7 +37,7 @@
   "Copy Html": "HTML のコピー",
   "Copy issue content again": "問題の内容をもう一度コピーする",
   "Could not determine CSharp content": "CSharp コンテンツを特定できませんでした",
-  "Could not determine CSharp content: {0}": "Could not determine CSharp content: {0}",
+  "Could not determine CSharp content: {0}": "CSharp コンテンツを特定できませんでした: {0}",
   "Could not determine Html content": "HTML コンテンツを特定できませんでした",
   "Could not find '{0}' in or above '{1}'.": "'{1}' 以上に '{0}' が見つかりませんでした。",
   "Could not find Razor Language Server executable '{0}' within directory": "ディレクトリ内に Razor 言語サーバーの実行可能ファイル '{0}' が見つかりませんでした",
