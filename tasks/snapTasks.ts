@@ -79,34 +79,27 @@ gulp.task('incrementVersion', async (): Promise<void> => {
 
 gulp.task('updateChangelog', async (): Promise<void> => {
     // Add a new changelog section for the new version.
-    console.log('Adding new prs to changelog');
+    console.log('Determining version from CHANGELOG');
 
     const changelogPath = path.join(path.resolve(__dirname, '..'), 'CHANGELOG.md');
     const changelogContent = fs.readFileSync(changelogPath, 'utf8');
     const changelogLines = changelogContent.split(os.EOL);
 
     // Find all the headers in the changelog (and their line numbers)
-    const currentHeaderLine = findNextVersionHeaderLine(changelogLines);
+    const [currentHeaderLine, currentVersion] = findNextVersionHeaderLine(changelogLines);
     if (currentHeaderLine === -1) {
         throw new Error('Could not find the current header in the changelog.');
     }
 
-    const currentVersion = getVersionFromHeader(changelogLines[currentHeaderLine]);
-    if (!currentVersion) {
-        throw new Error('Could not determine the current version from the changelog header.');
-    }
+    console.log(`Adding PRs for ${currentVersion} to CHANGELOG`);
 
-    console.log(`Adding PRs for ${currentVersion}`);
-
-    const previousHeaderLine = findNextVersionHeaderLine(changelogLines, currentHeaderLine + 1);
+    const [previousHeaderLine, previousVersion] = findNextVersionHeaderLine(changelogLines, currentHeaderLine + 1);
     if (previousHeaderLine === -1) {
-        throw new Error('Could not find the previous header before the current version header in the changelog.');
+        throw new Error('Could not find the previous header in the changelog.');
     }
 
-    const previousVersion = getVersionFromHeader(changelogLines[previousHeaderLine]);
-    if (!previousVersion) {
-        throw new Error('Could not determine the previous version from the changelog header.');
-    }
+    const presentPrIds = getPrIdsBetweenHeaders(changelogLines, currentHeaderLine, previousHeaderLine);
+    console.log(`PRs [#${presentPrIds.join(', #')}] already in the changelog.`);
 
     const versionTags = await findTagsByVersion(previousVersion!);
     if (versionTags.length === 0) {
@@ -115,11 +108,9 @@ gulp.task('updateChangelog', async (): Promise<void> => {
 
     // The last tag is the most recent one created.
     const versionTag = versionTags.pop();
-
     console.log(`Using tag ${versionTag} for previous version ${previousVersion}`);
 
-    const presentPrIds = getPrIdsBetweenHeaders(changelogLines, currentHeaderLine, previousHeaderLine);
-    console.log(`PRs [#${presentPrIds.join(', #')}] already in the changelog.`);
+    console.log(`Generating PR list from ${versionTag} to HEAD...`);
     const currentPrs = await generatePRList(versionTag!, 'HEAD');
 
     const newPrs = [];
@@ -145,16 +136,16 @@ gulp.task('updateChangelog', async (): Promise<void> => {
 
 const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/g;
 
-function findNextVersionHeaderLine(changelogLines: string[], startLine: number = 0): number {
-    const headerRegex = /^#\s\d+\.\d+\.(x|\d+)$/gm;
+function findNextVersionHeaderLine(changelogLines: string[], startLine: number = 0): [number, string] {
+    const headerRegex = /^#\s(\d+\.\d+)\.(x|\d+)$/gm;
     for (let i = startLine; i < changelogLines.length; i++) {
         const line = changelogLines.at(i);
         const match = headerRegex.exec(line!);
         if (match) {
-            return i;
+            return [i, match[1]];
         }
     }
-    return -1;
+    return [-1, ''];
 }
 
 function getPrIdsBetweenHeaders(changelogLines: string[], startLine: number, endLine: number): string[] {
@@ -169,18 +160,7 @@ function getPrIdsBetweenHeaders(changelogLines: string[], startLine: number, end
     return prs;
 }
 
-function getVersionFromHeader(header: string): string | null {
-    const versionRegex = /^#+\s+(\d+\.\d+)/;
-    const match = versionRegex.exec(header);
-    if (match && match[1]) {
-        return match[1];
-    }
-    return null;
-}
-
 async function generatePRList(startSHA: string, endSHA: string): Promise<string[]> {
-    console.log(`Generating PR list from ${startSHA} to ${endSHA}...`);
-
     try {
         console.log(`Executing: roslyn-tools pr-finder -s "${startSHA}" -e "${endSHA}" --format o#`);
         let { stdout } = await execAsync(
