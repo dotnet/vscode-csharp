@@ -12,6 +12,7 @@ import {
 } from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService';
 import * as integrationHelpers from './integrationHelpers';
 import path from 'path';
+
 describe(`Build and live diagnostics dedupe`, () => {
     beforeAll(async () => {
         await integrationHelpers.activateCSharpExtension();
