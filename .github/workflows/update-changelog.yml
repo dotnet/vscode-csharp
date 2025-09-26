@@ -1,10 +1,9 @@
 name: Update CHANGELOG
 on:
-  workflow_dispatch
-
-schedule:
-  # Runs every Tuesday at 9 PM Pacific Time (5 AM UTC Wednesday)
-  - cron: '0 5 * * 3'
+  workflow_dispatch:
+  schedule:
+    # Runs every Tuesday at 9 PM Pacific Time (5 AM UTC Wednesday)
+    - cron: '0 5 * * 3'
 
 permissions:
   contents: write
