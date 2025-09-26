@@ -43,3 +43,13 @@ jobs:
       # Install gulp globally (required for build tasks)
       - name: Install gulp
         run: npm install -g gulp
+
+      # Install vsce (needed for packaging tasks)
+      - name: Install vsce
+        run: npm install -g vsce
+
+      # Install server dependencies (needed for integration tests and running)
+      - name: Install dependencies
+        run: gulp installDependencies
+
+      
