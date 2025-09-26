@@ -1,0 +1,104 @@
+trigger: none
+pr: none
+
+parameters:
+  - name: targetBranch
+    displayName: Target Branch for PR
+    type: string
+    default: main
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+  - repository: RoslynMirror
+    type: git
+    name: internal/dotnet-roslyn
+  pipelines:
+    - pipeline: officialBuildCI
+      source: dotnet-roslyn-official
+      project: internal
+      branch: main
+      trigger: none
+
+variables:
+  - name: RoslynEndSHA
+    value: $(resources.pipeline.officialBuildCI.sourceCommit)
+  - name: RoslynBuildNumber
+    value: $(resources.pipeline.officialBuildCI.runName)
+  - name: RoslynBuildId
+    value: $(resources.pipeline.officialBuildCI.runID)
+  - template: dotnet-variables.yml
+  - group: DotNetBot-GitHub
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: netcore1espool-internal
+      image: 1es-windows-2022
+      os: windows
+    sdl:
+      sourceRepositoriesToScan:
+        exclude:
+        - repository: RoslynMirror
+    stages:
+      - stage: BumpRoslyn
+        displayName: Bump Roslyn Version
+        jobs:
+          - job: ProcessBump
+            displayName: Process Roslyn Bump
+            pool:
+              name: netcore1espool-internal
+              image: 1es-ubuntu-2204
+              os: linux
+            steps:
+              - checkout: self
+                fetchTags: false
+                persistCredentials: true
+
+              - task: UseDotNet@2
+                displayName: Install .NET SDK
+                inputs:
+                  version: $(defaultDotnetVersion)
+
+              - template: /azure-pipelines/install-node.yml@self
+
+              - task: DownloadPipelineArtifact@2
+                displayName: Download Asset Manifests
+                inputs:
+                  source: specific
+                  project: internal
+                  pipeline: dotnet-roslyn-official
+                  runVersion: specific
+                  runId: $(RoslynBuildId)
+                  artifact: AssetManifests
+                  path: $(Pipeline.Workspace)/AssetManifests
+
+              - pwsh: |
+                  npm ci
+                  npm install
+                  npm install -g gulp
+                  gulp installDependencies
+                displayName: 'Install npm dependencies and gulp'
+                workingDirectory: $(Build.SourcesDirectory)/dotnet-vscode-csharp
+
+              - checkout: RoslynMirror
+                fetchTags: false
+                displayName: 'Checkout Roslyn repository'
+                path: roslyn
+
+              - script: |
+                  echo "Installing roslyn-tools..."
+                  dotnet tool install -g Microsoft.RoslynTools --prerelease --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json
+                  echo "Verifying roslyn-tools installation..."
+                  dotnet tool list -g
+                  roslyn-tools --version
+                displayName: 'Install roslyn-tools CLI'
+
+              - pwsh: gulp insertion:roslyn --assetManifestPath=$(Pipeline.Workspace)/AssetManifests --roslynRepoPath=$(Pipeline.Workspace)/roslyn --roslynEndSHA=$(RoslynEndSHA) --roslynBuildNumber=$(RoslynBuildNumber) --roslynBuildId=$(RoslynBuildId) --targetBranch=${{ parameters.targetBranch }} --githubPAT=$(BotAccount-dotnet-bot-repo-PAT) --dryRun=false
+                workingDirectory: $(Build.SourcesDirectory)/dotnet-vscode-csharp
+
+
