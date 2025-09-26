@@ -16,6 +16,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           fetch-tags: true
       - name: Install NodeJS
         uses: actions/setup-node@v4
