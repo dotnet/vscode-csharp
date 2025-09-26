@@ -28,9 +28,6 @@ jobs:
       DevKitTests:
         npmCommand: test:integration:devkit
         isIntegration: true
-      RazorTests:
-        npmCommand: test:integration:razor
-        isIntegration: true
       RazorCohostTests:
         npmCommand: test:integration:razor:cohost
         isIntegration: true
