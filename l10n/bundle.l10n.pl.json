@@ -37,7 +37,7 @@
   "Copy Html": "Kopiuj treść HTML",
   "Copy issue content again": "Ponownie skopiuj zawartość problemu",
   "Could not determine CSharp content": "Nie można określić zawartości CSharp",
-  "Could not determine CSharp content: {0}": "Could not determine CSharp content: {0}",
+  "Could not determine CSharp content: {0}": "Nie można określić zawartości CSharp: {0}",
   "Could not determine Html content": "Nie można określić zawartości HTML",
   "Could not find '{0}' in or above '{1}'.": "Nie można odnaleźć elementu „{0}” w lub powyżej „{1}”.",
   "Could not find Razor Language Server executable '{0}' within directory": "Nie można odnaleźć pliku wykonywalnego serwera języka Razor „{0}” w katalogu",

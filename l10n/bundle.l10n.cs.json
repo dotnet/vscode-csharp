@@ -37,7 +37,7 @@
   "Copy Html": "Kopírovat HTML",
   "Copy issue content again": "Zkopírovat obsah problému znovu",
   "Could not determine CSharp content": "Nepovedlo se určit obsah CSharp.",
-  "Could not determine CSharp content: {0}": "Could not determine CSharp content: {0}",
+  "Could not determine CSharp content: {0}": "Nepovedlo se určit obsah CSharp: {0}",
   "Could not determine Html content": "Nepovedlo se určit obsah HTML.",
   "Could not find '{0}' in or above '{1}'.": "Nepovedlo se najít {0} v {1} ani výše.",
   "Could not find Razor Language Server executable '{0}' within directory": "V adresáři se nepovedlo najít spustitelný soubor jazykového serveru Razor {0}.",

@@ -37,7 +37,7 @@
   "Copy Html": "HTML'yi Kopyala",
   "Copy issue content again": "Sorun içeriğini yeniden kopyala",
   "Could not determine CSharp content": "CSharp içeriği belirlenemedi",
-  "Could not determine CSharp content: {0}": "Could not determine CSharp content: {0}",
+  "Could not determine CSharp content: {0}": "CSharp içeriği belirlenemedi: {0}",
   "Could not determine Html content": "Html içeriği belirlenemedi",
   "Could not find '{0}' in or above '{1}'.": "'{1}' içinde veya üzerinde '{0}' bulunamadı.",
   "Could not find Razor Language Server executable '{0}' within directory": "'{0}' Razor Dil Sunucusu yürütülebilir dosyası dizinde bulunamadı",
