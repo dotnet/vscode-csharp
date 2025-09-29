@@ -21,16 +21,20 @@ import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction
 import { commonOptions, languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
 import { registerRestoreCommands } from './projectRestore/restore';
-import { registerCopilotExtension } from './copilot/copilot';
 import { registerSourceGeneratedFilesContentProvider } from './generators/sourceGeneratedFilesContentProvider';
 import { registerMiscellaneousFileNotifier } from './workspace/miscellaneousFileNotifier';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
 import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
+import { registerCopilotRelatedFilesProvider } from './copilot/relatedFilesProvider';
+import { registerCopilotContextProviders } from './copilot/contextProviders';
+import { RazorLogger } from '../razor/src/razorLogger';
+import { registerRazorEndpoints } from './razor/razorEndpoints';
+import { registerTraceCommand } from './profiling/profiling';
 
 let _channel: vscode.LogOutputChannel;
-let _traceChannel: vscode.OutputChannel;
+let _traceChannel: vscode.LogOutputChannel;
 
 /**
  * Creates and activates the Roslyn language server.
@@ -42,13 +46,13 @@ export async function activateRoslynLanguageServer(
     optionObservable: Observable<void>,
     outputChannel: vscode.LogOutputChannel,
     reporter: TelemetryReporter,
-    languageServerEvents: RoslynLanguageServerEvents
+    languageServerEvents: RoslynLanguageServerEvents,
+    razorLogger: RazorLogger
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
     _channel = outputChannel;
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
-    // The trace channel verbosity is controlled by the _channel verbosity.
-    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'));
+    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'), { log: true });
 
     reporter.sendTelemetryEvent(TelemetryEventNames.ClientInitialize);
 
@@ -71,23 +75,27 @@ export async function activateRoslynLanguageServer(
         _traceChannel
     );
 
+    registerTraceCommand(context, languageServer, outputChannel);
+
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);
-    registerCopilotExtension(languageServer, _channel);
+    registerCopilotRelatedFilesProvider(context, languageServer, _channel);
+    registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
-    registerCommands(context, languageServer, hostExecutableResolver, _channel);
+    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel);
     registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
     registerRazorCommands(context, languageServer);
+    registerRazorEndpoints(context, languageServer, razorLogger, platformInfo);
 
     registerUnitTestingCommands(context, languageServer);
 
     // Register any needed debugger components that need to communicate with the language server.
     registerDebugger(context, languageServer, languageServerEvents, platformInfo, _channel);
 
-    registerRestoreCommands(context, languageServer);
+    registerRestoreCommands(context, languageServer, _channel);
 
     registerSourceGeneratedFilesContentProvider(context, languageServer);
 

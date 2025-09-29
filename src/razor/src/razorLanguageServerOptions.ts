@@ -7,10 +7,9 @@ import * as vscode from 'vscode';
 
 export interface RazorLanguageServerOptions {
     serverPath: string;
-    outputChannel?: vscode.OutputChannel;
+    outputChannel?: vscode.LogOutputChannel;
     debug?: boolean;
     usingOmniSharp: boolean;
-    forceRuntimeCodeGeneration: boolean;
     suppressErrorToasts: boolean;
-    useNewFormattingEngine: boolean;
+    cohostingEnabled: boolean;
 }

@@ -15,7 +15,8 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": "$tsc",
         },
         {
             "label": "buildDev",
@@ -25,17 +26,30 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": "$tsc",
         },
         {
-            "label": "buildTest",
+            "label": "package",
             "command": "npm",
             "type": "shell",
-            "args": ["run", "compileTest"],
+            "args": ["run", "package"],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": "$tsc",
+        },
+        {
+            "label": "packageDev",
+            "command": "npm",
+            "type": "shell",
+            "args": ["run", "packageDev"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$tsc",
         },
         {
             "label": "test",

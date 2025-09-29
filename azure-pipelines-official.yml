@@ -60,7 +60,7 @@ extends:
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
-    - template: /azure-pipelines/build-all.yml@self
+    - template: /azure-pipelines/build-vsix.yml@self
       parameters:
         versionNumberOverride: ${{ parameters.versionNumberOverride }}
         isOfficial: true

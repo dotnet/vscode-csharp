@@ -21,6 +21,8 @@ import CompositeDisposable from '../compositeDisposable';
 import { BaseVsDbgConfigurationProvider } from '../shared/configurationProvider';
 import { omnisharpOptions } from '../shared/options';
 import { ActionOption, showErrorMessage } from '../shared/observers/utils/showMessage';
+import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { Command } from 'vscode-languageserver-types';
 
 export async function activate(
     thisExtension: vscode.Extension<any>,
@@ -229,12 +231,18 @@ function showInstallErrorMessage(eventStream: EventStream) {
 function showDotnetToolsWarning(message: string): void {
     const config = vscode.workspace.getConfiguration('csharp');
     if (!config.get('suppressDotnetInstallWarning', false)) {
-        const getDotNetMessage: ActionOption = {
-            title: vscode.l10n.t('Get the SDK'),
-            action: async () => {
-                await vscode.env.openExternal(vscode.Uri.parse('https://dot.net/core-sdk-vscode'));
-            },
-        };
+        const getDotNetMessage: ActionOption | Command =
+            getCSharpDevKit() !== undefined
+                ? {
+                      title: vscode.l10n.t('Get the SDK'),
+                      command: 'csdevkit.installDotnetSdk',
+                  }
+                : {
+                      title: vscode.l10n.t('Get the SDK'),
+                      action: async () => {
+                          await vscode.env.openExternal(vscode.Uri.parse('https://dot.net/core-sdk-vscode'));
+                      },
+                  };
         const goToSettingsMessage: ActionOption = {
             title: vscode.l10n.t('Disable message in settings'),
             action: async () => {

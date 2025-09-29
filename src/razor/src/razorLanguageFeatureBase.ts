@@ -14,7 +14,7 @@ import { getUriPath } from './uriPaths';
 
 export class RazorLanguageFeatureBase {
     constructor(
-        private readonly documentSynchronizer: RazorDocumentSynchronizer,
+        protected readonly documentSynchronizer: RazorDocumentSynchronizer,
         protected readonly documentManager: RazorDocumentManager,
         protected readonly serviceClient: RazorLanguageServiceClient,
         protected readonly logger: RazorLogger
@@ -39,8 +39,8 @@ export class RazorLanguageFeatureBase {
                 if (languageResponse.hostDocumentVersion === undefined) {
                     // There should always be a document version attached to an open document.
                     // Log it and move on as if it was synchronized.
-                    if (this.logger.verboseEnabled) {
-                        this.logger.logVerbose(
+                    if (this.logger.traceEnabled) {
+                        this.logger.logTrace(
                             `Could not find a document version associated with the document '${getUriPath(
                                 document.uri
                             )}'.`

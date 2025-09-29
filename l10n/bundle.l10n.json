@@ -1,12 +1,14 @@
 {
+  "Reload Extensions": "Reload Extensions",
+  "Workspace trust has changed. Would you like to reload extensions?": "Workspace trust has changed. Would you like to reload extensions?",
+  "How to setup Remote Debugging": "How to setup Remote Debugging",
+  "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.": "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.",
+  "The C# extension for Visual Studio Code is incompatible on {0} {1}.": "The C# extension for Visual Studio Code is incompatible on {0} {1}.",
   "Update and reload": "Update and reload",
   "The {0} extension requires at least {1} of the .NET Install Tool ({2}) extension. Please update to continue": "The {0} extension requires at least {1} of the .NET Install Tool ({2}) extension. Please update to continue",
   "Version {0} of the .NET Install Tool ({1}) was not found, {2} will not activate.": "Version {0} of the .NET Install Tool ({1}) was not found, {2} will not activate.",
   ".NET Test Log": ".NET Test Log",
   ".NET NuGet Restore": ".NET NuGet Restore",
-  "How to setup Remote Debugging": "How to setup Remote Debugging",
-  "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.": "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.",
-  "The C# extension for Visual Studio Code is incompatible on {0} {1}.": "The C# extension for Visual Studio Code is incompatible on {0} {1}.",
   "Cannot create .NET debug configurations. No workspace folder was selected.": "Cannot create .NET debug configurations. No workspace folder was selected.",
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.",
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.",
@@ -21,6 +23,10 @@
   "Transport attach could not obtain processes list.": "Transport attach could not obtain processes list.",
   "Error Message: ": "Error Message: ",
   "See {0} output": "See {0} output",
+  "Manage": "Manage",
+  "C# Activation Status": "C# Activation Status",
+  "Limited Activation": "Limited Activation",
+  "The workspace is not trusted.": "The workspace is not trusted.",
   "'{0}' was not set in the debug configuration.": "'{0}' was not set in the debug configuration.",
   "'{0}' request is not supported for the '{1}' configuration.": "'{0}' request is not supported for the '{1}' configuration.",
   "'{0}' was not provided in the debug configuration.": "'{0}' was not provided in the debug configuration.",
@@ -99,10 +105,11 @@
   "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.": "{0}, paste your issue contents as the body of the issue. Don't forget to fill out any details left unfilled.",
   "Privacy Alert! The contents copied to your clipboard may contain personal data. Prior to posting to GitHub, please remove any personal data which should not be publicly viewable.": "Privacy Alert! The contents copied to your clipboard may contain personal data. Prior to posting to GitHub, please remove any personal data which should not be publicly viewable.",
   "Copy issue content again": "Copy issue content again",
-  "Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.": "Cannot start collecting Razor logs when {0} is set to {1}. Please set {0} to {2} and then reload your VSCode environment and re-run the report Razor issue command.",
+  "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".",
   "Non Razor file as active document": "Non Razor file as active document",
   "Could not determine CSharp content": "Could not determine CSharp content",
   "Could not determine Html content": "Could not determine Html content",
+  "Could not determine CSharp content: {0}": "Could not determine CSharp content: {0}",
   "A valid dotnet installation could not be found: {0}": "A valid dotnet installation could not be found: {0}",
   "Is this a Bug or Feature request?": "Is this a Bug or Feature request?",
   "Bug": "Bug",
@@ -176,6 +183,7 @@
   "Choose": "Choose",
   "Choose and set default": "Choose and set default",
   "Do not load any": "Do not load any",
+  "Reload C# Extension": "Reload C# Extension",
   "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?": "Detected change in telemetry settings. These will not take effect until the language server is restarted, would you like to restart?",
   "IntelliCode features will not be available, {0} failed to activate.": "IntelliCode features will not be available, {0} failed to activate.",
   "Go to output": "Go to output",
@@ -185,17 +193,63 @@
   "Sending request": "Sending request",
   "C# Project Context Status": "C# Project Context Status",
   "Active File Context": "Active File Context",
+  "Initializing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
+    "message": "Initializing dotnet-trace...",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "Failed to execute dotnet-trace command: {0}/dotnet-trace is a command name and should not be localized": {
+    "message": "Failed to execute dotnet-trace command: {0}",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
+  "Select Trace Folder": "Select Trace Folder",
+  "Select Folder to Save Trace File": "Select Folder to Save Trace File",
+  "Folder for trace file {0} does not exist": "Folder for trace file {0} does not exist",
+  "Enter dotnet-trace arguments/dotnet-trace is a command name and should not be localized": {
+    "message": "Enter dotnet-trace arguments",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "You can modify the default arguments if needed": "You can modify the default arguments if needed",
+  "Recording trace...": "Recording trace...",
+  "Install": "Install",
+  "dotnet-trace not found, run \"{0}\" to install it?/dotnet-trace is a command name and should not be localized": {
+    "message": "dotnet-trace not found, run \"{0}\" to install it?",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "Installing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
+    "message": "Installing dotnet-trace...",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
+  "Failed to install dotnet-trace, it may need to be manually installed. See C# output for details./dotnet-trace is a command name and should not be localized": {
+    "message": "Failed to install dotnet-trace, it may need to be manually installed. See C# output for details.",
+    "comment": [
+      "dotnet-trace is a command name and should not be localized"
+    ]
+  },
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
   "Generated document not found": "Generated document not found",
   "Nested Code Action": "Nested Code Action",
   "Fix All: ": "Fix All: ",
   "Pick a fix all scope": "Pick a fix all scope",
   "Fix All Code Action": "Fix All Code Action",
+  "No": "No",
+  ".NET: Generate Assets for Build and Debug": ".NET: Generate Assets for Build and Debug",
+  "The '{0}' command is not recommended to be used when C# Dev Kit extension is installed. Would you like build and debug using a dynamic configuration instead?": "The '{0}' command is not recommended to be used when C# Dev Kit extension is installed. Would you like build and debug using a dynamic configuration instead?",
   "Failed to set extension directory": "Failed to set extension directory",
   "Failed to set debugadpter directory": "Failed to set debugadpter directory",
   "Failed to set install complete file path": "Failed to set install complete file path",
-  "The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is {0}.": "The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is {0}.",
-  "The .NET Core SDK cannot be located: {0}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.": "The .NET Core SDK cannot be located: {0}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.",
+  "The .NET SDK located on the path is too old. .NET debugging will not be enabled. The minimum supported version is {0}.": "The .NET SDK located on the path is too old. .NET debugging will not be enabled. The minimum supported version is {0}.",
+  "The .NET SDK cannot be located: {0}. .NET debugging will not be enabled. Make sure the .NET SDK is installed and is on the path.": "The .NET SDK cannot be located: {0}. .NET debugging will not be enabled. Make sure the .NET SDK is installed and is on the path.",
   "The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.": "The value '{0}' for 'targetArchitecture' in launch configuraiton is invalid. Expected 'x86_64' or 'arm64'.",
   "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.": "Unable to determine RuntimeId. Please set 'targetArchitecture' in your launch.json configuration.",
   "Unexpected RuntimeId '{0}'.": "Unexpected RuntimeId '{0}'.",

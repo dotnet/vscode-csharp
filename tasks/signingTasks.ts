@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as gulp from 'gulp';
 import { rootPath } from './projectPaths';
 import path from 'path';
+import { verifySignature } from './vsceTasks';
 // There are no typings for this library.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 //const argv = require('yargs').argv;
@@ -18,6 +19,10 @@ gulp.task('signJs', async () => {
 
 gulp.task('signVsix', async () => {
     await signVsix();
+});
+
+gulp.task('verifyVsix', async () => {
+    await verifyVsix();
 });
 
 // Development task to install the signing plugin locally.
@@ -41,11 +46,17 @@ async function installSignPlugin(): Promise<void> {
 
 async function signJs(): Promise<void> {
     const logPath = getLogPath();
-    if (process.env.SignType === 'test' && process.platform !== 'win32') {
+    const signType = process.env.SignType;
+    if (!signType) {
+        console.warn('SignType environment variable is not set, skipping JS signing.');
+        return;
+    }
+
+    if (signType === 'test' && process.platform !== 'win32') {
         console.log('Test signing is not supported on non-windows platforms. Skipping JS signing.');
         return;
     }
-    console.log(`Signing JS as ${process.env.SignType}`);
+    console.log(`Signing JS as ${signType}`);
     await execDotnet([
         'build',
         path.join(rootPath, 'msbuild', 'signing', 'signJs'),
@@ -56,16 +67,41 @@ async function signJs(): Promise<void> {
 
 async function signVsix(): Promise<void> {
     const logPath = getLogPath();
-    if (process.env.SignType === 'test' && process.platform !== 'win32') {
+    const signType = process.env.SignType;
+    if (!signType) {
+        console.warn('SignType environment variable is not set, skipping VSIX signing.');
+        return;
+    }
+
+    if (signType === 'test' && process.platform !== 'win32') {
         console.log('Test signing is not supported on non-windows platforms. Skipping VSIX signing.');
         return;
     }
-    console.log(`Signing VSIX as ${process.env.SignType}`);
+    console.log(`Signing VSIX as ${signType}`);
     await execDotnet([
         'build',
         path.join(rootPath, 'msbuild', 'signing', 'signVsix'),
         `-bl:${path.join(logPath, 'signVsix.binlog')}`,
     ]);
+}
+
+async function verifyVsix(): Promise<void> {
+    const signType = process.env.SignType;
+    if (!signType) {
+        console.warn('SignType environment variable is not set, skipping VSIX verification.');
+        return;
+    }
+
+    if (signType.toLowerCase() !== 'real') {
+        console.log('Signing verification is only supported for real signing. Skipping VSIX verification.');
+        return;
+    }
+
+    const vsixs = fs.readdirSync('.').filter((file) => path.extname(file) === '.vsix');
+    for (const vsixFile in vsixs) {
+        console.log(`Verifying signature of ${vsixFile}`);
+        await verifySignature(vsixFile);
+    }
 }
 
 function getLogPath(): string {

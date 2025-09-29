@@ -1,0 +1,11 @@
+{
+    "folders": [
+        {
+            "path": ".."
+        }
+    ],
+    "settings": {
+        "dotnet.server.useOmnisharp": false,
+        "dotnet.preferCSharpExtension": true,
+    }
+}

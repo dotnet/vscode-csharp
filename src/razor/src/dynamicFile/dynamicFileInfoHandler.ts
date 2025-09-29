@@ -8,13 +8,15 @@ import { UriConverter } from '../../../lsptoolshost/utils/uriConverter';
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorLogger } from '../razorLogger';
 import { ProvideDynamicFileParams } from './provideDynamicFileParams';
-import { ProvideDynamicFileResponse, DynamicFileUpdate } from './provideDynamicFileResponse';
+import { ProvideDynamicFileResponse } from './provideDynamicFileResponse';
 import { RemoveDynamicFileParams } from './removeDynamicFileParams';
 import { CSharpProjectedDocument } from '../csharp/csharpProjectedDocument';
 import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
 import { RazorDynamicFileChangedParams } from './dynamicFileUpdatedParams';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
-import { ServerTextChange } from '../rpc/serverTextChange';
+import { razorTextChange } from './razorTextChange';
+import { razorTextSpan } from './razorTextSpan';
+import { razorOptions } from '../../../shared/options';
 
 // Handles Razor generated doc communication between the Roslyn workspace and Razor.
 // didChange behavior for Razor generated docs is handled in the RazorDocumentManager.
@@ -38,16 +40,21 @@ export class DynamicFileInfoHandler {
                 await this.removeDynamicFileInfo(request);
             }
         );
-        this.documentManager.onChange(async (e) => {
-            if (e.kind == RazorDocumentChangeKind.csharpChanged && !e.document.isOpen) {
-                const uriString = UriConverter.serialize(e.document.uri);
-                const identifier = TextDocumentIdentifier.create(uriString);
-                await vscode.commands.executeCommand(
-                    DynamicFileInfoHandler.dynamicFileUpdatedCommand,
-                    new RazorDynamicFileChangedParams(identifier)
-                );
-            }
-        });
+
+        if (!razorOptions.cohostingEnabled) {
+            this.documentManager.onChange(async (e) => {
+                // Ignore any updates without text changes. This is important for perf since sending an update to roslyn does
+                // a round trip for producing nothing new and causes a lot of churn in solution updates.
+                if (e.kind == RazorDocumentChangeKind.csharpChanged && !e.document.isOpen && e.changes.length > 0) {
+                    const uriString = UriConverter.serialize(e.document.uri);
+                    const identifier = TextDocumentIdentifier.create(uriString);
+                    await vscode.commands.executeCommand(
+                        DynamicFileInfoHandler.dynamicFileUpdatedCommand,
+                        new RazorDynamicFileChangedParams(identifier)
+                    );
+                }
+            });
+        }
     }
 
     // Given Razor document URIs, returns associated generated doc URIs
@@ -75,19 +82,11 @@ export class DynamicFileInfoHandler {
             if (request.fullText) {
                 // The server asked for a full replace so the newtext is the important
                 // thing here, the span doesn't matter.
-                const change: ServerTextChange = {
-                    newText: razorDocument.csharpDocument.getContent(),
-                    span: {
-                        start: 0,
-                        length: 0,
-                    },
-                };
-
-                const update = new DynamicFileUpdate([change]);
+                const change = new razorTextChange(razorDocument.csharpDocument.getContent(), new razorTextSpan(0, 0));
 
                 return new ProvideDynamicFileResponse(
                     request.razorDocument,
-                    [update],
+                    [change],
                     csharpDocument.checksum,
                     csharpDocument.checksumAlgorithm,
                     csharpDocument.encodingCodePage
@@ -99,22 +98,18 @@ export class DynamicFileInfoHandler {
             if (this.documentManager.isRazorDocumentOpenInCSharpWorkspace(vscodeUri)) {
                 // Open documents have didOpen/didChange to update the csharp buffer. Razor
                 // does not send edits and instead lets vscode handle them.
-                return new ProvideDynamicFileResponse(
-                    { uri: virtualCsharpUri },
-                    null,
-                    csharpDocument.checksum,
-                    csharpDocument.checksumAlgorithm,
-                    csharpDocument.encodingCodePage
-                );
+                return null;
             } else {
                 // Closed documents provide edits since the last time they were requested since
                 // there is no open buffer in vscode corresponding to the csharp content.
                 const response = csharpDocument.applyEdits();
-                const updates = response.edits?.map((e) => new DynamicFileUpdate(e.changes)) ?? null;
+                const updates = response.edits?.flatMap((e) =>
+                    e.changes.map((c) => new razorTextChange(c.newText, new razorTextSpan(c.span.start, c.span.length)))
+                );
 
                 return new ProvideDynamicFileResponse(
                     { uri: virtualCsharpUri },
-                    updates,
+                    updates ?? [],
                     response.originalChecksum,
                     response.originalChecksumAlgorithm,
                     response.originalEncodingCodePage

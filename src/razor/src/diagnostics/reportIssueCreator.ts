@@ -11,11 +11,17 @@ import { IRazorDocument } from '../document/IRazorDocument';
 import { IRazorDocumentManager } from '../document/IRazorDocumentManager';
 import { razorExtensionId } from '../razorExtensionId';
 import { IReportIssueDataCollectionResult } from './IReportIssueDataCollectionResult';
+import { HtmlDocumentManager } from '../../../lsptoolshost/razor/htmlDocumentManager';
+import { ShowGeneratedDocumentCommand } from '../../../lsptoolshost/razor/showGeneratedDocumentCommand';
+import { GeneratedDocumentKind } from '../../../lsptoolshost/razor/generatedDocumentKind';
+import { RoslynLanguageServer } from '../../../lsptoolshost/server/roslynLanguageServer';
 
 export class ReportIssueCreator {
     constructor(
         private readonly vscodeApi: vscodeAdapter.api,
-        private readonly documentManager: IRazorDocumentManager
+        private readonly documentManager?: IRazorDocumentManager,
+        private readonly cohostingDocumentManager?: HtmlDocumentManager,
+        private readonly roslynLanguageServer?: RoslynLanguageServer
     ) {}
 
     public async create(collectionResult: IReportIssueDataCollectionResult) {
@@ -23,16 +29,33 @@ export class ReportIssueCreator {
         let csharpContent: string;
         let htmlContent: string;
 
+        razorContent = vscode.l10n.t('Non Razor file as active document');
+        csharpContent = vscode.l10n.t('Could not determine CSharp content');
+        htmlContent = vscode.l10n.t('Could not determine Html content');
+
         if (collectionResult.document) {
             razorContent = await this.getRazor(collectionResult.document);
 
-            const razorDocument = await this.documentManager.getDocument(collectionResult.document.uri);
-            csharpContent = await this.getProjectedCSharp(razorDocument);
-            htmlContent = await this.getProjectedHtml(razorDocument);
-        } else {
-            razorContent = vscode.l10n.t('Non Razor file as active document');
-            csharpContent = vscode.l10n.t('Could not determine CSharp content');
-            htmlContent = vscode.l10n.t('Could not determine Html content');
+            if (this.documentManager) {
+                const razorDocument = await this.documentManager.getDocument(collectionResult.document.uri);
+                csharpContent = await this.getProjectedCSharp(razorDocument);
+                htmlContent = await this.getProjectedHtml(razorDocument);
+            } else if (this.cohostingDocumentManager) {
+                try {
+                    csharpContent = await ShowGeneratedDocumentCommand.getGeneratedDocumentContent(
+                        collectionResult.document.uri,
+                        GeneratedDocumentKind.CSharp,
+                        this.roslynLanguageServer!
+                    );
+                } catch (e: any) {
+                    csharpContent = vscode.l10n.t('Could not determine CSharp content: {0}', e.toString());
+                }
+
+                const htmlDocument = await this.cohostingDocumentManager.getDocument(collectionResult.document.uri);
+                if (htmlDocument) {
+                    htmlContent = htmlDocument.getContent();
+                }
+            }
         }
 
         const razorExtensionVersion = this.getExtensionVersion();

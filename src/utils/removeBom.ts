@@ -3,13 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import removeBomBuffer from 'strip-bom-buf';
-import removeBomString from 'strip-bom';
+import * as NodeBuffer from 'node:buffer';
 
 export function removeBOMFromBuffer(buffer: Buffer): Buffer {
-    return removeBomBuffer(buffer);
+    return buffer[0] === 0xef && buffer[1] === 0xbb && buffer[2] === 0xbf && NodeBuffer.isUtf8(buffer)
+        ? buffer.subarray(3)
+        : buffer;
 }
 
 export function removeBOMFromString(line: string): string {
-    return removeBomString(line.trim());
+    line = line.trim();
+    return line.charCodeAt(0) === 0xfeff ? line.slice(1) : line;
 }

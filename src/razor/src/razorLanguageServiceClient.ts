@@ -11,9 +11,22 @@ import { LanguageQueryResponse } from './rpc/languageQueryResponse';
 import { RazorMapToDocumentRangesRequest } from './rpc/razorMapToDocumentRangesRequest';
 import { RazorMapToDocumentRangesResponse } from './rpc/razorMapToDocumentRangesResponse';
 import { convertRangeFromSerializable, convertRangeToSerializable } from './rpc/serializableRange';
+import { RazorMapSpansParams } from './mapping/razorMapSpansParams';
+import { RazorMapSpansResponse } from './mapping/razorMapSpansResponse';
+import { UriConverter } from '../../lsptoolshost/utils/uriConverter';
+import { RazorDocumentManager } from './document/razorDocumentManager';
+import { RazorMapTextChangesParams } from './mapping/razorMapTextChangesParams';
+import { RazorMapTextChangesResponse } from './mapping/razorMapTextChangesResponse';
+import { RazorMapToDocumentEditsParams } from './mapping/razorMapToDocumentEditsParams';
+import { RazorMapToDocumentEditsResponse } from './mapping/razorMapToDocumentEditsResponse';
 
 export class RazorLanguageServiceClient {
-    constructor(private readonly serverClient: RazorLanguageServerClient) {}
+    constructor(
+        private readonly serverClient: RazorLanguageServerClient,
+        private readonly documentManager: RazorDocumentManager
+    ) {}
+
+    private static readonly MapToDocumentRangesEndpoint = 'razor/mapToDocumentRanges';
 
     public async languageQuery(position: vscode.Position, uri: vscode.Uri) {
         await this.ensureStarted();
@@ -35,7 +48,7 @@ export class RazorLanguageServiceClient {
 
         const request = new RazorMapToDocumentRangesRequest(languageKind, serializableRanges, uri);
         const response = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>(
-            'razor/mapToDocumentRanges',
+            RazorLanguageServiceClient.MapToDocumentRangesEndpoint,
             request
         );
         const responseRanges = [];
@@ -48,6 +61,63 @@ export class RazorLanguageServiceClient {
 
         response.ranges = responseRanges;
         return response;
+    }
+
+    public async mapSpans(params: RazorMapSpansParams): Promise<RazorMapSpansResponse> {
+        const csharpUri = UriConverter.deserialize(params.csharpDocument.uri);
+        const document = await this.documentManager.getDocumentForCSharpUri(csharpUri);
+
+        if (!document) {
+            return RazorMapSpansResponse.empty;
+        }
+
+        const request = new RazorMapToDocumentRangesRequest(LanguageKind.CSharp, params.ranges, document.uri);
+        const result = await this.serverClient.sendRequest<RazorMapToDocumentRangesResponse>(
+            RazorLanguageServiceClient.MapToDocumentRangesEndpoint,
+            request
+        );
+
+        if (!result) {
+            return RazorMapSpansResponse.empty;
+        }
+
+        return new RazorMapSpansResponse(
+            result.ranges.map((r) => {
+                return {
+                    start: { line: r.start.line, character: r.start.character },
+                    end: { line: r.end.line, character: r.end.character },
+                };
+            }),
+            result.spans,
+            {
+                uri: UriConverter.serialize(document.uri),
+            }
+        );
+    }
+
+    async mapTextChanges(params: RazorMapTextChangesParams): Promise<RazorMapTextChangesResponse> {
+        const csharpUri = UriConverter.deserialize(params.csharpDocument.uri);
+        const document = await this.documentManager.getDocumentForCSharpUri(csharpUri);
+        if (!document) {
+            return RazorMapTextChangesResponse.empty;
+        }
+
+        const request = new RazorMapToDocumentEditsParams(LanguageKind.CSharp, document.uri, params.textChanges);
+        const response = await this.serverClient.sendRequest<RazorMapToDocumentEditsResponse>(
+            'razor/mapToDocumentEdits',
+            request
+        );
+
+        if (!response) {
+            return RazorMapTextChangesResponse.empty;
+        }
+
+        return new RazorMapTextChangesResponse(
+            {
+                uri: UriConverter.serialize(document.uri),
+            },
+            response.textChanges
+        );
     }
 
     private async ensureStarted() {

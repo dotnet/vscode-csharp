@@ -1,4 +1,6 @@
 parameters:
+  - name: os
+    type: string
   - name: pool
     type: object
   - name: containerName
@@ -16,10 +18,22 @@ jobs:
 - job:
   strategy:
     matrix:
-      CSharpTests:
-        npmCommand: test:withoutDevKit
+      UnitTests:
+        npmCommand: test:unit
+        isIntegration: false
+      ${{ if ne(parameters.os, 'windows') }}:
+        CSharpIntegrationTests:
+          npmCommand: test:integration:csharp
+          isIntegration: true
       DevKitTests:
         npmCommand: test:integration:devkit
+        isIntegration: true
+      RazorCohostTests:
+        npmCommand: test:integration:razor:cohost
+        isIntegration: true
+      UntrustedWorkspaceTest:
+        npmCommand: test:integration:untrusted
+        isIntegration: true
   pool: ${{ parameters.pool }}
   ${{ if parameters.containerName }}:
     container: ${{ parameters.containerName }}
@@ -27,6 +41,7 @@ jobs:
   - template: /azure-pipelines/test.yml@self
     parameters:
       dotnetVersion: ${{ parameters.dotnetVersion }}
-      installAdditionalLinuxDependencies: true
+      installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
       npmCommand: $(npmCommand)
       testVSCodeVersion: ${{ parameters.testVSCodeVersion }}
+      isIntegration: $(isIntegration)

@@ -21,7 +21,7 @@ const killProcess = (targetPid: number | undefined, logger: RazorLogger) => {
     }
 
     try {
-        logger.logVerbose(`[DEBUGGER] Terminating debugging session with PID ${targetPid}...`);
+        logger.logTrace(`[DEBUGGER] Terminating debugging session with PID ${targetPid}...`);
         process.kill(targetPid);
     } catch (error) {
         logger.logError(`[DEBUGGER] Error terminating debug processes with PID ${targetPid}: `, error as Error);

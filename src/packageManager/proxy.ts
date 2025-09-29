@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Url } from 'url';
-import HttpProxyAgent from 'http-proxy-agent';
-import HttpsProxyAgent from 'https-proxy-agent';
+import { HttpProxyAgent, HttpProxyAgentOptions } from 'http-proxy-agent';
+import { HttpsProxyAgent, HttpsProxyAgentOptions } from 'https-proxy-agent';
 import { Agent } from 'http';
 
 function getSystemProxyURL(requestURL: Url): string | undefined {
@@ -21,7 +21,7 @@ function getSystemProxyURL(requestURL: Url): string | undefined {
 export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean): Agent | undefined {
     const proxyURL = proxy.length > 0 ? proxy : getSystemProxyURL(requestURL);
 
-    if (proxyURL === undefined) {
+    if (proxyURL === undefined || proxyURL.length === 0) {
         return undefined;
     }
 
@@ -34,11 +34,11 @@ export function getProxyAgent(requestURL: Url, proxy: string, strictSSL: boolean
         return undefined;
     }
 
-    const opts: HttpProxyAgent.HttpProxyAgentOptions<string> & HttpsProxyAgent.HttpsProxyAgentOptions<string> = {
+    const opts: HttpProxyAgentOptions<string> & HttpsProxyAgentOptions<string> = {
         rejectUnauthorized: strictSSL,
     };
 
     return requestURL.protocol === 'http:'
-        ? new HttpProxyAgent.HttpProxyAgent(proxyEndpoint, opts)
-        : new HttpsProxyAgent.HttpsProxyAgent(proxyEndpoint, opts);
+        ? new HttpProxyAgent(proxyEndpoint, opts)
+        : new HttpsProxyAgent(proxyEndpoint, opts);
 }

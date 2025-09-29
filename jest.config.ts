@@ -13,6 +13,7 @@ const config: Config = {
         '<rootDir>/test/omnisharp/omnisharpUnitTests/jest.config.ts',
         '<rootDir>/test/razor/razorIntegrationTests/jest.config.ts',
         '<rootDir>/test/razor/razorTests/jest.config.ts',
+        '<rootDir>/test/untrustedWorkspace/integrationTests/jest.config.ts',
     ],
     // Reporters are a global jest configuration property and cannot be set in the project jest config.
     // This configuration will create a 'junit.xml' file in the output directory, no matter which test project is running.

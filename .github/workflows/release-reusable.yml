@@ -1,0 +1,73 @@
+name: Reusable - Create Release from Changelog
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: Tag name to create a release for (e.g. v2.88.0 or v2.88.0-prerelease)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+
+      - name: Create release from CHANGELOG
+        uses: actions/github-script@v7
+        env:
+          TAG: ${{ inputs.tag }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { readFile } = require('fs/promises');
+
+            const tag = process.env.TAG;
+            core.info(`Creating release for tag: ${tag}`);
+
+            if (!tag || !tag.startsWith('v2.')) {
+              core.setFailed('Invalid tag name. Tag name must start with "v2."');
+              return;
+            }
+
+            // Read CHANGELOG.md and extract the latest section (first single '#' header)
+            const changelog = await readFile('CHANGELOG.md', 'utf8');
+            const headerMatch = changelog.match(/^# .+$/m);
+            if (!headerMatch) {
+              core.setFailed('Could not find a top-level # header in CHANGELOG.md');
+              return;
+            }
+            const startIdx = changelog.indexOf(headerMatch[0]);
+            let endIdx = changelog.indexOf('\n# ', startIdx + headerMatch[0].length);
+            if (endIdx === -1) {
+              endIdx = changelog.length;
+            }
+            const releaseNotes = changelog.substring(startIdx, endIdx).trim();
+
+            const isPrerelease = tag.includes('-prerelease');
+            core.info(`Prerelease: ${isPrerelease}`);
+
+            try {
+              const response = await github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: tag,
+                name: tag,
+                body: releaseNotes,
+                prerelease: isPrerelease,
+              });
+              core.info(`Release created: ${response.data.html_url}`);
+            } catch (err) {
+              if (err && err.status === 422 && err.message && String(err.message).includes('already_exists')) {
+                core.warning(`Release for tag '${tag}' already exists.`);
+              } else {
+                core.setFailed(`Error creating release: ${err?.message ?? err}`);
+              }
+            }

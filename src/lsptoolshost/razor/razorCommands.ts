@@ -27,7 +27,7 @@ import {
     InlayHintResolveRequest,
     InlayHintParams,
     InlayHintRequest,
-} from 'vscode-languageclient/node';
+} from 'vscode-languageclient';
 import SerializableSimplifyMethodParams from '../../razor/src/simplify/serializableSimplifyMethodParams';
 import { TextEdit } from 'vscode-html-languageservice';
 import { SerializableFormatNewFileParams } from '../../razor/src/formatNewFile/serializableFormatNewFileParams';
@@ -40,7 +40,6 @@ export const provideCodeActionsCommand = 'roslyn.provideCodeActions';
 export const resolveCodeActionCommand = 'roslyn.resolveCodeAction';
 export const provideCompletionsCommand = 'roslyn.provideCompletions';
 export const resolveCompletionsCommand = 'roslyn.resolveCompletion';
-export const provideSemanticTokensRangeCommand = 'roslyn.provideSemanticTokensRange';
 export const roslynSimplifyMethodCommand = 'roslyn.simplifyMethod';
 export const roslynFormatNewFileCommand = 'roslyn.formatNewFile';
 export const razorInitializeCommand = 'razor.initialize';
