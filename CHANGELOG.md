@@ -3,6 +3,15 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.95.x
+* Bump xamlTools to 18.0.11016.94 (PR: [#8665](https://github.com/dotnet/vscode-csharp/pull/8665))
+* Bump Roslyn to 5.1.0-1.25475.3 (PR: [#8665](https://github.com/dotnet/vscode-csharp/pull/8665))
+  * Fix index out of bounds producing diagnostic in error recovery scenario (PR: [#80391](https://github.com/dotnet/roslyn/pull/80391))
+  * Fix pp directives when converting block bodies to expression bodies (PR: [#80401](https://github.com/dotnet/roslyn/pull/80401))
+  * Fix renaming of type parameters used in object creation expressions (PR: [#80403](https://github.com/dotnet/roslyn/pull/80403))
+  * Add timing data for Proposal Adjuster fixers (PR: [#80406](https://github.com/dotnet/roslyn/pull/80406))
+  * Update ManagedHotReloadLanguageServiceBridge.cs to avoid raising not implement exception when projects is empty (PR: [#80408](https://github.com/dotnet/roslyn/pull/80408))
+
 # 2.94.x
 * Install roslyn-tools (PR: [#8663](https://github.com/dotnet/vscode-csharp/pull/8663))
 * Bump tar-fs from 2.1.3 to 2.1.4 (PR: [#8661](https://github.com/dotnet/vscode-csharp/pull/8661))
