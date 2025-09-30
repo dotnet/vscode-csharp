@@ -40,11 +40,11 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.0.0-2.25472.11",
+    "roslyn": "5.1.0-1.25475.3",
     "omniSharp": "1.39.14",
     "razor": "10.0.0-preview.25472.6",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.14.36106.43"
+    "xamlTools": "18.0.11016.94"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
