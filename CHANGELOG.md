@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.94.x
+* Fix update changelog script (PR: [#8671](https://github.com/dotnet/vscode-csharp/pull/8671))
 * Update RoslynCopilot url to 18.0.797-alpha (PR: [#8652](https://github.com/OmniSharp/omnisharp-vscode/pull/8652))
 * Fix GH action (PR: [#8662](https://github.com/OmniSharp/omnisharp-vscode/pull/8662))
 * Adds a new GH action to update the CHANGELOG (PR: [#8658](https://github.com/OmniSharp/omnisharp-vscode/pull/8658))
