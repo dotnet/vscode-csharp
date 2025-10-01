@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.94.x
+* Bump tar-fs from 2.1.3 to 2.1.4 (PR: [#8661](https://github.com/dotnet/vscode-csharp/pull/8661))
+* Update pipeline and packaging excludes (PR: [#8654](https://github.com/dotnet/vscode-csharp/pull/8654))
 * Bump xamlTools to 18.0.11016.94 (PR: [#8665](https://github.com/dotnet/vscode-csharp/pull/8665))
 * Bump Roslyn to 5.1.0-1.25475.3 (PR: [#8665](https://github.com/dotnet/vscode-csharp/pull/8665))
   * Fix index out of bounds producing diagnostic in error recovery scenario (PR: [#80391](https://github.com/dotnet/roslyn/pull/80391))
