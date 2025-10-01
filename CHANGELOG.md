@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.94.x
+* Update RoslynCopilot url to 18.0.797-alpha (PR: [#8652](https://github.com/OmniSharp/omnisharp-vscode/pull/8652))
+* Fix GH action (PR: [#8662](https://github.com/OmniSharp/omnisharp-vscode/pull/8662))
+* Adds a new GH action to update the CHANGELOG (PR: [#8658](https://github.com/OmniSharp/omnisharp-vscode/pull/8658))
+* Do not run legacy Razor tests in CI (PR: [#8656](https://github.com/OmniSharp/omnisharp-vscode/pull/8656))
+* Update third party notices for currently shipped version (PR: [#8653](https://github.com/OmniSharp/omnisharp-vscode/pull/8653))
 * Bump xamlTools to 18.0.11023.10 (PR: [#8669](https://github.com/dotnet/vscode-csharp/pull/8669))
 * Bump Roslyn to 5.1.0-1.25475.3 (PR: [#8665](https://github.com/dotnet/vscode-csharp/pull/8665))
   * Fix index out of bounds producing diagnostic in error recovery scenario (PR: [#80391](https://github.com/dotnet/roslyn/pull/80391))

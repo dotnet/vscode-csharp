@@ -141,10 +141,10 @@ gulp.task('updateChangelog', async (): Promise<void> => {
     fs.writeFileSync(changelogPath, changelogLines.join(os.EOL));
 });
 
-const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/g;
+const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/;
 
 function findNextVersionHeaderLine(changelogLines: string[], startLine: number = 0): [number, string] {
-    const headerRegex = /^#\s(\d+\.\d+)\.(x|\d+)$/gm;
+    const headerRegex = /^#\s(\d+\.\d+)\.(x|\d+)$/;
     for (let i = startLine; i < changelogLines.length; i++) {
         const line = changelogLines.at(i);
         const match = headerRegex.exec(line!);
@@ -160,7 +160,7 @@ function getPrIdsBetweenHeaders(changelogLines: string[], startLine: number, end
     for (let i = startLine; i < endLine; i++) {
         const line = changelogLines.at(i);
         const match = prRegex.exec(line!);
-        if (match && match[1]) {
+        if (match) {
             prs.push(match[1]);
         }
     }
