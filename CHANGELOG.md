@@ -9,7 +9,7 @@
 * Adds a new GH action to update the CHANGELOG (PR: [#8658](https://github.com/OmniSharp/omnisharp-vscode/pull/8658))
 * Do not run legacy Razor tests in CI (PR: [#8656](https://github.com/OmniSharp/omnisharp-vscode/pull/8656))
 * Update third party notices for currently shipped version (PR: [#8653](https://github.com/OmniSharp/omnisharp-vscode/pull/8653))
-* Bump xamlTools to 18.0.11016.94 (PR: [#8665](https://github.com/dotnet/vscode-csharp/pull/8665))
+* Bump xamlTools to 18.0.11023.10 (PR: [#8669](https://github.com/dotnet/vscode-csharp/pull/8669))
 * Bump Roslyn to 5.1.0-1.25475.3 (PR: [#8665](https://github.com/dotnet/vscode-csharp/pull/8665))
   * Fix index out of bounds producing diagnostic in error recovery scenario (PR: [#80391](https://github.com/dotnet/roslyn/pull/80391))
   * Fix pp directives when converting block bodies to expression bodies (PR: [#80401](https://github.com/dotnet/roslyn/pull/80401))
