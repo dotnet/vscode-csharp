@@ -25,9 +25,9 @@ jobs:
           node-version: '20.x'
       - name: Install dependencies
         run: npm ci
-      - name: Update version.json
+      - name: Update CHANGELOG
         run: npx gulp updateChangelog
-      - name: Create version update PR
+      - name: Create update PR
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
