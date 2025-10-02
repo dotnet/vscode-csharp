@@ -96,7 +96,7 @@
     "@microsoft/servicehub-framework": "4.2.99-beta",
     "@octokit/rest": "^20.0.1",
     "@vscode/debugprotocol": "1.56.0",
-    "@vscode/extension-telemetry": "^0.9.0",
+    "@vscode/extension-telemetry": "^1.0.0",
     "@vscode/js-debug-browsers": "^1.1.0",
     "execa": "4.0.0",
     "fs-extra": "11.3.0",
