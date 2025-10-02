@@ -19,6 +19,9 @@ export interface ProjectConfigurationMessage {
     FileExtensions: string[];
     FileCounts: number[];
     SdkStyleProject: boolean;
+    HasSolutionFile: boolean;
+    IsFileBasedProgram: boolean;
+    IsMiscellaneousFile: boolean;
 }
 
 export function reportProjectConfigurationEvent(
@@ -46,6 +49,9 @@ export function reportProjectConfigurationEvent(
     telemetryProps['FileCounts'] = projectConfig.FileCounts?.join('|') ?? '';
     telemetryProps['NetSdkVersion'] = dotnetInfo?.Version ?? '';
     telemetryProps['sdkStyleProject'] = projectConfig.SdkStyleProject.toString();
+    telemetryProps['HasSolutionFile'] = projectConfig.HasSolutionFile.toString();
+    telemetryProps['IsFileBasedProgram'] = projectConfig.IsFileBasedProgram.toString();
+    telemetryProps['IsMiscellaneousFile'] = projectConfig.IsMiscellaneousFile.toString();
 
     if (useModernNet) {
         telemetryProps['useModernNet'] = useModernNet.toString();

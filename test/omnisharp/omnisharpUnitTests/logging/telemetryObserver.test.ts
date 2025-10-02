@@ -100,6 +100,9 @@ describe('TelemetryReporterObserver', () => {
             FileExtensions: fileExtensions,
             FileCounts: fileCounts,
             SdkStyleProject: sdkStyleProject,
+            HasSolutionFile: true,
+            IsFileBasedProgram: true,
+            IsMiscellaneousFile: true
         });
 
         await observer.post(event);
@@ -114,6 +117,9 @@ describe('TelemetryReporterObserver', () => {
         expect(property['FileCounts']).toEqual('7|3');
         expect(property['useModernNet']).toEqual('true');
         expect(property['sdkStyleProject']).toEqual('true');
+        expect(property['HasSolutionFile']).toEqual('true');
+        expect(property['IsFileBasedProgram']).toEqual('true');
+        expect(property['IsMiscellaneousFile']).toEqual('true');
     });
 
     [
