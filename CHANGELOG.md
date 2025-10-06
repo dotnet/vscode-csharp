@@ -3,11 +3,9 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# 2.95.x
+# 2.94.x
 * Bump Razor to 10.0.0-preview.25503.1 (PR: [#8678](https://github.com/dotnet/vscode-csharp/pull/8678))
   * Ensure RazorVSInternalCompletionParams is used for serialization of completion requests (PR: [#12271](https://github.com/dotnet/razor/pull/12271))
-
-# 2.94.x
 * Fix update changelog script (PR: [#8671](https://github.com/dotnet/vscode-csharp/pull/8671))
 * Update RoslynCopilot url to 18.0.797-alpha (PR: [#8652](https://github.com/OmniSharp/omnisharp-vscode/pull/8652))
 * Fix GH action (PR: [#8662](https://github.com/OmniSharp/omnisharp-vscode/pull/8662))
