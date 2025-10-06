@@ -102,7 +102,7 @@ describe('TelemetryReporterObserver', () => {
             SdkStyleProject: sdkStyleProject,
             HasSolutionFile: true,
             IsFileBasedProgram: true,
-            IsMiscellaneousFile: true
+            IsMiscellaneousFile: true,
         });
 
         await observer.post(event);
