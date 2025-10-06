@@ -65,6 +65,8 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "Включает предварительный просмотр \"программ на основе файлов\" (dotnet run app.cs).",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Показывать примечания при отображении символа.",
   "configuration.dotnet.server.componentPaths": "Позволяет переопределить путь к папке для встроенных компонентов языкового сервера (например, переопределить путь .roslynDevKit в каталоге расширения для использования локально созданных компонентов).",
+  "configuration.dotnet.server.componentPaths.razorDevKit": "Overrides the folder path for the Razor Dev Kit component of the language server",
+  "configuration.dotnet.server.componentPaths.razorExtension": "Overrides the folder path for the Razor extension component of the language server",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Переопределяет путь к папке для компонента .roslynCopilot языкового сервера",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Переопределяет путь к папке для компонента .roslynDevKit языкового сервера.",
   "configuration.dotnet.server.componentPaths.xamlTools": "Переопределяет путь к папке для компонента .xamlTools языкового сервера.",
