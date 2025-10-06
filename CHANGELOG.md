@@ -62,10 +62,10 @@
 
 # 2.91.x
 * Bump Roslyn to 5.0.0-2.25458.10 (PR: [#8588](https://github.com/dotnet/vscode-csharp/pull/8588))
-  * Move brace adjustment on enter to on auto insert in LSP(PR: [#80075](https://github.com/dotnet/roslyn/pull/80075))
-  * Avoid throwing when obsolete overload of GetUpdatesAsync is invoked with empty array(PR: [#80161](https://github.com/dotnet/roslyn/pull/80161))
-  * Bump patch version of MSBuild packages(PR: [#80156](https://github.com/dotnet/roslyn/pull/80156))
-  * Include category in Hot Reload log messages(PR: [#80160](https://github.com/dotnet/roslyn/pull/80160))
+  * Move brace adjustment on enter to on auto insert in LSP (PR: [#80075](https://github.com/dotnet/roslyn/pull/80075))
+  * Avoid throwing when obsolete overload of GetUpdatesAsync is invoked with empty array (PR: [#80161](https://github.com/dotnet/roslyn/pull/80161))
+  * Bump patch version of MSBuild packages (PR: [#80156](https://github.com/dotnet/roslyn/pull/80156))
+  * Include category in Hot Reload log messages (PR: [#80160](https://github.com/dotnet/roslyn/pull/80160))
   * Store client's version for open docs (PR: [#80064](https://github.com/dotnet/roslyn/pull/80064))
   * Pass global properties and the binary log path via RPC to BuildHost (PR: [#80094](https://github.com/dotnet/roslyn/pull/80094))
   * Don't switch runtime / design time solutions if cohosting is on (PR: [#80065](https://github.com/dotnet/roslyn/pull/80065))
