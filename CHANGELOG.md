@@ -3,6 +3,23 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# Next
+- [Improve error recovery when object initializer uses ':' instead of '='](https://github.com/dotnet/roslyn/pull/80553)
+- [Support `field` keyword in EE.](https://github.com/dotnet/roslyn/pull/80515)
+- [Log a debug message for ContentModified exceptions.](https://github.com/dotnet/roslyn/pull/80549)
+- [Update proposal adjuster to acquire feature flags from VS](https://github.com/dotnet/roslyn/pull/80541)
+- [Add telemetry indicating when file-based programs are used](https://github.com/dotnet/roslyn/pull/80538)
+- [Fix thread safety issue in BuildServerConnection.TryCreateServer environment variable handling](https://github.com/dotnet/roslyn/pull/80498)
+- [Extensions: refine tracking of used imports](https://github.com/dotnet/roslyn/pull/80485)
+- [Disambiguate extension methods in "ambiguous call" error message when they have the same name but are from different assemblies](https://github.com/dotnet/roslyn/pull/80453)
+- [Block file-local EmbeddedAttribute definitions.](https://github.com/dotnet/roslyn/pull/80501)
+- [Extension block members do not have `this` parameter](https://github.com/dotnet/roslyn/pull/80457)
+- [Handle some scenarios where attributes applied in local functions or lambdas within extension blocks were missing in metadata](https://github.com/dotnet/roslyn/pull/80464)
+- [Unset other DOTNET_ROOT env vars when launching apphosts](https://github.com/dotnet/roslyn/pull/80492)
+- [Add friendlier error message on an explicit implementation when the return type is wrong](https://github.com/dotnet/roslyn/pull/80376)
+- [Extensions: add Name property on embedded ExtensionMarkerAttribute](https://github.com/dotnet/roslyn/pull/80456)
+- [Avoid implicit null checks while narrowing type for `or` patterns](https://github.com/dotnet/roslyn/pull/80348)
+
 # 2.94.x
 * Fix update changelog script (PR: [#8671](https://github.com/dotnet/vscode-csharp/pull/8671))
 * Update RoslynCopilot url to 18.0.797-alpha (PR: [#8652](https://github.com/OmniSharp/omnisharp-vscode/pull/8652))
