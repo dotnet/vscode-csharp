@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.94.x
+* Add completion for razor components in settings (PR: [#8680](https://github.com/dotnet/vscode-csharp/pull/8680))
+* Add copilot instructions (PR: [#8676](https://github.com/dotnet/vscode-csharp/pull/8676))
+* Fix up changelog (PR: [#8677](https://github.com/dotnet/vscode-csharp/pull/8677))
 * Bump Razor to 10.0.0-preview.25503.1 (PR: [#8679](https://github.com/dotnet/vscode-csharp/pull/8679))
   * Ensure RazorVSInternalCompletionParams is used for serialization of completion requests (PR: [#12271](https://github.com/dotnet/razor/pull/12271))
 * Fix update changelog script (PR: [#8671](https://github.com/dotnet/vscode-csharp/pull/8671))
