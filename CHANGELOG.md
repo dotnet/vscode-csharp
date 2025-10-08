@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.95.x
+
 # 2.94.x
 * Add completion for razor components in settings (PR: [#8680](https://github.com/dotnet/vscode-csharp/pull/8680))
 * Add copilot instructions (PR: [#8676](https://github.com/dotnet/vscode-csharp/pull/8676))
