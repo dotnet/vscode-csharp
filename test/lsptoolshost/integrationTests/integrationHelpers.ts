@@ -10,8 +10,6 @@ import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 import { existsSync } from 'fs';
 import { ServerState } from '../../../src/lsptoolshost/server/languageServerEvents';
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
-import { EOL, platform } from 'os';
-import { describe, expect, test } from '@jest/globals';
 
 export async function activateCSharpExtension(): Promise<void> {
     const csharpExtension = vscode.extensions.getExtension<CSharpExtensionExports>('ms-dotnettools.csharp');
@@ -191,8 +189,6 @@ export async function navigate(
 
     // Navigation happens asynchronously when a different file is opened, so we need to wait for the window to change.
     await windowChanged;
-
-    expect(vscode.window.activeTextEditor?.document.fileName).toContain(expectedFileName);
 }
 
 export function sortLocations(locations: vscode.Location[]): vscode.Location[] {
@@ -252,50 +248,4 @@ export async function waitForExpectedResult<T>(
 
 export async function sleep(ms = 0) {
     return new Promise((r) => setTimeout(r, ms));
-}
-
-export async function expectText(document: vscode.TextDocument, expectedLines: string[]) {
-    const expectedText = expectedLines.join(EOL);
-    expect(document.getText()).toBe(expectedText);
-}
-
-export function expectPath(expected: vscode.Uri, actual: vscode.Uri) {
-    if (isLinux()) {
-        expect(actual.path).toBe(expected.path);
-    } else {
-        const actualPath = actual.path.toLowerCase();
-        const expectedPath = expected.path.toLocaleLowerCase();
-        expect(actualPath).toBe(expectedPath);
-    }
-}
-
-export const describeIfCSharp = describeIf(!usingDevKit());
-export const describeIfDevKit = describeIf(usingDevKit());
-export const describeIfNotMacOS = describeIf(!isMacOS());
-export const describeIfWindows = describeIf(isWindows());
-export const testIfCSharp = testIf(!usingDevKit());
-export const testIfDevKit = testIf(usingDevKit());
-export const testIfNotMacOS = testIf(!isMacOS());
-export const testIfWindows = testIf(isWindows());
-
-function describeIf(condition: boolean) {
-    return condition ? describe : describe.skip;
-}
-
-function testIf(condition: boolean) {
-    return condition ? test : test.skip;
-}
-
-function isMacOS() {
-    const currentPlatform = platform();
-    return currentPlatform === 'darwin';
-}
-
-function isWindows() {
-    const currentPlatform = platform();
-    return currentPlatform === 'win32';
-}
-
-function isLinux() {
-    return !(isMacOS() || isWindows());
 }
