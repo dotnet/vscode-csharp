@@ -76,17 +76,8 @@ export function registerCopilotContextProviders(
         return;
     }
 
-    devkit.activate().then(async () => {
+    devkit.activate().then(() => {
         try {
-            const copilotClientApi = await getCopilotClientApi();
-            const copilotChatApi = await getCopilotChatApi();
-            if (!copilotClientApi && !copilotChatApi) {
-                channel.debug(
-                    'Failed to find compatible version of GitHub Copilot extension installed. Skip registration of Copilot context provider.'
-                );
-                return;
-            }
-
             const provider: ContextProvider<SupportedContextItem> = {
                 id: CSharpExtensionId, // use extension id as provider id for now
                 selector: [{ language: 'csharp' }],
@@ -106,30 +97,50 @@ export function registerCopilotContextProviders(
                     },
                 },
             };
-
-            let installCount = 0;
-            if (copilotClientApi) {
-                const disposable = await installContextProvider(copilotClientApi, provider);
-                if (disposable) {
-                    context.subscriptions.push(disposable);
-                    installCount++;
-                }
-            }
-            if (copilotChatApi) {
-                const disposable = await installContextProvider(copilotChatApi, provider);
-                if (disposable) {
-                    context.subscriptions.push(disposable);
-                    installCount++;
-                }
-            }
-
-            if (installCount === 0) {
-                channel.debug(
-                    'Incompatible GitHub Copilot extension installed. Skip registration of C# context providers.'
-                );
-                return;
-            }
-            channel.debug('Registration of C# context provider for GitHub Copilot extension succeeded.');
+            getCopilotClientApi()
+                .then(async (api) => {
+                    if (!api) {
+                        channel.debug(
+                            'Failed to find compatible version of GitHub Copilot extension installed. Skip registration of Copilot context provider.'
+                        );
+                        return;
+                    }
+                    const disposable = await installContextProvider(api, provider);
+                    if (disposable) {
+                        context.subscriptions.push(disposable);
+                        channel.debug('Registration of C# context provider for GitHub Copilot extension succeeded.');
+                    } else {
+                        channel.debug(
+                            'Incompatible GitHub Copilot extension installed. Skip registration of C# context providers.'
+                        );
+                    }
+                })
+                .catch((error) => {
+                    channel.error('Failed to register Copilot context providers', error);
+                });
+            getCopilotChatApi()
+                .then(async (api) => {
+                    if (!api) {
+                        channel.debug(
+                            'Failed to find compatible version of GitHub Copilot Chat extension installed. Skip registration of Copilot context provider.'
+                        );
+                        return;
+                    }
+                    const disposable = await installContextProvider(api, provider);
+                    if (disposable) {
+                        context.subscriptions.push(disposable);
+                        channel.debug(
+                            'Registration of C# context provider for GitHub Copilot Chat extension succeeded.'
+                        );
+                    } else {
+                        channel.debug(
+                            'Incompatible GitHub Copilot Chat extension installed. Skip registration of C# context providers.'
+                        );
+                    }
+                })
+                .catch((error) => {
+                    channel.error('Failed to register Copilot Chat context providers', error);
+                });
         } catch (error) {
             channel.error('Failed to register Copilot context providers', error);
         }

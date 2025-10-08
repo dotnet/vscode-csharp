@@ -11,6 +11,5 @@ export interface RazorLanguageServerOptions {
     debug?: boolean;
     usingOmniSharp: boolean;
     suppressErrorToasts: boolean;
-    useNewFormattingEngine: boolean;
     cohostingEnabled: boolean;
 }

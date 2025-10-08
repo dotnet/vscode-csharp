@@ -1,6 +1,10 @@
 trigger: none
 pr: none
 
+variables:
+# Variable group contains PAT for bot account.
+- group: dotnet-vscode-insertion-variables
+
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -29,8 +33,7 @@ extends:
           image: 1ESPT-Windows2022
           os: windows
         templateContext:
-          type: releaseJob
-          isProduction: false #change this
+          isProduction: true
           inputs:
           - input: pipelineArtifact
             pipeline: CI
@@ -38,7 +41,11 @@ extends:
             destinationPath: $(Pipeline.Workspace)/artifacts
 
         steps:
-        - checkout: none
+        - checkout: self
+          clean: true
+          submodules: true
+          fetchTags: false
+          fetchDepth: 0
 
         - task: CopyFiles@2
           displayName: 'Copy files from Zip folder to staging directory'
@@ -56,3 +63,13 @@ extends:
             Destination: "AzureBlob"
             storage: "$(AzStorage)"
             ContainerName: "$(AzContainerName)"
+
+        - pwsh: | 
+            npm install
+            npm install -g gulp
+          displayName: 'Install tools'
+
+        - pwsh: gulp 'publish roslyn copilot' --userName dotnet-maestro-bot --email dotnet-maestro-bot@microsoft.com --stagingDirectory '$(Build.ArtifactStagingDirectory)/staging'
+          displayName: 'Create component update PR'
+          env:
+            GitHubPAT: $(BotAccount-dotnet-maestro-bot-PAT)

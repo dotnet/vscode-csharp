@@ -11,9 +11,10 @@ import { SerializableSemanticTokensParams } from './serializableSemanticTokensPa
 import { RazorDocumentManager } from '../document/razorDocumentManager';
 import { RazorDocumentSynchronizer } from '../document/razorDocumentSynchronizer';
 import { RazorLogger } from '../razorLogger';
+import { SerializableRange } from '../rpc/serializableRange';
 
 export class SemanticTokensRangeHandler {
-    private static readonly getSemanticTokensRangeEndpoint = 'razor/provideSemanticTokensRange';
+    private static readonly getSemanticTokensRangeEndpoint = 'razor/provideSemanticTokensRanges';
     private semanticTokensRequestType: RequestType<
         SerializableSemanticTokensParams,
         ProvideSemanticTokensResponse,
@@ -86,10 +87,13 @@ export class SemanticTokensRangeHandler {
                 }
             }
 
+            // We get multiple ranges in semanticTokensParams.ranges, and we just want to compute one range which encompasses it all
+            const reducedRange = this.reduceRanges(semanticTokensParams.ranges);
+
             const tokens = await vscode.commands.executeCommand<vscode.SemanticTokens>(
                 'vscode.provideDocumentRangeSemanticTokens',
                 razorDocument.csharpDocument.uri,
-                semanticTokensParams.ranges[0]
+                reducedRange
             );
 
             return new ProvideSemanticTokensResponse(
@@ -104,6 +108,37 @@ export class SemanticTokensRangeHandler {
             this.emptyTokensResponse,
             semanticTokensParams.requiredHostDocumentVersion
         );
+    }
+
+    private reduceRanges(ranges: SerializableRange[]) {
+        if (!ranges || ranges.length === 0) {
+            return { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } };
+        }
+
+        // Start with the first range's bounds
+        let minStart = ranges[0].start;
+        let maxEnd = ranges[0].end;
+
+        for (const range of ranges) {
+            const s = range.start;
+            const e = range.end;
+
+            // Update minStart if this range starts earlier
+            if (s.line < minStart.line || (s.line === minStart.line && s.character < minStart.character)) {
+                minStart = s;
+            }
+
+            // Update maxEnd if this range ends later
+            if (e.line > maxEnd.line || (e.line === maxEnd.line && e.character > maxEnd.character)) {
+                maxEnd = e;
+            }
+        }
+
+        // Return new SerializableRange composed from the computed bounds
+        return {
+            start: { line: minStart.line, character: minStart.character },
+            end: { line: maxEnd.line, character: maxEnd.character },
+        };
     }
 
     private countLines(text: string) {

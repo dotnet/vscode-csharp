@@ -40,7 +40,6 @@ export const provideCodeActionsCommand = 'roslyn.provideCodeActions';
 export const resolveCodeActionCommand = 'roslyn.resolveCodeAction';
 export const provideCompletionsCommand = 'roslyn.provideCompletions';
 export const resolveCompletionsCommand = 'roslyn.resolveCompletion';
-export const provideSemanticTokensRangeCommand = 'roslyn.provideSemanticTokensRange';
 export const roslynSimplifyMethodCommand = 'roslyn.simplifyMethod';
 export const roslynFormatNewFileCommand = 'roslyn.formatNewFile';
 export const razorInitializeCommand = 'razor.initialize';
