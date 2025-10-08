@@ -40,11 +40,11 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.0.0-2.25472.11",
+    "roslyn": "5.1.0-1.25506.3",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.25472.6",
+    "razor": "10.0.0-preview.25503.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "17.14.36106.43"
+    "xamlTools": "18.0.11023.10"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -405,7 +405,7 @@
     {
       "id": "RoslynCopilot",
       "description": "Language server for Roslyn Copilot integration",
-      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.743-alpha.zip",
+      "url": "https://roslyn.blob.core.windows.net/releases/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer-18.0.797-alpha.zip",
       "installPath": ".roslynCopilot",
       "platforms": [
         "neutral"
@@ -414,7 +414,7 @@
         "neutral"
       ],
       "installTestPath": "./.roslynCopilot/Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll",
-      "integrity": "94F87755F5AA90B578E06A8C91DFAA0F99BBE58B147A53BA8C53CEFA07374583"
+      "integrity": "168DC3B3757B5F58DD35E27820949CA8AF4B890BE92D1A0CA6461A3A62E9D0A4"
     },
     {
       "id": "Debugger",
@@ -1438,6 +1438,14 @@
               },
               "roslynCopilot": {
                 "description": "%configuration.dotnet.server.componentPaths.roslynCopilot%",
+                "type": "string"
+              },
+              "razorExtension": {
+                "description": "%configuration.dotnet.server.componentPaths.razorExtension%",
+                "type": "string"
+              },
+              "razorDevKit": {
+                "description": "%configuration.dotnet.server.componentPaths.razorDevKit%",
                 "type": "string"
               }
             },
