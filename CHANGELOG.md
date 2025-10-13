@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.95.x
+* Bump Razor to 10.0.0-preview.25512.6 (PR: [#8694](https://github.com/dotnet/vscode-csharp/pull/8694))
+  * Provide a way for users to turn on logging for formatting, to help resolve bugs (PR: [#12304](https://github.com/dotnet/razor/pull/12304))
+  * Handle diagnostic spans that cover an entire attribute value (PR: [#12302](https://github.com/dotnet/razor/pull/12302))
+  * Map component start tags to C#, for better GTD, FAR, Hover, etc. (PR: [#12287](https://github.com/dotnet/razor/pull/12287))
 
 # 2.94.x
 * Add completion for razor components in settings (PR: [#8680](https://github.com/dotnet/vscode-csharp/pull/8680))
