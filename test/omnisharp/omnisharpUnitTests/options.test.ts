@@ -5,7 +5,6 @@
 
 import * as vscode from 'vscode';
 import { jest, describe, test, expect, beforeEach } from '@jest/globals';
-import { URI } from 'vscode-uri';
 import * as path from 'path';
 import { commonOptions, omnisharpOptions } from '../../../src/shared/options';
 import { getWorkspaceConfiguration } from '../../fakes';
@@ -85,7 +84,7 @@ describe('Options tests', () => {
     });
 
     test('"omnisharp.defaultLaunchSolution" is used if set', async () => {
-        const workspaceFolderUri = URI.file('/Test');
+        const workspaceFolderUri = vscode.Uri.file('/Test');
         jest.replaceProperty(vscode.workspace, 'workspaceFolders', [
             { index: 0, name: 'Test', uri: workspaceFolderUri },
         ]);

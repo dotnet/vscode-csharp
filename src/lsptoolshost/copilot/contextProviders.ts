@@ -2,7 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ContextProviderApiV1, ResolveRequest, SupportedContextItem } from '@github/copilot-language-server';
+import {
+    ContextProviderApiV1,
+    ResolveRequest,
+    SupportedContextItem,
+    type ContextProvider,
+} from '@github/copilot-language-server';
 import * as vscode from 'vscode';
 import * as lsp from 'vscode-languageserver-protocol';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
@@ -71,51 +76,118 @@ export function registerCopilotContextProviders(
         return;
     }
 
-    devkit.activate().then(async () => {
+    devkit.activate().then(() => {
         try {
-            const copilotApi = vscode.extensions.getExtension<CopilotApi>('github.copilot');
-            if (!copilotApi) {
-                channel.debug(
-                    'Failed to find compatible version of GitHub Copilot extension installed. Skip registeration of Copilot context provider.'
-                );
-                return;
-            }
-
-            const api = await copilotApi.activate();
-            const contextProviderApi = await api.getContextProviderAPI('v1');
-
-            if (!contextProviderApi) {
-                channel.debug(
-                    'Incompatible GitHub Copilot extension installed. Skip registeration of C# context providers.'
-                );
-                return;
-            }
-
-            context.subscriptions.push(
-                contextProviderApi.registerContextProvider<SupportedContextItem>({
-                    id: CSharpExtensionId, // use extension id as provider id for now
-                    selector: [{ language: 'csharp' }],
-                    resolver: {
-                        resolve: async (request, token) => {
-                            const contextResolveParam = createContextResolveParam(request);
-                            if (!contextResolveParam) {
-                                return [];
-                            }
-                            const items = await languageServer.sendRequest(
-                                resolveContextRequest,
-                                contextResolveParam,
-                                token
-                            );
-                            channel.trace(`Copilot context provider resolved ${items.length} items`);
-                            return items;
-                        },
+            const provider: ContextProvider<SupportedContextItem> = {
+                id: CSharpExtensionId, // use extension id as provider id for now
+                selector: [{ language: 'csharp' }],
+                resolver: {
+                    resolve: async (request, token) => {
+                        const contextResolveParam = createContextResolveParam(request);
+                        if (!contextResolveParam) {
+                            return [];
+                        }
+                        const items = await languageServer.sendRequest(
+                            resolveContextRequest,
+                            contextResolveParam,
+                            token
+                        );
+                        channel.trace(`Copilot context provider resolved ${items.length} items`);
+                        return items;
                     },
+                },
+            };
+            getCopilotClientApi()
+                .then(async (api) => {
+                    if (!api) {
+                        channel.debug(
+                            'Failed to find compatible version of GitHub Copilot extension installed. Skip registration of Copilot context provider.'
+                        );
+                        return;
+                    }
+                    const disposable = await installContextProvider(api, provider);
+                    if (disposable) {
+                        context.subscriptions.push(disposable);
+                        channel.debug('Registration of C# context provider for GitHub Copilot extension succeeded.');
+                    } else {
+                        channel.debug(
+                            'Incompatible GitHub Copilot extension installed. Skip registration of C# context providers.'
+                        );
+                    }
                 })
-            );
-
-            channel.debug('Registration of C# context provider for GitHub Copilot extension succeeded.');
+                .catch((error) => {
+                    channel.error('Failed to register Copilot context providers', error);
+                });
+            getCopilotChatApi()
+                .then(async (api) => {
+                    if (!api) {
+                        channel.debug(
+                            'Failed to find compatible version of GitHub Copilot Chat extension installed. Skip registration of Copilot context provider.'
+                        );
+                        return;
+                    }
+                    const disposable = await installContextProvider(api, provider);
+                    if (disposable) {
+                        context.subscriptions.push(disposable);
+                        channel.debug(
+                            'Registration of C# context provider for GitHub Copilot Chat extension succeeded.'
+                        );
+                    } else {
+                        channel.debug(
+                            'Incompatible GitHub Copilot Chat extension installed. Skip registration of C# context providers.'
+                        );
+                    }
+                })
+                .catch((error) => {
+                    channel.error('Failed to register Copilot Chat context providers', error);
+                });
         } catch (error) {
             channel.error('Failed to register Copilot context providers', error);
         }
     });
+}
+
+async function getCopilotClientApi(): Promise<CopilotApi | undefined> {
+    const extension = vscode.extensions.getExtension<CopilotApi>('github.copilot');
+    if (!extension) {
+        return undefined;
+    }
+    try {
+        return await extension.activate();
+    } catch {
+        return undefined;
+    }
+}
+
+async function getCopilotChatApi(): Promise<CopilotApi | undefined> {
+    type CopilotChatApi = { getAPI?(version: number): CopilotApi | undefined };
+    const extension = vscode.extensions.getExtension<CopilotChatApi>('github.copilot-chat');
+    if (!extension) {
+        return undefined;
+    }
+
+    let exports: CopilotChatApi | undefined;
+    try {
+        exports = await extension.activate();
+    } catch {
+        return undefined;
+    }
+    if (!exports || typeof exports.getAPI !== 'function') {
+        return undefined;
+    }
+    return exports.getAPI(1);
+}
+
+async function installContextProvider(
+    copilotAPI: CopilotApi,
+    contextProvider: ContextProvider<SupportedContextItem>
+): Promise<vscode.Disposable | undefined> {
+    const hasGetContextProviderAPI = typeof copilotAPI.getContextProviderAPI === 'function';
+    if (hasGetContextProviderAPI) {
+        const contextAPI = await copilotAPI.getContextProviderAPI('v1');
+        if (contextAPI) {
+            return contextAPI.registerContextProvider(contextProvider);
+        }
+    }
+    return undefined;
 }

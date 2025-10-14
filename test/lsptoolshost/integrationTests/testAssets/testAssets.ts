@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as fs from 'async-file';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import spawnGit from './spawnGit';
@@ -23,7 +23,7 @@ export class TestAssetProject {
     async addFileWithContents(fileName: string, contents: string): Promise<vscode.Uri> {
         const dir = this.projectDirectoryPath;
         const loc = path.join(dir, fileName);
-        await fs.writeTextFile(loc, contents);
+        await fs.writeFile(loc, contents);
         return vscode.Uri.file(loc);
     }
 }

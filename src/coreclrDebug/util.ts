@@ -71,7 +71,7 @@ export class CoreClrDebugUtil {
             if (semver.lt(dotnetInfo.Version, MINIMUM_SUPPORTED_DOTNET_CLI)) {
                 throw new Error(
                     vscode.l10n.t(
-                        `The .NET Core SDK located on the path is too old. .NET Core debugging will not be enabled. The minimum supported version is {0}.`,
+                        `The .NET SDK located on the path is too old. .NET debugging will not be enabled. The minimum supported version is {0}.`,
                         MINIMUM_SUPPORTED_DOTNET_CLI
                     )
                 );
@@ -80,7 +80,7 @@ export class CoreClrDebugUtil {
             const message = error instanceof Error ? error.message : `${error}`;
             throw new Error(
                 vscode.l10n.t(
-                    `The .NET Core SDK cannot be located: {0}. .NET Core debugging will not be enabled. Make sure the .NET Core SDK is installed and is on the path.`,
+                    `The .NET SDK cannot be located: {0}. .NET debugging will not be enabled. Make sure the .NET SDK is installed and is on the path.`,
                     message
                 )
             );

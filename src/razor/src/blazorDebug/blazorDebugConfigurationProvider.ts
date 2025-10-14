@@ -80,6 +80,11 @@ export class BlazorDebugConfigurationProvider implements vscode.DebugConfigurati
 
     constructor(private readonly logger: RazorLogger, private readonly vscodeType: typeof vscode) {}
 
+    public static register(logger: RazorLogger, vscodeType: typeof vscode) {
+        const provider = new BlazorDebugConfigurationProvider(logger, vscodeType);
+        return vscodeType.debug.registerDebugConfigurationProvider('blazorwasm', provider);
+    }
+
     public async resolveDebugConfiguration(
         folder: vscode.WorkspaceFolder | undefined,
         configuration: vscode.DebugConfiguration

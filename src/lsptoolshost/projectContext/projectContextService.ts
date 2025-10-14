@@ -9,6 +9,7 @@ import { VSGetProjectContextsRequest, VSProjectContext, VSProjectContextList } f
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../utils/uriConverter';
 import { LanguageServerEvents, ServerState } from '../server/languageServerEvents';
+import { razorOptions } from '../../shared/options';
 
 export interface ProjectContextChangeEvent {
     languageId: string;
@@ -53,7 +54,14 @@ export class ProjectContextService {
         const textEditor = vscode.window.activeTextEditor;
         const languageId = textEditor?.document?.languageId;
         if (languageId !== 'csharp') {
-            return;
+            if (languageId !== 'aspnetcorerazor') {
+                return;
+            }
+
+            // We only support Razor when cohosting is enabled.
+            if (!razorOptions.cohostingEnabled) {
+                return;
+            }
         }
 
         // If we have an open request, cancel it.

@@ -15,12 +15,35 @@ pr:
     - prerelease
     - main
   paths:
+    # Exclude paths and files which do not cause functional changes to the C# extension and do not impact CI.
     exclude:
-    - '*.md'
-    - 'version.json'
+    # Changes to these configuration files are not functional changes.
+    - .azuredevops/*
+    - .config/*
+    - .devcontainer/*
     - .github/*
+    - .vscode/*
+    # The following pipelines are not run for PRs and changes should be validated by a separate run of the pipeline.
+    - azure-pipelines/dotnet-vscode-csharp-insertion.yml
+    - azure-pipelines/loc.yml
     - azure-pipelines/release.yml
-    - CHANGELOG.
+    - azure-pipelines/profiling.yml
+    - azure-pipelines/publish-roslyn-copilot.yml
+    # Changes to documentation are not functional changes.
+    - docs/*
+    - images/*
+    - RuntimeLicenses/*
+    # Changes to language bundles are not functional changes. We still run CI when `l10n/bundle.l10n.json` itself is changed.
+    - 'l10n/bundle.l10n.*.json'
+    # Changes to the color themes are not functional changes.
+    - themes/*
+    # Changes to documentation are not functional changes.
+    - '**.md'
+    - CODEOWNERS
+    # Changes to the vesion is not a functional change. The extension version is updated by the branch-snap GH action.
+    - 'version.json'
+    # Changes to text files (e.g. third party notices) are not functional changes.
+    - '**.txt'
 
 # Run a scheduled build every night on main to run tests against insiders VSCode.
 # The variable testVSCodeVersion is set to insiders based on the build reason.
@@ -40,10 +63,14 @@ variables:
     value: stable
 
 stages:
-- template: azure-pipelines/build-all.yml
+- template: azure-pipelines/build-vsix.yml
   parameters:
     isOfficial: false
     signType: test
+    dotnetVersion: $(defaultDotnetVersion)
+
+- template: azure-pipelines/validate-build.yml
+  parameters:
     dotnetVersion: $(defaultDotnetVersion)
 
 - stage:
@@ -52,6 +79,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: linux
       # Prefer the dotnet from the container.
       dotnetVersion: ''
       testVSCodeVersion: $(testVSCodeVersion)
@@ -67,6 +95,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: linux
       # Prefer the dotnet from the container.
       dotnetVersion: ''
       testVSCodeVersion: $(testVSCodeVersion)
@@ -82,6 +111,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: windows
       dotnetVersion: $(defaultDotnetVersion)
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
@@ -94,6 +124,7 @@ stages:
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
+      os: macos
       dotnetVersion: $(defaultDotnetVersion)
       testVSCodeVersion: $(testVSCodeVersion)
       pool:

@@ -139,7 +139,7 @@ export async function activate(
         const csharpFeature = new RazorCSharpFeature(documentManager, eventEmitterFactory, logger);
         const htmlFeature = new RazorHtmlFeature(documentManager, languageServiceClient, eventEmitterFactory, logger);
         const localRegistrations: vscode.Disposable[] = [];
-        const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, undefined, logger);
+        const reportIssueCommand = new ReportIssueCommand(vscodeType, documentManager, undefined, undefined, logger);
         const razorCodeActionRunner = new RazorCodeActionRunner(languageServerClient, logger);
         const codeActionsHandler = new CodeActionsHandler(
             documentManager,
@@ -310,8 +310,7 @@ export async function activate(
             localRegistrations.length = 0;
         });
 
-        const provider = new BlazorDebugConfigurationProvider(logger, vscodeType);
-        context.subscriptions.push(vscodeType.debug.registerDebugConfigurationProvider('blazorwasm', provider));
+        context.subscriptions.push(BlazorDebugConfigurationProvider.register(logger, vscodeType));
 
         languageServerClient.onStarted(async () => {
             await documentManager.initialize();

@@ -21,7 +21,7 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import CompositeDisposable from '../compositeDisposable';
 import Disposable from '../disposable';
-import { ExtensionContext, OutputChannel } from 'vscode';
+import { ExtensionContext, LogOutputChannel, OutputChannel } from 'vscode';
 import { LanguageMiddlewareFeature } from './languageMiddlewareFeature';
 import { LspEngine } from './engines/lspEngine';
 import { IEngine } from './engines/IEngine';
@@ -314,7 +314,8 @@ export class OmniSharpServer {
                 this._eventBus,
                 this.eventStream,
                 this.context,
-                this.outputChannel,
+                // If we are in LSP mode, then we created an LogOutputChannel originally
+                this.outputChannel as LogOutputChannel,
                 disposables,
                 this.languageMiddlewareFeature,
                 this.platformInfo,

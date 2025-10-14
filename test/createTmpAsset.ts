@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as tmp from 'tmp';
-import { rimraf } from 'async-file';
-import { NestedError } from './nestedError';
+import { remove } from 'fs-extra';
+import { NestedError } from '../src/nestedError';
 
 export async function CreateTmpFile(): Promise<TmpAsset> {
     const tmpFile = await new Promise<tmp.SynchrounousResult>((resolve, reject) => {
@@ -43,7 +43,7 @@ export async function CreateTmpDir(unsafeCleanup: boolean): Promise<TmpAsset> {
         name: tmpDir.name,
         dispose: () => {
             if (unsafeCleanup) {
-                rimraf(tmpDir.name).catch((rejectReason) => {
+                remove(tmpDir.name).catch((rejectReason) => {
                     throw new Error(`Failed to cleanup ${tmpDir.name} at ${tmpDir.fd}: ${rejectReason}`);
                 }); //to delete directories that have folders inside them
             } else {

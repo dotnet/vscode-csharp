@@ -15,9 +15,10 @@ export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
-    outputChannel: vscode.LogOutputChannel
+    outputChannel: vscode.LogOutputChannel,
+    csharpTraceChannel: vscode.LogOutputChannel
 ) {
-    registerExtensionCommands(context, languageServer, hostExecutableResolver, outputChannel);
+    registerExtensionCommands(context, hostExecutableResolver, outputChannel, csharpTraceChannel);
     registerWorkspaceCommands(context, languageServer);
     registerServerCommands(context, languageServer, outputChannel);
 }
@@ -27,16 +28,17 @@ export function registerCommands(
  */
 function registerExtensionCommands(
     context: vscode.ExtensionContext,
-    languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
-    outputChannel: vscode.LogOutputChannel
+    outputChannel: vscode.LogOutputChannel,
+    csharpTraceChannel: vscode.LogOutputChannel
 ) {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
-                context.extension.packageJSON.version,
+                context,
                 getDotnetInfo,
                 /*shouldIncludeMonoInfo:*/ false,
+                [outputChannel, csharpTraceChannel],
                 hostExecutableResolver
             )
         )

@@ -259,10 +259,7 @@ function getLowercaseFileNameFromUrl(url: string): string {
     let fileName = url.substr(index + 1).toLowerCase();
 
     if (fileName.startsWith('omnisharp')) {
-        // Omnisharp versions are always after the last '-'.
-        // e.g. we want omnisharp-win-x86 from omnisharp-win-x86-1.39.3.zip
-        const lastDash = fileName.lastIndexOf('-');
-        fileName = fileName.substr(0, lastDash);
+        // Omnisharp versions are not contained in the file name.
         return fileName;
     } else if (fileName.startsWith('coreclr-debug')) {
         // Debugger versions are not contained in the file name.
@@ -270,6 +267,12 @@ function getLowercaseFileNameFromUrl(url: string): string {
     } else if (fileName.startsWith('razorlanguageserver') || fileName.startsWith('devkittelemetry')) {
         // Razor versions are everything after the second to last dash.
         // e.g. we want razorlanguageserver-win-x64 from razorlanguageserver-win-x64-7.0.0-preview.23067.5.zip
+        const secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
+        fileName = fileName.substr(0, secondToLastDash);
+        return fileName;
+    } else if (fileName.startsWith('microsoft.visualstudio.copilot.roslyn.languageserver')) {
+        // Copilot versions are everything after the second to last dash.
+        // e.g. we want microsoft.visualstudio.copilot.roslyn.languageserver from microsoft.visualstudio.copilot.roslyn.languageserver-18.0.479-alpha.zip
         const secondToLastDash = fileName.lastIndexOf('-', fileName.lastIndexOf('-') - 1);
         fileName = fileName.substr(0, secondToLastDash);
         return fileName;

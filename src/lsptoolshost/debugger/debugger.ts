@@ -60,19 +60,25 @@ export function registerDebugger(
         vscode.debug.registerDebugConfigurationProvider('monovsdbg_wasm', dotnetWorkspaceConfigurationProvider)
     );
 
-    context.subscriptions.push(
-        vscode.commands.registerCommand('dotnet.generateAssets', async (selectedIndex) => {
-            if (!(await promptForDevKitDebugConfigurations())) {
+    vscode.commands.registerCommand(
+        'dotnet.generateAssets',
+        async (selectedIndex: number, options: { skipPrompt?: boolean } = {}) => {
+            if (!(await promptForDevKitDebugConfigurations(options))) {
                 return;
             }
 
             await generateAssets(workspaceInformationProvider, selectedIndex);
-        })
-    );
+        }
+    )
 }
 
-async function promptForDevKitDebugConfigurations(): Promise<boolean> {
+async function promptForDevKitDebugConfigurations(options: { skipPrompt?: boolean }): Promise<boolean> {
     if (getCSharpDevKit()) {
+        // If skipPrompt is true, proceed with generating assets without showing the dialog
+        if (options.skipPrompt) {
+            return true;
+        }
+
         let result: boolean | undefined = undefined;
 
         while (result === undefined) {

@@ -182,15 +182,26 @@ To update the version of the roslyn server used by the extension do the followin
 4.  Ensure that version of the package is in the proper feeds by running `gulp updateRoslynVersion`. Note: you may need to install the [Azure Artifacts NuGet Credential Provider](https://github.com/microsoft/artifacts-credprovider#installation-on-windows) to run interactive authentication.
 5.  Build and test the change. If everything looks good, submit a PR.
 
+## Updating the `Roslyn` Copilot Language Server version
+
+In order to pull in the latest version of Roslyn Copilot bits from the VS Conversations repo, follow these steps:
+1. Trigger [this pipeline](https://devdiv.visualstudio.com/DevDiv/_build?definitionId=27222) which should automatically publish bits to the storage account and then create an insertion PR like [this](https://github.com/dotnet/vscode-csharp/pull/8597)
+2. Build and test the change to ensure the roslyn copilot language server bits are downloaded correctly. You'll see log entries like the below in the Output->C# pane:
+```
+[info] Installing package 'Language server for Roslyn Copilot integration'
+[info] Finished
+```
+More details for this are [here] (https://devdiv.visualstudio.com/DevDiv/_git/VisualStudio.Conversations?path=/src/Copilot.Roslyn.LanguageServer/README.md)
+
 ## Snapping for releases
 Extension releases on the marketplace are done from the prerelease and release branches (corresponding to the prerelease or release version of the extension).  Code flows from main -> prerelease -> release.  Every week we snap main -> prerelease.  Monthly, we snap prerelease -> release.
 
 ### Snap main -> prerelease
 The snap is done via the "Branch snap" github action.  To run the snap from main -> prerelease, run the action via "Run workflow" and choose main as the base branch.
-![branch snap action](./docs/main_snap.png)
+![branch snap action](./docs/images/main_snap.png)
 
 This will generate two PRs that must be merged.  One merging the main branch into prerelease, and the other bumps the version in main.
-![generated prs](./docs/generated_prs.png)
+![generated prs](./docs/images/generated_prs.png)
 
 ### Snap prerelease -> release
 To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a single PR merging from prerelease to release.
@@ -199,6 +210,6 @@ To snap from prerelease to release, run the same action but use **prerelease** a
 The marketplace release is managed by an internal AzDo pipeline.  On the pipeline page, hit run pipeline.  This will bring up the pipeline parameters to fill out:
 1.  The branch will **always** be main, no matter if release a build from prerelease or release.
 2.  Uncheck the "test" option.
-3.  In "Resources", choose "dotnet-vscode-csharp [officialBuildCI]", then check only the build that should be released, and then confirm with "Use selected run".  Based on the selected build, it will automatically determine if it is prerelease or release. ![release pipeline image](./docs/release_pipeline.png)
-4.  The pipeline parameters should then look something like the following image.  Hit "Run". ![release pipeline parameters image](./docs/release_pipeline_params.png)
+3.  In "Resources", choose "dotnet-vscode-csharp [officialBuildCI]", then check only the build that should be released, and then confirm with "Use selected run".  Based on the selected build, it will automatically determine if it is prerelease or release. ![release pipeline image](./docs/images/release_pipeline.png)
+4.  The pipeline parameters should then look something like the following image.  Hit "Run". ![release pipeline parameters image](./docs/images/release_pipeline_params.png)
 5.  After a bit, the pipeline will request approval from an authorized approver before it actually uploads to the marketplace.  Hit approve and it will continue.
