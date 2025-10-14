@@ -59,17 +59,18 @@ export function registerDebugger(
     context.subscriptions.push(
         vscode.debug.registerDebugConfigurationProvider('monovsdbg_wasm', dotnetWorkspaceConfigurationProvider)
     );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            'dotnet.generateAssets',
+            async (selectedIndex: number, options: { skipPrompt?: boolean } = {}) => {
+                if (!(await promptForDevKitDebugConfigurations(options))) {
+                    return;
+                }
 
-    vscode.commands.registerCommand(
-        'dotnet.generateAssets',
-        async (selectedIndex: number, options: { skipPrompt?: boolean } = {}) => {
-            if (!(await promptForDevKitDebugConfigurations(options))) {
-                return;
+                await generateAssets(workspaceInformationProvider, selectedIndex);
             }
-
-            await generateAssets(workspaceInformationProvider, selectedIndex);
-        }
-    )
+        )
+    );
 }
 
 async function promptForDevKitDebugConfigurations(options: { skipPrompt?: boolean }): Promise<boolean> {
