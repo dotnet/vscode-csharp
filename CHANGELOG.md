@@ -4,7 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.95.x
-* Bump Roslyn to 5.3.0-1.25513.2 (PR: [#8697](https://github.com/dotnet/vscode-csharp/pull/8697))
+* Bump Roslyn to 5.3.0-1.25514.3 (PR: [#8700](https://github.com/dotnet/vscode-csharp/pull/8700))
+  * Ensure `LspWorkspaceManager` returns solutions without misc document when file moved(PR: [#80535](https://github.com/dotnet/roslyn/pull/80535))
+  * Add limited support for binarylogger to MSBuildWorkspace(PR: [#80120](https://github.com/dotnet/roslyn/pull/80120))
   * Restore fully qualify for Razor (PR: [#80674](https://github.com/dotnet/roslyn/pull/80674))
   * Improve diagnostic quality for less accessible base type argument (PR: [#80483](https://github.com/dotnet/roslyn/pull/80483))
   * Build BuildHost against net8.0 (PR: [#80641](https://github.com/dotnet/roslyn/pull/80641))
