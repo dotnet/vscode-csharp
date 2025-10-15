@@ -36,4 +36,3 @@ coverage/
 
 \.DS_Store
 vsix/
-*.bak
