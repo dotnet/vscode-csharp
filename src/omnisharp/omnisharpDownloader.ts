@@ -56,7 +56,8 @@ export class OmnisharpDownloader {
                     packagesToInstall,
                     this.networkSettingsProvider,
                     this.eventStream,
-                    isValidDownload
+                    isValidDownload,
+                    undefined
                 )
             ) {
                 this.eventStream.post(new InstallationSuccess());

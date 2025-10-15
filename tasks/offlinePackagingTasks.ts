@@ -280,7 +280,9 @@ async function installPackageJsonDependency(
         codeExtensionPath
     );
     const provider = () => new NetworkSettings('', true);
-    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, token))) {
+    if (
+        !(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, undefined, token))
+    ) {
         throw Error('Failed to download package.');
     }
 }

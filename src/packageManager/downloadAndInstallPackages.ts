@@ -16,12 +16,14 @@ import { mkdirpSync } from 'fs-extra';
 import { PackageInstallStart } from '../shared/loggingEvents';
 import { DownloadValidator } from './isValidDownload';
 import { CancellationToken } from 'vscode';
+import { ITelemetryReporter } from '../shared/telemetryReporter';
 
 export async function downloadAndInstallPackages(
     packages: AbsolutePathPackage[],
     provider: NetworkSettingsProvider,
     eventStream: EventStream,
     downloadValidator: DownloadValidator,
+    telemetryReporter?: ITelemetryReporter,
     token?: CancellationToken
 ): Promise<boolean> {
     eventStream.post(new PackageInstallStart());
@@ -59,6 +61,26 @@ export async function downloadAndInstallPackages(
                 eventStream.post(new InstallationFailure(installationStage, packageError));
             } else {
                 eventStream.post(new InstallationFailure(installationStage, error));
+            }
+
+            // Send telemetry for the failure
+            if (telemetryReporter) {
+                const telemetryProperties: { [key: string]: string } = {
+                    installStage: installationStage,
+                    packageId: pkg.id,
+                    isOptional: pkg.isOptional ? 'true' : 'false',
+                };
+
+                if (error instanceof NestedError && error.err instanceof PackageError) {
+                    telemetryProperties['error.message'] = error.err.message;
+                    telemetryProperties['error.packageUrl'] = error.err.pkg.url;
+                } else if (error instanceof PackageError) {
+                    telemetryProperties['error.message'] = error.message;
+                    telemetryProperties['error.packageUrl'] = error.pkg.url;
+                }
+
+                const eventName = pkg.isOptional ? 'OptionalPackageInstallationFailed' : 'PackageInstallationFailed';
+                telemetryReporter.sendTelemetryEvent(eventName, telemetryProperties);
             }
 
             // If the package is optional, log and continue with the next package

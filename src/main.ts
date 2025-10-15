@@ -86,7 +86,7 @@ export async function activate(
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = useOmnisharpServer && omnisharpOptions.useModernNet !== true;
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) =>
-        downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
+        downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload, reporter);
 
     const runtimeDependenciesExist = await installRuntimeDependencies(
         context.extension.packageJSON,

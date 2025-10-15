@@ -87,7 +87,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 downloadablePackage,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             for (const elem of testZip.files) {
                 const filePath = path.join(tmpDirPath, elem.path);
@@ -100,7 +101,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 downloadablePackage,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             expect(await util.fileExists(path.join(tmpDirPath, 'install.Lock'))).toBe(true);
         });
@@ -119,7 +121,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 downloadablePackage,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             expect(eventBus.getEvents()).toStrictEqual(eventsSequence);
         });
@@ -153,7 +156,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 downloadablePackage,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             expect(eventBus.getEvents()).toStrictEqual(eventsSequence);
         });
@@ -180,7 +184,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 downloadablePackage,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             expect(eventBus.getEvents()).toStrictEqual(eventsSequence);
         });
@@ -196,7 +201,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 notDownloadablePackage,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             const obtainedEvents = eventBus.getEvents();
             expect(obtainedEvents[0]).toStrictEqual(eventsSequence[0]);
@@ -212,7 +218,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 notDownloadablePackage,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             expect(await util.fileExists(path.join(tmpDirPath, 'install.Lock'))).toBe(false);
         });
@@ -233,7 +240,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 optionalPackage,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             expect(result).toBe(true);
         });
@@ -258,7 +266,8 @@ describe(`${downloadAndInstallPackages.name}`, () => {
                 mixedPackages,
                 networkSettingsProvider,
                 eventStream,
-                downloadValidator
+                downloadValidator,
+                undefined
             );
             expect(result).toBe(true);
             expect(await util.fileExists(path.join(tmpInstallDir2.name, 'install.Lock'))).toBe(true);
@@ -276,7 +285,13 @@ describe(`${downloadAndInstallPackages.name}`, () => {
             ];
 
             eventBus.getEvents(); // Clear any previous events
-            await downloadAndInstallPackages(optionalPackage, networkSettingsProvider, eventStream, downloadValidator);
+            await downloadAndInstallPackages(
+                optionalPackage,
+                networkSettingsProvider,
+                eventStream,
+                downloadValidator,
+                undefined
+            );
             const obtainedEvents = eventBus.getEvents();
             const installationFailureEvent = obtainedEvents.find(
                 (event) => event instanceof InstallationFailure

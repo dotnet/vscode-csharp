@@ -38,7 +38,8 @@ export class RazorOmnisharpDownloader {
                     packagesToInstall,
                     this.networkSettingsProvider,
                     this.eventStream,
-                    isValidDownload
+                    isValidDownload,
+                    undefined
                 )
             ) {
                 this.eventStream.post(new InstallationSuccess());
