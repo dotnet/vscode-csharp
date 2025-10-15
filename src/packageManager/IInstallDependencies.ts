@@ -5,6 +5,8 @@
 
 import { AbsolutePathPackage } from './absolutePathPackage';
 
-export default interface IInstallDependencies {
-    (packages: AbsolutePathPackage[]): Promise<boolean>;
+export type DependencyInstallationResults = { [name: string]: boolean };
+
+export interface IInstallDependencies {
+    (packages: AbsolutePathPackage[]): Promise<DependencyInstallationResults>;
 }

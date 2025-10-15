@@ -119,7 +119,7 @@ export async function activate(
     } else {
         const getCoreClrDebugPromise = async (languageServerStartedPromise: Promise<void>) => {
             let coreClrDebugPromise = Promise.resolve();
-            if (runtimeDependenciesExist) {
+            if (runtimeDependenciesExist['Debugger']) {
                 // activate coreclr-debug
                 coreClrDebugPromise = coreclrdebug.activate(
                     context.extension,

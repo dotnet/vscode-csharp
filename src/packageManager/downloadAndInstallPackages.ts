@@ -17,6 +17,7 @@ import { PackageInstallStart } from '../shared/loggingEvents';
 import { DownloadValidator } from './isValidDownload';
 import { CancellationToken } from 'vscode';
 import { ITelemetryReporter } from '../shared/telemetryReporter';
+import { DependencyInstallationResults } from './IInstallDependencies';
 
 export async function downloadAndInstallPackages(
     packages: AbsolutePathPackage[],
@@ -25,9 +26,9 @@ export async function downloadAndInstallPackages(
     downloadValidator: DownloadValidator,
     telemetryReporter?: ITelemetryReporter,
     token?: CancellationToken
-): Promise<boolean> {
-    let downloadFailed = false;
+): Promise<DependencyInstallationResults> {
     eventStream.post(new PackageInstallStart());
+    const results: DependencyInstallationResults = {};
     for (const pkg of packages) {
         let installationStage = 'touchBeginFile';
         try {
@@ -51,12 +52,16 @@ export async function downloadAndInstallPackages(
                     await InstallZip(buffer, pkg.description, pkg.installPath, pkg.binaries, eventStream);
                     installationStage = 'touchLockFile';
                     await touchInstallFile(pkg.installPath, InstallFileType.Lock);
+                    results[pkg.id] = true;
                     break;
                 } else {
                     eventStream.post(new IntegrityCheckFailure(pkg.description, pkg.url, willTryInstallingPackage()));
+                    results[pkg.id] = false;
                 }
             }
         } catch (error) {
+            results[pkg.id] = false;
+
             if (error instanceof NestedError) {
                 const packageError = new PackageError(error.message, pkg, error.err);
                 eventStream.post(new InstallationFailure(installationStage, packageError));
@@ -66,8 +71,6 @@ export async function downloadAndInstallPackages(
 
             // Send telemetry for the failure
             sendInstallationFailureTelemetry(pkg, installationStage, error);
-
-            downloadFailed = true;
         } finally {
             try {
                 if (await installFileExists(pkg.installPath, InstallFileType.Begin)) {
@@ -79,7 +82,7 @@ export async function downloadAndInstallPackages(
         }
     }
 
-    return !downloadFailed;
+    return results;
 
     function sendInstallationFailureTelemetry(pkg: AbsolutePathPackage, installationStage: string, error: any): void {
         if (!telemetryReporter) {

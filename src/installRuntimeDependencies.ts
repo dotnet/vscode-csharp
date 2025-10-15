@@ -8,7 +8,7 @@ import { PackageInstallation, LogPlatformInfo, InstallationSuccess } from './sha
 import { EventStream } from './eventStream';
 import { getRuntimeDependenciesPackages } from './tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from './packageManager/getAbsolutePathPackagesToInstall';
-import IInstallDependencies from './packageManager/IInstallDependencies';
+import { DependencyInstallationResults, IInstallDependencies } from './packageManager/IInstallDependencies';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
 
 export async function installRuntimeDependencies(
@@ -19,7 +19,7 @@ export async function installRuntimeDependencies(
     platformInfo: PlatformInformation,
     useFramework: boolean,
     requiredPackageIds: string[]
-): Promise<boolean> {
+): Promise<DependencyInstallationResults> {
     const runTimeDependencies = getRuntimeDependenciesPackages(packageJSON);
     const packagesToInstall = await getAbsolutePathPackagesToInstall(runTimeDependencies, platformInfo, extensionPath);
     const filteredPackages = filterOmniSharpPackage(packagesToInstall, useFramework);
@@ -30,15 +30,20 @@ export async function installRuntimeDependencies(
         // Display platform information and RID
         eventStream.post(new LogPlatformInfo(platformInfo));
 
-        if (await installDependencies(filteredRequiredPackages)) {
+        const installationResults = await installDependencies(filteredRequiredPackages);
+
+        const failedPackages = Object.entries(installationResults)
+            .filter(([, installed]) => !installed)
+            .map(([name]) => name);
+        if (failedPackages.length === 0) {
             eventStream.post(new InstallationSuccess());
-        } else {
-            return false;
         }
+
+        return installationResults;
     }
 
-    //All the required packages are already downloaded and installed
-    return true;
+    // There was nothing to install
+    return {};
 }
 
 function filterOmniSharpPackage(packages: AbsolutePathPackage[], useFramework: boolean) {

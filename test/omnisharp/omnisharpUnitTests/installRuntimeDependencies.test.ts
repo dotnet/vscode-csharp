@@ -5,7 +5,7 @@
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
 import { installRuntimeDependencies } from '../../../src/installRuntimeDependencies';
-import IInstallDependencies from '../../../src/packageManager/IInstallDependencies';
+import { IInstallDependencies } from '../../../src/packageManager/IInstallDependencies';
 import { EventStream } from '../../../src/eventStream';
 import { PlatformInformation } from '../../../src/shared/platform';
 import TestEventBus from './testAssets/testEventBus';
@@ -28,7 +28,8 @@ describe(`${installRuntimeDependencies.name}`, () => {
     beforeEach(() => {
         eventStream = new EventStream();
         eventBus = new TestEventBus(eventStream);
-        installDependencies = async () => Promise.resolve(true);
+        installDependencies = async (packages) =>
+            Promise.resolve(packages.reduce((acc, pkg) => ({ ...acc, [pkg.id]: true }), {}));
     });
 
     describe('When all the dependencies already exist', () => {
@@ -90,7 +91,7 @@ describe(`${installRuntimeDependencies.name}`, () => {
             let inputPackage: AbsolutePathPackage[];
             installDependencies = async (packages) => {
                 inputPackage = packages;
-                return Promise.resolve(true);
+                return Promise.resolve(packages.reduce((acc, pkg) => ({ ...acc, [pkg.id]: true }), {}));
             };
 
             const installed = await installRuntimeDependencies(
@@ -111,7 +112,8 @@ describe(`${installRuntimeDependencies.name}`, () => {
         });
 
         test('Returns false when installDependencies returns false', async () => {
-            installDependencies = async () => Promise.resolve(false);
+            installDependencies = async (packages) =>
+                Promise.resolve(packages.reduce((acc, pkg) => ({ ...acc, [pkg.id]: false }), {}));
             const installed = await installRuntimeDependencies(
                 packageJSON,
                 extensionPath,
@@ -121,7 +123,7 @@ describe(`${installRuntimeDependencies.name}`, () => {
                 useFramework,
                 ['myPackage']
             );
-            expect(installed).toBe(false);
+            expect(installed['myPackage']).toBe(false);
         });
     });
 });
