@@ -276,12 +276,7 @@ describe(`${downloadAndInstallPackages.name}`, () => {
             ];
 
             eventBus.getEvents(); // Clear any previous events
-            await downloadAndInstallPackages(
-                optionalPackage,
-                networkSettingsProvider,
-                eventStream,
-                downloadValidator
-            );
+            await downloadAndInstallPackages(optionalPackage, networkSettingsProvider, eventStream, downloadValidator);
             const obtainedEvents = eventBus.getEvents();
             const installationFailureEvent = obtainedEvents.find(
                 (event) => event instanceof InstallationFailure
