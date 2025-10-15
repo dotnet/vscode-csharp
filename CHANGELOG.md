@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.95.x
+* Update Roslyn to 5.3.0-1.25513.2 (PR: [#8697](https://github.com/dotnet/vscode-csharp/pull/8697))
+* Update RoslynCopilot url to 18.0.898-alpha (PR: [#8696](https://github.com/dotnet/vscode-csharp/pull/8696))
 * Bump Roslyn to 5.3.0-1.25514.3 (PR: [#8700](https://github.com/dotnet/vscode-csharp/pull/8700))
   * Ensure `LspWorkspaceManager` returns solutions without misc document when file moved(PR: [#80535](https://github.com/dotnet/roslyn/pull/80535))
   * Add limited support for binarylogger to MSBuildWorkspace(PR: [#80120](https://github.com/dotnet/roslyn/pull/80120))
