@@ -89,7 +89,6 @@ export async function downloadAndInstallPackages(
         const telemetryProperties: { [key: string]: string } = {
             installStage: installationStage,
             packageId: pkg.id,
-            isOptional: pkg.isOptional ? 'true' : 'false',
         };
 
         if (error instanceof NestedError && error.err instanceof PackageError) {
