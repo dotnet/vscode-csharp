@@ -61,6 +61,11 @@ export async function downloadAndInstallPackages(
                 eventStream.post(new InstallationFailure(installationStage, error));
             }
 
+            // If the package is optional, log and continue with the next package
+            if (pkg.isOptional) {
+                continue;
+            }
+
             return false;
         } finally {
             try {

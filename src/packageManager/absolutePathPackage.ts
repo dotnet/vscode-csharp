@@ -20,7 +20,8 @@ export class AbsolutePathPackage implements IPackage {
         public fallbackUrl?: string,
         public platformId?: string,
         public integrity?: string,
-        public isFramework?: boolean
+        public isFramework?: boolean,
+        public isOptional?: boolean
     ) {}
 
     public static getAbsolutePathPackage(pkg: Package, extensionPath: string) {
@@ -36,7 +37,8 @@ export class AbsolutePathPackage implements IPackage {
             pkg.fallbackUrl,
             pkg.platformId,
             pkg.integrity,
-            pkg.isFramework
+            pkg.isFramework,
+            pkg.isOptional
         );
     }
 }
