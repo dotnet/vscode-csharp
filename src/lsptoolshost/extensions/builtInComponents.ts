@@ -46,14 +46,21 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
     },
 };
 
-export function getComponentPaths(componentName: string, options: LanguageServerOptions | undefined): string[] {
+export function getComponentPaths(
+    componentName: string,
+    options: LanguageServerOptions | undefined,
+    channel?: { warn: (message: string) => void }
+): string[] {
     const component = componentInfo[componentName];
     const baseFolder = getComponentFolderPath(component, options);
     const paths = component.componentDllPaths.map((dllPath) => path.join(baseFolder, dllPath));
     for (const dllPath of paths) {
         if (!fs.existsSync(dllPath)) {
             if (component.isOptional) {
-                // Component is optional and doesn't exist - return empty array
+                // Component is optional and doesn't exist - log warning and return empty array
+                if (channel) {
+                    channel.warn(`Optional component '${componentName}' could not be found at '${dllPath}'.`);
+                }
                 return [];
             }
             throw new Error(`Component DLL not found: ${dllPath}`);
