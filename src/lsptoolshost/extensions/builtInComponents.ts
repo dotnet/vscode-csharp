@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { LanguageServerOptions } from '../../shared/options';
@@ -49,7 +50,7 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
 export function getComponentPaths(
     componentName: string,
     options: LanguageServerOptions | undefined,
-    channel?: { warn: (message: string) => void }
+    channel?: vscode.LogOutputChannel
 ): string[] {
     const component = componentInfo[componentName];
     const baseFolder = getComponentFolderPath(component, options);

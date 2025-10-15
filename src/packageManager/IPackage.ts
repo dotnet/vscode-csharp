@@ -13,5 +13,4 @@ export interface IPackage {
     platformId?: string;
     integrity?: string;
     isFramework?: boolean;
-    isOptional?: boolean;
 }
