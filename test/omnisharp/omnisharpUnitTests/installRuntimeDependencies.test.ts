@@ -49,7 +49,9 @@ describe(`${installRuntimeDependencies.name}`, () => {
                 useFramework,
                 ['Debugger', 'Omnisharp', 'Razor']
             );
-            expect(installed).toBe(true);
+            expect(installed['Debugger']).toBe(true);
+            expect(installed['Omnisharp']).toBe(true);
+            expect(installed['Razor']).toBe(true);
         });
 
         test("Doesn't log anything to the eventStream", async () => {
@@ -103,7 +105,7 @@ describe(`${installRuntimeDependencies.name}`, () => {
                 useFramework,
                 ['myPackage']
             );
-            expect(installed).toBe(true);
+            expect(installed['myPackage']).toBe(true);
             isNotNull(inputPackage!);
             expect(inputPackage).toHaveLength(1);
             expect(inputPackage[0]).toStrictEqual(
