@@ -26,29 +26,7 @@ export async function downloadAndInstallPackages(
     telemetryReporter?: ITelemetryReporter,
     token?: CancellationToken
 ): Promise<boolean> {
-    function sendInstallationFailureTelemetry(pkg: AbsolutePathPackage, installationStage: string, error: any): void {
-        if (!telemetryReporter) {
-            return;
-        }
-
-        const telemetryProperties: { [key: string]: string } = {
-            installStage: installationStage,
-            packageId: pkg.id,
-            isOptional: pkg.isOptional ? 'true' : 'false',
-        };
-
-        if (error instanceof NestedError && error.err instanceof PackageError) {
-            telemetryProperties['error.message'] = error.err.message;
-            telemetryProperties['error.packageUrl'] = error.err.pkg.url;
-        } else if (error instanceof PackageError) {
-            telemetryProperties['error.message'] = error.message;
-            telemetryProperties['error.packageUrl'] = error.pkg.url;
-        }
-
-        const eventName = pkg.isOptional ? 'OptionalPackageInstallationFailed' : 'PackageInstallationFailed';
-        telemetryReporter.sendTelemetryEvent(eventName, telemetryProperties);
-    }
-
+    let downloadFailed = false;
     eventStream.post(new PackageInstallStart());
     for (const pkg of packages) {
         let installationStage = 'touchBeginFile';
@@ -89,12 +67,7 @@ export async function downloadAndInstallPackages(
             // Send telemetry for the failure
             sendInstallationFailureTelemetry(pkg, installationStage, error);
 
-            // If the package is optional, log and continue with the next package
-            if (pkg.isOptional) {
-                continue;
-            }
-
-            return false;
+            downloadFailed = true;
         } finally {
             try {
                 if (await installFileExists(pkg.installPath, InstallFileType.Begin)) {
@@ -106,5 +79,27 @@ export async function downloadAndInstallPackages(
         }
     }
 
-    return true;
+    return !downloadFailed;
+
+    function sendInstallationFailureTelemetry(pkg: AbsolutePathPackage, installationStage: string, error: any): void {
+        if (!telemetryReporter) {
+            return;
+        }
+
+        const telemetryProperties: { [key: string]: string } = {
+            installStage: installationStage,
+            packageId: pkg.id,
+            isOptional: pkg.isOptional ? 'true' : 'false',
+        };
+
+        if (error instanceof NestedError && error.err instanceof PackageError) {
+            telemetryProperties['error.message'] = error.err.message;
+            telemetryProperties['error.packageUrl'] = error.err.pkg.url;
+        } else if (error instanceof PackageError) {
+            telemetryProperties['error.message'] = error.message;
+            telemetryProperties['error.packageUrl'] = error.pkg.url;
+        }
+
+        telemetryReporter.sendTelemetryEvent('PackageInstallationFailed', telemetryProperties);
+    }
 }
