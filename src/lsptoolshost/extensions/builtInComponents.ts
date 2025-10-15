@@ -11,6 +11,7 @@ interface ComponentInfo {
     defaultFolderName: string;
     optionName: string;
     componentDllPaths: string[];
+    isOptional?: boolean;
 }
 
 export const componentInfo: { [key: string]: ComponentInfo } = {
@@ -26,11 +27,13 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
             'Microsoft.VisualStudio.DesignTools.CodeAnalysis.dll',
             'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll',
         ],
+        isOptional: true,
     },
     razorDevKit: {
         defaultFolderName: '.razorDevKit',
         optionName: 'razorDevKit',
         componentDllPaths: ['Microsoft.VisualStudio.DevKit.Razor.dll'],
+        isOptional: true,
     },
     razorExtension: {
         defaultFolderName: '.razorExtension',
@@ -41,20 +44,17 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         defaultFolderName: '.roslynCopilot',
         optionName: 'roslynCopilot',
         componentDllPaths: ['Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll'],
+        isOptional: true,
     },
 };
 
-export function getComponentPaths(
-    componentName: string,
-    options: LanguageServerOptions | undefined,
-    isOptional = false
-): string[] {
+export function getComponentPaths(componentName: string, options: LanguageServerOptions | undefined): string[] {
     const component = componentInfo[componentName];
     const baseFolder = getComponentFolderPath(component, options);
     const paths = component.componentDllPaths.map((dllPath) => path.join(baseFolder, dllPath));
     for (const dllPath of paths) {
         if (!fs.existsSync(dllPath)) {
-            if (isOptional) {
+            if (component.isOptional) {
                 // Component is optional and doesn't exist - return empty array
                 return [];
             }

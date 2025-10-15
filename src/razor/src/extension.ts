@@ -104,7 +104,7 @@ export async function activate(
             await setupDevKitEnvironment(dotnetInfo.env, csharpDevkitExtension, logger);
 
             if (vscode.env.isTelemetryEnabled) {
-                const razorComponentPaths = getComponentPaths('razorDevKit', undefined, true);
+                const razorComponentPaths = getComponentPaths('razorDevKit', undefined);
                 if (razorComponentPaths.length !== 1) {
                     logger.logError('Failed to find Razor DevKit telemetry extension path.', undefined);
                 } else {
