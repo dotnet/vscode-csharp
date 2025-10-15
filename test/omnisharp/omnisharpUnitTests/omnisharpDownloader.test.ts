@@ -54,7 +54,8 @@ import { modernNetVersion } from '../../../src/omnisharp/omnisharpPackageCreator
                 eventStream,
                 testPackageJSON,
                 platformInfo,
-                extensionPath
+                extensionPath,
+                undefined as any
             );
             server = await MockHttpsServer.CreateMockHttpsServer();
             testZip = await TestZip.createTestZipAsync(createTestFile('Foo', 'foo.txt'));

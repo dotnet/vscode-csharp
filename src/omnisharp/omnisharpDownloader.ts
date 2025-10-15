@@ -19,6 +19,7 @@ import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackag
 import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall';
 import { isValidDownload } from '../packageManager/isValidDownload';
 import { LatestBuildDownloadStart } from './omnisharpLoggingEvents';
+import { ITelemetryReporter } from '../shared/telemetryReporter';
 
 export class OmnisharpDownloader {
     public constructor(
@@ -26,7 +27,8 @@ export class OmnisharpDownloader {
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation,
-        private extensionPath: string
+        private extensionPath: string,
+        private reporter: ITelemetryReporter
     ) {}
 
     public async DownloadAndInstallOmnisharp(
@@ -57,7 +59,7 @@ export class OmnisharpDownloader {
                     this.networkSettingsProvider,
                     this.eventStream,
                     isValidDownload,
-                    undefined
+                    this.reporter
                 )
             ) {
                 this.eventStream.post(new InstallationSuccess());
