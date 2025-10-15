@@ -1026,7 +1026,7 @@ export class RoslynLanguageServer {
 
         // Also include the Xaml Dev Kit extensions, if enabled.
         if (languageServerOptions.enableXamlTools) {
-            getComponentPaths('xamlTools', languageServerOptions).forEach((path) =>
+            getComponentPaths('xamlTools', languageServerOptions, true).forEach((path) =>
                 additionalExtensionPaths.push(path)
             );
         }
@@ -1096,7 +1096,7 @@ export class RoslynLanguageServer {
             await exports.setupTelemetryEnvironmentAsync(env);
         }
 
-        getComponentPaths('roslynCopilot', languageServerOptions).forEach((extPath) => {
+        getComponentPaths('roslynCopilot', languageServerOptions, true).forEach((extPath) => {
             additionalExtensionPaths.push(extPath);
         });
     }
