@@ -245,8 +245,7 @@ function GetTestOmniSharpManager(
         eventStream,
         testPackageJSON,
         platformInfo,
-        extensionPath,
-        undefined as any
+        extensionPath
     );
     return new OmnisharpManager(downloader, platformInfo, serverUrl);
 }

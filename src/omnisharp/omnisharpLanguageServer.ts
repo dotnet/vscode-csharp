@@ -154,7 +154,8 @@ export async function activateOmniSharpLanguageServer(
             eventStream,
             context.extension.packageJSON,
             platformInfo,
-            context.extension.extensionPath
+            context.extension.extensionPath,
+            reporter
         );
 
         await razorOmnisharpDownloader.DownloadAndInstallRazorOmnisharp(

@@ -28,7 +28,7 @@ export class OmnisharpDownloader {
         private packageJSON: any,
         private platformInfo: PlatformInformation,
         private extensionPath: string,
-        private reporter: ITelemetryReporter
+        private reporter?: ITelemetryReporter
     ) {}
 
     public async DownloadAndInstallOmnisharp(

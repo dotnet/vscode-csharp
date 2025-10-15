@@ -11,6 +11,7 @@ import { downloadAndInstallPackages } from '../packageManager/downloadAndInstall
 import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackageUtils';
 import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall';
 import { isValidDownload } from '../packageManager/isValidDownload';
+import { ITelemetryReporter } from '../shared/telemetryReporter';
 
 export class RazorOmnisharpDownloader {
     public constructor(
@@ -18,7 +19,8 @@ export class RazorOmnisharpDownloader {
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation,
-        private extensionPath: string
+        private extensionPath: string,
+        private reporter?: ITelemetryReporter
     ) {}
 
     public async DownloadAndInstallRazorOmnisharp(version: string): Promise<boolean> {
@@ -39,7 +41,7 @@ export class RazorOmnisharpDownloader {
                     this.networkSettingsProvider,
                     this.eventStream,
                     isValidDownload,
-                    undefined
+                    this.reporter
                 )
             ) {
                 this.eventStream.post(new InstallationSuccess());
