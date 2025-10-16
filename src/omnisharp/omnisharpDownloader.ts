@@ -53,15 +53,17 @@ export class OmnisharpDownloader {
         if (packagesToInstall.length > 0) {
             this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            if (
-                await downloadAndInstallPackages(
-                    packagesToInstall,
-                    this.networkSettingsProvider,
-                    this.eventStream,
-                    isValidDownload,
-                    this.reporter
-                )
-            ) {
+            const installationResults = await downloadAndInstallPackages(
+                packagesToInstall,
+                this.networkSettingsProvider,
+                this.eventStream,
+                isValidDownload,
+                this.reporter
+            );
+            const failedPackages = Object.entries(installationResults)
+                .filter(([, installed]) => !installed)
+                .map(([name]) => name);
+            if (failedPackages.length === 0) {
                 this.eventStream.post(new InstallationSuccess());
                 return true;
             }
