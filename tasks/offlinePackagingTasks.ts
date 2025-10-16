@@ -280,8 +280,19 @@ async function installPackageJsonDependency(
         codeExtensionPath
     );
     const provider = () => new NetworkSettings('', true);
-    if (!(await downloadAndInstallPackages(packagesToInstall, provider, eventStream, isValidDownload, token))) {
-        throw Error('Failed to download package.');
+    const installationResults = await downloadAndInstallPackages(
+        packagesToInstall,
+        provider,
+        eventStream,
+        isValidDownload,
+        undefined,
+        token
+    );
+    const failedPackages = Object.entries(installationResults)
+        .filter(([, installed]) => !installed)
+        .map(([name]) => name);
+    if (failedPackages.length > 0) {
+        throw Error('The following packages failed to install: ' + failedPackages.join(', '));
     }
 }
 

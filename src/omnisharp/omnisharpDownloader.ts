@@ -19,6 +19,7 @@ import { getRuntimeDependenciesPackages } from '../tools/runtimeDependencyPackag
 import { getAbsolutePathPackagesToInstall } from '../packageManager/getAbsolutePathPackagesToInstall';
 import { isValidDownload } from '../packageManager/isValidDownload';
 import { LatestBuildDownloadStart } from './omnisharpLoggingEvents';
+import { ITelemetryReporter } from '../shared/telemetryReporter';
 
 export class OmnisharpDownloader {
     public constructor(
@@ -26,7 +27,8 @@ export class OmnisharpDownloader {
         private eventStream: EventStream,
         private packageJSON: any,
         private platformInfo: PlatformInformation,
-        private extensionPath: string
+        private extensionPath: string,
+        private reporter?: ITelemetryReporter
     ) {}
 
     public async DownloadAndInstallOmnisharp(
@@ -51,14 +53,17 @@ export class OmnisharpDownloader {
         if (packagesToInstall.length > 0) {
             this.eventStream.post(new PackageInstallation(`OmniSharp Version = ${version}`));
             this.eventStream.post(new LogPlatformInfo(this.platformInfo));
-            if (
-                await downloadAndInstallPackages(
-                    packagesToInstall,
-                    this.networkSettingsProvider,
-                    this.eventStream,
-                    isValidDownload
-                )
-            ) {
+            const installationResults = await downloadAndInstallPackages(
+                packagesToInstall,
+                this.networkSettingsProvider,
+                this.eventStream,
+                isValidDownload,
+                this.reporter
+            );
+            const failedPackages = Object.entries(installationResults)
+                .filter(([, installed]) => !installed)
+                .map(([name]) => name);
+            if (failedPackages.length === 0) {
                 this.eventStream.post(new InstallationSuccess());
                 return true;
             }
