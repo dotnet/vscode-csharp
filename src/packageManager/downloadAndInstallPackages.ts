@@ -17,7 +17,7 @@ import { PackageInstallStart } from '../shared/loggingEvents';
 import { DownloadValidator } from './isValidDownload';
 import { CancellationToken } from 'vscode';
 import { ITelemetryReporter } from '../shared/telemetryReporter';
-import { DependencyInstallationResults } from './IInstallDependencies';
+import { DependencyInstallationStatus } from './IInstallDependencies';
 
 export async function downloadAndInstallPackages(
     packages: AbsolutePathPackage[],
@@ -26,9 +26,9 @@ export async function downloadAndInstallPackages(
     downloadValidator: DownloadValidator,
     telemetryReporter?: ITelemetryReporter,
     token?: CancellationToken
-): Promise<DependencyInstallationResults> {
+): Promise<DependencyInstallationStatus> {
     eventStream.post(new PackageInstallStart());
-    const results: DependencyInstallationResults = {};
+    const results: DependencyInstallationStatus = {};
     for (const pkg of packages) {
         let installationStage = 'touchBeginFile';
         try {
