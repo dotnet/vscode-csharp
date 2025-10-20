@@ -12,10 +12,16 @@
   * Improve diagnostic quality for less accessible base type argument (PR: [#80483](https://github.com/dotnet/roslyn/pull/80483))
   * Build BuildHost against net8.0 (PR: [#80641](https://github.com/dotnet/roslyn/pull/80641))
   * Add completion for directives in file based programs (PR: [#80410](https://github.com/dotnet/roslyn/pull/80410))
-* Bump Razor to 10.0.0-preview.25512.6 (PR: [#8694](https://github.com/dotnet/vscode-csharp/pull/8694))
+* Bump Razor to 10.0.0-preview.25517.9 (PR: [#8706](https://github.com/dotnet/vscode-csharp/pull/8706))
   * Provide a way for users to turn on logging for formatting, to help resolve bugs (PR: [#12304](https://github.com/dotnet/razor/pull/12304))
   * Handle diagnostic spans that cover an entire attribute value (PR: [#12302](https://github.com/dotnet/razor/pull/12302))
   * Map component start tags to C#, for better GTD, FAR, Hover, etc. (PR: [#12287](https://github.com/dotnet/razor/pull/12287))
+  * Add snippet support for component completion with EditorRequired attributes (PR: [#12325](https://github.com/dotnet/razor/pull/12325))
+  * Add Go To Definition support for file paths in string literals (PR: [#12323](https://github.com/dotnet/razor/pull/12323))
+  * Add IntelliSense support for Blazor enhanced navigation and form handling data attributes (PR: [#12324](https://github.com/dotnet/razor/pull/12324))
+  * Fix component end tags to behave consistently with start tags for Hover, Go To Definition, and Find All References (PR: [#12327](https://github.com/dotnet/razor/pull/12327))
+  * Add out-of-scope Blazor Component completions with auto-insert @using statements (PR: [#12336](https://github.com/dotnet/razor/pull/12336))
+  * Fix classification for fully qualified components (PR: [#12335](https://github.com/dotnet/razor/pull/12335))
 
 # 2.94.x
 * Add completion for razor components in settings (PR: [#8680](https://github.com/dotnet/vscode-csharp/pull/8680))
