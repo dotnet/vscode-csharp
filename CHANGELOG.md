@@ -4,6 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.95.x
+* Update Debugger to v2.95.0 (PR: [#8710](https://github.com/dotnet/vscode-csharp/pull/8710))
+* Remove default editor.formatOnType configuration for C# (PR: [#8709](https://github.com/dotnet/vscode-csharp/pull/8709))
+* Support optional components (PR: [#8703](https://github.com/dotnet/vscode-csharp/pull/8703))
+* Update RoslynCopilot url to 18.0.904-alpha (PR: [#8699](https://github.com/dotnet/vscode-csharp/pull/8699))
+* Update Roslyn to 5.3.0-1.25513.2 (PR: [#8697](https://github.com/dotnet/vscode-csharp/pull/8697))
+* Bump Razor to 10.0.0-preview.25512.6 (PR: [#8694](https://github.com/dotnet/vscode-csharp/pull/8694))
 * Update RoslynCopilot url to 18.0.898-alpha (PR: [#8696](https://github.com/dotnet/vscode-csharp/pull/8696))
 * Bump Roslyn to 5.3.0-1.25514.3 (PR: [#8700](https://github.com/dotnet/vscode-csharp/pull/8700))
   * Ensure `LspWorkspaceManager` returns solutions without misc document when file moved(PR: [#80535](https://github.com/dotnet/roslyn/pull/80535))
