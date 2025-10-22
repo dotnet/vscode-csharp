@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.96.x
+
 # 2.95.x
 * Update RoslynCopilot url to 18.0.898-alpha (PR: [#8696](https://github.com/dotnet/vscode-csharp/pull/8696))
 * Bump Roslyn to 5.3.0-1.25514.3 (PR: [#8700](https://github.com/dotnet/vscode-csharp/pull/8700))
