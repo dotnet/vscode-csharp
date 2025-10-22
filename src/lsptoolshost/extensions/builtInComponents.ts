@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { LanguageServerOptions } from '../../shared/options';
@@ -11,6 +12,7 @@ interface ComponentInfo {
     defaultFolderName: string;
     optionName: string;
     componentDllPaths: string[];
+    isOptional?: boolean;
 }
 
 export const componentInfo: { [key: string]: ComponentInfo } = {
@@ -41,15 +43,27 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
         defaultFolderName: '.roslynCopilot',
         optionName: 'roslynCopilot',
         componentDllPaths: ['Microsoft.VisualStudio.Copilot.Roslyn.LanguageServer.dll'],
+        isOptional: true,
     },
 };
 
-export function getComponentPaths(componentName: string, options: LanguageServerOptions | undefined): string[] {
+export function getComponentPaths(
+    componentName: string,
+    options: LanguageServerOptions | undefined,
+    channel?: vscode.LogOutputChannel
+): string[] {
     const component = componentInfo[componentName];
     const baseFolder = getComponentFolderPath(component, options);
     const paths = component.componentDllPaths.map((dllPath) => path.join(baseFolder, dllPath));
     for (const dllPath of paths) {
         if (!fs.existsSync(dllPath)) {
+            if (component.isOptional) {
+                // Component is optional and doesn't exist - log warning and return empty array
+                if (channel) {
+                    channel.warn(`Optional component '${componentName}' could not be found at '${dllPath}'.`);
+                }
+                return [];
+            }
             throw new Error(`Component DLL not found: ${dllPath}`);
         }
     }
