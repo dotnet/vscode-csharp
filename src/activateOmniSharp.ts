@@ -8,7 +8,7 @@ import { OmnisharpExtensionExports } from './csharpExtensionExports';
 import { PlatformInformation } from './shared/platform';
 import { Observable } from 'rxjs';
 import { NetworkSettingsProvider } from './networkSettings';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { activateOmniSharpLanguageServer } from './omnisharp/omnisharpLanguageServer';
 import { EventStream } from './eventStream';
 import { razorOptions } from './shared/options';
