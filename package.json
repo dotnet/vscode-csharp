@@ -718,6 +718,7 @@
     "configuration": [
       {
         "title": "Project",
+        "id": "ms-dotnettools.csharp.project",
         "order": 0,
         "properties": {
           "dotnet.defaultSolution": {
@@ -729,6 +730,7 @@
       },
       {
         "title": "Text Editor",
+        "id": "ms-dotnettools.csharp.textEditor",
         "order": 1,
         "properties": {
           "dotnet.autoInsert.enableAutoInsert": {
@@ -953,6 +955,7 @@
       },
       {
         "title": "Debugger",
+        "id": "ms-dotnettools.csharp.debugger",
         "order": 8,
         "properties": {
           "csharp.debug.stopAtEntry": {
@@ -1411,6 +1414,7 @@
       },
       {
         "title": "LSP Server",
+        "id": "ms-dotnettools.csharp.lspServer",
         "order": 9,
         "properties": {
           "dotnet.preferCSharpExtension": {
@@ -1551,6 +1555,7 @@
       },
       {
         "title": "OmniSharp",
+        "id": "ms-dotnettools.csharp.omniSharp",
         "order": 10,
         "properties": {
           "dotnet.server.useOmnisharp": {
