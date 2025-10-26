@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.97.x
+* Bump Razor to 10.0.0-preview.25524.10 (PR: [#8721](https://github.com/dotnet/vscode-csharp/pull/8721))
+  * Add CodeAction to simplify fully-qualified component tags (PR: [#12379](https://github.com/dotnet/razor/pull/12379))
+  * Fix component and component attribute rename in cohosting (PR: [#12374](https://github.com/dotnet/razor/pull/12374))
 
 # 2.96.x
 * Update Debugger to v2.95.0 (PR: [#8710](https://github.com/dotnet/vscode-csharp/pull/8710))
