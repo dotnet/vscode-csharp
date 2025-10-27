@@ -1,5 +1,5 @@
 parameters:
-  - name: dotnetVersion
+  - name: installDotNet
     type: string
   - name: testVSCodeVersion
     type: string
@@ -13,7 +13,7 @@ steps:
 
 - template: prereqs.yml
   parameters:
-    dotnetVersion: ${{ parameters.dotnetVersion }}
+    installDotNet: ${{ parameters.installDotNet }}
 
 - template: test-prereqs.yml
 

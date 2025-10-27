@@ -4,8 +4,6 @@ parameters:
   default: 'default'
 - name: isOfficial
   type: boolean
-- name: dotnetVersion
-  type: string
 - name: channel
   values:
   - release
@@ -128,7 +126,7 @@ stages:
     - template: /azure-pipelines/prereqs.yml@self
       parameters:
         versionNumberOverride: ${{ parameters.versionNumberOverride }}
-        dotnetVersion: ${{ parameters.dotnetVersion}}
+        installDotNet: true
 
     - task: UsePythonVersion@0
       displayName: 'Use Python 3.11'
