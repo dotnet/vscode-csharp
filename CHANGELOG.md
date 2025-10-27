@@ -4,6 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.97.x
+* Bump Roslyn to 5.3.0-1.25524.13 (PR: [#8723](https://github.com/dotnet/vscode-csharp/pull/8723))
+  * Fix culture-sensitive StringBuilder.Append and ToString calls across codebase and add banned symbols (PR: [#80800](https://github.com/dotnet/roslyn/pull/80800))
+  * Add support for autocompleting raw string quotes (PR: [#80871](https://github.com/dotnet/roslyn/pull/80871))
+  * Don't add parenthesis when committing type with accessible nested type using dot (PR: [#80846](https://github.com/dotnet/roslyn/pull/80846))
+  * Completion for `#:project` paths in file based programs (PR: [#80844](https://github.com/dotnet/roslyn/pull/80844))
+  * Allow semantic tokens in Razor to be better behaved (PR: [#80815](https://github.com/dotnet/roslyn/pull/80815))
+  * When searching for the original file from a PDB, only allow absolute paths (PR: [#80804](https://github.com/dotnet/roslyn/pull/80804))
 * Bump Razor to 10.0.0-preview.25524.10 (PR: [#8721](https://github.com/dotnet/vscode-csharp/pull/8721))
   * Add CodeAction to simplify fully-qualified component tags (PR: [#12379](https://github.com/dotnet/razor/pull/12379))
   * Fix component and component attribute rename in cohosting (PR: [#12374](https://github.com/dotnet/razor/pull/12374))
