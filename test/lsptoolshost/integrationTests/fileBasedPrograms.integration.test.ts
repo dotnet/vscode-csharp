@@ -19,10 +19,10 @@ import {
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 
-const doRunSuite = process.env.RoslynSkipTestFileBasedPrograms !== 'true';
-console.log(`process.env.RoslynSkipTestFileBasedPrograms: ${process.env.RoslynSkipTestFileBasedPrograms}`);
+const doRunSuite = process.env['ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS'] !== 'true';
+console.log(`process.env.ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: ${process.env.ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS}`);
 console.log(`doRunSuite: ${doRunSuite}`);
-(doRunSuite ? describe : describe.skip)(`Restore Tests`, () => {
+(doRunSuite ? describe : describe.skip)(`File-based Programs Tests`, () => {
     let exports: CSharpExtensionExports;
 
     beforeAll(async () => {
