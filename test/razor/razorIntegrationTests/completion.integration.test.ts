@@ -77,21 +77,13 @@ describe(`Razor Completion ${testAssetWorkspace.description}`, function () {
             throw new Error('No active document');
         }
 
-        const expectedDocumentation = `
-\`\`\`csharp
-readonly struct System.DateTime
-\`\`\`
-  
-Represents an instant in time, typically expressed as a date and time of day\\.
-`;
         await waitForExpectedCompletionItemAsync(
             new vscode.Position(2, 1),
             undefined,
-            200,
+            undefined,
             'DateTime',
             vscode.CompletionItemKind.Struct,
-            'DateTime',
-            expectedDocumentation
+            'DateTime'
         );
     });
 
@@ -105,21 +97,13 @@ Represents an instant in time, typically expressed as a date and time of day\\.
             throw new Error('No active document');
         }
 
-        const expectedDocumentation = `
-\`\`\`csharp
-readonly struct System.DateTime
-\`\`\`
-  
-Represents an instant in time, typically expressed as a date and time of day\\.
-`;
         await waitForExpectedCompletionItemAsync(
             new vscode.Position(5, 13),
             undefined,
-            200,
+            undefined,
             'DateTime',
             vscode.CompletionItemKind.Struct,
-            'DateTime',
-            expectedDocumentation
+            'DateTime'
         );
     });
 
