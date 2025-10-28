@@ -13,6 +13,9 @@ parameters:
     default: false
   - name: testVSCodeVersion
     type: string
+  - name: RoslynSkipTestFileBasedPrograms
+    type: string
+    default: ''
 
 jobs:
 - job:
@@ -39,6 +42,8 @@ jobs:
     container: ${{ parameters.containerName }}
   steps:
   - template: /azure-pipelines/test.yml@self
+    env:
+      skipFileBasedProgramsTests: $ {{ parameters.skipFileBasedProgramsTests }}
     parameters:
       installDotNet: ${{ parameters.installDotNet }}
       installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
