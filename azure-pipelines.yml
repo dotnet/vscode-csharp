@@ -72,7 +72,7 @@ stages:
 - stage:
   displayName: Test Linux (.NET 8)
   dependsOn: []
-  variables:
+  env:
     RoslynSkipTestFileBasedPrograms: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
@@ -90,7 +90,7 @@ stages:
 - stage:
   displayName: Test Linux (.NET 9)
   dependsOn: []
-  variables:
+  env:
     RoslynSkipTestFileBasedPrograms: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
