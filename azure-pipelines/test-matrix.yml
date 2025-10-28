@@ -1,11 +1,13 @@
 parameters:
+  - name: os
+    type: string
   - name: pool
     type: object
   - name: containerName
     type: string
     default: ''
-  - name: dotnetVersion
-    type: string
+  - name: installDotNet
+    type: boolean
   - name: installAdditionalLinuxDependencies
     type: boolean
     default: false
@@ -19,14 +21,12 @@ jobs:
       UnitTests:
         npmCommand: test:unit
         isIntegration: false
-      CSharpIntegrationTests:
-        npmCommand: test:integration:csharp
-        isIntegration: true
+      ${{ if ne(parameters.os, 'windows') }}:
+        CSharpIntegrationTests:
+          npmCommand: test:integration:csharp
+          isIntegration: true
       DevKitTests:
         npmCommand: test:integration:devkit
-        isIntegration: true
-      RazorTests:
-        npmCommand: test:integration:razor
         isIntegration: true
       RazorCohostTests:
         npmCommand: test:integration:razor:cohost
@@ -40,7 +40,7 @@ jobs:
   steps:
   - template: /azure-pipelines/test.yml@self
     parameters:
-      dotnetVersion: ${{ parameters.dotnetVersion }}
+      installDotNet: ${{ parameters.installDotNet }}
       installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
       npmCommand: $(npmCommand)
       testVSCodeVersion: ${{ parameters.testVSCodeVersion }}

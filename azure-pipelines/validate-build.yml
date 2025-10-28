@@ -1,0 +1,37 @@
+stages:
+- stage: ValidateBuild
+  displayName: 'Validate Build'
+  dependsOn: []
+  jobs:
+  - job: 'BuildWindows'
+    displayName: 'Build Windows'
+    pool:
+      name: Azure Pipelines
+      vmImage: windows-latest
+      os: windows
+    steps:
+      - template: /azure-pipelines/build.yml@self
+        parameters:
+          installDotNet: true
+
+  - job: 'BuildLinux'
+    displayName: 'Build Linux'
+    pool:
+      name: Azure Pipelines
+      vmImage: ubuntu-latest
+      os: linux
+    steps:
+      - template: /azure-pipelines/build.yml@self
+        parameters:
+          installDotNet: true
+
+  - job: 'BuildDarwin'
+    displayName: 'Build Darwin'
+    pool:
+      name: Azure Pipelines
+      vmImage: macOS-latest
+      os: macOS
+    steps:
+      - template: /azure-pipelines/build.yml@self
+        parameters:
+          installDotNet: true

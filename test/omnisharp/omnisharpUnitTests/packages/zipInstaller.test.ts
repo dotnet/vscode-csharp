@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, afterEach } from '@jest/globals';
-import * as fs from 'async-file';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as util from '../../../../src/common';
-import { CreateTmpDir, TmpAsset } from '../../../../src/createTmpAsset';
+import { CreateTmpDir, TmpAsset } from '../../../createTmpAsset';
 import { InstallZip } from '../../../../src/packageManager/zipInstaller';
 import { EventStream } from '../../../../src/eventStream';
 import { PlatformInformation } from '../../../../src/shared/platform';

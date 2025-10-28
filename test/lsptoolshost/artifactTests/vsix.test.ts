@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect } from '@jest/globals';
-import * as fs from 'async-file';
-import * as glob from 'glob-promise';
+import * as fs from 'fs-extra';
+import * as glob from 'glob';
 import * as path from 'path';
 
 const vsixFiles = glob.sync(path.join(process.cwd(), '**', '*.vsix'));

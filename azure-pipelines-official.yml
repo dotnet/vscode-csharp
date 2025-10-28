@@ -27,9 +27,6 @@ parameters:
   - auto
   default: auto
 
-variables:
-- template: /azure-pipelines/dotnet-variables.yml@self
-
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -60,10 +57,9 @@ extends:
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
-    - template: /azure-pipelines/build-all.yml@self
+    - template: /azure-pipelines/build-vsix.yml@self
       parameters:
         versionNumberOverride: ${{ parameters.versionNumberOverride }}
         isOfficial: true
         channel: ${{ parameters.channel }}
         signType: ${{ parameters.signType }}
-        dotnetVersion: $(defaultDotnetVersion)

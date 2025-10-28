@@ -8,7 +8,7 @@
 !.razorDevKit/**
 !.razoromnisharp/**
 !.razorExtension/**
-.rpt2_cache/**
+.azuredevops/**
 .config/**
 .devcontainer/**
 .github/**
@@ -22,13 +22,13 @@ src/**
 tasks/**
 test/**
 __mocks__/**
-jest.config.ts
-baseJestConfig.ts
+**/*.ts
 .prettierignore
 typings/**
 vsix/**
 node_modules
 azure-pipelines
+init.ps1
 
 **/*.map
 *.vsix
@@ -39,17 +39,13 @@ CODEOWNERS
 Directory.Build.props
 global.json
 NuGet.config
-gulpfile.ts
 !install.Lock
-ISSUE_TEMPLATE
 !README.md
 !CHANGELOG.md
 *.md
-CONTRIBUTING.md
 *.vscodeignore
 *.yml
 package-lock.json
-package.json
 tsconfig.json
 version.json
 wallaby.js

@@ -12,7 +12,8 @@ jobs:
     with:
       configuration_file_path: '.config/snap-flow.json'
 
-  create-pull-request:
+  bump-main-version:
+    needs: check-script
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
