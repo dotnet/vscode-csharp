@@ -43,7 +43,7 @@ jobs:
   steps:
   - template: /azure-pipelines/test.yml@self
     env:
-      skipFileBasedProgramsTests: $ {{ parameters.skipFileBasedProgramsTests }}
+      RoslynSkipTestFileBasedPrograms: $ {{ parameters.RoslynSkipTestFileBasedPrograms }}
     parameters:
       installDotNet: ${{ parameters.installDotNet }}
       installAdditionalLinuxDependencies: ${{ parameters.installAdditionalLinuxDependencies }}
