@@ -10,6 +10,7 @@ import * as os from 'os';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { findTagsByVersion } from './gitTasks';
+import minimist from 'minimist';
 
 const execAsync = promisify(exec);
 
@@ -20,18 +21,51 @@ function logWarning(message: string, error?: unknown): void {
     }
 }
 
+/**
+ * Calculate the next release (stable) version from the current version.
+ * Rounds up the minor version to the next tens version.
+ * @param currentVersion The current version in "major.minor" format (e.g., "2.74")
+ * @returns The next stable release version (e.g., "2.80")
+ */
+export function getNextReleaseVersion(currentVersion: string): string {
+    const split = currentVersion.split('.');
+    const major = parseInt(split[0]);
+    const minor = parseInt(split[1]);
+
+    // Round up to the next tens version
+    const nextTensMinor = Math.ceil((minor + 1) / 10) * 10;
+
+    return `${major}.${nextTensMinor}`;
+}
+
 gulp.task('incrementVersion', async (): Promise<void> => {
+    const argv = minimist(process.argv.slice(2));
+    const isReleaseCandidate = argv['releaseCandidate'] === true || argv['releaseCandidate'] === 'true';
+
     // Get the current version from version.json
     const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
     const file = fs.readFileSync(versionFilePath, 'utf8');
     const versionJson = JSON.parse(file);
 
-    // Increment the minor version
+    // Calculate new version
     const version = versionJson.version as string;
     const split = version.split('.');
-    const newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
+    let newVersion: string;
 
-    console.log(`Updating ${version} to ${newVersion}`);
+    if (isReleaseCandidate) {
+        // If this is a release candidate, increment to be higher than the next stable version
+        // e.g., if current is 2.74, next stable is 2.80, so main should be 2.81
+        const nextStableVersion = getNextReleaseVersion(version);
+        const stableSplit = nextStableVersion.split('.');
+        newVersion = `${stableSplit[0]}.${parseInt(stableSplit[1]) + 1}`;
+        console.log(
+            `Release candidate mode: Updating ${version} to ${newVersion} (next stable would be ${nextStableVersion})`
+        );
+    } else {
+        // Normal increment: just increment the minor version
+        newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
+        console.log(`Updating ${version} to ${newVersion}`);
+    }
 
     // Write the new version back to version.json
     versionJson.version = newVersion;
@@ -186,3 +220,27 @@ async function generatePRList(startSHA: string, endSHA: string): Promise<string[
         throw error;
     }
 }
+
+/**
+ * Update version.json to the next stable release version.
+ * This task is used when snapping from prerelease to release.
+ * It updates the version to round up to the next tens version (e.g., 2.74 -> 2.80).
+ */
+gulp.task('updateVersionForRelease', async (): Promise<void> => {
+    // Get the current version from version.json
+    const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
+    const file = fs.readFileSync(versionFilePath, 'utf8');
+    const versionJson = JSON.parse(file);
+
+    const currentVersion = versionJson.version as string;
+    const releaseVersion = getNextReleaseVersion(currentVersion);
+
+    console.log(`Updating version from ${currentVersion} to stable release version ${releaseVersion}`);
+
+    // Write the new version back to version.json
+    versionJson.version = releaseVersion;
+    const newJson = JSON.stringify(versionJson, null, 4);
+    console.log(`New json: ${newJson}`);
+
+    fs.writeFileSync(versionFilePath, newJson);
+});
