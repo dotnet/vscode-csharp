@@ -1,6 +1,6 @@
 parameters:
-  - name: dotnetVersion
-    type: string
+  - name: installDotNet
+    type: boolean
   - name: installAdditionalLinuxDependencies
     type: boolean
     default: false
@@ -20,7 +20,7 @@ steps:
 
 - template: prereqs.yml
   parameters:
-    dotnetVersion: ${{ parameters.dotnetVersion }}
+    installDotNet: ${{ parameters.installDotNet }}
 
 - ${{ if eq(parameters.installAdditionalLinuxDependencies, true) }}:
   - template: test-linux-docker-prereqs.yml

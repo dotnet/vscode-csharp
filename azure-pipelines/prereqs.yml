@@ -2,8 +2,8 @@ parameters:
   - name: versionNumberOverride
     type: string
     default: 'default'
-  - name: dotnetVersion
-    type: string
+  - name: installDotNet
+    type: boolean
 
 steps:
 
@@ -14,11 +14,13 @@ steps:
 
 # Some tests use predefined docker images with a specific version of .NET installed.
 # So we avoid installing .NET in those cases.
-- ${{ if parameters.dotnetVersion }}:
+- ${{ if parameters.installDotNet }}:
   - task: UseDotNet@2
     displayName: 'Install .NET SDK'
     inputs:
-      version: ${{ parameters.dotnetVersion }}
+      useGlobalJson: true
+      workingDirectory: $(Build.SourcesDirectory)/msbuild
+      
 
 - script: dotnet --info
   displayName: Display dotnet info
