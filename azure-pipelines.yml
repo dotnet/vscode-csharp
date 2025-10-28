@@ -119,7 +119,7 @@ stages:
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals 1es-ubuntu-2004-open
-      containerName: mcr.microsoft.com/dotnet/sdk:10.0.100-rc2-noble
+      containerName: mcr.microsoft.com/dotnet/sdk:10.0.100-noble
 
 - stage: Test_Windows_Stage
   displayName: Test Windows
