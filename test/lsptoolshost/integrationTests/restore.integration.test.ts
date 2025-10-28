@@ -20,6 +20,8 @@ import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } fr
 import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 
 const doRunSuite = process.env.RoslynSkipTestFileBasedPrograms !== 'true';
+console.log(`process.env.RoslynSkipTestFileBasedPrograms: ${process.env.RoslynSkipTestFileBasedPrograms}`);
+console.log(`doRunSuite: ${doRunSuite}`);
 (doRunSuite ? describe : describe.skip)(`Restore Tests`, () => {
     let exports: CSharpExtensionExports;
 

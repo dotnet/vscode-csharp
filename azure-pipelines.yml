@@ -72,10 +72,10 @@ stages:
 - stage:
   displayName: Test Linux (.NET 8)
   dependsOn: []
+  variables:
+    RoslynSkipTestFileBasedPrograms: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
-    variables:
-      RoslynSkipTestFileBasedPrograms: 'true'
     parameters:
       os: linux
       # Prefer the dotnet from the container.
@@ -90,10 +90,10 @@ stages:
 - stage:
   displayName: Test Linux (.NET 9)
   dependsOn: []
+  variables:
+    RoslynSkipTestFileBasedPrograms: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
-    variables:
-      RoslynSkipTestFileBasedPrograms: 'true'
     parameters:
       os: linux
       # Prefer the dotnet from the container.
