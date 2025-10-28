@@ -9,7 +9,7 @@ import { beforeAll, afterAll, test, expect, beforeEach, describe } from '@jest/g
 import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import * as integrationHelpers from '../../lsptoolshost/integrationTests/integrationHelpers';
 
-describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
+describe(`Razor Completion ${testAssetWorkspace.description}`, function () {
     beforeAll(async function () {
         if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
             return;
@@ -37,7 +37,7 @@ describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
         }
 
         await waitForExpectedCompletionItemAsync(
-            new vscode.Position(4, 7),
+            new vscode.Position(9, 7),
             undefined,
             undefined,
             'text',
@@ -57,7 +57,7 @@ describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
 
 [MDN Reference](https://developer.mozilla.org/docs/Web/HTML/Reference/Elements/div)`;
         await waitForExpectedCompletionItemAsync(
-            new vscode.Position(6, 3),
+            new vscode.Position(11, 3),
             undefined,
             undefined,
             'div',
@@ -66,6 +66,83 @@ describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
             expectedDocumentation
         );
     }, 30000);
+
+    test('At-DateTime', async () => {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
+        const activeDocument = vscode.window.activeTextEditor?.document.uri;
+        if (!activeDocument) {
+            throw new Error('No active document');
+        }
+
+        const expectedDocumentation = `
+\`\`\`csharp
+readonly struct System.DateTime
+\`\`\`
+  
+Represents an instant in time, typically expressed as a date and time of day\\.
+`;
+        await waitForExpectedCompletionItemAsync(
+            new vscode.Position(2, 1),
+            undefined,
+            200,
+            'DateTime',
+            vscode.CompletionItemKind.Struct,
+            'DateTime',
+            expectedDocumentation
+        );
+    });
+
+    test('DateTime', async () => {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
+        const activeDocument = vscode.window.activeTextEditor?.document.uri;
+        if (!activeDocument) {
+            throw new Error('No active document');
+        }
+
+        const expectedDocumentation = `
+\`\`\`csharp
+readonly struct System.DateTime
+\`\`\`
+  
+Represents an instant in time, typically expressed as a date and time of day\\.
+`;
+        await waitForExpectedCompletionItemAsync(
+            new vscode.Position(5, 13),
+            undefined,
+            200,
+            'DateTime',
+            vscode.CompletionItemKind.Struct,
+            'DateTime',
+            expectedDocumentation
+        );
+    });
+
+    test('Provisional completion', async () => {
+        if (!integrationHelpers.isRazorWorkspace(vscode.workspace)) {
+            return;
+        }
+
+        const activeDocument = vscode.window.activeTextEditor?.document.uri;
+        if (!activeDocument) {
+            throw new Error('No active document');
+        }
+
+        await waitForExpectedCompletionItemAsync(
+            new vscode.Position(1, 10),
+            '.',
+            1,
+            'Now',
+            vscode.CompletionItemKind.Property,
+            'Now',
+            undefined // TODO: Put in an expected doc string when https://github.com/dotnet/razor/pull/12403 inserts
+        );
+    });
 
     async function getCompletionsAsync(
         position: vscode.Position,
@@ -100,7 +177,7 @@ describe(`Razor Hover ${testAssetWorkspace.description}`, function () {
 
         await integrationHelpers.waitForExpectedResult<vscode.CompletionList>(
             async () => {
-                const completions = await getCompletionsAsync(position, undefined, resolvedItemCount);
+                const completions = await getCompletionsAsync(position, triggerCharacter, resolvedItemCount);
                 return completions;
             },
             duration,
