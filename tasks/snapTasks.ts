@@ -38,41 +38,59 @@ export function getNextReleaseVersion(currentVersion: string): string {
     return `${major}.${nextTensMinor}`;
 }
 
+/**
+ * Read and parse version.json
+ * @returns The parsed version.json object
+ */
+function readVersionJson(): { version: string; [key: string]: unknown } {
+    const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
+    const file = fs.readFileSync(versionFilePath, 'utf8');
+    return JSON.parse(file);
+}
+
+/**
+ * Write version.json with the given version
+ * @param versionJson The version.json object to write
+ */
+function writeVersionJson(versionJson: { version: string; [key: string]: unknown }): void {
+    const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
+    const newJson = JSON.stringify(versionJson, null, 4);
+    console.log(`New json: ${newJson}`);
+    fs.writeFileSync(versionFilePath, newJson);
+}
+
 gulp.task('incrementVersion', async (): Promise<void> => {
     const argv = minimist(process.argv.slice(2));
     const isReleaseCandidate = argv['releaseCandidate'] === true || argv['releaseCandidate'] === 'true';
 
     // Get the current version from version.json
-    const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
-    const file = fs.readFileSync(versionFilePath, 'utf8');
-    const versionJson = JSON.parse(file);
+    const versionJson = readVersionJson();
 
     // Calculate new version
     const version = versionJson.version as string;
-    const split = version.split('.');
-    let newVersion: string;
+    let split: string[];
 
     if (isReleaseCandidate) {
         // If this is a release candidate, increment to be higher than the next stable version
         // e.g., if current is 2.74, next stable is 2.80, so main should be 2.81
         const nextStableVersion = getNextReleaseVersion(version);
-        const stableSplit = nextStableVersion.split('.');
-        newVersion = `${stableSplit[0]}.${parseInt(stableSplit[1]) + 1}`;
+        split = nextStableVersion.split('.');
         console.log(
-            `Release candidate mode: Updating ${version} to ${newVersion} (next stable would be ${nextStableVersion})`
+            `Release candidate mode: Updating ${version} to ${split[0]}.${
+                parseInt(split[1]) + 1
+            } (next stable would be ${nextStableVersion})`
         );
     } else {
         // Normal increment: just increment the minor version
-        newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
-        console.log(`Updating ${version} to ${newVersion}`);
+        split = version.split('.');
+        console.log(`Updating ${version} to ${split[0]}.${parseInt(split[1]) + 1}`);
     }
+
+    const newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
 
     // Write the new version back to version.json
     versionJson.version = newVersion;
-    const newJson = JSON.stringify(versionJson, null, 4);
-    console.log(`New json: ${newJson}`);
-
-    fs.writeFileSync(versionFilePath, newJson);
+    writeVersionJson(versionJson);
 
     // Add a new changelog section for the new version.
     console.log('Adding new version header to changelog');
@@ -226,11 +244,9 @@ async function generatePRList(startSHA: string, endSHA: string): Promise<string[
  * This task is used when snapping from prerelease to release.
  * It updates the version to round up to the next tens version (e.g., 2.74 -> 2.80).
  */
-gulp.task('updateVersionForRelease', async (): Promise<void> => {
+gulp.task('updateVersionForStableRelease', async (): Promise<void> => {
     // Get the current version from version.json
-    const versionFilePath = path.join(path.resolve(__dirname, '..'), 'version.json');
-    const file = fs.readFileSync(versionFilePath, 'utf8');
-    const versionJson = JSON.parse(file);
+    const versionJson = readVersionJson();
 
     const currentVersion = versionJson.version as string;
     const releaseVersion = getNextReleaseVersion(currentVersion);
@@ -239,8 +255,5 @@ gulp.task('updateVersionForRelease', async (): Promise<void> => {
 
     // Write the new version back to version.json
     versionJson.version = releaseVersion;
-    const newJson = JSON.stringify(versionJson, null, 4);
-    console.log(`New json: ${newJson}`);
-
-    fs.writeFileSync(versionFilePath, newJson);
+    writeVersionJson(versionJson);
 });

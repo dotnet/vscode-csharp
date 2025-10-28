@@ -63,11 +63,12 @@ jobs:
       - name: Install dependencies 
         run: npm ci
       - name: Update version.json for release
-        run: npx gulp updateVersionForRelease
-      - name: Commit and push version update
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git add version.json
-          git commit -m "Update version for stable release"
-          git push
+        run: npx gulp updateVersionForStableRelease
+      - name: Create PR with version update
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Update version for stable release
+          title: '[automated] Update version for stable release'
+          branch: merge/prerelease-to-release
+          base: release
