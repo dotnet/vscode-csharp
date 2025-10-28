@@ -67,26 +67,15 @@ gulp.task('incrementVersion', async (): Promise<void> => {
     const versionJson = readVersionJson();
 
     // Calculate new version
-    const version = versionJson.version as string;
-    let split: string[];
-
+    let version = versionJson.version as string;
     if (isReleaseCandidate) {
-        // If this is a release candidate, increment to be higher than the next stable version
-        // e.g., if current is 2.74, next stable is 2.80, so main should be 2.81
-        const nextStableVersion = getNextReleaseVersion(version);
-        split = nextStableVersion.split('.');
-        console.log(
-            `Release candidate mode: Updating ${version} to ${split[0]}.${
-                parseInt(split[1]) + 1
-            } (next stable would be ${nextStableVersion})`
-        );
-    } else {
-        // Normal increment: just increment the minor version
-        split = version.split('.');
-        console.log(`Updating ${version} to ${split[0]}.${parseInt(split[1]) + 1}`);
+        version = getNextReleaseVersion(version);
+        console.log(`Release candidate, using base version of ${version}`);
     }
 
+    const split = version.split('.');
     const newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
+    console.log(`Updating ${versionJson.version} to ${newVersion}`);
 
     // Write the new version back to version.json
     versionJson.version = newVersion;

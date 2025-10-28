@@ -69,6 +69,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update version for stable release
-          title: '[automated] Update version for stable release'
           branch: merge/prerelease-to-release
           base: release
