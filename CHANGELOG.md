@@ -4,6 +4,12 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.97.x
+* Update target framework in Razor integration test (PR: [#8729](https://github.com/dotnet/vscode-csharp/pull/8729))
+* Use global.json with rollforward instead of pipeline versions (PR: [#8722](https://github.com/dotnet/vscode-csharp/pull/8722))
+* Update RoslynCopilot url to 18.3.72-alpha (PR: [#8726](https://github.com/dotnet/vscode-csharp/pull/8726))
+* Add group ids to configuration groups (PR: [#8720](https://github.com/dotnet/vscode-csharp/pull/8720))
+* [WIP] Update job execution order for bump-main-version (PR: [#8717](https://github.com/dotnet/vscode-csharp/pull/8717))
+* Update CHANGELOG for version 2.97.x (PR: [#8716](https://github.com/dotnet/vscode-csharp/pull/8716))
 * Bump Roslyn to 5.3.0-1.25524.13 (PR: [#8723](https://github.com/dotnet/vscode-csharp/pull/8723))
   * Fix culture-sensitive StringBuilder.Append and ToString calls across codebase and add banned symbols (PR: [#80800](https://github.com/dotnet/roslyn/pull/80800))
   * Add support for autocompleting raw string quotes (PR: [#80871](https://github.com/dotnet/roslyn/pull/80871))
