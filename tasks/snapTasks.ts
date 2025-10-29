@@ -59,29 +59,12 @@ function writeVersionJson(versionJson: { version: string; [key: string]: unknown
     fs.writeFileSync(versionFilePath, newJson);
 }
 
-gulp.task('incrementVersion', async (): Promise<void> => {
-    const argv = minimist(process.argv.slice(2));
-    const isReleaseCandidate = argv['releaseCandidate'] === true || argv['releaseCandidate'] === 'true';
-
-    // Get the current version from version.json
-    const versionJson = readVersionJson();
-
-    // Calculate new version
-    let version = versionJson.version as string;
-    if (isReleaseCandidate) {
-        version = getNextReleaseVersion(version);
-        console.log(`Release candidate, using base version of ${version}`);
-    }
-
-    const split = version.split('.');
-    const newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
-    console.log(`Updating ${versionJson.version} to ${newVersion}`);
-
-    // Write the new version back to version.json
-    versionJson.version = newVersion;
-    writeVersionJson(versionJson);
-
-    // Add a new changelog section for the new version.
+/**
+ * Add a new version section to the changelog
+ * @param version The version to add (e.g., "2.75")
+ * @param additionalLines Optional additional lines to add after the version header
+ */
+function addChangelogSection(version: string, additionalLines?: string[]): void {
     console.log('Adding new version header to changelog');
 
     const changelogPath = path.join(path.resolve(__dirname, '..'), 'CHANGELOG.md');
@@ -112,10 +95,41 @@ gulp.task('incrementVersion', async (): Promise<void> => {
     // Insert a new header for the new version after the known issues header but before the next header.
     const lineToInsertAt = matches[knownIssuesIndex + 1].line - 1;
     console.log(`Inserting new version header at line ${lineToInsertAt}`);
-    const linesToInsert = ['', `# ${newVersion}.x`];
+    const linesToInsert = ['', `# ${version}.x`];
+
+    // Add any additional lines if provided
+    if (additionalLines && additionalLines.length > 0) {
+        linesToInsert.push(...additionalLines);
+    }
 
     changelogLines.splice(lineToInsertAt, 0, ...linesToInsert);
     fs.writeFileSync(changelogPath, changelogLines.join(os.EOL));
+}
+
+gulp.task('incrementVersion', async (): Promise<void> => {
+    const argv = minimist(process.argv.slice(2));
+    const isReleaseCandidate = argv['releaseCandidate'] === true || argv['releaseCandidate'] === 'true';
+
+    // Get the current version from version.json
+    const versionJson = readVersionJson();
+
+    // Calculate new version
+    let version = versionJson.version as string;
+    if (isReleaseCandidate) {
+        version = getNextReleaseVersion(version);
+        console.log(`Release candidate, using base version of ${version}`);
+    }
+
+    const split = version.split('.');
+    const newVersion = `${split[0]}.${parseInt(split[1]) + 1}`;
+    console.log(`Updating ${versionJson.version} to ${newVersion}`);
+
+    // Write the new version back to version.json
+    versionJson.version = newVersion;
+    writeVersionJson(versionJson);
+
+    // Add a new changelog section for the new version.
+    addChangelogSection(newVersion);
 });
 
 gulp.task('updateChangelog', async (): Promise<void> => {
@@ -245,4 +259,7 @@ gulp.task('updateVersionForStableRelease', async (): Promise<void> => {
     // Write the new version back to version.json
     versionJson.version = releaseVersion;
     writeVersionJson(versionJson);
+
+    // Add a new changelog section for the release version that references the prerelease
+    addChangelogSection(releaseVersion, [`* See ${currentVersion}.x for full list of changes.`]);
 });
