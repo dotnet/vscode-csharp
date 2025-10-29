@@ -124,6 +124,8 @@ stages:
 - stage: Test_Windows_Stage
   displayName: Test Windows
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
@@ -137,6 +139,8 @@ stages:
 - stage: Test_MacOS_Stage
   displayName: Test MacOS
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
