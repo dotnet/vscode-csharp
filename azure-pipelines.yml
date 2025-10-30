@@ -72,6 +72,8 @@ stages:
 - stage:
   displayName: Test Linux (.NET 8)
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
@@ -83,11 +85,13 @@ stages:
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals 1es-ubuntu-2004-open
-      containerName: mcr.microsoft.com/dotnet/sdk:8.0
+      containerName: mcr.microsoft.com/dotnet/sdk:8.0-noble
 
 - stage:
   displayName: Test Linux (.NET 9)
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
@@ -99,11 +103,29 @@ stages:
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals 1es-ubuntu-2004-open
-      containerName: mcr.microsoft.com/dotnet/sdk:9.0
+      containerName: mcr.microsoft.com/dotnet/sdk:9.0-noble
+
+- stage:
+  displayName: Test Linux (.NET 10)
+  dependsOn: []
+  jobs:
+  - template: azure-pipelines/test-matrix.yml
+    parameters:
+      os: linux
+      # Prefer the dotnet from the container.
+      installDotNet: false
+      testVSCodeVersion: $(testVSCodeVersion)
+      installAdditionalLinuxDependencies: true
+      pool:
+        name: NetCore-Public
+        demands: ImageOverride -equals 1es-ubuntu-2004-open
+      containerName: mcr.microsoft.com/dotnet/sdk:10.0.100-rc.2-noble
 
 - stage: Test_Windows_Stage
   displayName: Test Windows
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
@@ -117,6 +139,8 @@ stages:
 - stage: Test_MacOS_Stage
   displayName: Test MacOS
   dependsOn: []
+  variables:
+    ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
   jobs:
   - template: azure-pipelines/test-matrix.yml
     parameters:
