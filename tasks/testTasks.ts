@@ -12,6 +12,7 @@ import { jestOmniSharpUnitTestProjectName } from '../test/omnisharp/omnisharpUni
 import { jestUnitTestProjectName } from '../test/lsptoolshost/unitTests/jest.config';
 import { razorTestProjectName } from '../test/razor/razorTests/jest.config';
 import { jestArtifactTestsProjectName } from '../test/lsptoolshost/artifactTests/jest.config';
+import { jestTasksTestProjectName } from '../test/tasks/jest.config';
 import {
     getJUnitFileName,
     integrationTestProjects,
@@ -46,7 +47,11 @@ function createUnitTestSubTasks() {
         await runJestTest(razorTestProjectName);
     });
 
-    gulp.task('test:unit', gulp.series('test:unit:csharp', 'test:unit:razor'));
+    gulp.task('test:unit:tasks', async () => {
+        await runJestTest(jestTasksTestProjectName);
+    });
+
+    gulp.task('test:unit', gulp.series('test:unit:csharp', 'test:unit:razor', 'test:unit:tasks'));
 }
 
 function createIntegrationTestSubTasks() {
