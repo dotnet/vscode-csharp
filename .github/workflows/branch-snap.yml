@@ -1,6 +1,12 @@
 name: Branch snap
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      releaseCandidate:
+        description: 'Is this a release candidate snap from main? (Will increment main version to be higher than next stable release)'
+        required: false
+        default: 'false'
+        type: boolean
 
 permissions:
   contents: write
@@ -18,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install NodeJS
         uses: actions/setup-node@v4
         with:
@@ -26,7 +32,12 @@ jobs:
       - name: Install dependencies 
         run: npm ci
       - name: Update version.json
-        run: npx gulp incrementVersion
+        run: |
+          if [ "${{ github.event.inputs.releaseCandidate }}" = "true" ]; then
+            npx gulp incrementVersion --releaseCandidate=true
+          else
+            npx gulp incrementVersion
+          fi
       - name: Create version update PR
         uses: peter-evans/create-pull-request@v4
         with:
@@ -34,3 +45,29 @@ jobs:
           commit-message: Update main version
           title: '[automated] Update main version'
           branch: merge/update-main-version
+
+  update-release-version:
+    needs: check-script
+    if: github.ref == 'refs/heads/prerelease'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out merge branch
+        uses: actions/checkout@v4
+        with:
+          ref: merge/prerelease-to-release
+          fetch-depth: 0
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+      - name: Install dependencies 
+        run: npm ci
+      - name: Update version.json for release
+        run: npx gulp updateVersionForStableRelease
+      - name: Create PR with version update
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Update version for stable release
+          branch: merge/prerelease-to-release
+          base: release
