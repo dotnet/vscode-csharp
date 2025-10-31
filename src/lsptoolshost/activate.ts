@@ -27,7 +27,6 @@ import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
 import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
-import { registerCopilotRelatedFilesProvider } from './copilot/relatedFilesProvider';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
@@ -79,7 +78,6 @@ export async function activateRoslynLanguageServer(
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);
-    registerCopilotRelatedFilesProvider(context, languageServer, _channel);
     registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
