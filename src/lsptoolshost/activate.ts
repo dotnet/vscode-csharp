@@ -79,7 +79,6 @@ export async function activateRoslynLanguageServer(
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);
-    registerCopilotRelatedFilesProvider(context, languageServer, _channel);
     registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
