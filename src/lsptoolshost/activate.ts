@@ -27,7 +27,6 @@ import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
 import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
-import { registerCopilotRelatedFilesProvider } from './copilot/relatedFilesProvider';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
