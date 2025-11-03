@@ -239,15 +239,6 @@ export interface ProjectNeedsRestoreName {
     projectFilePaths: string[];
 }
 
-export interface CopilotRelatedDocumentsParams extends WorkDoneProgressParams, PartialResultParams {
-    _vs_textDocument: TextDocumentIdentifier;
-    position: Position;
-}
-
-export interface CopilotRelatedDocumentsReport {
-    _vs_file_paths?: string[];
-}
-
 export interface SourceGeneratorGetRequestParams {
     textDocument: TextDocumentIdentifier;
     resultId?: string;
