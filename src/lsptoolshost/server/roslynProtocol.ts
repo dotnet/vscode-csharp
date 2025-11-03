@@ -357,18 +357,6 @@ export namespace ProjectNeedsRestoreRequest {
     export const type = new RequestType<ProjectNeedsRestoreName, void, void>(method);
 }
 
-export namespace CopilotRelatedDocumentsRequest {
-    export const method = 'copilot/_related_documents';
-    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
-    export const type = new ProtocolRequestType<
-        CopilotRelatedDocumentsParams,
-        CopilotRelatedDocumentsReport[],
-        CopilotRelatedDocumentsReport[],
-        void,
-        void
-    >(method);
-}
-
 export namespace SourceGeneratorGetTextRequest {
     export const method = 'sourceGeneratedDocument/_roslyn_getText';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
