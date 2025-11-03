@@ -12,7 +12,6 @@ import {
     getCompletionsAsync,
     openFileInWorkspaceAsync,
     revertActiveFile,
-    sleep,
     waitForAllAsyncOperationsAsync,
     waitForExpectedResult,
 } from './integrationHelpers';
@@ -44,7 +43,6 @@ console.log(`doRunSuite: ${doRunSuite}`);
     });
 
     test('Inserting package directive triggers a restore', async () => {
-        await sleep(1);
         await vscode.window.activeTextEditor!.edit((editBuilder) => {
             editBuilder.insert(new vscode.Position(0, 0), '#:package Newtonsoft.Json@13.0.3');
         });
