@@ -125,7 +125,7 @@ stages:
       testVSCodeVersion: $(testVSCodeVersion)
       pool:
         name: Azure Pipelines
-        vmImage: macOS-13
+        vmImage: macOS-15
 
 - stage: Test_OmniSharp
   displayName: Test OmniSharp
