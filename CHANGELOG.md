@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.97.x
+* Bump xamlTools to 18.3.11128.18 (PR: [#8669](https://github.com/dotnet/vscode-csharp/pull/8740))
 * Update target framework in Razor integration test (PR: [#8729](https://github.com/dotnet/vscode-csharp/pull/8729))
 * Use global.json with rollforward instead of pipeline versions (PR: [#8722](https://github.com/dotnet/vscode-csharp/pull/8722))
 * Update RoslynCopilot url to 18.3.72-alpha (PR: [#8726](https://github.com/dotnet/vscode-csharp/pull/8726))
