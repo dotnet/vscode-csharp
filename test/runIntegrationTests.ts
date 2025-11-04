@@ -31,11 +31,5 @@ export async function runIntegrationTests(projectName: string) {
 
     const { results } = await jest.runCLI(jestConfig, [projectName]);
 
-    if (!results.success) {
-        console.log('Tests failed.');
-    }
-
-    // Explicitly exit the process - VSCode likes to write a bunch of cancellation errors to the console after this
-    // which make it look like the tests always fail.  We're done with the tests at this point, so just exit.
-    process.exit(results.success ? 0 : 1);
+    return results;
 }

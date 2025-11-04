@@ -9,12 +9,8 @@ import testAssetWorkspace from './testAssets/testAssetWorkspace';
 import { AnalysisSetting } from '../../../src/lsptoolshost/diagnostics/buildDiagnosticsService';
 import path from 'path';
 import { getCode, setDiagnosticSettings, waitForExpectedDiagnostics } from './diagnosticsHelpers';
-import {
-    activateCSharpExtension,
-    closeAllEditorsAsync,
-    describeIfCSharp,
-    openFileInWorkspaceAsync,
-} from './integrationHelpers';
+import { activateCSharpExtension, closeAllEditorsAsync, openFileInWorkspaceAsync } from './integrationHelpers';
+import { describeIfCSharp } from '../../jestHelpers';
 
 // Restarting the server is required for these tests, but not supported with C# Dev Kit.
 describeIfCSharp(`Document Diagnostics Tests`, () => {
