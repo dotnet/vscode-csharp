@@ -14,14 +14,12 @@ import {
     revertActiveFile,
     waitForAllAsyncOperationsAsync,
     waitForExpectedResult,
+    describeIfFileBasedPrograms,
 } from './integrationHelpers';
-import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
+import { beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 import { CSharpExtensionExports } from '../../../src/csharpExtensionExports';
 
-const doRunSuite = process.env['ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS'] !== 'true';
-console.log(`process.env.ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: ${process.env.ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS}`);
-console.log(`doRunSuite: ${doRunSuite}`);
-(doRunSuite ? describe : describe.skip)(`File-based Programs Tests`, () => {
+describeIfFileBasedPrograms(`File-based Programs Tests`, () => {
     let exports: CSharpExtensionExports;
 
     beforeAll(async () => {
@@ -45,6 +43,7 @@ console.log(`doRunSuite: ${doRunSuite}`);
     test('Inserting package directive triggers a restore', async () => {
         await vscode.window.activeTextEditor!.edit((editBuilder) => {
             editBuilder.insert(new vscode.Position(0, 0), '#:package Newtonsoft.Json@13.0.3');
+            editBuilder.insert(new vscode.Position(1, 0), 'using Newton');
         });
         await vscode.window.activeTextEditor!.document.save();
         await waitForAllAsyncOperationsAsync(exports);

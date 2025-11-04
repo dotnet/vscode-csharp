@@ -300,6 +300,10 @@ export const testIfDevKit = testIf(usingDevKit());
 export const testIfNotMacOS = testIf(!isMacOS());
 export const testIfWindows = testIf(isWindows());
 
+const runFileBasedProgramsTests = process.env['ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS'] !== 'true';
+console.log(`process.env.ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: ${process.env.ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS}`);
+export const describeIfFileBasedPrograms = describeIf(runFileBasedProgramsTests);
+
 function describeIf(condition: boolean) {
     return condition ? describe : describe.skip;
 }
