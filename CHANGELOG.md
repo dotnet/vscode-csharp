@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.97.x
+* Bump xamlTools to 18.3.11128.18 (PR: [#8669](https://github.com/dotnet/vscode-csharp/pull/8740))
 * Update target framework in Razor integration test (PR: [#8729](https://github.com/dotnet/vscode-csharp/pull/8729))
 * Use global.json with rollforward instead of pipeline versions (PR: [#8722](https://github.com/dotnet/vscode-csharp/pull/8722))
 * Update RoslynCopilot url to 18.3.72-alpha (PR: [#8726](https://github.com/dotnet/vscode-csharp/pull/8726))
@@ -17,9 +18,14 @@
   * Completion for `#:project` paths in file based programs (PR: [#80844](https://github.com/dotnet/roslyn/pull/80844))
   * Allow semantic tokens in Razor to be better behaved (PR: [#80815](https://github.com/dotnet/roslyn/pull/80815))
   * When searching for the original file from a PDB, only allow absolute paths (PR: [#80804](https://github.com/dotnet/roslyn/pull/80804))
-* Bump Razor to 10.0.0-preview.25524.10 (PR: [#8721](https://github.com/dotnet/vscode-csharp/pull/8721))
+* Bump Razor to 10.0.0-preview.25552.2 (PR: [#8734](https://github.com/dotnet/vscode-csharp/pull/8734))
   * Add CodeAction to simplify fully-qualified component tags (PR: [#12379](https://github.com/dotnet/razor/pull/12379))
   * Fix component and component attribute rename in cohosting (PR: [#12374](https://github.com/dotnet/razor/pull/12374))
+  * Fix formatting of mixed indentation in VS Code (PR: [#12418](https://github.com/dotnet/razor/pull/12418))
+  * Allow cohosting quick info to show html tag information even when on a taghelper or component tag. (PR: [#12415](https://github.com/dotnet/razor/pull/12415))
+  * Fix(ish) formatting of RenderFragments (C# templates) (PR: [#12397](https://github.com/dotnet/razor/pull/12397))
+  * Drop Html edits that would split a C# literal across multiple lines (PR: [#12396](https://github.com/dotnet/razor/pull/12396))
+  * Fix completion resolve for provisional completion (PR: [#12403](https://github.com/dotnet/razor/pull/12403))
 
 # 2.96.x
 * Update Debugger to v2.95.0 (PR: [#8710](https://github.com/dotnet/vscode-csharp/pull/8710))

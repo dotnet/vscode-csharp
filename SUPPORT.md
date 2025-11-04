@@ -107,7 +107,7 @@ If you encounter issues with document classification (e.g., incorrect syntax hig
 For issues with diagnostics, please provide values of the background analysis scope options, `dotnet.backgroundAnalysis.analyzerDiagnosticsScope` and `dotnet.backgroundAnalysis.compilerDiagnosticsScope`
 ![background analysis settings](./docs/images/background_analysis.png)
 
-#### Language server crashing
+### Language server crashing
 
 If the language server crashes, general logs are often helpful for diagnosing the issue. However, in some cases, logs alone may not provide enough information and we may need a crash dump. Follow these steps to collect a crash dump:
 - Set the `dotnet.server.crashDumpPath` setting in VSCode to a user-writable folder where crash dumps can be saved.
@@ -117,7 +117,7 @@ If the language server crashes, general logs are often helpful for diagnosing th
 > [!WARNING]
 > The dump can contain detailed information on the project - generally we will provide an email so that it can be shared privately
 
-#### Recording a language server trace
+### Recording a language server trace
 
 When investigating performance issues, we may request a performance trace of the language server to diagnose what is causing the problem.  These are typically taken via [dotnet-trace](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace) (a cross platform tool to collect performance traces of .NET processes)
 
@@ -131,6 +131,16 @@ The C# extension has a built in command, `csharp.recordLanguageServerTrace` to h
 4.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the peformance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace
 ![alt text](docs/images/recordTraceTerminal.png)
 5.  Share the trace.  Note that the trace may contain PII, so generally we will provide an email or other confidential way to share the trace with us.
+
+### Sharing information privately
+Detailed logs, dumps, traces, and other information can sometimes contain private information that you do not wish to share publicly.  Instead, you can utilize the Developer Community page to share these privately to Microsoft.
+
+1.  Go to https://developercommunity.visualstudio.com/dotnet/report
+2.  Fill in the issue title, reference the GitHub issue in the description, and upload the attachments
+![developer community feedback page](docs/images/developer_community_feedback.png)
+3.  Once created, a comment on the GitHub issue a link to the new Developer Community ticket.
+
+
 
 ## Microsoft Support Policy
 
