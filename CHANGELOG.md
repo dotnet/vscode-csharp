@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.101.x
+
 # 2.97.x
 * Add integration test for restore of file-based programs (PR: [#8470](https://github.com/dotnet/vscode-csharp/pull/8470))
 * Update setting documentation for on auto insert (PR: [#8742](https://github.com/dotnet/vscode-csharp/pull/8742))
