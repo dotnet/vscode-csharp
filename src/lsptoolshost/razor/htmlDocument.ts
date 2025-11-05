@@ -39,7 +39,7 @@ export class HtmlDocument {
         // Wait for VS Code to process any previous content change. We don't care about finding
         // a specific version, just that it's moved on from the previous one.
         while (document.version === this.previousVersion) {
-            await new Promise((resolve) => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 5));
         }
     }
 }
