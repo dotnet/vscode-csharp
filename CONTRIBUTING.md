@@ -64,9 +64,9 @@ To debug unit tests locally, press <kbd>F5</kbd> in VS Code with the "Launch Tes
 To debug integration tests
 1.  Import the `csharp-test-profile.code-profile` in VSCode to setup a clean profile in which to run integration tests.  This must be imported at least once to use the launch configurations (ensure the extensions are updated in the profile).
 2.  Open any integration test file and <kbd>F5</kbd> launch with the correct launch configuration selected.
-    - For integration tests inside `test/lsptoolshost`, use either `Launch Current File slnWithCsproj Integration Tests` or `[DevKit] Launch Current File slnWithCsproj Integration Tests` (to run tests using C# + C# Dev Kit)
+    - For integration tests inside `test/lsptoolshost`, use either `[Roslyn] Run Current File Integration Test` or `[DevKit] Launch Current File Integration Tests` (to run tests using C# + C# Dev Kit)
     - For integration tests inside `test/razor`, use `[Razor] Run Current File Integration Test`
-    - For integration tests inside `test/omnisharp`, use one of the `Omnisharp:` current file profiles
+    - For integration tests inside `test/omnisharp`, use one of the `[O#] Run Current File Integration Test` current file profiles
 
 These will allow you to actually debug the test, but the 'Razor integration tests' configuration does not.
 
@@ -196,15 +196,25 @@ More details for this are [here] (https://devdiv.visualstudio.com/DevDiv/_git/Vi
 ## Snapping for releases
 Extension releases on the marketplace are done from the prerelease and release branches (corresponding to the prerelease or release version of the extension).  Code flows from main -> prerelease -> release.  Every week we snap main -> prerelease.  Monthly, we snap prerelease -> release.
 
+### Versioning Scheme
+The extension follows a specific versioning scheme for releases:
+- **Prerelease versions**: Use standard minor version increments (e.g., 2.74, 2.75, 2.76...)
+- **Stable release versions**: Use the next tens version (e.g., 2.74 prerelease becomes 2.80 stable)
+- **Main branch after RC snap**: Jumps to one above the next stable version (e.g., if snapping 2.74 as RC, main becomes 2.81)
+
 ### Snap main -> prerelease
 The snap is done via the "Branch snap" github action.  To run the snap from main -> prerelease, run the action via "Run workflow" and choose main as the base branch.
 ![branch snap action](./docs/images/main_snap.png)
+
+When running the snap action, you can optionally check the "Is this a release candidate snap" checkbox. If checked:
+- The prerelease branch will receive the snapped code with the current version (e.g., 2.74)
+- The main branch version will be updated to be higher than the next stable release (e.g., 2.81, since the next stable would be 2.80)
 
 This will generate two PRs that must be merged.  One merging the main branch into prerelease, and the other bumps the version in main.
 ![generated prs](./docs/images/generated_prs.png)
 
 ### Snap prerelease -> release
-To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a single PR merging from prerelease to release.
+To snap from prerelease to release, run the same action but use **prerelease** as the workflow branch.  This will generate a PR merging from prerelease to release, and automatically update the version to the next stable release version (e.g., 2.74 -> 2.80) on the merge branch before the PR is merged.
 
 ### Marketplace release
 The marketplace release is managed by an internal AzDo pipeline.  On the pipeline page, hit run pipeline.  This will bring up the pipeline parameters to fill out:

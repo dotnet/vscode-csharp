@@ -29,7 +29,7 @@
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "インデクサーのヒントを表示する",
   "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "ラムダ パラメーター型のヒントを表示する",
   "configuration.csharp.inlayHints.enableInlayHintsForTypes": "インライン型のヒントを表示する",
-  "configuration.dotnet.autoInsert.enableAutoInsert": "ドキュメント コメントの自動挿入を有効にします。",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic adjustments of code constructs on typing, including documentation comment insertion, brace formatting adjustments, and raw string literal support.",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "次のバックグラウンド コード分析を実行します: (以前の `omnisharp.enableRoslynAnalyzers`)",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "ソリューション全体",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "なし",
