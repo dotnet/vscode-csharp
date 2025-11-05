@@ -10,7 +10,6 @@ export class HtmlDocument {
     public readonly path: string;
     private content = '';
     private checksum = '';
-    private previousVersion = -1;
 
     public constructor(public readonly uri: vscode.Uri, checksum: string) {
         this.path = getUriPath(uri);
@@ -25,21 +24,8 @@ export class HtmlDocument {
         return this.checksum;
     }
 
-    public async setContent(checksum: string, content: string) {
-        const document = await vscode.workspace.openTextDocument(this.uri);
-        // Capture the version _before_ the change, so we can know for sure if it's been seen
-        this.previousVersion = document.version;
+    public setContent(checksum: string, content: string) {
         this.checksum = checksum;
         this.content = content;
-    }
-
-    public async waitForBufferUpdate() {
-        const document = await vscode.workspace.openTextDocument(this.uri);
-
-        // Wait for VS Code to process any previous content change. We don't care about finding
-        // a specific version, just that it's moved on from the previous one.
-        while (document.version === this.previousVersion) {
-            await new Promise((resolve) => setTimeout(resolve, 5));
-        }
     }
 }
