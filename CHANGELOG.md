@@ -29,6 +29,7 @@
   * Fix(ish) formatting of RenderFragments (C# templates) (PR: [#12397](https://github.com/dotnet/razor/pull/12397))
   * Drop Html edits that would split a C# literal across multiple lines (PR: [#12396](https://github.com/dotnet/razor/pull/12396))
   * Fix completion resolve for provisional completion (PR: [#12403](https://github.com/dotnet/razor/pull/12403))
+* Wait for Html buffer updates before making requests (PR: [#8748](https://github.com/dotnet/vscode-csharp/pull/8748))
 
 # 2.96.x
 * Update Debugger to v2.95.0 (PR: [#8710](https://github.com/dotnet/vscode-csharp/pull/8710))

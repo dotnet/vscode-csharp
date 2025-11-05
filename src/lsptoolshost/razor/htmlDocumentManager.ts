@@ -79,9 +79,7 @@ export class HtmlDocumentManager {
 
         this.logger.logTrace(`New content for '${uri}', updating '${document.path}', checksum '${checksum}'.`);
 
-        await vscode.workspace.openTextDocument(document.uri);
-
-        document.setContent(checksum, text);
+        await document.setContent(checksum, text);
 
         this.contentProvider.fireDidChange(document.uri);
     }

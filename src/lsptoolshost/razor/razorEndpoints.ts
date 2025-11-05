@@ -252,6 +252,13 @@ export function registerRazorEndpoints(
                 return undefined;
             }
 
+            // We know that we've got the right document, and we've been told about the right content by the server,
+            // but all we can be sure of at this point is that we've fired the change event for it. The event firing
+            // is async, and the didChange notification that it would generate is a notification, so doesn't necessarily
+            // block. Before we actually make a call to the Html server, we should at least make sure that the document
+            // version is not still the same as before we updated the content.
+            await document.waitForBufferUpdate();
+
             return invocation(document, params.request);
         });
     }
