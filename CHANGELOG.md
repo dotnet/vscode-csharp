@@ -4,6 +4,15 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.97.x
+* Add integration test for restore of file-based programs (PR: [#8470](https://github.com/dotnet/vscode-csharp/pull/8470))
+* Update setting documentation for on auto insert (PR: [#8742](https://github.com/dotnet/vscode-csharp/pull/8742))
+*  Bump xamlTools to fix "Color" auto-completion and code navigation (PR: [#8740](https://github.com/dotnet/vscode-csharp/pull/8740))
+* Update VM image to macOS-15 in pipeline (PR: [#8741](https://github.com/dotnet/vscode-csharp/pull/8741))
+* Revert "Update Debugger to v2.95.0" (PR: [#8736](https://github.com/dotnet/vscode-csharp/pull/8736))
+* Add instructions for creating private feedback (PR: [#8732](https://github.com/dotnet/vscode-csharp/pull/8732))
+* Implement tiered versioning scheme for branch snapping workflow (PR: [#8728](https://github.com/dotnet/vscode-csharp/pull/8728))
+* Update Roslyn to 5.3.0-1.25524.13 (PR: [#8723](https://github.com/dotnet/vscode-csharp/pull/8723))
+* Bump Razor to 10.0.0-preview.25524.10 (PR: [#8721](https://github.com/dotnet/vscode-csharp/pull/8721))
 * Bump xamlTools to 18.3.11128.18 (PR: [#8669](https://github.com/dotnet/vscode-csharp/pull/8740))
 * Update target framework in Razor integration test (PR: [#8729](https://github.com/dotnet/vscode-csharp/pull/8729))
 * Use global.json with rollforward instead of pipeline versions (PR: [#8722](https://github.com/dotnet/vscode-csharp/pull/8722))
