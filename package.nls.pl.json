@@ -29,7 +29,7 @@
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Pokaż wskazówki dla indeksatorów",
   "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "Pokaż wskazówki dla typów parametrów funkcji lambda",
   "configuration.csharp.inlayHints.enableInlayHintsForTypes": "Wyświetl wskazówki w tekście dla typów",
-  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic adjustments of code constructs on typing, including documentation comment insertion, brace formatting adjustments, and raw string literal support.",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "Włącz automatyczne korekty konstrukcji kodu podczas wpisywania, w tym wstawianie komentarzy dokumentacji, korekty formatowania nawiasów klamrowych i obsługę nieprzetworzonych literałów ciągów.",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "Uruchom analizę kodu w tle dla: (Wcześniej „omnisharp.enableRoslynAnalyzers”)",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "Całe rozwiązanie",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "Brak",

@@ -3,7 +3,15 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.101.x
+
 # 2.97.x
+* Add integration test for restore of file-based programs (PR: [#8470](https://github.com/dotnet/vscode-csharp/pull/8470))
+* Update setting documentation for on auto insert (PR: [#8742](https://github.com/dotnet/vscode-csharp/pull/8742))
+* Bump xamlTools to fix "Color" auto-completion and code navigation (PR: [#8740](https://github.com/dotnet/vscode-csharp/pull/8740))
+* Update VM image to macOS-15 in pipeline (PR: [#8741](https://github.com/dotnet/vscode-csharp/pull/8741))
+* Add instructions for creating private feedback (PR: [#8732](https://github.com/dotnet/vscode-csharp/pull/8732))
+* Implement tiered versioning scheme for branch snapping workflow (PR: [#8728](https://github.com/dotnet/vscode-csharp/pull/8728))
 * Bump xamlTools to 18.3.11128.18 (PR: [#8669](https://github.com/dotnet/vscode-csharp/pull/8740))
 * Update target framework in Razor integration test (PR: [#8729](https://github.com/dotnet/vscode-csharp/pull/8729))
 * Use global.json with rollforward instead of pipeline versions (PR: [#8722](https://github.com/dotnet/vscode-csharp/pull/8722))
