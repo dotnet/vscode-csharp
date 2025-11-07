@@ -1507,7 +1507,7 @@
           },
           "dotnet.projects.enableFileBasedPrograms": {
             "type": "boolean",
-            "default": true,
+            "default": false,
             "description": "%configuration.dotnet.projects.enableFileBasedPrograms%",
             "tags": [
               "preview"
