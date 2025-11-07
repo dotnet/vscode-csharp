@@ -40,7 +40,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.3.0-2.25553.6",
+    "roslyn": "5.3.0-2.25557.4",
     "omniSharp": "1.39.14",
     "razor": "10.0.0-preview.25552.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
