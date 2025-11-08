@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.101.x
+* Update Roslyn to 5.3.0-2.25557.4 (PR: [#8759](https://github.com/dotnet/vscode-csharp/pull/8759))
+  * Implement canonical miscellaneous files project loader for non-file-based programs (PR: [#80748](https://github.com/dotnet/roslyn/pull/80748))
+  * Better handle if a BuildHost process crashes that prevents connection (PR: [#81041](https://github.com/dotnet/roslyn/pull/81041))
 * Wait for Html buffer updates before making requests (PR: [#8748](https://github.com/dotnet/vscode-csharp/pull/8748))
 
 # 2.97.x
