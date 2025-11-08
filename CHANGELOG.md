@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.101.x
-* Update Roslyn to 5.3.0-2.25557.4 (PR: [#8759](https://github.com/dotnet/vscode-csharp/pull/8759))
+* Update Roslyn to 5.3.0-2.25557.6 (PR: [#8761](https://github.com/dotnet/vscode-csharp/pull/8761))
+  * File-based programs live directive diagnostics (PR: [#80575](https://github.com/dotnet/roslyn/pull/80575))
   * Implement canonical miscellaneous files project loader for non-file-based programs (PR: [#80748](https://github.com/dotnet/roslyn/pull/80748))
   * Better handle if a BuildHost process crashes that prevents connection (PR: [#81041](https://github.com/dotnet/roslyn/pull/81041))
 
