@@ -9,6 +9,12 @@
   * Implement canonical miscellaneous files project loader for non-file-based programs (PR: [#80748](https://github.com/dotnet/roslyn/pull/80748))
   * Better handle if a BuildHost process crashes that prevents connection (PR: [#81041](https://github.com/dotnet/roslyn/pull/81041))
 * Wait for Html buffer updates before making requests (PR: [#8748](https://github.com/dotnet/vscode-csharp/pull/8748))
+* Bump Razor to 10.0.0-preview.25557.2 (PR: [#8764](https://github.com/dotnet/vscode-csharp/pull/8764))
+  * Support Roslyn's custom nested code actions in VS Code (PR: [#12467](https://github.com/dotnet/razor/pull/12467))                                                                                                             
+  * Format type parameter values as types (PR: [#12448](https://github.com/dotnet/razor/pull/12448))                                                                                                                              
+  * Default the cohosting option in the generator to on. (PR: [#12446](https://github.com/dotnet/razor/pull/12446))                                                                                      
+  * Add UnboundDirectiveAttributeAddUsingCodeActionProvider for directive attributes (PR: [#12404](https://github.com/dotnet/razor/pull/12404))                                                                                   
+  * Fix edit in one project not being reflected in consuming project (PR: [#12439](https://github.com/dotnet/razor/pull/12439))                                                                                                   
 
 # 2.97.x
 * Add integration test for restore of file-based programs (PR: [#8470](https://github.com/dotnet/vscode-csharp/pull/8470))
