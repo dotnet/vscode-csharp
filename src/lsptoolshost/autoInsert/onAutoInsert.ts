@@ -104,7 +104,7 @@ async function applyAutoInsertEdit(
     languageServer: RoslynLanguageServer,
     token: vscode.CancellationToken
 ) {
-    const formattingOptions = getFormattingOptions();
+    const formattingOptions = getFormattingOptions(uri);
     const request: RoslynProtocol.OnAutoInsertParams = {
         _vs_textDocument: textDocumentIdentifier,
         _vs_position: position,
@@ -142,8 +142,8 @@ async function applyAutoInsertEdit(
     }
 }
 
-function getFormattingOptions(): FormattingOptions {
-    const editorConfig = vscode.workspace.getConfiguration('editor');
+function getFormattingOptions(resource: vscode.Uri): FormattingOptions {
+    const editorConfig = vscode.workspace.getConfiguration('editor', resource);
     const tabSize = editorConfig.get<number>('tabSize') ?? 4;
     const insertSpaces = editorConfig.get<boolean>('insertSpaces') ?? true;
     return FormattingOptions.create(tabSize, insertSpaces);
