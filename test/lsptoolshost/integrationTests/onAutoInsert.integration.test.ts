@@ -11,7 +11,6 @@ import {
     closeAllEditorsAsync,
     openFileInWorkspaceAsync,
     revertActiveFile,
-    sleep,
     waitForExpectedResult,
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
@@ -36,7 +35,6 @@ describe(`OnAutoInsert Tests`, () => {
     });
 
     test('Triple slash inserts doc comment snippet', async () => {
-        await sleep(1);
         await vscode.window.activeTextEditor!.edit((editBuilder) => {
             editBuilder.insert(new vscode.Position(2, 6), '/');
         });
@@ -123,21 +121,16 @@ describe(`OnAutoInsert Tests`, () => {
         const originalCsharpTabSize = csharpConfig.get('tabSize');
 
         try {
-            // Configure global tabSize to 2
-            await globalConfig.update('tabSize', 2, vscode.ConfigurationTarget.Global);
-            // Configure C# tabSize to 4
-            await vscode.workspace
-                .getConfiguration('[csharp]', vscode.window.activeTextEditor!.document.uri)
-                .update('editor.tabSize', 4, vscode.ConfigurationTarget.Global);
+            // Turn off detect indentation to ensure it consistently uses the settings.
+            await globalConfig.update('detectIndentation', false, vscode.ConfigurationTarget.Global);
 
-            // Wait for configuration to propagate
-            await sleep(100);
+            // Customize tab sizes
+            await globalConfig.update('tabSize', 4, vscode.ConfigurationTarget.Global);
+            await csharpConfig.update('tabSize', 2, vscode.ConfigurationTarget.Global);
 
             await vscode.window.activeTextEditor!.edit((editBuilder) => {
                 editBuilder.insert(new vscode.Position(11, 15), '\n');
             });
-
-            // OnAutoInsert is triggered by the change event but completes asynchronously, so wait for the buffer to be updated.
 
             const expectedLines = [
                 'class DocComments',
@@ -152,9 +145,9 @@ describe(`OnAutoInsert Tests`, () => {
                 '',
                 '    /// </summary>',
                 '    void M2()',
-                '    {',
-                '        ', // Should be 4 spaces (C# setting), not 2 (global setting)
-                '    }',
+                '  {',
+                '    ', // Should be 2 spaces (C# setting), not 4 (global setting)
+                '  }',
                 '}',
                 '',
             ];
@@ -169,10 +162,9 @@ describe(`OnAutoInsert Tests`, () => {
             );
         } finally {
             // Restore original settings
+            await globalConfig.update('detectIndentation', true, vscode.ConfigurationTarget.Global);
             await globalConfig.update('tabSize', originalGlobalTabSize, vscode.ConfigurationTarget.Global);
-            await vscode.workspace
-                .getConfiguration('[csharp]', vscode.window.activeTextEditor!.document.uri)
-                .update('editor.tabSize', originalCsharpTabSize, vscode.ConfigurationTarget.Global);
+            await csharpConfig.update('tabSize', originalCsharpTabSize, vscode.ConfigurationTarget.Global);
         }
     });
 });
