@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-
 import {
     FormattingOptions,
     InsertTextFormat,
@@ -82,10 +81,20 @@ export function registerOnAutoInsert(languageServer: RoslynLanguageServer, langu
         // We need to calculate what that position would be after the change is applied and send that to the server.
         const position = vscodeRange.start.translate(0, change.text.length - rangeLength);
 
+        const formattingOptions = getFormattingOptions(document);
+
         source.cancel();
         source = new vscode.CancellationTokenSource();
         try {
-            await applyAutoInsertEdit(position, changeTrimmed, e.textDocument, uri, languageServer, source.token);
+            await applyAutoInsertEdit(
+                position,
+                changeTrimmed,
+                e.textDocument,
+                uri,
+                formattingOptions,
+                languageServer,
+                source.token
+            );
         } catch (e) {
             if (e instanceof vscode.CancellationError) {
                 return;
@@ -101,10 +110,10 @@ async function applyAutoInsertEdit(
     changeTextTrimmed: string,
     textDocumentIdentifier: TextDocumentIdentifier,
     uri: vscode.Uri,
+    formattingOptions: FormattingOptions,
     languageServer: RoslynLanguageServer,
     token: vscode.CancellationToken
 ) {
-    const formattingOptions = getFormattingOptions();
     const request: RoslynProtocol.OnAutoInsertParams = {
         _vs_textDocument: textDocumentIdentifier,
         _vs_position: position,
@@ -142,9 +151,18 @@ async function applyAutoInsertEdit(
     }
 }
 
-function getFormattingOptions(): FormattingOptions {
-    const editorConfig = vscode.workspace.getConfiguration('editor');
-    const tabSize = editorConfig.get<number>('tabSize') ?? 4;
-    const insertSpaces = editorConfig.get<boolean>('insertSpaces') ?? true;
+function getFormattingOptions(document: vscode.TextDocument): FormattingOptions {
+    const editorSettings = vscode.workspace.getConfiguration('editor', document);
+    const detectIndentation = editorSettings.get<boolean>('detectIndentation');
+
+    const editor = detectIndentation
+        ? vscode.window.visibleTextEditors.find((e) => e.document === document)
+        : undefined;
+
+    // VSCode guarantees that retrieving the editor.options.tabSize will return a number
+    const tabSize = (editor?.options.tabSize as number | undefined) ?? editorSettings.get<number>('tabSize') ?? 4;
+    // VSCode guarantees that retrieving the editor.options.insertSpaces will return a boolean
+    const insertSpaces =
+        (editor?.options.insertSpaces as boolean | undefined) ?? editorSettings.get<boolean>('insertSpaces') ?? true;
     return FormattingOptions.create(tabSize, insertSpaces);
 }
