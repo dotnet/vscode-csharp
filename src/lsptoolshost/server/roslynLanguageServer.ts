@@ -35,7 +35,7 @@ import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileI
 import * as RoslynProtocol from './roslynProtocol';
 import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import CSharpIntelliCodeExports from '../../csharpIntelliCodeExports';
 import {
     csharpDevkitExtensionId,
