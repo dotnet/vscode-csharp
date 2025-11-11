@@ -152,17 +152,17 @@ async function applyAutoInsertEdit(
 }
 
 function getFormattingOptions(document: vscode.TextDocument): FormattingOptions {
-    const editorConfig = vscode.workspace.getConfiguration('editor', document);
-    const detectIndentation = editorConfig.get<boolean>('detectIndentation');
+    const editorSettings = vscode.workspace.getConfiguration('editor', document);
+    const detectIndentation = editorSettings.get<boolean>('detectIndentation');
 
     const editor = detectIndentation
         ? vscode.window.visibleTextEditors.find((e) => e.document === document)
         : undefined;
 
     // VSCode guarantees that retrieving the editor.options.tabSize will return a number
-    const tabSize = (editor?.options.tabSize as number | undefined) ?? editorConfig.get<number>('tabSize') ?? 4;
+    const tabSize = (editor?.options.tabSize as number | undefined) ?? editorSettings.get<number>('tabSize') ?? 4;
     // VSCode guarantees that retrieving the editor.options.insertSpaces will return a boolean
     const insertSpaces =
-        (editor?.options.insertSpaces as boolean | undefined) ?? editorConfig.get<boolean>('insertSpaces') ?? true;
+        (editor?.options.insertSpaces as boolean | undefined) ?? editorSettings.get<boolean>('insertSpaces') ?? true;
     return FormattingOptions.create(tabSize, insertSpaces);
 }
