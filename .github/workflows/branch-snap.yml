@@ -39,7 +39,7 @@ jobs:
             npx gulp incrementVersion
           fi
       - name: Create version update PR
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update main version
