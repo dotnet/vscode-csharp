@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.101.x
+* Fix auto-insert ignoring language-specific editor.tabSize (PR: [#8768](https://github.com/dotnet/vscode-csharp/pull/8768))
+* Update Roslyn to 5.3.0-2.25557.4 (PR: [#8759](https://github.com/dotnet/vscode-csharp/pull/8759))
+* Fix file extension in debugger troubleshooting doc (PR: [#8756](https://github.com/dotnet/vscode-csharp/pull/8756))
 * Update Roslyn to 5.3.0-2.25557.6 (PR: [#8761](https://github.com/dotnet/vscode-csharp/pull/8761))
   * File-based programs live directive diagnostics (PR: [#80575](https://github.com/dotnet/roslyn/pull/80575))
   * Implement canonical miscellaneous files project loader for non-file-based programs (PR: [#80748](https://github.com/dotnet/roslyn/pull/80748))
