@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.102.x
+
 # 2.101.x
 * Fix auto-insert ignoring language-specific editor.tabSize (PR: [#8768](https://github.com/dotnet/vscode-csharp/pull/8768))
 * Update Roslyn to 5.3.0-2.25557.4 (PR: [#8759](https://github.com/dotnet/vscode-csharp/pull/8759))
