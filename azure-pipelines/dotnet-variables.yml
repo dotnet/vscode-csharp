@@ -1,3 +1,0 @@
-variables:
-- name: defaultDotnetVersion
-  value: '8.0.403'
