@@ -3,6 +3,22 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.101.x
+* Fix auto-insert ignoring language-specific editor.tabSize (PR: [#8768](https://github.com/dotnet/vscode-csharp/pull/8768))
+* Update Roslyn to 5.3.0-2.25557.4 (PR: [#8759](https://github.com/dotnet/vscode-csharp/pull/8759))
+* Fix file extension in debugger troubleshooting doc (PR: [#8756](https://github.com/dotnet/vscode-csharp/pull/8756))
+* Update Roslyn to 5.3.0-2.25557.6 (PR: [#8761](https://github.com/dotnet/vscode-csharp/pull/8761))
+  * File-based programs live directive diagnostics (PR: [#80575](https://github.com/dotnet/roslyn/pull/80575))
+  * Implement canonical miscellaneous files project loader for non-file-based programs (PR: [#80748](https://github.com/dotnet/roslyn/pull/80748))
+  * Better handle if a BuildHost process crashes that prevents connection (PR: [#81041](https://github.com/dotnet/roslyn/pull/81041))
+* Wait for Html buffer updates before making requests (PR: [#8748](https://github.com/dotnet/vscode-csharp/pull/8748))
+* Bump Razor to 10.0.0-preview.25557.2 (PR: [#8765](https://github.com/dotnet/vscode-csharp/pull/8765))
+  * Support Roslyn's custom nested code actions in VS Code (PR: [#12467](https://github.com/dotnet/razor/pull/12467))
+  * Format type parameter values as types (PR: [#12448](https://github.com/dotnet/razor/pull/12448))
+  * Default the cohosting option in the generator to on. (PR: [#12446](https://github.com/dotnet/razor/pull/12446))
+  * Add UnboundDirectiveAttributeAddUsingCodeActionProvider for directive attributes (PR: [#12404](https://github.com/dotnet/razor/pull/12404))
+  * Fix edit in one project not being reflected in consuming project (PR: [#12439](https://github.com/dotnet/razor/pull/12439))
+
 # 2.97.x
 * Add integration test for restore of file-based programs (PR: [#8470](https://github.com/dotnet/vscode-csharp/pull/8470))
 * Update setting documentation for on auto insert (PR: [#8742](https://github.com/dotnet/vscode-csharp/pull/8742))
@@ -116,7 +132,7 @@
 
 # 2.92.x
 * Bump Razor to 10.0.0-preview.25464.2 (PR: [#8628](https://github.com/dotnet/vscode-csharp/pull/8628))
-  * Improve go to definition for mvc tag helpers (PR: [#12216](https://github.com/dotnet/razor/pull/12216))                                                                                                               
+  * Improve go to definition for mvc tag helpers (PR: [#12216](https://github.com/dotnet/razor/pull/12216))
   * Filter CSS024 when caused by C# code in an attribute (PR: [#12209](https://github.com/dotnet/razor/pull/12209))
   * Provide more specific information in cohosting failures (PR: [#12193](https://github.com/dotnet/razor/pull/12193))
   * Fix renaming file (PR: [#12196](https://github.com/dotnet/razor/pull/12196))

@@ -29,7 +29,7 @@
   "configuration.csharp.inlayHints.enableInlayHintsForIndexerParameters": "Zobrazit tipy pro indexery",
   "configuration.csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": "Zobrazit nápovědy pro typy parametrů lambda",
   "configuration.csharp.inlayHints.enableInlayHintsForTypes": "Zobrazovat vložené nápovědy k typům",
-  "configuration.dotnet.autoInsert.enableAutoInsert": "Enable automatic adjustments of code constructs on typing, including documentation comment insertion, brace formatting adjustments, and raw string literal support.",
+  "configuration.dotnet.autoInsert.enableAutoInsert": "Umožňuje automatické úpravy konstruktů kódu při psaní, včetně vkládání komentářů k dokumentaci, úprav formátování složených závorek a podpory nezpracovaných řetězcových literálů.",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "Spustit analýzu kódu na pozadí pro: (Dříve omnisharp.enableRoslynAnalyzers)",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.fullSolution": "Celé řešení",
   "configuration.dotnet.backgroundAnalysis.analyzerDiagnosticsScope.none": "Žádné",
