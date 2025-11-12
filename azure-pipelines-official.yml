@@ -27,9 +27,6 @@ parameters:
   - auto
   default: auto
 
-variables:
-- template: /azure-pipelines/dotnet-variables.yml@self
-
 resources:
   repositories:
   - repository: 1ESPipelineTemplates
@@ -66,4 +63,3 @@ extends:
         isOfficial: true
         channel: ${{ parameters.channel }}
         signType: ${{ parameters.signType }}
-        dotnetVersion: $(defaultDotnetVersion)

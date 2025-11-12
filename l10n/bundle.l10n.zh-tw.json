@@ -37,7 +37,7 @@
   "Copy Html": "複製 HTML",
   "Copy issue content again": "再次複製問題內容",
   "Could not determine CSharp content": "無法判斷 CSharp 內容",
-  "Could not determine CSharp content: {0}": "Could not determine CSharp content: {0}",
+  "Could not determine CSharp content: {0}": "無法判斷 CSharp 內容:{0}",
   "Could not determine Html content": "無法判斷 Html 內容",
   "Could not find '{0}' in or above '{1}'.": "'{1}' 中或以上找不到 '{0}'。",
   "Could not find Razor Language Server executable '{0}' within directory": "目錄中找不到 Razor 語言伺服器可執行檔 '{0}'",

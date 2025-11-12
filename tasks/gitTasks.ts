@@ -5,6 +5,7 @@
 
 import { spawnSync } from 'child_process';
 import { Octokit } from '@octokit/rest';
+import { EOL } from 'os';
 
 /**
  * Execute a git command with optional logging
@@ -145,4 +146,17 @@ export async function createPullRequest(
         console.warn('Failed to create PR via Octokit:', e);
         return null;
     }
+}
+
+/**
+ * Find all tags that match the given version pattern
+ * @param version The `Major.Minor` version pattern to match
+ * @returns A sorted list of matching tags from oldest to newest
+ */
+export async function findTagsByVersion(version: string): Promise<string[]> {
+    const tagList = await git(['tag', '--list', `v${version}*`, '--sort=creatordate'], false);
+    return tagList
+        .split(EOL)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
 }

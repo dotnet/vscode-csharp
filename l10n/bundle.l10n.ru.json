@@ -37,7 +37,7 @@
   "Copy Html": "Копировать HTML",
   "Copy issue content again": "Повторно копировать содержимое проблемы",
   "Could not determine CSharp content": "Не удалось определить содержимое CSharp",
-  "Could not determine CSharp content: {0}": "Could not determine CSharp content: {0}",
+  "Could not determine CSharp content: {0}": "Не удалось определить содержимое CSharp: {0}",
   "Could not determine Html content": "Не удалось определить содержимое HTML",
   "Could not find '{0}' in or above '{1}'.": "Не удалось найти \"{0}\" в \"{1}\" или выше.",
   "Could not find Razor Language Server executable '{0}' within directory": "Не удалось найти исполняемый файл языкового сервера Razor в каталоге \"{0}\"",

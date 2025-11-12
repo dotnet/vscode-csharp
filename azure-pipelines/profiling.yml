@@ -14,8 +14,6 @@ variables:
   value: $(Build.SourcesDirectory)/out/profiling/merged/
 - name: LOGS_DIRECTORY
   value: $(Build.SourcesDirectory)/out/logs/
-- template: /azure-pipelines/dotnet-variables.yml@self
-
 
 resources:
   repositories:
@@ -54,7 +52,7 @@ extends:
         steps:
         - template: /azure-pipelines/test.yml@self
           parameters:
-            dotnetVersion: $(defaultDotnetVersion)
+            installDotNet: true
             npmCommand: profiling
             testVSCodeVersion: stable
             isIntegration: true

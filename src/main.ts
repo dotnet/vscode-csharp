@@ -17,7 +17,7 @@ import { vscodeNetworkSettingsProvider } from './networkSettings';
 import createOptionStream from './shared/observables/createOptionStream';
 import { AbsolutePathPackage } from './packageManager/absolutePathPackage';
 import { downloadAndInstallPackages } from './packageManager/downloadAndInstallPackages';
-import IInstallDependencies from './packageManager/IInstallDependencies';
+import { IInstallDependencies } from './packageManager/IInstallDependencies';
 import { installRuntimeDependencies } from './installRuntimeDependencies';
 import { isValidDownload } from './packageManager/isValidDownload';
 import { MigrateOptions } from './shared/migrateOptions';
@@ -86,7 +86,7 @@ export async function activate(
     const networkSettingsProvider = vscodeNetworkSettingsProvider(vscode);
     const useFramework = useOmnisharpServer && omnisharpOptions.useModernNet !== true;
     const installDependencies: IInstallDependencies = async (dependencies: AbsolutePathPackage[]) =>
-        downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload);
+        downloadAndInstallPackages(dependencies, networkSettingsProvider, eventStream, isValidDownload, reporter);
 
     const runtimeDependenciesExist = await installRuntimeDependencies(
         context.extension.packageJSON,
@@ -119,7 +119,7 @@ export async function activate(
     } else {
         const getCoreClrDebugPromise = async (languageServerStartedPromise: Promise<void>) => {
             let coreClrDebugPromise = Promise.resolve();
-            if (runtimeDependenciesExist) {
+            if (runtimeDependenciesExist['Debugger']) {
                 // activate coreclr-debug
                 coreClrDebugPromise = coreclrdebug.activate(
                     context.extension,
