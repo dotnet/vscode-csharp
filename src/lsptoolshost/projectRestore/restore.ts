@@ -5,16 +5,11 @@
 
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import {
-    RestorableProjects,
-    RestoreParams,
-    RestorePartialResult,
-    RestoreRequest,
-    ProjectNeedsRestoreRequest,
-} from '../server/roslynProtocol';
+import { RestorableProjects, RestoreParams, RestoreRequest } from '../server/roslynProtocol';
 import path from 'path';
 import { showErrorMessage } from '../../shared/observers/utils/showMessage';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
+import { CancellationToken } from 'vscode-jsonrpc';
 
 let _restoreInProgress = false;
 
@@ -32,33 +27,10 @@ export function registerRestoreCommands(
         );
         context.subscriptions.push(
             vscode.commands.registerCommand('dotnet.restore.all', async (): Promise<void> => {
-                return restore(languageServer, csharpOutputChannel, [], true);
+                return restore(languageServer, csharpOutputChannel, []);
             })
         );
     }
-
-    languageServer.registerOnRequest(ProjectNeedsRestoreRequest.type, async (params) => {
-        let projectFilePaths = params.projectFilePaths;
-        if (getCSharpDevKit()) {
-            // Only restore '.cs' files (file-based apps) if CDK is loaded.
-            const csharpFiles = [];
-            for (const path of projectFilePaths) {
-                if (path.endsWith('.cs')) {
-                    csharpFiles.push(path);
-                } else {
-                    csharpOutputChannel.debug(
-                        `[.NET Restore] Not restoring '${path}' from C# extension, because C# Dev Kit is expected to handle restore for it.`
-                    );
-                }
-            }
-
-            projectFilePaths = csharpFiles;
-        }
-
-        if (projectFilePaths.length > 0) {
-            await restore(languageServer, csharpOutputChannel, params.projectFilePaths, false);
-        }
-    });
 }
 
 async function chooseProjectAndRestore(
@@ -93,63 +65,34 @@ async function chooseProjectAndRestore(
         return;
     }
 
-    await restore(languageServer, outputChannel, [pickedItem.description!], true);
+    await restore(languageServer, outputChannel, [pickedItem.description!]);
 }
 
 export async function restore(
     languageServer: RoslynLanguageServer,
     outputChannel: vscode.LogOutputChannel,
-    projectFiles: string[],
-    showOutput: boolean
+    projectFiles: string[]
 ): Promise<void> {
     if (_restoreInProgress) {
         showErrorMessage(vscode, vscode.l10n.t('Restore already in progress'));
         return;
     }
     _restoreInProgress = true;
-    if (showOutput) {
-        outputChannel.show(true);
-    }
+    outputChannel.show(true);
 
     const request: RestoreParams = { projectFilePaths: projectFiles };
-    await vscode.window
-        .withProgress(
-            {
-                location: vscode.ProgressLocation.Notification,
-                title: vscode.l10n.t('Restore'),
-                cancellable: true,
-            },
-            async (progress, token) => {
-                const writeOutput = (output: RestorePartialResult) => {
-                    if (output.message) {
-                        outputChannel.debug(`[.NET Restore] ${output.message}`);
-                    }
 
-                    progress.report({ message: output.stage });
-                };
+    // server will show a work done progress with cancellation.  no need to pass a token to the request.
+    const resultPromise = languageServer.sendRequest(RestoreRequest.type, request, CancellationToken.None).then(
+        () => {
+            _restoreInProgress = false;
+        },
+        (err) => {
+            outputChannel.error(`[.NET Restore] ${err}`);
+            _restoreInProgress = false;
+        }
+    );
 
-                progress.report({ message: vscode.l10n.t('Sending request') });
-                const responsePromise = languageServer.sendRequestWithProgress(
-                    RestoreRequest.type,
-                    request,
-                    async (p) => writeOutput(p),
-                    token
-                );
-
-                await responsePromise.then(
-                    (result) => result.forEach((r) => writeOutput(r)),
-                    (err) => outputChannel.error(`[.NET Restore] ${err}`)
-                );
-            }
-        )
-        .then(
-            () => {
-                _restoreInProgress = false;
-            },
-            () => {
-                _restoreInProgress = false;
-            }
-        );
-
+    await resultPromise;
     return;
 }
