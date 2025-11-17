@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.100.x
+* Fix issue refreshing colorization after project loads (PR: [#8787](https://github.com/dotnet/vscode-csharp/pull/8787))
 * See 2.97.x for full list of changes.
 
 # 2.97.x
