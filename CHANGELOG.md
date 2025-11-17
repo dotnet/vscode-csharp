@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.102.x
+* Bump Razor to 10.0.0-preview.25564.2 (PR: [#8790](https://github.com/dotnet/vscode-csharp/pull/8790))
+  * Revert "Map component start tags to C#, for better GTD, FAR, Hover, etc. (#12287) (PR: [#12486](https://github.com/dotnet/razor/pull/12486))
+  * Rename code-behind and scoped CSS file when renaming component  (PR: [#12480](https://github.com/dotnet/razor/pull/12480))
+  * Better handle parameter attribute directive completion (PR: [#12473](https://github.com/dotnet/razor/pull/12473))
 
 # 2.101.x
 * Fix auto-insert ignoring language-specific editor.tabSize (PR: [#8768](https://github.com/dotnet/vscode-csharp/pull/8768))
