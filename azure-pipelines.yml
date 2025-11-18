@@ -84,8 +84,7 @@ stages:
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
-        image: 1es-ubuntu-2204-open
-        os: linux
+        demands: ImageOverride -equals 1es-ubuntu-2204-open
       containerName: mcr.microsoft.com/dotnet/sdk:8.0-noble
 
 - stage:
@@ -103,8 +102,7 @@ stages:
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
-        image: 1es-ubuntu-2204-open
-        os: linux
+        demands: ImageOverride -equals 1es-ubuntu-2204-open
       containerName: mcr.microsoft.com/dotnet/sdk:9.0-noble
 
 - stage:
@@ -120,8 +118,7 @@ stages:
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
-        image: 1es-ubuntu-2204-open
-        os: linux
+        demands: ImageOverride -equals 1es-ubuntu-2204-open
       containerName: mcr.microsoft.com/dotnet/sdk:10.0.100-rc.2-noble
 
 - stage: Test_Windows_Stage
@@ -162,15 +159,12 @@ stages:
     strategy:
       matrix:
         linux:
-          imageName: 1es-ubuntu-2204-open
-          osName: linux
+          demandsName: 1es-ubuntu-2204-open
         windows:
-          imageName: 1es-windows-2022-open
-          osName: windows
+          demandsName: 1es-windows-2022-open
     pool:
       name: NetCore-Public
-      image: $(imageName)
-      os: $(osName)
+      demands: ImageOverride -equals $(demandsName)
     steps:
     - template: azure-pipelines/test-omnisharp.yml
       parameters:
