@@ -239,15 +239,6 @@ export interface ProjectNeedsRestoreName {
     projectFilePaths: string[];
 }
 
-export interface CopilotRelatedDocumentsParams extends WorkDoneProgressParams, PartialResultParams {
-    _vs_textDocument: TextDocumentIdentifier;
-    position: Position;
-}
-
-export interface CopilotRelatedDocumentsReport {
-    _vs_file_paths?: string[];
-}
-
 export interface SourceGeneratorGetRequestParams {
     textDocument: TextDocumentIdentifier;
     resultId?: string;
@@ -364,18 +355,6 @@ export namespace ProjectNeedsRestoreRequest {
     export const method = 'workspace/_roslyn_projectNeedsRestore';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
     export const type = new RequestType<ProjectNeedsRestoreName, void, void>(method);
-}
-
-export namespace CopilotRelatedDocumentsRequest {
-    export const method = 'copilot/_related_documents';
-    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
-    export const type = new ProtocolRequestType<
-        CopilotRelatedDocumentsParams,
-        CopilotRelatedDocumentsReport[],
-        CopilotRelatedDocumentsReport[],
-        void,
-        void
-    >(method);
 }
 
 export namespace SourceGeneratorGetTextRequest {
