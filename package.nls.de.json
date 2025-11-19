@@ -65,7 +65,6 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "Aktiviert die Vorschau für die Erfahrung „dateibasierte Programme“ (dotnet run app.cs).",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Beschreibungsinformationen beim Anzeigen des Symbols anzeigen.",
   "configuration.dotnet.server.componentPaths": "Ermöglicht das Überschreiben des Ordnerpfads für eingebaute Komponenten des Sprachservers (z. B. Überschreiben des Pfads .roslynDevKit im Erweiterungsverzeichnis, um lokal erstellte Komponenten zu verwenden)",
-  "configuration.dotnet.server.componentPaths.razorDevKit": "Überschreibt den Ordnerpfad für die Razor-Dev-Kit-Komponente des Sprachservers",
   "configuration.dotnet.server.componentPaths.razorExtension": "Überschreibt den Ordnerpfad für die Razor-Erweiterungskomponente des Sprachservers",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Überschreibt den Ordnerpfad für die .roslynCopilot-Komponente des Sprachservers",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Überschreibt den Ordnerpfad für die Komponente .roslynDevKit des Sprachservers",

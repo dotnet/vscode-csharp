@@ -65,7 +65,6 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "Active l’expérience de prévisualisation des « programmes basés sur des fichiers » (dotnet run app.cs).",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "Afficher les informations sur les remarques lors de l’affichage du symbole.",
   "configuration.dotnet.server.componentPaths": "Permet de remplacer le chemin d’accès au dossier des composants intégrés du serveur de langage (par exemple, remplacer le chemin d’accès .roslynDevKit dans le répertoire d’extension pour utiliser les composants générés localement).",
-  "configuration.dotnet.server.componentPaths.razorDevKit": "Remplace le chemin d’accès du dossier pour le composant du Kit de développement Razor du serveur de langage",
   "configuration.dotnet.server.componentPaths.razorExtension": "Remplace le chemin d’accès du dossier pour le composant d’extension Razor du serveur de langage",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "Remplace le chemin d’accès du dossier pour le composant .roslynCopilot du serveur de langage",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Remplace le chemin d’accès au dossier du composant .roslynDevKit du serveur de langage",

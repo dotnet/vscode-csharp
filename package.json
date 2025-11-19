@@ -1447,10 +1447,6 @@
               "razorExtension": {
                 "description": "%configuration.dotnet.server.componentPaths.razorExtension%",
                 "type": "string"
-              },
-              "razorDevKit": {
-                "description": "%configuration.dotnet.server.componentPaths.razorDevKit%",
-                "type": "string"
               }
             },
             "default": {}

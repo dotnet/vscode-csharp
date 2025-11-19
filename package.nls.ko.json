@@ -65,7 +65,6 @@
   "configuration.dotnet.projects.enableFileBasedPrograms": "미리 보기 \"파일 기반 프로그램\"(dotnet run app.cs) 환경을 활성화합니다.",
   "configuration.dotnet.quickInfo.showRemarksInQuickInfo": "기호를 표시할 때 설명 정보를 표시합니다.",
   "configuration.dotnet.server.componentPaths": "언어 서버의 기본 제공 구성 요소에 대한 폴더 경로를 재정의할 수 있습니다(예: 로컬로 빌드된 구성 요소를 사용하도록 확장 디렉터리의 .roslynDevKit 경로 재정의).",
-  "configuration.dotnet.server.componentPaths.razorDevKit": "언어 서버의 Razor Dev Kit 구성 요소에 대한 폴더 경로를 재정의합니다.",
   "configuration.dotnet.server.componentPaths.razorExtension": "언어 서버의 Razor 확장 구성 요소에 대한 폴더 경로를 재정의합니다.",
   "configuration.dotnet.server.componentPaths.roslynCopilot": "언어 서버의 .roslynCopilot 구성 요소에 대한 폴더 경로를 덮어씁니다.",
   "configuration.dotnet.server.componentPaths.roslynDevKit": "언어 서버의 .roslynDevKit 구성 요소에 대한 폴더 경로를 재정의합니다.",
