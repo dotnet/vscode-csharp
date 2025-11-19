@@ -163,7 +163,6 @@
   "Select the process to attach to": "Selezionare il processo a cui collegarsi",
   "Select the project to launch": "Selezionare il progetto da avviare",
   "Self-signed certificate successfully {0}": "Certificato autofirmato correttamente {0}",
-  "Sending request": "Invio della richiesta",
   "Server failed to start after retrying 5 times.": "Non è possibile avviare il server dopo 5 tentativi.",
   "Server stopped": "Server arrestato",
   "Show Output": "Mostra output",

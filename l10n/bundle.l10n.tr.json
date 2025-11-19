@@ -163,7 +163,6 @@
   "Select the process to attach to": "Eklenilecek işlemi seçin",
   "Select the project to launch": "Başlatılacak projeyi seçin",
   "Self-signed certificate successfully {0}": "Otomatik olarak imzalanan sertifika başarıyla {0}",
-  "Sending request": "İstek gönderiliyor",
   "Server failed to start after retrying 5 times.": "Sunucu 5 kez yeniden denendikten sonra başlatılamadı.",
   "Server stopped": "Sunucu durduruldu",
   "Show Output": "Çıktıyı Göster",
