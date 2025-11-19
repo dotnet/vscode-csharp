@@ -1542,14 +1542,6 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
-          },
-          "razor.languageServer.cohostingEnabled": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.razor.languageServer.cohostingEnabled%",
-            "tags": [
-              "experimental"
-            ]
           }
         }
       },

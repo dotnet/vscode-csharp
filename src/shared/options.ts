@@ -432,7 +432,7 @@ class RazorOptionsImpl implements RazorOptions {
         return readOption<string>('razor.languageServer.directory', '');
     }
     public get cohostingEnabled() {
-        return readOption<boolean>('razor.languageServer.cohostingEnabled', false);
+        return true;
     }
 }
 
