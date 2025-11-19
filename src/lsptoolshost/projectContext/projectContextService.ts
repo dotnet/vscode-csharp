@@ -53,15 +53,8 @@ export class ProjectContextService {
     public async refresh() {
         const textEditor = vscode.window.activeTextEditor;
         const languageId = textEditor?.document?.languageId;
-        if (languageId !== 'csharp') {
-            if (languageId !== 'aspnetcorerazor') {
-                return;
-            }
-
-            // We only support Razor when cohosting is enabled.
-            if (!razorOptions.cohostingEnabled) {
-                return;
-            }
+        if (languageId !== 'csharp' && languageId !== 'aspnetcorerazor') {
+            return;
         }
 
         // If we have an open request, cancel it.

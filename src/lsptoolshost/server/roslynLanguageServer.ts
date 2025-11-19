@@ -656,17 +656,11 @@ export class RoslynLanguageServer {
             razorComponentPath = path.dirname(extPath);
         });
 
-        // If cohosting is enabled we get the source generator from the razor component path
-        const razorSourceGeneratorPath = razorOptions.cohostingEnabled ? razorComponentPath : razorPath;
-
-        args.push(
-            '--razorSourceGenerator',
-            path.join(razorSourceGeneratorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
-        );
+        args.push('--razorSourceGenerator', path.join(razorComponentPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
 
         args.push(
             '--razorDesignTimePath',
-            path.join(razorSourceGeneratorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
+            path.join(razorComponentPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
         );
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -707,14 +701,12 @@ export class RoslynLanguageServer {
             await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
 
-            if (razorOptions.cohostingEnabled) {
-                // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
-                // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
-                args.push(
-                    '--csharpDesignTimePath',
-                    path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')
-                );
-            }
+            // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
+            // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
+            args.push(
+                '--csharpDesignTimePath',
+                path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')
+            );
         }
 
         for (const extensionPath of additionalExtensionPaths) {

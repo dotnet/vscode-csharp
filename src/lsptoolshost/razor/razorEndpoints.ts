@@ -66,16 +66,11 @@ export function registerRazorEndpoints(
         razorLogger.log(params.message, params.type)
     );
 
-    if (razorOptions.cohostingEnabled) {
-        vscode.commands.executeCommand('setContext', 'razor.mode', 'cohosting');
-        registerCohostingEndpoints();
+    vscode.commands.executeCommand('setContext', 'razor.mode', 'cohosting');
+    registerCohostingEndpoints();
 
-        context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
-        context.subscriptions.push(ShowGeneratedDocumentCommand.register(roslynLanguageServer));
-    } else {
-        vscode.commands.executeCommand('setContext', 'razor.mode', 'lsp');
-        registerNonCohostingEndpoints();
-    }
+    context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
+    context.subscriptions.push(ShowGeneratedDocumentCommand.register(roslynLanguageServer));
 
     return;
 

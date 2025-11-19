@@ -12,10 +12,10 @@ import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSele
 
 export class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
-        // We only support Razor when cohosting is enabled.
-        const documentSelector = razorOptions.cohostingEnabled
-            ? combineDocumentSelectors(languageServerOptions.documentSelector, RazorLanguage.documentSelector)
-            : combineDocumentSelectors(languageServerOptions.documentSelector);
+        const documentSelector = combineDocumentSelectors(
+            languageServerOptions.documentSelector,
+            RazorLanguage.documentSelector
+        );
         const projectContextService = languageServer._projectContextService;
 
         const item = vscode.languages.createLanguageStatusItem('csharp.projectContextStatus', documentSelector);
