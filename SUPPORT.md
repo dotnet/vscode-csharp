@@ -115,7 +115,7 @@ If the language server crashes, general logs are often helpful for diagnosing th
 - When the server crashes, a dump in the specified folder will be created.
 
 > [!WARNING]
-> The dump can contain detailed information on the project - generally we will provide an email so that it can be shared privately
+> The dump will contain detailed information about the workspace.  See [Sharing information privately](#sharing-information-privately)
 
 ### Recording a language server trace
 
@@ -130,15 +130,19 @@ The C# extension has a built in command, `csharp.recordLanguageServerTrace` to h
 ![alt text](docs/images/recordTraceArgs.png)
 4.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the peformance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace
 ![alt text](docs/images/recordTraceTerminal.png)
-5.  Share the trace.  Note that the trace may contain PII, so generally we will provide an email or other confidential way to share the trace with us.
+5.  Share the trace.
+
+> [!WARNING]
+> The trace will contain detailed information about the workspace.  See [Sharing information privately](#sharing-information-privately)
 
 ### Sharing information privately
-Detailed logs, dumps, traces, and other information can sometimes contain private information that you do not wish to share publicly.  Instead, you can utilize the Developer Community page to share these privately to Microsoft.
+Detailed logs, dumps, traces, and other information can sometimes contain private information that you do not wish to share publicly on GitHub (for example file paths and file contents).  Instead, you can utilize the Developer Community page to share these privately to Microsoft.
 
 1.  Go to https://developercommunity.visualstudio.com/dotnet/report
-2.  Fill in the issue title, reference the GitHub issue in the description, and upload the attachments
+2.  Fill in the issue title, reference the GitHub issue in the description, and upload the attachments.  Note that there is a 2 GB limit on attached files.  Dumps can often be larger than that, so we recommend compressing them to a `.zip` before uploading.
+
 ![developer community feedback page](docs/images/developer_community_feedback.png)
-3.  Once created, a comment on the GitHub issue a link to the new Developer Community ticket.
+4.  Once created, a comment on the GitHub issue a link to the new Developer Community ticket.
 
 
 
