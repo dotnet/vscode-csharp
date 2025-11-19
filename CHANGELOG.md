@@ -9,8 +9,6 @@
 * Remove unused related files code (PR: [#8733](https://github.com/dotnet/vscode-csharp/pull/8733))
 * Automatically reload extension when workspace is trusted (PR: [#8794](https://github.com/dotnet/vscode-csharp/pull/8794))
 * Update to new language client with range semantic tokens refresh (PR: [#8783](https://github.com/dotnet/vscode-csharp/pull/8783))
-* Disable AzDO dependabot (PR: [#8782](https://github.com/dotnet/vscode-csharp/pull/8782))
-* Skip O# doc comment insertion tests (PR: [#8777](https://github.com/dotnet/vscode-csharp/pull/8777))
 * Bump Razor to 10.0.0-preview.25564.2 (PR: [#8790](https://github.com/dotnet/vscode-csharp/pull/8790))
   * Revert "Map component start tags to C#, for better GTD, FAR, Hover, etc. (#12287) (PR: [#12486](https://github.com/dotnet/razor/pull/12486))
   * Rename code-behind and scoped CSS file when renaming component  (PR: [#12480](https://github.com/dotnet/razor/pull/12480))
