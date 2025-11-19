@@ -57,7 +57,6 @@ export function registerRazorEndpoints(
         razorLogger.log(params.message, params.type)
     );
 
-    vscode.commands.executeCommand('setContext', 'razor.mode', 'cohosting');
     registerCohostingEndpoints();
 
     context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
