@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.103.x
+
 # 2.102.x
 * Update Roslyn to 5.3.0-2.25568.9 (PR: [#8799](https://github.com/dotnet/vscode-csharp/pull/8799))
   * Handle automatic restores on directly on the server (PR: [#81233](https://github.com/dotnet/roslyn/pull/81233))
