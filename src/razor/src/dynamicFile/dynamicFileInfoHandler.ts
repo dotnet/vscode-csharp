@@ -11,12 +11,8 @@ import { ProvideDynamicFileParams } from './provideDynamicFileParams';
 import { ProvideDynamicFileResponse } from './provideDynamicFileResponse';
 import { RemoveDynamicFileParams } from './removeDynamicFileParams';
 import { CSharpProjectedDocument } from '../csharp/csharpProjectedDocument';
-import { RazorDocumentChangeKind } from '../document/razorDocumentChangeKind';
-import { RazorDynamicFileChangedParams } from './dynamicFileUpdatedParams';
-import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { razorTextChange } from './razorTextChange';
 import { razorTextSpan } from './razorTextSpan';
-import { razorOptions } from '../../../shared/options';
 
 // Handles Razor generated doc communication between the Roslyn workspace and Razor.
 // didChange behavior for Razor generated docs is handled in the RazorDocumentManager.

@@ -52,7 +52,7 @@ import { DotnetInfo } from '../../shared/utils/dotnetInfo';
 import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents';
 import { registerShowToastNotification } from '../handlers/showToastNotification';
 import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
-import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from '../../shared/options';
+import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
 import { NamedPipeInformation } from './roslynProtocol';
 import { IDisposable } from '../../disposable';
 import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
@@ -644,11 +644,6 @@ export class RoslynLanguageServer {
         if (logLevel) {
             args.push('--logLevel', logLevel);
         }
-
-        const razorPath =
-            razorOptions.razorServerPath === ''
-                ? path.join(context.extension.extensionPath, '.razor')
-                : razorOptions.razorServerPath;
 
         let razorComponentPath = '';
         getComponentPaths('razorExtension', languageServerOptions, channel).forEach((extPath) => {

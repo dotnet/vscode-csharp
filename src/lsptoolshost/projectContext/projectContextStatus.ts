@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { languageServerOptions, razorOptions } from '../../shared/options';
+import { languageServerOptions } from '../../shared/options';
 import { RazorLanguage } from '../../razor/src/razorLanguage';
 import { ServerState } from '../server/languageServerEvents';
 import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';

@@ -9,7 +9,6 @@ import { VSGetProjectContextsRequest, VSProjectContext, VSProjectContextList } f
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../utils/uriConverter';
 import { LanguageServerEvents, ServerState } from '../server/languageServerEvents';
-import { razorOptions } from '../../shared/options';
 
 export interface ProjectContextChangeEvent {
     languageId: string;
