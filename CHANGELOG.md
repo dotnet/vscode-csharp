@@ -4,7 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.102.x
-* Update Roslyn to 5.3.0-2.25568.2 (PR: [#8799](https://github.com/dotnet/vscode-csharp/pull/8799))
+* Update Roslyn to 5.3.0-2.25568.9 (PR: [#8799](https://github.com/dotnet/vscode-csharp/pull/8799))
+  * Handle automatic restores on directly on the server (PR: [#81233](https://github.com/dotnet/roslyn/pull/81233))
   * Only treat a file with directives as an FBP (PR: [#81307](https://github.com/dotnet/roslyn/pull/81307))
   * Document excerpt for Razor, and fix Find All Refs (PR: [#81291](https://github.com/dotnet/roslyn/pull/81291))
   * Filter IntelliSense attribute suggestions by AttributeTargets (PR: [#81157](https://github.com/dotnet/roslyn/pull/81157))
