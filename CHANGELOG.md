@@ -4,9 +4,6 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.102.x
-* Fix one of glob dependabot issues (PR: [#8798](https://github.com/dotnet/vscode-csharp/pull/8798))
-* Localization result based on 3d1c89afbfcb0a1ba54d46cb4590cfc2381e85b2 (PR: [#8796](https://github.com/dotnet/vscode-csharp/pull/8796))
-* Remove unused related files code (PR: [#8733](https://github.com/dotnet/vscode-csharp/pull/8733))
 * Automatically reload extension when workspace is trusted (PR: [#8794](https://github.com/dotnet/vscode-csharp/pull/8794))
 * Update to new language client with range semantic tokens refresh (PR: [#8783](https://github.com/dotnet/vscode-csharp/pull/8783))
 * Bump Razor to 10.0.0-preview.25564.2 (PR: [#8790](https://github.com/dotnet/vscode-csharp/pull/8790))
