@@ -40,7 +40,7 @@ import { RazorSignatureHelpProvider } from './signatureHelp/razorSignatureHelpPr
 import { TelemetryReporter as RazorTelemetryReporter } from './telemetryReporter';
 import { RazorDiagnosticHandler } from './diagnostics/razorDiagnosticHandler';
 import { RazorSimplifyMethodHandler } from './simplify/razorSimplifyMethodHandler';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { DotnetRuntimeExtensionResolver } from '../../lsptoolshost/dotnetRuntime/dotnetRuntimeExtensionResolver';
 import { PlatformInformation } from '../../shared/platform';

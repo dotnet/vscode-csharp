@@ -9,7 +9,7 @@ import * as path from 'path';
 import { registerCommands } from './commands';
 import { registerDebugger } from './debugger/debugger';
 import { PlatformInformation } from '../shared/platform';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { DotnetRuntimeExtensionResolver } from './dotnetRuntime/dotnetRuntimeExtensionResolver';
 import { registerUnitTestingCommands } from './testing/unitTesting';

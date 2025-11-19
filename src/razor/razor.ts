@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as Razor from '../../src/razor/src/extension';
 import { EventStream } from '../eventStream';
-import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryReporter } from '@vscode/extension-telemetry';
 import { PlatformInformation } from '../shared/platform';
 import { showWarningMessage } from '../shared/observers/utils/showMessage';
 import { RazorLogger } from './src/razorLogger';
