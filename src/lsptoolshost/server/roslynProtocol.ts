@@ -227,9 +227,8 @@ export interface RestoreParams extends WorkDoneProgressParams, PartialResultPara
     projectFilePaths: string[];
 }
 
-export interface RestorePartialResult {
-    stage: string;
-    message: string;
+export interface RestoreResult {
+    success: boolean;
 }
 
 export interface ProjectNeedsRestoreName {
@@ -237,15 +236,6 @@ export interface ProjectNeedsRestoreName {
      * The set of projects that have unresolved dependencies and require a restore.
      */
     projectFilePaths: string[];
-}
-
-export interface CopilotRelatedDocumentsParams extends WorkDoneProgressParams, PartialResultParams {
-    _vs_textDocument: TextDocumentIdentifier;
-    position: Position;
-}
-
-export interface CopilotRelatedDocumentsReport {
-    _vs_file_paths?: string[];
 }
 
 export interface SourceGeneratorGetRequestParams {
@@ -345,37 +335,13 @@ export namespace CodeActionFixAllResolveRequest {
 export namespace RestoreRequest {
     export const method = 'workspace/_roslyn_restore';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
-    export const type = new ProtocolRequestType<
-        RestoreParams,
-        RestorePartialResult[],
-        RestorePartialResult,
-        void,
-        void
-    >(method);
+    export const type = new RequestType<RestoreParams, RestoreResult, void>(method);
 }
 
 export namespace RestorableProjects {
     export const method = 'workspace/_roslyn_restorableProjects';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
     export const type = new RequestType0<string[], void>(method);
-}
-
-export namespace ProjectNeedsRestoreRequest {
-    export const method = 'workspace/_roslyn_projectNeedsRestore';
-    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
-    export const type = new RequestType<ProjectNeedsRestoreName, void, void>(method);
-}
-
-export namespace CopilotRelatedDocumentsRequest {
-    export const method = 'copilot/_related_documents';
-    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
-    export const type = new ProtocolRequestType<
-        CopilotRelatedDocumentsParams,
-        CopilotRelatedDocumentsReport[],
-        CopilotRelatedDocumentsReport[],
-        void,
-        void
-    >(method);
 }
 
 export namespace SourceGeneratorGetTextRequest {

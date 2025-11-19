@@ -3,6 +3,21 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.102.x
+* Update Roslyn to 5.3.0-2.25568.9 (PR: [#8799](https://github.com/dotnet/vscode-csharp/pull/8799))
+  * Handle automatic restores on directly on the server (PR: [#81233](https://github.com/dotnet/roslyn/pull/81233))
+  * Only treat a file with directives as an FBP (PR: [#81307](https://github.com/dotnet/roslyn/pull/81307))
+  * Document excerpt for Razor, and fix Find All Refs (PR: [#81291](https://github.com/dotnet/roslyn/pull/81291))
+  * Filter IntelliSense attribute suggestions by AttributeTargets (PR: [#81157](https://github.com/dotnet/roslyn/pull/81157))
+  * Fix IDE0055: Enforce import directive grouping when groups are contiguous, regardless of sorting (PR: [#81202](https://github.com/dotnet/roslyn/pull/81202))
+  * Fix indentation of if statement after else on separate line (PR: [#81178](https://github.com/dotnet/roslyn/pull/81178))
+* Automatically reload extension when workspace is trusted (PR: [#8794](https://github.com/dotnet/vscode-csharp/pull/8794))
+* Update to new language client with range semantic tokens refresh (PR: [#8783](https://github.com/dotnet/vscode-csharp/pull/8783))
+* Bump Razor to 10.0.0-preview.25564.2 (PR: [#8790](https://github.com/dotnet/vscode-csharp/pull/8790))
+  * Revert "Map component start tags to C#, for better GTD, FAR, Hover, etc. (#12287) (PR: [#12486](https://github.com/dotnet/razor/pull/12486))
+  * Rename code-behind and scoped CSS file when renaming component  (PR: [#12480](https://github.com/dotnet/razor/pull/12480))
+  * Better handle parameter attribute directive completion (PR: [#12473](https://github.com/dotnet/razor/pull/12473))
+
 # 2.101.x
 * Fix auto-insert ignoring language-specific editor.tabSize (PR: [#8768](https://github.com/dotnet/vscode-csharp/pull/8768))
 * Update Roslyn to 5.3.0-2.25557.4 (PR: [#8759](https://github.com/dotnet/vscode-csharp/pull/8759))

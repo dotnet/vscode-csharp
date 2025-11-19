@@ -1,6 +1,4 @@
 {
-  "Reload Extensions": "Reload Extensions",
-  "Workspace trust has changed. Would you like to reload extensions?": "Workspace trust has changed. Would you like to reload extensions?",
   "How to setup Remote Debugging": "How to setup Remote Debugging",
   "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.": "The C# extension for Visual Studio Code is incompatible on {0} {1} with the VS Code Remote Extensions. To see avaliable workarounds, click on '{2}'.",
   "The C# extension for Visual Studio Code is incompatible on {0} {1}.": "The C# extension for Visual Studio Code is incompatible on {0} {1}.",
@@ -190,7 +188,6 @@
   "Suppress notification": "Suppress notification",
   "Restore {0}": "Restore {0}",
   "Restore already in progress": "Restore already in progress",
-  "Sending request": "Sending request",
   "C# Project Context Status": "C# Project Context Status",
   "Active File Context": "Active File Context",
   "Initializing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
