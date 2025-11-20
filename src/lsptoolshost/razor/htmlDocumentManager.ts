@@ -7,12 +7,13 @@ import * as vscode from 'vscode';
 import { RazorLogger } from '../../razor/src/razorLogger';
 import { PlatformInformation } from '../../shared/platform';
 import { getUriPath } from '../../razor/src/uriPaths';
-import { virtualHtmlSuffix } from '../../razor/src/razorConventions';
 import { HtmlDocumentContentProvider } from './htmlDocumentContentProvider';
 import { HtmlDocument } from './htmlDocument';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { RequestType, TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../utils/uriConverter';
+
+const virtualHtmlSuffix = '__virtual.html';
 
 export class HtmlDocumentManager {
     private readonly htmlDocuments: { [hostDocumentPath: string]: HtmlDocument } = {};
