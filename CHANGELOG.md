@@ -5,6 +5,7 @@
 
 # 2.103.x
 * Fix indentation after pressing Enter in Razor files (PR: [#8809](https://github.com/dotnet/vscode-csharp/pull/8809))
+* Remove non-cohosting editor code (PR: [#8810](https://github.com/dotnet/vscode-csharp/pull/8810))
 
 # 2.102.x
 * Update Roslyn to 5.3.0-2.25568.9 (PR: [#8799](https://github.com/dotnet/vscode-csharp/pull/8799))

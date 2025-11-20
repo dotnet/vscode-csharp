@@ -5,17 +5,17 @@
 
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { languageServerOptions, razorOptions } from '../../shared/options';
+import { languageServerOptions } from '../../shared/options';
 import { RazorLanguage } from '../../razor/src/razorLanguage';
 import { ServerState } from '../server/languageServerEvents';
 import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';
 
 export class ProjectContextStatus {
     static createStatusItem(context: vscode.ExtensionContext, languageServer: RoslynLanguageServer) {
-        // We only support Razor when cohosting is enabled.
-        const documentSelector = razorOptions.cohostingEnabled
-            ? combineDocumentSelectors(languageServerOptions.documentSelector, RazorLanguage.documentSelector)
-            : combineDocumentSelectors(languageServerOptions.documentSelector);
+        const documentSelector = combineDocumentSelectors(
+            languageServerOptions.documentSelector,
+            RazorLanguage.documentSelector
+        );
         const projectContextService = languageServer._projectContextService;
 
         const item = vscode.languages.createLanguageStatusItem('csharp.projectContextStatus', documentSelector);

@@ -29,11 +29,6 @@ export const componentInfo: { [key: string]: ComponentInfo } = {
             'Microsoft.VisualStudio.DesignTools.CodeAnalysis.Diagnostics.dll',
         ],
     },
-    razorDevKit: {
-        defaultFolderName: '.razorDevKit',
-        optionName: 'razorDevKit',
-        componentDllPaths: ['Microsoft.VisualStudio.DevKit.Razor.dll'],
-    },
     razorExtension: {
         defaultFolderName: '.razorExtension',
         optionName: 'razorExtension',
