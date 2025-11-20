@@ -72,7 +72,6 @@
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
     "test:unit": "npm run compileDev && gulp test:unit",
     "test:integration:csharp": "npm run packageDev && gulp test:integration:csharp",
-    "test:integration:razor": "npm run packageDev && gulp test:integration:razor",
     "test:integration:razor:cohost": "npm run packageDev && gulp test:integration:razor:cohost",
     "test:integration:devkit": "npm run packageDev && gulp test:integration:devkit",
     "test:integration:untrusted": "npm run packageDev && gulp test:integration:untrusted",
