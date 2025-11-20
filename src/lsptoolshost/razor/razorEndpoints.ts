@@ -45,6 +45,7 @@ import { HtmlDocument } from './htmlDocument';
 import { HtmlForwardedRequest } from './htmlForwardedRequest';
 import { BlazorDebugConfigurationProvider } from '../../razor/src/blazorDebug/blazorDebugConfigurationProvider';
 import { ShowGeneratedDocumentCommand } from './showGeneratedDocumentCommand';
+import { RazorLanguageConfiguration } from '../../razor/src/razorLanguageConfiguration';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -61,6 +62,9 @@ export function registerRazorEndpoints(
 
     context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
     context.subscriptions.push(ShowGeneratedDocumentCommand.register(roslynLanguageServer));
+
+    const languageConfiguration = new RazorLanguageConfiguration();
+    context.subscriptions.push(languageConfiguration.register());
 
     return;
 

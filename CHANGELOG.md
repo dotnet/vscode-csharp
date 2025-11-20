@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.103.x
+* Fix indentation after pressing Enter in Razor files (PR: [#8809](https://github.com/dotnet/vscode-csharp/pull/8809))
 * Remove non-cohosting editor code (PR: [#8810](https://github.com/dotnet/vscode-csharp/pull/8810))
 
 # 2.102.x
