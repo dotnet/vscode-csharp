@@ -113,7 +113,7 @@ async function executeDotNetTraceCommand(
         throw new Error(vscode.l10n.t(`Folder for trace file {0} does not exist`, traceFolder));
     }
 
-    const dotnetTraceArgs = `--process-id ${processId} --clreventlevel informational --providers "Microsoft-DotNETCore-SampleProfiler,Microsoft-Windows-DotNETRuntime"`;
+    const dotnetTraceArgs = `--process-id ${processId} --clreventlevel informational --providers "Microsoft-DotNETCore-SampleProfiler,Microsoft-Windows-DotNETRuntime,Microsoft-CodeAnalysis-General:0xFFFFFFFF:5,Microsoft-CodeAnalysis-Workspaces:0xFFFFFFFF:5,RoslynEventSource:0xFFFFFFFF:5"`;
 
     // Show an input box pre-populated with the default dotnet trace arguments
     const userArgs = await vscode.window.showInputBox({
