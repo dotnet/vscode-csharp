@@ -6,6 +6,14 @@
 # 2.103.x
 * Fix indentation after pressing Enter in Razor files (PR: [#8809](https://github.com/dotnet/vscode-csharp/pull/8809))
 * Remove non-cohosting editor code (PR: [#8810](https://github.com/dotnet/vscode-csharp/pull/8810))
+* Update Roslyn to 5.3.0-2.25571.4 (PR: [#TBD](TBD))
+  * Fix typing of 'else' causing unwanted indentation of following statement (PR: [#81393](https://github.com/dotnet/roslyn/pull/81393))
+  * Show semantic errors for loose files with top-level statements (PR: [#81326](https://github.com/dotnet/roslyn/pull/81326))
+  * Simplify and fix fading options. (PR: [#81346](https://github.com/dotnet/roslyn/pull/81346))
+  * Colorization for array, pointer, and function pointer type aliases followup (PR: [#81363](https://github.com/dotnet/roslyn/pull/81363))
+  * Fix: Support compound assignments in "Use null propagation" analyzer (PR: [#81328](https://github.com/dotnet/roslyn/pull/81328))
+  * Fix IDE0032: Code fixer adds setter for static properties with instance constructor writes (PR: [#81327](https://github.com/dotnet/roslyn/pull/81327))
+  * Add 'add extension completion' support for modern extensions. (PR: [#81239](https://github.com/dotnet/roslyn/pull/81239))
 
 # 2.102.x
 * Update Roslyn to 5.3.0-2.25568.9 (PR: [#8799](https://github.com/dotnet/vscode-csharp/pull/8799))
