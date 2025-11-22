@@ -6,7 +6,7 @@
 # 2.103.x
 * Fix indentation after pressing Enter in Razor files (PR: [#8809](https://github.com/dotnet/vscode-csharp/pull/8809))
 * Remove non-cohosting editor code (PR: [#8810](https://github.com/dotnet/vscode-csharp/pull/8810))
-* Update Roslyn to 5.3.0-2.25571.4 (PR: [#TBD](TBD))
+* Update Roslyn to 5.3.0-2.25571.4 (PR: [#8813](https://github.com/dotnet/vscode-csharp/pull/8813))
   * Fix typing of 'else' causing unwanted indentation of following statement (PR: [#81393](https://github.com/dotnet/roslyn/pull/81393))
   * Show semantic errors for loose files with top-level statements (PR: [#81326](https://github.com/dotnet/roslyn/pull/81326))
   * Simplify and fix fading options. (PR: [#81346](https://github.com/dotnet/roslyn/pull/81346))
