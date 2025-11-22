@@ -36,3 +36,4 @@ coverage/
 
 \.DS_Store
 vsix/
+.vswebassemblybridge/
