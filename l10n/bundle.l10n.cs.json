@@ -24,7 +24,7 @@
   "Cannot create .NET debug configurations. No workspace folder was selected.": "Nelze vytvořit konfigurace ladění .NET. Nebyla vybrána žádná složka pracovního prostoru.",
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": "Nelze vytvořit konfigurace ladění .NET. Aktivní projekt C# se nenachází ve složce „{0}“.",
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Nelze vytvořit konfigurace ladění .NET. Server se stále inicializuje nebo se neočekávaně ukončil.",
-  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'",
+  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Nepovedlo se načíst jazykový server Razor OmniSharp, protože se nenašel adresář: {0}",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Nelze přeložit konfigurace ladění .NET. Server se stále inicializuje nebo se neočekávaně ukončil.",
   "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Nelze spustit shromažďování protokolů Razor, když je {0} nastaveno na {1}. Otevřete prosím okno výstupu, zvolte Protokol Razor a pomocí ikony ozubeného kola ověřte, že úroveň protokolu je nastavená na Ladit nebo Trasovat.",
   "Choose": "Zvolit",

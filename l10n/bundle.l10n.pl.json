@@ -24,7 +24,7 @@
   "Cannot create .NET debug configurations. No workspace folder was selected.": "Nie można utworzyć konfiguracji debugowania platformy .NET. Nie wybrano żadnego folderu obszaru roboczego.",
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": "Nie można utworzyć konfiguracji debugowania platformy .NET. Aktywny projekt języka C# nie znajduje się w folderze „{0}”.",
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Nie można utworzyć konfiguracji debugowania platformy .NET. Serwer nadal inicjuje się lub nieoczekiwanie zakończył działanie.",
-  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'",
+  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Nie można załadować serwera języka Razor OmniSharp, ponieważ nie znaleziono katalogu: „{0}”",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Nie można rozpoznać konfiguracji debugowania platformy .NET. Serwer nadal inicjuje się lub nieoczekiwanie zakończył działanie.",
   "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Nie można rozpocząć zbierania dzienników Razor, gdy wartość {0} jest ustawiona na {1}. Otwórz okno danych wyjściowych, wybierz pozycję „Dziennik Razor” i użyj ikony koła zębatego, aby upewnić się, że poziom dziennika ma wartość „Debugowanie” lub „Śledzenie”.",
   "Choose": "Wybierz",

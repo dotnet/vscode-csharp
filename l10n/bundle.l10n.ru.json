@@ -24,7 +24,7 @@
   "Cannot create .NET debug configurations. No workspace folder was selected.": "Не удается создать конфигурации отладки .NET. Не выбрана папка рабочей области.",
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": "Не удается создать конфигурации отладки .NET. Активный проект C# не находится в папке \"{0}\".",
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Не удается создать конфигурации отладки .NET. Сервер все еще инициализируется или неожиданно завершил работу.",
-  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'",
+  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Невозможно загрузить языковой сервер Razor OmniSharp, так как каталог не найден: \"{0}\"",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "Не удается разрешить конфигурации отладки .NET. Сервер все еще инициализируется или неожиданно завершил работу.",
   "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "Невозможно начать сбор журналов Razor, когда для {0} присвоено значение {1}. Откройте окно вывода, выберите \"Журнал Razor\" и используйте значок шестеренки, чтобы убедиться, что уровню ведения журнала присвоено значение \"Отладка\" или \"Трассировка\".",
   "Choose": "Выбрать",

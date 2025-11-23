@@ -24,7 +24,7 @@
   "Cannot create .NET debug configurations. No workspace folder was selected.": "無法建立 .NET 偵錯設定。未選取工作區資料夾。",
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": "無法建立 .NET 偵錯設定。使用中的 C# 專案不在資料夾 '{0}' 內。",
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "無法建立 .NET 偵錯設定。伺服器仍在初始化或已意外結束。",
-  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'",
+  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "無法載入 Razor OmniSharp 語言伺服器，因為找不到目錄: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "無法解析 .NET 偵錯設定。伺服器仍在初始化或已意外結束。",
   "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "當 {0} 設定為 {1} 時，無法開始收集 Razor 記錄。請開啟輸出視窗，選擇「Razor 記錄」，並使用齒輪圖示確保記錄層級設定為「偵錯」或「追蹤」。",
   "Choose": "選擇",

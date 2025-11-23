@@ -24,7 +24,7 @@
   "Cannot create .NET debug configurations. No workspace folder was selected.": "No se pueden crear configuraciones de depuración de .NET. No se seleccionó ninguna carpeta del área de trabajo.",
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": "No se pueden crear configuraciones de depuración de .NET. El proyecto de C# activo no está dentro de la carpeta '{0}'.",
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": "No se pueden crear configuraciones de depuración de .NET. El servidor aún se está inicializando o se cerró inesperadamente.",
-  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'",
+  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "No se puede cargar el servidor de lenguaje OmniSharp de Razor porque no se encontró el directorio: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": "No se pueden resolver configuraciones de depuración de .NET. El servidor aún se está inicializando o se cerró inesperadamente.",
   "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "No se puede iniciar la recopilación de registros de Razor cuando {0} está establecido en {1}. Abra la ventana de salida, elija \"Registro de Razor\" y utilice el icono de engranaje para asegurarse de que el nivel de registro esté configurado en \"Depurar\" o \"Seguimiento\".",
   "Choose": "Elegir",

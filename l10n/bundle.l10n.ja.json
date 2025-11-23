@@ -24,7 +24,7 @@
   "Cannot create .NET debug configurations. No workspace folder was selected.": ".NET デバッグ構成を作成できません。ワークスペース フォルダーが選択されていません。",
   "Cannot create .NET debug configurations. The active C# project is not within folder '{0}'.": ".NET デバッグ構成を作成できません。アクティブな C# プロジェクトがフォルダー '{0}' 内にありません。",
   "Cannot create .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET デバッグ構成を作成できません。サーバーはまだ初期化中か、予期せず終了しました。",
-  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'",
+  "Cannot load Razor OmniSharp language server because the directory was not found: '{0}'": "ディレクトリが見つからなかったため、Razor OmniSharp 言語サーバーを読み込めません: '{0}'",
   "Cannot resolve .NET debug configurations. The server is still initializing or has exited unexpectedly.": ".NET デバッグ構成を解決できません。サーバーはまだ初期化中か、予期せず終了しました。",
   "Cannot start collecting Razor logs when {0} is set to {1}. Please open the output window, choose the \"Razor Log\", and use the gear icon to ensure the log level is set to \"Debug\" or \"Trace\".": "{0} が {1} に設定されている場合、Razor ログの収集を開始できません。出力ウィンドウを開き、[Razor ログ] を選択し、歯車アイコンを使用してログ レベルが [デバッグ] または [トレース] に設定されていることを確認してください。",
   "Choose": "選択",
