@@ -6,6 +6,10 @@
 # 2.103.x
 * Fix indentation after pressing Enter in Razor files (PR: [#8809](https://github.com/dotnet/vscode-csharp/pull/8809))
 * Remove non-cohosting editor code (PR: [#8810](https://github.com/dotnet/vscode-csharp/pull/8810))
+* Bump Razor to 10.0.0-preview.25573.2 (PR: [#8815](https://github.com/dotnet/vscode-csharp/pull/8815))
+  * Explicitly handle switch expressions in parser (PR: [#12500](https://github.com/dotnet/razor/pull/12500))
+  * Bring back Go to Def, FAR and hover for components via Roslyn (PR: [#12501](https://github.com/dotnet/razor/pull/12501))
+  * Don't add newlines at the start of implicit expressions in on type formatting (PR: [#12489](https://github.com/dotnet/razor/pull/12489))
 * Update Roslyn to 5.3.0-2.25571.4 (PR: [#8813](https://github.com/dotnet/vscode-csharp/pull/8813))
   * Fix typing of 'else' causing unwanted indentation of following statement (PR: [#81393](https://github.com/dotnet/roslyn/pull/81393))
   * Show semantic errors for loose files with top-level statements (PR: [#81326](https://github.com/dotnet/roslyn/pull/81326))
