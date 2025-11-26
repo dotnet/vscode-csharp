@@ -84,7 +84,7 @@ stages:
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
-        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+        demands: ImageOverride -equals ubuntu.2204.amd64.open
       containerName: mcr.microsoft.com/dotnet/sdk:8.0-noble
 
 - stage:
@@ -102,7 +102,7 @@ stages:
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
-        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+        demands: ImageOverride -equals ubuntu.2204.amd64.open
       containerName: mcr.microsoft.com/dotnet/sdk:9.0-noble
 
 - stage:
@@ -118,7 +118,7 @@ stages:
       installAdditionalLinuxDependencies: true
       pool:
         name: NetCore-Public
-        demands: ImageOverride -equals build.ubuntu.2204.amd64.open
+        demands: ImageOverride -equals ubuntu.2204.amd64.open
       containerName: mcr.microsoft.com/dotnet/sdk:10.0.100-rc.2-noble
 
 - stage: Test_Windows_Stage
@@ -159,7 +159,7 @@ stages:
     strategy:
       matrix:
         linux:
-          demandsName: build.ubuntu.2204.amd64.open
+          demandsName: ubuntu.2204.amd64.open
         windows:
           demandsName: 1es-windows-2022-open
     pool:
