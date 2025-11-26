@@ -12,7 +12,7 @@ steps:
   fetchDepth: 1
 
 # The build.ubuntu.2204.amd64.open image is missing libgbm-dev which is required for running integration tests.
-- script: sudo apt-get update -y && apt-get install -y libgbm-dev
+- script: sudo apt-get update -y && sudo apt-get install -y libgbm-dev
   displayName: 'Install additional Linux dependencies'
   target: host
   condition: eq(variables['Agent.OS'], 'Linux')
