@@ -228,13 +228,13 @@ export function RunRazorTemplateSuite() {
 
         it('Template compared to normal HTML', async () => {
             await assertMatchesSnapshot(
-                `<h1 class="title">@Name</h1>
+                `<h1 class="title" data-length="@Name.Length">@Name</h1>
 
 @code
 {
     public string Name { get; set; } = "Home Page";
 
-    public RenderFragment ChildContent => @<span class="highlight">@Name</span>;
+    public RenderFragment ChildContent => @<span class="highlight" data-length="@Name.Length">@Name</span>;
 }`
             );
         });
@@ -271,6 +271,14 @@ export function RunRazorTemplateSuite() {
             await assertMatchesSnapshot(
                 `@{
     RenderFragment x = @<button onclick="handleClick()" onmouseover="highlight()">Click me</button>;
+}`
+            );
+        });
+
+        it('Template with directive attributes', async () => {
+            await assertMatchesSnapshot(
+                `@{
+    RenderFragment x = @<button @onclick="HandleClick" @onmouseover="HandleMouseOver">Click me</button>;
 }`
             );
         });
