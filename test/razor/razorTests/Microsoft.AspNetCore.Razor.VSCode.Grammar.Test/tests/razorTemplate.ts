@@ -252,11 +252,15 @@ export function RunRazorTemplateSuite() {
         });
 
         it('Void tag img with multiple attributes', async () => {
-            await assertMatchesSnapshot('@{ RenderFragment image = @<img src="photo.jpg" alt="Photo" class="thumbnail" />; }');
+            await assertMatchesSnapshot(
+                '@{ RenderFragment image = @<img src="photo.jpg" alt="Photo" class="thumbnail" />; }'
+            );
         });
 
         it('Void tag meta in template', async () => {
-            await assertMatchesSnapshot('@{ RenderFragment meta = @<meta name="viewport" content="width=device-width" />; }');
+            await assertMatchesSnapshot(
+                '@{ RenderFragment meta = @<meta name="viewport" content="width=device-width" />; }'
+            );
         });
 
         it('Template with data attributes', async () => {
