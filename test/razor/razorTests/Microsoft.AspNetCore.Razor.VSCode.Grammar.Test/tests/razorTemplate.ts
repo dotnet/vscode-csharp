@@ -239,6 +239,18 @@ export function RunRazorTemplateSuite() {
             );
         });
 
+        it('Multi-line template', async () => {
+            await assertMatchesSnapshot(
+                `@code
+{
+    public string Name { get; set; } = "Home Page";
+    public RenderFragment ChildContent => @<p class="greeting">
+        Hello, @Name!
+    </p>;
+}`
+            );
+        });
+
         it('Void tag template with attributes', async () => {
             await assertMatchesSnapshot('@{ RenderFragment x = @<input type="text" placeholder="Enter name" />; }');
         });
