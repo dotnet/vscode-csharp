@@ -209,5 +209,70 @@ export function RunRazorTemplateSuite() {
 }`
             );
         });
+
+        it('Simple template with attribute', async () => {
+            await assertMatchesSnapshot(
+                `@{
+    RenderFragment x = @<div class="test">Hello</div>;
+}`
+            );
+        });
+
+        it('Template with multiple attributes', async () => {
+            await assertMatchesSnapshot(
+                `@{
+    RenderFragment x = @<div id="container" class="wrapper" style="color: red;">Content</div>;
+}`
+            );
+        });
+
+        it('Template compared to normal HTML', async () => {
+            await assertMatchesSnapshot(
+                `<h1 class="title">@Name</h1>
+
+@code
+{
+    public string Name { get; set; } = "Home Page";
+
+    public RenderFragment ChildContent => @<span class="highlight">@Name</span>;
+}`
+            );
+        });
+
+        it('Void tag template with attributes', async () => {
+            await assertMatchesSnapshot('@{ RenderFragment x = @<input type="text" placeholder="Enter name" />; }');
+        });
+
+        it('Void tag hr with class attribute', async () => {
+            await assertMatchesSnapshot('@{ RenderFragment divider = @<hr class="separator" />; }');
+        });
+
+        it('Void tag br in template', async () => {
+            await assertMatchesSnapshot('@{ RenderFragment lineBreak = @<br class="spacer" />; }');
+        });
+
+        it('Void tag img with multiple attributes', async () => {
+            await assertMatchesSnapshot('@{ RenderFragment image = @<img src="photo.jpg" alt="Photo" class="thumbnail" />; }');
+        });
+
+        it('Void tag meta in template', async () => {
+            await assertMatchesSnapshot('@{ RenderFragment meta = @<meta name="viewport" content="width=device-width" />; }');
+        });
+
+        it('Template with data attributes', async () => {
+            await assertMatchesSnapshot(
+                `@{
+    RenderFragment x = @<div data-id="123" data-name="test">Data content</div>;
+}`
+            );
+        });
+
+        it('Template with event handler attributes', async () => {
+            await assertMatchesSnapshot(
+                `@{
+    RenderFragment x = @<button onclick="handleClick()" onmouseover="highlight()">Click me</button>;
+}`
+            );
+        });
     });
 }
