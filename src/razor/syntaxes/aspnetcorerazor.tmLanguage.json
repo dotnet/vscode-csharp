@@ -25,6 +25,13 @@
           "include": "#implicit-expression"
         }
       ]
+    },
+    "source.cs": {
+      "patterns": [
+        {
+          "include": "#inline-template"
+        }
+      ]
     }
   },
   "patterns": [
@@ -128,6 +135,9 @@
           "include": "#text-tag"
         },
         {
+          "include": "#inline-template"
+        },
+        {
           "include": "#wellformed-html"
         },
         {
@@ -180,6 +190,111 @@
           "name": "keyword.control.cshtml.transition.textTag.close"
         }
       }
+    },
+    "inline-template": {
+      "patterns": [
+        {
+          "include": "#inline-template-void-tag"
+        },
+        {
+          "include": "#inline-template-non-void-tag"
+        }
+      ]
+    },
+    "inline-template-void-tag": {
+      "name": "meta.tag.structure.$4.void.html",
+      "begin": "(?i)(@)(<)(!)?(area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)(?=\\s|/?>)",
+      "beginCaptures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#transition"
+            }
+          ]
+        },
+        "2": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "3": {
+          "name": "constant.character.escape.razor.tagHelperOptOut"
+        },
+        "4": {
+          "name": "entity.name.tag.html"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#razor-control-structures"
+        },
+        {
+          "include": "text.html.basic#attribute"
+        }
+      ],
+      "end": "/?>",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.tag.end.html"
+        }
+      }
+    },
+    "inline-template-non-void-tag": {
+      "begin": "(@)(<)(!)?([^/\\s>]+)(?=\\s|/?>)",
+      "beginCaptures": {
+        "1": {
+          "patterns": [
+            {
+              "include": "#transition"
+            }
+          ]
+        },
+        "2": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "3": {
+          "name": "constant.character.escape.razor.tagHelperOptOut"
+        },
+        "4": {
+          "name": "entity.name.tag.html"
+        }
+      },
+      "end": "(</)(\\4)\\s*(>)|(/>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.html"
+        },
+        "2": {
+          "name": "entity.name.tag.html"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.html"
+        },
+        "4": {
+          "name": "punctuation.definition.tag.end.html"
+        }
+      },
+      "patterns": [
+        {
+          "begin": "(?<=>)(?!$)",
+          "end": "(?=</)",
+          "patterns": [
+            {
+              "include": "#inline-template"
+            },
+            {
+              "include": "#wellformed-html"
+            },
+            {
+              "include": "#razor-control-structures"
+            }
+          ]
+        },
+        {
+          "include": "#razor-control-structures"
+        },
+        {
+          "include": "text.html.basic#attribute"
+        }
+      ]
     },
     "razor-comment": {
       "name": "meta.comment.razor",
