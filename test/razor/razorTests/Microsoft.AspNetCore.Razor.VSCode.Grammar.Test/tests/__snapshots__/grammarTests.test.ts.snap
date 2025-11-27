@@ -8118,6 +8118,84 @@ Line: }
 "
 `;
 
+exports[`Grammar tests Razor templates @<p>....</p> Multi-line template with C# in attribute on second line 1`] = `
+"Line: @code
+ - token from 0 to 1 (@) with scopes text.aspnetcorerazor, keyword.control.cshtml.transition
+ - token from 1 to 5 (code) with scopes text.aspnetcorerazor, keyword.control.razor.directive.code
+
+Line: {
+ - token from 0 to 1 ({) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.open
+
+Line:     public string Name { get; set; } = "Home Page";
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 10 (public) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, storage.modifier.cs
+ - token from 10 to 11 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 11 to 17 (string) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.type.cs
+ - token from 17 to 18 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 18 to 22 (Name) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.variable.property.cs
+ - token from 22 to 23 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 23 to 24 ({) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.curlybrace.open.cs
+ - token from 24 to 25 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 25 to 28 (get) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.other.get.cs
+ - token from 28 to 29 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+ - token from 29 to 30 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 30 to 33 (set) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.other.set.cs
+ - token from 33 to 34 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+ - token from 34 to 35 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 35 to 36 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.curlybrace.close.cs
+ - token from 36 to 37 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 37 to 38 (=) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.operator.assignment.cs
+ - token from 38 to 39 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 39 to 40 (") with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs, punctuation.definition.string.begin.cs
+ - token from 40 to 49 (Home Page) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs
+ - token from 49 to 50 (") with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, string.quoted.double.cs, punctuation.definition.string.end.cs
+ - token from 50 to 51 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+
+Line:     public RenderFragment ChildContent => @<p>
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 10 (public) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, storage.modifier.cs
+ - token from 10 to 11 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 11 to 25 (RenderFragment) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.type.cs
+ - token from 25 to 26 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 26 to 38 (ChildContent) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.variable.property.cs
+ - token from 38 to 39 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 39 to 41 (=>) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.operator.arrow.cs
+ - token from 41 to 42 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 42 to 43 (@) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, keyword.control.cshtml.transition
+ - token from 43 to 44 (<) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.definition.tag.begin.html
+ - token from 44 to 45 (p) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.tag.html
+ - token from 45 to 47 (>) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+
+Line:         <span data-length="@Name.Length">@Name</span>
+ - token from 0 to 8 (        ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 8 to 13 (<span) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, invalid.illegal.character-not-allowed-here.html
+ - token from 13 to 14 ( ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 14 to 25 (data-length) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.attribute.data-x.data-length.html, entity.other.attribute-name.html
+ - token from 25 to 26 (=) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.attribute.data-x.data-length.html, punctuation.separator.key-value.html
+ - token from 26 to 27 (") with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.attribute.data-x.data-length.html, string.quoted.double.html, punctuation.definition.string.begin.html
+ - token from 27 to 28 (@) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.attribute.data-x.data-length.html, string.quoted.double.html, meta.expression.implicit.cshtml, keyword.control.cshtml.transition
+ - token from 28 to 32 (Name) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.attribute.data-x.data-length.html, string.quoted.double.html, meta.expression.implicit.cshtml, source.cs, variable.other.object.cs
+ - token from 32 to 33 (.) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.attribute.data-x.data-length.html, string.quoted.double.html, meta.expression.implicit.cshtml, source.cs
+ - token from 33 to 39 (Length) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.attribute.data-x.data-length.html, string.quoted.double.html, meta.expression.implicit.cshtml, source.cs, variable.other.object.property.cs
+ - token from 39 to 40 (") with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.attribute.data-x.data-length.html, string.quoted.double.html, punctuation.definition.string.end.html
+ - token from 40 to 41 (>) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 41 to 42 (@) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.expression.implicit.cshtml, keyword.control.cshtml.transition
+ - token from 42 to 46 (Name) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, meta.expression.implicit.cshtml, source.cs, variable.other.object.cs
+ - token from 46 to 52 (</span) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, invalid.illegal.character-not-allowed-here.html
+ - token from 52 to 54 (>) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+
+Line:     </p>;
+ - token from 0 to 4 (    ) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs
+ - token from 4 to 6 (</) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.definition.tag.begin.html
+ - token from 6 to 7 (p) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, entity.name.tag.html
+ - token from 7 to 8 (>) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.definition.tag.end.html
+ - token from 8 to 9 (;) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, source.cs, punctuation.terminator.statement.cs
+
+Line: }
+ - token from 0 to 1 (}) with scopes text.aspnetcorerazor, meta.structure.razor.directive.codeblock, keyword.control.razor.directive.codeblock.close
+"
+`;
+
 exports[`Grammar tests Razor templates @<p>....</p> Nested do while statement with template 1`] = `
 "Line: @{
  - token from 0 to 1 (@) with scopes text.aspnetcorerazor, meta.structure.razor.codeblock, keyword.control.cshtml.transition

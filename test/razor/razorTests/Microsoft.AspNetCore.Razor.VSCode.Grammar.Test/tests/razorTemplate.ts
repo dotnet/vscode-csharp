@@ -251,6 +251,18 @@ export function RunRazorTemplateSuite() {
             );
         });
 
+        it('Multi-line template with C# in attribute on second line', async () => {
+            await assertMatchesSnapshot(
+                `@code
+{
+    public string Name { get; set; } = "Home Page";
+    public RenderFragment ChildContent => @<p>
+        <span data-length="@Name.Length">@Name</span>
+    </p>;
+}`
+            );
+        });
+
         it('Void tag template with attributes', async () => {
             await assertMatchesSnapshot('@{ RenderFragment x = @<input type="text" placeholder="Enter name" />; }');
         });
