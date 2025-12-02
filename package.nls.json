@@ -43,6 +43,7 @@
   "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit",
   "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
   "configuration.dotnet.projects.enableFileBasedPrograms": "Enables the preview \"file-based programs\" (dotnet run app.cs) experience.",
+  "configuration.dotnet.projects.enableFileBasedProgramsWithoutDirectives": "Enables the preview \"file-based programs\" (dotnet run app.cs) experience for files which lack '#:' or '#!' directives. Only respected when `dotnet.projects.enableFileBasedPrograms` is `true`.",
   "configuration.dotnet.projects.binaryLogPath": "Sets a path where MSBuild binary logs are written to when loading projects, to help diagnose loading errors.",
   "configuration.dotnet.preferCSharpExtension": "Forces projects to load with the C# extension only.  This can be useful when using legacy project types that are not supported by C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.typeMembers.memberInsertionLocation": "The insertion location of properties, events, and methods When implement interface or abstract class.",

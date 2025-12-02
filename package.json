@@ -1520,6 +1520,14 @@
               "preview"
             ]
           },
+          "dotnet.projects.enableFileBasedProgramsWithoutDirectives": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.projects.enableFileBasedProgramsWithoutDirectives%",
+            "tags": [
+              "preview"
+            ]
+          },
           "razor.languageServer.directory": {
             "type": "string",
             "scope": "machine-overridable",
