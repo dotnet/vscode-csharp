@@ -1520,10 +1520,10 @@
               "preview"
             ]
           },
-          "dotnet.projects.enableFileBasedProgramsWithoutDirectives": {
+          "dotnet.projects.enableFileBasedProgramsWhenAmbiguous": {
             "type": "boolean",
             "default": true,
-            "description": "%configuration.dotnet.projects.enableFileBasedProgramsWithoutDirectives%",
+            "description": "%configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous%",
             "tags": [
               "preview"
             ]
