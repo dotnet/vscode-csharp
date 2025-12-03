@@ -40,7 +40,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.3.0-2.25571.4",
+    "roslyn": "5.3.0-2.25603.1",
     "omniSharp": "1.39.14",
     "razor": "10.0.0-preview.25577.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -1516,6 +1516,14 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.dotnet.projects.enableFileBasedPrograms%",
+            "tags": [
+              "preview"
+            ]
+          },
+          "dotnet.projects.enableFileBasedProgramsWhenAmbiguous": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous%",
             "tags": [
               "preview"
             ]
