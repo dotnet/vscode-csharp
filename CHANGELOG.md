@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.103.x
+* Update TextMate grammars used in tests, and baselines (PR: [#8819](https://github.com/dotnet/vscode-csharp/pull/8819))
+* Update from Ubuntu 20.04 to 22.04 (PR: [#8789](https://github.com/dotnet/vscode-csharp/pull/8789))
+* Bump Razor to 10.0.0-preview.25573.2 (PR: [#8815](https://github.com/dotnet/vscode-csharp/pull/8815))
 * include roslyn event source configs in profiling command (PR: [#8808](https://github.com/dotnet/vscode-csharp/pull/8808))
 * Revise SUPPORT.md for clarity on sharing information (PR: [#8807](https://github.com/dotnet/vscode-csharp/pull/8807))
 * Fix indentation after pressing Enter in Razor files (PR: [#8809](https://github.com/dotnet/vscode-csharp/pull/8809))
