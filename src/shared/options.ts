@@ -87,8 +87,6 @@ export interface LanguageServerOptions {
 export interface RazorOptions {
     readonly razorDevMode: boolean;
     readonly razorPluginPath: string;
-    readonly razorServerPath: string;
-    readonly cohostingEnabled: boolean;
 }
 
 class CommonOptionsImpl implements CommonOptions {
@@ -427,12 +425,6 @@ class RazorOptionsImpl implements RazorOptions {
     }
     public get razorPluginPath() {
         return readOption<string>('razor.plugin.path', '');
-    }
-    public get razorServerPath() {
-        return readOption<string>('razor.languageServer.directory', '');
-    }
-    public get cohostingEnabled() {
-        return readOption<boolean>('razor.languageServer.cohostingEnabled', false);
     }
 }
 

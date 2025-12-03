@@ -24,8 +24,6 @@ import {
     rootPath,
     devKitDependenciesDirectory,
     xamlToolsDirectory,
-    razorLanguageServerDirectory,
-    razorDevKitDirectory,
     razorExtensionDirectory,
 } from '../tasks/projectPaths';
 import { getPackageJSON } from '../tasks/packageJson';
@@ -85,18 +83,6 @@ export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
         packageJsonName: 'xamlTools',
         getPackageContentPath: (_platformInfo) => 'content',
         vsixOutputPath: xamlToolsDirectory,
-    },
-    razor: {
-        getPackageName: (platformInfo) => `rzls.${platformInfo?.rid ?? 'neutral'}`,
-        packageJsonName: 'razor',
-        getPackageContentPath: (platformInfo) => path.join('content', 'LanguageServer', platformInfo?.rid ?? 'neutral'),
-        vsixOutputPath: razorLanguageServerDirectory,
-    },
-    razorDevKit: {
-        getPackageName: (_platformInfo) => 'Microsoft.VisualStudio.DevKit.Razor',
-        packageJsonName: 'razor',
-        getPackageContentPath: (_platformInfo) => 'content',
-        vsixOutputPath: razorDevKitDirectory,
     },
     razorExtension: {
         getPackageName: (_platformInfo) => 'Microsoft.VisualStudioCode.RazorExtension',
@@ -182,11 +168,6 @@ gulp.task(
     'updateRazorVersion',
     // Run the fetch of all packages, and then also installDependencies after
     gulp.series(async () => {
-        await updateNugetPackageVersion(allNugetPackages.razor);
-
-        // Also pull in the Razor DevKit dependencies nuget package.
-        await acquireNugetPackage(allNugetPackages.razorDevKit, undefined, getPackageJSON(), true);
-
         // Pull in the .razorExtension code that gets loaded in the roslyn language server
         await acquireNugetPackage(allNugetPackages.razorExtension, undefined, getPackageJSON(), true);
     }, 'installDependencies')
@@ -378,7 +359,7 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
 }
 
 async function cleanAsync() {
-    const directoriesToDelete = ['install.*', '.omnisharp*', '.debugger', '.razor'];
+    const directoriesToDelete = ['install.*', '.omnisharp*', '.debugger', '.razorExtension'];
     for (const key in allNugetPackages) {
         directoriesToDelete.push(allNugetPackages[key].vsixOutputPath);
     }

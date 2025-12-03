@@ -16,7 +16,6 @@ import { registerUnitTestingCommands } from './testing/unitTesting';
 import { registerLanguageServerOptionChanges } from './options/optionChanges';
 import { Observable } from 'rxjs';
 import { RoslynLanguageServerEvents } from './server/languageServerEvents';
-import { registerRazorCommands } from './razor/razorCommands';
 import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction';
 import { commonOptions, languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
@@ -85,7 +84,6 @@ export async function activateRoslynLanguageServer(
     registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
-    registerRazorCommands(context, languageServer);
     registerRazorEndpoints(context, languageServer, razorLogger, platformInfo);
 
     registerUnitTestingCommands(context, languageServer);
