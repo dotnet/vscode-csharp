@@ -4,7 +4,6 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.103.x
-* Update TextMate grammars used in tests, and baselines (PR: [#8819](https://github.com/dotnet/vscode-csharp/pull/8819))
 * Bump Razor to 10.0.0-preview.25573.2 (PR: [#8815](https://github.com/dotnet/vscode-csharp/pull/8815))
 * include roslyn event source configs in profiling command (PR: [#8808](https://github.com/dotnet/vscode-csharp/pull/8808))
 * Revise SUPPORT.md for clarity on sharing information (PR: [#8807](https://github.com/dotnet/vscode-csharp/pull/8807))
