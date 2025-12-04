@@ -22,6 +22,15 @@ export function readConfigurations(params: ConfigurationParams): (string | null)
             continue;
         }
 
+        // HACK: https://github.com/dotnet/razor/issues/12491
+        // In order to allow us to remove the cohosting setting, without a dual Roslyn and Razor
+        // insertion, we're just going to hardcode it to true, until we have removed and inserted
+        // the code in those repos that check it
+        if (section === 'razor.language_server.cohosting_enabled') {
+            result.push('true');
+            continue;
+        }
+
         // Server use a different name compare to the name defined in client, so do the remapping.
         const clientSideName = convertServerOptionNameToClientConfigurationName(section);
         if (clientSideName == null) {

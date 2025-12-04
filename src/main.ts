@@ -29,7 +29,6 @@ import { checkDotNetRuntimeExtensionVersion } from './checkDotNetRuntimeExtensio
 import { checkIsSupportedPlatform } from './checkSupportedPlatform';
 import { activateOmniSharp } from './activateOmniSharp';
 import { activateRoslyn } from './activateRoslyn';
-import { CommandOption, showInformationMessage } from './shared/observers/utils/showMessage';
 import { LimitedActivationStatus } from './shared/limitedActivationStatus';
 
 export async function activate(
@@ -107,13 +106,9 @@ export async function activate(
         csharpChannel.info('C# Extension activated in limited mode due to workspace trust not being granted.');
         LimitedActivationStatus.createStatusItem(context);
         context.subscriptions.push(
+            // Reload extensions when workspace trust is granted
             vscode.workspace.onDidGrantWorkspaceTrust(() => {
-                const reloadTitle: CommandOption = {
-                    title: vscode.l10n.t('Reload Extensions'),
-                    command: 'workbench.action.restartExtensionHost',
-                };
-                const message = vscode.l10n.t('Workspace trust has changed. Would you like to reload extensions?');
-                showInformationMessage(vscode, message, reloadTitle);
+                vscode.commands.executeCommand('workbench.action.restartExtensionHost');
             })
         );
     } else {

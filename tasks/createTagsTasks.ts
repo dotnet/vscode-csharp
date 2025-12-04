@@ -45,7 +45,7 @@ gulp.task('createTags:razor', async (): Promise<void> => {
         options,
         'dotnet',
         'razor',
-        async () => getCommitFromNugetAsync(allNugetPackages.razor),
+        async () => getCommitFromNugetAsync(allNugetPackages.razorExtension),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [

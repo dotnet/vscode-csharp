@@ -31,7 +31,6 @@ import {
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../../shared/platform';
 import { readConfigurations } from '../options/configurationMiddleware';
-import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileInfoHandler';
 import * as RoslynProtocol from './roslynProtocol';
 import { CSharpDevKitExports } from '../../csharpDevKitExports';
 import { SolutionSnapshotId } from '../solutionSnapshot/ISolutionSnapshotProvider';
@@ -52,15 +51,13 @@ import { DotnetInfo } from '../../shared/utils/dotnetInfo';
 import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents';
 import { registerShowToastNotification } from '../handlers/showToastNotification';
 import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
-import { commonOptions, languageServerOptions, omnisharpOptions, razorOptions } from '../../shared/options';
+import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
 import { NamedPipeInformation } from './roslynProtocol';
 import { IDisposable } from '../../disposable';
 import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
 import { getComponentPaths } from '../extensions/builtInComponents';
 import { OnAutoInsertFeature } from '../autoInsert/onAutoInsertFeature';
 import { ProjectContextService } from '../projectContext/projectContextService';
-import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideDynamicFileResponse';
-import { ProvideDynamicFileParams } from '../../razor/src/dynamicFile/provideDynamicFileParams';
 import {
     ActionOption,
     CommandOption,
@@ -68,7 +65,6 @@ import {
     showInformationMessage,
 } from '../../shared/observers/utils/showMessage';
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
-import { RazorDynamicFileChangedParams } from '../../razor/src/dynamicFile/dynamicFileUpdatedParams';
 import { getProfilingEnvVars } from '../profiling/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
@@ -79,10 +75,6 @@ import { UriConverter } from '../utils/uriConverter';
 let _wasActivatedWithCSharpDevkit: boolean | undefined;
 
 export class RoslynLanguageServer {
-    // These are notifications we will get from the LSP server and will forward to the Razor extension.
-    private static readonly provideRazorDynamicFileInfoMethodName: string = 'razor/provideDynamicFileInfo';
-    private static readonly removeRazorDynamicFileInfoMethodName: string = 'razor/removeDynamicFileInfo';
-
     /**
      * The encoding to use when writing to and from the stream.
      */
@@ -143,9 +135,6 @@ export class RoslynLanguageServer {
         this.registerDocumentOpenForDiagnostics();
 
         this._projectContextService = new ProjectContextService(this, this._languageServerEvents);
-
-        // Register Razor dynamic file info handling
-        this.registerDynamicFileInfo();
 
         this.registerDebuggerAttach();
 
@@ -645,28 +634,17 @@ export class RoslynLanguageServer {
             args.push('--logLevel', logLevel);
         }
 
-        const razorPath =
-            razorOptions.razorServerPath === ''
-                ? path.join(context.extension.extensionPath, '.razor')
-                : razorOptions.razorServerPath;
-
         let razorComponentPath = '';
         getComponentPaths('razorExtension', languageServerOptions, channel).forEach((extPath) => {
             additionalExtensionPaths.push(extPath);
             razorComponentPath = path.dirname(extPath);
         });
 
-        // If cohosting is enabled we get the source generator from the razor component path
-        const razorSourceGeneratorPath = razorOptions.cohostingEnabled ? razorComponentPath : razorPath;
-
-        args.push(
-            '--razorSourceGenerator',
-            path.join(razorSourceGeneratorPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll')
-        );
+        args.push('--razorSourceGenerator', path.join(razorComponentPath, 'Microsoft.CodeAnalysis.Razor.Compiler.dll'));
 
         args.push(
             '--razorDesignTimePath',
-            path.join(razorSourceGeneratorPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
+            path.join(razorComponentPath, 'Targets', 'Microsoft.NET.Sdk.Razor.DesignTime.targets')
         );
 
         // Get the brokered service pipe name from C# Dev Kit (if installed).
@@ -707,14 +685,12 @@ export class RoslynLanguageServer {
             await vscode.commands.executeCommand('setContext', 'dotnet.server.activationContext', 'Roslyn');
             _wasActivatedWithCSharpDevkit = false;
 
-            if (razorOptions.cohostingEnabled) {
-                // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
-                // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
-                args.push(
-                    '--csharpDesignTimePath',
-                    path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')
-                );
-            }
+            // Razor has code in Microsoft.CSharp.DesignTime.targets to handle non-Razor-SDK projects, but that doesn't get imported outside
+            // of DevKit so we polyfill with a mini-version that Razor provides for that scenario.
+            args.push(
+                '--csharpDesignTimePath',
+                path.join(razorComponentPath, 'Targets', 'Microsoft.CSharpExtension.DesignTime.targets')
+            );
         }
 
         for (const extensionPath of additionalExtensionPaths) {
@@ -843,37 +819,6 @@ export class RoslynLanguageServer {
             reader: new SocketMessageReader(socket, RoslynLanguageServer.encoding),
             writer: new SocketMessageWriter(socket, RoslynLanguageServer.encoding),
         };
-    }
-
-    private ProvideDyanmicFileInfoType: RequestType<ProvideDynamicFileParams, ProvideDynamicFileResponse, any> =
-        new RequestType(RoslynLanguageServer.provideRazorDynamicFileInfoMethodName);
-
-    private registerDynamicFileInfo() {
-        // When the Roslyn language server sends a request for Razor dynamic file info, we forward that request along to Razor via
-        // a command.
-        this._languageClient.onRequest<ProvideDynamicFileParams, ProvideDynamicFileResponse, any>(
-            this.ProvideDyanmicFileInfoType,
-            async (request) =>
-                vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, request)
-        );
-        this._languageClient.onNotification(
-            RoslynLanguageServer.removeRazorDynamicFileInfoMethodName,
-            async (notification) =>
-                vscode.commands.executeCommand(DynamicFileInfoHandler.removeDynamicFileInfoCommand, notification)
-        );
-        vscode.commands.registerCommand(
-            DynamicFileInfoHandler.dynamicFileUpdatedCommand,
-            async (notification: RazorDynamicFileChangedParams) => {
-                if (this.isRunning()) {
-                    await this.sendNotification<RazorDynamicFileChangedParams>(
-                        'razor/dynamicFileInfoChanged',
-                        notification
-                    );
-                } else {
-                    this._channel.warn('Tried to send razor/dynamicFileInfoChanged while server is not running');
-                }
-            }
-        );
     }
 
     // eslint-disable-next-line @typescript-eslint/promise-function-async

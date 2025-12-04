@@ -42,7 +42,7 @@
   "defaults": {
     "roslyn": "5.3.0-2.25604.2",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.25564.2",
+    "razor": "10.0.0-preview.25577.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.3.11128.18"
   },
@@ -72,7 +72,6 @@
     "compile:razorTextMate": "npx js-yaml src/razor/syntaxes/aspnetcorerazor.tmLanguage.yml > src/razor/syntaxes/aspnetcorerazor.tmLanguage.json",
     "test:unit": "npm run compileDev && gulp test:unit",
     "test:integration:csharp": "npm run packageDev && gulp test:integration:csharp",
-    "test:integration:razor": "npm run packageDev && gulp test:integration:razor",
     "test:integration:razor:cohost": "npm run packageDev && gulp test:integration:razor:cohost",
     "test:integration:devkit": "npm run packageDev && gulp test:integration:devkit",
     "test:integration:untrusted": "npm run packageDev && gulp test:integration:untrusted",
@@ -134,7 +133,7 @@
     "@typescript-eslint/parser": "^8.19.0",
     "@vscode/l10n-dev": "^0.0.35",
     "@vscode/test-electron": "2.3.8",
-    "@vscode/vsce": "3.0.0",
+    "@vscode/vsce": "3.7.0",
     "archiver": "5.3.0",
     "esbuild": "^0.25.0",
     "eslint": "^8.43.0",
@@ -1447,10 +1446,6 @@
               "razorExtension": {
                 "description": "%configuration.dotnet.server.componentPaths.razorExtension%",
                 "type": "string"
-              },
-              "razorDevKit": {
-                "description": "%configuration.dotnet.server.componentPaths.razorDevKit%",
-                "type": "string"
               }
             },
             "default": {}
@@ -1525,6 +1520,14 @@
               "preview"
             ]
           },
+          "dotnet.projects.enableFileBasedProgramsWhenAmbiguous": {
+            "type": "boolean",
+            "default": true,
+            "description": "%configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous%",
+            "tags": [
+              "preview"
+            ]
+          },
           "razor.languageServer.directory": {
             "type": "string",
             "scope": "machine-overridable",
@@ -1542,14 +1545,6 @@
             "type": "boolean",
             "default": true,
             "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
-          },
-          "razor.languageServer.cohostingEnabled": {
-            "type": "boolean",
-            "default": true,
-            "description": "%configuration.razor.languageServer.cohostingEnabled%",
-            "tags": [
-              "experimental"
-            ]
           }
         }
       },
