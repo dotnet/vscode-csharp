@@ -7,13 +7,12 @@
 
 ## Overview
 
-These updates focus on:
+This update focuses on:
 
 - Smoother typing and formatting in C# and Razor files.
 - More reliable behavior for file-based programs and loose files.
 - Better semantic colorization performance in large files.
-- A more predictable experience when editing mixed C#/HTML Razor content.
-- Fewer manual steps when changing workspace trust.
+- A more predictable editing experience when working with mixed C#/HTML Razor content.
 
 ---
 
@@ -21,16 +20,8 @@ These updates focus on:
 
 ### Smarter typing and indentation
 
-**Typing helpers respect language-specific tab size**  
-Features like auto-insert now honor C#’s language-specific `editor.tabSize` rather than always using global defaults. This keeps indentation consistent when you switch between projects or languages with different formatting conventions.
-
-**Improved indentation around `else` blocks**  
-Several fixes improve indentation with `else`:
-
-- Prevents unwanted indentation of the next statement after typing `else`.
-- Handles more `if`/`else` patterns correctly so that block layout remains consistent with your configured style.
-
-These changes reduce the amount of manual cleanup needed when you tweak control-flow or reformat blocks.
+**Respect editor-specific tab size for auto-insert**  
+Typing helpers like auto-insert now honor language-specific `editor.tabSize` settings for C# instead of relying solely on global defaults. This leads to more predictable indentation when switching between projects or languages with different formatting preferences.
 
 ---
 
@@ -38,30 +29,30 @@ These changes reduce the amount of manual cleanup needed when you tweak control-
 
 ### Better support for loose files and top-level programs
 
-**More reliable diagnostics for loose files with top-level statements**  
-Loose C# files that use top-level statements now surface semantic errors more reliably, even when they’re not part of a project. This improves the “single file” or scratchpad workflow while still providing high-quality feedback.
+**Top-level statement diagnostics for loose files**  
+Loose C# files that use top-level statements now surface semantic errors more reliably, even when they’re not part of a project. This makes it safer to experiment with single-file snippets or scripts without losing useful diagnostics.
 
-**Smarter detection and control of file-based programs**
+**Smarter detection of file-based programs**
 
-Several improvements target file-based programs (FBPs):
+Several improvements address how file-based programs (FBPs) are identified and analyzed:
 
-- Files that happen to contain directives are no longer aggressively classified as FBPs, which reduces misclassification and surprising behavior.
-- An explicit configuration flag lets you control how ambiguous cases are handled, so you can tune behavior for your specific project layout or build system.
-- Live directive diagnostics are clearer and more accurate in file-based programs.
+- Files with preprocessor directives are treated as FBPs only when appropriate, reducing misclassification and surprising behavior.
+- An explicit option flag is available to control when file-based programs should be enabled in ambiguous cases, so you can tune behavior for your workspace or build system.
+- Live diagnostics and directive handling for file-based programs are improved, including clearer errors when directives are misused.
 
-Together, these changes make it more natural to just open a `.cs` file and start coding without losing the advantages of modern C# language support.
+These changes together make the “just open a .cs file and start coding” scenario feel more consistent, especially when using modern C# features and top-level statements.
 
 ---
 
 ## IntelliSense & Code Quality
 
-### More relevant completions and cleaner usings
+### More relevant completions and cleaner formatting
 
-**Attribute completion filtered by valid targets**  
-Attribute IntelliSense now filters suggestions using `AttributeTargets`. You see only attributes that make sense for the symbol you’re annotating (for example, parameter vs type vs assembly), which cuts down on noise and helps you pick the right attribute more quickly.
+**Attribute completion only where valid**  
+IntelliSense for attributes now filters suggestions using `AttributeTargets`, so you only see attributes that make sense on the symbol you’re annotating (e.g., parameter vs assembly vs method). This reduces noise and helps you pick the correct attribute faster.
 
-**Consistent grouping of import directives**  
-Formatting and code-style operations respect import directive grouping even when groups aren’t sorted. Grouping preferences are applied more consistently, making large `using` sections easier to keep tidy and visually scan.
+**Import directive grouping respected more strictly**  
+The “format document” and related code-style operations respect import directive grouping rules even when groups aren’t sorted. Grouping preferences are now enforced more consistently, helping keep large files’ `using` sections organized and easier to scan.
 
 ---
 
@@ -69,47 +60,50 @@ Formatting and code-style operations respect import directive grouping even when
 
 ### Range-based semantic token refresh
 
-Semantic colorization now uses a range-based refresh model: only the affected regions of a file are recomputed after an edit instead of the entire document.
+The C# language client integrates with a newer semantic tokens mechanism that refreshes **only the affected ranges** in a document, instead of recomputing tokens for the entire file after every edit.
 
-You’ll see:
+Benefits you’ll notice:
 
-- Faster colorization updates in large files.
-- Less lag or flicker when typing quickly or applying large edits.
-- Better scalability for solutions that rely on large or generated sources.
+- Faster updates to semantic colorization in large files.
+- Reduced flicker or lag when typing quickly.
+- Better scalability for solutions with very long or generated source files.
 
-This is especially helpful in heavy ASP.NET Core or library projects where individual files can be very long.
+This is especially helpful when working with large ASP.NET Core projects or heavy use of generated code.
 
 ---
 
 ## Razor & Blazor
 
-All Razor-related changes in this period are pulled in from the Razor toolchain used by the extension.
+All Razor-related changes in these iterations come from the Razor toolchain updates consumed by the C# extension.
 
-### More accurate completion and mapping in Razor
+### More accurate Razor completion & navigation
 
 **Refined directive attribute completion**  
-Completion for Razor directive attributes has been tuned so that parameter attribute directives are handled more precisely. That means fewer irrelevant suggestions and behavior that more closely matches what the Razor compiler expects.
+Razor directive attribute completion has been tuned to better understand parameter attributes. This results in:
 
-**Improved component and project mapping behavior**
+- Fewer irrelevant suggestions when editing attribute directives.
+- More precise completion behavior that matches the Razor compiler’s expectations.
 
-Additional Razor fixes in this period:
+**Better handling of import and mapping scenarios**  
 
-- Edits to shared Razor files are more reliably reflected in consuming projects, reducing stale state when refactoring shared components.
-- Project-level changes and imports are handled more robustly so that completion and navigation stay in sync across multi-project Razor and Blazor solutions.
+Across the Razor updates in these releases you get:
 
-These changes smooth out a range of subtle issues you might have hit when maintaining complex view hierarchies.
+- Improved handling of documents and imports so that completion and mapping are more reliable in multi-project setups.
+- More predictable propagation of edits across consuming projects, reducing “stale” Razor state when you refactor shared components.
+
+These changes smooth out a range of small-but-frequent rough edges you might have hit when editing complex Blazor or MVC views.
 
 ---
 
 ## Reliability & UX
 
-### Smoother behavior when workspace trust changes
+### Extension behavior in trusted workspaces
 
 **Automatic reload after trusting a workspace**  
 When you change a workspace from untrusted to trusted, the C# extension can reload itself automatically. This ensures:
 
-- Features that rely on a trusted environment (like additional analyzers or adjacently launched processes) start working without you manually reloading the window.
-- Fewer confusing moments where capabilities appear to be “half-on” after you accept trust.
+- Language features (like analyzers or external processes that depend on trust) become available without needing a manual reload.
+- Fewer “why isn’t this working yet?” moments after toggling workspace trust.
 
 ---
 
@@ -117,12 +111,11 @@ When you change a workspace from untrusted to trusted, the C# extension can relo
 
 Across this set of changes, the C# tooling in VS Code delivers:
 
-- More predictable typing and formatting in both C# and Razor.
-- Stronger support for loose files and file-based programs.
-- Faster, more scalable semantic highlighting.
-- Smoother editing in complex Razor/Blazor projects.
-- A smoother user experience when adjusting workspace trust.
-
+- More predictable typing and formatting in C# and Razor.
+- Stronger support for stand-alone C# files and file-based programs.
+- Faster and more scalable semantic highlighting.
+- A smoother experience in complex Razor/Blazor projects.
+- A more seamless transition when changing workspace trust.
 
 # 2.103.x
 * include roslyn event source configs in profiling command (PR: [#8808](https://github.com/dotnet/vscode-csharp/pull/8808))
