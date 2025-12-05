@@ -56,5 +56,5 @@ extends:
           parameters:
             installDotNet: true
             npmCommand: profiling
-            testVSCodeVersion: stable
+            testVSCodeVersion: insiders
             isIntegration: true
