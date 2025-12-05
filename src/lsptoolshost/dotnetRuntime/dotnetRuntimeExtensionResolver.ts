@@ -21,9 +21,9 @@ import {
 import { DotNetRuntimeExtensionId } from '../../checkDotNetRuntimeExtensionVersion';
 import { getCSharpDevKit } from '../../utils/getCSharpDevKit';
 
-const DotNetMajorVersion = '9';
+const DotNetMajorVersion = '10';
 const DotNetMinorVersion = '0';
-const DotNetPatchVersion = '1';
+const DotNetPatchVersion = '0';
 export const DotNetRuntimeVersion = `${DotNetMajorVersion}.${DotNetMinorVersion}.${DotNetPatchVersion}`;
 
 /**
