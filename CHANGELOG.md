@@ -9,8 +9,14 @@
   * Build our libraries against net10.0 (PR: [#81545](https://github.com/dotnet/roslyn/pull/81545))
   * Update Roslyn LSP server to .net10 (PR: [#81508](https://github.com/dotnet/roslyn/pull/81508))
   * Fix InvalidCastException in ConvertForToForEach with tuples (PR: [#81531](https://github.com/dotnet/roslyn/pull/81531))
-* Bump Razor to 10.0.0-preview.25603.3 (PR: [#8843](https://github.com/dotnet/vscode-csharp/pull/8843))
+* Update Razor to 10.0.0-preview.25608.3 (PR: [#8844](https://github.com/dotnet/vscode-csharp/pull/8844))
+  * Move NetVSCode to net10.0 (PR: [#12557](https://github.com/dotnet/razor/pull/12557))
+  * Update C# code when Razor components are renamed (PR: [#12534](https://github.com/dotnet/razor/pull/12534))
+  * Ensure formatting can't change string literal contents (PR: [#12556](https://github.com/dotnet/razor/pull/12556))
+  * Immutable code document (PR: [#12533](https://github.com/dotnet/razor/pull/12533))
   * Close GC hole in EnumExtensions (PR: [#12549](https://github.com/dotnet/razor/pull/12549))
+  * Clean up LanguageServerFeatureOptions (PR: [#12540](https://github.com/dotnet/razor/pull/12540))
+  * Replace TryGetTextDocumentEdits with EnumerateTextDocumentEdits iterator method to prevent data loss (PR: [#12529](https://github.com/dotnet/razor/pull/12529))
 
 # 2.103.x
 * include roslyn event source configs in profiling command (PR: [#8808](https://github.com/dotnet/vscode-csharp/pull/8808))
