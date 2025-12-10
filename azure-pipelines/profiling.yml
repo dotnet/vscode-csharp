@@ -32,6 +32,8 @@ extends:
     stages:
     - stage: Run_Profiling
       displayName: Run Profiling
+      variables:
+        ROSLYN_SKIP_TEST_FILE_BASED_PROGRAMS: 'true'
       jobs:
       - job: Profile
         pool:

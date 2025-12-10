@@ -7,7 +7,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscodeAdapter from './vscodeAdapter';
 import * as vscode from 'vscode';
-import { RazorLanguageServerClient } from './razorLanguageServerClient';
 import { MessageType } from 'vscode-languageserver-protocol';
 
 export class RazorLogger implements vscodeAdapter.Disposable {
@@ -16,7 +15,6 @@ export class RazorLogger implements vscodeAdapter.Disposable {
     public debugEnabled!: boolean;
     public infoEnabled!: boolean;
     public readonly outputChannel: vscode.LogOutputChannel;
-    public languageServerClient: RazorLanguageServerClient | undefined;
 
     private readonly onLogEmitter: vscodeAdapter.EventEmitter<string>;
 
@@ -130,12 +128,6 @@ export class RazorLogger implements vscodeAdapter.Disposable {
 
     private async updateLogLevelAsync() {
         this.processTraceLevel();
-
-        if (this.languageServerClient) {
-            await this.languageServerClient.sendNotification('razor/updateLogLevel', {
-                logLevel: this.logLevelForRZLS,
-            });
-        }
     }
 
     private logErrorInternal(message: string, error: Error) {

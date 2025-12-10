@@ -84,17 +84,6 @@ function createIntegrationTestSubTasks() {
     );
 
     for (const projectName of razorIntegrationTestProjects) {
-        gulp.task(`test:integration:razor:${projectName}`, async () =>
-            // Run DevKit tests because razor doesn't gracefully handle roslyn restarting
-            // in tests. DevKit prevents that behavior by handling project restore without
-            // requiring it.
-            runDevKitIntegrationTests(
-                projectName,
-                path.join('razor', 'razorIntegrationTests'),
-                `Razor Test Integration ${projectName}`
-            )
-        );
-
         gulp.task(`test:integration:razor:cohost:${projectName}`, async () =>
             // Register each test again, but as a regular test, which will run with cohosting on
             runIntegrationTest(
@@ -106,11 +95,6 @@ function createIntegrationTestSubTasks() {
     }
 
     gulp.task(
-        'test:integration:razor',
-        gulp.series(razorIntegrationTestProjects.map((projectName) => `test:integration:razor:${projectName}`))
-    );
-
-    gulp.task(
         'test:integration:razor:cohost',
         gulp.series(razorIntegrationTestProjects.map((projectName) => `test:integration:razor:cohost:${projectName}`))
     );
@@ -120,7 +104,7 @@ function createIntegrationTestSubTasks() {
         gulp.series(
             'test:integration:csharp',
             'test:integration:devkit',
-            'test:integration:razor',
+            'test:integration:razor:cohost',
             'test:integration:untrusted'
         )
     );

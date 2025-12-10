@@ -7,16 +7,24 @@ import * as vscode from 'vscode';
 import { RazorLogger } from '../../razor/src/razorLogger';
 import { PlatformInformation } from '../../shared/platform';
 import { getUriPath } from '../../razor/src/uriPaths';
-import { virtualHtmlSuffix } from '../../razor/src/razorConventions';
 import { HtmlDocumentContentProvider } from './htmlDocumentContentProvider';
 import { HtmlDocument } from './htmlDocument';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { RequestType, TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../utils/uriConverter';
 
+const virtualHtmlSuffix = '__virtual.html';
+
 export class HtmlDocumentManager {
     private readonly htmlDocuments: { [hostDocumentPath: string]: HtmlDocument } = {};
     private readonly contentProvider: HtmlDocumentContentProvider;
+    private readonly pendingUpdates: {
+        [documentPath: string]: {
+            promise: Promise<void>;
+            resolve: () => void;
+            reject: (error: any) => void;
+        };
+    } = {};
 
     private readonly razorDocumentClosedRequest: RequestType<TextDocumentIdentifier, void, Error> = new RequestType(
         'razor/documentClosed'
@@ -35,6 +43,20 @@ export class HtmlDocumentManager {
     }
 
     public register() {
+        const didChangeRegistration = vscode.workspace.onDidChangeTextDocument((e) => {
+            // Check if this document is being monitored for updates
+            if (e.document.uri.scheme === HtmlDocumentContentProvider.scheme) {
+                const documentPath = getUriPath(e.document.uri);
+                const pendingUpdate = this.pendingUpdates[documentPath];
+
+                if (pendingUpdate) {
+                    // Document has been updated, resolve the promise
+                    pendingUpdate.resolve();
+                    delete this.pendingUpdates[documentPath];
+                }
+            }
+        });
+
         const didCloseRegistration = vscode.workspace.onDidCloseTextDocument(async (document) => {
             // We log when a virtual document is closed just in case it helps track down future bugs
             if (document.uri.scheme === HtmlDocumentContentProvider.scheme) {
@@ -63,7 +85,7 @@ export class HtmlDocumentManager {
             this.contentProvider
         );
 
-        return vscode.Disposable.from(didCloseRegistration, providerRegistration);
+        return vscode.Disposable.from(didChangeRegistration, didCloseRegistration, providerRegistration);
     }
 
     public async updateDocumentText(uri: vscode.Uri, checksum: string, text: string) {
@@ -79,6 +101,17 @@ export class HtmlDocumentManager {
 
         this.logger.logTrace(`New content for '${uri}', updating '${document.path}', checksum '${checksum}'.`);
 
+        // Create a promise for this document update
+        let resolve: () => void;
+        let reject: (error: any) => void;
+        const updatePromise = new Promise<void>((res, rej) => {
+            resolve = res;
+            reject = rej;
+        });
+
+        this.pendingUpdates[document.path] = { promise: updatePromise, resolve: resolve!, reject: reject! };
+
+        // Now update the document and fire the change event so VS Code will inform the Html language client.
         await vscode.workspace.openTextDocument(document.uri);
 
         document.setContent(checksum, text);
@@ -91,6 +124,13 @@ export class HtmlDocumentManager {
 
         if (document) {
             this.logger.logTrace(`Removing '${document.uri}' from the document manager.`);
+
+            // Clean up any pending update promises for this document
+            const pendingUpdate = this.pendingUpdates[document.path];
+            if (pendingUpdate) {
+                pendingUpdate.reject(new Error('Document was closed before update completed'));
+                delete this.pendingUpdates[document.path];
+            }
 
             delete this.htmlDocuments[document.path];
         }
@@ -111,9 +151,34 @@ export class HtmlDocumentManager {
             return undefined;
         }
 
-        // No checksum, just give them the latest document and hope they know what to do with it.
-
         await vscode.workspace.openTextDocument(document.uri);
+
+        if (checksum) {
+            // If checksum is supplied, that means we're getting this document because we're about to call an LSP method
+            // on it. We know that we've got the right document, and we've been told about the right content by the server,
+            // but all we can be sure of at this point is that we've fired the change event for it. The event firing
+            // is async, and the didChange notification that it would generate is a notification, so doesn't necessarily
+            // block. Before we actually make a call to the Html server, we should at least make sure that the document
+            // update has been seen by VS Code. We can't get access to the Html language client specifically to check if it
+            // has seen it, but we can trust that ordering will be preserved at least.
+            const pendingUpdate = this.pendingUpdates[document.path];
+            if (pendingUpdate) {
+                try {
+                    // Wait for the update promise with a 5 second timeout
+                    await Promise.race([
+                        pendingUpdate.promise,
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('Document update timeout')), 5000)
+                        ),
+                    ]);
+                } catch (error) {
+                    this.logger.logWarning(`Failed to wait for document update: ${error}`);
+                } finally {
+                    // Clean up the promise reference
+                    delete this.pendingUpdates[document.path];
+                }
+            }
+        }
 
         return document;
     }

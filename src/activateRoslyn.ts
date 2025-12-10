@@ -5,7 +5,6 @@
 
 import * as vscode from 'vscode';
 import { CSharpExtensionExports } from './csharpExtensionExports';
-import { activateRazorExtension } from './razor/razor';
 import { PlatformInformation } from './shared/platform';
 import { Observable } from 'rxjs';
 import { EventStream } from './eventStream';
@@ -42,25 +41,6 @@ export function activateRoslyn(
 
     const razorLogger = new RazorLogger();
 
-    // Activate Razor. Needs to be activated before Roslyn so commands are registered in the correct order.
-    // Otherwise, if Roslyn starts up first, they could execute commands that don't yet exist on Razor's end.
-    //
-    // Flow:
-    // Razor starts up and registers dynamic file info commands ->
-    // Roslyn starts up and registers Razor-specific didOpen/didClose/didChange commands and sends request to Razor
-    //     for dynamic file info once project system is ready ->
-    // Razor sends didOpen commands to Roslyn for generated docs and responds to request with dynamic file info
-    const razorLanguageServerStartedPromise = activateRazorExtension(
-        context,
-        context.extension.extensionPath,
-        eventStream,
-        reporter,
-        csharpDevkitExtension,
-        platformInfo,
-        /* useOmnisharpServer */ false,
-        razorLogger
-    );
-
     // Setup a listener for project initialization complete before we start the server.
     const projectInitializationCompletePromise = new Promise<void>((resolve, _) => {
         roslynLanguageServerEvents.onServerStateChange(async (e) => {
@@ -90,7 +70,6 @@ export function activateRoslyn(
         isLimitedActivation: false,
         initializationFinished: async () => {
             await coreClrDebugPromise;
-            await razorLanguageServerStartedPromise;
             await roslynLanguageServerStartedPromise;
             await projectInitializationCompletePromise;
         },

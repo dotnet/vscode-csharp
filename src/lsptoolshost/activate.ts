@@ -16,7 +16,6 @@ import { registerUnitTestingCommands } from './testing/unitTesting';
 import { registerLanguageServerOptionChanges } from './options/optionChanges';
 import { Observable } from 'rxjs';
 import { RoslynLanguageServerEvents } from './server/languageServerEvents';
-import { registerRazorCommands } from './razor/razorCommands';
 import { registerCodeActionFixAllCommands } from './diagnostics/fixAllCodeAction';
 import { commonOptions, languageServerOptions } from '../shared/options';
 import { registerNestedCodeActionCommands } from './diagnostics/nestedCodeAction';
@@ -27,7 +26,6 @@ import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { WorkspaceStatus } from './workspace/workspaceStatus';
 import { ProjectContextStatus } from './projectContext/projectContextStatus';
 import { RoslynLanguageServer } from './server/roslynLanguageServer';
-import { registerCopilotRelatedFilesProvider } from './copilot/relatedFilesProvider';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
@@ -79,7 +77,6 @@ export async function activateRoslynLanguageServer(
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);
-    registerCopilotRelatedFilesProvider(context, languageServer, _channel);
     registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
@@ -87,7 +84,6 @@ export async function activateRoslynLanguageServer(
     registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
-    registerRazorCommands(context, languageServer);
     registerRazorEndpoints(context, languageServer, razorLogger, platformInfo);
 
     registerUnitTestingCommands(context, languageServer);

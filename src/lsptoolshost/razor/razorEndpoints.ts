@@ -35,25 +35,17 @@ import { UriConverter } from '../utils/uriConverter';
 import { PlatformInformation } from '../../shared/platform';
 import { HtmlDocumentManager } from './htmlDocumentManager';
 import { DocumentColorHandler } from '../../razor/src/documentColor/documentColorHandler';
-import { razorOptions } from '../../shared/options';
 import { ColorPresentationHandler } from '../../razor/src/colorPresentation/colorPresentationHandler';
 import { convertRangeToSerializable } from '../../razor/src/rpc/serializableRange';
 import { FoldingRangeHandler } from '../../razor/src/folding/foldingRangeHandler';
 import { CompletionHandler } from '../../razor/src/completion/completionHandler';
-import { DynamicFileInfoHandler } from '../../razor/src/dynamicFile/dynamicFileInfoHandler';
-import { ProvideDynamicFileParams } from '../../razor/src/dynamicFile/provideDynamicFileParams';
-import { ProvideDynamicFileResponse } from '../../razor/src/dynamicFile/provideDynamicFileResponse';
-import { RazorMapSpansParams } from '../../razor/src/mapping/razorMapSpansParams';
-import { RazorMapSpansResponse } from '../../razor/src/mapping/razorMapSpansResponse';
-import { MappingHandler } from '../../razor/src/mapping/mappingHandler';
-import { RazorMapTextChangesParams } from '../../razor/src/mapping/razorMapTextChangesParams';
-import { RazorMapTextChangesResponse } from '../../razor/src/mapping/razorMapTextChangesResponse';
 import { FormattingHandler } from '../../razor/src/formatting/formattingHandler';
 import { ReportIssueCommand } from '../../razor/src/diagnostics/reportIssueCommand';
 import { HtmlDocument } from './htmlDocument';
 import { HtmlForwardedRequest } from './htmlForwardedRequest';
 import { BlazorDebugConfigurationProvider } from '../../razor/src/blazorDebug/blazorDebugConfigurationProvider';
 import { ShowGeneratedDocumentCommand } from './showGeneratedDocumentCommand';
+import { RazorLanguageConfiguration } from '../../razor/src/razorLanguageConfiguration';
 
 export function registerRazorEndpoints(
     context: vscode.ExtensionContext,
@@ -66,16 +58,13 @@ export function registerRazorEndpoints(
         razorLogger.log(params.message, params.type)
     );
 
-    if (razorOptions.cohostingEnabled) {
-        vscode.commands.executeCommand('setContext', 'razor.mode', 'cohosting');
-        registerCohostingEndpoints();
+    registerCohostingEndpoints();
 
-        context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
-        context.subscriptions.push(ShowGeneratedDocumentCommand.register(roslynLanguageServer));
-    } else {
-        vscode.commands.executeCommand('setContext', 'razor.mode', 'lsp');
-        registerNonCohostingEndpoints();
-    }
+    context.subscriptions.push(BlazorDebugConfigurationProvider.register(razorLogger, vscode));
+    context.subscriptions.push(ShowGeneratedDocumentCommand.register(roslynLanguageServer));
+
+    const languageConfiguration = new RazorLanguageConfiguration();
+    context.subscriptions.push(languageConfiguration.register());
 
     return;
 
@@ -84,13 +73,7 @@ export function registerRazorEndpoints(
     //
     function registerCohostingEndpoints() {
         const documentManager = new HtmlDocumentManager(platformInfo, roslynLanguageServer, razorLogger);
-        const reportIssueCommand = new ReportIssueCommand(
-            vscode,
-            undefined,
-            documentManager,
-            roslynLanguageServer,
-            razorLogger
-        );
+        const reportIssueCommand = new ReportIssueCommand(vscode, documentManager, roslynLanguageServer, razorLogger);
         context.subscriptions.push(documentManager.register());
         context.subscriptions.push(reportIssueCommand.register());
 
@@ -210,32 +193,6 @@ export function registerRazorEndpoints(
             );
             return response?.edits;
         });
-    }
-
-    function registerNonCohostingEndpoints() {
-        registerMethodHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
-            'razor/provideDynamicFileInfo',
-            async (params) =>
-                vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
-        );
-
-        registerMethodHandler<ProvideDynamicFileParams, ProvideDynamicFileResponse>(
-            'razor/removeDynamicFileInfo',
-            async (params) =>
-                vscode.commands.executeCommand(DynamicFileInfoHandler.provideDynamicFileInfoCommand, params)
-        );
-        registerMethodHandler<RazorMapSpansParams, RazorMapSpansResponse>('razor/mapSpans', async (params) => {
-            return await vscode.commands.executeCommand<RazorMapSpansResponse>(MappingHandler.MapSpansCommand, params);
-        });
-        registerMethodHandler<RazorMapTextChangesParams, RazorMapTextChangesResponse>(
-            'razor/mapTextChanges',
-            async (params) => {
-                return await vscode.commands.executeCommand<RazorMapTextChangesResponse>(
-                    MappingHandler.MapChangesCommand,
-                    params
-                );
-            }
-        );
     }
 
     // Helper method that registers a request handler, and logs errors to the Razor logger.
