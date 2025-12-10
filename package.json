@@ -1514,15 +1514,12 @@
           },
           "dotnet.projects.enableFileBasedPrograms": {
             "type": "boolean",
-            "default": false,
-            "description": "%configuration.dotnet.projects.enableFileBasedPrograms%",
-            "tags": [
-              "preview"
-            ]
+            "default": true,
+            "description": "%configuration.dotnet.projects.enableFileBasedPrograms%"
           },
           "dotnet.projects.enableFileBasedProgramsWhenAmbiguous": {
             "type": "boolean",
-            "default": true,
+            "default": false,
             "description": "%configuration.dotnet.projects.enableFileBasedProgramsWhenAmbiguous%",
             "tags": [
               "preview"
