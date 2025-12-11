@@ -86,7 +86,7 @@ The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnal
 1. Clone the [Razor repository](https://github.com/dotnet/razor). This repository contains the Razor server implementation.
 2. Follow the build instructions provided in the repository.
 
-The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net9.0`.
+The extension is typically at `$razorRepoRoot/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net9.0`.
 
 ### Debugging Local Language Servers
 
@@ -148,19 +148,10 @@ Or, in VSCode settings (`Ctrl+,`):
 Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with the actual path to your Razor repository.
 
 ```json
-"razor.languageServer.debug": true,
-"razor.languageServer.directory": "<razorRepoRoot>/artifacts/bin/rzls/Debug/net9.0",
-"razor.server.trace": "Debug"
+"dotnet.server.componentPaths": {
+    "razorExtension": "<razorRepoRoot>/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net9.0"
+},
 ```
-
----
-
-Or, in VSCode settings (`Ctrl+,`):
-
-1. Search for `Razor`.
-2. Set `razor.languageServer.directory` to the path of your Razor DLL.
-3. Enable `razor.languageServer.debug`.
-4. Set `razor.server.trace` to `Debug`. This gives you more detailed log messages in the output window.
 
 ### Updating NPM packages
 We use the .NET eng AzDo artifacts feed https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet-public-npm/npm/registry/ with upstreams to the public npm registry.
