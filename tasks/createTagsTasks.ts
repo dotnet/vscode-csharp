@@ -27,7 +27,8 @@ gulp.task('createTags:roslyn', async (): Promise<void> => {
         options,
         'dotnet',
         'roslyn',
-        async (releaseCommit: string) => getCommitFromNugetAsync(allNugetPackages.roslyn, releaseCommit),
+        async (releaseCommit: string, githubPAT: string) =>
+            getCommitFromNugetAsync(allNugetPackages.roslyn, releaseCommit, githubPAT),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -45,7 +46,8 @@ gulp.task('createTags:razor', async (): Promise<void> => {
         options,
         'dotnet',
         'razor',
-        async (releaseCommit: string) => getCommitFromNugetAsync(allNugetPackages.razorExtension, releaseCommit),
+        async (releaseCommit: string, githubPAT: string) =>
+            getCommitFromNugetAsync(allNugetPackages.razorExtension, releaseCommit, githubPAT),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -63,7 +65,7 @@ gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
         options,
         'dotnet',
         'vscode-csharp',
-        async (releaseCommit: string) => releaseCommit,
+        async (releaseCommit: string, _githubPAT: string) => releaseCommit,
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [`v${releaseVersion}${prereleaseText}`, releaseVersion];
@@ -77,7 +79,7 @@ async function createTagsAsync(
     options: CreateTagsOptions,
     owner: string,
     repo: string,
-    getComponentCommit: (releaseCommit: string) => Promise<string | null>,
+    getComponentCommit: (releaseCommit: string, githubPAT: string) => Promise<string | null>,
     getTagAndMessage: (releaseVersion: string, isPrerelease: boolean) => [string, string]
 ): Promise<void> {
     console.log(`releaseVersion: ${options.releaseVersion}`);
@@ -88,7 +90,8 @@ async function createTagsAsync(
     const prerelease = getFlag('prerelease', options);
     console.log(`prerelease: ${prerelease}`);
 
-    const commit = await getComponentCommit(options.releaseCommit);
+    const githubPAT = getGitHubPAT(options);
+    const commit = await getComponentCommit(options.releaseCommit, githubPAT);
     if (!commit) {
         logError('Failed to find commit.');
         return;
@@ -103,7 +106,6 @@ async function createTagsAsync(
         console.log('Tagging is skipped in dry run mode.');
         return;
     } else {
-        const githubPAT = getGitHubPAT(options);
         const tagCreated = await tagRepoAsync(owner, repo, commit, tag, message, githubPAT);
 
         if (!tagCreated) {
@@ -195,7 +197,11 @@ function logError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
 }
 
-async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, releaseCommit: string): Promise<string | null> {
+async function getCommitFromNugetAsync(
+    packageInfo: NugetPackageInfo,
+    releaseCommit: string,
+    githubPAT: string
+): Promise<string | null> {
     // Fetch package.json from dotnet/vscode-csharp GitHub repo at the specific commit
     const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/vscode-csharp/${releaseCommit}/package.json`;
 
@@ -203,7 +209,12 @@ async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, releaseCom
 
     let packageJson: { defaults?: { [key: string]: string } };
     try {
-        const response = await fetch(packageJsonUrl);
+        const response = await fetch(packageJsonUrl, {
+            headers: {
+                Authorization: `token ${githubPAT}`,
+                Accept: 'application/vnd.github.v3.raw',
+            },
+        });
         if (!response.ok) {
             logError(`Failed to fetch package.json from ${packageJsonUrl}: ${response.status} ${response.statusText}`);
             return null;
