@@ -202,7 +202,7 @@ async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, isPrerelea
 
     console.log(`Fetching package.json from ${packageJsonUrl}`);
 
-    let packageJson: any;
+    let packageJson: { defaults?: { [key: string]: string } };
     try {
         const response = await fetch(packageJsonUrl);
         if (!response.ok) {
@@ -216,7 +216,7 @@ async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, isPrerelea
         return null;
     }
 
-    const packageVersion = packageJson['defaults']?.[packageInfo.packageJsonName];
+    const packageVersion = packageJson.defaults?.[packageInfo.packageJsonName];
     if (!packageVersion) {
         logError(`Can't find ${packageInfo.packageJsonName} version in package.json from ${branch} branch`);
         return null;
