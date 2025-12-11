@@ -196,9 +196,9 @@ function logError(message: string): void {
 }
 
 async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, isPrerelease: boolean): Promise<string | null> {
-    // Fetch package.json from dotnet/roslyn GitHub repo
+    // Fetch package.json from dotnet/vscode-csharp GitHub repo
     const branch = isPrerelease ? 'prerelease' : 'release';
-    const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/roslyn/${branch}/package.json`;
+    const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/vscode-csharp/${branch}/package.json`;
 
     console.log(`Fetching package.json from ${packageJsonUrl}`);
 
