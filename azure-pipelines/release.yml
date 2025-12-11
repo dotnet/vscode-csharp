@@ -154,13 +154,10 @@ extends:
         steps:
         - checkout: self
           clean: true
-          submodules: true
+          submodules: false
           fetchTags: false
-          fetchDepth: 0
+          fetchDepth: 1
         - template: /azure-pipelines/install-node.yml@self
-        - pwsh: |
-            git checkout $(resources.pipeline.officialBuildCI.sourceCommit)
-          displayName: 'Checkout build source branch'
         - pwsh: |
             npm ci
             npm install
