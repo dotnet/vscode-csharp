@@ -27,7 +27,7 @@ gulp.task('createTags:roslyn', async (): Promise<void> => {
         options,
         'dotnet',
         'roslyn',
-        async (isPrerelease: boolean) => getCommitFromNugetAsync(allNugetPackages.roslyn, isPrerelease),
+        async (releaseCommit: string) => getCommitFromNugetAsync(allNugetPackages.roslyn, releaseCommit),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -45,7 +45,7 @@ gulp.task('createTags:razor', async (): Promise<void> => {
         options,
         'dotnet',
         'razor',
-        async (isPrerelease: boolean) => getCommitFromNugetAsync(allNugetPackages.razorExtension, isPrerelease),
+        async (releaseCommit: string) => getCommitFromNugetAsync(allNugetPackages.razorExtension, releaseCommit),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -63,7 +63,7 @@ gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
         options,
         'dotnet',
         'vscode-csharp',
-        async (_isPrerelease: boolean) => options.releaseCommit,
+        async (releaseCommit: string) => releaseCommit,
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [`v${releaseVersion}${prereleaseText}`, releaseVersion];
@@ -77,7 +77,7 @@ async function createTagsAsync(
     options: CreateTagsOptions,
     owner: string,
     repo: string,
-    getCommit: (isPrerelease: boolean) => Promise<string | null>,
+    getComponentCommit: (releaseCommit: string) => Promise<string | null>,
     getTagAndMessage: (releaseVersion: string, isPrerelease: boolean) => [string, string]
 ): Promise<void> {
     console.log(`releaseVersion: ${options.releaseVersion}`);
@@ -88,7 +88,7 @@ async function createTagsAsync(
     const prerelease = getFlag('prerelease', options);
     console.log(`prerelease: ${prerelease}`);
 
-    const commit = await getCommit(prerelease);
+    const commit = await getComponentCommit(options.releaseCommit);
     if (!commit) {
         logError('Failed to find commit.');
         return;
@@ -195,10 +195,9 @@ function logError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
 }
 
-async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, isPrerelease: boolean): Promise<string | null> {
-    // Fetch package.json from dotnet/vscode-csharp GitHub repo
-    const branch = isPrerelease ? 'prerelease' : 'release';
-    const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/vscode-csharp/${branch}/package.json`;
+async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, releaseCommit: string): Promise<string | null> {
+    // Fetch package.json from dotnet/vscode-csharp GitHub repo at the specific commit
+    const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/vscode-csharp/${releaseCommit}/package.json`;
 
     console.log(`Fetching package.json from ${packageJsonUrl}`);
 
@@ -218,7 +217,7 @@ async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, isPrerelea
 
     const packageVersion = packageJson.defaults?.[packageInfo.packageJsonName];
     if (!packageVersion) {
-        logError(`Can't find ${packageInfo.packageJsonName} version in package.json from ${branch} branch`);
+        logError(`Can't find ${packageInfo.packageJsonName} version in package.json from commit ${releaseCommit}`);
         return null;
     }
 
