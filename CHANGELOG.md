@@ -6,6 +6,9 @@
 # 2.105.x
 
 # 2.111.x
+* Razor logging cleanup and documentation update (PR: [#8843](https://github.com/dotnet/vscode-csharp/pull/8843))
+* Create Razor tags based on the razorExtension component (PR: [#8830](https://github.com/dotnet/vscode-csharp/pull/8830))
+* Add second opt-out flag for file-based programs (PR: [#8823](https://github.com/dotnet/vscode-csharp/pull/8823))
 * Update extension to run on .NET 10 (PR: [#8839](https://github.com/dotnet/vscode-csharp/pull/8839))
 * Update Roslyn to 5.3.0-2.25604.5 (PR: [#8839](https://github.com/dotnet/vscode-csharp/pull/))
   * Build our libraries against net10.0 (PR: [#81545](https://github.com/dotnet/roslyn/pull/81545))
