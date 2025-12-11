@@ -27,7 +27,7 @@ gulp.task('createTags:roslyn', async (): Promise<void> => {
         options,
         'dotnet',
         'roslyn',
-        async () => getCommitFromNugetAsync(allNugetPackages.roslyn),
+        async (isPrerelease: boolean) => getCommitFromNugetAsync(allNugetPackages.roslyn, isPrerelease),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -45,7 +45,7 @@ gulp.task('createTags:razor', async (): Promise<void> => {
         options,
         'dotnet',
         'razor',
-        async () => getCommitFromNugetAsync(allNugetPackages.razorExtension),
+        async (isPrerelease: boolean) => getCommitFromNugetAsync(allNugetPackages.razorExtension, isPrerelease),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -63,7 +63,7 @@ gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
         options,
         'dotnet',
         'vscode-csharp',
-        async () => options.releaseCommit,
+        async (_isPrerelease: boolean) => options.releaseCommit,
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [`v${releaseVersion}${prereleaseText}`, releaseVersion];
@@ -77,7 +77,7 @@ async function createTagsAsync(
     options: CreateTagsOptions,
     owner: string,
     repo: string,
-    getCommit: () => Promise<string | null>,
+    getCommit: (isPrerelease: boolean) => Promise<string | null>,
     getTagAndMessage: (releaseVersion: string, isPrerelease: boolean) => [string, string]
 ): Promise<void> {
     console.log(`releaseVersion: ${options.releaseVersion}`);
@@ -85,14 +85,14 @@ async function createTagsAsync(
     const dryRun = getFlag('dryRun', options);
     console.log(`dry run: ${dryRun}`);
 
-    const commit = await getCommit();
+    const prerelease = getFlag('prerelease', options);
+    console.log(`prerelease: ${prerelease}`);
+
+    const commit = await getCommit(prerelease);
     if (!commit) {
         logError('Failed to find commit.');
         return;
     }
-
-    const prerelease = getFlag('prerelease', options);
-    console.log(`prerelease: ${prerelease}`);
 
     const [tag, message] = getTagAndMessage(options.releaseVersion, prerelease);
     console.log(`tag: ${tag}`);
@@ -195,12 +195,30 @@ function logError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
 }
 
-async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<string | null> {
-    const packageJsonString = fs.readFileSync('./package.json').toString();
-    const packageJson = JSON.parse(packageJsonString);
-    const packageVersion = packageJson['defaults'][packageInfo.packageJsonName];
+async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo, isPrerelease: boolean): Promise<string | null> {
+    // Fetch package.json from dotnet/roslyn GitHub repo
+    const branch = isPrerelease ? 'prerelease' : 'release';
+    const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/roslyn/${branch}/package.json`;
+
+    console.log(`Fetching package.json from ${packageJsonUrl}`);
+
+    let packageJson: any;
+    try {
+        const response = await fetch(packageJsonUrl);
+        if (!response.ok) {
+            logError(`Failed to fetch package.json from ${packageJsonUrl}: ${response.status} ${response.statusText}`);
+            return null;
+        }
+        const packageJsonString = await response.text();
+        packageJson = JSON.parse(packageJsonString);
+    } catch (error) {
+        logError(`Error fetching package.json from GitHub: ${error}`);
+        return null;
+    }
+
+    const packageVersion = packageJson['defaults']?.[packageInfo.packageJsonName];
     if (!packageVersion) {
-        logError(`Can't find ${packageInfo.packageJsonName} version in package.json`);
+        logError(`Can't find ${packageInfo.packageJsonName} version in package.json from ${branch} branch`);
         return null;
     }
 
