@@ -38,11 +38,11 @@ Follow these steps to build, run, and test the repository:
 
 If you have the ability to run powershell, you can invoke "init.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
 
-1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
-   a.  If you have already authenticated before, but the token expired, you may need to run `vsts-npm-auth -config .npmrc -f` instead.
-2. Run `npm i` - This command installs the project dependencies.
-3. Run `npm i -g gulp` - This command installs Gulp globally.
-4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
+1. Run `npm i` - This command installs the project dependencies.
+2. Run `npm i -g gulp` - This command installs Gulp globally.
+3. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
+
+**Note**: Authentication with `vsts-npm-auth` is only required when adding new packages to the feeds. For regular development with existing dependencies, authentication is not necessary. See the [Updating NPM packages](#updating-npm-packages) section for details.
 
 You can now run `code .` - This command opens the project in Visual Studio Code.
 
@@ -155,7 +155,13 @@ Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with 
 
 ### Updating NPM packages
 We use the .NET eng AzDo artifacts feed https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet-public-npm/npm/registry/ with upstreams to the public npm registry.
-Auth is required in order to pull new packages from the upstream.  This can be done by running `vsts-npm-auth -config .npmrc`.
+
+**Note**: Authentication is only required when adding new packages to the feeds. For installing existing dependencies during regular development, authentication is not necessary.
+
+To add new packages, you must authenticate by running:
+1. `npm install -g vsts-npm-auth` (if not already installed)
+2. `vsts-npm-auth -config .npmrc`
+
 If you need to renew authorization, you can force it via `vsts-npm-auth -config .npmrc -F`
 
 ## Creating VSIX Packages for the Extension
