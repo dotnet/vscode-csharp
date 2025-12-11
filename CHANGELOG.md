@@ -4,9 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.111.x
-* Trim Razor changelog (PR: [#8845](https://github.com/dotnet/vscode-csharp/pull/8845))
 * Razor logging cleanup and documentation update (PR: [#8843](https://github.com/dotnet/vscode-csharp/pull/8843))
-* Bump jws (PR: [#8833](https://github.com/dotnet/vscode-csharp/pull/8833))
 * Create Razor tags based on the razorExtension component (PR: [#8830](https://github.com/dotnet/vscode-csharp/pull/8830))
 * Add second opt-out flag for file-based programs (PR: [#8823](https://github.com/dotnet/vscode-csharp/pull/8823))
 * Update extension to run on .NET 10 (PR: [#8839](https://github.com/dotnet/vscode-csharp/pull/8839))
