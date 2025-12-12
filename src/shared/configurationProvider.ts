@@ -154,7 +154,26 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
                 }
             }
         }
-
+        if (
+            debugConfiguration.type === 'monovsdbg_wasm' &&
+            debugConfiguration.monoDebuggerOptions.platform === 'browser' &&
+            this.isDotnetWorkspaceConfigurationProvider()
+        ) {
+            if (folder && debugConfiguration.monoDebuggerOptions.assetsPath == null) {
+                const csharpDevKitExtension = getCSharpDevKit();
+                if (csharpDevKitExtension === undefined) {
+                    if (!(await this.isDotNet9OrNewer(folder))) {
+                        return undefined;
+                    }
+                }
+                const [assetsPath, programName] = await this.getAssetsPathAndProgram(folder);
+                debugConfiguration.monoDebuggerOptions.assetsPath = assetsPath;
+                debugConfiguration.program = programName;
+                if (debugConfiguration.program == null) {
+                    return undefined;
+                }
+            }
+        }
         return debugConfiguration;
     }
 
@@ -307,5 +326,16 @@ export class BaseVsDbgConfigurationProvider implements vscode.DebugConfiguration
         }
 
         return result;
+    }
+    async getAssetsPathAndProgram(_: vscode.WorkspaceFolder): Promise<[string, string]> {
+        return ['', ''];
+    }
+
+    async isDotNet9OrNewer(_: vscode.WorkspaceFolder): Promise<boolean> {
+        return false;
+    }
+
+    isDotnetWorkspaceConfigurationProvider(): boolean {
+        return false;
     }
 }
