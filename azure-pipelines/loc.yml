@@ -38,6 +38,8 @@ extends:
       name: netcore1espool-internal
       image: 1es-windows-2022
       os: windows
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
     stages:
     - stage: LocalizationStage
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
@@ -68,7 +70,7 @@ extends:
           fetchDepth: 0
         - pwsh: | 
             npm install
-            npm install -g gulp
+            npm install -g gulp --globalconfig $(Build.SourcesDirectory)/.npmrc
           displayName: 'Install tools'
         - pwsh: npm run compile
           displayName: 'Compile'
