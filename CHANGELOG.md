@@ -4,6 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.112.x
+* Update Razor to 10.0.0-preview.25613.1 (PR: [#8858](https://github.com/dotnet/vscode-csharp/pull/8858))
+  * Encode double slash as underscore slash in hint names (PR: [#12597](https://github.com/dotnet/razor/pull/12597))
+  * Navigate to a Razor file when GTD/FAR/GTI is run in C# on the class name (PR: [#12580](https://github.com/dotnet/razor/pull/12580))
+  * Fix rename of components in the global namespace (PR: [#12577](https://github.com/dotnet/razor/pull/12577))
 
 # 2.111.x
 * Razor logging cleanup and documentation update (PR: [#8843](https://github.com/dotnet/vscode-csharp/pull/8843))
