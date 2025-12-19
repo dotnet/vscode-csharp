@@ -628,7 +628,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   using-statement-with-optional-transition:
     name: 'meta.statement.using.razor'
@@ -640,7 +640,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @if (...) { ... } <<<<<
 
@@ -654,7 +654,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   if-statement-with-optional-transition:
     name: 'meta.statement.if.razor'
@@ -666,7 +666,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> else [if (...)] { ... } <<<<<
 
@@ -680,7 +680,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @for (...) { ... } <<<<<
 
@@ -694,7 +694,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   for-statement-with-optional-transition:
     name: 'meta.statement.for.razor'
@@ -706,7 +706,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @foreach (...) { ... } <<<<<
 
@@ -721,7 +721,7 @@ repository:
       - include: '#foreach-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   foreach-statement-with-optional-transition:
     name: 'meta.statement.foreach.razor'
@@ -734,7 +734,7 @@ repository:
       - include: '#foreach-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   # This condition is pulled directly from the C# grammar for foreach statements
   foreach-condition:
@@ -803,7 +803,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   do-statement-with-optional-transition:
     name: 'meta.statement.do.razor'
@@ -815,7 +815,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @while (...) { ... } <<<<<
 
@@ -845,7 +845,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#switch-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   switch-statement-with-optional-transition:
     name: 'meta.statement.switch.razor'
@@ -857,7 +857,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#switch-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   switch-code-block:
     name: 'meta.structure.razor.csharp.codeblock.switch'
@@ -884,7 +884,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   lock-statement-with-optional-transition:
     name: 'meta.statement.lock.razor'
@@ -896,7 +896,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   #>>>>> @try { ... } [catch|finally] (...) { ... } <<<<<
 
@@ -922,7 +922,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   try-block-with-optional-transition:
     name: 'meta.statement.try.razor'
@@ -934,7 +934,7 @@ repository:
       - include: '#csharp-condition'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   catch-clause:
     name: 'meta.statement.catch.razor'
@@ -946,7 +946,7 @@ repository:
       - include: 'source.cs#when-clause'
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   # This condition is pulled directly from the C# grammar for catch clauses
   catch-condition:
@@ -993,7 +993,7 @@ repository:
     patterns:
       - include: '#csharp-code-block'
       - include: '#razor-codeblock-body'
-    end: '(?<=})'
+    end: '(?<=})|(?<=;)|(?=^\s*\})'
 
   # ----------  Misc C# ------------
 
