@@ -1298,7 +1298,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "using-statement-with-optional-transition": {
       "name": "meta.statement.using.razor",
@@ -1326,7 +1326,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "if-statement": {
       "name": "meta.statement.if.razor",
@@ -1354,7 +1354,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "if-statement-with-optional-transition": {
       "name": "meta.statement.if.razor",
@@ -1382,7 +1382,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "else-part": {
       "name": "meta.statement.else.razor",
@@ -1406,7 +1406,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "for-statement": {
       "name": "meta.statement.for.razor",
@@ -1434,7 +1434,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "for-statement-with-optional-transition": {
       "name": "meta.statement.for.razor",
@@ -1462,7 +1462,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "foreach-statement": {
       "name": "meta.statement.foreach.razor",
@@ -1497,7 +1497,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "foreach-statement-with-optional-transition": {
       "name": "meta.statement.foreach.razor",
@@ -1532,7 +1532,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "foreach-condition": {
       "begin": "\\(",
@@ -1618,7 +1618,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "do-statement-with-optional-transition": {
       "name": "meta.statement.do.razor",
@@ -1646,7 +1646,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "while-statement": {
       "name": "meta.statement.while.razor",
@@ -1707,7 +1707,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "switch-statement-with-optional-transition": {
       "name": "meta.statement.switch.razor",
@@ -1735,7 +1735,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "switch-code-block": {
       "name": "meta.structure.razor.csharp.codeblock.switch",
@@ -1789,7 +1789,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "lock-statement-with-optional-transition": {
       "name": "meta.statement.lock.razor",
@@ -1817,7 +1817,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "try-statement": {
       "patterns": [
@@ -1871,7 +1871,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "try-block-with-optional-transition": {
       "name": "meta.statement.try.razor",
@@ -1899,7 +1899,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "catch-clause": {
       "name": "meta.statement.catch.razor",
@@ -1923,7 +1923,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "catch-condition": {
       "begin": "\\(",
@@ -1972,7 +1972,7 @@
           "include": "#razor-codeblock-body"
         }
       ],
-      "end": "(?<=})"
+      "end": "(?<=})|(?<=;)|(?=^\\s*\\})"
     },
     "await-prefix": {
       "name": "keyword.other.await.cs",
