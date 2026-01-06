@@ -567,14 +567,14 @@ describe('Target Framework Detection', () => {
         expect(result).toEqual('net5.0');
     });
 
-    test('findNetCoreTargetFramework handles shortnames without dot for .NET 10 (net100)', () => {
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 1.0 (net100)', () => {
         const result = findNetCoreTargetFramework(['net100']);
-        expect(result).toEqual('net10.0');
+        expect(result).toBeUndefined();
     });
 
-    test('findNetCoreTargetFramework handles shortnames without dot for .NET 11 (net110)', () => {
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 1.1 (net110)', () => {
         const result = findNetCoreTargetFramework(['net110']);
-        expect(result).toEqual('net11.0');
+        expect(result).toBeUndefined();
     });
 
     test('findNetCoreTargetFramework handles multiple TFMs and selects correct one', () => {

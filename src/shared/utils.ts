@@ -49,7 +49,7 @@ export function findModernNetFrameworkTargetFramework(tfmShortNames: string[]): 
             // Modern .NET without dot: net50 (5.0), net60 (6.0), ..., net100 (10.0), net110 (11.0)
             // These are reported as net + (version * 10), so they're always multiples of 10
             // This excludes legacy .NET Framework like net461 (4.6.1), net472 (4.7.2), etc.
-            if (version >= 50 && version % 10 === 0) {
+            if (version >= 50 && version <= 90 && version % 10 === 0) {
                 const actualVersion = version / 10;
                 return `net${actualVersion}.0`;
             }
