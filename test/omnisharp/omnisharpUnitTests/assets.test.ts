@@ -143,7 +143,7 @@ describe('Asset generation: csproj', () => {
         checkProgramPath(rootPath, programPath, info[0].outputPath);
     });
 
-    [5, 6, 7, 8, 9].forEach((version) => {
+    [5, 6, 7, 8, 9, 10, 11].forEach((version) => {
         const shortName = `net${version}.0`;
 
         test(`Create launch.json for NET ${version} project opened in workspace with shortname '${shortName}'`, () => {
@@ -473,6 +473,113 @@ describe('Asset generation: csproj', () => {
         expect(launchConfigurations[1].request).toEqual('attach');
 
         expect(JSON.stringify(launchConfigurations).indexOf('OS-COMMENT')).toBeLessThan(0);
+    });
+});
+
+describe('Target Framework Detection', () => {
+    test('findNetCoreTargetFramework detects modern .NET 5', () => {
+        const result = findNetCoreTargetFramework(['net5.0']);
+        expect(result).toEqual('net5.0');
+    });
+
+    test('findNetCoreTargetFramework detects modern .NET 6', () => {
+        const result = findNetCoreTargetFramework(['net6.0']);
+        expect(result).toEqual('net6.0');
+    });
+
+    test('findNetCoreTargetFramework detects modern .NET 7', () => {
+        const result = findNetCoreTargetFramework(['net7.0']);
+        expect(result).toEqual('net7.0');
+    });
+
+    test('findNetCoreTargetFramework detects modern .NET 8', () => {
+        const result = findNetCoreTargetFramework(['net8.0']);
+        expect(result).toEqual('net8.0');
+    });
+
+    test('findNetCoreTargetFramework detects modern .NET 9', () => {
+        const result = findNetCoreTargetFramework(['net9.0']);
+        expect(result).toEqual('net9.0');
+    });
+
+    test('findNetCoreTargetFramework detects modern .NET 10', () => {
+        const result = findNetCoreTargetFramework(['net10.0']);
+        expect(result).toEqual('net10.0');
+    });
+
+    test('findNetCoreTargetFramework detects modern .NET 11', () => {
+        const result = findNetCoreTargetFramework(['net11.0']);
+        expect(result).toEqual('net11.0');
+    });
+
+    test('findNetCoreTargetFramework detects netcoreapp1.0', () => {
+        const result = findNetCoreTargetFramework(['netcoreapp1.0']);
+        expect(result).toEqual('netcoreapp1.0');
+    });
+
+    test('findNetCoreTargetFramework detects netcoreapp3.1', () => {
+        const result = findNetCoreTargetFramework(['netcoreapp3.1']);
+        expect(result).toEqual('netcoreapp3.1');
+    });
+
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 1.0', () => {
+        const result = findNetCoreTargetFramework(['net10']);
+        expect(result).toBeUndefined();
+    });
+
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 1.1', () => {
+        const result = findNetCoreTargetFramework(['net11']);
+        expect(result).toBeUndefined();
+    });
+
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 2.0', () => {
+        const result = findNetCoreTargetFramework(['net20']);
+        expect(result).toBeUndefined();
+    });
+
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 3.5', () => {
+        const result = findNetCoreTargetFramework(['net35']);
+        expect(result).toBeUndefined();
+    });
+
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 4.0', () => {
+        const result = findNetCoreTargetFramework(['net40']);
+        expect(result).toBeUndefined();
+    });
+
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 4.5', () => {
+        const result = findNetCoreTargetFramework(['net45']);
+        expect(result).toBeUndefined();
+    });
+
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 4.6.1', () => {
+        const result = findNetCoreTargetFramework(['net461']);
+        expect(result).toBeUndefined();
+    });
+
+    test('findNetCoreTargetFramework does not detect legacy .NET Framework 4.8', () => {
+        const result = findNetCoreTargetFramework(['net48']);
+        expect(result).toBeUndefined();
+    });
+
+    test('findNetCoreTargetFramework handles shortnames without dot for .NET 5 (net50)', () => {
+        const result = findNetCoreTargetFramework(['net50']);
+        expect(result).toEqual('net5.0');
+    });
+
+    test('findNetCoreTargetFramework handles shortnames without dot for .NET 10 (net100)', () => {
+        const result = findNetCoreTargetFramework(['net100']);
+        expect(result).toEqual('net10.0');
+    });
+
+    test('findNetCoreTargetFramework handles shortnames without dot for .NET 11 (net110)', () => {
+        const result = findNetCoreTargetFramework(['net110']);
+        expect(result).toEqual('net11.0');
+    });
+
+    test('findNetCoreTargetFramework handles multiple TFMs and selects correct one', () => {
+        const result = findNetCoreTargetFramework(['net48', 'net10.0', 'netstandard2.0']);
+        expect(result).toEqual('net10.0');
     });
 });
 
