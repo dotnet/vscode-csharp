@@ -23,7 +23,7 @@ export function findModernNetFrameworkTargetFramework(tfmShortNames: string[]): 
     // Match modern .NET versions (5.0 and higher): net5.0, net6.0, net7.0, net8.0, net9.0, net10.0, net11.0, etc.
     // Pattern: ^net(\d+)\.0$ - starts with 'net', followed by digits, then '.0'
     // This matches net5.0, net10.0, net11.0, etc.
-    const withDotRegexp = new RegExp('^net(\\d+)\\.0$');
+    const withDotRegexp = /^net(\d+)\.0$/;
     
     for (const tf of tfmShortNames) {
         const match = withDotRegexp.exec(tf);
@@ -38,7 +38,7 @@ export function findModernNetFrameworkTargetFramework(tfmShortNames: string[]): 
 
     // Also check for shortnames without dot: net50, net60, net70, net80, net90, net100, net110, etc.
     // Pattern: ^net(\d+)$ - starts with 'net', followed by only digits (no dot)
-    const withoutDotRegexp = new RegExp('^net(\\d+)$');
+    const withoutDotRegexp = /^net(\d+)$/;
     
     for (const tf of tfmShortNames) {
         const match = withoutDotRegexp.exec(tf);
