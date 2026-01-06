@@ -36,7 +36,7 @@ export function findModernNetFrameworkTargetFramework(tfmShortNames: string[]): 
         }
     }
 
-    // Also check for shortnames without dot: net50, net60, net70, net80, net90, net100, net110, etc.
+    // Also check for shortnames without dot: net50, net60, net70, net80, and net90.
     // Pattern: ^net(\d+)$ - starts with 'net', followed by only digits (no dot)
     const withoutDotRegexp = /^net(\d+)$/;
 
@@ -46,7 +46,7 @@ export function findModernNetFrameworkTargetFramework(tfmShortNames: string[]): 
             const versionStr = match[1];
             const version = parseInt(versionStr, 10);
 
-            // Modern .NET without dot: net50 (5.0), net60 (6.0), ..., net100 (10.0), net110 (11.0)
+            // Modern .NET without dot: net50 (5.0), net60 (6.0), ..., net90 (9.0)
             // These are reported as net + (version * 10), so they're always multiples of 10
             // This excludes legacy .NET Framework like net461 (4.6.1), net472 (4.7.2), etc.
             if (version >= 50 && version <= 90 && version % 10 === 0) {
