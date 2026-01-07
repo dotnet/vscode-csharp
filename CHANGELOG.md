@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.112.x
+* Fix TFM detection for .NET 10+ to enable launch.json generation (PR: [#8873](https://github.com/dotnet/vscode-csharp/pull/8873))
 * Update Razor to 10.0.0-preview.25619.1 (PR: [#8867](https://github.com/dotnet/vscode-csharp/pull/8867))
   * Encode double slash as underscore slash in hint names (PR: [#12597](https://github.com/dotnet/razor/pull/12597))
   * Navigate to a Razor file when GTD/FAR/GTI is run in C# on the class name (PR: [#12580](https://github.com/dotnet/razor/pull/12580))
