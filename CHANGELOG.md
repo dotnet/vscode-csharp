@@ -4,11 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.112.x
-* Bump qs and body-parser (PR: [#8871](https://github.com/dotnet/vscode-csharp/pull/8871))
-* Bump Razor to 10.0.0-preview.25613.1 (PR: [#8858](https://github.com/dotnet/vscode-csharp/pull/8858))
-* Make sure to use .npmrc from the powershell commands (PR: [#8859](https://github.com/dotnet/vscode-csharp/pull/8859))
-* Fetch package.json from dotnet/vscode-csharp GitHub repo for tag creation (PR: [#8856](https://github.com/dotnet/vscode-csharp/pull/8856))
-* Update version number to 2.112 (PR: [#8855](https://github.com/dotnet/vscode-csharp/pull/8855))
+* Fix TFM detection for .NET 10+ to enable launch.json generation (PR: [#8873](https://github.com/dotnet/vscode-csharp/pull/8873))
 * Update Razor to 10.0.0-preview.25619.1 (PR: [#8867](https://github.com/dotnet/vscode-csharp/pull/8867))
   * Encode double slash as underscore slash in hint names (PR: [#12597](https://github.com/dotnet/razor/pull/12597))
   * Navigate to a Razor file when GTD/FAR/GTI is run in C# on the class name (PR: [#12580](https://github.com/dotnet/razor/pull/12580))
