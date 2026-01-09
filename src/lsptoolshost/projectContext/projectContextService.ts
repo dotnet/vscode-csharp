@@ -5,10 +5,16 @@
 
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { VSGetProjectContextsRequest, VSProjectContext, VSProjectContextList } from '../server/roslynProtocol';
+import {
+    ProjectContextRefreshNotification,
+    VSGetProjectContextsRequest,
+    VSProjectContext,
+    VSProjectContextList,
+} from '../server/roslynProtocol';
 import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../utils/uriConverter';
 import { LanguageServerEvents, ServerState } from '../server/languageServerEvents';
+import { RoslynLanguageClient } from '../server/roslynLanguageClient';
 
 export interface ProjectContextChangeEvent {
     languageId: string;
@@ -32,7 +38,11 @@ export class ProjectContextService {
         _vs_is_miscellaneous: false,
     };
 
-    constructor(private _languageServer: RoslynLanguageServer, _languageServerEvents: LanguageServerEvents) {
+    constructor(
+        private _languageServer: RoslynLanguageServer,
+        _languageClient: RoslynLanguageClient,
+        _languageServerEvents: LanguageServerEvents
+    ) {
         _languageServerEvents.onServerStateChange(async (e) => {
             // When the project initialization is complete, open files
             // could move from the miscellaneous workspace context into
@@ -40,6 +50,10 @@ export class ProjectContextService {
             if (e.state === ServerState.Stopped || e.state === ServerState.ProjectInitializationComplete) {
                 await this.refresh();
             }
+        });
+
+        _languageClient.onNotification(ProjectContextRefreshNotification.type, async () => {
+            await this.refresh();
         });
 
         vscode.window.onDidChangeActiveTextEditor(async (_) => this.refresh());
@@ -62,9 +76,6 @@ export class ProjectContextService {
 
         const uri = textEditor!.document.uri;
 
-        // Whether we have refreshed the active document's project context.
-        let isVerifyPass = false;
-
         if (_verifyTimeout) {
             // If we have changed active document then do not verify the previous one.
             clearTimeout(_verifyTimeout);
@@ -72,12 +83,6 @@ export class ProjectContextService {
         }
 
         if (_documentUriToVerify) {
-            if (uri.toString() === _documentUriToVerify.toString()) {
-                // We have rerequested project contexts for the active document
-                // and we can now notify if the document isn't part of the workspace.
-                isVerifyPass = true;
-            }
-
             _documentUriToVerify = undefined;
         }
 
@@ -93,24 +98,12 @@ export class ProjectContextService {
         }
 
         const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
-        const isVerified = !context._vs_is_miscellaneous || isVerifyPass;
-        this._contextChangeEmitter.fire({ languageId, uri, context, isVerified });
+        this._contextChangeEmitter.fire({ languageId, uri, context, isVerified: false });
 
-        if (context._vs_is_miscellaneous && !isVerifyPass) {
-            // Request the active project context be refreshed but delay the request to give
-            // time for the project system to update with new files.
-            _verifyTimeout = setTimeout(() => {
-                _verifyTimeout = undefined;
-                _documentUriToVerify = uri;
-
-                // Trigger a refresh, but don't block on refresh completing.
-                this.refresh().catch((e) => {
-                    throw new Error(`Error refreshing project context status ${e}`);
-                });
-            }, VerificationDelay);
-
-            return;
-        }
+        // If we do not recieve a refresh even within the timout period, send a verified event.
+        _verifyTimeout = setTimeout(() => {
+            this._contextChangeEmitter.fire({ languageId, uri, context, isVerified: true });
+        }, VerificationDelay);
     }
 
     private async getProjectContexts(

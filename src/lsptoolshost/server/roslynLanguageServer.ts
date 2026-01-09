@@ -69,6 +69,7 @@ import { getProfilingEnvVars } from '../profiling/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
+import { ProjectContextFeature } from '../projectContext/projectContextFeature';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -106,6 +107,7 @@ export class RoslynLanguageServer {
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
     public readonly _onAutoInsertFeature: OnAutoInsertFeature;
+    public readonly _projectContextFeature: ProjectContextFeature;
 
     public readonly _buildDiagnosticService: BuildDiagnosticsService;
     public readonly _projectContextService: ProjectContextService;
@@ -134,7 +136,7 @@ export class RoslynLanguageServer {
         this._buildDiagnosticService = new BuildDiagnosticsService(diagnosticsReportedByBuild);
         this.registerDocumentOpenForDiagnostics();
 
-        this._projectContextService = new ProjectContextService(this, this._languageServerEvents);
+        this._projectContextService = new ProjectContextService(this, this._languageClient, this._languageServerEvents);
 
         this.registerDebuggerAttach();
 
@@ -143,6 +145,7 @@ export class RoslynLanguageServer {
         registerOnAutoInsert(this, this._languageClient);
 
         this._onAutoInsertFeature = new OnAutoInsertFeature(this._languageClient);
+        this._projectContextFeature = new ProjectContextFeature(this._languageClient);
     }
 
     public get state(): ServerState {
@@ -335,6 +338,7 @@ export class RoslynLanguageServer {
         );
 
         client.registerFeature(server._onAutoInsertFeature);
+        client.registerFeature(server._projectContextFeature);
 
         // Start the client. This will also launch the server process.
         await client.start();
@@ -602,6 +606,10 @@ export class RoslynLanguageServer {
 
     public getOnAutoInsertFeature(): OnAutoInsertFeature | undefined {
         return this._onAutoInsertFeature;
+    }
+
+    public getProjectContextFeature(): ProjectContextFeature | undefined {
+        return this._projectContextFeature;
     }
 
     private static async startServer(
