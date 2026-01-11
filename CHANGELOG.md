@@ -5,11 +5,20 @@
 
 # 2.112.x
 * Fix TFM detection for .NET 10+ to enable launch.json generation (PR: [#8873](https://github.com/dotnet/vscode-csharp/pull/8873))
-* Update Razor to 10.0.0-preview.25619.1 (PR: [#8867](https://github.com/dotnet/vscode-csharp/pull/8867))
+* Update Razor to 10.0.0-preview.26059.2 (PR: [#8867](https://github.com/dotnet/vscode-csharp/pull/8867))
   * Encode double slash as underscore slash in hint names (PR: [#12597](https://github.com/dotnet/razor/pull/12597))
   * Navigate to a Razor file when GTD/FAR/GTI is run in C# on the class name (PR: [#12580](https://github.com/dotnet/razor/pull/12580))
   * Fix rename of components in the global namespace (PR: [#12577](https://github.com/dotnet/razor/pull/12577))
   * Return a document symbol representing the "Render" method for a Razor file (PR: [#12568](https://github.com/dotnet/razor/pull/12568))
+  * Filter our html diagnostics when a tag helper attribute spans multiple lines (PR: [#12654](https://github.com/dotnet/razor/pull/12654))                                                                                                              
+  * Handle Html indentation ourselves, rather than using the IDE formatter (PR: [#12623](https://github.com/dotnet/razor/pull/12623))                                                                                                                    
+  * Add new option to control attribute indent style (PR: [#12625](https://github.com/dotnet/razor/pull/12625))                                                                                                                                          
+  * Fix formatting with adjacent C# templates (PR: [#12636](https://github.com/dotnet/razor/pull/12636))                                                                                                                                                 
+  * Emit the start of multiline implicit expressions the same as explicit. (PR: [#12624](https://github.com/dotnet/razor/pull/12624))                                                                                                                    
+  * Rename a .razor file when Roslyn renames the component type name (PR: [#12606](https://github.com/dotnet/razor/pull/12606))                                                                                                                          
+  * Rename component tags and type references when a Razor file is renamed (PR: [#12561](https://github.com/dotnet/razor/pull/12561))                                                                                                                    
+  * Handle conflict markers (PR: [#12642](https://github.com/dotnet/razor/pull/12642))                                                                                                                                                                   
+  * Fix cross project span and edit mapping (PR: [#12614](https://github.com/dotnet/razor/pull/12614))                                                                                                                                                   
 * Fix JavaScript highlighting in Razor files after C# control structures without braces (PR: [#8865](https://github.com/dotnet/vscode-csharp/pull/8865))
 
 # 2.111.x
