@@ -1761,6 +1761,15 @@
             "default": false,
             "description": "%configuration.omnisharp.razor.format.codeBlockBraceOnNextLine%"
           },
+          "razor.format.attributeIndentStyle": {
+            "type": "string",
+            "default": "alignWithFirst",
+            "enum": [
+              "alignWithFirst",
+              "indentByOne"
+            ],
+            "description": "%configuration.omnisharp.razor.format.attributeIndentStyle%"
+          },
           "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
             "scope": "window",
