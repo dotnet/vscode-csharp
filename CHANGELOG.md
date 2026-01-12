@@ -5,7 +5,8 @@
 
 # 2.112.x
 * Fix TFM detection for .NET 10+ to enable launch.json generation (PR: [#8873](https://github.com/dotnet/vscode-csharp/pull/8873))
-* Update Razor to 10.0.0-preview.26059.2 (PR: [#8867](https://github.com/dotnet/vscode-csharp/pull/8867))
+* Fix JavaScript highlighting in Razor files after C# control structures without braces (PR: [#8865](https://github.com/dotnet/vscode-csharp/pull/8865))
+* Update Razor to 10.0.0-preview.26059.2 (PR: [#8877](https://github.com/dotnet/vscode-csharp/pull/8877))
   * Encode double slash as underscore slash in hint names (PR: [#12597](https://github.com/dotnet/razor/pull/12597))
   * Navigate to a Razor file when GTD/FAR/GTI is run in C# on the class name (PR: [#12580](https://github.com/dotnet/razor/pull/12580))
   * Fix rename of components in the global namespace (PR: [#12577](https://github.com/dotnet/razor/pull/12577))
@@ -19,14 +20,20 @@
   * Rename component tags and type references when a Razor file is renamed (PR: [#12561](https://github.com/dotnet/razor/pull/12561))                                                                                                                    
   * Handle conflict markers (PR: [#12642](https://github.com/dotnet/razor/pull/12642))                                                                                                                                                                   
   * Fix cross project span and edit mapping (PR: [#12614](https://github.com/dotnet/razor/pull/12614))                                                                                                                                                   
-* Fix JavaScript highlighting in Razor files after C# control structures without braces (PR: [#8865](https://github.com/dotnet/vscode-csharp/pull/8865))
+* Update Roslyn to 5.4.0-2.26060.1 (PR: [#8877](https://github.com/dotnet/vscode-csharp/pull/8877))  
+  * Add back async fixers (PR: [#81835](https://github.com/dotnet/roslyn/pull/81835))
+  * Fix crash in convert-if-to-switch (PR: [#81724](https://github.com/dotnet/roslyn/pull/81724))
+  * Add code-folding/structure-guides/sticky-scroll support for extension blocks (PR: [#81667](https://github.com/dotnet/roslyn/pull/81667))
+  * Improve go-to-def in situations where compiler returns multiple candidates. (PR: [#81583](https://github.com/dotnet/roslyn/pull/81583))
+  * Add willRenameFiles support, and an abstraction for extenders to implement (PR: [#81549](https://github.com/dotnet/roslyn/pull/81549))
+  * Support `// lang=c#` along with `// lang=c#-test` (PR: [#81558](https://github.com/dotnet/roslyn/pull/81558))
 
 # 2.111.x
 * Razor logging cleanup and documentation update (PR: [#8843](https://github.com/dotnet/vscode-csharp/pull/8843))
 * Create Razor tags based on the razorExtension component (PR: [#8830](https://github.com/dotnet/vscode-csharp/pull/8830))
 * Add second opt-out flag for file-based programs (PR: [#8823](https://github.com/dotnet/vscode-csharp/pull/8823))
 * Update extension to run on .NET 10 (PR: [#8839](https://github.com/dotnet/vscode-csharp/pull/8839))
-* Update Roslyn to 5.3.0-2.25604.5 (PR: [#8839](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.3.0-2.25604.5 (PR: [#8839](https://github.com/dotnet/vscode-csharp/pull/8839))
   * Build our libraries against net10.0 (PR: [#81545](https://github.com/dotnet/roslyn/pull/81545))
   * Update Roslyn LSP server to .net10 (PR: [#81508](https://github.com/dotnet/roslyn/pull/81508))
   * Fix InvalidCastException in ConvertForToForEach with tuples (PR: [#81531](https://github.com/dotnet/roslyn/pull/81531))
