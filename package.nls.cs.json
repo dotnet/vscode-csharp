@@ -116,6 +116,7 @@
   "configuration.omnisharp.projectLoadTimeout": "Doba, po kterou bude Visual Studio Code čekat na spuštění serveru OmniSharp. Čas je vyjádřen v sekundách.",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Určuje, jestli se má potvrdit pomocný element značky a elementy komponenty s mezerou.",
   "configuration.omnisharp.razor.devmode": "Vynutí spuštění rozšíření v režimu, který umožňuje místní vývoj Razor.VSCode.",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Vynutí, aby levá složená závorka za direktivou @code nebo @functions byla na následujícím řádku.",
   "configuration.omnisharp.razor.format.enable": "Umožňuje povolit nebo zakázat výchozí formátovací modul Razor.",
   "configuration.omnisharp.razor.plugin.path": "Přepíše cestu ke knihovně DLL modulu plug-in Razor.",

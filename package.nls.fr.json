@@ -116,6 +116,7 @@
   "configuration.omnisharp.projectLoadTimeout": "Le temps Visual Studio Code attend le démarrage du serveur OmniSharp. L’heure est exprimée en secondes.",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Spécifie s’il faut valider les éléments tag helper et component avec un espace.",
   "configuration.omnisharp.razor.devmode": "Force l’extension à s’exécuter dans un mode qui active le développement Razor.VSCode local.",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Force l'accolade ouverte après une directive @code ou @functions à se trouver sur la ligne suivante.",
   "configuration.omnisharp.razor.format.enable": "Activez/désactivez le formateur Razor par défaut.",
   "configuration.omnisharp.razor.plugin.path": "Remplace le chemin d’accès à la DLL du plug-in Razor.",
