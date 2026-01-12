@@ -129,6 +129,7 @@
   "configuration.omnisharp.razor.devmode": "Forces the extension to run in a mode that enables local Razor.VSCode development.",
   "configuration.omnisharp.razor.format.enable": "Enable/disable default Razor formatter.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Forces the open brace after an @code or @functions directive to be on the following line.",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Specifies whether to commit tag helper and component elements with a space.",
   "configuration.razor.languageServer.directory": "Overrides the path to the Razor Language Server directory.",
   "configuration.razor.languageServer.debug": "Specifies whether to wait for debug attach when launching the language server.",

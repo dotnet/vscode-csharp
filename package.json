@@ -40,9 +40,9 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.3.0-2.25604.5",
+    "roslyn": "5.4.0-2.26060.1",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.25619.1",
+    "razor": "10.0.0-preview.26059.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.3.11128.18"
   },
@@ -1760,6 +1760,15 @@
             "scope": "window",
             "default": false,
             "description": "%configuration.omnisharp.razor.format.codeBlockBraceOnNextLine%"
+          },
+          "razor.format.attributeIndentStyle": {
+            "type": "string",
+            "default": "alignWithFirst",
+            "enum": [
+              "alignWithFirst",
+              "indentByOne"
+            ],
+            "description": "%configuration.omnisharp.razor.format.attributeIndentStyle%"
           },
           "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
