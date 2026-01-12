@@ -23,7 +23,8 @@ export interface ProjectContextChangeEvent {
     isVerified: boolean;
 }
 
-const VerificationDelay = 2 * 1000;
+// We want to verify the project context is in a stable state before warning the user about miscellaneous files.
+const VerificationDelay = 5 * 1000;
 
 let _verifyTimeout: NodeJS.Timeout | undefined;
 let _documentUriToVerify: vscode.Uri | undefined;
@@ -76,8 +77,10 @@ export class ProjectContextService {
 
         const uri = textEditor!.document.uri;
 
+        // We verify a project context is stable by waiting for a period of time
+        // without any changes before sending a verified event. Changing active document
+        // or receiving a new project context refresh notification cancels any pending verification.
         if (_verifyTimeout) {
-            // If we have changed active document then do not verify the previous one.
             clearTimeout(_verifyTimeout);
             _verifyTimeout = undefined;
         }
