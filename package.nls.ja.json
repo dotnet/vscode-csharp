@@ -116,6 +116,7 @@
   "configuration.omnisharp.projectLoadTimeout": "Visual Studio Code が OmniSharp サーバーの起動を待機する時間。時間は秒単位で表されます。",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "タグ ヘルパーとコンポーネント要素をスペースでコミットするかどうかを指定します。",
   "configuration.omnisharp.razor.devmode": "ローカル Razor.VSCode 開発を有効にするモードで拡張機能を強制的に実行します。",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "@code または @functions ディレクティブの後の始め中かっこを強制的に次の行にします。",
   "configuration.omnisharp.razor.format.enable": "既定の Razor フォーマッタを有効または無効にします。",
   "configuration.omnisharp.razor.plugin.path": "Razor プラグイン dll へのパスをオーバーライドします。",
