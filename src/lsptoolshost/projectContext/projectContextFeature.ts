@@ -16,7 +16,7 @@ import {
     ClientCapabilities,
     DocumentSelector,
     InitializeParams,
-    ProtocolRequestType,
+    ProtocolNotificationType0,
     RegistrationType,
     ServerCapabilities,
     TextDocumentRegistrationOptions,
@@ -32,13 +32,9 @@ export class ProjectContextFeature implements DynamicFeature<RoslynProtocol.Proj
     constructor(client: LanguageClient) {
         this._client = client;
         this._registrations = new Map();
-        this.registrationType = new ProtocolRequestType<
-            RoslynProtocol.OnAutoInsertParams,
-            RoslynProtocol.OnAutoInsertResponseItem | null,
-            never,
-            void,
-            RoslynProtocol.OnAutoInsertRegistrationOptions
-        >(RoslynProtocol.OnAutoInsertRequest.method);
+        this.registrationType = new ProtocolNotificationType0<RoslynProtocol.ProjectContextRegistrationOptions>(
+            RoslynProtocol.ProjectContextRefreshNotification.method
+        );
     }
     fillInitializeParams?: ((params: InitializeParams) => void) | undefined;
     preInitialize?:
@@ -124,7 +120,7 @@ export class ProjectContextFeature implements DynamicFeature<RoslynProtocol.Proj
     private getRegistrationOptions(
         documentSelector: DocumentSelector | undefined,
         capability: undefined | TextDocumentRegistrationOptions
-    ): (RoslynProtocol.OnAutoInsertRegistrationOptions & { documentSelector: DocumentSelector }) | undefined {
+    ): RoslynProtocol.ProjectContextRegistrationOptions | undefined {
         if (!documentSelector || !capability) {
             return undefined;
         }
