@@ -60,7 +60,7 @@ async function changeProjectContext(
     document: vscode.TextDocument,
     options: ChangeProjectContextOptions
 ): Promise<VSProjectContext | undefined> {
-    const contextList = await languageServer._projectContextService.getProjectContexts(
+    const contextList = await languageServer._projectContextService.queryServerProjectContexts(
         document.uri,
         CancellationToken.None
     );

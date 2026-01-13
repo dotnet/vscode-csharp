@@ -137,7 +137,7 @@ export class ProjectContextService {
             return;
         }
 
-        const contextList = await this.getProjectContexts(document.uri, this._source.token);
+        const contextList = await this.queryServerProjectContexts(document.uri, this._source.token);
         if (!contextList) {
             this._contextChangeEmitter.fire({
                 document,
@@ -158,7 +158,7 @@ export class ProjectContextService {
         }, VerificationDelay);
     }
 
-    public async getProjectContexts(
+    public async queryServerProjectContexts(
         uri: string | vscode.Uri,
         token: vscode.CancellationToken
     ): Promise<VSProjectContextList | undefined> {
