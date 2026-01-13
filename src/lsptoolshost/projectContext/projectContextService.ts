@@ -33,8 +33,15 @@ let _verifyTimeout: NodeJS.Timeout | undefined;
 let _documentUriToVerify: vscode.Uri | undefined;
 
 export class ProjectContextService {
-    private readonly _projectContextMap: Map<ContextKey, VSProjectContext> = new Map();
-    private readonly _contextKeyMap: Map<UriString, ContextKey> = new Map();
+    // This map tracks which project context is active for a given context key. New entries are
+    // added when querying the server for project contexts for a document and when a user changes
+    // the active context for a document.
+    private readonly _keyToActiveProjectContextMap: Map<ContextKey, VSProjectContext> = new Map();
+
+    // This map tracks which context key a given document uri is associated with. New entries are
+    // added when querying the server for project contexts for a document.
+    private readonly _uriToContextKeyMap: Map<UriString, ContextKey> = new Map();
+
     private readonly _contextChangeEmitter = new vscode.EventEmitter<ProjectContextChangeEvent>();
     private _source = new vscode.CancellationTokenSource();
     private readonly _emptyProjectContext: VSProjectContext = {
@@ -72,12 +79,12 @@ export class ProjectContextService {
     public async getDocumentContext(uri: string | vscode.Uri): Promise<VSProjectContext | undefined> {
         const uriString = uri instanceof vscode.Uri ? UriConverter.serialize(uri) : uri;
 
-        const key = this._contextKeyMap.get(uriString);
+        const key = this._uriToContextKeyMap.get(uriString);
         if (key === undefined) {
             return undefined;
         }
 
-        return this._projectContextMap.get(key);
+        return this._keyToActiveProjectContextMap.get(key);
     }
 
     public async setActiveFileContext(
@@ -91,7 +98,7 @@ export class ProjectContextService {
             return;
         }
 
-        this._projectContextMap.set(contextList._vs_key, context);
+        this._keyToActiveProjectContextMap.set(contextList._vs_key, context);
         this._contextChangeEmitter.fire({
             document,
             context,
@@ -176,10 +183,10 @@ export class ProjectContextService {
             // No need to track if there is only one context because the default context
             // will always be active.
             if (contextList._vs_projectContexts.length > 1) {
-                this._contextKeyMap.set(uriString, contextList._vs_key);
+                this._uriToContextKeyMap.set(uriString, contextList._vs_key);
                 // If this list of contexts hasn't been queried before that set the context to the default.
-                if (!this._projectContextMap.has(contextList._vs_key)) {
-                    this._projectContextMap.set(
+                if (!this._keyToActiveProjectContextMap.has(contextList._vs_key)) {
+                    this._keyToActiveProjectContextMap.set(
                         contextList._vs_key,
                         contextList._vs_projectContexts[contextList._vs_defaultIndex]
                     );
@@ -187,7 +194,7 @@ export class ProjectContextService {
             } else {
                 // If memory becomes a concern we could ref count how many documents are
                 // using each context key and remove them here as well.
-                this._contextKeyMap.delete(uriString);
+                this._uriToContextKeyMap.delete(uriString);
             }
 
             return contextList;
