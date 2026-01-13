@@ -206,7 +206,8 @@ export class ProjectContextService {
         }
 
         if (oldContextKey !== undefined) {
-            // Decrement the ref count for the old context key.
+            // The document is no longer associated with the old context key, so decrement
+            // the ref count. If no documents are associated with the old context key, remove it.
             const oldRefCount = this._contextKeyToRefCountMap.get(oldContextKey) || 0;
             if (oldRefCount <= 1) {
                 this._contextKeyToRefCountMap.delete(oldContextKey);
