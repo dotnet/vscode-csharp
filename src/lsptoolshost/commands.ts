@@ -36,8 +36,8 @@ function registerExtensionCommands(
     csharpTraceChannel: vscode.LogOutputChannel
 ) {
     context.subscriptions.push(
-        vscode.commands.registerCommand('csharp.changeProjectContext', async (options) =>
-            changeProjectContext(languageServer, options)
+        vscode.commands.registerCommand('csharp.changeProjectContext', async (document, options) =>
+            changeProjectContext(languageServer, document, options)
         )
     );
     context.subscriptions.push(
@@ -57,14 +57,11 @@ function registerExtensionCommands(
 }
 async function changeProjectContext(
     languageServer: RoslynLanguageServer,
-    options: ChangeProjectContextOptions | undefined
+    document: vscode.TextDocument,
+    options: ChangeProjectContextOptions
 ): Promise<VSProjectContext | undefined> {
-    const editor = vscode.window.activeTextEditor;
-    if (editor === undefined) {
-        return;
-    }
     const contextList = await languageServer._projectContextService.getProjectContexts(
-        editor.document.uri,
+        document.uri,
         CancellationToken.None
     );
     if (contextList === undefined) {
@@ -75,7 +72,9 @@ async function changeProjectContext(
 
     if (options !== undefined) {
         const contextLabel = `${options.projectName} (${options.tfm})`;
-        context = contextList._vs_projectContexts.find((context) => context._vs_label === contextLabel);
+        context =
+            contextList._vs_projectContexts.find((context) => context._vs_label === contextLabel) ||
+            contextList._vs_projectContexts.find((context) => context._vs_label === options.projectName);
     } else {
         const items = contextList._vs_projectContexts.map((context) => {
             return { label: context._vs_label, context };
@@ -90,7 +89,7 @@ async function changeProjectContext(
         return;
     }
 
-    await languageServer._projectContextService.setActiveFileContext(contextList, context);
+    await languageServer._projectContextService.setActiveFileContext(document, contextList, context);
 }
 
 interface ChangeProjectContextOptions {

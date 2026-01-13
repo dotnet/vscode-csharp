@@ -28,7 +28,7 @@ export class ProjectContextStatus {
 
         projectContextService.onActiveFileContextChanged((e) => {
             item.text = e.context._vs_label;
-            item.command = e.hasAdditionalContexts ? selectContextCommand : undefined;
+            item.command = e.hasAdditionalContexts ? { ...selectContextCommand, arguments: [e.document] } : undefined;
 
             // Show a warning when the active file is part of the Miscellaneous File workspace and
             // project initialization is complete.

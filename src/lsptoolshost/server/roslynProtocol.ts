@@ -28,6 +28,7 @@ import { ProjectConfigurationMessage } from '../../shared/projectConfiguration';
 export interface VSProjectContextList {
     _vs_projectContexts: VSProjectContext[];
     _vs_defaultIndex: number;
+    _vs_key: string;
 }
 
 export interface VSProjectContext {
@@ -283,7 +284,7 @@ export namespace ProjectContextRefreshNotification {
 export namespace FeatureProvidersRefreshNotification {
     export const method = 'workspace/featureProviders/_vs_refresh';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
-    export const type = new NotificationType<TextDocumentIdentifier>(method);
+    export const type = new NotificationType<object>(method);
 }
 
 export namespace ProjectInitializationCompleteNotification {
