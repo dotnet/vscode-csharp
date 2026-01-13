@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.112.x
-* Add ability to select a doecument's project context (PR: [#7328](https://github.com/dotnet/vscode-csharp/pull/7328))
+* Add ability to select a document's project context (PR: [#7328](https://github.com/dotnet/vscode-csharp/pull/7328))
 * Fix TFM detection for .NET 10+ to enable launch.json generation (PR: [#8873](https://github.com/dotnet/vscode-csharp/pull/8873))
 * Fix JavaScript highlighting in Razor files after C# control structures without braces (PR: [#8865](https://github.com/dotnet/vscode-csharp/pull/8865))
 * Update Razor to 10.0.0-preview.26059.2 (PR: [#8877](https://github.com/dotnet/vscode-csharp/pull/8877))
