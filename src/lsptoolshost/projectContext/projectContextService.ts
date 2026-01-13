@@ -42,6 +42,11 @@ export class ProjectContextService {
     // added when querying the server for project contexts for a document.
     private readonly _uriToContextKeyMap: Map<UriString, ContextKey> = new Map();
 
+    // This map tracks how many documents are associated with a given context key. New entries are
+    // added when querying the server for project contexts for a document. Entries are removed
+    // when documents are no longer associated with a context key.
+    private readonly _contextKeyToRefCountMap: Map<ContextKey, number> = new Map();
+
     private readonly _contextChangeEmitter = new vscode.EventEmitter<ProjectContextChangeEvent>();
     private _source = new vscode.CancellationTokenSource();
     private readonly _emptyProjectContext: VSProjectContext = {
@@ -179,23 +184,7 @@ export class ProjectContextService {
                 token
             );
 
-            // Update our caches so that we can quickly lookup the active context later.
-            // No need to track if there is only one context because the default context
-            // will always be active.
-            if (contextList._vs_projectContexts.length > 1) {
-                this._uriToContextKeyMap.set(uriString, contextList._vs_key);
-                // If this list of contexts hasn't been queried before that set the context to the default.
-                if (!this._keyToActiveProjectContextMap.has(contextList._vs_key)) {
-                    this._keyToActiveProjectContextMap.set(
-                        contextList._vs_key,
-                        contextList._vs_projectContexts[contextList._vs_defaultIndex]
-                    );
-                }
-            } else {
-                // If memory becomes a concern we could ref count how many documents are
-                // using each context key and remove them here as well.
-                this._uriToContextKeyMap.delete(uriString);
-            }
+            this.updateCaches(uriString, contextList);
 
             return contextList;
         } catch (error) {
@@ -204,6 +193,48 @@ export class ProjectContextService {
             }
 
             throw error;
+        }
+    }
+
+    private updateCaches(uriString: UriString, contextList: VSProjectContextList) {
+        const oldContextKey = this._uriToContextKeyMap.get(uriString);
+        const newContextKey = contextList._vs_key;
+
+        if (oldContextKey !== undefined) {
+            if (oldContextKey === newContextKey) {
+                // We have already seen this context key and it hasn't changed, nothing to do.
+                return;
+            }
+
+            // Decrement the ref count for the old context key.
+            const oldRefCount = this._contextKeyToRefCountMap.get(oldContextKey) || 0;
+            if (oldRefCount <= 1) {
+                this._contextKeyToRefCountMap.delete(oldContextKey);
+                this._keyToActiveProjectContextMap.delete(oldContextKey);
+            } else {
+                this._contextKeyToRefCountMap.set(oldContextKey, oldRefCount - 1);
+            }
+        }
+
+        // Update our caches so that we can quickly lookup the active context later.
+        // No need to track when there is only one context because the server will use
+        // the default context automatically.
+        if (contextList._vs_projectContexts.length > 1) {
+            // Increment the ref count for the new context key.
+            const newRefCount = (this._contextKeyToRefCountMap.get(newContextKey) || 0) + 1;
+            this._contextKeyToRefCountMap.set(newContextKey, newRefCount);
+
+            this._uriToContextKeyMap.set(uriString, newContextKey);
+
+            // If there is not already an active context for this key, set it to the default.
+            if (!this._keyToActiveProjectContextMap.has(newContextKey)) {
+                const defaultContext = contextList._vs_projectContexts[contextList._vs_defaultIndex];
+                this._keyToActiveProjectContextMap.set(newContextKey, defaultContext);
+            }
+        } else {
+            // We do not need to track the context key for documents with only one context. Remove any
+            // existing mapping.
+            this._uriToContextKeyMap.delete(uriString);
         }
     }
 }
