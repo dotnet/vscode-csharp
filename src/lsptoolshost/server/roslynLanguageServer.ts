@@ -14,6 +14,7 @@ import {
     NotificationType,
     ProtocolRequestType,
     ServerOptions,
+    TextDocumentIdentifier,
 } from 'vscode-languageclient';
 import {
     Trace,
@@ -525,6 +526,23 @@ export class RoslynLanguageServer {
                 state: ServerState.ProjectInitializationStarted,
                 workspaceLabel: this.workspaceDisplayName(),
             });
+        }
+    }
+
+    public async refreshFeatureProviders(): Promise<void> {
+        const uri = getActiveDocumentUri();
+        const request = uri !== undefined ? { uri: UriConverter.serialize(uri) } : undefined;
+
+        return this._languageClient.sendNotification<TextDocumentIdentifier>(
+            RoslynProtocol.FeatureProvidersRefreshNotification.type,
+            request
+        );
+
+        function getActiveDocumentUri(): vscode.Uri | undefined {
+            const document = vscode.window.activeTextEditor?.document;
+            return document?.languageId === 'csharp' || document?.languageId === 'aspnetcorerazor'
+                ? document.uri
+                : undefined;
         }
     }
 

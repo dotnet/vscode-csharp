@@ -90,9 +90,7 @@ async function changeProjectContext(
         return;
     }
 
-    languageServer._projectContextService.setActiveFileContext(contextList, context);
-    // TODO: Replace this with proper server-side onDidChange notifications
-    editor.edit(() => 0);
+    await languageServer._projectContextService.setActiveFileContext(contextList, context);
 }
 
 interface ChangeProjectContextOptions {

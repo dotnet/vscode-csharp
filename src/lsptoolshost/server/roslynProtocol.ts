@@ -280,6 +280,12 @@ export namespace ProjectContextRefreshNotification {
     export const type = new NotificationType(method);
 }
 
+export namespace FeatureProvidersRefreshNotification {
+    export const method = 'workspace/featureProviders/_vs_refresh';
+    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
+    export const type = new NotificationType<TextDocumentIdentifier>(method);
+}
+
 export namespace ProjectInitializationCompleteNotification {
     export const method = 'workspace/projectInitializationComplete';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;

@@ -100,7 +100,7 @@ export class ProjectContextService {
             .join(';');
     }
 
-    public setActiveFileContext(contextList: VSProjectContextList, context: VSProjectContext): void {
+    public async setActiveFileContext(contextList: VSProjectContextList, context: VSProjectContext): Promise<void> {
         const textEditor = vscode.window.activeTextEditor;
         const uri = textEditor?.document?.uri;
         const languageId = textEditor?.document?.languageId;
@@ -112,6 +112,8 @@ export class ProjectContextService {
         this._projectContextMap.set(key, context);
 
         this._contextChangeEmitter.fire({ languageId, uri, context, isVerified: true, hasAdditionalContexts: true });
+
+        await this._languageServer.refreshFeatureProviders();
     }
 
     public async refresh() {
