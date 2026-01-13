@@ -200,12 +200,12 @@ export class ProjectContextService {
         const oldContextKey = this._uriToContextKeyMap.get(uriString);
         const newContextKey = contextList._vs_key;
 
-        if (oldContextKey !== undefined) {
-            if (oldContextKey === newContextKey) {
-                // We have already seen this context key and it hasn't changed, nothing to do.
-                return;
-            }
+        if (oldContextKey === newContextKey) {
+            // We have already seen this context key and it hasn't changed, nothing to do.
+            return;
+        }
 
+        if (oldContextKey !== undefined) {
             // Decrement the ref count for the old context key.
             const oldRefCount = this._contextKeyToRefCountMap.get(oldContextKey) || 0;
             if (oldRefCount <= 1) {
@@ -219,11 +219,15 @@ export class ProjectContextService {
         // Update our caches so that we can quickly lookup the active context later.
         // No need to track when there is only one context because the server will use
         // the default context automatically.
+
         if (contextList._vs_projectContexts.length > 1) {
-            // Increment the ref count for the new context key.
-            const newRefCount = (this._contextKeyToRefCountMap.get(newContextKey) || 0) + 1;
+            // We only get here if this is the first time we have seen this document with this
+            // context key. So we need to increment the ref count in order to track it.
+            const oldRefCount = this._contextKeyToRefCountMap.get(newContextKey) || 0;
+            const newRefCount = oldRefCount + 1;
             this._contextKeyToRefCountMap.set(newContextKey, newRefCount);
 
+            // Track that this document uri is associated with this context key.
             this._uriToContextKeyMap.set(uriString, newContextKey);
 
             // If there is not already an active context for this key, set it to the default.
