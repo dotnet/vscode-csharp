@@ -59,16 +59,15 @@ extends:
             artifactName: l10n
         steps:
         - task: NodeTool@0
-          displayName: 'Install Node.js 18.x'
+          displayName: 'Install Node.js 22.x'
           inputs:
-            # Octokit client needs 18.x to have 'fetch' function.
-            versionSpec: '18.x'
+            versionSpec: '22.x'
         - checkout: self
           clean: true
           submodules: true
           fetchTags: false
           fetchDepth: 0
-        - pwsh: | 
+        - pwsh: |
             npm install
             npm install -g gulp --globalconfig $(Build.SourcesDirectory)/.npmrc
           displayName: 'Install tools'

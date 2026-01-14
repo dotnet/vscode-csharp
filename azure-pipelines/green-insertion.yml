@@ -35,7 +35,7 @@ jobs:
     displayName: ⚙️ Install Node.js
     inputs:
       versionSource: spec
-      versionSpec: 16.x
+      versionSpec: 22.x
   - powershell: |
       "registry=https://pkgs.dev.azure.com/devdiv/DevDiv/_packaging/vs-green/npm/registry/`nalways-auth=true`n" | Tee-Object -FilePath '$(Pipeline.Workspace)/.npmrc'
     displayName: ⚙️ Prepare for publish
