@@ -52,7 +52,7 @@ import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents'
 import { registerShowToastNotification } from '../handlers/showToastNotification';
 import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
 import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
-import { NamedPipeInformation } from './roslynProtocol';
+import { NamedPipeInformation, VSTextDocumentIdentifier } from './roslynProtocol';
 import { IDisposable } from '../../disposable';
 import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
 import { getComponentPaths } from '../extensions/builtInComponents';
@@ -289,6 +289,7 @@ export class RoslynLanguageServer {
         };
 
         const documentSelector = languageServerOptions.documentSelector;
+        let server: RoslynLanguageServer | undefined = undefined;
 
         // Options to control the language client
         const clientOptions: LanguageClientOptions = {
@@ -311,6 +312,12 @@ export class RoslynLanguageServer {
             middleware: {
                 provideDiagnostics,
                 provideWorkspaceDiagnostics,
+                async sendRequest(type, param, token, next) {
+                    if (server !== undefined && type !== RoslynProtocol.VSGetProjectContextsRequest.type) {
+                        await RoslynLanguageServer.tryAddProjectContext(param, server);
+                    }
+                    return next(type, param, token);
+                },
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },
@@ -327,7 +334,7 @@ export class RoslynLanguageServer {
 
         client.registerProposedFeatures();
 
-        const server = new RoslynLanguageServer(
+        server = new RoslynLanguageServer(
             client,
             platformInfo,
             context,
@@ -343,6 +350,19 @@ export class RoslynLanguageServer {
         // Start the client. This will also launch the server process.
         await client.start();
         return server;
+    }
+
+    private static async tryAddProjectContext(param: unknown | undefined, server: RoslynLanguageServer): Promise<void> {
+        if (!isObject(param)) {
+            return;
+        }
+
+        const textDocument = <VSTextDocumentIdentifier | undefined>(param['textDocument'] || param['_vs_textDocument']);
+        if (!textDocument) {
+            return;
+        }
+
+        textDocument._vs_projectContext = await server._projectContextService.getDocumentContext(textDocument.uri);
     }
 
     public async stop(): Promise<void> {
@@ -506,6 +526,10 @@ export class RoslynLanguageServer {
                 workspaceLabel: this.workspaceDisplayName(),
             });
         }
+    }
+
+    public async refreshFeatureProviders(): Promise<void> {
+        return this._languageClient.sendNotification(RoslynProtocol.FeatureProvidersRefreshNotification.type, {});
     }
 
     private convertServerError(request: string, e: any): Error {
@@ -1107,4 +1131,8 @@ function getSessionId(): string {
     }
 
     return sessionId;
+}
+
+export function isObject(value: any): value is { [key: string]: any } {
+    return value !== null && typeof value === 'object';
 }

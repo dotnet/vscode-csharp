@@ -40,7 +40,7 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.4.0-2.26060.1",
+    "roslyn": "5.4.0-2.26062.9",
     "omniSharp": "1.39.14",
     "razor": "10.0.0-preview.26059.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
@@ -1866,6 +1866,12 @@
         "title": "%command.dotnet.restore.all%",
         "category": ".NET",
         "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
+      },
+      {
+        "command": "csharp.changeProjectContext",
+        "title": "%command.csharp.changeProjectContext%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn'"
       },
       {
         "command": "csharp.listProcess",
