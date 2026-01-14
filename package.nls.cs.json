@@ -1,5 +1,6 @@
 {
   "command.csharp.attachToProcess": "Připojení k procesu .NET 5+ nebo .NET Core",
+  "command.csharp.changeProjectContext": "Change the active document's project context",
   "command.csharp.downloadDebugger": "Stáhnout ladicí program .NET Core",
   "command.csharp.listProcess": "Vypsat proces pro připojení",
   "command.csharp.listRemoteDockerProcess": "Výpis procesů v připojení Dockeru",

@@ -1,5 +1,6 @@
 {
   "command.csharp.attachToProcess": "附加到 .NET 5+ 或 .NET Core 进程",
+  "command.csharp.changeProjectContext": "Change the active document's project context",
   "command.csharp.downloadDebugger": "下载 .NET Core 调试程序",
   "command.csharp.listProcess": "列出要附加的进程",
   "command.csharp.listRemoteDockerProcess": "列出 Docker 连接上的进程",
