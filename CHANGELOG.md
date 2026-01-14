@@ -259,7 +259,13 @@
 * Update Debugger to 2.90.0 (PR: [#8572](https://github.com/dotnet/vscode-csharp/pull/8572))
 
 # 2.90.x
-* Bump Roslyn to 5.0.0-2.25424.1 (PR: [#8559](https://github.com/dotnet/vscode-csharp/pull/8559))
+* Register the CSharp context provider with Copilot Chat as well. (PR: [#8565](https://github.com/dotnet/vscode-csharp/pull/8565))
+* Improve the limited activation experience (PR: [#8564](https://github.com/dotnet/vscode-csharp/pull/8564))
+* Do not create a proxy agent if proxy url is empty string. (PR: [#8564](https://github.com/dotnet/vscode-csharp/pull/8581))
+* Bump Roslyn to 5.0.0-2.25428.10 (PR: [#8576](https://github.com/dotnet/vscode-csharp/pull/8576))
+  * Fix issue reporting workspace diagnostics in Razor files (PR: [#80071](https://github.com/dotnet/roslyn/pull/80071))
+  * Cache project analyzers (PR: [#80050](https://github.com/dotnet/roslyn/pull/80050))
+  * Cache diagnostic analyzer computation (PR: [#80045](https://github.com/dotnet/roslyn/pull/80045))
   * Generate `init` accessor for required properties inside `readonly struct`s (PR: [#80004](https://github.com/dotnet/roslyn/pull/80004))
   * Allow Razor cohosting to work with non-Razor SDK projects (PR: [#79953](https://github.com/dotnet/roslyn/pull/79953))
   * Update 'use expr body' to be a purely syntactic analyzer (PR: [#79979](https://github.com/dotnet/roslyn/pull/79979))
@@ -335,7 +341,9 @@
   * Update Roslyn to 4.14.0-3.25168.13 (PR: [omnisharp-roslyn/#2664](https://github.com/OmniSharp/omnisharp-roslyn/pull/2664))
 
 # 2.87.x
-* Bump Roslyn to 5.0.0-2.25371.17 (PR: [#8436](https://github.com/dotnet/vscode-csharp/pull/8436))
+* Fix acquisition of components with proxies (PR: [#8462](https://github.com/dotnet/vscode-csharp/pull/8462))
+* Bump Roslyn to 5.0.0-2.25404.10 (PR: [#8490](https://github.com/dotnet/vscode-csharp/pull/8490))
+  * Fix file based programs getting stuck in the host workspace (PR: [#79730](https://github.com/dotnet/roslyn/pull/79730))
   * Fix exception in additional file diagnostics (PR: [#79501](https://github.com/dotnet/roslyn/pull/79501))
   * Simplify stale project handling in hot reload (PR: [#79386](https://github.com/dotnet/roslyn/pull/79386))
   * Fix static extension method not showing up on enum type (PR: [#79454](https://github.com/dotnet/roslyn/pull/79454))
