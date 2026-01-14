@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.113.x
+
 # 2.112.x
 * Add project context refresh support (PR: [#8876](https://github.com/dotnet/vscode-csharp/pull/8876))
 * Add ability to select a document's project context (PR: [#7328](https://github.com/dotnet/vscode-csharp/pull/7328))
