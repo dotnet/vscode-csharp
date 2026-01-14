@@ -28,6 +28,7 @@ import { ProjectConfigurationMessage } from '../../shared/projectConfiguration';
 export interface VSProjectContextList {
     _vs_projectContexts: VSProjectContext[];
     _vs_defaultIndex: number;
+    _vs_key: string;
 }
 
 export interface VSProjectContext {
@@ -98,6 +99,8 @@ export interface OnAutoInsertResponseItem {
      */
     command?: Command;
 }
+
+export type ProjectContextRegistrationOptions = TextDocumentRegistrationOptions;
 
 /**
  * OnAutoInsert options.
@@ -270,6 +273,18 @@ export namespace VSGetProjectContextsRequest {
     export const method = 'textDocument/_vs_getProjectContexts';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
     export const type = new RequestType<VSGetProjectContextParams, VSProjectContextList, void>(method);
+}
+
+export namespace ProjectContextRefreshNotification {
+    export const method = 'workspace/projectContext/_vs_refresh';
+    export const messageDirection: MessageDirection = MessageDirection.serverToClient;
+    export const type = new NotificationType(method);
+}
+
+export namespace FeatureProvidersRefreshNotification {
+    export const method = 'workspace/featureProviders/_vs_refresh';
+    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
+    export const type = new NotificationType<object>(method);
 }
 
 export namespace ProjectInitializationCompleteNotification {

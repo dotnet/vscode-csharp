@@ -1,5 +1,6 @@
 {
   "command.csharp.attachToProcess": "連結至 .NET 5+ 或 .NET Core 程序",
+  "command.csharp.changeProjectContext": "Change the active document's project context",
   "command.csharp.downloadDebugger": "下載 .NET Core 偵錯工具",
   "command.csharp.listProcess": "列出連結的程序",
   "command.csharp.listRemoteDockerProcess": "列出 Docker 連線上的程序",
@@ -116,6 +117,7 @@
   "configuration.omnisharp.projectLoadTimeout": "Visual Studio Code 將等候 OmniSharp 伺服器啟動的時間。時間以秒表示。",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "指定是否以空格來認可標記協助程式和元件元素。",
   "configuration.omnisharp.razor.devmode": "強制延伸模組在啟用本機 Razor.VSCode 開發的模式中執行。",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "強制 @code 或 @functions 指示詞後的左大括號出現在下一行。",
   "configuration.omnisharp.razor.format.enable": "啟用/停用預設 Razor 格式器。",
   "configuration.omnisharp.razor.plugin.path": "覆寫 Razor 外掛程式 DLL 的路徑。",

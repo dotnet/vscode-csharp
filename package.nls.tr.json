@@ -1,5 +1,6 @@
 {
   "command.csharp.attachToProcess": ".NET 5+ veya .NET Core işlemine ekleme",
+  "command.csharp.changeProjectContext": "Change the active document's project context",
   "command.csharp.downloadDebugger": ".NET Core Hata Ayıklayıcısını İndirin",
   "command.csharp.listProcess": "Ekleme işlemini listele",
   "command.csharp.listRemoteDockerProcess": "Docker bağlantısındaki işlemleri listeleme",
@@ -116,6 +117,7 @@
   "configuration.omnisharp.projectLoadTimeout": "Visual Studio Code'un OmniSharp sunucusunun başlamasını bekleyeceği süre. Süre saniye cinsinden ifade edilir.",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Etiket yardımcısı ve bileşen öğelerinin bir boşlukla işlenip işlenmeyeceğini belirtir.",
   "configuration.omnisharp.razor.devmode": "Uzantıyı, yerel Razor.VSCode geliştirmeyi etkinleştiren bir modda çalışmaya zorlar.",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Açık küme ayracını bir @code veya @functions yönergesinden sonra aşağıdaki satırda olmaya zorlar.",
   "configuration.omnisharp.razor.format.enable": "Varsayılan Razor biçimlendiricisini etkinleştirin/devre dışı bırakın.",
   "configuration.omnisharp.razor.plugin.path": "Razor eklenti dll'sini geçersiz kılar.",

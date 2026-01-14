@@ -20,8 +20,8 @@ export function registerMiscellaneousFileNotifier(
     languageServer._projectContextService.onActiveFileContextChanged((e) => {
         // Only warn for C# miscellaneous files when the workspace is fully initialized.
         if (
-            e.uri.scheme !== 'file' ||
-            e.languageId !== 'csharp' ||
+            e.document.uri.scheme !== 'file' ||
+            e.document.languageId !== 'csharp' ||
             !e.isVerified ||
             !e.context._vs_is_miscellaneous ||
             languageServer.state !== ServerState.ProjectInitializationComplete
@@ -38,7 +38,7 @@ export function registerMiscellaneousFileNotifier(
         }
 
         // Check to see if we have already notified the user about this document.
-        const hash = createHash(e.uri.toString(/*skipEncoding:*/ true));
+        const hash = createHash(e.document.uri.toString(/*skipEncoding:*/ true));
         if (NotifiedDocuments.has(hash)) {
             return;
         }

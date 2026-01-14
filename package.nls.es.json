@@ -1,5 +1,6 @@
 {
   "command.csharp.attachToProcess": "Adjuntar a un proceso de .NET 5 (o posterior) o .NET Core",
+  "command.csharp.changeProjectContext": "Change the active document's project context",
   "command.csharp.downloadDebugger": "Descargar depurador de .NET Core",
   "command.csharp.listProcess": "Enumerar proceso que se va a adjuntar",
   "command.csharp.listRemoteDockerProcess": "Enumerar procesos en conexión de Docker",
@@ -116,6 +117,7 @@
   "configuration.omnisharp.projectLoadTimeout": "Tiempo Visual Studio Code esperará a que se inicie el servidor OmniSharp. El tiempo se expresa en segundos.",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Especifica si se deben confirmar los elementos auxiliares de etiquetas y componentes con un espacio.",
   "configuration.omnisharp.razor.devmode": "Fuerza la extensión a ejecutarse en un modo que habilita el desarrollo local de Razor.VSCode.",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Fuerza la llave de apertura después de una directiva @code o @functions a estar en la línea siguiente.",
   "configuration.omnisharp.razor.format.enable": "Habilite o deshabilite el formateador Razor predeterminado.",
   "configuration.omnisharp.razor.plugin.path": "Invalida la ruta de acceso al archivo DLL del complemento Razor.",
