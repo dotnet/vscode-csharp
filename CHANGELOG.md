@@ -5,12 +5,6 @@
 
 # 2.112.x
 * Add project context refresh support (PR: [#8876](https://github.com/dotnet/vscode-csharp/pull/8876))
-* Bump Razor to 10.0.0-preview.25619.1 (PR: [#8867](https://github.com/dotnet/vscode-csharp/pull/8867))
-* Bump qs and body-parser (PR: [#8871](https://github.com/dotnet/vscode-csharp/pull/8871))
-* Bump Razor to 10.0.0-preview.25613.1 (PR: [#8858](https://github.com/dotnet/vscode-csharp/pull/8858))
-* Make sure to use .npmrc from the powershell commands (PR: [#8859](https://github.com/dotnet/vscode-csharp/pull/8859))
-* Fetch package.json from dotnet/vscode-csharp GitHub repo for tag creation (PR: [#8856](https://github.com/dotnet/vscode-csharp/pull/8856))
-* Update version number to 2.112 (PR: [#8855](https://github.com/dotnet/vscode-csharp/pull/8855))
 * Add ability to select a document's project context (PR: [#7328](https://github.com/dotnet/vscode-csharp/pull/7328))
 * Fix TFM detection for .NET 10+ to enable launch.json generation (PR: [#8873](https://github.com/dotnet/vscode-csharp/pull/8873))
 * Fix JavaScript highlighting in Razor files after C# control structures without braces (PR: [#8865](https://github.com/dotnet/vscode-csharp/pull/8865))
