@@ -31,11 +31,7 @@ jobs:
     vmImage: ubuntu-latest
   steps:
   - checkout: none
-  - task: NodeTool@0
-    displayName: ⚙️ Install Node.js
-    inputs:
-      versionSource: spec
-      versionSpec: 22.x
+  - template: /azure-pipelines/install-node.yml@self
   - powershell: |
       "registry=https://pkgs.dev.azure.com/devdiv/DevDiv/_packaging/vs-green/npm/registry/`nalways-auth=true`n" | Tee-Object -FilePath '$(Pipeline.Workspace)/.npmrc'
     displayName: ⚙️ Prepare for publish

@@ -58,10 +58,7 @@ extends:
             condition: ${{ parameters.publishLocalizationFile }}
             artifactName: l10n
         steps:
-        - task: NodeTool@0
-          displayName: 'Install Node.js 22.x'
-          inputs:
-            versionSpec: '22.x'
+        - template: /azure-pipelines/install-node.yml@self
         - checkout: self
           clean: true
           submodules: true
