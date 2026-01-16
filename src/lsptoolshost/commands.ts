@@ -76,9 +76,11 @@ async function changeProjectContext(
             contextList._vs_projectContexts.find((context) => context._vs_label === contextLabel) ||
             contextList._vs_projectContexts.find((context) => context._vs_label === options.projectName);
     } else {
-        const items = contextList._vs_projectContexts.map((context) => {
-            return { label: context._vs_label, context };
-        });
+        const items = contextList._vs_projectContexts
+            .map((context) => {
+                return { label: context._vs_label, context };
+            })
+            .sort((a, b) => a.label.localeCompare(b.label));
         const selectedItem = await vscode.window.showQuickPick(items, {
             placeHolder: vscode.l10n.t('Select project context'),
         });
