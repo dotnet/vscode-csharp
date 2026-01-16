@@ -23,10 +23,10 @@ Setting up your local development environment for the vscode-csharp repository i
 
 Before you start, make sure you have the following software installed on your machine:
 
-* Node.js v20 ([v20.17.0 LTS](https://nodejs.org/en/blog/release/v20.17.0)).
+* Node.js v24 ([24.13.0 LTS](https://nodejs.org/en/blog/release/v24.13.0)).
   * Note - Building with higher major versions of Node.js is not advised - it may work but we do not test it.
 * Npm (The version shipped with node is fine)
-* .NET 8.0 SDK (dotnet should be on your path)
+* .NET 10.0 SDK (dotnet should be on your path)
 
 Once you have these installed, you can navigate to the cloned vscode-csharp repository to proceed with building, running, and testing the repository.
 

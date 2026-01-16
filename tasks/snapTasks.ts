@@ -75,7 +75,7 @@ function addChangelogSection(version: string, additionalLines?: string[]): void 
     const headerRegex = /^#+\s+.*$/gm;
     const matches = [];
     for (let i = 0; i < changelogLines.length; i++) {
-        const line = changelogLines.at(i);
+        const line = changelogLines[i];
         const match = headerRegex.exec(line!);
         if (match) {
             matches.push({ line: i, text: match[0] });
@@ -201,7 +201,7 @@ const prRegex = /^\*.+\(PR: \[#(\d+)\]\(/;
 function findNextVersionHeaderLine(changelogLines: string[], startLine: number = 0): [number, string] {
     const headerRegex = /^#\s(\d+\.\d+)\.(x|\d+)$/;
     for (let i = startLine; i < changelogLines.length; i++) {
-        const line = changelogLines.at(i);
+        const line = changelogLines[i];
         const match = headerRegex.exec(line!);
         if (match) {
             return [i, match[1]];
@@ -213,7 +213,7 @@ function findNextVersionHeaderLine(changelogLines: string[], startLine: number =
 function getPrIdsBetweenHeaders(changelogLines: string[], startLine: number, endLine: number): string[] {
     const prs: string[] = [];
     for (let i = startLine; i < endLine; i++) {
-        const line = changelogLines.at(i);
+        const line = changelogLines[i];
         const match = prRegex.exec(line!);
         if (match) {
             prs.push(match[1]);

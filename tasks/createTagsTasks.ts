@@ -65,7 +65,7 @@ gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
         options,
         'dotnet',
         'vscode-csharp',
-        async (releaseCommit: string, githubPAT: string) => releaseCommit,
+        async (releaseCommit: string, _githubPAT: string) => releaseCommit,
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [`v${releaseVersion}${prereleaseText}`, releaseVersion];
