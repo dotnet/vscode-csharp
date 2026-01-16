@@ -28,7 +28,7 @@ jobs:
       # Install Node.js (required for TypeScript compilation and npm packages)
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
 
       # Install .NET SDK (required for some build components and MSBuild tasks)
