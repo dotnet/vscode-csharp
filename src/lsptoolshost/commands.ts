@@ -54,6 +54,11 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('csharp.openUrlInBrowser', async () => {
+            await vscode.env.openExternal(vscode.Uri.parse('https://aka.ms/new-csharp-commands'));
+        })
+    );
 }
 async function changeProjectContext(
     languageServer: RoslynLanguageServer,
