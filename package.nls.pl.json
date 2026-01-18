@@ -1,6 +1,6 @@
 {
   "command.csharp.attachToProcess": "Dołączanie do procesu platformy .NET 5 lub .NET Core",
-  "command.csharp.changeProjectContext": "Change the active document's project context",
+  "command.csharp.changeProjectContext": "Zmień kontekst projektu dokumentu aktywnego",
   "command.csharp.downloadDebugger": "Pobierz debuger platformy .NET Core",
   "command.csharp.listProcess": "Wyświetl proces do dołączenia",
   "command.csharp.listRemoteDockerProcess": "Wyświetl listę procesów w połączeniu platformy Docker",
@@ -117,7 +117,7 @@
   "configuration.omnisharp.projectLoadTimeout": "Czas, przez który edytor Visual Studio Code będzie oczekiwać na uruchomienie serwera OmniSharp. Czas jest wyrażony w sekundach.",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Określa, czy zatwierdzać pomocnik tagów i elementy składników ze spacjami.",
   "configuration.omnisharp.razor.devmode": "Wymusza uruchomienie rozszerzenia w trybie umożliwiającym lokalne programowanie Razor.VSCode.",
-  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Określa styl wcięcia dla atrybutów tagów HTML i komponentów w plikach Razor.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Wymusza, aby otwierający nawias klamrowy po dyrektywie @code lub @functions był w następującym wierszu.",
   "configuration.omnisharp.razor.format.enable": "Włącz/wyłącz domyślny moduł formatowania Razor.",
   "configuration.omnisharp.razor.plugin.path": "Przesłania ścieżkę do biblioteki dll wtyczki Razor.",
