@@ -57,9 +57,30 @@ function registerExtensionCommands(
 }
 async function changeProjectContext(
     languageServer: RoslynLanguageServer,
-    document: vscode.TextDocument,
+    documentOrUri: vscode.TextDocument | vscode.Uri | undefined,
     options: ChangeProjectContextOptions
 ): Promise<VSProjectContext | undefined> {
+    // Handle the case where a Uri is passed (e.g., from file explorer context menu)
+    let document: vscode.TextDocument;
+    if (documentOrUri instanceof vscode.Uri) {
+        try {
+            document = await vscode.workspace.openTextDocument(documentOrUri);
+        } catch (_e) {
+            vscode.window.showErrorMessage(vscode.l10n.t('Failed to open document: {0}', documentOrUri.fsPath));
+            return;
+        }
+    } else if (documentOrUri === undefined) {
+        // If no document is provided, use the active editor's document
+        const activeEditor = vscode.window.activeTextEditor;
+        if (!activeEditor) {
+            vscode.window.showWarningMessage(vscode.l10n.t('No active document to change project context for.'));
+            return;
+        }
+        document = activeEditor.document;
+    } else {
+        document = documentOrUri;
+    }
+
     const contextList = await languageServer._projectContextService.queryServerProjectContexts(
         document.uri,
         CancellationToken.None

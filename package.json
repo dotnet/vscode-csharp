@@ -5624,6 +5624,13 @@
           "group": "2_dotnet@2"
         }
       ],
+      "explorer/context": [
+        {
+          "command": "csharp.changeProjectContext",
+          "when": "resourceExtname == .cs && dotnet.server.activationContext == 'Roslyn'",
+          "group": "2_dotnet@1"
+        }
+      ],
       "issue/reporter": [
         {
           "command": "csharp.reportIssue"
