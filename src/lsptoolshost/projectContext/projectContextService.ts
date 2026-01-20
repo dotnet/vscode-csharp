@@ -18,9 +18,7 @@ import { RoslynLanguageClient } from '../server/roslynLanguageClient';
 
 export interface ProjectContextChangeEvent {
     document: vscode.TextDocument;
-    context: VSProjectContext;
     isVerified: boolean;
-    hasAdditionalContexts: boolean;
 }
 
 type ContextKey = string;
@@ -49,7 +47,9 @@ export class ProjectContextService {
 
     private readonly _contextChangeEmitter = new vscode.EventEmitter<ProjectContextChangeEvent>();
     private _source = new vscode.CancellationTokenSource();
-    private readonly _emptyProjectContext: VSProjectContext = {
+
+
+    public readonly emptyProjectContext: VSProjectContext = {
         _vs_id: '',
         _vs_kind: '',
         _vs_label: '',
@@ -81,7 +81,7 @@ export class ProjectContextService {
         return this._contextChangeEmitter.event;
     }
 
-    public async getDocumentContext(uri: string | vscode.Uri): Promise<VSProjectContext | undefined> {
+    public getDocumentContext(uri: string | vscode.Uri): VSProjectContext | undefined {
         const uriString = uri instanceof vscode.Uri ? UriConverter.serialize(uri) : uri;
 
         const key = this._uriToContextKeyMap.get(uriString);
@@ -106,9 +106,7 @@ export class ProjectContextService {
         this._keyToActiveProjectContextMap.set(contextList._vs_key, context);
         this._contextChangeEmitter.fire({
             document,
-            context,
-            isVerified: true,
-            hasAdditionalContexts: true,
+            isVerified: true
         });
 
         await this._languageServer.refreshFeatureProviders();
@@ -142,9 +140,7 @@ export class ProjectContextService {
         if (!this._languageServer.isRunning()) {
             this._contextChangeEmitter.fire({
                 document,
-                context: this._emptyProjectContext,
-                isVerified: false,
-                hasAdditionalContexts: false,
+                isVerified: false
             });
             return;
         }
@@ -153,20 +149,16 @@ export class ProjectContextService {
         if (!contextList) {
             this._contextChangeEmitter.fire({
                 document,
-                context: this._emptyProjectContext,
-                isVerified: false,
-                hasAdditionalContexts: false,
+                isVerified: false
             });
             return;
         }
 
-        const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
-        const hasAdditionalContexts = contextList._vs_projectContexts.length > 1;
-        this._contextChangeEmitter.fire({ document, context, isVerified: false, hasAdditionalContexts });
+        this._contextChangeEmitter.fire({ document, isVerified: false });
 
-        // If we do not recieve a refresh even within the timout period, send a verified event.
+        // If we do not receive a refresh even within the timeout period, send a verified event.
         _verifyTimeout = setTimeout(() => {
-            this._contextChangeEmitter.fire({ document, context, isVerified: true, hasAdditionalContexts });
+            this._contextChangeEmitter.fire({ document, isVerified: true });
         }, VerificationDelay);
     }
 

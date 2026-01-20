@@ -1871,7 +1871,14 @@
         "command": "csharp.changeProjectContext",
         "title": "%command.csharp.changeProjectContext%",
         "category": "CSharp",
-        "enablement": "dotnet.server.activationContext == 'Roslyn'"
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
+      },
+      {
+        "command": "csharp.changeProjectContextExplorer",
+        "title": "%command.csharp.changeProjectContextExplorer%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
+        "when": "false"
       },
       {
         "command": "csharp.listProcess",
@@ -5626,8 +5633,8 @@
       ],
       "explorer/context": [
         {
-          "command": "csharp.changeProjectContext",
-          "when": "resourceExtname == .cs && dotnet.server.activationContext == 'Roslyn'",
+          "command": "csharp.changeProjectContextExplorer",
+          "when": "resourceExtname == .cs && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
           "group": "2_dotnet@1"
         }
       ],

@@ -41,6 +41,11 @@ function registerExtensionCommands(
         )
     );
     context.subscriptions.push(
+        vscode.commands.registerCommand('csharp.changeProjectContextExplorer', async (uri) =>
+            openAndChangeProjectContext(languageServer, uri)
+        )
+    );
+    context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
                 context,
@@ -55,32 +60,31 @@ function registerExtensionCommands(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
 }
-async function changeProjectContext(
+
+async function openAndChangeProjectContext(
     languageServer: RoslynLanguageServer,
-    documentOrUri: vscode.TextDocument | vscode.Uri | undefined,
-    options: ChangeProjectContextOptions
-): Promise<VSProjectContext | undefined> {
-    // Handle the case where a Uri is passed (e.g., from file explorer context menu)
-    let document: vscode.TextDocument;
-    if (documentOrUri instanceof vscode.Uri) {
-        try {
-            document = await vscode.workspace.openTextDocument(documentOrUri);
-        } catch (_e) {
-            vscode.window.showErrorMessage(vscode.l10n.t('Failed to open document: {0}', documentOrUri.fsPath));
-            return;
-        }
-    } else if (documentOrUri === undefined) {
-        // If no document is provided, use the active editor's document
-        const activeEditor = vscode.window.activeTextEditor;
-        if (!activeEditor) {
-            vscode.window.showWarningMessage(vscode.l10n.t('No active document to change project context for.'));
-            return;
-        }
-        document = activeEditor.document;
-    } else {
-        document = documentOrUri;
+    uri: vscode.Uri | undefined,
+): Promise<void> {
+    if (uri === undefined) {
+        vscode.window.showErrorMessage(vscode.l10n.t('No file selected to change project context.'));
+        return;
     }
 
+    try {
+        //const document = await vscode.workspace.openTextDocument(uri);
+        const document = await vscode.window.showTextDocument(uri);
+        await changeProjectContext(languageServer, document.document, undefined);
+    } catch (error) {
+        const message = error instanceof Error ? error.message : `${error}`;
+        vscode.window.showErrorMessage(vscode.l10n.t('Failed to change context for {0}: {1}', uri.fsPath, message));
+    }
+}
+
+async function changeProjectContext(
+    languageServer: RoslynLanguageServer,
+    document: vscode.TextDocument,
+    options: ChangeProjectContextOptions | undefined
+): Promise<VSProjectContext | undefined> {
     const contextList = await languageServer._projectContextService.queryServerProjectContexts(
         document.uri,
         CancellationToken.None
