@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.113.x
+* Update Razor to 10.0.0-preview.26066.2 (PR: [#8894](https://github.com/dotnet/vscode-csharp/pull/8894))
+  * Ignore case when parsing enum values in settings in VS Code (PR: [#12667](https://github.com/dotnet/razor/pull/12667))      
 
 # 2.112.x
 * Add project context refresh support (PR: [#8876](https://github.com/dotnet/vscode-csharp/pull/8876))
