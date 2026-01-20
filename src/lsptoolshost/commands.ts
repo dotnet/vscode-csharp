@@ -71,7 +71,6 @@ async function openAndChangeProjectContext(
     }
 
     try {
-        //const document = await vscode.workspace.openTextDocument(uri);
         const document = await vscode.window.showTextDocument(uri);
         await changeProjectContext(languageServer, document.document, undefined);
     } catch (error) {

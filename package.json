@@ -5629,14 +5629,15 @@
           "command": "dotnet.test.debugTestsInContext",
           "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
           "group": "2_dotnet@2"
-        }
-      ],
-      "explorer/context": [
+        },
         {
           "command": "csharp.changeProjectContextExplorer",
           "when": "resourceExtname == .cs && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
           "group": "2_dotnet@1"
         }
+      ],
+      "explorer/context": [
+        
       ],
       "issue/reporter": [
         {
