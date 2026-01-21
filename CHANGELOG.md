@@ -3,6 +3,12 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.113.x
+* Add explorer context menu item for changing project context (PR: [#8896](https://github.com/dotnet/vscode-csharp/pull/8896))
+* Small fixes for project context selector (PR: [#8889](https://github.com/dotnet/vscode-csharp/pull/8889))
+* Update Razor to 10.0.0-preview.26066.2 (PR: [#8894](https://github.com/dotnet/vscode-csharp/pull/8894))
+  * Ignore case when parsing enum values in settings in VS Code (PR: [#12667](https://github.com/dotnet/razor/pull/12667))      
+
 # 2.112.x
 * Add project context refresh support (PR: [#8876](https://github.com/dotnet/vscode-csharp/pull/8876))
 * Add ability to select a document's project context (PR: [#7328](https://github.com/dotnet/vscode-csharp/pull/7328))

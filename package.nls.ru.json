@@ -1,6 +1,6 @@
 {
   "command.csharp.attachToProcess": "Присоединение к процессу .NET 5+ или .NET Core.",
-  "command.csharp.changeProjectContext": "Change the active document's project context",
+  "command.csharp.changeProjectContext": "Изменить контекст проекта активного документа",
   "command.csharp.downloadDebugger": "Скачать отладчик .NET Core",
   "command.csharp.listProcess": "Перечислить процесс для вложения",
   "command.csharp.listRemoteDockerProcess": "Список процессов подключения к Docker",
@@ -117,7 +117,7 @@
   "configuration.omnisharp.projectLoadTimeout": "Время, в течение которого Visual Studio Code будет ожидать запуск сервера OmniSharp. Время указывается в секундах.",
   "configuration.omnisharp.razor.completion.commitElementsWithSpace": "Указывает, следует ли зафиксировать вспомогательное приложение тегов и элементы компонентов с пробелом.",
   "configuration.omnisharp.razor.devmode": "Принудительно запускает расширение в режиме, в котором включена локальная разработка Razor.VSCode.",
-  "configuration.omnisharp.razor.format.attributeIndentStyle": "Specifies the indentation style for Html and component tag attributes in Razor files.",
+  "configuration.omnisharp.razor.format.attributeIndentStyle": "Указывает стиль отступа для атрибутов HTML и тегов компонентов в файлах Razor.",
   "configuration.omnisharp.razor.format.codeBlockBraceOnNextLine": "Принудительно добавляет открывающую фигурную скобку после директивы @code или @functions на следующей строке.",
   "configuration.omnisharp.razor.format.enable": "Включить/отключить форматировщик Razor по умолчанию.",
   "configuration.omnisharp.razor.plugin.path": "Переопределяет путь к библиотеке DLL подключаемого модуля Razor.",

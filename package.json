@@ -42,7 +42,7 @@
   "defaults": {
     "roslyn": "5.4.0-2.26062.9",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.26059.2",
+    "razor": "10.0.0-preview.26066.2",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.3.11128.18"
   },
@@ -1871,7 +1871,21 @@
         "command": "csharp.changeProjectContext",
         "title": "%command.csharp.changeProjectContext%",
         "category": "CSharp",
-        "enablement": "dotnet.server.activationContext == 'Roslyn'"
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
+      },
+      {
+        "command": "csharp.changeProjectContextEditor",
+        "title": "%command.csharp.changeProjectContextEditor%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
+        "when": "false"
+      },
+      {
+        "command": "csharp.changeProjectContextFileExplorer",
+        "title": "%command.csharp.changeProjectContextFileExplorer%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
+        "when": "false"
       },
       {
         "command": "csharp.listProcess",
@@ -5622,6 +5636,18 @@
           "command": "dotnet.test.debugTestsInContext",
           "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
           "group": "2_dotnet@2"
+        },
+        {
+          "command": "csharp.changeProjectContextEditor",
+          "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "group": "2_dotnet@1"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "csharp.changeProjectContextFileExplorer",
+          "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "group": "2_dotnet@1"
         }
       ],
       "issue/reporter": [
