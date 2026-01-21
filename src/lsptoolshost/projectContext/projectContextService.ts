@@ -15,10 +15,14 @@ import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../utils/uriConverter';
 import { LanguageServerEvents, ServerState } from '../server/languageServerEvents';
 import { RoslynLanguageClient } from '../server/roslynLanguageClient';
+import { languageServerOptions } from '../../shared/options';
+import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';
 
 export interface ProjectContextChangeEvent {
     document: vscode.TextDocument;
+    context: VSProjectContext;
     isVerified: boolean;
+    hasAdditionalContexts: boolean;
 }
 
 type ContextKey = string;
@@ -47,14 +51,14 @@ export class ProjectContextService {
 
     private readonly _contextChangeEmitter = new vscode.EventEmitter<ProjectContextChangeEvent>();
     private _source = new vscode.CancellationTokenSource();
-
-
-    public readonly emptyProjectContext: VSProjectContext = {
+    private readonly _emptyProjectContext: VSProjectContext = {
         _vs_id: '',
         _vs_kind: '',
         _vs_label: '',
         _vs_is_miscellaneous: false,
     };
+
+    private readonly _documentSelector = combineDocumentSelectors(languageServerOptions.documentSelector);
 
     constructor(
         private _languageServer: RoslynLanguageServer,
@@ -98,15 +102,21 @@ export class ProjectContextService {
         context: VSProjectContext
     ): Promise<void> {
         const uri = document.uri;
-        const languageId = document.languageId;
-        if (!uri || (languageId !== 'csharp' && languageId !== 'aspnetcorerazor')) {
+        if (!uri || !this.isRelevantDocument(document)) {
             return;
         }
 
         this._keyToActiveProjectContextMap.set(contextList._vs_key, context);
+        if (_verifyTimeout) {
+            clearTimeout(_verifyTimeout);
+            _verifyTimeout = undefined;
+        }
+
         this._contextChangeEmitter.fire({
             document,
-            isVerified: true
+            context,
+            isVerified: true,
+            hasAdditionalContexts: true,
         });
 
         await this._languageServer.refreshFeatureProviders();
@@ -114,8 +124,7 @@ export class ProjectContextService {
 
     public async refresh() {
         const textEditor = vscode.window.activeTextEditor;
-        const languageId = textEditor?.document?.languageId;
-        if (languageId !== 'csharp' && languageId !== 'aspnetcorerazor') {
+        if (!this.isRelevantDocument(textEditor?.document)) {
             return;
         }
 
@@ -140,7 +149,9 @@ export class ProjectContextService {
         if (!this._languageServer.isRunning()) {
             this._contextChangeEmitter.fire({
                 document,
-                isVerified: false
+                context: this._emptyProjectContext,
+                isVerified: false,
+                hasAdditionalContexts: false,
             });
             return;
         }
@@ -149,16 +160,20 @@ export class ProjectContextService {
         if (!contextList) {
             this._contextChangeEmitter.fire({
                 document,
-                isVerified: false
+                context: this._emptyProjectContext,
+                isVerified: false,
+                hasAdditionalContexts: false,
             });
             return;
         }
 
-        this._contextChangeEmitter.fire({ document, isVerified: false });
+        const context = this.getDocumentContext(document.uri) ?? contextList._vs_projectContexts[contextList._vs_defaultIndex];
+        const hasAdditionalContexts = contextList._vs_projectContexts.length > 1;
+        this._contextChangeEmitter.fire({ document, context, isVerified: false, hasAdditionalContexts });
 
-        // If we do not receive a refresh even within the timeout period, send a verified event.
+        // If we do not recieve a refresh even within the timout period, send a verified event.
         _verifyTimeout = setTimeout(() => {
-            this._contextChangeEmitter.fire({ document, isVerified: true });
+            this._contextChangeEmitter.fire({ document, context, isVerified: true, hasAdditionalContexts });
         }, VerificationDelay);
     }
 
@@ -176,8 +191,11 @@ export class ProjectContextService {
                 token
             );
 
-            this.updateCaches(uriString, contextList);
+            if (token.isCancellationRequested) {
+                return undefined;
+            }
 
+            this.updateCaches(uriString, contextList);
             return contextList;
         } catch (error) {
             if (error instanceof vscode.CancellationError) {
@@ -186,6 +204,13 @@ export class ProjectContextService {
 
             throw error;
         }
+    }
+
+    private isRelevantDocument(document: vscode.TextDocument | undefined): boolean {
+        if (document === undefined) {
+            return false;
+        }
+        return vscode.languages.match(this._documentSelector, document) > 0;
     }
 
     private updateCaches(uriString: UriString, contextList: VSProjectContextList) {

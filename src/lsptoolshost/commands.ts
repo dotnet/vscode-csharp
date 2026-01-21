@@ -10,17 +10,19 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { registerWorkspaceCommands } from './workspace/workspaceCommands';
 import { registerServerCommands } from './server/serverCommands';
-import { CancellationToken } from 'vscode-languageclient/node';
-import { VSProjectContext } from './server/roslynProtocol';
+import { changeProjectContext, changeProjectContextCommandName, changeProjectContextEditor, changeProjectContextFileExplorer, openAndChangeProjectContext } from './projectContext/projectContextCommands';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryEventNames } from '../shared/telemetryEventNames';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: vscode.LogOutputChannel,
-    csharpTraceChannel: vscode.LogOutputChannel
+    csharpTraceChannel: vscode.LogOutputChannel,
+    reporter: TelemetryReporter
 ) {
-    registerExtensionCommands(context, languageServer, hostExecutableResolver, outputChannel, csharpTraceChannel);
+    registerExtensionCommands(context, languageServer, hostExecutableResolver, outputChannel, csharpTraceChannel, reporter);
     registerWorkspaceCommands(context, languageServer);
     registerServerCommands(context, languageServer, outputChannel);
 }
@@ -33,17 +35,27 @@ function registerExtensionCommands(
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: vscode.LogOutputChannel,
-    csharpTraceChannel: vscode.LogOutputChannel
+    csharpTraceChannel: vscode.LogOutputChannel,
+    reporter: TelemetryReporter
 ) {
     context.subscriptions.push(
-        vscode.commands.registerCommand('csharp.changeProjectContext', async (document, options) =>
-            changeProjectContext(languageServer, document, options)
-        )
+        vscode.commands.registerCommand(changeProjectContextCommandName, async (document, options) =>
+        {
+            reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeCommand);
+            changeProjectContext(languageServer, document, options);
+        })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand('csharp.changeProjectContextExplorer', async (uri) =>
-            openAndChangeProjectContext(languageServer, uri)
-        )
+        vscode.commands.registerCommand(changeProjectContextFileExplorer, async (uri) => {
+            reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeFileExplorer);
+            openAndChangeProjectContext(languageServer, uri);
+        })
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(changeProjectContextEditor, async (uri) => {
+            reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeEditor);
+            openAndChangeProjectContext(languageServer, uri);
+        })
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
@@ -59,66 +71,4 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
-}
-
-async function openAndChangeProjectContext(
-    languageServer: RoslynLanguageServer,
-    uri: vscode.Uri | undefined,
-): Promise<void> {
-    if (uri === undefined) {
-        vscode.window.showErrorMessage(vscode.l10n.t('No file selected to change project context.'));
-        return;
-    }
-
-    try {
-        const document = await vscode.window.showTextDocument(uri);
-        await changeProjectContext(languageServer, document.document, undefined);
-    } catch (error) {
-        const message = error instanceof Error ? error.message : `${error}`;
-        vscode.window.showErrorMessage(vscode.l10n.t('Failed to change context for {0}: {1}', uri.fsPath, message));
-    }
-}
-
-async function changeProjectContext(
-    languageServer: RoslynLanguageServer,
-    document: vscode.TextDocument,
-    options: ChangeProjectContextOptions | undefined
-): Promise<VSProjectContext | undefined> {
-    const contextList = await languageServer._projectContextService.queryServerProjectContexts(
-        document.uri,
-        CancellationToken.None
-    );
-    if (contextList === undefined) {
-        return;
-    }
-
-    let context: VSProjectContext | undefined = undefined;
-
-    if (options !== undefined) {
-        const contextLabel = `${options.projectName} (${options.tfm})`;
-        context =
-            contextList._vs_projectContexts.find((context) => context._vs_label === contextLabel) ||
-            contextList._vs_projectContexts.find((context) => context._vs_label === options.projectName);
-    } else {
-        const items = contextList._vs_projectContexts
-            .map((context) => {
-                return { label: context._vs_label, context };
-            })
-            .sort((a, b) => a.label.localeCompare(b.label));
-        const selectedItem = await vscode.window.showQuickPick(items, {
-            placeHolder: vscode.l10n.t('Select project context'),
-        });
-        context = selectedItem?.context;
-    }
-
-    if (context === undefined) {
-        return;
-    }
-
-    await languageServer._projectContextService.setActiveFileContext(document, contextList, context);
-}
-
-interface ChangeProjectContextOptions {
-    projectName: string;
-    tfm: string;
 }

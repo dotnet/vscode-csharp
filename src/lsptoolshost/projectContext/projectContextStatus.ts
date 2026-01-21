@@ -26,35 +26,28 @@ export class ProjectContextStatus {
         item.detail = vscode.l10n.t('Active Context');
         context.subscriptions.push(item);
 
-        projectContextService.onActiveFileContextChanged(async (e) => {
-            if (e.document !== vscode.window.activeTextEditor?.document) {
-                // Only update the status item for the active document.
-                return;
-            }
-
-            let context = projectContextService.getDocumentContext(e.document.uri);
-            if (context === undefined) {
-                context = projectContextService.emptyProjectContext;
-            }
-
-
-            item.text = context._vs_label;
-            item.command = { ...selectContextCommand, arguments: [e.document] };
+        projectContextService.onActiveFileContextChanged((e) => {
+            item.text = e.context._vs_label;
+            item.command = e.hasAdditionalContexts ? { ...selectContextCommand, arguments: [e.document] } : undefined;
 
             // Show a warning when the active file is part of the Miscellaneous File workspace and
             // project initialization is complete.
             if (languageServer.state === ServerState.ProjectInitializationComplete) {
                 item.severity =
-                    context._vs_is_miscellaneous && e.isVerified
+                    e.context._vs_is_miscellaneous && e.isVerified
                         ? vscode.LanguageStatusSeverity.Warning
                         : vscode.LanguageStatusSeverity.Information;
             } else {
                 item.severity = vscode.LanguageStatusSeverity.Information;
             }
 
-            item.detail = context._vs_is_miscellaneous
-                ? vscode.l10n.t('Not all language features will be available.')
-                : vscode.l10n.t('Active Context');
+            if (e.hasAdditionalContexts) {
+                item.detail = undefined;
+            } else {
+                item.detail = e.context._vs_is_miscellaneous
+                    ? vscode.l10n.t('Not all language features will be available.')
+                    : vscode.l10n.t('Active Context');
+            }
         });
 
         // Trigger a refresh, but don't block creation on the refresh completing.

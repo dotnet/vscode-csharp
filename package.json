@@ -1874,8 +1874,15 @@
         "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
       },
       {
-        "command": "csharp.changeProjectContextExplorer",
-        "title": "%command.csharp.changeProjectContextExplorer%",
+        "command": "csharp.changeProjectContextEditor",
+        "title": "%command.csharp.changeProjectContextEditor%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
+        "when": "false"
+      },
+      {
+        "command": "csharp.changeProjectContextFileExplorer",
+        "title": "%command.csharp.changeProjectContextFileExplorer%",
         "category": "CSharp",
         "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
         "when": "false"
@@ -5631,14 +5638,14 @@
           "group": "2_dotnet@2"
         },
         {
-          "command": "csharp.changeProjectContextExplorer",
+          "command": "csharp.changeProjectContextEditor",
           "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
           "group": "2_dotnet@1"
         }
       ],
       "explorer/context": [
         {
-          "command": "csharp.changeProjectContextExplorer",
+          "command": "csharp.changeProjectContextFileExplorer",
           "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
           "group": "2_dotnet@1"
         }
