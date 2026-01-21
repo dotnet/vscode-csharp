@@ -1,6 +1,8 @@
 {
   "command.csharp.attachToProcess": ".NET 5+ veya .NET Core işlemine ekleme",
   "command.csharp.changeProjectContext": "Etkin belgenin proje bağlamını değiştirin",
+  "command.csharp.changeProjectContextEditor": "Select Project Context",
+  "command.csharp.changeProjectContextFileExplorer": "Select Project Context",
   "command.csharp.downloadDebugger": ".NET Core Hata Ayıklayıcısını İndirin",
   "command.csharp.listProcess": "Ekleme işlemini listele",
   "command.csharp.listRemoteDockerProcess": "Docker bağlantısındaki işlemleri listeleme",
