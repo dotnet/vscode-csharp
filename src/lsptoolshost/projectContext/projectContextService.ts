@@ -17,6 +17,7 @@ import { LanguageServerEvents, ServerState } from '../server/languageServerEvent
 import { RoslynLanguageClient } from '../server/roslynLanguageClient';
 import { languageServerOptions } from '../../shared/options';
 import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';
+import { RazorLanguage } from '../../razor/src/razorLanguage';
 
 export interface ProjectContextChangeEvent {
     document: vscode.TextDocument;
@@ -58,7 +59,7 @@ export class ProjectContextService {
         _vs_is_miscellaneous: false,
     };
 
-    private readonly _documentSelector = combineDocumentSelectors(languageServerOptions.documentSelector);
+    private readonly _documentSelector = combineDocumentSelectors(languageServerOptions.documentSelector, RazorLanguage.documentSelector);
 
     constructor(
         private _languageServer: RoslynLanguageServer,
@@ -101,17 +102,16 @@ export class ProjectContextService {
         contextList: VSProjectContextList,
         context: VSProjectContext
     ): Promise<void> {
-        const uri = document.uri;
-        if (!uri || !this.isRelevantDocument(document)) {
+        if (!this.isRelevantDocument(document)) {
             return;
         }
 
-        this._keyToActiveProjectContextMap.set(contextList._vs_key, context);
         if (_verifyTimeout) {
             clearTimeout(_verifyTimeout);
             _verifyTimeout = undefined;
         }
 
+        this._keyToActiveProjectContextMap.set(contextList._vs_key, context);
         this._contextChangeEmitter.fire({
             document,
             context,
@@ -210,6 +210,7 @@ export class ProjectContextService {
         if (document === undefined) {
             return false;
         }
+
         return vscode.languages.match(this._documentSelector, document) > 0;
     }
 
