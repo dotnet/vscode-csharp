@@ -4,6 +4,8 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.113.x
+* Add explorer context menu item for changing project context (PR: [#8896](https://github.com/dotnet/vscode-csharp/pull/8896))
+* Small fixes for project context selector (PR: [#8889](https://github.com/dotnet/vscode-csharp/pull/8889))
 * Update Razor to 10.0.0-preview.26066.2 (PR: [#8894](https://github.com/dotnet/vscode-csharp/pull/8894))
   * Ignore case when parsing enum values in settings in VS Code (PR: [#12667](https://github.com/dotnet/razor/pull/12667))      
 
