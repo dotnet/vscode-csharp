@@ -1,6 +1,8 @@
 {
   "command.csharp.attachToProcess": "Adjuntar a un proceso de .NET 5 (o posterior) o .NET Core",
   "command.csharp.changeProjectContext": "Cambiar el contexto del proyecto del documento activo",
+  "command.csharp.changeProjectContextEditor": "Select Project Context",
+  "command.csharp.changeProjectContextFileExplorer": "Select Project Context",
   "command.csharp.downloadDebugger": "Descargar depurador de .NET Core",
   "command.csharp.listProcess": "Enumerar proceso que se va a adjuntar",
   "command.csharp.listRemoteDockerProcess": "Enumerar procesos en conexión de Docker",

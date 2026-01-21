@@ -1,6 +1,8 @@
 {
   "command.csharp.attachToProcess": ".NET 5+ 또는 .NET Core 프로세스에 연결",
   "command.csharp.changeProjectContext": "활성 문서의 프로젝트 컨텍스트 변경",
+  "command.csharp.changeProjectContextEditor": "Select Project Context",
+  "command.csharp.changeProjectContextFileExplorer": "Select Project Context",
   "command.csharp.downloadDebugger": ".NET Core 디버거 다운로드",
   "command.csharp.listProcess": "연결 프로세스 나열",
   "command.csharp.listRemoteDockerProcess": "Docker 연결에 프로세스 나열",
