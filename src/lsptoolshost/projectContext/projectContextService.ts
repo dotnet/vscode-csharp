@@ -59,7 +59,10 @@ export class ProjectContextService {
         _vs_is_miscellaneous: false,
     };
 
-    private readonly _documentSelector = combineDocumentSelectors(languageServerOptions.documentSelector, RazorLanguage.documentSelector);
+    private readonly _documentSelector = combineDocumentSelectors(
+        languageServerOptions.documentSelector,
+        RazorLanguage.documentSelector
+    );
 
     constructor(
         private _languageServer: RoslynLanguageServer,
@@ -167,7 +170,8 @@ export class ProjectContextService {
             return;
         }
 
-        const context = this.getDocumentContext(document.uri) ?? contextList._vs_projectContexts[contextList._vs_defaultIndex];
+        const context =
+            this.getDocumentContext(document.uri) ?? contextList._vs_projectContexts[contextList._vs_defaultIndex];
         const hasAdditionalContexts = contextList._vs_projectContexts.length > 1;
         this._contextChangeEmitter.fire({ document, context, isVerified: false, hasAdditionalContexts });
 

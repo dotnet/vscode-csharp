@@ -1,15 +1,20 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { VSProjectContext } from '../server/roslynProtocol';
 import { CancellationToken } from 'vscode-languageclient/node';
 
-export const changeProjectContextCommandName = "csharp.changeProjectContext"
-export const changeProjectContextFileExplorer = "csharp.changeProjectContextFileExplorer"
-export const changeProjectContextEditor = "csharp.changeProjectContextEditor"
+export const changeProjectContextCommandName = 'csharp.changeProjectContext';
+export const changeProjectContextFileExplorer = 'csharp.changeProjectContextFileExplorer';
+export const changeProjectContextEditor = 'csharp.changeProjectContextEditor';
 
 export async function openAndChangeProjectContext(
     languageServer: RoslynLanguageServer,
-    uri: vscode.Uri | undefined): Promise<void> {
+    uri: vscode.Uri | undefined
+): Promise<void> {
     if (uri === undefined) {
         vscode.window.showErrorMessage(vscode.l10n.t('No file selected to change project context.'));
         return;
