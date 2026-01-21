@@ -3,6 +3,8 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.121.x
+
 # 2.113.x
 * Add explorer context menu item for changing project context (PR: [#8896](https://github.com/dotnet/vscode-csharp/pull/8896))
 * Small fixes for project context selector (PR: [#8889](https://github.com/dotnet/vscode-csharp/pull/8889))
