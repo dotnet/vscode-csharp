@@ -42,7 +42,7 @@ If you have the ability to run powershell, you can invoke "init.ps1" from the ro
 2. Run `npm i -g gulp` - This command installs Gulp globally.
 3. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
 
-**Note**: Authentication with `vsts-npm-auth` is only required when adding new packages to the feeds. For regular development with existing dependencies, authentication is not necessary. See the [Updating NPM packages](#updating-npm-packages) section for details.
+**Note**: Authentication with `ado-npm-auth` is only required when adding new packages to the feeds. For regular development with existing dependencies, authentication is not necessary. See the [Updating NPM packages](#updating-npm-packages) section for details.
 
 You can now run `code .` - This command opens the project in Visual Studio Code.
 
@@ -159,10 +159,8 @@ We use the .NET eng AzDo artifacts feed https://dnceng.pkgs.visualstudio.com/pub
 **Note**: Authentication is only required when adding new packages to the feeds. For installing existing dependencies during regular development, authentication is not necessary.
 
 To add new packages, you must authenticate by running:
-1. `npm install -g vsts-npm-auth` (if not already installed)
-2. `vsts-npm-auth -config .npmrc`
-
-If you need to renew authorization, you can force it via `vsts-npm-auth -config .npmrc -F`
+1. `npm install -g ado-npm-auth` (if not already installed)
+2. `ado-npm-auth -c .npmrc`
 
 ## Creating VSIX Packages for the Extension
 
