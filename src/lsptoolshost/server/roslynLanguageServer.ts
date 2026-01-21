@@ -314,7 +314,7 @@ export class RoslynLanguageServer {
                 provideWorkspaceDiagnostics,
                 async sendRequest(type, param, token, next) {
                     if (server !== undefined && type !== RoslynProtocol.VSGetProjectContextsRequest.type) {
-                        await RoslynLanguageServer.tryAddProjectContext(param, server);
+                        RoslynLanguageServer.tryAddProjectContext(param, server);
                     }
                     return next(type, param, token);
                 },
@@ -352,7 +352,7 @@ export class RoslynLanguageServer {
         return server;
     }
 
-    private static async tryAddProjectContext(param: unknown | undefined, server: RoslynLanguageServer): Promise<void> {
+    private static tryAddProjectContext(param: unknown | undefined, server: RoslynLanguageServer): void {
         if (!isObject(param)) {
             return;
         }
@@ -362,7 +362,7 @@ export class RoslynLanguageServer {
             return;
         }
 
-        textDocument._vs_projectContext = await server._projectContextService.getDocumentContext(textDocument.uri);
+        textDocument._vs_projectContext = server._projectContextService.getDocumentContext(textDocument.uri);
     }
 
     public async stop(): Promise<void> {

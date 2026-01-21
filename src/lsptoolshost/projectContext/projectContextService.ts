@@ -15,6 +15,9 @@ import { TextDocumentIdentifier } from 'vscode-languageserver-protocol';
 import { UriConverter } from '../utils/uriConverter';
 import { LanguageServerEvents, ServerState } from '../server/languageServerEvents';
 import { RoslynLanguageClient } from '../server/roslynLanguageClient';
+import { languageServerOptions } from '../../shared/options';
+import { combineDocumentSelectors } from '../../shared/utils/combineDocumentSelectors';
+import { RazorLanguage } from '../../razor/src/razorLanguage';
 
 export interface ProjectContextChangeEvent {
     document: vscode.TextDocument;
@@ -56,6 +59,11 @@ export class ProjectContextService {
         _vs_is_miscellaneous: false,
     };
 
+    private readonly _documentSelector = combineDocumentSelectors(
+        languageServerOptions.documentSelector,
+        RazorLanguage.documentSelector
+    );
+
     constructor(
         private _languageServer: RoslynLanguageServer,
         _languageClient: RoslynLanguageClient,
@@ -81,7 +89,7 @@ export class ProjectContextService {
         return this._contextChangeEmitter.event;
     }
 
-    public async getDocumentContext(uri: string | vscode.Uri): Promise<VSProjectContext | undefined> {
+    public getDocumentContext(uri: string | vscode.Uri): VSProjectContext | undefined {
         const uriString = uri instanceof vscode.Uri ? UriConverter.serialize(uri) : uri;
 
         const key = this._uriToContextKeyMap.get(uriString);
@@ -97,10 +105,13 @@ export class ProjectContextService {
         contextList: VSProjectContextList,
         context: VSProjectContext
     ): Promise<void> {
-        const uri = document.uri;
-        const languageId = document.languageId;
-        if (!uri || (languageId !== 'csharp' && languageId !== 'aspnetcorerazor')) {
+        if (!this.isRelevantDocument(document)) {
             return;
+        }
+
+        if (_verifyTimeout) {
+            clearTimeout(_verifyTimeout);
+            _verifyTimeout = undefined;
         }
 
         this._keyToActiveProjectContextMap.set(contextList._vs_key, context);
@@ -116,8 +127,7 @@ export class ProjectContextService {
 
     public async refresh() {
         const textEditor = vscode.window.activeTextEditor;
-        const languageId = textEditor?.document?.languageId;
-        if (languageId !== 'csharp' && languageId !== 'aspnetcorerazor') {
+        if (!this.isRelevantDocument(textEditor?.document)) {
             return;
         }
 
@@ -160,7 +170,8 @@ export class ProjectContextService {
             return;
         }
 
-        const context = contextList._vs_projectContexts[contextList._vs_defaultIndex];
+        const context =
+            this.getDocumentContext(document.uri) ?? contextList._vs_projectContexts[contextList._vs_defaultIndex];
         const hasAdditionalContexts = contextList._vs_projectContexts.length > 1;
         this._contextChangeEmitter.fire({ document, context, isVerified: false, hasAdditionalContexts });
 
@@ -184,8 +195,11 @@ export class ProjectContextService {
                 token
             );
 
-            this.updateCaches(uriString, contextList);
+            if (token.isCancellationRequested) {
+                return undefined;
+            }
 
+            this.updateCaches(uriString, contextList);
             return contextList;
         } catch (error) {
             if (error instanceof vscode.CancellationError) {
@@ -194,6 +208,14 @@ export class ProjectContextService {
 
             throw error;
         }
+    }
+
+    private isRelevantDocument(document: vscode.TextDocument | undefined): boolean {
+        if (document === undefined) {
+            return false;
+        }
+
+        return vscode.languages.match(this._documentSelector, document) > 0;
     }
 
     private updateCaches(uriString: UriString, contextList: VSProjectContextList) {
