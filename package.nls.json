@@ -1,4 +1,5 @@
 {
+  "command.openUrlInBrowser": "Commands now start with C#",
   "command.o.restart": "Restart OmniSharp",
   "command.o.pickProjectAndStart": "Select Project",
   "command.dotnet.openSolution": "Open Solution",
