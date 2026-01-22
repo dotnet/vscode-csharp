@@ -1,8 +1,8 @@
 {
   "command.csharp.attachToProcess": "Присоединение к процессу .NET 5+ или .NET Core.",
   "command.csharp.changeProjectContext": "Изменить контекст проекта активного документа",
-  "command.csharp.changeProjectContextEditor": "Select Project Context",
-  "command.csharp.changeProjectContextFileExplorer": "Select Project Context",
+  "command.csharp.changeProjectContextEditor": "Выбор контекста проекта",
+  "command.csharp.changeProjectContextFileExplorer": "Выбор контекста проекта",
   "command.csharp.downloadDebugger": "Скачать отладчик .NET Core",
   "command.csharp.listProcess": "Перечислить процесс для вложения",
   "command.csharp.listRemoteDockerProcess": "Список процессов подключения к Docker",

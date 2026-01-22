@@ -1,8 +1,8 @@
 {
   "command.csharp.attachToProcess": "Dołączanie do procesu platformy .NET 5 lub .NET Core",
   "command.csharp.changeProjectContext": "Zmień kontekst projektu dokumentu aktywnego",
-  "command.csharp.changeProjectContextEditor": "Select Project Context",
-  "command.csharp.changeProjectContextFileExplorer": "Select Project Context",
+  "command.csharp.changeProjectContextEditor": "Wybierz kontekst projektu",
+  "command.csharp.changeProjectContextFileExplorer": "Wybierz kontekst projektu",
   "command.csharp.downloadDebugger": "Pobierz debuger platformy .NET Core",
   "command.csharp.listProcess": "Wyświetl proces do dołączenia",
   "command.csharp.listRemoteDockerProcess": "Wyświetl listę procesów w połączeniu platformy Docker",
