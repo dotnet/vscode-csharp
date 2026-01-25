@@ -158,9 +158,9 @@ namespace   MyApp.Spaces
 
             const result = calculateNamespace(rootNamespace, projectUri, fileUri);
 
-            // In modern C#, identifiers can start with numbers in some contexts
-            // The implementation doesn't add underscore prefix, so we expect: MyApp.3rdParty
-            expect(result).toBe('MyApp.3rdParty');
+            // In C#, identifiers (including namespace segments) cannot start with a digit.
+            // Directory names starting with a digit are prefixed with an underscore in the namespace.
+            expect(result).toBe('MyApp._3rdParty');
         });
     });
 });

@@ -28,12 +28,9 @@ export async function syncNamespaces(outputChannel: vscode.LogOutputChannel): Pr
 /**
  * Internal function to synchronize C# namespaces with directory structure.
  * @param outputChannel The output channel for logging
- * @param dryRun If true, only shows changes without applying them
  */
 async function syncNamespacesInternal(outputChannel: vscode.LogOutputChannel): Promise<void> {
-    outputChannel.appendLine(
-        `Starting namespace synchronization...`
-    );
+    outputChannel.appendLine(`Starting namespace synchronization...`);
     outputChannel.show(true);
 
     const workspaceFolders = vscode.workspace.workspaceFolders;

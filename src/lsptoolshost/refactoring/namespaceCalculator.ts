@@ -31,12 +31,24 @@ export function calculateNamespace(rootNamespace: string, csprojUri: vscode.Uri,
 /**
  * Sanitizes a folder name to be used as part of a namespace.
  * Removes or replaces characters that are invalid in C# namespaces.
+ * - Replaces whitespace, hyphens, and dots with underscores
+ * - Prefixes segments starting with digits with underscore
+ * - Removes any remaining invalid characters
  */
 function sanitizeFolderName(name: string): string {
-    return name
-        .replace(/[\s-]/g, '_')
-        .replace(/[^\w.]/g, '')
+    // Normalize whitespace, hyphens, and dots to underscores
+    // Dots are replaced to avoid creating unintended namespace segments
+    let sanitized = name
+        .replace(/[\s.-]/g, '_')
+        .replace(/[^\w]/g, '')
         .trim();
+
+    // C# namespace identifiers cannot start with a digit; prefix with '_' if they do
+    if (/^[0-9]/.test(sanitized)) {
+        sanitized = `_${sanitized}`;
+    }
+
+    return sanitized;
 }
 
 /**
@@ -47,7 +59,6 @@ function sanitizeFolderName(name: string): string {
 export function extractCurrentNamespace(
     content: string
 ): { namespace: string; isFileScoped: boolean; match: RegExpMatchArray } | null {
-
     // Try file-scoped namespace first (namespace Foo.Bar;)
     const fileScopedRegex = /^(\s*)namespace\s+([\w.]+)\s*;/m;
     let match = content.match(fileScopedRegex);

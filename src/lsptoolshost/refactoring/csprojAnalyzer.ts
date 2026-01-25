@@ -7,6 +7,28 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 /**
+ * Common directories to exclude when scanning for project files.
+ */
+const EXCLUDED_DIRECTORIES = [
+    'bin',
+    'obj',
+    '.git',
+    '.svn',
+    '.hg',
+    'node_modules',
+    'packages',
+    '.vs',
+    '.vscode',
+    'TestResults',
+    'artifacts',
+    '.idea',
+    'wwwroot',
+    'dist',
+    'out',
+    'build',
+];
+
+/**
  * Recursively finds all .csproj files in the given directory.
  * Excludes common build artifacts, version control directories, and dependencies.
  */
@@ -18,27 +40,7 @@ export async function getCsprojFiles(uri: vscode.Uri): Promise<vscode.Uri[]> {
 
         for (const [name, type] of entries) {
             // Skip build artifacts, version control, dependencies, and common irrelevant directories
-            if (
-                [
-                    'bin',
-                    'obj',
-                    '.git',
-                    '.svn',
-                    '.hg',
-                    'node_modules',
-                    'packages',
-                    '.vs',
-                    '.vscode',
-                    'TestResults',
-                    'artifacts',
-                    '.idea',
-                    'wwwroot',
-                    'dist',
-                    'out',
-                    'build',
-                ].includes(name) ||
-                name.startsWith('.')
-            ) {
+            if (EXCLUDED_DIRECTORIES.includes(name) || name.startsWith('.')) {
                 continue;
             }
 
@@ -69,27 +71,7 @@ export async function getCsFiles(uri: vscode.Uri): Promise<vscode.Uri[]> {
 
         for (const [name, type] of entries) {
             // Skip build output directories, version control, dependencies, and common artifacts
-            if (
-                [
-                    'bin',
-                    'obj',
-                    '.git',
-                    '.svn',
-                    '.hg',
-                    'node_modules',
-                    'packages',
-                    '.vs',
-                    '.vscode',
-                    'TestResults',
-                    'artifacts',
-                    '.idea',
-                    'wwwroot',
-                    'dist',
-                    'out',
-                    'build',
-                ].includes(name) ||
-                name.startsWith('.')
-            ) {
+            if (EXCLUDED_DIRECTORIES.includes(name) || name.startsWith('.')) {
                 continue;
             }
 
@@ -119,7 +101,7 @@ export async function getRootNamespace(csprojUri: vscode.Uri): Promise<string> {
 
         const match = text.match(/<RootNamespace>(.*?)<\/RootNamespace>/);
         if (match) {
-            return match[1];
+            return match[1].trim();
         }
 
         // Fall back to project file name without extension
