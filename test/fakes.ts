@@ -233,22 +233,38 @@ export function getFakeVsCode(): vscode.vscode {
         },
         Uri: {
             parse: (value: string): vscode.Uri => {
-                // Parse file:// URIs (e.g., file:///D:/Projects/MyApp/file.cs)
-                // URI paths always use forward slashes, regardless of platform
-                const fileUriPattern = /^file:\/\/\/([A-Za-z]:\/.*)/;
-                const match = value.match(fileUriPattern);
-                if (match) {
-                    const uriPath = '/' + match[1]; // /D:/Projects/MyApp/file.cs
-                    // fsPath should use the platform-specific separator
-                    // On Windows: D:\Projects\MyApp\file.cs
-                    // On Unix: /D:/Projects/MyApp/file.cs (which doesn't make sense, but it's a test mock)
-                    const fsPath = process.platform === 'win32' ? match[1].replace(/\//g, '\\') : '/' + match[1];
+                // Parse file:// URIs properly for both Windows and Unix paths
+                // Windows: file:///c:/path/to/file or file:///C:/path/to/file
+                // Unix: file:///path/to/file
+                const windowsFilePattern = /^file:\/\/\/([A-Za-z]):(\/.*)/;
+                const unixFilePattern = /^file:\/\/(\/.*)/;
+
+                const windowsMatch = value.match(windowsFilePattern);
+                if (windowsMatch) {
+                    // Windows path: file:///C:/Projects/MyApp/file.cs
+                    const driveLetter = windowsMatch[1];
+                    const pathPart = windowsMatch[2];
+                    const uriPath = `/${driveLetter}:${pathPart}`;
+                    // fsPath uses platform-specific separators
+                    const fsPath =
+                        process.platform === 'win32' ? `${driveLetter}:${pathPart.replace(/\//g, '\\')}` : uriPath;
                     return {
                         path: uriPath,
                         fsPath: fsPath,
                     } as unknown as vscode.Uri;
                 }
-                // For non-file URIs or unsupported formats, just return the value as-is
+
+                const unixMatch = value.match(unixFilePattern);
+                if (unixMatch) {
+                    // Unix path: file:///home/user/project/file.cs
+                    const pathPart = unixMatch[1];
+                    return {
+                        path: pathPart,
+                        fsPath: pathPart,
+                    } as unknown as vscode.Uri;
+                }
+
+                // For non-file URIs or unsupported formats, return as-is
                 return {
                     path: value,
                     fsPath: value,

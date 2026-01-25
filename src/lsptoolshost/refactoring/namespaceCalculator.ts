@@ -62,9 +62,12 @@ function sanitizeFolderName(name: string): string {
 export function extractCurrentNamespace(
     content: string
 ): { namespace: string; isFileScoped: boolean; match: RegExpMatchArray } | null {
+    // Remove multi-line comments to avoid matching namespaces inside /* */ blocks
+    const contentWithoutMultiLineComments = content.replace(/\/\*[\s\S]*?\*\//g, '');
+
     // Try file-scoped namespace first (namespace Foo.Bar;)
     const fileScopedRegex = /^(\s*)namespace\s+([\w.]+)\s*;/m;
-    let match = content.match(fileScopedRegex);
+    let match = contentWithoutMultiLineComments.match(fileScopedRegex);
 
     if (match) {
         return {
@@ -76,7 +79,7 @@ export function extractCurrentNamespace(
 
     // Try traditional block namespace (namespace Foo.Bar { ... })
     const blockNamespaceRegex = /^(\s*)namespace\s+([\w.]+)/m;
-    match = content.match(blockNamespaceRegex);
+    match = contentWithoutMultiLineComments.match(blockNamespaceRegex);
 
     if (match) {
         return {

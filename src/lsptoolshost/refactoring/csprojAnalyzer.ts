@@ -100,7 +100,12 @@ export async function getRootNamespace(csprojUri: vscode.Uri): Promise<string> {
 
         const match = text.match(/<RootNamespace>(.*?)<\/RootNamespace>/);
         if (match) {
-            return match[1].trim();
+            const trimmed = match[1].trim();
+            // If RootNamespace is empty, fall back to project filename
+            if (trimmed.length === 0) {
+                return path.basename(csprojUri.fsPath, '.csproj');
+            }
+            return trimmed;
         }
 
         // Fall back to project file name without extension

@@ -76,11 +76,8 @@ describe('Namespace Sync Integration Tests', () => {
         }
     });
 
-    test('should ignore build directories', async () => {
-        // This test verifies that bin/obj directories are not scanned
-        // We can't easily test this in integration tests, but the unit tests cover it
-        expect(true).toBe(true);
-    });
+    // TODO: Add proper integration test that verifies bin/obj directories are excluded
+    // by actually invoking the sync command and checking the results
 });
 
 describe('Namespace Calculator Integration', () => {
@@ -110,9 +107,6 @@ describe('Namespace Calculator Integration', () => {
         }
     });
 
-    test('should handle special characters in directory names', async () => {
-        // This verifies the sanitization logic works correctly
-        // The actual test is in unit tests, this is more of a smoke test
-        expect(true).toBe(true);
-    });
+    // TODO: Add proper integration test that verifies directory name sanitization
+    // by creating test files with special characters and invoking the sync command
 });

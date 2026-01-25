@@ -4,14 +4,31 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import * as vscode from 'vscode';
+import { getRootNamespace } from '../../../src/lsptoolshost/refactoring/csprojAnalyzer';
+
+// Mock vscode.workspace.fs
+jest.mock('vscode', () => ({
+    Uri: {
+        file: (p: string) => ({ fsPath: p, path: p }),
+    },
+    workspace: {
+        fs: {
+            readFile: jest.fn(),
+        },
+    },
+}));
+
+// Get reference to the mocked readFile
+const mockReadFile = vscode.workspace.fs.readFile as jest.MockedFunction<(uri: vscode.Uri) => Promise<Uint8Array>>;
 
 describe('Csproj Analyzer', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        mockReadFile.mockClear();
     });
 
     describe('getRootNamespace', () => {
-        test('should extract RootNamespace from XML content', () => {
+        test('should extract RootNamespace from XML content', async () => {
             const csprojContent = `<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -19,40 +36,45 @@ describe('Csproj Analyzer', () => {
   </PropertyGroup>
 </Project>`;
 
-            // Regex to extract RootNamespace
-            const match = /<RootNamespace>\s*(.+?)\s*<\/RootNamespace>/.exec(csprojContent);
-            const rootNamespace = match ? match[1].trim() : null;
+            const mockUri = vscode.Uri.file('C:/Projects/MyApp/MyApp.csproj');
+            mockReadFile.mockResolvedValue(Buffer.from(csprojContent));
+
+            const rootNamespace = await getRootNamespace(mockUri);
 
             expect(rootNamespace).toBe('MyApp.Core');
         });
 
-        test('should return null when RootNamespace is not specified', () => {
+        test('should fallback to filename when RootNamespace is not specified', async () => {
             const csprojContent = `<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 </Project>`;
 
-            const match = /<RootNamespace>\s*(.+?)\s*<\/RootNamespace>/.exec(csprojContent);
-            const rootNamespace = match ? match[1].trim() : null;
+            const mockUri = vscode.Uri.file('C:/Projects/MyApp/MyApp.csproj');
+            mockReadFile.mockResolvedValue(Buffer.from(csprojContent));
 
-            expect(rootNamespace).toBeNull();
+            const rootNamespace = await getRootNamespace(mockUri);
+
+            expect(rootNamespace).toBe('MyApp');
         });
 
-        test('should trim whitespace from RootNamespace', () => {
+        test('should trim whitespace from RootNamespace', async () => {
             const csprojContent = `<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>  MyApp.Services  </RootNamespace>
   </PropertyGroup>
 </Project>`;
 
-            const match = /<RootNamespace>\s*(.+?)\s*<\/RootNamespace>/.exec(csprojContent);
-            const rootNamespace = match ? match[1].trim() : null;
+            const mockUri = vscode.Uri.file('C:/Projects/MyApp/MyApp.csproj');
+            mockReadFile.mockResolvedValue(Buffer.from(csprojContent));
+
+            const rootNamespace = await getRootNamespace(mockUri);
 
             expect(rootNamespace).toBe('MyApp.Services');
         });
 
-        test('should handle complex project file', () => {
+        test('should handle complex project file', async () => {
             const csprojContent = `<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -67,39 +89,27 @@ describe('Csproj Analyzer', () => {
   </ItemGroup>
 </Project>`;
 
-            const match = /<RootNamespace>\s*(.+?)\s*<\/RootNamespace>/.exec(csprojContent);
-            const rootNamespace = match ? match[1].trim() : null;
+            const mockUri = vscode.Uri.file('C:/Projects/MyApp/MyProduct.API.csproj');
+            mockReadFile.mockResolvedValue(Buffer.from(csprojContent));
+
+            const rootNamespace = await getRootNamespace(mockUri);
 
             expect(rootNamespace).toBe('MyCompany.MyProduct.API');
         });
 
-        test('should handle empty RootNamespace tag', () => {
+        test('should fallback to filename when RootNamespace tag is empty', async () => {
             const csprojContent = `<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace></RootNamespace>
   </PropertyGroup>
 </Project>`;
 
-            const match = /<RootNamespace>\s*(.+?)\s*<\/RootNamespace>/.exec(csprojContent);
-            const rootNamespace = match ? match[1].trim() : null;
+            const mockUri = vscode.Uri.file('C:/Projects/MyApp/MyApp.csproj');
+            mockReadFile.mockResolvedValue(Buffer.from(csprojContent));
 
-            expect(rootNamespace).toBeNull();
-        });
+            const rootNamespace = await getRootNamespace(mockUri);
 
-        test('should extract filename without extension', () => {
-            const filePath = '/home/user/MyApp.Core.Services.csproj';
-            const filename = filePath.split('/').pop();
-            const nameWithoutExtension = filename?.replace('.csproj', '') ?? '';
-
-            expect(nameWithoutExtension).toBe('MyApp.Core.Services');
-        });
-
-        test('should handle Windows-style path separators', () => {
-            const filePath = 'D:\\Projects\\MyApp\\MyApp.csproj';
-            const filename = filePath.split('\\').pop();
-            const nameWithoutExtension = filename?.replace('.csproj', '') ?? '';
-
-            expect(nameWithoutExtension).toBe('MyApp');
+            expect(rootNamespace).toBe('MyApp');
         });
     });
 });

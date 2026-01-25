@@ -213,12 +213,18 @@ async function applyNamespaceChanges(
                 continue;
             }
 
+            // Ensure match.index is defined (it should always be for non-global regexes)
+            if (namespaceInfo.match.index === undefined) {
+                outputChannel.appendLine(`Error: match.index is undefined for ${change.fileUri.fsPath}, skipping.`);
+                continue;
+            }
+
             // Find the exact range of the namespace name to replace
             const startPos = document.positionAt(
-                namespaceInfo.match.index! + namespaceInfo.match[0].lastIndexOf(namespaceInfo.namespace)
+                namespaceInfo.match.index + namespaceInfo.match[0].lastIndexOf(namespaceInfo.namespace)
             );
             const endPos = document.positionAt(
-                namespaceInfo.match.index! +
+                namespaceInfo.match.index +
                     namespaceInfo.match[0].lastIndexOf(namespaceInfo.namespace) +
                     namespaceInfo.namespace.length
             );
