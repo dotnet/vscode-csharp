@@ -232,8 +232,27 @@ export function getFakeVsCode(): vscode.vscode {
             all: [],
         },
         Uri: {
-            parse: () => {
-                throw new Error('Not Implemented');
+            parse: (value: string): vscode.Uri => {
+                // Parse file:// URIs (e.g., file:///D:/Projects/MyApp/file.cs)
+                // URI paths always use forward slashes, regardless of platform
+                const fileUriPattern = /^file:\/\/\/([A-Za-z]:\/.*)/;
+                const match = value.match(fileUriPattern);
+                if (match) {
+                    const uriPath = '/' + match[1]; // /D:/Projects/MyApp/file.cs
+                    // fsPath should use the platform-specific separator
+                    // On Windows: D:\Projects\MyApp\file.cs
+                    // On Unix: /D:/Projects/MyApp/file.cs (which doesn't make sense, but it's a test mock)
+                    const fsPath = process.platform === 'win32' ? match[1].replace(/\//g, '\\') : '/' + match[1];
+                    return {
+                        path: uriPath,
+                        fsPath: fsPath,
+                    } as unknown as vscode.Uri;
+                }
+                // For non-file URIs or unsupported formats, just return the value as-is
+                return {
+                    path: value,
+                    fsPath: value,
+                } as unknown as vscode.Uri;
             },
             file: (f: string): vscode.Uri => {
                 return {

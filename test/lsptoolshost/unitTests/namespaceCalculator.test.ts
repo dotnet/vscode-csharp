@@ -123,8 +123,9 @@ namespace   MyApp.Spaces
 
         test('should handle Windows paths correctly', () => {
             const rootNamespace = 'MyApp';
-            const projectUri = vscode.Uri.file('D:\\Projects\\MyApp\\MyApp.csproj');
-            const fileUri = vscode.Uri.file('D:\\Projects\\MyApp\\Controllers\\HomeController.cs');
+            // Use vscode.Uri.parse with explicit file:// scheme for cross-platform compatibility
+            const projectUri = vscode.Uri.parse('file:///D:/Projects/MyApp/MyApp.csproj');
+            const fileUri = vscode.Uri.parse('file:///D:/Projects/MyApp/Controllers/HomeController.cs');
 
             const result = calculateNamespace(rootNamespace, projectUri, fileUri);
 

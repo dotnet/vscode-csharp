@@ -22,7 +22,6 @@ const EXCLUDED_DIRECTORIES = [
     'TestResults',
     'artifacts',
     '.idea',
-    'wwwroot',
     'dist',
     'out',
     'build',

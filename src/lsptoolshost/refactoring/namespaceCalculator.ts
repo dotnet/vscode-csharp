@@ -11,16 +11,19 @@ import * as path from 'path';
  * relative to the project root.
  */
 export function calculateNamespace(rootNamespace: string, csprojUri: vscode.Uri, fileUri: vscode.Uri): string {
-    const csprojDir = path.dirname(csprojUri.fsPath);
-    const fileDir = path.dirname(fileUri.fsPath);
-    const relativePath = path.relative(csprojDir, fileDir);
+    const csprojPath = csprojUri.path;
+    const filePath = fileUri.path;
+
+    const csprojDir = path.posix.dirname(csprojPath);
+    const fileDir = path.posix.dirname(filePath);
+    const relativePath = path.posix.relative(csprojDir, fileDir);
 
     if (!relativePath || relativePath === '.') {
         return rootNamespace;
     }
 
     const suffix = relativePath
-        .split(path.sep)
+        .split('/')
         .map((segment: string) => sanitizeFolderName(segment))
         .filter((segment: string) => segment.length > 0)
         .join('.');
