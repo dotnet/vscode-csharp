@@ -19,6 +19,7 @@ import {
 } from './projectContext/projectContextCommands';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
+import { syncNamespaces } from './refactoring/namespaceSync';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -82,5 +83,11 @@ function registerExtensionCommands(
     );
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand('csharp.syncNamespaces', async () => {
+            reporter.sendTelemetryEvent(TelemetryEventNames.NamespaceSyncCommand);
+            await syncNamespaces(outputChannel);
+        })
     );
 }

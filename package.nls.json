@@ -19,6 +19,7 @@
   "command.csharp.listRemoteDockerProcess": "List processes on Docker connection",
   "command.csharp.attachToProcess": "Attach to a .NET 5+ or .NET Core process",
   "command.csharp.reportIssue": "Report an issue",
+  "command.csharp.syncNamespaces": "Sync namespaces",
   "command.csharp.showDecompilationTerms": "Show the decompiler terms agreement",
   "command.csharp.recordLanguageServerTrace": "Record a performance trace of the C# Language Server",
   "command.extension.showRazorCSharpWindow": "Show Razor CSharp",

@@ -1918,6 +1918,12 @@
         "enablement": "isWorkspaceTrusted"
       },
       {
+        "command": "csharp.syncNamespaces",
+        "title": "%command.csharp.syncNamespaces%",
+        "category": "CSharp",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
         "command": "csharp.showDecompilationTerms",
         "title": "%command.csharp.showDecompilationTerms%",
         "category": "CSharp",
