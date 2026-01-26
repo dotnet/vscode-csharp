@@ -4,7 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.121.x
-
+* Update Razor to 10.0.0-preview.26075.11 (PR: [#8914](https://github.com/dotnet/vscode-csharp/pull/8914))
+  * Add IndentByTwo attribute indent style option for Razor formatting (PR: [#12700](https://github.com/dotnet/razor/pull/12700))
+  * Fix ordering logic for folding ranges, to fix expression bodied method folding (PR: [#12695](https://github.com/dotnet/razor/pull/12695))
+  
 # 2.113.x
 * Add explorer context menu item for changing project context (PR: [#8896](https://github.com/dotnet/vscode-csharp/pull/8896))
 * Small fixes for project context selector (PR: [#8889](https://github.com/dotnet/vscode-csharp/pull/8889))

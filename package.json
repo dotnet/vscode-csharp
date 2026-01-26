@@ -42,7 +42,7 @@
   "defaults": {
     "roslyn": "5.4.0-2.26062.9",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.26066.2",
+    "razor": "10.0.0-preview.26075.11",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.3.11128.18"
   },
@@ -1527,31 +1527,42 @@
             "tags": [
               "preview"
             ]
-          },
-          "razor.languageServer.directory": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.razor.languageServer.directory%",
-            "order": 90
-          },
-          "razor.languageServer.debug": {
+          }
+        }
+      },
+      {
+        "title": "Razor",
+        "id": "ms-dotnettools.csharp.razor",
+        "order": 10,
+        "properties": {
+          "razor.format.codeBlockBraceOnNextLine": {
             "type": "boolean",
-            "scope": "machine-overridable",
+            "scope": "window",
             "default": false,
-            "description": "%configuration.razor.languageServer.debug%",
-            "order": 90
+            "description": "%configuration.razor.razor.format.codeBlockBraceOnNextLine%"
           },
-          "razor.languageServer.suppressLspErrorToasts": {
+          "razor.format.attributeIndentStyle": {
+            "type": "string",
+            "default": "alignWithFirst",
+            "enum": [
+              "alignWithFirst",
+              "indentByOne",
+              "indentByTwo"
+            ],
+            "description": "%configuration.razor.razor.format.attributeIndentStyle%"
+          },
+          "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
-            "default": true,
-            "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
+            "scope": "window",
+            "default": false,
+            "description": "%configuration.razor.razor.completion.commitElementsWithSpace%"
           }
         }
       },
       {
         "title": "OmniSharp",
         "id": "ms-dotnettools.csharp.omniSharp",
-        "order": 10,
+        "order": 11,
         "properties": {
           "dotnet.server.useOmnisharp": {
             "type": "boolean",
@@ -1754,27 +1765,6 @@
             "scope": "window",
             "default": true,
             "description": "%configuration.omnisharp.razor.format.enable%"
-          },
-          "razor.format.codeBlockBraceOnNextLine": {
-            "type": "boolean",
-            "scope": "window",
-            "default": false,
-            "description": "%configuration.omnisharp.razor.format.codeBlockBraceOnNextLine%"
-          },
-          "razor.format.attributeIndentStyle": {
-            "type": "string",
-            "default": "alignWithFirst",
-            "enum": [
-              "alignWithFirst",
-              "indentByOne"
-            ],
-            "description": "%configuration.omnisharp.razor.format.attributeIndentStyle%"
-          },
-          "razor.completion.commitElementsWithSpace": {
-            "type": "boolean",
-            "scope": "window",
-            "default": false,
-            "description": "%configuration.omnisharp.razor.completion.commitElementsWithSpace%"
           }
         }
       }
