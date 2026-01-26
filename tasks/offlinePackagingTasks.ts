@@ -67,9 +67,19 @@ export interface NugetPackageInfo {
 // Set of NuGet packages that we need to download and install.
 export const allNugetPackages: { [key: string]: NugetPackageInfo } = {
     roslyn: {
-        getPackageName: (platformInfo) => `Microsoft.CodeAnalysis.LanguageServer.${platformInfo?.rid ?? 'neutral'}`,
+        getPackageName: (platformInfo) => {
+            if (platformInfo === undefined) {
+                throw new Error('Platform info is required for roslyn package name.');
+            }
+            return `roslyn-language-server.${platformInfo.rid}`;
+        },
         packageJsonName: 'roslyn',
-        getPackageContentPath: (platformInfo) => path.join('content', 'LanguageServer', platformInfo?.rid ?? 'neutral'),
+        getPackageContentPath: (platformInfo) => {
+            if (platformInfo === undefined) {
+                throw new Error('Platform info is required for roslyn package content path.');
+            }
+            return path.join('tools', 'net10.0', platformInfo.rid);
+        },
         vsixOutputPath: languageServerDirectory,
     },
     roslynDevKit: {
@@ -115,9 +125,6 @@ for (const p of platformSpecificPackages) {
 gulp.task('vsix:release:package:windows', gulp.series(...vsixTasks.filter((t) => t.includes('windows'))));
 gulp.task('vsix:release:package:linux', gulp.series(...vsixTasks.filter((t) => t.includes('linux'))));
 gulp.task('vsix:release:package:darwin', gulp.series(...vsixTasks.filter((t) => t.includes('darwin'))));
-gulp.task('vsix:release:package:neutral', async () => {
-    await doPackageOffline(undefined);
-});
 
 gulp.task(
     'vsix:release:package',
@@ -230,11 +237,6 @@ async function installNuGetPackage(
 }
 
 async function installRazor(packageJSON: any, platformInfo: PlatformInformation) {
-    if (platformInfo === undefined) {
-        const platformNeutral = new PlatformInformation('neutral', 'neutral');
-        return await installPackageJsonDependency('Razor', packageJSON, platformNeutral);
-    }
-
     return await installPackageJsonDependency('Razor', packageJSON, platformInfo);
 }
 
@@ -351,7 +353,7 @@ async function doPackageOffline(vsixPlatform: VSIXPlatformInfo | undefined) {
         const message = (err instanceof Error ? err.stack : err) ?? '<unknown error>';
         // NOTE: Extra `\n---` at the end is because gulp will print this message following by the
         // stack trace of this line. So that seperates the two stack traces.
-        throw Error(`Failed to create package ${vsixPlatform?.vsceTarget ?? 'neutral'}. ${message}\n---`);
+        throw Error(`Failed to create package ${vsixPlatform?.vsceTarget ?? 'undefined'}. ${message}\n---`);
     } finally {
         // Reset package version to the placeholder value.
         await nbgv.resetPackageVersionPlaceholder();
@@ -395,9 +397,6 @@ function getPackageName(packageJSON: any, vscodePlatformId?: string) {
 
 async function updateNugetPackageVersion(packageInfo: NugetPackageInfo) {
     const packageJSON = getPackageJSON();
-
-    // Fetch the neutral package that we don't otherwise have in our platform list
-    await acquireNugetPackage(packageInfo, undefined, packageJSON, true);
 
     // And now fetch each platform specific
     for (const p of platformSpecificPackages) {

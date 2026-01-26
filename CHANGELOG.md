@@ -4,6 +4,11 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.121.x
+* Update Roslyn to 5.4.0-2.26077.7 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+  * Convert language server project into .NET tool (PR: [#82154](https://github.com/dotnet/roslyn/pull/82154))
+  * Add more details to stale project update warning (PR: [#82053](https://github.com/dotnet/roslyn/pull/82053))
+  * Cleanup server capabilities providers and delete unused LSP providers (PR: [#82116](https://github.com/dotnet/roslyn/pull/82116))
+  * Reduce allocations in LSP completion handling. (PR: [#82133](https://github.com/dotnet/roslyn/pull/82133))
 
 # 2.114.x
 * Adjust Select Project Context editor menu item location (PR: [#8907](https://github.com/dotnet/vscode-csharp/pull/8907))
