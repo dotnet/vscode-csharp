@@ -30,4 +30,7 @@ export enum TelemetryEventNames {
     ProjectContextChangeFileExplorer = 'roslyn/projectContextChangeFileExplorer',
     ProjectContextChangeEditor = 'roslyn/projectContextChangeEditor',
     ProjectContextChangeCommand = 'roslyn/projectContextChangeCommand',
+
+    // Namespace synchronization command
+    NamespaceSyncCommand = 'csharp/namespaceSyncCommand',
 }
