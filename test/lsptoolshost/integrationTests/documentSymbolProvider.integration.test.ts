@@ -32,78 +32,82 @@ describe(`Document Symbol Tests`, () => {
     test('Returns all elements', async () => {
         const symbols = await GetDocumentSymbols(fileUri);
 
-        expect(symbols).toHaveLength(5);
+        expect(symbols).toHaveLength(1);
+
+        // Namespace Test
+        expect(symbols[0].name).toBe('Test');
+        expect(symbols[0].kind).toBe(vscode.SymbolKind.Namespace);
+        expect(symbols[0].children).toHaveLength(5);
+
+        const namespaceChildren = symbols[0].children;
 
         // Class C
-        expect(symbols[0].name).toBe('C');
-        expect(symbols[0].detail).toBe('Test.C');
-        expect(symbols[0].kind).toBe(vscode.SymbolKind.Class);
+        expect(namespaceChildren[0].name).toBe('C');
+        expect(namespaceChildren[0].kind).toBe(vscode.SymbolKind.Class);
         // The range is the entire class, but the selection range is the class name
-        expect(symbols[0].range).toStrictEqual(new vscode.Range(new vscode.Position(4, 4), new vscode.Position(37, 5)));
-        expect(symbols[0].selectionRange).toStrictEqual(
+        expect(namespaceChildren[0].range).toStrictEqual(
+            new vscode.Range(new vscode.Position(4, 4), new vscode.Position(37, 5))
+        );
+        expect(namespaceChildren[0].selectionRange).toStrictEqual(
             new vscode.Range(new vscode.Position(4, 10), new vscode.Position(4, 11))
         );
-        expect(symbols[0].children).toHaveLength(20);
+        expect(namespaceChildren[0].children).toHaveLength(18);
 
         // Field _f
-        expect(symbols[0].children[0].name).toBe('_f');
-        expect(symbols[0].children[0].kind).toBe(vscode.SymbolKind.Field);
-
-        // Finalize
-        expect(symbols[0].children[3].name).toBe('~C');
-        expect(symbols[0].children[3].kind).toBe(vscode.SymbolKind.Method);
+        expect(namespaceChildren[0].children[0].name).toBe('_f : int');
+        expect(namespaceChildren[0].children[0].kind).toBe(vscode.SymbolKind.Field);
 
         // Ctor
-        expect(symbols[0].children[4].name).toBe('C');
-        expect(symbols[0].children[4].kind).toBe(vscode.SymbolKind.Method);
+        expect(namespaceChildren[0].children[3].name).toBe('C()');
+        expect(namespaceChildren[0].children[3].kind).toBe(vscode.SymbolKind.Method);
 
-        // EventHandler E1
-        expect(symbols[0].children[5].name).toBe('E1');
-        expect(symbols[0].children[5].kind).toBe(vscode.SymbolKind.Event);
-
-        // explicit operator int(C c1)
-        expect(symbols[0].children[11].name).toBe('explicit operator Int32');
-        expect(symbols[0].children[11].detail).toBe('explicit operator int(C c1)');
-        expect(symbols[0].children[11].kind).toBe(vscode.SymbolKind.Operator);
-
-        // implicit operator int(C c1)
-        expect(symbols[0].children[12].name).toBe('implicit operator C');
-        expect(symbols[0].children[12].detail).toBe('implicit operator C(int i)');
-        expect(symbols[0].children[12].kind).toBe(vscode.SymbolKind.Operator);
+        // Finalize
+        expect(namespaceChildren[0].children[4].name).toBe('~C()');
+        expect(namespaceChildren[0].children[4].kind).toBe(vscode.SymbolKind.Method);
 
         // Method M1
-        expect(symbols[0].children[13].name).toBe('M1');
-        expect(symbols[0].children[13].detail).toBe('M1(int i, string s, params object[] args)');
-        expect(symbols[0].children[13].kind).toBe(vscode.SymbolKind.Method);
-
-        // operator !=
-        expect(symbols[0].children[14].name).toBe('operator !=');
-        expect(symbols[0].children[14].detail).toBe('operator !=(C c1, int i)');
-        expect(symbols[0].children[14].kind).toBe(vscode.SymbolKind.Operator);
+        expect(namespaceChildren[0].children[5].name).toBe('M1(int, string, object[]) : void');
+        expect(namespaceChildren[0].children[5].detail).toBe('M1(int, string, object[]) : void');
+        expect(namespaceChildren[0].children[5].kind).toBe(vscode.SymbolKind.Method);
 
         // Property P1
-        expect(symbols[0].children[16].name).toBe('P1');
-        expect(symbols[0].children[16].kind).toBe(vscode.SymbolKind.Property);
+        expect(namespaceChildren[0].children[6].name).toBe('P1 : int');
+        expect(namespaceChildren[0].children[6].kind).toBe(vscode.SymbolKind.Property);
+
+        // EventHandler E1
+        expect(namespaceChildren[0].children[10].name).toBe('E1 : EventHandler');
+        expect(namespaceChildren[0].children[10].kind).toBe(vscode.SymbolKind.Event);
+
+        // operator !=
+        expect(namespaceChildren[0].children[15].name).toBe('operator !=(C, int) : bool');
+        expect(namespaceChildren[0].children[15].detail).toBe('operator !=(C, int) : bool');
+        expect(namespaceChildren[0].children[15].kind).toBe(vscode.SymbolKind.Operator);
+
+        // implicit operator C(int)
+        expect(namespaceChildren[0].children[16].name).toBe('implicit operator C(int)');
+        expect(namespaceChildren[0].children[16].detail).toBe('implicit operator C(int)');
+        expect(namespaceChildren[0].children[16].kind).toBe(vscode.SymbolKind.Operator);
+
+        // explicit operator int(C)
+        expect(namespaceChildren[0].children[17].name).toBe('explicit operator int(C)');
+        expect(namespaceChildren[0].children[17].detail).toBe('explicit operator int(C)');
+        expect(namespaceChildren[0].children[17].kind).toBe(vscode.SymbolKind.Operator);
 
         // Struct S
-        expect(symbols[1].name).toBe('S');
-        expect(symbols[1].detail).toBe('Test.S');
-        expect(symbols[1].kind).toBe(vscode.SymbolKind.Struct);
+        expect(namespaceChildren[1].name).toBe('S');
+        expect(namespaceChildren[1].kind).toBe(vscode.SymbolKind.Struct);
 
         // Interface I
-        expect(symbols[2].name).toBe('I');
-        expect(symbols[2].detail).toBe('Test.I');
-        expect(symbols[2].kind).toBe(vscode.SymbolKind.Interface);
+        expect(namespaceChildren[2].name).toBe('I');
+        expect(namespaceChildren[2].kind).toBe(vscode.SymbolKind.Interface);
 
         // Delegate D
-        expect(symbols[3].name).toBe('D');
-        expect(symbols[3].detail).toBe('Test.D');
-        expect(symbols[3].kind).toBe(vscode.SymbolKind.Method);
+        expect(namespaceChildren[3].name).toBe('D() : void');
+        expect(namespaceChildren[3].kind).toBe(vscode.SymbolKind.Method);
 
         // Enum E
-        expect(symbols[4].name).toBe('E');
-        expect(symbols[4].detail).toBe('Test.E');
-        expect(symbols[4].kind).toBe(vscode.SymbolKind.Enum);
+        expect(namespaceChildren[4].name).toBe('E');
+        expect(namespaceChildren[4].kind).toBe(vscode.SymbolKind.Enum);
     });
 });
 
