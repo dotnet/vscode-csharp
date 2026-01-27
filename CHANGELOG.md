@@ -3,7 +3,10 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# 2.121.x
+# 2.114.x
+* Adjust Select Project Context editor menu item location (PR: [#8907](https://github.com/dotnet/vscode-csharp/pull/8907))
+* Replace vsts-npm-auth with ado-npm-auth in documentation and scripts (PR: [#8906](https://github.com/dotnet/vscode-csharp/pull/8906))
+* Clarify vsts-npm-auth only required when adding new packages (PR: [#8850](https://github.com/dotnet/vscode-csharp/pull/8850))
 * Update Razor to 10.0.0-preview.26075.11 (PR: [#8914](https://github.com/dotnet/vscode-csharp/pull/8914))
   * Add IndentByTwo attribute indent style option for Razor formatting (PR: [#12700](https://github.com/dotnet/razor/pull/12700))
   * Fix ordering logic for folding ranges, to fix expression bodied method folding (PR: [#12695](https://github.com/dotnet/razor/pull/12695))
