@@ -1803,7 +1803,7 @@
     "commands": [
       {
 				"command": "csharp.openUrlInBrowser",
-				"title": "%commands.openUrlInBrowser%",
+				"title": "%command.openUrlInBrowser%",
 				"category": "CSharp"
 			},
       {
