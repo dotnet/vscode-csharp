@@ -370,7 +370,8 @@ export class RoslynLanguageServer {
     }
 
     public async restart(): Promise<void> {
-        await this._languageClient.restart();
+        await this.stop();
+        await this._languageClient.start();
     }
 
     public workspaceDisplayName(): string {

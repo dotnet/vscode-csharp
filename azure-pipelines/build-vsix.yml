@@ -138,7 +138,6 @@ stages:
       displayName: Use .NET Core sdk 8.0.x
       inputs:
         version: 8.0.x
-
     # If we're in an official build, install the signing plugin
     - ${{ if eq(parameters.isOfficial, true) }}:
       - task: MicroBuildSigningPlugin@4

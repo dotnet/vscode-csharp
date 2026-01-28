@@ -3,11 +3,35 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.114.x
+* Adjust Select Project Context editor menu item location (PR: [#8907](https://github.com/dotnet/vscode-csharp/pull/8907))
+* Replace vsts-npm-auth with ado-npm-auth in documentation and scripts (PR: [#8906](https://github.com/dotnet/vscode-csharp/pull/8906))
+* Clarify vsts-npm-auth only required when adding new packages (PR: [#8850](https://github.com/dotnet/vscode-csharp/pull/8850))
+* Update Razor to 10.0.0-preview.26075.11 (PR: [#8914](https://github.com/dotnet/vscode-csharp/pull/8914))
+  * Add IndentByTwo attribute indent style option for Razor formatting (PR: [#12700](https://github.com/dotnet/razor/pull/12700))
+  * Fix ordering logic for folding ranges, to fix expression bodied method folding (PR: [#12695](https://github.com/dotnet/razor/pull/12695))
+* Update Roslyn to 5.4.0-2.26076.6 (PR: [#8921](https://github.com/dotnet/vscode-csharp/pull/8921))
+  * [EnC] Use default encoding stored in the PDB for creating committed document SourceText (PR: [#81912](https://github.com/dotnet/roslyn/pull/81912))
+  * Fix setting checksum algorithm when mapping projects (PR: [#82051](https://github.com/dotnet/roslyn/pull/82051))
+  * Fix race in AbstractFormatEngine.GetChainedFormattingRules (PR: [#82079](https://github.com/dotnet/roslyn/pull/82079))
+  * Fix crash when seeing if code can be converted to collection expressions (PR: [#82104](https://github.com/dotnet/roslyn/pull/82104))
+  * feat: foreach completion (PR: [#81850](https://github.com/dotnet/roslyn/pull/81850))
+  * Use document structure in breadcrumbs, sticky scroll, and outline in VSCode (PR: [#81993](https://github.com/dotnet/roslyn/pull/81993))
+  * Keep comments when converting coalesce expressions (PR: [#82062](https://github.com/dotnet/roslyn/pull/82062))
+  * Adds an analyzer/fixer to inform the user when the compiler silently inserts a fallible explicit cast. (PR: [#82039](https://github.com/dotnet/roslyn/pull/82039))
+  * Don't offer "Use coalesce expression" when if-statement contains directives (PR: [#82041](https://github.com/dotnet/roslyn/pull/82041))
+  * Fix detection of embedded c# code (PR: [#82033](https://github.com/dotnet/roslyn/pull/82033))
+  * Fix issue with 'remove unnecessary suppression' and field/property initializers (PR: [#81899](https://github.com/dotnet/roslyn/pull/81899))
+  * Extensions: RemovedUnusedMembers should analyze symbol usages within extension blocks too (PR: [#81996](https://github.com/dotnet/roslyn/pull/81996))
+  * Don't offer 'use ??' when pointers are involved (PR: [#81988](https://github.com/dotnet/roslyn/pull/81988))
+  * Add 'find references' support for collection-expression-builder methods. (PR: [#81770](https://github.com/dotnet/roslyn/pull/81770))
+  * Support inference in collection expressions (PR: [#77534](https://github.com/dotnet/roslyn/pull/77534))
+
 # 2.113.x
 * Add explorer context menu item for changing project context (PR: [#8896](https://github.com/dotnet/vscode-csharp/pull/8896))
 * Small fixes for project context selector (PR: [#8889](https://github.com/dotnet/vscode-csharp/pull/8889))
 * Update Razor to 10.0.0-preview.26066.2 (PR: [#8894](https://github.com/dotnet/vscode-csharp/pull/8894))
-  * Ignore case when parsing enum values in settings in VS Code (PR: [#12667](https://github.com/dotnet/razor/pull/12667))      
+  * Ignore case when parsing enum values in settings in VS Code (PR: [#12667](https://github.com/dotnet/razor/pull/12667))
 
 # 2.112.x
 * Add project context refresh support (PR: [#8876](https://github.com/dotnet/vscode-csharp/pull/8876))
