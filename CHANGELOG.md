@@ -9,7 +9,7 @@
   * Add more details to stale project update warning (PR: [#82053](https://github.com/dotnet/roslyn/pull/82053))
   * Cleanup server capabilities providers and delete unused LSP providers (PR: [#82116](https://github.com/dotnet/roslyn/pull/82116))
   * Reduce allocations in LSP completion handling. (PR: [#82133](https://github.com/dotnet/roslyn/pull/82133))
-* Update xamlTools to 18.4.11427.62 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/8929))
+* Update xamlTools to 18.4.11427.62 (PR: [#8929](https://github.com/dotnet/vscode-csharp/pull/8929))
   * Implicit XML namespaces for MAUI feature (PR: AzDO#698019)
   * Fix MAUI TAP initialization issue and improve logging (PR: AzDO#702593)
 
