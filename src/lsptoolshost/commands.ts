@@ -56,13 +56,6 @@ function registerExtensionCommands(
             changeProjectContextCommandName,
             async (document: vscode.TextDocument | undefined, options) => {
                 reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeCommand);
-
-                document = document ?? vscode.window.activeTextEditor?.document;
-                if (document === undefined) {
-                    vscode.window.showErrorMessage(vscode.l10n.t('No file selected to change project context.'));
-                    return;
-                }
-
                 await changeProjectContext(languageServer, document, options);
             }
         )
