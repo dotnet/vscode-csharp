@@ -9,6 +9,7 @@ import { LanguageClientOptions, ServerOptions } from 'vscode-languageclient';
 import CompositeDisposable from '../../compositeDisposable';
 import { IDisposable } from '../../disposable';
 import { languageServerOptions } from '../../shared/options';
+import { RoslynLspErrorCodes } from './roslynProtocol';
 
 /**
  * Implementation of the base LanguageClient type that allows for additional items to be disposed of
@@ -34,16 +35,6 @@ export class RoslynLanguageClient extends LanguageClient {
         return super.dispose(timeout);
     }
 
-    /**
-     * Indicates that the server could not process the request, but that the failure shouldn't be surfaced to the user.
-     * (It's expected that the failure is still logged, however.)
-     *
-     * This is only meant to be used under conditions where we can't fulfill the request, but we think that the failure
-     * is unlikely to be significant to the user (i.e. surface as an actual editor feature failing to function properly.)
-     * For example, if pull diagnostics are requested for a virtual document that was already closed.
-     */
-    private static readonly RoslynLspNonFatalRequestFailure = -32799;
-
     override handleFailedRequest<T>(
         type: MessageSignature,
         token: CancellationToken | undefined,
@@ -51,7 +42,7 @@ export class RoslynLanguageClient extends LanguageClient {
         defaultValue: T,
         showNotification?: boolean
     ) {
-        if (error.code == RoslynLanguageClient.RoslynLspNonFatalRequestFailure) {
+        if (error.code == RoslynLspErrorCodes.nonFatalRequestFailure) {
             return super.handleFailedRequest(type, token, error, defaultValue, false);
         }
 
