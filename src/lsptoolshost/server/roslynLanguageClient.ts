@@ -34,6 +34,16 @@ export class RoslynLanguageClient extends LanguageClient {
         return super.dispose(timeout);
     }
 
+    /**
+     * Indicates that the server could not process the request, but that the failure shouldn't be surfaced to the user.
+     * (It's expected that the failure is still logged, however.)
+     *
+     * This is only meant to be used under conditions where we can't fulfill the request, but we think that the failure
+     * is unlikely to be significant to the user (i.e. surface as an actual editor feature failing to function properly.)
+     * For example, if pull diagnostics are requested for a virtual document that was already closed.
+     */
+    private static readonly RoslynLspNonFatalRequestFailure = -32799;
+
     override handleFailedRequest<T>(
         type: MessageSignature,
         token: CancellationToken | undefined,
@@ -41,6 +51,10 @@ export class RoslynLanguageClient extends LanguageClient {
         defaultValue: T,
         showNotification?: boolean
     ) {
+        if (error.code == RoslynLanguageClient.RoslynLspNonFatalRequestFailure) {
+            return super.handleFailedRequest(type, token, error, defaultValue, false);
+        }
+
         // Temporarily allow LSP error toasts to be suppressed if configured.
         // There are a few architectural issues preventing us from solving some of the underlying problems,
         // for example Razor cohosting to fix text mismatch issues and unification of serialization libraries
