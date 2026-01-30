@@ -52,10 +52,13 @@ function registerExtensionCommands(
     reporter: TelemetryReporter
 ) {
     context.subscriptions.push(
-        vscode.commands.registerCommand(changeProjectContextCommandName, async (document, options) => {
-            reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeCommand);
-            await changeProjectContext(languageServer, document, options);
-        })
+        vscode.commands.registerCommand(
+            changeProjectContextCommandName,
+            async (document: vscode.TextDocument | undefined, options) => {
+                reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeCommand);
+                await changeProjectContext(languageServer, document, options);
+            }
+        )
     );
     context.subscriptions.push(
         vscode.commands.registerCommand(changeProjectContextFileExplorer, async (uri) => {

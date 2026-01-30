@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as vscode from 'vscode';
+import { isRelevantDocument } from './projectContextService';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { VSProjectContext } from '../server/roslynProtocol';
 import { CancellationToken } from 'vscode-languageclient/node';
@@ -31,9 +32,15 @@ export async function openAndChangeProjectContext(
 
 export async function changeProjectContext(
     languageServer: RoslynLanguageServer,
-    document: vscode.TextDocument,
+    document: vscode.TextDocument | undefined,
     options: ChangeProjectContextOptions | undefined
 ): Promise<VSProjectContext | undefined> {
+    document = document ?? vscode.window.activeTextEditor?.document;
+    if (!isRelevantDocument(document)) {
+        vscode.window.showErrorMessage(vscode.l10n.t('No file selected to change project context.'));
+        return;
+    }
+
     const contextList = await languageServer._projectContextService.queryServerProjectContexts(
         document.uri,
         CancellationToken.None

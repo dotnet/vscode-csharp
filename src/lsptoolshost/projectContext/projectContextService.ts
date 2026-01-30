@@ -33,7 +33,19 @@ type UriString = string;
 const VerificationDelay = 5 * 1000;
 
 let _verifyTimeout: NodeJS.Timeout | undefined;
-let _documentUriToVerify: vscode.Uri | undefined;
+
+const _documentSelector = combineDocumentSelectors(
+    languageServerOptions.documentSelector,
+    RazorLanguage.documentSelector
+);
+
+export function isRelevantDocument(document: vscode.TextDocument | undefined): document is vscode.TextDocument {
+    if (document === undefined) {
+        return false;
+    }
+
+    return vscode.languages.match(_documentSelector, document) > 0;
+}
 
 export class ProjectContextService {
     // This map tracks which project context is active for a given context key. New entries are
@@ -58,11 +70,6 @@ export class ProjectContextService {
         _vs_label: '',
         _vs_is_miscellaneous: false,
     };
-
-    private readonly _documentSelector = combineDocumentSelectors(
-        languageServerOptions.documentSelector,
-        RazorLanguage.documentSelector
-    );
 
     constructor(
         private _languageServer: RoslynLanguageServer,
@@ -105,7 +112,7 @@ export class ProjectContextService {
         contextList: VSProjectContextList,
         context: VSProjectContext
     ): Promise<void> {
-        if (!this.isRelevantDocument(document)) {
+        if (!isRelevantDocument(document)) {
             return;
         }
 
@@ -127,7 +134,7 @@ export class ProjectContextService {
 
     public async refresh() {
         const textEditor = vscode.window.activeTextEditor;
-        if (!this.isRelevantDocument(textEditor?.document)) {
+        if (!isRelevantDocument(textEditor?.document)) {
             return;
         }
 
@@ -143,10 +150,6 @@ export class ProjectContextService {
         if (_verifyTimeout) {
             clearTimeout(_verifyTimeout);
             _verifyTimeout = undefined;
-        }
-
-        if (_documentUriToVerify) {
-            _documentUriToVerify = undefined;
         }
 
         if (!this._languageServer.isRunning()) {
@@ -208,14 +211,6 @@ export class ProjectContextService {
 
             throw error;
         }
-    }
-
-    private isRelevantDocument(document: vscode.TextDocument | undefined): boolean {
-        if (document === undefined) {
-            return false;
-        }
-
-        return vscode.languages.match(this._documentSelector, document) > 0;
     }
 
     private updateCaches(uriString: UriString, contextList: VSProjectContextList) {
