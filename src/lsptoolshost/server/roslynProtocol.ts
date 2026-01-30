@@ -275,10 +275,10 @@ export namespace VSGetProjectContextsRequest {
     export const type = new RequestType<VSGetProjectContextParams, VSProjectContextList, void>(method);
 }
 
-export namespace ProjectContextRefreshNotification {
+export namespace ProjectContextRefreshRequest {
     export const method = 'workspace/projectContext/_vs_refresh';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
-    export const type = new NotificationType(method);
+    export const type = new RequestType0(method);
 }
 
 export namespace FeatureProvidersRefreshNotification {

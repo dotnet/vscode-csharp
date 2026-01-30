@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import {
-    ProjectContextRefreshNotification,
+    ProjectContextRefreshRequest,
     VSGetProjectContextsRequest,
     VSProjectContext,
     VSProjectContextList,
@@ -85,7 +85,7 @@ export class ProjectContextService {
             }
         });
 
-        _languageClient.onNotification(ProjectContextRefreshNotification.type, async () => {
+        _languageClient.onRequest(ProjectContextRefreshRequest.type, async () => {
             await this.refresh();
         });
 
