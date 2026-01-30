@@ -4,6 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.114.x
+* Fix project context refresh handling on client (PR: [#8933](https://github.com/dotnet/vscode-csharp/pull/8933))
 * Adjust Select Project Context editor menu item location (PR: [#8907](https://github.com/dotnet/vscode-csharp/pull/8907))
 * Replace vsts-npm-auth with ado-npm-auth in documentation and scripts (PR: [#8906](https://github.com/dotnet/vscode-csharp/pull/8906))
 * Clarify vsts-npm-auth only required when adding new packages (PR: [#8850](https://github.com/dotnet/vscode-csharp/pull/8850))

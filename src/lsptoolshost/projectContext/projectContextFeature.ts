@@ -33,7 +33,7 @@ export class ProjectContextFeature implements DynamicFeature<RoslynProtocol.Proj
         this._client = client;
         this._registrations = new Map();
         this.registrationType = new ProtocolNotificationType0<RoslynProtocol.ProjectContextRegistrationOptions>(
-            RoslynProtocol.ProjectContextRefreshNotification.method
+            RoslynProtocol.ProjectContextRefreshRequest.method
         );
     }
     fillInitializeParams?: ((params: InitializeParams) => void) | undefined;
