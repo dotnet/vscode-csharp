@@ -365,5 +365,5 @@ export namespace RoslynLspErrorCodes {
      * is unlikely to be significant to the user (i.e. surface as an actual editor feature failing to function properly.)
      * For example, if pull diagnostics are requested for a virtual document that was already closed.
      */
-    export const nonFatalRequestFailure = -32799;
+    export const nonFatalRequestFailure = -30099;
 }
