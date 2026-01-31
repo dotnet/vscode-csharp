@@ -58,10 +58,7 @@ schedules:
 
 variables:
 - name: testVSCodeVersion
-  ${{ if eq( variables['Build.Reason'], 'Schedule' ) }}:
-    value: insiders
-  ${{ else }}:
-    value: stable
+  value: insiders
 
 stages:
 - template: azure-pipelines/build-vsix.yml
