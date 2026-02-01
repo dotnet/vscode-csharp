@@ -42,7 +42,7 @@
   "defaults": {
     "roslyn": "5.4.0-2.26077.7",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.26075.11",
+    "razor": "10.0.0-preview.26081.1",
     "razorOmnisharp": "7.0.0-preview.23363.1",
     "xamlTools": "18.4.11427.62"
   },
