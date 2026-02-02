@@ -3,6 +3,19 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.121.x
+* Update Roslyn to 5.5.0-2.26080.10 (PR: [#8941](https://github.com/dotnet/vscode-csharp/pull/8941))
+  * LSP: Tolerate non-mutating requests where we are unable to determine the language (PR: [#81660](https://github.com/dotnet/roslyn/pull/81660))
+  * Update SQLitePCLRaw to 2.1.6 and remove NETSDK1206 suppressions (PR: [#82156](https://github.com/dotnet/roslyn/pull/82156))
+  * Only report work done progress if the client supports it (PR: [#82184](https://github.com/dotnet/roslyn/pull/82184))
+  * Convert language server project into .NET tool (PR: [#82154](https://github.com/dotnet/roslyn/pull/82154))
+  * Add more details to stale project update warning (PR: [#82053](https://github.com/dotnet/roslyn/pull/82053))
+  * Cleanup server capabilities providers and delete unused LSP providers (PR: [#82116](https://github.com/dotnet/roslyn/pull/82116))
+  * Reduce allocations in LSP completion handling. (PR: [#82133](https://github.com/dotnet/roslyn/pull/82133))
+* Update xamlTools to 18.4.11427.62 (PR: [#8929](https://github.com/dotnet/vscode-csharp/pull/8929))
+  * Implicit XML namespaces for MAUI feature (PR: AzDO#698019)
+  * Fix MAUI TAP initialization issue and improve logging (PR: AzDO#702593)
+
 # 2.114.x
 * Adjust Select Project Context editor menu item location (PR: [#8907](https://github.com/dotnet/vscode-csharp/pull/8907))
 * Replace vsts-npm-auth with ado-npm-auth in documentation and scripts (PR: [#8906](https://github.com/dotnet/vscode-csharp/pull/8906))

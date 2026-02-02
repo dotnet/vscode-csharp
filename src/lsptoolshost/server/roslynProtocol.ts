@@ -275,10 +275,10 @@ export namespace VSGetProjectContextsRequest {
     export const type = new RequestType<VSGetProjectContextParams, VSProjectContextList, void>(method);
 }
 
-export namespace ProjectContextRefreshNotification {
+export namespace ProjectContextRefreshRequest {
     export const method = 'workspace/projectContext/_vs_refresh';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
-    export const type = new NotificationType(method);
+    export const type = new RequestType0(method);
 }
 
 export namespace FeatureProvidersRefreshNotification {
@@ -369,4 +369,16 @@ export namespace RefreshSourceGeneratedDocumentNotification {
     export const method = 'workspace/refreshSourceGeneratedDocument';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
     export const type = new NotificationType(method);
+}
+
+export namespace RoslynLspErrorCodes {
+    /**
+     * Indicates that the server could not process the request, but that the failure shouldn't be surfaced to the user.
+     * (It's expected that the failure is still logged, however.)
+     *
+     * This is only meant to be used under conditions where we can't fulfill the request, but we think that the failure
+     * is unlikely to be significant to the user (i.e. surface as an actual editor feature failing to function properly.)
+     * For example, if pull diagnostics are requested for a virtual document that was already closed.
+     */
+    export const nonFatalRequestFailure = -30099;
 }
