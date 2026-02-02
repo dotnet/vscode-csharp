@@ -3,7 +3,7 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
-# 2.121.x
+# 2.115.x
 * Update Roslyn to 5.5.0-2.26080.10 (PR: [#8941](https://github.com/dotnet/vscode-csharp/pull/8941))
   * LSP: Tolerate non-mutating requests where we are unable to determine the language (PR: [#81660](https://github.com/dotnet/roslyn/pull/81660))
   * Update SQLitePCLRaw to 2.1.6 and remove NETSDK1206 suppressions (PR: [#82156](https://github.com/dotnet/roslyn/pull/82156))
