@@ -19,13 +19,15 @@ import {
 } from './projectContext/projectContextCommands';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
+import { registerCaptureLogsCommand } from './logging/captureLogs';
+import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
-    outputChannel: vscode.LogOutputChannel,
-    csharpTraceChannel: vscode.LogOutputChannel,
+    outputChannel: ObservableLogOutputChannel,
+    csharpTraceChannel: ObservableLogOutputChannel,
     reporter: TelemetryReporter
 ) {
     registerExtensionCommands(
@@ -47,8 +49,8 @@ function registerExtensionCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
-    outputChannel: vscode.LogOutputChannel,
-    csharpTraceChannel: vscode.LogOutputChannel,
+    outputChannel: ObservableLogOutputChannel,
+    csharpTraceChannel: ObservableLogOutputChannel,
     reporter: TelemetryReporter
 ) {
     context.subscriptions.push(
@@ -86,4 +88,5 @@ function registerExtensionCommands(
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
+    registerCaptureLogsCommand(context, languageServer, outputChannel, csharpTraceChannel);
 }

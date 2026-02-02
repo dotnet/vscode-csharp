@@ -213,6 +213,19 @@
     ]
   },
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
+  "Capturing C# Logs": "Capturing C# Logs",
+  "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
+  "Creating log archive...": "Creating log archive...",
+  "Save Logs": "Save Logs",
+  "Save C# Logs": "Save C# Logs",
+  "Open Folder": "Open Folder",
+  "C# logs saved successfully.": "C# logs saved successfully.",
+  "Failed to save C# logs: {0}/{0} is the error message": {
+    "message": "Failed to save C# logs: {0}",
+    "comment": [
+      "{0} is the error message"
+    ]
+  },
   "Generated document not found": "Generated document not found",
   "Nested Code Action": "Nested Code Action",
   "Fix All: ": "Fix All: ",
