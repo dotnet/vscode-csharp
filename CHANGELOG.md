@@ -4,7 +4,10 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.121.x
-* Update Roslyn to 5.4.0-2.26077.7 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.5.0-2.26080.10 (PR: [#8941](https://github.com/dotnet/vscode-csharp/pull/8941))
+  * LSP: Tolerate non-mutating requests where we are unable to determine the language (PR: [#81660](https://github.com/dotnet/roslyn/pull/81660))
+  * Update SQLitePCLRaw to 2.1.6 and remove NETSDK1206 suppressions (PR: [#82156](https://github.com/dotnet/roslyn/pull/82156))
+  * Only report work done progress if the client supports it (PR: [#82184](https://github.com/dotnet/roslyn/pull/82184))
   * Convert language server project into .NET tool (PR: [#82154](https://github.com/dotnet/roslyn/pull/82154))
   * Add more details to stale project update warning (PR: [#82053](https://github.com/dotnet/roslyn/pull/82053))
   * Cleanup server capabilities providers and delete unused LSP providers (PR: [#82116](https://github.com/dotnet/roslyn/pull/82116))
