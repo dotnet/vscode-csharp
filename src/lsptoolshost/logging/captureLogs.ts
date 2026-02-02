@@ -61,58 +61,56 @@ async function captureLogsToZip(
                 // Wait for the user to cancel the progress
                 await waitForCancellation(token);
 
-                if (token.isCancellationRequested) {
-                    progress.report({
-                        message: vscode.l10n.t('Creating log archive...'),
-                    });
+                progress.report({
+                    message: vscode.l10n.t('Creating log archive...'),
+                });
 
-                    // Convert captured messages to log content
-                    const csharpLogContent = formatLogMessages(csharpLogMessages);
-                    const traceLogContent = formatLogMessages(traceLogMessages);
+                // Convert captured messages to log content
+                const csharpLogContent = formatLogMessages(csharpLogMessages);
+                const traceLogContent = formatLogMessages(traceLogMessages);
 
-                    // Prompt user for save location
-                    const saveUri = await vscode.window.showSaveDialog({
-                        defaultUri: getDefaultSaveUri(),
-                        filters: {
-                            // eslint-disable-next-line @typescript-eslint/naming-convention
-                            'Zip files': ['zip'],
-                        },
-                        saveLabel: vscode.l10n.t('Save Logs'),
-                        title: vscode.l10n.t('Save C# Logs'),
-                    });
+                // Prompt user for save location
+                const saveUri = await vscode.window.showSaveDialog({
+                    defaultUri: getDefaultSaveUri(),
+                    filters: {
+                        // eslint-disable-next-line @typescript-eslint/naming-convention
+                        'Zip files': ['zip'],
+                    },
+                    saveLabel: vscode.l10n.t('Save Logs'),
+                    title: vscode.l10n.t('Save C# Logs'),
+                });
 
-                    if (!saveUri) {
-                        // User cancelled the save dialog
-                        return;
+                if (!saveUri) {
+                    // User cancelled the save dialog
+                    return;
+                }
+
+                try {
+                    await createZipWithLogs(
+                        context,
+                        outputChannel,
+                        traceChannel,
+                        csharpLogContent,
+                        traceLogContent,
+                        saveUri.fsPath
+                    );
+                    const openFolder = vscode.l10n.t('Open Folder');
+                    const result = await vscode.window.showInformationMessage(
+                        vscode.l10n.t('C# logs saved successfully.'),
+                        openFolder
+                    );
+                    if (result === openFolder) {
+                        await vscode.commands.executeCommand('revealFileInOS', saveUri);
                     }
-
-                    try {
-                        await createZipWithLogs(
-                            context,
-                            outputChannel,
-                            traceChannel,
-                            csharpLogContent,
-                            traceLogContent,
-                            saveUri.fsPath
-                        );
-                        const openFolder = vscode.l10n.t('Open Folder');
-                        const result = await vscode.window.showInformationMessage(
-                            vscode.l10n.t('C# logs saved successfully.'),
-                            openFolder
-                        );
-                        if (result === openFolder) {
-                            await vscode.commands.executeCommand('revealFileInOS', saveUri);
-                        }
-                    } catch (error) {
-                        const errorMessage = error instanceof Error ? error.message : String(error);
-                        await vscode.window.showErrorMessage(
-                            vscode.l10n.t({
-                                message: 'Failed to save C# logs: {0}',
-                                args: [errorMessage],
-                                comment: ['{0} is the error message'],
-                            })
-                        );
-                    }
+                } catch (error) {
+                    const errorMessage = error instanceof Error ? error.message : String(error);
+                    await vscode.window.showErrorMessage(
+                        vscode.l10n.t({
+                            message: 'Failed to save C# logs: {0}',
+                            args: [errorMessage],
+                            comment: ['{0} is the error message'],
+                        })
+                    );
                 }
             }
         );
