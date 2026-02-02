@@ -117,6 +117,34 @@ If the language server crashes, general logs are often helpful for diagnosing th
 > [!WARNING]
 > The dump will contain detailed information about the workspace.  See [Sharing information privately](#sharing-information-privately)
 
+### Capturing activity trace logging
+
+When investigating issues that require detailed logging for a specific scenario, the C# extension provides a command to capture trace-level logs while you reproduce the issue. This is useful when the issue is difficult to reproduce or when you need to capture logs for a specific sequence of actions.
+
+1. **Invoke the Capture Logs Command**:
+   - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+   - Search for and select `CSharp: Capture Logs` (`csharp.captureLogs`).
+
+2. **Reproduce the Issue**:
+   - A notification will appear indicating that logs are being captured.
+   - While the notification is visible, perform the actions that reproduce the issue.
+   - The extension automatically sets the log level to `Trace` during capture to collect detailed information.
+
+3. **Stop Capturing and Save**:
+   - Click the `Cancel` button on the notification to stop capturing.
+   - You will be prompted to save the log archive. Choose a location to save the `.zip` file.
+
+4. **Share the Logs**:
+   - The saved archive contains:
+     - `csharp.log` - The existing C# log file
+     - `csharp-lsp-trace.log` - The existing LSP trace log file
+     - `csharp.activity.log` - Captured C# log activity during the recording session
+     - `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the recording session
+   - Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
+
+> [!WARNING]
+> The logs may contain file paths, project names, and other workspace information. Review the contents before sharing publicly.
+
 ### Recording a language server trace
 
 When investigating performance issues, we may request a performance trace of the language server to diagnose what is causing the problem.  These are typically taken via [dotnet-trace](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace) (a cross platform tool to collect performance traces of .NET processes)
