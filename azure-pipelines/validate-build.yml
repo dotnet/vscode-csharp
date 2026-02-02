@@ -6,9 +6,8 @@ stages:
   - job: 'BuildWindows'
     displayName: 'Build Windows'
     pool:
-      name: Azure Pipelines
-      vmImage: windows-latest
-      os: windows
+      name: NetCore-Public
+      demands: ImageOverride -equals 1es-windows-2022-open
     steps:
       - template: /azure-pipelines/build.yml@self
         parameters:
@@ -17,9 +16,8 @@ stages:
   - job: 'BuildLinux'
     displayName: 'Build Linux'
     pool:
-      name: Azure Pipelines
-      vmImage: ubuntu-latest
-      os: linux
+      name: NetCore-Public
+      demands: ImageOverride -equals build.ubuntu.2204.amd64.open
     steps:
       - template: /azure-pipelines/build.yml@self
         parameters:
