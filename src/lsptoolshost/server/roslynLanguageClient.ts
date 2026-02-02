@@ -9,6 +9,7 @@ import { LanguageClientOptions, ServerOptions } from 'vscode-languageclient';
 import CompositeDisposable from '../../compositeDisposable';
 import { IDisposable } from '../../disposable';
 import { languageServerOptions } from '../../shared/options';
+import { RoslynLspErrorCodes } from './roslynProtocol';
 
 /**
  * Implementation of the base LanguageClient type that allows for additional items to be disposed of
@@ -41,6 +42,10 @@ export class RoslynLanguageClient extends LanguageClient {
         defaultValue: T,
         showNotification?: boolean
     ) {
+        if (error.code == RoslynLspErrorCodes.nonFatalRequestFailure) {
+            return super.handleFailedRequest(type, token, error, defaultValue, false);
+        }
+
         // Temporarily allow LSP error toasts to be suppressed if configured.
         // There are a few architectural issues preventing us from solving some of the underlying problems,
         // for example Razor cohosting to fix text mismatch issues and unification of serialization libraries
