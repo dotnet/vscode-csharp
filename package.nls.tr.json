@@ -1,5 +1,6 @@
 {
   "command.csharp.attachToProcess": ".NET 5+ veya .NET Core işlemine ekleme",
+  "command.csharp.captureLogs": "Capture C# Log Output",
   "command.csharp.changeProjectContext": "Etkin belgenin proje bağlamını değiştirin",
   "command.csharp.changeProjectContextEditor": "Proje Bağlamı Seç",
   "command.csharp.changeProjectContextFileExplorer": "Proje Bağlamı Seç",
