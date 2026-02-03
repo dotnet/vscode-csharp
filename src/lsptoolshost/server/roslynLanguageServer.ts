@@ -194,6 +194,31 @@ export class RoslynLanguageServer {
         }
     }
 
+    /**
+     * Sets both the output channel and trace channel log levels to Trace for capturing logs.
+     * Returns a function that can be called to restore the original log levels.
+     */
+    public async setLogLevelsForCapture(): Promise<() => Promise<void>> {
+        if (this._languageClient.state !== State.Running) {
+            // If the server isn't running, return a no-op restore function
+            return async () => {};
+        }
+
+        // Set server log level to Trace
+        await this.sendNotification('roslyn/updateLogLevel', {
+            logLevel: 'Trace',
+        });
+
+        // Enable verbose tracing on the LSP client
+        await this._languageClient.setTrace(Trace.Verbose);
+
+        // Return a function to restore the original log levels
+        return async () => {
+            await this.updateOutputChannelLogLevel();
+            await this.updateTraceChannelLogLevel();
+        };
+    }
+
     private registerServerStateChanged() {
         this._languageClient.onDidChangeState(async (state) => {
             if (state.newState === State.Running) {
