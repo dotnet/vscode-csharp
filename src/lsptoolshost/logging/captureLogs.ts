@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import archiver from 'archiver';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ObservableLogOutputChannel, LogMessage } from './observableLogOutputChannel';
+import { commonOptions, languageServerOptions, razorOptions } from '../../shared/options';
 
 /**
  * Registers the command to capture C# log output.
@@ -199,6 +200,10 @@ async function createZipWithLogs(
         archive.append(csharpActivityLogContent, { name: 'csharp.activity.log' });
         archive.append(traceActivityLogContent, { name: 'csharp-lsp-trace.activity.log' });
 
+        // Add current settings to the archive
+        const settingsContent = gatherCurrentSettings();
+        archive.append(settingsContent, { name: 'csharp-settings.json' });
+
         void archive.finalize();
     });
 }
@@ -214,6 +219,45 @@ async function readLogFileContent(logFileUri: vscode.Uri): Promise<string | null
         // File doesn't exist or can't be read
         return null;
     }
+}
+
+/**
+ * Gathers the current settings for CommonOptions, LanguageServerOptions, and RazorOptions.
+ * Returns a formatted JSON string.
+ */
+function gatherCurrentSettings(): string {
+    const settings = {
+        commonOptions: {
+            waitForDebugger: commonOptions.waitForDebugger,
+            serverPath: commonOptions.serverPath,
+            useOmnisharpServer: commonOptions.useOmnisharpServer,
+            excludePaths: commonOptions.excludePaths,
+            defaultSolution: commonOptions.defaultSolution,
+            unitTestDebuggingOptions: commonOptions.unitTestDebuggingOptions,
+            runSettingsPath: commonOptions.runSettingsPath,
+            organizeImportsOnFormat: commonOptions.organizeImportsOnFormat,
+        },
+        languageServerOptions: {
+            documentSelector: languageServerOptions.documentSelector,
+            extensionsPaths: languageServerOptions.extensionsPaths,
+            preferCSharpExtension: languageServerOptions.preferCSharpExtension,
+            startTimeout: languageServerOptions.startTimeout,
+            crashDumpPath: languageServerOptions.crashDumpPath,
+            analyzerDiagnosticScope: languageServerOptions.analyzerDiagnosticScope,
+            compilerDiagnosticScope: languageServerOptions.compilerDiagnosticScope,
+            componentPaths: languageServerOptions.componentPaths,
+            enableXamlTools: languageServerOptions.enableXamlTools,
+            suppressLspErrorToasts: languageServerOptions.suppressLspErrorToasts,
+            suppressMiscellaneousFilesToasts: languageServerOptions.suppressMiscellaneousFilesToasts,
+            useServerGC: languageServerOptions.useServerGC,
+            reportInformationAsHint: languageServerOptions.reportInformationAsHint,
+        },
+        razorOptions: {
+            razorDevMode: razorOptions.razorDevMode,
+            razorPluginPath: razorOptions.razorPluginPath,
+        },
+    };
+    return JSON.stringify(settings, null, 2);
 }
 
 /**
