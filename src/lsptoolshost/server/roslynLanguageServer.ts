@@ -70,6 +70,7 @@ import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
 import { ProjectContextFeature } from '../projectContext/projectContextFeature';
+import { isSolutionFileOnDisk } from '../../solutionFileWorkspaceHandler';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -553,11 +554,16 @@ export class RoslynLanguageServer {
     }
 
     private async openDefaultSolutionOrProjects(): Promise<void> {
+        const activeEditor = vscode.window.activeTextEditor;
+
         // If Dev Kit isn't installed, then we are responsible for picking the solution to open, assuming the user hasn't explicitly
         // disabled it.
         const defaultSolution = commonOptions.defaultSolution;
         if (!_wasActivatedWithCSharpDevkit && defaultSolution !== 'disable' && this._solutionFile === undefined) {
-            if (defaultSolution !== '') {
+            // If we are started with an active solution file, open it.
+            if (isSolutionFileOnDisk(activeEditor?.document)) {
+                await this.openSolution(activeEditor.document.uri);
+            } else if (defaultSolution !== '') {
                 await this.openSolution(vscode.Uri.file(defaultSolution));
             } else {
                 // Auto open if there is just one solution target; if there's more the one we'll just let the user pick with the picker.
