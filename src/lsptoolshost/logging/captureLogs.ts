@@ -227,37 +227,35 @@ async function readLogFileContent(logFileUri: vscode.Uri): Promise<string | null
  */
 function gatherCurrentSettings(): string {
     const settings = {
-        commonOptions: {
-            waitForDebugger: commonOptions.waitForDebugger,
-            serverPath: commonOptions.serverPath,
-            useOmnisharpServer: commonOptions.useOmnisharpServer,
-            excludePaths: commonOptions.excludePaths,
-            defaultSolution: commonOptions.defaultSolution,
-            unitTestDebuggingOptions: commonOptions.unitTestDebuggingOptions,
-            runSettingsPath: commonOptions.runSettingsPath,
-            organizeImportsOnFormat: commonOptions.organizeImportsOnFormat,
-        },
-        languageServerOptions: {
-            documentSelector: languageServerOptions.documentSelector,
-            extensionsPaths: languageServerOptions.extensionsPaths,
-            preferCSharpExtension: languageServerOptions.preferCSharpExtension,
-            startTimeout: languageServerOptions.startTimeout,
-            crashDumpPath: languageServerOptions.crashDumpPath,
-            analyzerDiagnosticScope: languageServerOptions.analyzerDiagnosticScope,
-            compilerDiagnosticScope: languageServerOptions.compilerDiagnosticScope,
-            componentPaths: languageServerOptions.componentPaths,
-            enableXamlTools: languageServerOptions.enableXamlTools,
-            suppressLspErrorToasts: languageServerOptions.suppressLspErrorToasts,
-            suppressMiscellaneousFilesToasts: languageServerOptions.suppressMiscellaneousFilesToasts,
-            useServerGC: languageServerOptions.useServerGC,
-            reportInformationAsHint: languageServerOptions.reportInformationAsHint,
-        },
-        razorOptions: {
-            razorDevMode: razorOptions.razorDevMode,
-            razorPluginPath: razorOptions.razorPluginPath,
-        },
+        commonOptions: getOptionValues(commonOptions),
+        languageServerOptions: getOptionValues(languageServerOptions),
+        razorOptions: getOptionValues(razorOptions),
     };
     return JSON.stringify(settings, null, 2);
+}
+
+/**
+ * Extracts all option values from an options object by iterating over its property descriptors.
+ *
+ * Note: We cannot use Object.keys() here because the options objects are class instances where
+ * all properties are defined as getters on the prototype, not as own properties on the instance.
+ * Object.keys() only returns enumerable own properties, so it would return an empty array.
+ * Instead, we inspect the prototype's property descriptors to find all the getter functions.
+ */
+function getOptionValues<T extends object>(options: T): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
+    const prototype = Object.getPrototypeOf(options);
+    const descriptors = Object.getOwnPropertyDescriptors(prototype);
+
+    for (const [key, descriptor] of Object.entries(descriptors)) {
+        // Skip constructor and non-getter properties
+        if (key === 'constructor' || typeof descriptor.get !== 'function') {
+            continue;
+        }
+        result[key] = (options as Record<string, unknown>)[key];
+    }
+
+    return result;
 }
 
 /**
