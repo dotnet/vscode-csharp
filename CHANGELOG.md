@@ -3,6 +3,9 @@
 - Diagnostics related feature requests and improvements [#5951](https://github.com/dotnet/vscode-csharp/issues/5951)
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
+# 2.120.x
+* See 2.115.x for full list of changes.
+
 # 2.115.x
 * Update Roslyn to 5.5.0-2.26080.10 (PR: [#8941](https://github.com/dotnet/vscode-csharp/pull/8941))
   * LSP: Tolerate non-mutating requests where we are unable to determine the language (PR: [#81660](https://github.com/dotnet/roslyn/pull/81660))
