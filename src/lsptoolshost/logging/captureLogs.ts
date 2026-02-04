@@ -59,9 +59,9 @@ async function captureLogsToZip(
                     message: vscode.l10n.t('Creating archive...'),
                 });
 
-                // Stop observers and get formatted log content
-                const csharpLogContent = csharpLogObserver.stop();
-                const traceLogContent = traceLogObserver.stop();
+                // Get formatted log content from observers
+                const csharpLogContent = csharpLogObserver.getLog();
+                const traceLogContent = traceLogObserver.getLog();
 
                 // Prompt user for save location
                 const saveUri = await vscode.window.showSaveDialog({
@@ -109,7 +109,9 @@ async function captureLogsToZip(
             }
         );
     } finally {
-        // Always restore log levels
+        // Always clean up observers and restore log levels
+        csharpLogObserver.dispose();
+        traceLogObserver.dispose();
         await restoreLogLevels();
     }
 }

@@ -161,8 +161,7 @@ export class ObservableLogOutputChannel implements vscode.LogOutputChannel {
 }
 
 /**
- * Observes log messages from an ObservableLogOutputChannel and collects them until stopped.
- * When stopped, returns the collected messages as a formatted string.
+ * Observes log messages from an ObservableLogOutputChannel and collects them until disposed.
  */
 export class LogObserver {
     private readonly _messages: LogMessage[] = [];
@@ -175,11 +174,17 @@ export class LogObserver {
     }
 
     /**
-     * Stops observing log messages, disposes the subscription, and returns the collected messages as a formatted string.
+     * Returns the collected messages as a formatted string suitable for a log file.
      */
-    public stop(): string {
-        this._subscription.dispose();
+    public getLog(): string {
         return LogObserver.formatLogMessages(this._messages);
+    }
+
+    /**
+     * Disposes the subscription and stops observing log messages.
+     */
+    public dispose(): void {
+        this._subscription.dispose();
     }
 
     /**

@@ -163,9 +163,9 @@ async function executeDotNetTraceCommand(
             message: vscode.l10n.t('Creating archive...'),
         });
 
-        // Stop observers and get formatted log content
-        const csharpLogContent = csharpLogObserver.stop();
-        const traceLogContent = traceLogObserver.stop();
+        // Get formatted log content from observers
+        const csharpLogContent = csharpLogObserver.getLog();
+        const traceLogContent = traceLogObserver.getLog();
 
         try {
             await createZipWithLogs(
@@ -197,7 +197,9 @@ async function executeDotNetTraceCommand(
             );
         }
     } finally {
-        // Always restore log levels
+        // Always clean up observers and restore log levels
+        csharpLogObserver.dispose();
+        traceLogObserver.dispose();
         await restoreLogLevels();
     }
 }
