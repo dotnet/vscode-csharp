@@ -9,7 +9,6 @@ import * as path from 'path';
 import archiver from 'archiver';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ObservableLogOutputChannel } from './observableLogOutputChannel';
-import { commonOptions, languageServerOptions, razorOptions } from '../../shared/options';
 
 /**
  * Registers the command to capture C# log output.
@@ -216,40 +215,66 @@ export async function readLogFileContent(logFileUri: vscode.Uri): Promise<string
 }
 
 /**
- * Gathers the current settings for CommonOptions, LanguageServerOptions, and RazorOptions.
+ * Gathers the current VS Code settings for dotnet, csharp, razor, and omnisharp namespaces.
+ * Reads the setting keys from the extension's package.json to enumerate all available settings.
  * Returns a formatted JSON string.
  */
 export function gatherCurrentSettings(): string {
-    const settings = {
-        commonOptions: getOptionValues(commonOptions),
-        languageServerOptions: getOptionValues(languageServerOptions),
-        razorOptions: getOptionValues(razorOptions),
-    };
-    return JSON.stringify(settings, null, 2);
-}
+    const extensionId = 'ms-dotnettools.csharp';
+    const extension = vscode.extensions.getExtension(extensionId);
 
-/**
- * Extracts all option values from an options object by iterating over its property descriptors.
- *
- * Note: We cannot use Object.keys() here because the options objects are class instances where
- * all properties are defined as getters on the prototype, not as own properties on the instance.
- * Object.keys() only returns enumerable own properties, so it would return an empty array.
- * Instead, we inspect the prototype's property descriptors to find all the getter functions.
- */
-function getOptionValues<T extends object>(options: T): Record<string, unknown> {
-    const result: Record<string, unknown> = {};
-    const prototype = Object.getPrototypeOf(options);
-    const descriptors = Object.getOwnPropertyDescriptors(prototype);
-
-    for (const [key, descriptor] of Object.entries(descriptors)) {
-        // Skip constructor and non-getter properties
-        if (key === 'constructor' || typeof descriptor.get !== 'function') {
-            continue;
-        }
-        result[key] = (options as Record<string, unknown>)[key];
+    if (!extension) {
+        return JSON.stringify({ error: 'Could not find C# extension' }, null, 2);
     }
 
-    return result;
+    // Get all configuration properties defined in package.json
+    const packageJson = extension.packageJSON as {
+        contributes?: {
+            configuration?: Array<{
+                properties?: Record<string, unknown>;
+            }>;
+        };
+    };
+
+    const configurationSections = packageJson?.contributes?.configuration;
+    if (!configurationSections || !Array.isArray(configurationSections)) {
+        return JSON.stringify({ error: 'No configuration found in package.json' }, null, 2);
+    }
+
+    // Collect all setting keys from package.json, grouped by their section prefix
+    const settingsBySection: Record<string, string[]> = {};
+
+    for (const section of configurationSections) {
+        if (section.properties) {
+            for (const fullKey of Object.keys(section.properties)) {
+                // Split the full key (e.g., "dotnet.server.path") into section and rest
+                const dotIndex = fullKey.indexOf('.');
+                if (dotIndex > 0) {
+                    const sectionName = fullKey.substring(0, dotIndex);
+                    if (!settingsBySection[sectionName]) {
+                        settingsBySection[sectionName] = [];
+                    }
+                    settingsBySection[sectionName].push(fullKey);
+                }
+            }
+        }
+    }
+
+    // Get the current value for each setting
+    const result: Record<string, Record<string, unknown>> = {};
+
+    for (const [sectionName, settingKeys] of Object.entries(settingsBySection)) {
+        result[sectionName] = {};
+        const config = vscode.workspace.getConfiguration();
+
+        for (const fullKey of settingKeys) {
+            // Get the setting key without the section prefix for the result
+            const keyWithoutSection = fullKey.substring(sectionName.length + 1);
+            result[sectionName][keyWithoutSection] = config.get(fullKey);
+        }
+    }
+
+    return JSON.stringify(result, null, 2);
 }
 
 /**
