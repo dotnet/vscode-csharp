@@ -182,8 +182,8 @@
     ]
   },
   "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
-  "Select Trace Folder": "Select Trace Folder",
-  "Select Folder to Save Trace File": "Select Folder to Save Trace File",
+  "Save Trace": "Save Trace",
+  "Save C# Trace and Logs": "Save C# Trace and Logs",
   "Folder for trace file {0} does not exist": "Folder for trace file {0} does not exist",
   "Enter dotnet-trace arguments/dotnet-trace is a command name and should not be localized": {
     "message": "Enter dotnet-trace arguments",
@@ -192,7 +192,16 @@
     ]
   },
   "You can modify the default arguments if needed": "You can modify the default arguments if needed",
-  "Recording trace...": "Recording trace...",
+  "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
+  "Creating archive...": "Creating archive...",
+  "Open Folder": "Open Folder",
+  "C# logs saved successfully.": "C# logs saved successfully.",
+  "Failed to save C# trace: {0}/{0} is the error message": {
+    "message": "Failed to save C# trace: {0}",
+    "comment": [
+      "{0} is the error message"
+    ]
+  },
   "Install": "Install",
   "dotnet-trace not found, run \"{0}\" to install it?/dotnet-trace is a command name and should not be localized": {
     "message": "dotnet-trace not found, run \"{0}\" to install it?",
@@ -214,12 +223,8 @@
   },
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
   "Capturing C# Logs": "Capturing C# Logs",
-  "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
-  "Creating log archive...": "Creating log archive...",
   "Save Logs": "Save Logs",
   "Save C# Logs": "Save C# Logs",
-  "Open Folder": "Open Folder",
-  "C# logs saved successfully.": "C# logs saved successfully.",
   "Failed to save C# logs: {0}/{0} is the error message": {
     "message": "Failed to save C# logs: {0}",
     "comment": [

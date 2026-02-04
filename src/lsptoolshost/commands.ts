@@ -20,6 +20,7 @@ import {
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { registerCaptureLogsCommand } from './logging/captureLogs';
+import { registerTraceCommand } from './profiling/profiling';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 
 export function registerCommands(
@@ -89,4 +90,5 @@ function registerExtensionCommands(
         vscode.commands.registerCommand('csharp.showOutputWindow', async () => outputChannel.show())
     );
     registerCaptureLogsCommand(context, languageServer, outputChannel, csharpTraceChannel);
+    registerTraceCommand(context, languageServer, outputChannel, csharpTraceChannel);
 }

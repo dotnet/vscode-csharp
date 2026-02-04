@@ -29,7 +29,6 @@ import { RoslynLanguageServer } from './server/roslynLanguageServer';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
-import { registerTraceCommand } from './profiling/profiling';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 
 let _channel: ObservableLogOutputChannel;
@@ -75,8 +74,6 @@ export async function activateRoslynLanguageServer(
         _channel,
         _traceChannel
     );
-
-    registerTraceCommand(context, languageServer, outputChannel);
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);

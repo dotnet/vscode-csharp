@@ -5,9 +5,10 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as path from 'path';
 import archiver from 'archiver';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
-import { ObservableLogOutputChannel, LogMessage } from './observableLogOutputChannel';
+import { ObservableLogOutputChannel } from './observableLogOutputChannel';
 import { commonOptions, languageServerOptions, razorOptions } from '../../shared/options';
 
 /**
@@ -32,17 +33,9 @@ async function captureLogsToZip(
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel
 ): Promise<void> {
-    // Arrays to collect log messages during capture
-    const csharpLogMessages: LogMessage[] = [];
-    const traceLogMessages: LogMessage[] = [];
-
-    // Subscribe to log messages
-    const csharpLogSubscription = outputChannel.onMessageLogged((message) => {
-        csharpLogMessages.push(message);
-    });
-    const traceLogSubscription = traceChannel.onMessageLogged((message) => {
-        traceLogMessages.push(message);
-    });
+    // Create observers to collect log messages during capture
+    const csharpLogObserver = outputChannel.observe();
+    const traceLogObserver = traceChannel.observe();
 
     // Set log levels to Trace for capture and get the restore function
     const restoreLogLevels = await languageServer.setLogLevelsForCapture();
@@ -63,12 +56,12 @@ async function captureLogsToZip(
                 await waitForCancellation(token);
 
                 progress.report({
-                    message: vscode.l10n.t('Creating log archive...'),
+                    message: vscode.l10n.t('Creating archive...'),
                 });
 
-                // Convert captured messages to log content
-                const csharpLogContent = formatLogMessages(csharpLogMessages);
-                const traceLogContent = formatLogMessages(traceLogMessages);
+                // Stop observers and get formatted log content
+                const csharpLogContent = csharpLogObserver.stop();
+                const traceLogContent = traceLogObserver.stop();
 
                 // Prompt user for save location
                 const saveUri = await vscode.window.showSaveDialog({
@@ -116,30 +109,15 @@ async function captureLogsToZip(
             }
         );
     } finally {
-        // Always clean up subscriptions and restore log levels
-        csharpLogSubscription.dispose();
-        traceLogSubscription.dispose();
+        // Always restore log levels
         await restoreLogLevels();
     }
 }
 
 /**
- * Formats an array of log messages into a string suitable for a log file.
- */
-function formatLogMessages(messages: LogMessage[]): string {
-    return messages
-        .map((msg) => {
-            const timestamp = msg.timestamp.toISOString();
-            const level = msg.level.toUpperCase().padEnd(5);
-            return `[${timestamp}] [${level}] ${msg.message}`;
-        })
-        .join('\n');
-}
-
-/**
  * Waits for the cancellation token to be triggered.
  */
-async function waitForCancellation(token: vscode.CancellationToken): Promise<void> {
+export async function waitForCancellation(token: vscode.CancellationToken): Promise<void> {
     return new Promise<void>((resolve) => {
         if (token.isCancellationRequested) {
             resolve();
@@ -154,16 +132,17 @@ async function waitForCancellation(token: vscode.CancellationToken): Promise<voi
 }
 
 /**
- * Creates a zip file containing the log contents.
+ * Creates a zip file containing the log contents and optionally a trace file.
  * Includes both the captured activity logs and the existing log files from the extension context.
  */
-async function createZipWithLogs(
+export async function createZipWithLogs(
     context: vscode.ExtensionContext,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
     csharpActivityLogContent: string,
     traceActivityLogContent: string,
-    outputPath: string
+    outputPath: string,
+    traceFilePath?: string
 ): Promise<void> {
     // Read existing log files from disk
     const csharpLogPath = vscode.Uri.joinPath(context.logUri, outputChannel.name + '.log');
@@ -179,6 +158,14 @@ async function createZipWithLogs(
         });
 
         output.on('close', () => {
+            // Clean up the trace file after adding to archive
+            if (traceFilePath && fs.existsSync(traceFilePath)) {
+                try {
+                    fs.unlinkSync(traceFilePath);
+                } catch {
+                    // Ignore cleanup errors
+                }
+            }
             resolve();
         });
 
@@ -187,6 +174,11 @@ async function createZipWithLogs(
         });
 
         archive.pipe(output);
+
+        // Add trace file to the archive if it exists
+        if (traceFilePath && fs.existsSync(traceFilePath)) {
+            archive.file(traceFilePath, { name: path.basename(traceFilePath) });
+        }
 
         // Add existing log files to the archive
         if (csharpLogContent) {
@@ -211,7 +203,7 @@ async function createZipWithLogs(
 /**
  * Reads the content of a log file, returning null if the file doesn't exist.
  */
-async function readLogFileContent(logFileUri: vscode.Uri): Promise<string | null> {
+export async function readLogFileContent(logFileUri: vscode.Uri): Promise<string | null> {
     try {
         const content = await vscode.workspace.fs.readFile(logFileUri);
         return Buffer.from(content).toString('utf8');
@@ -225,7 +217,7 @@ async function readLogFileContent(logFileUri: vscode.Uri): Promise<string | null
  * Gathers the current settings for CommonOptions, LanguageServerOptions, and RazorOptions.
  * Returns a formatted JSON string.
  */
-function gatherCurrentSettings(): string {
+export function gatherCurrentSettings(): string {
     const settings = {
         commonOptions: getOptionValues(commonOptions),
         languageServerOptions: getOptionValues(languageServerOptions),
@@ -259,13 +251,13 @@ function getOptionValues<T extends object>(options: T): Record<string, unknown> 
 }
 
 /**
- * Gets the default URI for saving the log archive.
+ * Gets the default URI for saving the log/trace archive.
  * Uses the first workspace folder if available, otherwise falls back to the user's home directory.
  */
-function getDefaultSaveUri(): vscode.Uri {
+export function getDefaultSaveUri(filePrefix: string = 'csharp-logs'): vscode.Uri {
     const now = new Date();
     const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
-    const fileName = `csharp-logs-${timestamp}.zip`;
+    const fileName = `${filePrefix}-${timestamp}.zip`;
 
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders && workspaceFolders.length > 0) {
