@@ -35,6 +35,14 @@ export class ObservableLogOutputChannel implements vscode.LogOutputChannel {
         return this._channel;
     }
 
+    /**
+     * Creates a new LogObserver that collects log messages from this channel.
+     * Call `stop()` on the returned observer to stop collecting and get the formatted log content.
+     */
+    public observe(): LogObserver {
+        return new LogObserver(this);
+    }
+
     // Implement LogOutputChannel interface by delegating to the underlying channel
 
     public get name(): string {
@@ -149,5 +157,46 @@ export class ObservableLogOutputChannel implements vscode.LogOutputChannel {
             return String(arg);
         });
         return `${message} ${formattedArgs.join(' ')}`;
+    }
+}
+
+/**
+ * Observes log messages from an ObservableLogOutputChannel and collects them until disposed.
+ */
+export class LogObserver {
+    private readonly _messages: LogMessage[] = [];
+    private readonly _subscription: vscode.Disposable;
+
+    constructor(channel: ObservableLogOutputChannel) {
+        this._subscription = channel.onMessageLogged((message) => {
+            this._messages.push(message);
+        });
+    }
+
+    /**
+     * Returns the collected messages as a formatted string suitable for a log file.
+     */
+    public getLog(): string {
+        return LogObserver.formatLogMessages(this._messages);
+    }
+
+    /**
+     * Disposes the subscription and stops observing log messages.
+     */
+    public dispose(): void {
+        this._subscription.dispose();
+    }
+
+    /**
+     * Formats an array of log messages into a string suitable for a log file.
+     */
+    public static formatLogMessages(messages: LogMessage[]): string {
+        return messages
+            .map((msg) => {
+                const timestamp = msg.timestamp.toISOString();
+                const level = msg.level.toUpperCase().padEnd(5);
+                return `[${timestamp}] [${level}] ${msg.message}`;
+            })
+            .join('\n');
     }
 }
