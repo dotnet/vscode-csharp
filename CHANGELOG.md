@@ -4,7 +4,7 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.121.x
-* Update Roslyn to 5.5.0-2.26103.6 (PR: [#](https://github.com/dotnet/vscode-csharp/pull/))
+* Update Roslyn to 5.5.0-2.26103.6 (PR: [#8956](https://github.com/dotnet/vscode-csharp/pull/8956))
   * Fix workspace search always returning no results for first query (PR: [#82276](https://github.com/dotnet/roslyn/pull/82276))
   * Improve elimination of redundant evaluations during pattern matching operation (PR: [#82142](https://github.com/dotnet/roslyn/pull/82142))
   * Limit the FileSystemWatchers to one per drive root for DefaultFileChangeWatcher (PR: [#82211](https://github.com/dotnet/roslyn/pull/82211))
