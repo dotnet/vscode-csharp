@@ -35,29 +35,6 @@ export class RazorLogger implements vscodeAdapter.Disposable {
         return this.outputChannel.logLevel;
     }
 
-    /**
-     * Gets the log level in numeric form that matches what is expected in rzls.
-     * Matches https://github.com/dotnet/razor/blob/7390745dcd9c8831d4459437ed2e9e94125f3dd3/src/Razor/src/Microsoft.CodeAnalysis.Razor.Workspaces/Logging/LogLevel.cs#L6
-     */
-    public get logLevelForRZLS(): number {
-        switch (this.logLevel) {
-            case vscode.LogLevel.Off:
-                return 0;
-            case vscode.LogLevel.Trace:
-                return 1;
-            case vscode.LogLevel.Debug:
-                return 2;
-            case vscode.LogLevel.Info:
-                return 3;
-            case vscode.LogLevel.Warning:
-                return 4;
-            case vscode.LogLevel.Error:
-                return 5;
-            default:
-                throw new Error('Unexpected log level value. Do not know how to convert');
-        }
-    }
-
     public get onLog() {
         return this.onLogEmitter.event;
     }

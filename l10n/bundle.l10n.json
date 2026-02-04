@@ -162,8 +162,13 @@
   "Suppress notification": "Suppress notification",
   "Restore {0}": "Restore {0}",
   "Restore already in progress": "Restore already in progress",
+  "Select context": "Select context",
   "C# Project Context Status": "C# Project Context Status",
-  "Active File Context": "Active File Context",
+  "Active Context": "Active Context",
+  "Not all language features will be available.": "Not all language features will be available.",
+  "No file selected to change project context.": "No file selected to change project context.",
+  "Failed to change context for {0}: {1}": "Failed to change context for {0}: {1}",
+  "Select project context": "Select project context",
   "Initializing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
     "message": "Initializing dotnet-trace...",
     "comment": [

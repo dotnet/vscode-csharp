@@ -38,6 +38,8 @@ extends:
       name: netcore1espool-internal
       image: 1es-windows-2022
       os: windows
+    settings:
+      networkIsolationPolicy: Permissive,CFSClean
     stages:
     - stage: LocalizationStage
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
@@ -56,19 +58,15 @@ extends:
             condition: ${{ parameters.publishLocalizationFile }}
             artifactName: l10n
         steps:
-        - task: NodeTool@0
-          displayName: 'Install Node.js 18.x'
-          inputs:
-            # Octokit client needs 18.x to have 'fetch' function.
-            versionSpec: '18.x'
+        - template: /azure-pipelines/install-node.yml@self
         - checkout: self
           clean: true
           submodules: true
           fetchTags: false
           fetchDepth: 0
-        - pwsh: | 
+        - pwsh: |
             npm install
-            npm install -g gulp
+            npm install -g gulp --globalconfig $(Build.SourcesDirectory)/.npmrc
           displayName: 'Install tools'
         - pwsh: npm run compile
           displayName: 'Compile'

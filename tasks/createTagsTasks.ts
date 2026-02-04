@@ -27,7 +27,8 @@ gulp.task('createTags:roslyn', async (): Promise<void> => {
         options,
         'dotnet',
         'roslyn',
-        async () => getCommitFromNugetAsync(allNugetPackages.roslyn),
+        async (releaseCommit: string, githubPAT: string) =>
+            getCommitFromNugetAsync(allNugetPackages.roslyn, releaseCommit, githubPAT),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -45,7 +46,8 @@ gulp.task('createTags:razor', async (): Promise<void> => {
         options,
         'dotnet',
         'razor',
-        async () => getCommitFromNugetAsync(allNugetPackages.razor),
+        async (releaseCommit: string, githubPAT: string) =>
+            getCommitFromNugetAsync(allNugetPackages.razorExtension, releaseCommit, githubPAT),
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [
@@ -63,7 +65,7 @@ gulp.task('createTags:vscode-csharp', async (): Promise<void> => {
         options,
         'dotnet',
         'vscode-csharp',
-        async () => options.releaseCommit,
+        async (releaseCommit: string, _githubPAT: string) => releaseCommit,
         (releaseVersion: string, isPrerelease: boolean): [string, string] => {
             const prereleaseText = isPrerelease ? '-prerelease' : '';
             return [`v${releaseVersion}${prereleaseText}`, releaseVersion];
@@ -77,7 +79,7 @@ async function createTagsAsync(
     options: CreateTagsOptions,
     owner: string,
     repo: string,
-    getCommit: () => Promise<string | null>,
+    getComponentCommit: (releaseCommit: string, githubPAT: string) => Promise<string | null>,
     getTagAndMessage: (releaseVersion: string, isPrerelease: boolean) => [string, string]
 ): Promise<void> {
     console.log(`releaseVersion: ${options.releaseVersion}`);
@@ -85,14 +87,15 @@ async function createTagsAsync(
     const dryRun = getFlag('dryRun', options);
     console.log(`dry run: ${dryRun}`);
 
-    const commit = await getCommit();
+    const prerelease = getFlag('prerelease', options);
+    console.log(`prerelease: ${prerelease}`);
+
+    const githubPAT = getGitHubPAT(options);
+    const commit = await getComponentCommit(options.releaseCommit, githubPAT);
     if (!commit) {
         logError('Failed to find commit.');
         return;
     }
-
-    const prerelease = getFlag('prerelease', options);
-    console.log(`prerelease: ${prerelease}`);
 
     const [tag, message] = getTagAndMessage(options.releaseVersion, prerelease);
     console.log(`tag: ${tag}`);
@@ -103,7 +106,6 @@ async function createTagsAsync(
         console.log('Tagging is skipped in dry run mode.');
         return;
     } else {
-        const githubPAT = getGitHubPAT(options);
         const tagCreated = await tagRepoAsync(owner, repo, commit, tag, message, githubPAT);
 
         if (!tagCreated) {
@@ -195,12 +197,38 @@ function logError(message: string): void {
     console.log(`##vso[task.logissue type=error]${message}`);
 }
 
-async function getCommitFromNugetAsync(packageInfo: NugetPackageInfo): Promise<string | null> {
-    const packageJsonString = fs.readFileSync('./package.json').toString();
-    const packageJson = JSON.parse(packageJsonString);
-    const packageVersion = packageJson['defaults'][packageInfo.packageJsonName];
+async function getCommitFromNugetAsync(
+    packageInfo: NugetPackageInfo,
+    releaseCommit: string,
+    githubPAT: string
+): Promise<string | null> {
+    // Fetch package.json from dotnet/vscode-csharp GitHub repo at the specific commit
+    const packageJsonUrl = `https://raw.githubusercontent.com/dotnet/vscode-csharp/${releaseCommit}/package.json`;
+
+    console.log(`Fetching package.json from ${packageJsonUrl}`);
+
+    let packageJson: { defaults?: { [key: string]: string } };
+    try {
+        const response = await fetch(packageJsonUrl, {
+            headers: {
+                Authorization: `token ${githubPAT}`,
+                Accept: 'application/vnd.github.v3.raw',
+            },
+        });
+        if (!response.ok) {
+            logError(`Failed to fetch package.json from ${packageJsonUrl}: ${response.status} ${response.statusText}`);
+            return null;
+        }
+        const packageJsonString = await response.text();
+        packageJson = JSON.parse(packageJsonString);
+    } catch (error) {
+        logError(`Error fetching package.json from GitHub: ${error}`);
+        return null;
+    }
+
+    const packageVersion = packageJson.defaults?.[packageInfo.packageJsonName];
     if (!packageVersion) {
-        logError(`Can't find ${packageInfo.packageJsonName} version in package.json`);
+        logError(`Can't find ${packageInfo.packageJsonName} version in package.json from commit ${releaseCommit}`);
         return null;
     }
 

@@ -52,7 +52,7 @@ import { RoslynLanguageServerEvents, ServerState } from './languageServerEvents'
 import { registerShowToastNotification } from '../handlers/showToastNotification';
 import { registerOnAutoInsert } from '../autoInsert/onAutoInsert';
 import { commonOptions, languageServerOptions, omnisharpOptions } from '../../shared/options';
-import { NamedPipeInformation } from './roslynProtocol';
+import { NamedPipeInformation, VSTextDocumentIdentifier } from './roslynProtocol';
 import { IDisposable } from '../../disposable';
 import { BuildDiagnosticsService } from '../diagnostics/buildDiagnosticsService';
 import { getComponentPaths } from '../extensions/builtInComponents';
@@ -69,6 +69,7 @@ import { getProfilingEnvVars } from '../profiling/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
+import { ProjectContextFeature } from '../projectContext/projectContextFeature';
 
 // Flag indicating if C# Devkit was installed the last time we activated.
 // Used to determine if we need to restart the server on extension changes.
@@ -106,6 +107,7 @@ export class RoslynLanguageServer {
     private _projectFiles: vscode.Uri[] = new Array<vscode.Uri>();
 
     public readonly _onAutoInsertFeature: OnAutoInsertFeature;
+    public readonly _projectContextFeature: ProjectContextFeature;
 
     public readonly _buildDiagnosticService: BuildDiagnosticsService;
     public readonly _projectContextService: ProjectContextService;
@@ -134,7 +136,7 @@ export class RoslynLanguageServer {
         this._buildDiagnosticService = new BuildDiagnosticsService(diagnosticsReportedByBuild);
         this.registerDocumentOpenForDiagnostics();
 
-        this._projectContextService = new ProjectContextService(this, this._languageServerEvents);
+        this._projectContextService = new ProjectContextService(this, this._languageClient, this._languageServerEvents);
 
         this.registerDebuggerAttach();
 
@@ -143,6 +145,7 @@ export class RoslynLanguageServer {
         registerOnAutoInsert(this, this._languageClient);
 
         this._onAutoInsertFeature = new OnAutoInsertFeature(this._languageClient);
+        this._projectContextFeature = new ProjectContextFeature(this._languageClient);
     }
 
     public get state(): ServerState {
@@ -286,6 +289,7 @@ export class RoslynLanguageServer {
         };
 
         const documentSelector = languageServerOptions.documentSelector;
+        let server: RoslynLanguageServer | undefined = undefined;
 
         // Options to control the language client
         const clientOptions: LanguageClientOptions = {
@@ -308,6 +312,12 @@ export class RoslynLanguageServer {
             middleware: {
                 provideDiagnostics,
                 provideWorkspaceDiagnostics,
+                async sendRequest(type, param, token, next) {
+                    if (server !== undefined && type !== RoslynProtocol.VSGetProjectContextsRequest.type) {
+                        RoslynLanguageServer.tryAddProjectContext(param, server);
+                    }
+                    return next(type, param, token);
+                },
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },
@@ -324,7 +334,7 @@ export class RoslynLanguageServer {
 
         client.registerProposedFeatures();
 
-        const server = new RoslynLanguageServer(
+        server = new RoslynLanguageServer(
             client,
             platformInfo,
             context,
@@ -335,10 +345,24 @@ export class RoslynLanguageServer {
         );
 
         client.registerFeature(server._onAutoInsertFeature);
+        client.registerFeature(server._projectContextFeature);
 
         // Start the client. This will also launch the server process.
         await client.start();
         return server;
+    }
+
+    private static tryAddProjectContext(param: unknown | undefined, server: RoslynLanguageServer): void {
+        if (!isObject(param)) {
+            return;
+        }
+
+        const textDocument = <VSTextDocumentIdentifier | undefined>(param['textDocument'] || param['_vs_textDocument']);
+        if (!textDocument) {
+            return;
+        }
+
+        textDocument._vs_projectContext = server._projectContextService.getDocumentContext(textDocument.uri);
     }
 
     public async stop(): Promise<void> {
@@ -346,7 +370,8 @@ export class RoslynLanguageServer {
     }
 
     public async restart(): Promise<void> {
-        await this._languageClient.restart();
+        await this.stop();
+        await this._languageClient.start();
     }
 
     public workspaceDisplayName(): string {
@@ -504,6 +529,10 @@ export class RoslynLanguageServer {
         }
     }
 
+    public async refreshFeatureProviders(): Promise<void> {
+        return this._languageClient.sendNotification(RoslynProtocol.FeatureProvidersRefreshNotification.type, {});
+    }
+
     private convertServerError(request: string, e: any): Error {
         let error: Error;
         if (e instanceof ResponseError && e.code === -32800) {
@@ -602,6 +631,10 @@ export class RoslynLanguageServer {
 
     public getOnAutoInsertFeature(): OnAutoInsertFeature | undefined {
         return this._onAutoInsertFeature;
+    }
+
+    public getProjectContextFeature(): ProjectContextFeature | undefined {
+        return this._projectContextFeature;
     }
 
     private static async startServer(
@@ -1099,4 +1132,8 @@ function getSessionId(): string {
     }
 
     return sessionId;
+}
+
+export function isObject(value: any): value is { [key: string]: any } {
+    return value !== null && typeof value === 'object';
 }

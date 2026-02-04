@@ -17,14 +17,18 @@ export class ProjectContextStatus {
             RazorLanguage.documentSelector
         );
         const projectContextService = languageServer._projectContextService;
-
+        const selectContextCommand = {
+            command: 'csharp.changeProjectContext',
+            title: vscode.l10n.t('Select context'),
+        };
         const item = vscode.languages.createLanguageStatusItem('csharp.projectContextStatus', documentSelector);
         item.name = vscode.l10n.t('C# Project Context Status');
-        item.detail = vscode.l10n.t('Active File Context');
+        item.detail = vscode.l10n.t('Active Context');
         context.subscriptions.push(item);
 
         projectContextService.onActiveFileContextChanged((e) => {
             item.text = e.context._vs_label;
+            item.command = e.hasAdditionalContexts ? { ...selectContextCommand, arguments: [e.document] } : undefined;
 
             // Show a warning when the active file is part of the Miscellaneous File workspace and
             // project initialization is complete.
@@ -37,11 +41,13 @@ export class ProjectContextStatus {
                 item.severity = vscode.LanguageStatusSeverity.Information;
             }
 
-            item.detail = e.context._vs_is_miscellaneous
-                ? vscode.l10n.t(
-                      'The active document is not part of the open workspace. Not all language features will be available.'
-                  )
-                : vscode.l10n.t('Active File Context');
+            if (e.hasAdditionalContexts) {
+                item.detail = undefined;
+            } else {
+                item.detail = e.context._vs_is_miscellaneous
+                    ? vscode.l10n.t('Not all language features will be available.')
+                    : vscode.l10n.t('Active Context');
+            }
         });
 
         // Trigger a refresh, but don't block creation on the refresh completing.

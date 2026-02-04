@@ -23,10 +23,10 @@ Setting up your local development environment for the vscode-csharp repository i
 
 Before you start, make sure you have the following software installed on your machine:
 
-* Node.js v20 ([v20.17.0 LTS](https://nodejs.org/en/blog/release/v20.17.0)).
+* Node.js v24 ([24.13.0 LTS](https://nodejs.org/en/blog/release/v24.13.0)).
   * Note - Building with higher major versions of Node.js is not advised - it may work but we do not test it.
 * Npm (The version shipped with node is fine)
-* .NET 8.0 SDK (dotnet should be on your path)
+* .NET 10.0 SDK (dotnet should be on your path)
 
 Once you have these installed, you can navigate to the cloned vscode-csharp repository to proceed with building, running, and testing the repository.
 
@@ -38,11 +38,11 @@ Follow these steps to build, run, and test the repository:
 
 If you have the ability to run powershell, you can invoke "init.ps1" from the root of the repo. If not, the following steps will get build going for you as well:
 
-1. Run `npm install -g vsts-npm-auth`, then run `vsts-npm-auth -config .npmrc` - This command will configure your credentials for the next command.
-   a.  If you have already authenticated before, but the token expired, you may need to run `vsts-npm-auth -config .npmrc -f` instead.
-2. Run `npm i` - This command installs the project dependencies.
-3. Run `npm i -g gulp` - This command installs Gulp globally.
-4. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
+1. Run `npm i` - This command installs the project dependencies.
+2. Run `npm i -g gulp` - This command installs Gulp globally.
+3. Run `gulp installDependencies` - This command downloads the various dependencies as specified by the version in the [package.json](package.json) file.
+
+**Note**: Authentication with `ado-npm-auth` is only required when adding new packages to the feeds. For regular development with existing dependencies, authentication is not necessary. See the [Updating NPM packages](#updating-npm-packages) section for details.
 
 You can now run `code .` - This command opens the project in Visual Studio Code.
 
@@ -86,7 +86,7 @@ The server DLL is typically at `$roslynRepoRoot/artifacts/bin/Microsoft.CodeAnal
 1. Clone the [Razor repository](https://github.com/dotnet/razor). This repository contains the Razor server implementation.
 2. Follow the build instructions provided in the repository.
 
-The server DLL is typically at `$razorRepoRoot/artifacts/bin/rzls/Debug/net9.0`.
+The extension is typically at `$razorRepoRoot/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net9.0`.
 
 ### Debugging Local Language Servers
 
@@ -148,24 +148,19 @@ Or, in VSCode settings (`Ctrl+,`):
 Add the following lines to your `settings.json`. Replace `<razorRepoRoot>` with the actual path to your Razor repository.
 
 ```json
-"razor.languageServer.debug": true,
-"razor.languageServer.directory": "<razorRepoRoot>/artifacts/bin/rzls/Debug/net9.0",
-"razor.server.trace": "Debug"
+"dotnet.server.componentPaths": {
+    "razorExtension": "<razorRepoRoot>/artifacts/bin/Microsoft.VisualStudioCode.RazorExtension/Debug/net9.0"
+},
 ```
-
----
-
-Or, in VSCode settings (`Ctrl+,`):
-
-1. Search for `Razor`.
-2. Set `razor.languageServer.directory` to the path of your Razor DLL.
-3. Enable `razor.languageServer.debug`.
-4. Set `razor.server.trace` to `Debug`. This gives you more detailed log messages in the output window.
 
 ### Updating NPM packages
 We use the .NET eng AzDo artifacts feed https://dnceng.pkgs.visualstudio.com/public/_packaging/dotnet-public-npm/npm/registry/ with upstreams to the public npm registry.
-Auth is required in order to pull new packages from the upstream.  This can be done by running `vsts-npm-auth -config .npmrc`.
-If you need to renew authorization, you can force it via `vsts-npm-auth -config .npmrc -F`
+
+**Note**: Authentication is only required when adding new packages to the feeds. For installing existing dependencies during regular development, authentication is not necessary.
+
+To add new packages, you must authenticate by running:
+1. `npm install -g ado-npm-auth` (if not already installed)
+2. `ado-npm-auth -c .npmrc`
 
 ## Creating VSIX Packages for the Extension
 

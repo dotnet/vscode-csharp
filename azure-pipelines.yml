@@ -40,6 +40,8 @@ pr:
     # Changes to documentation are not functional changes.
     - '**.md'
     - CODEOWNERS
+    # Changes to init.ps1 is not exercised in CI
+    - 'init.ps1'
     # Changes to the vesion is not a functional change. The extension version is updated by the branch-snap GH action.
     - 'version.json'
     # Changes to text files (e.g. third party notices) are not functional changes.
@@ -119,7 +121,7 @@ stages:
       pool:
         name: NetCore-Public
         demands: ImageOverride -equals build.ubuntu.2204.amd64.open
-      containerName: mcr.microsoft.com/dotnet/sdk:10.0.100-rc.2-noble
+      containerName: mcr.microsoft.com/dotnet/sdk:10.0-noble
 
 - stage: Test_Windows_Stage
   displayName: Test Windows

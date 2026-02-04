@@ -10,15 +10,32 @@ import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { registerWorkspaceCommands } from './workspace/workspaceCommands';
 import { registerServerCommands } from './server/serverCommands';
+import {
+    changeProjectContext,
+    changeProjectContextCommandName,
+    changeProjectContextEditor,
+    changeProjectContextFileExplorer,
+    openAndChangeProjectContext,
+} from './projectContext/projectContextCommands';
+import TelemetryReporter from '@vscode/extension-telemetry';
+import { TelemetryEventNames } from '../shared/telemetryEventNames';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: vscode.LogOutputChannel,
-    csharpTraceChannel: vscode.LogOutputChannel
+    csharpTraceChannel: vscode.LogOutputChannel,
+    reporter: TelemetryReporter
 ) {
-    registerExtensionCommands(context, hostExecutableResolver, outputChannel, csharpTraceChannel);
+    registerExtensionCommands(
+        context,
+        languageServer,
+        hostExecutableResolver,
+        outputChannel,
+        csharpTraceChannel,
+        reporter
+    );
     registerWorkspaceCommands(context, languageServer);
     registerServerCommands(context, languageServer, outputChannel);
 }
@@ -28,10 +45,33 @@ export function registerCommands(
  */
 function registerExtensionCommands(
     context: vscode.ExtensionContext,
+    languageServer: RoslynLanguageServer,
     hostExecutableResolver: IHostExecutableResolver,
     outputChannel: vscode.LogOutputChannel,
-    csharpTraceChannel: vscode.LogOutputChannel
+    csharpTraceChannel: vscode.LogOutputChannel,
+    reporter: TelemetryReporter
 ) {
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
+            changeProjectContextCommandName,
+            async (document: vscode.TextDocument | undefined, options) => {
+                reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeCommand);
+                await changeProjectContext(languageServer, document, options);
+            }
+        )
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(changeProjectContextFileExplorer, async (uri) => {
+            reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeFileExplorer);
+            await openAndChangeProjectContext(languageServer, uri);
+        })
+    );
+    context.subscriptions.push(
+        vscode.commands.registerCommand(changeProjectContextEditor, async (uri) => {
+            reporter.sendTelemetryEvent(TelemetryEventNames.ProjectContextChangeEditor);
+            await openAndChangeProjectContext(languageServer, uri);
+        })
+    );
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(

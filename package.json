@@ -40,11 +40,11 @@
     "workspace"
   ],
   "defaults": {
-    "roslyn": "5.3.0-2.25603.1",
+    "roslyn": "5.5.0-2.26080.10",
     "omniSharp": "1.39.14",
-    "razor": "10.0.0-preview.25577.1",
+    "razor": "10.0.0-preview.26075.11",
     "razorOmnisharp": "7.0.0-preview.23363.1",
-    "xamlTools": "18.3.11128.18"
+    "xamlTools": "18.4.11427.62"
   },
   "main": "./dist/extension",
   "l10n": "./l10n",
@@ -123,7 +123,7 @@
     "@types/fs-extra": "11.0.4",
     "@types/gulp": "4.0.5",
     "@types/minimist": "1.2.1",
-    "@types/node": "20.14.8",
+    "@types/node": "24.10.8",
     "@types/semver": "7.3.13",
     "@types/tmp": "0.0.33",
     "@types/uuid": "^9.0.1",
@@ -1524,31 +1524,42 @@
             "tags": [
               "preview"
             ]
-          },
-          "razor.languageServer.directory": {
-            "type": "string",
-            "scope": "machine-overridable",
-            "description": "%configuration.razor.languageServer.directory%",
-            "order": 90
-          },
-          "razor.languageServer.debug": {
+          }
+        }
+      },
+      {
+        "title": "Razor",
+        "id": "ms-dotnettools.csharp.razor",
+        "order": 10,
+        "properties": {
+          "razor.format.codeBlockBraceOnNextLine": {
             "type": "boolean",
-            "scope": "machine-overridable",
+            "scope": "window",
             "default": false,
-            "description": "%configuration.razor.languageServer.debug%",
-            "order": 90
+            "description": "%configuration.razor.razor.format.codeBlockBraceOnNextLine%"
           },
-          "razor.languageServer.suppressLspErrorToasts": {
+          "razor.format.attributeIndentStyle": {
+            "type": "string",
+            "default": "alignWithFirst",
+            "enum": [
+              "alignWithFirst",
+              "indentByOne",
+              "indentByTwo"
+            ],
+            "description": "%configuration.razor.razor.format.attributeIndentStyle%"
+          },
+          "razor.completion.commitElementsWithSpace": {
             "type": "boolean",
-            "default": true,
-            "description": "%configuration.razor.languageServer.suppressLspErrorToasts%"
+            "scope": "window",
+            "default": false,
+            "description": "%configuration.razor.razor.completion.commitElementsWithSpace%"
           }
         }
       },
       {
         "title": "OmniSharp",
         "id": "ms-dotnettools.csharp.omniSharp",
-        "order": 10,
+        "order": 11,
         "properties": {
           "dotnet.server.useOmnisharp": {
             "type": "boolean",
@@ -1751,18 +1762,6 @@
             "scope": "window",
             "default": true,
             "description": "%configuration.omnisharp.razor.format.enable%"
-          },
-          "razor.format.codeBlockBraceOnNextLine": {
-            "type": "boolean",
-            "scope": "window",
-            "default": false,
-            "description": "%configuration.omnisharp.razor.format.codeBlockBraceOnNextLine%"
-          },
-          "razor.completion.commitElementsWithSpace": {
-            "type": "boolean",
-            "scope": "window",
-            "default": false,
-            "description": "%configuration.omnisharp.razor.completion.commitElementsWithSpace%"
           }
         }
       }
@@ -1854,6 +1853,26 @@
         "title": "%command.dotnet.restore.all%",
         "category": ".NET",
         "enablement": "isWorkspaceTrusted && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')"
+      },
+      {
+        "command": "csharp.changeProjectContext",
+        "title": "%command.csharp.changeProjectContext%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
+      },
+      {
+        "command": "csharp.changeProjectContextEditor",
+        "title": "%command.csharp.changeProjectContextEditor%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
+        "when": "false"
+      },
+      {
+        "command": "csharp.changeProjectContextFileExplorer",
+        "title": "%command.csharp.changeProjectContextFileExplorer%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
+        "when": "false"
       },
       {
         "command": "csharp.listProcess",
@@ -5596,14 +5615,26 @@
       ],
       "editor/context": [
         {
+          "command": "csharp.changeProjectContextEditor",
+          "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "group": "2_dotnet@1"
+        },
+        {
           "command": "dotnet.test.runTestsInContext",
           "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
-          "group": "2_dotnet@1"
+          "group": "3_dotnet@1"
         },
         {
           "command": "dotnet.test.debugTestsInContext",
           "when": "editorLangId == csharp && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp')",
-          "group": "2_dotnet@2"
+          "group": "3_dotnet@2"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "csharp.changeProjectContextFileExplorer",
+          "when": "(resourceLangId == csharp || resourceLangId == aspnetcorerazor) && (dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit')",
+          "group": "2_dotnet@1"
         }
       ],
       "issue/reporter": [

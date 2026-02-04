@@ -80,7 +80,7 @@ export async function activateRoslynLanguageServer(
     registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
-    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel);
+    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel, reporter);
     registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
@@ -162,11 +162,6 @@ function getInstalledServerPath(platformInfo: PlatformInformation): string {
     let extension = '';
     if (platformInfo.isWindows()) {
         extension = '.exe';
-    } else if (platformInfo.isMacOS()) {
-        // MacOS executables must be signed with codesign.  Currently all Roslyn server executables are built on windows
-        // and therefore dotnet publish does not automatically sign them.
-        // Tracking bug - https://devdiv.visualstudio.com/DevDiv/_workitems/edit/1767519/
-        extension = '.dll';
     }
 
     let pathWithExtension = `${serverFilePath}${extension}`;

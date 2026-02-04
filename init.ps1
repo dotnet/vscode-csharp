@@ -22,18 +22,12 @@ function Run-Command($command, $arguments, $errorMsg) {
 Push-Location $PSScriptRoot
 
 try {
-    Write-Host "`n[1/5] Installing vsts-npm-auth globally..." -ForegroundColor Cyan
-    Run-Command "npm" @("install", "-g", "vsts-npm-auth") "Failed to install vsts-npm-auth."
+    Write-Host "`n[1/5] Installing ado-npm-auth globally..." -ForegroundColor Cyan
+    Run-Command "npm" @("install", "-g", "ado-npm-auth") "Failed to install ado-npm-auth."
 
     Write-Host "`n[2/5] Authenticating with Azure DevOps..." -ForegroundColor Cyan
     if (Test-Path ".npmrc") {
-        try {
-            Run-Command "vsts-npm-auth" @("-config", ".npmrc") "Initial authentication failed."
-        }
-        catch {
-            Write-Host "Initial authentication failed. Trying with force (-f) flag..." -ForegroundColor DarkYellow
-            Run-Command "vsts-npm-auth" @("-config", ".npmrc", "-f") "Forced authentication failed."
-        }
+        Run-Command "ado-npm-auth" @("-c", ".npmrc") "Authentication failed."
     } else {
         Write-Host ".npmrc file not found in the current directory." -ForegroundColor Red
         throw ".npmrc file not found in the current directory."
