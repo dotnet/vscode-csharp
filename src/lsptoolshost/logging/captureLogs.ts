@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import archiver from 'archiver';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ObservableLogOutputChannel, LogMessage } from './observableLogOutputChannel';
+import { commonOptions, languageServerOptions, razorOptions } from '../../shared/options';
 
 /**
  * Registers the command to capture C# log output.
@@ -199,6 +200,10 @@ async function createZipWithLogs(
         archive.append(csharpActivityLogContent, { name: 'csharp.activity.log' });
         archive.append(traceActivityLogContent, { name: 'csharp-lsp-trace.activity.log' });
 
+        // Add current settings to the archive
+        const settingsContent = gatherCurrentSettings();
+        archive.append(settingsContent, { name: 'csharp-settings.json' });
+
         void archive.finalize();
     });
 }
@@ -214,6 +219,43 @@ async function readLogFileContent(logFileUri: vscode.Uri): Promise<string | null
         // File doesn't exist or can't be read
         return null;
     }
+}
+
+/**
+ * Gathers the current settings for CommonOptions, LanguageServerOptions, and RazorOptions.
+ * Returns a formatted JSON string.
+ */
+function gatherCurrentSettings(): string {
+    const settings = {
+        commonOptions: getOptionValues(commonOptions),
+        languageServerOptions: getOptionValues(languageServerOptions),
+        razorOptions: getOptionValues(razorOptions),
+    };
+    return JSON.stringify(settings, null, 2);
+}
+
+/**
+ * Extracts all option values from an options object by iterating over its property descriptors.
+ *
+ * Note: We cannot use Object.keys() here because the options objects are class instances where
+ * all properties are defined as getters on the prototype, not as own properties on the instance.
+ * Object.keys() only returns enumerable own properties, so it would return an empty array.
+ * Instead, we inspect the prototype's property descriptors to find all the getter functions.
+ */
+function getOptionValues<T extends object>(options: T): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
+    const prototype = Object.getPrototypeOf(options);
+    const descriptors = Object.getOwnPropertyDescriptors(prototype);
+
+    for (const [key, descriptor] of Object.entries(descriptors)) {
+        // Skip constructor and non-getter properties
+        if (key === 'constructor' || typeof descriptor.get !== 'function') {
+            continue;
+        }
+        result[key] = (options as Record<string, unknown>)[key];
+    }
+
+    return result;
 }
 
 /**
