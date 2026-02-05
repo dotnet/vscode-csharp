@@ -1,6 +1,6 @@
 {
   "command.csharp.attachToProcess": "附加到 .NET 5+ 或 .NET Core 进程",
-  "command.csharp.captureLogs": "Capture C# Log Output",
+  "command.csharp.captureLogs": "捕获 C# 日志输出",
   "command.csharp.changeProjectContext": "更改活动文档的项目上下文",
   "command.csharp.changeProjectContextEditor": "选择项目上下文",
   "command.csharp.changeProjectContextFileExplorer": "选择项目上下文",
