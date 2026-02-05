@@ -6,6 +6,11 @@
 # 2.122.x
 
 # 2.121.x
+* Use the package.json to gather all defined settings (PR: [#8954](https://github.com/dotnet/vscode-csharp/pull/8954))
+* Capture logs when recording a server trace (PR: [#8951](https://github.com/dotnet/vscode-csharp/pull/8951))
+* Log settings when capturing logs (PR: [#8948](https://github.com/dotnet/vscode-csharp/pull/8948))
+* Add captureLogs command which will record C# and C# LSP log activity (PR: [#8942](https://github.com/dotnet/vscode-csharp/pull/8942))
+* Bump Razor to 10.0.0-preview.26081.1 (PR: [#8940](https://github.com/dotnet/vscode-csharp/pull/8940))
 
 # 2.115.x
 * Update Roslyn to 5.5.0-2.26080.10 (PR: [#8941](https://github.com/dotnet/vscode-csharp/pull/8941))
