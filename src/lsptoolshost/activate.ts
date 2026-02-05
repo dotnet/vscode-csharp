@@ -29,10 +29,10 @@ import { RoslynLanguageServer } from './server/roslynLanguageServer';
 import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
-import { registerTraceCommand } from './profiling/profiling';
+import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 
-let _channel: vscode.LogOutputChannel;
-let _traceChannel: vscode.LogOutputChannel;
+let _channel: ObservableLogOutputChannel;
+let _traceChannel: ObservableLogOutputChannel;
 
 /**
  * Creates and activates the Roslyn language server.
@@ -48,9 +48,11 @@ export async function activateRoslynLanguageServer(
     razorLogger: RazorLogger
 ): Promise<RoslynLanguageServer> {
     // Create a channel for outputting general logs from the language server.
-    _channel = outputChannel;
+    // Wrap in ObservableLogOutputChannel to enable capturing logs regardless of UI log level.
+    _channel = new ObservableLogOutputChannel(outputChannel);
     // Create a separate channel for outputting trace logs - these are incredibly verbose and make other logs very difficult to see.
-    _traceChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'), { log: true });
+    const traceOutputChannel = vscode.window.createOutputChannel(vscode.l10n.t('C# LSP Trace Logs'), { log: true });
+    _traceChannel = new ObservableLogOutputChannel(traceOutputChannel);
 
     reporter.sendTelemetryEvent(TelemetryEventNames.ClientInitialize);
 
@@ -72,8 +74,6 @@ export async function activateRoslynLanguageServer(
         _channel,
         _traceChannel
     );
-
-    registerTraceCommand(context, languageServer, outputChannel);
 
     registerLanguageStatusItems(context, languageServer, languageServerEvents);
     registerMiscellaneousFileNotifier(context, languageServer);

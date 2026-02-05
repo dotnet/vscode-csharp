@@ -4,11 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
+import * as path from 'path';
 import * as vscode from 'vscode';
 import { EOL } from 'os';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
 import { execChildProcess } from '../../common';
+import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
+import { getDefaultSaveUri, createZipWithLogs } from '../logging/captureLogs';
 
 const TraceTerminalName = 'dotnet-trace';
 
@@ -34,7 +37,8 @@ export function getProfilingEnvVars(outputChannel: vscode.LogOutputChannel): Nod
 export function registerTraceCommand(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
-    outputChannel: vscode.LogOutputChannel
+    outputChannel: ObservableLogOutputChannel,
+    traceChannel: ObservableLogOutputChannel
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.recordLanguageServerTrace', async () => {
@@ -52,7 +56,14 @@ export function registerTraceCommand(
                         }),
                     });
                     try {
-                        await executeDotNetTraceCommand(languageServer, progress, outputChannel, token);
+                        await executeDotNetTraceCommand(
+                            context,
+                            languageServer,
+                            progress,
+                            outputChannel,
+                            traceChannel,
+                            token
+                        );
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : String(error);
                         showErrorMessageWithOptions(
@@ -72,12 +83,14 @@ export function registerTraceCommand(
 }
 
 async function executeDotNetTraceCommand(
+    context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     progress: vscode.Progress<{
         message?: string;
         increment?: number;
     }>,
-    outputChannel: vscode.LogOutputChannel,
+    outputChannel: ObservableLogOutputChannel,
+    traceChannel: ObservableLogOutputChannel,
     cancellationToken: vscode.CancellationToken
 ): Promise<void> {
     const processId = languageServer.processId;
@@ -86,28 +99,24 @@ async function executeDotNetTraceCommand(
         throw new Error(vscode.l10n.t('Language server process not found, ensure the server is running.'));
     }
 
-    let traceFolderUri: vscode.Uri | undefined;
-    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders?.length >= 1) {
-        traceFolderUri = vscode.workspace.workspaceFolders[0].uri;
-    }
-
-    // Prompt the user for the folder to save the trace file
-    // By default, choose the first workspace folder if available.
-    const uris = await vscode.window.showOpenDialog({
-        canSelectFiles: false,
-        canSelectFolders: true,
-        canSelectMany: false,
-        defaultUri: traceFolderUri ? traceFolderUri : undefined,
-        openLabel: vscode.l10n.t('Select Trace Folder'),
-        title: vscode.l10n.t('Select Folder to Save Trace File'),
+    // Prompt the user for save location first
+    const saveUri = await vscode.window.showSaveDialog({
+        defaultUri: getDefaultSaveUri('csharp-trace'),
+        filters: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            'Zip files': ['zip'],
+        },
+        saveLabel: vscode.l10n.t('Save Trace'),
+        title: vscode.l10n.t('Save C# Trace and Logs'),
     });
 
-    if (uris === undefined || uris.length === 0) {
-        // User cancelled the dialog
+    if (!saveUri) {
+        // User cancelled the save dialog
         return;
     }
 
-    const traceFolder = uris[0].fsPath;
+    // Get the folder for temporary trace file output
+    const traceFolder = path.dirname(saveUri.fsPath);
 
     if (!fs.existsSync(traceFolder)) {
         throw new Error(vscode.l10n.t(`Folder for trace file {0} does not exist`, traceFolder));
@@ -135,12 +144,64 @@ async function executeDotNetTraceCommand(
         return;
     }
 
-    const terminal = await getOrCreateTerminal(traceFolder, outputChannel);
+    // Create observers to collect log messages during capture
+    const csharpLogObserver = outputChannel.observe();
+    const traceLogObserver = traceChannel.observe();
 
-    const args = ['collect', ...userArgs.split(' ')];
+    // Set log levels to Trace for capture and get the restore function
+    const restoreLogLevels = await languageServer.setLogLevelsForCapture();
 
-    progress.report({ message: vscode.l10n.t('Recording trace...') });
-    await runDotnetTrace(args, terminal, cancellationToken);
+    try {
+        const terminal = await getOrCreateTerminal(traceFolder, outputChannel);
+
+        const args = ['collect', ...userArgs.split(' ')];
+
+        progress.report({ message: vscode.l10n.t('Recording logs... Click Cancel to stop and save.') });
+        const traceFilePath = await runDotnetTrace(args, terminal, traceFolder, cancellationToken);
+
+        progress.report({
+            message: vscode.l10n.t('Creating archive...'),
+        });
+
+        // Get formatted log content from observers
+        const csharpLogContent = csharpLogObserver.getLog();
+        const traceLogContent = traceLogObserver.getLog();
+
+        try {
+            await createZipWithLogs(
+                context,
+                outputChannel,
+                traceChannel,
+                csharpLogContent,
+                traceLogContent,
+                saveUri.fsPath,
+                traceFilePath
+            );
+
+            const openFolder = vscode.l10n.t('Open Folder');
+            const result = await vscode.window.showInformationMessage(
+                vscode.l10n.t('C# logs saved successfully.'),
+                openFolder
+            );
+            if (result === openFolder) {
+                await vscode.commands.executeCommand('revealFileInOS', saveUri);
+            }
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            await vscode.window.showErrorMessage(
+                vscode.l10n.t({
+                    message: 'Failed to save C# trace: {0}',
+                    args: [errorMessage],
+                    comment: ['{0} is the error message'],
+                })
+            );
+        }
+    } finally {
+        // Always clean up observers and restore log levels
+        csharpLogObserver.dispose();
+        traceLogObserver.dispose();
+        await restoreLogLevels();
+    }
 }
 
 async function verifyOrAcquireDotnetTrace(
@@ -149,7 +210,7 @@ async function verifyOrAcquireDotnetTrace(
         message?: string;
         increment?: number;
     }>,
-    channel: vscode.LogOutputChannel
+    channel: ObservableLogOutputChannel
 ): Promise<boolean> {
     try {
         await execChildProcess('dotnet-trace --version', folder, process.env);
@@ -207,8 +268,9 @@ async function verifyOrAcquireDotnetTrace(
 async function runDotnetTrace(
     args: string[],
     terminal: vscode.Terminal,
+    traceFolder: string,
     token: vscode.CancellationToken
-): Promise<void> {
+): Promise<string | undefined> {
     // Use a terminal to execute the dotnet-trace.  This is much simpler and more reliable than executing dotnet-trace
     // directly via the child_process module as dotnet-trace relies on shell input in order to stop the trace.
     // Without using a psuedo-terminal, it is extremely difficult to send the correct signal to stop the trace.
@@ -239,10 +301,28 @@ async function runDotnetTrace(
         // Without shell integration we can't listen for the command to finish.  We can't execute it as a child process either (see above).
         // Instead we fire and forget the command.  The user can stop the trace collection by interacting with the terminal directly.
         terminal.sendText(command);
+
+        // Wait for cancellation since we can't detect when the command finishes
+        await new Promise<void>((resolve) => {
+            if (token.isCancellationRequested) {
+                resolve();
+                return;
+            }
+            const disposable = token.onCancellationRequested(() => {
+                disposable.dispose();
+                resolve();
+            });
+        });
     }
+
+    // Find the most recent .nettrace file in the trace folder
+    return findLatestNettraceFile(traceFolder);
 }
 
-async function getOrCreateTerminal(folder: string, outputChannel: vscode.LogOutputChannel): Promise<vscode.Terminal> {
+async function getOrCreateTerminal(
+    folder: string,
+    outputChannel: ObservableLogOutputChannel
+): Promise<vscode.Terminal> {
     const existing = vscode.window.terminals.find((t) => t.name === TraceTerminalName);
     if (existing) {
         const options: vscode.TerminalOptions = existing.creationOptions;
@@ -266,7 +346,7 @@ async function getOrCreateTerminal(folder: string, outputChannel: vscode.LogOutp
 
 async function waitForTerminalReady(
     terminal: vscode.Terminal,
-    outputChannel: vscode.LogOutputChannel
+    outputChannel: ObservableLogOutputChannel
 ): Promise<vscode.Terminal> {
     // The shell integration feature is required for us to be able to see the result of a command in the terminal.
     // However the shell integration feature has a couple of special behaviors:
@@ -297,4 +377,25 @@ async function waitForTerminalReady(
     }
 
     return terminal;
+}
+
+/**
+ * Finds the most recently created .nettrace file in the specified folder.
+ */
+function findLatestNettraceFile(folder: string): string | undefined {
+    try {
+        const files = fs.readdirSync(folder);
+        const nettraceFiles = files
+            .filter((f) => f.endsWith('.nettrace'))
+            .map((f) => {
+                const fullPath = path.join(folder, f);
+                const stats = fs.statSync(fullPath);
+                return { path: fullPath, mtime: stats.mtime };
+            })
+            .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
+
+        return nettraceFiles.length > 0 ? nettraceFiles[0].path : undefined;
+    } catch {
+        return undefined;
+    }
 }

@@ -117,23 +117,61 @@ If the language server crashes, general logs are often helpful for diagnosing th
 > [!WARNING]
 > The dump will contain detailed information about the workspace.  See [Sharing information privately](#sharing-information-privately)
 
+### Capturing activity trace logging
+
+When investigating issues that require detailed logging for a specific scenario, the C# extension provides a command to capture trace-level logs while you reproduce the issue. This is useful when the issue is difficult to reproduce or when you need to capture logs for a specific sequence of actions.
+
+1. **Invoke the Capture Logs Command**:
+   - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+   - Search for and select `CSharp: Capture Logs` (`csharp.captureLogs`).
+
+2. **Reproduce the Issue**:
+   - A notification will appear indicating that logs are being captured.
+   - While the notification is visible, perform the actions that reproduce the issue.
+   - The extension automatically sets the log level to `Trace` during capture to collect detailed information.
+
+3. **Stop Capturing and Save**:
+   - Click the `Cancel` button on the notification to stop capturing.
+   - You will be prompted to save the log archive. Choose a location to save the `.zip` file.
+
+4. **Share the Logs**:
+   - The saved archive contains:
+     - `csharp.log` - The existing C# log file
+     - `csharp-lsp-trace.log` - The existing LSP trace log file
+     - `csharp.activity.log` - Captured C# log activity during the recording session
+     - `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the recording session
+     - `csharp-settings.json` - Current C# extension settings
+   - Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
+
+> [!WARNING]
+> The logs may contain file paths, project names, and other workspace information. Review the contents before sharing publicly.
+
 ### Recording a language server trace
 
 When investigating performance issues, we may request a performance trace of the language server to diagnose what is causing the problem.  These are typically taken via [dotnet-trace](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace) (a cross platform tool to collect performance traces of .NET processes)
 
-The C# extension has a built in command, `csharp.recordLanguageServerTrace` to help with trace collection.  This command will install `dotnet-trace` as a global tool and invoke it against the language server.
+The C# extension has a built in command, `csharp.recordLanguageServerTrace` to help with trace collection.  This command will install `dotnet-trace` as a global tool, invoke it against the language server, and package the results along with logs into a `.zip` archive.
 
 1.  Invoke the record language server trace command
 ![alt text](docs/images/recordTraceCommand.png)
-2.  Select the folder to save the trace.
+2.  Choose a location to save the trace archive (`.zip` file).
 3.  Accept the default trace arguments, or change them if requested
 ![alt text](docs/images/recordTraceArgs.png)
-4.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the peformance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace
+4.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the performance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace, or click `Cancel` on the progress notification.
 ![alt text](docs/images/recordTraceTerminal.png)
-5.  Share the trace.
+5.  The extension will automatically package the trace and logs into an archive.
+6.  Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
+
+The saved archive contains:
+- The `.nettrace` file from dotnet-trace
+- `csharp.log` - The existing C# log file
+- `csharp-lsp-trace.log` - The existing LSP trace log file
+- `csharp.activity.log` - Captured C# log activity during the trace session
+- `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the trace session
+- `csharp-settings.json` - Current C# extension settings
 
 > [!WARNING]
-> The trace will contain detailed information about the workspace.  See [Sharing information privately](#sharing-information-privately)
+> The trace and logs will contain detailed information about the workspace.  See [Sharing information privately](#sharing-information-privately)
 
 ### Sharing information privately
 Detailed logs, dumps, traces, and other information can sometimes contain private information that you do not wish to share publicly on GitHub (for example file paths and file contents).  Instead, you can utilize the Developer Community page to share these privately to Microsoft.

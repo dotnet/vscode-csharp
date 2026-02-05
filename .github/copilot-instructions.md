@@ -33,11 +33,12 @@
 
 ## Project Conventions & Patterns
 - **TypeScript**: Follows strict linting (`.eslintrc.js`), including header/license blocks and camelCase filenames (except for interfaces and special files).
+- **Code Formatting**: After making code edits, always run `npx eslint <file-path> --fix` to auto-fix formatting issues (prettier) and lint errors. This ensures code passes CI checks.
 - **Component Downloads**: Language servers and debuggers are downloaded at runtime; see `package.json` for URLs and install logic.
 - **Copilot Providers**: Use `registerCopilotContextProviders` and `registerCopilotRelatedFilesProvider` to extend Copilot context for C#.
 - **Testing**: Prefer integration tests over unit tests for features. Structure follows:
   - `test/lsptoolshost/integrationTests/` for Roslyn/LSP features
-  - `test/omnisharp/omnisharpIntegrationTests/` for OmniSharp features  
+  - `test/omnisharp/omnisharpIntegrationTests/` for OmniSharp features
   - `test/razor/razorIntegrationTests/` for Razor features
   - Use `test/*/integrationTests/integrationHelpers.ts` for test setup utilities
   - Tests use Jest with VS Code test environment and require workspace test assets
