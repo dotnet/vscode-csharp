@@ -1,6 +1,6 @@
 {
   "command.csharp.attachToProcess": "An einen .NET 5+ oder .NET Core-Prozess anfügen",
-  "command.csharp.captureLogs": "Capture C# Log Output",
+  "command.csharp.captureLogs": "C#-Protokollausgabe erfassen",
   "command.csharp.changeProjectContext": "Projektkontext des aktiven Dokuments ändern",
   "command.csharp.changeProjectContextEditor": "Projektkontext auswählen",
   "command.csharp.changeProjectContextFileExplorer": "Projektkontext auswählen",
