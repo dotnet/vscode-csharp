@@ -187,6 +187,20 @@ The C# extension has a built in command, `csharp.collectDump` to help with dump 
 > [!WARNING]
 > The dump will contain detailed information about the workspace, including file contents loaded in memory. See [Sharing information privately](#sharing-information-privately)
 
+### Collecting a GC dump
+
+When investigating memory issues related to garbage collection or object retention, we may request a GC dump of the language server. These are typically taken via [dotnet-gcdump](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-gcdump) (a cross platform tool to collect GC dumps of .NET processes). GC dumps are smaller than full memory dumps and focus on managed heap information.
+
+The C# extension has a built in command, `csharp.collectGcDump` to help with GC dump collection. This command will install `dotnet-gcdump` as a global tool, invoke it against the language server, and package the result into a `.zip` archive.
+
+1.  Invoke the collect GC dump command by opening the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS) and selecting `CSharp: Collect a GC dump of the C# Language Server`.
+2.  Choose a location to save the GC dump archive (`.zip` file).
+3.  The extension will collect the GC dump and package it into an archive.
+4.  Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
+
+> [!WARNING]
+> The GC dump will contain information about managed objects in memory. See [Sharing information privately](#sharing-information-privately)
+
 ### Sharing information privately
 Detailed logs, dumps, traces, and other information can sometimes contain private information that you do not wish to share publicly on GitHub (for example file paths and file contents).  Instead, you can utilize the Developer Community page to share these privately to Microsoft.
 

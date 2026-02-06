@@ -221,6 +221,48 @@
       "dotnet-trace is a command name and should not be localized"
     ]
   },
+  "Initializing dotnet-gcdump.../dotnet-gcdump is a command name and should not be localized": {
+    "message": "Initializing dotnet-gcdump...",
+    "comment": [
+      "dotnet-gcdump is a command name and should not be localized"
+    ]
+  },
+  "Failed to execute dotnet-gcdump command: {0}/dotnet-gcdump is a command name and should not be localized": {
+    "message": "Failed to execute dotnet-gcdump command: {0}",
+    "comment": [
+      "dotnet-gcdump is a command name and should not be localized"
+    ]
+  },
+  "C# GC dump saved successfully.": "C# GC dump saved successfully.",
+  "Save GC Dump": "Save GC Dump",
+  "Save C# GC Dump": "Save C# GC Dump",
+  "Folder for GC dump file {0} does not exist": "Folder for GC dump file {0} does not exist",
+  "Enter dotnet-gcdump arguments/dotnet-gcdump is a command name and should not be localized": {
+    "message": "Enter dotnet-gcdump arguments",
+    "comment": [
+      "dotnet-gcdump is a command name and should not be localized"
+    ]
+  },
+  "Collecting GC dump...": "Collecting GC dump...",
+  "Failed to create GC dump file.": "Failed to create GC dump file.",
+  "dotnet-gcdump not found, run \"{0}\" to install it?/dotnet-gcdump is a command name and should not be localized": {
+    "message": "dotnet-gcdump not found, run \"{0}\" to install it?",
+    "comment": [
+      "dotnet-gcdump is a command name and should not be localized"
+    ]
+  },
+  "Installing dotnet-gcdump.../dotnet-gcdump is a command name and should not be localized": {
+    "message": "Installing dotnet-gcdump...",
+    "comment": [
+      "dotnet-gcdump is a command name and should not be localized"
+    ]
+  },
+  "Failed to install dotnet-gcdump, it may need to be manually installed. See C# output for details./dotnet-gcdump is a command name and should not be localized": {
+    "message": "Failed to install dotnet-gcdump, it may need to be manually installed. See C# output for details.",
+    "comment": [
+      "dotnet-gcdump is a command name and should not be localized"
+    ]
+  },
   "Initializing dotnet-dump.../dotnet-dump is a command name and should not be localized": {
     "message": "Initializing dotnet-dump...",
     "comment": [
