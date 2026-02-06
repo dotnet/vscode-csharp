@@ -20,8 +20,8 @@ import {
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { registerCaptureLogsCommand } from './logging/captureLogs';
-import { registerTraceCommand } from './profiling/profiling';
-import { registerDumpCommand } from './profiling/dump';
+import { registerTraceCommand } from './logging/profiling';
+import { registerDumpCommand } from './logging/dump';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 
 export function registerCommands(
