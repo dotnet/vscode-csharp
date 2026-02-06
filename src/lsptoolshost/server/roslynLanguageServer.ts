@@ -774,6 +774,12 @@ export class RoslynLanguageServer {
 
         channel.trace(`Profiling environment variables: ${JSON.stringify(profilingEnvVars)}`);
 
+        const customEnvVars = languageServerOptions.environmentVariables;
+        if (Object.keys(customEnvVars).length > 0) {
+            env = { ...env, ...customEnvVars };
+            channel.info(`Custom environment variables: ${JSON.stringify(customEnvVars)}`);
+        }
+
         let childProcess: cp.ChildProcessWithoutNullStreams;
         const cpOptions: cp.SpawnOptionsWithoutStdio = {
             detached: true,
