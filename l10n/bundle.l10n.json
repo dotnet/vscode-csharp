@@ -233,18 +233,18 @@
       "dotnet-dump is a command name and should not be localized"
     ]
   },
+  "C# memory dump saved successfully.": "C# memory dump saved successfully.",
   "Save Dump": "Save Dump",
   "Save C# Memory Dump": "Save C# Memory Dump",
   "Folder for dump file {0} does not exist": "Folder for dump file {0} does not exist",
-  "Collecting memory dump...": "Collecting memory dump...",
-  "Failed to create dump file.": "Failed to create dump file.",
-  "C# memory dump saved successfully.": "C# memory dump saved successfully.",
-  "Failed to save C# dump: {0}/{0} is the error message": {
-    "message": "Failed to save C# dump: {0}",
+  "Enter dotnet-dump arguments/dotnet-dump is a command name and should not be localized": {
+    "message": "Enter dotnet-dump arguments",
     "comment": [
-      "{0} is the error message"
+      "dotnet-dump is a command name and should not be localized"
     ]
   },
+  "Collecting memory dump...": "Collecting memory dump...",
+  "Failed to create dump file.": "Failed to create dump file.",
   "dotnet-dump not found, run \"{0}\" to install it?/dotnet-dump is a command name and should not be localized": {
     "message": "dotnet-dump not found, run \"{0}\" to install it?",
     "comment": [

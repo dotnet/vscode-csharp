@@ -20,6 +20,9 @@ export function registerDumpCommand(
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.collectDump', async () => {
+            let saveUri: vscode.Uri | undefined;
+            let errorMessage: string | undefined;
+
             await vscode.window.withProgress(
                 {
                     location: vscode.ProgressLocation.Notification,
@@ -34,21 +37,34 @@ export function registerDumpCommand(
                         }),
                     });
                     try {
-                        await executeDotNetDumpCommand(languageServer, progress, outputChannel);
+                        saveUri = await executeDotNetDumpCommand(languageServer, progress, outputChannel);
                     } catch (error) {
-                        const errorMessage = error instanceof Error ? error.message : String(error);
-                        showErrorMessageWithOptions(
-                            vscode,
-                            vscode.l10n.t({
-                                message: 'Failed to execute dotnet-dump command: {0}',
-                                args: [errorMessage],
-                                comment: 'dotnet-dump is a command name and should not be localized',
-                            }),
-                            { modal: true }
-                        );
+                        errorMessage = error instanceof Error ? error.message : String(error);
                     }
                 }
             );
+
+            // Show messages after progress is dismissed
+            if (errorMessage) {
+                showErrorMessageWithOptions(
+                    vscode,
+                    vscode.l10n.t({
+                        message: 'Failed to execute dotnet-dump command: {0}',
+                        args: [errorMessage],
+                        comment: 'dotnet-dump is a command name and should not be localized',
+                    }),
+                    { modal: true }
+                );
+            } else if (saveUri) {
+                const openFolder = vscode.l10n.t('Open Folder');
+                const result = await vscode.window.showInformationMessage(
+                    vscode.l10n.t('C# memory dump saved successfully.'),
+                    openFolder
+                );
+                if (result === openFolder) {
+                    await vscode.commands.executeCommand('revealFileInOS', saveUri);
+                }
+            }
         })
     );
 }
@@ -60,7 +76,7 @@ async function executeDotNetDumpCommand(
         increment?: number;
     }>,
     outputChannel: ObservableLogOutputChannel
-): Promise<void> {
+): Promise<vscode.Uri | undefined> {
     const processId = languageServer.processId;
 
     if (!processId) {
@@ -80,7 +96,7 @@ async function executeDotNetDumpCommand(
 
     if (!saveUri) {
         // User cancelled the save dialog
-        return;
+        return undefined;
     }
 
     // Get the folder for temporary dump file output
@@ -93,7 +109,23 @@ async function executeDotNetDumpCommand(
     const dotnetDumpInstalled = await verifyOrAcquireDotnetDump(dumpFolder, progress, outputChannel);
     if (!dotnetDumpInstalled) {
         // Cancelled or unable to install dotnet-dump
-        return;
+        return undefined;
+    }
+
+    const dotnetDumpArgs = `--process-id ${processId} --type Full`;
+
+    // Show an input box pre-populated with the default dotnet-dump arguments
+    const userArgs = await vscode.window.showInputBox({
+        value: dotnetDumpArgs,
+        placeHolder: vscode.l10n.t({
+            message: 'Enter dotnet-dump arguments',
+            comment: 'dotnet-dump is a command name and should not be localized',
+        }),
+        prompt: vscode.l10n.t('You can modify the default arguments if needed'),
+    });
+    if (userArgs === undefined) {
+        // User cancelled the input box
+        return undefined;
     }
 
     progress.report({
@@ -101,7 +133,7 @@ async function executeDotNetDumpCommand(
     });
 
     // Execute dotnet-dump collect
-    const dumpFilePath = await collectDump(processId, dumpFolder, outputChannel);
+    const dumpFilePath = await collectDump(userArgs, dumpFolder, outputChannel);
 
     if (!dumpFilePath) {
         throw new Error(vscode.l10n.t('Failed to create dump file.'));
@@ -111,27 +143,9 @@ async function executeDotNetDumpCommand(
         message: vscode.l10n.t('Creating archive...'),
     });
 
-    try {
-        await createZipWithDump(saveUri.fsPath, dumpFilePath);
+    await createZipWithDump(saveUri.fsPath, dumpFilePath);
 
-        const openFolder = vscode.l10n.t('Open Folder');
-        const result = await vscode.window.showInformationMessage(
-            vscode.l10n.t('C# memory dump saved successfully.'),
-            openFolder
-        );
-        if (result === openFolder) {
-            await vscode.commands.executeCommand('revealFileInOS', saveUri);
-        }
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        await vscode.window.showErrorMessage(
-            vscode.l10n.t({
-                message: 'Failed to save C# dump: {0}',
-                args: [errorMessage],
-                comment: ['{0} is the error message'],
-            })
-        );
-    }
+    return saveUri;
 }
 
 async function verifyOrAcquireDotnetDump(
@@ -196,7 +210,7 @@ async function verifyOrAcquireDotnetDump(
 }
 
 async function collectDump(
-    processId: number,
+    userArgs: string,
     dumpFolder: string,
     channel: ObservableLogOutputChannel
 ): Promise<string | undefined> {
@@ -204,7 +218,7 @@ async function collectDump(
     const dumpFileName = `csharp-lsp-${timestamp}.dmp`;
     const dumpFilePath = path.join(dumpFolder, dumpFileName);
 
-    const command = `dotnet-dump collect --process-id ${processId} --output "${dumpFilePath}"`;
+    const command = `dotnet-dump collect ${userArgs} --output "${dumpFilePath}"`;
     channel.info(`Executing: ${command}`);
 
     try {
