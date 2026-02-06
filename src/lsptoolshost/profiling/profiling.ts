@@ -106,8 +106,8 @@ async function executeDotNetTraceCommand(
             // eslint-disable-next-line @typescript-eslint/naming-convention
             'Zip files': ['zip'],
         },
-        saveLabel: vscode.l10n.t('Save Trace'),
-        title: vscode.l10n.t('Save C# Trace and Logs'),
+        saveLabel: vscode.l10n.t('Save Trace and Logs'),
+        title: vscode.l10n.t('Save Trace and Logs'),
     });
 
     if (!saveUri) {

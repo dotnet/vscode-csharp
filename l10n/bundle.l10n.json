@@ -189,6 +189,35 @@
       "{0} is the tool name and should not be localized"
     ]
   },
+  "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
+  "Folder for dump file {0} does not exist/{0} is the folder path": {
+    "message": "Folder for dump file {0} does not exist",
+    "comment": [
+      "{0} is the folder path"
+    ]
+  },
+  "Enter {0} arguments/{0} is the tool name and should not be localized": {
+    "message": "Enter {0} arguments",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "You can modify the default arguments if needed": "You can modify the default arguments if needed",
+  "Creating archive...": "Creating archive...",
+  "Initializing {0}.../{0} is the tool name and should not be localized": {
+    "message": "Initializing {0}...",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "Failed to execute {0} command: {1}/{0} is the tool name and should not be localized{1} is the error message": {
+    "message": "Failed to execute {0} command: {1}",
+    "comment": [
+      "{0} is the tool name and should not be localized",
+      "{1} is the error message"
+    ]
+  },
+  "Open Folder": "Open Folder",
   "Initializing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
     "message": "Initializing dotnet-trace...",
     "comment": [
@@ -201,9 +230,7 @@
       "dotnet-trace is a command name and should not be localized"
     ]
   },
-  "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
-  "Save Trace": "Save Trace",
-  "Save C# Trace and Logs": "Save C# Trace and Logs",
+  "Save Trace and Logs": "Save Trace and Logs",
   "Folder for trace file {0} does not exist": "Folder for trace file {0} does not exist",
   "Enter dotnet-trace arguments/dotnet-trace is a command name and should not be localized": {
     "message": "Enter dotnet-trace arguments",
@@ -211,10 +238,7 @@
       "dotnet-trace is a command name and should not be localized"
     ]
   },
-  "You can modify the default arguments if needed": "You can modify the default arguments if needed",
   "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
-  "Creating archive...": "Creating archive...",
-  "Open Folder": "Open Folder",
   "C# logs saved successfully.": "C# logs saved successfully.",
   "Failed to save C# trace: {0}/{0} is the error message": {
     "message": "Failed to save C# trace: {0}",
@@ -222,54 +246,14 @@
       "{0} is the error message"
     ]
   },
-  "Initializing dotnet-gcdump.../dotnet-gcdump is a command name and should not be localized": {
-    "message": "Initializing dotnet-gcdump...",
-    "comment": [
-      "dotnet-gcdump is a command name and should not be localized"
-    ]
-  },
-  "Failed to execute dotnet-gcdump command: {0}/dotnet-gcdump is a command name and should not be localized": {
-    "message": "Failed to execute dotnet-gcdump command: {0}",
-    "comment": [
-      "dotnet-gcdump is a command name and should not be localized"
-    ]
-  },
-  "C# GC dump saved successfully.": "C# GC dump saved successfully.",
   "Save GC Dump": "Save GC Dump",
-  "Save C# GC Dump": "Save C# GC Dump",
-  "Folder for GC dump file {0} does not exist": "Folder for GC dump file {0} does not exist",
-  "Enter dotnet-gcdump arguments/dotnet-gcdump is a command name and should not be localized": {
-    "message": "Enter dotnet-gcdump arguments",
-    "comment": [
-      "dotnet-gcdump is a command name and should not be localized"
-    ]
-  },
   "Collecting GC dump...": "Collecting GC dump...",
   "Failed to create GC dump file.": "Failed to create GC dump file.",
-  "Initializing dotnet-dump.../dotnet-dump is a command name and should not be localized": {
-    "message": "Initializing dotnet-dump...",
-    "comment": [
-      "dotnet-dump is a command name and should not be localized"
-    ]
-  },
-  "Failed to execute dotnet-dump command: {0}/dotnet-dump is a command name and should not be localized": {
-    "message": "Failed to execute dotnet-dump command: {0}",
-    "comment": [
-      "dotnet-dump is a command name and should not be localized"
-    ]
-  },
-  "C# memory dump saved successfully.": "C# memory dump saved successfully.",
-  "Save Dump": "Save Dump",
-  "Save C# Memory Dump": "Save C# Memory Dump",
-  "Folder for dump file {0} does not exist": "Folder for dump file {0} does not exist",
-  "Enter dotnet-dump arguments/dotnet-dump is a command name and should not be localized": {
-    "message": "Enter dotnet-dump arguments",
-    "comment": [
-      "dotnet-dump is a command name and should not be localized"
-    ]
-  },
+  "C# GC dump saved successfully.": "C# GC dump saved successfully.",
+  "Save Memory Dump": "Save Memory Dump",
   "Collecting memory dump...": "Collecting memory dump...",
   "Failed to create dump file.": "Failed to create dump file.",
+  "C# memory dump saved successfully.": "C# memory dump saved successfully.",
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
   "Capturing C# Logs": "Capturing C# Logs",
   "Save Logs": "Save Logs",
