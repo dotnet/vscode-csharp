@@ -1495,6 +1495,14 @@
             "default": true,
             "description": "%configuration.dotnet.server.useServerGC%"
           },
+          "dotnet.server.environmentVariables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "description": "%configuration.dotnet.server.environmentVariables%"
+          },
           "dotnet.enableXamlTools": {
             "scope": "machine-overridable",
             "type": "boolean",
