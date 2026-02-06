@@ -189,35 +189,6 @@
       "{0} is the tool name and should not be localized"
     ]
   },
-  "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
-  "Folder for dump file {0} does not exist/{0} is the folder path": {
-    "message": "Folder for dump file {0} does not exist",
-    "comment": [
-      "{0} is the folder path"
-    ]
-  },
-  "Enter {0} arguments/{0} is the tool name and should not be localized": {
-    "message": "Enter {0} arguments",
-    "comment": [
-      "{0} is the tool name and should not be localized"
-    ]
-  },
-  "You can modify the default arguments if needed": "You can modify the default arguments if needed",
-  "Creating archive...": "Creating archive...",
-  "Initializing {0}.../{0} is the tool name and should not be localized": {
-    "message": "Initializing {0}...",
-    "comment": [
-      "{0} is the tool name and should not be localized"
-    ]
-  },
-  "Failed to execute {0} command: {1}/{0} is the tool name and should not be localized{1} is the error message": {
-    "message": "Failed to execute {0} command: {1}",
-    "comment": [
-      "{0} is the tool name and should not be localized",
-      "{1} is the error message"
-    ]
-  },
-  "Open Folder": "Open Folder",
   "Initializing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
     "message": "Initializing dotnet-trace...",
     "comment": [
@@ -230,15 +201,19 @@
       "dotnet-trace is a command name and should not be localized"
     ]
   },
+  "Language server process not found, ensure the server is running.": "Language server process not found, ensure the server is running.",
   "Save Trace and Logs": "Save Trace and Logs",
   "Folder for trace file {0} does not exist": "Folder for trace file {0} does not exist",
-  "Enter dotnet-trace arguments/dotnet-trace is a command name and should not be localized": {
-    "message": "Enter dotnet-trace arguments",
+  "dotnet-trace Arguments/dotnet-trace is a command name and should not be localized": {
+    "message": "dotnet-trace Arguments",
     "comment": [
       "dotnet-trace is a command name and should not be localized"
     ]
   },
+  "You can modify the default arguments if needed": "You can modify the default arguments if needed",
   "Recording logs... Click Cancel to stop and save.": "Recording logs... Click Cancel to stop and save.",
+  "Creating archive...": "Creating archive...",
+  "Open Folder": "Open Folder",
   "C# logs saved successfully.": "C# logs saved successfully.",
   "Failed to save C# trace: {0}/{0} is the error message": {
     "message": "Failed to save C# trace: {0}",
@@ -246,14 +221,45 @@
       "{0} is the error message"
     ]
   },
-  "Save GC Dump": "Save GC Dump",
-  "Collecting GC dump...": "Collecting GC dump...",
-  "Failed to create GC dump file.": "Failed to create GC dump file.",
-  "C# GC dump saved successfully.": "C# GC dump saved successfully.",
-  "Save Memory Dump": "Save Memory Dump",
   "Collecting memory dump...": "Collecting memory dump...",
-  "Failed to create dump file.": "Failed to create dump file.",
-  "C# memory dump saved successfully.": "C# memory dump saved successfully.",
+  "Collecting GC dump...": "Collecting GC dump...",
+  "Collect Dump": "Collect Dump",
+  "Initializing...": "Initializing...",
+  "Failed to collect dump: {0}/{0} is the error message": {
+    "message": "Failed to collect dump: {0}",
+    "comment": [
+      "{0} is the error message"
+    ]
+  },
+  "Dump saved successfully.": "Dump saved successfully.",
+  "{0} Arguments/{0} is the tool name and should not be localized": {
+    "message": "{0} Arguments",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "Enter {0} arguments/{0} is the tool name and should not be localized": {
+    "message": "Enter {0} arguments",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "Save Dump": "Save Dump",
+  "Folder for dump file {0} does not exist/{0} is the folder path": {
+    "message": "Folder for dump file {0} does not exist",
+    "comment": [
+      "{0} is the folder path"
+    ]
+  },
+  "Collecting logs...": "Collecting logs...",
+  "Failed to collect any content.": "Failed to collect any content.",
+  "Memory Dump": "Memory Dump",
+  "Full process memory dump using dotnet-dump": "Full process memory dump using dotnet-dump",
+  "GC Dump": "GC Dump",
+  "Garbage collector heap dump using dotnet-gcdump": "Garbage collector heap dump using dotnet-gcdump",
+  "Current C# extension log files and settings": "Current C# extension log files and settings",
+  "Select Content to Collect": "Select Content to Collect",
+  "Choose which content to include in the archive": "Choose which content to include in the archive",
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
   "Capturing C# Logs": "Capturing C# Logs",
   "Save Logs": "Save Logs",

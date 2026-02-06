@@ -127,8 +127,8 @@ async function executeDotNetTraceCommand(
     // Show an input box pre-populated with the default dotnet trace arguments
     const userArgs = await vscode.window.showInputBox({
         value: dotnetTraceArgs,
-        placeHolder: vscode.l10n.t({
-            message: 'Enter dotnet-trace arguments',
+        title: vscode.l10n.t({
+            message: 'dotnet-trace Arguments',
             comment: 'dotnet-trace is a command name and should not be localized',
         }),
         prompt: vscode.l10n.t('You can modify the default arguments if needed'),

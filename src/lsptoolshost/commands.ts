@@ -22,7 +22,6 @@ import { TelemetryEventNames } from '../shared/telemetryEventNames';
 import { registerCaptureLogsCommand } from './logging/captureLogs';
 import { registerTraceCommand } from './profiling/profiling';
 import { registerDumpCommand } from './profiling/dump';
-import { registerGcDumpCommand } from './profiling/gcdump';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
 
 export function registerCommands(
@@ -93,6 +92,5 @@ function registerExtensionCommands(
     );
     registerCaptureLogsCommand(context, languageServer, outputChannel, csharpTraceChannel);
     registerTraceCommand(context, languageServer, outputChannel, csharpTraceChannel);
-    registerDumpCommand(context, languageServer, outputChannel);
-    registerGcDumpCommand(context, languageServer, outputChannel);
+    registerDumpCommand(context, languageServer, outputChannel, csharpTraceChannel);
 }
