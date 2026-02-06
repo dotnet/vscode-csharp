@@ -9,9 +9,9 @@ import * as vscode from 'vscode';
 import { EOL } from 'os';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
-import { execChildProcess } from '../../common';
 import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
 import { getDefaultSaveUri, createZipWithLogs } from '../logging/captureLogs';
+import { verifyOrAcquireDotnetTool } from './profilingUtils';
 
 const TraceTerminalName = 'dotnet-trace';
 
@@ -138,7 +138,7 @@ async function executeDotNetTraceCommand(
         return;
     }
 
-    const dotnetTraceInstalled = await verifyOrAcquireDotnetTrace(traceFolder, progress, outputChannel);
+    const dotnetTraceInstalled = await verifyOrAcquireDotnetTool('dotnet-trace', traceFolder, progress, outputChannel);
     if (!dotnetTraceInstalled) {
         // Cancelled or unable to install dotnet-trace
         return;
@@ -201,67 +201,6 @@ async function executeDotNetTraceCommand(
         csharpLogObserver.dispose();
         traceLogObserver.dispose();
         await restoreLogLevels();
-    }
-}
-
-async function verifyOrAcquireDotnetTrace(
-    folder: string,
-    progress: vscode.Progress<{
-        message?: string;
-        increment?: number;
-    }>,
-    channel: ObservableLogOutputChannel
-): Promise<boolean> {
-    try {
-        await execChildProcess('dotnet-trace --version', folder, process.env);
-        return true; // If the command succeeds, dotnet-trace is installed.
-    } catch (error) {
-        channel.debug(`Failed to execute dotnet-trace --version with error: ${error}`);
-    }
-
-    const confirmAction = {
-        title: vscode.l10n.t('Install'),
-    };
-    const installCommand = 'dotnet tool install --global dotnet-trace';
-    const confirmResult = await vscode.window.showInformationMessage(
-        vscode.l10n.t({
-            message: 'dotnet-trace not found, run "{0}" to install it?',
-            args: [installCommand],
-            comment: 'dotnet-trace is a command name and should not be localized',
-        }),
-        {
-            modal: true,
-        },
-        confirmAction
-    );
-
-    if (confirmResult !== confirmAction) {
-        return false;
-    }
-
-    progress.report({
-        message: vscode.l10n.t({
-            message: 'Installing dotnet-trace...',
-            comment: 'dotnet-trace is a command name and should not be localized',
-        }),
-    });
-
-    try {
-        await execChildProcess(installCommand, folder, process.env);
-        return true;
-    } catch (error) {
-        channel.error(`Failed to install dotnet-trace with error: ${error}`);
-        await vscode.window.showErrorMessage(
-            vscode.l10n.t({
-                message:
-                    'Failed to install dotnet-trace, it may need to be manually installed. See C# output for details.',
-                comment: 'dotnet-trace is a command name and should not be localized',
-            }),
-            {
-                modal: true,
-            }
-        );
-        return false;
     }
 }
 

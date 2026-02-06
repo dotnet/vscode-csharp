@@ -169,6 +169,26 @@
   "No file selected to change project context.": "No file selected to change project context.",
   "Failed to change context for {0}: {1}": "Failed to change context for {0}: {1}",
   "Select project context": "Select project context",
+  "Install": "Install",
+  "{0} not found, run \"{1}\" to install it?/{0} is the tool name and should not be localized{1} is the install command": {
+    "message": "{0} not found, run \"{1}\" to install it?",
+    "comment": [
+      "{0} is the tool name and should not be localized",
+      "{1} is the install command"
+    ]
+  },
+  "Installing {0}.../{0} is the tool name and should not be localized": {
+    "message": "Installing {0}...",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
+  "Failed to install {0}, it may need to be manually installed. See C# output for details./{0} is the tool name and should not be localized": {
+    "message": "Failed to install {0}, it may need to be manually installed. See C# output for details.",
+    "comment": [
+      "{0} is the tool name and should not be localized"
+    ]
+  },
   "Initializing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
     "message": "Initializing dotnet-trace...",
     "comment": [
@@ -202,25 +222,6 @@
       "{0} is the error message"
     ]
   },
-  "Install": "Install",
-  "dotnet-trace not found, run \"{0}\" to install it?/dotnet-trace is a command name and should not be localized": {
-    "message": "dotnet-trace not found, run \"{0}\" to install it?",
-    "comment": [
-      "dotnet-trace is a command name and should not be localized"
-    ]
-  },
-  "Installing dotnet-trace.../dotnet-trace is a command name and should not be localized": {
-    "message": "Installing dotnet-trace...",
-    "comment": [
-      "dotnet-trace is a command name and should not be localized"
-    ]
-  },
-  "Failed to install dotnet-trace, it may need to be manually installed. See C# output for details./dotnet-trace is a command name and should not be localized": {
-    "message": "Failed to install dotnet-trace, it may need to be manually installed. See C# output for details.",
-    "comment": [
-      "dotnet-trace is a command name and should not be localized"
-    ]
-  },
   "Initializing dotnet-gcdump.../dotnet-gcdump is a command name and should not be localized": {
     "message": "Initializing dotnet-gcdump...",
     "comment": [
@@ -245,24 +246,6 @@
   },
   "Collecting GC dump...": "Collecting GC dump...",
   "Failed to create GC dump file.": "Failed to create GC dump file.",
-  "dotnet-gcdump not found, run \"{0}\" to install it?/dotnet-gcdump is a command name and should not be localized": {
-    "message": "dotnet-gcdump not found, run \"{0}\" to install it?",
-    "comment": [
-      "dotnet-gcdump is a command name and should not be localized"
-    ]
-  },
-  "Installing dotnet-gcdump.../dotnet-gcdump is a command name and should not be localized": {
-    "message": "Installing dotnet-gcdump...",
-    "comment": [
-      "dotnet-gcdump is a command name and should not be localized"
-    ]
-  },
-  "Failed to install dotnet-gcdump, it may need to be manually installed. See C# output for details./dotnet-gcdump is a command name and should not be localized": {
-    "message": "Failed to install dotnet-gcdump, it may need to be manually installed. See C# output for details.",
-    "comment": [
-      "dotnet-gcdump is a command name and should not be localized"
-    ]
-  },
   "Initializing dotnet-dump.../dotnet-dump is a command name and should not be localized": {
     "message": "Initializing dotnet-dump...",
     "comment": [
@@ -287,24 +270,6 @@
   },
   "Collecting memory dump...": "Collecting memory dump...",
   "Failed to create dump file.": "Failed to create dump file.",
-  "dotnet-dump not found, run \"{0}\" to install it?/dotnet-dump is a command name and should not be localized": {
-    "message": "dotnet-dump not found, run \"{0}\" to install it?",
-    "comment": [
-      "dotnet-dump is a command name and should not be localized"
-    ]
-  },
-  "Installing dotnet-dump.../dotnet-dump is a command name and should not be localized": {
-    "message": "Installing dotnet-dump...",
-    "comment": [
-      "dotnet-dump is a command name and should not be localized"
-    ]
-  },
-  "Failed to install dotnet-dump, it may need to be manually installed. See C# output for details./dotnet-dump is a command name and should not be localized": {
-    "message": "Failed to install dotnet-dump, it may need to be manually installed. See C# output for details.",
-    "comment": [
-      "dotnet-dump is a command name and should not be localized"
-    ]
-  },
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
   "Capturing C# Logs": "Capturing C# Logs",
   "Save Logs": "Save Logs",

@@ -6,12 +6,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import archiver from 'archiver';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
 import { execChildProcess } from '../../common';
 import { ObservableLogOutputChannel } from '../logging/observableLogOutputChannel';
 import { getDefaultSaveUri } from '../logging/captureLogs';
+import { verifyOrAcquireDotnetTool, createZipWithFile } from './profilingUtils';
 
 export function registerDumpCommand(
     context: vscode.ExtensionContext,
@@ -106,7 +106,7 @@ async function executeDotNetDumpCommand(
         throw new Error(vscode.l10n.t(`Folder for dump file {0} does not exist`, dumpFolder));
     }
 
-    const dotnetDumpInstalled = await verifyOrAcquireDotnetDump(dumpFolder, progress, outputChannel);
+    const dotnetDumpInstalled = await verifyOrAcquireDotnetTool('dotnet-dump', dumpFolder, progress, outputChannel);
     if (!dotnetDumpInstalled) {
         // Cancelled or unable to install dotnet-dump
         return undefined;
@@ -143,70 +143,9 @@ async function executeDotNetDumpCommand(
         message: vscode.l10n.t('Creating archive...'),
     });
 
-    await createZipWithDump(saveUri.fsPath, dumpFilePath);
+    await createZipWithFile(saveUri.fsPath, dumpFilePath);
 
     return saveUri;
-}
-
-async function verifyOrAcquireDotnetDump(
-    folder: string,
-    progress: vscode.Progress<{
-        message?: string;
-        increment?: number;
-    }>,
-    channel: ObservableLogOutputChannel
-): Promise<boolean> {
-    try {
-        await execChildProcess('dotnet-dump --version', folder, process.env);
-        return true; // If the command succeeds, dotnet-dump is installed.
-    } catch (error) {
-        channel.debug(`Failed to execute dotnet-dump --version with error: ${error}`);
-    }
-
-    const confirmAction = {
-        title: vscode.l10n.t('Install'),
-    };
-    const installCommand = 'dotnet tool install --global dotnet-dump';
-    const confirmResult = await vscode.window.showInformationMessage(
-        vscode.l10n.t({
-            message: 'dotnet-dump not found, run "{0}" to install it?',
-            args: [installCommand],
-            comment: 'dotnet-dump is a command name and should not be localized',
-        }),
-        {
-            modal: true,
-        },
-        confirmAction
-    );
-
-    if (confirmResult !== confirmAction) {
-        return false;
-    }
-
-    progress.report({
-        message: vscode.l10n.t({
-            message: 'Installing dotnet-dump...',
-            comment: 'dotnet-dump is a command name and should not be localized',
-        }),
-    });
-
-    try {
-        await execChildProcess(installCommand, folder, process.env);
-        return true;
-    } catch (error) {
-        channel.error(`Failed to install dotnet-dump with error: ${error}`);
-        await vscode.window.showErrorMessage(
-            vscode.l10n.t({
-                message:
-                    'Failed to install dotnet-dump, it may need to be manually installed. See C# output for details.',
-                comment: 'dotnet-dump is a command name and should not be localized',
-            }),
-            {
-                modal: true,
-            }
-        );
-        return false;
-    }
 }
 
 async function collectDump(
@@ -243,39 +182,4 @@ async function collectDump(
         channel.error(`Failed to collect dump: ${error}`);
         throw error;
     }
-}
-
-/**
- * Creates a zip file containing only the dump file.
- */
-async function createZipWithDump(outputPath: string, dumpFilePath: string): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-        const output = fs.createWriteStream(outputPath);
-        const archive = archiver('zip', {
-            zlib: { level: 9 },
-        });
-
-        output.on('close', () => {
-            // Clean up the temporary dump file after adding to archive
-            if (fs.existsSync(dumpFilePath)) {
-                try {
-                    fs.unlinkSync(dumpFilePath);
-                } catch {
-                    // Ignore cleanup errors
-                }
-            }
-            resolve();
-        });
-
-        archive.on('error', (err) => {
-            reject(err);
-        });
-
-        archive.pipe(output);
-
-        // Add dump file to the archive
-        archive.file(dumpFilePath, { name: path.basename(dumpFilePath) });
-
-        void archive.finalize();
-    });
 }
