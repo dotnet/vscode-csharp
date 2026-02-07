@@ -22,6 +22,7 @@
   "command.csharp.showDecompilationTerms": "Show the decompiler terms agreement",
   "command.csharp.recordLanguageServerTrace": "Record a performance trace of the C# Language Server",
   "command.csharp.captureLogs": "Capture C# Log Output",
+  "command.csharp.collectDump": "Collect a dump of the C# Language Server",
   "command.extension.showRazorCSharpWindow": "Show Razor CSharp",
   "command.extension.showRazorHtmlWindow": "Show Razor Html",
   "command.razor.reportIssue": "Report a Razor issue",
