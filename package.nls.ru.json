@@ -75,6 +75,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Переопределяет путь к папке для компонента .roslynDevKit языкового сервера.",
   "configuration.dotnet.server.componentPaths.xamlTools": "Переопределяет путь к папке для компонента .xamlTools языкового сервера.",
   "configuration.dotnet.server.crashDumpPath": "Задает путь к папке, в которую записываются аварийные дампы в случае сбоя языкового сервера.  Должен быть доступен для записи пользователем.",
+  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
   "configuration.dotnet.server.extensionPaths": "Переопределить путь к аргументам --extension сервера языка",
   "configuration.dotnet.server.path": "Указывает абсолютный путь к исполняемому файлу сервера (LSP или O#). Если оставить поле пустым, используется версия, закрепленная в расширении C#. (Ранее — \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "Указывает время ожидания (в миллисекундах) для запуска клиента и его подключения к языковому серверу.",
