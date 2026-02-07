@@ -75,6 +75,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "替代语言服务器的 .roslynDevKit 组件的文件夹路径",
   "configuration.dotnet.server.componentPaths.xamlTools": "替代语言服务器的 .xamlTools 组件的文件夹路径",
   "configuration.dotnet.server.crashDumpPath": "设置在语言服务器崩溃时在其中写入故障转储的文件夹路径。用户必须可以写入。",
+  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
   "configuration.dotnet.server.extensionPaths": "替代语言服务器 --extension 参数的路径",
   "configuration.dotnet.server.path": "指定服务器(LSP 或 O#)可执行文件的绝对路径。如果留空，会使用固定到 C# 扩展的版本。(之前为 \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "为客户端指定一个超时 (以毫秒为单位)，以成功启动并连接到语言服务器。",

@@ -75,6 +75,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Invalida la ruta de acceso de la carpeta para el componente .roslynDevKit del servidor de lenguaje.",
   "configuration.dotnet.server.componentPaths.xamlTools": "Invalida la ruta de acceso de la carpeta para el componente .xamlTools del servidor de lenguaje.",
   "configuration.dotnet.server.crashDumpPath": "Establece una ruta de acceso de carpeta en la que se escriben los volcados de memoria si el servidor de lenguaje se bloquea.  El usuario debe poder escribir en él.",
+  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
   "configuration.dotnet.server.extensionPaths": "Invalidación de la ruta de acceso a los argumentos --extension del servidor de lenguaje",
   "configuration.dotnet.server.path": "Especifica la ruta absoluta al ejecutable del servidor (LSP u O#). Cuando se deja vacío, se utiliza la versión anclada a la extensión C#. (Anteriormente \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "Especifica un tiempo de espera (en ms) para que el cliente se inicie correctamente y se conecte al servidor de lenguaje.",

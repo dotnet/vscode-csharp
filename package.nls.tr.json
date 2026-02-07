@@ -75,6 +75,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Dil sunucusundaki .roslynDevKit bileşeninin klasör yolunu geçersiz kılar",
   "configuration.dotnet.server.componentPaths.xamlTools": "Dil sunucusundaki .xamlTools bileşeninin klasör yolunu geçersiz kılar",
   "configuration.dotnet.server.crashDumpPath": "Dil sunucusunun çökmesi durumunda kilitlenme dökümlerinin yazılacağı klasör yolunu ayarlar.  Kullanıcı tarafından yazılabilir olmalıdır.",
+  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
   "configuration.dotnet.server.extensionPaths": "Dil sunucusu --extension bağımsız değişkenleri yolunu geçersiz kıl",
   "configuration.dotnet.server.path": "Sunucunun (LSP veya O#) yürütülebilir dosyasının mutlak yolunu belirtir. Boş bırakıldığında C# Uzantısına sabitlenen sürüm kullanılır. (Önceden 'omnisharp.path')",
   "configuration.dotnet.server.startTimeout": "İstemcinin başarılı bir şekilde başlatılması ve dil sunucusuna bağlanması için zaman aşımını (ms cinsinden) belirtir.",

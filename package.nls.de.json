@@ -75,6 +75,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Überschreibt den Ordnerpfad für die Komponente .roslynDevKit des Sprachservers",
   "configuration.dotnet.server.componentPaths.xamlTools": "Überschreibt den Ordnerpfad für die Komponente .xamlTools des Sprachservers",
   "configuration.dotnet.server.crashDumpPath": "Legt einen Ordnerpfad fest, in den Absturzabbilder geschrieben werden, wenn der Sprachserver abstürzt.  Muss vom Benutzer beschreibbar sein.",
+  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
   "configuration.dotnet.server.extensionPaths": "Außerkraftsetzung für Pfad zu Sprachserver --extension-Argumenten",
   "configuration.dotnet.server.path": "Gibt den absoluten Pfad zur ausführbaren Serverdatei (LSP oder O#) an. Wenn sie leer gelassen wird, wird die an die C#-Erweiterung angeheftete Version verwendet. (Zuvor \"omnisharp.path\")",
   "configuration.dotnet.server.startTimeout": "Gibt ein Timeout (in ms) an, mit dem der Client erfolgreich gestartet und eine Verbindung mit dem Sprachserver hergestellt werden kann.",

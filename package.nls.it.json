@@ -75,6 +75,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Esegue l'override del percorso della cartella per il componente .roslynDevKit del server di linguaggio",
   "configuration.dotnet.server.componentPaths.xamlTools": "Esegue l'override del percorso della cartella per il componente .xamlTools del server di linguaggio",
   "configuration.dotnet.server.crashDumpPath": "Imposta un percorso cartella in cui vengono scritti i dump di arresto anomalo del sistema in caso di arresto anomalo del server di linguaggio.  Deve essere scrivibile dall'utente.",
+  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
   "configuration.dotnet.server.extensionPaths": "Eseguire l’override per il percorso del server di linguaggio --argomenti estensione",
   "configuration.dotnet.server.path": "Specifica il percorso assoluto dell'eseguibile del server (LSP od O#). Se lasciato vuoto, viene usata la versione aggiunta all'estensione C#. (In precedenza “omnisharp.path”)",
   "configuration.dotnet.server.startTimeout": "Specifica un timeout (in ms) per l'avvio del client e la sua connessione al server di linguaggio.",
