@@ -4,6 +4,9 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.122.x
+* Enable and switch to `Balanced` source generator execution (PR: [#8970](https://github.com/dotnet/vscode-csharp/pull/8970))
+  * `Balanced` mode improves language server performance by only running source generators on explicit actions like file save, build task execution, or the `csharp.rerunSourceGenerators` command.  This is in contrast to the previous default, `Automatic`, which ran source generators on every keystroke.
+  * The `dotnet.server.sourceGeneratorExecution` option allows you to switch between `Balanced` and `Automatic` source generator execution (requires restart).
 
 # 2.121.x
 * Use the package.json to gather all defined settings (PR: [#8954](https://github.com/dotnet/vscode-csharp/pull/8954))

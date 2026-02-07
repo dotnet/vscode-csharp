@@ -692,6 +692,11 @@ export class RoslynLanguageServer {
             args.push('--logLevel', logLevel);
         }
 
+        const sourceGeneratorExecution = languageServerOptions.sourceGeneratorExecution;
+        if (sourceGeneratorExecution) {
+            args.push('--sourceGeneratorExecutionPreference', sourceGeneratorExecution);
+        }
+
         let razorComponentPath = '';
         getComponentPaths('razorExtension', languageServerOptions, channel).forEach((extPath) => {
             additionalExtensionPaths.push(extPath);
