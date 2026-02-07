@@ -251,6 +251,10 @@ export interface SourceGeneratedDocumentText {
     resultId?: string;
 }
 
+export interface RefreshSourceGeneratorsParams {
+    forceRegeneration: boolean;
+}
+
 export namespace WorkspaceDebugConfigurationRequest {
     export const method = 'workspace/debugConfiguration';
     export const messageDirection: MessageDirection = MessageDirection.clientToServer;
@@ -369,6 +373,12 @@ export namespace RefreshSourceGeneratedDocumentNotification {
     export const method = 'workspace/refreshSourceGeneratedDocument';
     export const messageDirection: MessageDirection = MessageDirection.serverToClient;
     export const type = new NotificationType(method);
+}
+
+export namespace RefreshSourceGeneratorsNotification {
+    export const method = 'workspace/_roslyn_refreshSourceGenerators';
+    export const messageDirection: MessageDirection = MessageDirection.clientToServer;
+    export const type = new NotificationType<RefreshSourceGeneratorsParams>(method);
 }
 
 export namespace RoslynLspErrorCodes {

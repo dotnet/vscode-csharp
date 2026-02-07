@@ -1503,6 +1503,19 @@
             "default": {},
             "description": "%configuration.dotnet.server.environmentVariables%"
           },
+          "dotnet.server.sourceGeneratorExecution": {
+            "type": "string",
+            "enum": [
+              "Balanced",
+              "Automatic"
+            ],
+            "default": "Balanced",
+            "markdownEnumDescriptions": [
+              "%configuration.dotnet.server.sourceGeneratorExecution.balanced%",
+              "%configuration.dotnet.server.sourceGeneratorExecution.automatic%"
+            ],
+            "markdownDescription": "%configuration.dotnet.server.sourceGeneratorExecution%"
+          },
           "dotnet.enableXamlTools": {
             "scope": "machine-overridable",
             "type": "boolean",
@@ -1884,6 +1897,12 @@
         "category": "CSharp",
         "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'",
         "when": "false"
+      },
+      {
+        "command": "csharp.rerunSourceGenerators",
+        "title": "%command.csharp.rerunSourceGenerators%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'RoslynDevKit'"
       },
       {
         "command": "csharp.listProcess",
