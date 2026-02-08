@@ -75,7 +75,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Substitui o caminho da pasta para o componente .roslynDevKit do servidor de linguagem",
   "configuration.dotnet.server.componentPaths.xamlTools": "Substitui o caminho da pasta para o componente .xamlTools do servidor de linguagem",
   "configuration.dotnet.server.crashDumpPath": "Define um caminho de pasta onde os despejos de memória serão gravados se o servidor de idioma travar.  Deve ser gravável pelo usuário.",
-  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
+  "configuration.dotnet.server.environmentVariables": "Variáveis de ambiente personalizadas para passar ao processo do servidor de linguagem. Especifique como pares chave-valor, por exemplo: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
   "configuration.dotnet.server.extensionPaths": "Substituir o caminho para os argumentos --extension do servidor de idiomas",
   "configuration.dotnet.server.path": "Especifica o caminho absoluto para o executável do servidor (LSP ou O#). Quando deixado em branco, a versão fixada na extensão C# é usada. (Anteriormente `omnisharp.path`)",
   "configuration.dotnet.server.startTimeout": "Especifica um tempo limite (em ms) para o cliente iniciar e conectar-se com êxito ao servidor de idioma.",

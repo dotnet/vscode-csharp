@@ -75,7 +75,7 @@
   "configuration.dotnet.server.componentPaths.roslynDevKit": "Přepíše cestu ke složce pro komponentu .roslynDevKit jazykového serveru.",
   "configuration.dotnet.server.componentPaths.xamlTools": "Přepíše cestu ke složce pro komponentu .xamlTools jazykového serveru.",
   "configuration.dotnet.server.crashDumpPath": "Nastaví cestu ke složce, do které se zapisují výpisy stavu systému, pokud dojde k chybovému ukončení jazykového serveru.  Musí být zapisovatelný uživatelem.",
-  "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
+  "configuration.dotnet.server.environmentVariables": "Vlastní proměnné prostředí, které se mají předat procesu jazykového serveru. Zadejte je jako páry klíč-hodnota, například: { \"DOTNET_GCName\": \"libclrgc.dylib\" }",
   "configuration.dotnet.server.extensionPaths": "Přepsat pro cestu k jazykovému serveru -- argumenty rozšíření",
   "configuration.dotnet.server.path": "Určuje absolutní cestu ke spustitelnému souboru serveru (LSP nebo O#). Ponechání prázdné vede k použití verze připnuté k rozšíření C#. (Dříve omnisharp.path)",
   "configuration.dotnet.server.startTimeout": "Určuje časový limit (v ms), aby se klient úspěšně spustil a připojil k jazykovému serveru.",
