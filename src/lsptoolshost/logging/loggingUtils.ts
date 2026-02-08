@@ -316,20 +316,7 @@ export async function collectDumpWithTool(
         const output = await execChildProcess(command, dumpFolder, process.env);
         channel.info(`${toolName} output: ${output}`);
 
-        if (fs.existsSync(dumpFilePath)) {
-            return dumpFilePath;
-        }
-
-        // Check if dump was created with a different name
-        const filesInFolder = fs.readdirSync(dumpFolder);
-        const dumpFile = filesInFolder.find(
-            (f) => f.startsWith(`${filePrefix}-`) && (f.endsWith(`.${fileExtension}`) || f.includes(timestamp))
-        );
-        if (dumpFile) {
-            return path.join(dumpFolder, dumpFile);
-        }
-
-        return undefined;
+        return fs.existsSync(dumpFilePath) ? dumpFilePath : undefined;
     } catch (error) {
         channel.error(`Failed to collect ${fileExtension} dump: ${error}`);
         throw error;
@@ -355,8 +342,8 @@ export async function createZipWithLogs(
     const csharpLogPath = vscode.Uri.joinPath(context.logUri, outputChannel.name + '.log');
     const traceLogPath = vscode.Uri.joinPath(context.logUri, traceChannel.name + '.log');
 
-    const csharpLogContent = await readLogFileContent(csharpLogPath);
-    const traceLogContent = await readLogFileContent(traceLogPath);
+    const csharpLogContent = await readLogFileContent(csharpLogPath, outputChannel);
+    const traceLogContent = await readLogFileContent(traceLogPath, outputChannel);
 
     return new Promise<void>((resolve, reject) => {
         const output = fs.createWriteStream(outputPath);
@@ -431,12 +418,19 @@ export async function createZipWithLogs(
 /**
  * Reads the content of a log file, returning null if the file doesn't exist.
  */
-export async function readLogFileContent(logFileUri: vscode.Uri): Promise<string | null> {
+export async function readLogFileContent(
+    logFileUri: vscode.Uri,
+    outputChannel: ObservableLogOutputChannel
+): Promise<string | null> {
     try {
         const content = await vscode.workspace.fs.readFile(logFileUri);
         return Buffer.from(content).toString('utf8');
     } catch {
-        // File doesn't exist or can't be read
+        // File doesn't exist or can't be read. This can happen if the logLevel
+        // is set in such a way that no messages are being logged, for instance if
+        // the C# LSP Trace log level is set to "info". We need to handle this
+        // gracefully. Write a debug message and return null.
+        outputChannel.debug(`Log file not found: ${logFileUri.fsPath}`);
         return null;
     }
 }
