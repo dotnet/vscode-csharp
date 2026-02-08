@@ -106,22 +106,24 @@ interface DumpTypeQuickPickItem extends vscode.QuickPickItem {
     type: DumpType;
 }
 
-/** Options for the dump type selection quick pick */
-export interface SelectDumpTypesOptions {
+/** Options for selecting dump types and gathering arguments */
+export interface SelectDumpsOptions {
     /** Title for the quick pick */
     title: string;
     /** Placeholder text */
     placeHolder: string;
+    /** The process ID for the target process */
+    processId: number;
     /** If true, returns empty array when nothing selected. If false, returns undefined. */
     allowEmpty?: boolean;
 }
 
 /**
- * Shows a quick pick to select dump types.
- * @param options Configuration for the quick pick
- * @returns Selected dump types, undefined if cancelled, or empty array if allowEmpty is true and nothing selected
+ * Shows a quick pick to select dump types and gathers arguments for each selected type.
+ * @param options Configuration for the selection and the target process ID
+ * @returns Array of DumpRequest with arguments, undefined if cancelled, or empty array if allowEmpty is true and nothing selected
  */
-export async function selectDumpTypes(options: SelectDumpTypesOptions): Promise<DumpType[] | undefined> {
+export async function selectDumpsWithArguments(options: SelectDumpsOptions): Promise<DumpRequest[] | undefined> {
     const items: DumpTypeQuickPickItem[] = [
         {
             label: vscode.l10n.t('Memory Dump'),
@@ -149,29 +151,17 @@ export async function selectDumpTypes(options: SelectDumpTypesOptions): Promise<
         return options.allowEmpty ? [] : undefined;
     }
 
-    return selected.map((item) => item.type);
-}
-
-/**
- * Gathers dump arguments from the user.
- * @param dumpTypes The dump types to gather arguments for
- * @param processId The process ID for the target process
- * @returns Array of DumpRequest with arguments, or undefined if user cancelled
- */
-export async function gatherDumpArguments(
-    dumpTypes: DumpType[],
-    processId: number
-): Promise<DumpRequest[] | undefined> {
+    // Gather arguments for each selected dump type
     const dumpRequests: DumpRequest[] = [];
-
-    for (const type of dumpTypes) {
-        const config = getDumpConfig(type);
-        const args = await promptForDumpArguments(config, processId);
+    for (const item of selected) {
+        const config = getDumpConfig(item.type);
+        const defaultArgs = config.defaultArgs.replace('{processId}', options.processId.toString());
+        const args = await promptForToolArguments(config.toolName, defaultArgs);
         if (args === undefined) {
             return undefined; // User cancelled
         }
 
-        dumpRequests.push({ type, args });
+        dumpRequests.push({ type: item.type, args });
     }
 
     return dumpRequests;
@@ -224,17 +214,6 @@ export async function promptForToolArguments(toolName: string, defaultArgs: stri
         }),
         prompt: vscode.l10n.t('You can modify the default arguments if needed'),
     });
-}
-
-/**
- * Prompts the user for dump arguments with customizable defaults.
- * @param config The dump tool configuration
- * @param processId The process ID to substitute into the default arguments
- * @returns The user-provided arguments, or undefined if cancelled
- */
-export async function promptForDumpArguments(config: DumpToolConfig, processId: number): Promise<string | undefined> {
-    const defaultArgs = config.defaultArgs.replace('{processId}', processId.toString());
-    return await promptForToolArguments(config.toolName, defaultArgs);
 }
 
 /**

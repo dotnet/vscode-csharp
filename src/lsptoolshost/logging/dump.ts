@@ -13,8 +13,7 @@ import {
     collectDumps,
     createZipWithLogs,
     getDefaultSaveUri,
-    selectDumpTypes,
-    gatherDumpArguments,
+    selectDumpsWithArguments,
     verifyDumpTools,
 } from './loggingUtils';
 import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
@@ -37,22 +36,17 @@ export function registerDumpCommand(
                 return;
             }
 
-            // Step 1: Let the user select dump type(s)
-            const selectedTypes = await selectDumpTypes({
+            // Step 1: Let the user select dump type(s) and provide arguments
+            const dumpRequests = await selectDumpsWithArguments({
                 title: vscode.l10n.t('Select Dump Type'),
                 placeHolder: vscode.l10n.t('Choose dump type(s) to collect'),
+                processId,
             });
-            if (!selectedTypes || selectedTypes.length === 0) {
+            if (!dumpRequests || dumpRequests.length === 0) {
                 return; // User cancelled
             }
 
-            // Step 2: Gather arguments for each dump type
-            const dumpRequests = await gatherDumpArguments(selectedTypes, processId);
-            if (!dumpRequests) {
-                return; // User cancelled
-            }
-
-            // Step 3: Prompt the user for save location
+            // Step 2: Prompt the user for save location
             const saveUri = await vscode.window.showSaveDialog({
                 defaultUri: getDefaultSaveUri('csharp-dump'),
                 filters: {
@@ -80,7 +74,7 @@ export function registerDumpCommand(
                 return;
             }
 
-            // Step 4: Collect dumps and create archive with progress
+            // Step 3: Collect dumps and create archive with progress
             let errorMessage: string | undefined;
 
             await vscode.window.withProgress(

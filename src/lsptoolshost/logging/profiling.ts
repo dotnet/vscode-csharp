@@ -15,8 +15,7 @@ import {
     collectDumps,
     createZipWithLogs,
     getDefaultSaveUri,
-    selectDumpTypes,
-    gatherDumpArguments,
+    selectDumpsWithArguments,
     verifyDumpTools,
     promptForToolArguments,
     DumpRequest,
@@ -41,6 +40,13 @@ export function getProfilingEnvVars(outputChannel: vscode.LogOutputChannel): Nod
     }
 
     return profilingEnvVars;
+}
+
+interface TraceResults {
+    traceFilePath: string;
+    dumpFiles: string[];
+    csharpLog: string;
+    lspLog: string;
 }
 
 export function registerTraceCommand(
@@ -68,29 +74,18 @@ export function registerTraceCommand(
                 return; // User cancelled
             }
 
-            // Step 2: Ask about optional dumps
-            const dumpTypes = await selectDumpTypes({
+            // Step 2: Ask about optional dumps and get arguments
+            const dumpRequests = await selectDumpsWithArguments({
                 title: vscode.l10n.t('Capture Dumps With Trace'),
                 placeHolder: vscode.l10n.t('Optionally select dump(s) to capture before and after the trace'),
+                processId,
                 allowEmpty: true,
             });
-            if (dumpTypes === undefined) {
+            if (dumpRequests === undefined) {
                 return; // User cancelled
             }
 
-            // Step 3: Get dump arguments if any dumps selected
-            let dumpRequests: DumpRequest[];
-            if (dumpTypes.length > 0) {
-                const gathered = await gatherDumpArguments(dumpTypes, processId);
-                if (!gathered) {
-                    return; // User cancelled
-                }
-                dumpRequests = gathered;
-            } else {
-                dumpRequests = [];
-            }
-
-            // Step 4: Ask for save location
+            // Step 3: Ask for save location
             const saveUri = await vscode.window.showSaveDialog({
                 defaultUri: getDefaultSaveUri('csharp-trace'),
                 filters: {
@@ -118,7 +113,8 @@ export function registerTraceCommand(
                 return;
             }
 
-            // Step 5: Execute the trace with progress
+            // Step 4: Execute the trace with progress
+            let traceResults: TraceResults | undefined;
             let resultUri: vscode.Uri | undefined;
             let errorMessage: string | undefined;
 
@@ -130,13 +126,11 @@ export function registerTraceCommand(
                 },
                 async (progress, token) => {
                     try {
-                        resultUri = await executeTraceCollection(
-                            context,
+                        traceResults = await executeTraceCollection(
                             languageServer,
                             userArgs,
                             dumpRequests,
                             traceFolder,
-                            saveUri,
                             progress,
                             outputChannel,
                             traceChannel,
@@ -158,7 +152,40 @@ export function registerTraceCommand(
                     }),
                     { modal: true }
                 );
-            } else if (resultUri) {
+                return;
+            }
+
+            if (!traceResults) {
+                return;
+            }
+
+            // After the trace is stopped (via cancellation or natural completion), we need a new progress
+            // notification since the original one may have been dismissed by cancellation.
+            await vscode.window.withProgress(
+                {
+                    location: vscode.ProgressLocation.Notification,
+                    title: 'dotnet-trace',
+                    cancellable: false,
+                },
+                async (progress) => {
+                    try {
+                        resultUri = await saveTraceResults(
+                            traceResults!,
+                            context,
+                            dumpRequests,
+                            traceFolder,
+                            saveUri,
+                            progress,
+                            outputChannel,
+                            traceChannel
+                        );
+                    } catch (error) {
+                        errorMessage = error instanceof Error ? error.message : String(error);
+                    }
+                }
+            );
+
+            if (resultUri) {
                 const openFolder = vscode.l10n.t('Open Folder');
                 const result = await vscode.window.showInformationMessage(
                     vscode.l10n.t('C# logs saved successfully.'),
@@ -176,17 +203,15 @@ export function registerTraceCommand(
  * Executes the trace collection and archiving.
  */
 async function executeTraceCollection(
-    context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     userArgs: string,
     dumpRequests: DumpRequest[],
     traceFolder: string,
-    saveUri: vscode.Uri,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
     cancellationToken: vscode.CancellationToken
-): Promise<vscode.Uri | undefined> {
+): Promise<TraceResults | undefined> {
     // Verify dotnet-trace is installed
     progress.report({
         message: vscode.l10n.t({
@@ -200,67 +225,82 @@ async function executeTraceCollection(
         return undefined;
     }
 
+    const allDumpFiles: string[] = [];
+
     // Verify dump tools if needed
     if (dumpRequests.length > 0) {
         const toolsVerified = await verifyDumpTools(dumpRequests, traceFolder, progress, outputChannel);
         if (!toolsVerified) {
             throw new Error(vscode.l10n.t('Required dump tools could not be installed.'));
         }
+
+        const startDumps = await collectDumps(dumpRequests, traceFolder, progress, outputChannel, 'before-trace');
+        allDumpFiles.push(...startDumps);
     }
+
     const csharpLogObserver = outputChannel.observe();
     const traceLogObserver = traceChannel.observe();
 
     // Set log levels to Trace for capture and get the restore function
     const restoreLogLevels = await languageServer.setLogLevelsForCapture();
 
-    const allDumpFiles: string[] = [];
-
     try {
-        // Collect dumps before trace if any selected
-        if (dumpRequests.length > 0) {
-            const startDumps = await collectDumps(dumpRequests, traceFolder, progress, outputChannel, 'before-trace');
-            allDumpFiles.push(...startDumps);
-        }
-
         const terminal = await getOrCreateTerminal(traceFolder, outputChannel);
 
         const args = ['collect', ...userArgs.split(' ')];
 
         progress.report({ message: vscode.l10n.t('Recording logs... Click Cancel to stop and save.') });
         const traceFilePath = await runDotnetTrace(args, terminal, traceFolder, cancellationToken);
-
-        // Collect dumps after trace if any selected
-        if (dumpRequests.length > 0) {
-            const endDumps = await collectDumps(dumpRequests, traceFolder, progress, outputChannel, 'after-trace');
-            allDumpFiles.push(...endDumps);
+        if (!traceFilePath) {
+            return undefined;
         }
 
-        progress.report({
-            message: vscode.l10n.t('Creating archive...'),
-        });
-
-        // Get formatted log content from observers
-        const csharpLogContent = csharpLogObserver.getLog();
-        const traceLogContent = traceLogObserver.getLog();
-
-        await createZipWithLogs(
-            context,
-            outputChannel,
-            traceChannel,
-            csharpLogContent,
-            traceLogContent,
-            saveUri.fsPath,
+        return {
             traceFilePath,
-            allDumpFiles
-        );
-
-        return saveUri;
+            dumpFiles: allDumpFiles,
+            csharpLog: csharpLogObserver.getLog(),
+            lspLog: traceLogObserver.getLog(),
+        };
     } finally {
         // Always clean up observers and restore log levels
         csharpLogObserver.dispose();
         traceLogObserver.dispose();
         await restoreLogLevels();
     }
+}
+
+async function saveTraceResults(
+    traceResults: TraceResults,
+    context: vscode.ExtensionContext,
+    dumpRequests: DumpRequest[],
+    traceFolder: string,
+    saveUri: vscode.Uri,
+    progress: vscode.Progress<{ message?: string; increment?: number }>,
+    outputChannel: ObservableLogOutputChannel,
+    traceChannel: ObservableLogOutputChannel
+): Promise<vscode.Uri | undefined> {
+    // Collect dumps after trace if any selected
+    if (dumpRequests.length > 0) {
+        const endDumps = await collectDumps(dumpRequests, traceFolder, progress, outputChannel, 'after-trace');
+        traceResults.dumpFiles.push(...endDumps);
+    }
+
+    progress.report({
+        message: vscode.l10n.t('Creating archive...'),
+    });
+
+    await createZipWithLogs(
+        context,
+        outputChannel,
+        traceChannel,
+        traceResults.csharpLog,
+        traceResults.lspLog,
+        saveUri.fsPath,
+        traceResults.traceFilePath,
+        traceResults.dumpFiles
+    );
+
+    return saveUri;
 }
 
 async function runDotnetTrace(
