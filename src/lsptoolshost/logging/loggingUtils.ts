@@ -127,7 +127,7 @@ export async function selectDumpsWithArguments(options: SelectDumpsOptions): Pro
     const items: DumpTypeQuickPickItem[] = [
         {
             label: vscode.l10n.t('Memory Dump'),
-            description: vscode.l10n.t('Full process memory dump using dotnet-dump'),
+            description: vscode.l10n.t('Process memory dump using dotnet-dump'),
             type: 'memory',
         },
         {

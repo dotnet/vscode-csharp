@@ -200,7 +200,7 @@
   "Collecting memory dump...": "Collecting memory dump...",
   "Collecting GC dump...": "Collecting GC dump...",
   "Memory Dump": "Memory Dump",
-  "Full process memory dump using dotnet-dump": "Full process memory dump using dotnet-dump",
+  "Process memory dump using dotnet-dump": "Process memory dump using dotnet-dump",
   "GC Dump": "GC Dump",
   "Garbage collector heap dump using dotnet-gcdump": "Garbage collector heap dump using dotnet-gcdump",
   "{0} Arguments/{0} is the tool name and should not be localized": {
