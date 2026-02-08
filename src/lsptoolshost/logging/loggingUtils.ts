@@ -50,19 +50,15 @@ export function getDumpConfig(type: DumpType): DumpToolConfig {
     return type === 'memory' ? memoryDumpConfig : gcDumpConfig;
 }
 
-/** Pre-configured dump options with arguments already gathered */
-export interface DumpOptions {
-    /** Dump types to collect */
-    dumpTypes: DumpType[];
-    /** Pre-configured arguments for memory dump */
-    memoryDumpArgs?: string;
-    /** Pre-configured arguments for GC dump */
-    gcDumpArgs?: string;
+/** A single dump request with its type and arguments */
+export interface DumpRequest {
+    type: DumpType;
+    args: string;
 }
 
 /**
- * Collects dumps based on the provided options.
- * @param dumpOptions The pre-configured dump options with arguments
+ * Collects dumps based on the provided requests.
+ * @param dumpRequests The dump requests with arguments
  * @param folder The folder to save dumps to
  * @param progress Progress reporter
  * @param outputChannel Output channel for logging
@@ -70,7 +66,7 @@ export interface DumpOptions {
  * @returns Array of paths to the collected dump files
  */
 export async function collectDumps(
-    dumpOptions: DumpOptions,
+    dumpRequests: DumpRequest[],
     folder: string,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel,
@@ -78,13 +74,8 @@ export async function collectDumps(
 ): Promise<string[]> {
     const collectedFiles: string[] = [];
 
-    for (const type of dumpOptions.dumpTypes) {
-        const config = getDumpConfig(type);
-        const args = type === 'memory' ? dumpOptions.memoryDumpArgs : dumpOptions.gcDumpArgs;
-
-        if (!args) {
-            continue;
-        }
+    for (const request of dumpRequests) {
+        const config = getDumpConfig(request.type);
 
         progress.report({
             message: config.collectingMessage,
@@ -94,7 +85,7 @@ export async function collectDumps(
             const dumpFile = await collectDumpWithTool(
                 config.toolName,
                 config.fileExtension,
-                args,
+                request.args,
                 folder,
                 outputChannel,
                 filePrefix
@@ -103,7 +94,7 @@ export async function collectDumps(
                 collectedFiles.push(dumpFile);
             }
         } catch (error) {
-            outputChannel.error(`Failed to collect ${type} dump: ${error}`);
+            outputChannel.error(`Failed to collect ${request.type} dump: ${error}`);
             // Continue with other dumps even if one fails
         }
     }
@@ -162,59 +153,16 @@ export async function selectDumpTypes(options: SelectDumpTypesOptions): Promise<
 }
 
 /**
- * Prepares dump options by verifying tools and gathering arguments for each dump type.
- * @param dumpTypes The dump types to prepare
- * @param processId The process ID for the target process
- * @param folder The folder to run tool verification in
- * @param progress Progress reporter
- * @param outputChannel Output channel for logging
- * @returns Configured DumpOptions, or undefined if user cancelled or tool installation failed
- */
-export async function prepareDumpOptions(
-    dumpTypes: DumpType[],
-    processId: number,
-    folder: string,
-    progress: vscode.Progress<{ message?: string; increment?: number }>,
-    outputChannel: ObservableLogOutputChannel
-): Promise<DumpOptions | undefined> {
-    const dumpOptions: DumpOptions = {
-        dumpTypes: dumpTypes,
-    };
-
-    for (const type of dumpTypes) {
-        const config = getDumpConfig(type);
-
-        // Verify/install the dump tool
-        const toolInstalled = await verifyOrAcquireDotnetTool(config.toolName, folder, progress, outputChannel);
-        if (!toolInstalled) {
-            return undefined;
-        }
-
-        const args = await promptForDumpArguments(config, processId);
-        if (args === undefined) {
-            return undefined; // User cancelled
-        }
-
-        if (type === 'memory') {
-            dumpOptions.memoryDumpArgs = args;
-        } else {
-            dumpOptions.gcDumpArgs = args;
-        }
-    }
-
-    return dumpOptions;
-}
-
-/**
- * Gathers dump arguments from the user without verifying tools.
+ * Gathers dump arguments from the user.
  * @param dumpTypes The dump types to gather arguments for
  * @param processId The process ID for the target process
- * @returns Configured DumpOptions with arguments, or undefined if user cancelled
+ * @returns Array of DumpRequest with arguments, or undefined if user cancelled
  */
-export async function gatherDumpArguments(dumpTypes: DumpType[], processId: number): Promise<DumpOptions | undefined> {
-    const dumpOptions: DumpOptions = {
-        dumpTypes: dumpTypes,
-    };
+export async function gatherDumpArguments(
+    dumpTypes: DumpType[],
+    processId: number
+): Promise<DumpRequest[] | undefined> {
+    const dumpRequests: DumpRequest[] = [];
 
     for (const type of dumpTypes) {
         const config = getDumpConfig(type);
@@ -223,33 +171,31 @@ export async function gatherDumpArguments(dumpTypes: DumpType[], processId: numb
             return undefined; // User cancelled
         }
 
-        if (type === 'memory') {
-            dumpOptions.memoryDumpArgs = args;
-        } else {
-            dumpOptions.gcDumpArgs = args;
-        }
+        dumpRequests.push({ type, args });
     }
 
-    return dumpOptions;
+    return dumpRequests;
 }
 
 /**
- * Verifies that all dump tools are installed for the given options.
- * @param dumpOptions The dump options containing the types to verify
+ * Verifies that all dump tools are installed for the given requests.
+ * @param dumpRequests The dump requests to verify tools for
  * @param folder The folder to run tool verification in
  * @param progress Progress reporter
  * @param outputChannel Output channel for logging
  * @returns True if all tools are installed, false if cancelled or failed
  */
 export async function verifyDumpTools(
-    dumpOptions: DumpOptions,
+    dumpRequests: DumpRequest[],
     folder: string,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel
 ): Promise<boolean> {
-    for (const type of dumpOptions.dumpTypes) {
-        const config = getDumpConfig(type);
-        const toolInstalled = await verifyOrAcquireDotnetTool(config.toolName, folder, progress, outputChannel);
+    // Get unique tool names to avoid verifying the same tool twice
+    const toolNames = new Set(dumpRequests.map((r) => getDumpConfig(r.type).toolName));
+
+    for (const toolName of toolNames) {
+        const toolInstalled = await verifyOrAcquireDotnetTool(toolName, folder, progress, outputChannel);
         if (!toolInstalled) {
             return false;
         }

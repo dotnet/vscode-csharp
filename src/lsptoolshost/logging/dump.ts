@@ -9,7 +9,7 @@ import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ObservableLogOutputChannel } from './observableLogOutputChannel';
 import {
-    DumpOptions,
+    DumpRequest,
     collectDumps,
     createZipWithLogs,
     getDefaultSaveUri,
@@ -47,8 +47,8 @@ export function registerDumpCommand(
             }
 
             // Step 2: Gather arguments for each dump type
-            const dumpOptions = await gatherDumpArguments(selectedTypes, processId);
-            if (!dumpOptions) {
+            const dumpRequests = await gatherDumpArguments(selectedTypes, processId);
+            if (!dumpRequests) {
                 return; // User cancelled
             }
 
@@ -93,7 +93,7 @@ export function registerDumpCommand(
                     try {
                         await executeDumpCollection(
                             context,
-                            dumpOptions,
+                            dumpRequests,
                             dumpFolder,
                             saveUri,
                             progress,
@@ -136,7 +136,7 @@ export function registerDumpCommand(
  */
 async function executeDumpCollection(
     context: vscode.ExtensionContext,
-    dumpOptions: DumpOptions,
+    dumpRequests: DumpRequest[],
     dumpFolder: string,
     saveUri: vscode.Uri,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
@@ -148,13 +148,13 @@ async function executeDumpCollection(
         message: vscode.l10n.t('Verifying tools...'),
     });
 
-    const toolsVerified = await verifyDumpTools(dumpOptions, dumpFolder, progress, outputChannel);
+    const toolsVerified = await verifyDumpTools(dumpRequests, dumpFolder, progress, outputChannel);
     if (!toolsVerified) {
         throw new Error(vscode.l10n.t('Required dump tools could not be installed.'));
     }
 
     // Collect all dumps
-    const collectedDumps = await collectDumps(dumpOptions, dumpFolder, progress, outputChannel);
+    const collectedDumps = await collectDumps(dumpRequests, dumpFolder, progress, outputChannel);
 
     // Collect logs and create archive
     progress.report({

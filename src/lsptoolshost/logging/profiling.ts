@@ -19,7 +19,7 @@ import {
     gatherDumpArguments,
     verifyDumpTools,
     promptForToolArguments,
-    DumpOptions,
+    DumpRequest,
 } from './loggingUtils';
 
 const TraceTerminalName = 'dotnet-trace';
@@ -79,14 +79,15 @@ export function registerTraceCommand(
             }
 
             // Step 3: Get dump arguments if any dumps selected
-            let dumpOptions: DumpOptions | undefined;
+            let dumpRequests: DumpRequest[];
             if (dumpTypes.length > 0) {
-                dumpOptions = await gatherDumpArguments(dumpTypes, processId);
-                if (!dumpOptions) {
+                const gathered = await gatherDumpArguments(dumpTypes, processId);
+                if (!gathered) {
                     return; // User cancelled
                 }
+                dumpRequests = gathered;
             } else {
-                dumpOptions = { dumpTypes: [] };
+                dumpRequests = [];
             }
 
             // Step 4: Ask for save location
@@ -133,7 +134,7 @@ export function registerTraceCommand(
                             context,
                             languageServer,
                             userArgs,
-                            dumpOptions!,
+                            dumpRequests,
                             traceFolder,
                             saveUri,
                             progress,
@@ -178,7 +179,7 @@ async function executeTraceCollection(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     userArgs: string,
-    dumpOptions: DumpOptions,
+    dumpRequests: DumpRequest[],
     traceFolder: string,
     saveUri: vscode.Uri,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
@@ -200,8 +201,8 @@ async function executeTraceCollection(
     }
 
     // Verify dump tools if needed
-    if (dumpOptions.dumpTypes.length > 0) {
-        const toolsVerified = await verifyDumpTools(dumpOptions, traceFolder, progress, outputChannel);
+    if (dumpRequests.length > 0) {
+        const toolsVerified = await verifyDumpTools(dumpRequests, traceFolder, progress, outputChannel);
         if (!toolsVerified) {
             throw new Error(vscode.l10n.t('Required dump tools could not be installed.'));
         }
@@ -216,8 +217,8 @@ async function executeTraceCollection(
 
     try {
         // Collect dumps before trace if any selected
-        if (dumpOptions.dumpTypes.length > 0) {
-            const startDumps = await collectDumps(dumpOptions, traceFolder, progress, outputChannel, 'before-trace');
+        if (dumpRequests.length > 0) {
+            const startDumps = await collectDumps(dumpRequests, traceFolder, progress, outputChannel, 'before-trace');
             allDumpFiles.push(...startDumps);
         }
 
@@ -229,8 +230,8 @@ async function executeTraceCollection(
         const traceFilePath = await runDotnetTrace(args, terminal, traceFolder, cancellationToken);
 
         // Collect dumps after trace if any selected
-        if (dumpOptions.dumpTypes.length > 0) {
-            const endDumps = await collectDumps(dumpOptions, traceFolder, progress, outputChannel, 'after-trace');
+        if (dumpRequests.length > 0) {
+            const endDumps = await collectDumps(dumpRequests, traceFolder, progress, outputChannel, 'after-trace');
             allDumpFiles.push(...endDumps);
         }
 
