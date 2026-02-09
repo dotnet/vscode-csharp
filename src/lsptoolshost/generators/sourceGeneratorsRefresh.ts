@@ -26,7 +26,7 @@ export function registerSourceGeneratorRefresh(
     context.subscriptions.push(
         vscode.tasks.onDidEndTask(async (e) => {
             if (e.execution.task.group === vscode.TaskGroup.Build) {
-                outputChannel.trace('Refreshing source generators on build start on build end');
+                outputChannel.trace('Refreshing source generators on build end');
                 await languageServer.sendNotification(RefreshSourceGeneratorsNotification.method, {
                     forceRegeneration: false,
                 });
