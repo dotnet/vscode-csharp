@@ -44,7 +44,7 @@
   "configuration.dotnet.server.crashDumpPath": "Sets a folder path where crash dumps are written to if the language server crashes.  Must be writeable by the user. (Requires window reload)",
   "configuration.dotnet.server.suppressLspErrorToasts": "Suppresses error toasts from showing up if the server encounters a recoverable error.",
   "configuration.dotnet.server.suppressMiscellaneousFilesToasts": "Suppress warning toasts from showing up if the active document is outside the open workspace.",
-  "configuration.dotnet.server.useServerGC": "Configure the language server to use .NET server garbage collection.  Server garbage collection generally provides better performance at the expensive of higher memory consumption. (Requires window reload)",
+  "configuration.dotnet.server.useServerGC": "Configure the language server to use .NET server garbage collection.  Server garbage collection generally provides better performance at the expense of higher memory consumption. (Requires window reload)",
   "configuration.dotnet.server.environmentVariables": "Custom environment variables to pass to the language server process. Specify as key-value pairs, for example: { \"DOTNET_GCName\": \"libclrgc.dylib\" }. (Requires window reload)",
   "configuration.dotnet.enableXamlTools": "Enables XAML tools when using C# Dev Kit. (Requires window reload)",
   "configuration.dotnet.projects.enableAutomaticRestore": "Enables automatic NuGet restore if the extension detects assets are missing.",
