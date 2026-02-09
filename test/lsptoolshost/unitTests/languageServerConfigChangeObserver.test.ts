@@ -36,6 +36,7 @@ describe('Option changes observer', () => {
     [
         { config: 'dotnet', section: 'server.documentSelector', value: ['other'] },
         { config: 'dotnet', section: 'preferCSharpExtension', value: true },
+        { config: 'dotnet', section: 'server.crashDumpPath', value: '/tmp/dumps' },
     ].forEach((elem) => {
         describe(`When the ${elem.config}.${elem.section} changes`, () => {
             beforeEach(async () => {
