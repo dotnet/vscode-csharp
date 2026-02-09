@@ -44,39 +44,19 @@ When investigating issues, the C# extension provides a command to capture trace-
 > [!WARNING]
 > The logs may contain file paths, project names, and other workspace information. Review the contents before sharing publicly.
 
-##### Manual Log Collection
+##### Setting Trace Levels Manually
 
-If you need to set the trace level manually or collect logs from a specific output window:
+If you need to set the trace level manually:
 
-1. **Set the Log Level to Trace**:
-   - Open the `C#` output window (`View` -> `Output`).
-   - Set the log level to `Trace`.
+- **In the C# output window** (`View` -> `Output`), set the log level to `Trace`.
+  
+  ![c# output window showing trace option](./docs/images/csharp_trace.png)
 
-     ![c# output window showing trace option](./docs/images/csharp_trace.png)
-
-2. **Reproduce the Issue**:
-   - Perform the actions that reproduce the issue.
-
-3. **Copy the Logs**:
-   - In the `C#` output window, select all the logs (e.g., `Ctrl+A`) and copy them.
-   - Paste the logs into the issue template under the "C# Log" section.
-   - If necessary, redact sensitive information (e.g., file paths, project names).
-
-4. **Reset the Log Level**:
-   - After collecting the logs, reset the log level to `Info`.
+- **In the C# LSP Trace Logs output window**, set the log level to `Trace`.
 
 **Other Ways to Set the Log Level**:
 - When launching VSCode from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
 - Invoke the `Developer: Set Log Level` command from the VSCode command palette, find the `C#` entry, and set the level.
-- If the issue occurs during extension startup, you can set `Trace` as the default log level, restart VSCode, and the trace logs will be captured automatically.
-
-##### C# LSP Trace Logs
-- To capture detailed requests sent to the Roslyn language server:
-  1. Open the `C# LSP Trace Logs` output window.
-  2. Set the output window log level to `Trace`.
-  3. Reproduce the issue.
-  4. Copy the contents of the `C# LSP Trace Logs` output window.
-  5.  After collecting the logs, reset the log level to `Info`.
 
 #### Collecting Razor Logs
 For issues with Razor, the Razor Log output window can contain useful information.
