@@ -65,7 +65,7 @@ import {
     showInformationMessage,
 } from '../../shared/observers/utils/showMessage';
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
-import { getProfilingEnvVars } from '../profiling/profiling';
+import { getProfilingEnvVars } from '../logging/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
@@ -773,6 +773,12 @@ export class RoslynLanguageServer {
         env = { ...env, ...profilingEnvVars };
 
         channel.trace(`Profiling environment variables: ${JSON.stringify(profilingEnvVars)}`);
+
+        const customEnvVars = languageServerOptions.environmentVariables;
+        if (Object.keys(customEnvVars).length > 0) {
+            env = { ...env, ...customEnvVars };
+            channel.info(`Custom environment variables: ${JSON.stringify(customEnvVars)}`);
+        }
 
         let childProcess: cp.ChildProcessWithoutNullStreams;
         const cpOptions: cp.SpawnOptionsWithoutStdio = {
