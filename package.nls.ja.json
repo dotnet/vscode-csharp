@@ -4,6 +4,7 @@
   "command.csharp.changeProjectContext": "アクティブなドキュメントのプロジェクト コンテキストを変更する",
   "command.csharp.changeProjectContextEditor": "プロジェクト コンテキストの選択",
   "command.csharp.changeProjectContextFileExplorer": "プロジェクト コンテキストの選択",
+  "command.csharp.collectDump": "Collect a dump of the C# Language Server",
   "command.csharp.downloadDebugger": ".NET Core デバッガーをダウンロードする",
   "command.csharp.listProcess": "アタッチのプロセスをリスト表示する",
   "command.csharp.listRemoteDockerProcess": "Docker 接続のプロセスをリスト表示する",
