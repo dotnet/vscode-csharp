@@ -15,9 +15,38 @@ For help and questions about using this project, please see the [README](https:/
 We highly recommend using the C# extension's built-in command, `CSharp: Report an issue` (`csharp.reportIssue`) to create a pre-filled issue template.  This will include helpful details such as local dotnet installations, installed extensions, and other information.
 ![csharp.reportIssue command](./docs/images/report_issue.png)
 
-#### Collecting General Logs
+#### Capturing activity trace logging
 
-The template has a section to include the `C#` output window logs. These logs are not automatically included as they may contain personal information (such as full file paths and project names), but they are key to resolving problems.
+When investigating issues, the C# extension provides a command to capture trace-level logs while you reproduce the issue. This is the recommended way to collect logs as it automatically captures all relevant log files in a single archive.
+
+1. **Invoke the Capture Logs Command**:
+   - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
+   - Search for and select `CSharp: Capture Logs` (`csharp.captureLogs`).
+![alt text](docs/images/captureLogsCommand.png)
+2. **Reproduce the Issue**:
+   - A notification will appear indicating that logs are being captured.
+   - While the notification is visible, perform the actions that reproduce the issue.
+   - The extension automatically sets the log level to `Trace` during capture to collect detailed information.
+
+3. **Stop Capturing and Save**:
+   - Click the `Cancel` button on the notification to stop capturing.
+   - You will be prompted to save the log archive. Choose a location to save the `.zip` file.
+
+4. **Share the Logs**:
+   - The saved archive contains:
+     - `csharp.log` - The existing C# log file
+     - `csharp-lsp-trace.log` - The existing LSP trace log file
+     - `csharp.activity.log` - Captured C# log activity during the recording session
+     - `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the recording session
+     - `csharp-settings.json` - Current C# extension settings
+   - Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
+
+> [!WARNING]
+> The logs may contain file paths, project names, and other workspace information. Review the contents before sharing publicly.
+
+##### Manual Log Collection
+
+If you need to set the trace level manually or collect logs from a specific output window:
 
 1. **Set the Log Level to Trace**:
    - Open the `C#` output window (`View` -> `Output`).
@@ -36,7 +65,10 @@ The template has a section to include the `C#` output window logs. These logs ar
 4. **Reset the Log Level**:
    - After collecting the logs, reset the log level to `Info`.
 
-**Note**: If the issue occurs during extension startup, you can set `Trace` as the default log level, restart VSCode, and the trace logs will be captured automatically.
+**Other Ways to Set the Log Level**:
+- When launching VSCode from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
+- Invoke the `Developer: Set Log Level` command from the VSCode command palette, find the `C#` entry, and set the level.
+- If the issue occurs during extension startup, you can set `Trace` as the default log level, restart VSCode, and the trace logs will be captured automatically.
 
 ##### C# LSP Trace Logs
 - To capture detailed requests sent to the Roslyn language server:
@@ -45,11 +77,6 @@ The template has a section to include the `C#` output window logs. These logs ar
   3. Reproduce the issue.
   4. Copy the contents of the `C# LSP Trace Logs` output window.
   5.  After collecting the logs, reset the log level to `Info`.
-
-
-##### Other Ways to Set the Log Level
-1. When launching VSCode from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
-2. Invoke the `Developer: Set Log Level` command from the VSCode command palette, find the `C#` entry, and set the level.
 
 #### Collecting Razor Logs
 For issues with Razor, the Razor Log output window can contain useful information.
@@ -74,7 +101,7 @@ For issues with Razor, the Razor Log output window can contain useful informatio
 Missing language features are often caused by a failure to load the project(s) or solution. To diagnose and resolve these issues, follow these steps:
 
 1. **Provide General Logs**:
-   - Include the information from the issue template and the general logs (see the "Collecting General Logs" section above). These logs are essential for troubleshooting.
+   - Include the information from the issue template and the general logs (see the "Capturing activity trace logging" section above). These logs are essential for troubleshooting.
 
 2. **Check the Active Project Context**:
    - Verify that the file is associated with the correct project in the language server.
@@ -116,35 +143,6 @@ If the language server crashes, general logs are often helpful for diagnosing th
 
 > [!WARNING]
 > The dump will contain detailed information about the workspace.  See [Sharing information privately](#sharing-information-privately)
-
-### Capturing activity trace logging
-
-When investigating issues that require detailed logging for a specific scenario, the C# extension provides a command to capture trace-level logs while you reproduce the issue. This is useful when the issue is difficult to reproduce or when you need to capture logs for a specific sequence of actions.
-
-1. **Invoke the Capture Logs Command**:
-   - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
-   - Search for and select `CSharp: Capture Logs` (`csharp.captureLogs`).
-![alt text](docs/images/captureLogsCommand.png)
-2. **Reproduce the Issue**:
-   - A notification will appear indicating that logs are being captured.
-   - While the notification is visible, perform the actions that reproduce the issue.
-   - The extension automatically sets the log level to `Trace` during capture to collect detailed information.
-
-3. **Stop Capturing and Save**:
-   - Click the `Cancel` button on the notification to stop capturing.
-   - You will be prompted to save the log archive. Choose a location to save the `.zip` file.
-
-4. **Share the Logs**:
-   - The saved archive contains:
-     - `csharp.log` - The existing C# log file
-     - `csharp-lsp-trace.log` - The existing LSP trace log file
-     - `csharp.activity.log` - Captured C# log activity during the recording session
-     - `csharp-lsp-trace.activity.log` - Captured LSP trace activity during the recording session
-     - `csharp-settings.json` - Current C# extension settings
-   - Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
-
-> [!WARNING]
-> The logs may contain file paths, project names, and other workspace information. Review the contents before sharing publicly.
 
 ### Recording a language server trace
 
