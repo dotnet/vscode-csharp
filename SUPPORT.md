@@ -55,8 +55,8 @@ If you need to set the trace level manually:
 - **In the C# LSP Trace Logs output window**, set the log level to `Trace`.
 
 **Other Ways to Set the Log Level**:
-- When launching VSCode from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
-- Invoke the `Developer: Set Log Level` command from the VSCode command palette, find the `C#` entry, and set the level.
+- When launching VS Code from the CLI, pass the `--log ms-dotnettools.csharp:trace` parameter.
+- Invoke the `Developer: Set Log Level` command from the VS Code command palette, find the `C#` entry, and set the level.
 
 #### Collecting Razor Logs
 For issues with Razor, the Razor Log output window can contain useful information.
