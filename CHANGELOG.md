@@ -4,10 +4,17 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.122.x
+* Consolidate duplicate log collection sections in SUPPORT.md (PR: [#8974](https://github.com/dotnet/vscode-csharp/pull/8974))
+* Add crashDumpPath to settings that trigger restart prompt and standardize restart descriptions (PR: [#8973](https://github.com/dotnet/vscode-csharp/pull/8973))
+* Add command to collect memory and GC dumps (PR: [#8966](https://github.com/dotnet/vscode-csharp/pull/8966))
+* Add dotnet.server.environmentVariables setting for custom language server env vars (PR: [#8967](https://github.com/dotnet/vscode-csharp/pull/8967))
+* Pass the extension host process id to the Roslyn LSP on startup (PR: [#8976](https://github.com/dotnet/vscode-csharp/pull/8976))
 * Enable and switch to `Balanced` source generator execution (PR: [#8970](https://github.com/dotnet/vscode-csharp/pull/8970))
   * `Balanced` mode improves language server performance by only running source generators on explicit actions like file save, build task execution, or the `csharp.rerunSourceGenerators` command.  This is in contrast to the previous default, `Automatic`, which ran source generators on every keystroke.
   * The `dotnet.server.sourceGeneratorExecution` option allows you to switch between `Balanced` and `Automatic` source generator execution (requires restart).
-* Update Roslyn to 5.5.0-2.26103.6 5.5.0-2.26109.12 (PR: [#8970](https://github.com/dotnet/vscode-csharp/pull/8970))
+* Update Roslyn to 5.5.0-2.26109.18 (PR: [#8976](https://github.com/dotnet/vscode-csharp/pull/8976))
+  * Adds `--clientProcessId` option so server can shutdown when the parent does (PR: [#82346](https://github.com/dotnet/roslyn/pull/82346))
+  * Show both property and extension method items with identical name (PR: [#82315](https://github.com/dotnet/roslyn/pull/82315))
   * Add LSP server support for balanced source generator execution with refresh (PR: [#82330](https://github.com/dotnet/roslyn/pull/82330))
   * Handle change in enableFileBasedPrograms setting in the editor (PR: [#82214](https://github.com/dotnet/roslyn/pull/82214))
   * No longer recommend 'this' inside nameof in an attribute (PR: [#82299](https://github.com/dotnet/roslyn/pull/82299))
