@@ -522,4 +522,5 @@ export const LanguageServerOptionsThatTriggerReload: ReadonlyArray<keyof Languag
     'reportInformationAsHint',
     'environmentVariables',
     'sourceGeneratorExecution',
+    'crashDumpPath',
 ];

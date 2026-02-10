@@ -65,7 +65,7 @@ import {
     showInformationMessage,
 } from '../../shared/observers/utils/showMessage';
 import { TelemetryEventNames } from '../../shared/telemetryEventNames';
-import { getProfilingEnvVars } from '../profiling/profiling';
+import { getProfilingEnvVars } from '../logging/profiling';
 import { isString } from '../utils/isString';
 import { getServerPath } from '../activate';
 import { UriConverter } from '../utils/uriConverter';
