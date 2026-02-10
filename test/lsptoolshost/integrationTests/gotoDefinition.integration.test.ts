@@ -25,9 +25,8 @@ import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } fr
  */
 function expectDecompiledOrMetadata(): void {
     const text = vscode.window.activeTextEditor?.document.getText();
-    const uri = vscode.window.activeTextEditor?.document.uri.fsPath.toLowerCase();
     expect(
-        text?.includes('// Decompiled with ICSharpCode.Decompiler') || uri?.includes('microsoft.netcore.app.ref')
+        text?.includes('// Decompiled with ICSharpCode.Decompiler') || text?.includes('microsoft.netcore.app.ref')
     ).toBe(true);
 }
 
