@@ -4,7 +4,7 @@
   "command.csharp.changeProjectContext": "變更使用中文件的專案内容",
   "command.csharp.changeProjectContextEditor": "選取專案内容",
   "command.csharp.changeProjectContextFileExplorer": "選取專案内容",
-  "command.csharp.collectDump": "Collect a dump of the C# Language Server",
+  "command.csharp.collectDump": "收集 C# 語言伺服器的傾印",
   "command.csharp.downloadDebugger": "下載 .NET Core 偵錯工具",
   "command.csharp.listProcess": "列出連結的程序",
   "command.csharp.listRemoteDockerProcess": "列出 Docker 連線上的程序",

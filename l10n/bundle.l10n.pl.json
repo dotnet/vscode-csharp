@@ -81,7 +81,7 @@
   "Fix All: ": "Napraw wszystko: ",
   "Fix all issues": "Napraw wszystkie problemy",
   "Folder for dump file {0} does not exist/{0} is the folder path": "Folder for dump file {0} does not exist",
-  "Folder for trace file {0} does not exist/{0} is the folder path": "Folder for trace file {0} does not exist",
+  "Folder for trace file {0} does not exist/{0} is the folder path": "Folder pliku śledzenia {0} nie istnieje",
   "For further information visit {0}": "Aby uzyskać więcej informacji, odwiedź witrynę {0}",
   "For further information visit {0}.": "Aby uzyskać więcej informacji, odwiedź witrynę {0}.",
   "For more information about the 'console' field, see {0}": "Aby uzyskać więcej informacji o polu „console”, zobacz {0}",

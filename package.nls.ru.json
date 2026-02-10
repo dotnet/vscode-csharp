@@ -4,7 +4,7 @@
   "command.csharp.changeProjectContext": "Изменить контекст проекта активного документа",
   "command.csharp.changeProjectContextEditor": "Выбор контекста проекта",
   "command.csharp.changeProjectContextFileExplorer": "Выбор контекста проекта",
-  "command.csharp.collectDump": "Collect a dump of the C# Language Server",
+  "command.csharp.collectDump": "Сбор дампа языкового сервера C#",
   "command.csharp.downloadDebugger": "Скачать отладчик .NET Core",
   "command.csharp.listProcess": "Перечислить процесс для вложения",
   "command.csharp.listRemoteDockerProcess": "Список процессов подключения к Docker",

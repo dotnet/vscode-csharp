@@ -81,7 +81,7 @@
   "Fix All: ": "Tümünü Düzelt: ",
   "Fix all issues": "Tüm sorunları düzeltin",
   "Folder for dump file {0} does not exist/{0} is the folder path": "Folder for dump file {0} does not exist",
-  "Folder for trace file {0} does not exist/{0} is the folder path": "Folder for trace file {0} does not exist",
+  "Folder for trace file {0} does not exist/{0} is the folder path": "İzleme dosyasının klasörü {0} mevcut değil",
   "For further information visit {0}": "Daha fazla bilgi için bkz. {0}",
   "For further information visit {0}.": "Daha fazla bilgi için bkz. {0}.",
   "For more information about the 'console' field, see {0}": "'Konsol' alanı hakkında daha fazla bilgi için bkz. {0}",
