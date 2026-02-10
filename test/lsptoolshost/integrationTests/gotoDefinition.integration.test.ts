@@ -17,6 +17,19 @@ import {
 } from './integrationHelpers';
 import { describe, beforeAll, beforeEach, afterAll, test, expect, afterEach } from '@jest/globals';
 
+/**
+ * For built-in library references, we can get different metadata results depending on the test project TFM and installed SDKs.
+ * When the installed SDK matches the project TFM, we can find the implementation assembly and return decompiled source.
+ * When the installed SDK does not match, we will get a reference assembly instead and only have metadata available.
+ * This happens as our test project targets the lowest supported TFM, but we test against all supported SDKs to ensure compatibility.
+ */
+function expectDecompiledOrMetadata(): void {
+    const text = vscode.window.activeTextEditor?.document.getText();
+    expect(
+        text?.includes('// Decompiled with ICSharpCode.Decompiler') || text?.includes('microsoft.netcore.app.ref')
+    ).toBe(true);
+}
+
 describe(`Go To Definition Tests`, () => {
     beforeAll(async () => {
         await activateCSharpExtension();
@@ -131,7 +144,7 @@ describe(`Go To Definition Tests`, () => {
         );
     });
 
-    test('Navigates to definition in metadata as source', async () => {
+    testIfCSharp('Navigates to definition in System', async () => {
         // Get definitions
         const requestPosition = new vscode.Position(10, 25);
         const definitionList = <vscode.Location[]>(
@@ -147,12 +160,10 @@ describe(`Go To Definition Tests`, () => {
 
         // Navigate
         await navigate(requestPosition, definitionList, 'Console.cs');
-        expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
-            '// Decompiled with ICSharpCode.Decompiler'
-        );
+        expectDecompiledOrMetadata();
     });
 
-    test('Navigates to definition from inside metadata as source', async () => {
+    test('Navigates to definition from inside metadata', async () => {
         // Get definitions
         const requestPosition = new vscode.Position(10, 25);
         const definitionList = <vscode.Location[]>(
@@ -168,9 +179,6 @@ describe(`Go To Definition Tests`, () => {
 
         // Navigate
         await navigate(requestPosition, definitionList, 'Console.cs');
-        expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
-            '// Decompiled with ICSharpCode.Decompiler'
-        );
 
         // Get definitions from inside Console.cs
         // Rather than hardcoding a location, we find the location by searching the document as different SDKs may have different versions of the source.
@@ -189,9 +197,7 @@ describe(`Go To Definition Tests`, () => {
 
         // Navigate
         await navigate(rangeOfDefinition.start, consoleColorDefinition, 'ConsoleColor.cs');
-        expect(vscode.window.activeTextEditor?.document.getText()).not.toContain(
-            '// Decompiled with ICSharpCode.Decompiler'
-        );
+        expectDecompiledOrMetadata();
     });
 
     test('Returns multiple definitions for partial types', async () => {
