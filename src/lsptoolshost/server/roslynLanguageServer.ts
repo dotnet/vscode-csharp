@@ -684,6 +684,11 @@ export class RoslynLanguageServer {
             args.push('--debug');
         }
 
+        // Pass the client process ID to the server so the server can monitor the
+        // client and exit if the client exits. This ensures we don't end up with
+        // orphaned server processes.
+        args.push('--clientProcessId', process.pid.toString());
+
         // Get the initial log level from the channel.
         // Changes to the channel log level will be picked up by the server after
         // LSP finishes initializing and we're able to pick up the new value.
