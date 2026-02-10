@@ -4,7 +4,13 @@
 - Debug from .csproj and .sln [#5876](https://github.com/dotnet/vscode-csharp/issues/5876)
 
 # 2.122.x
-* Update Roslyn to 5.5.0-2.26103.6 (PR: [#8956](https://github.com/dotnet/vscode-csharp/pull/8956))
+* Enable and switch to `Balanced` source generator execution (PR: [#8970](https://github.com/dotnet/vscode-csharp/pull/8970))
+  * `Balanced` mode improves language server performance by only running source generators on explicit actions like file save, build task execution, or the `csharp.rerunSourceGenerators` command.  This is in contrast to the previous default, `Automatic`, which ran source generators on every keystroke.
+  * The `dotnet.server.sourceGeneratorExecution` option allows you to switch between `Balanced` and `Automatic` source generator execution (requires restart).
+* Update Roslyn to 5.5.0-2.26103.6 5.5.0-2.26109.12 (PR: [#8970](https://github.com/dotnet/vscode-csharp/pull/8970))
+  * Add LSP server support for balanced source generator execution with refresh (PR: [#82330](https://github.com/dotnet/roslyn/pull/82330))
+  * Handle change in enableFileBasedPrograms setting in the editor (PR: [#82214](https://github.com/dotnet/roslyn/pull/82214))
+  * No longer recommend 'this' inside nameof in an attribute (PR: [#82299](https://github.com/dotnet/roslyn/pull/82299))
   * Fix workspace search always returning no results for first query (PR: [#82276](https://github.com/dotnet/roslyn/pull/82276))
   * Improve elimination of redundant evaluations during pattern matching operation (PR: [#82142](https://github.com/dotnet/roslyn/pull/82142))
   * Limit the FileSystemWatchers to one per drive root for DefaultFileChangeWatcher (PR: [#82211](https://github.com/dotnet/roslyn/pull/82211))

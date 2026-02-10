@@ -30,6 +30,7 @@ import { registerCopilotContextProviders } from './copilot/contextProviders';
 import { RazorLogger } from '../razor/src/razorLogger';
 import { registerRazorEndpoints } from './razor/razorEndpoints';
 import { ObservableLogOutputChannel } from './logging/observableLogOutputChannel';
+import { registerSourceGeneratorRefresh } from './generators/sourceGeneratorsRefresh';
 
 let _channel: ObservableLogOutputChannel;
 let _traceChannel: ObservableLogOutputChannel;
@@ -94,6 +95,7 @@ export async function activateRoslynLanguageServer(
     registerRestoreCommands(context, languageServer, _channel);
 
     registerSourceGeneratedFilesContentProvider(context, languageServer);
+    registerSourceGeneratorRefresh(context, languageServer, _channel);
 
     context.subscriptions.push(registerLanguageServerOptionChanges(optionObservable));
 
