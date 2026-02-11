@@ -20,6 +20,7 @@ import {
     promptForToolArguments,
     DumpRequest,
 } from './loggingUtils';
+import { RazorLogger } from '../../razor/src/razorLogger';
 
 const TraceTerminalName = 'dotnet-trace';
 
@@ -53,7 +54,8 @@ export function registerTraceCommand(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.recordLanguageServerTrace', async () => {
@@ -177,7 +179,8 @@ export function registerTraceCommand(
                             saveUri,
                             progress,
                             outputChannel,
-                            traceChannel
+                            traceChannel,
+                            razorLogger
                         );
                     } catch (error) {
                         errorMessage = error instanceof Error ? error.message : String(error);
@@ -277,7 +280,8 @@ async function saveTraceResults(
     saveUri: vscode.Uri,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
 ): Promise<vscode.Uri | undefined> {
     // Collect dumps after trace if any selected
     if (dumpRequests.length > 0) {
@@ -293,6 +297,7 @@ async function saveTraceResults(
         context,
         outputChannel,
         traceChannel,
+        razorLogger,
         traceResults.csharpLog,
         traceResults.lspLog,
         saveUri.fsPath,

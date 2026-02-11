@@ -17,12 +17,14 @@ import {
     verifyDumpTools,
 } from './loggingUtils';
 import { showErrorMessageWithOptions } from '../../shared/observers/utils/showMessage';
+import { RazorLogger } from '../../razor/src/razorLogger';
 
 export function registerDumpCommand(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.collectDump', async () => {
@@ -92,7 +94,8 @@ export function registerDumpCommand(
                             saveUri,
                             progress,
                             outputChannel,
-                            traceChannel
+                            traceChannel,
+                            razorLogger
                         );
                     } catch (error) {
                         errorMessage = error instanceof Error ? error.message : String(error);
@@ -135,7 +138,8 @@ async function executeDumpCollection(
     saveUri: vscode.Uri,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
 ): Promise<void> {
     // Verify tools are installed
     progress.report({
@@ -161,6 +165,7 @@ async function executeDumpCollection(
         context,
         outputChannel,
         traceChannel,
+        razorLogger,
         '', // No activity log content for dump command
         '', // No activity log content for dump command
         saveUri.fsPath,

@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { RoslynLanguageServer } from '../server/roslynLanguageServer';
 import { ObservableLogOutputChannel } from './observableLogOutputChannel';
 import { createZipWithLogs, getDefaultSaveUri } from './loggingUtils';
+import { RazorLogger } from '../../razor/src/razorLogger';
 
 /**
  * Registers the command to capture C# log output.
@@ -15,11 +16,12 @@ export function registerCaptureLogsCommand(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
 ): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.captureLogs', async () => {
-            await captureLogsToZip(context, languageServer, outputChannel, traceChannel);
+            await captureLogsToZip(context, languageServer, outputChannel, traceChannel, razorLogger);
         })
     );
 }
@@ -28,7 +30,8 @@ async function captureLogsToZip(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer,
     outputChannel: ObservableLogOutputChannel,
-    traceChannel: ObservableLogOutputChannel
+    traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger
 ): Promise<void> {
     // Create observers to collect log messages during capture
     const csharpLogObserver = outputChannel.observe();
@@ -81,6 +84,7 @@ async function captureLogsToZip(
                         context,
                         outputChannel,
                         traceChannel,
+                        razorLogger,
                         csharpLogContent,
                         traceLogContent,
                         saveUri.fsPath

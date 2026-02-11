@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import archiver from 'archiver';
 import { execChildProcess } from '../../common';
 import { ObservableLogOutputChannel } from './observableLogOutputChannel';
+import { RazorLogger } from '../../razor/src/razorLogger';
 
 /**
  * Configuration for a dump tool.
@@ -332,6 +333,7 @@ export async function createZipWithLogs(
     context: vscode.ExtensionContext,
     outputChannel: ObservableLogOutputChannel,
     traceChannel: ObservableLogOutputChannel,
+    razorLogger: RazorLogger,
     csharpActivityLogContent: string,
     traceActivityLogContent: string,
     outputPath: string,
@@ -341,9 +343,11 @@ export async function createZipWithLogs(
     // Read existing log files from disk
     const csharpLogPath = vscode.Uri.joinPath(context.logUri, outputChannel.name + '.log');
     const traceLogPath = vscode.Uri.joinPath(context.logUri, traceChannel.name + '.log');
+    const razorLogPath = vscode.Uri.joinPath(context.logUri, razorLogger.outputChannel.name + '.log');
 
     const csharpLogContent = await readLogFileContent(csharpLogPath, outputChannel);
     const traceLogContent = await readLogFileContent(traceLogPath, outputChannel);
+    const razorLogContent = await readLogFileContent(razorLogPath, outputChannel);
 
     return new Promise<void>((resolve, reject) => {
         const output = fs.createWriteStream(outputPath);
@@ -401,6 +405,9 @@ export async function createZipWithLogs(
         }
         if (traceLogContent) {
             archive.append(traceLogContent, { name: 'csharp-lsp-trace.log' });
+        }
+        if (razorLogContent) {
+            archive.append(razorLogContent, { name: 'razor.log' });
         }
 
         // Add captured activity logs to the archive

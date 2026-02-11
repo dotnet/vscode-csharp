@@ -81,7 +81,7 @@ export async function activateRoslynLanguageServer(
     registerCopilotContextProviders(context, languageServer, _channel);
 
     // Register any commands that need to be handled by the extension.
-    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel, reporter);
+    registerCommands(context, languageServer, hostExecutableResolver, _channel, _traceChannel, reporter, razorLogger);
     registerNestedCodeActionCommands(context, languageServer, _channel);
     registerCodeActionFixAllCommands(context, languageServer, _channel);
 
