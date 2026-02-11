@@ -13,6 +13,7 @@ For help and questions about using this project, please see the [README](https:/
 ### How to file an issue
 
 We highly recommend using the C# extension's built-in command, `CSharp: Report an issue` (`csharp.reportIssue`) to create a pre-filled issue template.  This will include helpful details such as local dotnet installations, installed extensions, and other information.
+
 ![csharp.reportIssue command](./docs/images/report_issue.png)
 
 #### Capturing activity trace logging
@@ -21,7 +22,7 @@ When investigating issues, the C# extension provides a command to capture trace-
 
 1. **Invoke the Capture Logs Command**:
    - Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS).
-   - Search for and select `CSharp: Capture Logs` (`csharp.captureLogs`).
+   - Search for and select `CSharp: Capture Logs` (`csharp.captureLogs`).  
 ![alt text](docs/images/captureLogsCommand.png)
 2. **Reproduce the Issue**:
    - A notification will appear indicating that logs are being captured.
@@ -112,6 +113,7 @@ If you encounter issues with document classification (e.g., incorrect syntax hig
 ### Diagnostics problems
 
 For issues with diagnostics, please provide values of the background analysis scope options, `dotnet.backgroundAnalysis.analyzerDiagnosticsScope` and `dotnet.backgroundAnalysis.compilerDiagnosticsScope`
+
 ![background analysis settings](./docs/images/background_analysis.png)
 
 ### Language server crashing
@@ -130,17 +132,17 @@ When investigating performance issues, we may request a performance trace of the
 
 The C# extension has a built in command, `csharp.recordLanguageServerTrace` to help with trace collection.  This command will install `dotnet-trace` as a global tool, invoke it against the language server, and package the results along with logs into a `.zip` archive.
 
-1.  Invoke the record language server trace command
+1.  Invoke the record language server trace command.  
 ![alt text](docs/images/recordTraceCommand.png)
-2.  Accept the default trace arguments, or change them if requested
+2.  Accept the default trace arguments, or change them if requested.  
 ![alt text](docs/images/dotnetTraceArguments.png)
-3.  Optionally select dump(s) to capture before and after the trace (Memory Dump and/or GC Dump). This is useful for comparing memory state before and after the trace.
+3.  Optionally select dump(s) to capture before and after the trace (Memory Dump and/or GC Dump). This is useful for comparing memory state before and after the trace.  
 ![alt text](docs/images/selectDumpsWithTrace.png)
-4.  If any dumps are selected, you will be prompted to customize the dump arguments.
+4.  If any dumps are selected, you will be prompted to customize the dump arguments.  
 ![alt text](docs/images/dotnetDumpArguments.png)
 ![alt text](docs/images/dotnetGcDumpArguments.png)
 5.  Choose a location to save the trace archive (`.zip` file).
-6.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the performance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace, or click `Cancel` on the progress notification.
+6.  A new terminal window will open to run the trace collection.  While the trace is running, reproduce the performance issue.  When done, hit <Enter> or <Ctrl+C> in the trace window to stop the trace, or click `Cancel` on the progress notification.  
 ![alt text](docs/images/recordTraceTerminal.png)
 7.  The extension will automatically package the trace, logs, and any dumps into an archive.
 8.  Attach the archive to your GitHub issue or share it privately (see [Sharing information privately](#sharing-information-privately)).
@@ -166,11 +168,11 @@ When investigating memory issues or hangs, we may request a dump of the language
 
 The C# extension has a built in command, `csharp.collectDump` to help with dump collection. This command will install the necessary dotnet tools, invoke them against the language server, and package the result into a `.zip` archive.
 
-1.  Invoke the collect dump command by opening the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS) and selecting `CSharp: Collect a dump of the C# Language Server`.
+1.  Invoke the collect dump command by opening the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS) and selecting `CSharp: Collect a dump of the C# Language Server`.  
 ![alt text](docs/images/collectDumpCommand.png)
-2.  Select which dumps to collect (Memory Dump and/or GC Dump). The archive will also include current C# extension log files and settings.
+2.  Select which dumps to collect (Memory Dump and/or GC Dump). The archive will also include current C# extension log files and settings.  
 ![alt text](docs/images/selectDumpTypes.png)
-3.  You will be prompted to customize the dump arguments.
+3.  You will be prompted to customize the dump arguments.  
 ![alt text](docs/images/dotnetDumpArguments.png)
 ![alt text](docs/images/dotnetGcDumpArguments.png)
 4.  Choose a location to save the archive (`.zip` file).
